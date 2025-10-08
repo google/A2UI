@@ -11,6 +11,10 @@
       "description": "A schema for a BeginRendering message in the A2A streaming UI protocol. This message signals that the UI can now be rendered and provides initial root component and styling information.",
       "type": "object",
       "properties": {
+        "catalogUri": {
+          "type": "string",
+          "description": "The URI of the component catalog to use for rendering. This must be one of the catalogs declared by the client in the 'clientUiCapabilities' message. This can be a well-known URI or a dynamic catalog URI provided by the client."
+        },
         "root": {
           "type": "string",
           "description": "The ID of the root component from which rendering should begin. This is a reference to a component instance by its unique ID. This property is REQUIRED."
@@ -22,6 +26,7 @@
         }
       },
       "required": [
+        "catalogUri",
         "root"
       ]
     },

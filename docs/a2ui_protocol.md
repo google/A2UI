@@ -398,10 +398,15 @@ The process for resolving the `action.context` remains the same: the client iter
 
 ### 5.3. The `clientUiCapabilities` Message
 
-This message is sent by the client to inform the server about its capabilities. This is crucial for supporting different component sets. The message must contain exactly one of the following properties:
+This message is sent by the client to inform the server about its capabilities. This is crucial for supporting different component sets. The message contains a `catalogs` array, where each item represents a supported catalog.
 
-- `catalogUri`: A URI pointing to a predefined component catalog schema that the client supports.
-- `dynamicCatalog`: An inline JSON object, conforming to the Catalog Schema, that defines the client's supported components. This is useful for development or for clients with highly custom component sets.
+For each catalog, the client must provide exactly one of the following:
+- `catalogUri`: A URI pointing to a predefined, well-known component catalog schema that the client supports.
+- `dynamicCatalog`: An inline JSON object that defines a custom component catalog. This object must contain:
+    - `dynamicCatalogUri`: A client-defined URI to uniquely identify this catalog. The server will use this URI in the `beginRendering` message to select it.
+    - `catalog`: The full catalog definition, conforming to the Catalog Schema.
+
+This allows for a flexible negotiation where a client can declare support for multiple standard and/or custom component sets.
 
 ### 5.4. The `error` Message
 
@@ -493,6 +498,10 @@ This section provides the formal JSON Schema for a single server-to-client messa
       "description": "A schema for a BeginRendering message in the A2UI streaming UI protocol. This message signals that the UI can now be rendered and provides initial root component and styling information.",
       "type": "object",
       "properties": {
+        "catalogUri": {
+          "type": "string",
+          "description": "The URI of the component catalog to use for rendering. This must be one of the catalogs declared by the client in the 'clientUiCapabilities' message. This can be a well-known URI or a dynamic catalog URI provided by the client."
+        },
         "root": {
           "type": "string",
           "description": "The ID of the root component from which rendering should begin. This is a reference to a component instance by its unique ID. This property is REQUIRED."
@@ -504,6 +513,7 @@ This section provides the formal JSON Schema for a single server-to-client messa
         }
       },
       "required": [
+        "catalogUri",
         "root"
       ]
     },

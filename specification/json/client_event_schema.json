@@ -40,28 +40,55 @@
     },
     "clientUiCapabilities": {
       "title": "Client Capabilities",
-      "description": "A message from the client describing its capabilities, such as the component catalog it supports. Exactly ONE of the properties in this object must be set.",
+      "description": "A message from the client describing its capabilities, such as the component catalogs it supports.",
       "type": "object",
       "properties": {
-        "catalogUri": {
-          "type": "string",
-          "description": "A URI pointing to a predefined component catalog schema."
-        },
-        "dynamicCatalog": {
-          "$ref": "https://raw.githubusercontent.com/google/a2ui/refs/heads/main/schemas/v0.1/catalog.json"
+        "catalogs": {
+          "type": "array",
+          "description": "An array of component catalogs supported by the client.",
+          "items": {
+            "type": "object",
+            "description": "A description of a supported catalog. Exactly one of 'catalogUri' or 'dynamicCatalog' must be provided.",
+            "properties": {
+              "catalogUri": {
+                "type": "string",
+                "description": "A URI pointing to a predefined, well-known component catalog schema."
+              },
+              "dynamicCatalog": {
+                "type": "object",
+                "description": "An inline definition of a component catalog.",
+                "properties": {
+                  "dynamicCatalogUri": {
+                    "type": "string",
+                    "description": "A client-defined URI to uniquely identify this dynamic catalog. The server will use this URI in the 'beginRendering' message to select this catalog."
+                  },
+                  "catalog": {
+                    "$ref": "https://raw.githubusercontent.com/google/a2ui/refs/heads/main/schemas/v0.1/catalog.json"
+                  }
+                },
+                "required": [
+                  "dynamicCatalogUri",
+                  "catalog"
+                ]
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "catalogUri"
+                ]
+              },
+              {
+                "required": [
+                  "dynamicCatalog"
+                ]
+              }
+            ]
+          }
         }
       },
-      "oneOf": [
-        {
-          "required": [
-            "catalogUri"
-          ]
-        },
-        {
-          "required": [
-            "dynamicCatalog"
-          ]
-        }
+      "required": [
+        "catalogs"
       ]
     },
     "error": {
