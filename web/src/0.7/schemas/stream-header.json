@@ -1,0 +1,12 @@
+{
+  "title": "StreamHeader Message",
+  "description": "A schema for a StreamHeader message in the A2A streaming UI protocol.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "The version of the protocol. This property is REQUIRED."
+    }
+  },
+  "required": ["version"]
+}

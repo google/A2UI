@@ -1,0 +1,107 @@
+{
+  "name": "@breadboard-ai/gulf",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI-first UI Toolkit Demo",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./ui": {
+      "types": "./dist/0.7/ui/ui.d.ts",
+      "default": "./dist/0.7/ui/ui.js"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "lint": "wireit",
+    "dev": "wireit",
+    "test": "wireit"
+  },
+  "wireit": {
+    "dev": {
+      "command": "vite dev",
+      "dependencies": [
+        "build"
+      ]
+    },
+    "test": {
+      "command": "node --test --enable-source-maps --test-reporter spec dist/tests/**/*.test.js",
+      "dependencies": [
+        "build"
+      ]
+    },
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc -b --pretty",
+      "env": {
+        "FORCE_COLOR": "1"
+      },
+      "files": [
+        "src/**/*.ts",
+        "tests/**/*.ts",
+        "tsconfig.json",
+        "../../core/tsconfig/base.json"
+      ],
+      "output": [
+        "dist/",
+        "!dist/**/*.min.js{,.map}"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "lint": {
+      "command": "eslint . --ext .ts",
+      "env": {
+        "FORCE_COLOR": "1"
+      },
+      "dependencies": [
+        "build:tsc"
+      ],
+      "files": [
+        ".eslintrc",
+        "../../.eslintrc.json"
+      ],
+      "output": []
+    }
+  },
+  "repository": {
+    "directory": "packages/gulf",
+    "type": "git",
+    "url": "git+https://github.com/breadboard-ai/breadboard.git"
+  },
+  "files": [
+    "dist/src"
+  ],
+  "keywords": [],
+  "author": "Google Labs Team",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/breadboard-ai/breadboard/issues"
+  },
+  "homepage": "https://github.com/breadboard-ai/breadboard/tree/main/packages/gulf#readme",
+  "devDependencies": {
+    "@types/node": "^24.6.2",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.8.3",
+    "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "@a2a-js/sdk": "^0.3.4",
+    "@lit-labs/signals": "^0.1.3",
+    "@lit/context": "^1.1.4",
+    "http-proxy": "^1.18.1",
+    "json-rpc-2.0": "^1.7.1",
+    "markdown-it": "^14.1.0",
+    "signal-utils": "^0.21.1"
+  }
+}

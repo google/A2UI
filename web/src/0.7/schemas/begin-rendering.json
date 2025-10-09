@@ -1,0 +1,31 @@
+{
+  "title": "BeginRendering Message",
+  "description": "A schema for a BeginRendering message in the A2A streaming UI protocol. This message signals that the UI can now be rendered and provides initial root component and styling information.",
+  "type": "object",
+  "properties": {
+    "root": {
+      "type": "string",
+      "description": "The ID of the root component from which rendering should begin. This is a reference to a component instance by its unique ID. This property is REQUIRED."
+    },
+    "styles": {
+      "type": "object",
+      "description": "An object containing styling information for the UI.",
+      "properties": {
+        "font": {
+          "type": "string",
+          "description": "The primary font to be used throughout the UI."
+        },
+        "logoUrl": {
+          "type": "string",
+          "description": "A URL pointing to the logo image to be displayed."
+        },
+        "primaryColor": {
+          "type": "string",
+          "description": "The primary color for the UI, specified as a hexadecimal color code (e.g., '#00BFFF').",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    }
+  },
+  "required": ["root"]
+}

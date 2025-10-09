@@ -1,0 +1,15 @@
+{
+  "title": "Data model update",
+  "description": "Sets or replaces the data model at a specified path with new content.",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "An optional path to a location within the data model where the content should be inserted or replaced. The path is represented as a dot-separated string and can include array indexing (e.g., 'user.addresses[0].street'). If this field is omitted, the entire data model will be replaced with the provided 'contents'."
+    },
+    "contents": {
+      "description": "The JSON content to be placed at the specified path. This property is REQUIRED. This can be any valid JSON value (object, array, string, number, boolean, or null). The content at the target path will be completely replaced by this new value."
+    }
+  },
+  "required": ["contents"]
+}

@@ -60,7 +60,7 @@
       "properties": {
         "url": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The URL of the image to be displayed. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -94,7 +94,7 @@
       "properties": {
         "url": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The URL of the video to be played. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -116,7 +116,7 @@
       "properties": {
         "url": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "A description of the audio content, which can be used for accessibility or display purposes. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -353,7 +353,7 @@
             "properties": {
               "title": {
                 "type": "object",
-                "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+                "description": "The title of the tab, which is displayed to the user. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
                 "properties": {
                   "path": {
                     "type": "string",
@@ -392,15 +392,6 @@
           ],
           "default": "horizontal",
           "description": "The orientation."
-        },
-        "color": {
-          "type": "string",
-          "description": "The color of the divider (e.g., hex code or semantic name)."
-        },
-        "thickness": {
-          "type": "number",
-          "default": 1,
-          "description": "The thickness of the divider."
         }
       }
     },
@@ -426,7 +417,7 @@
       "properties": {
         "label": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The text label displayed on the button. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -498,7 +489,7 @@
       "properties": {
         "label": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The label displayed next to the checkbox. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -512,7 +503,7 @@
         },
         "value": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The boolean state of the checkbox, where true means checked and false means unchecked. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -534,7 +525,7 @@
       "properties": {
         "text": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The text content of the input field. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -548,7 +539,7 @@
         },
         "label": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The label for the text field, which is displayed to the user and should describe the expected input. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -583,7 +574,7 @@
       "properties": {
         "value": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The selected date and/or time. The value must be provided in ISO 8601 format. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -591,7 +582,7 @@
             },
             "literalString": {
               "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "description": "A fixed, hardcoded string value in ISO 8601 format."
             }
           }
         },
@@ -617,7 +608,7 @@
       "properties": {
         "selections": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "A list of strings representing the currently selected `value`s from the `options` list. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
@@ -638,7 +629,7 @@
             "properties": {
               "label": {
                 "type": "object",
-                "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+                "description": "The user-facing label for a choice in the list. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
                 "properties": {
                   "path": {
                     "type": "string",
@@ -674,7 +665,7 @@
       "properties": {
         "value": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The current numerical value of the slider. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
             "path": {
               "type": "string",
