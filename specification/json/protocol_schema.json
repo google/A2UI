@@ -2,6 +2,7 @@
   "title": "A2UI Protocol message",
   "description": "A message from the server to the client, which can be one of several types.",
   "type": "object",
+  "maxProperties": 1,
   "properties": {
     "surfaceId": {
       "type": "string",
@@ -45,6 +46,7 @@
               "componentProperties": {
                 "type": "object",
                 "description": "Defines the properties for the component type.",
+                "maxProperties": 1,
                 "additionalProperties": true
               }
             },
