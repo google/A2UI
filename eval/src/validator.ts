@@ -12,9 +12,19 @@ export function validateSchema(
   const errors: string[] = [];
 
   const topLevelKeys = Object.keys(data);
-  if (topLevelKeys.length !== 1 || topLevelKeys[0] !== expectedMessageType) {
+  const hasSurfaceId = topLevelKeys.includes('surfaceId');
+  const messageKeys = topLevelKeys.filter(k => k !== 'surfaceId');
+
+  if (messageKeys.length !== 1 || messageKeys[0] !== expectedMessageType) {
     errors.push(
-      `Generated JSON should have exactly one top-level key: '${expectedMessageType}'. Found: ${topLevelKeys}`
+      `Generated JSON should have exactly one message key: '${expectedMessageType}'. Found: ${messageKeys}`
+    );
+    return errors;
+  }
+
+  if (topLevelKeys.length > 2) {
+    errors.push(
+      `Generated JSON has too many properties. It should only have one message key and an optional 'surfaceId'. Found: ${topLevelKeys}`
     );
     return errors;
   }
