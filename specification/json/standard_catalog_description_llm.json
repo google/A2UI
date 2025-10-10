@@ -1,8 +1,7 @@
 {
   "title": "A2UI Protocol message",
-  "description": "A message from the server to the client, which can be one of several types.",
+  "description": "A message from the server to the client. A message must contain at most one of `beginRendering`, `surfaceUpdate`, `dataModelUpdate`, or `surfaceDeletion`. It may optionally contain a `surfaceId`.",
   "type": "object",
-  "maxProperties": 1,
   "properties": {
     "surfaceId": {
       "type": "string",
