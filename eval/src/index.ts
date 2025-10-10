@@ -17,6 +17,12 @@ const ai = genkit({
   ],
 });
 
+const concurrencyLimits = {
+  openai: 10,
+  anthropic: 10,
+  google: 20,
+};
+
 // Define a UI component generator flow
 export const componentGeneratorFlow = ai.defineFlow(
   {
@@ -88,51 +94,170 @@ async function main() {
     }
   }
 
-  const generationPromises: Promise<InferenceResult>[] = [];
+  // Create a flat list of all generation tasks
+  const allTasks: {
+    prompt: TestPrompt;
+    modelConfig: any;
+    runNumber: number;
+    schema: any;
+  }[] = [];
 
   for (const prompt of filteredPrompts) {
-    const schemaString = fs.readFileSync(path.join(__dirname, prompt.schemaPath), 'utf-8');
+    const schemaString = fs.readFileSync(
+      path.join(__dirname, prompt.schemaPath),
+      'utf-8'
+    );
     const schema = JSON.parse(schemaString);
     for (const modelConfig of filteredModels) {
       for (let i = 1; i <= runsPerPrompt; i++) {
-        console.log(`Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${i})`);
-        const startTime = Date.now();
-        generationPromises.push(
-          componentGeneratorFlow({
-            prompt: prompt.promptText,
-            model: modelConfig.model,
-            config: modelConfig.config,
-            schema,
-          }).then(component => {
-            const validationResults = validateSchema(
-              component,
-              prompt.expectedMessageType,
-              prompt.matchers
-            );
+        allTasks.push({ prompt, modelConfig, runNumber: i, schema });
+      }
+    }
+  }
+
+  // Group tasks by API provider
+  const tasksByProvider = allTasks.reduce(
+    (acc, task) => {
+      const provider = task.modelConfig.apiProvider;
+      if (!acc[provider]) {
+        acc[provider] = [];
+      }
+      acc[provider].push(task);
+      return acc;
+    },
+    {} as Record<string, typeof allTasks>
+  );
+
+  // Function to process a queue of tasks with a concurrency limit
+  async function runWithConcurrency(
+    tasks: any[],
+    limit: number,
+    asyncFn: (task: any) => Promise<InferenceResult>
+  ) {
+    const results: InferenceResult[] = [];
+    const executing: Promise<any>[] = [];
+    let taskIndex = 0;
+
+    const run = async () => {
+      if (taskIndex >= tasks.length) {
+        return;
+      }
+      const currentTaskIndex = taskIndex++;
+      const task = tasks[currentTaskIndex];
+      try {
+        const result = await asyncFn(task);
+        results[currentTaskIndex] = result;
+      } catch (e) {
+        // Error is already handled in the asyncFn, but this prevents unhandled rejections
+      }
+      await run();
+    };
+
+    for (let i = 0; i < Math.min(limit, tasks.length); i++) {
+      executing.push(run());
+    }
+    await Promise.all(executing);
+    return results.filter(r => r); // Filter out empty slots if errors occurred
+  }
+
+  const taskExecutor = async (task: any): Promise<InferenceResult> => {
+    const { prompt, modelConfig, runNumber, schema } = task;
+    const maxRetries = 3;
+    const startTime = Date.now();
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(
+          `Starting generation for model: ${modelConfig.name}, prompt: ${
+            prompt.name
+          } (run ${runNumber}, attempt ${attempt}/${maxRetries})`
+        );
+        const component = await componentGeneratorFlow({
+          prompt: prompt.promptText,
+          model: modelConfig.model,
+          config: modelConfig.config,
+          schema,
+        });
+
+        const validationResults = validateSchema(
+          component,
+          prompt.expectedMessageType,
+          prompt.matchers
+        );
+
+        return {
+          modelName: modelConfig.name,
+          prompt,
+          component,
+          error: null,
+          latency: Date.now() - startTime,
+          validationResults,
+          runNumber,
+        };
+      } catch (error: any) {
+        console.error(
+          `Attempt ${attempt}/${maxRetries} failed for model: ${
+            modelConfig.name
+          }, prompt: ${prompt.name} (run ${runNumber}). Error:`,
+          error
+        );
+
+        // Concurrency errors should be retried.
+        if (error.status === 429) {
+          if (attempt < maxRetries) {
+            continue; // Retry
+          } else {
+            // Last attempt failed, so we fall through and return an error.
+          }
+        } else {
+          // For validation errors or other errors, we do not retry.
+          const errorMessage = error.message || 'Unknown error';
+          if (
+            error.status === 400 ||
+            errorMessage.toLowerCase().includes('json')
+          ) {
             return {
               modelName: modelConfig.name,
               prompt,
-              component,
+              component: null,
               error: null,
               latency: Date.now() - startTime,
-              validationResults,
-              runNumber: i,
+              validationResults: [
+                `Schema validation failed during generation: ${errorMessage}`,
+              ],
+              runNumber,
             };
-          }).catch(error => ({
+          }
+          // For any other kind of error, we also fail immediately.
+          return {
             modelName: modelConfig.name,
             prompt,
             component: null,
             error,
             latency: Date.now() - startTime,
             validationResults: [],
-            runNumber: i,
-          }))
-        );
+            runNumber,
+          };
+        }
       }
     }
-  }
+    throw new Error(
+      `Unexpected exit from retry loop for model: ${modelConfig.name}, prompt: ${prompt.name}`
+    );
+  };
 
-  const results = await Promise.all(generationPromises);
+  const providerPromises = Object.entries(tasksByProvider).map(
+    ([provider, tasks]) => {
+      const limit = concurrencyLimits[provider] || 1;
+      console.log(
+        `Processing ${tasks.length} tasks for ${provider} with concurrency ${limit}`
+      );
+      return runWithConcurrency(tasks, limit, taskExecutor);
+    }
+  );
+
+  const resultsByProvider = await Promise.all(providerPromises);
+  const results = resultsByProvider.flat();
 
   const resultsByModel: Record<string, InferenceResult[]> = {};
 
