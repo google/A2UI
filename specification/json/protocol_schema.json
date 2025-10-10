@@ -1,6 +1,7 @@
 {
   "title": "A2UI Protocol message",
   "description": "A message from the server to the client, which can be one of several types.",
+  "type": "object",
   "properties": {
     "surfaceId": {
       "type": "string",
@@ -77,11 +78,7 @@
     },
     "surfaceDeletion": {
       "title": "SurfaceDeletion Message",
-      "description": "A schema for a SurfaceDeletion message in the A2A streaming UI protocol. This message signals that a surface should be removed from the UI.",
-      "type": "object",
-      "properties": {},
-      "required": []
+      "description": "A schema for a SurfaceDeletion message in the A2A streaming UI protocol. This message signals that a surface should be removed from the UI."
     }
   }
 }
-
