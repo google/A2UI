@@ -2,34 +2,29 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-export interface ValidationResult {
-  success: boolean;
-  error?: string;
-}
+import { SchemaMatcher, ValidationResult } from "./schema_matcher";
 
-export class ComponentUpdateSchemaMatcher {
+export class ComponentUpdateSchemaMatcher extends SchemaMatcher {
   constructor(
     public componentName: string,
     public propertyName?: string,
-    public matchText?: string
-  ) {}
+    public matchText?: string,
+  ) {
+    super();
+  }
 
   validate(schema: any): ValidationResult {
-    const surfaceUpdate = schema.surfaceUpdate;
-    if (!surfaceUpdate) {
+    const components = schema.surfaceUpdate?.components;
+    if (!components || !Array.isArray(components)) {
       return {
         success: false,
-        error: 'Generated JSON must have a "surfaceUpdate" property.',
-      };
-    }
-    if (!surfaceUpdate.components || !Array.isArray(surfaceUpdate.components)) {
-      return {
-        success: false,
-        error: 'The "surfaceUpdate" property must contain a "components" array.',
+        error: `SurfaceUpdate message must have a "components" array.\n${JSON.stringify(
+          schema,
+        )}`,
       };
     }
 
-    for (const component of surfaceUpdate.components) {
+    for (const component of components) {
       if (component.componentProperties?.[this.componentName]) {
         const properties = component.componentProperties[this.componentName];
         if (!this.propertyName) {
@@ -57,15 +52,22 @@ export class ComponentUpdateSchemaMatcher {
     if (this.matchText) {
       error += ` containing text '${this.matchText}'`;
     }
-    error += '.';
+    error += ".";
     return { success: false, error };
   }
 
   private findText(obj: any, text: string): boolean {
-    if (typeof obj === 'string') {
+    if (typeof obj === "string") {
       return obj.toLowerCase().includes(text.toLowerCase());
     }
-    if (typeof obj === 'object' && obj !== null) {
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        if (this.findText(item, text)) {
+          return true;
+        }
+      }
+    }
+    if (typeof obj === "object" && obj !== null) {
       for (const key in obj) {
         if (this.findText(obj[key], text)) {
           return true;
