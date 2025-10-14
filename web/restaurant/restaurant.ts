@@ -30,8 +30,6 @@ import "../src/0.8/ui/ui.js";
 import "./ui/ui.js";
 import { StateEvent } from "../src/0.8/events/events";
 
-import { data as fakeData } from "./fake-data";
-
 @customElement("a2ui-restaurant")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   @provide({ context: themeContext })
