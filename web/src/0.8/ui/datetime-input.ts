@@ -56,7 +56,7 @@ export class DateTimeInput extends Root {
     }
 
     this.processor.setDataByPath(
-      `${this.value.path}${this.dataContextPath}`,
+      this.processor.resolvePath(this.value.path, this.dataContextPath),
       value
     );
   }

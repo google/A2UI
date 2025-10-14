@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import DefaultCatalog from "../0.8/catalog/default-catalog.json";
-import { A2UIClientEventMessage } from "../0.8/types/client-event";
+import DefaultCatalog from "../src/0.8/catalog/default-catalog.json";
+import { A2UIClientEventMessage } from "../src/0.8/types/client-event";
 
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();

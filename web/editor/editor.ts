@@ -14,15 +14,15 @@ import {
   HTMLTemplateResult,
 } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { A2UIModelProcessor } from "../0.8/data/model-processor";
-import { A2UIProtocolMessage, Theme } from "../0.8/types/types";
+import { A2UIModelProcessor } from "../src/0.8/data/model-processor";
+import { A2UIProtocolMessage, Theme } from "../src/0.8/types/types";
 import { repeat } from "lit/directives/repeat.js";
 import { SignalWatcher } from "@lit-labs/signals";
 import { provide } from "@lit/context";
-import { themeContext } from "../0.8/ui/context/theme";
+import { themeContext } from "../src/0.8/ui/context/theme";
 import { theme as uiTheme } from "./theme/theme.js";
 import "./ui/ui.js";
-import * as UI from "../0.8/ui/ui.js";
+import * as UI from "../src/0.8/ui/ui.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Snackbar } from "./ui/snackbar.js";
 import { ref } from "lit/directives/ref.js";

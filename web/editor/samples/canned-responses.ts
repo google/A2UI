@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { A2UIProtocolMessage } from "../../0.8/types/types";
+import { A2UIProtocolMessage } from "../../src/0.8/types/types";
 
 export const simpleCard: A2UIProtocolMessage[] = [
   {

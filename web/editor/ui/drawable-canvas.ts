@@ -7,7 +7,7 @@
 import { LitElement, css, html, nothing, svg } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { EnumValue } from "../types/types";
-import * as Styles from "../../0.8/ui/styles/index";
+import * as Styles from "../../src/0.8/ui/styles/index";
 import { ItemSelect } from "./item-select";
 
 type RenderMode = "free" | "line" | "rect";
@@ -340,7 +340,9 @@ export class DrawableCanvas extends LitElement {
   render() {
     return html`${svg`
       <svg
-        viewBox="${this.#adjustment.x} ${this.#adjustment.y} ${this.#bounds.width} ${this.#bounds.height}"
+        viewBox="${this.#adjustment.x} ${this.#adjustment.y} ${
+        this.#bounds.width
+      } ${this.#bounds.height}"
         @pointerdown=${this.#startDrawing}
         @pointermove=${this.#draw}
         @pointerup=${this.#stopDrawing}

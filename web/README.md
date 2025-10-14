@@ -13,7 +13,7 @@ This is a UI to generate and visualize A2UI responses.
 2. In the `.env` file place your Gemini API Key: `GEMINI_API_KEY=<your key>`.
 3. Install the dependencies: `npm i`
 4. Run the dev server: `npm run dev`
-5. Open http://localhost:5173
+5. Open http://localhost:5173/editor/ for the Editor or http://localhost:5173/restaurant/ for the A2A UI example (note that this needs an A2A server running)
 
 If you do not have a `.env` file with a GEMINI_API_KEY value set the developer
 server will not start. It will instead provide you with an error message

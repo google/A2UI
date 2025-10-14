@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { type Theme } from "../../0.8/types/types.js";
-import * as Utils from "../../0.8/ui/utils/utils.js";
+import { type Theme } from "../../src/0.8/types/types.js";
+import * as Utils from "../../src/0.8/ui/utils/utils.js";
 
 /** Elements */
 
@@ -171,12 +171,7 @@ const listItemLight = Utils.merge(listItem, {
 });
 
 export const theme: Theme = {
-  additionalStyles: {
-    Card: {
-      boxShadow: `0px 2px 3px oklch(from var(--p-30) l c h / calc(alpha * 0.1)),
-          0px 8px 14px oklch(from var(--p-30) l c h / calc(alpha * 0.03))`,
-    },
-  },
+  additionalStyles: {},
   components: {
     AudioPlayer: {},
     Button: {

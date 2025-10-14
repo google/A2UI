@@ -42,7 +42,7 @@ export class Text extends Root {
         }
 
         const textValue = this.processor.getDataByPath(
-          `${this.dataContextPath}${this.text.path}`,
+          this.processor.resolvePath(this.text.path, this.dataContextPath),
           this.surfaceId
         );
         if (typeof textValue !== "string") {

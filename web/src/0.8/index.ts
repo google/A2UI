@@ -14,10 +14,12 @@ import Catalog from "./catalog/default-catalog.json";
 
 import * as GeminiMiddleware from "./middleware/gemini.js";
 import * as ImageFallbackMiddleware from "./middleware/image-fallback.js";
+import * as A2AMiddleware from "./middleware/a2a.js";
 
 export const Middleware = {
   GeminiMiddleware,
   ImageFallbackMiddleware,
+  A2AMiddleware,
 };
 
 export const Schemas = {

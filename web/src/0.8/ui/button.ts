@@ -7,10 +7,10 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root";
 import { StateEvent } from "../events/events";
-import { UserAction } from "../types/types";
 import { StringValue } from "../types/primitives";
 import * as Styles from "./styles";
 import { classMap } from "lit/directives/class-map.js";
+import { Action } from "../types/components";
 
 @customElement("a2ui-button")
 export class Button extends Root {
@@ -18,7 +18,7 @@ export class Button extends Root {
   accessor label: StringValue | null = null;
 
   @property()
-  accessor userAction: UserAction | null = null;
+  accessor action: Action | null = null;
 
   static styles = [
     Styles.all,
@@ -37,12 +37,12 @@ export class Button extends Root {
       return html`<button
         class=${classMap(this.theme.components.Button)}
         @click=${() => {
-          if (!this.userAction) {
+          if (!this.action) {
             return;
           }
           const evt = new StateEvent<"a2ui.action">({
             eventType: "a2ui.action",
-            userAction: this.userAction,
+            action: this.action,
             dataContextPath: this.dataContextPath,
             sourceComponentId: this.id,
           });
@@ -62,7 +62,7 @@ export class Button extends Root {
         }
 
         const labelValue = this.processor.getDataByPath(
-          `${this.dataContextPath}${this.label.path}`,
+          this.processor.resolvePath(this.label.path, this.dataContextPath),
           this.surfaceId
         );
 

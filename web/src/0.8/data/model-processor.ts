@@ -126,6 +126,18 @@ export class A2UIModelProcessor {
     return this.#setDataByPath(surface.dataModel, path, value);
   }
 
+  resolvePath(path: string, dataContextPath?: string) {
+    if (dataContextPath) {
+      if (path.startsWith("/") || dataContextPath.endsWith("/")) {
+        return `${dataContextPath}${path}`;
+      } else {
+        return `${dataContextPath}/${path}`;
+      }
+    }
+
+    return path;
+  }
+
   #setDataByPath(root: DataMap, path: string, value: DataValue): void {
     const segments = path.split("/").filter((s) => s);
     if (segments.length === 0) {

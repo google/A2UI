@@ -101,7 +101,7 @@ export class Slider extends Root {
         }
 
         const textValue = this.processor.getDataByPath(
-          `${this.dataContextPath}${this.value.path}`,
+          this.processor.resolvePath(this.value.path, this.dataContextPath),
           this.surfaceId
         );
 

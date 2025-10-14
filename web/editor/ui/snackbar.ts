@@ -7,7 +7,7 @@ import { LitElement, html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { SnackbarMessage, SnackbarUUID, SnackType } from "../types/types";
 import { repeat } from "lit/directives/repeat.js";
-import * as Styles from "../../0.8/ui/styles/index";
+import * as Styles from "../../src/0.8/ui/styles/index";
 import { SnackbarActionEvent } from "../events/events";
 import { classMap } from "lit/directives/class-map.js";
 

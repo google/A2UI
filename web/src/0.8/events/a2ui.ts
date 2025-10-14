@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { UserAction } from "../types/types.js";
+import { Action } from "../types/components.js";
 import { BaseEventDetail } from "./base.js";
 
 type Namespace = "a2ui";
 
 export interface A2UIAction extends BaseEventDetail<`${Namespace}.action`> {
-  readonly userAction: UserAction;
+  readonly action: Action;
   readonly dataContextPath: string;
   readonly sourceComponentId: string;
 }
