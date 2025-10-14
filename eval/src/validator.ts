@@ -8,15 +8,9 @@ import { SchemaMatcher } from "./schema_matcher";
 export function validateSchema(
   data: any,
   schemaName: string,
-  matchers?: SchemaMatcher[],
+  matchers?: SchemaMatcher[]
 ): string[] {
   const errors: string[] = [];
-
-  if (schemaName !== "a2ui_protocol_message.json") {
-    errors.push(`Unknown schema for validation: ${schemaName}`);
-    return errors;
-  }
-
   if (data.surfaceUpdate) {
     validateComponentUpdate(data.surfaceUpdate, errors);
   } else if (data.dataModelUpdate) {
@@ -27,7 +21,7 @@ export function validateSchema(
     validateSurfaceDeletion(data.surfaceDeletion, errors);
   } else {
     errors.push(
-      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, beginRendering, surfaceDeletion.",
+      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, beginRendering, surfaceDeletion."
     );
   }
 
@@ -97,7 +91,7 @@ function validateBeginRendering(data: any, errors: string[]) {
 function validateComponent(
   component: any,
   allIds: Set<string>,
-  errors: string[],
+  errors: string[]
 ) {
   if (!component.id) {
     errors.push(`Component is missing an 'id'.`);
@@ -105,7 +99,7 @@ function validateComponent(
   }
   if (!component.componentProperties) {
     errors.push(
-      `Component '${component.id}' is missing 'componentProperties'.`,
+      `Component '${component.id}' is missing 'componentProperties'.`
     );
     return;
   }
@@ -113,7 +107,7 @@ function validateComponent(
   const componentTypes = Object.keys(component.componentProperties);
   if (componentTypes.length !== 1) {
     errors.push(
-      `Component '${component.id}' must have exactly one property in 'componentProperties', but found ${componentTypes.length}.`,
+      `Component '${component.id}' must have exactly one property in 'componentProperties', but found ${componentTypes.length}.`
     );
     return;
   }
@@ -125,7 +119,7 @@ function validateComponent(
     for (const prop of props) {
       if (properties[prop] === undefined) {
         errors.push(
-          `Component '${component.id}' of type '${componentType}' is missing required property '${prop}'.`,
+          `Component '${component.id}' of type '${componentType}' is missing required property '${prop}'.`
         );
       }
     }
@@ -135,7 +129,7 @@ function validateComponent(
     for (const id of ids) {
       if (id && !allIds.has(id)) {
         errors.push(
-          `Component '${component.id}' references non-existent component ID '${id}'.`,
+          `Component '${component.id}' references non-existent component ID '${id}'.`
         );
       }
     }
@@ -181,7 +175,7 @@ function validateComponent(
         const hasTemplate = !!properties.children.template;
         if ((hasExplicit && hasTemplate) || (!hasExplicit && !hasTemplate)) {
           errors.push(
-            `Component '${component.id}' must have either 'explicitList' or 'template' in children, but not both or neither.`,
+            `Component '${component.id}' must have either 'explicitList' or 'template' in children, but not both or neither.`
           );
         }
         if (hasExplicit) {
@@ -202,12 +196,12 @@ function validateComponent(
         properties.tabItems.forEach((tab: any) => {
           if (!tab.title) {
             errors.push(
-              `Tab item in component '${component.id}' is missing a 'title'.`,
+              `Tab item in component '${component.id}' is missing a 'title'.`
             );
           }
           if (!tab.child) {
             errors.push(
-              `Tab item in component '${component.id}' is missing a 'child'.`,
+              `Tab item in component '${component.id}' is missing a 'child'.`
             );
           }
           checkRefs([tab.child]);
@@ -226,7 +220,7 @@ function validateComponent(
       break;
     default:
       errors.push(
-        `Unknown component type '${componentType}' in component '${component.id}'.`,
+        `Unknown component type '${componentType}' in component '${component.id}'.`
       );
   }
 }

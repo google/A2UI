@@ -19,7 +19,7 @@ export class MessageTypeMatcher extends SchemaMatcher {
         error: "Response is not a valid object.",
       };
     }
-    const keys = Object.keys(response);
+    const keys = Object.keys(response).filter((k) => k !== "surfaceId");
     if (keys.length === 1 && keys[0] === this.messageType) {
       return { success: true };
     } else {

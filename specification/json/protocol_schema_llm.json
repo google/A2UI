@@ -3,9 +3,8 @@
   "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct user interfaces.",
   "type": "object",
   "properties": {
-    "surfaceId": {
-      "type": "string",
-      "description": "The unique identifier for the UI surface this message applies to."
+    "unused": {
+      "type": "string"
     }
   },
   "anyOf": [
@@ -41,9 +40,13 @@
             }
           },
           "required": ["root"]
+        },
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface this message applies to."
         }
       },
-      "required": ["beginRendering"]
+      "required": ["beginRendering", "surfaceId"]
     },
     {
       "type": "object",
@@ -678,9 +681,13 @@
             }
           },
           "required": ["components"]
+        },
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface this message applies to."
         }
       },
-      "required": ["surfaceUpdate"]
+      "required": ["surfaceUpdate", "surfaceId"]
     },
     {
       "type": "object",
@@ -698,9 +705,13 @@
             }
           },
           "required": ["contents"]
+        },
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface this message applies to."
         }
       },
-      "required": ["dataModelUpdate"]
+      "required": ["dataModelUpdate", "surfaceId"]
     },
     {
       "type": "object",
@@ -709,15 +720,17 @@
           "type": "object",
           "description": "Deletes a surface.",
           "properties": {
-            "delete": {
-              "type": "boolean",
-              "description": "Must be true to confirm deletion."
+            "unused": {
+              "type": "string"
             }
-          },
-          "required": ["delete"]
+          }
+        },
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface this message applies to."
         }
       },
-      "required": ["surfaceDeletion"]
+      "required": ["surfaceDeletion", "surfaceId"]
     }
   ]
 }

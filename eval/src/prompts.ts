@@ -101,7 +101,7 @@ The dog generator is another card which is a form that generates a fictional dog
       new ComponentUpdateSchemaMatcher(
         "CheckBox",
         "label",
-        "Enable email notifications",
+        "Enable email notifications"
       ),
       new ComponentUpdateSchemaMatcher("Button", "label", "Delete Account"),
       new ComponentUpdateSchemaMatcher("Button", "label", "Confirm Deletion"),
@@ -166,7 +166,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
       new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
-        "Simple Animal Explorer",
+        "Simple Animal Explorer"
       ),
       new ComponentUpdateSchemaMatcher("TextField", "label", "Search..."),
       new ComponentUpdateSchemaMatcher("Text", "text", "Mammalia"),
@@ -207,7 +207,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
       new ComponentUpdateSchemaMatcher(
         "Button",
         "label",
-        "Watch Video Tutorial",
+        "Watch Video Tutorial"
       ),
     ],
   },
@@ -252,13 +252,13 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
       new ComponentUpdateSchemaMatcher(
         "MultipleChoice",
         "options",
-        "Excellent",
+        "Excellent"
       ),
       new ComponentUpdateSchemaMatcher("CheckBox", "label", "Product Quality"),
       new ComponentUpdateSchemaMatcher(
         "TextField",
         "label",
-        "Any other comments?",
+        "Any other comments?"
       ),
       new ComponentUpdateSchemaMatcher("Button", "label", "Submit Feedback"),
     ],
@@ -353,7 +353,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
       new ComponentUpdateSchemaMatcher(
         "Text",
         "text",
-        "Enjoying the beautiful weather today!",
+        "Enjoying the beautiful weather today!"
       ),
       new ComponentUpdateSchemaMatcher("Image"),
       new ComponentUpdateSchemaMatcher("Button", "label", "Like"),
@@ -381,7 +381,7 @@ The right side of the row is another 'Column' for product information:
       new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
-        "Premium Leather Jacket",
+        "Premium Leather Jacket"
       ),
       new ComponentUpdateSchemaMatcher("Text", "text", "$299.99"),
       new ComponentUpdateSchemaMatcher("Image"),
@@ -434,29 +434,29 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
       new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
-        "Day 1: Arrival & Eiffel Tower",
+        "Day 1: Arrival & Eiffel Tower"
       ),
       new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
-        "Day 2: Museums & Culture",
+        "Day 2: Museums & Culture"
       ),
       new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
-        "Day 3: Art & Departure",
+        "Day 3: Art & Departure"
       ),
       new ComponentUpdateSchemaMatcher("Column"),
       new ComponentUpdateSchemaMatcher("CheckBox"),
       new ComponentUpdateSchemaMatcher(
         "Text",
         "text",
-        "Visit the Eiffel Tower",
+        "Visit the Eiffel Tower"
       ),
       new ComponentUpdateSchemaMatcher(
         "Text",
         "text",
-        "Visit the Louvre Museum",
+        "Visit the Louvre Museum"
       ),
       new ComponentUpdateSchemaMatcher("Text", "text", "Explore Montmartre"),
     ],
