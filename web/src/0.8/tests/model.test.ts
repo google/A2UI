@@ -112,6 +112,16 @@ describe("A2UIModelProcessor", () => {
       const data = processor.getDataByPath("/a/b/c");
       assert.strictEqual(data, "value");
     });
+
+    it("should handle paths correctly", () => {
+      const path1 = processor.resolvePath("/a/b/c", "/value");
+      const path2 = processor.resolvePath("a/b/c", "/value/");
+      const path3 = processor.resolvePath("a/b/c", "/value");
+
+      assert.strictEqual(path1, "/value/a/b/c");
+      assert.strictEqual(path2, "/value/a/b/c");
+      assert.strictEqual(path3, "/value/a/b/c");
+    });
   });
 
   describe("Component Tree Building", () => {
