@@ -6,7 +6,7 @@ import { SchemaMatcher, ValidationResult } from "./schema_matcher";
 
 export class BasicSchemaMatcher extends SchemaMatcher {
   constructor(
-    public propertyName: string,
+    public propertyPath: string,
     public propertyValue?: any,
   ) {
     super();
@@ -21,17 +21,26 @@ export class BasicSchemaMatcher extends SchemaMatcher {
       return result;
     }
 
-    const actualValue = schema[this.propertyName];
+    const pathParts = this.propertyPath.split('.');
+    let actualValue = schema;
+    for (const part of pathParts) {
+      if (actualValue && typeof actualValue === 'object') {
+        actualValue = actualValue[part];
+      } else {
+        actualValue = undefined;
+        break;
+      }
+    }
 
     if (actualValue === undefined) {
-      const error = `Failed to find property '${this.propertyName}'.`;
+      const error = `Failed to find property '${this.propertyPath}'.`;
       return { success: false, error };
     }
 
     if (this.propertyValue !== undefined) {
       if (JSON.stringify(actualValue) !== JSON.stringify(this.propertyValue)) {
         const error = `Property '${
-          this.propertyName
+          this.propertyPath
         }' has value '${JSON.stringify(
           actualValue,
         )}', but expected '${JSON.stringify(this.propertyValue)}'.`;
