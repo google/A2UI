@@ -29,8 +29,8 @@ export class Column extends Root {
       }
 
       section {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-auto-rows: auto;
         min-height: 0;
         overflow: auto;
       }

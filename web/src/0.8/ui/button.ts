@@ -66,7 +66,7 @@ export class Button extends Root {
           this.surfaceId
         );
 
-        if (!labelValue) {
+        if (labelValue === null) {
           return html`Invalid label`;
         }
 

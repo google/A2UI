@@ -97,7 +97,7 @@ export class TextField extends Root {
           this.surfaceId
         );
 
-        if (!textValue) {
+        if (textValue === null) {
           return html`Invalid label`;
         }
 

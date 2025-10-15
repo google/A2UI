@@ -186,13 +186,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         if (!body) {
           return;
         }
-        const request = body as A2UIClientEventMessage;
-        const messages = await this.#processRequest(request);
-
-        this.#lastMessages = messages;
-        console.debug(messages);
-        this.#processor.clearSurfaces();
-        this.#processor.processMessages(messages);
+        const message = body as A2UIClientEventMessage;
+        await this.#sendAndProcessMessage(message);
       }}
     >
       <h1 class="typography-f-sf typography-v-r typography-w-400 color-c-p30">
@@ -234,7 +229,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         ([surfaceId]) => surfaceId,
         ([surfaceId, surface]) => {
           return html`<a2ui-surface
-              @a2uiaction=${(evt: StateEvent<"a2ui.action">) => {
+              @a2uiaction=${async (evt: StateEvent<"a2ui.action">) => {
                 const [target] = evt.composedPath();
                 if (!(target instanceof HTMLElement)) {
                   return;
@@ -265,7 +260,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
                   }
                 }
 
-                const msg: A2UIClientEventMessage = {
+                const message: A2UIClientEventMessage = {
                   userAction: {
                     actionName: evt.detail.action.action,
                     sourceComponentId: target.id,
@@ -274,7 +269,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
                   },
                 };
 
-                this.#processRequest(msg);
+                await this.#sendAndProcessMessage(message);
               }}
               .surfaceId=${surfaceId}
               .surface=${surface}
@@ -285,7 +280,16 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     </section>`;
   }
 
-  async #processRequest(
+  async #sendAndProcessMessage(request) {
+    const messages = await this.#sendMessage(request);
+
+    this.#lastMessages = messages;
+    console.debug(messages);
+    this.#processor.clearSurfaces();
+    this.#processor.processMessages(messages);
+  }
+
+  async #sendMessage(
     message: A2UIClientEventMessage
   ): Promise<A2UIProtocolMessage[]> {
     try {

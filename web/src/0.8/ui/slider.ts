@@ -105,7 +105,7 @@ export class Slider extends Root {
           this.surfaceId
         );
 
-        if (!textValue) {
+        if (textValue === null) {
           return html`Invalid value`;
         }
 
