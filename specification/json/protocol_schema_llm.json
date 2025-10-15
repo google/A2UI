@@ -494,7 +494,7 @@
     },
     "surfaceDeletion": {
       "type": "object",
-      "description": "Signals the client to delete the surface. The object should be empty; its presence is the signal.",
+      "description": "Signals the client to delete the surface. The object should be empty; its presence is the signal. Only include if the surface is to be deleted.",
       "properties": { "unused": { "type": "string" } }
     }
   },
