@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import { BasicSchemaMatcher } from "./basic_schema_matcher";
-import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
+import { ComponentUpdateSchemaMatcher } from "./component_update_schema_matcher";
 import { MessageTypeMatcher } from "./message_type_matcher";
 import { SchemaMatcher } from "./schema_matcher";
 
@@ -54,11 +54,11 @@ The dog generator is another card which is a form that generates a fictional dog
 `,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Dog breed name"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Number of legs"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Generate"),
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Dog breed name"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Number of legs"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Generate"),
     ],
   },
   {
@@ -69,11 +69,11 @@ The dog generator is another card which is a form that generates a fictional dog
     promptText: `Generate a JSON message containing a surfaceUpdate for a login form. It should have a "Login" heading, two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Login"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "username"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "password"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Remember Me"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Sign In"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Login"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "username"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "password"),
+      new ComponentUpdateSchemaMatcher("CheckBox", "label", "Remember Me"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Sign In"),
     ],
   },
   {
@@ -83,11 +83,11 @@ The dog generator is another card which is a form that generates a fictional dog
     promptText: `Generate a JSON message containing a surfaceUpdate for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a staticContext with the product ID, for example, 'productId': 'product123'. You should create a template component and then a list that uses it.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Add to Cart"),
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("Card"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("Text"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Add to Cart"),
     ],
   },
   {
@@ -97,15 +97,15 @@ The dog generator is another card which is a form that generates a fictional dog
     promptText: `Generate a JSON message containing a surfaceUpdate for a user settings page. Use a Tabs component with two tabs: "Profile" and "Notifications". The "Profile" tab should contain a simple column with a text field for the user's name. The "Notifications" tab should contain a checkbox for "Enable email notifications". Also, include a Modal component. The modal's entry point should be a button labeled "Delete Account", and its content should be a column with a confirmation text and two buttons: "Confirm Deletion" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "name"),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher("TextField", "label", "name"),
+      new ComponentUpdateSchemaMatcher(
         "CheckBox",
         "label",
         "Enable email notifications"
       ),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Delete Account"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Confirm Deletion"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Cancel"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Delete Account"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Confirm Deletion"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Cancel"),
     ],
   },
   {
@@ -163,33 +163,33 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
 `,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
         "Simple Animal Explorer"
       ),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Search..."),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Mammalia"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Carnivora"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Lion"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Tiger"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Wolf"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Artiodactyla"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Giraffe"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Hippopotamus"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Aves"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Accipitriformes"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Bald Eagle"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Struthioniformes"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Ostrich"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Sphenisciformes"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Penguin"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Reptilia"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Crocodilia"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Nile Crocodile"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Squamata"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Komodo Dragon"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Ball Python"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Search..."),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Mammalia"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Carnivora"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Lion"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Tiger"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Wolf"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Artiodactyla"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Giraffe"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Hippopotamus"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Aves"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Accipitriformes"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Bald Eagle"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Struthioniformes"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Ostrich"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Sphenisciformes"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Penguin"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Reptilia"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Crocodilia"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Nile Crocodile"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Squamata"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Komodo Dragon"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Ball Python"),
     ],
   },
   {
@@ -199,12 +199,16 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a recipe card. It should have a 'Heading' for the recipe title, "Classic Lasagna". Below the title, an 'Image' of the lasagna. Then, a 'Row' containing two 'Column's. The first column has a 'Text' heading "Ingredients" and a 'List' of ingredients. The second column has a 'Text' heading "Instructions" and a 'List' of step-by-step instructions. Finally, a 'Button' at the bottom labeled "Watch Video Tutorial".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Classic Lasagna"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Ingredients"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Instructions"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Watch Video Tutorial"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Classic Lasagna"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Ingredients"),
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Instructions"),
+      new ComponentUpdateSchemaMatcher(
+        "Button",
+        "label",
+        "Watch Video Tutorial"
+      ),
     ],
   },
   {
@@ -214,14 +218,14 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button's: "Previous", "Play", and "Next".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Bohemian Rhapsody"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Queen"),
-      new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Previous"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Play"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Next"),
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Bohemian Rhapsody"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Queen"),
+      new ComponentUpdateSchemaMatcher("Slider"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Previous"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Play"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Next"),
     ],
   },
   {
@@ -231,10 +235,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a weather forecast UI. It should have a 'Heading' with the city name, "New York". Below it, a 'Row' with the current temperature as a 'Text' component ("68°F") and an 'Image' for the weather icon (e.g., a sun). Below that, a 'Divider'. Then, a 'List' component to display the 5-day forecast. Each item in the list should be a 'Row' with the day, an icon, and high/low temperatures.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "New York"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "68°F"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("List"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "New York"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "68°F"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("List"),
     ],
   },
   {
@@ -244,15 +248,19 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a survey form. It should have a 'Heading' "Customer Feedback". Then a 'MultipleChoice' question "How would you rate our service?" with options "Excellent", "Good", "Average", "Poor". Then a 'CheckBox' section for "What did you like?" with options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Customer Feedback"),
-      new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "Excellent"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Product Quality"),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Customer Feedback"),
+      new ComponentUpdateSchemaMatcher(
+        "MultipleChoice",
+        "options",
+        "Excellent"
+      ),
+      new ComponentUpdateSchemaMatcher("CheckBox", "label", "Product Quality"),
+      new ComponentUpdateSchemaMatcher(
         "TextField",
         "label",
         "Any other comments?"
       ),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Submit Feedback"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Submit Feedback"),
     ],
   },
   {
@@ -262,12 +270,12 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a flight booking form. It should have a 'Heading' "Book a Flight". Use a 'Row' for two 'TextField's: "Departure City" and "Arrival City". Below that, another 'Row' for two 'DateTimeInput's: "Departure Date" and "Return Date". Add a 'CheckBox' for "One-way trip". Finally, a 'Button' labeled "Search Flights".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Book a Flight"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Departure City"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Arrival City"),
-      new SurfaceUpdateSchemaMatcher("DateTimeInput"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "One-way trip"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Search Flights"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Book a Flight"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Departure City"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Arrival City"),
+      new ComponentUpdateSchemaMatcher("DateTimeInput"),
+      new ComponentUpdateSchemaMatcher("CheckBox", "label", "One-way trip"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Search Flights"),
     ],
   },
   {
@@ -277,14 +285,14 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a simple dashboard. It should have a 'Heading' "Sales Dashboard". Below, a 'Row' containing three 'Card's. The first card has a 'Text' "Revenue" and another 'Text' "$50,000". The second card has "New Customers" and "1,200". The third card has "Conversion Rate" and "4.5%".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Sales Dashboard"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Revenue"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "$50,000"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "New Customers"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "1,200"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Conversion Rate"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "4.5%"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Sales Dashboard"),
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Revenue"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "$50,000"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "New Customers"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "1,200"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Conversion Rate"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "4.5%"),
     ],
   },
   {
@@ -294,12 +302,12 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a contact card. It should be a 'Card' with a 'Row'. The row contains an 'Image' (as an avatar) and a 'Column'. The column contains a 'Text' for the name "Jane Doe", a 'Text' for the email "jane.doe@example.com", and a 'Text' for the phone number "(123) 456-7890". Below the main row, add a 'Button' labeled "View on Map".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Jane Doe"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "jane.doe@example.com"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "(123) 456-7890"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "View on Map"),
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Jane Doe"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "jane.doe@example.com"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "(123) 456-7890"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "View on Map"),
     ],
   },
   {
@@ -309,12 +317,12 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a calendar event creation form. It should have a 'Heading' "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time". Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "New Event"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Event Title"),
-      new SurfaceUpdateSchemaMatcher("DateTimeInput"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "All-day event"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Save"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Cancel"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "New Event"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Event Title"),
+      new ComponentUpdateSchemaMatcher("DateTimeInput"),
+      new ComponentUpdateSchemaMatcher("CheckBox", "label", "All-day event"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Save"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Cancel"),
     ],
   },
   {
@@ -324,13 +332,13 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a checkout page. It should have a 'Heading' "Checkout". Create a 'Column' for "Shipping Information" with 'TextField's for "Full Name" and "Address". Create another 'Column' for "Payment Information" with 'TextField's for "Card Number" and "Expiry Date". Add a 'Divider'. Show an order summary with a 'Text' component: "Total: $99.99". Finally, a 'Button' labeled "Place Order".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Checkout"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Full Name"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Address"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Card Number"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Expiry Date"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Total: $99.99"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Place Order"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Checkout"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Full Name"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Address"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Card Number"),
+      new ComponentUpdateSchemaMatcher("TextField", "label", "Expiry Date"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Total: $99.99"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Place Order"),
     ],
   },
   {
@@ -340,17 +348,17 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Generate a JSON message with a surfaceUpdate property for a social media post. It should be a 'Card' containing a 'Column'. The first item is a 'Row' with an 'Image' (user avatar) and a 'Text' (username "user123"). Below that, a 'Text' component for the post content: "Enjoying the beautiful weather today!". Then, an 'Image' for the main post picture. Finally, a 'Row' with three 'Button's: "Like", "Comment", and "Share".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "user123"),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "user123"),
+      new ComponentUpdateSchemaMatcher(
         "Text",
         "text",
         "Enjoying the beautiful weather today!"
       ),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Like"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Comment"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Share"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Like"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Comment"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Share"),
     ],
   },
   {
@@ -370,16 +378,16 @@ The right side of the row is another 'Column' for product information:
 - A 'Text' component for the product description below the button.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
         "Premium Leather Jacket"
       ),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "$299.99"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "S"),
-      new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "Black"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Add to Cart"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "$299.99"),
+      new ComponentUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("MultipleChoice", "options", "S"),
+      new ComponentUpdateSchemaMatcher("MultipleChoice", "options", "Black"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Add to Cart"),
     ],
   },
   {
@@ -398,15 +406,15 @@ Below the filters card, a 'Row' containing two 'Card's for key metrics:
 Finally, a large 'Card' at the bottom with a 'Heading' "Revenue Over Time" and a placeholder 'Image' to represent a line chart.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Company Dashboard"),
-      new SurfaceUpdateSchemaMatcher("DateTimeInput"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Apply Filters"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Total Revenue"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "$1,234,567"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "New Users"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "4,321"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Revenue Over Time"),
-      new SurfaceUpdateSchemaMatcher("Image"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Company Dashboard"),
+      new ComponentUpdateSchemaMatcher("DateTimeInput"),
+      new ComponentUpdateSchemaMatcher("Button", "label", "Apply Filters"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Total Revenue"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "$1,234,567"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "New Users"),
+      new ComponentUpdateSchemaMatcher("Text", "text", "4,321"),
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Revenue Over Time"),
+      new ComponentUpdateSchemaMatcher("Image"),
     ],
   },
   {
@@ -422,27 +430,35 @@ Below, use a 'List' to display three days. Each item in the list should be a 'Ca
 Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to mark as complete) and a 'Text' component with the activity description.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Paris Adventure"),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher("Heading", "text", "Paris Adventure"),
+      new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
         "Day 1: Arrival & Eiffel Tower"
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
         "Day 2: Museums & Culture"
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new ComponentUpdateSchemaMatcher(
         "Heading",
         "text",
         "Day 3: Art & Departure"
       ),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("CheckBox"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Visit the Eiffel Tower"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Visit the Louvre Museum"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Explore Montmartre"),
+      new ComponentUpdateSchemaMatcher("Column"),
+      new ComponentUpdateSchemaMatcher("CheckBox"),
+      new ComponentUpdateSchemaMatcher(
+        "Text",
+        "text",
+        "Visit the Eiffel Tower"
+      ),
+      new ComponentUpdateSchemaMatcher(
+        "Text",
+        "text",
+        "Visit the Louvre Museum"
+      ),
+      new ComponentUpdateSchemaMatcher("Text", "text", "Explore Montmartre"),
     ],
   },
 ];

@@ -11,7 +11,6 @@
     "evalGpt": "pnpm run eval -- --model=gpt-5-mini --prompt=travelItinerary",
     "evalClaude": "pnpm run eval -- --model=claude-4-sonnet --prompt=travelItinerary",
     "start": "genkit start",
-    "genkit:dev": "genkit start -- tsx --watch src/dev.ts",
     "format": "prettier --write src/**/*.ts"
   },
   "keywords": [],

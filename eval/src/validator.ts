@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
+import { ComponentUpdateSchemaMatcher } from "./component_update_schema_matcher";
 import { SchemaMatcher } from "./schema_matcher";
 
 export function validateSchema(
@@ -12,7 +12,7 @@ export function validateSchema(
 ): string[] {
   const errors: string[] = [];
   if (data.surfaceUpdate) {
-    validateSurfaceUpdate(data.surfaceUpdate, errors);
+    validateComponentUpdate(data.surfaceUpdate, errors);
   } else if (data.dataModelUpdate) {
     validateDataModelUpdate(data.dataModelUpdate, errors);
   } else if (data.beginRendering) {
@@ -38,9 +38,10 @@ export function validateSchema(
 }
 
 function validateSurfaceDeletion(data: any, errors: string[]) {
-  // The presence of the surfaceDeletion object is enough.
-  // It has an optional "unused" property to prevent it from being empty.
-  const allowed = ["unused"];
+  if (data.delete !== true) {
+    errors.push('SurfaceDeletion must have a "delete" property set to true.');
+  }
+  const allowed = ["delete"];
   for (const key in data) {
     if (!allowed.includes(key)) {
       errors.push(`SurfaceDeletion has unexpected property: ${key}`);
@@ -48,9 +49,9 @@ function validateSurfaceDeletion(data: any, errors: string[]) {
   }
 }
 
-function validateSurfaceUpdate(data: any, errors: string[]) {
+function validateComponentUpdate(data: any, errors: string[]) {
   if (!data.components || !Array.isArray(data.components)) {
-    errors.push("SurfaceUpdate must have a 'components' array.");
+    errors.push("ComponentUpdate must have a 'components' array.");
     return;
   }
 
@@ -96,21 +97,23 @@ function validateComponent(
     errors.push(`Component is missing an 'id'.`);
     return;
   }
-  if (!component.component) {
-    errors.push(`Component '${component.id}' is missing 'component'.`);
+  if (!component.componentProperties) {
+    errors.push(
+      `Component '${component.id}' is missing 'componentProperties'.`
+    );
     return;
   }
 
-  const componentTypes = Object.keys(component.component);
+  const componentTypes = Object.keys(component.componentProperties);
   if (componentTypes.length !== 1) {
     errors.push(
-      `Component '${component.id}' must have exactly one property in 'component', but found ${componentTypes.length}.`
+      `Component '${component.id}' must have exactly one property in 'componentProperties', but found ${componentTypes.length}.`
     );
     return;
   }
 
   const componentType = componentTypes[0];
-  const properties = component.component[componentType];
+  const properties = component.componentProperties[componentType];
 
   const checkRequired = (props: string[]) => {
     for (const prop of props) {
@@ -155,7 +158,7 @@ function validateComponent(
       checkRequired(["value"]);
       break;
     case "MultipleChoice":
-      checkRequired(["selections", "options"]);
+      checkRequired(["selections"]);
       break;
     case "Slider":
       checkRequired(["value"]);
@@ -167,7 +170,7 @@ function validateComponent(
     case "Column":
     case "List":
       checkRequired(["children"]);
-      if (properties.children && Array.isArray(properties.children)) {
+      if (properties.children) {
         const hasExplicit = !!properties.children.explicitList;
         const hasTemplate = !!properties.children.template;
         if ((hasExplicit && hasTemplate) || (!hasExplicit && !hasTemplate)) {
