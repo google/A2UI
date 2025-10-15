@@ -460,27 +460,41 @@
     },
     "dataModelUpdate": {
       "type": "object",
+      "description": "Updates the data model for a surface.",
       "properties": {
-        "dataModelUpdate": {
-          "type": "object",
-          "description": "Updates the data model for a surface.",
-          "properties": {
-            "path": {
-              "type": "string",
-              "description": "An optional path to a location within the data model where the content should be inserted or replaced. The path is represented as a dot-separated string and can include array indexing (e.g., 'user.addresses[0].street'). If this field is omitted, the entire data model will be replaced with the provided 'contents'."
-            },
-            "contents": {
-              "description": "The JSON content to be placed at the specified path. This property is REQUIRED. This can be any valid JSON value (object, array, string, number, boolean, or null). The content at the target path will be completely replaced by this new value."
-            }
-          },
-          "required": ["contents"]
-        },
-        "surfaceId": {
+        "path": {
           "type": "string",
-          "description": "The unique identifier for the UI surface this message applies to."
+          "description": "An optional path to a location within the data model (e.g., 'user.name'). If omitted, the entire data model will be replaced."
+        },
+        "contents": {
+          "type": "array",
+          "description": "A list of key-value pairs representing the data.",
+          "items": {
+            "type": "object",
+            "description": "A single data entry. Exactly one 'value_' property should be provided alongside the key.",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "The key for this data entry."
+              },
+              "value_string": {
+                "type": "string",
+                "description": "A string value."
+              },
+              "value_number": {
+                "type": "number",
+                "description": "A number value."
+              },
+              "value_boolean": {
+                "type": "boolean",
+                "description": "A boolean value."
+              }
+            },
+            "required": ["key"]
+          }
         }
       },
-      "required": ["dataModelUpdate", "surfaceId"]
+      "required": ["contents"]
     },
     "deleteSurface": {
       "type": "object",
