@@ -1,4 +1,4 @@
-# A2UI (Generative UI Language Format) Protocol
+# A2UI (Agent to UI) Protocol
 
 A Specification for a JSONL-Based, Streaming UI Protocol
 
@@ -46,11 +46,11 @@ Out-of-Band Event Handling (REST API): Using a standard, stateless REST endpoint
 
 ## Introduction
 
-The A2UI (Generative UI Language Format) Protocol is a protocol designed for rendering user interfaces from a stream of JSON objects sent from a server. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
+The A2UI (Agent to UI) Protocol is a protocol designed for rendering user interfaces from a stream of JSON objects sent from a server, which is typically an AI agent. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
 
 The protocol is designed to be "LLM-friendly," meaning its structure is declarative and straightforward, making it easy for a generative model to produce.
 
-Communication occurs via a JSON Lines (JSONL) stream. The client parses each line as a distinct message and incrementally builds the UI. The server-to-client protocol defines four message types:
+Communication occurs via a JSON Lines (JSONL) stream, which can be easily transported using the A2A protocol. The client parses each line as a distinct message and incrementally builds the UI. The server-to-client protocol defines four message types:
 
 - `surfaceUpdate`: Provides a list of component definitions to be added to or updated in a specific UI area called a "surface."
 - `dataModelUpdate`: Provides new data to be inserted into or to replace a surface's data model. Each surface has its own data model.
@@ -89,7 +89,7 @@ The `surfaceId` is a top-level property on server-to-client messages that direct
 
 ### 1.4. Data Flow Model
 
-The A2UI protocol is composed of a server-to-client stream describing UI and individual events sent to the server. The client consumes the stream, builds the UI, and renders it. Communication occurs via a JSON Lines (JSONL) stream, typically transported over **Server-Sent Events (SSE)**.
+The A2UI protocol is composed of a server-to-client stream describing UI and individual events sent to the server. The client consumes the stream, builds the UI, and renders it. This communication from an agent to a UI occurs via a JSON Lines (JSONL) stream, typically transported over **Server-Sent Events (SSE)**.
 
 1.  **Server Stream:** The server begins sending the JSONL stream over an SSE connection.
 2.  **Client-Side Buffering:** The client receives messages and buffers them:
@@ -376,7 +376,7 @@ The client's interpreter is responsible for resolving these paths against the da
 
 ## Section 5: Event Handling
 
-While the server-to-client UI definition is a one-way stream, user interactions and other client-side information are communicated back to the server using a separate, out-of-band mechanism. This is typically a standard REST API endpoint where the client sends a `POST` request with a single client event message.
+While the server-to-client UI definition is a one-way stream, user interactions and other client-side information are communicated back to the server (the agent) using a separate, out-of-band mechanism. This is typically a standard REST API endpoint where the client sends a `POST` request with a single client event message.
 
 ### 5.1. The Client Event Message
 
