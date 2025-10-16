@@ -17,14 +17,14 @@ export interface TestPrompt {
 
 export const prompts: TestPrompt[] = [
   {
-    name: "surfaceDeletion",
-    description: "A SurfaceDeletion message to remove a UI surface.",
+    name: "deleteSurface",
+    description: "A DeleteSurface message to remove a UI surface.",
     schemaPath: "../../specification/json/protocol_schema_llm.json",
-    promptText: `Generate a JSON message containing a surfaceDeletion for the surface 'dashboard-surface-1'.`,
+    promptText: `Generate a JSON message containing a deleteSurface for the surface 'dashboard-surface-1'.`,
     matchers: [
-      new MessageTypeMatcher("surfaceDeletion"),
-      new BasicSchemaMatcher("surfaceDeletion"),
-      new BasicSchemaMatcher("surfaceDeletion.surfaceId", "dashboard-surface-1"),
+      new MessageTypeMatcher("deleteSurface"),
+      new BasicSchemaMatcher("deleteSurface"),
+      new BasicSchemaMatcher("deleteSurface.surfaceId", "dashboard-surface-1"),
     ],
   },
   {

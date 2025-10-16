@@ -2,7 +2,7 @@
 
 This document outlines the validation rules implemented in the `validateSchema` function. The purpose of this validator is to check for constraints that are not easily expressed in the JSON schema itself, such as conditional requirements and reference integrity.
 
-An A2UI message is a JSON object that can have a `surfaceId` and one of the following properties, defining the message type: `beginRendering`, `surfaceUpdate`, `dataModelUpdate`, or `surfaceDeletion`.
+An A2UI message is a JSON object that can have a `surfaceId` and one of the following properties, defining the message type: `beginRendering`, `surfaceUpdate`, `dataModelUpdate`, or `deleteSurface`.
 
 ## Common Properties
 
@@ -70,7 +70,7 @@ For each component in the `components` array, the following rules apply:
 - If `path` is present, the `contents` will be set at that location in the data model.
 - No other properties besides `path` and `contents` are allowed.
 
-## `SurfaceDeletion` Message Rules
+## `DeleteSurface` Message Rules
 
 - **Required**: Must have a `delete` property set to `true`.
 - No other properties are allowed.

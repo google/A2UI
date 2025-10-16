@@ -17,11 +17,11 @@ export function validateSchema(
     validateDataModelUpdate(data.dataModelUpdate, errors);
   } else if (data.beginRendering) {
     validateBeginRendering(data.beginRendering, errors);
-  } else if (data.surfaceDeletion) {
-    validateSurfaceDeletion(data.surfaceDeletion, errors);
+  } else if (data.deleteSurface) {
+    validateDeleteSurface(data.deleteSurface, errors);
   } else {
     errors.push(
-      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, beginRendering, surfaceDeletion."
+      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, beginRendering, deleteSurface."
     );
   }
 
@@ -37,16 +37,16 @@ export function validateSchema(
   return errors;
 }
 
-function validateSurfaceDeletion(data: any, errors: string[]) {
+function validateDeleteSurface(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
-    errors.push("SurfaceDeletion must have a 'surfaceId' property.");
+    errors.push("DeleteSurface must have a 'surfaceId' property.");
   }
-  // The presence of the surfaceDeletion object is enough.
+  // The presence of the deleteSurface object is enough.
   // It has an optional "unused" property to prevent it from being empty.
   const allowed = ["unused", "surfaceId"];
   for (const key in data) {
     if (!allowed.includes(key)) {
-      errors.push(`SurfaceDeletion has unexpected property: ${key}`);
+      errors.push(`DeleteSurface has unexpected property: ${key}`);
     }
   }
 }

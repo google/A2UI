@@ -55,13 +55,14 @@ Communication occurs via a JSON Lines (JSONL) stream. The client parses each lin
 - `surfaceUpdate`: Provides a list of component definitions to be added to or updated in a specific UI area called a "surface."
 - `dataModelUpdate`: Provides new data to be inserted into or to replace a surface's data model. Each surface has its own data model.
 - `beginRendering`: Signals to the client that it has enough information to perform the initial render, specifying the ID of the root component.
-- `surfaceDeletion`: Explicitly removes a surface and its contents from the UI.
+- `deleteSurface`: Explicitly removes a surface and its contents from the UI.
 
 Client-to-server communication for user interactions is handled separately via a JSON payload sent to a REST API. This message can be one of several types:
+
 - `userAction`: Reports a user-initiated action from a component.
 - `clientCapabilities`: Informs the server about the client's capabilities, such as the component catalog it supports.
 - `error`: Reports a client-side error.
-This keeps the primary data stream unidirectional.
+  This keeps the primary data stream unidirectional.
 
 ## Section 1: Foundational Architecture and Data Flow
 
@@ -85,7 +86,7 @@ A **Surface** is a contiguous portion of screen real estate into which a A2UI UI
 
 For example, in a chat application, each AI-generated response could be rendered into a separate surface within the conversation history. A separate, persistent surface could be used for a side panel that displays related information.
 
-The `surfaceId` is a top-level property on server-to-client messages that directs changes to the correct area. It is used with messages like `surfaceUpdate`, `dataModelUpdate`, and `surfaceDeletion` to target a specific surface.
+The `surfaceId` is a top-level property on server-to-client messages that directs changes to the correct area. It is used with messages like `surfaceUpdate`, `dataModelUpdate`, and `deleteSurface` to target a specific surface.
 
 ### 1.4. Data Flow Model
 
@@ -100,7 +101,7 @@ The A2UI protocol is composed of a server-to-client stream describing UI and ind
 3.  **Render Signal:** The server sends a `beginRendering` message with the `root` component's ID. This prevents a "flash of incomplete content." The client buffers incoming components and data but waits for this explicit signal before attempting the first render, ensuring the initial view is coherent.
 4.  **Client-Side Rendering:** The client, now in a "ready" state, starts at the `root` component. It recursively walks the component tree by looking up component IDs in its buffer. It resolves any data bindings against the data model and uses its `WidgetRegistry` to instantiate native widgets.
 5.  **User Interaction and Event Handling:** The user interacts with a rendered widget (e.g., taps a button). The client constructs a `userAction` JSON payload, resolving any data bindings from the component's `action.context`. It sends this payload (as part of a larger client event message) to a pre-configured REST API endpoint on the server via a `POST` request.
-6.  **Dynamic Updates:** The server processes the `userAction`. If the UI needs to change in response, the server sends new `updateSurface` and `dataModelUpdate` messages over the original SSE stream. As these arrive, the client updates its component buffer and data model, and the UI re-renders to reflect the changes. The server can also send `surfaceDeletion` to remove a UI region.
+6.  **Dynamic Updates:** The server processes the `userAction`. If the UI needs to change in response, the server sends new `updateSurface` and `dataModelUpdate` messages over the original SSE stream. As these arrive, the client updates its component buffer and data model, and the UI re-renders to reflect the changes. The server can also send `deleteSurface` to remove a UI region.
 
 ```mermaid
 sequenceDiagram
@@ -126,7 +127,7 @@ sequenceDiagram
     Server-->>-Client: 11. HTTP 200 OK
 
     loop Dynamic Updates in Response to Event
-        Server->>+Client: surfaceUpdate, dataModelUpdate, or surfaceDeletion (via SSE)
+        Server->>+Client: surfaceUpdate, dataModelUpdate, or deleteSurface (via SSE)
         Client->>Client: Update component map, data model, or remove surface
         Note right of Client: Triggers UI rebuild
         Client-->>-Server: (UI is updated)
@@ -362,8 +363,9 @@ A component can also bind to numbers (`literalNumber`), booleans (`literalBoolea
   ```
 
 - **Path and Literal Value (Initialization Shorthand)**: If **both** `path` and a `literal*` value are provided, it serves as a shorthand for data model initialization. The client MUST:
-    1.  Update the data model at the specified `path` with the provided `literal*` value. This is an implicit `dataModelUpdate`.
-    2.  Bind the component property to that `path` for rendering and future updates.
+
+  1.  Update the data model at the specified `path` with the provided `literal*` value. This is an implicit `dataModelUpdate`.
+  2.  Bind the component property to that `path` for rendering and future updates.
 
   This allows the server to set a default value and bind to it in a single step.
 
@@ -503,9 +505,7 @@ This section provides the formal JSON Schema for a single server-to-client messa
           "additionalProperties": true
         }
       },
-      "required": [
-        "root"
-      ]
+      "required": ["root"]
     },
     "surfaceUpdate": {
       "title": "UpdateSurface Message",
@@ -529,16 +529,11 @@ This section provides the formal JSON Schema for a single server-to-client messa
                 "additionalProperties": true
               }
             },
-            "required": [
-              "id",
-              "componentProperties"
-            ]
+            "required": ["id", "componentProperties"]
           }
         }
       },
-      "required": [
-        "components"
-      ]
+      "required": ["components"]
     },
     "dataModelUpdate": {
       "title": "Data model update",
@@ -553,13 +548,11 @@ This section provides the formal JSON Schema for a single server-to-client messa
           "description": "The JSON content to be placed at the specified path. This property is REQUIRED. This can be any valid JSON value (object, array, string, number, boolean, or null). The content at the target path will be completely replaced by this new value."
         }
       },
-      "required": [
-        "contents"
-      ]
+      "required": ["contents"]
     },
-    "surfaceDeletion": {
-      "title": "SurfaceDeletion Message",
-      "description": "A schema for a surfaceDeletion message in the A2UI streaming UI protocol. This message signals that a surface should be removed from the UI.",
+    "deleteSurface": {
+      "title": "DeleteSurface Message",
+      "description": "A schema for a deleteSurface message in the A2UI streaming UI protocol. This message signals that a surface should be removed from the UI.",
       "type": "object",
       "properties": {},
       "required": []
