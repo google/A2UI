@@ -41,9 +41,7 @@ function validateDeleteSurface(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
     errors.push("DeleteSurface must have a 'surfaceId' property.");
   }
-  // The presence of the deleteSurface object is enough.
-  // It has an optional "unused" property to prevent it from being empty.
-  const allowed = ["unused", "surfaceId"];
+  const allowed = ["surfaceId"];
   for (const key in data) {
     if (!allowed.includes(key)) {
       errors.push(`DeleteSurface has unexpected property: ${key}`);

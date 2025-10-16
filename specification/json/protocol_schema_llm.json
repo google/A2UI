@@ -1,6 +1,7 @@
 {
   "title": "A2UI Message Schema",
   "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
+  "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'surfaceDeletion'.",
   "type": "object",
   "properties": {
     "beginRendering": {
@@ -10,6 +11,10 @@
         "surfaceId": {
           "type": "string",
           "description": "The unique identifier for the UI surface this message applies to."
+        },
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface to be rendered."
         },
         "root": {
           "type": "string",
@@ -36,6 +41,7 @@
         }
       },
       "required": ["root", "surfaceId"]
+      "required": ["root", "surfaceId"]
     },
     "surfaceUpdate": {
       "type": "object",
@@ -43,13 +49,15 @@
       "properties": {
         "surfaceId": {
           "type": "string",
-          "description": "The unique identifier for the UI surface this message applies to."
+          "description": "The unique identifier for the UI surface to be updated. If you are adding a new surface this *must* be a new, unique identified that has never been used for any existing surfaces shown."
         },
         "components": {
           "type": "array",
           "description": "A list containing all UI components for the surface.",
+          "minItems": 1,
           "items": {
             "type": "object",
+            "description": "Represents a *single* component in a UI widget tree. This component could be one of many supported types.",
             "properties": {
               "id": {
                 "type": "string",
@@ -64,13 +72,19 @@
                     "properties": {
                       "text": {
                         "type": "object",
+                        "description": "The text content for the heading. This can be a literal string or a reference to a value in the data model ('path', e.g. 'doc.title').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
                       "level": {
                         "type": "string",
+                        "description": "The heading level, corresponding to HTML heading tags (e.g., '1' for <h1>, '2' for <h2>).",
                         "enum": ["1", "2", "3", "4", "5"]
                       }
                     },
@@ -81,9 +95,14 @@
                     "properties": {
                       "text": {
                         "type": "object",
+                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'hotel.description').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -94,17 +113,23 @@
                     "properties": {
                       "url": {
                         "type": "object",
+                        "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'thumbnail.url').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
                       "fit": {
                         "type": "string",
+                        "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
                         "enum": [
-                          "fill",
-                          "cover",
                           "contain",
+                          "cover",
+                          "fill",
                           "none",
                           "scale-down"
                         ]
@@ -117,9 +142,14 @@
                     "properties": {
                       "url": {
                         "type": "object",
+                        "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'video.url').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -130,16 +160,26 @@
                     "properties": {
                       "url": {
                         "type": "object",
+                        "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'song.url').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
                       "description": {
                         "type": "object",
+                        "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. 'song.title').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -154,13 +194,20 @@
                         "properties": {
                           "explicitList": {
                             "type": "array",
-                            "items": { "type": "string" }
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "template": {
                             "type": "object",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
                             "properties": {
-                              "componentId": { "type": "string" },
-                              "dataBinding": { "type": "string" }
+                              "componentId": {
+                                "type": "string"
+                              },
+                              "dataBinding": {
+                                "type": "string"
+                              }
                             },
                             "required": ["componentId", "dataBinding"]
                           }
@@ -168,17 +215,19 @@
                       },
                       "distribution": {
                         "type": "string",
+                        "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property.",
                         "enum": [
-                          "start",
                           "center",
                           "end",
-                          "spaceBetween",
                           "spaceAround",
-                          "spaceEvenly"
+                          "spaceBetween",
+                          "spaceEvenly",
+                          "start"
                         ]
                       },
                       "alignment": {
                         "type": "string",
+                        "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
                         "enum": ["start", "center", "end", "stretch"]
                       }
                     },
@@ -193,13 +242,20 @@
                         "properties": {
                           "explicitList": {
                             "type": "array",
-                            "items": { "type": "string" }
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "template": {
                             "type": "object",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
                             "properties": {
-                              "componentId": { "type": "string" },
-                              "dataBinding": { "type": "string" }
+                              "componentId": {
+                                "type": "string"
+                              },
+                              "dataBinding": {
+                                "type": "string"
+                              }
                             },
                             "required": ["componentId", "dataBinding"]
                           }
@@ -207,6 +263,7 @@
                       },
                       "distribution": {
                         "type": "string",
+                        "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property.",
                         "enum": [
                           "start",
                           "center",
@@ -218,7 +275,8 @@
                       },
                       "alignment": {
                         "type": "string",
-                        "enum": ["start", "center", "end", "stretch"]
+                        "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
+                        "enum": ["center", "end", "start", "stretch"]
                       }
                     },
                     "required": ["children"]
@@ -232,13 +290,20 @@
                         "properties": {
                           "explicitList": {
                             "type": "array",
-                            "items": { "type": "string" }
+                            "items": {
+                              "type": "string"
+                            }
                           },
                           "template": {
                             "type": "object",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
                             "properties": {
-                              "componentId": { "type": "string" },
-                              "dataBinding": { "type": "string" }
+                              "componentId": {
+                                "type": "string"
+                              },
+                              "dataBinding": {
+                                "type": "string"
+                              }
                             },
                             "required": ["componentId", "dataBinding"]
                           }
@@ -246,10 +311,12 @@
                       },
                       "direction": {
                         "type": "string",
+                        "description": "The direction in which the list items are laid out.",
                         "enum": ["vertical", "horizontal"]
                       },
                       "alignment": {
                         "type": "string",
+                        "description": "Defines the alignment of children along the cross axis.",
                         "enum": ["start", "center", "end", "stretch"]
                       }
                     },
@@ -257,7 +324,12 @@
                   },
                   "Card": {
                     "type": "object",
-                    "properties": { "child": { "type": "string" } },
+                    "properties": {
+                      "child": {
+                        "type": "string",
+                        "description": "The ID of the component to be rendered inside the card."
+                      }
+                    },
                     "required": ["child"]
                   },
                   "Tabs": {
@@ -265,17 +337,25 @@
                     "properties": {
                       "tabItems": {
                         "type": "array",
+                        "description": "An array of objects, where each object defines a tab with a title and a child component.",
                         "items": {
                           "type": "object",
                           "properties": {
                             "title": {
                               "type": "object",
+                              "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. 'options.title').",
                               "properties": {
-                                "literalString": { "type": "string" },
-                                "path": { "type": "string" }
+                                "literalString": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                }
                               }
                             },
-                            "child": { "type": "string" }
+                            "child": {
+                              "type": "string"
+                            }
                           },
                           "required": ["title", "child"]
                         }
@@ -288,6 +368,7 @@
                     "properties": {
                       "axis": {
                         "type": "string",
+                        "description": "The orientation of the divider.",
                         "enum": ["horizontal", "vertical"]
                       }
                     }
@@ -295,38 +376,55 @@
                   "Modal": {
                     "type": "object",
                     "properties": {
-                      "entryPointChild": { "type": "string" },
-                      "contentChild": { "type": "string" }
+                      "entryPointChild": {
+                        "type": "string",
+                        "description": "The ID of the component that opens the modal when interacted with (e.g., a button)."
+                      },
+                      "contentChild": {
+                        "type": "string",
+                        "description": "The ID of the component to be displayed inside the modal."
+                      }
                     },
                     "required": ["entryPointChild", "contentChild"]
                   },
                   "Button": {
                     "type": "object",
                     "properties": {
-                      "label": {
-                        "type": "object",
-                        "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
-                        }
+                      "child": {
+                        "type": "string",
+                        "description": "The ID of the component to display in the button, typically a Text component."
                       },
                       "action": {
                         "type": "object",
+                        "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
                         "properties": {
-                          "name": { "type": "string" },
+                          "name": {
+                            "type": "string"
+                          },
                           "context": {
                             "type": "array",
                             "items": {
                               "type": "object",
                               "properties": {
-                                "key": { "type": "string" },
+                                "key": {
+                                  "type": "string"
+                                },
                                 "value": {
                                   "type": "object",
+                                  "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. 'user.name').",
                                   "properties": {
-                                    "path": { "type": "string" },
-                                    "literalString": { "type": "string" },
-                                    "literalNumber": { "type": "number" },
-                                    "literalBoolean": { "type": "boolean" }
+                                    "path": {
+                                      "type": "string"
+                                    },
+                                    "literalString": {
+                                      "type": "string"
+                                    },
+                                    "literalNumber": {
+                                      "type": "number"
+                                    },
+                                    "literalBoolean": {
+                                      "type": "boolean"
+                                    }
                                   }
                                 }
                               },
@@ -337,23 +435,33 @@
                         "required": ["name"]
                       }
                     },
-                    "required": ["label", "action"]
+                    "required": ["child", "action"]
                   },
                   "CheckBox": {
                     "type": "object",
                     "properties": {
                       "label": {
                         "type": "object",
+                        "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. 'option.label').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
                       "value": {
                         "type": "object",
+                        "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. 'filter.open').",
                         "properties": {
-                          "literalBoolean": { "type": "boolean" },
-                          "path": { "type": "string" }
+                          "literalBoolean": {
+                            "type": "boolean"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       }
                     },
@@ -364,23 +472,43 @@
                     "properties": {
                       "label": {
                         "type": "object",
+                        "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. 'user.name').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
                       "text": {
                         "type": "object",
+                        "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. 'user.name').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
                       "textFieldType": {
                         "type": "string",
-                        "enum": ["shortText", "number", "date", "longText"]
+                        "description": "The type of input field to display.",
+                        "enum": [
+                          "date",
+                          "longText",
+                          "number",
+                          "shortText",
+                          "obscured"
+                        ]
                       },
-                      "validationRegexp": { "type": "string" }
+                      "validationRegexp": {
+                        "type": "string",
+                        "description": "A regular expression used for client-side validation of the input."
+                      }
                     },
                     "required": ["label"]
                   },
@@ -389,14 +517,28 @@
                     "properties": {
                       "value": {
                         "type": "object",
+                        "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. 'user.dob').",
                         "properties": {
-                          "literalString": { "type": "string" },
-                          "path": { "type": "string" }
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
-                      "enableDate": { "type": "boolean" },
-                      "enableTime": { "type": "boolean" },
-                      "outputFormat": { "type": "string" }
+                      "enableDate": {
+                        "type": "boolean",
+                        "description": "If true, allows the user to select a date."
+                      },
+                      "enableTime": {
+                        "type": "boolean",
+                        "description": "If true, allows the user to select a time."
+                      },
+                      "outputFormat": {
+                        "type": "string",
+                        "description": "The desired format for the output string after a date or time is selected."
+                      }
                     },
                     "required": ["value"]
                   },
@@ -405,32 +547,49 @@
                     "properties": {
                       "selections": {
                         "type": "object",
+                        "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. 'hotel.options').",
                         "properties": {
                           "literalArray": {
                             "type": "array",
-                            "items": { "type": "string" }
+                            "items": {
+                              "type": "string"
+                            }
                           },
-                          "path": { "type": "string" }
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
                       "options": {
                         "type": "array",
+                        "description": "An array of available options for the user to choose from.",
                         "items": {
                           "type": "object",
                           "properties": {
                             "label": {
                               "type": "object",
+                              "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. 'option.label').",
                               "properties": {
-                                "literalString": { "type": "string" },
-                                "path": { "type": "string" }
+                                "literalString": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                }
                               }
                             },
-                            "value": { "type": "string" }
+                            "value": {
+                              "type": "string",
+                              "description": "The value to be associated with this option when selected."
+                            }
                           },
                           "required": ["label", "value"]
                         }
                       },
-                      "maxAllowedSelections": { "type": "integer" }
+                      "maxAllowedSelections": {
+                        "type": "integer",
+                        "description": "The maximum number of options that the user is allowed to select."
+                      }
                     },
                     "required": ["selections", "options"]
                   },
@@ -439,13 +598,24 @@
                     "properties": {
                       "value": {
                         "type": "object",
+                        "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. 'restaurant.cost').",
                         "properties": {
-                          "literalNumber": { "type": "number" },
-                          "path": { "type": "string" }
+                          "literalNumber": {
+                            "type": "number"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
                         }
                       },
-                      "minValue": { "type": "number" },
-                      "maxValue": { "type": "number" }
+                      "minValue": {
+                        "type": "number",
+                        "description": "The minimum value of the slider."
+                      },
+                      "maxValue": {
+                        "type": "number",
+                        "description": "The maximum value of the slider."
+                      }
                     },
                     "required": ["value"]
                   }
@@ -457,18 +627,23 @@
         }
       },
       "required": ["surfaceId", "components"]
+      "required": ["surfaceId", "components"]
     },
     "dataModelUpdate": {
       "type": "object",
       "description": "Updates the data model for a surface.",
       "properties": {
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface this data model update applies to."
+        },
         "path": {
           "type": "string",
           "description": "An optional path to a location within the data model (e.g., 'user.name'). If omitted, the entire data model will be replaced."
         },
         "contents": {
           "type": "array",
-          "description": "A list of key-value pairs representing the data.",
+          "description": "An array of data entries. Each entry must contain a 'key' and exactly one corresponding typed 'value*' property.",
           "items": {
             "type": "object",
             "description": "A single data entry. Exactly one 'value_' property should be provided alongside the key.",
@@ -477,15 +652,15 @@
                 "type": "string",
                 "description": "The key for this data entry."
               },
-              "value_string": {
+              "valueString": {
                 "type": "string",
                 "description": "A string value."
               },
-              "value_number": {
+              "valueNumber": {
                 "type": "number",
                 "description": "A number value."
               },
-              "value_boolean": {
+              "valueBoolean": {
                 "type": "boolean",
                 "description": "A boolean value."
               }
@@ -494,18 +669,19 @@
           }
         }
       },
-      "required": ["contents"]
+      "required": ["contents", "surfaceId"]
     },
     "deleteSurface": {
+    "deleteSurface": {
       "type": "object",
-      "description": "Signals the client to delete the surface. The object should be empty; its presence is the signal. Only include if the surface is to be deleted.",
+      "description": "Signals the client to delete the surface identified by 'surfaceId'.",
       "properties": {
         "surfaceId": {
           "type": "string",
-          "description": "The unique identifier for the UI surface this message applies to."
+          "description": "The unique identifier for the UI surface to be deleted."
         }
-      }
-    },
-    "required": ["surfaceId"]
+      },
+      "required": ["surfaceId"]
+    }
   }
 }
