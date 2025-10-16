@@ -63,8 +63,16 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
       return false;
     }
 
-    if (typeof propertyValue === 'object' && propertyValue.literal !== undefined) {
-      return propertyValue.literal === expectedValue;
+    if (typeof propertyValue === 'object' && !Array.isArray(propertyValue)) {
+      if (propertyValue.literalString !== undefined && propertyValue.literalString === expectedValue) {
+        return true;
+      }
+      if (propertyValue.literalNumber !== undefined && propertyValue.literalNumber === expectedValue) {
+        return true;
+      }
+      if (propertyValue.literalBoolean !== undefined && propertyValue.literalBoolean === expectedValue) {
+        return true;
+      }
     }
 
     if (Array.isArray(propertyValue)) {
@@ -73,7 +81,7 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
           if (item.value === expectedValue) {
             return true;
           }
-          if (item.label && typeof item.label === 'object' && item.label.literal === expectedValue) {
+          if (item.label && typeof item.label === 'object' && (item.label.literalString === expectedValue)) {
             return true;
           }
         } else if (item === expectedValue) {
