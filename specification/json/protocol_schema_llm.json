@@ -1,6 +1,5 @@
 {
   "title": "A2UI Message Schema",
-  "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'surfaceDeletion'.",
   "type": "object",
   "properties": {
@@ -8,10 +7,6 @@
       "type": "object",
       "description": "Signals the client to begin rendering a surface with a root component and specific styles.",
       "properties": {
-        "surfaceId": {
-          "type": "string",
-          "description": "The unique identifier for the UI surface this message applies to."
-        },
         "surfaceId": {
           "type": "string",
           "description": "The unique identifier for the UI surface to be rendered."
@@ -40,7 +35,6 @@
           }
         }
       },
-      "required": ["root", "surfaceId"]
       "required": ["root", "surfaceId"]
     },
     "surfaceUpdate": {
@@ -627,7 +621,6 @@
         }
       },
       "required": ["surfaceId", "components"]
-      "required": ["surfaceId", "components"]
     },
     "dataModelUpdate": {
       "type": "object",
@@ -671,7 +664,6 @@
       },
       "required": ["contents", "surfaceId"]
     },
-    "deleteSurface": {
     "deleteSurface": {
       "type": "object",
       "description": "Signals the client to delete the surface identified by 'surfaceId'.",
