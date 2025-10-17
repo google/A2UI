@@ -396,10 +396,9 @@ This message is sent by the client to inform the server about its capabilities. 
 
 #### `dynamicCatalog`
 
-The `dynamicCatalog` property allows the client to send an inline JSON object that defines its entire supported component set. This is especially useful for development or for clients with highly custom components. The object must conform to the Catalog Schema, containing two main properties: `components` and `styles`.
+The `dynamicCatalog` property allows the client to send an inline JSON object that defines its entire supported component set. This is especially useful for development or for clients with highly custom components. The object must conform to the Catalog Schema, containing `components`.
 
-- `components`: An object where each key is the name of a component (e.g., `"MyCustomCard"`) and the value is a valid JSON Schema defining the properties for that component.
-- `styles`: An object where each key is a style property name (e.g., `"brandColor"`) and the value is a JSON Schema for that style property.
+- `components`: An object where each key is the name of a component (e.g., `"MyCustomCard"`) and the value is a valid JSON object schema defining the properties for that component.
 
 **Example of a `clientUiCapabilities` message with a dynamic catalog:**
 
@@ -415,12 +414,6 @@ The `dynamicCatalog` property allows the client to send an inline JSON object th
             "statusColor": { "type": "string" }
           },
           "required": ["text", "statusColor"]
-        }
-      },
-      "styles": {
-        "pillBorderRadius": {
-          "type": "number",
-          "description": "The border radius for pill-shaped components."
         }
       }
     }
@@ -1248,13 +1241,6 @@ This section provides the formal JSON Schema for the client-to-server event mess
             "components": {
               "type": "object",
               "description": "A map where each key is a component name and the value is a JSON Schema defining an object containing its properties.",
-              "additionalProperties": {
-                "$ref": "https://json-schema.org/draft/2020-12/schema"
-              }
-            },
-            "styles": {
-              "type": "object",
-              "description": "A map where each key is a style property name and the value is a JSON Schema defining it.",
               "additionalProperties": {
                 "$ref": "https://json-schema.org/draft/2020-12/schema"
               }
