@@ -60,7 +60,7 @@ Communication occurs via a JSON Lines (JSONL) stream. The client parses each lin
 Client-to-server communication for user interactions is handled separately via a JSON payload sent to a REST API. This message can be one of several types:
 
 - `userAction`: Reports a user-initiated action from a component.
-- `clientCapabilities`: Informs the server about the client's capabilities, such as the component catalog it supports.
+- `clientUiCapabilities`: Informs the server about the client's capabilities, such as the component catalog it supports.
 - `error`: Reports a client-side error.
   This keeps the primary data stream unidirectional.
 
@@ -159,7 +159,7 @@ A2UI's component model is designed for flexibility, separating the protocol from
 
 ### 2.1. The Catalog: Defining Components
 
-Unlike previous versions with a fixed component set, A2UI now defines components in a **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `updateSurface` messages that conform to the component catalog understood by the client. Clients can inform the server of the catalog they support using the `clientCapabilities` message.
+Unlike previous versions with a fixed component set, A2UI now defines components in a **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `updateSurface` messages that conform to the component catalog understood by the client. Clients can inform the server of the catalog they support using the `clientUiCapabilities` message.
 
 ### 2.2. The `updateSurface` Message
 
@@ -367,7 +367,7 @@ The client's interpreter is responsible for resolving these paths against the da
 
 ## Section 5: Event Handling
 
-While the server-to-client UI definition is a one-way stream (e.g., over SSE), user interactions are communicated back to the server using using an A2A message.
+While the server-to-client UI definition is a one-way stream (e.g., over SSE), user interactions are communicated back to the server using an A2A message.
 
 ### 5.1. The Client Event Message
 
@@ -389,10 +389,44 @@ The process for resolving the `action.context` remains the same: the client iter
 
 ### 5.3. The `clientUiCapabilities` Message
 
-This message is sent by the client to inform the server about its capabilities. This is crucial for supporting different component sets. The message must contain exactly one of the following properties:
+This message is sent by the client to inform the server about its capabilities. This is crucial for supporting different component sets, allowing the server to generate UI that is compatible with the client. The message must contain exactly one of the following properties: `catalogUri` or `dynamicCatalog`.
 
 - `catalogUri`: A URI pointing to a predefined component catalog schema that the client supports.
 - `dynamicCatalog`: An inline JSON object, conforming to the Catalog Schema, that defines the client's supported components. This is useful for development or for clients with highly custom component sets.
+
+#### `dynamicCatalog`
+
+The `dynamicCatalog` property allows the client to send an inline JSON object that defines its entire supported component set. This is especially useful for development or for clients with highly custom components. The object must conform to the Catalog Schema, containing two main properties: `components` and `styles`.
+
+- `components`: An object where each key is the name of a component (e.g., `"MyCustomCard"`) and the value is a valid JSON Schema defining the properties for that component.
+- `styles`: An object where each key is a style property name (e.g., `"brandColor"`) and the value is a JSON Schema for that style property.
+
+**Example of a `clientUiCapabilities` message with a dynamic catalog:**
+
+```json
+{
+  "clientUiCapabilities": {
+    "dynamicCatalog": {
+      "components": {
+        "StatusPill": {
+          "type": "object",
+          "properties": {
+            "text": { "$ref": "#/definitions/BoundValue" },
+            "statusColor": { "type": "string" }
+          },
+          "required": ["text", "statusColor"]
+        }
+      },
+      "styles": {
+        "pillBorderRadius": {
+          "type": "number",
+          "description": "The border radius for pill-shaped components."
+        }
+      }
+    }
+  }
+}
+```
 
 ### 5.4. The `error` Message
 
@@ -460,12 +494,12 @@ A robust client-side interpreter for A2UI should be composed of several key comp
 - **Component Buffer:** A `Map<String, Component>` that stores all component instances by their `id`. This is populated by `componentUpdate` messages.
 - **Data Model Store:** A `Map<String, dynamic>` (or similar) that holds the application state. This is built and modified by `dataModelUpdate` messages.
 - **Interpreter State:** A state machine to track if the client is ready to render (e.g., a `_isReadyToRender` boolean that is set to `true` by `beginRendering`).
-- **`**WidgetRegistry**`**:\*\*\*\* A developer-provided map (e.g., `Map<String, WidgetBuilder>`) that associates component type strings ("Row", "Text") with functions that build native widgets.
+- **Widget Registry**: A developer-provided map (e.g., `Map<String, WidgetBuilder>`) that associates component type strings ("Row", "Text") with functions that build native widgets.
 - **Binding Resolver:** A utility that can take a `BoundValue` (e.g., `{ "path": "user.name" }`) and resolve it against the Data Model Store.
 - **Surface Manager:** Logic to create, update, and delete UI surfaces based on `surfaceId`.
 - **Event Handler:** A function, exposed to the `WidgetRegistry`, that constructs and sends the client event message (e.g., `userAction`) to the configured REST API endpoint.
 
-## Section 7: Complete A2UI JSON Schema
+## Section 7: Complete A2UI Server To Client JSON Schema
 
 This section provides the formal JSON Schema for a single server-to-client message in the A2UI JSONL stream. Each line in the stream must be a valid JSON object that conforms to this schema. It includes the entire base catalog of components, but the components may be swapped out for other components supported by the client.
 
@@ -1148,5 +1182,102 @@ This section provides the formal JSON Schema for a single server-to-client messa
       "required": ["surfaceId"]
     }
   }
+}
+```
+
+## Section 8: Client-to-Server JSON Schema
+
+This section provides the formal JSON Schema for the client-to-server event message. The client sends a single JSON object that must conform to this schema.
+
+```json
+{
+  "title": "A2UI Client-to-Server Event Schema",
+  "description": "Describes a JSON payload for a client-to-server event message. A message MUST contain exactly ONE of the properties: 'userAction', 'clientUiCapabilities', or 'error'.",
+  "type": "object",
+  "minProperties": 1,
+  "maxProperties": 1,
+  "properties": {
+    "userAction": {
+      "type": "object",
+      "description": "Reports a user-initiated action from a component.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the action, taken from the component's action.name property."
+        },
+        "surfaceId": {
+          "type": "string",
+          "description": "The id of the surface where the event originated."
+        },
+        "sourceComponentId": {
+          "type": "string",
+          "description": "The id of the component that triggered the event."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "An ISO 8601 timestamp of when the event occurred."
+        },
+        "context": {
+          "type": "object",
+          "description": "A JSON object containing the key-value pairs from the component's action.context, after resolving all data bindings.",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "name",
+        "surfaceId",
+        "sourceComponentId",
+        "timestamp",
+        "context"
+      ]
+    },
+    "clientUiCapabilities": {
+      "type": "object",
+      "description": "Informs the server about the client's capabilities, such as the component catalog it supports. Exactly ONE of the properties in this object must be set.",
+      "properties": {
+        "catalogUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "A URI pointing to a predefined component catalog schema that the client supports."
+        },
+        "dynamicCatalog": {
+          "type": "object",
+          "description": "An inline JSON object that defines the client's supported components and styles.",
+          "properties": {
+            "components": {
+              "type": "object",
+              "description": "A map where each key is a component name and the value is a JSON Schema defining an object containing its properties.",
+              "additionalProperties": {
+                "$ref": "https://json-schema.org/draft/2020-12/schema"
+              }
+            },
+            "styles": {
+              "type": "object",
+              "description": "A map where each key is a style property name and the value is a JSON Schema defining it.",
+              "additionalProperties": {
+                "$ref": "https://json-schema.org/draft/2020-12/schema"
+              }
+            }
+          },
+          "required": ["components", "styles"]
+        }
+      },
+      "oneOf": [
+        { "required": ["catalogUri"] },
+        { "required": ["dynamicCatalog"] }
+      ]
+    },
+    "error": {
+      "type": "object",
+      "description": "Reports a client-side error. The content is flexible.",
+      "additionalProperties": true
+    }
+  },
+  "oneOf": [
+    { "required": ["userAction"] },
+    { "required": ["clientUiCapabilities"] },
+    { "required": ["error"] }
+  ]
 }
 ```
