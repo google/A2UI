@@ -1,6 +1,6 @@
 {
   "title": "A2UI Message Schema",
-  "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'surfaceDeletion'.",
+  "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   "type": "object",
   "properties": {
     "beginRendering": {
@@ -22,10 +22,6 @@
             "font": {
               "type": "string",
               "description": "The primary font for the UI."
-            },
-            "logoUrl": {
-              "type": "string",
-              "description": "A URL for the logo image."
             },
             "primaryColor": {
               "type": "string",
