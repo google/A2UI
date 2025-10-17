@@ -1138,26 +1138,39 @@ This section provides the formal JSON Schema for a single server-to-client messa
           "description": "An array of data entries. Each entry must contain a 'key' and exactly one corresponding typed 'value*' property.",
           "items": {
             "type": "object",
-            "description": "A single data entry. Exactly one 'value_' property should be provided alongside the key.",
+            "description": "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
             "properties": {
               "key": {
                 "type": "string",
                 "description": "The key for this data entry."
               },
               "valueString": {
-                "type": "string",
-                "description": "A string value."
+                "type": "string"
               },
               "valueNumber": {
-                "type": "number",
-                "description": "A number value."
+                "type": "number"
               },
               "valueBoolean": {
-                "type": "boolean",
-                "description": "A boolean value."
+                "type": "boolean"
+              },
+              "valueList": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "valueString": {
+                      "type": "string"
+                    },
+                    "valueNumber": {
+                      "type": "number"
+                    },
+                    "valueBoolean": {
+                      "type": "boolean"
+                    }
+                  }
+                }
               }
-            },
-            "required": ["key"]
+            }
           }
         }
       },
@@ -1246,7 +1259,7 @@ This section provides the formal JSON Schema for the client-to-server event mess
               }
             }
           },
-          "required": ["components", "styles"]
+          "required": ["components"]
         }
       },
       "oneOf": [
