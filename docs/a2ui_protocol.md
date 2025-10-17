@@ -1,4 +1,4 @@
-# A2UI (Generative UI Language Format) Protocol
+# A2UI Protocol
 
 A Specification for a JSONL-Based, Streaming UI Protocol
 
@@ -42,7 +42,7 @@ The system needs a clear, reliable way to handle both server-pushed UI and clien
 
 Unidirectional UI Stream: Using a one-way stream (SSE) for UI updates simplifies the client's logic. It only needs to listen and react. This is a more robust pattern for server-push than trying to manage a complex bidirectional channel.
 
-Out-of-Band Event Handling (REST API): Using a standard, stateless REST endpoint for user actions leverages a well-understood, highly scalable, and reliable web technology. It cleanly separates the concerns of UI rendering from event processing.
+Event Handling: Event handling is done via an A2A message from the client to the server agent
 
 ## Introduction
 
@@ -86,7 +86,7 @@ A **Surface** is a contiguous portion of screen real estate into which a A2UI UI
 
 For example, in a chat application, each AI-generated response could be rendered into a separate surface within the conversation history. A separate, persistent surface could be used for a side panel that displays related information.
 
-The `surfaceId` is a top-level property on server-to-client messages that directs changes to the correct area. It is used with messages like `surfaceUpdate`, `dataModelUpdate`, and `deleteSurface` to target a specific surface.
+The `surfaceId` is a property within each server-to-client message that directs changes to the correct area. It is used with messages like `beginRendering`, `surfaceUpdate`, `dataModelUpdate`, and `deleteSurface` to target a specific surface.
 
 ### 1.4. Data Flow Model
 
@@ -100,7 +100,8 @@ The A2UI protocol is composed of a server-to-client stream describing UI and ind
 
 3.  **Render Signal:** The server sends a `beginRendering` message with the `root` component's ID. This prevents a "flash of incomplete content." The client buffers incoming components and data but waits for this explicit signal before attempting the first render, ensuring the initial view is coherent.
 4.  **Client-Side Rendering:** The client, now in a "ready" state, starts at the `root` component. It recursively walks the component tree by looking up component IDs in its buffer. It resolves any data bindings against the data model and uses its `WidgetRegistry` to instantiate native widgets.
-5.  **User Interaction and Event Handling:** The user interacts with a rendered widget (e.g., taps a button). The client constructs a `userAction` JSON payload, resolving any data bindings from the component's `action.context`. It sends this payload (as part of a larger client event message) to a pre-configured REST API endpoint on the server via a `POST` request.
+5.  **User Interaction and Event Handling:** The user interacts with a rendered widget (e.g., taps a button). The client constructs a `userAction` JSON payload, resolving any data bindings from the component's `action.context`. It sends this payload to the server via an A2A message.
+
 6.  **Dynamic Updates:** The server processes the `userAction`. If the UI needs to change in response, the server sends new `updateSurface` and `dataModelUpdate` messages over the original SSE stream. As these arrive, the client updates its component buffer and data model, and the UI re-renders to reflect the changes. The server can also send `deleteSurface` to remove a UI region.
 
 ```mermaid
@@ -111,7 +112,7 @@ sequenceDiagram
     Server->>+Client: SSE Connection (JSONL Stream)
     Client->>Client: 1. Parse JSONL message
     loop Until 'beginRendering'
-        Client->>Client: 2a. Process updateSurface (store components in map for surfaceId)
+        Client->>Client: 2a. Process surfaceUpdate (store components in map for surfaceId)
         Client->>Client: 2b. Process dataModelUpdate (update data model)
     end
     Client->>Client: 3. Process beginRendering (rootId: 'root', isReady: true)
@@ -123,8 +124,8 @@ sequenceDiagram
 
     Note over Client: 8. User interacts with UI (e.g., clicks button)
     Client->>Client: 9. Construct userAction payload
-    Client->>+Server: 10. POST /event (Client Event JSON with userAction)
-    Server-->>-Client: 11. HTTP 200 OK
+    Client->>+Server: 10. A2A Message sent to server (Client Event JSON with userAction)
+    Server-->>-Client: 11. OK
 
     loop Dynamic Updates in Response to Event
         Server->>+Client: surfaceUpdate, dataModelUpdate, or deleteSurface (via SSE)
@@ -158,21 +159,20 @@ A2UI's component model is designed for flexibility, separating the protocol from
 
 ### 2.1. The Catalog: Defining Components
 
-Unlike previous versions with a fixed component set, A2UI now defines components in a separate **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `updateSurface` messages that conform to the component catalog understood by the client. Clients can inform the server of the catalog they support using the `clientCapabilities` message.
+Unlike previous versions with a fixed component set, A2UI now defines components in a **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `updateSurface` messages that conform to the component catalog understood by the client. Clients can inform the server of the catalog they support using the `clientCapabilities` message.
 
 ### 2.2. The `updateSurface` Message
 
-This message is the primary way UI structure is defined. It is sent with a top-level `surfaceId` and contains a `components` array.
+This message is the primary way UI structure is defined. It contains a `surfaceId` and a `components` array.
 
 ```json
 {
-  "surfaceId": "main_content_area",
-  "updateSurface": {
+  "surfaceUpdate": {
+    "surfaceId": "main_content_area",
     "components": [
       {
         "id": "unique-component-id",
-        "weight": 1.0,
-        "componentProperties": {
+        "component": {
           "Text": {
             "text": { "literalString": "Hello, World!" }
           }
@@ -180,7 +180,7 @@ This message is the primary way UI structure is defined. It is sent with a top-l
       },
       {
         "id": "another-component-id",
-        "componentProperties": { ... }
+        "component": { ... }
       }
     ]
   }
@@ -194,16 +194,16 @@ This message is the primary way UI structure is defined. It is sent with a top-l
 Each object in the `components` array has the following structure:
 
 - `id`: A required, unique string that identifies this specific component instance. This is used for parent-child references.
-- `componentProperties`: A required object that defines the component's type and properties.
+- `component`: A required object that defines the component's type and properties.
 
-### 2.4.`componentProperties` (Generic Object)
+### 2.4.`component` (Generic Object)
 
-On the wire, this object is generic. Its structure is not defined by the core A2UI protocol. Instead, its validation is based on the active **Catalog**. For a given component, it **must** contain exactly one key, where the key is the string name of the component type from the catalog (e.g., `"Text"`, `"Row"`). The value is an object containing the properties for that component, as defined in the catalog.
+On the wire, this object is generic. Its structure is not defined by the core A2UI protocol. Instead, its validation is based on the active **Catalog**. It is a wrapper object that **must** contain exactly one key, where the key is the string name of the component type from the catalog (e.g., `"Text"`, `"Row"`). The value is an object containing the properties for that component, as defined in the catalog.
 
 **Example:** A `Text` component:
 
 ```json
-"componentProperties": {
+"component": {
   "Text": {
     "text": { "literalString": "This is text" }
   }
@@ -213,10 +213,10 @@ On the wire, this object is generic. Its structure is not defined by the core A2
 A `Button` component:
 
 ```json
-"componentProperties": {
+"component": {
   "Button": {
     "label": { "literalString": "Click Me" },
-    "action": { "action": "submit_form" }
+    "action": { "name": "submit_form" }
   }
 }
 ```
@@ -236,7 +236,7 @@ This model allows the server to send component definitions in any order, as long
 ```mermaid
 flowchart TD
     subgraph "Server Stream (JSONL)"
-        A("<b>componentUpdate</b><br>components: [root, title, button]")
+        A("<b>surfaceUpdate</b><br>components: [root, title, button]")
         B("<b>beginRendering</b><br>root: 'root'")
     end
 
@@ -303,32 +303,21 @@ A2UI enforces a clean separation between the UI's structure (components) and its
 
 This message is the only way to modify the client's data model.
 
-- `contents`: The JSON content to be inserted.
-- `path`: An optional, dot-separated path string.
+- `surfaceId`: The unique identifier for the UI surface this data model update applies to.
+- `path`: An optional path to a location within the data model (e.g., 'user.name'). If omitted, the update applies to the root of the data model.
+- `contents`: An array of data entries. Each entry must contain a 'key' and exactly one corresponding typed 'value\*' property (e.g. `valueString`, `valueNumber`, `valueBoolean`).
 
-  - If `path` is `null` or empty, the `contents` will **completely replace** the entire data model.
-  - If `path` is provided (e.g., `user.name` or `user.addresses[0].street`), the client will traverse the data model and insert the `contents` at that specific location, creating nested objects/lists as needed.
-
-#### Example 1: Replacing the root data model
+#### Example: Updating the data model
 
 ```json
 {
   "dataModelUpdate": {
-    "contents": {
-      "user": { "name": "Alice" },
-      "posts": []
-    }
-  }
-}
-```
-
-#### Example 2: Updating a specific path
-
-```json
-{
-  "dataModelUpdate": {
-    "path": "user.name",
-    "contents": "Bob"
+    "surfaceId": "main_content_area",
+    "path": "user",
+    "contents": [
+      { "key": "name", "valueString": "Bob" },
+      { "key": "isVerified", "valueBoolean": true }
+    ]
   }
 }
 ```
@@ -378,7 +367,7 @@ The client's interpreter is responsible for resolving these paths against the da
 
 ## Section 5: Event Handling
 
-While the server-to-client UI definition is a one-way stream, user interactions and other client-side information are communicated back to the server using a separate, out-of-band mechanism. This is typically a standard REST API endpoint where the client sends a `POST` request with a single client event message.
+While the server-to-client UI definition is a one-way stream (e.g., over SSE), user interactions are communicated back to the server using using an A2A message.
 
 ### 5.1. The Client Event Message
 
@@ -390,7 +379,7 @@ This message is sent when the user interacts with a component that has an action
 
 The `userAction` object has the following structure:
 
-- `actionName` (string, required): The name of the action, taken directly from the `action.action` property of the component (e.g., "submit_form").
+- `name` (string, required): The name of the action, taken directly from the `action.name` property of the component (e.g., "submit_form").
 - `surfaceId` (string, required): The `id` of the surface where the event originated.
 - `sourceComponentId` (string, required): The `id` of the component that triggered the event (e.g., "my_button").
 - `timestamp` (string, required): An ISO 8601 timestamp of when the event occurred (e.g., "2025-09-19T17:01:00Z").
@@ -416,11 +405,11 @@ This message provides a feedback mechanism for the server. It is sent when the c
     ```json
     {
       "id": "submit_btn",
-      "componentProperties": {
+      "component": {
         "Button": {
           "label": { "literalString": "Submit" },
           "action": {
-            "action": "submit_form",
+            "name": "submit_form",
             "context": [
               { "key": "userInput", "value": { "path": "form.textField" } },
               { "key": "formId", "value": { "literalString": "f-123" } }
@@ -448,7 +437,7 @@ This message provides a feedback mechanism for the server. It is sent when the c
     ```json
     {
       "userAction": {
-        "actionName": "submit_form",
+        "name": "submit_form",
         "surfaceId": "main_content_area",
         "sourceComponentId": "submit_btn",
         "timestamp": "2025-09-19T17:05:00Z",
@@ -478,84 +467,685 @@ A robust client-side interpreter for A2UI should be composed of several key comp
 
 ## Section 7: Complete A2UI JSON Schema
 
-This section provides the formal JSON Schema for a single server-to-client message in the A2UI JSONL stream. Each line in the stream must be a valid JSON object that conforms to this schema. Note that the component set is not defined here, but in a separate Catalog schema.
+This section provides the formal JSON Schema for a single server-to-client message in the A2UI JSONL stream. Each line in the stream must be a valid JSON object that conforms to this schema. It includes the entire base catalog of components, but the components may be swapped out for other components supported by the client.
 
 ```json
 {
-  "title": "A2UI Protocol Message",
-  "description": "A single message in the A2UI streaming UI protocol. Exactly ONE of the properties in this object must be set, corresponding to the specific message type.",
+  "title": "A2UI Message Schema",
+  "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'surfaceDeletion'.",
   "type": "object",
   "properties": {
-    "surfaceId": {
-      "type": "string",
-      "description": "An ID for the surface that the UI changes should be applied to. If this surface doesn't exist, it will be created. If this is not specified, the default surface will be used."
-    },
     "beginRendering": {
-      "title": "BeginRendering Message",
-      "description": "A schema for a BeginRendering message in the A2UI streaming UI protocol. This message signals that the UI can now be rendered and provides initial root component and styling information.",
       "type": "object",
+      "description": "Signals the client to begin rendering a surface with a root component and specific styles.",
       "properties": {
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface to be rendered."
+        },
         "root": {
           "type": "string",
-          "description": "The ID of the root component from which rendering should begin. This is a reference to a component instance by its unique ID. This property is REQUIRED."
+          "description": "The ID of the root component to render."
         },
         "styles": {
           "type": "object",
-          "description": "An object containing styling information for the UI, as defined by the active Catalog.",
-          "additionalProperties": true
-        }
-      },
-      "required": ["root"]
-    },
-    "surfaceUpdate": {
-      "title": "UpdateSurface Message",
-      "description": "A schema for a updateSurface message in the A2UI streaming UI protocol.",
-      "type": "object",
-      "properties": {
-        "components": {
-          "type": "array",
-          "description": "A flat list of all component instances available for rendering. Components reference each other by ID. This property is REQUIRED.",
-          "items": {
-            "description": "A specific instance of a ComponentType with its own unique ID and properties.",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "A unique identifier for this component instance. This property is REQUIRED."
-              },
-              "componentProperties": {
-                "type": "object",
-                "description": "Defines the properties for the component type, according to the active Catalog.",
-                "additionalProperties": true
-              }
+          "description": "Styling information for the UI.",
+          "properties": {
+            "font": {
+              "type": "string",
+              "description": "The primary font for the UI."
             },
-            "required": ["id", "componentProperties"]
+            "logoUrl": {
+              "type": "string",
+              "description": "A URL for the logo image."
+            },
+            "primaryColor": {
+              "type": "string",
+              "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
           }
         }
       },
-      "required": ["components"]
+      "required": ["root", "surfaceId"]
     },
-    "dataModelUpdate": {
-      "title": "Data model update",
-      "description": "Sets or replaces the data model at a specified path with new content.",
+    "surfaceUpdate": {
       "type": "object",
+      "description": "Updates a surface with a new set of components.",
       "properties": {
-        "path": {
+        "surfaceId": {
           "type": "string",
-          "description": "An optional path to a location within the data model where the content should be inserted or replaced. The path is represented as a dot-separated string and can include array indexing (e.g., 'user.addresses[0].street'). If this field is omitted, the entire data model will be replaced with the provided 'contents'."
+          "description": "The unique identifier for the UI surface to be updated. If you are adding a new surface this *must* be a new, unique identified that has never been used for any existing surfaces shown."
         },
-        "contents": {
-          "description": "The JSON content to be placed at the specified path. This property is REQUIRED. This can be any valid JSON value (object, array, string, number, boolean, or null). The content at the target path will be completely replaced by this new value."
+        "components": {
+          "type": "array",
+          "description": "A list containing all UI components for the surface.",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "description": "Represents a *single* component in a UI widget tree. This component could be one of many supported types.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique identifier for this component."
+              },
+              "component": {
+                "type": "object",
+                "description": "A wrapper object that MUST contain exactly one key, which is the name of the component type (e.g., 'Heading'). The value is an object containing the properties for that specific component.",
+                "properties": {
+                  "Heading": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "object",
+                        "description": "The text content for the heading. This can be a literal string or a reference to a value in the data model ('path', e.g. 'doc.title').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "level": {
+                        "type": "string",
+                        "description": "The heading level, corresponding to HTML heading tags (e.g., '1' for <h1>, '2' for <h2>).",
+                        "enum": ["1", "2", "3", "4", "5"]
+                      }
+                    },
+                    "required": ["text"]
+                  },
+                  "Text": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "object",
+                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'hotel.description').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": ["text"]
+                  },
+                  "Image": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "object",
+                        "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'thumbnail.url').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "fit": {
+                        "type": "string",
+                        "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
+                        "enum": [
+                          "contain",
+                          "cover",
+                          "fill",
+                          "none",
+                          "scale-down"
+                        ]
+                      }
+                    },
+                    "required": ["url"]
+                  },
+                  "Video": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "object",
+                        "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'video.url').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": ["url"]
+                  },
+                  "AudioPlayer": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "type": "object",
+                        "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'song.url').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "description": {
+                        "type": "object",
+                        "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. 'song.title').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": ["url"]
+                  },
+                  "Row": {
+                    "type": "object",
+                    "properties": {
+                      "children": {
+                        "type": "object",
+                        "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+                        "properties": {
+                          "explicitList": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "template": {
+                            "type": "object",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "properties": {
+                              "componentId": {
+                                "type": "string"
+                              },
+                              "dataBinding": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["componentId", "dataBinding"]
+                          }
+                        }
+                      },
+                      "distribution": {
+                        "type": "string",
+                        "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property.",
+                        "enum": [
+                          "center",
+                          "end",
+                          "spaceAround",
+                          "spaceBetween",
+                          "spaceEvenly",
+                          "start"
+                        ]
+                      },
+                      "alignment": {
+                        "type": "string",
+                        "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
+                        "enum": ["start", "center", "end", "stretch"]
+                      }
+                    },
+                    "required": ["children"]
+                  },
+                  "Column": {
+                    "type": "object",
+                    "properties": {
+                      "children": {
+                        "type": "object",
+                        "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+                        "properties": {
+                          "explicitList": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "template": {
+                            "type": "object",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "properties": {
+                              "componentId": {
+                                "type": "string"
+                              },
+                              "dataBinding": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["componentId", "dataBinding"]
+                          }
+                        }
+                      },
+                      "distribution": {
+                        "type": "string",
+                        "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property.",
+                        "enum": [
+                          "start",
+                          "center",
+                          "end",
+                          "spaceBetween",
+                          "spaceAround",
+                          "spaceEvenly"
+                        ]
+                      },
+                      "alignment": {
+                        "type": "string",
+                        "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
+                        "enum": ["center", "end", "start", "stretch"]
+                      }
+                    },
+                    "required": ["children"]
+                  },
+                  "List": {
+                    "type": "object",
+                    "properties": {
+                      "children": {
+                        "type": "object",
+                        "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+                        "properties": {
+                          "explicitList": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "template": {
+                            "type": "object",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "properties": {
+                              "componentId": {
+                                "type": "string"
+                              },
+                              "dataBinding": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["componentId", "dataBinding"]
+                          }
+                        }
+                      },
+                      "direction": {
+                        "type": "string",
+                        "description": "The direction in which the list items are laid out.",
+                        "enum": ["vertical", "horizontal"]
+                      },
+                      "alignment": {
+                        "type": "string",
+                        "description": "Defines the alignment of children along the cross axis.",
+                        "enum": ["start", "center", "end", "stretch"]
+                      }
+                    },
+                    "required": ["children"]
+                  },
+                  "Card": {
+                    "type": "object",
+                    "properties": {
+                      "child": {
+                        "type": "string",
+                        "description": "The ID of the component to be rendered inside the card."
+                      }
+                    },
+                    "required": ["child"]
+                  },
+                  "Tabs": {
+                    "type": "object",
+                    "properties": {
+                      "tabItems": {
+                        "type": "array",
+                        "description": "An array of objects, where each object defines a tab with a title and a child component.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "object",
+                              "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. 'options.title').",
+                              "properties": {
+                                "literalString": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "child": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["title", "child"]
+                        }
+                      }
+                    },
+                    "required": ["tabItems"]
+                  },
+                  "Divider": {
+                    "type": "object",
+                    "properties": {
+                      "axis": {
+                        "type": "string",
+                        "description": "The orientation of the divider.",
+                        "enum": ["horizontal", "vertical"]
+                      }
+                    }
+                  },
+                  "Modal": {
+                    "type": "object",
+                    "properties": {
+                      "entryPointChild": {
+                        "type": "string",
+                        "description": "The ID of the component that opens the modal when interacted with (e.g., a button)."
+                      },
+                      "contentChild": {
+                        "type": "string",
+                        "description": "The ID of the component to be displayed inside the modal."
+                      }
+                    },
+                    "required": ["entryPointChild", "contentChild"]
+                  },
+                  "Button": {
+                    "type": "object",
+                    "properties": {
+                      "child": {
+                        "type": "string",
+                        "description": "The ID of the component to display in the button, typically a Text component."
+                      },
+                      "action": {
+                        "type": "object",
+                        "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "context": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. 'user.name').",
+                                  "properties": {
+                                    "path": {
+                                      "type": "string"
+                                    },
+                                    "literalString": {
+                                      "type": "string"
+                                    },
+                                    "literalNumber": {
+                                      "type": "number"
+                                    },
+                                    "literalBoolean": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                }
+                              },
+                              "required": ["key", "value"]
+                            }
+                          }
+                        },
+                        "required": ["name"]
+                      }
+                    },
+                    "required": ["child", "action"]
+                  },
+                  "CheckBox": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "object",
+                        "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. 'option.label').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "value": {
+                        "type": "object",
+                        "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. 'filter.open').",
+                        "properties": {
+                          "literalBoolean": {
+                            "type": "boolean"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": ["label", "value"]
+                  },
+                  "TextField": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "object",
+                        "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. 'user.name').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "text": {
+                        "type": "object",
+                        "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. 'user.name').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "textFieldType": {
+                        "type": "string",
+                        "description": "The type of input field to display.",
+                        "enum": [
+                          "date",
+                          "longText",
+                          "number",
+                          "shortText",
+                          "obscured"
+                        ]
+                      },
+                      "validationRegexp": {
+                        "type": "string",
+                        "description": "A regular expression used for client-side validation of the input."
+                      }
+                    },
+                    "required": ["label"]
+                  },
+                  "DateTimeInput": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "object",
+                        "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. 'user.dob').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "enableDate": {
+                        "type": "boolean",
+                        "description": "If true, allows the user to select a date."
+                      },
+                      "enableTime": {
+                        "type": "boolean",
+                        "description": "If true, allows the user to select a time."
+                      },
+                      "outputFormat": {
+                        "type": "string",
+                        "description": "The desired format for the output string after a date or time is selected."
+                      }
+                    },
+                    "required": ["value"]
+                  },
+                  "MultipleChoice": {
+                    "type": "object",
+                    "properties": {
+                      "selections": {
+                        "type": "object",
+                        "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. 'hotel.options').",
+                        "properties": {
+                          "literalArray": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "options": {
+                        "type": "array",
+                        "description": "An array of available options for the user to choose from.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "object",
+                              "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. 'option.label').",
+                              "properties": {
+                                "literalString": {
+                                  "type": "string"
+                                },
+                                "path": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "value": {
+                              "type": "string",
+                              "description": "The value to be associated with this option when selected."
+                            }
+                          },
+                          "required": ["label", "value"]
+                        }
+                      },
+                      "maxAllowedSelections": {
+                        "type": "integer",
+                        "description": "The maximum number of options that the user is allowed to select."
+                      }
+                    },
+                    "required": ["selections", "options"]
+                  },
+                  "Slider": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "object",
+                        "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. 'restaurant.cost').",
+                        "properties": {
+                          "literalNumber": {
+                            "type": "number"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "minValue": {
+                        "type": "number",
+                        "description": "The minimum value of the slider."
+                      },
+                      "maxValue": {
+                        "type": "number",
+                        "description": "The maximum value of the slider."
+                      }
+                    },
+                    "required": ["value"]
+                  }
+                }
+              }
+            },
+            "required": ["id", "component"]
+          }
         }
       },
-      "required": ["contents"]
+      "required": ["surfaceId", "components"]
+    },
+    "dataModelUpdate": {
+      "type": "object",
+      "description": "Updates the data model for a surface.",
+      "properties": {
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface this data model update applies to."
+        },
+        "path": {
+          "type": "string",
+          "description": "An optional path to a location within the data model (e.g., 'user.name'). If omitted, the entire data model will be replaced."
+        },
+        "contents": {
+          "type": "array",
+          "description": "An array of data entries. Each entry must contain a 'key' and exactly one corresponding typed 'value*' property.",
+          "items": {
+            "type": "object",
+            "description": "A single data entry. Exactly one 'value_' property should be provided alongside the key.",
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "The key for this data entry."
+              },
+              "valueString": {
+                "type": "string",
+                "description": "A string value."
+              },
+              "valueNumber": {
+                "type": "number",
+                "description": "A number value."
+              },
+              "valueBoolean": {
+                "type": "boolean",
+                "description": "A boolean value."
+              }
+            },
+            "required": ["key"]
+          }
+        }
+      },
+      "required": ["contents", "surfaceId"]
     },
     "deleteSurface": {
-      "title": "DeleteSurface Message",
-      "description": "A schema for a deleteSurface message in the A2UI streaming UI protocol. This message signals that a surface should be removed from the UI.",
       "type": "object",
-      "properties": {},
-      "required": []
+      "description": "Signals the client to delete the surface identified by 'surfaceId'.",
+      "properties": {
+        "surfaceId": {
+          "type": "string",
+          "description": "The unique identifier for the UI surface to be deleted."
+        }
+      },
+      "required": ["surfaceId"]
     }
   }
 }
