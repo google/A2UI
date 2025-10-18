@@ -47,11 +47,3 @@ Here are some additional things to keep in mind during the process:
 
 - **Test your changes.** Before you submit a pull request, make sure that your changes work as expected.
 - **Be patient.** It may take some time for your pull request to be reviewed and merged.
-
----
-
-## For Google Employees
-
-Complete the following steps to register your GitHub account and be added as a contributor to this repository.
-
-1. Register your GitHub account at [go/GitHub](http://go/github)
