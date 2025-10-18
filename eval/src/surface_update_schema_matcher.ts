@@ -1,6 +1,8 @@
-// Copyright 2025 The Flutter Authors.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/**
+ * @license
+ * Copyright 2025 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 import { SchemaMatcher, ValidationResult } from "./schema_matcher";
 
@@ -93,7 +95,7 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
     if (JSON.stringify(propertyValue) === JSON.stringify(expectedValue)) {
       return true;
     }
-    
+
     return false;
   }
 }
