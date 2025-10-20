@@ -1,0 +1,4 @@
+mkdocs-material==9.6.22
+mkdocs-redirects==1.2.2
+mkdocs-macros-plugin==1.4.0
+mkdocs-llmstxt==0.4.0
