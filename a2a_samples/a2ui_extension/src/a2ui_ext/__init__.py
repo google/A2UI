@@ -1,18 +1,16 @@
 import logging
-
 from typing import Any
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events.event_queue import EventQueue
 from a2a.types import AgentExtension, Task
 
-
 logger = logging.getLogger(__name__)
 
 # --- Define a2ui UI constants ---
-_CORE_PATH = 'a2ui.org/ext/a2a-ui/v0.1'
-URI = f'https://{_CORE_PATH}'
-a2ui_MIME_TYPE = 'application/json+a2ui'
+_CORE_PATH = "a2ui.org/ext/a2a-ui/v0.1"
+URI = f"https://{_CORE_PATH}"
+a2ui_MIME_TYPE = "application/json+a2ui"
 
 
 class a2uiExtension:
@@ -22,12 +20,12 @@ class a2uiExtension:
         """Get the AgentExtension representing this extension."""
         return AgentExtension(
             uri=URI,
-            description='Provides a declarative a2ui UI JSON structure in messages.',
+            description="Provides a declarative a2ui UI JSON structure in messages.",
             params={
-                'supportedSchemas': [
-                    'https://raw.githubusercontent.com/google/a2ui/refs/heads/main/schemas/v0.1/standard_catalog.json'
+                "supportedSchemas": [
+                    "https://raw.githubusercontent.com/google/a2ui/refs/heads/main/schemas/v0.1/standard_catalog.json"
                 ],
-                'acceptsDynamicSchemas': True,
+                "acceptsDynamicSchemas": True,
             },
         )
 
@@ -50,17 +48,20 @@ class _a2uiExecutor(AgentExecutor):
         self._delegate = delegate
         self._ext = ext
 
-    async def execute(
-        self, context: RequestContext, event_queue: EventQueue
-    ) -> None:
+    async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
         # The extension's ONLY job is to check for the header and log activation.
-        if self._ext.activate(context):
-            logger.info('--- a2ui UI EXTENSION ACTIVATED ---')
+        logger.info(
+            f"--- Client requested extensions: {context.requested_extensions} ---"
+        )
+        use_ui = self._ext.activate(context)
+        if use_ui:
+            logger.info("--- a2ui UI EXTENSION ACTIVATED ---")
         else:
-            logger.info('--- a2ui UI EXTENSION *NOT* ACTIVE ---')
+            logger.info("--- a2ui UI EXTENSION *NOT* ACTIVE ---")
 
         # All parsing logic is now handled correctly inside the delegate executor.
-        await self._delegate.execute(context, event_queue)
+        # We pass the `use_ui` flag to the delegate.
+        await self._delegate.execute(context, event_queue, use_ui=use_ui)
 
     async def cancel(
         self, context: RequestContext, event_queue: EventQueue
@@ -69,7 +70,7 @@ class _a2uiExecutor(AgentExecutor):
 
 
 __all__ = [
-    'URI',
-    'a2uiExtension',
-    'a2ui_MIME_TYPE',
+    "URI",
+    "a2uiExtension",
+    "a2ui_MIME_TYPE",
 ]

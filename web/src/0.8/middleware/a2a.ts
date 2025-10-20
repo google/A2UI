@@ -21,7 +21,7 @@ const fetchWithCustomHeader: typeof fetch = async (url, init) => {
   const headers = new Headers(init?.headers);
   headers.set(
     "X-A2A-Extensions",
-    "https://github.com/a2aproject/a2a-samples/extensions/gulfui/v8"
+    "https://a2ui.org/ext/a2a-ui/v0.1"
   );
 
   const newInit = { ...init, headers };
