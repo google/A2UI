@@ -12,7 +12,7 @@ The A2UI extension is built on three main concepts:
 
 Surfaces: A "Surface" is a distinct, controllable region of the client's UI. The spec uses a surfaceId to direct updates to specific surfaces (e.g., a main content area, a side panel, or a new chat bubble). This allows a single agent stream to manage multiple UI areas independently.
 
-Catalogs: The a2ui extension is component-agnostic. All UI components (e.g., Text, Row, Button) and their stylings are defined in a separate Catalog Definition Schema. This allows clients and servers to negotiate which catalog to use.
+Catalog Definition Document: The a2ui extension is component-agnostic. All UI components (e.g., Text, Row, Button) and their stylings are defined in a separate Catalog Definition Schema. This allows clients and servers to negotiate which catalog to use.
 
 Schemas: The a2ui extension is defined by three primary JSON schemas:
 
