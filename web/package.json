@@ -29,6 +29,7 @@
     "lib",
     "tests",
     "restaurant",
-    "editor"
+    "editor",
+    "inspector"
   ]
 }
