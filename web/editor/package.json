@@ -93,7 +93,7 @@
   "devDependencies": {
     "dotenv": "^17.2.3",
     "typescript": "^5.8.3",
-    "vite": "^7.1.9",
+    "vite": "^7.1.11",
     "wireit": "^0.15.0-pre.2"
   },
   "dependencies": {
