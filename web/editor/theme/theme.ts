@@ -14,8 +14,9 @@
  limitations under the License.
  */
 
-import { type Theme } from "../../src/0.8/types/types.js";
-import * as Utils from "../../src/0.8/ui/utils/utils.js";
+import { v0_8 } from "@a2ui/web-lib";
+
+const Utils = v0_8.UI.Utils;
 
 /** Elements */
 
@@ -180,7 +181,7 @@ const listItemLight = Utils.merge(listItem, {
   "color-c-n35": true,
 });
 
-export const theme: Theme = {
+export const theme: v0_8.Types.Theme = {
   additionalStyles: {
     Card: {
       boxShadow: `0px 2px 3px oklch(from var(--p-30) l c h / calc(alpha * 0.1)),
@@ -267,7 +268,7 @@ export const theme: Theme = {
       "layout-g-4": true,
     },
     Slider: {},
-    Tabs: {},
+    Tabs: { container: {}, controls: { all: {}, selected: {} }, element: {} },
     Text: {
       "layout-w-100": true,
       "layout-g-2": true,

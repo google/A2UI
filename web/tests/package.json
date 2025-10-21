@@ -1,0 +1,90 @@
+{
+  "name": "@a2ui/web-tests",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI-first UI Toolkit Demo",
+  "main": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "lint": "wireit",
+    "dev": "wireit",
+    "test": "wireit"
+  },
+  "wireit": {
+    "dev": {
+      "command": "vite dev",
+      "dependencies": [
+        "build"
+      ]
+    },
+    "test": {
+      "command": "node --test --enable-source-maps --test-reporter spec dist/0.8/**/*.test.js",
+      "dependencies": [
+        "build"
+      ]
+    },
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc -b --pretty",
+      "env": {
+        "FORCE_COLOR": "1"
+      },
+      "dependencies": [
+        "<dependencies>#build:tsc"
+      ],
+      "files": [
+        "0.8/**/*.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/",
+        "!dist/**/*.min.js{,.map}"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "lint": {
+      "command": "eslint . --ext .ts",
+      "env": {
+        "FORCE_COLOR": "1"
+      },
+      "dependencies": [
+        "build:tsc"
+      ],
+      "files": [
+        ".eslintrc",
+        "../../.eslintrc.json"
+      ],
+      "output": []
+    }
+  },
+  "repository": {
+    "directory": "packages/a2ui",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "files": [
+    "dist/src"
+  ],
+  "keywords": [],
+  "author": "Google",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "@a2ui/web-lib": "^0.1.0"
+  }
+}

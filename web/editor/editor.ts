@@ -24,15 +24,11 @@ import {
   HTMLTemplateResult,
 } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { A2UIModelProcessor } from "../src/0.8/data/model-processor";
-import { A2UIProtocolMessage, Theme } from "../src/0.8/types/types";
 import { repeat } from "lit/directives/repeat.js";
 import { SignalWatcher } from "@lit-labs/signals";
 import { provide } from "@lit/context";
-import { themeContext } from "../src/0.8/ui/context/theme";
 import { theme as uiTheme } from "./theme/theme.js";
 import "./ui/ui.js";
-import * as UI from "../src/0.8/ui/ui.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Snackbar } from "./ui/snackbar.js";
 import { ref } from "lit/directives/ref.js";
@@ -43,6 +39,7 @@ import {
   SnackType,
 } from "./types/types.js";
 import { DrawableCanvas } from "./ui/ui.js";
+import { v0_8 } from "@a2ui/web-lib";
 
 type UserMode = "upload" | "sketch";
 type RenderMode = "surfaces" | "messages";
@@ -52,8 +49,8 @@ const RENDER_MODE_KEY = "ui-render-mode";
 
 @customElement("a2ui-layout-editor")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  @provide({ context: themeContext })
-  accessor theme: Theme = uiTheme;
+  @provide({ context: v0_8.UI.Context.themeContext })
+  accessor theme: v0_8.Types.Theme = uiTheme;
 
   @state()
   accessor #ready = false;
@@ -80,10 +77,10 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #drawableCanvas: DrawableCanvas | null = null;
 
   @state()
-  accessor #lastMessages: A2UIProtocolMessage[] | null = null;
+  accessor #lastMessages: v0_8.Types.A2UIProtocolMessage[] | null = null;
 
   static styles = [
-    UI.Styles.all,
+    v0_8.UI.Styles.all,
     css`
       :host {
         display: grid;
@@ -451,7 +448,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   }
   #renderMode: RenderMode = "surfaces";
 
-  #processor = new A2UIModelProcessor();
+  #processor = new v0_8.Data.A2UIModelProcessor();
   #a2uiClient = new A2UIClient();
 
   constructor() {
@@ -469,7 +466,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   async #processRequest(
     image?: HTMLImageElement | null,
     instructions?: string
-  ): Promise<A2UIProtocolMessage[]> {
+  ): Promise<v0_8.Types.A2UIProtocolMessage[]> {
     try {
       this.#requesting = true;
       const response = await this.#a2uiClient.sendMultipart(
@@ -478,8 +475,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       );
 
       const message = JSON.parse(response.parts[0].text) as
-        | A2UIProtocolMessage
-        | A2UIProtocolMessage[];
+        | v0_8.Types.A2UIProtocolMessage
+        | v0_8.Types.A2UIProtocolMessage[];
 
       if (Array.isArray(message)) {
         return message;

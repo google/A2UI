@@ -14,8 +14,7 @@
  limitations under the License.
  */
 
-import DefaultCatalog from "../src/0.8/catalog/default-catalog.json";
-import { A2UIClientEventMessage } from "../src/0.8/types/client-event";
+import { v0_8 } from "@a2ui/web-lib";
 
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
@@ -29,7 +28,7 @@ export class A2UIClient {
         (async () => {
           await this.#send({
             clientUiCapabilities: {
-              dynamicCatalog: DefaultCatalog,
+              dynamicCatalog: v0_8.Schemas.DefaultCatalog,
             },
           });
           console.log("A2UI Client Handshake");
@@ -62,7 +61,7 @@ export class A2UIClient {
   }
 
   async #send<T extends { role: "model"; parts: Array<{ text: string }> }>(
-    message: A2UIClientEventMessage
+    message: v0_8.Types.A2UIClientEventMessage
   ) {
     const response = await fetch("/a2ui", {
       body: JSON.stringify(message),

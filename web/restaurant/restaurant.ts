@@ -18,12 +18,8 @@ import { SignalWatcher } from "@lit-labs/signals";
 import { provide } from "@lit/context";
 import { LitElement, html, css, nothing, HTMLTemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { themeContext } from "../src/0.8/ui/context/theme";
 import { theme as uiTheme } from "./theme/theme.js";
-import { A2UIProtocolMessage, Theme } from "../src/0.8/types/types";
 import { A2UIClient } from "./client";
-import { A2UIClientEventMessage } from "../src/0.8/types/client-event";
-import * as Styles from "../src/0.8/ui/styles/index.js";
 import {
   SnackbarAction,
   SnackbarMessage,
@@ -31,20 +27,16 @@ import {
   SnackType,
 } from "./types/types";
 import { type Snackbar } from "./ui/snackbar";
-import { A2UIModelProcessor } from "../src/0.8/data/model-processor";
 import { repeat } from "lit/directives/repeat.js";
-
-// A2UI elements.
-import "../src/0.8/ui/ui.js";
+import { v0_8 } from "@a2ui/web-lib";
 
 // Restaurant demo elements.
 import "./ui/ui.js";
-import { StateEvent } from "../src/0.8/events/events";
 
 @customElement("a2ui-restaurant")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  @provide({ context: themeContext })
-  accessor theme: Theme = uiTheme;
+  @provide({ context: v0_8.UI.Context.themeContext })
+  accessor theme: v0_8.Types.Theme = uiTheme;
 
   @state()
   accessor #requesting = false;
@@ -53,10 +45,10 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #error: string | null = null;
 
   @state()
-  accessor #lastMessages: A2UIProtocolMessage[] = [];
+  accessor #lastMessages: v0_8.Types.A2UIProtocolMessage[] = [];
 
   static styles = [
-    Styles.all,
+    v0_8.UI.Styles.all,
     css`
       :host {
         display: block;
@@ -161,7 +153,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     `,
   ];
 
-  #processor = new A2UIModelProcessor();
+  #processor = new v0_8.Data.A2UIModelProcessor();
   #a2uiClient = new A2UIClient();
   #snackbar: Snackbar | undefined = undefined;
   #pendingSnackbarMessages: Array<{
@@ -197,7 +189,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         if (!body) {
           return;
         }
-        const message = body as A2UIClientEventMessage;
+        const message = body as v0_8.Types.A2UIClientEventMessage;
         await this.#sendAndProcessMessage(message);
       }}
     >
@@ -240,13 +232,15 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
         ([surfaceId]) => surfaceId,
         ([surfaceId, surface]) => {
           return html`<a2ui-surface
-              @a2uiaction=${async (evt: StateEvent<"a2ui.action">) => {
+              @a2uiaction=${async (
+                evt: v0_8.Events.StateEvent<"a2ui.action">
+              ) => {
                 const [target] = evt.composedPath();
                 if (!(target instanceof HTMLElement)) {
                   return;
                 }
 
-                const context: A2UIClientEventMessage["userAction"]["context"] =
+                const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] =
                   {};
                 if (evt.detail.action.context) {
                   const srcContext = evt.detail.action.context;
@@ -271,7 +265,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
                   }
                 }
 
-                const message: A2UIClientEventMessage = {
+                const message: v0_8.Types.A2UIClientEventMessage = {
                   userAction: {
                     actionName: evt.detail.action.action,
                     sourceComponentId: target.id,
@@ -301,8 +295,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   }
 
   async #sendMessage(
-    message: A2UIClientEventMessage
-  ): Promise<A2UIProtocolMessage[]> {
+    message: v0_8.Types.A2UIClientEventMessage
+  ): Promise<v0_8.Types.A2UIProtocolMessage[]> {
     try {
       this.#requesting = true;
       const response = this.#a2uiClient.send(message);

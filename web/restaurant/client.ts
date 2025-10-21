@@ -14,8 +14,7 @@
  limitations under the License.
  */
 
-import { A2UIClientEventMessage } from "../src/0.8/types/client-event";
-import { A2UIProtocolMessage } from "../src/0.8/types/types";
+import { v0_8 } from "@a2ui/web-lib";
 
 type A2TextPayload = {
   kind: "text";
@@ -24,7 +23,7 @@ type A2TextPayload = {
 
 type A2DataPayload = {
   kind: "data";
-  data: A2UIProtocolMessage;
+  data: v0_8.Types.A2UIProtocolMessage;
 };
 
 type A2AServerPayload =
@@ -37,7 +36,9 @@ export class A2UIClient {
     return this.#ready;
   }
 
-  async send(message: A2UIClientEventMessage): Promise<A2UIProtocolMessage[]> {
+  async send(
+    message: v0_8.Types.A2UIClientEventMessage
+  ): Promise<v0_8.Types.A2UIProtocolMessage[]> {
     const response = await fetch("/a2a", {
       body: JSON.stringify(message),
       method: "POST",
@@ -45,7 +46,7 @@ export class A2UIClient {
 
     if (response.ok) {
       const data = (await response.json()) as A2AServerPayload;
-      const messages: A2UIProtocolMessage[] = [];
+      const messages: v0_8.Types.A2UIProtocolMessage[] = [];
       if ("error" in data) {
         throw new Error(data.error);
       } else {

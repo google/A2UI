@@ -17,8 +17,8 @@
 import { LitElement, css, html, nothing, svg } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { EnumValue } from "../types/types";
-import * as Styles from "../../src/0.8/ui/styles/index";
 import { ItemSelect } from "./item-select";
+import { v0_8 } from "@a2ui/web-lib";
 
 type RenderMode = "free" | "line" | "rect";
 interface Path {
@@ -75,7 +75,7 @@ const values: EnumValue[] = [
 @customElement("drawable-canvas")
 export class DrawableCanvas extends LitElement {
   static styles = [
-    Styles.all,
+    v0_8.UI.Styles.all,
     css`
       :host {
         display: grid;
