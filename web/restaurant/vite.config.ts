@@ -26,8 +26,7 @@ export default async () => {
   config();
 
   const entry: Record<string, string> = {
-    editor: resolve(__dirname, "editor/index.html"),
-    restaurant: resolve(__dirname, "restaurant/index.html"),
+    restaurant: resolve(__dirname, "index.html"),
   };
 
   return {

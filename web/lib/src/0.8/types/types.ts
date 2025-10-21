@@ -182,7 +182,7 @@ export type ComponentProperties = {
 export interface ComponentInstance {
   id: string;
   componentProperties?: ComponentProperties;
-  component: ComponentProperties;
+  component?: ComponentProperties;
 }
 
 export interface BeginRenderingMessage {

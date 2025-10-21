@@ -194,7 +194,6 @@ export class Root extends SignalWatcher(LitElement) {
         }
 
         case "Image": {
-          console.log(component);
           return html`<a2ui-image
             id=${component.id}
             .component=${component}

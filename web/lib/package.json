@@ -50,9 +50,7 @@
       "dependencies": [],
       "files": [
         "src/**/*.ts",
-        "tests/**/*.ts",
-        "tsconfig.json",
-        "../../core/tsconfig/base.json"
+        "tsconfig.json"
       ],
       "output": [
         "dist/",

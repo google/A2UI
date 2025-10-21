@@ -430,14 +430,11 @@ export class A2UIModelProcessor {
     visited.add(componentId);
 
     const componentData = components.get(baseComponentId)!;
-    const componentType = Object.keys(componentData.component)[0];
-    const unresolvedProperties = componentData.componentProperties
-      ? componentData.componentProperties[
-          componentType as keyof typeof componentData.componentProperties
-        ]
-      : componentData.component[
-          componentType as keyof typeof componentData.component
-        ];
+    const componentProps =
+      componentData.componentProperties ?? componentData.component;
+    const componentType = Object.keys(componentProps)[0];
+    const unresolvedProperties =
+      componentProps[componentType as keyof typeof componentProps];
 
     // Manually build the resolvedProperties object by resolving each value in
     // the component's properties.

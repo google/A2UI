@@ -22,10 +22,14 @@
     "build:tsc": "wireit",
     "lint": "wireit",
     "dev": "wireit",
-    "test": "wireit"
+    "test": "wireit",
+    "serve": "wireit"
   },
   "wireit": {
     "dev": {
+      "command": "npm run serve --watch"
+    },
+    "serve": {
       "command": "vite dev",
       "dependencies": [
         "build"
@@ -51,10 +55,8 @@
         "<dependencies>#build:tsc"
       ],
       "files": [
-        "src/**/*.ts",
-        "tests/**/*.ts",
-        "tsconfig.json",
-        "../../core/tsconfig/base.json"
+        "**/*.ts",
+        "tsconfig.json"
       ],
       "output": [
         "dist/",
