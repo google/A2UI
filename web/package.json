@@ -28,6 +28,7 @@
   "workspaces": [
     "lib",
     "tests",
-    "restaurant"
+    "restaurant",
+    "editor"
   ]
 }
