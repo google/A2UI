@@ -40,10 +40,6 @@ import {
 } from "./types/types.js";
 import { DrawableCanvas } from "./ui/ui.js";
 import { v0_8 } from "@a2ui/web-lib";
-import { SignalArray } from "signal-utils/array";
-import { SignalMap } from "signal-utils/map";
-import { SignalObject } from "signal-utils/object";
-import { SignalSet } from "signal-utils/set";
 
 type UserMode = "upload" | "sketch";
 type RenderMode = "surfaces" | "messages";
@@ -452,12 +448,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   }
   #renderMode: RenderMode = "surfaces";
 
-  #processor = new v0_8.Data.A2UIModelProcessor({
-    arrayCtor: SignalArray as unknown as ArrayConstructor,
-    mapCtor: SignalMap as unknown as MapConstructor,
-    objCtor: SignalObject as unknown as ObjectConstructor,
-    setCtor: SignalSet as unknown as SetConstructor,
-  });
+  #processor = v0_8.Data.createSignalA2UIModelProcessor();
   #a2uiClient = new A2UIClient();
 
   constructor() {

@@ -53,10 +53,6 @@ import {
   isResolvedVideo,
 } from "./guards.js";
 
-type MapCtor<K extends unknown = unknown, V extends unknown = unknown> = new (
-  vals?: [Array<[K, V]>]
-) => Map<K, V>;
-
 /**
  * Processes and consolidates A2UIProtocolMessage objects into a
  * structured, hierarchical model of UI surfaces.

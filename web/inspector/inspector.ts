@@ -31,10 +31,6 @@ import {
   SnackType,
 } from "./types/types.js";
 import { v0_8 } from "@a2ui/web-lib";
-import { SignalArray } from "signal-utils/array";
-import { SignalMap } from "signal-utils/map";
-import { SignalObject } from "signal-utils/object";
-import { SignalSet } from "signal-utils/set";
 
 @customElement("a2ui-layout-inspector")
 export class A2UILayoutInspector extends SignalWatcher(LitElement) {
@@ -403,12 +399,7 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
     `,
   ];
 
-  #processor = new v0_8.Data.A2UIModelProcessor({
-    arrayCtor: SignalArray as unknown as ArrayConstructor,
-    mapCtor: SignalMap as unknown as MapConstructor,
-    objCtor: SignalObject as unknown as ObjectConstructor,
-    setCtor: SignalSet as unknown as SetConstructor,
-  });
+  #processor = v0_8.Data.createSignalA2UIModelProcessor();
 
   #renderSurfacesOrMessages() {
     if (this.#requesting) {
