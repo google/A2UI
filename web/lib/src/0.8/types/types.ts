@@ -187,7 +187,7 @@ export interface ComponentInstance {
 
 export interface BeginRenderingMessage {
   root: string;
-  styles?: Record<string, unknown>;
+  styles?: Record<string, string>;
 }
 
 export interface SurfaceUpdateMessage {
@@ -424,4 +424,5 @@ export interface Surface {
   componentTree: AnyComponentNode | null;
   dataModel: DataMap;
   components: Map<string, ComponentInstance>;
+  styles: Record<string, string>;
 }

@@ -61,7 +61,6 @@ export class A2UIModelProcessor {
   static readonly DEFAULT_SURFACE_ID = "@default";
 
   #currentSurface = A2UIModelProcessor.DEFAULT_SURFACE_ID;
-  #styles: Record<string, unknown> = {};
   #mapCtor: MapConstructor = Map;
   #arrayCtor: ArrayConstructor = Array;
   #setCtor: SetConstructor = Set;
@@ -86,10 +85,6 @@ export class A2UIModelProcessor {
 
   getSurfaces(): ReadonlyMap<string, Surface> {
     return this.#surfaces;
-  }
-
-  getStyles(): Readonly<Record<string, unknown>> {
-    return this.#styles;
   }
 
   clearSurfaces() {
@@ -358,6 +353,7 @@ export class A2UIModelProcessor {
         componentTree: null,
         dataModel: new this.#mapCtor(),
         components: new this.#mapCtor(),
+        styles: new this.#objCtor(),
       }) as Surface;
 
       this.#surfaces.set(surfaceId, surface);
@@ -372,7 +368,7 @@ export class A2UIModelProcessor {
   ): void {
     const surface = this.#getOrCreateSurface(surfaceId);
     surface.rootComponentId = message.root;
-    this.#styles = message.styles ?? {};
+    surface.styles = message.styles ?? {};
     this.#rebuildComponentTree(surface);
   }
 

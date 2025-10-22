@@ -19,6 +19,7 @@ import { customElement, property } from "lit/decorators.js";
 import { SurfaceID, Surface as SurfaceState } from "../types/types";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { Root } from "./root.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-surface")
 export class Surface extends Root {
@@ -51,7 +52,30 @@ export class Surface extends Root {
       return nothing;
     }
 
+    const styles: Record<string, string> = {};
+    if (this.surface.styles) {
+      for (const [key, value] of Object.entries(this.surface.styles)) {
+        switch (key) {
+          case "primaryColor": {
+            for (let i = 0; i <= 100; i++) {
+              styles[`--p-${i}`] = `color-mix(in srgb, ${value} ${
+                100 - i
+              }%, #fff ${i}%)`;
+            }
+            break;
+          }
+
+          case "font": {
+            styles["--font-family"] = value;
+            styles["--font-family-flex"] = value;
+            break;
+          }
+        }
+      }
+    }
+
     return html`<a2ui-root
+      style=${styleMap(styles)}
       .surfaceId=${this.surfaceId}
       .processor=${this.processor}
       .childComponents=${[this.surface.componentTree]}
