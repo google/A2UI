@@ -31,6 +31,10 @@ import {
   SnackType,
 } from "./types/types.js";
 import { v0_8 } from "@a2ui/web-lib";
+import { SignalArray } from "signal-utils/array";
+import { SignalMap } from "signal-utils/map";
+import { SignalObject } from "signal-utils/object";
+import { SignalSet } from "signal-utils/set";
 
 @customElement("a2ui-layout-inspector")
 export class A2UILayoutInspector extends SignalWatcher(LitElement) {
@@ -399,11 +403,12 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
     `,
   ];
 
-  #processor = new v0_8.Data.A2UIModelProcessor();
-
-  constructor() {
-    super();
-  }
+  #processor = new v0_8.Data.A2UIModelProcessor({
+    arrayCtor: SignalArray as unknown as ArrayConstructor,
+    mapCtor: SignalMap as unknown as MapConstructor,
+    objCtor: SignalObject as unknown as ObjectConstructor,
+    setCtor: SignalSet as unknown as SetConstructor,
+  });
 
   #renderSurfacesOrMessages() {
     if (this.#requesting) {
@@ -507,7 +512,7 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
         <form
           id="controls-container"
           slot="slot-0"
-          @submit=${(evt: SubmitEvent) => {
+          @submit=${async (evt: SubmitEvent) => {
             evt.preventDefault();
             const formData = new FormData(evt.target as HTMLFormElement);
             const instructions = formData.get("instructions");
@@ -520,6 +525,7 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
 
               this.#processor.clearSurfaces();
               this.#processor.processMessages(messages);
+              this.requestUpdate();
             } catch (err) {
               console.warn(err);
               this.snackbar(html`Unable to render UI`, SnackType.ERROR);

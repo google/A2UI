@@ -14,7 +14,6 @@
  limitations under the License.
  */
 
-import { SignalMap } from "signal-utils/map";
 import {
   A2UIProtocolMessage,
   AnyComponentNode,
@@ -30,9 +29,6 @@ import {
   SurfaceID,
   SurfaceUpdateMessage,
 } from "../types/types";
-import { SignalSet } from "signal-utils/set";
-import { SignalObject } from "signal-utils/object";
-import { SignalArray } from "signal-utils/array";
 import {
   isComponentArrayReference,
   isObject,
@@ -56,7 +52,10 @@ import {
   isResolvedTextField,
   isResolvedVideo,
 } from "./guards.js";
-import { deep } from "signal-utils/deep";
+
+type MapCtor<K extends unknown = unknown, V extends unknown = unknown> = new (
+  vals?: [Array<[K, V]>]
+) => Map<K, V>;
 
 /**
  * Processes and consolidates A2UIProtocolMessage objects into a
@@ -66,8 +65,28 @@ export class A2UIModelProcessor {
   static readonly DEFAULT_SURFACE_ID = "@default";
 
   #currentSurface = A2UIModelProcessor.DEFAULT_SURFACE_ID;
-  #surfaces: Map<SurfaceID, Surface> = new SignalMap();
   #styles: Record<string, unknown> = {};
+  #mapCtor: MapConstructor = Map;
+  #arrayCtor: ArrayConstructor = Array;
+  #setCtor: SetConstructor = Set;
+  #objCtor: ObjectConstructor = Object;
+  #surfaces: Map<SurfaceID, Surface>;
+
+  constructor(
+    readonly opts: {
+      mapCtor: MapConstructor;
+      arrayCtor: ArrayConstructor;
+      setCtor: SetConstructor;
+      objCtor: ObjectConstructor;
+    } = { mapCtor: Map, arrayCtor: Array, setCtor: Set, objCtor: Object }
+  ) {
+    this.#arrayCtor = opts.arrayCtor;
+    this.#mapCtor = opts.mapCtor;
+    this.#setCtor = opts.setCtor;
+    this.#objCtor = opts.objCtor;
+
+    this.#surfaces = new opts.mapCtor();
+  }
 
   getSurfaces(): ReadonlyMap<string, Surface> {
     return this.#surfaces;
@@ -190,7 +209,7 @@ export class A2UIModelProcessor {
    * appear to be stringified JSON.
    */
   #convertKeyValueArrayToMap(arr: DataArray): DataMap {
-    const map = new SignalMap<string, DataValue>();
+    const map = new this.#mapCtor<string, DataValue>();
     for (const item of arr) {
       if (!isObject(item) || !("key" in item)) continue;
 
@@ -246,7 +265,7 @@ export class A2UIModelProcessor {
       if (value instanceof Map || isObject(value)) {
         // Normalize an Object to a Map.
         if (!(value instanceof Map) && isObject(value)) {
-          value = new SignalMap(Object.entries(value));
+          value = new this.#mapCtor(Object.entries(value));
         }
 
         root.clear();
@@ -276,7 +295,7 @@ export class A2UIModelProcessor {
         target === null
       ) {
         const targetIsArray = /^\d+$/.test(segments[i + 1]);
-        target = targetIsArray ? new SignalArray() : new SignalMap();
+        target = targetIsArray ? new this.#arrayCtor() : new this.#mapCtor();
         if (current instanceof Map) {
           current.set(segment, target);
         } else if (Array.isArray(current)) {
@@ -287,7 +306,7 @@ export class A2UIModelProcessor {
     }
 
     const finalSegment = segments[segments.length - 1];
-    const storedValue = deep(value);
+    const storedValue = value;
     if (current instanceof Map) {
       current.set(finalSegment, storedValue);
     } else if (Array.isArray(current) && /^\d+$/.test(finalSegment)) {
@@ -338,11 +357,11 @@ export class A2UIModelProcessor {
   #getOrCreateSurface(surfaceId: string): Surface {
     let surface: Surface | undefined = this.#surfaces.get(surfaceId);
     if (!surface) {
-      surface = new SignalObject({
+      surface = new this.#objCtor({
         rootComponentId: null,
         componentTree: null,
-        dataModel: new SignalMap(),
-        components: new SignalMap(),
+        dataModel: new this.#mapCtor(),
+        components: new this.#mapCtor(),
       }) as Surface;
 
       this.#surfaces.set(surfaceId, surface);
@@ -398,7 +417,7 @@ export class A2UIModelProcessor {
     }
 
     // Track visited nodes to avoid circular references.
-    const visited = new SignalSet<string>();
+    const visited = new this.#setCtor<string>();
     surface.componentTree = this.#buildNodeRecursive(
       surface.rootComponentId,
       surface,
@@ -438,7 +457,7 @@ export class A2UIModelProcessor {
 
     // Manually build the resolvedProperties object by resolving each value in
     // the component's properties.
-    const resolvedProperties: ResolvedMap = new SignalObject();
+    const resolvedProperties: ResolvedMap = new this.#objCtor() as ResolvedMap;
     if (isObject(unresolvedProperties)) {
       for (const [key, value] of Object.entries(unresolvedProperties)) {
         resolvedProperties[key] = this.#resolvePropertyValue(
@@ -461,7 +480,7 @@ export class A2UIModelProcessor {
         if (!isResolvedHeading(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Heading",
           properties: resolvedProperties,
@@ -471,7 +490,7 @@ export class A2UIModelProcessor {
         if (!isResolvedText(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Text",
           properties: resolvedProperties,
@@ -481,7 +500,7 @@ export class A2UIModelProcessor {
         if (!isResolvedImage(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Image",
           properties: resolvedProperties,
@@ -491,7 +510,7 @@ export class A2UIModelProcessor {
         if (!isResolvedVideo(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Video",
           properties: resolvedProperties,
@@ -501,7 +520,7 @@ export class A2UIModelProcessor {
         if (!isResolvedAudioPlayer(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "AudioPlayer",
           properties: resolvedProperties,
@@ -512,7 +531,7 @@ export class A2UIModelProcessor {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
 
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Row",
           properties: resolvedProperties,
@@ -523,7 +542,7 @@ export class A2UIModelProcessor {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
 
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Column",
           properties: resolvedProperties,
@@ -533,7 +552,7 @@ export class A2UIModelProcessor {
         if (!isResolvedList(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "List",
           properties: resolvedProperties,
@@ -543,7 +562,7 @@ export class A2UIModelProcessor {
         if (!isResolvedCard(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Card",
           properties: resolvedProperties,
@@ -553,7 +572,7 @@ export class A2UIModelProcessor {
         if (!isResolvedTabs(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Tabs",
           properties: resolvedProperties,
@@ -563,7 +582,7 @@ export class A2UIModelProcessor {
         if (!isResolvedDivider(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Divider",
           properties: resolvedProperties,
@@ -573,7 +592,7 @@ export class A2UIModelProcessor {
         if (!isResolvedModal(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Modal",
           properties: resolvedProperties,
@@ -583,7 +602,7 @@ export class A2UIModelProcessor {
         if (!isResolvedButton(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Button",
           properties: resolvedProperties,
@@ -593,7 +612,7 @@ export class A2UIModelProcessor {
         if (!isResolvedCheckbox(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Checkbox",
           properties: resolvedProperties,
@@ -603,7 +622,7 @@ export class A2UIModelProcessor {
         if (!isResolvedTextField(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "TextField",
           properties: resolvedProperties,
@@ -613,7 +632,7 @@ export class A2UIModelProcessor {
         if (!isResolvedDateTimeInput(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "DateTimeInput",
           properties: resolvedProperties,
@@ -623,7 +642,7 @@ export class A2UIModelProcessor {
         if (!isResolvedMultipleChoice(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "MultipleChoice",
           properties: resolvedProperties,
@@ -633,7 +652,7 @@ export class A2UIModelProcessor {
         if (!isResolvedSlider(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);
         }
-        return new SignalObject({
+        return new this.#objCtor({
           ...baseNode,
           type: "Slider",
           properties: resolvedProperties,
@@ -699,7 +718,7 @@ export class A2UIModelProcessor {
         }
 
         // Return empty array if the data is not ready yet.
-        return new SignalArray();
+        return new this.#arrayCtor();
       }
     }
 
@@ -712,7 +731,7 @@ export class A2UIModelProcessor {
 
     // 4. If it's a plain object, resolve each of its properties.
     if (isObject(value)) {
-      const newObj: ResolvedMap = new SignalObject();
+      const newObj: ResolvedMap = new this.#objCtor() as ResolvedMap;
       for (const [key, propValue] of Object.entries(value)) {
         // Special case for paths. Here we might get /item/ or ./ on the front
         // of the path which isn't what we want. In this case we check the
