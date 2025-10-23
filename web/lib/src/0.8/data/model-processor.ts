@@ -60,7 +60,6 @@ import {
 export class A2UIModelProcessor {
   static readonly DEFAULT_SURFACE_ID = "@default";
 
-  #currentSurface = A2UIModelProcessor.DEFAULT_SURFACE_ID;
   #mapCtor: MapConstructor = Map;
   #arrayCtor: ArrayConstructor = Array;
   #setCtor: SetConstructor = Set;
@@ -118,8 +117,6 @@ export class A2UIModelProcessor {
         this.#handleDeleteSurface(message.deleteSurface);
       }
     }
-
-    this.#currentSurface = A2UIModelProcessor.DEFAULT_SURFACE_ID;
   }
 
   /**
@@ -132,7 +129,7 @@ export class A2UIModelProcessor {
     relativePath: string,
     surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
   ): DataValue | null {
-    const surface = this.#surfaces.get(surfaceId);
+    const surface = this.#getOrCreateSurface(surfaceId);
     if (!surface) return null;
 
     let finalPath: string;
@@ -149,25 +146,13 @@ export class A2UIModelProcessor {
     return this.#getDataByPath(surface.dataModel, finalPath);
   }
 
-  getDataByPath(path: string, surfaceId: SurfaceID | null = null) {
-    if (!surfaceId) {
-      surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID;
-    }
-    const surface = this.#getOrCreateSurface(surfaceId);
-    if (!surface) {
-      return null;
-    }
-
-    return this.#getDataByPath(surface.dataModel, path) ?? null;
-  }
-
   setData(
     node: AnyComponentNode,
     relativePath: string,
     value: DataValue,
     surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
   ): void {
-    const surface = this.#surfaces.get(surfaceId);
+    const surface = this.#getOrCreateSurface(surfaceId);
     if (!surface) return null;
 
     let finalPath: string;
@@ -182,19 +167,6 @@ export class A2UIModelProcessor {
     }
 
     this.#setDataByPath(surface.dataModel, finalPath, value);
-  }
-
-  setDataByPath(
-    path: string,
-    value: DataValue,
-    surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
-  ) {
-    const surface = this.#getOrCreateSurface(surfaceId);
-    if (!surface) {
-      return null;
-    }
-
-    return this.#setDataByPath(surface.dataModel, path, value);
   }
 
   resolvePath(path: string, dataContextPath?: string): string {

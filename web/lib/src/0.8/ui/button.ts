@@ -57,6 +57,7 @@ export class Button extends Root {
             action: this.action,
             dataContextPath: this.dataContextPath,
             sourceComponentId: this.id,
+            sourceComponent: this.component,
           });
           this.dispatchEvent(evt);
         }}

@@ -45,7 +45,7 @@ const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
 };
 
 describe("A2UIModelProcessor", () => {
-  let processor;
+  let processor = new v0_8.Data.A2UIModelProcessor();
 
   beforeEach(() => {
     processor = new v0_8.Data.A2UIModelProcessor();
@@ -138,7 +138,10 @@ describe("A2UIModelProcessor", () => {
           },
         },
       ]);
-      const name = processor.getDataByPath("/user/name");
+      const name = processor.getData(
+        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        "/user/name"
+      );
       assert.strictEqual(name, "Alice");
     });
 
@@ -152,13 +155,17 @@ describe("A2UIModelProcessor", () => {
           },
         },
       ]);
-      const user = processor.getDataByPath("/user");
+      const user = processor.getData(
+        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        "/user"
+      );
       assert.deepStrictEqual(toPlainObject(user), { name: "Bob" });
     });
 
     it("should create nested structures when setting data", () => {
-      processor.setDataByPath("/a/b/c", "value");
-      const data = processor.getDataByPath("/a/b/c");
+      const component = { dataContextPath: "/" } as v0_8.Types.AnyComponentNode;
+      processor.setData(component, "/a/b/c", "value");
+      const data = processor.getData(component, "/a/b/c");
       assert.strictEqual(data, "value");
     });
 
@@ -494,8 +501,9 @@ describe("A2UIModelProcessor", () => {
 
       processor.processMessages(messages);
 
-      const title = processor.getDataByPath("/title", "test-surface");
-      const items = processor.getDataByPath("/items", "test-surface");
+      const component = { dataContextPath: "/" } as v0_8.Types.AnyComponentNode;
+      const title = processor.getData(component, "/title", "test-surface");
+      const items = processor.getData(component, "/items", "test-surface");
 
       assert.strictEqual(title, "My Title");
       assert.deepStrictEqual(toPlainObject(items), [{ id: 1 }, { id: 2 }]);
@@ -512,7 +520,8 @@ describe("A2UIModelProcessor", () => {
         },
       ]);
 
-      const badData = processor.getDataByPath("/badData");
+      const component = { dataContextPath: "/" } as v0_8.Types.AnyComponentNode;
+      const badData = processor.getData(component, "/badData");
       assert.strictEqual(badData, invalidJSON);
     });
   });

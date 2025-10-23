@@ -257,7 +257,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
                         item.value.path,
                         evt.detail.dataContextPath
                       );
-                      const value = this.#processor.getDataByPath(
+                      const value = this.#processor.getData(
+                        evt.detail.sourceComponent,
                         path,
                         surfaceId
                       );
