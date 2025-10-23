@@ -16,8 +16,16 @@ export class ModelProcessor {
     return this.processor.resolvePath(path, dataContextPath);
   }
 
-  getDataByPath(path: string, surfaceId: v0_8.Types.SurfaceID | null = null) {
+  getDataByPath(path: string, surfaceId?: v0_8.Types.SurfaceID | null) {
     return this.processor.getDataByPath(path, surfaceId);
+  }
+
+  setDataByPath(
+    path: string,
+    value: v0_8.Types.DataValue,
+    surfaceId?: v0_8.Types.SurfaceID | null
+  ) {
+    return this.processor.setDataByPath(path, value, surfaceId ?? undefined);
   }
 
   getData(
@@ -29,7 +37,7 @@ export class ModelProcessor {
   }
 
   async makeRequest(request: v0_8.Types.A2UIClientEventMessage | string) {
-    let messages: v0_8.Types.A2UIProtocolMessage[];
+    let messages: v0_8.Types.ServerToClientMessage[];
 
     try {
       this.isLoading.set(true);

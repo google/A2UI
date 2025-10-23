@@ -8,7 +8,7 @@ type A2TextPayload = {
 
 type A2DataPayload = {
   kind: 'data';
-  data: v0_8.Types.A2UIProtocolMessage;
+  data: v0_8.Types.ServerToClientMessage;
 };
 
 type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | { error: string };
@@ -18,7 +18,7 @@ type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | { error: string }
 export class A2UIClient {
   async send(
     message: v0_8.Types.A2UIClientEventMessage
-  ): Promise<v0_8.Types.A2UIProtocolMessage[]> {
+  ): Promise<v0_8.Types.ServerToClientMessage[]> {
     const response = await fetch('/a2a', {
       body: JSON.stringify(message),
       method: 'POST',
@@ -26,7 +26,7 @@ export class A2UIClient {
 
     if (response.ok) {
       const data = (await response.json()) as A2AServerPayload;
-      const messages: v0_8.Types.A2UIProtocolMessage[] = [];
+      const messages: v0_8.Types.ServerToClientMessage[] = [];
 
       if ('error' in data) {
         throw new Error(data.error);
