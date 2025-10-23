@@ -6,6 +6,6 @@
   @let surfaces = processor.getSurfaces();
 
   @for (entry of surfaces; track $index) {
-    <ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
+    <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
   }
 }
