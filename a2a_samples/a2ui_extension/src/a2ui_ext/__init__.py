@@ -23,7 +23,7 @@ class a2uiExtension:
             description="Provides a declarative a2ui UI JSON structure in messages.",
             params={
                 "supportedSchemas": [
-                    "https://raw.githubusercontent.com/google/a2ui/refs/heads/main/schemas/v0.1/standard_catalog.json"
+                    "file:///Users/gspencer/code/a2ui/specification/json/server_to_client.json"
                 ],
                 "acceptsDynamicSchemas": True,
             },

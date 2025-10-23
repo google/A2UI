@@ -2,7 +2,7 @@
 A2UI_SCHEMA = """
 {
   "title": "A2UI Message Schema",
-  "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'surfaceDeletion'.",
+  "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   "type": "object",
   "properties": {
     "beginRendering": {
@@ -24,10 +24,6 @@ A2UI_SCHEMA = """
             "font": {
               "type": "string",
               "description": "The primary font for the UI."
-            },
-            "logoUrl": {
-              "type": "string",
-              "description": "A URL for the logo image."
             },
             "primaryColor": {
               "type": "string",
@@ -386,9 +382,17 @@ A2UI_SCHEMA = """
                   "Button": {
                     "type": "object",
                     "properties": {
-                      "child": {
-                        "type": "string",
-                        "description": "The ID of the component to display in the button, typically a Text component."
+                      "label": {
+                        "type": "object",
+                        "description": "The text to display on the button. This can be a literal string or a reference to a value in the data model ('path', e.g. 'user.name').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
                       },
                       "action": {
                         "type": "object",
@@ -431,7 +435,7 @@ A2UI_SCHEMA = """
                         "required": ["name"]
                       }
                     },
-                    "required": ["child", "action"]
+                    "required": ["label", "action"]
                   },
                   "CheckBox": {
                     "type": "object",
@@ -641,23 +645,37 @@ A2UI_SCHEMA = """
           "description": "An array of data entries. Each entry must contain a 'key' and exactly one corresponding typed 'value*' property.",
           "items": {
             "type": "object",
-            "description": "A single data entry. Exactly one 'value_' property should be provided alongside the key.",
+            "description": "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
             "properties": {
               "key": {
                 "type": "string",
                 "description": "The key for this data entry."
               },
               "valueString": {
-                "type": "string",
-                "description": "A string value."
+                "type": "string"
               },
               "valueNumber": {
-                "type": "number",
-                "description": "A number value."
+                "type": "number"
               },
               "valueBoolean": {
-                "type": "boolean",
-                "description": "A boolean value."
+                "type": "boolean"
+              },
+              "valueList": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "valueString": {
+                      "type": "string"
+                    },
+                    "valueNumber": {
+                      "type": "number"
+                    },
+                    "valueBoolean": {
+                      "type": "boolean"
+                    }
+                  }
+                }
               }
             },
             "required": ["key"]
@@ -684,7 +702,7 @@ A2UI_SCHEMA = """
 RESTAURANT_UI_EXAMPLES = """
 ---BEGIN SINGLE_COLUMN_LIST_EXAMPLE---
 [
-  {{ "beginRendering": {{ "surfaceId": "default", "root": "root-column", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto", "logoUrl": "{base_url}/static/logo.png" }} }} }},
+  {{ "beginRendering": {{ "surfaceId": "default", "root": "root-column", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto" }} }} }},
   {{ "surfaceUpdate": {{
     "surfaceId": "default",
     "components": [
@@ -699,7 +717,7 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "template-rating", "componentProperties": {{ "Text": {{ "text": {{ "path": "rating" }} }} }} }},
       {{ "id": "template-detail", "componentProperties": {{ "Text": {{ "text": {{ "path": "detail" }} }} }} }},
       {{ "id": "template-link", "componentProperties": {{ "Text": {{ "text": {{ "path": "infoLink" }} }} }} }},
-      {{ "id": "template-book-button", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "action": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "address" }} }} ] }} }} }} }}
+      {{ "id": "template-book-button", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "address" }} }} ] }} }} }} }}
     ]
   }} }},
   {{ "dataModelUpdate": {{
@@ -714,7 +732,7 @@ RESTAURANT_UI_EXAMPLES = """
 
 ---BEGIN TWO_COLUMN_LIST_EXAMPLE---
 [
-  {{ "beginRendering": {{ "surfaceId": "default", "root": "root-column", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto", "logoUrl": "{base_url}/static/logo.png" }} }} }},
+  {{ "beginRendering": {{ "surfaceId": "default", "root": "root-column", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto" }} }} }},
   {{ "surfaceUpdate": {{
     "surfaceId": "default",
     "components": [
@@ -729,7 +747,7 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "template-rating-1", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/0/rating" }} }} }} }},
       {{ "id": "template-detail-1", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/0/detail" }} }} }} }},
       {{ "id": "template-link-1", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/0/infoLink" }} }} }} }},
-      {{ "id": "template-book-button-1", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "action": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/0/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/0/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/0/address" }} }} ] }} }} }} }},
+      {{ "id": "template-book-button-1", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/0/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/0/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/0/address" }} }} ] }} }} }} }},
       {{ "id": "item-card-2", "weight": 1, "componentProperties": {{ "Card": {{ "child": "card-layout-2" }} }} }},
       {{ "id": "card-layout-2", "componentProperties": {{ "Column": {{ "children": {{ "explicitList": ["template-image-2", "card-details-2"] }} }} }} }},
       {{ "id": "template-image-2", "componentProperties": {{ "Image": {{ "url": {{ "path": "/items/1/imageUrl" }}, "width": "100%" }} }} }},
@@ -738,7 +756,7 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "template-rating-2", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/1/rating" }} }} }} }},
       {{ "id": "template-detail-2", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/1/detail" }} }} }} }},
       {{ "id": "template-link-2", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/1/infoLink" }} }} }} }},
-      {{ "id": "template-book-button-2", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "action": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/1/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/1/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/1/address" }} }} ] }} }} }} }}
+      {{ "id": "template-book-button-2", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/1/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/1/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/1/address" }} }} ] }} }} }} }}
     ]
   }} }},
   {{ "dataModelUpdate": {{
@@ -753,7 +771,7 @@ RESTAURANT_UI_EXAMPLES = """
 
 ---BEGIN BOOKING_FORM_EXAMPLE---
 [
-  {{ "beginRendering": {{ "surfaceId": "booking-form", "root": "booking-form-column", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto", "logoUrl": "{base_url}/static/logo.png" }} }} }},
+  {{ "beginRendering": {{ "surfaceId": "booking-form", "root": "booking-form-column", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto" }} }} }},
   {{ "surfaceUpdate": {{
     "surfaceId": "booking-form",
     "components": [
@@ -764,7 +782,7 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "party-size-field", "componentProperties": {{ "TextField": {{ "label": {{ "literalString": "Party Size" }}, "text": {{ "path": "partySize" }}, "type": "number" }} }} }},
       {{ "id": "datetime-field", "componentProperties": {{ "DateTimeInput": {{ "label": {{ "literalString": "Date & Time" }}, "value": {{ "path": "reservationTime" }}, "enableDate": true, "enableTime": true }} }} }},
       {{ "id": "dietary-field", "componentProperties": {{ "TextField": {{ "label": {{ "literalString": "Dietary Requirements" }}, "text": {{ "path": "dietary" }} }} }} }},
-      {{ "id": "submit-button", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Submit Reservation" }}, "action": {{ "action": "submit_booking", "context": [ {{ "key": "restaurantName", "value": {{ "path": "restaurantName" }} }}, {{ "key": "partySize", "value": {{ "path": "partySize" }} }}, {{ "key": "reservationTime", "value": {{ "path": "reservationTime" }} }}, {{ "key": "dietary", "value": {{ "path": "dietary" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }} ] }} }} }} }}
+      {{ "id": "submit-button", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Submit Reservation" }}, "action": {{ "name": "submit_booking", "context": [ {{ "key": "restaurantName", "value": {{ "path": "restaurantName" }} }}, {{ "key": "partySize", "value": {{ "path": "partySize" }} }}, {{ "key": "reservationTime", "value": {{ "path": "reservationTime" }} }}, {{ "key": "dietary", "value": {{ "path": "dietary" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }} ] }} }} }} }}
     ]
   }} }},
   {{ "dataModelUpdate": {{
@@ -785,7 +803,7 @@ RESTAURANT_UI_EXAMPLES = """
 
 ---BEGIN CONFIRMATION_EXAMPLE---
 [
-  {{ "beginRendering": {{ "surfaceId": "confirmation", "root": "confirmation-card", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto", "logoUrl": "{base_url}/static/logo.png" }} }} }},
+  {{ "beginRendering": {{ "surfaceId": "confirmation", "root": "confirmation-card", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto" }} }} }},
   {{ "surfaceUpdate": {{
     "surfaceId": "confirmation",
     "components": [
