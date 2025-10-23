@@ -74,7 +74,6 @@
   },
   "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
   "devDependencies": {
-    "dotenv": "^17.2.3",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
