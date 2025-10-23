@@ -291,7 +291,6 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     const messages = await this.#sendMessage(request);
 
     this.#lastMessages = messages;
-    console.debug(messages);
     this.#processor.clearSurfaces();
     this.#processor.processMessages(messages);
   }

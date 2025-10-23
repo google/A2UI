@@ -96,12 +96,7 @@ export function isResolvedAudioPlayer(
 }
 
 export function isResolvedButton(props: unknown): props is ResolvedButton {
-  return (
-    isObject(props) &&
-    "label" in props &&
-    isStringValue(props.label) &&
-    "action" in props
-  );
+  return isObject(props) && "child" in props && "action" in props;
 }
 
 export function isResolvedCard(props: unknown): props is ResolvedCard {
