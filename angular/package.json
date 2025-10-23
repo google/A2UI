@@ -23,12 +23,15 @@
   },
   "private": true,
   "dependencies": {
+    "@a2a-js/sdk": "^0.3.4",
+    "@a2ui/web-lib": "0.1.0",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/platform-browser": "^20.3.0",
     "@angular/platform-server": "^20.3.0",
     "@angular/ssr": "^20.3.6",
+    "@google/genai": "^1.22.0",
     "express": "^5.1.0",
     "tslib": "^2.3.0"
   },
@@ -46,5 +49,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.9.2"
-  }
+  },
+  "workspaces": [
+    "../web/lib"
+  ]
 }
