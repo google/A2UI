@@ -161,6 +161,29 @@ export class A2UIModelProcessor {
     return this.#getDataByPath(surface.dataModel, path) ?? null;
   }
 
+  setData(
+    node: AnyComponentNode,
+    relativePath: string,
+    value: DataValue,
+    surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
+  ): void {
+    const surface = this.#surfaces.get(surfaceId);
+    if (!surface) return null;
+
+    let finalPath: string;
+
+    // The special `.` path means the final path is the node's data context
+    // path and so we return the dataContextPath as-is.
+    if (relativePath === ".") {
+      finalPath = node.dataContextPath ?? "/";
+    } else {
+      // For all other paths, resolve them against the node's context.
+      finalPath = this.resolvePath(relativePath, node.dataContextPath);
+    }
+
+    this.#setDataByPath(surface.dataModel, finalPath, value);
+  }
+
   setDataByPath(
     path: string,
     value: DataValue,
