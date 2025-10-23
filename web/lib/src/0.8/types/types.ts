@@ -18,6 +18,7 @@ export {
   type ClientToServerMessage as A2UIClientEventMessage,
   type ClientCapabilitiesDynamic,
 } from "./client-event.js";
+export { type Action } from "./components.js";
 
 import {
   Heading,
