@@ -29,8 +29,7 @@
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": []
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts"]
 }

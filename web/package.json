@@ -5,12 +5,35 @@
   "description": "AI-first UI Toolkit Demo",
   "main": "./dist/index.js",
   "scripts": {
-    "prepack": "npm run build",
-    "build": "wireit",
+    "prepack": "pnpm run build",
+    "build": "pnpm --filter @a2ui/web-lib build && pnpm --filter @a2ui/web-tests build && pnpm --filter @a2ui/restaurant build && pnpm --filter @a2ui/editor build && pnpm --filter @a2ui/inspector build",
     "build:tsc": "wireit",
     "lint": "wireit",
     "dev": "wireit",
     "test": "wireit"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "@a2ui/web-lib:build",
+        "@a2ui/web-tests:build",
+        "@a2ui/restaurant:build",
+        "@a2ui/editor:build",
+        "@a2ui/inspector:build"
+      ]
+    },
+    "lint": {
+      "command": "eslint . --ext .ts",
+      "files": [
+        "**/*.ts",
+        "lib/**/*.ts",
+        "editor/**/*.ts",
+        "inspector/**/*.ts",
+        "restaurant/**/*.ts",
+        "tests/**/*.ts"
+      ],
+      "output": []
+    }
   },
   "repository": {
     "directory": "packages/a2ui",
@@ -23,13 +46,20 @@
     "url": "https://github.com/google/A2UI/issues"
   },
   "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
-  "devDependencies": {},
-  "dependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
+    "typescript-eslint": "^8.46.2"
+  },
   "workspaces": [
     "lib",
     "tests",
     "restaurant",
     "editor",
     "inspector"
-  ]
+  ],
+  "dependencies": {
+    "jiti": "^2.6.1"
+  }
 }

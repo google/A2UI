@@ -46,6 +46,7 @@ export class A2UIClient {
 
     if (response.ok) {
       const data = (await response.json()) as A2AServerPayload;
+      console.log('A2A Server Payload:', JSON.stringify(data, null, 2));
       const messages: v0_8.Types.A2UIProtocolMessage[] = [];
       if ("error" in data) {
         throw new Error(data.error);

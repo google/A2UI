@@ -16,19 +16,18 @@
 
 export const A2UIProtocolMessage = {
   description:
-    "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain a 'surfaceId' and exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'surfaceDeletion'.",
+    "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   type: "object",
   properties: {
-    surfaceId: {
-      type: "string",
-      description:
-        "The unique identifier for the UI surface this message applies to.",
-    },
     beginRendering: {
       type: "object",
       description:
         "Signals the client to begin rendering a surface with a root component and specific styles.",
       properties: {
+        surfaceId: {
+          type: "string",
+          description: "The unique identifier for the UI surface to be rendered."
+        },
         root: {
           type: "string",
           description: "The ID of the root component to render.",
@@ -41,10 +40,6 @@ export const A2UIProtocolMessage = {
               type: "string",
               description: "The primary font for the UI.",
             },
-            logoUrl: {
-              type: "string",
-              description: "A URL for the logo image.",
-            },
             primaryColor: {
               type: "string",
               description:
@@ -53,12 +48,16 @@ export const A2UIProtocolMessage = {
           },
         },
       },
-      required: ["root"],
+      required: ["root", "surfaceId"],
     },
     surfaceUpdate: {
       type: "object",
       description: "Updates a surface with a new set of components.",
       properties: {
+        surfaceId: {
+          type: "string",
+          description: "The unique identifier for the UI surface to be updated. If you are adding a new surface this *must* be a new, unique identified that has never been used for any existing surfaces shown."
+        },
         components: {
           type: "array",
           description: "A list containing all UI components for the surface.",
@@ -80,7 +79,7 @@ export const A2UIProtocolMessage = {
                       text: {
                         type: "object",
                         properties: {
-                          literal: { type: "string" },
+                          literalString: { type: "string" },
                           path: { type: "string" },
                         },
                       },
@@ -97,7 +96,7 @@ export const A2UIProtocolMessage = {
                       text: {
                         type: "object",
                         properties: {
-                          literal: { type: "string" },
+                          literalString: { type: "string" },
                           path: { type: "string" },
                         },
                       },
@@ -110,7 +109,7 @@ export const A2UIProtocolMessage = {
                       url: {
                         type: "object",
                         properties: {
-                          literal: { type: "string" },
+                          literalString: { type: "string" },
                           path: { type: "string" },
                         },
                       },
@@ -133,7 +132,7 @@ export const A2UIProtocolMessage = {
                       url: {
                         type: "object",
                         properties: {
-                          literal: { type: "string" },
+                          literalString: { type: "string" },
                           path: { type: "string" },
                         },
                       },
@@ -146,14 +145,14 @@ export const A2UIProtocolMessage = {
                       url: {
                         type: "object",
                         properties: {
-                          literal: { type: "string" },
+                          literalString: { type: "string" },
                           path: { type: "string" },
                         },
                       },
                       description: {
                         type: "object",
                         properties: {
-                          literal: { type: "string" },
+                          literalString: { type: "string" },
                           path: { type: "string" },
                         },
                       },
@@ -289,7 +288,7 @@ export const A2UIProtocolMessage = {
                             title: {
                               type: "object",
                               properties: {
-                                literal: { type: "string" },
+                                literalString: { type: "string" },
                                 path: { type: "string" },
                               },
                             },
@@ -318,89 +317,86 @@ export const A2UIProtocolMessage = {
                     },
                     required: ["entryPointChild", "contentChild"],
                   },
-                  Button: {
-                    type: "object",
-                    properties: {
-                      label: {
-                        type: "object",
-                        properties: {
-                          literal: { type: "string" },
-                          path: { type: "string" },
-                        },
+                  "Button": {
+                    "type": "object",
+                    "properties": {
+                      "child": {
+                        "type": "string",
+                        "description": "The ID of the component to display in the button, typically a Text component."
                       },
-                      action: {
-                        type: "object",
-                        properties: {
-                          name: { type: "string" },
-                          context: {
-                            type: "array",
-                            items: {
-                              type: "object",
-                              properties: {
-                                key: { type: "string" },
-                                value: {
-                                  type: "object",
-                                  properties: {
-                                    path: { type: "string" },
-                                    literal: { type: "string" },
-                                    literalNumber: { type: "number" },
-                                    literalBoolean: { type: "boolean" },
-                                  },
-                                },
+                      "action": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "context": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": { "type": "string" },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "path": { "type": "string" },
+                                    "literalString": { "type": "string" },
+                                    "literalNumber": { "type": "number" },
+                                    "literalBoolean": { "type": "boolean" }
+                                  }
+                                }
                               },
-                              required: ["key", "value"],
-                            },
-                          },
+                              "required": ["key", "value"]
+                            }
+                          }
                         },
-                        required: ["name"],
-                      },
+                        "required": ["name"]
+                      }
                     },
-                    required: ["label", "action"],
+                    "required": ["child", "action"]
                   },
-                  CheckBox: {
-                    type: "object",
-                    properties: {
-                      label: {
-                        type: "object",
-                        properties: {
-                          literal: { type: "string" },
-                          path: { type: "string" },
-                        },
+                  "CheckBox": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "object",
+                        "properties": {
+                          "literalString": { "type": "string" },
+                          "path": { "type": "string" }
+                        }
                       },
-                      value: {
-                        type: "object",
-                        properties: {
-                          literalBoolean: { type: "boolean" },
-                          path: { type: "string" },
-                        },
-                      },
+                      "value": {
+                        "type": "object",
+                        "properties": {
+                          "literalBoolean": { "type": "boolean" },
+                          "path": { "type": "string" }
+                        }
+                      }
                     },
-                    required: ["label", "value"],
+                    "required": ["label", "value"]
                   },
-                  TextField: {
-                    type: "object",
-                    properties: {
-                      label: {
-                        type: "object",
-                        properties: {
-                          literal: { type: "string" },
-                          path: { type: "string" },
-                        },
+                  "TextField": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "object",
+                        "properties": {
+                          "literalString": { "type": "string" },
+                          "path": { "type": "string" }
+                        }
                       },
-                      text: {
-                        type: "object",
-                        properties: {
-                          literal: { type: "string" },
-                          path: { type: "string" },
-                        },
+                      "text": {
+                        "type": "object",
+                        "properties": {
+                          "literalString": { "type": "string" },
+                          "path": { "type": "string" }
+                        }
                       },
-                      textFieldType: {
-                        type: "string",
-                        enum: ["shortText", "number", "date", "longText"],
+                      "textFieldType": {
+                        "type": "string",
+                        "enum": ["shortText", "number", "date", "longText", "obscured"]
                       },
-                      validationRegexp: { type: "string" },
+                      "validationRegexp": { "type": "string" }
                     },
-                    required: ["label"],
+                    "required": ["label"]
                   },
                   DateTimeInput: {
                     type: "object",
@@ -439,7 +435,7 @@ export const A2UIProtocolMessage = {
                             label: {
                               type: "object",
                               properties: {
-                                literal: { type: "string" },
+                                literalString: { type: "string" },
                                 path: { type: "string" },
                               },
                             },
@@ -474,12 +470,16 @@ export const A2UIProtocolMessage = {
           },
         },
       },
-      required: ["components"],
+      required: ["surfaceId", "components"],
     },
     dataModelUpdate: {
       type: "object",
       description: "Updates the data model for a surface.",
       properties: {
+        surfaceId: {
+          type: "string",
+          description: "The unique identifier for the UI surface this data model update applies to."
+        },
         path: {
           type: "string",
           description:
@@ -498,31 +498,53 @@ export const A2UIProtocolMessage = {
                 description:
                   "The key for this data entry. This should be set with slashes for nesting",
               },
-              value_string: {
+              valueString: {
                 type: "string",
                 description: "A string value.",
               },
-              value_number: {
+              valueNumber: {
                 type: "number",
                 description: "A number value.",
               },
-              value_boolean: {
+              valueBoolean: {
                 type: "boolean",
                 description: "A boolean value.",
               },
+              valueList: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    valueString: {
+                      type: "string"
+                    },
+                    valueNumber: {
+                      type: "number"
+                    },
+                    valueBoolean: {
+                      type: "boolean"
+                    }
+                  }
+                }
+              }
             },
             required: ["key"],
           },
         },
       },
-      required: ["contents"],
+      required: ["contents", "surfaceId"],
     },
-    surfaceDeletion: {
+    deleteSurface: {
       type: "object",
       description:
         "Signals the client to delete the surface. The object should be empty; its presence is the signal. Only include if the surface is to be deleted.",
-      properties: { unused: { type: "string" } },
+      properties: {
+        surfaceId: {
+          type: "string",
+          description: "The unique identifier for the UI surface to be deleted."
+        }
+      },
+      required: ["surfaceId"]
     },
   },
-  required: ["surfaceId"],
 };

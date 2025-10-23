@@ -382,17 +382,9 @@ A2UI_SCHEMA = """
                   "Button": {
                     "type": "object",
                     "properties": {
-                      "label": {
-                        "type": "object",
-                        "description": "The text to display on the button. This can be a literal string or a reference to a value in the data model ('path', e.g. 'user.name').",
-                        "properties": {
-                          "literalString": {
-                            "type": "string"
-                          },
-                          "path": {
-                            "type": "string"
-                          }
-                        }
+                      "child": {
+                        "type": "string",
+                        "description": "The ID of the component to display in the button, typically a Text component."
                       },
                       "action": {
                         "type": "object",
@@ -435,7 +427,7 @@ A2UI_SCHEMA = """
                         "required": ["name"]
                       }
                     },
-                    "required": ["label", "action"]
+                    "required": ["child", "action"]
                   },
                   "CheckBox": {
                     "type": "object",
@@ -717,7 +709,8 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "template-rating", "componentProperties": {{ "Text": {{ "text": {{ "path": "rating" }} }} }} }},
       {{ "id": "template-detail", "componentProperties": {{ "Text": {{ "text": {{ "path": "detail" }} }} }} }},
       {{ "id": "template-link", "componentProperties": {{ "Text": {{ "text": {{ "path": "infoLink" }} }} }} }},
-      {{ "id": "template-book-button", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "address" }} }} ] }} }} }} }}
+      {{ "id": "template-book-button", "componentProperties": {{ "Button": {{ "child": "book-now-text", "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "address" }} }} ] }} }} }} }},
+      {{ "id": "book-now-text", "componentProperties": {{ "Text": {{ "text": {{ "literalString": "Book Now" }} }} }} }}
     ]
   }} }},
   {{ "dataModelUpdate": {{
@@ -747,7 +740,8 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "template-rating-1", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/0/rating" }} }} }} }},
       {{ "id": "template-detail-1", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/0/detail" }} }} }} }},
       {{ "id": "template-link-1", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/0/infoLink" }} }} }} }},
-      {{ "id": "template-book-button-1", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/0/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/0/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/0/address" }} }} ] }} }} }} }},
+      {{ "id": "template-book-button-1", "componentProperties": {{ "Button": {{ "child": "book-now-text-1", "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/0/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/0/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/0/address" }} }} ] }} }} }} }},
+      {{ "id": "book-now-text-1", "componentProperties": {{ "Text": {{ "text": {{ "literalString": "Book Now" }} }} }} }},
       {{ "id": "item-card-2", "weight": 1, "componentProperties": {{ "Card": {{ "child": "card-layout-2" }} }} }},
       {{ "id": "card-layout-2", "componentProperties": {{ "Column": {{ "children": {{ "explicitList": ["template-image-2", "card-details-2"] }} }} }} }},
       {{ "id": "template-image-2", "componentProperties": {{ "Image": {{ "url": {{ "path": "/items/1/imageUrl" }}, "width": "100%" }} }} }},
@@ -756,7 +750,8 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "template-rating-2", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/1/rating" }} }} }} }},
       {{ "id": "template-detail-2", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/1/detail" }} }} }} }},
       {{ "id": "template-link-2", "componentProperties": {{ "Text": {{ "text": {{ "path": "/items/1/infoLink" }} }} }} }},
-      {{ "id": "template-book-button-2", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Book Now" }}, "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/1/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/1/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/1/address" }} }} ] }} }} }} }}
+      {{ "id": "template-book-button-2", "componentProperties": {{ "Button": {{ "child": "book-now-text-2", "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "/items/1/name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "/items/1/imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "/items/1/address" }} }} ] }} }} }} }},
+      {{ "id": "book-now-text-2", "componentProperties": {{ "Text": {{ "text": {{ "literalString": "Book Now" }} }} }} }}
     ]
   }} }},
   {{ "dataModelUpdate": {{
@@ -782,7 +777,8 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "party-size-field", "componentProperties": {{ "TextField": {{ "label": {{ "literalString": "Party Size" }}, "text": {{ "path": "partySize" }}, "type": "number" }} }} }},
       {{ "id": "datetime-field", "componentProperties": {{ "DateTimeInput": {{ "label": {{ "literalString": "Date & Time" }}, "value": {{ "path": "reservationTime" }}, "enableDate": true, "enableTime": true }} }} }},
       {{ "id": "dietary-field", "componentProperties": {{ "TextField": {{ "label": {{ "literalString": "Dietary Requirements" }}, "text": {{ "path": "dietary" }} }} }} }},
-      {{ "id": "submit-button", "componentProperties": {{ "Button": {{ "label": {{ "literalString": "Submit Reservation" }}, "action": {{ "name": "submit_booking", "context": [ {{ "key": "restaurantName", "value": {{ "path": "restaurantName" }} }}, {{ "key": "partySize", "value": {{ "path": "partySize" }} }}, {{ "key": "reservationTime", "value": {{ "path": "reservationTime" }} }}, {{ "key": "dietary", "value": {{ "path": "dietary" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }} ] }} }} }} }}
+      {{ "id": "submit-button", "componentProperties": {{ "Button": {{ "child": "submit-reservation-text", "action": {{ "name": "submit_booking", "context": [ {{ "key": "restaurantName", "value": {{ "path": "restaurantName" }} }}, {{ "key": "partySize", "value": {{ "path": "partySize" }} }}, {{ "key": "reservationTime", "value": {{ "path": "reservationTime" }} }}, {{ "key": "dietary", "value": {{ "path": "dietary" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }} ] }} }} }} }},
+      {{ "id": "submit-reservation-text", "componentProperties": {{ "Text": {{ "text": {{ "literalString": "Submit Reservation" }} }} }} }}
     ]
   }} }},
   {{ "dataModelUpdate": {{
