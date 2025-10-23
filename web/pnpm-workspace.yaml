@@ -1,9 +1,0 @@
-packages:
-  - lib
-  - tests
-  - restaurant
-  - editor
-  - inspector
-
-onlyBuiltDependencies:
-  - esbuild
