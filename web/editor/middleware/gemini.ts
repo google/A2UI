@@ -21,7 +21,7 @@ import { v0_8 } from "@a2ui/web-lib";
 import { createA2UIPrompt, createImageParsePrompt } from "./prompts";
 
 // TODO: Reenable.
-// import { A2UIProtocolMessage } from "../schemas/a2ui-message.js";
+// import ServerToClientMessage from "../schemas/a2ui-message.js";
 
 let catalog: v0_8.Types.ClientCapabilitiesDynamic | null = null;
 let ai: GoogleGenAI;
@@ -142,7 +142,7 @@ export const plugin = (): Plugin => {
                         // responseMimeType: "application/json",
                         // responseJsonSchema: {
                         //   type: "array",
-                        //   items: A2UIProtocolMessage,
+                        //   items: ServerToClientMessage,
                         // },
                         systemInstruction: `Please return a valid array
                         necessary to satisfy the user request. If no data is

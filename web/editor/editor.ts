@@ -40,6 +40,7 @@ import {
 } from "./types/types.js";
 import { DrawableCanvas } from "./ui/ui.js";
 import { v0_8 } from "@a2ui/web-lib";
+import * as UI from "@a2ui/web-lib/ui";
 
 type UserMode = "upload" | "sketch";
 type RenderMode = "surfaces" | "messages";
@@ -49,7 +50,7 @@ const RENDER_MODE_KEY = "ui-render-mode";
 
 @customElement("a2ui-layout-editor")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  @provide({ context: v0_8.UI.Context.themeContext })
+  @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
 
   @state()
@@ -77,10 +78,10 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #drawableCanvas: DrawableCanvas | null = null;
 
   @state()
-  accessor #lastMessages: v0_8.Types.A2UIProtocolMessage[] | null = null;
+  accessor #lastMessages: v0_8.Types.ServerToClientMessage[] | null = null;
 
   static styles = [
-    v0_8.UI.Styles.all,
+    UI.Styles.all,
     css`
       :host {
         display: grid;
@@ -466,7 +467,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   async #processRequest(
     image?: HTMLImageElement | null,
     instructions?: string
-  ): Promise<v0_8.Types.A2UIProtocolMessage[]> {
+  ): Promise<v0_8.Types.ServerToClientMessage[]> {
     try {
       this.#requesting = true;
       const response = await this.#a2uiClient.sendMultipart(
@@ -475,8 +476,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       );
 
       const message = JSON.parse(response.parts[0].text) as
-        | v0_8.Types.A2UIProtocolMessage
-        | v0_8.Types.A2UIProtocolMessage[];
+        | v0_8.Types.ServerToClientMessage
+        | v0_8.Types.ServerToClientMessage[];
 
       if (Array.isArray(message)) {
         return message;

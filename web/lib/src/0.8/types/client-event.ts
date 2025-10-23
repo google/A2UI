@@ -34,7 +34,7 @@ export type ClientCapabilities =
  * A message sent from the client to the server. Exactly ONE of the properties
  * in this object must be set.
  */
-export interface A2UIClientEventMessage {
+export interface ClientToServerMessage {
   userAction?: UserAction;
   clientUiCapabilities?: ClientCapabilities;
   error?: ClientError;

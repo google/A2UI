@@ -29,13 +29,14 @@ import {
 import { type Snackbar } from "./ui/snackbar";
 import { repeat } from "lit/directives/repeat.js";
 import { v0_8 } from "@a2ui/web-lib";
+import * as UI from "@a2ui/web-lib/ui";
 
 // Restaurant demo elements.
 import "./ui/ui.js";
 
 @customElement("a2ui-restaurant")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  @provide({ context: v0_8.UI.Context.themeContext })
+  @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
 
   @state()
@@ -45,10 +46,10 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #error: string | null = null;
 
   @state()
-  accessor #lastMessages: v0_8.Types.A2UIProtocolMessage[] = [];
+  accessor #lastMessages: v0_8.Types.ServerToClientMessage[] = [];
 
   static styles = [
-    v0_8.UI.Styles.all,
+    UI.Styles.all,
     css`
       :host {
         display: block;
@@ -296,7 +297,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   async #sendMessage(
     message: v0_8.Types.A2UIClientEventMessage
-  ): Promise<v0_8.Types.A2UIProtocolMessage[]> {
+  ): Promise<v0_8.Types.ServerToClientMessage[]> {
     try {
       this.#requesting = true;
       const response = this.#a2uiClient.send(message);

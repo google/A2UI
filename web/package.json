@@ -5,12 +5,7 @@
   "description": "AI-first UI Toolkit Demo",
   "main": "./dist/index.js",
   "scripts": {
-    "prepack": "npm run build",
-    "build": "wireit",
-    "build:tsc": "wireit",
-    "lint": "wireit",
-    "dev": "wireit",
-    "test": "wireit"
+    "build": "wireit"
   },
   "repository": {
     "directory": "packages/a2ui",

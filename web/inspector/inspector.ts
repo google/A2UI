@@ -31,10 +31,11 @@ import {
   SnackType,
 } from "./types/types.js";
 import { v0_8 } from "@a2ui/web-lib";
+import * as UI from "@a2ui/web-lib/ui";
 
 @customElement("a2ui-layout-inspector")
 export class A2UILayoutInspector extends SignalWatcher(LitElement) {
-  @provide({ context: v0_8.UI.Context.themeContext })
+  @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
 
   @state()
@@ -50,7 +51,7 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
   }> = [];
 
   static styles = [
-    v0_8.UI.Styles.all,
+    UI.Styles.all,
     css`
       :host {
         display: grid;

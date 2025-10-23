@@ -16,13 +16,12 @@
 
 export * as Events from "./events/events.js";
 export * as Types from "./types/types.js";
-export * as UI from "./ui/ui.js";
 
 import * as Guards from "./data/guards.js";
 
 import { create as createSignalA2UIModelProcessor } from "./data/signal-model-processor.js";
 import { A2UIModelProcessor } from "./data/model-processor.js";
-import { A2UIProtocolMessage } from "./schemas/a2ui-message.js";
+import A2UIProtocolMessage from "./schemas/a2ui-message.json" with { type: "json" };
 import A2UIClientEventMessage from "./schemas/client-event.json" with { type: "json" };
 import DefaultCatalog from "./catalog/default-catalog.json" with { type: "json" };
 
