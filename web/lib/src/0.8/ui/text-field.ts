@@ -70,7 +70,7 @@ export class TextField extends Root {
     }
 
     this.processor.setDataByPath(
-      `${this.dataContextPath}${this.text.path}`,
+      this.processor.resolvePath(this.text.path, this.dataContextPath),
       value
     );
   }

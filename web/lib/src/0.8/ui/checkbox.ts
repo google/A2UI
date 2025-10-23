@@ -70,7 +70,7 @@ export class Checkbox extends Root {
     }
 
     this.processor.setDataByPath(
-      `${this.dataContextPath}${this.value.path}`,
+      this.processor.resolvePath(this.value.path, this.dataContextPath),
       value
     );
   }
