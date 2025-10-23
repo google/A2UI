@@ -24,7 +24,8 @@ export class MultipleChoice extends DynamicComponent {
       return;
     }
 
-    this.processor.setDataByPath(
+    this.processor.setData(
+      this.component(),
       this.processor.resolvePath(path, this.component().dataContextPath),
       event.target.value
     );

@@ -16,16 +16,13 @@ export class ModelProcessor {
     return this.processor.resolvePath(path, dataContextPath);
   }
 
-  getDataByPath(path: string, surfaceId?: v0_8.Types.SurfaceID | null) {
-    return this.processor.getDataByPath(path, surfaceId);
-  }
-
-  setDataByPath(
-    path: string,
+  setData(
+    node: v0_8.Types.AnyComponentNode,
+    relativePath: string,
     value: v0_8.Types.DataValue,
     surfaceId?: v0_8.Types.SurfaceID | null
   ) {
-    return this.processor.setDataByPath(path, value, surfaceId ?? undefined);
+    return this.processor.setData(node, relativePath, value, surfaceId ?? undefined);
   }
 
   getData(

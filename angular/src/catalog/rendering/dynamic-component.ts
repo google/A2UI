@@ -22,7 +22,7 @@ export abstract class DynamicComponent {
           context[item.key] = item.value.literalString;
         } else if (item.value.path) {
           const path = this.processor.resolvePath(item.value.path, component.dataContextPath);
-          const value = this.processor.getDataByPath(path, this.surfaceId());
+          const value = this.processor.getData(component, path, this.surfaceId() ?? undefined);
           context[item.key] = value;
         }
       }

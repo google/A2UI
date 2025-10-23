@@ -23,6 +23,6 @@ export class DatetimeInput extends DynamicComponent {
       return;
     }
 
-    this.processor.setDataByPath(path, event.target.value, this.surfaceId());
+    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
   }
 }
