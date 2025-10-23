@@ -14,19 +14,20 @@
  limitations under the License.
  */
 
-import { html, css, nothing, PropertyValues } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StateEvent } from "../events/events.js";
+import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Action } from "../types/components.js";
-import { AnyComponentNode } from "../types/types.js";
+import { A2UIModelProcessor } from "../data/model-processor.js";
 
 @customElement("a2ui-button")
 export class Button extends Root {
-  @property({ attribute: false })
-  accessor child: AnyComponentNode | null = null;
+  @property()
+  accessor label: StringValue | null = null;
 
   @property()
   accessor action: Action | null = null;
@@ -40,40 +41,63 @@ export class Button extends Root {
         min-height: 0;
         overflow: auto;
       }
-      button {
-        width: 100%;
-      }
     `,
   ];
 
-  protected updated(changedProperties: PropertyValues<this>): void {
-    super.updated(changedProperties);
-    if (changedProperties.has("child")) {
-      if (this.child) {
-        this.childComponents = [this.child];
-      } else {
-        this.childComponents = [];
+  #renderButton() {
+    const innerRender = (label: string) => {
+      return html`<button
+        class=${classMap(this.theme.components.Button)}
+        @click=${() => {
+          if (!this.action) {
+            return;
+          }
+          const evt = new StateEvent<"a2ui.action">({
+            eventType: "a2ui.action",
+            action: this.action,
+            dataContextPath: this.dataContextPath,
+            sourceComponentId: this.id,
+            sourceComponent: this.component,
+          });
+          this.dispatchEvent(evt);
+        }}
+      >
+        ${label}
+      </button>`;
+    };
+
+    if (this.label && typeof this.label === "object") {
+      if ("literalString" in this.label && this.label.literalString) {
+        return innerRender(this.label.literalString);
+      } else if ("literal" in this.label && this.label.literal !== undefined) {
+        return innerRender(this.label.literal);
+      } else if (this.label && "path" in this.label && this.label.path) {
+        if (!this.processor || !this.component) {
+          return html`(no model)`;
+        }
+
+        const labelValue = this.processor.getData(
+          this.component,
+          this.label.path,
+          this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+        );
+
+        if (labelValue === null) {
+          return html`Invalid label`;
+        }
+
+        if (typeof labelValue !== "string") {
+          return html`Invalid label`;
+        }
+
+        return innerRender(labelValue);
       }
     }
+
+    return nothing;
   }
 
   render() {
-    return html`<button
-      class=${classMap(this.theme.components.Button)}
-      @click=${() => {
-        if (!this.action) {
-          return;
-        }
-        const evt = new StateEvent<"a2ui.action">({
-          eventType: "a2ui.action",
-          action: this.action,
-          dataContextPath: this.dataContextPath,
-          sourceComponentId: this.id,
-        });
-        this.dispatchEvent(evt);
-      }}
-    >
-      <slot></slot>
-    </button>`;
+    return this.#renderButton();
   }
 }

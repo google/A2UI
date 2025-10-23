@@ -1,13 +1,17 @@
 # A2UI (Agent-to-Agent UI) Extension Spec
+
 ## Overview
+
 This extension implements the A2UI (Agent-to-Agent UI) spec, a format for agents to send streaming, interactive user interfaces to clients.
 
 ## Extension URI
-The URI of this extension is https://github.com/google/a2ui/a2a_samples/a2ui_extension/spec/spec.md.
+
+The URI of this extension is https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_samples/a2ui_extension/spec/spec.md
 
 This is the only URI accepted for this extension.
 
 ## Core Concepts
+
 The A2UI extension is built on three main concepts:
 
 Surfaces: A "Surface" is a distinct, controllable region of the client's UI. The spec uses a surfaceId to direct updates to specific surfaces (e.g., a main content area, a side panel, or a new chat bubble). This allows a single agent stream to manage multiple UI areas independently.

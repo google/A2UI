@@ -74,9 +74,11 @@ export class Slider extends Root {
       return;
     }
 
-    this.processor.setDataByPath(
-      `${this.dataContextPath}${this.value.path}`,
-      value
+    this.processor.setData(
+      this.component,
+      this.value.path,
+      value,
+      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
     );
   }
 

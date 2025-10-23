@@ -15,7 +15,7 @@
  */
 
 import {
-  A2UIProtocolMessage,
+  ServerToClientMessage,
   AnyComponentNode,
   BeginRenderingMessage,
   DataArray,
@@ -54,13 +54,12 @@ import {
 } from "./guards.js";
 
 /**
- * Processes and consolidates A2UIProtocolMessage objects into a
- * structured, hierarchical model of UI surfaces.
+ * Processes and consolidates A2UIProtocolMessage objects into a structured,
+ * hierarchical model of UI surfaces.
  */
 export class A2UIModelProcessor {
   static readonly DEFAULT_SURFACE_ID = "@default";
 
-  #currentSurface = A2UIModelProcessor.DEFAULT_SURFACE_ID;
   #mapCtor: MapConstructor = Map;
   #arrayCtor: ArrayConstructor = Array;
   #setCtor: SetConstructor = Set;
@@ -91,29 +90,26 @@ export class A2UIModelProcessor {
     this.#surfaces.clear();
   }
 
-  processMessages(messages: A2UIProtocolMessage[]): void {
-    this.#currentSurface = A2UIModelProcessor.DEFAULT_SURFACE_ID;
-
+  processMessages(messages: ServerToClientMessage[]): void {
     for (const message of messages) {
-      if (message.surfaceId) {
-        this.#currentSurface = message.surfaceId;
-      }
-
       if (message.beginRendering) {
         this.#handleBeginRendering(
           message.beginRendering,
-          this.#currentSurface
+          message.beginRendering.surfaceId
         );
       }
 
       if (message.surfaceUpdate) {
-        this.#handleSurfaceUpdate(message.surfaceUpdate, this.#currentSurface);
+        this.#handleSurfaceUpdate(
+          message.surfaceUpdate,
+          message.surfaceUpdate.surfaceId
+        );
       }
 
       if (message.dataModelUpdate) {
         this.#handleDataModelUpdate(
           message.dataModelUpdate,
-          this.#currentSurface
+          message.dataModelUpdate.surfaceId
         );
       }
 
@@ -121,8 +117,6 @@ export class A2UIModelProcessor {
         this.#handleDeleteSurface(message.deleteSurface);
       }
     }
-
-    this.#currentSurface = A2UIModelProcessor.DEFAULT_SURFACE_ID;
   }
 
   /**
@@ -135,7 +129,7 @@ export class A2UIModelProcessor {
     relativePath: string,
     surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
   ): DataValue | null {
-    const surface = this.#surfaces.get(surfaceId);
+    const surface = this.#getOrCreateSurface(surfaceId);
     if (!surface) return null;
 
     let finalPath: string;
@@ -152,29 +146,27 @@ export class A2UIModelProcessor {
     return this.#getDataByPath(surface.dataModel, finalPath);
   }
 
-  getDataByPath(path: string, surfaceId: SurfaceID | null = null) {
-    if (!surfaceId) {
-      surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID;
-    }
-    const surface = this.#getOrCreateSurface(surfaceId);
-    if (!surface) {
-      return null;
-    }
-
-    return this.#getDataByPath(surface.dataModel, path) ?? null;
-  }
-
-  setDataByPath(
-    path: string,
+  setData(
+    node: AnyComponentNode,
+    relativePath: string,
     value: DataValue,
     surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
-  ) {
+  ): void {
     const surface = this.#getOrCreateSurface(surfaceId);
-    if (!surface) {
-      return null;
+    if (!surface) return null;
+
+    let finalPath: string;
+
+    // The special `.` path means the final path is the node's data context
+    // path and so we return the dataContextPath as-is.
+    if (relativePath === ".") {
+      finalPath = node.dataContextPath ?? "/";
+    } else {
+      // For all other paths, resolve them against the node's context.
+      finalPath = this.resolvePath(relativePath, node.dataContextPath);
     }
 
-    return this.#setDataByPath(surface.dataModel, path, value);
+    this.#setDataByPath(surface.dataModel, finalPath, value);
   }
 
   resolvePath(path: string, dataContextPath?: string): string {
@@ -206,8 +198,8 @@ export class A2UIModelProcessor {
 
       const key = item.key as string;
 
-      // Find the value, which is in a property prefixed with "value_".
-      const valueKey = Object.keys(item).find((k) => k.startsWith("value_"));
+      // Find the value, which is in a property prefixed with "value".
+      const valueKey = Object.keys(item).find((k) => k.startsWith("value"));
       if (!valueKey) continue;
 
       let value = item[valueKey];
@@ -237,20 +229,20 @@ export class A2UIModelProcessor {
   }
 
   #setDataByPath(root: DataMap, path: string, value: DataValue): void {
+    // Check if the incoming value is the special key-value array format.
+    if (
+      Array.isArray(value) &&
+      value.length > 0 &&
+      isObject(value[0]) &&
+      "key" in value[0]
+    ) {
+      value = this.#convertKeyValueArrayToMap(value);
+    }
+
     const segments = this.#normalizePath(path)
       .split("/")
       .filter((s) => s);
     if (segments.length === 0) {
-      // Check if the incoming value is the special key-value array format.
-      if (
-        Array.isArray(value) &&
-        value.length > 0 &&
-        isObject(value[0]) &&
-        "key" in value[0]
-      ) {
-        value = this.#convertKeyValueArrayToMap(value);
-      }
-
       // Root data can either be a Map or an Object. If we receive an Object,
       // however, we will normalize it to a proper Map.
       if (value instanceof Map || isObject(value)) {

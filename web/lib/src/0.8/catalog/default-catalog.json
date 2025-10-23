@@ -356,7 +356,7 @@
     "Button": {
       "type": "object",
       "properties": {
-        "child": {
+        "label": {
           "type": "object",
           "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
           "properties": {
@@ -374,7 +374,7 @@
           "type": "object",
           "description": "Represents a user-initiated action.",
           "properties": {
-            "name": {
+            "action": {
               "type": "string",
               "description": "A unique name identifying the action (e.g., 'submitForm')."
             },
@@ -412,10 +412,10 @@
               }
             }
           },
-          "required": ["name"]
+          "required": ["action"]
         }
       },
-      "required": ["child", "action"]
+      "required": ["label", "action"]
     },
     "CheckBox": {
       "type": "object",
@@ -481,7 +481,7 @@
             }
           }
         },
-        "textFieldType": {
+        "type": {
           "type": "string",
           "enum": ["shortText", "number", "date", "longText"]
         },
@@ -574,7 +574,7 @@
           "default": 1
         }
       },
-      "required": ["selections", "options"]
+      "required": ["selections"]
     },
     "Slider": {
       "type": "object",

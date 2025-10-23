@@ -19,6 +19,7 @@ import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
+import { A2UIModelProcessor } from "../data/model-processor.js";
 
 @customElement("a2ui-multiplechoice")
 export class MultipleChoice extends Root {
@@ -65,9 +66,11 @@ export class MultipleChoice extends Root {
       return;
     }
 
-    this.processor.setDataByPath(
-      this.processor.resolvePath(this.value.path, this.dataContextPath),
-      value
+    this.processor.setData(
+      this.component,
+      this.value.path,
+      value,
+      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
     );
   }
 

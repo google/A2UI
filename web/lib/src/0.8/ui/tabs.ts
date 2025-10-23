@@ -63,8 +63,6 @@ export class Tabs extends Root {
       return nothing;
     }
 
-    console.log(this.theme.components.Tabs);
-
     return html`<div
       id="buttons"
       class=${classMap(this.theme.components.Tabs.element)}

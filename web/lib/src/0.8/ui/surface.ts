@@ -39,6 +39,18 @@ export class Surface extends Root {
         min-height: 0;
         overflow: auto;
         max-height: 100%;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      #surface-logo {
+        display: flex;
+        justify-content: center;
+
+        & img {
+          width: 50%;
+          max-width: 220px;
+        }
       }
 
       a2ui-root {
@@ -47,11 +59,17 @@ export class Surface extends Root {
     `,
   ];
 
-  render() {
-    if (!this.surface) {
+  #renderLogo() {
+    if (!this.surface.styles.logoUrl) {
       return nothing;
     }
 
+    return html`<div id="surface-logo">
+      <img src=${this.surface.styles.logoUrl} />
+    </div>`;
+  }
+
+  #renderSurface() {
     const styles: Record<string, string> = {};
     if (this.surface.styles) {
       for (const [key, value] of Object.entries(this.surface.styles)) {
@@ -80,5 +98,13 @@ export class Surface extends Root {
       .processor=${this.processor}
       .childComponents=${[this.surface.componentTree]}
     ></a2ui-root>`;
+  }
+
+  render() {
+    if (!this.surface) {
+      return nothing;
+    }
+
+    return html`${[this.#renderLogo(), this.#renderSurface()]}`;
   }
 }

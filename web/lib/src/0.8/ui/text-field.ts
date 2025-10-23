@@ -69,9 +69,11 @@ export class TextField extends Root {
       return;
     }
 
-    this.processor.setDataByPath(
-      `${this.dataContextPath}${this.text.path}`,
-      value
+    this.processor.setData(
+      this.component,
+      this.text.path,
+      value,
+      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
     );
   }
 

@@ -17,7 +17,7 @@ import { LitElement, html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { SnackbarMessage, SnackbarUUID, SnackType } from "../types/types";
 import { repeat } from "lit/directives/repeat.js";
-import { v0_8 } from "@a2ui/web-lib";
+import * as UI from "@a2ui/web-lib/ui";
 import { SnackbarActionEvent } from "../events/events";
 import { classMap } from "lit/directives/class-map.js";
 
@@ -38,7 +38,7 @@ export class Snackbar extends LitElement {
   #timeout = 0;
 
   static styles = [
-    v0_8.UI.Styles.all,
+    UI.Styles.all,
     css`
       :host {
         --text-color: var(--n-0);

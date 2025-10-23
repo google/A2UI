@@ -15,8 +15,9 @@
  */
 
 import { v0_8 } from "@a2ui/web-lib";
+import * as UI from "@a2ui/web-lib/ui";
 
-const Utils = v0_8.UI.Utils;
+const Utils = UI.Utils;
 
 /** Elements */
 

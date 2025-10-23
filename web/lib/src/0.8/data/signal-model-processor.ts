@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { A2UIModelProcessor } from "./model-processor";
+import { A2UIModelProcessor } from "./model-processor.js";
 
 import { SignalArray } from "signal-utils/array";
 import { SignalMap } from "signal-utils/map";

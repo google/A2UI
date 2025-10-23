@@ -20,7 +20,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref, Ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
 import { EnumValue } from "../types/types";
-import { v0_8 } from "@a2ui/web-lib";
+import * as UI from "@a2ui/web-lib/ui";
 
 @customElement("item-select")
 export class ItemSelect extends LitElement {
@@ -82,7 +82,7 @@ export class ItemSelect extends LitElement {
   }
 
   static styles = [
-    v0_8.UI.Styles.all,
+    UI.Styles.all,
     css`
       :host {
         display: block;

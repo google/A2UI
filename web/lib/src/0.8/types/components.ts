@@ -20,7 +20,7 @@ export interface Action {
   /**
    * A unique name identifying the action (e.g., 'submitForm').
    */
-  name: string;
+  action: string;
   /**
    * A key-value map of data bindings to be resolved when the action is triggered.
    */
@@ -124,7 +124,7 @@ export interface Modal {
 }
 
 export interface Button {
-  child: string;
+  label: StringValue;
   /**
    * Represents a user-initiated action.
    */

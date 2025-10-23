@@ -15,7 +15,7 @@
  */
 
 export {
-  type A2UIClientEventMessage,
+  type ClientToServerMessage as A2UIClientEventMessage,
   type ClientCapabilitiesDynamic,
 } from "./client-event.js";
 
@@ -186,15 +186,18 @@ export interface ComponentInstance {
 }
 
 export interface BeginRenderingMessage {
+  surfaceId: string;
   root: string;
   styles?: Record<string, string>;
 }
 
 export interface SurfaceUpdateMessage {
+  surfaceId: string;
   components: ComponentInstance[];
 }
 
 export interface DataModelUpdate {
+  surfaceId: string;
   path?: string;
   contents: DataValue;
 }
@@ -203,8 +206,7 @@ export interface DeleteSurfaceMessage {
   surfaceId: string;
 }
 
-export interface A2UIProtocolMessage {
-  surfaceId?: string;
+export interface ServerToClientMessage {
   beginRendering?: BeginRenderingMessage;
   surfaceUpdate?: SurfaceUpdateMessage;
   dataModelUpdate?: DataModelUpdate;
@@ -360,7 +362,7 @@ export type ResolvedImage = Image;
 export type ResolvedVideo = Video;
 export type ResolvedAudioPlayer = AudioPlayer;
 export type ResolvedDivider = Divider;
-export type ResolvedButton = Button & { child: AnyComponentNode; };
+export type ResolvedButton = Button;
 export type ResolvedCheckbox = Checkbox;
 export type ResolvedTextField = TextField;
 export type ResolvedDateTimeInput = DateTimeInput;

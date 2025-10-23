@@ -98,9 +98,9 @@ export function isResolvedAudioPlayer(
 export function isResolvedButton(props: unknown): props is ResolvedButton {
   return (
     isObject(props) &&
-    "action" in props &&
-    "child" in props &&
-    (props.child === null || isAnyComponentNode(props.child))
+    "label" in props &&
+    isStringValue(props.label) &&
+    "action" in props
   );
 }
 

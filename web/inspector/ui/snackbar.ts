@@ -20,7 +20,7 @@ import { SnackbarMessage, SnackbarUUID, SnackType } from "../types/types";
 import { repeat } from "lit/directives/repeat.js";
 import { SnackbarActionEvent } from "../events/events";
 import { classMap } from "lit/directives/class-map.js";
-import { v0_8 } from "@a2ui/web-lib";
+import * as UI from "@a2ui/web-lib/ui";
 
 const DEFAULT_TIMEOUT = 8000;
 
@@ -39,7 +39,7 @@ export class Snackbar extends LitElement {
   #timeout = 0;
 
   static styles = [
-    v0_8.UI.Styles.all,
+    UI.Styles.all,
     css`
       :host {
         --text-color: var(--n-0);
