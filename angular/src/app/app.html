@@ -1,1 +1,11 @@
-Hello {{title()}}
+<button (click)="makeRequest()">Test</button>
+
+@if (processor.isLoading()) {
+  Loading...
+} @else {
+  @let surfaces = processor.getSurfaces();
+
+  @for (entry of surfaces; track $index) {
+    <ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
+  }
+}
