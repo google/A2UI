@@ -2,15 +2,14 @@
   "name": "@a2ui/web-tests",
   "private": true,
   "version": "0.1.0",
-  "description": "AI-first UI Toolkit Demo",
-  "main": "./dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "A2UI Web Library Tests",
+  "main": "./dist/0.8/model.test.js",
+  "types": "./dist/0.8/model.test.d.ts",
   "type": "module",
   "scripts": {
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "lint": "wireit",
     "dev": "wireit",
     "test": "wireit"
   },
@@ -49,24 +48,10 @@
         "!dist/**/*.min.js{,.map}"
       ],
       "clean": "if-file-deleted"
-    },
-    "lint": {
-      "command": "eslint . --ext .ts",
-      "env": {
-        "FORCE_COLOR": "1"
-      },
-      "dependencies": [
-        "build:tsc"
-      ],
-      "files": [
-        ".eslintrc",
-        "../../.eslintrc.json"
-      ],
-      "output": []
     }
   },
   "repository": {
-    "directory": "packages/a2ui",
+    "directory": "web/tests",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },

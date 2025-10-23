@@ -81,6 +81,7 @@
     "http-proxy": "^1.18.1",
     "json-rpc-2.0": "^1.7.1",
     "jsonschema": "^1.5.0",
+    "lit": "^3.3.1",
     "markdown-it": "^14.1.0",
     "signal-utils": "^0.21.1"
   }
