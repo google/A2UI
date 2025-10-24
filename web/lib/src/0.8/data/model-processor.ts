@@ -147,13 +147,18 @@ export class A2UIModelProcessor {
   }
 
   setData(
-    node: AnyComponentNode,
+    node: AnyComponentNode | null,
     relativePath: string,
     value: DataValue,
     surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
   ): void {
+    if (!node) {
+      console.warn("No component node set");
+      return;
+    }
+
     const surface = this.#getOrCreateSurface(surfaceId);
-    if (!surface) return null;
+    if (!surface) return;
 
     let finalPath: string;
 
@@ -460,7 +465,7 @@ export class A2UIModelProcessor {
 
     const componentData = components.get(baseComponentId)!;
     const componentProps =
-      componentData.componentProperties ?? componentData.component;
+      componentData.componentProperties ?? componentData.component ?? {};
     const componentType = Object.keys(componentProps)[0];
     const unresolvedProperties =
       componentProps[componentType as keyof typeof componentProps];

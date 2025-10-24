@@ -76,6 +76,7 @@
   },
   "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
   "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
