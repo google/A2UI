@@ -100,8 +100,9 @@
     <button a2ui-button
       [surfaceId]="surfaceId"
       [component]="component"
-      [label]="component.properties.label"
-      [action]="component.properties.action"></button>
+      [action]="component.properties.action">
+      <a2ui-renderer [surfaceId]="surfaceId" [component]="component.properties.child"/>
+    </button>
   }
 
   @case ('Divider') {
