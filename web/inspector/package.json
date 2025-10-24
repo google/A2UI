@@ -10,15 +10,17 @@
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "dev": "wireit",
-    "test": "wireit"
+    "dev": "npm run serve --watch",
+    "test": "wireit",
+    "serve": "wireit"
   },
   "wireit": {
-    "dev": {
+    "serve": {
       "command": "vite dev",
       "dependencies": [
         "build"
-      ]
+      ],
+      "service": true
     },
     "test": {
       "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/tests/**/*.test.js",
