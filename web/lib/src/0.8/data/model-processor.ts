@@ -186,6 +186,36 @@ export class A2UIModelProcessor {
     return `/${path}`;
   }
 
+  #parseIfJsonString(value: DataValue): DataValue {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const trimmedValue = value.trim();
+    if (
+      (trimmedValue.startsWith("{") && trimmedValue.endsWith("}")) ||
+      (trimmedValue.startsWith("[") && trimmedValue.endsWith("]"))
+    ) {
+      try {
+        // It looks like JSON, attempt to parse it.
+        return JSON.parse(value);
+      } catch (e) {
+        // It looked like JSON but wasn't. Keep the original string.
+        console.warn(
+          `Failed to parse potential JSON string: "${value.substring(
+            0,
+            50
+          )}..."`,
+          e
+        );
+        return value; // Return original string
+      }
+    }
+
+    // It's a string, but not JSON-like.
+    return value;
+  }
+
   /**
    * Converts a specific array format [{key: "...", value_string: "..."}, ...]
    * into a standard Map. It also attempts to parse any string values that
@@ -202,25 +232,21 @@ export class A2UIModelProcessor {
       const valueKey = Object.keys(item).find((k) => k.startsWith("value"));
       if (!valueKey) continue;
 
-      let value = item[valueKey];
+      let value: DataValue = item[valueKey];
+      // It's a valueList. We must unwrap its contents.
+      if (valueKey === "valueList" && Array.isArray(value)) {
+        value = value.map((wrappedItem: unknown) => {
+          if (!isObject(wrappedItem)) return null;
+          const innerValueKey = Object.keys(wrappedItem).find((k) =>
+            k.startsWith("value")
+          );
+          if (!innerValueKey) return null;
 
-      // Attempt to parse the value if it's a JSON string.
-      if (typeof value === "string") {
-        const trimmedValue = value.trim();
-        if (
-          (trimmedValue.startsWith("{") && trimmedValue.endsWith("}")) ||
-          (trimmedValue.startsWith("[") && trimmedValue.endsWith("]"))
-        ) {
-          try {
-            value = JSON.parse(value);
-          } catch (e) {
-            // It looked like JSON but wasn't. Keep the original string.
-            console.warn(
-              `Failed to parse potential JSON string for key "${key}":`,
-              e
-            );
-          }
-        }
+          const innerValue = wrappedItem[innerValueKey];
+          return this.#parseIfJsonString(innerValue as DataValue);
+        });
+      } else if (typeof value === "string") {
+        value = this.#parseIfJsonString(value);
       }
 
       this.#setDataByPath(map, key, value);

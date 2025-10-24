@@ -200,7 +200,18 @@ export interface SurfaceUpdateMessage {
 export interface DataModelUpdate {
   surfaceId: string;
   path?: string;
-  contents: DataValue;
+  contents: {
+    key: string;
+    valueString?: string /** May be JSON */;
+    valueNumber?: number;
+    valueBoolean?: boolean;
+
+    valueList?: {
+      valueString?: string /** May be JSON */;
+      valueNumber?: number;
+      valueBoolean?: boolean;
+    }[];
+  }[];
 }
 
 export interface DeleteSurfaceMessage {
@@ -368,6 +379,11 @@ export type ResolvedTextField = TextField;
 export type ResolvedDateTimeInput = DateTimeInput;
 export type ResolvedMultipleChoice = MultipleChoice;
 export type ResolvedSlider = Slider;
+
+export interface ResolvedButton {
+  child: AnyComponentNode;
+  action: Button["action"];
+}
 
 export interface ResolvedRow {
   children: AnyComponentNode[];
