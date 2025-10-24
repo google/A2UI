@@ -183,7 +183,11 @@ const listItemLight = Utils.merge(listItem, {
 });
 
 export const theme: v0_8.Types.Theme = {
-  additionalStyles: {},
+  additionalStyles: {
+    Button: {
+      "--n-35": "var(--n-100)",
+    },
+  },
   components: {
     AudioPlayer: {},
     Button: {

@@ -22,6 +22,7 @@ import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ResolvedTextField } from "../types/types";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-textfield")
 export class TextField extends Root {
@@ -80,8 +81,11 @@ export class TextField extends Root {
   #renderField(value: string | number) {
     return html` <section>
       <input
-        class=${classMap(this.theme.components.TextField)}
         autocomplete="off"
+        class=${classMap(this.theme.components.TextField)}
+        style=${this.theme.additionalStyles?.TextField
+          ? styleMap(this.theme.additionalStyles?.TextField)
+          : nothing}
         @input=${(evt: Event) => {
           if (!(evt.target instanceof HTMLInputElement)) {
             return;

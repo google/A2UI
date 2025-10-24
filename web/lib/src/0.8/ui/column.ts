@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ResolvedColumn } from "../types/types";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-column")
 export class Column extends Root {
@@ -90,7 +91,12 @@ export class Column extends Root {
   ];
 
   render() {
-    return html`<section class=${classMap(this.theme.components.Column)}>
+    return html`<section
+      class=${classMap(this.theme.components.Column)}
+      style=${this.theme.additionalStyles?.Column
+        ? styleMap(this.theme.additionalStyles?.Column)
+        : nothing}
+    >
       <slot></slot>
     </section>`;
   }

@@ -14,10 +14,12 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { Root } from "./root.js";
 import * as Styles from "./styles/index.js";
+import { styleMap } from "lit/directives/style-map.js";
+import { classMap } from "lit/directives/class-map.js";
 
 @customElement("a2ui-divider")
 export class Divider extends Root {
@@ -39,6 +41,11 @@ export class Divider extends Root {
   ];
 
   render() {
-    return html`<hr />`;
+    return html`<hr
+      class=${classMap(this.theme.components.Divider)}
+      style=${this.theme.additionalStyles?.Divider
+        ? styleMap(this.theme.additionalStyles?.Divider)
+        : nothing}
+    />`;
   }
 }

@@ -14,11 +14,12 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-list")
 export class List extends Root {
@@ -59,7 +60,12 @@ export class List extends Root {
   ];
 
   render() {
-    return html`<section class=${classMap(this.theme.components.List)}>
+    return html`<section
+      class=${classMap(this.theme.components.List)}
+      style=${this.theme.additionalStyles?.List
+        ? styleMap(this.theme.additionalStyles?.List)
+        : nothing}
+    >
       <slot></slot>
     </section>`;
   }

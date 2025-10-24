@@ -14,13 +14,14 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StateEvent } from "../events/events.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Action } from "../types/components.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-button")
 export class Button extends Root {
@@ -42,6 +43,9 @@ export class Button extends Root {
   render() {
     return html`<button
       class=${classMap(this.theme.components.Button)}
+      style=${this.theme.additionalStyles?.Button
+        ? styleMap(this.theme.additionalStyles?.Button)
+        : nothing}
       @click=${() => {
         if (!this.action) {
           return;

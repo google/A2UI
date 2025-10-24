@@ -23,6 +23,7 @@ import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import * as Utils from "./utils/utils.js";
 import * as Styles from "./styles/index.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-tabs")
 export class Tabs extends Root {
@@ -121,6 +122,9 @@ export class Tabs extends Root {
   render() {
     return html`<section
       class=${classMap(this.theme.components.Tabs.container)}
+      style=${this.theme.additionalStyles?.Tabs
+        ? styleMap(this.theme.additionalStyles?.Tabs)
+        : nothing}
     >
       ${[this.#renderTabs(), this.#renderSlot()]}
     </section>`;

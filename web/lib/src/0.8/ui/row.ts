@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ResolvedRow } from "../types/types";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-row")
 export class Row extends Root {
@@ -87,7 +88,12 @@ export class Row extends Root {
   ];
 
   render() {
-    return html`<section class=${classMap(this.theme.components.Row)}>
+    return html`<section
+      class=${classMap(this.theme.components.Row)}
+      style=${this.theme.additionalStyles?.Row
+        ? styleMap(this.theme.additionalStyles?.Row)
+        : nothing}
+    >
       <slot></slot>
     </section>`;
   }

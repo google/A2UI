@@ -21,6 +21,7 @@ import { StringValue, BooleanValue } from "../types/primitives";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-checkbox")
 export class Checkbox extends Root {
@@ -80,6 +81,9 @@ export class Checkbox extends Root {
   #renderField(value: boolean | number) {
     return html` <section
       class=${classMap(this.theme.components.CheckBox.container)}
+      style=${this.theme.additionalStyles?.CheckBox
+        ? styleMap(this.theme.additionalStyles?.CheckBox)
+        : nothing}
     >
       <input
         class=${classMap(this.theme.components.CheckBox.element)}

@@ -14,13 +14,14 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-heading")
 export class Heading extends Root {
@@ -102,7 +103,12 @@ export class Heading extends Root {
           return html`(invalid)`;
         }
 
-        return html`<h1 class=${classMap(this.theme.components.Heading)}>
+        return html`<h1
+          class=${classMap(this.theme.components.Heading)}
+          style=${this.theme.additionalStyles?.Heading
+            ? styleMap(this.theme.additionalStyles?.Heading)
+            : nothing}
+        >
           ${textValue}
         </h1>`;
       }
