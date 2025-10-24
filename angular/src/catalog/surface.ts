@@ -29,6 +29,16 @@ import { v0_8 } from '@a2ui/web-lib';
       <ng-container a2ui-renderer [surfaceId]="surfaceId" [component]="surface.componentTree!" />
     }
   `,
+  styles: `
+    :host {
+      display: flex;
+      min-height: 0;
+      overflow: auto;
+      max-height: 100%;
+      flex-direction: column;
+      gap: 16px;
+    }
+  `
 })
 export class Surface {
   readonly surfaceId = input.required<v0_8.Types.SurfaceID | null>();

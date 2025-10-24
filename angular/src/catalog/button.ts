@@ -32,6 +32,14 @@ import { Renderer } from './rendering/renderer';
       [component]="component().properties.child"
     />
   `,
+  styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+  `,
 })
 export class Button extends DynamicComponent<v0_8.Types.ButtonNode> {
   readonly action = input.required<v0_8.Types.Action | null>();

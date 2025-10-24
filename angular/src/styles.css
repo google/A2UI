@@ -14,4 +14,7 @@
  limitations under the License.
  */
 
-/* You can add global styles to this file, and also import other style files */
+/* TODO: remove this */
+:root {
+  --weight: 1;
+}

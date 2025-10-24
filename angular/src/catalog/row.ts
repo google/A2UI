@@ -22,17 +22,69 @@ import { Renderer } from './rendering/renderer';
 @Component({
   selector: 'a2ui-row',
   imports: [Renderer],
+  host: {
+    '[attr.alignment]': 'alignment()',
+    '[attr.distribution]': 'distribution()',
+  },
   styles: `
     :host {
-      display: block;
-      outline: solid 1px blue;
-      padding: 20px;
+      display: flex;
+      flex: var(--weight);
+    }
+
+    section {
+      display: flex;
+      flex-direction: row;
+      min-width: 100%;
+      height: 100%;
+    }
+
+    :host[alignment="start"] section {
+      align-items: start;
+    }
+
+    :host[alignment="center"] section {
+      align-items: center;
+    }
+
+    :host[alignment="end"] section {
+      align-items: end;
+    }
+
+    :host[alignment="stretch"] section {
+      align-items: stretch;
+    }
+
+    :host[distribution="start"] section {
+      justify-content: start;
+    }
+
+    :host[distribution="center"] section {
+      justify-content: center;
+    }
+
+    :host[distribution="end"] section {
+      justify-content: end;
+    }
+
+    :host[distribution="spaceBetween"] section {
+      justify-content: space-between;
+    }
+
+    :host[distribution="spaceAround"] section {
+      justify-content: space-around;
+    }
+
+    :host[distribution="spaceEvenly"] section {
+      justify-content: space-evenly;
     }
   `,
   template: `
-    @for (child of component().properties.children; track child) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child"/>
-    }
+    <section>
+      @for (child of component().properties.children; track child) {
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      }
+    </section>
   `,
 })
 export class Row extends DynamicComponent<v0_8.Types.RowNode> {

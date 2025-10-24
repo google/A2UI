@@ -24,18 +24,26 @@ import { Renderer } from './rendering/renderer';
   imports: [Renderer],
   template: `
     @let tabs = this.tabs();
-  
-    @for (tab of tabs; track tab) {
-      <button 
-        (click)="selectedIndex.set($index)"
-        [disabled]="selectedIndex() === $index">{{resolvePrimitive(tab.title)}}</button>
-    }
 
-    <ng-container 
-      a2ui-renderer 
-      [surfaceId]="surfaceId()!" 
-      [component]="tabs[selectedIndex()].child"/>
+    <section>
+      @for (tab of tabs; track tab) {
+        <button
+          (click)="selectedIndex.set($index)"
+          [disabled]="selectedIndex() === $index">{{resolvePrimitive(tab.title)}}</button>
+      }
+
+      <ng-container
+        a2ui-renderer
+        [surfaceId]="surfaceId()!"
+        [component]="tabs[selectedIndex()].child"/>
+    </section>
   `,
+  styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+    }
+  `
 })
 export class Tabs extends DynamicComponent {
   protected selectedIndex = signal(0);

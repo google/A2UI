@@ -28,6 +28,16 @@ import { v0_8 } from '@a2ui/web-lib';
     '(input)': 'handleInput($event)',
     '[value]': 'inputValue()',
   },
+  styles: `
+    :host {
+      display: block;
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  `
 })
 export class DatetimeInput extends DynamicComponent {
   readonly value = input.required<v0_8.Primitives.StringValue | null>();

@@ -24,9 +24,25 @@ import { v0_8 } from '@a2ui/web-lib';
     @let resolvedUrl = this.resolvedUrl(); 
     
     @if (resolvedUrl) {
-      <audio controls [src]="resolvedUrl"></audio>
+      <section>
+        <audio controls [src]="resolvedUrl"></audio>
+      </section>
     }
   `,
+  styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    audio {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  `
 })
 export class Audio extends DynamicComponent {
   readonly url = input.required<v0_8.Primitives.StringValue | null>();

@@ -22,6 +22,7 @@ import {
   inject,
   input,
   inputBinding,
+  OnDestroy,
   Type,
   untracked,
   ViewContainerRef,
@@ -32,10 +33,11 @@ import { Catalog } from './types';
 @Directive({
   selector: 'ng-container[a2ui-renderer]',
 })
-export class Renderer {
+export class Renderer implements OnDestroy {
   private viewContainerRef = inject(ViewContainerRef);
   private catalog = inject(Catalog);
   private currentRef: ComponentRef<unknown> | null = null;
+  private isDestroyed = false;
 
   readonly surfaceId = input.required<v0_8.Types.SurfaceID>();
   readonly component = input.required<v0_8.Types.AnyComponentNode>();
@@ -46,6 +48,11 @@ export class Renderer {
       const component = this.component();
       untracked(() => this.render(surfaceId, component));
     });
+  }
+
+  ngOnDestroy(): void {
+    this.isDestroyed = true;
+    this.clear();
   }
 
   private async render(surfaceId: v0_8.Types.SurfaceID, component: v0_8.Types.AnyComponentNode) {
@@ -60,9 +67,9 @@ export class Renderer {
       componentBindings = config.bindings(component as any);
     }
 
-    this.currentRef?.destroy();
+    this.clear();
 
-    if (newComponent) {
+    if (newComponent && !this.isDestroyed) {
       const bindings = [
         inputBinding('surfaceId', () => surfaceId),
         inputBinding('component', () => component),
@@ -76,8 +83,11 @@ export class Renderer {
         bindings,
         injector: this.viewContainerRef.injector,
       });
-    } else {
-      this.currentRef = null;
     }
+  }
+
+  private clear() {
+    this.currentRef?.destroy();
+    this.currentRef = null;
   }
 }

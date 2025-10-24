@@ -22,18 +22,73 @@ import { Renderer } from './rendering/renderer';
 @Component({
   selector: 'a2ui-column',
   imports: [Renderer],
+  host: {
+    '[attr.alignment]': 'alignment()',
+    '[attr.distribution]': 'distribution()',
+  },
   styles: `
     :host {
-      display: block;
-      outline: solid 1px red;
-      padding: 20px;
+      display: flex;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    section {
+      display: grid;
+      grid-auto-rows: auto;
+      min-height: 0;
+      overflow: auto;
+      width: 100%;
+    }
+
+    :host[alignment="start"] section {
+      align-items: start;
+    }
+
+    :host[alignment="center"] section {
+      align-items: center;
+    }
+
+    :host[alignment="end"] section {
+      align-items: end;
+    }
+
+    :host[alignment="stretch"] section {
+      align-items: stretch;
+    }
+
+    :host[distribution="start"] section {
+      justify-content: start;
+    }
+
+    :host[distribution="center"] section {
+      justify-content: center;
+    }
+
+    :host[distribution="end"] section {
+      justify-content: end;
+    }
+
+    :host[distribution="spaceBetween"] section {
+      justify-content: space-between;
+    }
+
+    :host[distribution="spaceAround"] section {
+      justify-content: space-around;
+    }
+
+    :host[distribution="spaceEvenly"] section {
+      justify-content: space-evenly;
     }
   `,
   template: `
     <!-- TODO: implement theme -->
-    @for (child of component().properties.children; track child) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child"/>
-    }
+    <section>
+      @for (child of component().properties.children; track child) {
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      }
+    </section>
   `,
 })
 export class Column extends DynamicComponent<v0_8.Types.ColumnNode> {

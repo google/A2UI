@@ -21,8 +21,15 @@ import { Surface } from '../catalog/surface';
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  styleUrl: './app.css',
   imports: [Surface],
+  styles: `
+    :host {
+      display: block;
+      max-width: 640px;
+      margin: 0px auto;
+      min-height: 100%;
+    }
+  `,
 })
 export class App {
   protected processor = inject(ModelProcessor);
