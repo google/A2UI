@@ -225,8 +225,8 @@ export class Root extends SignalWatcher(LitElement) {
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath ?? ""}
-            .label=${component.properties.label}
             .action=${component.properties.action}
+            .childComponents=${[component.properties.child]}
           ></a2ui-button>`;
         }
 

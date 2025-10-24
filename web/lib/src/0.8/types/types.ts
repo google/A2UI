@@ -362,7 +362,6 @@ export type ResolvedImage = Image;
 export type ResolvedVideo = Video;
 export type ResolvedAudioPlayer = AudioPlayer;
 export type ResolvedDivider = Divider;
-export type ResolvedButton = Button;
 export type ResolvedCheckbox = Checkbox;
 export type ResolvedTextField = TextField;
 export type ResolvedDateTimeInput = DateTimeInput;
@@ -391,6 +390,11 @@ export interface ResolvedColumn {
     | "spaceAround"
     | "spaceEvenly";
   alignment?: "start" | "center" | "end" | "stretch";
+}
+
+export interface ResolvedButton {
+  child: AnyComponentNode;
+  action: Button["action"];
 }
 
 export interface ResolvedList {

@@ -124,7 +124,11 @@ export interface Modal {
 }
 
 export interface Button {
-  label: StringValue;
+  /**
+   * The ID of the component to display as the button's content.
+   */
+  child: string;
+
   /**
    * Represents a user-initiated action.
    */
