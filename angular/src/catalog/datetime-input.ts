@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import { computed, Directive, input } from '@angular/core';
+import { computed, Component, input } from '@angular/core';
 import { DynamicComponent } from './rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
-@Directive({
+@Component({
   selector: 'input[a2ui-datetime-input]',
+  template: '',
   host: {
     autocomplete: 'off',
     type: 'datetime-local',

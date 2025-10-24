@@ -16,9 +16,12 @@
 
 import { Component } from '@angular/core';
 import { DynamicComponent } from './rendering/dynamic-component';
+import { v0_8 } from '@a2ui/web-lib';
+import { Renderer } from './rendering/renderer';
 
 @Component({
   selector: 'a2ui-card',
+  imports: [Renderer],
   styles: `
     :host {
       display: block;
@@ -28,9 +31,14 @@ import { DynamicComponent } from './rendering/dynamic-component';
   `,
   template: `
     <!-- TODO: implement theme -->
-    <ng-content></ng-content>
+    @let properties = component().properties;
+    @let children = properties.children || [properties.child];
+
+    @for (child of children; track child) {
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child"/>
+    }
   `,
 })
-export class Card extends DynamicComponent {
+export class Card extends DynamicComponent<v0_8.Types.CardNode> {
   // TODO: theme?
 }
