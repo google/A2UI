@@ -21,8 +21,10 @@ import { v0_8 } from '@a2ui/web-lib';
 @Component({
   selector: 'a2ui-audio',
   template: `
-    @let resolvedUrl = this.resolvedUrl(); @if (resolvedUrl) {
-    <audio controls [src]="resolvedUrl"></audio>
+    @let resolvedUrl = this.resolvedUrl(); 
+    
+    @if (resolvedUrl) {
+      <audio controls [src]="resolvedUrl"></audio>
     }
   `,
 })

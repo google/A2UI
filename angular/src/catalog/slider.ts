@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import { Directive, computed, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { DynamicComponent } from './rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
-@Directive({
+@Component({
   selector: 'input[a2ui-slider]',
+  template: '',
   host: {
     autocomplete: 'off',
     type: 'range',

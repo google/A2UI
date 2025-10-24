@@ -16,9 +16,12 @@
 
 import { Component, input } from '@angular/core';
 import { DynamicComponent } from './rendering/dynamic-component';
+import { Renderer } from './rendering/renderer';
+import { v0_8 } from '@a2ui/web-lib';
 
 @Component({
   selector: 'a2ui-list',
+  imports: [Renderer],
   styles: `
     :host {
       display: block;
@@ -28,10 +31,12 @@ import { DynamicComponent } from './rendering/dynamic-component';
   `,
   template: `
     <!-- TODO: implement theme -->
-    <ng-content></ng-content>
+    @for (child of component().properties.children; track child) {
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child"/>
+    }
   `,
 })
-export class List extends DynamicComponent {
+export class List extends DynamicComponent<v0_8.Types.ListNode> {
   readonly direction = input<'vertical' | 'horizontal'>('vertical');
 
   // TODO: theme?

@@ -31,7 +31,10 @@ import { Renderer } from './rendering/renderer';
         [disabled]="selectedIndex() === $index">{{resolvePrimitive(tab.title)}}</button>
     }
 
-    <a2ui-renderer [surfaceId]="surfaceId()!" [component]="tabs[selectedIndex()].child"/>
+    <ng-container 
+      a2ui-renderer 
+      [surfaceId]="surfaceId()!" 
+      [component]="tabs[selectedIndex()].child"/>
   `,
 })
 export class Tabs extends DynamicComponent {

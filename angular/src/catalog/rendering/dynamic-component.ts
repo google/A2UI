@@ -19,10 +19,12 @@ import { v0_8 } from '@a2ui/web-lib';
 import { ModelProcessor } from '../../app/processor';
 
 @Directive()
-export abstract class DynamicComponent {
+export abstract class DynamicComponent<
+  T extends v0_8.Types.AnyComponentNode = v0_8.Types.AnyComponentNode
+> {
   protected processor = inject(ModelProcessor);
   readonly surfaceId = input.required<v0_8.Types.SurfaceID | null>();
-  readonly component = input.required<v0_8.Types.AnyComponentNode>();
+  readonly component = input.required<T>();
 
   protected async sendAction(action: v0_8.Types.Action) {
     const component = this.component();

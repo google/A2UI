@@ -14,13 +14,20 @@
  limitations under the License.
  */
 
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { Catalog } from '../catalog/rendering/types';
+import { DEFAULT_CATALOG } from '../catalog/default';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideClientHydration(withEventReplay())
-  ]
+    provideClientHydration(withEventReplay()),
+    { provide: Catalog, useValue: DEFAULT_CATALOG },
+  ],
 };

@@ -26,7 +26,7 @@ import { v0_8 } from '@a2ui/web-lib';
     @let surface = this.surface(); 
     
     @if (surfaceId && surface) {
-      <a2ui-renderer [surfaceId]="surfaceId" [component]="surface.componentTree!" />
+      <ng-container a2ui-renderer [surfaceId]="surfaceId" [component]="surface.componentTree!" />
     }
   `,
 })

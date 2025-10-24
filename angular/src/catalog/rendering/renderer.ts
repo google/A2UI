@@ -14,50 +14,70 @@
  limitations under the License.
  */
 
-import { Component, input } from '@angular/core';
+import {
+  Binding,
+  ComponentRef,
+  Directive,
+  effect,
+  inject,
+  input,
+  inputBinding,
+  Type,
+  untracked,
+  ViewContainerRef,
+} from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
-import { Column } from '../column';
-import { Row } from '../row';
-import { Heading } from '../heading';
-import { Text } from '../text';
-import { List } from '../list';
-import { Card } from '../card';
-import { Image } from '../image';
-import { Button } from '../button';
-import { Video } from '../video';
-import { Audio } from '../audio';
-import { Divider } from '../divider';
-import { MultipleChoice } from '../multiple-choice';
-import { TextField } from '../text-field';
-import { DatetimeInput } from '../datetime-input';
-import { Checkbox } from '../checkbox';
-import { Slider } from '../slider';
-import { Tabs } from '../tabs';
+import { Catalog } from './types';
 
-@Component({
-  selector: 'a2ui-renderer',
-  templateUrl: 'renderer.html',
-  imports: [
-    Audio,
-    Button,
-    Card,
-    Checkbox,
-    Column,
-    DatetimeInput,
-    Divider,
-    Heading,
-    Image,
-    List,
-    MultipleChoice,
-    Row,
-    Slider,
-    Tabs,
-    Text,
-    TextField,
-    Video,
-  ],
+@Directive({
+  selector: 'ng-container[a2ui-renderer]',
 })
 export class Renderer {
+  private viewContainerRef = inject(ViewContainerRef);
+  private catalog = inject(Catalog);
+  private currentRef: ComponentRef<unknown> | null = null;
+
   readonly surfaceId = input.required<v0_8.Types.SurfaceID>();
   readonly component = input.required<v0_8.Types.AnyComponentNode>();
+
+  constructor() {
+    effect(() => {
+      const surfaceId = this.surfaceId();
+      const component = this.component();
+      untracked(() => this.render(surfaceId, component));
+    });
+  }
+
+  private async render(surfaceId: v0_8.Types.SurfaceID, component: v0_8.Types.AnyComponentNode) {
+    const config = this.catalog[component.type];
+    let newComponent: Type<unknown> | null = null;
+    let componentBindings: Binding[] | null = null;
+
+    if (typeof config === 'function') {
+      newComponent = await config();
+    } else if (typeof config === 'object') {
+      newComponent = await config.type();
+      componentBindings = config.bindings(component as any);
+    }
+
+    this.currentRef?.destroy();
+
+    if (newComponent) {
+      const bindings = [
+        inputBinding('surfaceId', () => surfaceId),
+        inputBinding('component', () => component),
+      ];
+
+      if (componentBindings) {
+        bindings.push(...componentBindings);
+      }
+
+      this.currentRef = this.viewContainerRef.createComponent(newComponent, {
+        bindings,
+        injector: this.viewContainerRef.injector,
+      });
+    } else {
+      this.currentRef = null;
+    }
+  }
 }

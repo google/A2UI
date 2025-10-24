@@ -17,9 +17,11 @@
 import { Component, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from './rendering/dynamic-component';
+import { Renderer } from './rendering/renderer';
 
 @Component({
   selector: 'a2ui-column',
+  imports: [Renderer],
   styles: `
     :host {
       display: block;
@@ -29,10 +31,12 @@ import { DynamicComponent } from './rendering/dynamic-component';
   `,
   template: `
     <!-- TODO: implement theme -->
-    <ng-content></ng-content>
+    @for (child of component().properties.children; track child) {
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child"/>
+    }
   `,
 })
-export class Column extends DynamicComponent {
+export class Column extends DynamicComponent<v0_8.Types.ColumnNode> {
   readonly alignment = input<v0_8.Types.ResolvedColumn['alignment']>('stretch');
   readonly distribution = input<v0_8.Types.ResolvedColumn['distribution']>('start');
 
