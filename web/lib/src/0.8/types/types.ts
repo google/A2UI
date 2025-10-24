@@ -380,11 +380,6 @@ export type ResolvedDateTimeInput = DateTimeInput;
 export type ResolvedMultipleChoice = MultipleChoice;
 export type ResolvedSlider = Slider;
 
-export interface ResolvedButton {
-  child: AnyComponentNode;
-  action: Button["action"];
-}
-
 export interface ResolvedRow {
   children: AnyComponentNode[];
   distribution?:
