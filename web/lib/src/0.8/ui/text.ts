@@ -62,7 +62,7 @@ export class Text extends Root {
           this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
         );
 
-        if (textValue === null) {
+        if (textValue === null || textValue === undefined) {
           return html`(empty)`;
         }
 

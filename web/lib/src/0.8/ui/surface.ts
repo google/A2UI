@@ -96,7 +96,9 @@ export class Surface extends Root {
       style=${styleMap(styles)}
       .surfaceId=${this.surfaceId}
       .processor=${this.processor}
-      .childComponents=${[this.surface.componentTree]}
+      .childComponents=${this.surface.componentTree
+        ? [this.surface.componentTree]
+        : null}
     ></a2ui-root>`;
   }
 
