@@ -730,9 +730,9 @@ RESTAURANT_UI_EXAMPLES = """
   {{ "dataModelUpdate": {{
     "surfaceId": "default",
     "path": "/",
-    "contents": {{
-      "items": [] // Populate this with restaurant data
-    }}
+    "contents": [
+      {{ "key": "items", "valueList": [] }} // Populate this with restaurant data
+    ]
   }} }}
 ]
 ---END SINGLE_COLUMN_LIST_EXAMPLE---
@@ -771,9 +771,9 @@ RESTAURANT_UI_EXAMPLES = """
   {{ "dataModelUpdate": {{
     "surfaceId": "default",
     "path": "/",
-    "contents": {{
-      "items": [] // Populate this with restaurant data
-    }}
+    "contents": [
+      {{ "key": "items", "valueList": [] }} // Populate this with restaurant data
+    ]
   }} }}
 ]
 ---END TWO_COLUMN_LIST_EXAMPLE---
@@ -798,15 +798,15 @@ RESTAURANT_UI_EXAMPLES = """
   {{ "dataModelUpdate": {{
     "surfaceId": "booking-form",
     "path": "/",
-    "contents": {{
-      "title": "Book a Table at [RestaurantName]",
-      "address": "[Restaurant Address]",
-      "restaurantName": "[RestaurantName]",
-      "partySize": "2",
-      "reservationTime": "",
-      "dietary": "",
-      "imageUrl": ""
-    }}
+    "contents": [
+      {{ "key": "title", "valueString": "Book a Table at [RestaurantName]" }},
+      {{ "key": "address", "valueString": "[Restaurant Address]" }},
+      {{ "key": "restaurantName", "valueString": "[RestaurantName]" }},
+      {{ "key": "partySize", "valueString": "2" }},
+      {{ "key": "reservationTime", "valueString": "" }},
+      {{ "key": "dietary", "valueString": "" }},
+      {{ "key": "imageUrl", "valueString": "" }}
+    ]
   }} }}
 ]
 ---END BOOKING_FORM_EXAMPLE---
@@ -832,12 +832,12 @@ RESTAURANT_UI_EXAMPLES = """
   {{ "dataModelUpdate": {{
     "surfaceId": "confirmation",
     "path": "/",
-    "contents": {{
-      "title": "Booking at [RestaurantName]",
-      "bookingDetails": "[PartySize] people at [Time]",
-      "dietaryRequirements": "Dietary Requirements: [Requirements]",
-      "imageUrl": "[ImageUrl]"
-    }}
+    "contents": [
+      {{ "key": "title", "valueString": "Booking at [RestaurantName]" }},
+      {{ "key": "bookingDetails", "valueString": "[PartySize] people at [Time]" }},
+      {{ "key": "dietaryRequirements", "valueString": "Dietary Requirements: [Requirements]" }},
+      {{ "key": "imageUrl", "valueString": "[ImageUrl]" }}
+    ]
   }} }}
 ]
 ---END CONFIRMATION_EXAMPLE---
@@ -868,7 +868,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
 
     --- UI TEMPLATE RULES ---
-    -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents.items` field.
+    -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueList` for the "items" key).
     -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
     -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
     -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
