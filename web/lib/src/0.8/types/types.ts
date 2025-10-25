@@ -182,7 +182,6 @@ export type ComponentProperties = {
 /** A raw component instance from a SurfaceUpdate message. */
 export interface ComponentInstance {
   id: string;
-  componentProperties?: ComponentProperties;
   component?: ComponentProperties;
 }
 

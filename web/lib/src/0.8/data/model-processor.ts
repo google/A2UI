@@ -465,7 +465,7 @@ export class A2UIModelProcessor {
 
     const componentData = components.get(baseComponentId)!;
     const componentProps =
-      componentData.componentProperties ?? componentData.component ?? {};
+      componentData.component ?? {};
     const componentType = Object.keys(componentProps)[0];
     const unresolvedProperties =
       componentProps[componentType as keyof typeof componentProps];
