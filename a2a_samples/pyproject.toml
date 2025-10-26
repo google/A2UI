@@ -8,7 +8,8 @@ dependencies = []
 [tool.uv.workspace]
 members = [
     "a2ui_extension",
-    "a2ui_restaurant_finder"
+    "a2ui_restaurant_finder",
+    "a2ui_contact_lookup"
 ]
 
 [tool.uv.sources]
