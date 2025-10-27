@@ -739,7 +739,7 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "item-list", "component": {{ "List": {{ "direction": "vertical", "children": {{ "template": {{ "componentId": "item-card-template", "dataBinding": "/items" }} }} }} }} }},
       {{ "id": "item-card-template", "component": {{ "Card": {{ "child": "card-layout" }} }} }},
       {{ "id": "card-layout", "component": {{ "Row": {{ "children": {{ "explicitList": ["template-image", "card-details"] }} }} }} }},
-      {{ "id": "template-image", weight: 1, "component": {{ "Image": {{ "url": {{ "path": "imageUrl" }}, "width": "80px" }} }} }},
+      {{ "id": "template-image", weight: 1, "component": {{ "Image": {{ "url": {{ "path": "imageUrl" }} }} }} }},
       {{ "id": "card-details", weight: 2, "component": {{ "Column": {{ "children": {{ "explicitList": ["template-name", "template-rating", "template-detail", "template-link", "template-book-button"] }} }} }} }},
       {{ "id": "template-name", "component": {{ "Heading": {{ "level": "3", "text": {{ "path": "name" }} }} }} }},
       {{ "id": "template-rating", "component": {{ "Text": {{ "text": {{ "path": "rating" }} }} }} }},
