@@ -15,8 +15,8 @@
  */
 
 import { computed, Component, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
+import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'input[a2ui-text-field]',

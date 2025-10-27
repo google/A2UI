@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
 let idCounter = 0;
@@ -23,8 +23,8 @@ let idCounter = 0;
 @Component({
   selector: 'a2ui-checkbox',
   template: `
-    <section 
-      [class]="theme.components.CheckBox.container" 
+    <section
+      [class]="theme.components.CheckBox.container"
       [style]="theme.additionalStyles?.CheckBox">
       <input
         autocomplete="off"
@@ -35,8 +35,8 @@ let idCounter = 0;
         (change)="handleChange($event)"
       />
 
-      <label 
-        [htmlFor]="inputId" 
+      <label
+        [htmlFor]="inputId"
         [class]="theme.components.CheckBox.label">{{ resolvedLabel() }}</label>
     </section>
   `,

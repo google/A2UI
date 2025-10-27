@@ -15,14 +15,14 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import { Renderer } from './rendering/renderer';
 import { v0_8 } from '@a2ui/web-lib';
+import { Renderer } from '../rendering/renderer';
 
 @Component({
   selector: 'a2ui-surface',
   imports: [Renderer],
   template: `
-    @let surfaceId = this.surfaceId(); 
+    @let surfaceId = this.surfaceId();
     @let surface = this.surface();
 
     @if (surfaceId && surface) {

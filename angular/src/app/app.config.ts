@@ -20,11 +20,10 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { Catalog } from '../catalog/rendering/catalog';
-import { DEFAULT_CATALOG } from '../catalog/default';
+import { A2UIClient, Catalog, DEFAULT_CATALOG, Theme } from '@a2ui/angular';
 import { IMAGE_CONFIG } from '@angular/common';
 import { theme } from './theme';
-import { Theme } from '../catalog/rendering/theming';
+import { Client } from './client';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     { provide: Catalog, useValue: DEFAULT_CATALOG },
     { provide: Theme, useValue: theme },
+    { provide: A2UIClient, useExisting: Client },
     {
       provide: IMAGE_CONFIG,
       useValue: {

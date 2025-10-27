@@ -14,20 +14,25 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { Component, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
+import { DynamicComponent } from '../rendering/dynamic-component';
+import { Renderer } from '../rendering/renderer';
 
 @Component({
-  selector: 'a2ui-video',
+  selector: 'button[a2ui-button]',
+  imports: [Renderer],
+  host: {
+    '(click)': 'handleClick()',
+    '[class]': 'theme.components.Button',
+    '[style]': 'theme.additionalStyles?.Button',
+  },
   template: `
-    @let resolvedUrl = this.resolvedUrl(); 
-    
-    @if (resolvedUrl) {
-      <section [class]="theme.components.Video" [style]="theme.additionalStyles?.Video">
-        <video controls [src]="resolvedUrl"></video>
-      </section>
-    }
+    <ng-container
+      a2ui-renderer
+      [surfaceId]="surfaceId()!"
+      [component]="component().properties.child"
+    />
   `,
   styles: `
     :host {
@@ -36,15 +41,16 @@ import { v0_8 } from '@a2ui/web-lib';
       min-height: 0;
       overflow: auto;
     }
-
-    video {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-    }
-  `
+  `,
 })
-export class Video extends DynamicComponent {
-  readonly url = input.required<v0_8.Primitives.StringValue | null>();
-  protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
+export class Button extends DynamicComponent<v0_8.Types.ButtonNode> {
+  readonly action = input.required<v0_8.Types.Action | null>();
+
+  protected handleClick() {
+    const action = this.action();
+
+    if (action) {
+      super.sendAction(action);
+    }
+  }
 }

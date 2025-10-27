@@ -14,14 +14,21 @@
  limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { Component, computed, input } from '@angular/core';
+import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
-import { Renderer } from './rendering/renderer';
 
 @Component({
-  selector: 'a2ui-card',
-  imports: [Renderer],
+  selector: 'a2ui-video',
+  template: `
+    @let resolvedUrl = this.resolvedUrl();
+
+    @if (resolvedUrl) {
+      <section [class]="theme.components.Video" [style]="theme.additionalStyles?.Video">
+        <video controls [src]="resolvedUrl"></video>
+      </section>
+    }
+  `,
   styles: `
     :host {
       display: block;
@@ -30,22 +37,14 @@ import { Renderer } from './rendering/renderer';
       overflow: auto;
     }
 
-    section {
-      display: flex;
-      height: 100%;
-      min-height: 0;
-      overflow: auto;
+    video {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
     }
-  `,
-  template: `
-    @let properties = component().properties; 
-    @let children = properties.children || [properties.child];
-
-    <section [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
-      @for (child of children; track child) {
-        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
-      }
-    </section>
-  `,
+  `
 })
-export class Card extends DynamicComponent<v0_8.Types.CardNode> {}
+export class Video extends DynamicComponent {
+  readonly url = input.required<v0_8.Primitives.StringValue | null>();
+  protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
+}

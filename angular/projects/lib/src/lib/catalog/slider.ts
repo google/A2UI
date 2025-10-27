@@ -14,36 +14,37 @@
  limitations under the License.
  */
 
-import { computed, Component, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { Component, computed, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
+import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
-  selector: 'input[a2ui-datetime-input]',
+  selector: 'input[a2ui-slider]',
   template: '',
   host: {
     autocomplete: 'off',
-    type: 'datetime-local',
-    placeholder: 'Date & Time',
+    type: 'range',
+    '[value]': 'resolvedValue()',
+    '[min]': 'minValue()',
+    '[max]': 'maxValue()',
     '(input)': 'handleInput($event)',
-    '[value]': 'inputValue()',
-    '[class]': 'theme.components.DateTimeInput',
-    '[style]': 'theme.additionalStyles?.DateTimeInput',
+    '[class]': 'theme.components.Slider',
+    '[style]': 'theme.additionalStyles?.Slider',
   },
   styles: `
     :host {
       display: block;
-      border-radius: 8px;
-      padding: 8px;
-      border: 1px solid #ccc;
       width: 100%;
       box-sizing: border-box;
     }
   `
 })
-export class DatetimeInput extends DynamicComponent {
-  readonly value = input.required<v0_8.Primitives.StringValue | null>();
-  protected inputValue = computed(() => super.resolvePrimitive(this.value()) || '');
+export class Slider extends DynamicComponent {
+  readonly value = input.required<v0_8.Primitives.NumberValue | null>();
+  readonly minValue = input.required<number | undefined>();
+  readonly maxValue = input.required<number | undefined>();
+
+  protected resolvedValue = computed(() => super.resolvePrimitive(this.value()) ?? 0);
 
   protected handleInput(event: Event) {
     const path = this.value()?.path;
@@ -52,6 +53,6 @@ export class DatetimeInput extends DynamicComponent {
       return;
     }
 
-    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
+    this.processor.setData(this.component(), path, event.target.valueAsNumber, this.surfaceId());
   }
 }

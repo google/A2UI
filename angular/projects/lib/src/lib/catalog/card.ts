@@ -14,26 +14,14 @@
  limitations under the License.
  */
 
-import { Component, input } from '@angular/core';
+import { Component } from '@angular/core';
+import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
-import { DynamicComponent } from './rendering/dynamic-component';
-import { Renderer } from './rendering/renderer';
+import { Renderer } from '../rendering/renderer';
 
 @Component({
-  selector: 'button[a2ui-button]',
+  selector: 'a2ui-card',
   imports: [Renderer],
-  host: {
-    '(click)': 'handleClick()',
-    '[class]': 'theme.components.Button',
-    '[style]': 'theme.additionalStyles?.Button',
-  },
-  template: `
-    <ng-container
-      a2ui-renderer
-      [surfaceId]="surfaceId()!"
-      [component]="component().properties.child"
-    />
-  `,
   styles: `
     :host {
       display: block;
@@ -41,16 +29,23 @@ import { Renderer } from './rendering/renderer';
       min-height: 0;
       overflow: auto;
     }
+
+    section {
+      display: flex;
+      height: 100%;
+      min-height: 0;
+      overflow: auto;
+    }
+  `,
+  template: `
+    @let properties = component().properties;
+    @let children = properties.children || [properties.child];
+
+    <section [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
+      @for (child of children; track child) {
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      }
+    </section>
   `,
 })
-export class Button extends DynamicComponent<v0_8.Types.ButtonNode> {
-  readonly action = input.required<v0_8.Types.Action | null>();
-
-  protected handleClick() {
-    const action = this.action();
-
-    if (action) {
-      super.sendAction(action);
-    }
-  }
-}
+export class Card extends DynamicComponent<v0_8.Types.CardNode> {}

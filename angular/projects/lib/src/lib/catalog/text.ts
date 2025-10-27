@@ -14,26 +14,29 @@
  limitations under the License.
  */
 
-import { Component, inject } from '@angular/core';
-import { ModelProcessor, Surface } from '@a2ui/angular';
+import { Component, computed, input } from '@angular/core';
+import { DynamicComponent } from '../rendering/dynamic-component';
+import { v0_8 } from '@a2ui/web-lib';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.html',
-  imports: [Surface],
+  selector: 'a2ui-text',
+  template: `{{ resolvedText() }}`,
+  host: {
+    '[class]': 'theme.components.Text',
+    '[style]': 'theme.additionalStyles?.Text',
+  },
   styles: `
     :host {
       display: block;
-      max-width: 640px;
-      margin: 0px auto;
-      min-height: 100%;
+      flex: var(--weight);
     }
   `,
 })
-export class App {
-  protected processor = inject(ModelProcessor);
+export class Text extends DynamicComponent {
+  readonly text = input.required<v0_8.Primitives.StringValue | null>();
 
-  protected makeRequest() {
-    this.processor.makeRequest('Top 5 Chinese restaurants in New York.');
-  }
+  protected resolvedText = computed(() => {
+    // TODO: Markdown?
+    return super.resolvePrimitive(this.text()) ?? '(empty)';
+  });
 }

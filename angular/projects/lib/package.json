@@ -1,0 +1,13 @@
+{
+  "name": "@a2ui/angular",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@a2ui/web-lib": "0.1.0",
+    "@angular/common": "^20.3.0",
+    "@angular/core": "^20.3.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

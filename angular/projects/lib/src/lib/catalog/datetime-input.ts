@@ -14,37 +14,36 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { computed, Component, input } from '@angular/core';
+import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
 @Component({
-  selector: 'input[a2ui-slider]',
+  selector: 'input[a2ui-datetime-input]',
   template: '',
   host: {
     autocomplete: 'off',
-    type: 'range',
-    '[value]': 'resolvedValue()',
-    '[min]': 'minValue()',
-    '[max]': 'maxValue()',
+    type: 'datetime-local',
+    placeholder: 'Date & Time',
     '(input)': 'handleInput($event)',
-    '[class]': 'theme.components.Slider',
-    '[style]': 'theme.additionalStyles?.Slider',
+    '[value]': 'inputValue()',
+    '[class]': 'theme.components.DateTimeInput',
+    '[style]': 'theme.additionalStyles?.DateTimeInput',
   },
   styles: `
     :host {
       display: block;
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid #ccc;
       width: 100%;
       box-sizing: border-box;
     }
   `
 })
-export class Slider extends DynamicComponent {
-  readonly value = input.required<v0_8.Primitives.NumberValue | null>();
-  readonly minValue = input.required<number | undefined>();
-  readonly maxValue = input.required<number | undefined>();
-
-  protected resolvedValue = computed(() => super.resolvePrimitive(this.value()) ?? 0);
+export class DatetimeInput extends DynamicComponent {
+  readonly value = input.required<v0_8.Primitives.StringValue | null>();
+  protected inputValue = computed(() => super.resolvePrimitive(this.value()) || '');
 
   protected handleInput(event: Event) {
     const path = this.value()?.path;
@@ -53,6 +52,6 @@ export class Slider extends DynamicComponent {
       return;
     }
 
-    this.processor.setData(this.component(), path, event.target.valueAsNumber, this.surfaceId());
+    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
   }
 }

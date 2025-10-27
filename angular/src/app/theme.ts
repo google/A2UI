@@ -14,8 +14,8 @@
  limitations under the License.
  */
 
+import { themeMerge } from '@a2ui/angular';
 import { v0_8 } from '@a2ui/web-lib';
-import { themeMerge } from '../catalog/rendering/theming';
 
 /** Elements */
 

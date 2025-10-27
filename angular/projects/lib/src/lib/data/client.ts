@@ -14,24 +14,23 @@
  limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { InjectionToken } from '@angular/core';
+import { v0_8 } from '@a2ui/web-lib';
 
-@Component({
-  selector: 'a2ui-divider',
-  template: '<hr [class]="theme.components.Divider" [style]="theme.additionalStyles?.Divider"/>',
-  styles: `
-    :host {
-      display: block;
-      min-height: 0;
-      overflow: auto;
-    }
+export interface A2TextPayload {
+  kind: 'text';
+  text: string;
+}
 
-    hr {
-      height: 1px;
-      background: #ccc;
-      border: none;
-    }
-  `,
-})
-export class Divider extends DynamicComponent {}
+export interface A2DataPayload {
+  kind: 'data';
+  data: v0_8.Types.ServerToClientMessage;
+}
+
+export type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | { error: string };
+
+export const A2UIClient = new InjectionToken<A2UIClient>('A2UIClient');
+
+export interface A2UIClient {
+  send(message: v0_8.Types.A2UIClientEventMessage): Promise<v0_8.Types.ServerToClientMessage[]>;
+}

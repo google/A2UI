@@ -15,10 +15,10 @@
  */
 
 import { Component, computed, input, signal } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
-import { Renderer } from './rendering/renderer';
-import { themeMerge } from './rendering/theming';
+import { DynamicComponent } from '../rendering/dynamic-component';
+import { Renderer } from '../rendering/renderer';
+import { themeMerge } from '../rendering/theming';
 
 @Component({
   selector: 'a2ui-tabs',
@@ -30,8 +30,8 @@ import { themeMerge } from './rendering/theming';
     <section [class]="theme.components.Tabs.container" [style]="theme.additionalStyles?.Tabs">
       <div [class]="theme.components.Tabs.element">
         @for (tab of tabs; track tab) {
-          <button 
-            (click)="this.selectedIndex.set($index)" 
+          <button
+            (click)="this.selectedIndex.set($index)"
             [disabled]="selectedIndex === $index"
             [class]="buttonClasses()[selectedIndex]">
             {{ resolvePrimitive(tab.title) }}

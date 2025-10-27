@@ -14,29 +14,24 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { Component } from '@angular/core';
+import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
-  selector: 'a2ui-text',
-  template: `{{ resolvedText() }}`,
-  host: {
-    '[class]': 'theme.components.Text',
-    '[style]': 'theme.additionalStyles?.Text',
-  },
+  selector: 'a2ui-divider',
+  template: '<hr [class]="theme.components.Divider" [style]="theme.additionalStyles?.Divider"/>',
   styles: `
     :host {
       display: block;
-      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    hr {
+      height: 1px;
+      background: #ccc;
+      border: none;
     }
   `,
 })
-export class Text extends DynamicComponent {
-  readonly text = input.required<v0_8.Primitives.StringValue | null>();
-
-  protected resolvedText = computed(() => {
-    // TODO: Markdown?
-    return super.resolvePrimitive(this.text()) ?? '(empty)';
-  });
-}
+export class Divider extends DynamicComponent {}

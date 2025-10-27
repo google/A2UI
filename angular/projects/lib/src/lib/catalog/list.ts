@@ -15,9 +15,9 @@
  */
 
 import { Component, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
-import { Renderer } from './rendering/renderer';
 import { v0_8 } from '@a2ui/web-lib';
+import { DynamicComponent } from '../rendering/dynamic-component';
+import { Renderer } from '../rendering/renderer';
 
 @Component({
   selector: 'a2ui-list',

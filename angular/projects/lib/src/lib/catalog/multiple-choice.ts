@@ -15,15 +15,15 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
+import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-multiple-choice',
   template: `
     <section>
-      <select 
-        (change)="handleChange($event)" 
+      <select
+        (change)="handleChange($event)"
         [value]="selectValue()"
         [class]="theme.components.MultipleChoice"
         [style]="theme.additionalStyles?.MultipleChoice">

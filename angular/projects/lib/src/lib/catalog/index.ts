@@ -14,26 +14,22 @@
  limitations under the License.
  */
 
-import { Component, inject } from '@angular/core';
-import { ModelProcessor, Surface } from '@a2ui/angular';
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.html',
-  imports: [Surface],
-  styles: `
-    :host {
-      display: block;
-      max-width: 640px;
-      margin: 0px auto;
-      min-height: 100%;
-    }
-  `,
-})
-export class App {
-  protected processor = inject(ModelProcessor);
-
-  protected makeRequest() {
-    this.processor.makeRequest('Top 5 Chinese restaurants in New York.');
-  }
-}
+export * from './audio';
+export * from './button';
+export * from './card';
+export * from './checkbox';
+export * from './column';
+export * from './datetime-input';
+export * from './default';
+export * from './divider';
+export * from './heading';
+export * from './image';
+export * from './list';
+export * from './multiple-choice';
+export * from './row';
+export * from './slider';
+export * from './surface';
+export * from './tabs';
+export * from './text';
+export * from './text-field';
+export * from './video';

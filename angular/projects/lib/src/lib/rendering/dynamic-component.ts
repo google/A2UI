@@ -16,8 +16,8 @@
 
 import { Directive, inject, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
-import { ModelProcessor } from '../../app/processor';
 import { Theme } from './theming';
+import { ModelProcessor } from '../data';
 
 @Directive()
 export abstract class DynamicComponent<

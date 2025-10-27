@@ -14,24 +14,12 @@
  limitations under the License.
  */
 
-import { v0_8 } from '@a2ui/web-lib';
 import { Injectable } from '@angular/core';
+import { A2AServerPayload, A2UIClient } from '@a2ui/angular';
+import { v0_8 } from '@a2ui/web-lib';
 
-type A2TextPayload = {
-  kind: 'text';
-  text: string;
-};
-
-type A2DataPayload = {
-  kind: 'data';
-  data: v0_8.Types.ServerToClientMessage;
-};
-
-type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | { error: string };
-
-// TODO: possibly dedupe this
 @Injectable({ providedIn: 'root' })
-export class A2UIClient {
+export class Client implements A2UIClient {
   async send(
     message: v0_8.Types.A2UIClientEventMessage
   ): Promise<v0_8.Types.ServerToClientMessage[]> {

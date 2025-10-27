@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, ElementRef, inject, input } from '@angular/core';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
 @Component({
@@ -36,8 +36,8 @@ import { v0_8 } from '@a2ui/web-lib';
     }
   `,
   template: `
-    @let resolvedUrl = this.resolvedUrl(); 
-    
+    @let resolvedUrl = this.resolvedUrl();
+
     @if (resolvedUrl) {
       <section [class]="classes()" [style]="theme.additionalStyles?.Image">
         <img [src]="resolvedUrl" />

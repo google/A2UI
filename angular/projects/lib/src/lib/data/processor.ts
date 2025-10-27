@@ -58,14 +58,12 @@ export class ModelProcessor {
       this.isLoading.set(false);
       messages = response;
     } catch (err) {
-      // this.snackbar(err as string, SnackType.ERROR);
       console.error(err);
       messages = [];
     } finally {
       this.isLoading.set(false);
     }
 
-    // this.#lastMessages = messages;
     this.processor.clearSurfaces();
     this.processor.processMessages(messages);
     return messages;

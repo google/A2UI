@@ -14,26 +14,6 @@
  limitations under the License.
  */
 
-import { Component, inject } from '@angular/core';
-import { ModelProcessor, Surface } from '@a2ui/angular';
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.html',
-  imports: [Surface],
-  styles: `
-    :host {
-      display: block;
-      max-width: 640px;
-      margin: 0px auto;
-      min-height: 100%;
-    }
-  `,
-})
-export class App {
-  protected processor = inject(ModelProcessor);
-
-  protected makeRequest() {
-    this.processor.makeRequest('Top 5 Chinese restaurants in New York.');
-  }
-}
+export * from './lib/catalog/index';
+export * from './lib/rendering/index';
+export * from './lib/data/index';

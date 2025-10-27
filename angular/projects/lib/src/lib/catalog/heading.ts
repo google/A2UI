@@ -16,7 +16,7 @@
 
 import { Component, computed, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
-import { DynamicComponent } from './rendering/dynamic-component';
+import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-heading',

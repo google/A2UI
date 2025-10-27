@@ -15,7 +15,7 @@
  */
 
 import { inputBinding } from '@angular/core';
-import { Catalog } from './rendering/catalog';
+import { Catalog } from '../rendering/catalog';
 import { Row } from './row';
 import { Column } from './column';
 import { Text } from './text';
