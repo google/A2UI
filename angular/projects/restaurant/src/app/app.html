@@ -14,14 +14,36 @@
  limitations under the License.
  -->
 
-<button (click)="makeRequest()">Test</button>
-
 @if (processor.isLoading()) {
-  Loading...
-} @else {
-  @let surfaces = processor.getSurfaces();
+  <div class="pending">
+    <span class="g-icon filled-heavy rotate">progress_activity</span>
+    Awaiting an answer...
+  </div>
+} @else if (!hasData()) {
+  <form (submit)="handleSubmit($event)">
+    <h1>Restaurant Finder</h1>
+    <div>
+      <input
+        required
+        value="Top 5 Chinese restaurants in New York."
+        autocomplete="off"
+        id="body"
+        name="body"
+        type="text"
+        [disabled]="processor.isLoading()"
+      />
 
-  @for (entry of surfaces; track $index) {
-    <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
-  }
+      <button type="submit" [disabled]="processor.isLoading()">
+        <span class="g-icon filled-heavy">send</span>
+      </button>
+    </div>
+  </form>
+} @else {
+  <div class="surfaces">
+    @let surfaces = processor.getSurfaces();
+
+    @for (entry of surfaces; track $index) {
+      <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
+    }
+  </div>
 }
