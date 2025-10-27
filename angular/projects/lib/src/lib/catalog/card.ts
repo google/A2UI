@@ -35,6 +35,7 @@ import { Renderer } from '../rendering/renderer';
       height: 100%;
       min-height: 0;
       overflow: auto;
+      box-sizing: border-box;
     }
   `,
   template: `

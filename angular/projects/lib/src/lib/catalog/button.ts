@@ -20,19 +20,20 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 
 @Component({
-  selector: 'button[a2ui-button]',
+  selector: 'a2ui-button',
   imports: [Renderer],
-  host: {
-    '(click)': 'handleClick()',
-    '[class]': 'theme.components.Button',
-    '[style]': 'theme.additionalStyles?.Button',
-  },
   template: `
-    <ng-container
-      a2ui-renderer
-      [surfaceId]="surfaceId()!"
-      [component]="component().properties.child"
-    />
+    <button
+      [class]="theme.components.Button"
+      [style]="theme.additionalStyles?.Button"
+      (click)="handleClick()"
+    >
+      <ng-container
+        a2ui-renderer
+        [surfaceId]="surfaceId()!"
+        [component]="component().properties.child"
+      />
+    </button>
   `,
   styles: `
     :host {

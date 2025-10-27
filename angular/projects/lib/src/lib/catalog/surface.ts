@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ViewEncapsulation } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { Renderer } from '../rendering/renderer';
 
@@ -29,16 +29,8 @@ import { Renderer } from '../rendering/renderer';
       <ng-container a2ui-renderer [surfaceId]="surfaceId" [component]="surface.componentTree!" />
     }
   `,
-  styles: `
-    :host {
-      display: flex;
-      min-height: 0;
-      overflow: auto;
-      max-height: 100%;
-      flex-direction: column;
-      gap: 16px;
-    }
-  `,
+  styleUrls: ['./surface.css', './classes.css'],
+  encapsulation: ViewEncapsulation.None,
   host: {
     '[style]': 'styles()',
   },
