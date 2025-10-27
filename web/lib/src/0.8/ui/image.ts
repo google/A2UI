@@ -22,11 +22,16 @@ import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { type Image as ImageType } from "../types/components.js";
+import * as Utils from "./utils/utils.js";
 
 @customElement("a2ui-image")
 export class Image extends Root {
   @property()
   accessor url: StringValue | null = null;
+
+  @property({ reflect: true, type: String })
+  accessor additionalRole: ImageType["role"] = "content";
 
   static styles = [
     Styles.all,
@@ -55,13 +60,21 @@ export class Image extends Root {
       return nothing;
     }
 
+    const render = (url: string) => {
+      if (this.additionalRole === "icon") {
+        return html`<span class="g-icon">${url}</span>`;
+      }
+
+      return html`<img src=${url} />`;
+    };
+
     if (this.url && typeof this.url === "object") {
       if ("literalString" in this.url) {
         const imageUrl = this.url.literalString ?? "";
-        return html`<img src=${imageUrl} />`;
+        return render(imageUrl);
       } else if ("literal" in this.url) {
         const imageUrl = this.url.literal ?? "";
-        return html`<img src=${imageUrl} />`;
+        return render(imageUrl);
       } else if (this.url && "path" in this.url && this.url.path) {
         if (!this.processor || !this.component) {
           return html`(no model)`;
@@ -79,39 +92,43 @@ export class Image extends Root {
         if (typeof imageUrl !== "string") {
           return html`Invalid image URL`;
         }
-        return html`<img src=${imageUrl} />`;
+        return render(imageUrl);
       }
     }
 
     return html`(empty)`;
   }
 
+  #renderIcon() {
+    return;
+  }
+
   render() {
-    const classes: Record<string, boolean> = {};
-    for (const [id, value] of Object.entries(this.theme.components.Image)) {
-      if (typeof value === "boolean") {
-        classes[id] = value;
-        continue;
+    let classes: Record<string, boolean> = {};
+
+    switch (this.additionalRole) {
+      case "icon": {
+        classes = Utils.merge(
+          this.theme.components.Image.all,
+          this.theme.components.Image.icon
+        );
+        break;
       }
 
-      let tagName = value;
-      if (tagName.endsWith(">")) {
-        tagName = tagName.replace(/\W*>$/, "").trim();
-        if (
-          this.parentElement &&
-          this.parentElement.tagName.toLocaleLowerCase() === tagName
-        ) {
-          classes[id] = true;
-        }
-      } else {
-        let parent = this.parentElement;
-        while (parent) {
-          if (tagName === parent.tagName.toLocaleLowerCase()) {
-            classes[id] = true;
-            break;
-          }
-          parent = parent.parentElement;
-        }
+      case "hero": {
+        classes = Utils.merge(
+          this.theme.components.Image.all,
+          this.theme.components.Image.hero
+        );
+        break;
+      }
+
+      default: {
+        classes = Utils.merge(
+          this.theme.components.Image.all,
+          this.theme.components.Image.content
+        );
+        break;
       }
     }
 

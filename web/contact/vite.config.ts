@@ -26,15 +26,11 @@ export default async () => {
   config();
 
   const entry: Record<string, string> = {
-    inspector: resolve(__dirname, "index.html"),
+    restaurant: resolve(__dirname, "index.html"),
   };
 
   return {
-    plugins: [
-      Middleware.ImageFallbackMiddleware.plugin(
-        "public/sample/forest_path.jpg"
-      ),
-    ],
+    plugins: [Middleware.A2AMiddleware.plugin()],
     build: {
       rollupOptions: {
         input: entry,

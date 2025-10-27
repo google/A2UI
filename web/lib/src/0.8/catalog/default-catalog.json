@@ -5,22 +5,20 @@
       "properties": {
         "text": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The text content for the heading. This can be a literal string or a reference to a value in the data model ('path', e.g. 'doc.title').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
         "level": {
           "type": "string",
-          "enum": ["1", "2", "3", "4", "5"],
-          "description": "The semantic importance level."
+          "description": "The heading level, corresponding to HTML heading tags (e.g., '1' for <h1>, '2' for <h2>).",
+          "enum": ["1", "2", "3", "4", "5"]
         }
       },
       "required": ["text"]
@@ -30,15 +28,13 @@
       "properties": {
         "text": {
           "type": "object",
-          "description": "The text to display. This property supports markdown for rich text formatting. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'hotel.description').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value. Markdown is supported."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         }
@@ -50,41 +46,41 @@
       "properties": {
         "url": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'thumbnail.url').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
         "fit": {
           "type": "string",
-          "enum": ["fill", "cover", "contain", "none", "scale-down"],
-          "default": "fill",
-          "description": "How the image should be inscribed into the box.\n- fill: Does not preserve the aspect ratio. The image is resized to fill the container (the image will be stretched or squeezed to fit).\n- cover: Preserves the aspect ratio, and the image fills the container. Cuts overflowing content if needed.\n- contain: Preserves the aspect ratio, and fits the image inside the container, without cutting - leaves empty space if needed.\n- none: The image is not resized.\n- scale-down: The image is scaled down to the smallest version of none or contain."
+          "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
+          "enum": ["contain", "cover", "fill", "none", "scale-down"]
+        },
+        "role": {
+          "type": "string",
+          "description": "Specifies more about the role of the image within the container.",
+          "enum": ["hero", "icon", "content"]
         }
       },
-      "required": ["url"]
+      "required": ["url", "role"]
     },
     "Video": {
       "type": "object",
       "properties": {
         "url": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'video.url').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         }
@@ -96,29 +92,25 @@
       "properties": {
         "url": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'song.url').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
         "description": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. 'song.title').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         }
@@ -130,27 +122,23 @@
       "properties": {
         "children": {
           "type": "object",
-          "description": "Defines the children of the container. You MUST define EITHER 'explicitList' OR 'template', but not both.",
+          "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
           "properties": {
             "explicitList": {
               "type": "array",
-              "description": "An explicit list of component instance IDs.",
               "items": {
-                "type": "string",
-                "description": "A reference to a component instance by its unique ID."
+                "type": "string"
               }
             },
             "template": {
               "type": "object",
-              "description": "A template to be rendered for each item in a data-bound list.",
+              "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
               "properties": {
                 "componentId": {
-                  "type": "string",
-                  "description": "The ID of the component (from the main 'components' list) to use as a template for each item."
+                  "type": "string"
                 },
                 "dataBinding": {
-                  "type": "string",
-                  "description": "A data binding reference to a list within the data model (e.g., '/user/posts')."
+                  "type": "string"
                 }
               },
               "required": ["componentId", "dataBinding"]
@@ -159,20 +147,20 @@
         },
         "distribution": {
           "type": "string",
+          "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property.",
           "enum": [
-            "start",
             "center",
             "end",
-            "spaceBetween",
             "spaceAround",
-            "spaceEvenly"
-          ],
-          "description": "Distribution of items along the main axis."
+            "spaceBetween",
+            "spaceEvenly",
+            "start"
+          ]
         },
         "alignment": {
           "type": "string",
-          "enum": ["start", "center", "end", "stretch"],
-          "description": "Alignment of items/child along the cross axis."
+          "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
       "required": ["children"]
@@ -182,27 +170,23 @@
       "properties": {
         "children": {
           "type": "object",
-          "description": "Defines the children of the container. You MUST define EITHER 'explicitList' OR 'template', but not both.",
+          "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
           "properties": {
             "explicitList": {
               "type": "array",
-              "description": "An explicit list of component instance IDs.",
               "items": {
-                "type": "string",
-                "description": "A reference to a component instance by its unique ID."
+                "type": "string"
               }
             },
             "template": {
               "type": "object",
-              "description": "A template to be rendered for each item in a data-bound list.",
+              "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
               "properties": {
                 "componentId": {
-                  "type": "string",
-                  "description": "The ID of the component (from the main 'components' list) to use as a template for each item."
+                  "type": "string"
                 },
                 "dataBinding": {
-                  "type": "string",
-                  "description": "A data binding reference to a list within the data model (e.g., '/user/posts')."
+                  "type": "string"
                 }
               },
               "required": ["componentId", "dataBinding"]
@@ -211,6 +195,7 @@
         },
         "distribution": {
           "type": "string",
+          "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property.",
           "enum": [
             "start",
             "center",
@@ -218,13 +203,12 @@
             "spaceBetween",
             "spaceAround",
             "spaceEvenly"
-          ],
-          "description": "Distribution of items along the main axis."
+          ]
         },
         "alignment": {
           "type": "string",
-          "enum": ["start", "center", "end", "stretch"],
-          "description": "Alignment of items/child along the cross axis."
+          "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
+          "enum": ["center", "end", "start", "stretch"]
         }
       },
       "required": ["children"]
@@ -234,27 +218,23 @@
       "properties": {
         "children": {
           "type": "object",
-          "description": "Defines the children of the container. You MUST define EITHER 'explicitList' OR 'template', but not both.",
+          "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
           "properties": {
             "explicitList": {
               "type": "array",
-              "description": "An explicit list of component instance IDs.",
               "items": {
-                "type": "string",
-                "description": "A reference to a component instance by its unique ID."
+                "type": "string"
               }
             },
             "template": {
               "type": "object",
-              "description": "A template to be rendered for each item in a data-bound list.",
+              "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
               "properties": {
                 "componentId": {
-                  "type": "string",
-                  "description": "The ID of the component (from the main 'components' list) to use as a template for each item."
+                  "type": "string"
                 },
                 "dataBinding": {
-                  "type": "string",
-                  "description": "A data binding reference to a list within the data model (e.g., '/user/posts')."
+                  "type": "string"
                 }
               },
               "required": ["componentId", "dataBinding"]
@@ -263,14 +243,13 @@
         },
         "direction": {
           "type": "string",
-          "enum": ["vertical", "horizontal"],
-          "default": "vertical",
-          "description": "The direction of the list."
+          "description": "The direction in which the list items are laid out.",
+          "enum": ["vertical", "horizontal"]
         },
         "alignment": {
           "type": "string",
-          "enum": ["start", "center", "end", "stretch"],
-          "description": "Alignment of items/child along the cross axis."
+          "description": "Defines the alignment of children along the cross axis.",
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
       "required": ["children"]
@@ -280,7 +259,7 @@
       "properties": {
         "child": {
           "type": "string",
-          "description": "A reference to a single component instance by its unique ID."
+          "description": "The ID of the component to be rendered inside the card."
         }
       },
       "required": ["child"]
@@ -290,27 +269,24 @@
       "properties": {
         "tabItems": {
           "type": "array",
-          "description": "A list of tabs, each with a title and a child component ID.",
+          "description": "An array of objects, where each object defines a tab with a title and a child component.",
           "items": {
             "type": "object",
             "properties": {
               "title": {
                 "type": "object",
-                "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+                "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. 'options.title').",
                 "properties": {
-                  "path": {
-                    "type": "string",
-                    "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-                  },
                   "literalString": {
-                    "type": "string",
-                    "description": "A fixed, hardcoded string value."
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
                   }
                 }
               },
               "child": {
-                "type": "string",
-                "description": "A reference to a component instance by its unique ID."
+                "type": "string"
               }
             },
             "required": ["title", "child"]
@@ -324,18 +300,8 @@
       "properties": {
         "axis": {
           "type": "string",
-          "enum": ["horizontal", "vertical"],
-          "default": "horizontal",
-          "description": "The orientation."
-        },
-        "color": {
-          "type": "string",
-          "description": "The color of the divider (e.g., hex code or semantic name)."
-        },
-        "thickness": {
-          "type": "number",
-          "default": 1,
-          "description": "The thickness of the divider."
+          "description": "The orientation of the divider.",
+          "enum": ["horizontal", "vertical"]
         }
       }
     },
@@ -344,11 +310,11 @@
       "properties": {
         "entryPointChild": {
           "type": "string",
-          "description": "The ID of the component (e.g., a button) that triggers the modal."
+          "description": "The ID of the component that opens the modal when interacted with (e.g., a button)."
         },
         "contentChild": {
           "type": "string",
-          "description": "The ID of the component to display as the modal's content."
+          "description": "The ID of the component to be displayed inside the modal."
         }
       },
       "required": ["entryPointChild", "contentChild"]
@@ -356,31 +322,19 @@
     "Button": {
       "type": "object",
       "properties": {
-        "label": {
-          "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
-          "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
-            "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
-            }
-          }
+        "child": {
+          "type": "string",
+          "description": "The ID of the component to display in the button, typically a Text component."
         },
         "action": {
           "type": "object",
-          "description": "Represents a user-initiated action.",
+          "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
           "properties": {
-            "action": {
-              "type": "string",
-              "description": "A unique name identifying the action (e.g., 'submitForm')."
+            "name": {
+              "type": "string"
             },
             "context": {
               "type": "array",
-              "description": "A key-value map of data bindings to be resolved when the action is triggered.",
               "items": {
                 "type": "object",
                 "properties": {
@@ -389,15 +343,13 @@
                   },
                   "value": {
                     "type": "object",
-                    "description": "The dynamic value. Define EXACTLY ONE of the nested properties.",
+                    "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. 'user.name').",
                     "properties": {
                       "path": {
-                        "type": "string",
-                        "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
+                        "type": "string"
                       },
                       "literalString": {
-                        "type": "string",
-                        "description": "A fixed, hardcoded string value."
+                        "type": "string"
                       },
                       "literalNumber": {
                         "type": "number"
@@ -412,38 +364,35 @@
               }
             }
           },
-          "required": ["action"]
+          "required": ["name"]
         }
       },
-      "required": ["label", "action"]
+      "required": ["child", "action"]
     },
     "CheckBox": {
       "type": "object",
       "properties": {
         "label": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. 'option.label').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
         "value": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. 'filter.open').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalBoolean": {
               "type": "boolean"
+            },
+            "path": {
+              "type": "string"
             }
           }
         }
@@ -453,41 +402,38 @@
     "TextField": {
       "type": "object",
       "properties": {
-        "text": {
-          "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
-          "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
-            "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
-            }
-          }
-        },
         "label": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. 'user.name').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
-        "type": {
+        "text": {
+          "type": "object",
+          "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. 'user.name').",
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "textFieldType": {
           "type": "string",
-          "enum": ["shortText", "number", "date", "longText"]
+          "description": "The type of input field to display.",
+          "enum": ["date", "longText", "number", "shortText", "obscured"]
         },
         "validationRegexp": {
           "type": "string",
-          "description": "A regex string to validate the input."
+          "description": "A regular expression used for client-side validation of the input."
         }
       },
       "required": ["label"]
@@ -497,29 +443,27 @@
       "properties": {
         "value": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. 'user.dob').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalString": {
-              "type": "string",
-              "description": "A fixed, hardcoded string value."
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
         "enableDate": {
           "type": "boolean",
-          "default": true
+          "description": "If true, allows the user to select a date."
         },
         "enableTime": {
           "type": "boolean",
-          "default": false
+          "description": "If true, allows the user to select a time."
         },
         "outputFormat": {
           "type": "string",
-          "description": "The string format for the output (e.g., 'YYYY-MM-DD')."
+          "description": "The desired format for the output string after a date or time is selected."
         }
       },
       "required": ["value"]
@@ -529,41 +473,40 @@
       "properties": {
         "selections": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. 'hotel.options').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalArray": {
               "type": "array",
               "items": {
                 "type": "string"
               }
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
         "options": {
           "type": "array",
+          "description": "An array of available options for the user to choose from.",
           "items": {
             "type": "object",
             "properties": {
               "label": {
                 "type": "object",
-                "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+                "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. 'option.label').",
                 "properties": {
-                  "path": {
-                    "type": "string",
-                    "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-                  },
                   "literalString": {
-                    "type": "string",
-                    "description": "A fixed, hardcoded string value."
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
                   }
                 }
               },
               "value": {
-                "type": "string"
+                "type": "string",
+                "description": "The value to be associated with this option when selected."
               }
             },
             "required": ["label", "value"]
@@ -571,34 +514,33 @@
         },
         "maxAllowedSelections": {
           "type": "integer",
-          "default": 1
+          "description": "The maximum number of options that the user is allowed to select."
         }
       },
-      "required": ["selections"]
+      "required": ["selections", "options"]
     },
     "Slider": {
       "type": "object",
       "properties": {
         "value": {
           "type": "object",
-          "description": "The value for this property. Can be a literal value or a data binding path. If both `path` and a `literal` value are provided, the client will initialize the data model at the given path with the literal value and then bind to that path.",
+          "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. 'restaurant.cost').",
           "properties": {
-            "path": {
-              "type": "string",
-              "description": "A data binding reference to a location in the data model (e.g., '/user/name')."
-            },
             "literalNumber": {
               "type": "number"
+            },
+            "path": {
+              "type": "string"
             }
           }
         },
         "minValue": {
           "type": "number",
-          "default": 0
+          "description": "The minimum value of the slider."
         },
         "maxValue": {
           "type": "number",
-          "default": 100
+          "description": "The maximum value of the slider."
         }
       },
       "required": ["value"]

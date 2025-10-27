@@ -102,8 +102,8 @@ export function createA2UIPrompt(
       )}"`,
 
       `Please return a valid A2UI Protocol Message object necessary to build the
-      satisfy the user request. If you choose to return multiple object you must
-      wrap them in an array.`,
+      user interface from scratch. If you choose to return multiple object you
+      must wrap them in an array and ensure there is a beginRendering message.`,
 
       `If no data is provided create some. If there are any URLs you must
     make them absolute and begin with a /. Nothing should ever be loaded from

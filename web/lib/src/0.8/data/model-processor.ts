@@ -245,7 +245,7 @@ export class A2UIModelProcessor {
           const innerValueKey = Object.keys(wrappedItem).find((k) =>
             k.startsWith("value")
           );
-          if (!innerValueKey) return null;
+          if (!innerValueKey) return wrappedItem as DataValue;
 
           const innerValue = wrappedItem[innerValueKey];
           return this.#parseIfJsonString(innerValue as DataValue);
@@ -464,8 +464,7 @@ export class A2UIModelProcessor {
     visited.add(componentId);
 
     const componentData = components.get(baseComponentId)!;
-    const componentProps =
-      componentData.component ?? {};
+    const componentProps = componentData.component ?? {};
     const componentType = Object.keys(componentProps)[0];
     const unresolvedProperties =
       componentProps[componentType as keyof typeof componentProps];
@@ -489,7 +488,11 @@ export class A2UIModelProcessor {
     // Now that we have the resolved properties in place we can go ahead and
     // ensure that they meet expectations in terms of types and so forth,
     // casting them into the specific shape for usage.
-    const baseNode = { id: componentId, dataContextPath };
+    const baseNode = {
+      id: componentId,
+      dataContextPath,
+      weight: componentData.weight ?? "initial",
+    };
     switch (componentType) {
       case "Heading":
         if (!isResolvedHeading(resolvedProperties)) {

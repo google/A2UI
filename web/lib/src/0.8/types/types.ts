@@ -49,8 +49,20 @@ export type Theme = {
     };
     DateTimeInput: Record<string, boolean | string>;
     Divider: Record<string, boolean | string>;
-    Heading: Record<string, boolean | string>;
-    Image: Record<string, boolean | string>;
+    Heading: {
+      all: Record<string, boolean>;
+      level1: Record<string, boolean>;
+      level2: Record<string, boolean>;
+      level3: Record<string, boolean>;
+      level4: Record<string, boolean>;
+      level5: Record<string, boolean>;
+    };
+    Image: {
+      all: Record<string, boolean>;
+      content: Record<string, boolean>;
+      icon: Record<string, boolean>;
+      hero: Record<string, boolean>;
+    };
     List: Record<string, boolean | string>;
     Modal: Record<string, boolean | string>;
     MultipleChoice: Record<string, boolean | string>;
@@ -182,6 +194,7 @@ export type ComponentProperties = {
 /** A raw component instance from a SurfaceUpdate message. */
 export interface ComponentInstance {
   id: string;
+  weight?: number;
   component?: ComponentProperties;
 }
 
@@ -248,6 +261,7 @@ export type ResolvedArray = ResolvedValue[];
  */
 interface BaseComponentNode {
   id: string;
+  weight?: number;
   dataContextPath?: string;
 }
 

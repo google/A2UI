@@ -58,6 +58,7 @@ export interface Text {
 
 export interface Image {
   url: StringValue;
+  role?: "content" | "icon" | "hero";
 }
 
 export interface Video {
