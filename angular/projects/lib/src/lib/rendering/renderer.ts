@@ -73,6 +73,7 @@ export class Renderer implements OnDestroy {
       const bindings = [
         inputBinding('surfaceId', () => surfaceId),
         inputBinding('component', () => component),
+        inputBinding('weight', () => component.weight ?? 'initial'),
       ];
 
       if (componentBindings) {

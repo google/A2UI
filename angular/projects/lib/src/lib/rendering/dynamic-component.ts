@@ -19,7 +19,11 @@ import { v0_8 } from '@a2ui/web-lib';
 import { Theme } from './theming';
 import { ModelProcessor } from '../data';
 
-@Directive()
+@Directive({
+  host: {
+    '[style.--weight]': 'weight()',
+  },
+})
 export abstract class DynamicComponent<
   T extends v0_8.Types.AnyComponentNode = v0_8.Types.AnyComponentNode
 > {
@@ -28,6 +32,7 @@ export abstract class DynamicComponent<
 
   readonly surfaceId = input.required<v0_8.Types.SurfaceID | null>();
   readonly component = input.required<T>();
+  readonly weight = input.required<string | number>();
 
   protected async sendAction(action: v0_8.Types.Action) {
     const component = this.component();

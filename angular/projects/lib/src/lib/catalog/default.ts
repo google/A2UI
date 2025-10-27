@@ -44,7 +44,10 @@ export const DEFAULT_CATALOG: Catalog = {
 
   Image: {
     type: () => import('./image').then((r) => r.Image),
-    bindings: ({ properties }) => [inputBinding('url', () => properties.url)],
+    bindings: ({ properties }) => [
+      inputBinding('url', () => properties.url),
+      inputBinding('additionalRole', () => properties.role),
+    ],
   },
 
   Video: {

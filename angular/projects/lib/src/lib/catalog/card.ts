@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 import { Renderer } from '../rendering/renderer';
@@ -22,20 +22,25 @@ import { Renderer } from '../rendering/renderer';
 @Component({
   selector: 'a2ui-card',
   imports: [Renderer],
+  encapsulation: ViewEncapsulation.None,
   styles: `
-    :host {
+    a2ui-card {
       display: block;
       flex: var(--weight);
       min-height: 0;
       overflow: auto;
     }
 
-    section {
-      display: flex;
+    a2ui-card > section {
       height: 100%;
+      width: 100%;
       min-height: 0;
       overflow: auto;
-      box-sizing: border-box;
+    }
+
+    a2ui-card > section > * {
+      height: 100%;
+      width: 100%;
     }
   `,
   template: `
