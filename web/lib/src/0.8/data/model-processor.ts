@@ -136,7 +136,7 @@ export class A2UIModelProcessor {
 
     // The special `.` path means the final path is the node's data context
     // path and so we return the dataContextPath as-is.
-    if (relativePath === ".") {
+    if (relativePath === "." || relativePath === "") {
       finalPath = node.dataContextPath ?? "/";
     } else {
       // For all other paths, resolve them against the node's context.
@@ -164,7 +164,7 @@ export class A2UIModelProcessor {
 
     // The special `.` path means the final path is the node's data context
     // path and so we return the dataContextPath as-is.
-    if (relativePath === ".") {
+    if (relativePath === "." || relativePath === "") {
       finalPath = node.dataContextPath ?? "/";
     } else {
       // For all other paths, resolve them against the node's context.
