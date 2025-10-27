@@ -28,6 +28,8 @@ import { v0_8 } from '@a2ui/web-lib';
     '[min]': 'minValue()',
     '[max]': 'maxValue()',
     '(input)': 'handleInput($event)',
+    '[class]': 'theme.components.Slider',
+    '[style]': 'theme.additionalStyles?.Slider',
   },
   styles: `
     :host {

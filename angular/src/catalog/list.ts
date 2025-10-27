@@ -51,8 +51,7 @@ import { v0_8 } from '@a2ui/web-lib';
     }
   `,
   template: `
-    <!-- TODO: implement theme -->
-    <section>
+    <section [class]="theme.components.List" [style]="theme.additionalStyles?.List">
       @for (child of component().properties.children; track child) {
         <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
@@ -61,6 +60,4 @@ import { v0_8 } from '@a2ui/web-lib';
 })
 export class List extends DynamicComponent<v0_8.Types.ListNode> {
   readonly direction = input<'vertical' | 'horizontal'>('vertical');
-
-  // TODO: theme?
 }

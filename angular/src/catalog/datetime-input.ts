@@ -27,6 +27,8 @@ import { v0_8 } from '@a2ui/web-lib';
     placeholder: 'Date & Time',
     '(input)': 'handleInput($event)',
     '[value]': 'inputValue()',
+    '[class]': 'theme.components.DateTimeInput',
+    '[style]': 'theme.additionalStyles?.DateTimeInput',
   },
   styles: `
     :host {

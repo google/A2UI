@@ -21,6 +21,16 @@ import { DynamicComponent } from './rendering/dynamic-component';
 @Component({
   selector: 'a2ui-text',
   template: `{{ resolvedText() }}`,
+  host: {
+    '[class]': 'theme.components.Text',
+    '[style]': 'theme.additionalStyles?.Text',
+  },
+  styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+    }
+  `,
 })
 export class Text extends DynamicComponent {
   readonly text = input.required<v0_8.Primitives.StringValue | null>();

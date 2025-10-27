@@ -23,16 +23,21 @@ let idCounter = 0;
 @Component({
   selector: 'a2ui-checkbox',
   template: `
-    <section>
+    <section 
+      [class]="theme.components.CheckBox.container" 
+      [style]="theme.additionalStyles?.CheckBox">
       <input
         autocomplete="off"
         type="checkbox"
         [id]="inputId"
         [checked]="inputChecked()"
+        [class]="theme.components.CheckBox.element"
         (change)="handleChange($event)"
       />
 
-      <label [htmlFor]="inputId">{{ resolvedLabel() }}</label>
+      <label 
+        [htmlFor]="inputId" 
+        [class]="theme.components.CheckBox.label">{{ resolvedLabel() }}</label>
     </section>
   `,
   styles: `

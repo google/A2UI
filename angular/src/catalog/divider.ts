@@ -19,7 +19,7 @@ import { DynamicComponent } from './rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-divider',
-  template: '<hr/>',
+  template: '<hr [class]="theme.components.Divider" [style]="theme.additionalStyles?.Divider"/>',
   styles: `
     :host {
       display: block;

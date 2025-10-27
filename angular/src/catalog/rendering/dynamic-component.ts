@@ -17,12 +17,15 @@
 import { Directive, inject, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { ModelProcessor } from '../../app/processor';
+import { Theme } from './theming';
 
 @Directive()
 export abstract class DynamicComponent<
   T extends v0_8.Types.AnyComponentNode = v0_8.Types.AnyComponentNode
 > {
-  protected processor = inject(ModelProcessor);
+  protected readonly processor = inject(ModelProcessor);
+  protected readonly theme = inject(Theme);
+
   readonly surfaceId = input.required<v0_8.Types.SurfaceID | null>();
   readonly component = input.required<T>();
 

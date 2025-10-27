@@ -27,6 +27,8 @@ import { v0_8 } from '@a2ui/web-lib';
     '[value]': 'inputValue()',
     '[attr.placeholder]': 'placeholder()',
     '[type]': 'inputType() === "number" ? "number" : "text"',
+    '[class]': 'theme.components.TextField',
+    '[style]': 'theme.additionalStyles?.TextField',
   },
   styles: `
     :host {
@@ -34,7 +36,7 @@ import { v0_8 } from '@a2ui/web-lib';
       width: 100%;
       box-sizing: border-box;
     }
-  `
+  `,
 })
 export class TextField extends DynamicComponent {
   readonly text = input.required<v0_8.Primitives.StringValue | null>();

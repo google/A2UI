@@ -24,7 +24,7 @@ import { v0_8 } from '@a2ui/web-lib';
     @let resolvedUrl = this.resolvedUrl(); 
     
     @if (resolvedUrl) {
-      <section>
+      <section [class]="theme.components.Video" [style]="theme.additionalStyles?.Video">
         <video controls [src]="resolvedUrl"></video>
       </section>
     }

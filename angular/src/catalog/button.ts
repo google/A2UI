@@ -24,6 +24,8 @@ import { Renderer } from './rendering/renderer';
   imports: [Renderer],
   host: {
     '(click)': 'handleClick()',
+    '[class]': 'theme.components.Button',
+    '[style]': 'theme.additionalStyles?.Button',
   },
   template: `
     <ng-container

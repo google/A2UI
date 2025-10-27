@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, ElementRef, inject, input } from '@angular/core';
 import { DynamicComponent } from './rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
@@ -39,13 +39,47 @@ import { v0_8 } from '@a2ui/web-lib';
     @let resolvedUrl = this.resolvedUrl(); 
     
     @if (resolvedUrl) {
-      <section>
+      <section [class]="classes()" [style]="theme.additionalStyles?.Image">
         <img [src]="resolvedUrl" />
       </section>
     }
   `,
 })
 export class Image extends DynamicComponent {
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly url = input.required<v0_8.Primitives.StringValue | null>();
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
+
+  protected readonly classes = computed(() => {
+    const classes: Record<string, boolean> = {};
+    const parentElement = this.elementRef.nativeElement.parentElement;
+
+    for (const [id, value] of Object.entries(this.theme.components.Image)) {
+      if (typeof value === 'boolean') {
+        classes[id] = value;
+        continue;
+      }
+
+      let tagName = value;
+
+      if (tagName.endsWith('>')) {
+        tagName = tagName.replace(/\W*>$/, '').trim();
+
+        if (parentElement && parentElement.tagName.toLocaleLowerCase() === tagName) {
+          classes[id] = true;
+        }
+      } else {
+        let parent = parentElement;
+        while (parent) {
+          if (tagName === parent.tagName.toLocaleLowerCase()) {
+            classes[id] = true;
+            break;
+          }
+          parent = parent.parentElement;
+        }
+      }
+    }
+
+    return classes;
+  });
 }

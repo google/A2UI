@@ -80,7 +80,7 @@ import { Renderer } from './rendering/renderer';
     }
   `,
   template: `
-    <section>
+    <section [class]="theme.components.Row" [style]="theme.additionalStyles?.Row">
       @for (child of component().properties.children; track child) {
         <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
@@ -90,6 +90,4 @@ import { Renderer } from './rendering/renderer';
 export class Row extends DynamicComponent<v0_8.Types.RowNode> {
   readonly alignment = input<v0_8.Types.ResolvedRow['alignment']>('stretch');
   readonly distribution = input<v0_8.Types.ResolvedRow['distribution']>('start');
-
-  // TODO: theme?
 }

@@ -83,8 +83,7 @@ import { Renderer } from './rendering/renderer';
     }
   `,
   template: `
-    <!-- TODO: implement theme -->
-    <section>
+    <section [class]="theme.components.Column" [style]="theme.additionalStyles?.Column">
       @for (child of component().properties.children; track child) {
         <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
@@ -94,6 +93,4 @@ import { Renderer } from './rendering/renderer';
 export class Column extends DynamicComponent<v0_8.Types.ColumnNode> {
   readonly alignment = input<v0_8.Types.ResolvedColumn['alignment']>('stretch');
   readonly distribution = input<v0_8.Types.ResolvedColumn['distribution']>('start');
-
-  // TODO: theme?
 }

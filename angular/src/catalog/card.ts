@@ -38,17 +38,14 @@ import { Renderer } from './rendering/renderer';
     }
   `,
   template: `
-    <!-- TODO: implement theme -->
-    @let properties = component().properties; @let children = properties.children ||
-    [properties.child];
+    @let properties = component().properties; 
+    @let children = properties.children || [properties.child];
 
-    <section>
+    <section [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
       @for (child of children; track child) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
     </section>
   `,
 })
-export class Card extends DynamicComponent<v0_8.Types.CardNode> {
-  // TODO: theme?
-}
+export class Card extends DynamicComponent<v0_8.Types.CardNode> {}

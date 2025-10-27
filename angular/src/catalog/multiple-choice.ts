@@ -22,7 +22,11 @@ import { v0_8 } from '@a2ui/web-lib';
   selector: 'a2ui-multiple-choice',
   template: `
     <section>
-      <select (change)="handleChange($event)" [value]="selectValue()">
+      <select 
+        (change)="handleChange($event)" 
+        [value]="selectValue()"
+        [class]="theme.components.MultipleChoice"
+        [style]="theme.additionalStyles?.MultipleChoice">
         @for (option of options(); track option.value) {
           <option [value]="option.value">{{ resolvePrimitive(option.label) }}</option>
         }

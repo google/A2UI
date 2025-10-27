@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { Renderer } from './rendering/renderer';
 import { v0_8 } from '@a2ui/web-lib';
 
@@ -23,8 +23,8 @@ import { v0_8 } from '@a2ui/web-lib';
   imports: [Renderer],
   template: `
     @let surfaceId = this.surfaceId(); 
-    @let surface = this.surface(); 
-    
+    @let surface = this.surface();
+
     @if (surfaceId && surface) {
       <ng-container a2ui-renderer [surfaceId]="surfaceId" [component]="surface.componentTree!" />
     }
@@ -38,9 +38,38 @@ import { v0_8 } from '@a2ui/web-lib';
       flex-direction: column;
       gap: 16px;
     }
-  `
+  `,
+  host: {
+    '[style]': 'styles()',
+  },
 })
 export class Surface {
   readonly surfaceId = input.required<v0_8.Types.SurfaceID | null>();
   readonly surface = input.required<v0_8.Types.Surface | null>();
+
+  protected readonly styles = computed(() => {
+    const surface = this.surface();
+    const styles: Record<string, string> = {};
+
+    if (surface?.styles) {
+      for (const [key, value] of Object.entries(surface.styles)) {
+        switch (key) {
+          case 'primaryColor': {
+            for (let i = 0; i <= 100; i++) {
+              styles[`--p-${i}`] = `color-mix(in srgb, ${value} ${100 - i}%, #fff ${i}%)`;
+            }
+            break;
+          }
+
+          case 'font': {
+            styles['--font-family'] = value;
+            styles['--font-family-flex'] = value;
+            break;
+          }
+        }
+      }
+    }
+
+    return styles;
+  });
 }

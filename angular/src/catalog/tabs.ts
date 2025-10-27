@@ -14,28 +14,36 @@
  limitations under the License.
  */
 
-import { Component, input, signal } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { DynamicComponent } from './rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 import { Renderer } from './rendering/renderer';
+import { themeMerge } from './rendering/theming';
 
 @Component({
   selector: 'a2ui-tabs',
   imports: [Renderer],
   template: `
     @let tabs = this.tabs();
+    @let selectedIndex = this.selectedIndex();
 
-    <section>
-      @for (tab of tabs; track tab) {
-        <button
-          (click)="selectedIndex.set($index)"
-          [disabled]="selectedIndex() === $index">{{resolvePrimitive(tab.title)}}</button>
-      }
+    <section [class]="theme.components.Tabs.container" [style]="theme.additionalStyles?.Tabs">
+      <div [class]="theme.components.Tabs.element">
+        @for (tab of tabs; track tab) {
+          <button 
+            (click)="this.selectedIndex.set($index)" 
+            [disabled]="selectedIndex === $index"
+            [class]="buttonClasses()[selectedIndex]">
+            {{ resolvePrimitive(tab.title) }}
+          </button>
+        }
+      </div>
 
       <ng-container
         a2ui-renderer
         [surfaceId]="surfaceId()!"
-        [component]="tabs[selectedIndex()].child"/>
+        [component]="tabs[selectedIndex].child"
+      />
     </section>
   `,
   styles: `
@@ -43,9 +51,22 @@ import { Renderer } from './rendering/renderer';
       display: block;
       flex: var(--weight);
     }
-  `
+  `,
 })
 export class Tabs extends DynamicComponent {
   protected selectedIndex = signal(0);
   readonly tabs = input.required<v0_8.Types.ResolvedTabItem[]>();
+
+  protected readonly buttonClasses = computed(() => {
+    const selectedIndex = this.selectedIndex();
+
+    return this.tabs().map((_, index) => {
+      return index === selectedIndex
+        ? themeMerge(
+            this.theme.components.Tabs.controls.all,
+            this.theme.components.Tabs.controls.selected
+          )
+        : this.theme.components.Tabs.controls.all;
+    });
+  });
 }

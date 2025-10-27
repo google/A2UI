@@ -20,7 +20,11 @@ import { DynamicComponent } from './rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-heading',
-  template: `<h1>{{ resolvedText() }}</h1>`,
+  template: `
+    <h1 [class]="theme.components.Heading" [style]="theme.additionalStyles?.Heading">
+      {{ resolvedText() }}
+    </h1>
+  `,
   host: {
     '[attr.level]': 'level()',
   },

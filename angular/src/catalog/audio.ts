@@ -24,7 +24,7 @@ import { v0_8 } from '@a2ui/web-lib';
     @let resolvedUrl = this.resolvedUrl(); 
     
     @if (resolvedUrl) {
-      <section>
+      <section [class]="theme.components.AudioPlayer" [style]="theme.additionalStyles?.AudioPlayer">
         <audio controls [src]="resolvedUrl"></audio>
       </section>
     }
