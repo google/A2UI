@@ -69,6 +69,10 @@ A2UI_SCHEMA = """
                 "type": "string",
                 "description": "The unique identifier for this component."
               },
+              "weight": {
+                "type": "number",
+                "description": "The relative weight of this component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
+              },
               "component": {
                 "type": "object",
                 "description": "A wrapper object that MUST contain exactly one key, which is the name of the component type (e.g., 'Heading'). The value is an object containing the properties for that specific component.",
@@ -142,6 +146,24 @@ A2UI_SCHEMA = """
                       }
                     },
                     "required": ["url"]
+                  },
+                  "Icon": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "object",
+                        "description": "The name of the icon to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'icon.name').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": ["name"]
                   },
                   "Video": {
                     "type": "object",
@@ -717,8 +739,8 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "item-list", "component": {{ "List": {{ "direction": "vertical", "children": {{ "template": {{ "componentId": "item-card-template", "dataBinding": "/items" }} }} }} }} }},
       {{ "id": "item-card-template", "component": {{ "Card": {{ "child": "card-layout" }} }} }},
       {{ "id": "card-layout", "component": {{ "Row": {{ "children": {{ "explicitList": ["template-image", "card-details"] }} }} }} }},
-      {{ "id": "template-image", "component": {{ "Image": {{ "url": {{ "path": "imageUrl" }}, "width": "80px" }} }} }},
-      {{ "id": "card-details", "component": {{ "Column": {{ "children": {{ "explicitList": ["template-name", "template-rating", "template-detail", "template-link", "template-book-button"] }} }} }} }},
+      {{ "id": "template-image", weight: 1, "component": {{ "Image": {{ "url": {{ "path": "imageUrl" }}, "width": "80px" }} }} }},
+      {{ "id": "card-details", weight: 2, "component": {{ "Column": {{ "children": {{ "explicitList": ["template-name", "template-rating", "template-detail", "template-link", "template-book-button"] }} }} }} }},
       {{ "id": "template-name", "component": {{ "Heading": {{ "level": "3", "text": {{ "path": "name" }} }} }} }},
       {{ "id": "template-rating", "component": {{ "Text": {{ "text": {{ "path": "rating" }} }} }} }},
       {{ "id": "template-detail", "component": {{ "Text": {{ "text": {{ "path": "detail" }} }} }} }},
