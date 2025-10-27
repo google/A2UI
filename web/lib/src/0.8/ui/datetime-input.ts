@@ -21,6 +21,7 @@ import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-datetimeinput")
 export class DateTimeInput extends Root {
@@ -80,6 +81,9 @@ export class DateTimeInput extends Root {
       <input
         autocomplete="off"
         class=${classMap(this.theme.components.DateTimeInput)}
+        style=${this.theme.additionalStyles?.DateTimeInput
+          ? styleMap(this.theme.additionalStyles?.DateTimeInput)
+          : nothing}
         @input=${(evt: Event) => {
           if (!(evt.target instanceof HTMLInputElement)) {
             return;

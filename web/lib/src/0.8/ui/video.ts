@@ -21,6 +21,7 @@ import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-video")
 export class Video extends Root {
@@ -83,7 +84,12 @@ export class Video extends Root {
   }
 
   render() {
-    return html`<section class=${classMap(this.theme.components.Video)}>
+    return html`<section
+      class=${classMap(this.theme.components.Video)}
+      style=${this.theme.additionalStyles?.Video
+        ? styleMap(this.theme.additionalStyles?.Video)
+        : nothing}
+    >
       ${this.#renderVideo()}
     </section>`;
   }

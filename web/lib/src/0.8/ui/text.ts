@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { markdown } from "./directives/directives.js";
 import { Root } from "./root.js";
@@ -23,6 +23,7 @@ import * as Styles from "./styles/index.js";
 import { appendToAll } from "./utils/utils.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-text")
 export class Text extends Root {
@@ -62,7 +63,7 @@ export class Text extends Root {
           this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
         );
 
-        if (textValue === null) {
+        if (textValue === null || textValue === undefined) {
           return html`(empty)`;
         }
 
@@ -77,7 +78,12 @@ export class Text extends Root {
   }
 
   render() {
-    return html`<section class=${classMap(this.theme.components.Text)}>
+    return html`<section
+      class=${classMap(this.theme.components.Text)}
+      style=${this.theme.additionalStyles?.Text
+        ? styleMap(this.theme.additionalStyles?.Text)
+        : nothing}
+    >
       ${this.#renderText()}
     </section>`;
   }

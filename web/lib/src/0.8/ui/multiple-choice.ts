@@ -14,12 +14,14 @@
  limitations under the License.
  */
 
-import { html, css, PropertyValues } from "lit";
+import { html, css, PropertyValues, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-multiplechoice")
 export class MultipleChoice extends Root {
@@ -82,10 +84,13 @@ export class MultipleChoice extends Root {
   }
 
   render() {
-    return html` <div class="description">
-        ${this.description ?? "Select an item"}
-      </div>
+    return html`<section>
+      <div class="description">${this.description ?? "Select an item"}</div>
       <select
+        class=${classMap(this.theme.components.MultipleChoice)}
+        style=${this.theme.additionalStyles?.MultipleChoice
+          ? styleMap(this.theme.additionalStyles?.MultipleChoice)
+          : nothing}
         @change=${(evt: Event) => {
           if (!this.value) {
             return;
@@ -101,6 +106,7 @@ export class MultipleChoice extends Root {
         ${this.options.map(
           (option) => html`<option ${option.value}>${option.label}</option>`
         )}
-      </select>`;
+      </select>
+    </section>`;
   }
 }

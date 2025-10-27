@@ -24,5 +24,5 @@ export interface A2UIAction extends BaseEventDetail<`${Namespace}.action`> {
   readonly action: Action;
   readonly dataContextPath: string;
   readonly sourceComponentId: string;
-  readonly sourceComponent: AnyComponentNode;
+  readonly sourceComponent: AnyComponentNode | null;
 }

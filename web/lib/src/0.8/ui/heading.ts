@@ -14,13 +14,15 @@
  limitations under the License.
  */
 
-import { html, css } from "lit";
+import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { styleMap } from "lit/directives/style-map.js";
+import * as Utils from "./utils/utils.js";
 
 @customElement("a2ui-heading")
 export class Heading extends Root {
@@ -34,60 +36,29 @@ export class Heading extends Root {
     Styles.all,
     css`
       :host {
-        display: block;
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: auto;
+        display: flex;
+        flex: var(--weight) 0 auto;
         min-height: 0;
         overflow: auto;
-
-        & h1 {
-          line-height: 1.2;
-        }
-      }
-
-      :host([level="1"]) h1 {
-        font-size: 24px;
-        margin: 0;
-        padding: 0;
-      }
-
-      :host([level="2"]) h1 {
-        font-size: 20px;
-        margin: 0;
-        padding: 0;
-      }
-
-      :host([level="3"]) h1 {
-        font-size: 18px;
-        margin: 0;
-        padding: 0;
-      }
-
-      :host([level="4"]) h1 {
-        font-size: 16px;
-        margin: 0;
-        padding: 0;
-      }
-
-      :host([level="5"]) h1 {
-        font-size: 14px;
-        margin: 0;
-        padding: 0;
       }
     `,
   ];
 
   render() {
+    const classKey =
+      `level${this.level}` as keyof typeof this.theme.components.Heading;
+    const classes = Utils.merge(
+      this.theme.components.Heading.all,
+      this.theme.components.Heading[classKey]
+    );
+
     if (this.text && typeof this.text === "object") {
       if ("literalString" in this.text) {
-        return html`<h1 class=${classMap(this.theme.components.Heading)}>
+        return html`<h1 class=${classMap(classes)}>
           ${this.text.literalString}
         </h1>`;
       } else if ("literal" in this.text) {
-        return html`<h1 class=${classMap(this.theme.components.Heading)}>
-          ${this.text.literal}
-        </h1>`;
+        return html`<h1 class=${classMap(classes)}>${this.text.literal}</h1>`;
       } else if (this.text && "path" in this.text && this.text.path) {
         if (!this.processor || !this.component) {
           return html`(no model)`;
@@ -102,7 +73,12 @@ export class Heading extends Root {
           return html`(invalid)`;
         }
 
-        return html`<h1 class=${classMap(this.theme.components.Heading)}>
+        return html`<h1
+          class=${classMap(classes)}
+          style=${this.theme.additionalStyles?.Heading
+            ? styleMap(this.theme.additionalStyles?.Heading)
+            : nothing}
+        >
           ${textValue}
         </h1>`;
       }

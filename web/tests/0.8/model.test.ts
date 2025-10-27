@@ -32,7 +32,7 @@ const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
     v0_8.Data.Guards.isObject(value) &&
     value.constructor.name === "SignalObject"
   ) {
-    const obj = {};
+    const obj: Record<string, unknown> = {};
     for (const key in value) {
       if (Object.prototype.hasOwnProperty.call(value, key)) {
         obj[key] = toPlainObject(value[key]);
@@ -133,8 +133,8 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            path: "/user/name",
-            contents: "Alice",
+            path: "/user",
+            contents: [{ key: "name", valueString: "Alice" }],
           },
         },
       ]);
@@ -146,12 +146,14 @@ describe("A2UIModelProcessor", () => {
     });
 
     it("should replace the entire data model when path is not provided", () => {
-      const initialData = { user: { name: "Bob" } };
       processor.processMessages([
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            contents: initialData,
+            path: "/",
+            contents: [
+              { key: "user", valueString: JSON.stringify({ name: "Bob" }) },
+            ],
           },
         },
       ]);
@@ -164,6 +166,7 @@ describe("A2UIModelProcessor", () => {
 
     it("should create nested structures when setting data", () => {
       const component = { dataContextPath: "/" } as v0_8.Types.AnyComponentNode;
+      // Note: setData is a public method that does not use the key-value format
       processor.setData(component, "/a/b/c", "value");
       const data = processor.getData(component, "/a/b/c");
       assert.strictEqual(data, "value");
@@ -259,8 +262,16 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            path: "/items",
-            contents: [{ name: "A" }, { name: "B" }],
+            path: "/",
+            contents: [
+              {
+                key: "items",
+                valueList: [
+                  { valueString: JSON.stringify({ name: "A" }) },
+                  { valueString: JSON.stringify({ name: "B" }) },
+                ],
+              },
+            ],
           },
         },
         {
@@ -361,8 +372,16 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            path: "/items",
-            contents: [{ name: "A" }, { name: "B" }],
+            path: "/",
+            contents: [
+              {
+                key: "items",
+                valueList: [
+                  { valueString: JSON.stringify({ name: "A" }) },
+                  { valueString: JSON.stringify({ name: "B" }) },
+                ],
+              },
+            ],
           },
         },
       ]);
@@ -380,8 +399,16 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            path: "/items",
-            contents: [{ name: "A" }, { name: "B" }],
+            path: "/",
+            contents: [
+              {
+                key: "items",
+                valueList: [
+                  { valueString: JSON.stringify({ name: "A" }) },
+                  { valueString: JSON.stringify({ name: "B" }) },
+                ],
+              },
+            ],
           },
         },
         {
@@ -433,8 +460,16 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            path: "/items",
-            contents: [{ name: "A" }, { name: "B" }],
+            path: "/",
+            contents: [
+              {
+                key: "items",
+                valueList: [
+                  { valueString: JSON.stringify({ name: "A" }) },
+                  { valueString: JSON.stringify({ name: "B" }) },
+                ],
+              },
+            ],
           },
         },
         {
@@ -488,6 +523,7 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "test-surface",
+            path: "/",
             contents: [
               { key: "title", valueString: "My Title" },
               {
@@ -515,6 +551,7 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
+            path: "/",
             contents: [{ key: "badData", valueString: invalidJSON }],
           },
         },
@@ -532,15 +569,24 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            path: "/days",
+            path: "/",
             contents: [
               {
-                title: "Day 1",
-                activities: ["Morning Walk", "Museum Visit"],
-              },
-              {
-                title: "Day 2",
-                activities: ["Market Trip"],
+                key: "days",
+                valueList: [
+                  {
+                    valueString: JSON.stringify({
+                      title: "Day 1",
+                      activities: ["Morning Walk", "Museum Visit"],
+                    }),
+                  },
+                  {
+                    valueString: JSON.stringify({
+                      title: "Day 2",
+                      activities: ["Market Trip"],
+                    }),
+                  },
+                ],
               },
             ],
           },
@@ -642,8 +688,17 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "@default",
-            path: "/tags",
-            contents: ["travel", "paris", "guide"],
+            path: "/",
+            contents: [
+              {
+                key: "tags",
+                valueList: [
+                  { valueString: "travel" },
+                  { valueString: "paris" },
+                  { valueString: "guide" },
+                ],
+              },
+            ],
           },
         },
         {
@@ -691,7 +746,8 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "A",
-            contents: { name: "Surface A Data" },
+            path: "/",
+            contents: [{ key: "name", valueString: "Surface A Data" }],
           },
         },
         {
@@ -710,7 +766,8 @@ describe("A2UIModelProcessor", () => {
         {
           dataModelUpdate: {
             surfaceId: "B",
-            contents: { name: "Surface B Data" },
+            path: "/",
+            contents: [{ key: "name", valueString: "Surface B Data" }],
           },
         },
         {

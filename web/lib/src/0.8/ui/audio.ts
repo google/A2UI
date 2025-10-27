@@ -21,6 +21,7 @@ import { StringValue } from "../types/primitives.js";
 import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-audioplayer")
 export class Audio extends Root {
@@ -83,7 +84,12 @@ export class Audio extends Root {
   }
 
   render() {
-    return html`<section class=${classMap(this.theme.components.AudioPlayer)}>
+    return html`<section
+      class=${classMap(this.theme.components.AudioPlayer)}
+      style=${this.theme.additionalStyles?.AudioPlayer
+        ? styleMap(this.theme.additionalStyles?.AudioPlayer)
+        : nothing}
+    >
       ${this.#renderAudio()}
     </section>`;
   }

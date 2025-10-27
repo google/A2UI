@@ -18,6 +18,7 @@ export {
   type ClientToServerMessage as A2UIClientEventMessage,
   type ClientCapabilitiesDynamic,
 } from "./client-event.js";
+export { type Action } from "./components.js";
 
 import {
   Heading,
@@ -48,8 +49,20 @@ export type Theme = {
     };
     DateTimeInput: Record<string, boolean | string>;
     Divider: Record<string, boolean | string>;
-    Heading: Record<string, boolean | string>;
-    Image: Record<string, boolean | string>;
+    Heading: {
+      all: Record<string, boolean>;
+      level1: Record<string, boolean>;
+      level2: Record<string, boolean>;
+      level3: Record<string, boolean>;
+      level4: Record<string, boolean>;
+      level5: Record<string, boolean>;
+    };
+    Image: {
+      all: Record<string, boolean>;
+      content: Record<string, boolean>;
+      icon: Record<string, boolean>;
+      hero: Record<string, boolean>;
+    };
     List: Record<string, boolean | string>;
     Modal: Record<string, boolean | string>;
     MultipleChoice: Record<string, boolean | string>;
@@ -181,7 +194,7 @@ export type ComponentProperties = {
 /** A raw component instance from a SurfaceUpdate message. */
 export interface ComponentInstance {
   id: string;
-  componentProperties?: ComponentProperties;
+  weight?: number;
   component?: ComponentProperties;
 }
 
@@ -199,7 +212,18 @@ export interface SurfaceUpdateMessage {
 export interface DataModelUpdate {
   surfaceId: string;
   path?: string;
-  contents: DataValue;
+  contents: {
+    key: string;
+    valueString?: string /** May be JSON */;
+    valueNumber?: number;
+    valueBoolean?: boolean;
+
+    valueList?: {
+      valueString?: string /** May be JSON */;
+      valueNumber?: number;
+      valueBoolean?: boolean;
+    }[];
+  }[];
 }
 
 export interface DeleteSurfaceMessage {
@@ -237,6 +261,7 @@ export type ResolvedArray = ResolvedValue[];
  */
 interface BaseComponentNode {
   id: string;
+  weight?: number;
   dataContextPath?: string;
 }
 
@@ -362,7 +387,6 @@ export type ResolvedImage = Image;
 export type ResolvedVideo = Video;
 export type ResolvedAudioPlayer = AudioPlayer;
 export type ResolvedDivider = Divider;
-export type ResolvedButton = Button;
 export type ResolvedCheckbox = Checkbox;
 export type ResolvedTextField = TextField;
 export type ResolvedDateTimeInput = DateTimeInput;
@@ -391,6 +415,11 @@ export interface ResolvedColumn {
     | "spaceAround"
     | "spaceEvenly";
   alignment?: "start" | "center" | "end" | "stretch";
+}
+
+export interface ResolvedButton {
+  child: AnyComponentNode;
+  action: Button["action"];
 }
 
 export interface ResolvedList {

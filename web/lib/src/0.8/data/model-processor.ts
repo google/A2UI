@@ -136,7 +136,7 @@ export class A2UIModelProcessor {
 
     // The special `.` path means the final path is the node's data context
     // path and so we return the dataContextPath as-is.
-    if (relativePath === ".") {
+    if (relativePath === "." || relativePath === "") {
       finalPath = node.dataContextPath ?? "/";
     } else {
       // For all other paths, resolve them against the node's context.
@@ -147,19 +147,24 @@ export class A2UIModelProcessor {
   }
 
   setData(
-    node: AnyComponentNode,
+    node: AnyComponentNode | null,
     relativePath: string,
     value: DataValue,
     surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
   ): void {
+    if (!node) {
+      console.warn("No component node set");
+      return;
+    }
+
     const surface = this.#getOrCreateSurface(surfaceId);
-    if (!surface) return null;
+    if (!surface) return;
 
     let finalPath: string;
 
     // The special `.` path means the final path is the node's data context
     // path and so we return the dataContextPath as-is.
-    if (relativePath === ".") {
+    if (relativePath === "." || relativePath === "") {
       finalPath = node.dataContextPath ?? "/";
     } else {
       // For all other paths, resolve them against the node's context.
@@ -186,6 +191,36 @@ export class A2UIModelProcessor {
     return `/${path}`;
   }
 
+  #parseIfJsonString(value: DataValue): DataValue {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const trimmedValue = value.trim();
+    if (
+      (trimmedValue.startsWith("{") && trimmedValue.endsWith("}")) ||
+      (trimmedValue.startsWith("[") && trimmedValue.endsWith("]"))
+    ) {
+      try {
+        // It looks like JSON, attempt to parse it.
+        return JSON.parse(value);
+      } catch (e) {
+        // It looked like JSON but wasn't. Keep the original string.
+        console.warn(
+          `Failed to parse potential JSON string: "${value.substring(
+            0,
+            50
+          )}..."`,
+          e
+        );
+        return value; // Return original string
+      }
+    }
+
+    // It's a string, but not JSON-like.
+    return value;
+  }
+
   /**
    * Converts a specific array format [{key: "...", value_string: "..."}, ...]
    * into a standard Map. It also attempts to parse any string values that
@@ -202,25 +237,21 @@ export class A2UIModelProcessor {
       const valueKey = Object.keys(item).find((k) => k.startsWith("value"));
       if (!valueKey) continue;
 
-      let value = item[valueKey];
+      let value: DataValue = item[valueKey];
+      // It's a valueList. We must unwrap its contents.
+      if (valueKey === "valueList" && Array.isArray(value)) {
+        value = value.map((wrappedItem: unknown) => {
+          if (!isObject(wrappedItem)) return null;
+          const innerValueKey = Object.keys(wrappedItem).find((k) =>
+            k.startsWith("value")
+          );
+          if (!innerValueKey) return wrappedItem as DataValue;
 
-      // Attempt to parse the value if it's a JSON string.
-      if (typeof value === "string") {
-        const trimmedValue = value.trim();
-        if (
-          (trimmedValue.startsWith("{") && trimmedValue.endsWith("}")) ||
-          (trimmedValue.startsWith("[") && trimmedValue.endsWith("]"))
-        ) {
-          try {
-            value = JSON.parse(value);
-          } catch (e) {
-            // It looked like JSON but wasn't. Keep the original string.
-            console.warn(
-              `Failed to parse potential JSON string for key "${key}":`,
-              e
-            );
-          }
-        }
+          const innerValue = wrappedItem[innerValueKey];
+          return this.#parseIfJsonString(innerValue as DataValue);
+        });
+      } else if (typeof value === "string") {
+        value = this.#parseIfJsonString(value);
       }
 
       this.#setDataByPath(map, key, value);
@@ -433,8 +464,7 @@ export class A2UIModelProcessor {
     visited.add(componentId);
 
     const componentData = components.get(baseComponentId)!;
-    const componentProps =
-      componentData.componentProperties ?? componentData.component;
+    const componentProps = componentData.component ?? {};
     const componentType = Object.keys(componentProps)[0];
     const unresolvedProperties =
       componentProps[componentType as keyof typeof componentProps];
@@ -458,7 +488,11 @@ export class A2UIModelProcessor {
     // Now that we have the resolved properties in place we can go ahead and
     // ensure that they meet expectations in terms of types and so forth,
     // casting them into the specific shape for usage.
-    const baseNode = { id: componentId, dataContextPath };
+    const baseNode = {
+      id: componentId,
+      dataContextPath,
+      weight: componentData.weight ?? "initial",
+    };
     switch (componentType) {
       case "Heading":
         if (!isResolvedHeading(resolvedProperties)) {

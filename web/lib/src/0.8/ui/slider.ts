@@ -21,6 +21,8 @@ import { NumberValue, StringValue } from "../types/primitives";
 import * as Styles from "./styles/index.js";
 import { ResolvedTextField } from "../types/types.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
+import { classMap } from "lit/directives/class-map.js";
+import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-slider")
 export class Slider extends Root {
@@ -89,6 +91,10 @@ export class Slider extends Root {
       <div>
         <input
           autocomplete="off"
+          class=${classMap(this.theme.components.Slider)}
+          style=${this.theme.additionalStyles?.Slider
+            ? styleMap(this.theme.additionalStyles?.Slider)
+            : nothing}
           @input=${(evt: Event) => {
             if (!(evt.target instanceof HTMLInputElement)) {
               return;

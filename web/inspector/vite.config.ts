@@ -32,7 +32,7 @@ export default async () => {
   return {
     plugins: [
       Middleware.ImageFallbackMiddleware.plugin(
-        "public/sample/scenic_view.jpg"
+        "public/sample/forest_path.jpg"
       ),
     ],
     build: {

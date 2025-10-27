@@ -57,7 +57,7 @@ export class Root extends SignalWatcher(LitElement) {
   accessor dataContextPath: string = "";
 
   @property()
-  set weight(weight: number) {
+  set weight(weight: string | number) {
     this.#weight = weight;
     this.style.setProperty("--weight", `${weight}`);
   }
@@ -66,7 +66,7 @@ export class Root extends SignalWatcher(LitElement) {
     return this.#weight;
   }
 
-  #weight = 0;
+  #weight: string | number = 1;
 
   static styles = [
     Styles.all,
@@ -139,7 +139,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-list
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .direction=${component.properties.direction ?? "vertical"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
@@ -157,7 +157,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-card
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .childComponents=${childComponents}
@@ -169,13 +169,13 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-column
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .childComponents=${component.properties.children ?? null}
             .dataContextPath=${component.dataContextPath ?? ""}
-            .alignment="${component.properties.alignment ?? "stretch"};"
-            .distribution="${component.properties.distribution ?? "start"};"
+            .alignment=${component.properties.alignment ?? "stretch"}
+            .distribution=${component.properties.distribution ?? "start"}
           ></a2ui-column>`;
         }
 
@@ -183,13 +183,13 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-row
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .childComponents=${component.properties.children ?? null}
             .dataContextPath=${component.dataContextPath ?? ""}
-            .alignment="${component.properties.alignment ?? "stretch"};"
-            .distribution="${component.properties.distribution ?? "start"};"
+            .alignment=${component.properties.alignment ?? "stretch"}
+            .distribution=${component.properties.distribution ?? "start"}
           ></a2ui-row>`;
         }
 
@@ -197,11 +197,12 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-image
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .url=${component.properties.url ?? null}
             .dataContextPath=${component.dataContextPath ?? ""}
+            .additionalRole=${component.properties.role ?? "content"}
           ></a2ui-image>`;
         }
 
@@ -209,7 +210,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-audioplayer
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .url=${component.properties.url ?? null}
@@ -221,12 +222,12 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-button
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath ?? ""}
-            .label=${component.properties.label}
             .action=${component.properties.action}
+            .childComponents=${[component.properties.child]}
           ></a2ui-button>`;
         }
 
@@ -234,7 +235,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-text
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .model=${this.processor}
             .surfaceId=${this.surfaceId}
             .processor=${this.processor}
@@ -247,7 +248,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-heading
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath}
@@ -260,7 +261,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-checkbox
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath ?? ""}
@@ -274,7 +275,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-datetimeinput
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath ?? ""}
@@ -290,7 +291,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-divider
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath}
@@ -305,7 +306,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-multiplechoice
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath}
@@ -319,7 +320,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-slider
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath}
@@ -334,7 +335,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-textfield
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath}
@@ -349,7 +350,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-video
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath}
@@ -370,7 +371,7 @@ export class Root extends SignalWatcher(LitElement) {
           return html`<a2ui-tabs
             id=${component.id}
             .component=${component}
-            .weight=${1}
+            .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath}

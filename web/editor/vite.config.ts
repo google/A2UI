@@ -33,7 +33,7 @@ export default async () => {
     plugins: [
       Middleware.GeminiMiddleware.plugin(),
       Middleware.ImageFallbackMiddleware.plugin(
-        "public/sample/scenic_view.jpg"
+        "public/sample/forest_path.jpg"
       ),
     ],
     build: {

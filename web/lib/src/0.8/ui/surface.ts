@@ -60,7 +60,7 @@ export class Surface extends Root {
   ];
 
   #renderLogo() {
-    if (!this.surface.styles.logoUrl) {
+    if (!this.surface?.styles.logoUrl) {
       return nothing;
     }
 
@@ -71,7 +71,7 @@ export class Surface extends Root {
 
   #renderSurface() {
     const styles: Record<string, string> = {};
-    if (this.surface.styles) {
+    if (this.surface?.styles) {
       for (const [key, value] of Object.entries(this.surface.styles)) {
         switch (key) {
           case "primaryColor": {
@@ -96,7 +96,9 @@ export class Surface extends Root {
       style=${styleMap(styles)}
       .surfaceId=${this.surfaceId}
       .processor=${this.processor}
-      .childComponents=${[this.surface.componentTree]}
+      .childComponents=${this.surface?.componentTree
+        ? [this.surface.componentTree]
+        : null}
     ></a2ui-root>`;
   }
 

@@ -38,10 +38,15 @@ export class Card extends Root {
       }
 
       section {
-        display: flex;
         height: 100%;
+        width: 100%;
         min-height: 0;
         overflow: auto;
+
+        ::slotted(*) {
+          height: 100%;
+          width: 100%;
+        }
       }
     `,
   ];

@@ -58,6 +58,7 @@ export interface Text {
 
 export interface Image {
   url: StringValue;
+  role?: "content" | "icon" | "hero";
 }
 
 export interface Video {
@@ -124,7 +125,11 @@ export interface Modal {
 }
 
 export interface Button {
-  label: StringValue;
+  /**
+   * The ID of the component to display as the button's content.
+   */
+  child: string;
+
   /**
    * Represents a user-initiated action.
    */
