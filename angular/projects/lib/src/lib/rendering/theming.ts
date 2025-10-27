@@ -17,7 +17,9 @@
 import { v0_8 } from '@a2ui/web-lib';
 import { InjectionToken } from '@angular/core';
 
-export const Theme = new InjectionToken<v0_8.Types.Theme>('Theme');
+export const Theme = new InjectionToken<Theme>('Theme');
+
+export type Theme = v0_8.Types.Theme;
 
 export function themeMerge(...classes: Array<Record<string, boolean>>) {
   // TODO: de-duplicate this function with Lit.

@@ -20,7 +20,7 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { A2UIClient, Catalog, DEFAULT_CATALOG, Theme } from '@a2ui/angular';
+import { DEFAULT_CATALOG, provideA2UI } from '@a2ui/angular';
 import { IMAGE_CONFIG } from '@angular/common';
 import { theme } from './theme';
 import { Client } from './client';
@@ -30,9 +30,11 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
-    { provide: Catalog, useValue: DEFAULT_CATALOG },
-    { provide: Theme, useValue: theme },
-    { provide: A2UIClient, useExisting: Client },
+    provideA2UI({
+      catalog: DEFAULT_CATALOG,
+      theme: theme,
+      client: Client,
+    }),
     {
       provide: IMAGE_CONFIG,
       useValue: {
