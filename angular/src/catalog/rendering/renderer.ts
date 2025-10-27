@@ -28,7 +28,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
-import { Catalog } from './types';
+import { Catalog } from './catalog';
 
 @Directive({
   selector: 'ng-container[a2ui-renderer]',

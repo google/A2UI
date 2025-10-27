@@ -20,9 +20,11 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { Catalog } from '../catalog/rendering/types';
+import { Catalog } from '../catalog/rendering/catalog';
 import { DEFAULT_CATALOG } from '../catalog/default';
 import { IMAGE_CONFIG } from '@angular/common';
+import { theme } from './theme';
+import { Theme } from '../catalog/rendering/theming';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
     { provide: Catalog, useValue: DEFAULT_CATALOG },
+    { provide: Theme, useValue: theme },
     {
       provide: IMAGE_CONFIG,
       useValue: {

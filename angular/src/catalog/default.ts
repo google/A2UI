@@ -15,12 +15,15 @@
  */
 
 import { inputBinding } from '@angular/core';
-import { Catalog } from './rendering/types';
+import { Catalog } from './rendering/catalog';
+import { Row } from './row';
+import { Column } from './column';
+import { Text } from './text';
 
 export const DEFAULT_CATALOG: Catalog = {
-  Row: () => import('./row').then((r) => r.Row),
+  Row: () => Row,
 
-  Column: () => import('./column').then((r) => r.Column),
+  Column: () => Column,
 
   List: {
     type: () => import('./list').then((r) => r.List),
@@ -55,7 +58,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Text: {
-    type: () => import('./text').then((r) => r.Text),
+    type: () => Text,
     bindings: ({ properties }) => [inputBinding('text', () => properties.text)],
   },
 
