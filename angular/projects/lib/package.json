@@ -1,13 +1,14 @@
 {
   "name": "@a2ui/angular",
   "version": "0.0.1",
-  "peerDependencies": {
+  "dependencies": {
     "@a2ui/web-lib": "0.1.0",
+    "markdown-it": "^14.1.0",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
     "@angular/common": "^20.3.0",
     "@angular/core": "^20.3.0"
-  },
-  "dependencies": {
-    "tslib": "^2.3.0"
   },
   "sideEffects": false
 }

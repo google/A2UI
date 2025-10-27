@@ -14,13 +14,15 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
+import { MarkdownRenderer } from '../data/markdown';
+import { themeAppendToAll } from '../rendering';
 
 @Component({
   selector: 'a2ui-text',
-  template: `{{ resolvedText() }}`,
+  template: `<section [innerHTML]="resolvedText()"></section>`,
   host: {
     '[class]': 'theme.components.Text',
     '[style]': 'theme.additionalStyles?.Text',
@@ -33,10 +35,17 @@ import { v0_8 } from '@a2ui/web-lib';
   `,
 })
 export class Text extends DynamicComponent {
+  private markdownRenderer = inject(MarkdownRenderer);
   readonly text = input.required<v0_8.Primitives.StringValue | null>();
 
   protected resolvedText = computed(() => {
-    // TODO: Markdown?
-    return super.resolvePrimitive(this.text()) ?? '(empty)';
+    const value = super.resolvePrimitive(this.text());
+
+    return value == null
+      ? '(empty)'
+      : this.markdownRenderer.render(
+          value,
+          themeAppendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {})
+        );
   });
 }
