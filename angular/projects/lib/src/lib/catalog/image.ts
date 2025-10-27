@@ -17,6 +17,7 @@
 import { Component, computed, ElementRef, inject, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
+import { themeMerge } from '../rendering';
 
 @Component({
   selector: 'a2ui-image',
@@ -36,50 +37,36 @@ import { v0_8 } from '@a2ui/web-lib';
     }
   `,
   template: `
-    @let resolvedUrl = this.resolvedUrl();
+    @let resolvedUrl = this.resolvedUrl(); 
 
     @if (resolvedUrl) {
       <section [class]="classes()" [style]="theme.additionalStyles?.Image">
-        <img [src]="resolvedUrl" />
+        @if (additionalRole() === 'icon') {
+          <span class="g-icon">{{ resolvedUrl }}</span>
+        } @else {
+          <img [src]="resolvedUrl" />
+        }
       </section>
     }
   `,
 })
 export class Image extends DynamicComponent {
-  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly url = input.required<v0_8.Primitives.StringValue | null>();
+  readonly additionalRole = input<v0_8.Types.ResolvedImage['role']>('content');
+
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 
   protected readonly classes = computed(() => {
-    const classes: Record<string, boolean> = {};
-    const parentElement = this.elementRef.nativeElement.parentElement;
-
-    for (const [id, value] of Object.entries(this.theme.components.Image)) {
-      if (typeof value === 'boolean') {
-        classes[id] = value;
-        continue;
+    switch (this.additionalRole()) {
+      case 'icon': {
+        return themeMerge(this.theme.components.Image.all, this.theme.components.Image.icon);
       }
 
-      let tagName = value;
-
-      if (tagName.endsWith('>')) {
-        tagName = tagName.replace(/\W*>$/, '').trim();
-
-        if (parentElement && parentElement.tagName.toLocaleLowerCase() === tagName) {
-          classes[id] = true;
-        }
-      } else {
-        let parent = parentElement;
-        while (parent) {
-          if (tagName === parent.tagName.toLocaleLowerCase()) {
-            classes[id] = true;
-            break;
-          }
-          parent = parent.parentElement;
-        }
+      case 'hero': {
+        return themeMerge(this.theme.components.Image.all, this.theme.components.Image.hero);
       }
     }
 
-    return classes;
+    return themeMerge(this.theme.components.Image.all, this.theme.components.Image.content);
   });
 }

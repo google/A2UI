@@ -17,11 +17,12 @@
 import { Component, computed, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from '../rendering/dynamic-component';
+import { themeMerge } from '../rendering';
 
 @Component({
   selector: 'a2ui-heading',
   template: `
-    <h1 [class]="theme.components.Heading" [style]="theme.additionalStyles?.Heading">
+    <h1 [class]="classes()" [style]="theme.additionalStyles?.Heading">
       {{ resolvedText() }}
     </h1>
   `,
@@ -30,46 +31,10 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   },
   styles: `
     :host {
-      display: block;
-      flex-grow: 0;
-      flex-shrink: 0;
-      flex-basis: auto;
+      display: flex;
+      flex: var(--weight) 0 auto;
       min-height: 0;
       overflow: auto;
-
-      & h1 {
-        line-height: 1.2;
-      }
-    }
-
-    :host([level="1"]) h1 {
-      font-size: 24px;
-      margin: 0;
-      padding: 0;
-    }
-
-    :host([level="2"]) h1 {
-      font-size: 20px;
-      margin: 0;
-      padding: 0;
-    }
-
-    :host([level="3"]) h1 {
-      font-size: 18px;
-      margin: 0;
-      padding: 0;
-    }
-
-    :host([level="4"]) h1 {
-      font-size: 16px;
-      margin: 0;
-      padding: 0;
-    }
-
-    :host([level="5"]) h1 {
-      font-size: 14px;
-      margin: 0;
-      padding: 0;
     }
   `,
 })
@@ -77,4 +42,9 @@ export class Heading extends DynamicComponent {
   readonly text = input.required<v0_8.Primitives.StringValue | null>();
   readonly level = input.required<string | undefined>();
   protected resolvedText = computed(() => super.resolvePrimitive(this.text()) ?? '');
+
+  protected readonly classes = computed(() => {
+    const classKey = `level${this.level()}` as keyof typeof this.theme.components.Heading;
+    return themeMerge(this.theme.components.Heading.all, this.theme.components.Heading[classKey]);
+  });
 }
