@@ -22,6 +22,7 @@ import {
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { Catalog } from '../catalog/rendering/types';
 import { DEFAULT_CATALOG } from '../catalog/default';
+import { IMAGE_CONFIG } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,5 +30,12 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
     { provide: Catalog, useValue: DEFAULT_CATALOG },
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        disableImageSizeWarning: true,
+        disableImageLazyLoadWarning: true,
+      },
+    },
   ],
 };

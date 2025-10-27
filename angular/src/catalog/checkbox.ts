@@ -23,16 +23,31 @@ let idCounter = 0;
 @Component({
   selector: 'a2ui-checkbox',
   template: `
-    <input
-      autocomplete="off"
-      type="checkbox"
-      [id]="inputId"
-      [checked]="inputChecked()"
-      (change)="handleChange($event)"
-    />
+    <section>
+      <input
+        autocomplete="off"
+        type="checkbox"
+        [id]="inputId"
+        [checked]="inputChecked()"
+        (change)="handleChange($event)"
+      />
 
-    <label [htmlFor]="inputId">{{ resolvedLabel() }}</label>
+      <label [htmlFor]="inputId">{{ resolvedLabel() }}</label>
+    </section>
   `,
+  styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+    }
+  `
 })
 export class Checkbox extends DynamicComponent {
   readonly value = input.required<v0_8.Primitives.BooleanValue | null>();

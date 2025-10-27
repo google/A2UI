@@ -28,6 +28,13 @@ import { v0_8 } from '@a2ui/web-lib';
     '[attr.placeholder]': 'placeholder()',
     '[type]': 'inputType() === "number" ? "number" : "text"',
   },
+  styles: `
+    :host {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  `
 })
 export class TextField extends DynamicComponent {
   readonly text = input.required<v0_8.Primitives.StringValue | null>();

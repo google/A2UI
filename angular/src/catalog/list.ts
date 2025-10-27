@@ -22,18 +22,41 @@ import { v0_8 } from '@a2ui/web-lib';
 @Component({
   selector: 'a2ui-list',
   imports: [Renderer],
+  host: {
+    '[attr.direction]': 'direction()',
+  },
   styles: `
     :host {
       display: block;
-      outline: solid 1px green;
-      padding: 20px;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    :host([direction="vertical"]) section {
+      display: grid;
+    }
+
+    :host([direction="horizontal"]) section {
+      display: flex;
+      max-width: 100%;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      scrollbar-width: none;
+
+      > ::slotted(*) {
+        flex: 1 0 fit-content;
+        max-width: min(80%, 400px);
+      }
     }
   `,
   template: `
     <!-- TODO: implement theme -->
-    @for (child of component().properties.children; track child) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child"/>
-    }
+    <section>
+      @for (child of component().properties.children; track child) {
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      }
+    </section>
   `,
 })
 export class List extends DynamicComponent<v0_8.Types.ListNode> {

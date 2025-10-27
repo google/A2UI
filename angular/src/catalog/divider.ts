@@ -18,7 +18,20 @@ import { Component } from '@angular/core';
 import { DynamicComponent } from './rendering/dynamic-component';
 
 @Component({
-  selector: 'hr[a2ui-divider]',
-  template: '',
+  selector: 'a2ui-divider',
+  template: '<hr/>',
+  styles: `
+    :host {
+      display: block;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    hr {
+      height: 1px;
+      background: #ccc;
+      border: none;
+    }
+  `,
 })
 export class Divider extends DynamicComponent {}

@@ -25,18 +25,28 @@ import { Renderer } from './rendering/renderer';
   styles: `
     :host {
       display: block;
-      outline: solid 1px orange;
-      padding: 20px;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    section {
+      display: flex;
+      height: 100%;
+      min-height: 0;
+      overflow: auto;
     }
   `,
   template: `
     <!-- TODO: implement theme -->
-    @let properties = component().properties;
-    @let children = properties.children || [properties.child];
+    @let properties = component().properties; @let children = properties.children ||
+    [properties.child];
 
-    @for (child of children; track child) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child"/>
-    }
+    <section>
+      @for (child of children; track child) {
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      }
+    </section>
   `,
 })
 export class Card extends DynamicComponent<v0_8.Types.CardNode> {

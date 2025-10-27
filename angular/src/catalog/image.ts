@@ -21,19 +21,27 @@ import { v0_8 } from '@a2ui/web-lib';
 @Component({
   selector: 'a2ui-image',
   styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
     img {
       display: block;
       width: 100%;
       height: 100%;
-
-      max-width: 200px; /* TODO: temporary */
+      box-sizing: border-box;
     }
   `,
   template: `
     @let resolvedUrl = this.resolvedUrl(); 
     
     @if (resolvedUrl) {
-      <img [src]="resolvedUrl" />
+      <section>
+        <img [src]="resolvedUrl" />
+      </section>
     }
   `,
 })

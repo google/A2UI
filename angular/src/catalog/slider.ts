@@ -29,6 +29,13 @@ import { v0_8 } from '@a2ui/web-lib';
     '[max]': 'maxValue()',
     '(input)': 'handleInput($event)',
   },
+  styles: `
+    :host {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  `
 })
 export class Slider extends DynamicComponent {
   readonly value = input.required<v0_8.Primitives.NumberValue | null>();

@@ -21,12 +21,27 @@ import { v0_8 } from '@a2ui/web-lib';
 @Component({
   selector: 'a2ui-multiple-choice',
   template: `
-    <select (change)="handleChange($event)" [value]="selectValue()">
-      @for (option of options(); track option.value) {
-      <option [value]="option.value">{{ resolvePrimitive(option.label) }}</option>
-      }
-    </select>
+    <section>
+      <select (change)="handleChange($event)" [value]="selectValue()">
+        @for (option of options(); track option.value) {
+          <option [value]="option.value">{{ resolvePrimitive(option.label) }}</option>
+        }
+      </select>
+    </section>
   `,
+  styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    select {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  `
 })
 export class MultipleChoice extends DynamicComponent {
   readonly options = input.required<{ label: v0_8.Primitives.StringValue; value: string }[]>();

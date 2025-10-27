@@ -24,9 +24,25 @@ import { v0_8 } from '@a2ui/web-lib';
     @let resolvedUrl = this.resolvedUrl(); 
     
     @if (resolvedUrl) {
-      <video controls [src]="resolvedUrl"></video>
+      <section>
+        <video controls [src]="resolvedUrl"></video>
+      </section>
     }
   `,
+  styles: `
+    :host {
+      display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    video {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  `
 })
 export class Video extends DynamicComponent {
   readonly url = input.required<v0_8.Primitives.StringValue | null>();
