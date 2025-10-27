@@ -1,0 +1,83 @@
+{
+  "title": "A2UI (Agent to UI) Client-to-Server Event Schema",
+  "description": "Describes a JSON payload for a client-to-server event message.",
+  "type": "object",
+  "minProperties": 1,
+  "maxProperties": 1,
+  "properties": {
+    "userAction": {
+      "type": "object",
+      "description": "Reports a user-initiated action from a component.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the action, taken from the component's action.name property."
+        },
+        "surfaceId": {
+          "type": "string",
+          "description": "The id of the surface where the event originated."
+        },
+        "sourceComponentId": {
+          "type": "string",
+          "description": "The id of the component that triggered the event."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "An ISO 8601 timestamp of when the event occurred."
+        },
+        "context": {
+          "type": "object",
+          "description": "A JSON object containing the key-value pairs from the component's action.context, after resolving all data bindings.",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "name",
+        "surfaceId",
+        "sourceComponentId",
+        "timestamp",
+        "context"
+      ]
+    },
+    "clientUiCapabilities": {
+      "type": "object",
+      "description": "Informs the server about the client's capabilities, such as the component catalog it supports. Exactly ONE of the properties in this object must be set.",
+      "properties": {
+        "catalogUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "A URI pointing to a predefined component catalog schema that the server advertized, and the client supports."
+        },
+        "dynamicCatalog": {
+          "type": "object",
+          "description": "An inline JSON object that defines the client's supported components.",
+          "properties": {
+            "components": {
+              "type": "object",
+              "description": "A map where each key is a component name and the value is a JSON Schema defining an object containing its properties.",
+              "additionalProperties": {
+                "$ref": "https://json-schema.org/draft/2020-12/schema"
+              }
+            }
+          },
+          "required": ["components"]
+        }
+      },
+      "oneOf": [
+        { "required": ["catalogUri"] },
+        { "required": ["dynamicCatalog"] }
+      ]
+    },
+    "error": {
+      "type": "object",
+      "description": "Reports a client-side error. The content is flexible.",
+      "additionalProperties": true
+    }
+  },
+  "oneOf": [
+    { "required": ["userAction"] },
+    { "required": ["clientUiCapabilities"] },
+    { "required": ["error"] }
+  ]
+}

@@ -22,9 +22,19 @@
     "build:tsc": "wireit",
     "dev": "npm run serve --watch",
     "test": "wireit",
-    "serve": "wireit"
+    "serve": "wireit",
+    "copy-spec": "wireit"
   },
   "wireit": {
+    "copy-spec": {
+      "command": "cp ../../specification/json/*.json ./src/0.8/schemas",
+      "files": [
+        "src/config.prod.js"
+      ],
+      "output": [
+        "dist/config.js"
+      ]
+    },
     "serve": {
       "command": "vite dev",
       "dependencies": [
@@ -48,7 +58,9 @@
       "env": {
         "FORCE_COLOR": "1"
       },
-      "dependencies": [],
+      "dependencies": [
+        "copy-spec"
+      ],
       "files": [
         "src/**/*.ts",
         "src/**/*.json",
