@@ -16,6 +16,14 @@
 
 import { v0_8 } from "@a2ui/web-lib";
 
+const catalog: v0_8.Types.ClientCapabilitiesDynamic = {
+  components:
+    v0_8.Schemas.A2UIProtocolMessage["properties"]["surfaceUpdate"][
+      "properties"
+    ]["components"]["items"]["properties"]["component"]["properties"],
+  styles: {},
+};
+
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
   constructor() {
@@ -28,7 +36,7 @@ export class A2UIClient {
         (async () => {
           await this.#send({
             clientUiCapabilities: {
-              dynamicCatalog: v0_8.Schemas.DefaultCatalog,
+              dynamicCatalog: catalog,
             },
           });
           console.log("A2UI Client Handshake");
