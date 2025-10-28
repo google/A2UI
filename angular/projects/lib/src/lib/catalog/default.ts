@@ -21,9 +21,21 @@ import { Column } from './column';
 import { Text } from './text';
 
 export const DEFAULT_CATALOG: Catalog = {
-  Row: () => Row,
+  Row: {
+    type: () => Row,
+    bindings: ({ properties }) => [
+      inputBinding('alignment', () => properties.alignment ?? 'stretch'),
+      inputBinding('distribution', () => properties.distribution ?? 'start'),
+    ],
+  },
 
-  Column: () => Column,
+  Column: {
+    type: () => Column,
+    bindings: ({ properties }) => [
+      inputBinding('alignment', () => properties.alignment ?? 'stretch'),
+      inputBinding('distribution', () => properties.distribution ?? 'start'),
+    ],
+  },
 
   List: {
     type: () => import('./list').then((r) => r.List),

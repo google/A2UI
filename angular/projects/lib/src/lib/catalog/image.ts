@@ -39,7 +39,7 @@ import { v0_8 } from '@a2ui/web-lib';
     @let resolvedUrl = this.resolvedUrl(); 
 
     @if (resolvedUrl) {
-      <section [class]="theme.components.Icon" [style]="theme.additionalStyles?.Icon">
+      <section [class]="theme.components.Image" [style]="theme.additionalStyles?.Image">
         <img [src]="resolvedUrl" />
       </section>
     }

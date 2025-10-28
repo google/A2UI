@@ -22,11 +22,13 @@ import { themeAppendToAll } from '../rendering';
 
 @Component({
   selector: 'a2ui-text',
-  template: `<section [innerHTML]="resolvedText()"></section>`,
-  host: {
-    '[class]': 'theme.components.Text',
-    '[style]': 'theme.additionalStyles?.Text',
-  },
+  template: `
+    <section
+      [class]="theme.components.Text"
+      [style]="theme.additionalStyles?.Text"
+      [innerHTML]="resolvedText()"
+    ></section>
+  `,
   styles: `
     :host {
       display: block;

@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
@@ -37,52 +37,53 @@ import { Renderer } from '../rendering/renderer';
       flex-direction: row;
       width: 100%;
       min-height: 100%;
+      box-sizing: border-box;
     }
 
-    :host([alignment="start"]) section {
+    .align-start {
       align-items: start;
     }
 
-    :host([alignment="center"]) section {
+    .align-center {
       align-items: center;
     }
 
-    :host([alignment="end"]) section {
+    .align-end {
       align-items: end;
     }
 
-    :host([alignment="stretch"]) section {
+    .align-stretch {
       align-items: stretch;
     }
 
-    :host([distribution="start"]) section {
+    .distribute-start {
       justify-content: start;
     }
 
-    :host([distribution="center"]) section {
+    .distribute-center {
       justify-content: center;
     }
 
-    :host([distribution="end"]) section {
+    .distribute-end {
       justify-content: end;
     }
 
-    :host([distribution="spaceBetween"]) section {
+    .distribute-spaceBetween {
       justify-content: space-between;
     }
 
-    :host([distribution="spaceAround"]) section {
+    .distribute-spaceAround {
       justify-content: space-around;
     }
 
-    :host([distribution="spaceEvenly"]) section {
+    .distribute-spaceEvenly {
       justify-content: space-evenly;
     }
   `,
   template: `
-    <section [class]="theme.components.Row" [style]="theme.additionalStyles?.Row">
+    <section [class]="classes()" [style]="theme.additionalStyles?.Row">
       @for (child of component().properties.children; track child) {
-        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
     </section>
   `,
@@ -90,4 +91,10 @@ import { Renderer } from '../rendering/renderer';
 export class Row extends DynamicComponent<v0_8.Types.RowNode> {
   readonly alignment = input<v0_8.Types.ResolvedRow['alignment']>('stretch');
   readonly distribution = input<v0_8.Types.ResolvedRow['distribution']>('start');
+
+  protected readonly classes = computed(() => ({
+    ...this.theme.components.Row,
+    [`align-${this.alignment()}`]: true,
+    [`distribute-${this.distribution()}`]: true,
+  }));
 }

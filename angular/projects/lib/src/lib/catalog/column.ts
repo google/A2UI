@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
@@ -22,10 +22,6 @@ import { Renderer } from '../rendering/renderer';
 @Component({
   selector: 'a2ui-column',
   imports: [Renderer],
-  host: {
-    '[attr.alignment]': 'alignment()',
-    '[attr.distribution]': 'distribution()',
-  },
   styles: `
     :host {
       display: flex;
@@ -37,52 +33,53 @@ import { Renderer } from '../rendering/renderer';
       flex-direction: column;
       min-width: 100%;
       height: 100%;
+      box-sizing: border-box;
     }
 
-    :host([alignment="start"]) section {
+    .align-start {
       align-items: start;
     }
 
-    :host([alignment="center"]) section {
+    .align-center {
       align-items: center;
     }
 
-    :host([alignment="end"]) section {
+    .align-end {
       align-items: end;
     }
 
-    :host([alignment="stretch"]) section {
+    .align-stretch {
       align-items: stretch;
     }
 
-    :host([distribution="start"]) section {
+    .distribute-start {
       justify-content: start;
     }
 
-    :host([distribution="center"]) section {
+    .distribute-center {
       justify-content: center;
     }
 
-    :host([distribution="end"]) section {
+    .distribute-end {
       justify-content: end;
     }
 
-    :host([distribution="spaceBetween"]) section {
+    .distribute-spaceBetween {
       justify-content: space-between;
     }
 
-    :host([distribution="spaceAround"]) section {
+    .distribute-spaceAround {
       justify-content: space-around;
     }
 
-    :host([distribution="spaceEvenly"]) section {
+    .distribute-spaceEvenly {
       justify-content: space-evenly;
     }
   `,
   template: `
-    <section [class]="theme.components.Column" [style]="theme.additionalStyles?.Column">
+    <section [class]="classes()" [style]="theme.additionalStyles?.Column">
       @for (child of component().properties.children; track child) {
-        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
     </section>
   `,
@@ -90,4 +87,10 @@ import { Renderer } from '../rendering/renderer';
 export class Column extends DynamicComponent<v0_8.Types.ColumnNode> {
   readonly alignment = input<v0_8.Types.ResolvedColumn['alignment']>('stretch');
   readonly distribution = input<v0_8.Types.ResolvedColumn['distribution']>('start');
+
+  protected readonly classes = computed(() => ({
+    ...this.theme.components.Column,
+    [`align-${this.alignment()}`]: true,
+    [`distribute-${this.distribution()}`]: true,
+  }));
 }
