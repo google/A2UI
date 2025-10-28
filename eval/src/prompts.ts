@@ -15,16 +15,16 @@
  */
 
 import { BasicSchemaMatcher } from "./basic_schema_matcher";
-import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
 import { MessageTypeMatcher } from "./message_type_matcher";
 import { SchemaMatcher } from "./schema_matcher";
+import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
 
 export interface TestPrompt {
-  promptText: string;
-  description: string;
   name: string;
+  description: string;
   schemaPath: string;
-  matchers?: SchemaMatcher[];
+  promptText: string;
+  matchers: SchemaMatcher[];
 }
 
 export const prompts: TestPrompt[] = [
@@ -68,8 +68,18 @@ The dog generator is another card which is a form that generates a fictional dog
       new MessageTypeMatcher("surfaceUpdate"),
       new SurfaceUpdateSchemaMatcher("Column"),
       new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Dog breed name"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Number of legs"),
+      new SurfaceUpdateSchemaMatcher(
+        "TextField",
+        "label",
+        "Dog breed name",
+        true
+      ),
+      new SurfaceUpdateSchemaMatcher(
+        "TextField",
+        "label",
+        "Number of legs",
+        true
+      ),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Generate"),
     ],
   },
@@ -82,8 +92,8 @@ The dog generator is another card which is a form that generates a fictional dog
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
       new SurfaceUpdateSchemaMatcher("Heading", "text", "Login"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "username"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "password"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "username", true),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "password", true),
       new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Remember Me"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Sign In"),
     ],
@@ -130,7 +140,7 @@ The dog generator is another card which is a form that generates a fictional dog
     promptText: `Generate a JSON message containing a surfaceUpdate for a user settings page. Use a Tabs component with two tabs: "Profile" and "Notifications". The "Profile" tab should contain a simple column with a text field for the user's name. The "Notifications" tab should contain a checkbox for "Enable email notifications". Also, include a Modal component. The modal's entry point should be a button labeled "Delete Account", and its content should be a column with a confirmation text and two buttons: "Confirm Deletion" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "name"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "name", true),
       new SurfaceUpdateSchemaMatcher(
         "CheckBox",
         "label",
@@ -202,25 +212,25 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
         "Simple Animal Explorer"
       ),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Search..."),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Mammalia"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Carnivora"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Mammalia"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Carnivora"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Lion"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Tiger"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Wolf"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Artiodactyla"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Artiodactyla"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Giraffe"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Hippopotamus"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Aves"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Accipitriformes"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Aves"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Accipitriformes"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Bald Eagle"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Struthioniformes"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Struthioniformes"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Ostrich"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Sphenisciformes"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Sphenisciformes"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Penguin"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Reptilia"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Crocodilia"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Reptilia"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Crocodilia"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Nile Crocodile"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Squamata"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Squamata"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Komodo Dragon"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Ball Python"),
     ],
