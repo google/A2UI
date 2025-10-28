@@ -212,7 +212,7 @@
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -260,7 +260,7 @@
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -308,7 +308,7 @@
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -650,7 +650,7 @@
         },
         "path": {
           "type": "string",
-          "description": "An optional path to a location within the data model (e.g., 'user.name'). If omitted, the entire data model will be replaced."
+          "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', the entire data model will be replaced."
         },
         "contents": {
           "type": "array",
@@ -672,11 +672,16 @@
               "valueBoolean": {
                 "type": "boolean"
               },
-              "valueList": {
+              "valueMap": {
+                "description": "Represents a map as an adjacency list.",
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "description": "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
                   "properties": {
+                    "key": {
+                      "type": "string"
+                    },
                     "valueString": {
                       "type": "string"
                     },
@@ -686,10 +691,12 @@
                     "valueBoolean": {
                       "type": "boolean"
                     }
-                  }
+                  },
+                  "required": ["key"]
                 }
               }
-            }
+            },
+            "required": ["key"]
           }
         }
       },

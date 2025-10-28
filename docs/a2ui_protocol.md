@@ -72,7 +72,7 @@ This document specifies the architecture and data formats for the A2UI protocol.
 
 The central philosophy of A2UI is the decoupling of three key elements:
 
-1.  **The Component Tree (The Structure):** A server-provided tree of abstract components that describes the UI's structure. This is defined by `componentUpdate` messages.
+1.  **The Component Tree (The Structure):** A server-provided tree of abstract components that describes the UI's structure. This is defined by `surfaceUpdate` messages.
 2.  **The Data Model (The State):** A server-provided JSON object containing the dynamic values that populate the UI, such as text, booleans, or lists. This is managed via `dataModelUpdate` messages.
 3.  **The Widget Registry (The "Catalog"):** A client-defined mapping of component types (e.g., "Row", "Text") to concrete, native widget implementations. This registry is **part of the client application**, not the protocol stream. The server must generate components that the target client's registry understands.
 
@@ -292,7 +292,7 @@ Container components (`Row`, `Column`, `List`) define their children using a `ch
 
 To render dynamic lists, a container uses the `template` property.
 
-1.  `dataBinding`: A path to a list in the data model (e.g., `user.posts`).
+1.  `dataBinding`: A path to a list in the data model (e.g., `/user/posts`).
 2.  `componentId`: The `id` of another component in the buffer to use as a template for each item in the list.
 
 The client will iterate over the list at `dataBinding` and, for each item, render the component specified by `componentId`. The item's data is made available to the template component for relative data binding.
@@ -306,8 +306,9 @@ A2UI enforces a clean separation between the UI's structure (components) and its
 This message is the only way to modify the client's data model.
 
 - `surfaceId`: The unique identifier for the UI surface this data model update applies to.
-- `path`: An optional path to a location within the data model (e.g., 'user.name'). If omitted, the update applies to the root of the data model.
-- `contents`: An array of data entries. Each entry must contain a 'key' and exactly one corresponding typed 'value\*' property (e.g. `valueString`, `valueNumber`, `valueBoolean`, `valueList`).
+- `path`: An optional path to a location within the data model (e.g., '/user/name'). If omitted, the update applies to the root of the data model.
+- `contents`: An array of data entries arranged as an adjacency list. Each entry must contain a 'key' and exactly one corresponding typed 'value\*' property (e.g. `valueString`, `valueNumber`, `valueBoolean`, `valueMap`).
+  - `valueMap`: A JSON object representing a map as an adjacency list.
 
 #### Example: Updating the data model
 
@@ -318,7 +319,14 @@ This message is the only way to modify the client's data model.
     "path": "user",
     "contents": [
       { "key": "name", "valueString": "Bob" },
-      { "key": "isVerified", "valueBoolean": true }
+      { "key": "isVerified", "valueBoolean": true },
+      {
+        "key": "address",
+        "valueMap": [
+          { "key": "street", "valueString": "123 Main St" },
+          { "key": "city", "valueString": "Anytown" }
+        ]
+      }
     ]
   }
 }
@@ -350,7 +358,7 @@ A component can also bind to numbers (`literalNumber`), booleans (`literalBoolea
 - **Path Only**: If only `path` is provided, the value is dynamic. It's resolved from the data model at render time.
 
   ```json
-  "text": { "path": "user.name" }
+  "text": { "path": "/user/name" }
   ```
 
 - **Path and Literal Value (Initialization Shorthand)**: If **both** `path` and a `literal*` value are provided, it serves as a shorthand for data model initialization. The client MUST:
@@ -361,8 +369,8 @@ A component can also bind to numbers (`literalNumber`), booleans (`literalBoolea
   This allows the server to set a default value and bind to it in a single step.
 
   ```json
-  // This initializes data model at 'user.name' to "Guest" and binds to it.
-  "text": { "path": "user.name", "literalString": "Guest" }
+  // This initializes data model at '/user/name' to "Guest" and binds to it.
+  "text": { "path": "/user/name", "literalString": "Guest" }
   ```
 
 The client's interpreter is responsible for resolving these paths against the data model before rendering. The A2UI protocol supports direct 1:1 binding; it does not include transformers (e.g., formatters, conditionals). Any data transformation must be performed by the server before sending it in a `dataModelUpdate`.
@@ -454,7 +462,7 @@ This message provides a feedback mechanism for the server. It is sent when the c
                   "context": [
                     {
                       "key": "userInput",
-                      "value": { "path": "form.textField" }
+                      "value": { "path": "/form/textField" }
                     },
                     { "key": "formId", "value": { "literalString": "f-123" } }
                   ]
@@ -473,9 +481,10 @@ This message provides a feedback mechanism for the server. It is sent when the c
     {
       "dataModelUpdate": {
         "surfaceId": "main_content_area",
-        "form": {
-          "textField": "User input text"
-        }
+        "path": "form",
+        "contents": [
+          { "key": "textField", "valueString": "User input text" }
+        ]
       }
     }
     ```
@@ -506,12 +515,12 @@ This message provides a feedback mechanism for the server. It is sent when the c
 A robust client-side interpreter for A2UI should be composed of several key components:
 
 - **JSONL Parser:** A parser capable of reading the stream line by line and decoding each line as a separate JSON object.
-- **Message Dispatcher:** A mechanism (e.g., a `switch` statement) to identify the message type (`streamHeader`, `componentUpdate`, etc.) and route it to the correct handler.
+- **Message Dispatcher:** A mechanism (e.g., a `switch` statement) to identify the message type (`beginRendering`, `surfaceUpdate`, etc.) and route it to the correct handler.
 - **Component Buffer:** A `Map<String, Component>` that stores all component instances by their `id`. This is populated by `componentUpdate` messages.
 - **Data Model Store:** A `Map<String, dynamic>` (or similar) that holds the application state. This is built and modified by `dataModelUpdate` messages.
 - **Interpreter State:** A state machine to track if the client is ready to render (e.g., a `_isReadyToRender` boolean that is set to `true` by `beginRendering`).
 - **Widget Registry**: A developer-provided map (e.g., `Map<String, WidgetBuilder>`) that associates component type strings ("Row", "Text") with functions that build native widgets.
-- **Binding Resolver:** A utility that can take a `BoundValue` (e.g., `{ "path": "user.name" }`) and resolve it against the Data Model Store.
+- **Binding Resolver:** A utility that can take a `BoundValue` (e.g., `{ "path": "/user/name" }`) and resolve it against the Data Model Store.
 - **Surface Manager:** Logic to create, update, and delete UI surfaces based on `surfaceId`.
 - **Event Handler:** A function, exposed to the `WidgetRegistry`, that constructs and sends the client event message (e.g., `userAction`) to the configured REST API endpoint.
 
@@ -574,6 +583,10 @@ This section provides the formal JSON Schema for a single server-to-client messa
               "id": {
                 "type": "string",
                 "description": "The unique identifier for this component."
+              },
+              "weight": {
+                "type": "number",
+                "description": "The relative weight of this component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
               },
               "component": {
                 "type": "object",
@@ -649,6 +662,24 @@ This section provides the formal JSON Schema for a single server-to-client messa
                     },
                     "required": ["url"]
                   },
+                  "Icon": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "object",
+                        "description": "The name of the icon to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'icon.name').",
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": ["name"]
+                  },
                   "Video": {
                     "type": "object",
                     "properties": {
@@ -712,7 +743,7 @@ This section provides the formal JSON Schema for a single server-to-client messa
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -760,7 +791,7 @@ This section provides the formal JSON Schema for a single server-to-client messa
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -808,7 +839,7 @@ This section provides the formal JSON Schema for a single server-to-client messa
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -1150,7 +1181,7 @@ This section provides the formal JSON Schema for a single server-to-client messa
         },
         "path": {
           "type": "string",
-          "description": "An optional path to a location within the data model (e.g., 'user.name'). If omitted, the entire data model will be replaced."
+          "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', the entire data model will be replaced."
         },
         "contents": {
           "type": "array",
@@ -1172,11 +1203,16 @@ This section provides the formal JSON Schema for a single server-to-client messa
               "valueBoolean": {
                 "type": "boolean"
               },
-              "valueList": {
+              "valueMap": {
+                "description": "Represents a map as an adjacency list.",
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "description": "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
                   "properties": {
+                    "key": {
+                      "type": "string"
+                    },
                     "valueString": {
                       "type": "string"
                     },
@@ -1186,10 +1222,12 @@ This section provides the formal JSON Schema for a single server-to-client messa
                     "valueBoolean": {
                       "type": "boolean"
                     }
-                  }
+                  },
+                  "required": ["key"]
                 }
               }
-            }
+            },
+            "required": ["key"]
           }
         }
       },

@@ -38,7 +38,24 @@ CONTACT_UI_EXAMPLES = """
     "surfaceId": "contact-list",
     "path": "/",
     "contents": [
-      { "key": "contacts", "valueList": [] }
+      {{ "key": "contacts", "valueMap": [
+        {{ "key": "contact1", "valueMap": [
+          {{ "key": "name", "valueString": "Alice Wonderland" }},
+          {{ "key": "phone", "valueString": "+1-555-123-4567" }},
+          {{ "key": "email", "valueString": "alice@example.com" }},
+          {{ "key": "imageUrl", "valueString": "https://example.com/alice.jpg" }},
+          {{ "key": "title", "valueString": "Mad Hatter" }},
+          {{ "key": "department", "valueString": "Wonderland" }}
+        ] }},
+        {{ "key": "contact2", "valueMap": [
+          {{ "key": "name", "valueString": "Bob The Builder" }},
+          {{ "key": "phone", "valueString": "+1-555-765-4321" }},
+          {{ "key": "email", "valueString": "bob@example.com" }},
+          {{ "key": "imageUrl", "valueString": "https://example.com/bob.jpg" }},
+          {{ "key": "title", "valueString": "Construction" }},
+          {{ "key": "department", "valueString": "Building" }}
+        ] }}
+      ] }}
     ]
   } }
 ]

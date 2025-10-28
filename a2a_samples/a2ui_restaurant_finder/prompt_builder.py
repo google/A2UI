@@ -13,10 +13,10 @@
 # limitations under the License.
 
 # The A2UI schema remains constant for all A2UI responses.
-A2UI_SCHEMA = """
+A2UI_SCHEMA = r'''
 {
   "title": "A2UI Message Schema",
-  "description": "Describes a JSON payload for an A2UI message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
+  "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   "type": "object",
   "properties": {
     "beginRendering": {
@@ -228,7 +228,7 @@ A2UI_SCHEMA = """
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -276,7 +276,7 @@ A2UI_SCHEMA = """
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -324,7 +324,7 @@ A2UI_SCHEMA = """
                           },
                           "template": {
                             "type": "object",
-                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the list in the data model.",
+                            "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
                             "properties": {
                               "componentId": {
                                 "type": "string"
@@ -666,7 +666,7 @@ A2UI_SCHEMA = """
         },
         "path": {
           "type": "string",
-          "description": "An optional path to a location within the data model (e.g., 'user.name'). If omitted, the entire data model will be replaced."
+          "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', the entire data model will be replaced."
         },
         "contents": {
           "type": "array",
@@ -688,11 +688,16 @@ A2UI_SCHEMA = """
               "valueBoolean": {
                 "type": "boolean"
               },
-              "valueList": {
+              "valueMap": {
+                "description": "Represents a map as an adjacency list.",
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "description": "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
                   "properties": {
+                    "key": {
+                      "type": "string"
+                    },
                     "valueString": {
                       "type": "string"
                     },
@@ -702,7 +707,8 @@ A2UI_SCHEMA = """
                     "valueBoolean": {
                       "type": "boolean"
                     }
-                  }
+                  },
+                  "required": ["key"]
                 }
               }
             },
@@ -725,7 +731,7 @@ A2UI_SCHEMA = """
     }
   }
 }
-"""
+'''
 
 RESTAURANT_UI_EXAMPLES = """
 ---BEGIN SINGLE_COLUMN_LIST_EXAMPLE---
@@ -753,7 +759,24 @@ RESTAURANT_UI_EXAMPLES = """
     "surfaceId": "default",
     "path": "/",
     "contents": [
-      {{ "key": "items", "valueList": [] }} // Populate this with restaurant data
+      {{ "key": "items", "valueMap": [
+        {{ "key": "item1", "valueMap": [
+          {{ "key": "name", "valueString": "The Fancy Place" }},
+          {{ "key": "rating", "valueNumber": 4.8 }},
+          {{ "key": "detail", "valueString": "Fine dining experience" }},
+          {{ "key": "infoLink", "valueString": "https://example.com/fancy" }},
+          {{ "key": "imageUrl", "valueString": "https://example.com/fancy.jpg" }},
+          {{ "key": "address", "valueString": "123 Main St" }}
+        ] }},
+        {{ "key": "item2", "valueMap": [
+          {{ "key": "name", "valueString": "Quick Bites" }},
+          {{ "key": "rating", "valueNumber": 4.2 }},
+          {{ "key": "detail", "valueString": "Casual and fast" }},
+          {{ "key": "infoLink", "valueString": "https://example.com/quick" }},
+          {{ "key": "imageUrl", "valueString": "https://example.com/quick.jpg" }},
+          {{ "key": "address", "valueString": "456 Oak Ave" }}
+        ] }}
+      ] }} // Populate this with restaurant data
     ]
   }} }}
 ]
@@ -794,7 +817,24 @@ RESTAURANT_UI_EXAMPLES = """
     "surfaceId": "default",
     "path": "/",
     "contents": [
-      {{ "key": "items", "valueList": [] }} // Populate this with restaurant data
+      {{ "key": "items", "valueMap": [
+        {{ "key": "item1", "valueMap": [
+          {{ "key": "name", "valueString": "The Fancy Place" }},
+          {{ "key": "rating", "valueNumber": 4.8 }},
+          {{ "key": "detail", "valueString": "Fine dining experience" }},
+          {{ "key": "infoLink", "valueString": "https://example.com/fancy" }},
+          {{ "key": "imageUrl", "valueString": "https://example.com/fancy.jpg" }},
+          {{ "key": "address", "valueString": "123 Main St" }}
+        ] }},
+        {{ "key": "item2", "valueMap": [
+          {{ "key": "name", "valueString": "Quick Bites" }},
+          {{ "key": "rating", "valueNumber": 4.2 }},
+          {{ "key": "detail", "valueString": "Casual and fast" }},
+          {{ "key": "infoLink", "valueString": "https://example.com/quick" }},
+          {{ "key": "imageUrl", "valueString": "https://example.com/quick.jpg" }},
+          {{ "key": "address", "valueString": "456 Oak Ave" }}
+        ] }}
+      ] }} // Populate this with restaurant data
     ]
   }} }}
 ]
@@ -890,7 +930,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
 
     --- UI TEMPLATE RULES ---
-    -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueList` for the "items" key).
+    -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
     -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
     -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
     -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
