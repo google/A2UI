@@ -19,7 +19,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
 @Component({
-  selector: 'a2ui-image',
+  selector: 'a2ui-icon',
   styles: `
     :host {
       display: block;
@@ -27,25 +27,18 @@ import { v0_8 } from '@a2ui/web-lib';
       min-height: 0;
       overflow: auto;
     }
-
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
-    }
   `,
   template: `
-    @let resolvedUrl = this.resolvedUrl(); 
+    @let resolvedName = this.resolvedName(); 
 
-    @if (resolvedUrl) {
+    @if (resolvedName) {
       <section [class]="theme.components.Icon" [style]="theme.additionalStyles?.Icon">
-        <img [src]="resolvedUrl" />
+        <span class="g-icon">{{resolvedName}}</span>
       </section>
     }
   `,
 })
-export class Image extends DynamicComponent {
-  readonly url = input.required<v0_8.Primitives.StringValue | null>();
-  protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
+export class Icon extends DynamicComponent {
+  readonly name = input.required<v0_8.Primitives.StringValue | null>();
+  protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
 }

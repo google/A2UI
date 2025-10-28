@@ -22,8 +22,6 @@ import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { type Image as ImageType } from "../types/components.js";
-import * as Utils from "./utils/utils.js";
 
 @customElement("a2ui-image")
 export class Image extends Root {

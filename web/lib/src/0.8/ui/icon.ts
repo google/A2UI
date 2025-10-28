@@ -22,8 +22,6 @@ import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { type Image as ImageType } from "../types/components.js";
-import * as Utils from "./utils/utils.js";
 
 @customElement("a2ui-icon")
 export class Icon extends Root {
@@ -60,8 +58,8 @@ export class Icon extends Root {
         const iconName = this.name.literalString ?? "";
         return render(iconName);
       } else if ("literal" in this.name) {
-        const iconNae = this.name.literal ?? "";
-        return render(iconNae);
+        const iconName = this.name.literal ?? "";
+        return render(iconName);
       } else if (this.name && "path" in this.name && this.name.path) {
         if (!this.processor || !this.component) {
           return html`(no model)`;

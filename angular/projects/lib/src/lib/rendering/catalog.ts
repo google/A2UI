@@ -34,6 +34,7 @@ export interface Catalog {
   Heading?: CatalogEntry<v0_8.Types.HeadingNode>;
   Text?: CatalogEntry<v0_8.Types.TextNode>;
   Image?: CatalogEntry<v0_8.Types.ImageNode>;
+  Icon?: CatalogEntry<v0_8.Types.IconNode>;
   Video?: CatalogEntry<v0_8.Types.VideoNode>;
   AudioPlayer?: CatalogEntry<v0_8.Types.AudioPlayerNode>;
   Row?: CatalogEntry<v0_8.Types.RowNode>;
