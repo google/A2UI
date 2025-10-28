@@ -23,6 +23,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { ResolvedTextField } from "../types/types";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { extractValue } from "./utils/utils.js";
 
 @customElement("a2ui-textfield")
 export class TextField extends Root {
@@ -43,7 +44,7 @@ export class TextField extends Root {
       }
 
       :host {
-        display: block;
+        display: flex;
         flex: var(--weight);
       }
 
@@ -52,8 +53,8 @@ export class TextField extends Root {
         width: 100%;
       }
 
-      .description {
-        font-size: 14px;
+      label {
+        display: block;
         margin-bottom: 4px;
       }
     `,
@@ -78,11 +79,16 @@ export class TextField extends Root {
     );
   }
 
-  #renderField(value: string | number) {
-    return html` <section>
+  #renderField(value: string | number, label: string) {
+    return html` <section
+      class=${classMap(this.theme.components.TextField.container)}
+    >
+      ${label && label !== ""
+        ? html`<label for="data">${label}</label>`
+        : nothing}
       <input
         autocomplete="off"
-        class=${classMap(this.theme.components.TextField)}
+        class=${classMap(this.theme.components.TextField.element)}
         style=${this.theme.additionalStyles?.TextField
           ? styleMap(this.theme.additionalStyles?.TextField)
           : nothing}
@@ -93,43 +99,29 @@ export class TextField extends Root {
 
           this.#setBoundValue(evt.target.value);
         }}
+        name="data"
         id="data"
         .value=${value}
-        .placeholder=${this.label?.literalString ?? ""}
+        .placeholder=${"Please enter a value"}
         type=${this.inputType === "number" ? "number" : "text"}
       />
     </section>`;
   }
 
   render() {
-    if (this.text && typeof this.text === "object") {
-      if ("literalString" in this.text && this.text.literalString) {
-        return this.#renderField(this.text.literalString);
-      } else if ("literal" in this.text && this.text.literal !== undefined) {
-        return this.#renderField(this.text.literal);
-      } else if (this.text && "path" in this.text && this.text.path) {
-        if (!this.processor || !this.component) {
-          return html`(no model)`;
-        }
+    const label = extractValue(
+      this.label,
+      this.component,
+      this.processor,
+      this.surfaceId
+    );
+    const value = extractValue(
+      this.text,
+      this.component,
+      this.processor,
+      this.surfaceId
+    );
 
-        const textValue = this.processor.getData(
-          this.component,
-          this.text.path,
-          this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
-        );
-
-        if (textValue === null) {
-          return html`Invalid label`;
-        }
-
-        if (typeof textValue !== "string") {
-          return html`Invalid label`;
-        }
-
-        return this.#renderField(textValue);
-      }
-    }
-
-    return nothing;
+    return this.#renderField(value, label);
   }
 }

@@ -15,6 +15,9 @@
  */
 
 import { ColorPalettes } from "../../types/colors.js";
+import { A2UIModelProcessor } from "../../data/model-processor.js";
+import { type StringValue } from "../../types/primitives.js";
+import { type AnyComponentNode } from "../../types/types.js";
 
 export function merge(...classes: Array<Record<string, boolean>>) {
   const styles: Record<string, boolean> = {};
@@ -101,4 +104,41 @@ export function toProp(key: string) {
   }
 
   return `--${key[0]}-${key.slice(1)}`;
+}
+
+export function extractValue(
+  val: StringValue | null,
+  component: AnyComponentNode | null,
+  processor: A2UIModelProcessor | null,
+  surfaceId: string | null
+): string {
+  if (val !== null && typeof val === "object") {
+    if ("literalString" in val) {
+      return val.literalString ?? "";
+    } else if ("literal" in val && val.literal !== undefined) {
+      return val.literal ?? "";
+    } else if (val && "path" in val && val.path) {
+      if (!processor || !component) {
+        return "(no model)";
+      }
+
+      const textValue = processor.getData(
+        component,
+        val.path,
+        surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+      );
+
+      if (textValue === null) {
+        return "Invalid label";
+      }
+
+      if (typeof textValue !== "string") {
+        return "Invalid label";
+      }
+
+      return textValue;
+    }
+  }
+
+  return "";
 }
