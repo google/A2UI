@@ -128,12 +128,8 @@ export function extractValue(
         surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
       );
 
-      if (textValue === null) {
-        return "Invalid label";
-      }
-
-      if (typeof textValue !== "string") {
-        return "Invalid label";
+      if (textValue === null || typeof textValue !== "string") {
+        return "";
       }
 
       return textValue;
