@@ -272,16 +272,12 @@ export const theme: v0_8.Types.Theme = {
       },
     },
     Image: {
-      all: {
-        "border-br-5": true,
-        "layout-el-cv": true,
-        "layout-w-100": true,
-        "layout-h-100": true,
-      },
-      content: {},
-      hero: {},
-      icon: {},
+      "border-br-5": true,
+      "layout-el-cv": true,
+      "layout-w-100": true,
+      "layout-h-100": true,
     },
+    Icon: {},
     List: {
       "layout-g-4": true,
       "layout-p-2": true,

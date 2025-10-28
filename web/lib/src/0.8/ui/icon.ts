@@ -25,10 +25,10 @@ import { styleMap } from "lit/directives/style-map.js";
 import { type Image as ImageType } from "../types/components.js";
 import * as Utils from "./utils/utils.js";
 
-@customElement("a2ui-image")
-export class Image extends Root {
+@customElement("a2ui-icon")
+export class Icon extends Root {
   @property()
-  accessor url: StringValue | null = null;
+  accessor name: StringValue | null = null;
 
   static styles = [
     Styles.all,
@@ -43,49 +43,43 @@ export class Image extends Root {
         min-height: 0;
         overflow: auto;
       }
-
-      img {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
     `,
   ];
 
-  #renderImage() {
-    if (!this.url) {
+  #renderIcon() {
+    if (!this.name) {
       return nothing;
     }
 
     const render = (url: string) => {
-      return html`<img src=${url} />`;
+      return html`<span class="g-icon">${url}</span>`;
     };
 
-    if (this.url && typeof this.url === "object") {
-      if ("literalString" in this.url) {
-        const imageUrl = this.url.literalString ?? "";
-        return render(imageUrl);
-      } else if ("literal" in this.url) {
-        const imageUrl = this.url.literal ?? "";
-        return render(imageUrl);
-      } else if (this.url && "path" in this.url && this.url.path) {
+    if (this.name && typeof this.name === "object") {
+      if ("literalString" in this.name) {
+        const iconName = this.name.literalString ?? "";
+        return render(iconName);
+      } else if ("literal" in this.name) {
+        const iconNae = this.name.literal ?? "";
+        return render(iconNae);
+      } else if (this.name && "path" in this.name && this.name.path) {
         if (!this.processor || !this.component) {
           return html`(no model)`;
         }
 
-        const imageUrl = this.processor.getData(
+        const iconName = this.processor.getData(
           this.component,
-          this.url.path,
+          this.name.path,
           this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
         );
-        if (!imageUrl) {
-          return html`Invalid image URL`;
+        if (!iconName) {
+          return html`Invalid icon name`;
         }
 
-        if (typeof imageUrl !== "string") {
-          return html`Invalid image URL`;
+        if (typeof iconName !== "string") {
+          return html`Invalid icon name`;
         }
-        return render(imageUrl);
+        return render(iconName);
       }
     }
 
@@ -99,7 +93,7 @@ export class Image extends Root {
         ? styleMap(this.theme.additionalStyles?.Image)
         : nothing}
     >
-      ${this.#renderImage()}
+      ${this.#renderIcon()}
     </section>`;
   }
 }

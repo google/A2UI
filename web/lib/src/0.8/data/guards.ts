@@ -26,6 +26,7 @@ import {
   ResolvedDateTimeInput,
   ResolvedDivider,
   ResolvedHeading,
+  ResolvedIcon,
   ResolvedImage,
   ResolvedList,
   ResolvedModal,
@@ -157,6 +158,10 @@ export function isResolvedHeading(props: unknown): props is ResolvedHeading {
 
 export function isResolvedImage(props: unknown): props is ResolvedImage {
   return isObject(props) && "url" in props && isStringValue(props.url);
+}
+
+export function isResolvedIcon(props: unknown): props is ResolvedIcon {
+  return isObject(props) && "name" in props && isStringValue(props.name);
 }
 
 export function isResolvedList(props: unknown): props is ResolvedList {

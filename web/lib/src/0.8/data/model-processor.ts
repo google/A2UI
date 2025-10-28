@@ -41,6 +41,7 @@ import {
   isResolvedDateTimeInput,
   isResolvedDivider,
   isResolvedHeading,
+  isResolvedIcon,
   isResolvedImage,
   isResolvedList,
   isResolvedModal,
@@ -527,6 +528,16 @@ export class A2UIModelProcessor {
         return new this.#objCtor({
           ...baseNode,
           type: "Image",
+          properties: resolvedProperties,
+        }) as AnyComponentNode;
+
+      case "Icon":
+        if (!isResolvedIcon(resolvedProperties)) {
+          throw new Error(`Invalid data; expected ${componentType}`);
+        }
+        return new this.#objCtor({
+          ...baseNode,
+          type: "Icon",
           properties: resolvedProperties,
         }) as AnyComponentNode;
 

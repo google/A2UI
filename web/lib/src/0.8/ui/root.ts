@@ -202,8 +202,19 @@ export class Root extends SignalWatcher(LitElement) {
             .surfaceId=${this.surfaceId}
             .url=${component.properties.url ?? null}
             .dataContextPath=${component.dataContextPath ?? ""}
-            .additionalRole=${component.properties.role ?? "content"}
           ></a2ui-image>`;
+        }
+
+        case "Icon": {
+          return html`<a2ui-icon
+            id=${component.id}
+            .component=${component}
+            .weight=${component.weight ?? "initial"}
+            .processor=${this.processor}
+            .surfaceId=${this.surfaceId}
+            .name=${component.properties.name ?? null}
+            .dataContextPath=${component.dataContextPath ?? ""}
+          ></a2ui-icon>`;
         }
 
         case "AudioPlayer": {

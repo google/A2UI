@@ -30,6 +30,7 @@ import { Column } from "./column.js";
 import { DateTimeInput } from "./datetime-input.js";
 import { Divider } from "./divider.js";
 import { Heading } from "./heading.js";
+import { Icon } from "./icon.js";
 import { Image } from "./image.js";
 import { List } from "./list.js";
 import { MultipleChoice } from "./multiple-choice.js";
@@ -55,6 +56,7 @@ export {
   DateTimeInput,
   Divider,
   Heading,
+  Icon,
   Image,
   List,
   MultipleChoice,
@@ -79,6 +81,7 @@ interface A2UITagNameMap {
   "a2ui-datetimeinput": DateTimeInput;
   "a2ui-divider": Divider;
   "a2ui-heading": Heading;
+  "a2ui-icon": Icon;
   "a2ui-image": Image;
   "a2ui-list": List;
   "a2ui-multiplechoice": MultipleChoice;

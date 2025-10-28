@@ -21,34 +21,35 @@ export {
 export { type Action } from "./components.js";
 
 import {
-  Heading,
-  Text,
-  Image,
-  Video,
   AudioPlayer,
-  Divider,
   Button,
   Checkbox,
-  TextField,
   DateTimeInput,
+  Divider,
+  Heading,
+  Icon,
+  Image,
   MultipleChoice,
   Slider,
+  Text,
+  TextField,
+  Video,
 } from "./components";
 import { StringValue } from "./primitives";
 
 export type Theme = {
   components: {
-    AudioPlayer: Record<string, boolean | string>;
-    Button: Record<string, boolean | string>;
-    Card: Record<string, boolean | string>;
-    Column: Record<string, boolean | string>;
+    AudioPlayer: Record<string, boolean>;
+    Button: Record<string, boolean>;
+    Card: Record<string, boolean>;
+    Column: Record<string, boolean>;
     CheckBox: {
-      container: Record<string, boolean | string>;
-      element: Record<string, boolean | string>;
-      label: Record<string, boolean | string>;
+      container: Record<string, boolean>;
+      element: Record<string, boolean>;
+      label: Record<string, boolean>;
     };
-    DateTimeInput: Record<string, boolean | string>;
-    Divider: Record<string, boolean | string>;
+    DateTimeInput: Record<string, boolean>;
+    Divider: Record<string, boolean>;
     Heading: {
       all: Record<string, boolean>;
       level1: Record<string, boolean>;
@@ -57,28 +58,24 @@ export type Theme = {
       level4: Record<string, boolean>;
       level5: Record<string, boolean>;
     };
-    Image: {
-      all: Record<string, boolean>;
-      content: Record<string, boolean>;
-      icon: Record<string, boolean>;
-      hero: Record<string, boolean>;
-    };
-    List: Record<string, boolean | string>;
-    Modal: Record<string, boolean | string>;
-    MultipleChoice: Record<string, boolean | string>;
-    Row: Record<string, boolean | string>;
-    Slider: Record<string, boolean | string>;
+    Image: Record<string, boolean>;
+    Icon: Record<string, boolean>;
+    List: Record<string, boolean>;
+    Modal: Record<string, boolean>;
+    MultipleChoice: Record<string, boolean>;
+    Row: Record<string, boolean>;
+    Slider: Record<string, boolean>;
     Tabs: {
-      container: Record<string, boolean | string>;
-      element: Record<string, boolean | string>;
+      container: Record<string, boolean>;
+      element: Record<string, boolean>;
       controls: {
         all: Record<string, boolean>;
         selected: Record<string, boolean>;
       };
     };
-    Text: Record<string, boolean | string>;
-    TextField: Record<string, boolean | string>;
-    Video: Record<string, boolean | string>;
+    Text: Record<string, boolean>;
+    TextField: Record<string, boolean>;
+    Video: Record<string, boolean>;
   };
   elements: {
     a: Record<string, boolean>;
@@ -280,6 +277,11 @@ export interface ImageNode extends BaseComponentNode {
   properties: ResolvedImage;
 }
 
+export interface IconNode extends BaseComponentNode {
+  type: "Icon";
+  properties: ResolvedIcon;
+}
+
 export interface VideoNode extends BaseComponentNode {
   type: "Video";
   properties: ResolvedVideo;
@@ -362,6 +364,7 @@ export interface SliderNode extends BaseComponentNode {
 export type AnyComponentNode =
   | HeadingNode
   | TextNode
+  | IconNode
   | ImageNode
   | VideoNode
   | AudioPlayerNode
@@ -383,6 +386,7 @@ export type AnyComponentNode =
 // original interfaces.
 export type ResolvedHeading = Heading;
 export type ResolvedText = Text;
+export type ResolvedIcon = Icon;
 export type ResolvedImage = Image;
 export type ResolvedVideo = Video;
 export type ResolvedAudioPlayer = AudioPlayer;
