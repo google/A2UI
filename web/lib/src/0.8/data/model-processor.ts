@@ -239,8 +239,8 @@ export class A2UIModelProcessor {
       if (!valueKey) continue;
 
       let value: DataValue = item[valueKey];
-      // It's a valueList. We must unwrap its contents.
-      if (valueKey === "valueList" && Array.isArray(value)) {
+      // It's a valueMap. We must unwrap its contents.
+      if (valueKey === "valueMap" && Array.isArray(value)) {
         value = value.map((wrappedItem: unknown) => {
           if (!isObject(wrappedItem)) return null;
           const innerValueKey = this.#findValueKey(wrappedItem);

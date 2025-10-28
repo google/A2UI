@@ -1,10 +1,10 @@
 {
-  "name": "@a2ui/restaurant",
+  "name": "@a2ui/contact",
   "private": true,
   "version": "0.1.0",
-  "description": "A2UI Restaurant Demo",
-  "main": "./dist/restaurant.js",
-  "types": "./dist/restaurant.d.ts",
+  "description": "A2UI Contact Demo",
+  "main": "./dist/contact.js",
+  "types": "./dist/contact.d.ts",
   "type": "module",
   "scripts": {
     "prepack": "npm run build",
@@ -39,7 +39,7 @@
         "FORCE_COLOR": "1"
       },
       "dependencies": [
-        "<dependencies>#build:tsc"
+        "../lib#build:tsc"
       ],
       "files": [
         "**/*.ts",

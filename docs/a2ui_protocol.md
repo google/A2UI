@@ -482,9 +482,7 @@ This message provides a feedback mechanism for the server. It is sent when the c
       "dataModelUpdate": {
         "surfaceId": "main_content_area",
         "path": "form",
-        "contents": [
-          { "key": "textField", "valueString": "User input text" }
-        ]
+        "contents": [{ "key": "textField", "valueString": "User input text" }]
       }
     }
     ```

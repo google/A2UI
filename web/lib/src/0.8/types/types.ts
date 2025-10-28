@@ -220,7 +220,8 @@ export interface DataModelUpdate {
     valueNumber?: number;
     valueBoolean?: boolean;
 
-    valueList?: {
+    valueMap?: {
+      key: string;
       valueString?: string /** May be JSON */;
       valueNumber?: number;
       valueBoolean?: boolean;

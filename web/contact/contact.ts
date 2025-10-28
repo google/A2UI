@@ -275,7 +275,8 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
                 const message: v0_8.Types.A2UIClientEventMessage = {
                   userAction: {
-                    actionName: evt.detail.action.action,
+                    surfaceId: surfaceId,
+                    name: evt.detail.action.name,
                     sourceComponentId: target.id,
                     timestamp: new Date().toISOString(),
                     context,
