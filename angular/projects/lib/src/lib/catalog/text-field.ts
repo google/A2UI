@@ -18,25 +18,50 @@ import { computed, Component, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
+let idCounter = 0;
+
 @Component({
-  selector: 'input[a2ui-text-field]',
-  template: '',
-  host: {
-    autocomplete: 'off',
-    '(input)': 'handleInput($event)',
-    '[value]': 'inputValue()',
-    '[attr.placeholder]': 'placeholder()',
-    '[type]': 'inputType() === "number" ? "number" : "text"',
-    '[class]': 'theme.components.TextField',
-    '[style]': 'theme.additionalStyles?.TextField',
-  },
+  selector: 'a2ui-text-field',
   styles: `
     :host {
-      display: block;
-      width: 100%;
+      display: flex;
+      flex: var(--weight);
+    }
+
+    section, input, label {
       box-sizing: border-box;
     }
+
+    input {
+      display: block;
+      width: 100%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+    }
   `,
+  template: `
+    @let resolvedLabel = this.resolvedLabel();
+
+    <section [class]="theme.components.TextField.container">
+      @if (resolvedLabel) {
+        <label [for]="inputId">{{resolvedLabel}}</label>
+      }
+
+      <input
+        autocomplete="off"
+        [class]="theme.components.TextField.element"
+        [style]="theme.additionalStyles?.TextField"
+        (input)="handleInput($event)"
+        [id]="inputId"
+        [value]="inputValue()"
+        placeholder="Please enter a value"
+        [type]="inputType() === 'number' ? 'number' : 'text'"
+      />
+    </section>
+  `
 })
 export class TextField extends DynamicComponent {
   readonly text = input.required<v0_8.Primitives.StringValue | null>();
@@ -44,7 +69,8 @@ export class TextField extends DynamicComponent {
   readonly inputType = input.required<v0_8.Types.ResolvedTextField['type'] | null>();
 
   protected inputValue = computed(() => super.resolvePrimitive(this.text()) || '');
-  protected placeholder = computed(() => super.resolvePrimitive(this.label()));
+  protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
+  protected inputId = `a2ui-input-${idCounter++}`;
 
   protected handleInput(event: Event) {
     const path = this.text()?.path;
