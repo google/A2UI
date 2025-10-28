@@ -14,13 +14,34 @@
  limitations under the License.
  */
 
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { ModelProcessor, Surface } from '@a2ui/angular';
+import { v0_8 } from '@a2ui/web-lib';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrl: 'app.css',
+  imports: [Surface],
 })
 export class App {
-  protected readonly title = signal('contact');
+  protected processor = inject(ModelProcessor);
+  protected hasData = signal(false);
+
+  protected async handleSubmit(event: SubmitEvent) {
+    event.preventDefault();
+
+    if (!(event.target instanceof HTMLFormElement)) {
+      return;
+    }
+
+    const data = new FormData(event.target);
+    const body = data.get('body') ?? null;
+
+    if (body) {
+      const message = body as v0_8.Types.A2UIClientEventMessage;
+      await this.processor.makeRequest(message);
+      this.hasData.set(true);
+    }
+  }
 }

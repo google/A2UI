@@ -1,6 +1,6 @@
-# A2UI Restaurant
+# Angular A2UI
 
-This is a UI to search for restaurants.
+These are sample implementations of A2UI in Angular.
 
 ## Prerequisites
 

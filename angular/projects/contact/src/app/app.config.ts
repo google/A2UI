@@ -20,11 +20,27 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { DEFAULT_CATALOG, provideA2UI } from '@a2ui/angular';
+import { IMAGE_CONFIG } from '@angular/common';
+import { theme } from './theme';
+import { Client } from './client';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
+    provideA2UI({
+      catalog: DEFAULT_CATALOG,
+      theme: theme,
+      client: Client,
+    }),
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        disableImageSizeWarning: true,
+        disableImageLazyLoadWarning: true,
+      },
+    },
   ],
 };

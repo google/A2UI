@@ -1,0 +1,389 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+import { themeMerge } from '@a2ui/angular';
+import { v0_8 } from '@a2ui/web-lib';
+
+/** Elements */
+
+const a = {
+  'typography-f-sf': true,
+  'typography-fs-n': true,
+  'typography-w-500': true,
+  'layout-as-n': true,
+  'layout-dis-iflx': true,
+  'layout-al-c': true,
+};
+
+const audio = {
+  'layout-w-100': true,
+};
+
+const body = {
+  'typography-f-s': true,
+  'typography-fs-n': true,
+  'typography-w-400': true,
+  'layout-mt-0': true,
+  'layout-mb-2': true,
+  'typography-sz-bm': true,
+  'color-c-n10': true,
+};
+
+const button = {
+  'typography-f-sf': true,
+  'typography-fs-n': true,
+  'typography-w-500': true,
+  'layout-pt-3': true,
+  'layout-pb-3': true,
+  'layout-pl-5': true,
+  'layout-pr-5': true,
+  'layout-mb-1': true,
+  'border-br-16': true,
+  'border-bw-0': true,
+  'border-c-n70': true,
+  'border-bs-s': true,
+  'color-bgc-s30': true,
+  'color-c-n100': true,
+  'behavior-ho-80': true,
+};
+
+const heading = {
+  'typography-f-sf': true,
+  'typography-fs-n': true,
+  'typography-w-500': true,
+  'layout-mt-0': true,
+  'layout-mb-2': true,
+  'color-c-n10': true,
+};
+
+const h1 = {
+  ...heading,
+  'typography-sz-tl': true,
+};
+
+const h2 = {
+  ...heading,
+  'typography-sz-tm': true,
+};
+
+const h3 = {
+  ...heading,
+  'typography-sz-ts': true,
+};
+
+const iframe = {
+  'behavior-sw-n': true,
+};
+
+const input = {
+  'typography-f-sf': true,
+  'typography-fs-n': true,
+  'typography-w-400': true,
+  'layout-pl-4': true,
+  'layout-pr-4': true,
+  'layout-pt-2': true,
+  'layout-pb-2': true,
+  'border-br-6': true,
+  'border-bw-1': true,
+  'color-bc-s70': true,
+  'border-bs-s': true,
+  'layout-as-n': true,
+  'color-c-n10': true,
+};
+
+const p = {
+  'typography-f-s': true,
+  'typography-fs-n': true,
+  'typography-w-400': true,
+  'layout-m-0': true,
+  'typography-sz-bm': true,
+  'layout-as-n': true,
+  'color-c-n10': true,
+};
+
+const orderedList = {
+  'typography-f-s': true,
+  'typography-fs-n': true,
+  'typography-w-400': true,
+  'layout-m-0': true,
+  'typography-sz-bm': true,
+  'layout-as-n': true,
+};
+
+const unorderedList = {
+  'typography-f-s': true,
+  'typography-fs-n': true,
+  'typography-w-400': true,
+  'layout-m-0': true,
+  'typography-sz-bm': true,
+  'layout-as-n': true,
+};
+
+const listItem = {
+  'typography-f-s': true,
+  'typography-fs-n': true,
+  'typography-w-400': true,
+  'layout-m-0': true,
+  'typography-sz-bm': true,
+  'layout-as-n': true,
+};
+
+const pre = {
+  'typography-f-c': true,
+  'typography-fs-n': true,
+  'typography-w-400': true,
+  'typography-sz-bm': true,
+  'typography-ws-p': true,
+  'layout-as-n': true,
+};
+
+const textarea = {
+  ...input,
+  'layout-r-none': true,
+  'layout-fs-c': true,
+};
+
+const video = {
+  'layout-el-cv': true,
+};
+
+const aLight = themeMerge(a, { 'color-c-p30': true });
+const inputLight = themeMerge(input, { 'color-c-n5': true });
+const textareaLight = themeMerge(textarea, { 'color-c-n5': true });
+const buttonLight = themeMerge(button, { 'color-c-n100': true });
+const h1Light = themeMerge(h1, { 'color-c-n5': true });
+const h2Light = themeMerge(h2, { 'color-c-n5': true });
+const h3Light = themeMerge(h3, { 'color-c-n5': true });
+const bodyLight = themeMerge(body, { 'color-c-n5': true });
+const pLight = themeMerge(p, { 'color-c-n60': true });
+const preLight = themeMerge(pre, { 'color-c-n35': true });
+const orderedListLight = themeMerge(orderedList, {
+  'color-c-n35': true,
+});
+const unorderedListLight = themeMerge(unorderedList, {
+  'color-c-n35': true,
+});
+const listItemLight = themeMerge(listItem, {
+  'color-c-n35': true,
+});
+
+export const theme: v0_8.Types.Theme = {
+  additionalStyles: {
+    Card: {
+      'min-width': '320px',
+    },
+    Button: {
+      '--n-60': 'var(--n-100)',
+    },
+    Image: {
+      'max-width': '120px',
+      'max-height': '120px',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+  },
+  components: {
+    AudioPlayer: {},
+    Button: {
+      'layout-pt-2': true,
+      'layout-pb-2': true,
+      'layout-pl-5': true,
+      'layout-pr-5': true,
+      'border-br-2': true,
+      'border-bw-0': true,
+      'border-bs-s': true,
+      'color-bgc-p30': true,
+      'color-c-n100': true,
+      'behavior-ho-70': true,
+    },
+    Card: {
+      'border-br-4': true,
+      'color-bgc-p100': true,
+      'color-bc-n90': true,
+      'border-bw-1': true,
+      'border-bs-s': true,
+      'layout-pt-10': true,
+      'layout-pb-10': true,
+      'layout-pl-4': true,
+      'layout-pr-4': true,
+    },
+    CheckBox: {
+      element: {
+        'layout-m-0': true,
+        'layout-mr-2': true,
+        'layout-p-2': true,
+        'border-br-12': true,
+        'border-bw-1': true,
+        'border-bs-s': true,
+        'color-bgc-p100': true,
+        'color-bc-p60': true,
+        'color-c-n30': true,
+        'color-c-p30': true,
+      },
+      label: {
+        'color-c-p30': true,
+        'typography-f-sf': true,
+        'typography-v-r': true,
+        'typography-w-400': true,
+        'layout-flx-1': true,
+        'typography-sz-ll': true,
+      },
+      container: {
+        'layout-dsp-iflex': true,
+        'layout-al-c': true,
+      },
+    },
+    Column: {},
+    DateTimeInput: {
+      'layout-pt-2': true,
+      'layout-pb-2': true,
+      'layout-pl-3': true,
+      'layout-pr-3': true,
+      'border-br-12': true,
+      'border-bw-1': true,
+      'border-bs-s': true,
+      'color-bgc-p100': true,
+      'color-bc-p60': true,
+      'color-c-n30': true,
+    },
+    Divider: {
+      'color-bgc-n90': true,
+      'layout-mt-6': true,
+      'layout-mb-6': true,
+    },
+    Heading: {
+      all: {
+        'color-c-p30': true,
+        'typography-f-sf': true,
+        'typography-ta-c': true,
+        'typography-v-r': true,
+        'typography-w-500': true,
+        'layout-mt-0': true,
+        'layout-mr-0': true,
+        'layout-ml-0': true,
+        'layout-mb-0': true,
+        'layout-p-0': true,
+        'layout-w-100': true,
+      },
+      level1: {
+        'typography-sz-tl': true,
+        'layout-mb-2': true,
+      },
+      level2: {
+        'typography-sz-tl': true,
+        'layout-mb-2': true,
+      },
+      level3: {
+        'typography-sz-ts': true,
+      },
+      level4: {
+        'typography-sz-bl': true,
+      },
+      level5: {
+        'typography-f-sf': false,
+        'color-c-n30': true,
+        'typography-sz-bm': true,
+        'layout-mb-1': true,
+      },
+    },
+    Image: {
+      'border-br-50pc': true,
+      'layout-el-cv': true,
+      'layout-w-100': true,
+      'layout-h-100': true,
+      'layout-dsp-flexhor': true,
+      'layout-al-c': true,
+      'layout-sp-c': true,
+      'layout-mb-3': true,
+    },
+    Icon: {
+      'border-br-1': true,
+      'layout-p-2': true,
+      'color-bgc-n98': true,
+      'layout-dsp-flexhor': true,
+      'layout-al-c': true,
+      'layout-sp-c': true,
+    },
+    List: {
+      'layout-g-4': true,
+      'layout-p-2': true,
+    },
+    Modal: {},
+    MultipleChoice: {},
+    Row: {
+      'layout-g-4': true,
+      'layout-mb-3': true,
+    },
+    Slider: {},
+    Tabs: {
+      container: {},
+      controls: { all: {}, selected: {} },
+      element: {},
+    },
+    Text: {
+      'layout-w-100': true,
+      'layout-g-2': true,
+      'color-c-p30': true,
+    },
+    TextField: {
+      'layout-pt-2': true,
+      'layout-pb-2': true,
+      'layout-pl-3': true,
+      'layout-pr-3': true,
+      'border-br-12': true,
+      'border-bw-1': true,
+      'border-bs-s': true,
+      'color-bgc-p100': true,
+      'color-bc-p60': true,
+      'color-c-n30': true,
+      'color-c-p30': true,
+    },
+    Video: {
+      'border-br-5': true,
+      'layout-el-cv': true,
+    },
+  },
+  elements: {
+    a: aLight,
+    audio,
+    body: bodyLight,
+    button: buttonLight,
+    h1: h1Light,
+    h2: h2Light,
+    h3: h3Light,
+    iframe,
+    input: inputLight,
+    p: pLight,
+    pre: preLight,
+    textarea: textareaLight,
+    video,
+  },
+  markdown: {
+    p: [...Object.keys(pLight)],
+    h1: [...Object.keys(h1Light)],
+    h2: [...Object.keys(h2Light)],
+    h3: [...Object.keys(h3Light)],
+    h4: [],
+    h5: [],
+    h6: [],
+    ul: [...Object.keys(unorderedListLight)],
+    ol: [...Object.keys(orderedListLight)],
+    li: [...Object.keys(listItemLight)],
+    a: [...Object.keys(aLight)],
+    strong: [],
+    em: [],
+  },
+};
