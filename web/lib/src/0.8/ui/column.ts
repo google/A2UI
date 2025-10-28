@@ -33,6 +33,10 @@ export class Column extends Root {
   static styles = [
     Styles.all,
     css`
+      * {
+        box-sizing: border-box;
+      }
+
       :host {
         display: flex;
         flex: var(--weight);

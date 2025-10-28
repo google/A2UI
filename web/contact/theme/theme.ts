@@ -162,7 +162,7 @@ const video = {
   "layout-el-cv": true,
 };
 
-const aLight = Utils.merge(a, { "color-c-n5": true });
+const aLight = Utils.merge(a, { "color-c-p30": true });
 const inputLight = Utils.merge(input, { "color-c-n5": true });
 const textareaLight = Utils.merge(textarea, { "color-c-n5": true });
 const buttonLight = Utils.merge(button, { "color-c-n100": true });
@@ -170,7 +170,7 @@ const h1Light = Utils.merge(h1, { "color-c-n5": true });
 const h2Light = Utils.merge(h2, { "color-c-n5": true });
 const h3Light = Utils.merge(h3, { "color-c-n5": true });
 const bodyLight = Utils.merge(body, { "color-c-n5": true });
-const pLight = Utils.merge(p, { "color-c-n35": true });
+const pLight = Utils.merge(p, { "color-c-n60": true });
 const preLight = Utils.merge(pre, { "color-c-n35": true });
 const orderedListLight = Utils.merge(orderedList, {
   "color-c-n35": true,
@@ -184,8 +184,17 @@ const listItemLight = Utils.merge(listItem, {
 
 export const theme: v0_8.Types.Theme = {
   additionalStyles: {
+    Card: {
+      "min-width": "320px",
+    },
     Button: {
-      "--n-35": "var(--n-100)",
+      "--n-60": "var(--n-100)",
+    },
+    Image: {
+      "max-width": "120px",
+      "max-height": "120px",
+      marginLeft: "auto",
+      marginRight: "auto",
     },
   },
   components: {
@@ -193,16 +202,26 @@ export const theme: v0_8.Types.Theme = {
     Button: {
       "layout-pt-2": true,
       "layout-pb-2": true,
-      "layout-pl-3": true,
-      "layout-pr-3": true,
-      "border-br-12": true,
+      "layout-pl-5": true,
+      "layout-pr-5": true,
+      "border-br-2": true,
       "border-bw-0": true,
       "border-bs-s": true,
       "color-bgc-p30": true,
       "color-c-n100": true,
       "behavior-ho-70": true,
     },
-    Card: { "border-br-9": true, "color-bgc-p100": true, "layout-p-4": true },
+    Card: {
+      "border-br-4": true,
+      "color-bgc-p100": true,
+      "color-bc-n90": true,
+      "border-bw-1": true,
+      "border-bs-s": true,
+      "layout-pt-10": true,
+      "layout-pb-10": true,
+      "layout-pl-4": true,
+      "layout-pr-4": true,
+    },
     CheckBox: {
       element: {
         "layout-m-0": true,
@@ -229,9 +248,7 @@ export const theme: v0_8.Types.Theme = {
         "layout-al-c": true,
       },
     },
-    Column: {
-      "layout-g-2": true,
-    },
+    Column: {},
     DateTimeInput: {
       "layout-pt-2": true,
       "layout-pb-2": true,
@@ -243,23 +260,33 @@ export const theme: v0_8.Types.Theme = {
       "color-bgc-p100": true,
       "color-bc-p60": true,
       "color-c-n30": true,
-      "color-c-p30": true,
     },
-    Divider: {},
+    Divider: {
+      "color-bgc-n90": true,
+      "layout-mt-6": true,
+      "layout-mb-6": true,
+    },
     Heading: {
       all: {
         "color-c-p30": true,
         "typography-f-sf": true,
+        "typography-ta-c": true,
         "typography-v-r": true,
-        "typography-w-400": true,
-        "layout-m-0": true,
+        "typography-w-500": true,
+        "layout-mt-0": true,
+        "layout-mr-0": true,
+        "layout-ml-0": true,
+        "layout-mb-0": true,
         "layout-p-0": true,
+        "layout-w-100": true,
       },
       level1: {
         "typography-sz-tl": true,
+        "layout-mb-2": true,
       },
       level2: {
-        "typography-sz-tm": true,
+        "typography-sz-tl": true,
+        "layout-mb-2": true,
       },
       level3: {
         "typography-sz-ts": true,
@@ -268,16 +295,30 @@ export const theme: v0_8.Types.Theme = {
         "typography-sz-bl": true,
       },
       level5: {
+        "typography-f-sf": false,
+        "color-c-n30": true,
         "typography-sz-bm": true,
+        "layout-mb-1": true,
       },
     },
     Image: {
-      "border-br-5": true,
+      "border-br-50pc": true,
       "layout-el-cv": true,
       "layout-w-100": true,
       "layout-h-100": true,
+      "layout-dsp-flexhor": true,
+      "layout-al-c": true,
+      "layout-sp-c": true,
+      "layout-mb-3": true,
     },
-    Icon: {},
+    Icon: {
+      "border-br-1": true,
+      "layout-p-2": true,
+      "color-bgc-n98": true,
+      "layout-dsp-flexhor": true,
+      "layout-al-c": true,
+      "layout-sp-c": true,
+    },
     List: {
       "layout-g-4": true,
       "layout-p-2": true,
@@ -286,6 +327,7 @@ export const theme: v0_8.Types.Theme = {
     MultipleChoice: {},
     Row: {
       "layout-g-4": true,
+      "layout-mb-3": true,
     },
     Slider: {},
     Tabs: {

@@ -59,9 +59,15 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
       }
 
       #surfaces {
+        display: flex;
+        flex-direction: column;
         width: 100%;
-        padding: var(--bb-grid-size-3);
+        padding: var(--bb-grid-size-3) 0;
         animation: fadeIn 1s cubic-bezier(0, 0, 0.3, 1) 0.3s backwards;
+
+        & a2ui-surface {
+          align-items: center;
+        }
       }
 
       form {

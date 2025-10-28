@@ -278,7 +278,9 @@ export const theme: v0_8.Types.Theme = {
       "layout-h-100": true,
       "border-br-5": true,
     },
-    Icon: {},
+    Icon: {
+      "color-c-p30": true,
+    },
     List: {
       "layout-g-4": true,
       "layout-p-2": true,
