@@ -116,6 +116,7 @@ export type Theme = {
     DateTimeInput?: Record<string, string>;
     Divider?: Record<string, string>;
     Heading?: Record<string, string>;
+    Icon?: Record<string, string>;
     Image?: Record<string, string>;
     List?: Record<string, string>;
     Modal?: Record<string, string>;

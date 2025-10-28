@@ -88,9 +88,9 @@ export class Icon extends Root {
 
   render() {
     return html`<section
-      class=${classMap(this.theme.components.Image)}
-      style=${this.theme.additionalStyles?.Image
-        ? styleMap(this.theme.additionalStyles?.Image)
+      class=${classMap(this.theme.components.Icon)}
+      style=${this.theme.additionalStyles?.Icon
+        ? styleMap(this.theme.additionalStyles?.Icon)
         : nothing}
     >
       ${this.#renderIcon()}

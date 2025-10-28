@@ -33,6 +33,8 @@ import {
 import { v0_8 } from "@a2ui/web-lib";
 import * as UI from "@a2ui/web-lib/ui";
 
+const LAST_ITEM_KEY = "last-item-value";
+
 @customElement("a2ui-layout-inspector")
 export class A2UILayoutInspector extends SignalWatcher(LitElement) {
   @provide({ context: UI.Context.themeContext })
@@ -49,6 +51,8 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
     message: SnackbarMessage;
     replaceAll: boolean;
   }> = [];
+
+  #lastItem: string | null = null;
 
   static styles = [
     UI.Styles.all,
@@ -400,6 +404,12 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
     `,
   ];
 
+  constructor() {
+    super();
+
+    this.#lastItem = globalThis.localStorage.getItem(LAST_ITEM_KEY) ?? "";
+  }
+
   #processor = v0_8.Data.createSignalA2UIModelProcessor();
 
   #renderSurfacesOrMessages() {
@@ -471,6 +481,7 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
           form.dispatchEvent(new SubmitEvent("submit", { bubbles: true }));
         }}
         placeholder="Provide the A2UI payload."
+        .value=${this.#lastItem}
       ></textarea>
       <button
         ?disabled=${this.#requesting}
@@ -513,7 +524,10 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
             }
 
             try {
-              const messages = JSON.parse(instructions as string);
+              const instructionsStr = instructions as string;
+
+              globalThis.localStorage.setItem(LAST_ITEM_KEY, instructionsStr);
+              const messages = JSON.parse(instructionsStr);
 
               this.#processor.clearSurfaces();
               this.#processor.processMessages(messages);
