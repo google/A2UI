@@ -55,6 +55,7 @@ export class A2UIClient {
           messages.push(item.data);
         }
       }
+      console.log(messages);
       return messages;
     }
 

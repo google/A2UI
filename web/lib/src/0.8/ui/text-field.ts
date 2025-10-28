@@ -84,7 +84,11 @@ export class TextField extends Root {
       class=${classMap(this.theme.components.TextField.container)}
     >
       ${label && label !== ""
-        ? html`<label for="data">${label}</label>`
+        ? html`<label
+            class=${classMap(this.theme.components.TextField.label)}
+            for="data"
+            >${label}</label
+          >`
         : nothing}
       <input
         autocomplete="off"

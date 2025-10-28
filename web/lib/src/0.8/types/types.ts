@@ -77,6 +77,7 @@ export type Theme = {
     TextField: {
       container: Record<string, boolean>;
       element: Record<string, boolean>;
+      label: Record<string, boolean>;
     };
     Video: Record<string, boolean>;
   };

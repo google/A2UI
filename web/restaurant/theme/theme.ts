@@ -299,8 +299,18 @@ export const theme: v0_8.Types.Theme = {
       "color-c-p30": true,
     },
     TextField: {
-      container: {},
+      container: {
+        "typography-sz-bm": true,
+        "layout-w-100": true,
+        "layout-g-2": true,
+        "layout-dsp-flexhor": true,
+        "layout-al-c": true,
+      },
+      label: {
+        "layout-flx-0": true,
+      },
       element: {
+        "typography-sz-bm": true,
         "layout-pt-2": true,
         "layout-pb-2": true,
         "layout-pl-3": true,
