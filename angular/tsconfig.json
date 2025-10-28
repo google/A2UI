@@ -38,6 +38,12 @@
     },
     {
       "path": "./projects/restaurant/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/contact/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/contact/tsconfig.spec.json"
     }
   ]
 }

@@ -9,6 +9,10 @@ This is a UI to search for restaurants.
 ## Running
 
 1. Install the dependencies: `npm i`
-2. Run the [A2A server](../../a2a_samples/a2ui_restaurant_finder/)
-3. Run the dev server: `npm start`
+2. Run the relevant A2A server:
+  * [For the restaurant app](../../a2a_samples/a2ui_restaurant_finder/)
+  * [For the contact app](../../a2a_samples/a2ui_contact_lookup/)
+3. Run the relevant app:
+  * `npm start -- restaurant`
+  * `npm start -- contact`
 4. Open http://localhost:4200/
