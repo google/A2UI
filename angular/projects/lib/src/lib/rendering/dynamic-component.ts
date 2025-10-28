@@ -36,6 +36,7 @@ export abstract class DynamicComponent<
 
   protected async sendAction(action: v0_8.Types.Action) {
     const component = this.component();
+    const surfaceId = this.surfaceId() ?? undefined;
     const context: Record<string, unknown> = {};
 
     if (action.context) {
@@ -48,7 +49,7 @@ export abstract class DynamicComponent<
           context[item.key] = item.value.literalString;
         } else if (item.value.path) {
           const path = this.processor.resolvePath(item.value.path, component.dataContextPath);
-          const value = this.processor.getData(component, path, this.surfaceId() ?? undefined);
+          const value = this.processor.getData(component, path, surfaceId);
           context[item.key] = value;
         }
       }
@@ -56,8 +57,9 @@ export abstract class DynamicComponent<
 
     const message: v0_8.Types.A2UIClientEventMessage = {
       userAction: {
-        actionName: action.action,
+        name: action.name,
         sourceComponentId: component.id,
+        surfaceId: surfaceId!,
         timestamp: new Date().toISOString(),
         context,
       },
