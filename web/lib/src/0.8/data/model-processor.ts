@@ -234,7 +234,7 @@ export class A2UIModelProcessor {
       const key = item.key as string;
 
       // Find the value, which is in a property prefixed with "value".
-      const valueKey = Object.keys(item).find((k) => k.startsWith("value"));
+      const valueKey = this.#findValueKey(item);
       if (!valueKey) continue;
 
       let value: DataValue = item[valueKey];
@@ -242,12 +242,13 @@ export class A2UIModelProcessor {
       if (valueKey === "valueList" && Array.isArray(value)) {
         value = value.map((wrappedItem: unknown) => {
           if (!isObject(wrappedItem)) return null;
-          const innerValueKey = Object.keys(wrappedItem).find((k) =>
-            k.startsWith("value")
-          );
+          const innerValueKey = this.#findValueKey(wrappedItem);
           if (!innerValueKey) return wrappedItem as DataValue;
 
           const innerValue = wrappedItem[innerValueKey];
+          if (innerValueKey === "valueMap" && Array.isArray(innerValue)) {
+            return this.#convertKeyValueArrayToMap(innerValue);
+          }
           return this.#parseIfJsonString(innerValue as DataValue);
         });
       } else if (typeof value === "string") {
@@ -439,6 +440,11 @@ export class A2UIModelProcessor {
       visited,
       "/"
     );
+  }
+
+  /** Finds a value key in a map. */
+  #findValueKey(value: Record<string, unknown>): string | undefined {
+    return Object.keys(value).find((k) => k.startsWith("value"));
   }
 
   /**

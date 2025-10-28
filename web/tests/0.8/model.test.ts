@@ -181,6 +181,64 @@ describe("A2UIModelProcessor", () => {
       assert.strictEqual(path2, "/value/a/b/c");
       assert.strictEqual(path3, "/value/a/b/c");
     });
+
+    it("should resolve valueMap inside a valueList", () => {
+      processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: "@default",
+            path: "/data",
+            contents: [
+              {
+                key: "users",
+                valueList: [
+                  {
+                    key: "users1",
+                    valueMap: [
+                      {
+                        key: "firstName",
+                        valueString: "Alice",
+                      },
+                      {
+                        key: "lastName",
+                        valueString: "Doe",
+                      },
+                    ],
+                  },
+                  {
+                    key: "users2",
+                    valueMap: [
+                      {
+                        key: "firstName",
+                        valueString: "John",
+                      },
+                      {
+                        key: "lastName",
+                        valueString: "Doe",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ]);
+      const info = processor.getData(
+        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        "/data/users"
+      );
+      assert.deepEqual(info, [
+        new Map([
+          ["firstName", "Alice"],
+          ["lastName", "Doe"],
+        ]),
+        new Map([
+          ["firstName", "John"],
+          ["lastName", "Doe"],
+        ]),
+      ]);
+    });
   });
 
   describe("Component Tree Building", () => {
