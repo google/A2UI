@@ -82,26 +82,16 @@ app.post('/a2a', (req, res) => {
     const client = await createOrGetClient();
     const response = await client.sendMessage(sendParams);
 
+    res.set('Cache-Control', 'no-store');
+
     if ('error' in response) {
       console.error('Error:', response.error.message);
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: response.error.message }));
+      res.status(500).json({ error: response.error.message });
       return;
-    } else {
-      const result = (response as SendMessageSuccessResponse).result as Task;
-
-      if (result.kind === 'task') {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(result.status.message?.parts));
-        return;
-      }
     }
 
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify([]));
+    const result = (response as SendMessageSuccessResponse).result as Task;
+    res.json(result.kind === 'task' ? result.status.message?.parts || [] : []);
   });
 });
 
