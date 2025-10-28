@@ -20,7 +20,7 @@ export interface Action {
   /**
    * A unique name identifying the action (e.g., 'submitForm').
    */
-  action: string;
+  name: string;
   /**
    * A key-value map of data bindings to be resolved when the action is triggered.
    */

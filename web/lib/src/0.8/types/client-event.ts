@@ -47,16 +47,19 @@ export interface ClientToServerMessage {
  */
 export interface UserAction {
   /**
-   * The name of the action, taken from the component's `action.action`
-   * property.
+   * The name of the action.
    */
-  actionName: string;
+  name: string;
   /**
-   * The `id` of the component that triggered the event.
+   * The ID of the surface.
+   */
+  surfaceId: string;
+  /**
+   * The ID of the component that triggered the event.
    */
   sourceComponentId: string;
   /**
-   * An ISO 8601 timestamp of when the event occurred.
+   * An ISO timestamp of when the event occurred.
    */
   timestamp: string;
   /**
