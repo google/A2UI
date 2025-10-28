@@ -47,7 +47,9 @@ let idCounter = 0;
 
     <section [class]="theme.components.TextField.container">
       @if (resolvedLabel) {
-        <label [for]="inputId">{{resolvedLabel}}</label>
+        <label 
+          [for]="inputId"
+          [class]="theme.components.TextField.label">{{resolvedLabel}}</label>
       }
 
       <input
