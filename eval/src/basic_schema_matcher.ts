@@ -33,10 +33,10 @@ export class BasicSchemaMatcher extends SchemaMatcher {
       return result;
     }
 
-    const pathParts = this.propertyPath.split('.');
+    const pathParts = this.propertyPath.split(".");
     let actualValue = schema;
     for (const part of pathParts) {
-      if (actualValue && typeof actualValue === 'object') {
+      if (actualValue && typeof actualValue === "object") {
         actualValue = actualValue[part];
       } else {
         actualValue = undefined;

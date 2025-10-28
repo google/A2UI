@@ -27,7 +27,7 @@ if (process.env.GEMINI_API_KEY) {
     googleAI({
       apiKey: process.env.GEMINI_API_KEY!,
       experimental_debugTraces: true,
-    })
+    }),
   );
 }
 if (process.env.OPENAI_API_KEY) {
@@ -67,5 +67,5 @@ export const componentGeneratorFlow = ai.defineFlow(
     if (!output) throw new Error("Failed to generate component");
 
     return output;
-  }
+  },
 );

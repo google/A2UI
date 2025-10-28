@@ -32,17 +32,28 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
 
   validate(schema: any): ValidationResult {
     if (!schema.surfaceUpdate) {
-      return { success: false, error: `Expected a 'surfaceUpdate' message but found none.` };
+      return {
+        success: false,
+        error: `Expected a 'surfaceUpdate' message but found none.`,
+      };
     }
     if (!Array.isArray(schema.surfaceUpdate.components)) {
-      return { success: false, error: `'surfaceUpdate' message does not contain a 'components' array.` };
+      return {
+        success: false,
+        error: `'surfaceUpdate' message does not contain a 'components' array.`,
+      };
     }
 
     const components = schema.surfaceUpdate.components;
-    const matchingComponents = components.filter(c => c.component && c.component[this.componentType]);
+    const matchingComponents = components.filter(
+      (c: any) => c.component && c.component[this.componentType],
+    );
 
     if (matchingComponents.length === 0) {
-      return { success: false, error: `Failed to find component of type '${this.componentType}'.` };
+      return {
+        success: false,
+        error: `Failed to find component of type '${this.componentType}'.`,
+      };
     }
 
     if (!this.propertyName) {
@@ -64,36 +75,67 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
     }
 
     if (this.propertyValue !== undefined) {
-      return { success: false, error: `Failed to find component of type '${this.componentType}' with property '${this.propertyName}' containing value '${JSON.stringify(this.propertyValue)}'.` };
+      return {
+        success: false,
+        error: `Failed to find component of type '${this.componentType}' with property '${this.propertyName}' containing value '${JSON.stringify(this.propertyValue)}'.`,
+      };
     } else {
-      return { success: false, error: `Failed to find component of type '${this.componentType}' with property '${this.propertyName}'.` };
+      return {
+        success: false,
+        error: `Failed to find component of type '${this.componentType}' with property '${this.propertyName}'.`,
+      };
     }
   }
 
-  private valueMatches(propertyValue: any, expectedValue: any): boolean {
-    if (propertyValue === null || propertyValue === undefined) {
+  private valueMatches(actualValue: any, expectedValue: any): boolean {
+    if (actualValue === null || actualValue === undefined) {
       return false;
     }
 
-    if (typeof propertyValue === 'object' && !Array.isArray(propertyValue)) {
-      if (propertyValue.literalString !== undefined && propertyValue.literalString === expectedValue) {
-        return true;
+    // Handle new literal/path object structure
+    if (typeof actualValue === "object" && !Array.isArray(actualValue)) {
+      if (actualValue.literalString !== undefined) {
+        return actualValue.literalString === expectedValue;
       }
-      if (propertyValue.literalNumber !== undefined && propertyValue.literalNumber === expectedValue) {
-        return true;
+      if (actualValue.literalNumber !== undefined) {
+        return actualValue.literalNumber === expectedValue;
       }
-      if (propertyValue.literalBoolean !== undefined && propertyValue.literalBoolean === expectedValue) {
-        return true;
+      if (actualValue.literalBoolean !== undefined) {
+        return actualValue.literalBoolean === expectedValue;
       }
+      // Could also have a 'path' key, but for matching we'd expect a literal value in expectedValue
     }
 
-    if (Array.isArray(propertyValue)) {
-      for (const item of propertyValue) {
-        if (typeof item === 'object' && item !== null) {
-          if (item.value === expectedValue) {
+    // Handle array cases (e.g., for MultipleChoice options)
+    if (Array.isArray(actualValue)) {
+      for (const item of actualValue) {
+        if (typeof item === "object" && item !== null) {
+          // Check if the item itself is a bound value object
+          if (
+            item.literalString !== undefined &&
+            item.literalString === expectedValue
+          )
+            return true;
+          if (
+            item.literalNumber !== undefined &&
+            item.literalNumber === expectedValue
+          )
+            return true;
+          if (
+            item.literalBoolean !== undefined &&
+            item.literalBoolean === expectedValue
+          )
+            return true;
+
+          // Check for structures like MultipleChoice options {label: {literalString: ...}, value: ...}
+          if (
+            item.label &&
+            typeof item.label === "object" &&
+            item.label.literalString === expectedValue
+          ) {
             return true;
           }
-          if (item.label && typeof item.label === 'object' && (item.label.literalString === expectedValue)) {
+          if (item.value === expectedValue) {
             return true;
           }
         } else if (item === expectedValue) {
@@ -102,10 +144,7 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
       }
     }
 
-    if (JSON.stringify(propertyValue) === JSON.stringify(expectedValue)) {
-      return true;
-    }
-
-    return false;
+    // Fallback to direct comparison
+    return JSON.stringify(actualValue) === JSON.stringify(expectedValue);
   }
 }
