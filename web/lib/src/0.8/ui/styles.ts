@@ -14,15 +14,7 @@
  limitations under the License.
  */
 
-import { css, CSSResultGroup, unsafeCSS } from "lit";
+import { unsafeCSS } from "lit";
+import { structuralStyles as unsafeStructuralStyles } from "../styles";
 
-export const opacity = css`
-  ${unsafeCSS(
-    new Array(21)
-      .fill(0)
-      .map((_, idx) => {
-        return `.opacity-el-${idx * 5} { opacity: ${idx / 20}; }`;
-      })
-      .join("\n")
-  )}
-` as CSSResultGroup;
+export const structuralStyles = unsafeCSS(unsafeStructuralStyles);

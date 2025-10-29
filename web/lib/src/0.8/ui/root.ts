@@ -32,8 +32,8 @@ import { A2UIModelProcessor } from "../data/model-processor.js";
 import { consume } from "@lit/context";
 import { themeContext } from "./context/theme.js";
 import { Theme } from "../types/types.js";
-import * as Styles from "./styles/index.js";
 import { StringValue } from "../types/primitives.js";
+import { structuralStyles } from "./styles";
 
 // This is the base class all the components will inherit
 @customElement("a2ui-root")
@@ -69,7 +69,7 @@ export class Root extends SignalWatcher(LitElement) {
   #weight: string | number = 1;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       :host {
         display: flex;

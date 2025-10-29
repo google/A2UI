@@ -14,12 +14,11 @@
  limitations under the License.
  */
 
-import { behavior } from "./behavior.js";
-import { border } from "./border.js";
-import { colors } from "./colors.js";
-import { icons } from "./icons.js";
-import { layout } from "./layout.js";
-import { opacity } from "./opacity.js";
-import { type } from "./type.js";
-
-export const all = [behavior, border, colors, icons, layout, opacity, type];
+export const opacity = `
+  ${new Array(21)
+    .fill(0)
+    .map((_, idx) => {
+      return `.opacity-el-${idx * 5} { opacity: ${idx / 20}; }`;
+    })
+    .join("\n")}
+`;

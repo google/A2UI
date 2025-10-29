@@ -18,11 +18,11 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
-import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
-import * as Utils from "./utils/utils.js";
+import { structuralStyles } from "./styles.js";
+import { Styles } from "../index.js";
 
 @customElement("a2ui-heading")
 export class Heading extends Root {
@@ -33,7 +33,7 @@ export class Heading extends Root {
   accessor level = 1;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       :host {
         display: flex;
@@ -47,7 +47,7 @@ export class Heading extends Root {
   render() {
     const classKey =
       `level${this.level}` as keyof typeof this.theme.components.Heading;
-    const classes = Utils.merge(
+    const classes = Styles.merge(
       this.theme.components.Heading.all,
       this.theme.components.Heading[classKey]
     );

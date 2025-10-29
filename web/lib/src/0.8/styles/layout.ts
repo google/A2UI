@@ -14,31 +14,27 @@
  limitations under the License.
  */
 
-import { css, CSSResultGroup, unsafeCSS } from "lit";
 import { grid } from "./shared.js";
 
-export const layout = css`
+export const layout = `
   :host {
-    ${unsafeCSS(
-      new Array(16)
-        .fill(0)
-        .map((_, idx) => {
-          return `--g-${idx + 1}: ${(idx + 1) * grid}px;`;
-        })
-        .join("\n")
-    )}
+    ${new Array(16)
+      .fill(0)
+      .map((_, idx) => {
+        return `--g-${idx + 1}: ${(idx + 1) * grid}px;`;
+      })
+      .join("\n")}
   }
 
-  ${unsafeCSS(
-    new Array(49)
-      .fill(0)
-      .map((_, index) => {
-        const idx = index - 24;
-        const lbl = idx < 0 ? `n${Math.abs(idx)}` : idx.toString();
-        return `
+  ${new Array(49)
+    .fill(0)
+    .map((_, index) => {
+      const idx = index - 24;
+      const lbl = idx < 0 ? `n${Math.abs(idx)}` : idx.toString();
+      return `
         .layout-p-${lbl} { --padding: ${
-          idx * grid
-        }px; padding: var(--padding); }
+        idx * grid
+      }px; padding: var(--padding); }
         .layout-pt-${lbl} { padding-top: ${idx * grid}px; }
         .layout-pr-${lbl} { padding-right: ${idx * grid}px; }
         .layout-pb-${lbl} { padding-bottom: ${idx * grid}px; }
@@ -54,31 +50,26 @@ export const layout = css`
         .layout-r-${lbl} { right: ${idx * grid}px; }
         .layout-b-${lbl} { bottom: ${idx * grid}px; }
         .layout-l-${lbl} { left: ${idx * grid}px; }`;
-      })
-      .join("\n")
-  )}
+    })
+    .join("\n")}
 
-  ${unsafeCSS(
-    new Array(25)
-      .fill(0)
-      .map((_, idx) => {
-        return `
+  ${new Array(25)
+    .fill(0)
+    .map((_, idx) => {
+      return `
         .layout-g-${idx} { gap: ${idx * grid}px; }`;
-      })
-      .join("\n")
-  )}
+    })
+    .join("\n")}
 
-  ${unsafeCSS(
-    new Array(8)
-      .fill(0)
-      .map((_, idx) => {
-        return `
+  ${new Array(8)
+    .fill(0)
+    .map((_, idx) => {
+      return `
         .layout-grd-col${idx + 1} { grid-template-columns: ${"1fr "
-          .repeat(idx + 1)
-          .trim()}; }`;
-      })
-      .join("\n")
-  )}
+        .repeat(idx + 1)
+        .trim()}; }`;
+    })
+    .join("\n")}
 
   .layout-pos-a {
     position: absolute;
@@ -172,47 +163,39 @@ export const layout = css`
 
   /** Widths **/
 
-  ${unsafeCSS(
-    new Array(10)
-      .fill(0)
-      .map((_, idx) => {
-        const weight = (idx + 1) * 10;
-        return `.layout-w-${weight} { width: ${weight}%; max-width: ${weight}%; }`;
-      })
-      .join("\n")
-  )}
+  ${new Array(10)
+    .fill(0)
+    .map((_, idx) => {
+      const weight = (idx + 1) * 10;
+      return `.layout-w-${weight} { width: ${weight}%; max-width: ${weight}%; }`;
+    })
+    .join("\n")}
 
-  ${unsafeCSS(
-    new Array(16)
-      .fill(0)
-      .map((_, idx) => {
-        const weight = idx * grid;
-        return `.layout-wp-${idx} { width: ${weight}px; }`;
-      })
-      .join("\n")
-  )}
+  ${new Array(16)
+    .fill(0)
+    .map((_, idx) => {
+      const weight = idx * grid;
+      return `.layout-wp-${idx} { width: ${weight}px; }`;
+    })
+    .join("\n")}
 
   /** Heights **/
 
-  ${unsafeCSS(
-    new Array(10)
-      .fill(0)
-      .map((_, idx) => {
-        const height = (idx + 1) * 10;
-        return `.layout-h-${height} { height: ${height}%; }`;
-      })
-      .join("\n")
-  )}
+  ${new Array(10)
+    .fill(0)
+    .map((_, idx) => {
+      const height = (idx + 1) * 10;
+      return `.layout-h-${height} { height: ${height}%; }`;
+    })
+    .join("\n")}
 
-  ${unsafeCSS(
-    new Array(16)
-      .fill(0)
-      .map((_, idx) => {
-        const height = idx * grid;
-        return `.layout-hp-${idx} { height: ${height}px; }`;
-      })
-      .join("\n")
-  )}
+  ${new Array(16)
+    .fill(0)
+    .map((_, idx) => {
+      const height = idx * grid;
+      return `.layout-hp-${idx} { height: ${height}px; }`;
+    })
+    .join("\n")}
 
   .layout-el-cv {
     & img,
@@ -233,4 +216,4 @@ export const layout = css`
     width: calc(100% + var(--padding) * 2);
     height: calc(100% + var(--padding) * 2);
   }
-` as CSSResultGroup;
+`;

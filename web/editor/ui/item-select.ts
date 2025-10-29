@@ -14,13 +14,13 @@
  limitations under the License.
  */
 
-import { LitElement, html, css, nothing } from "lit";
+import { LitElement, html, css, nothing, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref, Ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
 import { EnumValue } from "../types/types";
-import * as UI from "@a2ui/web-lib/ui";
+import { v0_8 } from "@a2ui/web-lib";
 
 @customElement("item-select")
 export class ItemSelect extends LitElement {
@@ -82,7 +82,7 @@ export class ItemSelect extends LitElement {
   }
 
   static styles = [
-    UI.Styles.all,
+    unsafeCSS(v0_8.Styles.structuralStyles),
     css`
       :host {
         display: block;

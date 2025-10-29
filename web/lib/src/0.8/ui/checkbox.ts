@@ -18,10 +18,10 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue, BooleanValue } from "../types/primitives";
-import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-checkbox")
 export class Checkbox extends Root {
@@ -32,7 +32,7 @@ export class Checkbox extends Root {
   accessor label: StringValue | null = null;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       * {
         box-sizing: border-box;

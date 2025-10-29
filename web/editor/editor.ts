@@ -22,6 +22,7 @@ import {
   nothing,
   TemplateResult,
   HTMLTemplateResult,
+  unsafeCSS,
 } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
@@ -81,7 +82,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #lastMessages: v0_8.Types.ServerToClientMessage[] | null = null;
 
   static styles = [
-    UI.Styles.all,
+    unsafeCSS(v0_8.Styles.structuralStyles),
     css`
       :host {
         display: grid;

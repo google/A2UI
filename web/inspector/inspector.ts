@@ -14,8 +14,8 @@
  limitations under the License.
  */
 
-import { LitElement, html, css, HTMLTemplateResult } from "lit";
-import { customElement, query, state } from "lit/decorators.js";
+import { LitElement, html, css, HTMLTemplateResult, unsafeCSS } from "lit";
+import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { SignalWatcher } from "@lit-labs/signals";
 import { provide } from "@lit/context";
@@ -55,7 +55,7 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
   #lastItem: string | null = null;
 
   static styles = [
-    UI.Styles.all,
+    unsafeCSS(v0_8.Styles.structuralStyles),
     css`
       :host {
         display: grid;

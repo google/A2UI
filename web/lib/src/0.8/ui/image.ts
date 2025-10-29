@@ -18,10 +18,10 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
-import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-image")
 export class Image extends Root {
@@ -29,7 +29,7 @@ export class Image extends Root {
   accessor url: StringValue | null = null;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       * {
         box-sizing: border-box;

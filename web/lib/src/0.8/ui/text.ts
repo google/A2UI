@@ -19,11 +19,11 @@ import { customElement, property } from "lit/decorators.js";
 import { markdown } from "./directives/directives.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
-import * as Styles from "./styles/index.js";
-import { appendToAll } from "./utils/utils.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
+import { Styles } from "../index.js";
 
 @customElement("a2ui-text")
 export class Text extends Root {
@@ -31,7 +31,7 @@ export class Text extends Root {
   accessor text: StringValue | null = null;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       :host {
         display: block;
@@ -45,12 +45,12 @@ export class Text extends Root {
       if ("literalString" in this.text && this.text.literalString) {
         return html`${markdown(
           this.text.literalString,
-          appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
+          Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
         )}`;
       } else if ("literal" in this.text && this.text.literal !== undefined) {
         return html`${markdown(
           this.text.literal,
-          appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
+          Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
         )}`;
       } else if (this.text && "path" in this.text && this.text.path) {
         if (!this.processor || !this.component) {
@@ -69,7 +69,7 @@ export class Text extends Root {
 
         return html`${markdown(
           textValue.toString(),
-          appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
+          Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
         )}`;
       }
     }

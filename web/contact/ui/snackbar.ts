@@ -13,13 +13,13 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import { LitElement, html, css, nothing } from "lit";
+import { LitElement, html, css, nothing, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { SnackbarMessage, SnackbarUUID, SnackType } from "../types/types";
 import { repeat } from "lit/directives/repeat.js";
-import * as UI from "@a2ui/web-lib/ui";
 import { SnackbarActionEvent } from "../events/events";
 import { classMap } from "lit/directives/class-map.js";
+import { v0_8 } from "@a2ui/web-lib";
 
 const DEFAULT_TIMEOUT = 8000;
 
@@ -38,7 +38,7 @@ export class Snackbar extends LitElement {
   #timeout = 0;
 
   static styles = [
-    UI.Styles.all,
+    unsafeCSS(v0_8.Styles.structuralStyles),
     css`
       :host {
         --text-color: var(--n-0);

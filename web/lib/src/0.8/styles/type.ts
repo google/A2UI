@@ -14,9 +14,7 @@
  limitations under the License.
  */
 
-import { css, CSSResultGroup, unsafeCSS } from "lit";
-
-export const type = css`
+export const type = `
   :host {
     --default-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --default-font-family-mono: "Courier New", Courier, monospace;
@@ -140,13 +138,11 @@ export const type = css`
 
   /** Weights **/
 
-  ${unsafeCSS(
-    new Array(9)
-      .fill(0)
-      .map((_, idx) => {
-        const weight = (idx + 1) * 100;
-        return `.typography-w-${weight} { font-weight: ${weight}; }`;
-      })
-      .join("\n")
-  )}
-` as CSSResultGroup;
+  ${new Array(9)
+    .fill(0)
+    .map((_, idx) => {
+      const weight = (idx + 1) * 100;
+      return `.typography-w-${weight} { font-weight: ${weight}; }`;
+    })
+    .join("\n")}
+`;

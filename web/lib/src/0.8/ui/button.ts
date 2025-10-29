@@ -18,10 +18,10 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StateEvent } from "../events/events.js";
-import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Action } from "../types/components.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-button")
 export class Button extends Root {
@@ -29,7 +29,7 @@ export class Button extends Root {
   accessor action: Action | null = null;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       :host {
         display: block;

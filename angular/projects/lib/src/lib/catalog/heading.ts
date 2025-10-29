@@ -17,7 +17,6 @@
 import { Component, computed, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { themeMerge } from '../rendering';
 
 @Component({
   selector: 'a2ui-heading',
@@ -45,6 +44,9 @@ export class Heading extends DynamicComponent {
 
   protected readonly classes = computed(() => {
     const classKey = `level${this.level()}` as keyof typeof this.theme.components.Heading;
-    return themeMerge(this.theme.components.Heading.all, this.theme.components.Heading[classKey]);
+    return v0_8.Styles.merge(
+      this.theme.components.Heading.all,
+      this.theme.components.Heading[classKey]
+    );
   });
 }

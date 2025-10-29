@@ -16,7 +16,14 @@
 
 import { SignalWatcher } from "@lit-labs/signals";
 import { provide } from "@lit/context";
-import { LitElement, html, css, nothing, HTMLTemplateResult } from "lit";
+import {
+  LitElement,
+  html,
+  css,
+  nothing,
+  HTMLTemplateResult,
+  unsafeCSS,
+} from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { theme as uiTheme } from "./theme/theme.js";
 import { A2UIClient } from "./client";
@@ -49,7 +56,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #lastMessages: v0_8.Types.ServerToClientMessage[] = [];
 
   static styles = [
-    UI.Styles.all,
+    unsafeCSS(v0_8.Styles.structuralStyles),
     css`
       :host {
         display: block;

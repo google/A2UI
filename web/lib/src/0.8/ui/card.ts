@@ -17,14 +17,14 @@
 import { html, css, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { Root } from "./root.js";
-import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-card")
 export class Card extends Root {
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       * {
         box-sizing: border-box;

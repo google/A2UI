@@ -21,9 +21,9 @@ import { repeat } from "lit/directives/repeat.js";
 import { StringValue } from "../types/primitives.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
-import * as Utils from "./utils/utils.js";
-import * as Styles from "./styles/index.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
+import { Styles } from "../index.js";
 
 @customElement("a2ui-tabs")
 export class Tabs extends Root {
@@ -34,7 +34,7 @@ export class Tabs extends Root {
   accessor selected = 0;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       :host {
         display: block;
@@ -94,7 +94,7 @@ export class Tabs extends Root {
 
         let classes;
         if (this.selected === idx) {
-          classes = Utils.merge(
+          classes = Styles.merge(
             this.theme.components.Tabs.controls.all,
             this.theme.components.Tabs.controls.selected
           );

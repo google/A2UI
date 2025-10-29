@@ -14,9 +14,24 @@
  limitations under the License.
  */
 
-import { v0_8 } from '@a2ui/web-lib';
-import { InjectionToken } from '@angular/core';
+import { behavior } from "./behavior.js";
+import { border } from "./border.js";
+import { colors } from "./colors.js";
+import { icons } from "./icons.js";
+import { layout } from "./layout.js";
+import { opacity } from "./opacity.js";
+import { type } from "./type.js";
 
-export const Theme = new InjectionToken<Theme>('Theme');
+export * from "./utils.js";
 
-export type Theme = v0_8.Types.Theme;
+export const structuralStyles: string = [
+  behavior,
+  border,
+  colors,
+  icons,
+  layout,
+  opacity,
+  type,
+]
+  .flat(Infinity)
+  .join("\n");

@@ -14,8 +14,6 @@
  limitations under the License.
  */
 
-import { css } from "lit";
-
 /**
  * CSS classes for Google Symbols.
  *
@@ -25,7 +23,7 @@ import { css } from "lit";
  * <span class="g-icon">pen_spark</span>
  * ```
  */
-export const icons = css`
+export const icons = `
   .g-icon {
     font-family: "Google Symbols";
     font-weight: normal;

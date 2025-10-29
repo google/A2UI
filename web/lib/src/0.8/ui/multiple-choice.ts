@@ -18,10 +18,10 @@ import { html, css, PropertyValues, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
-import * as Styles from "./styles/index.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-multiplechoice")
 export class MultipleChoice extends Root {
@@ -35,7 +35,7 @@ export class MultipleChoice extends Root {
   accessor value: StringValue | null = null;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       * {
         box-sizing: border-box;

@@ -18,11 +18,11 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { NumberValue, StringValue } from "../types/primitives";
-import * as Styles from "./styles/index.js";
 import { ResolvedTextField } from "../types/types.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-slider")
 export class Slider extends Root {
@@ -42,7 +42,7 @@ export class Slider extends Root {
   accessor inputType: ResolvedTextField["type"] | null = null;
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       * {
         box-sizing: border-box;

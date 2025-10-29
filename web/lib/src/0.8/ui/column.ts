@@ -17,10 +17,10 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import * as Styles from "./styles/index.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ResolvedColumn } from "../types/types";
 import { styleMap } from "lit/directives/style-map.js";
+import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-column")
 export class Column extends Root {
@@ -31,7 +31,7 @@ export class Column extends Root {
   accessor distribution: ResolvedColumn["distribution"] = "start";
 
   static styles = [
-    Styles.all,
+    structuralStyles,
     css`
       * {
         box-sizing: border-box;

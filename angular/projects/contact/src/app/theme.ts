@@ -14,7 +14,6 @@
  limitations under the License.
  */
 
-import { themeMerge } from '@a2ui/angular';
 import { v0_8 } from '@a2ui/web-lib';
 
 /** Elements */
@@ -160,23 +159,23 @@ const video = {
   'layout-el-cv': true,
 };
 
-const aLight = themeMerge(a, { 'color-c-p30': true });
-const inputLight = themeMerge(input, { 'color-c-n5': true });
-const textareaLight = themeMerge(textarea, { 'color-c-n5': true });
-const buttonLight = themeMerge(button, { 'color-c-n100': true });
-const h1Light = themeMerge(h1, { 'color-c-n5': true });
-const h2Light = themeMerge(h2, { 'color-c-n5': true });
-const h3Light = themeMerge(h3, { 'color-c-n5': true });
-const bodyLight = themeMerge(body, { 'color-c-n5': true });
-const pLight = themeMerge(p, { 'color-c-n60': true });
-const preLight = themeMerge(pre, { 'color-c-n35': true });
-const orderedListLight = themeMerge(orderedList, {
+const aLight = v0_8.Styles.merge(a, { 'color-c-p30': true });
+const inputLight = v0_8.Styles.merge(input, { 'color-c-n5': true });
+const textareaLight = v0_8.Styles.merge(textarea, { 'color-c-n5': true });
+const buttonLight = v0_8.Styles.merge(button, { 'color-c-n100': true });
+const h1Light = v0_8.Styles.merge(h1, { 'color-c-n5': true });
+const h2Light = v0_8.Styles.merge(h2, { 'color-c-n5': true });
+const h3Light = v0_8.Styles.merge(h3, { 'color-c-n5': true });
+const bodyLight = v0_8.Styles.merge(body, { 'color-c-n5': true });
+const pLight = v0_8.Styles.merge(p, { 'color-c-n60': true });
+const preLight = v0_8.Styles.merge(pre, { 'color-c-n35': true });
+const orderedListLight = v0_8.Styles.merge(orderedList, {
   'color-c-n35': true,
 });
-const unorderedListLight = themeMerge(unorderedList, {
+const unorderedListLight = v0_8.Styles.merge(unorderedList, {
   'color-c-n35': true,
 });
-const listItemLight = themeMerge(listItem, {
+const listItemLight = v0_8.Styles.merge(listItem, {
   'color-c-n35': true,
 });
 

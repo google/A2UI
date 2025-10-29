@@ -14,9 +14,7 @@
  limitations under the License.
  */
 
-import { css, CSSResultGroup, unsafeCSS } from "lit";
-
-const opacityBehavior = unsafeCSS(`
+const opacityBehavior = `
   &:not([disabled]) {
     cursor: pointer;
     opacity: var(--opacity, 0);
@@ -26,20 +24,18 @@ const opacityBehavior = unsafeCSS(`
     &:focus {
       opacity: 1;
     }
-  }`);
+  }`;
 
-export const behavior = css`
-  ${unsafeCSS(
-    new Array(21)
-      .fill(0)
-      .map((_, idx) => {
-        return `.behavior-ho-${idx * 5} {
+export const behavior = `
+  ${new Array(21)
+    .fill(0)
+    .map((_, idx) => {
+      return `.behavior-ho-${idx * 5} {
           --opacity: ${idx / 20};
           ${opacityBehavior}
         }`;
-      })
-      .join("\n")
-  )}
+    })
+    .join("\n")}
 
   .behavior-o-s {
     overflow: scroll;
@@ -56,4 +52,4 @@ export const behavior = css`
   .behavior-sw-n {
     scrollbar-width: none;
   }
-}` as CSSResultGroup;
+`;

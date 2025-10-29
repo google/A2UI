@@ -14,11 +14,11 @@
  limitations under the License.
  */
 
-import { LitElement, css, html, nothing, svg } from "lit";
+import { LitElement, css, html, nothing, svg, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { EnumValue } from "../types/types";
 import { ItemSelect } from "./item-select";
-import * as UI from "@a2ui/web-lib/ui";
+import { v0_8 } from "@a2ui/web-lib";
 
 type RenderMode = "free" | "line" | "rect";
 interface Path {
@@ -75,7 +75,7 @@ const values: EnumValue[] = [
 @customElement("drawable-canvas")
 export class DrawableCanvas extends LitElement {
   static styles = [
-    UI.Styles.all,
+    unsafeCSS(v0_8.Styles.structuralStyles),
     css`
       :host {
         display: grid;

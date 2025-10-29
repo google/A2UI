@@ -1,8 +1,0 @@
-a2ui-surface {
-  display: flex;
-  min-height: 0;
-  overflow: auto;
-  max-height: 100%;
-  flex-direction: column;
-  gap: 16px;
-}

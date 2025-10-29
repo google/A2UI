@@ -18,17 +18,20 @@ import {
   Binding,
   ComponentRef,
   Directive,
+  DOCUMENT,
   effect,
   inject,
   input,
   inputBinding,
   OnDestroy,
+  PLATFORM_ID,
   Type,
   untracked,
   ViewContainerRef,
 } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { Catalog } from './catalog';
+import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
   selector: 'ng-container[a2ui-renderer]',
@@ -36,6 +39,8 @@ import { Catalog } from './catalog';
 export class Renderer implements OnDestroy {
   private viewContainerRef = inject(ViewContainerRef);
   private catalog = inject(Catalog);
+  private static hasInsertedStyles = false;
+
   private currentRef: ComponentRef<unknown> | null = null;
   private isDestroyed = false;
 
@@ -48,6 +53,16 @@ export class Renderer implements OnDestroy {
       const component = this.component();
       untracked(() => this.render(surfaceId, component));
     });
+
+    const platformId = inject(PLATFORM_ID);
+    const document = inject(DOCUMENT);
+
+    if (!Renderer.hasInsertedStyles && isPlatformBrowser(platformId)) {
+      const styles = document.createElement('style');
+      styles.textContent = v0_8.Styles.structuralStyles;
+      document.head.appendChild(styles);
+      Renderer.hasInsertedStyles = true;
+    }
   }
 
   ngOnDestroy(): void {
