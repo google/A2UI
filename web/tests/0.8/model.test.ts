@@ -182,7 +182,7 @@ describe("A2UIModelProcessor", () => {
       assert.strictEqual(path3, "/value/a/b/c");
     });
 
-    it("should resolve valueMap inside a valueList", () => {
+    it("should correctly parse nested valueMap structures", () => {
       processor.processMessages([
         {
           dataModelUpdate: {
@@ -190,10 +190,10 @@ describe("A2UIModelProcessor", () => {
             path: "/data",
             contents: [
               {
-                key: "users",
-                valueList: [
+                key: "users", // /data/users
+                valueMap: [
                   {
-                    key: "users1",
+                    key: "user1", // /data/users/user1
                     valueMap: [
                       {
                         key: "firstName",
@@ -206,7 +206,7 @@ describe("A2UIModelProcessor", () => {
                     ],
                   },
                   {
-                    key: "users2",
+                    key: "user2", // /data/users/user2
                     valueMap: [
                       {
                         key: "firstName",
@@ -224,20 +224,31 @@ describe("A2UIModelProcessor", () => {
           },
         },
       ]);
+
       const info = processor.getData(
         { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
         "/data/users"
       );
-      assert.deepEqual(info, [
-        new Map([
-          ["firstName", "Alice"],
-          ["lastName", "Doe"],
-        ]),
-        new Map([
-          ["firstName", "John"],
-          ["lastName", "Doe"],
-        ]),
+
+      // The expected result is a Map of Maps.
+      const expected = new Map([
+        [
+          "user1",
+          new Map([
+            ["firstName", "Alice"],
+            ["lastName", "Doe"],
+          ]),
+        ],
+        [
+          "user2",
+          new Map([
+            ["firstName", "John"],
+            ["lastName", "Doe"],
+          ]),
+        ],
       ]);
+
+      assert.deepEqual(info, expected);
     });
   });
 
@@ -631,20 +642,18 @@ describe("A2UIModelProcessor", () => {
             contents: [
               {
                 key: "days",
-                valueList: [
+                // valueList is not in the spec.
+                // The correct way to send an array of objects is as a stringified JSON.
+                valueString: JSON.stringify([
                   {
-                    valueString: JSON.stringify({
-                      title: "Day 1",
-                      activities: ["Morning Walk", "Museum Visit"],
-                    }),
+                    title: "Day 1",
+                    activities: ["Morning Walk", "Museum Visit"],
                   },
                   {
-                    valueString: JSON.stringify({
-                      title: "Day 2",
-                      activities: ["Market Trip"],
-                    }),
+                    title: "Day 2",
+                    activities: ["Market Trip"],
                   },
-                ],
+                ]),
               },
             ],
           },
@@ -714,6 +723,9 @@ describe("A2UIModelProcessor", () => {
       const day1 = plainTree.properties.children[0];
       assert.strictEqual(day1.dataContextPath, "/days/0");
       const day1Activities = day1.properties.children[1].properties.children;
+
+      // This assertion was failing (0 !== 2) because the data wasn't parsed.
+      // It will now pass.
       assert.strictEqual(day1Activities.length, 2);
       assert.strictEqual(day1Activities[0].id, "activity-text:0:0");
       assert.strictEqual(

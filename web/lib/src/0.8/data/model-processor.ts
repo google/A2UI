@@ -239,19 +239,9 @@ export class A2UIModelProcessor {
       if (!valueKey) continue;
 
       let value: DataValue = item[valueKey];
-      // It's a valueMap. We must unwrap its contents.
+      // It's a valueMap. We must recursively convert it.
       if (valueKey === "valueMap" && Array.isArray(value)) {
-        value = value.map((wrappedItem: unknown) => {
-          if (!isObject(wrappedItem)) return null;
-          const innerValueKey = this.#findValueKey(wrappedItem);
-          if (!innerValueKey) return wrappedItem as DataValue;
-
-          const innerValue = wrappedItem[innerValueKey];
-          if (innerValueKey === "valueMap" && Array.isArray(innerValue)) {
-            return this.#convertKeyValueArrayToMap(innerValue);
-          }
-          return this.#parseIfJsonString(innerValue as DataValue);
-        });
+        value = this.#convertKeyValueArrayToMap(value);
       } else if (typeof value === "string") {
         value = this.#parseIfJsonString(value);
       }
