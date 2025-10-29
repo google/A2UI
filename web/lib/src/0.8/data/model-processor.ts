@@ -28,6 +28,7 @@ import {
   Surface,
   SurfaceID,
   SurfaceUpdateMessage,
+  ModelProcessor,
 } from "../types/types";
 import {
   isComponentArrayReference,
@@ -58,7 +59,7 @@ import {
  * Processes and consolidates A2UIProtocolMessage objects into a structured,
  * hierarchical model of UI surfaces.
  */
-export class A2UIModelProcessor {
+export class A2UIModelProcessor implements ModelProcessor {
   static readonly DEFAULT_SURFACE_ID = "@default";
 
   #mapCtor: MapConstructor = Map;

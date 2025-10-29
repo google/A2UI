@@ -37,6 +37,32 @@ import {
 } from "./components";
 import { StringValue } from "./primitives";
 
+export type ModelProcessor = {
+  getSurfaces(): ReadonlyMap<string, Surface>;
+  clearSurfaces(): void;
+  processMessages(messages: ServerToClientMessage[]): void;
+
+  /**
+   * Retrieves the data for a given component node and a relative path string.
+   * This correctly handles the special `.` path, which refers to the node's
+   * own data context.
+   */
+  getData(
+    node: AnyComponentNode,
+    relativePath: string,
+    surfaceId: string
+  ): DataValue | null;
+
+  setData(
+    node: AnyComponentNode | null,
+    relativePath: string,
+    value: DataValue,
+    surfaceId: string
+  ): void;
+
+  resolvePath(path: string, dataContextPath?: string): string;
+};
+
 export type Theme = {
   components: {
     AudioPlayer: Record<string, boolean>;
