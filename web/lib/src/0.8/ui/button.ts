@@ -28,9 +28,6 @@ export class Button extends Root {
   @property()
   accessor action: Action | null = null;
 
-  @property({ type: Boolean })
-  accessor primary: boolean = false;
-
   static styles = [
     Styles.all,
     css`
@@ -44,16 +41,11 @@ export class Button extends Root {
   ];
 
   render() {
-    const buttonClasses = {
-      ...this.theme.components.Button,
-      "is-primary": this.primary,
-    };
     return html`<button
-      class=${classMap(buttonClasses)}
+      class=${classMap(this.theme.components.Button)}
       style=${this.theme.additionalStyles?.Button
         ? styleMap(this.theme.additionalStyles?.Button)
         : nothing}
-      aria-pressed=${this.primary ? "true" : "false"}
       @click=${() => {
         if (!this.action) {
           return;
