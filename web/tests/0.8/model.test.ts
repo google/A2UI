@@ -621,6 +621,383 @@ describe("A2UIModelProcessor", () => {
   });
 
   describe("Complex Template Scenarios", () => {
+    it("should correctly expand a template with dataBinding to a Map (from valueMap)", () => {
+      const messages = [
+        {
+          beginRendering: {
+            surfaceId: "default",
+            root: "root-column",
+          },
+        },
+        {
+          surfaceUpdate: {
+            surfaceId: "default",
+            components: [
+              {
+                id: "root-column",
+                component: {
+                  Column: {
+                    children: {
+                      explicitList: ["title-heading", "item-list"],
+                    },
+                  },
+                },
+              },
+              {
+                id: "title-heading",
+                component: {
+                  Heading: {
+                    level: "1",
+                    text: {
+                      literalString: "Top Restaurants",
+                    },
+                  },
+                },
+              },
+              {
+                id: "item-list",
+                component: {
+                  List: {
+                    direction: "vertical",
+                    children: {
+                      template: {
+                        componentId: "item-card-template",
+                        dataBinding: "/items",
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                id: "item-card-template",
+                component: {
+                  Card: {
+                    child: "card-layout",
+                  },
+                },
+              },
+              {
+                id: "card-layout",
+                component: {
+                  Row: {
+                    children: {
+                      explicitList: ["template-image", "card-details"],
+                    },
+                  },
+                },
+              },
+              {
+                id: "template-image",
+                weight: 1,
+                component: {
+                  Image: {
+                    url: {
+                      path: "imageUrl",
+                    },
+                  },
+                },
+              },
+              {
+                id: "card-details",
+                weight: 2,
+                component: {
+                  Column: {
+                    children: {
+                      explicitList: [
+                        "template-name",
+                        "template-rating",
+                        "template-detail",
+                        "template-link",
+                        "template-book-button",
+                      ],
+                    },
+                  },
+                },
+              },
+              {
+                id: "template-name",
+                component: {
+                  Heading: {
+                    level: "3",
+                    text: {
+                      path: "name",
+                    },
+                  },
+                },
+              },
+              {
+                id: "template-rating",
+                component: {
+                  Text: {
+                    text: {
+                      path: "rating",
+                    },
+                  },
+                },
+              },
+              {
+                id: "template-detail",
+                component: {
+                  Text: {
+                    text: {
+                      path: "detail",
+                    },
+                  },
+                },
+              },
+              {
+                id: "template-link",
+                component: {
+                  Text: {
+                    text: {
+                      path: "infoLink",
+                    },
+                  },
+                },
+              },
+              {
+                id: "template-book-button",
+                component: {
+                  Button: {
+                    child: "book-now-text",
+                    action: {
+                      name: "book_restaurant",
+                      context: [
+                        {
+                          key: "restaurantName",
+                          value: {
+                            path: "name",
+                          },
+                        },
+                        {
+                          key: "imageUrl",
+                          value: {
+                            path: "imageUrl",
+                          },
+                        },
+                        {
+                          key: "address",
+                          value: {
+                            path: "address",
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+              {
+                id: "book-now-text",
+                component: {
+                  Text: {
+                    text: {
+                      literalString: "Book Now",
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+        {
+          dataModelUpdate: {
+            surfaceId: "default",
+            path: "/",
+            contents: [
+              {
+                key: "items",
+                valueMap: [
+                  {
+                    key: "item1",
+                    valueMap: [
+                      {
+                        key: "name",
+                        valueString: "Business 1",
+                      },
+                      {
+                        key: "rating",
+                        valueString: "★★★★☆",
+                      },
+                      {
+                        key: "detail",
+                        valueString: "Spicy and savory hand-pulled noodles.",
+                      },
+                      {
+                        key: "infoLink",
+                        valueString: "[More Info](https://www.example.com/)",
+                      },
+                      {
+                        key: "imageUrl",
+                        valueString:
+                          "http://www.example.com/static/shrimpchowmein.jpeg",
+                      },
+                      {
+                        key: "address",
+                        valueString: "Address 1",
+                      },
+                    ],
+                  },
+                  {
+                    key: "item2",
+                    valueMap: [
+                      {
+                        key: "name",
+                        valueString: "Business 2",
+                      },
+                      {
+                        key: "rating",
+                        valueString: "★★★★☆",
+                      },
+                      {
+                        key: "detail",
+                        valueString: "Authentic and real.",
+                      },
+                      {
+                        key: "infoLink",
+                        valueString: "[More Info](https://www.example.com/)",
+                      },
+                      {
+                        key: "imageUrl",
+                        valueString:
+                          "http://www.example.com/static/mapotofu.jpeg",
+                      },
+                      {
+                        key: "address",
+                        valueString: "Address 2",
+                      },
+                    ],
+                  },
+                  {
+                    key: "item3",
+                    valueMap: [
+                      {
+                        key: "name",
+                        valueString: "Business 3",
+                      },
+                      {
+                        key: "rating",
+                        valueString: "★★★★☆",
+                      },
+                      {
+                        key: "detail",
+                        valueString:
+                          "Modern food with a farm-to-table approach.",
+                      },
+                      {
+                        key: "infoLink",
+                        valueString: "[More Info](https://www.example.com/)",
+                      },
+                      {
+                        key: "imageUrl",
+                        valueString:
+                          "http://www.example.com/static/beefbroccoli.jpeg",
+                      },
+                      {
+                        key: "address",
+                        valueString: "Address 3",
+                      },
+                    ],
+                  },
+                  {
+                    key: "item4",
+                    valueMap: [
+                      {
+                        key: "name",
+                        valueString: "Business 4",
+                      },
+                      {
+                        key: "rating",
+                        valueString: "★★★★★",
+                      },
+                      {
+                        key: "detail",
+                        valueString: "Upscale dining.",
+                      },
+                      {
+                        key: "infoLink",
+                        valueString: "[More Info](https://www.example.com/)",
+                      },
+                      {
+                        key: "imageUrl",
+                        valueString:
+                          "http://www.example.com/static/springrolls.jpeg",
+                      },
+                      {
+                        key: "address",
+                        valueString: "Address 4",
+                      },
+                    ],
+                  },
+                  {
+                    key: "item5",
+                    valueMap: [
+                      {
+                        key: "name",
+                        valueString: "Business 5",
+                      },
+                      {
+                        key: "rating",
+                        valueString: "★★★★☆",
+                      },
+                      {
+                        key: "detail",
+                        valueString: "Famous for its noodles.",
+                      },
+                      {
+                        key: "infoLink",
+                        valueString: "[More Info](https://www.example.com/)",
+                      },
+                      {
+                        key: "imageUrl",
+                        valueString:
+                          "http://www.example.com/static/kungpao.jpeg",
+                      },
+                      {
+                        key: "address",
+                        valueString: "Address 5",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ];
+
+      processor.processMessages(messages);
+      const tree = processor.getSurfaces().get("default")?.componentTree;
+      const plainTree = toPlainObject(tree);
+
+      // 1. Find the "item-list" component (the List)
+      const itemList = plainTree.properties.children[1];
+      assert.strictEqual(itemList.id, "item-list");
+
+      // 2. Check that it expanded 5 children from the Map
+      const templateChildren = itemList.properties.children;
+      assert.strictEqual(templateChildren.length, 5);
+
+      // 3. Check the first generated child for correct key-based ID and data context
+      const child1 = templateChildren[0];
+      assert.strictEqual(child1.id, "item-card-template:item1");
+      assert.strictEqual(child1.dataContextPath, "/items/item1");
+
+      // 4. Go deeper to check the data binding on a nested component
+      // Path: Card -> Row -> Column -> Heading
+      const child1NameHeading =
+        child1.properties.child.properties.children[1].properties.children[0];
+      assert.strictEqual(child1NameHeading.id, "template-name:item1");
+      assert.strictEqual(child1NameHeading.dataContextPath, "/items/item1");
+      assert.deepStrictEqual(child1NameHeading.properties.text, {
+        path: "name",
+      });
+
+      // 5. Check the second generated child
+      const child2 = templateChildren[1];
+      assert.strictEqual(child2.id, "item-card-template:item2");
+      assert.strictEqual(child2.dataContextPath, "/items/item2");
+    });
+
     it("should correctly expand nested templates with layered data contexts", () => {
       const messages = [
         {

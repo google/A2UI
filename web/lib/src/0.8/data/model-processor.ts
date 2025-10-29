@@ -448,7 +448,9 @@ export class A2UIModelProcessor implements ModelProcessor {
     visited: Set<string>,
     dataContextPath: string
   ): AnyComponentNode | null {
-    const baseComponentId = componentId.split(":").at(0) ?? "";
+    const idParts = componentId.split(":");
+    const baseComponentId = idParts[0] ?? "";
+    const idSuffix = idParts.length > 1 ? `:${idParts.slice(1).join(":")}` : "";
     const { components } = surface;
 
     if (!components.has(baseComponentId)) {
@@ -476,7 +478,8 @@ export class A2UIModelProcessor implements ModelProcessor {
           value,
           surface,
           visited,
-          dataContextPath
+          dataContextPath,
+          idSuffix
         );
       }
     }
@@ -698,11 +701,17 @@ export class A2UIModelProcessor implements ModelProcessor {
     value: unknown,
     surface: Surface,
     visited: Set<string>,
-    dataContextPath: string
+    dataContextPath: string,
+    idSuffix = ""
   ): ResolvedValue {
     // 1. If it's a string that matches a component ID, build that node.
     if (typeof value === "string" && surface.components.has(value)) {
-      return this.#buildNodeRecursive(value, surface, visited, dataContextPath);
+      return this.#buildNodeRecursive(
+        `${value}${idSuffix}`,
+        surface,
+        visited,
+        dataContextPath
+      );
     }
 
     // 2. If it's a ComponentArrayReference (e.g., a `children` property),
@@ -710,7 +719,12 @@ export class A2UIModelProcessor implements ModelProcessor {
     if (isComponentArrayReference(value)) {
       if (value.explicitList) {
         return value.explicitList.map((id) =>
-          this.#buildNodeRecursive(id, surface, visited, dataContextPath)
+          this.#buildNodeRecursive(
+            `${id}${idSuffix}`,
+            surface,
+            visited,
+            dataContextPath
+          )
         );
       }
 
@@ -722,8 +736,11 @@ export class A2UIModelProcessor implements ModelProcessor {
         const data = this.#getDataByPath(surface.dataModel, fullDataPath);
 
         const template = value.template;
+        // Handle Array data.
         if (Array.isArray(data)) {
           return data.map((_, index) => {
+            // Create a synthetic ID based on the template ID and the
+            // full index path of the data (e.g., template-id:0:1)
             const parentIndices = dataContextPath
               .split("/")
               .filter((segment) => /^\d+$/.test(segment));
@@ -743,6 +760,26 @@ export class A2UIModelProcessor implements ModelProcessor {
           });
         }
 
+        // Handle Map data.
+        const mapCtor = this.#mapCtor;
+        if (data instanceof mapCtor) {
+          return Array.from(data.keys()).map((key) => {
+            // Create a synthetic ID based on the template ID and the data key
+            // (e.g., template-id:item1)
+            const syntheticId = `${template.componentId}:${key}`;
+
+            // Create the new data context path using the key
+            const childDataContextPath = `${fullDataPath}/${key}`;
+
+            return this.#buildNodeRecursive(
+              syntheticId,
+              surface,
+              visited,
+              childDataContextPath
+            );
+          });
+        }
+
         // Return empty array if the data is not ready yet.
         return new this.#arrayCtor();
       }
@@ -751,7 +788,13 @@ export class A2UIModelProcessor implements ModelProcessor {
     // 3. If it's a plain array, resolve each of its items.
     if (Array.isArray(value)) {
       return value.map((item) =>
-        this.#resolvePropertyValue(item, surface, visited, dataContextPath)
+        this.#resolvePropertyValue(
+          item,
+          surface,
+          visited,
+          dataContextPath,
+          idSuffix
+        )
       );
     }
 
@@ -776,7 +819,8 @@ export class A2UIModelProcessor implements ModelProcessor {
           propertyValue,
           surface,
           visited,
-          dataContextPath
+          dataContextPath,
+          idSuffix
         );
       }
       return newObj;

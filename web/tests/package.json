@@ -21,7 +21,7 @@
       ]
     },
     "test": {
-      "command": "node --test --enable-source-maps --test-reporter spec dist/0.8/**/*.test.js",
+      "command": "node --test --enable-source-maps --test-reporter spec dist/0.8/*.test.js",
       "dependencies": [
         "build"
       ]
