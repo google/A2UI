@@ -256,11 +256,34 @@ export class A2UIModelProcessor implements ModelProcessor {
     // Check if the incoming value is the special key-value array format.
     if (
       Array.isArray(value) &&
-      value.length > 0 &&
-      isObject(value[0]) &&
-      "key" in value[0]
+      (value.length === 0 || (isObject(value[0]) && "key" in value[0]))
     ) {
-      value = this.#convertKeyValueArrayToMap(value);
+      // Check for "set primitive at path" convention:
+      // path: "/messages/123", contents: [{ key: ".", valueString: "hi" }]
+      if (value.length === 1 && isObject(value[0]) && value[0].key === ".") {
+        const item = value[0];
+        const valueKey = this.#findValueKey(item);
+
+        if (valueKey) {
+          // Extract the primitive value
+          value = item[valueKey];
+
+          // We must still process this value in case it's a valueMap or
+          // a JSON string.
+          if (valueKey === "valueMap" && Array.isArray(value)) {
+            value = this.#convertKeyValueArrayToMap(value);
+          } else if (typeof value === "string") {
+            value = this.#parseIfJsonString(value);
+          }
+          // Now, `value` is the primitive (e.g., "hi"), and we continue
+          // the function.
+        } else {
+          // Malformed, but fall back to existing behavior.
+          value = this.#convertKeyValueArrayToMap(value);
+        }
+      } else {
+        value = this.#convertKeyValueArrayToMap(value);
+      }
     }
 
     const segments = this.#normalizePath(path)
@@ -301,9 +324,8 @@ export class A2UIModelProcessor implements ModelProcessor {
         typeof target !== "object" ||
         target === null
       ) {
-        const targetIsArray = /^\d+$/.test(segments[i + 1]);
-        target = targetIsArray ? new this.#arrayCtor() : new this.#mapCtor();
-        if (current instanceof Map) {
+        target = new this.#mapCtor();
+        if (current instanceof this.#mapCtor) {
           current.set(segment, target);
         } else if (Array.isArray(current)) {
           current[parseInt(segment, 10)] = target;
@@ -314,7 +336,7 @@ export class A2UIModelProcessor implements ModelProcessor {
 
     const finalSegment = segments[segments.length - 1];
     const storedValue = value;
-    if (current instanceof Map) {
+    if (current instanceof this.#mapCtor) {
       current.set(finalSegment, storedValue);
     } else if (Array.isArray(current) && /^\d+$/.test(finalSegment)) {
       current[parseInt(finalSegment, 10)] = storedValue;

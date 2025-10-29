@@ -250,6 +250,94 @@ describe("A2UIModelProcessor", () => {
 
       assert.deepEqual(info, expected);
     });
+
+    it("should additively update a Map using numeric-string keys (like timestamps)", () => {
+      // 1. First, establish the /messages path as a Map.
+      processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: "@default",
+            path: "/messages",
+            contents: [
+              // Sending an empty key-value array creates an empty Map at the path.
+            ],
+          },
+        },
+      ]);
+
+      const key1 = "1700000000001";
+      const message1 = "Hello";
+
+      // 2. Add the first message.
+      processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: "@default",
+            path: `/messages/${key1}`,
+            contents: [
+              {
+                key: ".",
+                valueString: message1,
+              },
+            ],
+          },
+        },
+      ]);
+
+      let messagesData = processor.getData(
+        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        "/messages"
+      );
+
+      // Check that it's a Map and has the first item.
+      assert.ok(
+        messagesData instanceof Map,
+        "Data at /messages should be a Map"
+      );
+      assert.strictEqual(messagesData.size, 1);
+      assert.strictEqual(messagesData.get(key1), message1);
+
+      const key2 = "1700000000002";
+      const message2 = "World";
+
+      // 3. Add the second message. This is where the old logic would fail.
+      processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: "@default",
+            path: `/messages/${key2}`,
+            contents: [
+              {
+                key: ".",
+                valueString: message2,
+              },
+            ],
+          },
+        },
+      ]);
+
+      messagesData = processor.getData(
+        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        "/messages"
+      );
+
+      // 4. Check that the Map was additively updated and now has both items.
+      assert.ok(
+        messagesData instanceof Map,
+        "Data at /messages should still be a Map"
+      );
+      assert.strictEqual(messagesData.size, 2, "Map should have 2 items total");
+      assert.strictEqual(
+        messagesData.get(key1),
+        message1,
+        "First item correct"
+      );
+      assert.strictEqual(
+        messagesData.get(key2),
+        message2,
+        "Second item correct"
+      );
+    });
   });
 
   describe("Component Tree Building", () => {
