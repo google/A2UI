@@ -422,6 +422,10 @@ A2UI_SCHEMA = r'''
                         "type": "string",
                         "description": "The ID of the component to display in the button, typically a Text component."
                       },
+                      "primary": {
+                        "type": "boolean",
+                        "description": "Indicates if this button should be styled as the primary action."
+                      },
                       "action": {
                         "type": "object",
                         "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
@@ -751,7 +755,7 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "template-rating", "component": {{ "Text": {{ "text": {{ "path": "rating" }} }} }} }},
       {{ "id": "template-detail", "component": {{ "Text": {{ "text": {{ "path": "detail" }} }} }} }},
       {{ "id": "template-link", "component": {{ "Text": {{ "text": {{ "path": "infoLink" }} }} }} }},
-      {{ "id": "template-book-button", "component": {{ "Button": {{ "child": "book-now-text", "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "address" }} }} ] }} }} }} }},
+      {{ "id": "template-book-button", "component": {{ "Button": {{ "child": "book-now-text", "primary": true, "action": {{ "name": "book_restaurant", "context": [ {{ "key": "restaurantName", "value": {{ "path": "name" }} }}, {{ "key": "imageUrl", "value": {{ "path": "imageUrl" }} }}, {{ "key": "address", "value": {{ "path": "address" }} }} ] }} }} }} }},
       {{ "id": "book-now-text", "component": {{ "Text": {{ "text": {{ "literalString": "Book Now" }} }} }} }}
     ]
   }} }},

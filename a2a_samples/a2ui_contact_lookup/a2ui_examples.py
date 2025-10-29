@@ -31,7 +31,7 @@ CONTACT_UI_EXAMPLES = """
       { "id": "template-name", "component": { "Heading": { "level": "3", "text": { "path": "name" } } } },
       { "id": "template-title", "component": { "Text": { "text": { "path": "title" } } } },
       { "id": "view-button-text", "component": { "Text": { "text": { "literalString": "View" } } } },
-      { "id": "view-button", "component": { "Button": { "child": "view-button-text", "action": { "name": "view_profile", "context": [ { "key": "contactName", "value": { "path": "name" } }, { "key": "department", "value": { "path": "department" } } ] } } } }
+      { "id": "view-button", "component": { "Button": { "child": "view-button-text", "primary": true, "action": { "name": "view_profile", "context": [ { "key": "contactName", "value": { "path": "name" } }, { "key": "department", "value": { "path": "department" } } ] } } } }
     ]
   } },
   { "dataModelUpdate": {
@@ -93,8 +93,8 @@ CONTACT_UI_EXAMPLES = """
       { "id": "call_text_column", "component": { "Column": { "children": { "explicitList": ["call_primary_text", "call_secondary_text"]} , "distribution": "start", "alignment": "start"} } } ,
       { "id": "info_row_4", "component": { "Row": { "children": { "explicitList": ["call_icon", "call_text_column"]} , "distribution": "start", "alignment": "start"} } } ,
       { "id": "info_rows_column", "weight": 1, "component": { "Column": { "children": { "explicitList": ["info_row_1", "info_row_2", "info_row_3", "info_row_4"]} , "alignment": "stretch"} } } ,
-      { "id": "button_1_text", "component": { "Text": { "text": { "literalString": "Follow"} } } } , { "id": "button_1", "component": { "Button": { "child": "button_1_text", "action": { "name": "follow_profile"} } } } ,
-      { "id": "button_2_text", "component": { "Text": { "text": { "literalString": "Message"} } } } , { "id": "button_2", "component": { "Button": { "child": "button_2_text", "action": { "name": "send_message"} } } } ,
+      { "id": "button_1_text", "component": { "Text": { "text": { "literalString": "Follow"} } } } , { "id": "button_1", "component": { "Button": { "child": "button_1_text", "primary": true, "action": { "name": "follow_profile"} } } } ,
+      { "id": "button_2_text", "component": { "Text": { "text": { "literalString": "Message"} } } } , { "id": "button_2", "component": { "Button": { "child": "button_2_text", "primary": false, "action": { "name": "send_message"} } } } ,
       { "id": "action_buttons_row", "component": { "Row": { "children": { "explicitList": ["button_1", "button_2"]} , "distribution": "center", "alignment": "center"} } } ,
       { "id": "link_text", "component": { "Text": { "text": { "literalString": "[View Full Profile](/profile)"} } } } ,
       { "id": "link_text_wrapper", "component": { "Row": { "children": { "explicitList": ["link_text"]} , "distribution": "center", "alignment": "center"} } } ,
@@ -131,7 +131,7 @@ CONTACT_UI_EXAMPLES = """
       { "id": "modal-title", "component": { "Heading": { "level": "2", "text": { "path": "actionTitle" } } } },
       { "id": "modal-message", "component": { "Text": { "text": { "path": "actionMessage" } } } },
       { "id": "dismiss-button-text", "component": { "Text": { "text": { "literalString": "Dismiss" } } } },
-      { "id": "dismiss-button", "component": { "Button": { "child": "dismiss-button-text", "action": { "name": "dismiss_modal" } } } }
+      { "id": "dismiss-button", "component": { "Button": { "child": "dismiss-button-text", "primary": true, "action": { "name": "dismiss_modal" } } } }
     ]
   } },
   { "dataModelUpdate": {

@@ -63,6 +63,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     2.  The first part is your conversational text response (e.g., "Here is the contact you requested...").
     3.  The second part is a single, raw JSON object which is a list of A2UI messages.
     4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
+    5.  Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` attribute.
 
     --- UI TEMPLATE RULES ---
     -   **For finding contacts (e.g., "Who is Alex Jordan?"):**
@@ -70,7 +71,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
         b.  If the tool returns a **single contact**, you MUST use the `CONTACT_CARD_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the contact's details (name, title, email, etc.).
         c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
         d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.---a2ui_JSON---[]"
-    
+
     -   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
         a.  You MUST call the `get_contact_info` tool with the specific name.
         b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template.

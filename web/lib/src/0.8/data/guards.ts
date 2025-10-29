@@ -101,7 +101,8 @@ export function isResolvedButton(props: unknown): props is ResolvedButton {
     isObject(props) &&
     "child" in props &&
     isAnyComponentNode(props.child) &&
-    "action" in props
+    "action" in props &&
+    ("primary" in props ? typeof props.primary === "boolean" : true)
   );
 }
 

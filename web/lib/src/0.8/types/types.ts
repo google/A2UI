@@ -430,6 +430,7 @@ export interface ResolvedColumn {
 export interface ResolvedButton {
   child: AnyComponentNode;
   action: Button["action"];
+  primary?: boolean;
 }
 
 export interface ResolvedList {
