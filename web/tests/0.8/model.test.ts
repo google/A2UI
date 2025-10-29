@@ -335,10 +335,7 @@ describe("A2UIModelProcessor", () => {
             contents: [
               {
                 key: "items",
-                valueList: [
-                  { valueString: JSON.stringify({ name: "A" }) },
-                  { valueString: JSON.stringify({ name: "B" }) },
-                ],
+                valueString: JSON.stringify([{ name: "A" }, { name: "B" }]),
               },
             ],
           },
@@ -445,10 +442,7 @@ describe("A2UIModelProcessor", () => {
             contents: [
               {
                 key: "items",
-                valueList: [
-                  { valueString: JSON.stringify({ name: "A" }) },
-                  { valueString: JSON.stringify({ name: "B" }) },
-                ],
+                valueString: JSON.stringify([{ name: "A" }, { name: "B" }]),
               },
             ],
           },
@@ -472,10 +466,7 @@ describe("A2UIModelProcessor", () => {
             contents: [
               {
                 key: "items",
-                valueList: [
-                  { valueString: JSON.stringify({ name: "A" }) },
-                  { valueString: JSON.stringify({ name: "B" }) },
-                ],
+                valueString: JSON.stringify([{ name: "A" }, { name: "B" }]),
               },
             ],
           },
@@ -533,10 +524,7 @@ describe("A2UIModelProcessor", () => {
             contents: [
               {
                 key: "items",
-                valueList: [
-                  { valueString: JSON.stringify({ name: "A" }) },
-                  { valueString: JSON.stringify({ name: "B" }) },
-                ],
+                valueString: JSON.stringify([{ name: "A" }, { name: "B" }]),
               },
             ],
           },
@@ -762,11 +750,7 @@ describe("A2UIModelProcessor", () => {
             contents: [
               {
                 key: "tags",
-                valueList: [
-                  { valueString: "travel" },
-                  { valueString: "paris" },
-                  { valueString: "guide" },
-                ],
+                valueString: JSON.stringify(["travel", "paris", "guide"]),
               },
             ],
           },
