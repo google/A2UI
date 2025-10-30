@@ -31,6 +31,12 @@ export class DateTimeInput extends Root {
   @property()
   accessor label: StringValue | null = null;
 
+  @property({ reflect: false, type: Boolean })
+  accessor enableDate = true;
+
+  @property({ reflect: false, type: Boolean })
+  accessor enableTime = true;
+
   static styles = [
     structuralStyles,
     css`
@@ -76,7 +82,7 @@ export class DateTimeInput extends Root {
     );
   }
 
-  #renderField(value: string | number) {
+  #renderField(value: string) {
     return html`<div>
       <input
         autocomplete="off"
@@ -92,11 +98,66 @@ export class DateTimeInput extends Root {
           this.#setBoundValue(evt.target.value);
         }}
         id="data"
-        .value=${value}
-        placeholder="Date & Time"
-        type="datetime-local"
+        .value=${this.#formatInputValue(value)}
+        .placeholder=${this.#getPlaceholderText()}
+        .type=${this.#getInputType()}
       />
     </div>`;
+  }
+
+  #getInputType() {
+    if (this.enableDate && this.enableTime) {
+      return "datetime-local";
+    } else if (this.enableDate) {
+      return "date";
+    } else if (this.enableTime) {
+      return "time";
+    }
+
+    return "datetime-local";
+  }
+
+  #formatInputValue(value: string) {
+    const inputType = this.#getInputType();
+    const date = value ? new Date(value) : null;
+
+    if (!date || isNaN(date.getTime())) {
+      return "";
+    }
+
+    const year = this.#padNumber(date.getFullYear());
+    const month = this.#padNumber(date.getMonth());
+    const day = this.#padNumber(date.getDate());
+    const hours = this.#padNumber(date.getHours());
+    const minutes = this.#padNumber(date.getMinutes());
+
+    // Browsers are picky with what format they allow for the `value` attribute of date/time inputs.
+    // We need to parse it out of the provided value. Note that we don't use `toISOString`,
+    // because the resulting value is relative to UTC.
+    if (inputType === "date") {
+      return `${year}-${month}-${day}`;
+    } else if (inputType === "time") {
+      return `${hours}:${minutes}`;
+    }
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  #padNumber(value: number) {
+    return value.toString().padStart(2, "0");
+  }
+
+  #getPlaceholderText() {
+    // TODO: this should likely be passed from the model.
+    const inputType = this.#getInputType();
+
+    if (inputType === "date") {
+      return "Date";
+    } else if (inputType === "time") {
+      return "Time";
+    }
+
+    return "Date & Time";
   }
 
   render() {
