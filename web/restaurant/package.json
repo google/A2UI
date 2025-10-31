@@ -8,9 +8,10 @@
   "type": "module",
   "scripts": {
     "prepack": "npm run build",
+    "prebuild": "mkdir -p ../lib/src/0.8/schemas && cp ../../specification/json/server_to_client.json ../lib/src/0.8/schemas/server_to_client.json && cp ../../specification/json/client_to_server.json ../lib/src/0.8/schemas/client_to_server.json",
     "build": "wireit",
     "build:tsc": "wireit",
-    "dev": "npm run serve --watch",
+    "dev": "npm run serve",
     "test": "wireit",
     "serve": "wireit"
   },
@@ -30,6 +31,7 @@
     },
     "build": {
       "dependencies": [
+        "prebuild",
         "build:tsc"
       ]
     },
