@@ -290,8 +290,8 @@ export class Root extends SignalWatcher(LitElement) {
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .dataContextPath=${component.dataContextPath ?? ""}
-            .enableDate=${component.properties.enableDate}
-            .enableTime=${component.properties.enableTime}
+            .enableDate=${component.properties.enableDate ?? true}
+            .enableTime=${component.properties.enableTime ?? true}
             .outputFormat=${component.properties.outputFormat}
             .value=${component.properties.value}
           ></a2ui-datetimeinput>`;

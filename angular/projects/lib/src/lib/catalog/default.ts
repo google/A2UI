@@ -105,7 +105,11 @@ export const DEFAULT_CATALOG: Catalog = {
 
   DateTimeInput: {
     type: () => import('./datetime-input').then((r) => r.DatetimeInput),
-    bindings: ({ properties }) => [inputBinding('value', () => properties.value)],
+    bindings: ({ properties }) => [
+      inputBinding('enableDate', () => properties.enableDate),
+      inputBinding('enableTime', () => properties.enableTime),
+      inputBinding('value', () => properties.value),
+    ],
   },
 
   CheckBox: {

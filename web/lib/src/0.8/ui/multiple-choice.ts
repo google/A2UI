@@ -22,6 +22,7 @@ import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
+import { extractValue } from "./utils/utils.js";
 
 @customElement("a2ui-multiplechoice")
 export class MultipleChoice extends Root {
@@ -29,7 +30,7 @@ export class MultipleChoice extends Root {
   accessor description: string | null = null;
 
   @property()
-  accessor options: { label: string; value: string }[] = [];
+  accessor options: { label: StringValue; value: string }[] = [];
 
   @property()
   accessor value: StringValue | null = null;
@@ -84,13 +85,21 @@ export class MultipleChoice extends Root {
   }
 
   render() {
-    return html`<section>
-      <div class="description">${this.description ?? "Select an item"}</div>
+    return html`<section class=${classMap(
+      this.theme.components.MultipleChoice.container
+    )}>
+      <label class=${classMap(
+        this.theme.components.MultipleChoice.label
+      )} for="data">${this.description ?? "Select an item"}</div>
       <select
-        class=${classMap(this.theme.components.MultipleChoice)}
-        style=${this.theme.additionalStyles?.MultipleChoice
-          ? styleMap(this.theme.additionalStyles?.MultipleChoice)
-          : nothing}
+        name="data"
+        id="data"
+        class=${classMap(this.theme.components.MultipleChoice.element)}
+        style=${
+          this.theme.additionalStyles?.MultipleChoice
+            ? styleMap(this.theme.additionalStyles?.MultipleChoice)
+            : nothing
+        }
         @change=${(evt: Event) => {
           if (!this.value) {
             return;
@@ -103,9 +112,15 @@ export class MultipleChoice extends Root {
           this.#setBoundValue([evt.target.value]);
         }}
       >
-        ${this.options.map(
-          (option) => html`<option ${option.value}>${option.label}</option>`
-        )}
+        ${this.options.map((option) => {
+          const label = extractValue(
+            option.label,
+            this.component,
+            this.processor,
+            this.surfaceId
+          );
+          return html`<option ${option.value}>${label}</option>`;
+        })}
       </select>
     </section>`;
   }
