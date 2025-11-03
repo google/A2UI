@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 <!-- markdownlint-disable MD041 -->
 <!-- markdownlint-disable MD033 -->
 <div style="text-align: center;">
