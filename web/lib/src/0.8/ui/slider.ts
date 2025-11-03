@@ -85,30 +85,33 @@ export class Slider extends Root {
   }
 
   #renderField(value: string | number) {
-    return html`<div class="description">
+    return html`<section
+      class=${classMap(this.theme.components.Slider.container)}
+    >
+      <label class=${classMap(this.theme.components.Slider.label)} for="data">
         ${this.label?.literalString ?? ""}
-      </div>
-      <div>
-        <input
-          autocomplete="off"
-          class=${classMap(this.theme.components.Slider)}
-          style=${this.theme.additionalStyles?.Slider
-            ? styleMap(this.theme.additionalStyles?.Slider)
-            : nothing}
-          @input=${(evt: Event) => {
-            if (!(evt.target instanceof HTMLInputElement)) {
-              return;
-            }
+      </label>
+      <input
+        autocomplete="off"
+        class=${classMap(this.theme.components.Slider.element)}
+        style=${this.theme.additionalStyles?.Slider
+          ? styleMap(this.theme.additionalStyles?.Slider)
+          : nothing}
+        @input=${(evt: Event) => {
+          if (!(evt.target instanceof HTMLInputElement)) {
+            return;
+          }
 
-            this.#setBoundValue(evt.target.value);
-          }}
-          id="data"
-          .value=${value}
-          type="range"
-          min=${this.minValue ?? "0"}
-          max=${this.maxValue ?? "0"}
-        />
-      </div>`;
+          this.#setBoundValue(evt.target.value);
+        }}
+        id="data"
+        name="data"
+        .value=${value}
+        type="range"
+        min=${this.minValue ?? "0"}
+        max=${this.maxValue ?? "0"}
+      />
+    </section>`;
   }
 
   render() {
@@ -132,7 +135,7 @@ export class Slider extends Root {
           return html`Invalid value`;
         }
 
-        if (typeof textValue !== "string") {
+        if (typeof textValue !== "string" && typeof textValue !== "number") {
           return html`Invalid value`;
         }
 

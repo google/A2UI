@@ -83,10 +83,17 @@ export class DateTimeInput extends Root {
   }
 
   #renderField(value: string) {
-    return html`<div>
+    return html`<section
+      class=${classMap(this.theme.components.DateTimeInput.container)}
+    >
+      <label
+        for="data"
+        class=${classMap(this.theme.components.DateTimeInput.label)}
+        >${this.#getPlaceholderText()}</label
+      >
       <input
         autocomplete="off"
-        class=${classMap(this.theme.components.DateTimeInput)}
+        class=${classMap(this.theme.components.DateTimeInput.element)}
         style=${this.theme.additionalStyles?.DateTimeInput
           ? styleMap(this.theme.additionalStyles?.DateTimeInput)
           : nothing}
@@ -98,11 +105,12 @@ export class DateTimeInput extends Root {
           this.#setBoundValue(evt.target.value);
         }}
         id="data"
+        name="data"
         .value=${this.#formatInputValue(value)}
         .placeholder=${this.#getPlaceholderText()}
         .type=${this.#getInputType()}
       />
-    </div>`;
+    </section>`;
   }
 
   #getInputType() {
