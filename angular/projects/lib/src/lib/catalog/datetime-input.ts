@@ -23,8 +23,8 @@ import { v0_8 } from '@a2ui/web-lib';
   template: '',
   host: {
     autocomplete: 'off',
-    type: 'datetime-local',
-    placeholder: 'Date & Time',
+    '[attr.type]': 'inputType()',
+    '[attr.placeholder]': 'inputPlaceholder()',
     '(input)': 'handleInput($event)',
     '[value]': 'inputValue()',
     '[class]': 'theme.components.DateTimeInput',
@@ -40,7 +40,63 @@ import { v0_8 } from '@a2ui/web-lib';
 })
 export class DatetimeInput extends DynamicComponent {
   readonly value = input.required<v0_8.Primitives.StringValue | null>();
-  protected inputValue = computed(() => super.resolvePrimitive(this.value()) || '');
+  readonly enableDate = input.required<boolean>();
+  readonly enableTime = input.required<boolean>();
+
+  protected inputType = computed(() => {
+    const enableDate = this.enableDate();
+    const enableTime = this.enableTime();
+
+    if (enableDate && enableTime) {
+      return 'datetime-local';
+    } else if (enableDate) {
+      return 'date';
+    } else if (enableTime) {
+      return 'time';
+    }
+
+    return 'datetime-local';
+  });
+
+  protected inputPlaceholder = computed(() => {
+    // TODO: this should likely be passed from the model.
+    const inputType = this.inputType();
+
+    if (inputType === 'date') {
+      return 'Date';
+    } else if (inputType === 'time') {
+      return 'Time';
+    }
+
+    return 'Date & Time';
+  });
+
+  protected inputValue = computed(() => {
+    const inputType = this.inputType();
+    const parsed = super.resolvePrimitive(this.value()) || '';
+    const date = parsed ? new Date(parsed) : null;
+
+    if (!date || isNaN(date.getTime())) {
+      return '';
+    }
+
+    const year = this.padNumber(date.getFullYear());
+    const month = this.padNumber(date.getMonth());
+    const day = this.padNumber(date.getDate());
+    const hours = this.padNumber(date.getHours());
+    const minutes = this.padNumber(date.getMinutes());
+
+    // Browsers are picky with what format they allow for the `value` attribute of date/time inputs.
+    // We need to parse it out of the provided value. Note that we don't use `toISOString`,
+    // because the resulting value is relative to UTC.
+    if (inputType === 'date') {
+      return `${year}-${month}-${day}`;
+    } else if (inputType === 'time') {
+      return `${hours}:${minutes}`;
+    }
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  });
 
   protected handleInput(event: Event) {
     const path = this.value()?.path;
@@ -50,5 +106,9 @@ export class DatetimeInput extends DynamicComponent {
     }
 
     this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
+  }
+
+  private padNumber(value: number) {
+    return value.toString().padStart(2, '0');
   }
 }
