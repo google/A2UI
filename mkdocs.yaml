@@ -134,8 +134,8 @@ markdown_extensions:
 plugins:
   - search
   - macros
-  - include-markdown
-  - mermaid2
+  # - include-markdown
+  # - mermaid2
   # - llmstxt:
   #     full_output: llms-full.txt
   #     sections:
