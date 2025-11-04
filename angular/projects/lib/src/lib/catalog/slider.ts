@@ -19,31 +19,46 @@ import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
-  selector: 'input[a2ui-slider]',
-  template: '',
-  host: {
-    autocomplete: 'off',
-    type: 'range',
-    '[value]': 'resolvedValue()',
-    '[min]': 'minValue()',
-    '[max]': 'maxValue()',
-    '(input)': 'handleInput($event)',
-    '[class]': 'theme.components.Slider',
-    '[style]': 'theme.additionalStyles?.Slider',
-  },
+  selector: '[a2ui-slider]',
+  template: `
+    <section [class]="theme.components.Slider.container">
+      <label [class]="theme.components.Slider.label" [for]="inputId">
+        {{ label() }}
+      </label>
+
+      <input
+        autocomplete="off"
+        type="range"
+        [value]="resolvedValue()"
+        [min]="minValue()"
+        [max]="maxValue()"
+        [id]="inputId"
+        (input)="handleInput($event)"
+        [class]="theme.components.Slider.element"
+        [style]="theme.additionalStyles?.Slider"
+      />
+    </section>
+  `,
   styles: `
     :host {
+      display: block;
+      flex: var(--weight);
+    }
+
+    input {
       display: block;
       width: 100%;
       box-sizing: border-box;
     }
-  `
+  `,
 })
 export class Slider extends DynamicComponent {
   readonly value = input.required<v0_8.Primitives.NumberValue | null>();
+  readonly label = input('');
   readonly minValue = input.required<number | undefined>();
   readonly maxValue = input.required<number | undefined>();
 
+  protected readonly inputId = super.getUniqueId('a2ui-slider');
   protected resolvedValue = computed(() => super.resolvePrimitive(this.value()) ?? 0);
 
   protected handleInput(event: Event) {

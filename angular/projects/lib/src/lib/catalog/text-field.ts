@@ -18,8 +18,6 @@ import { computed, Component, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
-let idCounter = 0;
-
 @Component({
   selector: 'a2ui-text-field',
   styles: `
@@ -72,7 +70,7 @@ export class TextField extends DynamicComponent {
 
   protected inputValue = computed(() => super.resolvePrimitive(this.text()) || '');
   protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
-  protected inputId = `a2ui-input-${idCounter++}`;
+  protected inputId = super.getUniqueId('a2ui-input');
 
   protected handleInput(event: Event) {
     const path = this.text()?.path;
