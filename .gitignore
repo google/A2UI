@@ -8,3 +8,9 @@ dist
 __pycache__
 *.pyc
 .angular
+
+# MkDocs build output
+site/
+
+# Python virtual environment
+.venv/

@@ -21,12 +21,18 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 @Component({
   selector: 'a2ui-multiple-choice',
   template: `
-    <section>
+    <section [class]="theme.components.MultipleChoice.container">
+      <label [class]="theme.components.MultipleChoice.label" [for]="selectId">{{
+        description()
+      }}</label>
+
       <select
         (change)="handleChange($event)"
+        [id]="selectId"
         [value]="selectValue()"
-        [class]="theme.components.MultipleChoice"
-        [style]="theme.additionalStyles?.MultipleChoice">
+        [class]="theme.components.MultipleChoice.element"
+        [style]="theme.additionalStyles?.MultipleChoice"
+      >
         @for (option of options(); track option.value) {
           <option [value]="option.value">{{ resolvePrimitive(option.label) }}</option>
         }
@@ -45,11 +51,14 @@ import { DynamicComponent } from '../rendering/dynamic-component';
       width: 100%;
       box-sizing: border-box;
     }
-  `
+  `,
 })
 export class MultipleChoice extends DynamicComponent {
   readonly options = input.required<{ label: v0_8.Primitives.StringValue; value: string }[]>();
   readonly value = input.required<v0_8.Primitives.StringValue | null>();
+  readonly description = input.required<string>();
+
+  protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
   protected selectValue = computed(() => super.resolvePrimitive(this.value()));
 
   protected handleChange(event: Event) {
