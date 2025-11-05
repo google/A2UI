@@ -110,7 +110,11 @@ export const layout = `
   }
 
   .layout-al-fs {
-    align-items: flex-start;
+    align-items: start;
+  }
+
+  .layout-al-fe {
+    align-items: end;
   }
 
   .layout-al-c {
@@ -135,6 +139,18 @@ export const layout = `
 
   .layout-sp-bt {
     justify-content: space-between;
+  }
+
+  .layout-sp-s {
+    justify-content: start;
+  }
+
+  .layout-sp-e {
+    justify-content: end;
+  }
+
+  .layout-ji-e {
+    justify-items: end;
   }
 
   .layout-r-none {

@@ -6,19 +6,50 @@ hide:
 
 <!-- markdownlint-disable MD041 -->
 <!-- markdownlint-disable MD033 -->
-<div style="text-align: center;">
-  <div class="centered-logo-text-group">
-    <img src="assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
-    <h1>A2UI (Agent to UI) Protocol</h1>
-  </div>
+<div style="text-align: center; margin: 2rem 0 4rem 0;" markdown>
+
+<!-- Logo for Light Mode (shows dark logo on light background) -->
+<img src="assets/A2UI_dark.svg" alt="A2UI Logo" width="120" class="light-mode-only" style="margin-bottom: 1rem;">
+<!-- Logo for Dark Mode (shows light logo on dark background) -->
+<img src="assets/A2UI_light.svg" alt="A2UI Logo" width="120" class="dark-mode-only" style="margin-bottom: 1rem;">
+
+# The Future of UI is LLM-Generated
+
+<p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem auto; opacity: 0.8; line-height: 1.6;">
+A new open source UI Toolkit to facilitate LLM-generated UIs. A2UI is built with <a href="https://a2a-protocol.org">A2A protocol</a> and allows an A2A agent to send interactive components instead of just text, using a high level framework-agnostic format that can be rendered natively on any surface (starting with examples for web and mobile).
+</p>
+
+[Join the Waitlist](https://goo.gle/a2ui-form){ .md-button .md-button--primary style="padding: 0.6rem 2rem; font-size: 1.1rem;" }
+
 </div>
 
-Thank you for your interest in A2UI! A new open source UI Toolkit to facilitate LLM-generated UIs. A2UI is built with [A2A](https://a2a-protocol.org) and allows an A2A server agent to send interactive components instead of just text, using a high level framework-agnostic format that can be rendered natively on any surface (web, mobile).
+<!-- TODO: Replace with actual video -->
+<div style="aspect-ratio: 16/9; margin-bottom: 6rem; max-width: 900px; margin-left: auto; margin-right: auto; border-radius: .8rem; overflow: hidden; box-shadow: var(--md-shadow-z2);">
+  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Fbr_Solax1w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
 
-We will be sharing more soon. Sign up here to learn when we publish more details about A2UI.
+## A New Paradigm for UI Development
 
----
+A2UI's core philosophy enables the creation of dynamic, and adaptable user interfaces driven by AI.
 
-<div style="display: flex; justify-content: center;">
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeZIBsjtpwiVHdtz3Md8INPfY5FayZOlkVKgvUjzF_drgR2aw/viewform?embedded=true" width="1000" height="1042" frameborder="0" marginheight="0" marginwidth="0" style="max-width: 100%;">Loading…</iframe>
+<div class="grid cards" markdown>
+
+- :material-shield-lock: **Secure & Performant Transport**
+
+    ---
+
+    Built on the [Agent2Agent (A2A) protocol](https://a2a-protocol.org), A2UI inherits a secure transport layer, while mitigating risks like UI injection through a clean separation of structure and data.
+
+- :material-code-json: **LLM-Friendly Format**
+
+    ---
+
+    A2UI uses a streamable JSON Lines (JSONL) format designed for generative models. Transported over the A2A protocol, it enables progressive rendering and real-time UI updates.
+
+- :material-devices: **Truly Framework-Agnostic**
+
+    ---
+
+    Built for maximum portability. Render components on any platform, with initial clients for JavaScript Web Components, Flutter, and more to come.
+
 </div>

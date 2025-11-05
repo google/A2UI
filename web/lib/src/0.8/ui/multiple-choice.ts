@@ -22,7 +22,7 @@ import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { extractValue } from "./utils/utils.js";
+import { extractStringValue } from "./utils/utils.js";
 
 @customElement("a2ui-multiplechoice")
 export class MultipleChoice extends Root {
@@ -113,7 +113,7 @@ export class MultipleChoice extends Root {
         }}
       >
         ${this.options.map((option) => {
-          const label = extractValue(
+          const label = extractStringValue(
             option.label,
             this.component,
             this.processor,

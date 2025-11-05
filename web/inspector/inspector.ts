@@ -324,6 +324,10 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
             }
           }
 
+          & #surfaces {
+            background: var(--n-100);
+          }
+
           & #messages {
             position: relative;
             display: block;
