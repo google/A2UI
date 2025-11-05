@@ -22,7 +22,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { ResolvedTextField } from "../types/types";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { extractValue } from "./utils/utils.js";
+import { extractStringValue } from "./utils/utils.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-textfield")
@@ -113,13 +113,13 @@ export class TextField extends Root {
   }
 
   render() {
-    const label = extractValue(
+    const label = extractStringValue(
       this.label,
       this.component,
       this.processor,
       this.surfaceId
     );
-    const value = extractValue(
+    const value = extractStringValue(
       this.text,
       this.component,
       this.processor,

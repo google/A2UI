@@ -138,6 +138,7 @@ export class Root extends SignalWatcher(LitElement) {
             component.properties.children;
           return html`<a2ui-list
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .direction=${component.properties.direction ?? "vertical"}
@@ -156,6 +157,7 @@ export class Root extends SignalWatcher(LitElement) {
 
           return html`<a2ui-card
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -168,6 +170,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Column": {
           return html`<a2ui-column
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -182,6 +185,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Row": {
           return html`<a2ui-row
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -196,6 +200,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Image": {
           return html`<a2ui-image
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -208,6 +213,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Icon": {
           return html`<a2ui-icon
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -220,6 +226,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "AudioPlayer": {
           return html`<a2ui-audioplayer
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -232,6 +239,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Button": {
           return html`<a2ui-button
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -245,6 +253,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Text": {
           return html`<a2ui-text
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .model=${this.processor}
@@ -258,6 +267,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Heading": {
           return html`<a2ui-heading
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -271,6 +281,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "CheckBox": {
           return html`<a2ui-checkbox
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -282,9 +293,9 @@ export class Root extends SignalWatcher(LitElement) {
         }
 
         case "DateTimeInput": {
-          // TODO: enableDate, enableTime and outputFormat.
           return html`<a2ui-datetimeinput
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -301,6 +312,7 @@ export class Root extends SignalWatcher(LitElement) {
           // TODO: thickness, axis and color.
           return html`<a2ui-divider
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -316,6 +328,7 @@ export class Root extends SignalWatcher(LitElement) {
           // TODO: maxAllowedSelections and selections.
           return html`<a2ui-multiplechoice
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -330,6 +343,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Slider": {
           return html`<a2ui-slider
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -345,6 +359,7 @@ export class Root extends SignalWatcher(LitElement) {
           // TODO: type and validationRegexp.
           return html`<a2ui-textfield
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -360,6 +375,7 @@ export class Root extends SignalWatcher(LitElement) {
         case "Video": {
           return html`<a2ui-video
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -381,6 +397,7 @@ export class Root extends SignalWatcher(LitElement) {
 
           return html`<a2ui-tabs
             id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
             .component=${component}
             .weight=${component.weight ?? "initial"}
             .processor=${this.processor}
@@ -392,7 +409,23 @@ export class Root extends SignalWatcher(LitElement) {
         }
 
         case "Modal": {
-          return html`Element not available`;
+          const childComponents: AnyComponentNode[] = [
+            component.properties.entryPointChild,
+            component.properties.contentChild,
+          ];
+
+          component.properties.entryPointChild.slotName = "entry";
+
+          return html`<a2ui-modal
+            id=${component.id}
+            slot=${component.slotName ? component.slotName : nothing}
+            .component=${component}
+            .weight=${component.weight ?? "initial"}
+            .processor=${this.processor}
+            .surfaceId=${this.surfaceId}
+            .dataContextPath=${component.dataContextPath}
+            .childComponents=${childComponents}
+          ></a2ui-modal>`;
         }
       }
     })}`;

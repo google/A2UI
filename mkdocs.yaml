@@ -46,6 +46,8 @@ copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.goo
 extra_css:
   - stylesheets/custom.css
 
+
+
 # Configuration
 theme:
   name: material
@@ -124,7 +126,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:mermaid2.fence_mermaid
   - pymdownx.tabbed:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
@@ -139,6 +141,8 @@ markdown_extensions:
 plugins:
   - search
   - macros
+  # - include-markdown
+  # - mermaid2
   # - llmstxt:
   #     full_output: llms-full.txt
   #     sections:

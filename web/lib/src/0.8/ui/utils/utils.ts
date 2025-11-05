@@ -15,10 +15,10 @@
  */
 
 import { A2UIModelProcessor } from "../../data/model-processor.js";
-import { type StringValue } from "../../types/primitives.js";
+import { NumberValue, type StringValue } from "../../types/primitives.js";
 import { type AnyComponentNode } from "../../types/types.js";
 
-export function extractValue(
+export function extractStringValue(
   val: StringValue | null,
   component: AnyComponentNode | null,
   processor: A2UIModelProcessor | null,
@@ -49,4 +49,44 @@ export function extractValue(
   }
 
   return "";
+}
+
+export function extractNumberValue(
+  val: NumberValue | null,
+  component: AnyComponentNode | null,
+  processor: A2UIModelProcessor | null,
+  surfaceId: string | null
+): number {
+  if (val !== null && typeof val === "object") {
+    if ("literalNumber" in val) {
+      return val.literalNumber ?? 0;
+    } else if ("literal" in val && val.literal !== undefined) {
+      return val.literal ?? 0;
+    } else if (val && "path" in val && val.path) {
+      if (!processor || !component) {
+        return -1;
+      }
+
+      let numberValue = processor.getData(
+        component,
+        val.path,
+        surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+      );
+
+      if (typeof numberValue === "string") {
+        numberValue = Number.parseInt(numberValue, 10);
+        if (Number.isNaN(numberValue)) {
+          numberValue = null;
+        }
+      }
+
+      if (numberValue === null || typeof numberValue !== "number") {
+        return -1;
+      }
+
+      return numberValue;
+    }
+  }
+
+  return 0;
 }

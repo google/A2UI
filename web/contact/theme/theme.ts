@@ -324,7 +324,17 @@ export const theme: v0_8.Types.Theme = {
       "layout-g-4": true,
       "layout-p-2": true,
     },
-    Modal: {},
+    Modal: {
+      backdrop: { "color-bbgc-p60_20": true },
+      element: {
+        "border-br-2": true,
+        "color-bgc-p100": true,
+        "layout-p-4": true,
+        "border-bw-1": true,
+        "border-bs-s": true,
+        "color-bc-p80": true,
+      },
+    },
     MultipleChoice: {
       container: {},
       label: {},
