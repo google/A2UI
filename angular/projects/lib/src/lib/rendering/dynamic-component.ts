@@ -19,6 +19,8 @@ import { v0_8 } from '@a2ui/web-lib';
 import { Theme } from './theming';
 import { ModelProcessor } from '../data';
 
+let idCounter = 0;
+
 @Directive({
   host: {
     '[style.--weight]': 'weight()',
@@ -96,5 +98,9 @@ export abstract class DynamicComponent<
     }
 
     return null;
+  }
+
+  protected getUniqueId(prefix: string) {
+    return `${prefix}-${idCounter++}`;
   }
 }

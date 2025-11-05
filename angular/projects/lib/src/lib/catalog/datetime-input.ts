@@ -19,20 +19,35 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 import { v0_8 } from '@a2ui/web-lib';
 
 @Component({
-  selector: 'input[a2ui-datetime-input]',
-  template: '',
-  host: {
-    autocomplete: 'off',
-    '[attr.type]': 'inputType()',
-    '[attr.placeholder]': 'inputPlaceholder()',
-    '(input)': 'handleInput($event)',
-    '[value]': 'inputValue()',
-    '[class]': 'theme.components.DateTimeInput',
-    '[style]': 'theme.additionalStyles?.DateTimeInput',
-  },
+  selector: 'a2ui-datetime-input',
+  template: `
+    <section [class]="theme.components.DateTimeInput.container">
+      <label [for]="inputId" [class]="theme.components.DateTimeInput.label">{{ label() }}</label>
+
+      <input
+        autocomplete="off"
+        [attr.type]="inputType()"
+        [id]="inputId"
+        [class]="theme.components.DateTimeInput.element"
+        [style]="theme.additionalStyles?.DateTimeInput"
+        [value]="inputValue()"
+        (input)="handleInput($event)"
+      />
+    </section>
+  `,
   styles: `
     :host {
       display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    input {
+      display: block;
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid #ccc;
       width: 100%;
       box-sizing: border-box;
     }
@@ -42,6 +57,7 @@ export class DatetimeInput extends DynamicComponent {
   readonly value = input.required<v0_8.Primitives.StringValue | null>();
   readonly enableDate = input.required<boolean>();
   readonly enableTime = input.required<boolean>();
+  protected readonly inputId = super.getUniqueId('a2ui-datetime-input');
 
   protected inputType = computed(() => {
     const enableDate = this.enableDate();
@@ -58,7 +74,7 @@ export class DatetimeInput extends DynamicComponent {
     return 'datetime-local';
   });
 
-  protected inputPlaceholder = computed(() => {
+  protected label = computed(() => {
     // TODO: this should likely be passed from the model.
     const inputType = this.inputType();
 

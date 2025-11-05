@@ -91,6 +91,7 @@ export const DEFAULT_CATALOG: Catalog = {
     bindings: ({ properties }) => [
       inputBinding('options', () => properties.options || []),
       inputBinding('value', () => properties.selections),
+      inputBinding('description', () => 'Select an item'), // TODO: this should be defined in the properties
     ],
   },
 
@@ -126,6 +127,7 @@ export const DEFAULT_CATALOG: Catalog = {
       inputBinding('value', () => properties.value),
       inputBinding('minValue', () => properties.minValue),
       inputBinding('maxValue', () => properties.maxValue),
+      inputBinding('label', () => ''), // TODO: this should be defined in the properties
     ],
   },
 
