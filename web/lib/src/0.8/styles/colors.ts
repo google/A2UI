@@ -27,7 +27,23 @@ const color = <C extends PaletteKeyVals>(src: PaletteKey<C>) =>
 
     ${src
       .map((key: string) => {
-        return `.color-bgc-${key} { background-color: var(${toProp(key)}); }`;
+        const vals = [
+          `.color-bgc-${key} { background-color: var(${toProp(key)}); }`,
+          `.color-bbgc-${key}::backdrop { background-color: var(${toProp(
+            key
+          )}); }`,
+        ];
+
+        for (let o = 0.1; o < 1; o += 0.1) {
+          vals.push(`.color-bbgc-${key}_${(o * 100).toFixed(0)}::backdrop {
+            background-color: oklch(from var(${toProp(
+              key
+            )}) l c h / calc(alpha * ${o.toFixed(1)}) );
+          }
+        `);
+        }
+
+        return vals.join("\n");
       })
       .join("\n")}
 

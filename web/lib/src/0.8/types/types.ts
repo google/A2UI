@@ -91,7 +91,10 @@ export type Theme = {
     Image: Record<string, boolean>;
     Icon: Record<string, boolean>;
     List: Record<string, boolean>;
-    Modal: Record<string, boolean>;
+    Modal: {
+      backdrop: Record<string, boolean>;
+      element: Record<string, boolean>;
+    };
     MultipleChoice: {
       container: Record<string, boolean>;
       element: Record<string, boolean>;
@@ -304,6 +307,7 @@ interface BaseComponentNode {
   id: string;
   weight?: number;
   dataContextPath?: string;
+  slotName?: string;
 }
 
 export interface HeadingNode extends BaseComponentNode {

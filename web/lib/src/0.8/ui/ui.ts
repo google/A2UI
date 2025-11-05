@@ -34,6 +34,7 @@ import { Icon } from "./icon.js";
 import { Image } from "./image.js";
 import { List } from "./list.js";
 import { MultipleChoice } from "./multiple-choice.js";
+import { Modal } from "./modal.js";
 import { Root } from "./root.js";
 import { Row } from "./row.js";
 import { Slider } from "./slider.js";
@@ -59,6 +60,7 @@ export {
   Image,
   List,
   MultipleChoice,
+  Modal,
   Row,
   Slider,
   Root,
@@ -83,6 +85,7 @@ interface A2UITagNameMap {
   "a2ui-icon": Icon;
   "a2ui-image": Image;
   "a2ui-list": List;
+  "a2ui-modal": Modal;
   "a2ui-multiplechoice": MultipleChoice;
   "a2ui-root": Root;
   "a2ui-row": Row;

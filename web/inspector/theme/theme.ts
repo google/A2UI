@@ -181,9 +181,8 @@ const listItemLight = v0_8.Styles.merge(listItem, {
 
 export const theme: v0_8.Types.Theme = {
   additionalStyles: {
-    Card: {
-      boxShadow: `0px 2px 3px oklch(from var(--p-30) l c h / calc(alpha * 0.1)),
-          0px 8px 14px oklch(from var(--p-30) l c h / calc(alpha * 0.03))`,
+    Button: {
+      "--n-35": "var(--n-100)",
     },
   },
   components: {
@@ -200,7 +199,14 @@ export const theme: v0_8.Types.Theme = {
       "color-c-n100": true,
       "behavior-ho-70": true,
     },
-    Card: { "border-br-9": true, "color-bgc-p100": true, "layout-p-4": true },
+    Card: {
+      "border-br-2": true,
+      "color-bgc-p100": true,
+      "layout-p-4": true,
+      "border-bw-1": true,
+      "border-bs-s": true,
+      "color-bc-p80": true,
+    },
     CheckBox: {
       element: {
         "layout-m-0": true,
@@ -284,9 +290,20 @@ export const theme: v0_8.Types.Theme = {
     },
     List: {
       "layout-g-4": true,
-      "layout-p-2": true,
+      "layout-pt-2": true,
+      "layout-pb-2": true,
     },
-    Modal: {},
+    Modal: {
+      backdrop: { "color-bbgc-p60_20": true },
+      element: {
+        "border-br-2": true,
+        "color-bgc-p100": true,
+        "layout-p-4": true,
+        "border-bw-1": true,
+        "border-bs-s": true,
+        "color-bc-p80": true,
+      },
+    },
     MultipleChoice: {
       container: {},
       label: {},
