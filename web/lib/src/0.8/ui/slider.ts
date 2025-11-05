@@ -23,6 +23,7 @@ import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
+import { extractNumberValue, extractStringValue } from "./utils/utils.js";
 
 @customElement("a2ui-slider")
 export class Slider extends Root {
@@ -111,6 +112,16 @@ export class Slider extends Root {
         min=${this.minValue ?? "0"}
         max=${this.maxValue ?? "0"}
       />
+      <span class=${classMap(this.theme.components.Slider.label)}
+        >${this.value
+          ? extractNumberValue(
+              this.value,
+              this.component,
+              this.processor,
+              this.surfaceId
+            )
+          : "0"}</span
+      >
     </section>`;
   }
 
