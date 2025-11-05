@@ -13,10 +13,10 @@ hide:
 <!-- Logo for Dark Mode (shows light logo on dark background) -->
 <img src="assets/A2UI_light.svg" alt="A2UI Logo" width="120" class="dark-mode-only" style="margin-bottom: 1rem;">
 
-# The Future of UI is Agent-Generated
+# The Future of UI is LLM-Generated
 
 <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem auto; opacity: 0.8; line-height: 1.6;">
-An open-source UI toolkit built on the <a href="https://a2a-protocol.org">A2A protocol</a>. A2UI enables UI widgets to be passed from remote agents to any application in a simple, declarative, and framework-agnostic way.
+A new open source UI Toolkit to facilitate LLM-generated UIs. A2UI is built with <a href="https://a2a-protocol.org">A2A protocol</a> and allows an A2A agent to send interactive components instead of just text, using a high level framework-agnostic format that can be rendered natively on any surface (starting with examples for web and mobile).
 </p>
 
 [Join the Waitlist](https://goo.gle/a2ui-form){ .md-button .md-button--primary style="padding: 0.6rem 2rem; font-size: 1.1rem;" }
@@ -30,7 +30,7 @@ An open-source UI toolkit built on the <a href="https://a2a-protocol.org">A2A pr
 
 ## A New Paradigm for UI Development
 
-A2UI's core philosophy enables the creation of dynamic, secure, and adaptable user interfaces driven by AI.
+A2UI's core philosophy enables the creation of dynamic, and adaptable user interfaces driven by AI.
 
 <div class="grid cards" markdown>
 

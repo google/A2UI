@@ -23,6 +23,13 @@ extra:
   analytics:
     provider: google
     property: G-YX9TPV8DCC
+  consent:
+      title: Cookie consent
+      description: >-
+        We use cookies to recognize repeated visits and preferences,
+        as well as to measure the effectiveness of our documentation and
+        whether users find the information they need. With your consent,
+        you're helping us to make our documentation better.
 
 # Navigation
 nav:
@@ -33,7 +40,7 @@ nav:
 # repo_url: https://github.com/google/A2UI
 
 # Copyright
-copyright: Copyright 2025 Google. Licensed under the Apache License, Version 2.0.
+copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
 
 # Custom CSS
 extra_css:
