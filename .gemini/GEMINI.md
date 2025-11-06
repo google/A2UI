@@ -86,3 +86,9 @@ This document is intended to be a living guide for the repository. As the reposi
 -   **New Demos or Clients**: If you add a new demo or client, add it to the "Running the Demos" section.
 -   **Specification Changes**: If you make significant changes to the A2UI protocol, ensure that the "A2UI Specification Overview" section is updated to reflect the changes, and that any linked documents are also updated.
 -   **Repository Structure Changes**: If you change the directory structure of the repository, update the "Repository Structure" section.
+
+To get this file back in sync, you can run the following commands:
+
+1. List all the files in the entire repo with `git ls-tree main --name-only -r`
+2. Read the ~50 most important files in the list, potentially in batches.
+3. Update this file.
