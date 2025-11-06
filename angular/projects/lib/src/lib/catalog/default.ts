@@ -135,4 +135,9 @@ export const DEFAULT_CATALOG: Catalog = {
     type: () => import('./tabs').then((r) => r.Tabs),
     bindings: ({ properties }) => [inputBinding('tabs', () => properties.tabItems)],
   },
+
+  Modal: {
+    type: () => import('./modal').then((r) => r.Modal),
+    bindings: () => [],
+  },
 };
