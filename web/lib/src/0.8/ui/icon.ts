@@ -50,6 +50,7 @@ export class Icon extends Root {
     }
 
     const render = (url: string) => {
+      url = url.replace(/([A-Z])/gm, "_$1").toLocaleLowerCase();
       return html`<span class="g-icon">${url}</span>`;
     };
 

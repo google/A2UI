@@ -25,7 +25,7 @@
  */
 export const icons = `
   .g-icon {
-    font-family: "Google Symbols";
+    font-family: "Material Symbols Outlined", "Google Symbols";
     font-weight: normal;
     font-style: normal;
     font-display: optional;
