@@ -23,9 +23,21 @@ A new open source UI Toolkit to facilitate LLM-generated UIs. A2UI is built with
 
 </div>
 
-<!-- TODO: Replace with actual video -->
-<div style="aspect-ratio: 16/9; margin-bottom: 6rem; max-width: 900px; margin-left: auto; margin-right: auto; border-radius: .8rem; overflow: hidden; box-shadow: var(--md-shadow-z2);">
-  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Fbr_Solax1w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<div style="display: flex; gap: 2rem; width: 100%; margin: 0 auto 6rem auto; justify-content: center; flex-wrap: wrap;">
+  <!-- Custom Component Demo -->
+  <div style="flex: 1; min-width: 350px; border-radius: .8rem; overflow: hidden; box-shadow: var(--md-shadow-z2);">
+    <video width="100%" height="auto" controls playsinline style="display: block; aspect-ratio: 16/9; object-fit: cover;">
+      <source src="assets/a2ui-custom-compnent.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <div style="flex: 1; min-width: 350px; border-radius: .8rem; overflow: hidden; box-shadow: var(--md-shadow-z2);">
+    <video width="100%" height="auto" controls playsinline style="display: block; aspect-ratio: 16/9; object-fit: cover;">
+      <source src="assets/landscape-architect-demo.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
 </div>
 
 ## A New Paradigm for UI Development

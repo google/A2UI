@@ -66,7 +66,7 @@
                     "properties": {
                       "text": {
                         "type": "object",
-                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model (e.g., '/hotel/description'). While simple Markdown is supported (without HTML or image references), utilizing dedicated UI components is generally preferred for a richer and more structured presentation.",
+                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation.",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -138,10 +138,60 @@
                     "properties": {
                       "name": {
                         "type": "object",
-                        "description": "The name of the icon to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/icon/name').",
+                        "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
                         "properties": {
                           "literalString": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                              "accountCircle",
+                              "add",
+                              "arrowBack",
+                              "arrowForward",
+                              "attachFile",
+                              "calendarToday",
+                              "call",
+                              "camera",
+                              "check",
+                              "close",
+                              "delete",
+                              "download",
+                              "edit",
+                              "event",
+                              "error",
+                              "favorite",
+                              "favoriteOff",
+                              "folder",
+                              "help",
+                              "home",
+                              "info",
+                              "locationOn",
+                              "lock",
+                              "lockOpen",
+                              "mail",
+                              "menu",
+                              "moreVert",
+                              "moreHoriz",
+                              "notificationsOff",
+                              "notifications",
+                              "payment",
+                              "person",
+                              "phone",
+                              "photo",
+                              "print",
+                              "refresh",
+                              "search",
+                              "send",
+                              "settings",
+                              "share",
+                              "shoppingCart",
+                              "star",
+                              "starHalf",
+                              "starOff",
+                              "upload",
+                              "visibility",
+                              "visibilityOff",
+                              "warning"
+                            ]
                           },
                           "path": {
                             "type": "string"
@@ -410,7 +460,7 @@
                       },
                       "primary": {
                         "type": "boolean",
-                        "description": "Whether or not this button is the 'primary' button for the UI it is connected to. Reserved for submit buttons, or similar, that define an important action. Secondary buttons (e.g. cancel buttons) should not have this set to true. There should only be one primary button among a group of related buttons."
+                        "description": "Indicates if this button should be styled as the primary action."
                       },
                       "action": {
                         "type": "object",

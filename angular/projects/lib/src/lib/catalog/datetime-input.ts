@@ -45,9 +45,6 @@ import { v0_8 } from '@a2ui/web-lib';
 
     input {
       display: block;
-      border-radius: 8px;
-      padding: 8px;
-      border: 1px solid #ccc;
       width: 100%;
       box-sizing: border-box;
     }

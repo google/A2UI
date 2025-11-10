@@ -33,7 +33,7 @@ export class MultipleChoice extends Root {
   accessor options: { label: StringValue; value: string }[] = [];
 
   @property()
-  accessor value: StringValue | null = null;
+  accessor selections: StringValue | string[] = [];
 
   static styles = [
     structuralStyles,
@@ -59,19 +59,20 @@ export class MultipleChoice extends Root {
   ];
 
   #setBoundValue(value: string[]) {
-    if (!this.value || !this.processor) {
+    console.log(value);
+    if (!this.selections || !this.processor) {
       return;
     }
-    if (!("path" in this.value)) {
+    if (!("path" in this.selections)) {
       return;
     }
-    if (!this.value.path) {
+    if (!this.selections.path) {
       return;
     }
 
     this.processor.setData(
       this.component,
-      this.value.path,
+      this.selections.path,
       value,
       this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
     );
@@ -79,9 +80,27 @@ export class MultipleChoice extends Root {
 
   protected willUpdate(changedProperties: PropertyValues<this>): void {
     const shouldUpdate = changedProperties.has("options");
-    if (shouldUpdate) {
-      this.#setBoundValue([this.options[0].value]);
+    if (!shouldUpdate) {
+      return;
     }
+
+    if (!this.processor || !this.component || Array.isArray(this.selections)) {
+      return;
+    }
+
+    this.selections;
+
+    const selectionValue = this.processor.getData(
+      this.component,
+      this.selections.path!,
+      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+    );
+
+    if (!Array.isArray(selectionValue)) {
+      return;
+    }
+
+    this.#setBoundValue(selectionValue as string[]);
   }
 
   render() {
@@ -101,10 +120,6 @@ export class MultipleChoice extends Root {
             : nothing
         }
         @change=${(evt: Event) => {
-          if (!this.value) {
-            return;
-          }
-
           if (!(evt.target instanceof HTMLSelectElement)) {
             return;
           }

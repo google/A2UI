@@ -32,6 +32,7 @@ import {
 } from "./types/types.js";
 import { v0_8 } from "@a2ui/web-lib";
 import * as UI from "@a2ui/web-lib/ui";
+import { map } from "lit/directives/map.js";
 
 const LAST_ITEM_KEY = "last-item-value";
 
@@ -449,17 +450,13 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
     }
 
     return html`<section id="surfaces">
-      ${repeat(
-        this.#processor.getSurfaces(),
-        ([surfaceId]) => surfaceId,
-        ([surfaceId, surface]) => {
-          return html`<a2ui-surface
+      ${map(this.#processor.getSurfaces(), ([surfaceId, surface]) => {
+        return html`<a2ui-surface
               .surfaceId=${surfaceId}
               .surface=${surface}
               .processor=${this.#processor}
             ></a2-uisurface>`;
-        }
-      )}
+      })}
     </section>`;
   }
 
@@ -533,7 +530,10 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
               globalThis.localStorage.setItem(LAST_ITEM_KEY, instructionsStr);
               const messages = JSON.parse(instructionsStr);
 
+              console.log(messages);
+
               this.#processor.clearSurfaces();
+              console.log(this.#processor.getSurfaces().size);
               this.#processor.processMessages(messages);
               this.requestUpdate();
             } catch (err) {

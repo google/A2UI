@@ -665,7 +665,7 @@ export class A2UIModelProcessor implements ModelProcessor {
         }
         return new this.#objCtor({
           ...baseNode,
-          type: "Checkbox",
+          type: "CheckBox",
           properties: resolvedProperties,
         }) as AnyComponentNode;
 
@@ -830,6 +830,8 @@ export class A2UIModelProcessor implements ModelProcessor {
         if (isPath(key, propValue) && dataContextPath !== "/") {
           propertyValue = propValue
             .replace(/^\.?\/item/, "")
+            .replace(/^\.?\/text/, "")
+            .replace(/^\.?\/label/, "")
             .replace(/^\.?\//, "");
           newObj[key] = propertyValue as ResolvedValue;
           continue;
