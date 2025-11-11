@@ -6,7 +6,7 @@ This extension implements the A2UI (Agent-to-Agent UI) spec, a format for agents
 
 ## Extension URI
 
-The URI of this extension is https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_samples/a2ui_extension/spec/spec.md
+The URI of this extension is https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/docs/a2ui_extension_specification.md
 
 This is the only URI accepted for this extension.
 
