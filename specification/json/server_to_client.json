@@ -76,7 +76,7 @@
                           }
                         }
                       },
-                      "hint": {
+                      "usageHint": {
                         "type": "string",
                         "description": "A hint for the base text style. One of:\n- `h1`: Largest heading.\n- `h2`: Second largest heading.\n- `h3`: Third largest heading.\n- `h4`: Fourth largest heading.\n- `h5`: Fifth largest heading.\n- `caption`: Small text for captions.\n- `body`: Standard body text.",
                         "enum": [
@@ -118,7 +118,7 @@
                           "scale-down"
                         ]
                       },
-                      "hint": {
+                      "usageHint": {
                         "type": "string",
                         "description": "A hint for the image size and style. One of:\n- `icon`: Small square icon.\n- `avatar`: Circular avatar image.\n- `smallFeature`: Small feature image.\n- `mediumFeature`: Medium feature image.\n- `largeFeature`: Large feature image.\n- `header`: Full-width, full bleed, header image.",
                         "enum": [
