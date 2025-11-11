@@ -27,7 +27,7 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "cp ../../specification/json/*.json ./src/0.8/schemas",
+      "command": "cp ../../specification/0.8/json/*.json ./src/0.8/schemas",
       "files": [
         "src/config.prod.js"
       ],

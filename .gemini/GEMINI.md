@@ -6,9 +6,9 @@ This document serves as a guide for using the Gemini agent within the A2UI repos
 
 The A2UI repository is organized into several key directories:
 
--   `docs/`: Contains the primary human-readable documentation for the A2UI protocol.
+-   `specification/0.8/docs/`: Contains the primary human-readable documentation for the A2UI protocol.
     -   `a2ui_protocol.md`: The foundational specification document. This is the best place to start to understand the protocol's fundamental goals.
--   `specification/json/`: Contains the formal JSON schema definitions for the protocol.
+-   `specification/0.8/json/`: Contains the formal JSON schema definitions for the protocol.
     -   `server_to_client.json`: Defines the schema for messages sent from the server to the client.
     -   `client_to_server.json`: Defines the schema for event messages sent from the client to the server.
 -   `a2a_samples/`: Contains three demo applications that showcase the A2UI protocol in action.
@@ -35,8 +35,8 @@ This document covers the design philosophy, architecture, data flow, and core co
 
 The formal, machine-readable definitions of the protocol are maintained as JSON schemas:
 
--   **Server-to-Client Schema**: `@specification/json/server_to_client.json`
--   **Client-to-Server Schema**: `@specification/json/client_to_server.json`
+-   **Server-to-Client Schema**: `@specification/0.8/json/server_to_client.json`
+-   **Client-to-Server Schema**: `@specification/0.8/json/client_to_server.json`
 
 ## Running the Demos
 

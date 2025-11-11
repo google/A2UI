@@ -15,5 +15,5 @@ The A2UI protocol enables a server to stream a platform-agnostic, abstract UI de
 
 The repository is structured as follows:
 
-- `docs/`: This directory contains the formal specification for the A2UI protocol (`docs/a2ui_protocol.md`) and related design documents and proposals.
-- `specification/json/`: This directory contains the JSON schema files used to validate A2UI protocol messages and client event messages.
+- `docs/`: This directory contains general information about the A2UI protocol .
+- `specification/`: Contains formal specification documents and JSON schemas for the protocol.
