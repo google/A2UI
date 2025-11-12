@@ -55,7 +55,16 @@
           "properties": {
             "components": {
               "type": "object",
+              "title": "Components",
               "description": "A map where each key is a component name and the value is a JSON Schema defining an object containing its properties.",
+              "additionalProperties": {
+                "$ref": "https://json-schema.org/draft/2020-12/schema"
+              }
+            },
+            "styles": {
+              "title": "Styles",
+              "description": "A schema that defines a catalog of A2UI styles. Each key is a style name, and each value is the JSON schema for that style's properties.",
+              "type": "object",
               "additionalProperties": {
                 "$ref": "https://json-schema.org/draft/2020-12/schema"
               }
