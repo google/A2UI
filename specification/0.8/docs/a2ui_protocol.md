@@ -9,6 +9,7 @@
 A Specification for a JSONL-Based, Streaming UI Protocol
 
 Created: Sep 19, 2025
+Updated: Nov 10, 2025
 
 ## Design Requirements
 
@@ -149,10 +150,10 @@ The following is a complete, minimal example of a JSONL stream that renders a us
 {"surfaceUpdate": {"components": [{"id": "profile_card", "component": {"Card": {"child": "card_content"}}}]}}
 {"surfaceUpdate": {"components": [{"id": "card_content", "component": {"Column": {"children": {"explicitList": ["header_row", "bio_text"]}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "header_row", "component": {"Row": {"alignment": "center", "children": {"explicitList": ["avatar", "name_column"]}}}}]}}
-{"surfaceUpdate": {"components": [{"id": "avatar", "component": {"Image": {"url": {"literalString": "[https://www.example.com/profile.jpg)"}}}}]}}
+{"surfaceUpdate": {"components": [{"id": "avatar", "component": {"Image": {"url": {"literalString": "https://www.example.com/profile.jpg"}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "name_column", "component": {"Column": {"alignment": "start", "children": {"explicitList": ["name_text", "handle_text"]}}}}]}}
-{"surfaceUpdate": {"components": [{"id": "name_text", "component": {"Heading": {"level": "3", "text": {"literalString": "Flutter Fan"}}}}]}}
-{"surfaceUpdate": {"components": [{"id": "handle_text", "component": {"Text": {"text": {"literalString": "@flutterdev"}}}}]}}
+{"surfaceUpdate": {"components": [{"id": "name_text", "component": {"Text": {"usageHint": "h3", "text": {"literalString": "A2A Fan"}}}}]}}
+{"surfaceUpdate": {"components": [{"id": "handle_text", "component": {"Text": {"text": {"literalString": "@a2a_fan"}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "bio_text", "component": {"Text": {"text": {"literalString": "Building beautiful apps from a single codebase."}}}}]}}
 {"dataModelUpdate": {"contents": {}}}
 {"beginRendering": {"root": "root"}}
@@ -568,7 +569,7 @@ A robust client-side interpreter for A2UI should be composed of several key comp
 This section provides the formal JSON Schema for a single server-to-client message in the A2UI JSONL stream. Each line in the stream must be a valid JSON object that conforms to this schema. It includes the entire base catalog of components, but the components may be swapped out for other components supported by the client. It is optimized to be able to be generated in structured output mode from various LLMs.
 
 ```json
-{% include "../json/server_to_client.json" %}
+{% include "../specification/json/server_to_client.json" %}
 ```
 
 ## Section 8: Complete A2UI Client to Server JSON Schema
@@ -576,5 +577,5 @@ This section provides the formal JSON Schema for a single server-to-client messa
 This section provides the formal JSON Schema for a single client-to-server message in the A2UI protocol.
 
 ```json
-{% include "../json/client_to_server.json" %}
+{% include "../specification/json/client_to_server.json" %}
 ```
