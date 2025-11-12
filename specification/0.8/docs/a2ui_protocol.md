@@ -569,7 +569,7 @@ A robust client-side interpreter for A2UI should be composed of several key comp
 This section provides the formal JSON Schema for a single server-to-client message in the A2UI JSONL stream. Each line in the stream must be a valid JSON object that conforms to this schema. It includes the entire base catalog of components, but the components may be swapped out for other components supported by the client. It is optimized to be able to be generated in structured output mode from various LLMs.
 
 ```json
-{% include "../specification/json/server_to_client.json" %}
+{% include "../specification/json/server_to_client_with_standard_catalog.json" %}
 ```
 
 ## Section 8: Complete A2UI Client to Server JSON Schema
