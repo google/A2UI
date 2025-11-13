@@ -10,7 +10,7 @@ A Specification for a JSONL-Based, Streaming UI Protocol
 
 Created: Sep 19, 2025
 Updated: Nov 10, 2025
-Updated: Nov 10, 2025
+Updated: Nov 12, 2025
 
 ## Design Requirements
 
