@@ -6,13 +6,8 @@ description = "A top-level project to manage A2A ADK libraries and samples."
 dependencies = []
 
 [tool.uv.workspace]
-members = [
-    "a2ui_extension",
-    "samples/restaurant_finder",
-    "samples/contact_lookup",
-]
+members = ["samples/restaurant_finder", "samples/contact_lookup"]
 
 [tool.uv.sources]
-a2ui-ext = { path = "a2ui_extension", editable = true }
 # The key must match the package name
 a2ui-restaurant-finder = { path = "samples/restaurant_finder", editable = true } # <-- Renamed here
