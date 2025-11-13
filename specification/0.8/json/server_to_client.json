@@ -2,10 +2,12 @@
   "title": "A2UI Message Schema",
   "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "beginRendering": {
       "type": "object",
       "description": "Signals the client to begin rendering a surface with a root component and specific styles.",
+      "additionalProperties": false,
       "properties": {
         "surfaceId": {
           "type": "string",
@@ -26,6 +28,7 @@
     "surfaceUpdate": {
       "type": "object",
       "description": "Updates a surface with a new set of components.",
+      "additionalProperties": false,
       "properties": {
         "surfaceId": {
           "type": "string",
@@ -38,6 +41,7 @@
           "items": {
             "type": "object",
             "description": "Represents a *single* component in a UI widget tree. This component could be one of many supported types.",
+            "additionalProperties": false,
             "properties": {
               "id": {
                 "type": "string",
@@ -62,6 +66,7 @@
     "dataModelUpdate": {
       "type": "object",
       "description": "Updates the data model for a surface.",
+      "additionalProperties": false,
       "properties": {
         "surfaceId": {
           "type": "string",
@@ -77,6 +82,7 @@
           "items": {
             "type": "object",
             "description": "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
+            "additionalProperties": false,
             "properties": {
               "key": {
                 "type": "string",
@@ -97,6 +103,7 @@
                 "items": {
                   "type": "object",
                   "description": "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
+                  "additionalProperties": false,
                   "properties": {
                     "key": {
                       "type": "string"
@@ -124,6 +131,7 @@
     "deleteSurface": {
       "type": "object",
       "description": "Signals the client to delete the surface identified by 'surfaceId'.",
+      "additionalProperties": false,
       "properties": {
         "surfaceId": {
           "type": "string",
