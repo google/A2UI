@@ -36,6 +36,7 @@ This document covers the design philosophy, architecture, data flow, and core co
 The formal, machine-readable definitions of the protocol are maintained as JSON schemas:
 
 -   **Server-to-Client Schema**: `@specification/0.8/json/server_to_client.json`
+-   **Server-to-Client Schema, with standard catalog**: `@specification/0.8/json/server_to_client_with_standard_catalog.json`
 -   **Client-to-Server Schema**: `@specification/0.8/json/client_to_server.json`
 
 ## Running the Demos
