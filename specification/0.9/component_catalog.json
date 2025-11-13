@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.dev/specification/0.9/component_catalog.json",
   "title": "A2UI Component Catalog",
   "description": "Definitions for the standard catalog of A2UI components.",
   "$defs": {
@@ -27,13 +28,13 @@
     },
     "Text": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Text" },
             "text": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation."
             },
             "usageHint": {
@@ -48,13 +49,13 @@
     },
     "Image": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Image" },
             "url": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/url')."
             },
             "fit": {
@@ -81,14 +82,14 @@
     },
     "Icon": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Icon" },
             "name": {
-              "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
               "type": "object",
+              "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
               "properties": {
                 "literalString": {
                   "type": "string",
@@ -159,13 +160,13 @@
     },
     "Video": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Video" },
             "url": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/video/url')."
             }
           },
@@ -175,18 +176,18 @@
     },
     "AudioPlayer": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "AudioPlayer" },
             "url": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/song/url')."
             },
             "description": {
               "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. '/song/title').",
-              "$ref": "server_to_client.json#/$defs/stringOrPath"
+              "$ref": "common_types.json#/$defs/stringOrPath"
             }
           },
           "required": ["component", "url"]
@@ -195,14 +196,14 @@
     },
     "Row": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Row" },
             "children": {
               "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
-              "$ref": "server_to_client.json#/$defs/childrenProperty"
+              "$ref": "common_types.json#/$defs/childrenProperty"
             },
             "distribution": {
               "type": "string",
@@ -228,14 +229,14 @@
     },
     "Column": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Column" },
             "children": {
               "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
-              "$ref": "server_to_client.json#/$defs/childrenProperty"
+              "$ref": "common_types.json#/$defs/childrenProperty"
             },
             "distribution": {
               "type": "string",
@@ -261,14 +262,14 @@
     },
     "List": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "List" },
             "children": {
               "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
-              "$ref": "server_to_client.json#/$defs/childrenProperty"
+              "$ref": "common_types.json#/$defs/childrenProperty"
             },
             "direction": {
               "type": "string",
@@ -287,7 +288,7 @@
     },
     "Card": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
@@ -303,7 +304,7 @@
     },
     "Tabs": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
@@ -316,7 +317,7 @@
                 "properties": {
                   "title": {
                     "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. '/options/title').",
-                    "$ref": "server_to_client.json#/$defs/stringOrPath"
+                    "$ref": "common_types.json#/$defs/stringOrPath"
                   },
                   "child": { "type": "string" }
                 },
@@ -330,7 +331,7 @@
     },
     "Divider": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
@@ -347,7 +348,7 @@
     },
     "Modal": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
@@ -367,7 +368,7 @@
     },
     "Button": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
@@ -415,17 +416,17 @@
     },
     "CheckBox": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "CheckBox" },
             "label": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. '/option/label')."
             },
             "value": {
-              "$ref": "server_to_client.json#/$defs/booleanOrPath",
+              "$ref": "common_types.json#/$defs/booleanOrPath",
               "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. '/filter/open')."
             }
           },
@@ -435,17 +436,17 @@
     },
     "TextField": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "TextField" },
             "label": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. '/user/name')."
             },
             "text": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. '/user/name')."
             },
             "textFieldType": {
@@ -464,13 +465,13 @@
     },
     "DateTimeInput": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "DateTimeInput" },
             "value": {
-              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob')."
             },
             "enableDate": {
@@ -492,14 +493,14 @@
     },
     "MultipleChoice": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "MultipleChoice" },
             "selections": {
               "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. '/hotel/options').",
-              "$ref": "server_to_client.json#/$defs/stringArrayOrPath"
+              "$ref": "common_types.json#/$defs/stringArrayOrPath"
             },
             "options": {
               "type": "array",
@@ -509,7 +510,7 @@
                 "properties": {
                   "label": {
                     "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. '/option/label').",
-                    "$ref": "server_to_client.json#/$defs/stringOrPath"
+                    "$ref": "common_types.json#/$defs/stringOrPath"
                   },
                   "value": {
                     "type": "string",
@@ -530,13 +531,13 @@
     },
     "Slider": {
       "allOf": [
-        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        { "$ref": "common_types.json#/$defs/componentProperties" },
         {
           "type": "object",
           "properties": {
             "component": { "const": "Slider" },
             "value": {
-              "$ref": "server_to_client.json#/$defs/numberOrPath",
+              "$ref": "common_types.json#/$defs/numberOrPath",
               "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost')."
             },
             "minValue": {
