@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.dev/specification/0.9/common_types.json",
+  "title": "A2UI Common Types",
+  "description": "Common type definitions used across A2UI schemas.",
+  "$defs": {
+    "stringOrPath": {
+      "type": "object",
+      "description": "Represents a value that can be either a literal string or a path to a value in the data model.",
+      "properties": {
+        "literalString": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "oneOf": [{ "required": ["literalString"] }, { "required": ["path"] }]
+    },
+    "numberOrPath": {
+      "type": "object",
+      "description": "Represents a value that can be either a literal number or a path to a value in the data model.",
+      "properties": {
+        "literalNumber": {
+          "type": "number"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "oneOf": [{ "required": ["literalNumber"] }, { "required": ["path"] }]
+    },
+    "booleanOrPath": {
+      "type": "object",
+      "description": "Represents a value that can be either a literal boolean or a path to a value in the data model.",
+      "properties": {
+        "literalBoolean": {
+          "type": "boolean"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "oneOf": [{ "required": ["literalBoolean"] }, { "required": ["path"] }]
+    },
+    "stringArrayOrPath": {
+      "type": "object",
+      "description": "Represents a value that can be either a literal array of strings or a path to a value in the data model.",
+      "properties": {
+        "literalArray": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "oneOf": [{ "required": ["literalArray"] }, { "required": ["path"] }]
+    },
+    "componentProperties": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier for this component."
+        },
+        "weight": {
+          "type": "number",
+          "description": "The relative weight of this component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
+        }
+      },
+      "required": ["id"]
+    },
+    "childrenProperty": {
+      "type": "object",
+      "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+      "properties": {
+        "explicitList": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "template": {
+          "type": "object",
+          "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
+          "properties": {
+            "componentId": { "type": "string" },
+            "dataBinding": { "type": "string" }
+          },
+          "required": ["componentId", "dataBinding"]
+        }
+      },
+      "oneOf": [{ "required": ["explicitList"] }, { "required": ["template"] }]
+    }
+  }
+}
