@@ -193,9 +193,9 @@ async function main() {
   const ajv = new Ajv({ allErrors: true });
 
   const schemaFiles = [
-    "../common_types.json",
-    "../component_catalog.json",
-    "../server_to_client.json",
+    "../../common_types.json",
+    "../../component_catalog.json",
+    "../../server_to_client.json",
   ];
   const schemas: any = {};
   for (const file of schemaFiles) {
@@ -289,6 +289,28 @@ async function main() {
               };
             })
             .catch((error) => {
+              if (modelOutputDir) {
+                const inputPath = path.join(
+                  modelOutputDir,
+                  `${prompt.name}.input.txt`
+                );
+                fs.writeFileSync(inputPath, prompt.promptText);
+
+                const errorPath = path.join(
+                  modelOutputDir,
+                  `${prompt.name}.error.json`
+                );
+                const errorOutput = {
+                  message: error.message,
+                  stack: error.stack,
+                  ...error,
+                };
+                fs.writeFileSync(
+                  errorPath,
+                  JSON.stringify(errorOutput, null, 2)
+                );
+              }
+
               if (modelOutputDir) {
                 const inputPath = path.join(
                   modelOutputDir,

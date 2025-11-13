@@ -14,14 +14,44 @@
  limitations under the License.
  */
 
+import Ajv from "ajv";
+import fs from "fs";
+import path from "path";
 import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
 import { SchemaMatcher } from "./schema_matcher";
+
+const ajv = new Ajv({ strict: false });
+
+const schemaDir = path.resolve(process.cwd(), "../");
+const serverToClientSchema = JSON.parse(
+  fs.readFileSync(path.join(schemaDir, "server_to_client.json"), "utf-8")
+);
+const componentCatalogSchema = JSON.parse(
+  fs.readFileSync(path.join(schemaDir, "component_catalog.json"), "utf-8")
+);
+const commonTypesSchema = JSON.parse(
+  fs.readFileSync(path.join(schemaDir, "common_types.json"), "utf-8")
+);
+
+ajv.addSchema(commonTypesSchema, "common_types.json");
+ajv.addSchema(componentCatalogSchema, "component_catalog.json");
+const validate = ajv.compile(serverToClientSchema);
 
 export function validateSchema(
   data: any,
   matchers?: SchemaMatcher[]
 ): string[] {
   const errors: string[] = [];
+
+  const valid = validate(data);
+  if (!valid) {
+    if (validate.errors) {
+      validate.errors.forEach((err) => {
+        errors.push(`AJV: ${err.instancePath} ${err.message}`);
+      });
+    }
+  }
+
   if (data.surfaceUpdate) {
     validateSurfaceUpdate(data.surfaceUpdate, errors);
   } else if (data.dataModelUpdate) {
@@ -246,16 +276,15 @@ function validateComponent(
     return;
   }
 
-  const componentTypes = Object.keys(component.component);
-  if (componentTypes.length !== 1) {
+  const componentType = component.component;
+  if (typeof componentType !== "string") {
     errors.push(
-      `Component '${component.id}' must have exactly one property in 'component', but found ${componentTypes.length}.`
+      `Component '${component.id}' has invalid 'component' property. Expected string, found ${typeof componentType}.`
     );
     return;
   }
 
-  const componentType = componentTypes[0];
-  const properties = component.component[componentType];
+  const properties = component;
 
   const checkRequired = (props: string[]) => {
     for (const prop of props) {

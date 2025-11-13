@@ -84,10 +84,10 @@ The dog generator is another card which is a form that generates a fictional dog
     name: "loginForm",
     description:
       'A simple login form with username, password, a "remember me" checkbox, and a submit button.',
-    promptText: `Generate a JSON message containing a surfaceUpdate for a login form. It should have a "Login" heading, two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
+    promptText: `Generate a JSON message containing a surfaceUpdate for a login form. It should have a "Login" text (usageHint 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Login"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Login"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "username", true),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "password", true),
       new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Remember Me"),
@@ -161,7 +161,7 @@ The dog generator is another card which is a form that generates a fictional dog
     description: "A simple, explicit UI to display a hierarchy of animals.",
     promptText: `Generate a JSON message with a surfaceUpdate property for a simplified UI explorer for the Animal Kingdom.
 
-The UI must have a main 'Heading' with the text "Simple Animal Explorer".
+The UI must have a main 'Text' (usageHint 'h1') with the text "Simple Animal Explorer".
 
 Below the heading, create a 'Tabs' component with exactly three tabs: "Mammals", "Birds", and "Reptiles".
 
@@ -196,11 +196,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
 `,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher(
-        "Heading",
-        "text",
-        "Simple Animal Explorer"
-      ),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Simple Animal Explorer"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Search..."),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Mammalia"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Carnivora"),
@@ -228,14 +224,14 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "recipeCard",
     description: "A UI to display a recipe with ingredients and instructions.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a recipe card. It should have a 'Heading' for the recipe title, "Classic Lasagna". Below the title, an 'Image' of the lasagna. Then, a 'Row' containing two 'Column's. The first column has a 'Text' heading "Ingredients" and a 'List' of ingredients. The second column has a 'Text' heading "Instructions" and a 'List' of step-by-step instructions. Finally, a 'Button' at the bottom labeled "Watch Video Tutorial".`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a recipe card. It should have a 'Text' (usageHint 'h1') for the recipe title, "Classic Lasagna". Below the title, an 'Image' of the lasagna. Then, a 'Row' containing two 'Column's. The first column has a 'Text' (usageHint 'h2') "Ingredients" and a 'List' of ingredients. The second column has a 'Text' (usageHint 'h2') "Instructions" and a 'List' of step-by-step instructions. Finally, a 'Button' at the bottom labeled "Watch Video Tutorial".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Classic Lasagna"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Classic Lasagna"),
       new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Ingredients"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Ingredients"),
       new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Instructions"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Instructions"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Watch Video Tutorial"),
     ],
   },
@@ -258,10 +254,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "weatherForecast",
     description: "A UI to display the weather forecast.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a weather forecast UI. It should have a 'Heading' with the city name, "New York". Below it, a 'Row' with the current temperature as a 'Text' component ("68°F") and an 'Image' for the weather icon (e.g., a sun). Below that, a 'Divider'. Then, a 'List' component to display the 5-day forecast. Each item in the list should be a 'Row' with the day, an icon, and high/low temperatures.`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a weather forecast UI. It should have a 'Text' (usageHint 'h1') with the city name, "New York". Below it, a 'Row' with the current temperature as a 'Text' component ("68°F") and an 'Image' for the weather icon (e.g., a sun). Below that, a 'Divider'. Then, a 'List' component to display the 5-day forecast. Each item in the list should be a 'Row' with the day, an icon, and high/low temperatures.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "New York"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "New York"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "68°F"),
       new SurfaceUpdateSchemaMatcher("Image"),
       new SurfaceUpdateSchemaMatcher("List"),
@@ -270,10 +266,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "surveyForm",
     description: "A customer feedback survey form.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a survey form. It should have a 'Heading' "Customer Feedback". Then a 'MultipleChoice' question "How would you rate our service?" with options "Excellent", "Good", "Average", "Poor". Then a 'CheckBox' section for "What did you like?" with options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'MultipleChoice' question "How would you rate our service?" with options "Excellent", "Good", "Average", "Poor". Then a 'CheckBox' section for "What did you like?" with options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Customer Feedback"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Customer Feedback"),
       new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "Excellent"),
       new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Product Quality"),
       new SurfaceUpdateSchemaMatcher(
@@ -287,10 +283,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "flightBooker",
     description: "A form to search for flights.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a flight booking form. It should have a 'Heading' "Book a Flight". Use a 'Row' for two 'TextField's: "Departure City" and "Arrival City". Below that, another 'Row' for two 'DateTimeInput's: "Departure Date" and "Return Date". Add a 'CheckBox' for "One-way trip". Finally, a 'Button' labeled "Search Flights".`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a flight booking form. It should have a 'Text' (usageHint 'h1') "Book a Flight". Use a 'Row' for two 'TextField's: "Departure City" and "Arrival City". Below that, another 'Row' for two 'DateTimeInput's: "Departure Date" and "Return Date". Add a 'CheckBox' for "One-way trip". Finally, a 'Button' labeled "Search Flights".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Book a Flight"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Book a Flight"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Departure City"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Arrival City"),
       new SurfaceUpdateSchemaMatcher("DateTimeInput"),
@@ -301,10 +297,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "dashboard",
     description: "A simple dashboard with statistics.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a simple dashboard. It should have a 'Heading' "Sales Dashboard". Below, a 'Row' containing three 'Card's. The first card has a 'Text' "Revenue" and another 'Text' "$50,000". The second card has "New Customers" and "1,200". The third card has "Conversion Rate" and "4.5%".`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a simple dashboard. It should have a 'Text' (usageHint 'h1') "Sales Dashboard". Below, a 'Row' containing three 'Card's. The first card has a 'Text' "Revenue" and another 'Text' "$50,000". The second card has "New Customers" and "1,200". The third card has "Conversion Rate" and "4.5%".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Sales Dashboard"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Sales Dashboard"),
       new SurfaceUpdateSchemaMatcher("Column"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Revenue"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "$50,000"),
@@ -331,10 +327,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "calendarEventCreator",
     description: "A form to create a new calendar event.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a calendar event creation form. It should have a 'Heading' "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time". Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a calendar event creation form. It should have a 'Text' (usageHint 'h1') "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time". Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "New Event"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "New Event"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Event Title"),
       new SurfaceUpdateSchemaMatcher("DateTimeInput"),
       new SurfaceUpdateSchemaMatcher("CheckBox", "label", "All-day event"),
@@ -345,10 +341,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "checkoutPage",
     description: "A simplified e-commerce checkout page.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a checkout page. It should have a 'Heading' "Checkout". Create a 'Column' for "Shipping Information" with 'TextField's for "Full Name" and "Address". Create another 'Column' for "Payment Information" with 'TextField's for "Card Number" and "Expiry Date". Add a 'Divider'. Show an order summary with a 'Text' component: "Total: $99.99". Finally, a 'Button' labeled "Place Order".`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a checkout page. It should have a 'Text' (usageHint 'h1') "Checkout". Create a 'Column' for "Shipping Information" with 'TextField's for "Full Name" and "Address". Create another 'Column' for "Payment Information" with 'TextField's for "Card Number" and "Expiry Date". Add a 'Divider'. Show an order summary with a 'Text' component: "Total: $99.99". Finally, a 'Button' labeled "Place Order".`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Checkout"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Checkout"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Full Name"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Address"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Card Number"),
@@ -383,20 +379,16 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
 The main layout should be a 'Row'.
 The left side of the row is a 'Column' containing a large main 'Image' of the product, and below it, a 'Row' of three smaller thumbnail 'Image' components.
 The right side of the row is another 'Column' for product information:
-- A 'Heading' for the product name, "Premium Leather Jacket".
+- A 'Text' (usageHint 'h1') for the product name, "Premium Leather Jacket".
 - A 'Text' component for the price, "$299.99".
 - A 'Divider'.
-- A 'Text' heading "Select Size", followed by a 'MultipleChoice' component with options "S", "M", "L", "XL".
-- A 'Text' heading "Select Color", followed by another 'MultipleChoice' component with options "Black", "Brown", "Red".
+- A 'Text' (usageHint 'h3') "Select Size", followed by a 'MultipleChoice' component with options "S", "M", "L", "XL".
+- A 'Text' (usageHint 'h3') "Select Color", followed by another 'MultipleChoice' component with options "Black", "Brown", "Red".
 - A 'Button' with the label "Add to Cart".
 - A 'Text' component for the product description below the button.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher(
-        "Heading",
-        "text",
-        "Premium Leather Jacket"
-      ),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Premium Leather Jacket"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "$299.99"),
       new SurfaceUpdateSchemaMatcher("Image"),
       new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "S"),
@@ -408,25 +400,25 @@ The right side of the row is another 'Column' for product information:
     name: "interactiveDashboard",
     description: "A dashboard with filters and data cards.",
     promptText: `Generate a JSON message with a surfaceUpdate property for an interactive analytics dashboard.
-At the top, a 'Heading' "Company Dashboard".
+At the top, a 'Text' (usageHint 'h1') "Company Dashboard".
 Below the heading, a 'Card' containing a 'Row' of filter controls:
 - A 'DateTimeInput' with a label for "Start Date".
 - A 'DateTimeInput' with a label for "End Date".
 - A 'Button' labeled "Apply Filters".
 Below the filters card, a 'Row' containing two 'Card's for key metrics:
-- The first 'Card' has a 'Heading' "Total Revenue" and a 'Text' component showing "$1,234,567".
-- The second 'Card' has a 'Heading' "New Users" and a 'Text' component showing "4,321".
-Finally, a large 'Card' at the bottom with a 'Heading' "Revenue Over Time" and a placeholder 'Image' to represent a line chart.`,
+- The first 'Card' has a 'Text' (usageHint 'h2') "Total Revenue" and a 'Text' component showing "$1,234,567".
+- The second 'Card' has a 'Text' (usageHint 'h2') "New Users" and a 'Text' component showing "4,321".
+Finally, a large 'Card' at the bottom with a 'Text' (usageHint 'h2') "Revenue Over Time" and a placeholder 'Image' to represent a line chart.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Company Dashboard"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Company Dashboard"),
       new SurfaceUpdateSchemaMatcher("DateTimeInput"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Apply Filters"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Total Revenue"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Total Revenue"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "$1,234,567"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "New Users"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "New Users"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "4,321"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Revenue Over Time"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Revenue Over Time"),
       new SurfaceUpdateSchemaMatcher("Image"),
     ],
   },
@@ -434,30 +426,26 @@ Finally, a large 'Card' at the bottom with a 'Heading' "Revenue Over Time" and a
     name: "travelItinerary",
     description: "A multi-day travel itinerary display.",
     promptText: `Generate a JSON message with a surfaceUpdate property for a travel itinerary for a trip to Paris.
-It should have a main 'Heading' "Paris Adventure".
+It should have a main 'Text' component with usageHint 'h1' and text "Paris Adventure".
 Below, use a 'List' to display three days. Each item in the list should be a 'Card'.
-- The first 'Card' (Day 1) should contain a 'Heading' "Day 1: Arrival & Eiffel Tower", and a 'List' of activities for that day: "Check into hotel", "Lunch at a cafe", "Visit the Eiffel Tower".
-- The second 'Card' (Day 2) should contain a 'Heading' "Day 2: Museums & Culture", and a 'List' of activities: "Visit the Louvre Museum", "Walk through Tuileries Garden", "See the Arc de Triomphe".
-- The third 'Card' (Day 3) should contain a 'Heading' "Day 3: Art & Departure", and a 'List' of activities: "Visit Musée d'Orsay", "Explore Montmartre", "Depart from CDG".
+- The first 'Card' (Day 1) should contain a 'Text' (usageHint 'h2') "Day 1: Arrival & Eiffel Tower", and a 'List' of activities for that day: "Check into hotel", "Lunch at a cafe", "Visit the Eiffel Tower".
+- The second 'Card' (Day 2) should contain a 'Text' (usageHint 'h2') "Day 2: Museums & Culture", and a 'List' of activities: "Visit the Louvre Museum", "Walk through Tuileries Garden", "See the Arc de Triomphe".
+- The third 'Card' (Day 3) should contain a 'Text' (usageHint 'h2') "Day 3: Art & Departure", and a 'List' of activities: "Visit Musée d'Orsay", "Explore Montmartre", "Depart from CDG".
 Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to mark as complete) and a 'Text' component with the activity description.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
-      new SurfaceUpdateSchemaMatcher("Heading", "text", "Paris Adventure"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Paris Adventure"),
       new SurfaceUpdateSchemaMatcher(
-        "Heading",
+        "Text",
         "text",
         "Day 1: Arrival & Eiffel Tower"
       ),
       new SurfaceUpdateSchemaMatcher(
-        "Heading",
+        "Text",
         "text",
         "Day 2: Museums & Culture"
       ),
-      new SurfaceUpdateSchemaMatcher(
-        "Heading",
-        "text",
-        "Day 3: Art & Departure"
-      ),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Day 3: Art & Departure"),
       new SurfaceUpdateSchemaMatcher("Column"),
       new SurfaceUpdateSchemaMatcher("CheckBox"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Visit the Eiffel Tower"),

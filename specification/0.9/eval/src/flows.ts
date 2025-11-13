@@ -60,9 +60,42 @@ export const componentGeneratorFlow = ai.defineFlow(
       .map((s: any) => JSON.stringify(s, null, 2))
       .join("\n\n");
 
-    const fullPrompt = `You are an AI assistant. Based on the following request, generate a JSON object that conforms to the provided JSON Schemas.
-The output MUST be ONLY the JSON object enclosed in a markdown code block.
+    const fullPrompt = `You are an AI assistant. Based on the following request, generate a JSON object that conforms to the provided JSON Schemas. The output MUST be ONLY the JSON object enclosed in a markdown code block.
+
 DO NOT include any other text before or after the markdown code block.
+
+Example Output:
+\`\`\`json
+{
+  "surfaceUpdate": {
+    "surfaceId": "contact_form_1",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": {
+          "explicitList": [
+            "first_name_label",
+            "first_name_field"
+          ]
+        }
+      },
+      {
+        "id": "first_name_label",
+        "component": "Text",
+        "text": { "literalString": "First Name" }
+      },
+      {
+        "id": "first_name_field",
+        "component": "TextField",
+        "label": { "literalString": "First Name" },
+        "text": { "path": "/contact/firstName" },
+        "textFieldType": "shortText"
+      }
+    ]
+  }
+}
+\`\`\`
 
 Request:
 ${prompt}
@@ -72,14 +105,14 @@ ${schemaDefs}
 `;
 
     // Generate text response
-    const { output } = await ai.generate({
+    const response = await ai.generate({
       prompt: fullPrompt,
       model,
       config,
     });
 
-    if (!output) throw new Error("Failed to generate component");
+    if (!response) throw new Error("Failed to generate component");
 
-    return output;
+    return response.text;
   }
 );

@@ -52,16 +52,16 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
     const components = schema.surfaceUpdate.components;
 
     for (const c of components) {
-      if (c.component && Object.keys(c.component).length > 1) {
+      if (c.component && typeof c.component !== "string") {
         return {
           success: false,
-          error: `Component ID '${c.id}' has multiple component types defined: ${Object.keys(c.component).join(", ")}`,
+          error: `Component ID '${c.id}' has invalid 'component' property. Expected string, found ${typeof c.component}.`,
         };
       }
     }
 
     const matchingComponents = components.filter(
-      (c: any) => c.component && c.component[this.componentType]
+      (c: any) => c.component === this.componentType
     );
 
     if (matchingComponents.length === 0) {
@@ -76,7 +76,7 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
     }
 
     for (const component of matchingComponents) {
-      const properties = component.component[this.componentType];
+      const properties = component;
       if (properties) {
         // Check for property directly on the component
         if (properties[this.propertyName] !== undefined) {
@@ -99,12 +99,8 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
             components,
             properties.child
           );
-          if (
-            childComponent &&
-            childComponent.component &&
-            childComponent.component.Text
-          ) {
-            const textValue = childComponent.component.Text.text;
+          if (childComponent && childComponent.component === "Text") {
+            const textValue = childComponent.text;
             if (this.valueMatches(textValue, this.propertyValue)) {
               return { success: true };
             }

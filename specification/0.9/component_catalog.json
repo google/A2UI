@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://a2ui.dev/specification/0.9/component_catalog.json",
   "title": "A2UI Component Catalog",
   "description": "Definitions for the standard catalog of A2UI components.",
