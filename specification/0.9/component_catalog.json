@@ -1,0 +1,556 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A2UI Component Catalog",
+  "description": "Definitions for the standard catalog of A2UI components.",
+  "$defs": {
+    "anyComponent": {
+      "oneOf": [
+        { "$ref": "#/$defs/Text" },
+        { "$ref": "#/$defs/Image" },
+        { "$ref": "#/$defs/Icon" },
+        { "$ref": "#/$defs/Video" },
+        { "$ref": "#/$defs/AudioPlayer" },
+        { "$ref": "#/$defs/Row" },
+        { "$ref": "#/$defs/Column" },
+        { "$ref": "#/$defs/List" },
+        { "$ref": "#/$defs/Card" },
+        { "$ref": "#/$defs/Tabs" },
+        { "$ref": "#/$defs/Divider" },
+        { "$ref": "#/$defs/Modal" },
+        { "$ref": "#/$defs/Button" },
+        { "$ref": "#/$defs/CheckBox" },
+        { "$ref": "#/$defs/TextField" },
+        { "$ref": "#/$defs/DateTimeInput" },
+        { "$ref": "#/$defs/MultipleChoice" },
+        { "$ref": "#/$defs/Slider" }
+      ]
+    },
+    "Text": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Text" },
+            "text": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation."
+            },
+            "usageHint": {
+              "type": "string",
+              "description": "A hint for the base text style.",
+              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
+            }
+          },
+          "required": ["component", "text"]
+        }
+      ]
+    },
+    "Image": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Image" },
+            "url": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/url')."
+            },
+            "fit": {
+              "type": "string",
+              "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
+              "enum": ["contain", "cover", "fill", "none", "scale-down"]
+            },
+            "usageHint": {
+              "type": "string",
+              "description": "A hint for the image size and style.",
+              "enum": [
+                "icon",
+                "avatar",
+                "smallFeature",
+                "mediumFeature",
+                "largeFeature",
+                "header"
+              ]
+            }
+          },
+          "required": ["component", "url"]
+        }
+      ]
+    },
+    "Icon": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Icon" },
+            "name": {
+              "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
+              "type": "object",
+              "properties": {
+                "literalString": {
+                  "type": "string",
+                  "enum": [
+                    "accountCircle",
+                    "add",
+                    "arrowBack",
+                    "arrowForward",
+                    "attachFile",
+                    "calendarToday",
+                    "call",
+                    "camera",
+                    "check",
+                    "close",
+                    "delete",
+                    "download",
+                    "edit",
+                    "event",
+                    "error",
+                    "favorite",
+                    "favoriteOff",
+                    "folder",
+                    "help",
+                    "home",
+                    "info",
+                    "locationOn",
+                    "lock",
+                    "lockOpen",
+                    "mail",
+                    "menu",
+                    "moreVert",
+                    "moreHoriz",
+                    "notificationsOff",
+                    "notifications",
+                    "payment",
+                    "person",
+                    "phone",
+                    "photo",
+                    "print",
+                    "refresh",
+                    "search",
+                    "send",
+                    "settings",
+                    "share",
+                    "shoppingCart",
+                    "star",
+                    "starHalf",
+                    "starOff",
+                    "upload",
+                    "visibility",
+                    "visibilityOff",
+                    "warning"
+                  ]
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "oneOf": [
+                { "required": ["literalString"] },
+                { "required": ["path"] }
+              ]
+            }
+          },
+          "required": ["component", "name"]
+        }
+      ]
+    },
+    "Video": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Video" },
+            "url": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/video/url')."
+            }
+          },
+          "required": ["component", "url"]
+        }
+      ]
+    },
+    "AudioPlayer": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "AudioPlayer" },
+            "url": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/song/url')."
+            },
+            "description": {
+              "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. '/song/title').",
+              "$ref": "server_to_client.json#/$defs/stringOrPath"
+            }
+          },
+          "required": ["component", "url"]
+        }
+      ]
+    },
+    "Row": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Row" },
+            "children": {
+              "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+              "$ref": "server_to_client.json#/$defs/childrenProperty"
+            },
+            "distribution": {
+              "type": "string",
+              "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property.",
+              "enum": [
+                "center",
+                "end",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "start"
+              ]
+            },
+            "alignment": {
+              "type": "string",
+              "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
+              "enum": ["start", "center", "end", "stretch"]
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "Column": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Column" },
+            "children": {
+              "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+              "$ref": "server_to_client.json#/$defs/childrenProperty"
+            },
+            "distribution": {
+              "type": "string",
+              "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property.",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "spaceBetween",
+                "spaceAround",
+                "spaceEvenly"
+              ]
+            },
+            "alignment": {
+              "type": "string",
+              "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
+              "enum": ["center", "end", "start", "stretch"]
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "List": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "List" },
+            "children": {
+              "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+              "$ref": "server_to_client.json#/$defs/childrenProperty"
+            },
+            "direction": {
+              "type": "string",
+              "description": "The direction in which the list items are laid out.",
+              "enum": ["vertical", "horizontal"]
+            },
+            "alignment": {
+              "type": "string",
+              "description": "Defines the alignment of children along the cross axis.",
+              "enum": ["start", "center", "end", "stretch"]
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ]
+    },
+    "Card": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Card" },
+            "child": {
+              "type": "string",
+              "description": "The ID of the component to be rendered inside the card."
+            }
+          },
+          "required": ["component", "child"]
+        }
+      ]
+    },
+    "Tabs": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Tabs" },
+            "tabItems": {
+              "type": "array",
+              "description": "An array of objects, where each object defines a tab with a title and a child component.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. '/options/title').",
+                    "$ref": "server_to_client.json#/$defs/stringOrPath"
+                  },
+                  "child": { "type": "string" }
+                },
+                "required": ["title", "child"]
+              }
+            }
+          },
+          "required": ["component", "tabItems"]
+        }
+      ]
+    },
+    "Divider": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Divider" },
+            "axis": {
+              "type": "string",
+              "description": "The orientation of the divider.",
+              "enum": ["horizontal", "vertical"]
+            }
+          },
+          "required": ["component"]
+        }
+      ]
+    },
+    "Modal": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Modal" },
+            "entryPointChild": {
+              "type": "string",
+              "description": "The ID of the component that opens the modal when interacted with (e.g., a button)."
+            },
+            "contentChild": {
+              "type": "string",
+              "description": "The ID of the component to be displayed inside the modal."
+            }
+          },
+          "required": ["component", "entryPointChild", "contentChild"]
+        }
+      ]
+    },
+    "Button": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Button" },
+            "child": {
+              "type": "string",
+              "description": "The ID of the component to display in the button, typically a Text component."
+            },
+            "primary": {
+              "type": "boolean",
+              "description": "Indicates if this button should be styled as the primary action."
+            },
+            "action": {
+              "type": "object",
+              "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
+              "properties": {
+                "name": { "type": "string" },
+                "context": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": { "type": "string" },
+                      "value": {
+                        "type": "object",
+                        "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. '/user/name').",
+                        "properties": {
+                          "path": { "type": "string" },
+                          "literalString": { "type": "string" },
+                          "literalNumber": { "type": "number" },
+                          "literalBoolean": { "type": "boolean" }
+                        }
+                      }
+                    },
+                    "required": ["key", "value"]
+                  }
+                }
+              },
+              "required": ["name"]
+            }
+          },
+          "required": ["component", "child", "action"]
+        }
+      ]
+    },
+    "CheckBox": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "CheckBox" },
+            "label": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. '/option/label')."
+            },
+            "value": {
+              "$ref": "server_to_client.json#/$defs/booleanOrPath",
+              "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. '/filter/open')."
+            }
+          },
+          "required": ["component", "label", "value"]
+        }
+      ]
+    },
+    "TextField": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "TextField" },
+            "label": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. '/user/name')."
+            },
+            "text": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. '/user/name')."
+            },
+            "textFieldType": {
+              "type": "string",
+              "description": "The type of input field to display.",
+              "enum": ["date", "longText", "number", "shortText", "obscured"]
+            },
+            "validationRegexp": {
+              "type": "string",
+              "description": "A regular expression used for client-side validation of the input."
+            }
+          },
+          "required": ["component", "label"]
+        }
+      ]
+    },
+    "DateTimeInput": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "DateTimeInput" },
+            "value": {
+              "$ref": "server_to_client.json#/$defs/stringOrPath",
+              "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob')."
+            },
+            "enableDate": {
+              "type": "boolean",
+              "description": "If true, allows the user to select a date."
+            },
+            "enableTime": {
+              "type": "boolean",
+              "description": "If true, allows the user to select a time."
+            },
+            "outputFormat": {
+              "type": "string",
+              "description": "The desired format for the output string after a date or time is selected."
+            }
+          },
+          "required": ["component", "value"]
+        }
+      ]
+    },
+    "MultipleChoice": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "MultipleChoice" },
+            "selections": {
+              "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. '/hotel/options').",
+              "$ref": "server_to_client.json#/$defs/stringArrayOrPath"
+            },
+            "options": {
+              "type": "array",
+              "description": "An array of available options for the user to choose from.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. '/option/label').",
+                    "$ref": "server_to_client.json#/$defs/stringOrPath"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "The value to be associated with this option when selected."
+                  }
+                },
+                "required": ["label", "value"]
+              }
+            },
+            "maxAllowedSelections": {
+              "type": "integer",
+              "description": "The maximum number of options that the user is allowed to select."
+            }
+          },
+          "required": ["component", "selections", "options"]
+        }
+      ]
+    },
+    "Slider": {
+      "allOf": [
+        { "$ref": "server_to_client.json#/$defs/componentProperties" },
+        {
+          "type": "object",
+          "properties": {
+            "component": { "const": "Slider" },
+            "value": {
+              "$ref": "server_to_client.json#/$defs/numberOrPath",
+              "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost')."
+            },
+            "minValue": {
+              "type": "number",
+              "description": "The minimum value of the slider."
+            },
+            "maxValue": {
+              "type": "number",
+              "description": "The maximum value of the slider."
+            }
+          },
+          "required": ["component", "value"]
+        }
+      ]
+    }
+  }
+}
