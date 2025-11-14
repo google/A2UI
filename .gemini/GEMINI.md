@@ -11,10 +11,9 @@ The A2UI repository is organized into several key directories:
 -   `specification/0.8/json/`: Contains the formal JSON schema definitions for the protocol.
     -   `server_to_client.json`: Defines the schema for messages sent from the server to the client.
     -   `client_to_server.json`: Defines the schema for event messages sent from the client to the server.
--   `a2a_samples/`: Contains three demo applications that showcase the A2UI protocol in action.
-    -   `a2ui_contact_lookup/`: A demo that looks up contact information.
-    -   `a2ui_extension/`: A demo that shows how to extend A2UI with custom components.
-    -   `a2ui_restaurant_finder/`: A demo that helps find restaurants.
+-   `a2a_agents/python/`: Contains Python code relating to server-side integration of A2UI
+    -   `a2ui_extension/`: Python implementation of the A2UI A2A extension.
+    -   `adk/samples/`: Contains demo applications that showcase the A2UI protocol in action using the ADK framework.
 -   `web/`: Contains the web-based client implementations (using Lit and Vite) for the samples, including a shared library (`web/lib`).
 -   `angular/`: Contains an alternative web-based client implementation using Angular.
 -   `eval/`: Contains a Genkit-based framework for evaluating LLM performance in generating A2UI responses.
@@ -36,6 +35,7 @@ This document covers the design philosophy, architecture, data flow, and core co
 The formal, machine-readable definitions of the protocol are maintained as JSON schemas:
 
 -   **Server-to-Client Schema**: `@specification/0.8/json/server_to_client.json`
+-   **Server-to-Client Schema, with standard catalog**: `@specification/0.8/json/server_to_client_with_standard_catalog.json`
 -   **Client-to-Server Schema**: `@specification/0.8/json/client_to_server.json`
 
 ## Running the Demos

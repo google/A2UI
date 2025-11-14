@@ -10,6 +10,7 @@ A Specification for a JSONL-Based, Streaming UI Protocol
 
 Created: Sep 19, 2025
 Updated: Nov 10, 2025
+Updated: Nov 12, 2025
 
 ## Design Requirements
 
@@ -55,7 +56,7 @@ Event Handling: Event handling is done via an A2A message from the client to the
 
 The A2UI Protocol is a protocol designed for rendering user interfaces from a stream of JSON objects sent from a server. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
 
-The protocol is designed to be "LLM-friendly," meaning its structure is declarative and straightforward, making it easy for a generative model to produce.
+The protocol is designed to be "LLM-friendly," meaning its structure is declarative and straightforward, making it easy for a generative model to produce. A core feature of A2UI is its extensible component model. The set of available UI components is not fixed by the protocol but is defined in a separate **Catalog**, allowing for platform-specific or custom components.
 
 Communication occurs via a JSON Lines (JSONL) stream. The client parses each line as a distinct message and incrementally builds the UI. The server-to-client protocol defines four message types:
 
@@ -151,7 +152,10 @@ The following is a complete, minimal example of a JSONL stream that renders a us
 {"surfaceUpdate": {"components": [{"id": "card_content", "component": {"Column": {"children": {"explicitList": ["header_row", "bio_text"]}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "header_row", "component": {"Row": {"alignment": "center", "children": {"explicitList": ["avatar", "name_column"]}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "avatar", "component": {"Image": {"url": {"literalString": "https://www.example.com/profile.jpg"}}}}]}}
+{"surfaceUpdate": {"components": [{"id": "avatar", "component": {"Image": {"url": {"literalString": "https://www.example.com/profile.jpg"}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "name_column", "component": {"Column": {"alignment": "start", "children": {"explicitList": ["name_text", "handle_text"]}}}}]}}
+{"surfaceUpdate": {"components": [{"id": "name_text", "component": {"Text": {"usageHint": "h3", "text": {"literalString": "A2A Fan"}}}}]}}
+{"surfaceUpdate": {"components": [{"id": "handle_text", "component": {"Text": {"text": {"literalString": "@a2a_fan"}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "name_text", "component": {"Text": {"usageHint": "h3", "text": {"literalString": "A2A Fan"}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "handle_text", "component": {"Text": {"text": {"literalString": "@a2a_fan"}}}}]}}
 {"surfaceUpdate": {"components": [{"id": "bio_text", "component": {"Text": {"text": {"literalString": "Building beautiful apps from a single codebase."}}}}]}}
@@ -166,6 +170,10 @@ A2UI's component model is designed for flexibility, separating the protocol from
 ### 2.1. The Catalog: Defining Components
 
 Unlike previous versions with a fixed component set, A2UI now defines components in a **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `surfaceUpdate` messages that conform to the component catalog understood by the client. Clients can inform the server of the catalog they support using the `clientUiCapabilities` message.
+
+#### Schemas for Developers
+
+When building an agent, it is recommended to use a resolved schema that includes the specific component catalog you are targeting (e.g., `server_to_client_with_standard_catalog.json`). This provides the LLM with a strict definition of all available components and their properties, leading to more reliable UI generation. The generic `server_to_client.json` is the abstract wire protocol, while the resolved schema is the concrete tool for generation.
 
 ### 2.2. The `surfaceUpdate` Message
 
@@ -429,47 +437,45 @@ This message is sent by the client to inform the server about its capabilities. 
 - `catalogUri`: A URI pointing to a predefined component catalog schema that the client supports.
 - `dynamicCatalog`: An inline JSON object, conforming to the Catalog Schema, that defines the client's supported components. This is useful for development or for clients with highly custom component sets.
 
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    Client->>+Server: POST /event (clientUiCapabilities with catalog)
+    Server-->>-Client: HTTP 200 OK
+    Note over Server: Server now knows which catalog to use.
+    Server->>+Client: SSE Connection (JSONL Stream using client's catalog)
+    Client-->>-Server: (Renders UI based on custom/specified catalog)
+```
+
 #### `dynamicCatalog`
 
 The `dynamicCatalog` property allows the client to send an inline JSON object that defines its entire supported component set. This is especially useful for development or for clients with highly custom components. The object must conform to the Catalog Schema, containing `components`.
 
 - `components`: An object where each key is the name of a component (e.g., `"MyCustomCard"`) and the value is a valid JSON object schema defining the properties for that component.
 
-**Example of a `clientUiCapabilities` message with a dynamic catalog:**
+**Example of a `clientUiCapabilities` message:**
 
 ```json
 {
-  "type": "object",
-  "description": "A message sent by the client to inform the server about its UI capabilities.",
-  "properties": {
-    "catalogUri": {
-      "type": "string",
-      "format": "uri",
-      "description": "A URI pointing to a predefined component catalog schema that the client supports."
-    },
+  "clientUiCapabilities": {
     "dynamicCatalog": {
-      "type": "object",
-      "description": "An inline JSON object, conforming to the Catalog Schema, that defines the client's supported components.",
-      "properties": {
-        "components": {
+      "components": {
+        "MyCustomCard": {
           "type": "object",
-          "description": "An object where each key is the name of a component (e.g., 'MyCustomCard') and the value is a valid JSON object schema defining the properties for that component.",
-          "patternProperties": {
-            "^[A-Z][a-zA-Z0-9]*$": {
-              "type": "object",
-              "description": "Schema for a specific component type."
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "child": {
+              "type": "string"
             }
           },
-          "additionalProperties": false
+          "required": ["title", "child"]
         }
-      },
-      "required": ["components"],
-      "additionalProperties": false
+      }
     }
-  },
-  "minProperties": 1,
-  "maxProperties": 1,
-  "additionalProperties": false
+  }
 }
 ```
 
@@ -569,7 +575,7 @@ A robust client-side interpreter for A2UI should be composed of several key comp
 This section provides the formal JSON Schema for a single server-to-client message in the A2UI JSONL stream. Each line in the stream must be a valid JSON object that conforms to this schema. It includes the entire base catalog of components, but the components may be swapped out for other components supported by the client. It is optimized to be able to be generated in structured output mode from various LLMs.
 
 ```json
-{% include "../specification/json/server_to_client.json" %}
+{% include "../specification/json/server_to_client_with_standard_catalog.json" %}
 ```
 
 ## Section 8: Complete A2UI Client to Server JSON Schema
