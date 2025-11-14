@@ -24,13 +24,19 @@ const ajv = new Ajv({ strict: false });
 
 const schemaDir = path.resolve(process.cwd(), "../");
 const serverToClientSchema = JSON.parse(
-  fs.readFileSync(path.join(schemaDir, "server_to_client.json"), "utf-8")
+  fs.readFileSync(
+    path.join(schemaDir, "json", "server_to_client.json"),
+    "utf-8"
+  )
 );
 const componentCatalogSchema = JSON.parse(
-  fs.readFileSync(path.join(schemaDir, "component_catalog.json"), "utf-8")
+  fs.readFileSync(
+    path.join(schemaDir, "json", "component_catalog.json"),
+    "utf-8"
+  )
 );
 const commonTypesSchema = JSON.parse(
-  fs.readFileSync(path.join(schemaDir, "common_types.json"), "utf-8")
+  fs.readFileSync(path.join(schemaDir, "json", "common_types.json"), "utf-8")
 );
 
 ajv.addSchema(commonTypesSchema, "common_types.json");
@@ -126,98 +132,14 @@ function validateDataModelUpdate(data: any, errors: string[]) {
     }
   }
 
-  if (!Array.isArray(data.contents)) {
-    errors.push("DataModelUpdate must have a 'contents' array.");
+  if (
+    typeof data.contents !== "object" ||
+    data.contents === null ||
+    Array.isArray(data.contents)
+  ) {
+    errors.push("DataModelUpdate 'contents' property must be an object.");
     return;
   }
-
-  const validateValueProperty = (
-    item: any,
-    itemErrors: string[],
-    prefix: string
-  ) => {
-    const valueProps = [
-      "valueString",
-      "valueNumber",
-      "valueBoolean",
-      "valueMap",
-    ];
-    let valueCount = 0;
-    let foundValueProp = "";
-    for (const prop of valueProps) {
-      if (item[prop] !== undefined) {
-        valueCount++;
-        foundValueProp = prop;
-      }
-    }
-    if (valueCount !== 1) {
-      itemErrors.push(
-        `${prefix} must have exactly one value property (${valueProps.join(", ")}), found ${valueCount}.`
-      );
-      return;
-    }
-
-    if (foundValueProp === "valueMap") {
-      if (!Array.isArray(item.valueMap)) {
-        itemErrors.push(`${prefix} 'valueMap' must be an array.`);
-        return;
-      }
-      item.valueMap.forEach((mapItem: any, index: number) => {
-        if (!mapItem.key) {
-          itemErrors.push(
-            `${prefix} 'valueMap' item at index ${index} is missing a 'key'.`
-          );
-        }
-        const mapValueProps = ["valueString", "valueNumber", "valueBoolean"];
-        let mapValueCount = 0;
-        for (const prop of mapValueProps) {
-          if (mapItem[prop] !== undefined) {
-            mapValueCount++;
-          }
-        }
-        if (mapValueCount !== 1) {
-          itemErrors.push(
-            `${prefix} 'valueMap' item at index ${index} must have exactly one value property (${mapValueProps.join(", ")}), found ${mapValueCount}.`
-          );
-        }
-        const allowedMapKeys = ["key", ...mapValueProps];
-        for (const key in mapItem) {
-          if (!allowedMapKeys.includes(key)) {
-            itemErrors.push(
-              `${prefix} 'valueMap' item at index ${index} has unexpected property: ${key}`
-            );
-          }
-        }
-      });
-    }
-  };
-
-  data.contents.forEach((item: any, index: number) => {
-    if (!item.key) {
-      errors.push(
-        `DataModelUpdate 'contents' item at index ${index} is missing a 'key'.`
-      );
-    }
-    validateValueProperty(
-      item,
-      errors,
-      `DataModelUpdate 'contents' item at index ${index}`
-    );
-    const allowedKeys = [
-      "key",
-      "valueString",
-      "valueNumber",
-      "valueBoolean",
-      "valueMap",
-    ];
-    for (const key in item) {
-      if (!allowedKeys.includes(key)) {
-        errors.push(
-          `DataModelUpdate 'contents' item at index ${index} has unexpected property: ${key}`
-        );
-      }
-    }
-  });
 }
 
 function validateBeginRendering(data: any, errors: string[]) {

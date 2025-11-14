@@ -112,6 +112,21 @@ function generateSummary(
 
   summary += `\n- **Number of tool error runs:** ${totalToolErrorRuns} / ${totalRuns}`;
   summary += `\n- **Number of runs with any failure (tool error or validation):** ${totalRunsWithAnyFailure} / ${totalRuns}`;
+  const latencies = results.map((r) => r.latency).sort((a, b) => a - b);
+  const totalLatency = latencies.reduce((acc, l) => acc + l, 0);
+  const meanLatency = (totalLatency / totalRuns).toFixed(0);
+  let medianLatency = 0;
+  if (latencies.length > 0) {
+    const mid = Math.floor(latencies.length / 2);
+    if (latencies.length % 2 === 0) {
+      medianLatency = (latencies[mid - 1] + latencies[mid]) / 2;
+    } else {
+      medianLatency = latencies[mid];
+    }
+  }
+
+  summary += `\n- **Mean Latency:** ${meanLatency} ms`;
+  summary += `\n- **Median Latency:** ${medianLatency} ms`;
   if (modelsWithFailures) {
     summary += `\n- **Models with at least one failure:** ${modelsWithFailures}`;
   }

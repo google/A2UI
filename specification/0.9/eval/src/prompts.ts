@@ -123,8 +123,10 @@ The dog generator is another card which is a form that generates a fictional dog
     matchers: [
       new MessageTypeMatcher("dataModelUpdate"),
       new BasicSchemaMatcher("dataModelUpdate.path", "/products"),
-      new BasicSchemaMatcher("dataModelUpdate.contents.0.key"), // Check that the first product key exists
-      new BasicSchemaMatcher("dataModelUpdate.contents.0.valueMap"), // Check that valueMap exists
+      new BasicSchemaMatcher("dataModelUpdate.contents.product1"),
+      new BasicSchemaMatcher("dataModelUpdate.contents.product1.id"),
+      new BasicSchemaMatcher("dataModelUpdate.contents.product1.name"),
+      new BasicSchemaMatcher("dataModelUpdate.contents.product1.imageUrl"),
     ],
   },
   {
