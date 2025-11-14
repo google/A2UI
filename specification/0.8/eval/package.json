@@ -19,10 +19,12 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/yargs": "^17.0.34",
     "dotenv-cli": "^10.0.0",
     "prettier": "^3.6.2",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "yargs": "^18.0.0"
   },
   "dependencies": {
     "@genkit-ai/compat-oai": "^1.19.2",

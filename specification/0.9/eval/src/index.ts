@@ -133,25 +133,45 @@ function generateSummary(
   return summary;
 }
 
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
 // Run the flow
 async function main() {
-  const args = process.argv.slice(2).reduce(
-    (acc, arg) => {
-      const [key, value] = arg.split("=");
-      if (key.startsWith("--")) {
-        if (value) {
-          acc[key.substring(2)] = value;
-        } else {
-          acc[key.substring(2)] = true;
-        }
-      }
-      return acc;
-    },
-    {} as Record<string, string | boolean>
-  );
+  const argv = await yargs(hideBin(process.argv))
+    .option("verbose", {
+      alias: "v",
+      type: "boolean",
+      description: "Run with verbose logging",
+      default: false,
+    })
+    .option("keep", {
+      type: "string",
+      description:
+        "Directory to keep output files. If no path is provided, a temporary directory will be created.",
+      coerce: (arg) => (arg === undefined ? true : arg),
+    })
+    .option("runs-per-prompt", {
+      type: "number",
+      description: "Number of times to run each prompt",
+      default: 1,
+    })
+    .option("model", {
+      type: "string",
+      array: true,
+      description: "Filter models by exact name",
+      default: [],
+      choices: modelsToTest.map((m) => m.name),
+    })
+    .option("prompt", {
+      type: "string",
+      description: "Filter prompts by name prefix",
+    })
+    .help()
+    .alias("h", "help").argv;
 
-  const verbose = !!args.verbose;
-  const keep = args.keep;
+  const verbose = argv.verbose;
+  const keep = argv.keep;
   let outputDir: string | null = null;
 
   if (keep) {
@@ -166,26 +186,25 @@ async function main() {
     console.log(`Keeping output in: ${outputDir}`);
   }
 
-  const runsPerPrompt = parseInt(args["runs-per-prompt"] as string, 10) || 1;
+  const runsPerPrompt = argv["runs-per-prompt"];
 
   let filteredModels = modelsToTest;
-  if (typeof args.model === "string") {
-    filteredModels = modelsToTest.filter((m) =>
-      m.name.startsWith(args.model as string)
-    );
+  if (argv.model && argv.model.length > 0) {
+    const modelNames = argv.model as string[];
+    filteredModels = modelsToTest.filter((m) => modelNames.includes(m.name));
     if (filteredModels.length === 0) {
-      console.error(`No model found with prefix "${args.model}".`);
+      console.error(`No models found matching: ${modelNames.join(", ")}.`);
       process.exit(1);
     }
   }
 
   let filteredPrompts = prompts;
-  if (typeof args.prompt === "string") {
+  if (argv.prompt) {
     filteredPrompts = prompts.filter((p) =>
-      p.name.startsWith(args.prompt as string)
+      p.name.startsWith(argv.prompt as string)
     );
     if (filteredPrompts.length === 0) {
-      console.error(`No prompt found with prefix "${args.prompt}".`);
+      console.error(`No prompt found with prefix "${argv.prompt}".`);
       process.exit(1);
     }
   }

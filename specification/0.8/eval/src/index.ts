@@ -118,25 +118,45 @@ function generateSummary(
   return summary;
 }
 
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
 // Run the flow
 async function main() {
-  const args = process.argv.slice(2).reduce(
-    (acc, arg) => {
-      const [key, value] = arg.split("=");
-      if (key.startsWith("--")) {
-        if (value) {
-          acc[key.substring(2)] = value;
-        } else {
-          acc[key.substring(2)] = true;
-        }
-      }
-      return acc;
-    },
-    {} as Record<string, string | boolean>,
-  );
+  const argv = await yargs(hideBin(process.argv))
+    .option("verbose", {
+      alias: "v",
+      type: "boolean",
+      description: "Run with verbose logging",
+      default: false,
+    })
+    .option("keep", {
+      type: "string",
+      description:
+        "Directory to keep output files. If no path is provided, a temporary directory will be created.",
+      coerce: (arg) => (arg === undefined ? true : arg),
+    })
+    .option("runs-per-prompt", {
+      type: "number",
+      description: "Number of times to run each prompt",
+      default: 1,
+    })
+    .option("model", {
+      type: "string",
+      array: true,
+      description: "Filter models by exact name",
+      default: [],
+      choices: modelsToTest.map((m) => m.name),
+    })
+    .option("prompt", {
+      type: "string",
+      description: "Filter prompts by name prefix",
+    })
+    .help()
+    .alias("h", "help").argv;
 
-  const verbose = !!args.verbose;
-  const keep = args.keep;
+  const verbose = argv.verbose;
+  const keep = argv.keep;
   let outputDir: string | null = null;
 
   if (keep) {
@@ -151,26 +171,25 @@ async function main() {
     console.log(`Keeping output in: ${outputDir}`);
   }
 
-  const runsPerPrompt = parseInt(args["runs-per-prompt"] as string, 10) || 1;
+  const runsPerPrompt = argv["runs-per-prompt"];
 
   let filteredModels = modelsToTest;
-  if (typeof args.model === "string") {
-    filteredModels = modelsToTest.filter((m) =>
-      m.name.startsWith(args.model as string),
-    );
+  if (argv.model && argv.model.length > 0) {
+    const modelNames = argv.model as string[];
+    filteredModels = modelsToTest.filter((m) => modelNames.includes(m.name));
     if (filteredModels.length === 0) {
-      console.error(`No model found with prefix "${args.model}".`);
+      console.error(`No models found matching: ${modelNames.join(", ")}.`);
       process.exit(1);
     }
   }
 
   let filteredPrompts = prompts;
-  if (typeof args.prompt === "string") {
+  if (argv.prompt) {
     filteredPrompts = prompts.filter((p) =>
-      p.name.startsWith(args.prompt as string),
+      p.name.startsWith(argv.prompt as string)
     );
     if (filteredPrompts.length === 0) {
-      console.error(`No prompt found with prefix "${args.prompt}".`);
+      console.error(`No prompt found with prefix "${argv.prompt}".`);
       process.exit(1);
     }
   }
@@ -180,7 +199,7 @@ async function main() {
   for (const prompt of filteredPrompts) {
     const schemaString = fs.readFileSync(
       path.join(__dirname, prompt.schemaPath),
-      "utf-8",
+      "utf-8"
     );
     const schema = JSON.parse(schemaString);
     for (const modelConfig of filteredModels) {
@@ -193,7 +212,7 @@ async function main() {
       }
       for (let i = 1; i <= runsPerPrompt; i++) {
         console.log(
-          `Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${i})`,
+          `Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${i})`
         );
         const startTime = Date.now();
         generationPromises.push(
@@ -207,23 +226,23 @@ async function main() {
               if (modelOutputDir) {
                 const inputPath = path.join(
                   modelOutputDir,
-                  `${prompt.name}.input.txt`,
+                  `${prompt.name}.input.txt`
                 );
                 fs.writeFileSync(inputPath, prompt.promptText);
 
                 const outputPath = path.join(
                   modelOutputDir,
-                  `${prompt.name}.output.json`,
+                  `${prompt.name}.output.json`
                 );
                 fs.writeFileSync(
                   outputPath,
-                  JSON.stringify(component, null, 2),
+                  JSON.stringify(component, null, 2)
                 );
               }
               const validationResults = validateSchema(
                 component,
                 prompt.schemaPath,
-                prompt.matchers,
+                prompt.matchers
               );
               return {
                 modelName: modelConfig.name,
@@ -239,13 +258,13 @@ async function main() {
               if (modelOutputDir) {
                 const inputPath = path.join(
                   modelOutputDir,
-                  `${prompt.name}.input.txt`,
+                  `${prompt.name}.input.txt`
                 );
                 fs.writeFileSync(inputPath, prompt.promptText);
 
                 const errorPath = path.join(
                   modelOutputDir,
-                  `${prompt.name}.error.json`,
+                  `${prompt.name}.error.json`
                 );
                 const errorOutput = {
                   message: error.message,
@@ -254,7 +273,7 @@ async function main() {
                 };
                 fs.writeFileSync(
                   errorPath,
-                  JSON.stringify(errorOutput, null, 2),
+                  JSON.stringify(errorOutput, null, 2)
                 );
               }
               return {
@@ -266,7 +285,7 @@ async function main() {
                 validationResults: [],
                 runNumber: i,
               };
-            }),
+            })
         );
       }
     }
@@ -302,7 +321,7 @@ async function main() {
           if (hasValidationFailures) {
             console.log("Validation Failures:");
             result.validationResults.forEach((failure) =>
-              console.log(`- ${failure}`),
+              console.log(`- ${failure}`)
             );
           }
           if (verbose) {
