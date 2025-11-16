@@ -76,12 +76,21 @@ class RestaurantAgentExecutor(AgentExecutor):
             for i, part in enumerate(context.message.parts):
                 if isinstance(part.root, DataPart):
                     if "userAction" in part.root.data:
-                        logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
+                        logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload in DataPart.")
                         ui_event_part = part.root.data["userAction"]
                     else:
                         logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
                 elif isinstance(part.root, TextPart):
                     logger.info(f"  Part {i}: TextPart (text: {part.root.text})")
+                    try:
+                        # Attempt to parse text part as JSON, in case the client sent it that way
+                        data = json.loads(part.root.text)
+                        if "userAction" in data:
+                            logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload in TextPart.")
+                            ui_event_part = data["userAction"]
+                    except (json.JSONDecodeError, TypeError):
+                        # Not a valid JSON or not a string, ignore
+                        pass
                 else:
                     logger.info(f"  Part {i}: Unknown part type ({type(part.root)})")
 
@@ -119,87 +128,39 @@ class RestaurantAgentExecutor(AgentExecutor):
             await event_queue.enqueue_event(task)
         updater = TaskUpdater(event_queue, task.id, task.context_id)
 
+        final_state = TaskState.input_required  # Default final state
+
         async for item in agent.stream(query, task.context_id):
-            is_task_complete = item["is_task_complete"]
-            if not is_task_complete:
-                await updater.update_status(
-                    TaskState.working,
-                    new_agent_text_message(item["updates"], task.context_id, task.id),
-                )
-                continue
+            if item["is_task_complete"]:
+                break
 
-            final_state = (
-                TaskState.completed
-                if action == "submit_booking"
-                else TaskState.input_required
-            )
+            a2ui_message = item["content"]
+            logger.info(f"Executor received message: {a2ui_message}")
 
-            content = item["content"]
-            final_parts = []
-            if "---a2ui_JSON---" in content:
-                logger.info("Splitting final response into text and UI parts.")
-                text_content, json_string = content.split("---a2ui_JSON---", 1)
+            # Determine final state based on actions seen in the stream
+            if "surfaceUpdate" in a2ui_message:
+                for component in a2ui_message["surfaceUpdate"].get("components", []):
+                    action = (
+                        component.get("component", {})
+                        .get("Button", {})
+                        .get("action", {})
+                    )
+                    if action.get("name") == "submit_booking":
+                        final_state = TaskState.completed
+                        break
 
-                if text_content.strip():
-                    final_parts.append(Part(root=TextPart(text=text_content.strip())))
+            part = Part(root=DataPart(data=a2ui_message, mime_type=a2ui_MIME_TYPE))
+            message = new_agent_parts_message([part], task.context_id, task.id)
 
-                if json_string.strip():
-                    try:
-                        json_string_cleaned = (
-                            json_string.strip().lstrip("```json").rstrip("```").strip()
-                        )
-                        # The new protocol sends a stream of JSON objects.
-                        # For this example, we'll assume they are sent as a list in the final response.
-                        json_data = json.loads(json_string_cleaned)
+            # Send each A2UI message as an intermediate update
+            await updater.update_status(TaskState.working, message)
 
-                        if isinstance(json_data, list):
-                            logger.info(
-                                f"Found {len(json_data)} messages. Creating individual DataParts."
-                            )
-                            for message in json_data:
-                                final_parts.append(
-                                    Part(
-                                        root=DataPart(
-                                            data=message,
-                                            mime_type=a2ui_MIME_TYPE,
-                                        )
-                                    )
-                                )
-                        else:
-                            # Handle the case where a single JSON object is returned
-                            logger.info(
-                                "Received a single JSON object. Creating a DataPart."
-                            )
-                            final_parts.append(
-                                Part(
-                                    root=DataPart(
-                                        data=json_data,
-                                        mime_type=a2ui_MIME_TYPE,
-                                    )
-                                )
-                            )
-
-                    except json.JSONDecodeError as e:
-                        logger.error(f"Failed to parse UI JSON: {e}")
-                        final_parts.append(Part(root=TextPart(text=json_string)))
-            else:
-                final_parts.append(Part(root=TextPart(text=content.strip())))
-
-            logger.info("--- FINAL PARTS TO BE SENT ---")
-            for i, part in enumerate(final_parts):
-                logger.info(f"  - Part {i}: Type = {type(part.root)}")
-                if isinstance(part.root, TextPart):
-                    logger.info(f"    - Text: {part.root.text[:200]}...")
-                elif isinstance(part.root, DataPart):
-                    logger.info(f"    - Data: {str(part.root.data)[:200]}...")
-            logger.info("-----------------------------")
-
-            await updater.update_status(
-                final_state,
-                new_agent_parts_message(final_parts, task.context_id, task.id),
-                final=(final_state == TaskState.completed),
-            )
-            break
+        # Send the final status update once the stream is complete
+        await updater.update_status(
+            final_state,
+            new_agent_text_message("Done.", task.context_id, task.id),
+            final=(final_state == TaskState.completed),
+        )
 
     async def cancel(
         self, request: RequestContext, event_queue: EventQueue
