@@ -22,6 +22,16 @@ import { prompts, TestPrompt } from "./prompts";
 import { validateSchema } from "./validator";
 import Ajv from "ajv";
 
+const schemaFiles = [
+  "../../json/common_types.json",
+  "../../json/component_catalog.json",
+  "../../json/server_to_client.json",
+];
+
+// const schemaFiles = [
+//   "../../../0.8/json/server_to_client_with_standard_catalog.json",
+// ];
+
 // Add this function to extract JSON from markdown
 function extractJsonFromMarkdown(markdown: string): any | null {
   const jsonBlockMatch = markdown.match(/```json\s*([\s\S]*?)\s*```/);
@@ -227,11 +237,6 @@ async function main() {
 
   const ajv = new Ajv({ allErrors: true });
 
-  const schemaFiles = [
-    "../../json/common_types.json",
-    "../../json/component_catalog.json",
-    "../../json/server_to_client.json",
-  ];
   const schemas: any = {};
   for (const file of schemaFiles) {
     const schemaString = fs.readFileSync(path.join(__dirname, file), "utf-8");
@@ -262,8 +267,7 @@ async function main() {
         generationPromises.push(
           componentGeneratorFlow({
             prompt: prompt.promptText,
-            model: modelConfig.model,
-            config: modelConfig.config,
+            modelConfig: modelConfig,
             schemas, // Pass all loaded schemas
           })
             .then((rawOutput) => {

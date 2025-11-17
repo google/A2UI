@@ -18,6 +18,8 @@ import { googleAI } from "@genkit-ai/google-genai";
 import { genkit, z } from "genkit";
 import { openAI } from "@genkit-ai/compat-oai/openai";
 import { anthropic } from "genkitx-anthropic";
+import { ModelConfiguration } from "./models";
+import { rateLimiter } from "./rateLimiter";
 
 const plugins = [];
 
@@ -49,13 +51,13 @@ export const componentGeneratorFlow = ai.defineFlow(
     name: "componentGeneratorFlow",
     inputSchema: z.object({
       prompt: z.string(),
-      model: z.any(),
-      config: z.any().optional(),
-      schemas: z.any(), // Changed from schema to schemas
+      modelConfig: z.any(), // Ideally, we'd have a Zod schema for ModelConfiguration
+      schemas: z.any(),
     }),
     outputSchema: z.any(),
   },
-  async ({ prompt, model, config, schemas }) => {
+  async ({ prompt, modelConfig, schemas }) => {
+    await rateLimiter.acquirePermit(modelConfig as ModelConfiguration);
     const schemaDefs = Object.values(schemas)
       .map((s: any) => JSON.stringify(s, null, 2))
       .join("\n\n");
@@ -107,11 +109,17 @@ ${schemaDefs}
     // Generate text response
     const response = await ai.generate({
       prompt: fullPrompt,
-      model,
-      config,
+      model: modelConfig.model,
+      config: modelConfig.config,
     });
 
     if (!response) throw new Error("Failed to generate component");
+
+    // Record token usage
+    const inputTokens = response.usage?.inputTokens || 0;
+    const outputTokens = response.usage?.outputTokens || 0;
+    const totalTokens = inputTokens + outputTokens;
+    rateLimiter.recordUsage(modelConfig as ModelConfiguration, totalTokens);
 
     return response.text;
   }

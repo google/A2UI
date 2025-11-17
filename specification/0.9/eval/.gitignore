@@ -11,7 +11,6 @@
 # production
 /build
 lib/
-output/
 
 # misc
 .DS_Store

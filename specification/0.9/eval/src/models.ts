@@ -22,6 +22,8 @@ export interface ModelConfiguration {
   model: any;
   name: string;
   config?: any;
+  requestsPerMinute?: number;
+  tokensPerMinute?: number;
 }
 
 export const modelsToTest: ModelConfiguration[] = [
@@ -44,16 +46,22 @@ export const modelsToTest: ModelConfiguration[] = [
     model: googleAI.model("gemini-2.5-pro"),
     name: "gemini-2.5-pro-thinking",
     config: { thinkingConfig: { thinkingBudget: 1000 } },
+    requestsPerMinute: 150,
+    tokensPerMinute: 2000000,
   },
   {
     model: googleAI.model("gemini-2.5-flash"),
     name: "gemini-2.5-flash",
     config: { thinkingConfig: { thinkingBudget: 0 } },
+    requestsPerMinute: 1000,
+    tokensPerMinute: 1000000,
   },
   {
     model: googleAI.model("gemini-2.5-flash-lite"),
     name: "gemini-2.5-flash-lite",
     config: { thinkingConfig: { thinkingBudget: 0 } },
+    requestsPerMinute: 4000,
+    tokensPerMinute: 1200000,
   },
   {
     model: claude4Sonnet,
