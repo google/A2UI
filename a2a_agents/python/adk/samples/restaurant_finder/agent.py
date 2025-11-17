@@ -33,7 +33,6 @@ from prompt_builder import (
     get_text_prompt,
     get_ui_prompt,
 )
-from tools import get_restaurants
 
 logger = logging.getLogger(__name__)
 
@@ -45,59 +44,133 @@ AGENT_INSTRUCTION = """
 
 class A2UIStreamParser:
     """
-    Parses a stream of text to find and yield complete JSON objects.
-    It is designed to find and parse complete `{...}` objects from a
-    stream, even if they are wrapped in a list.
+    A stateful parser that can incrementally parse A2UI messages from a stream.
+    It has a special mode to handle chunking of components within a surfaceUpdate.
     """
 
     def __init__(self):
         self._buffer = ""
+        self._state = "seeking_message"  # seeking_message, in_message, seeking_components, in_component
+        self._brace_level = 0
+        self._in_string = False
+        self._start_pos = -1
+        self._surface_id = None
+        logger.info("Parser initialized in 'seeking_message' state.")
 
     def feed(self, chunk: str):
-        """Appends a chunk of text from the stream to the buffer."""
         self._buffer += chunk
-        logger.info(f"Parser feed. Buffer is now: '{self._buffer}'")
+        logger.debug(f"Parser feed. Buffer size: {len(self._buffer)}")
 
-    def __iter__(self):
-        """Yields complete JSON objects found in the buffer."""
-        brace_level = 0
+    def get_chunks(self):
+        chunks = []
+        while self._parse_one_chunk(chunks):
+            pass
+        return chunks
+
+    def _find_matching_brace(self, start_char, end_char, start_pos):
+        """Finds the position of the matching closing brace/bracket from a start position."""
+        level = 1
         in_string = False
-        obj_start = -1
-
-        i = 0
-        while i < len(self._buffer):
+        for i in range(start_pos + 1, len(self._buffer)):
             char = self._buffer[i]
-
-            # Basic string detection to ignore braces inside strings
             if char == '"' and (i == 0 or self._buffer[i - 1] != "\\"):
                 in_string = not in_string
             elif not in_string:
-                if char == "{":
-                    if brace_level == 0:
-                        obj_start = i
-                    brace_level += 1
-                elif char == "}":
-                    if brace_level > 0:
-                        brace_level -= 1
-                        if brace_level == 0 and obj_start != -1:
-                            # Found a complete JSON object
-                            json_str = self._buffer[obj_start : i + 1]
-                            try:
-                                logger.info(
-                                    f"Parser found complete JSON object: {json_str}"
-                                )
-                                yield json.loads(json_str)
-                                # Reset for next object
-                                self._buffer = self._buffer[i + 1 :]
-                                i = -1  # Restart scan from the beginning of the new buffer
-                                obj_start = -1
-                            except json.JSONDecodeError:
-                                logger.warning(
-                                    f"Parser failed to decode JSON: {json_str}"
-                                )
-                                # It was a false positive, reset start and continue scanning
-                                obj_start = -1
-            i += 1
+                if char == start_char:
+                    level += 1
+                elif char == end_char:
+                    level -= 1
+                    if level == 0:
+                        return i
+        return -1
+
+    def _parse_one_chunk(self, chunks):
+        if self._state == "seeking_message":
+            return self._parse_message_mode(chunks)
+        elif self._state == "in_message":
+            return self._parse_message_mode(chunks)
+        elif self._state == "seeking_components":
+            return self._parse_seeking_components_mode()
+        elif self._state == "in_component":
+            return self._parse_component_mode(chunks)
+        return False
+
+    def _parse_message_mode(self, chunks):
+        obj_start = self._buffer.find("{")
+        if obj_start == -1:
+            return False
+
+        # Heuristically check if it's a surfaceUpdate without full parsing
+        is_surface_update = '"surfaceUpdate"' in self._buffer[obj_start : obj_start + 20]
+
+        if is_surface_update:
+            sid_key_pos = self._buffer.find('"surfaceId"', obj_start)
+            if sid_key_pos == -1: return False
+            sid_val_start = self._buffer.find('"', sid_key_pos + 11) + 1
+            if sid_val_start == 0: return False
+            sid_val_end = self._buffer.find('"', sid_val_start)
+            if sid_val_end == -1: return False
+            self._surface_id = self._buffer[sid_val_start:sid_val_end]
+
+            comp_key_pos = self._buffer.find('"components"', sid_val_end)
+            if comp_key_pos == -1: return False
+            comp_list_start = self._buffer.find('[', comp_key_pos)
+            if comp_list_start == -1: return False
+
+            logger.info(f"Switching to 'in_component' mode for surfaceId: '{self._surface_id}'")
+            self._state = "in_component"
+            self._buffer = self._buffer[comp_list_start + 1:]
+            return True
+        else:
+            obj_end = self._find_matching_brace("{", "}", obj_start)
+            if obj_end == -1: return False
+
+            obj_str = self._buffer[obj_start : obj_end + 1]
+            try:
+                message = json.loads(obj_str)
+                chunks.append(message)
+                self._buffer = self._buffer[obj_end + 1:]
+                self._state = "seeking_message"
+                return True
+            except json.JSONDecodeError:
+                return False
+
+    def _parse_component_mode(self, chunks):
+        self._buffer = self._buffer.lstrip(" \t\n\r,")
+        if not self._buffer: return False
+
+        if self._buffer.startswith("]"):
+            logger.info("Found end of components array.")
+            closing_brace_pos = self._buffer.find("}")
+            if closing_brace_pos != -1:
+                self._state = "seeking_message"
+                logger.debug("State -> seeking_message")
+                self._buffer = self._buffer[closing_brace_pos + 1:]
+                return True
+            else:
+                return False
+
+        comp_start = self._buffer.find("{")
+        if comp_start != 0: return False
+
+        comp_end = self._find_matching_brace("{", "}", comp_start)
+        if comp_end == -1: return False
+
+        comp_str = self._buffer[comp_start : comp_end + 1]
+        try:
+            component = json.loads(comp_str)
+            logger.info(f"Parsed component: {component.get('id')}")
+            chunked_message = {
+                "surfaceUpdate": {
+                    "surfaceId": self._surface_id,
+                    "components": [component],
+                }
+            }
+            chunks.append(chunked_message)
+            self._buffer = self._buffer[comp_end + 1:]
+            return True
+        except json.JSONDecodeError:
+            return False
 
 
 class RestaurantAgent:
@@ -117,23 +190,6 @@ class RestaurantAgent:
             session_service=InMemorySessionService(),
             memory_service=InMemoryMemoryService(),
         )
-
-        # --- MODIFICATION: Wrap the schema ---
-        # Load the A2UI_SCHEMA string into a Python object for validation
-        try:
-            # First, load the schema for a *single message*
-            single_message_schema = json.loads(A2UI_SCHEMA)
-
-            # The prompt instructs the LLM to return a *list* of messages.
-            # Therefore, our validation schema must be an *array* of the single message schema.
-            self.a2ui_schema_object = {"type": "array", "items": single_message_schema}
-            logger.info(
-                "A2UI_SCHEMA successfully loaded and wrapped in an array validator."
-            )
-        except json.JSONDecodeError as e:
-            logger.error(f"CRITICAL: Failed to parse A2UI_SCHEMA: {e}")
-            self.a2ui_schema_object = None
-        # --- END MODIFICATION ---
 
     def get_processing_message(self) -> str:
         return "Finding restaurants that match your criteria..."
@@ -155,7 +211,7 @@ class RestaurantAgent:
                 model=LITELLM_MODEL,
                 model_parameters={
                     "stream": True,
-                    "stream_options": {"include_usage": True}
+                    "stream_options": {"include_usage": True},
                 },
             ),
             name="restaurant_agent",
@@ -208,29 +264,17 @@ class RestaurantAgent:
                     parser.feed(chunk)
 
                 # Process any complete JSON objects the parser finds
-                for a2ui_message in parser:
+                for a2ui_message in parser.get_chunks():
                     if "surfaceUpdate" in a2ui_message:
-                        # For surface updates, chunk by component
-                        update = a2ui_message["surfaceUpdate"]
-                        new_components = []
-                        for component in update.get("components", []):
-                            comp_id = component.get("id")
-                            if comp_id not in sent_component_ids:
-                                new_components.append(component)
-                                sent_component_ids.add(comp_id)
-
-                        if new_components:
-                            # Yield a new surfaceUpdate with only the new components
-                            chunked_message = {
-                                "surfaceUpdate": {
-                                    "surfaceId": update["surfaceId"],
-                                    "components": new_components,
-                                }
-                            }
-                            logger.info(f"Agent yielding chunk: {chunked_message}")
+                        # The parser now returns chunked components, but we still check for duplicates
+                        component = a2ui_message["surfaceUpdate"]["components"][0]
+                        comp_id = component.get("id")
+                        if comp_id not in sent_component_ids:
+                            sent_component_ids.add(comp_id)
+                            logger.info(f"Agent yielding chunk: {a2ui_message}")
                             yield {
                                 "is_task_complete": False,
-                                "content": chunked_message,
+                                "content": a2ui_message,
                             }
                     else:
                         # For other messages like beginRendering, yield them directly
