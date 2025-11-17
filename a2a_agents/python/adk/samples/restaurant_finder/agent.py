@@ -23,6 +23,7 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.models.lite_llm import LiteLlm
+from google.adk.agents import run_config
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -37,77 +38,65 @@ from tools import get_restaurants
 logger = logging.getLogger(__name__)
 
 AGENT_INSTRUCTION = """
-    You are a helpful restaurant finding assistant. Your goal is to help users find and book restaurants using a rich UI.
-
-    To achieve this, you MUST follow this logic:
-
-    1.  **For finding restaurants:**
-        a. You MUST call the `get_restaurants` tool. Extract the cuisine, location, and a specific number (`count`) of restaurants from the user's query (e.g., for "top 5 chinese places", count is 5).
-        b. After receiving the data, you MUST follow the instructions precisely to generate the final a2ui UI JSON, using the appropriate UI example from the `prompt_builder.py` based on the number of restaurants.
-
-    2.  **For booking a table (when you receive a query like 'USER_WANTS_TO_BOOK...'):**
-        a. You MUST use the appropriate UI example from `prompt_builder.py` to generate the UI, populating the `dataModelUpdate.contents` with the details from the user's query.
-
-    3.  **For confirming a booking (when you receive a query like 'User submitted a booking...'):**
-        a. You MUST use the appropriate UI example from `prompt_builder.py` to generate the confirmation UI, populating the `dataModelUpdate.contents` with the final booking details.
+    You are a helpful restaurant booking assistant. Your only goal is to help users book restaurants using a rich UI.
+    To do this, you MUST use the BOOKING_FORM_EXAMPLE to generate the UI.
 """
 
 
 class A2UIStreamParser:
     """
     Parses a stream of text to find and yield complete JSON objects.
-    If it parses a list, it yields the items of the list individually.
-    It handles incomplete JSON by buffering and waiting for more data.
+    It is designed to find and parse complete `{...}` objects from a
+    stream, even if they are wrapped in a list.
     """
 
     def __init__(self):
         self._buffer = ""
-        self._brace_level = 0
-        self._in_string = False
 
     def feed(self, chunk: str):
         """Appends a chunk of text from the stream to the buffer."""
         self._buffer += chunk
+        logger.info(f"Parser feed. Buffer is now: '{self._buffer}'")
 
     def __iter__(self):
         """Yields complete JSON objects found in the buffer."""
-        start = 0
+        brace_level = 0
+        in_string = False
+        obj_start = -1
+
         i = 0
         while i < len(self._buffer):
             char = self._buffer[i]
-            if char == '"':
-                if i == 0 or self._buffer[i - 1] != "\\":
-                    self._in_string = not self._in_string
-            elif not self._in_string:
-                if char == "{" or char == "[":
-                    if self._brace_level == 0:
-                        start = i
-                    self._brace_level += 1
-                elif char == "}" or char == "]":
-                    if self._brace_level > 0:
-                        self._brace_level -= 1
-                        if self._brace_level == 0:
-                            # Found a complete top-level object
-                            json_str = self._buffer[start : i + 1]
+
+            # Basic string detection to ignore braces inside strings
+            if char == '"' and (i == 0 or self._buffer[i - 1] != "\\"):
+                in_string = not in_string
+            elif not in_string:
+                if char == "{":
+                    if brace_level == 0:
+                        obj_start = i
+                    brace_level += 1
+                elif char == "}":
+                    if brace_level > 0:
+                        brace_level -= 1
+                        if brace_level == 0 and obj_start != -1:
+                            # Found a complete JSON object
+                            json_str = self._buffer[obj_start : i + 1]
                             try:
-                                logger.info(f"Parser found complete JSON: {json_str}")
-                                parsed_json = json.loads(json_str)
-
-                                # If it's a list, yield each item.
-                                if isinstance(parsed_json, list):
-                                    for item in parsed_json:
-                                        yield item
-                                else:  # It's a dict
-                                    yield parsed_json
-
-                                # Reset buffer to what's left
+                                logger.info(
+                                    f"Parser found complete JSON object: {json_str}"
+                                )
+                                yield json.loads(json_str)
+                                # Reset for next object
                                 self._buffer = self._buffer[i + 1 :]
-                                # Restart iteration on the new buffer
-                                i = -1
-                                start = 0
+                                i = -1  # Restart scan from the beginning of the new buffer
+                                obj_start = -1
                             except json.JSONDecodeError:
-                                # Incomplete or invalid JSON, continue buffering
-                                pass
+                                logger.warning(
+                                    f"Parser failed to decode JSON: {json_str}"
+                                )
+                                # It was a false positive, reset start and continue scanning
+                                obj_start = -1
             i += 1
 
 
@@ -162,11 +151,16 @@ class RestaurantAgent:
             instruction = get_text_prompt()
 
         return LlmAgent(
-            model=LiteLlm(model=LITELLM_MODEL, stream=True),
+            model=LiteLlm(
+                model=LITELLM_MODEL,
+                model_parameters={
+                    "stream": True,
+                    "stream_options": {"include_usage": True}
+                },
+            ),
             name="restaurant_agent",
-            description="An agent that finds restaurants and helps book tables.",
+            description="An agent that helps book restaurant tables.",
             instruction=instruction,
-            tools=[get_restaurants],
         )
 
     async def stream(self, query, session_id) -> AsyncIterable[dict[str, Any]]:
@@ -195,6 +189,7 @@ class RestaurantAgent:
         async for event in self._runner.run_async(
             user_id=self._user_id,
             session_id=session.id,
+            run_config = run_config.RunConfig(streaming_mode=run_config.StreamingMode.SSE),
             new_message=types.Content(
                 role="user", parts=[types.Part.from_text(text=query)]
             ),

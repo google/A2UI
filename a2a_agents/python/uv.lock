@@ -88,7 +88,7 @@ requires-dist = [
     { name = "a2a-sdk", specifier = ">=0.3.0" },
     { name = "a2ui-ext", editable = "a2ui_extension" },
     { name = "click", specifier = ">=8.1.8" },
-    { name = "google-adk", specifier = ">=1.8.0" },
+    { name = "google-adk", specifier = ">=1.18" },
     { name = "google-genai", specifier = ">=1.27.0" },
     { name = "jsonschema", specifier = ">=4.0.0" },
     { name = "litellm" },
