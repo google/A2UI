@@ -113,10 +113,13 @@ class RestaurantAgentExecutor(AgentExecutor):
         final_state = TaskState.input_required  # Default final state
 
         async for item in agent.stream(query, task.context_id):
-            if item["is_task_complete"]:
+            if item.get("is_task_complete"):
                 break
 
-            a2ui_message = item["content"]
+            a2ui_message = item.get("content")
+            if not a2ui_message:
+                continue
+
             logger.info(f"Executor received message: {a2ui_message}")
 
             # Determine final state based on actions seen in the stream

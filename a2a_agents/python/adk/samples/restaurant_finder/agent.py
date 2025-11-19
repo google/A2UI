@@ -26,6 +26,21 @@ from google.adk.models.lite_llm import LiteLlm
 from google.adk.agents import run_config
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+import json
+import logging
+import os
+from collections.abc import AsyncIterable
+from typing import Any
+from datetime import datetime
+
+import jsonschema
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.artifacts import InMemoryArtifactService
+from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+from google.adk.models.lite_llm import LiteLlm
+from google.adk.agents import run_config
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from prompt_builder import (
     A2UI_SCHEMA,
@@ -241,6 +256,7 @@ class RestaurantAgent:
         sent_component_ids = set()
         delimiter_found = False
 
+        logger.info(f"[{datetime.now()}] Starting run_async loop.")
         # The runner must be configured to yield intermediate, partial results
         async for event in self._runner.run_async(
             user_id=self._user_id,
@@ -253,7 +269,7 @@ class RestaurantAgent:
             if event.content and event.content.parts and event.content.parts[0].text:
                 # Feed the raw text from the LLM into our permissive parser
                 chunk = event.content.parts[0].text
-                logger.info(f"LLM raw chunk: {chunk}")
+                logger.info(f"[{datetime.now()}] LLM raw chunk: {chunk}")
 
                 # Find and strip the ---a2ui_JSON--- delimiter once
                 if not delimiter_found and "---a2ui_JSON---" in chunk:
@@ -280,6 +296,7 @@ class RestaurantAgent:
                         # For other messages like beginRendering, yield them directly
                         logger.info(f"Agent yielding message: {a2ui_message}")
                         yield {"is_task_complete": False, "content": a2ui_message}
-
+        
+        logger.info(f"[{datetime.now()}] Finished run_async loop.")
         # Signal completion once the stream is done
         yield {"is_task_complete": True, "content": None}
