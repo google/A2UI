@@ -15,6 +15,7 @@
  */
 
 import { inputBinding } from '@angular/core';
+import { v0_8 } from '@a2ui/web-lib';
 import { Catalog } from '../rendering/catalog';
 import { Row } from './row';
 import { Column } from './column';
@@ -23,117 +24,165 @@ import { Text } from './text';
 export const DEFAULT_CATALOG: Catalog = {
   Row: {
     type: () => Row,
-    bindings: ({ properties }) => [
-      inputBinding('alignment', () => properties.alignment ?? 'stretch'),
-      inputBinding('distribution', () => properties.distribution ?? 'start'),
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.RowNode).properties;
+      return [
+        inputBinding('alignment', () => properties.alignment ?? 'stretch'),
+        inputBinding('distribution', () => properties.distribution ?? 'start'),
+      ];
+    },
   },
 
   Column: {
     type: () => Column,
-    bindings: ({ properties }) => [
-      inputBinding('alignment', () => properties.alignment ?? 'stretch'),
-      inputBinding('distribution', () => properties.distribution ?? 'start'),
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.ColumnNode).properties;
+      return [
+        inputBinding('alignment', () => properties.alignment ?? 'stretch'),
+        inputBinding('distribution', () => properties.distribution ?? 'start'),
+      ];
+    },
   },
 
   List: {
     type: () => import('./list').then((r) => r.List),
-    bindings: ({ properties }) => [
-      inputBinding('direction', () => properties.direction ?? 'vertical'),
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.ListNode).properties;
+      return [
+        inputBinding('direction', () => properties.direction ?? 'vertical'),
+      ];
+    },
   },
 
   Card: () => import('./card').then((r) => r.Card),
 
   Heading: {
     type: () => import('./heading').then((r) => r.Heading),
-    bindings: ({ properties }) => [
-      inputBinding('text', () => properties.text),
-      inputBinding('level', () => properties.level),
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.HeadingNode).properties;
+      return [
+        inputBinding('text', () => properties.text),
+        inputBinding('level', () => properties.level),
+      ];
+    },
   },
 
   Image: {
     type: () => import('./image').then((r) => r.Image),
-    bindings: ({ properties }) => [inputBinding('url', () => properties.url)],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.ImageNode).properties;
+      return [inputBinding('url', () => properties.url)];
+    },
   },
 
   Icon: {
     type: () => import('./icon').then((r) => r.Icon),
-    bindings: ({ properties }) => [inputBinding('name', () => properties.name)],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.IconNode).properties;
+      return [inputBinding('name', () => properties.name)];
+    },
   },
 
   Video: {
     type: () => import('./video').then((r) => r.Video),
-    bindings: ({ properties }) => [inputBinding('url', () => properties.url)],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.VideoNode).properties;
+      return [inputBinding('url', () => properties.url)];
+    },
   },
 
   AudioPlayer: {
     type: () => import('./audio').then((r) => r.Audio),
-    bindings: ({ properties }) => [inputBinding('url', () => properties.url)],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.AudioPlayerNode).properties;
+      return [inputBinding('url', () => properties.url)];
+    },
   },
 
   Text: {
     type: () => Text,
-    bindings: ({ properties }) => [inputBinding('text', () => properties.text)],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.TextNode).properties;
+      return [inputBinding('text', () => properties.text)];
+    },
   },
 
   Button: {
     type: () => import('./button').then((r) => r.Button),
-    bindings: ({ properties }) => [inputBinding('action', () => properties.action)],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.ButtonNode).properties;
+      return [inputBinding('action', () => properties.action)];
+    },
   },
 
   Divider: () => import('./divider').then((r) => r.Divider),
 
   MultipleChoice: {
     type: () => import('./multiple-choice').then((r) => r.MultipleChoice),
-    bindings: ({ properties }) => [
-      inputBinding('options', () => properties.options || []),
-      inputBinding('value', () => properties.selections),
-      inputBinding('description', () => 'Select an item'), // TODO: this should be defined in the properties
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.MultipleChoiceNode).properties;
+      return [
+        inputBinding('options', () => properties.options || []),
+        inputBinding('value', () => properties.selections),
+        inputBinding('description', () => 'Select an item'), // TODO: this should be defined in the properties
+      ];
+    },
   },
 
   TextField: {
     type: () => import('./text-field').then((r) => r.TextField),
-    bindings: ({ properties }) => [
-      inputBinding('text', () => properties.text ?? null),
-      inputBinding('label', () => properties.label),
-      inputBinding('inputType', () => properties.type),
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.TextFieldNode).properties;
+      return [
+        inputBinding('text', () => properties.text ?? null),
+        inputBinding('label', () => properties.label),
+        inputBinding('inputType', () => properties.type),
+      ];
+    },
   },
 
   DateTimeInput: {
     type: () => import('./datetime-input').then((r) => r.DatetimeInput),
-    bindings: ({ properties }) => [
-      inputBinding('enableDate', () => properties.enableDate),
-      inputBinding('enableTime', () => properties.enableTime),
-      inputBinding('value', () => properties.value),
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.DateTimeInputNode).properties;
+      return [
+        inputBinding('enableDate', () => properties.enableDate),
+        inputBinding('enableTime', () => properties.enableTime),
+        inputBinding('value', () => properties.value),
+      ];
+    },
   },
 
   CheckBox: {
     type: () => import('./checkbox').then((r) => r.Checkbox),
-    bindings: ({ properties }) => [
-      inputBinding('label', () => properties.label),
-      inputBinding('value', () => properties.value),
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.CheckboxNode).properties;
+      return [
+        inputBinding('label', () => properties.label),
+        inputBinding('value', () => properties.value),
+      ];
+    },
   },
 
   Slider: {
     type: () => import('./slider').then((r) => r.Slider),
-    bindings: ({ properties }) => [
-      inputBinding('value', () => properties.value),
-      inputBinding('minValue', () => properties.minValue),
-      inputBinding('maxValue', () => properties.maxValue),
-      inputBinding('label', () => ''), // TODO: this should be defined in the properties
-    ],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.SliderNode).properties;
+      return [
+        inputBinding('value', () => properties.value),
+        inputBinding('minValue', () => properties.minValue),
+        inputBinding('maxValue', () => properties.maxValue),
+        inputBinding('label', () => ''), // TODO: this should be defined in the properties
+      ];
+    },
   },
 
   Tabs: {
     type: () => import('./tabs').then((r) => r.Tabs),
-    bindings: ({ properties }) => [inputBinding('tabs', () => properties.tabItems)],
+    bindings: (node) => {
+      const properties = (node as v0_8.Types.TabsNode).properties;
+      return [inputBinding('tabs', () => properties.tabItems)];
+    },
   },
 
   Modal: {

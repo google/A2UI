@@ -30,25 +30,7 @@ export type CatalogEntry<T extends v0_8.Types.AnyComponentNode> =
     };
 
 export interface Catalog {
-  Button?: CatalogEntry<v0_8.Types.ButtonNode>;
-  Heading?: CatalogEntry<v0_8.Types.HeadingNode>;
-  Text?: CatalogEntry<v0_8.Types.TextNode>;
-  Image?: CatalogEntry<v0_8.Types.ImageNode>;
-  Icon?: CatalogEntry<v0_8.Types.IconNode>;
-  Video?: CatalogEntry<v0_8.Types.VideoNode>;
-  AudioPlayer?: CatalogEntry<v0_8.Types.AudioPlayerNode>;
-  Row?: CatalogEntry<v0_8.Types.RowNode>;
-  Column?: CatalogEntry<v0_8.Types.ColumnNode>;
-  List?: CatalogEntry<v0_8.Types.ListNode>;
-  Card?: CatalogEntry<v0_8.Types.CardNode>;
-  Tabs?: CatalogEntry<v0_8.Types.TabsNode>;
-  Divider?: CatalogEntry<v0_8.Types.DividerNode>;
-  Modal?: CatalogEntry<v0_8.Types.ModalNode>;
-  CheckBox?: CatalogEntry<v0_8.Types.CheckboxNode>;
-  TextField?: CatalogEntry<v0_8.Types.TextFieldNode>;
-  DateTimeInput?: CatalogEntry<v0_8.Types.DateTimeInputNode>;
-  MultipleChoice?: CatalogEntry<v0_8.Types.MultipleChoiceNode>;
-  Slider?: CatalogEntry<v0_8.Types.SliderNode>;
+  [key: string]: CatalogEntry<v0_8.Types.AnyComponentNode>;
 }
 
 export const Catalog = new InjectionToken<Catalog>('Catalog');

@@ -710,7 +710,12 @@ export class A2UIModelProcessor implements ModelProcessor {
         }) as AnyComponentNode;
 
       default:
-        throw new Error(`Unknown component type: "${componentType}"`);
+        // Catch-all for other custom component types.
+        return new this.#objCtor({
+          ...baseNode,
+          type: componentType,
+          properties: resolvedProperties,
+        }) as AnyComponentNode;
     }
   }
 
