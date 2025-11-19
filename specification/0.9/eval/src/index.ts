@@ -21,6 +21,7 @@ import { modelsToTest } from "./models";
 import { prompts, TestPrompt } from "./prompts";
 import { validateSchema } from "./validator";
 import { rateLimiter } from "./rateLimiter";
+import { logger, setupLogger } from "./logger";
 import Ajv from "ajv";
 
 const schemaFiles = [
@@ -40,7 +41,7 @@ function extractJsonFromMarkdown(markdown: string): any | null {
     try {
       return JSON.parse(jsonBlockMatch[1]);
     } catch (error) {
-      console.error("Failed to parse JSON from markdown:", error);
+      logger.error(`Failed to parse JSON from markdown: ${error}`);
       return null;
     }
   }
@@ -166,17 +167,18 @@ import { hideBin } from "yargs/helpers";
 // Run the flow
 async function main() {
   const argv = await yargs(hideBin(process.argv))
-    .option("verbose", {
-      alias: "v",
-      type: "boolean",
-      description: "Run with verbose logging",
-      default: false,
+    .option("log-level", {
+      type: "string",
+      description: "Set the logging level",
+      default: "info",
+      choices: ["debug", "info", "warn", "error"],
     })
     .option("keep", {
       type: "string",
       description:
-        "Directory to keep output files. If no path is provided, a temporary directory will be created.",
+        "Directory to keep output files. If true (default), uses results/output-<model>.",
       coerce: (arg) => (arg === undefined ? true : arg),
+      default: true,
     })
     .option("runs-per-prompt", {
       type: "number",
@@ -194,24 +196,43 @@ async function main() {
       type: "string",
       description: "Filter prompts by name prefix",
     })
+    .option("clean-output", {
+      type: "boolean",
+      description: "Clear the output directory before starting",
+      default: false,
+    })
     .help()
     .alias("h", "help").argv;
 
-  const verbose = argv.verbose;
-  const keep = argv.keep;
-  let outputDir: string | null = null;
+  let outputDir: string;
+  const keepArg = argv.keep;
 
-  if (keep) {
-    if (typeof keep === "string") {
-      outputDir = keep;
+  if (typeof keepArg === "string") {
+    outputDir = keepArg;
+  } else {
+    // Default naming logic
+    const models =
+      argv.model && argv.model.length > 0
+        ? (argv.model as string[])
+        : modelsToTest.map((m) => m.name);
+
+    if (models.length === 1) {
+      outputDir = path.join("results", `output-${models[0]}`);
     } else {
-      outputDir = fs.mkdtempSync(path.join(process.cwd(), "a2ui-eval-"));
+      outputDir = path.join("results", "output-combined");
     }
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
-    console.log(`Keeping output in: ${outputDir}`);
   }
+
+  if (argv["clean-output"] && fs.existsSync(outputDir)) {
+    fs.rmSync(outputDir, { recursive: true, force: true });
+  }
+
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  setupLogger(outputDir, argv["log-level"]);
+  logger.info(`Output directory: ${outputDir}`);
 
   const runsPerPrompt = argv["runs-per-prompt"];
 
@@ -220,7 +241,7 @@ async function main() {
     const modelNames = argv.model as string[];
     filteredModels = modelsToTest.filter((m) => modelNames.includes(m.name));
     if (filteredModels.length === 0) {
-      console.error(`No models found matching: ${modelNames.join(", ")}.`);
+      logger.error(`No models found matching: ${modelNames.join(", ")}.`);
       process.exit(1);
     }
   }
@@ -231,7 +252,7 @@ async function main() {
       p.name.startsWith(argv.prompt as string)
     );
     if (filteredPrompts.length === 0) {
-      console.error(`No prompt found with prefix "${argv.prompt}".`);
+      logger.error(`No prompt found with prefix "${argv.prompt}".`);
       process.exit(1);
     }
   }
@@ -265,7 +286,7 @@ async function main() {
         fs.mkdirSync(modelOutputDir, { recursive: true });
       }
       for (let i = 1; i <= runsPerPrompt; i++) {
-        console.log(
+        logger.info(
           `Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${i})`
         );
         const startTime = Date.now();
@@ -422,41 +443,41 @@ async function main() {
     resultsByModel[result.modelName].push(result);
   }
 
-  console.log("\n--- Generation Results ---");
+  logger.info("--- Generation Results ---");
   for (const modelName in resultsByModel) {
     for (const result of resultsByModel[modelName]) {
       const hasError = !!result.error;
       const hasValidationFailures = result.validationResults.length > 0;
       const hasComponent = !!result.component;
 
-      if (hasError || hasValidationFailures || (verbose && hasComponent)) {
-        console.log(`\n----------------------------------------`);
-        console.log(`Model: ${modelName}`);
-        console.log(`----------------------------------------`);
-        console.log(`\nQuery: ${result.prompt.name} (run ${result.runNumber})`);
+      if (hasError || hasValidationFailures) {
+        logger.info(`----------------------------------------`);
+        logger.info(`Model: ${modelName}`);
+        logger.info(`----------------------------------------`);
+        logger.info(`Query: ${result.prompt.name} (run ${result.runNumber})`);
 
         if (hasError) {
-          console.error("Error generating component:", result.error);
+          logger.error(
+            `Error generating component: ${JSON.stringify(result.error)}`
+          );
         } else if (hasComponent) {
           if (hasValidationFailures) {
-            console.log("Validation Failures:");
+            logger.info("Validation Failures:");
             result.validationResults.forEach((failure) =>
-              console.log(`- ${failure}`)
+              logger.info(`- ${failure}`)
             );
           }
-          if (verbose) {
-            if (hasValidationFailures) {
-              console.log("Generated schema:");
-              console.log(JSON.stringify(result.component, null, 2));
-            }
-          }
+          // Verbose logging of generated schema is removed as per request,
+          // or could be added back under 'debug' level if desired.
+          logger.debug("Generated schema:");
+          logger.debug(JSON.stringify(result.component, null, 2));
         }
       }
     }
   }
 
   const summary = generateSummary(resultsByModel, results);
-  console.log(summary);
+  logger.info(summary);
   if (outputDir) {
     const summaryPath = path.join(outputDir, "summary.md");
     fs.writeFileSync(summaryPath, summary);
