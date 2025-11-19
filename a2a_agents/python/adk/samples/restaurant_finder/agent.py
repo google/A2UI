@@ -23,6 +23,22 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.models.lite_llm import LiteLlm
+from google.adk.agents import run_config
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+import json
+import logging
+import os
+from collections.abc import AsyncIterable
+from typing import Any
+from datetime import datetime
+
+import jsonschema
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.artifacts import InMemoryArtifactService
+from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+from google.adk.models.lite_llm import LiteLlm
+from google.adk.agents import run_config
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -32,25 +48,144 @@ from prompt_builder import (
     get_text_prompt,
     get_ui_prompt,
 )
-from tools import get_restaurants
 
 logger = logging.getLogger(__name__)
 
 AGENT_INSTRUCTION = """
-    You are a helpful restaurant finding assistant. Your goal is to help users find and book restaurants using a rich UI.
-
-    To achieve this, you MUST follow this logic:
-
-    1.  **For finding restaurants:**
-        a. You MUST call the `get_restaurants` tool. Extract the cuisine, location, and a specific number (`count`) of restaurants from the user's query (e.g., for "top 5 chinese places", count is 5).
-        b. After receiving the data, you MUST follow the instructions precisely to generate the final a2ui UI JSON, using the appropriate UI example from the `prompt_builder.py` based on the number of restaurants.
-
-    2.  **For booking a table (when you receive a query like 'USER_WANTS_TO_BOOK...'):**
-        a. You MUST use the appropriate UI example from `prompt_builder.py` to generate the UI, populating the `dataModelUpdate.contents` with the details from the user's query.
-
-    3.  **For confirming a booking (when you receive a query like 'User submitted a booking...'):**
-        a. You MUST use the appropriate UI example from `prompt_builder.py` to generate the confirmation UI, populating the `dataModelUpdate.contents` with the final booking details.
+    You are a helpful restaurant booking assistant. Your only goal is to help users book restaurants using a rich UI.
+    To do this, you MUST use the BOOKING_FORM_EXAMPLE to generate the UI.
 """
+
+
+class A2UIStreamParser:
+    """
+    A stateful parser that can incrementally parse A2UI messages from a stream.
+    It has a special mode to handle chunking of components within a surfaceUpdate.
+    """
+
+    def __init__(self):
+        self._buffer = ""
+        self._state = "seeking_message"  # seeking_message, in_message, seeking_components, in_component
+        self._brace_level = 0
+        self._in_string = False
+        self._start_pos = -1
+        self._surface_id = None
+        logger.info("Parser initialized in 'seeking_message' state.")
+
+    def feed(self, chunk: str):
+        self._buffer += chunk
+        logger.debug(f"Parser feed. Buffer size: {len(self._buffer)}")
+
+    def get_chunks(self):
+        chunks = []
+        while self._parse_one_chunk(chunks):
+            pass
+        return chunks
+
+    def _find_matching_brace(self, start_char, end_char, start_pos):
+        """Finds the position of the matching closing brace/bracket from a start position."""
+        level = 1
+        in_string = False
+        for i in range(start_pos + 1, len(self._buffer)):
+            char = self._buffer[i]
+            if char == '"' and (i == 0 or self._buffer[i - 1] != "\\"):
+                in_string = not in_string
+            elif not in_string:
+                if char == start_char:
+                    level += 1
+                elif char == end_char:
+                    level -= 1
+                    if level == 0:
+                        return i
+        return -1
+
+    def _parse_one_chunk(self, chunks):
+        if self._state == "seeking_message":
+            return self._parse_message_mode(chunks)
+        elif self._state == "in_message":
+            return self._parse_message_mode(chunks)
+        elif self._state == "seeking_components":
+            return self._parse_seeking_components_mode()
+        elif self._state == "in_component":
+            return self._parse_component_mode(chunks)
+        return False
+
+    def _parse_message_mode(self, chunks):
+        obj_start = self._buffer.find("{")
+        if obj_start == -1:
+            return False
+
+        # Heuristically check if it's a surfaceUpdate without full parsing
+        is_surface_update = '"surfaceUpdate"' in self._buffer[obj_start : obj_start + 20]
+
+        if is_surface_update:
+            sid_key_pos = self._buffer.find('"surfaceId"', obj_start)
+            if sid_key_pos == -1: return False
+            sid_val_start = self._buffer.find('"', sid_key_pos + 11) + 1
+            if sid_val_start == 0: return False
+            sid_val_end = self._buffer.find('"', sid_val_start)
+            if sid_val_end == -1: return False
+            self._surface_id = self._buffer[sid_val_start:sid_val_end]
+
+            comp_key_pos = self._buffer.find('"components"', sid_val_end)
+            if comp_key_pos == -1: return False
+            comp_list_start = self._buffer.find('[', comp_key_pos)
+            if comp_list_start == -1: return False
+
+            logger.info(f"Switching to 'in_component' mode for surfaceId: '{self._surface_id}'")
+            self._state = "in_component"
+            self._buffer = self._buffer[comp_list_start + 1:]
+            return True
+        else:
+            obj_end = self._find_matching_brace("{", "}", obj_start)
+            if obj_end == -1: return False
+
+            obj_str = self._buffer[obj_start : obj_end + 1]
+            try:
+                message = json.loads(obj_str)
+                chunks.append(message)
+                self._buffer = self._buffer[obj_end + 1:]
+                self._state = "seeking_message"
+                return True
+            except json.JSONDecodeError:
+                return False
+
+    def _parse_component_mode(self, chunks):
+        self._buffer = self._buffer.lstrip(" \t\n\r,")
+        if not self._buffer: return False
+
+        if self._buffer.startswith("]"):
+            logger.info("Found end of components array.")
+            closing_brace_pos = self._buffer.find("}")
+            if closing_brace_pos != -1:
+                self._state = "seeking_message"
+                logger.debug("State -> seeking_message")
+                self._buffer = self._buffer[closing_brace_pos + 1:]
+                return True
+            else:
+                return False
+
+        comp_start = self._buffer.find("{")
+        if comp_start != 0: return False
+
+        comp_end = self._find_matching_brace("{", "}", comp_start)
+        if comp_end == -1: return False
+
+        comp_str = self._buffer[comp_start : comp_end + 1]
+        try:
+            component = json.loads(comp_str)
+            logger.info(f"Parsed component: {component.get('id')}")
+            chunked_message = {
+                "surfaceUpdate": {
+                    "surfaceId": self._surface_id,
+                    "components": [component],
+                }
+            }
+            chunks.append(chunked_message)
+            self._buffer = self._buffer[comp_end + 1:]
+            return True
+        except json.JSONDecodeError:
+            return False
 
 
 class RestaurantAgent:
@@ -71,23 +206,6 @@ class RestaurantAgent:
             memory_service=InMemoryMemoryService(),
         )
 
-        # --- MODIFICATION: Wrap the schema ---
-        # Load the A2UI_SCHEMA string into a Python object for validation
-        try:
-            # First, load the schema for a *single message*
-            single_message_schema = json.loads(A2UI_SCHEMA)
-
-            # The prompt instructs the LLM to return a *list* of messages.
-            # Therefore, our validation schema must be an *array* of the single message schema.
-            self.a2ui_schema_object = {"type": "array", "items": single_message_schema}
-            logger.info(
-                "A2UI_SCHEMA successfully loaded and wrapped in an array validator."
-            )
-        except json.JSONDecodeError as e:
-            logger.error(f"CRITICAL: Failed to parse A2UI_SCHEMA: {e}")
-            self.a2ui_schema_object = None
-        # --- END MODIFICATION ---
-
     def get_processing_message(self) -> str:
         return "Finding restaurants that match your criteria..."
 
@@ -104,11 +222,16 @@ class RestaurantAgent:
             instruction = get_text_prompt()
 
         return LlmAgent(
-            model=LiteLlm(model=LITELLM_MODEL),
+            model=LiteLlm(
+                model=LITELLM_MODEL,
+                model_parameters={
+                    "stream": True,
+                    "stream_options": {"include_usage": True},
+                },
+            ),
             name="restaurant_agent",
-            description="An agent that finds restaurants and helps book tables.",
+            description="An agent that helps book restaurant tables.",
             instruction=instruction,
-            tools=[get_restaurants],
         )
 
     async def stream(self, query, session_id) -> AsyncIterable[dict[str, Any]]:
@@ -129,175 +252,51 @@ class RestaurantAgent:
         elif "base_url" not in session.state:
             session.state["base_url"] = self.base_url
 
-        # --- Begin: UI Validation and Retry Logic ---
-        max_retries = 1  # Total 2 attempts
-        attempt = 0
-        current_query_text = query
+        parser = A2UIStreamParser()
+        sent_component_ids = set()
+        delimiter_found = False
 
-        # Ensure schema was loaded
-        if self.use_ui and self.a2ui_schema_object is None:
-            logger.error(
-                "--- RestaurantAgent.stream: A2UI_SCHEMA is not loaded. "
-                "Cannot perform UI validation. ---"
-            )
-            yield {
-                "is_task_complete": True,
-                "content": (
-                    "I'm sorry, I'm facing an internal configuration error with my UI components. "
-                    "Please contact support."
-                ),
-            }
-            return
-
-        while attempt <= max_retries:
-            attempt += 1
-            logger.info(
-                f"--- RestaurantAgent.stream: Attempt {attempt}/{max_retries + 1} "
-                f"for session {session_id} ---"
-            )
-
-            current_message = types.Content(
-                role="user", parts=[types.Part.from_text(text=current_query_text)]
-            )
-            final_response_content = None
-
-            async for event in self._runner.run_async(
-                user_id=self._user_id,
-                session_id=session.id,
-                new_message=current_message,
-            ):
-                logger.info(f"Event from runner: {event}")
-                if event.is_final_response():
-                    if (
-                        event.content
-                        and event.content.parts
-                        and event.content.parts[0].text
-                    ):
-                        final_response_content = "\n".join(
-                            [p.text for p in event.content.parts if p.text]
-                        )
-                    break  # Got the final response, stop consuming events
-                else:
-                    logger.info(f"Intermediate event: {event}")
-                    # Yield intermediate updates on every attempt
-                    yield {
-                        "is_task_complete": False,
-                        "updates": self.get_processing_message(),
-                    }
-
-            if final_response_content is None:
-                logger.warning(
-                    f"--- RestaurantAgent.stream: Received no final response content from runner "
-                    f"(Attempt {attempt}). ---"
-                )
-                if attempt <= max_retries:
-                    current_query_text = (
-                        "I received no response. Please try again."
-                        f"Please retry the original request: '{query}'"
-                    )
-                    continue  # Go to next retry
-                else:
-                    # Retries exhausted on no-response
-                    final_response_content = "I'm sorry, I encountered an error and couldn't process your request."
-                    # Fall through to send this as a text-only error
-
-            is_valid = False
-            error_message = ""
-
-            if self.use_ui:
-                logger.info(
-                    f"--- RestaurantAgent.stream: Validating UI response (Attempt {attempt})... ---"
-                )
-                try:
-                    if "---a2ui_JSON---" not in final_response_content:
-                        raise ValueError("Delimiter '---a2ui_JSON---' not found.")
-
-                    text_part, json_string = final_response_content.split(
-                        "---a2ui_JSON---", 1
-                    )
-
-                    if not json_string.strip():
-                        raise ValueError("JSON part is empty.")
-
-                    json_string_cleaned = (
-                        json_string.strip().lstrip("```json").rstrip("```").strip()
-                    )
-
-                    if not json_string_cleaned:
-                        raise ValueError("Cleaned JSON string is empty.")
-
-                    # --- New Validation Steps ---
-                    # 1. Check if it's parsable JSON
-                    parsed_json_data = json.loads(json_string_cleaned)
-
-                    # 2. Check if it validates against the A2UI_SCHEMA
-                    # This will raise jsonschema.exceptions.ValidationError if it fails
-                    logger.info(
-                        "--- RestaurantAgent.stream: Validating against A2UI_SCHEMA... ---"
-                    )
-                    jsonschema.validate(
-                        instance=parsed_json_data, schema=self.a2ui_schema_object
-                    )
-                    # --- End New Validation Steps ---
-
-                    logger.info(
-                        f"--- RestaurantAgent.stream: UI JSON successfully parsed AND validated against schema. "
-                        f"Validation OK (Attempt {attempt}). ---"
-                    )
-                    is_valid = True
-
-                except (
-                    ValueError,
-                    json.JSONDecodeError,
-                    jsonschema.exceptions.ValidationError,
-                ) as e:
-                    logger.warning(
-                        f"--- RestaurantAgent.stream: A2UI validation failed: {e} (Attempt {attempt}) ---"
-                    )
-                    logger.warning(
-                        f"--- Failed response content: {final_response_content[:500]}... ---"
-                    )
-                    error_message = f"Validation failed: {e}."
-
-            else:  # Not using UI, so text is always "valid"
-                is_valid = True
-
-            if is_valid:
-                logger.info(
-                    f"--- RestaurantAgent.stream: Response is valid. Sending final response (Attempt {attempt}). ---"
-                )
-                logger.info(f"Final response: {final_response_content}")
-                yield {
-                    "is_task_complete": True,
-                    "content": final_response_content,
-                }
-                return  # We're done, exit the generator
-
-            # --- If we're here, it means validation failed ---
-
-            if attempt <= max_retries:
-                logger.warning(
-                    f"--- RestaurantAgent.stream: Retrying... ({attempt}/{max_retries + 1}) ---"
-                )
-                # Prepare the query for the retry
-                current_query_text = (
-                    f"Your previous response was invalid. {error_message} "
-                    "You MUST generate a valid response that strictly follows the A2UI JSON SCHEMA. "
-                    "The response MUST be a JSON list of A2UI messages. "
-                    "Ensure the response is split by '---a2ui_JSON---' and the JSON part is well-formed. "
-                    f"Please retry the original request: '{query}'"
-                )
-                # Loop continues...
-
-        # --- If we're here, it means we've exhausted retries ---
-        logger.error(
-            "--- RestaurantAgent.stream: Max retries exhausted. Sending text-only error. ---"
-        )
-        yield {
-            "is_task_complete": True,
-            "content": (
-                "I'm sorry, I'm having trouble generating the interface for that request right now. "
-                "Please try again in a moment."
+        logger.info(f"[{datetime.now()}] Starting run_async loop.")
+        # The runner must be configured to yield intermediate, partial results
+        async for event in self._runner.run_async(
+            user_id=self._user_id,
+            session_id=session.id,
+            run_config = run_config.RunConfig(streaming_mode=run_config.StreamingMode.SSE),
+            new_message=types.Content(
+                role="user", parts=[types.Part.from_text(text=query)]
             ),
-        }
-        # --- End: UI Validation and Retry Logic ---
+        ):
+            if event.content and event.content.parts and event.content.parts[0].text:
+                # Feed the raw text from the LLM into our permissive parser
+                chunk = event.content.parts[0].text
+                logger.info(f"[{datetime.now()}] LLM raw chunk: {chunk}")
+
+                # Find and strip the ---a2ui_JSON--- delimiter once
+                if not delimiter_found and "---a2ui_JSON---" in chunk:
+                    _, json_chunk = chunk.split("---a2ui_JSON---", 1)
+                    parser.feed(json_chunk)
+                    delimiter_found = True
+                elif delimiter_found:
+                    parser.feed(chunk)
+
+                # Process any complete JSON objects the parser finds
+                for a2ui_message in parser.get_chunks():
+                    if "surfaceUpdate" in a2ui_message:
+                        # The parser now returns chunked components, but we still check for duplicates
+                        component = a2ui_message["surfaceUpdate"]["components"][0]
+                        comp_id = component.get("id")
+                        if comp_id not in sent_component_ids:
+                            sent_component_ids.add(comp_id)
+                            logger.info(f"Agent yielding chunk: {a2ui_message}")
+                            yield {
+                                "is_task_complete": False,
+                                "content": a2ui_message,
+                            }
+                    else:
+                        # For other messages like beginRendering, yield them directly
+                        logger.info(f"Agent yielding message: {a2ui_message}")
+                        yield {"is_task_complete": False, "content": a2ui_message}
+        
+        logger.info(f"[{datetime.now()}] Finished run_async loop.")
+        # Signal completion once the stream is done
+        yield {"is_task_complete": True, "content": None}
