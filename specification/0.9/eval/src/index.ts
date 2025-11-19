@@ -20,6 +20,7 @@ import * as path from "path";
 import { modelsToTest } from "./models";
 import { prompts, TestPrompt } from "./prompts";
 import { validateSchema } from "./validator";
+import { rateLimiter } from "./rateLimiter";
 import Ajv from "ajv";
 
 const schemaFiles = [
@@ -248,6 +249,10 @@ async function main() {
   }
 
   const generationPromises: Promise<InferenceResult>[] = [];
+  let completedCount = 0;
+  let failedCount = 0;
+  const totalJobs =
+    filteredPrompts.length * filteredModels.length * runsPerPrompt;
 
   for (const prompt of filteredPrompts) {
     // Schema is now loaded at the beginning
@@ -381,12 +386,32 @@ async function main() {
                 runNumber: i,
               };
             })
+            .then((result) => {
+              if (result.error) {
+                failedCount++;
+              } else {
+                completedCount++;
+              }
+              return result;
+            })
         );
       }
     }
   }
 
+  const progressInterval = setInterval(() => {
+    const queuedCount = rateLimiter.waitingCount;
+    const inProgressCount =
+      totalJobs - completedCount - failedCount - queuedCount;
+    const pct = Math.round(((completedCount + failedCount) / totalJobs) * 100);
+    process.stderr.write(
+      `\rProgress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}`
+    );
+  }, 1000);
+
   const results = await Promise.all(generationPromises);
+  clearInterval(progressInterval);
+  process.stderr.write("\n");
 
   const resultsByModel: Record<string, InferenceResult[]> = {};
 

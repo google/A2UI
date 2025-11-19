@@ -44,15 +44,8 @@ export const modelsToTest: ModelConfiguration[] = [
   },
   {
     model: googleAI.model("gemini-2.5-pro"),
-    name: "gemini-2.5-pro-thinking",
-    config: { thinkingConfig: { thinkingBudget: 1000 } },
-    requestsPerMinute: 150,
-    tokensPerMinute: 2000000,
-  },
-  {
-    model: googleAI.model("gemini-2.5-pro"),
     name: "gemini-2.5-pro",
-    config: { thinkingConfig: { thinkingBudget: 0 } },
+    config: { thinkingConfig: { thinkingBudget: 1000 } },
     requestsPerMinute: 150,
     tokensPerMinute: 2000000,
   },
