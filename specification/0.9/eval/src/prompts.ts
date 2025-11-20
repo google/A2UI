@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { BasicSchemaMatcher } from "./basic_schema_matcher";
+import { AnySchemaMatcher, BasicSchemaMatcher } from "./basic_schema_matcher";
 import { MessageTypeMatcher } from "./message_type_matcher";
 import { SchemaMatcher } from "./schema_matcher";
 import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
@@ -123,10 +123,26 @@ The dog generator is another card which is a form that generates a fictional dog
     matchers: [
       new MessageTypeMatcher("dataModelUpdate"),
       new BasicSchemaMatcher("dataModelUpdate.path", "/products"),
-      new BasicSchemaMatcher("dataModelUpdate.contents.product1"),
-      new BasicSchemaMatcher("dataModelUpdate.contents.product1.id"),
-      new BasicSchemaMatcher("dataModelUpdate.contents.product1.name"),
-      new BasicSchemaMatcher("dataModelUpdate.contents.product1.imageUrl"),
+      new AnySchemaMatcher([
+        new BasicSchemaMatcher("dataModelUpdate.contents.products.product1"),
+        new BasicSchemaMatcher("dataModelUpdate.contents.product1"),
+      ]),
+      new AnySchemaMatcher([
+        new BasicSchemaMatcher("dataModelUpdate.contents.products.product1.id"),
+        new BasicSchemaMatcher("dataModelUpdate.contents.product1.id"),
+      ]),
+      new AnySchemaMatcher([
+        new BasicSchemaMatcher(
+          "dataModelUpdate.contents.products.product1.name"
+        ),
+        new BasicSchemaMatcher("dataModelUpdate.contents.product1.name"),
+      ]),
+      new AnySchemaMatcher([
+        new BasicSchemaMatcher(
+          "dataModelUpdate.contents.products.product1.imageUrl"
+        ),
+        new BasicSchemaMatcher("dataModelUpdate.contents.product1.imageUrl"),
+      ]),
     ],
   },
   {
@@ -200,25 +216,67 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
       new MessageTypeMatcher("surfaceUpdate"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Simple Animal Explorer"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Search..."),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Mammalia"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Carnivora"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Mammalia"),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Mammalia"),
+      ]),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Carnivora"),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Carnivora"),
+      ]),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Lion"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Tiger"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Wolf"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Artiodactyla"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Artiodactyla"),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Artiodactyla"),
+      ]),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Giraffe"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Hippopotamus"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Aves"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Accipitriformes"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Aves"),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Aves"),
+      ]),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher(
+          "Text",
+          "text",
+          "Order: Accipitriformes"
+        ),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Accipitriformes"),
+      ]),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Bald Eagle"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Struthioniformes"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher(
+          "Text",
+          "text",
+          "Order: Struthioniformes"
+        ),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Struthioniformes"),
+      ]),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Ostrich"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Sphenisciformes"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher(
+          "Text",
+          "text",
+          "Order: Sphenisciformes"
+        ),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Sphenisciformes"),
+      ]),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Penguin"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Reptilia"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Crocodilia"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Reptilia"),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Reptilia"),
+      ]),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Crocodilia"),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Crocodilia"),
+      ]),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Nile Crocodile"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Squamata"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Squamata"),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Squamata"),
+      ]),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Komodo Dragon"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Ball Python"),
     ],

@@ -1,6 +1,8 @@
 import * as winston from "winston";
 import * as path from "path";
 
+let fileTransport: winston.transport | null = null;
+
 const consoleTransport = new winston.transports.Console({
   level: "info", // Default to info, can be updated later
   format: winston.format.combine(
@@ -32,7 +34,11 @@ export function setupLogger(outputDir: string, logLevel: string) {
   // Update Console transport level to match user preference directly
   consoleTransport.level = logLevel;
 
-  const fileTransport = new winston.transports.File({
+  if (fileTransport) {
+    logger.remove(fileTransport);
+  }
+
+  fileTransport = new winston.transports.File({
     filename: path.join(outputDir, "output.log"),
     level: "debug", // Always capture everything in the file
     format: winston.format.combine(

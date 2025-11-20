@@ -35,7 +35,7 @@ You can run the script for a single model and data point by using the `--model` 
 ### Syntax
 
 ```bash
-pnpm run eval -- --model='<model_name>' --prompt=<prompt_name>
+pnpm run eval --model=<model_name> --prompt=<prompt_name>
 ```
 
 ### Example
@@ -43,7 +43,7 @@ pnpm run eval -- --model='<model_name>' --prompt=<prompt_name>
 To run the test with the `gemini-2.5-flash-lite` model and the `loginForm` prompt, use the following command:
 
 ```bash
-pnpm run eval -- --model='gemini-2.5-flash-lite' --prompt=loginForm
+pnpm run eval --model=gemini-2.5-flash-lite --prompt=loginForm
 ```
 
 ## Controlling Output

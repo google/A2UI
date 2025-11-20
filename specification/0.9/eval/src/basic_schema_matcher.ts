@@ -63,3 +63,44 @@ export class BasicSchemaMatcher extends SchemaMatcher {
     return { success: true };
   }
 }
+
+export class AnySchemaMatcher extends SchemaMatcher {
+  constructor(public matchers: SchemaMatcher[]) {
+    super();
+  }
+
+  validate(schema: any): ValidationResult {
+    const errors: string[] = [];
+    for (const matcher of this.matchers) {
+      const result = matcher.validate(schema);
+      if (result.success) {
+        return { success: true };
+      }
+      if (result.error) {
+        errors.push(result.error);
+      }
+    }
+
+    return {
+      success: false,
+      error: `None of the matchers succeeded. Errors: [${errors.join(", ")}]`,
+    };
+  }
+}
+
+export class AllSchemaMatcher extends SchemaMatcher {
+  constructor(public matchers: SchemaMatcher[]) {
+    super();
+  }
+
+  validate(schema: any): ValidationResult {
+    for (const matcher of this.matchers) {
+      const result = matcher.validate(schema);
+      if (!result.success) {
+        return result;
+      }
+    }
+
+    return { success: true };
+  }
+}

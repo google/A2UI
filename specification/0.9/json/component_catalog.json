@@ -540,11 +540,11 @@
               "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost')."
             },
             "minValue": {
-              "type": "number",
+              "$ref": "common_types.json#/$defs/numberOrPath",
               "description": "The minimum value of the slider."
             },
             "maxValue": {
-              "type": "number",
+              "$ref": "common_types.json#/$defs/numberOrPath",
               "description": "The maximum value of the slider."
             }
           },

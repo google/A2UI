@@ -176,7 +176,7 @@ async function main() {
     .option("results", {
       type: "string",
       description:
-        "Directory to keep output files. If not specified, uses results/output-<model>. If more than one model is specified, uses results/output-combined.",
+        "Directory to keep output files. If not specified, uses results/output-<model>. If specified, uses the provided directory (appending output-<model>).",
       coerce: (arg) => (arg === undefined ? true : arg),
       default: true,
     })
@@ -203,38 +203,6 @@ async function main() {
     })
     .help()
     .alias("h", "help").argv;
-
-  let outputDir: string;
-  const resultsArg = argv.results;
-
-  if (typeof resultsArg === "string") {
-    outputDir = resultsArg;
-  } else {
-    // Default naming logic
-    const models =
-      argv.model && argv.model.length > 0
-        ? (argv.model as string[])
-        : modelsToTest.map((m) => m.name);
-
-    if (models.length === 1) {
-      outputDir = path.join("results", `output-${models[0]}`);
-    } else {
-      outputDir = path.join("results", "output-combined");
-    }
-  }
-
-  if (argv["clean-results"] && fs.existsSync(outputDir)) {
-    fs.rmSync(outputDir, { recursive: true, force: true });
-  }
-
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  setupLogger(outputDir, argv["log-level"]);
-  logger.info(`Output directory: ${outputDir}`);
-
-  const runsPerPrompt = argv["runs-per-prompt"];
 
   let filteredModels = modelsToTest;
   if (argv.model && argv.model.length > 0) {
@@ -269,229 +237,253 @@ async function main() {
     }
   }
 
-  const generationPromises: Promise<InferenceResult>[] = [];
-  let completedCount = 0;
-  let failedCount = 0;
-  const totalJobs =
-    filteredPrompts.length * filteredModels.length * runsPerPrompt;
+  const runsPerPrompt = argv["runs-per-prompt"];
 
-  for (const prompt of filteredPrompts) {
-    // Schema is now loaded at the beginning
-    for (const modelConfig of filteredModels) {
-      const modelDirName = modelConfig.name.replace(/[\/:]/g, "_");
-      const modelOutputDir = outputDir
-        ? path.join(outputDir, modelDirName)
-        : null;
-      if (modelOutputDir && !fs.existsSync(modelOutputDir)) {
-        fs.mkdirSync(modelOutputDir, { recursive: true });
+  for (const modelConfig of filteredModels) {
+    const modelDirName = `output-${modelConfig.name.replace(/[\/:]/g, "_")}`;
+    let outputDir: string;
+
+    const resultsArg = argv.results;
+    if (typeof resultsArg === "string") {
+      if (filteredModels.length > 1) {
+        outputDir = path.join(resultsArg, modelDirName);
+      } else {
+        outputDir = resultsArg;
       }
-      for (let i = 1; i <= runsPerPrompt; i++) {
-        logger.verbose(
-          `Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${i})`
-        );
+    } else {
+      outputDir = path.join("results", modelDirName);
+    }
+
+    if (argv["clean-results"] && fs.existsSync(outputDir)) {
+      fs.rmSync(outputDir, { recursive: true, force: true });
+    }
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    setupLogger(outputDir, argv["log-level"]);
+    logger.info(`Output directory: ${outputDir}`);
+
+    const generationPromises: Promise<InferenceResult>[] = [];
+    let completedCount = 0;
+    let failedCount = 0;
+    const totalJobs = filteredPrompts.length * runsPerPrompt;
+
+    for (const prompt of filteredPrompts) {
+      const runJob = async (
+        runIndex: number,
+        retryCount: number = 0
+      ): Promise<InferenceResult> => {
+        if (retryCount > 0) {
+          logger.warn(
+            `[${modelConfig.name}] Retrying prompt ${prompt.name} (run ${runIndex}, attempt ${retryCount + 1})`
+          );
+        } else {
+          logger.verbose(
+            `Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${runIndex})`
+          );
+        }
+
         const startTime = Date.now();
-        generationPromises.push(
-          componentGeneratorFlow({
+
+        try {
+          const output: any = await componentGeneratorFlow({
             prompt: prompt.promptText,
             modelConfig: modelConfig,
-            schemas, // Pass all loaded schemas
-          })
-            .then(async (output: any) => {
-              const text = output?.text;
-              const latency = output?.latency || 0;
+            schemas,
+          });
 
-              let component = null;
-              let error = null;
-              let validationResults: string[] = [];
+          const text = output?.text;
+          const latency = output?.latency || 0;
 
-              if (text) {
-                try {
-                  component = extractJsonFromMarkdown(text);
-                  if (modelOutputDir) {
-                    const inputPath = path.join(
-                      modelOutputDir,
-                      `${prompt.name}.input.txt`
-                    );
-                    fs.writeFileSync(inputPath, prompt.promptText);
+          let component = null;
+          let error = null;
+          let validationResults: string[] = [];
 
-                    const outputPath = path.join(
-                      modelOutputDir,
-                      `${prompt.name}.output.json`
-                    );
-                    fs.writeFileSync(
-                      outputPath,
-                      JSON.stringify(component, null, 2)
-                    );
-                  }
-                  // Validate against the main schema
-                  const validate = ajv.getSchema(
-                    "https://a2ui.dev/schema/v0.9/server_to_client.json"
+          if (text) {
+            try {
+              component = extractJsonFromMarkdown(text);
+
+              // Validate against the main schema
+              const validate = ajv.getSchema(
+                "https://a2ui.dev/schema/v0.9/server_to_client.json"
+              );
+              if (validate && !validate(component)) {
+                validationResults = (validate.errors || []).map(
+                  (err) => `${err.instancePath} ${err.message}`
+                );
+              }
+              // Also run original validator for more specific checks
+              validationResults = validationResults.concat(
+                validateSchema(component, prompt.matchers)
+              );
+
+              if (outputDir) {
+                const inputPath = path.join(
+                  outputDir,
+                  `${prompt.name}.input.txt`
+                );
+                fs.writeFileSync(inputPath, prompt.promptText);
+
+                const suffix =
+                  validationResults.length > 0 ? ".failed.json" : ".json";
+                const outputPath = path.join(
+                  outputDir,
+                  `${prompt.name}.${runIndex}${suffix}`
+                );
+                fs.writeFileSync(
+                  outputPath,
+                  JSON.stringify(component, null, 2)
+                );
+
+                if (validationResults.length > 0) {
+                  const failurePath = path.join(
+                    outputDir,
+                    `${prompt.name}.${runIndex}.failed.txt`
                   );
-                  if (validate && !validate(component)) {
-                    validationResults = (validate.errors || []).map(
-                      (err) => `${err.instancePath} ${err.message}`
-                    );
-                  }
-                  // Also run original validator for more specific checks
-                  validationResults = validationResults.concat(
-                    validateSchema(component, prompt.matchers)
-                  );
-                } catch (e) {
-                  error = e;
-                  validationResults.push(
-                    "Failed to extract JSON from model output."
-                  );
-                  if (modelOutputDir) {
-                    const errorPath = path.join(
-                      modelOutputDir,
-                      `${prompt.name}.output.txt`
-                    );
-                    fs.writeFileSync(errorPath, text || "No output text.");
-                  }
+                  fs.writeFileSync(failurePath, validationResults.join("\n"));
                 }
-              } else {
-                error = new Error("No output text returned from model");
               }
-
-              return {
-                modelName: modelConfig.name,
-                prompt,
-                component,
-                error,
-                latency,
-                validationResults,
-                runNumber: i,
-              };
-            })
-            .catch((error) => {
-              if (modelOutputDir) {
-                const inputPath = path.join(
-                  modelOutputDir,
-                  `${prompt.name}.input.txt`
-                );
-                fs.writeFileSync(inputPath, prompt.promptText);
-
+            } catch (e) {
+              error = e;
+              validationResults.push(
+                "Failed to extract JSON from model output."
+              );
+              if (outputDir) {
                 const errorPath = path.join(
-                  modelOutputDir,
-                  `${prompt.name}.error.json`
+                  outputDir,
+                  `${prompt.name}.${runIndex}.output.txt`
                 );
-                const errorOutput = {
-                  message: error.message,
-                  stack: error.stack,
-                  ...error,
-                };
-                fs.writeFileSync(
-                  errorPath,
-                  JSON.stringify(errorOutput, null, 2)
-                );
+                fs.writeFileSync(errorPath, text || "No output text.");
               }
+            }
+          } else {
+            error = new Error("No output text returned from model");
+          }
 
-              if (modelOutputDir) {
-                const inputPath = path.join(
-                  modelOutputDir,
-                  `${prompt.name}.input.txt`
-                );
-                fs.writeFileSync(inputPath, prompt.promptText);
+          return {
+            modelName: modelConfig.name,
+            prompt,
+            component,
+            error,
+            latency,
+            validationResults,
+            runNumber: runIndex,
+          };
+        } catch (error: any) {
+          // Retry logic for tool errors (not validation failures)
+          if (retryCount < 1) {
+            logger.warn(
+              `Tool error for ${modelConfig.name}, prompt ${prompt.name}: ${error.message}. Retrying...`
+            );
+            return runJob(runIndex, retryCount + 1);
+          }
 
-                const errorPath = path.join(
-                  modelOutputDir,
-                  `${prompt.name}.error.json`
-                );
-                const errorOutput = {
-                  message: error.message,
-                  stack: error.stack,
-                  ...error,
-                };
-                fs.writeFileSync(
-                  errorPath,
-                  JSON.stringify(errorOutput, null, 2)
-                );
-              }
-              return {
-                modelName: modelConfig.name,
-                prompt,
-                component: null,
-                error,
-                latency: Date.now() - startTime,
-                validationResults: [],
-                runNumber: i,
-              };
-            })
-            .then((result) => {
-              if (result.error) {
-                failedCount++;
-              } else {
-                completedCount++;
-              }
-              return result;
-            })
+          if (outputDir) {
+            const inputPath = path.join(outputDir, `${prompt.name}.input.txt`);
+            fs.writeFileSync(inputPath, prompt.promptText);
+
+            const errorPath = path.join(
+              outputDir,
+              `${prompt.name}.${runIndex}.error.json`
+            );
+            const errorOutput = {
+              message: error.message,
+              stack: error.stack,
+              ...error,
+            };
+            fs.writeFileSync(errorPath, JSON.stringify(errorOutput, null, 2));
+          }
+          return {
+            modelName: modelConfig.name,
+            prompt,
+            component: null,
+            error,
+            latency: Date.now() - startTime,
+            validationResults: [],
+            runNumber: runIndex,
+          };
+        }
+      };
+
+      for (let i = 1; i <= runsPerPrompt; i++) {
+        generationPromises.push(
+          runJob(i).then((result) => {
+            if (result.error) {
+              failedCount++;
+            } else {
+              completedCount++;
+            }
+            return result;
+          })
         );
       }
     }
-  }
 
-  const progressInterval = setInterval(() => {
-    const queuedCount = rateLimiter.waitingCount;
-    const inProgressCount =
-      totalJobs - completedCount - failedCount - queuedCount;
-    const pct = Math.round(((completedCount + failedCount) / totalJobs) * 100);
-    process.stderr.write(
-      `\rProgress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}`
-    );
-  }, 1000);
+    const progressInterval = setInterval(() => {
+      const queuedCount = rateLimiter.waitingCount;
+      const inProgressCount =
+        totalJobs - completedCount - failedCount - queuedCount;
+      const pct = Math.round(
+        ((completedCount + failedCount) / totalJobs) * 100
+      );
+      process.stderr.write(
+        `\r[${modelConfig.name}] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}`
+      );
+    }, 1000);
 
-  const results = await Promise.all(generationPromises);
-  clearInterval(progressInterval);
-  process.stderr.write("\n");
+    const results = await Promise.all(generationPromises);
+    clearInterval(progressInterval);
+    process.stderr.write("\n");
 
-  const resultsByModel: Record<string, InferenceResult[]> = {};
-
-  for (const result of results) {
-    if (!resultsByModel[result.modelName]) {
-      resultsByModel[result.modelName] = [];
+    const resultsByModel: Record<string, InferenceResult[]> = {};
+    for (const result of results) {
+      if (!resultsByModel[result.modelName]) {
+        resultsByModel[result.modelName] = [];
+      }
+      resultsByModel[result.modelName].push(result);
     }
-    resultsByModel[result.modelName].push(result);
-  }
 
-  logger.info("--- Generation Results ---");
-  for (const modelName in resultsByModel) {
-    for (const result of resultsByModel[modelName]) {
-      const hasError = !!result.error;
-      const hasValidationFailures = result.validationResults.length > 0;
-      const hasComponent = !!result.component;
+    logger.info("--- Generation Results ---");
+    for (const modelName in resultsByModel) {
+      for (const result of resultsByModel[modelName]) {
+        const hasError = !!result.error;
+        const hasValidationFailures = result.validationResults.length > 0;
+        const hasComponent = !!result.component;
 
-      if (hasError || hasValidationFailures) {
-        logger.info(`----------------------------------------`);
-        logger.info(`Model: ${modelName}`);
-        logger.info(`----------------------------------------`);
-        logger.info(`Query: ${result.prompt.name} (run ${result.runNumber})`);
+        if (hasError || hasValidationFailures) {
+          logger.info(`----------------------------------------`);
+          logger.info(`Model: ${modelName}`);
+          logger.info(`----------------------------------------`);
+          logger.info(`Query: ${result.prompt.name} (run ${result.runNumber})`);
 
-        if (hasError) {
-          logger.error(
-            `Error generating component: ${JSON.stringify(result.error)}`
-          );
-        } else if (hasComponent) {
-          if (hasValidationFailures) {
-            logger.warn("Validation Failures:");
-            result.validationResults.forEach((failure) =>
-              logger.warn(`- ${failure}`)
+          if (hasError) {
+            logger.error(
+              `Error generating component: ${JSON.stringify(result.error)}`
             );
+          } else if (hasComponent) {
+            if (hasValidationFailures) {
+              logger.warn("Validation Failures:");
+              result.validationResults.forEach((failure) =>
+                logger.warn(`- ${failure}`)
+              );
+            }
+            logger.verbose("Generated output:");
+            logger.verbose(JSON.stringify(result.component, null, 2));
           }
-          logger.verbose("Generated output:");
-          logger.verbose(JSON.stringify(result.component, null, 2));
         }
       }
     }
-  }
 
-  const summary = generateSummary(resultsByModel, results);
-  logger.info(summary);
-  if (outputDir) {
-    const summaryPath = path.join(outputDir, "summary.md");
-    fs.writeFileSync(summaryPath, summary);
+    const summary = generateSummary(resultsByModel, results);
+    logger.info(summary);
+    if (outputDir) {
+      const summaryPath = path.join(outputDir, "summary.md");
+      fs.writeFileSync(summaryPath, summary);
+    }
   }
 }
-
 if (require.main === module) {
   main().catch(console.error);
 }
