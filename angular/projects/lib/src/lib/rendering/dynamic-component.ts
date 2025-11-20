@@ -14,10 +14,10 @@
  limitations under the License.
  */
 
-import { Directive, inject, input } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
-import { Theme } from './theming';
+import { Directive, inject, input } from '@angular/core';
 import { ModelProcessor } from '../data';
+import { Theme } from './theming';
 
 let idCounter = 0;
 
@@ -36,7 +36,7 @@ export abstract class DynamicComponent<
   readonly component = input.required<T>();
   readonly weight = input.required<string | number>();
 
-  protected async sendAction(action: v0_8.Types.Action) {
+  protected sendAction(action: v0_8.Types.Action): Promise<v0_8.Types.ServerToClientMessage[]> {
     const component = this.component();
     const surfaceId = this.surfaceId() ?? undefined;
     const context: Record<string, unknown> = {};
@@ -67,7 +67,7 @@ export abstract class DynamicComponent<
       },
     };
 
-    await this.processor.makeRequest(message);
+    return this.processor.dispatch(message);
   }
 
   protected resolvePrimitive(value: v0_8.Primitives.StringValue | null): string | null;

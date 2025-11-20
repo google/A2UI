@@ -14,7 +14,6 @@
  limitations under the License.
  */
 
-import { InjectionToken } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
 
 export interface A2TextPayload {
@@ -28,9 +27,3 @@ export interface A2DataPayload {
 }
 
 export type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | { error: string };
-
-export const A2UIClient = new InjectionToken<A2UIClient>('A2UIClient');
-
-export interface A2UIClient {
-  send(message: v0_8.Types.A2UIClientEventMessage): Promise<v0_8.Types.ServerToClientMessage[]>;
-}
