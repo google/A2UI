@@ -20,11 +20,12 @@ import { openAI } from "@genkit-ai/compat-oai/openai";
 import { anthropic } from "genkitx-anthropic";
 import { ModelConfiguration } from "./models";
 import { rateLimiter } from "./rateLimiter";
+import { logger } from "./logger";
 
 const plugins = [];
 
 if (process.env.GEMINI_API_KEY) {
-  console.log("Initializing Google AI plugin...");
+  logger.info("Initializing Google AI plugin...");
   plugins.push(
     googleAI({
       apiKey: process.env.GEMINI_API_KEY!,
@@ -33,11 +34,11 @@ if (process.env.GEMINI_API_KEY) {
   );
 }
 if (process.env.OPENAI_API_KEY) {
-  console.log("Initializing OpenAI plugin...");
+  logger.info("Initializing OpenAI plugin...");
   plugins.push(openAI());
 }
 if (process.env.ANTHROPIC_API_KEY) {
-  console.log("Initializing Anthropic plugin...");
+  logger.info("Initializing Anthropic plugin...");
   plugins.push(anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! }));
 }
 
@@ -57,7 +58,6 @@ export const componentGeneratorFlow = ai.defineFlow(
     outputSchema: z.any(),
   },
   async ({ prompt, modelConfig, schemas }) => {
-    await rateLimiter.acquirePermit(modelConfig as ModelConfiguration);
     const schemaDefs = Object.values(schemas)
       .map((s: any) => JSON.stringify(s, null, 2))
       .join("\n\n");
@@ -105,22 +105,86 @@ ${prompt}
 JSON Schemas:
 ${schemaDefs}
 `;
+    const estimatedInputTokens = Math.ceil(fullPrompt.length / 2.5);
+    await rateLimiter.acquirePermit(
+      modelConfig as ModelConfiguration,
+      estimatedInputTokens
+    );
 
     // Generate text response
-    const response = await ai.generate({
-      prompt: fullPrompt,
-      model: modelConfig.model,
-      config: modelConfig.config,
-    });
+    let response;
+    const startTime = Date.now();
+    try {
+      response = await ai.generate({
+        prompt: fullPrompt,
+        model: modelConfig.model,
+        config: modelConfig.config,
+      });
+    } catch (e) {
+      logger.error(`Error during ai.generate: ${e}`);
+      rateLimiter.reportError(modelConfig as ModelConfiguration, e);
+      throw e;
+    }
+    const latency = Date.now() - startTime;
 
     if (!response) throw new Error("Failed to generate component");
 
-    // Record token usage
+    let candidate = (response as any).candidates?.[0];
+
+    // Fallback for different response structure (e.g. Genkit 0.9+ or specific model adapters)
+    if (!candidate && (response as any).message) {
+      const message = (response as any).message;
+      candidate = {
+        index: 0,
+        content: message.content,
+        finishReason: "STOP", // Assume STOP if not provided in this format
+        message: message,
+      };
+    }
+
+    if (!candidate) {
+      logger.error(
+        `No candidates returned in response. Full response: ${JSON.stringify(response, null, 2)}`
+      );
+      throw new Error("No candidates returned");
+    }
+
+    if (
+      candidate.finishReason !== "STOP" &&
+      candidate.finishReason !== undefined
+    ) {
+      logger.warn(
+        `Model finished with reason: ${candidate.finishReason}. Content: ${JSON.stringify(
+          candidate.content
+        )}`
+      );
+    }
+
+    // Record token usage (adjusting for actual usage)
     const inputTokens = response.usage?.inputTokens || 0;
     const outputTokens = response.usage?.outputTokens || 0;
     const totalTokens = inputTokens + outputTokens;
-    rateLimiter.recordUsage(modelConfig as ModelConfiguration, totalTokens);
 
-    return response.text;
+    // We already recorded estimatedInputTokens. We need to record the difference.
+    // If actual > estimated, we record the positive difference.
+    // If actual < estimated, we technically over-counted, but RateLimiter doesn't support negative adjustments yet.
+    // For safety, we just record any *additional* tokens if we under-estimated.
+    // And we definitely record the output tokens.
+
+    const additionalInputTokens = Math.max(
+      0,
+      inputTokens - estimatedInputTokens
+    );
+    const tokensToAdd = additionalInputTokens + outputTokens;
+
+    if (tokensToAdd > 0) {
+      rateLimiter.recordUsage(
+        modelConfig as ModelConfiguration,
+        tokensToAdd,
+        false
+      );
+    }
+
+    return { text: response.text, latency };
   }
 );

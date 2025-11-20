@@ -286,7 +286,7 @@ async function main() {
         fs.mkdirSync(modelOutputDir, { recursive: true });
       }
       for (let i = 1; i <= runsPerPrompt; i++) {
-        logger.info(
+        logger.verbose(
           `Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${i})`
         );
         const startTime = Date.now();
@@ -296,59 +296,69 @@ async function main() {
             modelConfig: modelConfig,
             schemas, // Pass all loaded schemas
           })
-            .then((rawOutput) => {
-              const component = extractJsonFromMarkdown(rawOutput);
+            .then(async (output: any) => {
+              const text = output?.text;
+              const latency = output?.latency || 0;
+
+              let component = null;
+              let error = null;
               let validationResults: string[] = [];
 
-              if (component) {
-                if (modelOutputDir) {
-                  const inputPath = path.join(
-                    modelOutputDir,
-                    `${prompt.name}.input.txt`
-                  );
-                  fs.writeFileSync(inputPath, prompt.promptText);
+              if (text) {
+                try {
+                  component = extractJsonFromMarkdown(text);
+                  if (modelOutputDir) {
+                    const inputPath = path.join(
+                      modelOutputDir,
+                      `${prompt.name}.input.txt`
+                    );
+                    fs.writeFileSync(inputPath, prompt.promptText);
 
-                  const outputPath = path.join(
-                    modelOutputDir,
-                    `${prompt.name}.output.json`
+                    const outputPath = path.join(
+                      modelOutputDir,
+                      `${prompt.name}.output.json`
+                    );
+                    fs.writeFileSync(
+                      outputPath,
+                      JSON.stringify(component, null, 2)
+                    );
+                  }
+                  // Validate against the main schema
+                  const validate = ajv.getSchema(
+                    "https://a2ui.dev/schema/v0.9/server_to_client.json"
                   );
-                  fs.writeFileSync(
-                    outputPath,
-                    JSON.stringify(component, null, 2)
+                  if (validate && !validate(component)) {
+                    validationResults = (validate.errors || []).map(
+                      (err) => `${err.instancePath} ${err.message}`
+                    );
+                  }
+                  // Also run original validator for more specific checks
+                  validationResults = validationResults.concat(
+                    validateSchema(component, prompt.matchers)
                   );
+                } catch (e) {
+                  error = e;
+                  validationResults.push(
+                    "Failed to extract JSON from model output."
+                  );
+                  if (modelOutputDir) {
+                    const errorPath = path.join(
+                      modelOutputDir,
+                      `${prompt.name}.output.txt`
+                    );
+                    fs.writeFileSync(errorPath, text || "No output text.");
+                  }
                 }
-                // Validate against the main schema
-                const validate = ajv.getSchema(
-                  "https://a2ui.dev/schema/v0.9/server_to_client.json"
-                );
-                if (validate && !validate(component)) {
-                  validationResults = (validate.errors || []).map(
-                    (err) => `${err.instancePath} ${err.message}`
-                  );
-                }
-                // Also run original validator for more specific checks
-                validationResults = validationResults.concat(
-                  validateSchema(component, prompt.matchers)
-                );
               } else {
-                validationResults.push(
-                  "Failed to extract JSON from model output."
-                );
-                if (modelOutputDir) {
-                  const errorPath = path.join(
-                    modelOutputDir,
-                    `${prompt.name}.output.txt`
-                  );
-                  fs.writeFileSync(errorPath, rawOutput);
-                }
+                error = new Error("No output text returned from model");
               }
 
               return {
                 modelName: modelConfig.name,
                 prompt,
                 component,
-                error: null,
-                latency: Date.now() - startTime,
+                error,
+                latency,
                 validationResults,
                 runNumber: i,
               };
@@ -462,15 +472,13 @@ async function main() {
           );
         } else if (hasComponent) {
           if (hasValidationFailures) {
-            logger.info("Validation Failures:");
+            logger.warn("Validation Failures:");
             result.validationResults.forEach((failure) =>
-              logger.info(`- ${failure}`)
+              logger.warn(`- ${failure}`)
             );
           }
-          // Verbose logging of generated schema is removed as per request,
-          // or could be added back under 'debug' level if desired.
-          logger.debug("Generated schema:");
-          logger.debug(JSON.stringify(result.component, null, 2));
+          logger.verbose("Generated output:");
+          logger.verbose(JSON.stringify(result.component, null, 2));
         }
       }
     }
