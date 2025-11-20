@@ -62,13 +62,13 @@ export function validateSchema(
     validateSurfaceUpdate(data.surfaceUpdate, errors);
   } else if (data.dataModelUpdate) {
     validateDataModelUpdate(data.dataModelUpdate, errors);
-  } else if (data.beginRendering) {
-    validateBeginRendering(data.beginRendering, errors);
+  } else if (data.createSurface) {
+    validateBeginRendering(data.createSurface, errors);
   } else if (data.deleteSurface) {
     validateDeleteSurface(data.deleteSurface, errors);
   } else {
     errors.push(
-      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, beginRendering, deleteSurface."
+      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, createSurface, deleteSurface."
     );
   }
 
@@ -144,10 +144,7 @@ function validateDataModelUpdate(data: any, errors: string[]) {
 
 function validateBeginRendering(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
-    errors.push("BeginRendering message must have a 'surfaceId' property.");
-  }
-  if (!data.root) {
-    errors.push("BeginRendering message must have a 'root' property.");
+    errors.push("CreateSurface message must have a 'surfaceId' property.");
   }
 }
 

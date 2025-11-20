@@ -28,19 +28,25 @@ export interface ModelConfiguration {
 
 export const modelsToTest: ModelConfiguration[] = [
   {
-    model: openAI.model("gpt-5"),
-    name: "gpt-5",
+    model: openAI.model("gpt-5.1"),
+    name: "gpt-5.1",
     config: { reasoning_effort: "minimal" },
+    requestsPerMinute: 500,
+    tokensPerMinute: 30000,
   },
   {
     model: openAI.model("gpt-5-mini"),
     name: "gpt-5-mini",
     config: { reasoning_effort: "minimal" },
+    requestsPerMinute: 500,
+    tokensPerMinute: 500000,
   },
   {
-    model: openAI.model("gpt-4.1"),
-    name: "gpt-4.1",
+    model: openAI.model("gpt-5-nano"),
+    name: "gpt-5-nano",
     config: {},
+    requestsPerMinute: 500,
+    tokensPerMinute: 200000,
   },
   {
     model: googleAI.model("gemini-2.5-pro"),
@@ -74,10 +80,14 @@ export const modelsToTest: ModelConfiguration[] = [
     model: claude4Sonnet,
     name: "claude-4-sonnet",
     config: {},
+    requestsPerMinute: 50,
+    tokensPerMinute: 30000,
   },
   {
     model: claude35Haiku,
     name: "claude-35-haiku",
     config: {},
+    requestsPerMinute: 50,
+    tokensPerMinute: 50000,
   },
 ];

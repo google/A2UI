@@ -177,8 +177,8 @@ The dog generator is another card which is a form that generates a fictional dog
   {
     name: "uiRoot",
     description: "A UIRoot message to set the initial UI and data roots.",
-    promptText: `Generate a JSON message with a 'beginRendering' property. This message tells the client where to start rendering the UI. Set the UI root to a component with ID "mainLayout".`,
-    matchers: [new MessageTypeMatcher("beginRendering")],
+    promptText: `Generate a JSON message with a 'createSurface' property. This message tells the client where to start rendering the UI. Set the UI root to a component with ID "mainLayout".`,
+    matchers: [new MessageTypeMatcher("createSurface")],
   },
   {
     name: "animalKingdomExplorer",

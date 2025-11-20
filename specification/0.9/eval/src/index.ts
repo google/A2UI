@@ -307,7 +307,7 @@ async function main() {
 
               // Validate against the main schema
               const validate = ajv.getSchema(
-                "https://a2ui.dev/schema/v0.9/server_to_client.json"
+                "https://a2ui.dev/specification/0.9/server_to_client.json"
               );
               if (validate && !validate(component)) {
                 validationResults = (validate.errors || []).map(
