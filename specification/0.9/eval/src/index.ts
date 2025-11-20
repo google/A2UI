@@ -65,7 +65,6 @@ function generateSummary(
   const promptNameWidth = 40;
   const latencyWidth = 20;
   const failedRunsWidth = 15;
-  const toolErrorRunsWidth = 20;
 
   let summary = "# Evaluation Summary";
   for (const modelName in resultsByModel) {
@@ -74,12 +73,10 @@ function generateSummary(
       promptNameWidth
     )} | ${"Avg Latency (ms)".padEnd(latencyWidth)} | ${"Failed Runs".padEnd(
       failedRunsWidth
-    )} | ${"Tool Error Runs".padEnd(toolErrorRunsWidth)} |`;
+    )} |`;
     const divider = `|${"-".repeat(promptNameWidth + 2)}|${"-".repeat(
       latencyWidth + 2
-    )}|${"-".repeat(failedRunsWidth + 2)}|${"-".repeat(
-      toolErrorRunsWidth + 2
-    )}|`;
+    )}|${"-".repeat(failedRunsWidth + 2)}|`;
     summary += header;
     summary += `\n${divider}`;
 
@@ -99,7 +96,6 @@ function generateSummary(
     for (const promptName in promptsInModel) {
       const runs = promptsInModel[promptName];
       const totalRuns = runs.length;
-      const errorRuns = runs.filter((r) => r.error).length;
       const failedRuns = runs.filter(
         (r) => r.error || r.validationResults.length > 0
       ).length;
@@ -110,13 +106,12 @@ function generateSummary(
 
       const failedRunsStr =
         failedRuns > 0 ? `${failedRuns} / ${totalRuns}` : "";
-      const errorRunsStr = errorRuns > 0 ? `${errorRuns} / ${totalRuns}` : "";
 
       summary += `\n| ${promptName.padEnd(
         promptNameWidth
       )} | ${avgLatency.padEnd(latencyWidth)} | ${failedRunsStr.padEnd(
         failedRunsWidth
-      )} | ${errorRunsStr.padEnd(toolErrorRunsWidth)} |`;
+      )} |`;
     }
 
     const totalRunsForModel = resultsByModel[modelName].length;
@@ -137,7 +132,7 @@ function generateSummary(
     ),
   ].join(", ");
 
-  summary += `\n- **Number of tool error runs:** ${totalToolErrorRuns} / ${totalRuns}`;
+  summary += `\n- **Total tool failures:** ${totalToolErrorRuns} / ${totalRuns}`;
   summary += `\n- **Number of runs with any failure (tool error or validation):** ${totalRunsWithAnyFailure} / ${totalRuns}`;
   const latencies = results.map((r) => r.latency).sort((a, b) => a - b);
   const totalLatency = latencies.reduce((acc, l) => acc + l, 0);
