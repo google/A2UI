@@ -42,7 +42,7 @@ For each component in the `components` array, the following rules apply:
 - **DateTimeInput**:
   - **Required**: Must have a `value` property.
 - **MultipleChoice**:
-  - **Required**: Must have a `selections` property.
+  - **Required**: Must have `selections` and `options` properties.
 - **Slider**:
   - **Required**: Must have a `value` property.
 - **Container Components** (`Row`, `Column`, `List`):
@@ -56,11 +56,13 @@ For each component in the `components` array, the following rules apply:
 - **Modal**:
   - **Required**: Must have both `entryPointChild` and `contentChild` properties.
 - **Button**:
-  - **Required**: Must have `label` and `action` properties.
+  - **Required**: Must have `child` and `action` properties.
 - **CheckBox**:
   - **Required**: Must have `label` and `value` properties.
 - **Divider**:
   - No required properties.
+- **Icon**:
+  - **Required**: Must have a `name` property.
 
 ## `DataModelUpdate` Message Rules
 

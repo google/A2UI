@@ -40,24 +40,40 @@ pnpm run eval -- --model='<model_name>' --prompt=<prompt_name>
 
 ### Example
 
-To run the test with the `gpt-5-mini (reasoning: minimal)` model and the `generateDogUIs` prompt, use the following command:
+To run the test with the `gemini-2.5-flash-lite` model and the `loginForm` prompt, use the following command:
 
 ```bash
-pnpm run eval -- --model='gpt-5-mini (reasoning: minimal)' --prompt=generateDogUIs
+pnpm run eval -- --model='gemini-2.5-flash-lite' --prompt=loginForm
 ```
 
 ## Controlling Output
 
-By default, the script only prints the summary table and any errors that occur during generation. To see the full JSON output for each successful generation, use the `--verbose` flag.
+By default, the script prints a progress bar and the final summary table to the console. Detailed logs are written to `output.log` in the results directory.
 
-To keep the input and output for each run in separate files, specify the `--keep=<output_dir>` flag, which will create a directory hierarchy with the input and output for each LLM call in separate files.
+### Command-Line Options
 
-### Example
+- `--log-level=<level>`: Sets the console logging level (default: `info`). Options: `error`, `warn`, `info`, `http`, `verbose`, `debug`, `silly`.
+  - Note: The file log (`output.log` in the results directory) always captures `debug` level logs regardless of this setting.
+- `--results=<output_dir>`: (Default: `results/output-<model>` or `results/output-combined` if multiple models are specified) Preserves output files. To specify a custom directory, use `--results=my_results`.
+- `--clean-results`: If set, cleans the results directory before running tests.
+- `--runs-per-prompt=<number>`: Number of times to run each prompt (default: 1).
+- `--model=<model_name>`: (Default: all models) Run only the specified model(s). Can be specified multiple times.
+- `--prompt=<prompt_name>`: (Default: all prompts) Run only the specified prompt.
 
+### Examples
+
+Run with debug output in console:
 ```bash
-pnpm run evalAll -- --verbose
+pnpm run eval -- --log-level=debug
 ```
 
+Run 5 times per prompt and clean previous results:
 ```bash
-pnpm run evalAll -- --keep=output
+pnpm run eval -- --runs-per-prompt=5 --clean-results
 ```
+
+## Rate Limiting
+
+The framework includes a two-tiered rate limiting system:
+1. **Proactive Limiting**: Locally tracks token and request usage to stay within configured limits (defined in `src/models.ts`).
+2. **Reactive Circuit Breaker**: Automatically pauses requests to a model if a `RESOURCE_EXHAUSTED` (429) error is received, resuming only after the requested retry duration.

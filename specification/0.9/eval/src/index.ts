@@ -173,10 +173,10 @@ async function main() {
       default: "info",
       choices: ["debug", "info", "warn", "error"],
     })
-    .option("keep", {
+    .option("results", {
       type: "string",
       description:
-        "Directory to keep output files. If true (default), uses results/output-<model>.",
+        "Directory to keep output files. If not specified, uses results/output-<model>. If more than one model is specified, uses results/output-combined.",
       coerce: (arg) => (arg === undefined ? true : arg),
       default: true,
     })
@@ -196,7 +196,7 @@ async function main() {
       type: "string",
       description: "Filter prompts by name prefix",
     })
-    .option("clean-output", {
+    .option("clean-results", {
       type: "boolean",
       description: "Clear the output directory before starting",
       default: false,
@@ -205,10 +205,10 @@ async function main() {
     .alias("h", "help").argv;
 
   let outputDir: string;
-  const keepArg = argv.keep;
+  const resultsArg = argv.results;
 
-  if (typeof keepArg === "string") {
-    outputDir = keepArg;
+  if (typeof resultsArg === "string") {
+    outputDir = resultsArg;
   } else {
     // Default naming logic
     const models =
@@ -223,7 +223,7 @@ async function main() {
     }
   }
 
-  if (argv["clean-output"] && fs.existsSync(outputDir)) {
+  if (argv["clean-results"] && fs.existsSync(outputDir)) {
     fs.rmSync(outputDir, { recursive: true, force: true });
   }
 
