@@ -7,7 +7,10 @@
     "paths": {
       "@a2ui/angular": [
         "./projects/lib/src/public-api.ts"
-      ]
+      ],
+      "@rizzcharts/*": [
+        "./projects/rizzcharts/src/*"
+      ],
     },
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
@@ -38,6 +41,12 @@
     },
     {
       "path": "./projects/restaurant/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/rizzcharts/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/rizzcharts/tsconfig.spec.json"
     },
     {
       "path": "./projects/contact/tsconfig.app.json"
