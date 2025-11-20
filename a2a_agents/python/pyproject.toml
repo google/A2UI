@@ -9,6 +9,7 @@ members = [
   "a2ui_extension",
   "adk/samples/restaurant_finder",
   "adk/samples/contact_lookup",
+  "adk/samples/rizzcharts",
 ]
 
 [tool.uv.sources]
