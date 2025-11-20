@@ -60,22 +60,14 @@
       "additionalProperties": false,
       "oneOf": [{ "required": ["literalArray"] }, { "required": ["path"] }]
     },
-    "componentProperties": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "The unique identifier for this component."
-        },
-        "weight": {
-          "type": "number",
-          "description": "The relative weight of this component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
-        }
-      },
-      "required": ["id"],
-      "additionalProperties": false
+    "id": {
+      "type": "string",
+      "description": "The unique identifier for this component."
     },
-
+    "weight": {
+      "type": "number",
+      "description": "The relative weight of this component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
+    },
     "childrenProperty": {
       "type": "object",
       "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",

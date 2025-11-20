@@ -28,8 +28,11 @@
     "Text": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Text" },
         "text": {
@@ -42,14 +45,17 @@
           "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
         }
       },
-      "required": ["common", "component", "text"],
+      "required": ["id", "component", "text"],
       "additionalProperties": false
     },
     "Image": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Image" },
         "url": {
@@ -74,14 +80,17 @@
           ]
         }
       },
-      "required": ["common", "component", "url"],
+      "required": ["id", "component", "url"],
       "additionalProperties": false
     },
     "Icon": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Icon" },
         "name": {
@@ -149,14 +158,17 @@
           "oneOf": [{ "required": ["literalString"] }, { "required": ["path"] }]
         }
       },
-      "required": ["common", "component", "name"],
+      "required": ["id", "component", "name"],
       "additionalProperties": false
     },
     "Video": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Video" },
         "url": {
@@ -164,14 +176,17 @@
           "description": "The URL of the video to display."
         }
       },
-      "required": ["common", "component", "url"],
+      "required": ["id", "component", "url"],
       "additionalProperties": false
     },
     "AudioPlayer": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "AudioPlayer" },
         "url": {
@@ -183,14 +198,17 @@
           "$ref": "common_types.json#/$defs/stringOrPath"
         }
       },
-      "required": ["common", "component", "url"],
+      "required": ["id", "component", "url"],
       "additionalProperties": false
     },
     "Row": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Row" },
         "children": {
@@ -215,14 +233,17 @@
           "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": ["common", "component", "children"],
+      "required": ["id", "component", "children"],
       "additionalProperties": false
     },
     "Column": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Column" },
         "children": {
@@ -247,14 +268,17 @@
           "enum": ["center", "end", "start", "stretch"]
         }
       },
-      "required": ["common", "component", "children"],
+      "required": ["id", "component", "children"],
       "additionalProperties": false
     },
     "List": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "List" },
         "children": {
@@ -272,14 +296,17 @@
           "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": ["common", "component", "children"],
+      "required": ["id", "component", "children"],
       "additionalProperties": false
     },
     "Card": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Card" },
         "child": {
@@ -287,14 +314,17 @@
           "description": "The ID of the component to be rendered inside the card."
         }
       },
-      "required": ["common", "component", "child"],
+      "required": ["id", "component", "child"],
       "additionalProperties": false
     },
     "Tabs": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Tabs" },
         "tabItems": {
@@ -314,14 +344,17 @@
           }
         }
       },
-      "required": ["common", "component", "tabItems"],
+      "required": ["id", "component", "tabItems"],
       "additionalProperties": false
     },
     "Divider": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Divider" },
         "axis": {
@@ -330,14 +363,17 @@
           "enum": ["horizontal", "vertical"]
         }
       },
-      "required": ["common", "component"],
+      "required": ["id", "component"],
       "additionalProperties": false
     },
     "Modal": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Modal" },
         "entryPointChild": {
@@ -349,14 +385,17 @@
           "description": "The ID of the component to be displayed inside the modal."
         }
       },
-      "required": ["common", "component", "entryPointChild", "contentChild"],
+      "required": ["id", "component", "entryPointChild", "contentChild"],
       "additionalProperties": false
     },
     "Button": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Button" },
         "child": {
@@ -399,14 +438,17 @@
           "additionalProperties": false
         }
       },
-      "required": ["common", "component", "child", "action"],
+      "required": ["id", "component", "child", "action"],
       "additionalProperties": false
     },
     "CheckBox": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "CheckBox" },
         "label": {
@@ -418,14 +460,17 @@
           "description": "The current state of the checkbox (true for checked, false for unchecked)."
         }
       },
-      "required": ["common", "component", "label", "value"],
+      "required": ["id", "component", "label", "value"],
       "additionalProperties": false
     },
     "TextField": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "TextField" },
         "label": {
@@ -446,14 +491,17 @@
           "description": "A regular expression used for client-side validation of the input."
         }
       },
-      "required": ["common", "component", "label"],
+      "required": ["id", "component", "label"],
       "additionalProperties": false
     },
     "DateTimeInput": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "DateTimeInput" },
         "value": {
@@ -477,14 +525,17 @@
           "description": "The text label for the input field."
         }
       },
-      "required": ["common", "component", "value"],
+      "required": ["id", "component", "value"],
       "additionalProperties": false
     },
     "MultipleChoice": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "MultipleChoice" },
         "selections": {
@@ -515,14 +566,17 @@
           "description": "The maximum number of options that the user is allowed to select."
         }
       },
-      "required": ["common", "component", "selections", "options"],
+      "required": ["id", "component", "selections", "options"],
       "additionalProperties": false
     },
     "Slider": {
       "type": "object",
       "properties": {
-        "common": {
-          "$ref": "common_types.json#/$defs/componentProperties"
+        "id": {
+          "$ref": "common_types.json#/$defs/id"
+        },
+        "weight": {
+          "$ref": "common_types.json#/$defs/weight"
         },
         "component": { "const": "Slider" },
         "value": {
@@ -538,7 +592,7 @@
           "description": "The maximum value of the slider."
         }
       },
-      "required": ["common", "component", "value"],
+      "required": ["id", "component", "value"],
       "additionalProperties": false
     },
     "Theme": {

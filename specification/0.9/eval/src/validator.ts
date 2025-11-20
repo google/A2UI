@@ -110,7 +110,7 @@ function validateSurfaceUpdate(data: any, errors: string[]) {
 
   const componentIds = new Set<string>();
   for (const c of data.components) {
-    const id = c.common?.id;
+    const id = c.id;
     if (id) {
       if (componentIds.has(id)) {
         errors.push(`Duplicate component ID found: ${id}`);
@@ -190,9 +190,9 @@ function validateComponent(
   allIds: Set<string>,
   errors: string[]
 ) {
-  const id = component.common?.id;
+  const id = component.id;
   if (!id) {
-    errors.push(`Component is missing an 'id' in 'common'.`);
+    errors.push(`Component is missing an 'id'.`);
     return;
   }
   if (!component.component) {
