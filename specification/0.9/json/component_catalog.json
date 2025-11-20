@@ -36,7 +36,7 @@
         "component": { "const": "Text" },
         "text": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation."
+          "description": "The text content to display. While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation."
         },
         "usageHint": {
           "type": "string",
@@ -52,7 +52,7 @@
         "component": { "const": "Image" },
         "url": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/url')."
+          "description": "The URL of the image to display."
         },
         "fit": {
           "type": "string",
@@ -80,7 +80,7 @@
         "component": { "const": "Icon" },
         "name": {
           "type": "object",
-          "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
+          "description": "The name of the icon to display.",
           "properties": {
             "literalString": {
               "type": "string",
@@ -150,7 +150,7 @@
         "component": { "const": "Video" },
         "url": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/video/url')."
+          "description": "The URL of the video to display."
         }
       },
       "required": ["component", "url"]
@@ -161,10 +161,10 @@
         "component": { "const": "AudioPlayer" },
         "url": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/song/url')."
+          "description": "The URL of the audio to be played."
         },
         "description": {
-          "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. '/song/title').",
+          "description": "A description of the audio, such as a title or summary.",
           "$ref": "common_types.json#/$defs/stringOrPath"
         }
       },
@@ -269,7 +269,7 @@
             "type": "object",
             "properties": {
               "title": {
-                "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. '/options/title').",
+                "description": "The tab title.",
                 "$ref": "common_types.json#/$defs/stringOrPath"
               },
               "child": { "type": "string" }
@@ -356,11 +356,11 @@
         "component": { "const": "CheckBox" },
         "label": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. '/option/label')."
+          "description": "The text to display next to the checkbox."
         },
         "value": {
           "$ref": "common_types.json#/$defs/booleanOrPath",
-          "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. '/filter/open')."
+          "description": "The current state of the checkbox (true for checked, false for unchecked)."
         }
       },
       "required": ["component", "label", "value"]
@@ -371,11 +371,11 @@
         "component": { "const": "TextField" },
         "label": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. '/user/name')."
+          "description": "The text label for the input field."
         },
         "text": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. '/user/name')."
+          "description": "The value of the text field."
         },
         "textFieldType": {
           "type": "string",
@@ -395,7 +395,7 @@
         "component": { "const": "DateTimeInput" },
         "value": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob')."
+          "description": "The selected date and/or time value."
         },
         "enableDate": {
           "type": "boolean",
@@ -417,7 +417,7 @@
       "properties": {
         "component": { "const": "MultipleChoice" },
         "selections": {
-          "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. '/hotel/options').",
+          "description": "The currently selected values for the component.",
           "$ref": "common_types.json#/$defs/stringArrayOrPath"
         },
         "options": {
@@ -427,7 +427,7 @@
             "type": "object",
             "properties": {
               "label": {
-                "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. '/option/label').",
+                "description": "The text to display for this option.",
                 "$ref": "common_types.json#/$defs/stringOrPath"
               },
               "value": {
@@ -451,7 +451,7 @@
         "component": { "const": "Slider" },
         "value": {
           "$ref": "common_types.json#/$defs/numberOrPath",
-          "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost')."
+          "description": "The current value of the slider."
         },
         "minValue": {
           "$ref": "common_types.json#/$defs/numberOrPath",
@@ -463,6 +463,21 @@
         }
       },
       "required": ["component", "value"]
+    },
+    "Theme": {
+      "type": "object",
+      "description": "Theming information for the UI.",
+      "properties": {
+        "font": {
+          "type": "string",
+          "description": "The primary font for the UI."
+        },
+        "primaryColor": {
+          "type": "string",
+          "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
     }
   }
 }

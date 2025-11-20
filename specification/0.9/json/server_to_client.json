@@ -14,20 +14,8 @@
               "type": "string",
               "description": "The unique identifier for the UI surface to be rendered."
             },
-            "styles": {
-              "type": "object",
-              "description": "Styling information for the UI.",
-              "properties": {
-                "font": {
-                  "type": "string",
-                  "description": "The primary font for the UI."
-                },
-                "primaryColor": {
-                  "type": "string",
-                  "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
-                  "pattern": "^#[0-9a-fA-F]{6}$"
-                }
-              }
+            "theme": {
+              "$ref": "component_catalog.json#/$defs/Theme"
             }
           },
           "required": ["surfaceId"]
