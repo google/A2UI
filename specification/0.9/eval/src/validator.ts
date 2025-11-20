@@ -29,9 +29,9 @@ const serverToClientSchema = JSON.parse(
     "utf-8"
   )
 );
-const componentCatalogSchema = JSON.parse(
+const standardCatalogDefinitionSchema = JSON.parse(
   fs.readFileSync(
-    path.join(schemaDir, "json", "component_catalog.json"),
+    path.join(schemaDir, "json", "standard_catalog_definition.json"),
     "utf-8"
   )
 );
@@ -40,7 +40,10 @@ const commonTypesSchema = JSON.parse(
 );
 
 ajv.addSchema(commonTypesSchema, "common_types.json");
-ajv.addSchema(componentCatalogSchema, "component_catalog.json");
+ajv.addSchema(
+  standardCatalogDefinitionSchema,
+  "standard_catalog_definition.json"
+);
 const validate = ajv.compile(serverToClientSchema);
 
 export function validateSchema(

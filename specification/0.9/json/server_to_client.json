@@ -15,7 +15,7 @@
               "description": "The unique identifier for the UI surface to be rendered."
             },
             "theme": {
-              "$ref": "component_catalog.json#/$defs/Theme"
+              "$ref": "standard_catalog_definition.json#/$defs/Theme"
             }
           },
           "required": ["surfaceId"]
@@ -39,7 +39,7 @@
               "description": "A list containing all UI components for the surface.",
               "minItems": 1,
               "items": {
-                "$ref": "component_catalog.json#/$defs/anyComponent"
+                "$ref": "standard_catalog_definition.json#/$defs/anyComponent"
               }
             }
           },

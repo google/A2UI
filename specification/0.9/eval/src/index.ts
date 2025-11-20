@@ -26,7 +26,7 @@ import Ajv from "ajv";
 
 const schemaFiles = [
   "../../json/common_types.json",
-  "../../json/component_catalog.json",
+  "../../json/standard_catalog_definition.json",
   "../../json/server_to_client.json",
 ];
 
