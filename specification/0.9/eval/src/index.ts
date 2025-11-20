@@ -257,6 +257,11 @@ async function main() {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
+    const detailsDir = path.join(outputDir, "details");
+    if (!fs.existsSync(detailsDir)) {
+      fs.mkdirSync(detailsDir, { recursive: true });
+    }
+
     setupLogger(outputDir, argv["log-level"]);
     logger.info(`Output directory: ${outputDir}`);
 
@@ -316,7 +321,7 @@ async function main() {
 
               if (outputDir) {
                 const inputPath = path.join(
-                  outputDir,
+                  detailsDir,
                   `${prompt.name}.input.txt`
                 );
                 fs.writeFileSync(inputPath, prompt.promptText);
@@ -324,7 +329,7 @@ async function main() {
                 const suffix =
                   validationResults.length > 0 ? ".failed.json" : ".json";
                 const outputPath = path.join(
-                  outputDir,
+                  detailsDir,
                   `${prompt.name}.${runIndex}${suffix}`
                 );
                 fs.writeFileSync(
@@ -334,7 +339,7 @@ async function main() {
 
                 if (validationResults.length > 0) {
                   const failurePath = path.join(
-                    outputDir,
+                    detailsDir,
                     `${prompt.name}.${runIndex}.failed.txt`
                   );
                   fs.writeFileSync(failurePath, validationResults.join("\n"));
@@ -347,7 +352,7 @@ async function main() {
               );
               if (outputDir) {
                 const errorPath = path.join(
-                  outputDir,
+                  detailsDir,
                   `${prompt.name}.${runIndex}.output.txt`
                 );
                 fs.writeFileSync(errorPath, text || "No output text.");
@@ -376,11 +381,11 @@ async function main() {
           }
 
           if (outputDir) {
-            const inputPath = path.join(outputDir, `${prompt.name}.input.txt`);
+            const inputPath = path.join(detailsDir, `${prompt.name}.input.txt`);
             fs.writeFileSync(inputPath, prompt.promptText);
 
             const errorPath = path.join(
-              outputDir,
+              detailsDir,
               `${prompt.name}.${runIndex}.error.json`
             );
             const errorOutput = {
@@ -424,7 +429,7 @@ async function main() {
         ((completedCount + failedCount) / totalJobs) * 100
       );
       process.stderr.write(
-        `\r[${modelConfig.name}] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}`
+        `\r[${modelConfig.name}] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `
       );
     }, 1000);
 

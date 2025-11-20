@@ -65,19 +65,25 @@ The dog generator is another card which is a form that generates a fictional dog
       new MessageTypeMatcher("surfaceUpdate"),
       new SurfaceUpdateSchemaMatcher("Column"),
       new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher(
-        "TextField",
-        "label",
-        "Dog breed name",
-        true
-      ),
-      new SurfaceUpdateSchemaMatcher(
-        "TextField",
-        "label",
-        "Number of legs",
-        true
-      ),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Generate"),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher(
+          "TextField",
+          "label",
+          "Dog breed name",
+          true
+        ),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Dog breed name", true),
+      ]),
+      new AnySchemaMatcher([
+        new SurfaceUpdateSchemaMatcher(
+          "TextField",
+          "label",
+          "Number of legs",
+          true
+        ),
+        new SurfaceUpdateSchemaMatcher("Text", "text", "Number of legs", true),
+      ]),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Generate", true),
     ],
   },
   {
