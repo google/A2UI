@@ -226,17 +226,6 @@ function validateComponent(
   };
 
   switch (componentType) {
-    case "Heading":
-      checkRequired(["text"]);
-      if (properties.text)
-        validateBoundValue(
-          properties.text,
-          "text",
-          component.id,
-          componentType,
-          errors
-        );
-      break;
     case "Text":
       checkRequired(["text"]);
       if (properties.text)

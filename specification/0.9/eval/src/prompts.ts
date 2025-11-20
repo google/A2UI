@@ -187,7 +187,7 @@ The dog generator is another card which is a form that generates a fictional dog
 
 The UI must have a main 'Text' (usageHint 'h1') with the text "Simple Animal Explorer".
 
-Below the heading, create a 'Tabs' component with exactly three tabs: "Mammals", "Birds", and "Reptiles".
+Below the text heading, create a 'Tabs' component with exactly three tabs: "Mammals", "Birds", and "Reptiles".
 
 Each tab's content should be a 'Column'. The first item in each column must be a 'TextField' with the label "Search...". Below the search field, display the hierarchy for that tab using nested 'Card' components.
 
@@ -467,7 +467,7 @@ The right side of the row is another 'Column' for product information:
     description: "A dashboard with filters and data cards.",
     promptText: `Generate a JSON message with a surfaceUpdate property for an interactive analytics dashboard.
 At the top, a 'Text' (usageHint 'h1') "Company Dashboard".
-Below the heading, a 'Card' containing a 'Row' of filter controls:
+Below the text heading, a 'Card' containing a 'Row' of filter controls:
 - A 'DateTimeInput' with a label for "Start Date".
 - A 'DateTimeInput' with a label for "End Date".
 - A 'Button' labeled "Apply Filters".
