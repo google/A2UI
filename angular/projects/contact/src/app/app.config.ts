@@ -14,16 +14,15 @@
  limitations under the License.
  */
 
+import { DEFAULT_CATALOG, provideA2UI } from '@a2ui/angular';
+import { IMAGE_CONFIG } from '@angular/common';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { DEFAULT_CATALOG, provideA2UI } from '@a2ui/angular';
-import { IMAGE_CONFIG } from '@angular/common';
 import { theme } from './theme';
-import { Client } from './client';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,7 +32,6 @@ export const appConfig: ApplicationConfig = {
     provideA2UI({
       catalog: DEFAULT_CATALOG,
       theme: theme,
-      client: Client,
     }),
     {
       provide: IMAGE_CONFIG,

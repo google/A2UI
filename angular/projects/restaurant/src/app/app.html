@@ -14,7 +14,7 @@
  limitations under the License.
  -->
 
-@if (processor.isLoading()) {
+@if (client.isLoading()) {
   <div class="pending">
     <span class="g-icon filled-heavy rotate">progress_activity</span>
     Awaiting an answer...
@@ -30,10 +30,10 @@
         id="body"
         name="body"
         type="text"
-        [disabled]="processor.isLoading()"
+        [disabled]="client.isLoading()"
       />
 
-      <button type="submit" [disabled]="processor.isLoading()">
+      <button type="submit" [disabled]="client.isLoading()">
         <span class="g-icon filled-heavy">send</span>
       </button>
     </div>

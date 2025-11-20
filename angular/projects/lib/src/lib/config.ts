@@ -14,18 +14,15 @@
  limitations under the License.
  */
 
-import { EnvironmentProviders, makeEnvironmentProviders, Type } from '@angular/core';
+import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { Catalog, Theme } from './rendering';
-import { A2UIClient } from './data';
 
 export function provideA2UI(config: {
   catalog: Catalog;
   theme: Theme;
-  client: Type<A2UIClient>;
 }): EnvironmentProviders {
   return makeEnvironmentProviders([
     { provide: Catalog, useValue: config.catalog },
     { provide: Theme, useValue: config.theme },
-    { provide: A2UIClient, useClass: config.client },
   ]);
 }

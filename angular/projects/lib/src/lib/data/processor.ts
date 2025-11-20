@@ -14,15 +14,19 @@
  limitations under the License.
  */
 
-import { inject, Injectable, signal } from '@angular/core';
 import { v0_8 } from '@a2ui/web-lib';
-import { A2UIClient } from './client';
+import { Injectable } from '@angular/core';
+import { firstValueFrom, Subject } from 'rxjs';
+
+export interface DispatchedEvent {
+  message: v0_8.Types.A2UIClientEventMessage;
+  completion: Subject<v0_8.Types.ServerToClientMessage[]>;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ModelProcessor {
-  private readonly a2uiClient = inject(A2UIClient);
   private readonly processor = new v0_8.Data.A2UIModelProcessor();
-  readonly isLoading = signal(false);
+  readonly events = new Subject<DispatchedEvent>();
 
   getSurfaces() {
     return this.processor.getSurfaces();
@@ -49,23 +53,17 @@ export class ModelProcessor {
     return this.processor.getData(node, relativePath, surfaceId);
   }
 
-  async makeRequest(request: v0_8.Types.A2UIClientEventMessage | string) {
-    let messages: v0_8.Types.ServerToClientMessage[];
-
-    try {
-      this.isLoading.set(true);
-      const response = await this.a2uiClient.send(request as v0_8.Types.A2UIClientEventMessage);
-      this.isLoading.set(false);
-      messages = response;
-    } catch (err) {
-      console.error(err);
-      messages = [];
-    } finally {
-      this.isLoading.set(false);
-    }
-
+  clearSurfaces() {
     this.processor.clearSurfaces();
+  }
+
+  processMessages(messages: v0_8.Types.ServerToClientMessage[]) {
     this.processor.processMessages(messages);
-    return messages;
+  }
+
+  dispatch(message: v0_8.Types.A2UIClientEventMessage): Promise<v0_8.Types.ServerToClientMessage[]> {
+    const completion = new Subject<v0_8.Types.ServerToClientMessage[]>();
+    this.events.next({ message, completion });
+    return firstValueFrom(completion);
   }
 }

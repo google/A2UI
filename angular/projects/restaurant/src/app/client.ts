@@ -14,13 +14,48 @@
  limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { A2AServerPayload, A2UIClient } from '@a2ui/angular';
+import { A2AServerPayload, ModelProcessor } from '@a2ui/angular';
 import { v0_8 } from '@a2ui/web-lib';
+import { inject, Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
-export class Client implements A2UIClient {
-  async send(
+export class Client {
+  private processor = inject(ModelProcessor);
+
+  readonly isLoading = signal(false);
+
+  constructor() {
+    this.processor.events.subscribe(async (event) => {
+      try {
+        const messages = await this.makeRequest(event.message);
+        event.completion.next(messages);
+        event.completion.complete();
+      } catch (err) {
+        event.completion.error(err);
+      }
+    });
+  }
+
+  async makeRequest(request: v0_8.Types.A2UIClientEventMessage | string) {
+    let messages: v0_8.Types.ServerToClientMessage[];
+
+    try {
+      this.isLoading.set(true);
+      const response = await this.send(request as v0_8.Types.A2UIClientEventMessage);
+      messages = response;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    } finally {
+      this.isLoading.set(false);
+    }
+
+    this.processor.clearSurfaces();
+    this.processor.processMessages(messages);
+    return messages;
+  }
+
+  private async send(
     message: v0_8.Types.A2UIClientEventMessage
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
     const response = await fetch('/a2a', {
