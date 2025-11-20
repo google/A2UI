@@ -18,7 +18,8 @@
               "$ref": "standard_catalog_definition.json#/$defs/Theme"
             }
           },
-          "required": ["surfaceId"]
+          "required": ["surfaceId"],
+          "additionalProperties": false
         }
       },
       "required": ["createSurface"],
@@ -43,7 +44,8 @@
               }
             }
           },
-          "required": ["surfaceId", "components"]
+          "required": ["surfaceId", "components"],
+          "additionalProperties": false
         }
       },
       "required": ["surfaceUpdate"],
@@ -69,7 +71,8 @@
               "additionalProperties": true
             }
           },
-          "required": ["contents", "surfaceId"]
+          "required": ["contents", "surfaceId"],
+          "additionalProperties": false
         }
       },
       "required": ["dataModelUpdate"],
@@ -86,7 +89,8 @@
               "description": "The unique identifier for the UI surface to be deleted."
             }
           },
-          "required": ["surfaceId"]
+          "required": ["surfaceId"],
+          "additionalProperties": false
         }
       },
       "required": ["deleteSurface"],

@@ -1,5 +1,5 @@
 {
-  "$id": "https://a2ui.dev/specification/0.9/component_catalog.json",
+  "$id": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json",
   "title": "A2UI Component Catalog",
   "description": "Definitions for the standard catalog of A2UI components.",
   "$defs": {
@@ -44,7 +44,8 @@
           "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
         }
       },
-      "required": ["component", "text"]
+      "required": ["component", "text"],
+      "additionalProperties": false
     },
     "Image": {
       "type": "object",
@@ -72,7 +73,8 @@
           ]
         }
       },
-      "required": ["component", "url"]
+      "required": ["component", "url"],
+      "additionalProperties": false
     },
     "Icon": {
       "type": "object",
@@ -139,10 +141,12 @@
               "type": "string"
             }
           },
+          "additionalProperties": false,
           "oneOf": [{ "required": ["literalString"] }, { "required": ["path"] }]
         }
       },
-      "required": ["component", "name"]
+      "required": ["component", "name"],
+      "additionalProperties": false
     },
     "Video": {
       "type": "object",
@@ -153,7 +157,8 @@
           "description": "The URL of the video to display."
         }
       },
-      "required": ["component", "url"]
+      "required": ["component", "url"],
+      "additionalProperties": false
     },
     "AudioPlayer": {
       "type": "object",
@@ -168,7 +173,8 @@
           "$ref": "common_types.json#/$defs/stringOrPath"
         }
       },
-      "required": ["component", "url"]
+      "required": ["component", "url"],
+      "additionalProperties": false
     },
     "Row": {
       "type": "object",
@@ -196,7 +202,8 @@
           "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": ["component", "children"]
+      "required": ["component", "children"],
+      "additionalProperties": false
     },
     "Column": {
       "type": "object",
@@ -224,7 +231,8 @@
           "enum": ["center", "end", "start", "stretch"]
         }
       },
-      "required": ["component", "children"]
+      "required": ["component", "children"],
+      "additionalProperties": false
     },
     "List": {
       "type": "object",
@@ -245,7 +253,8 @@
           "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": ["component", "children"]
+      "required": ["component", "children"],
+      "additionalProperties": false
     },
     "Card": {
       "type": "object",
@@ -256,7 +265,8 @@
           "description": "The ID of the component to be rendered inside the card."
         }
       },
-      "required": ["component", "child"]
+      "required": ["component", "child"],
+      "additionalProperties": false
     },
     "Tabs": {
       "type": "object",
@@ -274,11 +284,13 @@
               },
               "child": { "type": "string" }
             },
-            "required": ["title", "child"]
+            "required": ["title", "child"],
+            "additionalProperties": false
           }
         }
       },
-      "required": ["component", "tabItems"]
+      "required": ["component", "tabItems"],
+      "additionalProperties": false
     },
     "Divider": {
       "type": "object",
@@ -290,7 +302,8 @@
           "enum": ["horizontal", "vertical"]
         }
       },
-      "required": ["component"]
+      "required": ["component"],
+      "additionalProperties": false
     },
     "Modal": {
       "type": "object",
@@ -305,7 +318,8 @@
           "description": "The ID of the component to be displayed inside the modal."
         }
       },
-      "required": ["component", "entryPointChild", "contentChild"]
+      "required": ["component", "entryPointChild", "contentChild"],
+      "additionalProperties": false
     },
     "Button": {
       "type": "object",
@@ -338,17 +352,21 @@
                       "literalString": { "type": "string" },
                       "literalNumber": { "type": "number" },
                       "literalBoolean": { "type": "boolean" }
-                    }
+                    },
+                    "additionalProperties": false
                   }
                 },
-                "required": ["key", "value"]
+                "required": ["key", "value"],
+                "additionalProperties": false
               }
             }
           },
-          "required": ["name"]
+          "required": ["name"],
+          "additionalProperties": false
         }
       },
-      "required": ["component", "child", "action"]
+      "required": ["component", "child", "action"],
+      "additionalProperties": false
     },
     "CheckBox": {
       "type": "object",
@@ -363,7 +381,8 @@
           "description": "The current state of the checkbox (true for checked, false for unchecked)."
         }
       },
-      "required": ["component", "label", "value"]
+      "required": ["component", "label", "value"],
+      "additionalProperties": false
     },
     "TextField": {
       "type": "object",
@@ -387,7 +406,8 @@
           "description": "A regular expression used for client-side validation of the input."
         }
       },
-      "required": ["component", "label"]
+      "required": ["component", "label"],
+      "additionalProperties": false
     },
     "DateTimeInput": {
       "type": "object",
@@ -410,7 +430,8 @@
           "description": "The desired format for the output string after a date or time is selected."
         }
       },
-      "required": ["component", "value"]
+      "required": ["component", "value"],
+      "additionalProperties": false
     },
     "MultipleChoice": {
       "type": "object",
@@ -435,7 +456,8 @@
                 "description": "The value to be associated with this option when selected."
               }
             },
-            "required": ["label", "value"]
+            "required": ["label", "value"],
+            "additionalProperties": false
           }
         },
         "maxAllowedSelections": {
@@ -443,7 +465,8 @@
           "description": "The maximum number of options that the user is allowed to select."
         }
       },
-      "required": ["component", "selections", "options"]
+      "required": ["component", "selections", "options"],
+      "additionalProperties": false
     },
     "Slider": {
       "type": "object",
@@ -462,7 +485,8 @@
           "description": "The maximum value of the slider."
         }
       },
-      "required": ["component", "value"]
+      "required": ["component", "value"],
+      "additionalProperties": false
     },
     "Theme": {
       "type": "object",
@@ -477,7 +501,8 @@
           "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
           "pattern": "^#[0-9a-fA-F]{6}$"
         }
-      }
+      },
+      "additionalProperties": false
     }
   }
 }
