@@ -73,7 +73,9 @@ Example Output:
     "surfaceId": "contact_form_1",
     "components": [
       {
-        "id": "root",
+        "common": {
+          "id": "root"
+        },
         "component": "Column",
         "children": {
           "explicitList": [
@@ -83,12 +85,16 @@ Example Output:
         }
       },
       {
-        "id": "first_name_label",
+        "common": {
+          "id": "first_name_label"
+        },
         "component": "Text",
         "text": { "literalString": "First Name" }
       },
       {
-        "id": "first_name_field",
+        "common": {
+          "id": "first_name_field"
+        },
         "component": "TextField",
         "label": { "literalString": "First Name" },
         "text": { "path": "/contact/firstName" },

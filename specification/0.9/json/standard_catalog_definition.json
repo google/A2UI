@@ -4,35 +4,33 @@
   "description": "Definitions for the standard catalog of A2UI components.",
   "$defs": {
     "anyComponent": {
-      "allOf": [
-        { "$ref": "common_types.json#/$defs/componentBase" },
-        {
-          "oneOf": [
-            { "$ref": "#/$defs/Text" },
-            { "$ref": "#/$defs/Image" },
-            { "$ref": "#/$defs/Icon" },
-            { "$ref": "#/$defs/Video" },
-            { "$ref": "#/$defs/AudioPlayer" },
-            { "$ref": "#/$defs/Row" },
-            { "$ref": "#/$defs/Column" },
-            { "$ref": "#/$defs/List" },
-            { "$ref": "#/$defs/Card" },
-            { "$ref": "#/$defs/Tabs" },
-            { "$ref": "#/$defs/Divider" },
-            { "$ref": "#/$defs/Modal" },
-            { "$ref": "#/$defs/Button" },
-            { "$ref": "#/$defs/CheckBox" },
-            { "$ref": "#/$defs/TextField" },
-            { "$ref": "#/$defs/DateTimeInput" },
-            { "$ref": "#/$defs/MultipleChoice" },
-            { "$ref": "#/$defs/Slider" }
-          ]
-        }
+      "oneOf": [
+        { "$ref": "#/$defs/Text" },
+        { "$ref": "#/$defs/Image" },
+        { "$ref": "#/$defs/Icon" },
+        { "$ref": "#/$defs/Video" },
+        { "$ref": "#/$defs/AudioPlayer" },
+        { "$ref": "#/$defs/Row" },
+        { "$ref": "#/$defs/Column" },
+        { "$ref": "#/$defs/List" },
+        { "$ref": "#/$defs/Card" },
+        { "$ref": "#/$defs/Tabs" },
+        { "$ref": "#/$defs/Divider" },
+        { "$ref": "#/$defs/Modal" },
+        { "$ref": "#/$defs/Button" },
+        { "$ref": "#/$defs/CheckBox" },
+        { "$ref": "#/$defs/TextField" },
+        { "$ref": "#/$defs/DateTimeInput" },
+        { "$ref": "#/$defs/MultipleChoice" },
+        { "$ref": "#/$defs/Slider" }
       ]
     },
     "Text": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Text" },
         "text": {
           "$ref": "common_types.json#/$defs/stringOrPath",
@@ -44,12 +42,15 @@
           "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
         }
       },
-      "required": ["component", "text"],
+      "required": ["common", "component", "text"],
       "additionalProperties": false
     },
     "Image": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Image" },
         "url": {
           "$ref": "common_types.json#/$defs/stringOrPath",
@@ -73,12 +74,15 @@
           ]
         }
       },
-      "required": ["component", "url"],
+      "required": ["common", "component", "url"],
       "additionalProperties": false
     },
     "Icon": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Icon" },
         "name": {
           "type": "object",
@@ -145,24 +149,30 @@
           "oneOf": [{ "required": ["literalString"] }, { "required": ["path"] }]
         }
       },
-      "required": ["component", "name"],
+      "required": ["common", "component", "name"],
       "additionalProperties": false
     },
     "Video": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Video" },
         "url": {
           "$ref": "common_types.json#/$defs/stringOrPath",
           "description": "The URL of the video to display."
         }
       },
-      "required": ["component", "url"],
+      "required": ["common", "component", "url"],
       "additionalProperties": false
     },
     "AudioPlayer": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "AudioPlayer" },
         "url": {
           "$ref": "common_types.json#/$defs/stringOrPath",
@@ -173,12 +183,15 @@
           "$ref": "common_types.json#/$defs/stringOrPath"
         }
       },
-      "required": ["component", "url"],
+      "required": ["common", "component", "url"],
       "additionalProperties": false
     },
     "Row": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Row" },
         "children": {
           "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
@@ -202,12 +215,15 @@
           "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": ["component", "children"],
+      "required": ["common", "component", "children"],
       "additionalProperties": false
     },
     "Column": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Column" },
         "children": {
           "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
@@ -231,12 +247,15 @@
           "enum": ["center", "end", "start", "stretch"]
         }
       },
-      "required": ["component", "children"],
+      "required": ["common", "component", "children"],
       "additionalProperties": false
     },
     "List": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "List" },
         "children": {
           "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
@@ -253,24 +272,30 @@
           "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": ["component", "children"],
+      "required": ["common", "component", "children"],
       "additionalProperties": false
     },
     "Card": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Card" },
         "child": {
           "type": "string",
           "description": "The ID of the component to be rendered inside the card."
         }
       },
-      "required": ["component", "child"],
+      "required": ["common", "component", "child"],
       "additionalProperties": false
     },
     "Tabs": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Tabs" },
         "tabItems": {
           "type": "array",
@@ -289,12 +314,15 @@
           }
         }
       },
-      "required": ["component", "tabItems"],
+      "required": ["common", "component", "tabItems"],
       "additionalProperties": false
     },
     "Divider": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Divider" },
         "axis": {
           "type": "string",
@@ -302,12 +330,15 @@
           "enum": ["horizontal", "vertical"]
         }
       },
-      "required": ["component"],
+      "required": ["common", "component"],
       "additionalProperties": false
     },
     "Modal": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Modal" },
         "entryPointChild": {
           "type": "string",
@@ -318,12 +349,15 @@
           "description": "The ID of the component to be displayed inside the modal."
         }
       },
-      "required": ["component", "entryPointChild", "contentChild"],
+      "required": ["common", "component", "entryPointChild", "contentChild"],
       "additionalProperties": false
     },
     "Button": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Button" },
         "child": {
           "type": "string",
@@ -365,12 +399,15 @@
           "additionalProperties": false
         }
       },
-      "required": ["component", "child", "action"],
+      "required": ["common", "component", "child", "action"],
       "additionalProperties": false
     },
     "CheckBox": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "CheckBox" },
         "label": {
           "$ref": "common_types.json#/$defs/stringOrPath",
@@ -381,12 +418,15 @@
           "description": "The current state of the checkbox (true for checked, false for unchecked)."
         }
       },
-      "required": ["component", "label", "value"],
+      "required": ["common", "component", "label", "value"],
       "additionalProperties": false
     },
     "TextField": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "TextField" },
         "label": {
           "$ref": "common_types.json#/$defs/stringOrPath",
@@ -406,12 +446,15 @@
           "description": "A regular expression used for client-side validation of the input."
         }
       },
-      "required": ["component", "label"],
+      "required": ["common", "component", "label"],
       "additionalProperties": false
     },
     "DateTimeInput": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "DateTimeInput" },
         "value": {
           "$ref": "common_types.json#/$defs/stringOrPath",
@@ -428,14 +471,21 @@
         "outputFormat": {
           "type": "string",
           "description": "The desired format for the output string after a date or time is selected."
+        },
+        "label": {
+          "$ref": "common_types.json#/$defs/stringOrPath",
+          "description": "The text label for the input field."
         }
       },
-      "required": ["component", "value"],
+      "required": ["common", "component", "value"],
       "additionalProperties": false
     },
     "MultipleChoice": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "MultipleChoice" },
         "selections": {
           "description": "The currently selected values for the component.",
@@ -465,12 +515,15 @@
           "description": "The maximum number of options that the user is allowed to select."
         }
       },
-      "required": ["component", "selections", "options"],
+      "required": ["common", "component", "selections", "options"],
       "additionalProperties": false
     },
     "Slider": {
       "type": "object",
       "properties": {
+        "common": {
+          "$ref": "common_types.json#/$defs/componentProperties"
+        },
         "component": { "const": "Slider" },
         "value": {
           "$ref": "common_types.json#/$defs/numberOrPath",
@@ -485,7 +538,7 @@
           "description": "The maximum value of the slider."
         }
       },
-      "required": ["component", "value"],
+      "required": ["common", "component", "value"],
       "additionalProperties": false
     },
     "Theme": {

@@ -49,15 +49,15 @@ A vertical list with:
 Dog breed information
 Dog generator
 
-The dog breed information is a card, which contains a title “Famous Dog breeds”, a header image, and a carousel of different dog breeds. The carousel information should be in the data model at /carousel.
+The dog breed information is a card, which contains a title “Famous Dog breeds”, a header image, and a horizontal list of images of different dog breeds. The list information should be in the data model at /breeds.
 
 The dog generator is another card which is a form that generates a fictional dog breed with a description
 - Title
 - Description text explaining what it is
 - Dog breed name (text input)
 - Number of legs (number input)
-- Skills (checkboxes)
 - Button called “Generate” which takes the data above and generates a new dog description
+- Skills (MultipleChoice component)
 - A divider
 - A section which shows the generated content
 `,
@@ -119,12 +119,11 @@ The dog generator is another card which is a form that generates a fictional dog
       "A DataModelUpdate message to populate the product gallery data.",
     promptText: `Generate a JSON message containing a dataModelUpdate to populate the data model for the product gallery. The update should target the path '/products' and include at least two products. Each product in the map should have keys 'id', 'name', and 'imageUrl'. For example:
     {
-      "key": "product1",
-      "valueMap": [
-        { "key": "id", "valueString": "product1" },
-        { "key": "name", "valueString": "Awesome Gadget" },
-        { "key": "imageUrl", "valueString": "https://example.com/gadget.jpg" }
-      ]
+      "product1": {
+        "id": "product1",
+        "name": "Awesome Gadget",
+        "imageUrl": "https://example.com/gadget.jpg"
+      }
     }`,
     matchers: [
       new MessageTypeMatcher("dataModelUpdate"),
@@ -304,7 +303,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "musicPlayer",
     description: "A simple music player UI.",
-    promptText: `Generate a JSON message with a surfaceUpdate property for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button's: "Previous", "Play", and "Next".`,
+    promptText: `Generate a JSON message with a surfaceUpdate property for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the literalString labels "Previous", "Play", and "Next" respectively.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
       new SurfaceUpdateSchemaMatcher("Column"),
@@ -474,7 +473,7 @@ Below the text heading, a 'Card' containing a 'Row' of filter controls:
 Below the filters card, a 'Row' containing two 'Card's for key metrics:
 - The first 'Card' has a 'Text' (usageHint 'h2') "Total Revenue" and a 'Text' component showing "$1,234,567".
 - The second 'Card' has a 'Text' (usageHint 'h2') "New Users" and a 'Text' component showing "4,321".
-Finally, a large 'Card' at the bottom with a 'Text' (usageHint 'h2') "Revenue Over Time" and a placeholder 'Image' to represent a line chart.`,
+Finally, a large 'Card' at the bottom with a 'Text' (usageHint 'h2') "Revenue Over Time" and a placeholder 'Image' with a valid URL to represent a line chart.`,
     matchers: [
       new MessageTypeMatcher("surfaceUpdate"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Company Dashboard"),

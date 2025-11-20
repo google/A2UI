@@ -110,11 +110,12 @@ function validateSurfaceUpdate(data: any, errors: string[]) {
 
   const componentIds = new Set<string>();
   for (const c of data.components) {
-    if (c.id) {
-      if (componentIds.has(c.id)) {
-        errors.push(`Duplicate component ID found: ${c.id}`);
+    const id = c.common?.id;
+    if (id) {
+      if (componentIds.has(id)) {
+        errors.push(`Duplicate component ID found: ${id}`);
       }
-      componentIds.add(c.id);
+      componentIds.add(id);
     }
   }
 
@@ -189,19 +190,20 @@ function validateComponent(
   allIds: Set<string>,
   errors: string[]
 ) {
-  if (!component.id) {
-    errors.push(`Component is missing an 'id'.`);
+  const id = component.common?.id;
+  if (!id) {
+    errors.push(`Component is missing an 'id' in 'common'.`);
     return;
   }
   if (!component.component) {
-    errors.push(`Component '${component.id}' is missing 'component'.`);
+    errors.push(`Component '${id}' is missing 'component'.`);
     return;
   }
 
   const componentType = component.component;
   if (typeof componentType !== "string") {
     errors.push(
-      `Component '${component.id}' has invalid 'component' property. Expected string, found ${typeof componentType}.`
+      `Component '${id}' has invalid 'component' property. Expected string, found ${typeof componentType}.`
     );
     return;
   }
@@ -212,7 +214,7 @@ function validateComponent(
     for (const prop of props) {
       if (properties[prop] === undefined) {
         errors.push(
-          `Component '${component.id}' of type '${componentType}' is missing required property '${prop}'.`
+          `Component '${id}' of type '${componentType}' is missing required property '${prop}'.`
         );
       }
     }
@@ -222,7 +224,7 @@ function validateComponent(
     for (const id of ids) {
       if (id && !allIds.has(id)) {
         errors.push(
-          `Component '${component.id}' references non-existent component ID '${id}'.`
+          `Component '${id}' references non-existent component ID '${id}'.`
         );
       }
     }
@@ -232,51 +234,27 @@ function validateComponent(
     case "Text":
       checkRequired(["text"]);
       if (properties.text)
-        validateBoundValue(
-          properties.text,
-          "text",
-          component.id,
-          componentType,
-          errors
-        );
+        validateBoundValue(properties.text, "text", id, componentType, errors);
       break;
     case "Image":
       checkRequired(["url"]);
       if (properties.url)
-        validateBoundValue(
-          properties.url,
-          "url",
-          component.id,
-          componentType,
-          errors
-        );
+        validateBoundValue(properties.url, "url", id, componentType, errors);
       break;
     case "Video":
       checkRequired(["url"]);
       if (properties.url)
-        validateBoundValue(
-          properties.url,
-          "url",
-          component.id,
-          componentType,
-          errors
-        );
+        validateBoundValue(properties.url, "url", id, componentType, errors);
       break;
     case "AudioPlayer":
       checkRequired(["url"]);
       if (properties.url)
-        validateBoundValue(
-          properties.url,
-          "url",
-          component.id,
-          componentType,
-          errors
-        );
+        validateBoundValue(properties.url, "url", id, componentType, errors);
       if (properties.description)
         validateBoundValue(
           properties.description,
           "description",
-          component.id,
+          id,
           componentType,
           errors
         );
@@ -287,18 +265,12 @@ function validateComponent(
         validateBoundValue(
           properties.label,
           "label",
-          component.id,
+          id,
           componentType,
           errors
         );
       if (properties.text)
-        validateBoundValue(
-          properties.text,
-          "text",
-          component.id,
-          componentType,
-          errors
-        );
+        validateBoundValue(properties.text, "text", id, componentType, errors);
       break;
     case "DateTimeInput":
       checkRequired(["value"]);
@@ -306,7 +278,7 @@ function validateComponent(
         validateBoundValue(
           properties.value,
           "value",
-          component.id,
+          id,
           componentType,
           errors
         );
@@ -320,7 +292,7 @@ function validateComponent(
           (!properties.selections.literalArray && !properties.selections.path)
         ) {
           errors.push(
-            `Component '${component.id}' of type '${componentType}' property 'selections' must have either 'literalArray' or 'path'.`
+            `Component '${id}' of type '${componentType}' property 'selections' must have either 'literalArray' or 'path'.`
           );
         }
       }
@@ -328,19 +300,19 @@ function validateComponent(
         properties.options.forEach((option: any, index: number) => {
           if (!option.label)
             errors.push(
-              `Component '${component.id}' option at index ${index} missing 'label'.`
+              `Component '${id}' option at index ${index} missing 'label'.`
             );
           if (option.label)
             validateBoundValue(
               option.label,
               "label",
-              component.id,
+              id,
               componentType,
               errors
             );
           if (!option.value)
             errors.push(
-              `Component '${component.id}' option at index ${index} missing 'value'.`
+              `Component '${id}' option at index ${index} missing 'value'.`
             );
         });
       }
@@ -351,7 +323,7 @@ function validateComponent(
         validateBoundValue(
           properties.value,
           "value",
-          component.id,
+          id,
           componentType,
           errors
         );
@@ -362,7 +334,7 @@ function validateComponent(
         validateBoundValue(
           properties.value,
           "value",
-          component.id,
+          id,
           componentType,
           errors
         );
@@ -370,7 +342,7 @@ function validateComponent(
         validateBoundValue(
           properties.label,
           "label",
-          component.id,
+          id,
           componentType,
           errors
         );
@@ -379,12 +351,16 @@ function validateComponent(
     case "Column":
     case "List":
       checkRequired(["children"]);
-      if (properties.children && Array.isArray(properties.children)) {
+      if (
+        properties.children &&
+        typeof properties.children === "object" &&
+        !Array.isArray(properties.children)
+      ) {
         const hasExplicit = !!properties.children.explicitList;
         const hasTemplate = !!properties.children.template;
         if ((hasExplicit && hasTemplate) || (!hasExplicit && !hasTemplate)) {
           errors.push(
-            `Component '${component.id}' must have either 'explicitList' or 'template' in children, but not both or neither.`
+            `Component '${id}' must have either 'explicitList' or 'template' in children, but not both or neither.`
           );
         }
         if (hasExplicit) {
@@ -404,24 +380,14 @@ function validateComponent(
       if (properties.tabItems && Array.isArray(properties.tabItems)) {
         properties.tabItems.forEach((tab: any) => {
           if (!tab.title) {
-            errors.push(
-              `Tab item in component '${component.id}' is missing a 'title'.`
-            );
+            errors.push(`Tab item in component '${id}' is missing a 'title'.`);
           }
           if (!tab.child) {
-            errors.push(
-              `Tab item in component '${component.id}' is missing a 'child'.`
-            );
+            errors.push(`Tab item in component '${id}' is missing a 'child'.`);
           }
           checkRefs([tab.child]);
           if (tab.title)
-            validateBoundValue(
-              tab.title,
-              "title",
-              component.id,
-              componentType,
-              errors
-            );
+            validateBoundValue(tab.title, "title", id, componentType, errors);
         });
       }
       break;
@@ -433,9 +399,7 @@ function validateComponent(
       checkRequired(["child", "action"]);
       checkRefs([properties.child]);
       if (!properties.action || !properties.action.name) {
-        errors.push(
-          `Component '${component.id}' Button action is missing a 'name'.`
-        );
+        errors.push(`Component '${id}' Button action is missing a 'name'.`);
       }
       break;
     case "Divider":
@@ -444,17 +408,11 @@ function validateComponent(
     case "Icon":
       checkRequired(["name"]);
       if (properties.name)
-        validateBoundValue(
-          properties.name,
-          "name",
-          component.id,
-          componentType,
-          errors
-        );
+        validateBoundValue(properties.name, "name", id, componentType, errors);
       break;
     default:
       errors.push(
-        `Unknown component type '${componentType}' in component '${component.id}'.`
+        `Unknown component type '${componentType}' in component '${id}'.`
       );
   }
 }

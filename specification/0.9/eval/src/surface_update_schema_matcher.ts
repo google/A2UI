@@ -32,7 +32,7 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
   }
 
   private getComponentById(components: any[], id: string): any | undefined {
-    return components.find((c: any) => c.id === id);
+    return components.find((c: any) => c.common?.id === id);
   }
 
   validate(schema: any): ValidationResult {
@@ -55,7 +55,7 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
       if (c.component && typeof c.component !== "string") {
         return {
           success: false,
-          error: `Component ID '${c.id}' has invalid 'component' property. Expected string, found ${typeof c.component}.`,
+          error: `Component ID '${c.common?.id}' has invalid 'component' property. Expected string, found ${typeof c.component}.`,
         };
       }
     }

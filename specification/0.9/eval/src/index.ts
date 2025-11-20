@@ -189,6 +189,7 @@ async function main() {
     })
     .option("prompt", {
       type: "string",
+      array: true,
       description: "Filter prompts by name prefix",
     })
     .option("clean-results", {
@@ -210,12 +211,15 @@ async function main() {
   }
 
   let filteredPrompts = prompts;
-  if (argv.prompt) {
+  if (argv.prompt && argv.prompt.length > 0) {
+    const promptPrefixes = argv.prompt as string[];
     filteredPrompts = prompts.filter((p) =>
-      p.name.startsWith(argv.prompt as string)
+      promptPrefixes.some((prefix) => p.name.startsWith(prefix))
     );
     if (filteredPrompts.length === 0) {
-      logger.error(`No prompt found with prefix "${argv.prompt}".`);
+      logger.error(
+        `No prompt found with prefix "${promptPrefixes.join(", ")}".`
+      );
       process.exit(1);
     }
   }
