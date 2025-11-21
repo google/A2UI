@@ -1,0 +1,43 @@
+name: Web directory build and test
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'web/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'web/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache .wireit
+        uses: actions/cache@v4
+        with:
+          path: web/.wireit
+          key: ${{ runner.os }}-wireit-${{ hashFiles('web/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-wireit-
+
+      - name: Install all workspaces' dependencies
+        working-directory: ./web
+        run: npm install --workspaces
+
+      - name: Build all workspaces
+        working-directory: ./web
+        run: npm run build --workspaces
+
+      - name: Run all tests
+        working-directory: ./web
+        run: npm run test --workspace=tests
