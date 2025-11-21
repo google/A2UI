@@ -31,7 +31,7 @@ from a2ui_session_util import A2UI_ENABLED_STATE_KEY, A2UI_CATALOG_URI_STATE_KEY
 logger = logging.getLogger(__name__)
 
 STANDARD_CATALOG_URI = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json"
-RIZZCHARTS_CATALOG_URI = "https://raw.githubusercontent.com/wrenj/a2ui_demo_agent_hub/refs/heads/main/a2a_samples/ecommerce_dashboard/specification/v0_8/rizzcharts_component_catalog.json"
+RIZZCHARTS_CATALOG_URI = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json"
 
 class rizzchartsAgent:
     """An agent that runs an ecommerce dashboard"""

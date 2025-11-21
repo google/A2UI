@@ -22,8 +22,7 @@ import * as Guards from "./data/guards.js";
 
 import { create as createSignalA2UIModelProcessor } from "./data/signal-model-processor.js";
 import { A2UIModelProcessor } from "./data/model-processor.js";
-import A2UIProtocolMessage from "./schemas/server_to_client.json" with { type: "json" };
-import A2UIClientEventMessage from "./schemas/client_to_server.json" with { type: "json" };
+import A2UIClientEventMessage from "./schemas/server_to_client_with_standard_catalog.json" with { type: "json" };
 
 export const Data = {
   createSignalA2UIModelProcessor,
@@ -32,6 +31,5 @@ export const Data = {
 };
 
 export const Schemas = {
-  A2UIProtocolMessage,
   A2UIClientEventMessage,
 };

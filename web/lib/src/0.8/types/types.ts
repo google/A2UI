@@ -405,6 +405,12 @@ export interface SliderNode extends BaseComponentNode {
   properties: ResolvedSlider;
 }
 
+export interface CustomNode extends BaseComponentNode {
+  type: string;
+  // For custom nodes, properties are just a map of string keys to any resolved value.
+  properties: CustomNodeProperties;
+}
+
 /**
  * The complete discriminated union of all possible resolved component nodes.
  * A renderer would use this type for any given node in the component tree.
@@ -428,7 +434,8 @@ export type AnyComponentNode =
   | TextFieldNode
   | DateTimeInputNode
   | MultipleChoiceNode
-  | SliderNode;
+  | SliderNode
+  | CustomNode;
 
 // These components do not contain other components can reuse their
 // original interfaces.
@@ -497,6 +504,10 @@ export interface ResolvedTabs {
 export interface ResolvedModal {
   entryPointChild: AnyComponentNode;
   contentChild: AnyComponentNode;
+}
+
+export interface CustomNodeProperties {
+  [k: string]: ResolvedValue;
 }
 
 export type SurfaceID = string;

@@ -15,6 +15,7 @@
  */
 
 import { SignalWatcher } from "@lit-labs/signals";
+import { consume } from "@lit/context";
 import {
   css,
   html,
@@ -25,15 +26,19 @@ import {
   TemplateResult,
 } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { AnyComponentNode, SurfaceID } from "../types/types";
-import { effect } from "signal-utils/subtle/microtask-effect";
 import { map } from "lit/directives/map.js";
+import { effect } from "signal-utils/subtle/microtask-effect";
 import { A2UIModelProcessor } from "../data/model-processor.js";
-import { consume } from "@lit/context";
-import { themeContext } from "./context/theme.js";
-import { Theme } from "../types/types.js";
 import { StringValue } from "../types/primitives.js";
+import { AnyComponentNode, SurfaceID } from "../types/types";
+import { Theme } from "../types/types.js";
+import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles";
+
+type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
+  AnyComponentNode,
+  { type: T }
+>;
 
 // This is the base class all the components will inherit
 @customElement("a2ui-root")
@@ -134,14 +139,14 @@ export class Root extends SignalWatcher(LitElement) {
     return html` ${map(components, (component) => {
       switch (component.type) {
         case "List": {
-          const childComponents: AnyComponentNode[] | null =
-            component.properties.children;
+          const node = component as NodeOfType<"List">;
+          const childComponents = node.properties.children;
           return html`<a2ui-list
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
-            .direction=${component.properties.direction ?? "vertical"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
+            .direction=${node.properties.direction ?? "vertical"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .childComponents=${childComponents}
@@ -149,281 +154,299 @@ export class Root extends SignalWatcher(LitElement) {
         }
 
         case "Card": {
+          const node = component as NodeOfType<"Card">;
           let childComponents: AnyComponentNode[] | null =
-            component.properties.children;
-          if (!childComponents && component.properties.child) {
-            childComponents = [component.properties.child];
+            node.properties.children;
+          if (!childComponents && node.properties.child) {
+            childComponents = [node.properties.child];
           }
 
           return html`<a2ui-card
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
             .childComponents=${childComponents}
-            .dataContextPath=${component.dataContextPath ?? ""}
+            .dataContextPath=${node.dataContextPath ?? ""}
           ></a2ui-card>`;
         }
 
         case "Column": {
+          const node = component as NodeOfType<"Column">;
           return html`<a2ui-column
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .childComponents=${component.properties.children ?? null}
-            .dataContextPath=${component.dataContextPath ?? ""}
-            .alignment=${component.properties.alignment ?? "stretch"}
-            .distribution=${component.properties.distribution ?? "start"}
+            .childComponents=${node.properties.children ?? null}
+            .dataContextPath=${node.dataContextPath ?? ""}
+            .alignment=${node.properties.alignment ?? "stretch"}
+            .distribution=${node.properties.distribution ?? "start"}
           ></a2ui-column>`;
         }
 
         case "Row": {
+          const node = component as NodeOfType<"Row">;
           return html`<a2ui-row
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .childComponents=${component.properties.children ?? null}
-            .dataContextPath=${component.dataContextPath ?? ""}
-            .alignment=${component.properties.alignment ?? "stretch"}
-            .distribution=${component.properties.distribution ?? "start"}
+            .childComponents=${node.properties.children ?? null}
+            .dataContextPath=${node.dataContextPath ?? ""}
+            .alignment=${node.properties.alignment ?? "stretch"}
+            .distribution=${node.properties.distribution ?? "start"}
           ></a2ui-row>`;
         }
 
         case "Image": {
+          const node = component as NodeOfType<"Image">;
           return html`<a2ui-image
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .url=${component.properties.url ?? null}
-            .dataContextPath=${component.dataContextPath ?? ""}
+            .url=${node.properties.url ?? null}
+            .dataContextPath=${node.dataContextPath ?? ""}
           ></a2ui-image>`;
         }
 
         case "Icon": {
+          const node = component as NodeOfType<"Icon">;
           return html`<a2ui-icon
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .name=${component.properties.name ?? null}
-            .dataContextPath=${component.dataContextPath ?? ""}
+            .name=${node.properties.name ?? null}
+            .dataContextPath=${node.dataContextPath ?? ""}
           ></a2ui-icon>`;
         }
 
         case "AudioPlayer": {
+          const node = component as NodeOfType<"AudioPlayer">;
           return html`<a2ui-audioplayer
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .url=${component.properties.url ?? null}
-            .dataContextPath=${component.dataContextPath ?? ""}
+            .url=${node.properties.url ?? null}
+            .dataContextPath=${node.dataContextPath ?? ""}
           ></a2ui-audioplayer>`;
         }
 
         case "Button": {
+          const node = component as NodeOfType<"Button">;
           return html`<a2ui-button
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath ?? ""}
-            .action=${component.properties.action}
-            .childComponents=${[component.properties.child]}
+            .dataContextPath=${node.dataContextPath ?? ""}
+            .action=${node.properties.action}
+            .childComponents=${[node.properties.child]}
           ></a2ui-button>`;
         }
 
         case "Text": {
+          const node = component as NodeOfType<"Text">;
           return html`<a2ui-text
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .model=${this.processor}
             .surfaceId=${this.surfaceId}
             .processor=${this.processor}
-            .dataContextPath=${component.dataContextPath}
-            .text=${component.properties.text}
+            .dataContextPath=${node.dataContextPath}
+            .text=${node.properties.text}
           ></a2ui-text>`;
         }
 
         case "Heading": {
+          const node = component as NodeOfType<"Heading">;
           return html`<a2ui-heading
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
-            .text=${component.properties.text}
-            .level=${component.properties.level}
+            .dataContextPath=${node.dataContextPath}
+            .text=${node.properties.text}
+            .level=${node.properties.level}
           ></a2ui-heading>`;
         }
 
         case "CheckBox": {
+          const node = component as NodeOfType<"CheckBox">;
           return html`<a2ui-checkbox
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath ?? ""}
-            .label=${component.properties.label}
-            .value=${component.properties.value}
+            .dataContextPath=${node.dataContextPath ?? ""}
+            .label=${node.properties.label}
+            .value=${node.properties.value}
           ></a2ui-checkbox>`;
         }
 
         case "DateTimeInput": {
+          const node = component as NodeOfType<"DateTimeInput">;
           return html`<a2ui-datetimeinput
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath ?? ""}
-            .enableDate=${component.properties.enableDate ?? true}
-            .enableTime=${component.properties.enableTime ?? true}
-            .outputFormat=${component.properties.outputFormat}
-            .value=${component.properties.value}
+            .dataContextPath=${node.dataContextPath ?? ""}
+            .enableDate=${node.properties.enableDate ?? true}
+            .enableTime=${node.properties.enableTime ?? true}
+            .outputFormat=${node.properties.outputFormat}
+            .value=${node.properties.value}
           ></a2ui-datetimeinput>`;
         }
 
         case "Divider": {
           // TODO: thickness, axis and color.
+          const node = component as NodeOfType<"Divider">;
           return html`<a2ui-divider
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
-            .thickness=${component.properties.thickness}
-            .axis=${component.properties.axis}
-            .color=${component.properties.color}
+            .dataContextPath=${node.dataContextPath}
+            .thickness=${node.properties.thickness}
+            .axis=${node.properties.axis}
+            .color=${node.properties.color}
           ></a2ui-divider>`;
         }
 
         case "MultipleChoice": {
           // TODO: maxAllowedSelections and selections.
+          const node = component as NodeOfType<"MultipleChoice">;
           return html`<a2ui-multiplechoice
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
-            .options=${component.properties.options}
-            .maxAllowedSelections=${component.properties.maxAllowedSelections}
-            .selections=${component.properties.selections}
+            .dataContextPath=${node.dataContextPath}
+            .options=${node.properties.options}
+            .maxAllowedSelections=${node.properties.maxAllowedSelections}
+            .selections=${node.properties.selections}
           ></a2ui-multiplechoice>`;
         }
 
         case "Slider": {
+          const node = component as NodeOfType<"Slider">;
           return html`<a2ui-slider
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
-            .value=${component.properties.value}
-            .minValue=${component.properties.minValue}
-            .maxValue=${component.properties.maxValue}
+            .dataContextPath=${node.dataContextPath}
+            .value=${node.properties.value}
+            .minValue=${node.properties.minValue}
+            .maxValue=${node.properties.maxValue}
           ></a2ui-slider>`;
         }
 
         case "TextField": {
           // TODO: type and validationRegexp.
+          const node = component as NodeOfType<"TextField">;
           return html`<a2ui-textfield
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
-            .label=${component.properties.label}
-            .text=${component.properties.text}
-            .type=${component.properties.type}
-            .validationRegexp=${component.properties.validationRegexp}
+            .dataContextPath=${node.dataContextPath}
+            .label=${node.properties.label}
+            .text=${node.properties.text}
+            .type=${node.properties.type}
+            .validationRegexp=${node.properties.validationRegexp}
           ></a2ui-textfield>`;
         }
 
         case "Video": {
+          const node = component as NodeOfType<"Video">;
           return html`<a2ui-video
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
-            .url=${component.properties.url}
+            .dataContextPath=${node.dataContextPath}
+            .url=${node.properties.url}
           ></a2ui-video>`;
         }
 
         case "Tabs": {
+          const node = component as NodeOfType<"Tabs">;
           const titles: StringValue[] = [];
           const childComponents: AnyComponentNode[] = [];
-          if (component.properties.tabItems) {
-            for (const item of component.properties.tabItems) {
+          if (node.properties.tabItems) {
+            for (const item of node.properties.tabItems) {
               titles.push(item.title);
               childComponents.push(item.child);
             }
           }
 
           return html`<a2ui-tabs
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
+            .dataContextPath=${node.dataContextPath}
             .titles=${titles}
             .childComponents=${childComponents}
           ></a2ui-tabs>`;
         }
 
         case "Modal": {
+          const node = component as NodeOfType<"Modal">;
           const childComponents: AnyComponentNode[] = [
-            component.properties.entryPointChild,
-            component.properties.contentChild,
+            node.properties.entryPointChild,
+            node.properties.contentChild,
           ];
 
-          component.properties.entryPointChild.slotName = "entry";
+          node.properties.entryPointChild.slotName = "entry";
 
           return html`<a2ui-modal
-            id=${component.id}
-            slot=${component.slotName ? component.slotName : nothing}
-            .component=${component}
-            .weight=${component.weight ?? "initial"}
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
             .processor=${this.processor}
             .surfaceId=${this.surfaceId}
-            .dataContextPath=${component.dataContextPath}
+            .dataContextPath=${node.dataContextPath}
             .childComponents=${childComponents}
           ></a2ui-modal>`;
         }

@@ -14,9 +14,10 @@
  limitations under the License.
  */
 
-import { Component, inject, signal } from '@angular/core';
 import { ModelProcessor, Surface } from '@a2ui/angular';
 import { v0_8 } from '@a2ui/web-lib';
+import { Component, inject, signal } from '@angular/core';
+import { Client } from './client';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,9 @@ import { v0_8 } from '@a2ui/web-lib';
   imports: [Surface],
 })
 export class App {
+  protected client = inject(Client);
   protected processor = inject(ModelProcessor);
+
   protected hasData = signal(false);
 
   protected async handleSubmit(event: SubmitEvent) {
@@ -40,7 +43,7 @@ export class App {
 
     if (body) {
       const message = body as v0_8.Types.A2UIClientEventMessage;
-      await this.processor.makeRequest(message);
+      await this.client.makeRequest(message);
       this.hasData.set(true);
     }
   }
