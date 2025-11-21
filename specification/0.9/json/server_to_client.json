@@ -40,7 +40,21 @@
               "description": "A list containing all UI components for the surface.",
               "minItems": 1,
               "items": {
-                "$ref": "standard_catalog_definition.json#/$defs/anyComponent"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "common_types.json#/$defs/id"
+                  },
+                  "weight": {
+                    "$ref": "common_types.json#/$defs/weight"
+                  },
+                  "props": {
+                    "description": "The properties for the component.",
+                    "$ref": "standard_catalog_definition.json#/$defs/anyComponent"
+                  }
+                },
+                "required": ["id", "props"],
+                "additionalProperties": false
               }
             }
           },
