@@ -195,20 +195,28 @@ function validateComponent(
     errors.push(`Component is missing an 'id'.`);
     return;
   }
-  if (!component.component) {
-    errors.push(`Component '${id}' is missing 'component'.`);
+
+
+  if (!component.props || typeof component.props !== "object") {
+    errors.push(`Component '${id}' is missing 'props' object.`);
     return;
   }
 
-  const componentType = component.component;
-  if (typeof componentType !== "string") {
+  const properties = component.props;
+  const componentType = properties.component;
+  if (!componentType || typeof componentType !== "string") {
     errors.push(
-      `Component '${id}' has invalid 'component' property. Expected string, found ${typeof componentType}.`
+      `Component '${id}' is missing 'component' property in 'props'.`
     );
     return;
   }
 
-  const properties = component;
+  if (typeof properties !== "object" || properties === null) {
+    errors.push(
+      `Component '${id}' has invalid properties for type '${componentType}'.`
+    );
+    return;
+  }
 
   const checkRequired = (props: string[]) => {
     for (const prop of props) {
