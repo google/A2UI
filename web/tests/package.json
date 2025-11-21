@@ -37,7 +37,8 @@
         "FORCE_COLOR": "1"
       },
       "dependencies": [
-        "<dependencies>#build:tsc"
+        "../lib:build:tsc",
+        "../lib:copy-spec"
       ],
       "files": [
         "0.8/**/*.ts",
