@@ -34,7 +34,7 @@ class ComponentCatalogBuilder:
     def get_file_content(self, path: str) -> str:
         return Path(path).read_text()
 
-    def load_a2ui_schema(self, client_ui_capabilities: Optional[dict[str, Any]]) -> tuple[dict[str, Any], str]:
+    def load_a2ui_schema(self, client_ui_capabilities: Optional[dict[str, Any]]) -> tuple[dict[str, Any], Optional[str]]:
         """
         Returns:
             A tuple of the a2ui_schema and the catalog uri
