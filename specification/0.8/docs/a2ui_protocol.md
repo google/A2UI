@@ -68,7 +68,6 @@ Communication occurs via a JSON Lines (JSONL) stream. The client parses each lin
 Client-to-server communication for user interactions is handled separately via a JSON payload sent to a REST API. This message can be one of several types:
 
 - `userAction`: Reports a user-initiated action from a component.
-- `clientUiCapabilities`: Informs the server about the client's capabilities, such as the component catalog it supports.
 - `error`: Reports a client-side error.
   This keeps the primary data stream unidirectional.
 
@@ -84,11 +83,132 @@ The central philosophy of A2UI is the decoupling of three key elements:
 2.  **The Data Model (The State):** A server-provided JSON object containing the dynamic values that populate the UI, such as text, booleans, or lists. This is managed via `dataModelUpdate` messages.
 3.  **The Widget Registry (The "Catalog"):** A client-defined mapping of component types (e.g., "Row", "Text") to concrete, native widget implementations. This registry is **part of the client application**, not the protocol stream. The server must generate components that the target client's registry understands.
 
-### 1.2. The JSONL Stream: The Unit of Communication
+### 1.2. Catalog Negotiation
+
+A central concept in A2UI is the **Catalog**, which defines the contract between the server and client for what UI components can be rendered. Each client must select a single catalog to use for all UI surfaces, and it must inform the server of this choice with every request.
+
+#### 1.2.1. Principles of Catalog Negotiation
+
+-   **Statelessness**: The server does not remember which catalog the client is using across different requests. The client must specify its chosen catalog in every A2A message it sends.
+-   **Client-Driven**: The client is in control of which catalog is used.
+-   **Immutability**: Catalogs are identified by URIs and are considered immutable. If a catalog definition changes, it must be given a new URI.
+-   **URIs as Identifiers**: Catalog URIs (e.g., `https://a2ui.org/catalogs/standard/0.8`) are stable identifiers. Neither the client nor the server should fetch catalog definitions from these URIs at runtime.
+
+#### 1.2.2. Server Catalog Advertisement
+
+The server advertises which catalogs it supports within its A2A **Agent Card**. This is done using the A2A extension mechanism. The server adds an A2UI extension object to its `capabilities` which lists the URIs of supported catalogs and indicates whether it accepts custom, inline catalogs.
+
+**Example Agent Card Snippet:**
+
+```json
+{
+  "name": "Restaurant Finder Agent",
+  "capabilities": {
+    "extensions": [
+      {
+        "uri": "https://a2ui.org/ext/a2a-ui/v0.8",
+        "description": "This agent can render UIs using the A2UI protocol.",
+        "required": false,
+        "params": {
+          "supportedCatalogUris": [
+            "https://a2ui.org/catalogs/standard/0.8",
+            "https://my-company.com/a2ui/catalogs/custom-internal/1.2"
+          ],
+          "acceptsInlineCatalog": true
+        }
+      }
+    ]
+  }
+}
+```
+
+-   `supportedCatalogUris`: A list of catalog identifier URIs that the server can generate UI for.
+-   `acceptsInlineCatalog`: A boolean indicating if the server allows the client to provide a complete catalog definition directly in a message.
+
+#### 1.2.3. Client Catalog Selection
+
+With every A2A `Message` sent to the server, the client must include an `a2uiClientCapabilities` object in the `metadata` field. This object tells the server which catalog to use when generating the UI response for that specific request.
+
+The `a2uiClientCapabilities` object must contain exactly one of the following:
+
+1.  `catalogUri`: The URI of a catalog previously advertised by the server.
+2.  `inlineCatalog`: A complete catalog definition, which can only be used if the server advertised `acceptsInlineCatalog: true`. An inline catalog **replaces** the standard catalog; it is not additive.
+
+**Example A2A Message with `catalogUri`:**
+
+```json
+{
+  "messageId": "msg-123",
+  "metadata": {
+    "a2uiClientCapabilities": {
+      "catalogUri": "https://a2ui.org/catalogs/standard/0.8"
+    }
+  },
+  "parts": [
+    {
+      "data": {
+        "data": {
+          "userAction": {
+            "name": "find_restaurants",
+            "surfaceId": "s1",
+            "sourceComponentId": "c1",
+            "timestamp": "2025-11-24T09:59:58Z",
+            "context": {
+              "location": "Mountain View, CA"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+**Example A2A Message with `inlineCatalog`:**
+
+```json
+{
+  "messageId": "msg-124",
+  "metadata": {
+    "a2uiClientCapabilities": {
+      "inlineCatalog": {
+        "components": {
+          "SignaturePad": {
+            "type": "object",
+            "description": "A custom area for user signatures.",
+            "properties": {
+              "penColor": { "type": "string" },
+              "required": { "type": "boolean" }
+            },
+            "required": ["required"]
+          }
+        }
+      }
+    }
+  },
+  "parts": [
+    {
+      "data": {
+        "data": {
+          "userAction": {
+            "name": "sign_document",
+            "surfaceId": "s2",
+            "sourceComponentId": "c5",
+            "timestamp": "2025-11-24T10:04:00Z",
+            "context": {}
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+### 1.3. The JSONL Stream: The Unit of Communication
 
 All UI descriptions are transmitted from the server to the client as a stream of JSON objects, formatted as JSON Lines (JSONL). Each line is a separate, compact JSON object representing a single message. This allows the client to parse and process each part of the UI definition as it arrives, enabling progressive rendering.
 
-### 1.3. Surfaces: Managing Multiple UI Regions
+### 1.4. Surfaces: Managing Multiple UI Regions
 
 A **Surface** is a contiguous portion of screen real estate into which a A2UI UI can be rendered. The protocol introduces the concept of a `surfaceId` to uniquely identify and manage these areas. This allows a single A2UI stream to control multiple, independent UI regions simultaneously. Each surface has a separate root component and a separate hierarchy of components. Each surface has a separate data model, to avoid collision of keys when working with a large number of surfaces.
 
@@ -96,7 +216,7 @@ For example, in a chat application, each AI-generated response could be rendered
 
 The `surfaceId` is a property within each server-to-client message that directs changes to the correct area. It is used with messages like `beginRendering`, `surfaceUpdate`, `dataModelUpdate`, and `deleteSurface` to target a specific surface.
 
-### 1.4. Data Flow Model
+### 1.5. Data Flow Model
 
 The A2UI protocol is composed of a server-to-client stream describing UI and individual events sent to the server. The client consumes the stream, builds the UI, and renders it. Communication occurs via a JSON Lines (JSONL) stream, typically transported over **Server-Sent Events (SSE)**.
 
@@ -108,7 +228,7 @@ The A2UI protocol is composed of a server-to-client stream describing UI and ind
 
 3.  **Render Signal:** The server sends a `beginRendering` message with the `root` component's ID. This prevents a "flash of incomplete content." The client buffers incoming components and data but waits for this explicit signal before attempting the first render, ensuring the initial view is coherent.
 4.  **Client-Side Rendering:** The client, now in a "ready" state, starts at the `root` component. It recursively walks the component tree by looking up component IDs in its buffer. It resolves any data bindings against the data model and uses its `WidgetRegistry` to instantiate native widgets.
-5.  **User Interaction and Event Handling:** The user interacts with a rendered widget (e.g., taps a button). The client constructs a `userAction` JSON payload, resolving any data bindings from the component's `action.context`. It sends this payload to the server via an A2A message.
+5.  **User Interaction and Event Handling:** The user interacts with a rendered widget (e.g., taps a button). The client constructs a `userAction` JSON payload, resolving any data bindings from the component's `action.context`. It sends this payload to the server via an A2A message, including the required `a2uiClientCapabilities` in the metadata.
 6.  **Dynamic Updates:** The server processes the `userAction`. If the UI needs to change in response, the server sends new `surfaceUpdate` and `dataModelUpdate` messages over the original SSE stream. As these arrive, the client updates its component buffer and data model, and the UI re-renders to reflect the changes. The server can also send `deleteSurface` to remove a UI region.
 
 ```mermaid
@@ -131,7 +251,7 @@ sequenceDiagram
 
     Note over Client: 8. User interacts with UI (e.g., clicks button)
     Client->>Client: 9. Construct userAction payload
-    Client->>+Server: 10. A2A Message sent to server (Client Event JSON with userAction)
+    Client->>+Server: 10. A2A Message sent to server (with a2uiClientCapabilities in metadata)
     Server-->>-Client: 11. OK
 
     loop Dynamic Updates in Response to Event
@@ -142,7 +262,7 @@ sequenceDiagram
     end
 ```
 
-### 1.5. Full Stream Example
+### 1.6. Full Stream Example
 
 The following is a complete, minimal example of a JSONL stream that renders a user profile card.
 
@@ -169,7 +289,7 @@ A2UI's component model is designed for flexibility, separating the protocol from
 
 ### 2.1. The Catalog: Defining Components
 
-Unlike previous versions with a fixed component set, A2UI now defines components in a **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `surfaceUpdate` messages that conform to the component catalog understood by the client. Clients can inform the server of the catalog they support using the `clientUiCapabilities` message.
+Unlike previous versions with a fixed component set, A2UI now defines components in a **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `surfaceUpdate` messages that conform to the component catalog selected by the client. The mechanism for this is detailed in the **Catalog Negotiation** section.
 
 #### Schemas for Developers
 
@@ -414,7 +534,7 @@ While the server-to-client UI definition is a one-way stream (e.g., over SSE), u
 
 ### 5.1. The Client Event Message
 
-The client sends a single JSON object that acts as a wrapper. It must contain exactly one of the following keys: `userAction`, `clientUiCapabilities`, or `error`.
+The client sends a single JSON object that acts as a wrapper. It must contain exactly one of the following keys: `userAction` or `error`.
 
 ### 5.2. The `userAction` Message
 
@@ -430,60 +550,11 @@ The `userAction` object has the following structure:
 
 The process for resolving the `action.context` remains the same: the client iterates over the `context` array, resolves all literal or data-bound values, and constructs the `context` object.
 
-### 5.3. The `clientUiCapabilities` Message
-
-This message is sent by the client to inform the server about its capabilities. This is crucial for supporting different component sets, allowing the server to generate UI that is compatible with the client. The message must contain exactly one of the following properties: `catalogUri` or `dynamicCatalog`.
-
-- `catalogUri`: A URI pointing to a predefined component catalog schema that the client supports.
-- `dynamicCatalog`: An inline JSON object, conforming to the Catalog Schema, that defines the client's supported components. This is useful for development or for clients with highly custom component sets.
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    Client->>+Server: POST /event (clientUiCapabilities with catalog)
-    Server-->>-Client: HTTP 200 OK
-    Note over Server: Server now knows which catalog to use.
-    Server->>+Client: SSE Connection (JSONL Stream using client's catalog)
-    Client-->>-Server: (Renders UI based on custom/specified catalog)
-```
-
-#### `dynamicCatalog`
-
-The `dynamicCatalog` property allows the client to send an inline JSON object that defines its entire supported component set. This is especially useful for development or for clients with highly custom components. The object must conform to the Catalog Schema, containing `components`.
-
-- `components`: An object where each key is the name of a component (e.g., `"MyCustomCard"`) and the value is a valid JSON object schema defining the properties for that component.
-
-**Example of a `clientUiCapabilities` message:**
-
-```json
-{
-  "clientUiCapabilities": {
-    "dynamicCatalog": {
-      "components": {
-        "MyCustomCard": {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "child": {
-              "type": "string"
-            }
-          },
-          "required": ["title", "child"]
-        }
-      }
-    }
-  }
-}
-```
-
-### 5.4. The `error` Message
+### 5.3. The `error` Message
 
 This message provides a feedback mechanism for the server. It is sent when the client encounters an error, for instance, during UI rendering or data binding. The content of the object is flexible and can contain any relevant error information.
 
-### 5.5. Event Flow Example (`userAction`)
+### 5.4. Event Flow Example (`userAction`)
 
 1.  **Component Definition** (from `surfaceUpdate`):
 
@@ -537,20 +608,34 @@ This message provides a feedback mechanism for the server. It is sent when the c
 
 3.  **User Action:** The user taps the "submit_btn" button.
 4.  **Client-Side Resolution:** The client resolves the `action.context`.
-5.  **Client-to-Server Request:** The client sends a `POST` request to `https://api.example.com/handle_event` with the following JSON body:
+5.  **Client-to-Server Request:** The client sends an A2A `Message` to the server. The `userAction` is placed inside the `data` object of a `Part`, and the `metadata` contains the required `a2uiClientCapabilities`.
 
     ```json
     {
-      "userAction": {
-        "name": "submit_form",
-        "surfaceId": "main_content_area",
-        "sourceComponentId": "submit_btn",
-        "timestamp": "2025-09-19T17:05:00Z",
-        "context": {
-          "userInput": "User input text",
-          "formId": "f-123"
+      "messageId": "msg-125",
+      "metadata": {
+        "a2uiClientCapabilities": {
+          "catalogUri": "https://a2ui.org/catalogs/standard/0.8"
         }
-      }
+      },
+      "parts": [
+        {
+          "data": {
+            "data": {
+              "userAction": {
+                "name": "submit_form",
+                "surfaceId": "main_content_area",
+                "sourceComponentId": "submit_btn",
+                "timestamp": "2025-09-19T17:05:00Z",
+                "context": {
+                  "userInput": "User input text",
+                  "formId": "f-123"
+                }
+              }
+            }
+          }
+        }
+      ]
     }
     ```
 
