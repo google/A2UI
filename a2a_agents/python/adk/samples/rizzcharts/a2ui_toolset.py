@@ -40,7 +40,7 @@ class A2uiToolset(base_toolset.BaseToolset):
         self,
         readonly_context: Optional[ReadonlyContext] = None,
     ) -> List[BaseTool]:
-        use_ui = readonly_context.state.get(A2UI_ENABLED_STATE_KEY)
+        use_ui = readonly_context and readonly_context.state.get(A2UI_ENABLED_STATE_KEY)
         if use_ui:
             logger.info("A2UI is ENABLED, adding ui tools")
             return self._ui_tools
