@@ -29,6 +29,8 @@ import {
   SurfaceID,
   SurfaceUpdateMessage,
   ModelProcessor,
+  ValueMap,
+  DataObject,
 } from "../types/types";
 import {
   isComponentArrayReference,
@@ -52,6 +54,7 @@ import {
   isResolvedText,
   isResolvedTextField,
   isResolvedVideo,
+  isValueMap,
 } from "./guards.js";
 
 /**
@@ -423,7 +426,11 @@ export class A2UIModelProcessor implements ModelProcessor {
   #handleDataModelUpdate(message: DataModelUpdate, surfaceId: SurfaceID): void {
     const surface = this.#getOrCreateSurface(surfaceId);
     const path = message.path ?? "/";
-    this.#setDataByPath(surface.dataModel, path, message.contents);
+    this.#setDataByPath(
+      surface.dataModel,
+      path,
+      message.contents
+    );
     this.#rebuildComponentTree(surface);
   }
 

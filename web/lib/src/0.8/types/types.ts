@@ -263,19 +263,17 @@ export interface SurfaceUpdateMessage {
 export interface DataModelUpdate {
   surfaceId: string;
   path?: string;
-  contents: {
-    key: string;
-    valueString?: string /** May be JSON */;
-    valueNumber?: number;
-    valueBoolean?: boolean;
+  contents: ValueMap[];
+}
 
-    valueMap?: {
-      key: string;
-      valueString?: string /** May be JSON */;
-      valueNumber?: number;
-      valueBoolean?: boolean;
-    }[];
-  }[];
+// ValueMap is a type of DataObject for passing to the data model.
+export type ValueMap = DataObject & {
+  key: string;
+  /** May be JSON */
+  valueString?: string;
+  valueNumber?: number;
+  valueBoolean?: boolean;
+  valueMap?: ValueMap[];
 }
 
 export interface DeleteSurfaceMessage {

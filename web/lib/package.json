@@ -47,7 +47,7 @@
       "service": true
     },
     "test": {
-      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/tests/**/*.test.js",
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/*.test.js",
       "dependencies": [
         "build"
       ]
@@ -94,6 +94,7 @@
   "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
+    "@types/node": "^24.10.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },

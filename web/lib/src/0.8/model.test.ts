@@ -17,6 +17,7 @@
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
 import { v0_8 } from "@a2ui/web-lib";
+import {DataMap, DataValue} from "./types/types";
 
 // Helper function to strip reactivity for clean comparisons.
 const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
@@ -87,8 +88,8 @@ describe("A2UIModelProcessor", () => {
 
       const defaultSurface = surfaces.get("@default");
       assert.ok(defaultSurface, "Default surface should exist");
-      assert.strictEqual(defaultSurface.rootComponentId, "comp-a");
-      assert.deepStrictEqual(defaultSurface.styles, { color: "blue" });
+      assert.strictEqual(defaultSurface!.rootComponentId, "comp-a");
+      assert.deepStrictEqual(defaultSurface!.styles, { color: "blue" });
     });
 
     it("should handle `surfaceUpdate` by adding components", () => {
@@ -112,8 +113,8 @@ describe("A2UIModelProcessor", () => {
       if (!surface) {
         assert.fail("No default surface");
       }
-      assert.strictEqual(surface.components.size, 1);
-      assert.ok(surface.components.has("comp-a"));
+      assert.strictEqual(surface!.components.size, 1);
+      assert.ok(surface!.components.has("comp-a"));
     });
 
     it("should handle `deleteSurface`", () => {
@@ -290,10 +291,7 @@ describe("A2UIModelProcessor", () => {
       );
 
       // Check that it's a Map and has the first item.
-      assert.ok(
-        messagesData instanceof Map,
-        "Data at /messages should be a Map"
-      );
+      assertIsDataMap(messagesData);
       assert.strictEqual(messagesData.size, 1);
       assert.strictEqual(messagesData.get(key1), message1);
 
@@ -322,13 +320,10 @@ describe("A2UIModelProcessor", () => {
       );
 
       // 4. Check that the Map was additively updated and now has both items.
-      assert.ok(
-        messagesData instanceof Map,
-        "Data at /messages should still be a Map"
-      );
+      assertIsDataMap(messagesData);
       assert.strictEqual(messagesData.size, 2, "Map should have 2 items total");
       assert.strictEqual(
-        messagesData.get(key1),
+        (messagesData as DataMap).get(key1),
         message1,
         "First item correct"
       );
@@ -1311,26 +1306,32 @@ describe("A2UIModelProcessor", () => {
       assert.ok(surfaceA && surfaceB, "Both surfaces should exist");
 
       // Check Surface A
-      assert.strictEqual(surfaceA.components.size, 1);
-      assert.ok(surfaceA.components.has("comp-a"));
-      assert.deepStrictEqual(toPlainObject(surfaceA.dataModel), {
+      assert.ok(surfaceA, "Surface A exists.");
+      assert.strictEqual(surfaceA!.components.size, 1);
+      assert.ok(surfaceA!.components.has("comp-a"));
+      assert.deepStrictEqual(toPlainObject(surfaceA!.dataModel), {
         name: "Surface A Data",
       });
       assert.deepStrictEqual(
-        toPlainObject(surfaceA.componentTree).properties.text,
+        toPlainObject(surfaceA!.componentTree).properties.text,
         { path: "/name" }
       );
 
       // Check Surface B
-      assert.strictEqual(surfaceB.components.size, 1);
-      assert.ok(surfaceB.components.has("comp-b"));
-      assert.deepStrictEqual(toPlainObject(surfaceB.dataModel), {
+      assert.ok(surfaceB, "Surface B exists.");
+      assert.strictEqual(surfaceB!.components.size, 1);
+      assert.ok(surfaceB!.components.has("comp-b"));
+      assert.deepStrictEqual(toPlainObject(surfaceB!.dataModel), {
         name: "Surface B Data",
       });
       assert.deepStrictEqual(
-        toPlainObject(surfaceB.componentTree).properties.text,
+        toPlainObject(surfaceB!.componentTree).properties.text,
         { path: "/name" }
       );
     });
   });
 });
+
+function assertIsDataMap(obj: DataValue): asserts obj is DataMap {
+  assert.ok(obj instanceof Map, `Data should be a DataMap`);
+}

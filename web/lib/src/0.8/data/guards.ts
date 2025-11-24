@@ -37,7 +37,12 @@ import {
   ResolvedText,
   ResolvedTextField,
   ResolvedVideo,
+  ValueMap,
 } from "../types/types";
+
+export function isValueMap(value: unknown): value is ValueMap {
+  return isObject(value) && "key" in value;
+}
 
 export function isPath(key: string, value: unknown): value is string {
   return key === "path" && typeof value === "string";
