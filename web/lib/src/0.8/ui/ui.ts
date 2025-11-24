@@ -69,8 +69,6 @@ export {
   Video,
 };
 
-// TODO: Modal
-
 interface A2UITagNameMap {
   "a2ui-audioplayer": Audio;
   "a2ui-button": Button;
