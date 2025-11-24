@@ -94,7 +94,7 @@ export class Root extends SignalWatcher(LitElement) {
   #lightDomEffectDisposer: null | (() => void) = null;
 
   protected willUpdate(changedProperties: PropertyValues<this>): void {
-    if (changedProperties.has("childComponents") && this.childComponents) {
+    if (changedProperties.has("childComponents")) {
       if (this.#lightDomEffectDisposer) {
         this.#lightDomEffectDisposer();
       }
