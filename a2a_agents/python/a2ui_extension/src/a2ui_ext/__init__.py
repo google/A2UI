@@ -17,7 +17,7 @@ from typing import Any
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events.event_queue import EventQueue
-from a2a.types import AgentExtension, Task
+from a2a.types import AgentExtension, Task, Part, DataPart
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,15 @@ _CORE_PATH = "a2ui.org/ext/a2a-ui/v0.1"
 URI = f"https://{_CORE_PATH}"
 a2ui_MIME_TYPE = "application/json+a2ui"
 
+def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
+    return Part(
+        root=DataPart(
+            data=a2ui_data,
+            metadata={
+                "mimeType": a2ui_MIME_TYPE,
+            },
+        )
+    )
 
 class a2uiExtension:
     """A generic a2ui UI extension that activates UI mode."""
