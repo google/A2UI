@@ -45,8 +45,8 @@ export class Text extends DynamicComponent {
     return value == null
       ? '(empty)'
       : this.markdownRenderer.render(
-          value,
-          v0_8.Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {})
+          String(value),
+          v0_8.Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
         );
   });
 }
