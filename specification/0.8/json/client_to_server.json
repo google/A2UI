@@ -1,6 +1,6 @@
 {
   "title": "A2UI (Agent to UI) Client-to-Server Event Schema",
-  "description": "Describes the JSON payload for a client-to-server event message. Note that these messages are payloads within an A2A `Message` object. Catalog negotiation is handled via the `a2uiClientCapabilities` object in the A2A `Message.metadata` field, not within this payload.",
+  "description": "Describes the client-to-server event message. Note that these messages are JSON payloads within an A2A `Message` object.",
   "type": "object",
   "minProperties": 1,
   "maxProperties": 1,

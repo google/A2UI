@@ -16,6 +16,5 @@
       "type": "boolean",
       "description": "Whether the agent accepts inline catalog definitions from the client."
     }
-  },
-  "required": ["supportedCatalogUris", "acceptsInlineCatalog"]
+  }
 }
