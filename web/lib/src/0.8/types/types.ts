@@ -79,14 +79,6 @@ export type Theme = {
       label: Record<string, boolean>;
     };
     Divider: Record<string, boolean>;
-    Heading: {
-      all: Record<string, boolean>;
-      level1: Record<string, boolean>;
-      level2: Record<string, boolean>;
-      level3: Record<string, boolean>;
-      level4: Record<string, boolean>;
-      level5: Record<string, boolean>;
-    };
     Image: {
       all: Record<string, boolean>;
       icon: Record<string, boolean>;

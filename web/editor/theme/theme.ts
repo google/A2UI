@@ -247,31 +247,6 @@ export const theme: v0_8.Types.Theme = {
       },
     },
     Divider: {},
-    Heading: {
-      all: {
-        "color-c-p30": true,
-        "typography-f-sf": true,
-        "typography-v-r": true,
-        "typography-w-400": true,
-        "layout-m-0": true,
-        "layout-p-0": true,
-      },
-      level1: {
-        "typography-sz-tl": true,
-      },
-      level2: {
-        "typography-sz-tm": true,
-      },
-      level3: {
-        "typography-sz-ts": true,
-      },
-      level4: {
-        "typography-sz-bl": true,
-      },
-      level5: {
-        "typography-sz-bm": true,
-      },
-    },
     Image: {
       all: {
         "layout-el-cv": true,
@@ -318,11 +293,46 @@ export const theme: v0_8.Types.Theme = {
     Tabs: { container: {}, controls: { all: {}, selected: {} }, element: {} },
     Text: {
       all: { "layout-w-100": true, "layout-g-2": true, "color-c-p30": true },
-      h1: {},
-      h2: {},
-      h3: {},
-      h4: {},
-      h5: {},
+      h1: {
+        "typography-f-sf": true,
+        "typography-v-r": true,
+        "typography-w-400": true,
+        "layout-m-0": true,
+        "layout-p-0": true,
+        "typography-sz-tl": true,
+      },
+      h2: {
+        "typography-f-sf": true,
+        "typography-v-r": true,
+        "typography-w-400": true,
+        "layout-m-0": true,
+        "layout-p-0": true,
+        "typography-sz-tm": true,
+      },
+      h3: {
+        "typography-f-sf": true,
+        "typography-v-r": true,
+        "typography-w-400": true,
+        "layout-m-0": true,
+        "layout-p-0": true,
+        "typography-sz-ts": true,
+      },
+      h4: {
+        "typography-f-sf": true,
+        "typography-v-r": true,
+        "typography-w-400": true,
+        "layout-m-0": true,
+        "layout-p-0": true,
+        "typography-sz-bl": true,
+      },
+      h5: {
+        "typography-f-sf": true,
+        "typography-v-r": true,
+        "typography-w-400": true,
+        "layout-m-0": true,
+        "layout-p-0": true,
+        "typography-sz-bm": true,
+      },
       body: {},
       caption: {},
     },
