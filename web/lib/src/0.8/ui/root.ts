@@ -277,21 +277,6 @@ export class Root extends SignalWatcher(LitElement) {
           ></a2ui-text>`;
         }
 
-        case "Heading": {
-          const node = component as NodeOfType<"Heading">;
-          return html`<a2ui-heading
-            id=${node.id}
-            slot=${node.slotName ? node.slotName : nothing}
-            .component=${node}
-            .weight=${node.weight ?? "initial"}
-            .processor=${this.processor}
-            .surfaceId=${this.surfaceId}
-            .dataContextPath=${node.dataContextPath}
-            .text=${node.properties.text}
-            .level=${node.properties.level}
-          ></a2ui-heading>`;
-        }
-
         case "CheckBox": {
           const node = component as NodeOfType<"CheckBox">;
           return html`<a2ui-checkbox

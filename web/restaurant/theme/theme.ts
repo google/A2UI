@@ -273,10 +273,18 @@ export const theme: v0_8.Types.Theme = {
       },
     },
     Image: {
-      "border-br-5": true,
-      "layout-el-cv": true,
-      "layout-w-100": true,
-      "layout-h-100": true,
+      all: {
+        "border-br-5": true,
+        "layout-el-cv": true,
+        "layout-w-100": true,
+        "layout-h-100": true,
+      },
+      avatar: {},
+      header: {},
+      icon: {},
+      largeFeature: {},
+      mediumFeature: {},
+      smallFeature: {},
     },
     Icon: {},
     List: {
@@ -313,9 +321,18 @@ export const theme: v0_8.Types.Theme = {
       element: {},
     },
     Text: {
-      "layout-w-100": true,
-      "layout-g-2": true,
-      "color-c-p30": true,
+      all: {
+        "layout-w-100": true,
+        "layout-g-2": true,
+        "color-c-p30": true,
+      },
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      body: {},
+      caption: {},
     },
     TextField: {
       container: {

@@ -22,11 +22,16 @@ import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
+import { ResolvedImage } from "../types/types.js";
+import { Styles } from "../index.js";
 
 @customElement("a2ui-image")
 export class Image extends Root {
   @property()
   accessor url: StringValue | null = null;
+
+  @property()
+  accessor usageHint: ResolvedImage["usageHint"] | null = null;
 
   static styles = [
     structuralStyles,
@@ -91,8 +96,13 @@ export class Image extends Root {
   }
 
   render() {
+    const classes = Styles.merge(
+      this.theme.components.Image.all,
+      this.usageHint ? this.theme.components.Image[this.usageHint] : {}
+    );
+
     return html`<section
-      class=${classMap(this.theme.components.Image)}
+      class=${classMap(classes)}
       style=${this.theme.additionalStyles?.Image
         ? styleMap(this.theme.additionalStyles?.Image)
         : nothing}
