@@ -16,10 +16,12 @@ import json
 import logging
 import os
 
+from google.adk.tools.tool_context import ToolContext
+
 logger = logging.getLogger(__name__)
 
 
-def get_contact_info(name: str, department: str = "") -> str:
+def get_contact_info(name: str, tool_context: ToolContext, department: str = "") -> str:
     """Call this tool to get a list of contacts based on a name and optional department.
     'name' is the person's name to search for.
     'department' is the optional department to filter by.
@@ -33,7 +35,11 @@ def get_contact_info(name: str, department: str = "") -> str:
         script_dir = os.path.dirname(__file__)
         file_path = os.path.join(script_dir, "contact_data.json")
         with open(file_path) as f:
-            all_contacts = json.load(f)
+            contact_data_str = f.read()
+            if base_url := tool_context.state.get("base_url"):                
+                contact_data_str = contact_data_str.replace("http://localhost:10002", base_url)
+                logger.info(f'Updated base URL from tool context: {base_url}')
+            all_contacts = json.loads(contact_data_str)        
 
         name_lower = name.lower()
 

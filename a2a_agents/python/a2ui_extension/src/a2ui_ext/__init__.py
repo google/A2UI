@@ -36,6 +36,9 @@ def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
         )
     )
 
+def is_a2ui_part(part: Part) -> bool:
+    return isinstance(part.root, DataPart) and part.root.metadata and part.root.metadata.get("mimeType") == a2ui_MIME_TYPE
+
 class a2uiExtension:
     """A generic a2ui UI extension that activates UI mode."""
 
