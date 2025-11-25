@@ -18,6 +18,22 @@ import os
 
 logger = logging.getLogger(__name__)
 
+def get_office_map_url(location: str) -> str:
+    """
+    Returns a valid OpenStreetMap embed URL for a given office location.
+    Args:
+        location: The city or office name (e.g. "New York", "San Francisco")
+    """
+    # In a real app, you might look up exact lat/long from a database
+    coords = {
+        "New York": "-74.00,40.71,-73.98,40.73",
+        "San Francisco": "-122.42,37.77,-122.41,37.78",
+        "London": "-0.13,51.50,-0.12,51.51"
+    }
+    
+    bbox = coords.get(location, "-122.42,37.77,-122.41,37.78") # Default to SF
+    return f"https://www.openstreetmap.org/export/embed.html?bbox={bbox}&layer=mapnik"
+
 
 def get_contact_info(name: str, department: str = "") -> str:
     """Call this tool to get a list of contacts based on a name and optional department.

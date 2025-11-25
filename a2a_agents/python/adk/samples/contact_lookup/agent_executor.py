@@ -87,7 +87,8 @@ class ContactAgentExecutor(AgentExecutor):
 
         if ui_event_part:
             logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
-            action = ui_event_part.get("actionName")
+            
+            action = ui_event_part.get("name")
             ctx = ui_event_part.get("context", {})
 
             if action == "view_profile":
@@ -108,6 +109,10 @@ class ContactAgentExecutor(AgentExecutor):
                 contact_name = ctx.get("contactName", "Unknown")
                 query = f"USER_WANTS_FULL_PROFILE: {contact_name}"
 
+            elif action == "view_map":
+                location = ctx.get("location", "New York")
+                query = f"USER_WANTS_MAP: {location}"
+         
             else:
                 query = f"User submitted an event: {action} with data: {ctx}"
         else:

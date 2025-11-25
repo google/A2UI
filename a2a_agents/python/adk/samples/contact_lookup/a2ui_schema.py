@@ -120,6 +120,35 @@ A2UI_SCHEMA = r'''
                     },
                     "required": ["text"]
                   },
+                  "WebFrame": {
+                    "type": "object",
+                    "description": "A sandboxed container that can communicate with the Agent via postMessage (MCP-UI style).",
+                    "properties": {
+                      "url": {
+                        "type": "object",
+                        "description": "The URL to load.",
+                        "properties": {
+                          "literalString": { "type": "string" },
+                          "path": { "type": "string" }
+                        }
+                      },
+                      "height": {
+                        "type": "number",
+                        "description": "Fixed height in logical pixels."
+                      },
+                      "interactionMode": {
+                        "type": "string",
+                        "enum": ["readOnly", "interactive"],
+                        "default": "readOnly"
+                      },
+                      "allowedEvents": {
+                        "type": "array",
+                        "description": "List of action names this iframe is permitted to trigger via postMessage.",
+                        "items": { "type": "string" }
+                      }
+                    },
+                    "required": ["url", "height"]
+                  },
                   "Image": {
                     "type": "object",
                     "properties": {

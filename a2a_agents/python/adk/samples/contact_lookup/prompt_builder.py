@@ -80,6 +80,11 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
         a.  You MUST use the `ACTION_CONFIRMATION_EXAMPLE` template.
         b.  Populate the `dataModelUpdate.contents` with a confirmation title and message (e.g., title: "Email Drafted", message: "Drafting an email to Alex Jordan...").
 
+    -   **For handling map requests (e.g., "USER_WANTS_MAP: ..."):**
+        a.  Call the `get_office_map_url(location)` tool.
+        b.  Use the `OFFICE_MAP_EXAMPLE`.
+        c.  Bind the URL returned by the tool to the `WebFrame`'s `url` property.
+
     {formatted_examples}
 
     ---BEGIN A2UI JSON SCHEMA---
