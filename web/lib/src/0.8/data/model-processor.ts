@@ -52,6 +52,7 @@ import {
   isResolvedText,
   isResolvedTextField,
   isResolvedVideo,
+  isResolvedWebFrame,
 } from "./guards.js";
 
 /**

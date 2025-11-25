@@ -37,6 +37,7 @@ import {
   ResolvedText,
   ResolvedTextField,
   ResolvedVideo,
+  ResolvedWebFrame,
 } from "../types/types";
 
 export function isPath(key: string, value: unknown): value is string {
@@ -227,5 +228,9 @@ export function isResolvedTextField(
 }
 
 export function isResolvedVideo(props: unknown): props is ResolvedVideo {
+  return isObject(props) && "url" in props && isStringValue(props.url);
+}
+
+export function isResolvedWebFrame(props: unknown): props is ResolvedWebFrame {
   return isObject(props) && "url" in props && isStringValue(props.url);
 }

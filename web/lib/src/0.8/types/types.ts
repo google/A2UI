@@ -33,6 +33,7 @@ import {
   Text,
   TextField,
   Video,
+  WebFrame,
 } from "./components";
 import { StringValue } from "./primitives";
 
@@ -129,6 +130,10 @@ export type Theme = {
       label: Record<string, boolean>;
     };
     Video: Record<string, boolean>;
+    WebFrame: {
+      container: Record<string, boolean>;
+      element: Record<string, boolean>;
+    };
   };
   elements: {
     a: Record<string, boolean>;
@@ -180,6 +185,7 @@ export type Theme = {
     Text?: Record<string, string>;
     TextField?: Record<string, string>;
     Video?: Record<string, string>;
+    WebFrame?: Record<string, string>;
   };
 };
 
@@ -408,6 +414,11 @@ export interface SliderNode extends BaseComponentNode {
   properties: ResolvedSlider;
 }
 
+export interface WebFrameNode extends BaseComponentNode {
+  type: "WebFrame";
+  properties: ResolvedWebFrame;
+}
+
 export interface CustomNode extends BaseComponentNode {
   type: string;
   // For custom nodes, properties are just a map of string keys to any resolved value.
@@ -437,6 +448,7 @@ export type AnyComponentNode =
   | DateTimeInputNode
   | MultipleChoiceNode
   | SliderNode
+  | WebFrameNode
   | CustomNode;
 
 // These components do not contain other components can reuse their
@@ -452,6 +464,7 @@ export type ResolvedTextField = TextField;
 export type ResolvedDateTimeInput = DateTimeInput;
 export type ResolvedMultipleChoice = MultipleChoice;
 export type ResolvedSlider = Slider;
+export type ResolvedWebFrame = WebFrame;
 
 export interface ResolvedRow {
   children: AnyComponentNode[];

@@ -20,8 +20,8 @@ from typing import Any
 
 import jsonschema
 from a2ui_examples import CONTACT_UI_EXAMPLES
+from tools import get_contact_info, get_office_map_url
 
-# Corrected imports from our new/refactored files
 from a2ui_schema import A2UI_SCHEMA
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
@@ -93,7 +93,7 @@ class ContactAgent:
             name="contact_agent",
             description="An agent that finds colleague contact info.",
             instruction=instruction,
-            tools=[get_contact_info],
+            tools=[get_contact_info, get_office_map_url],
         )
 
     async def stream(self, query, session_id) -> AsyncIterable[dict[str, Any]]:

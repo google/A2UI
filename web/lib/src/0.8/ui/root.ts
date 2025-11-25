@@ -459,6 +459,24 @@ export class Root extends SignalWatcher(LitElement) {
           ></a2ui-modal>`;
         }
 
+        case "WebFrame": {
+          const node = component as NodeOfType<"WebFrame">;
+          return html`<a2ui-webframe
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
+            .processor=${this.processor}
+            .surfaceId=${this.surfaceId}
+            .dataContextPath=${node.dataContextPath}
+            .url=${node.properties.url}
+            .height=${node.properties.height}
+            .interactionMode=${node.properties.interactionMode}
+            .allowedEvents=${node.properties.allowedEvents}
+            .enableCustomElements=${this.enableCustomElements}
+          ></a2ui-webframe>`;
+        }
+
         default: {
           if (!this.enableCustomElements) {
             return;

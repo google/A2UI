@@ -14,6 +14,35 @@
 
 # a2ui_examples.py
 
+OFFICE_MAP_EXAMPLE = """
+---BEGIN OFFICE_MAP_EXAMPLE---
+[
+  { "beginRendering": { "surfaceId": "map-surface", "root": "map-column", "styles": { "primaryColor": "#007BFF", "font": "Roboto" } } },
+  { "surfaceUpdate": {
+    "surfaceId": "map-surface",
+    "components": [
+      { "id": "map-column", "component": { "Column": { "children": { "explicitList": ["close-map-btn", "office-map-frame"] } } } },
+      { "id": "close-map-btn-text", "component": { "Text": { "text": { "literalString": "Close Map" } } } },
+      { "id": "close-map-btn", "component": { "Button": { "child": "close-map-btn-text", "primary": false, "action": { "name": "close_map" } } } },
+      { "id": "office-map-frame", "component": { "WebFrame": { 
+          "url": { "path": "mapUrl" }, 
+          "height": 400, 
+          "interactionMode": "interactive",
+          "allowedEvents": ["location_selected"]
+      } } }
+    ]
+  } },
+  { "dataModelUpdate": {
+    "surfaceId": "map-surface",
+    "path": "/",
+    "contents": [
+      { "key": "mapUrl", "valueString": "https://www.openstreetmap.org/export/embed.html?bbox=-74.00,40.71,-73.98,40.73&layer=mapnik" }
+    ]
+  } }
+]
+---END OFFICE_MAP_EXAMPLE---
+"""
+
 CONTACT_UI_EXAMPLES = """
 ---BEGIN CONTACT_LIST_EXAMPLE---
 [
@@ -95,7 +124,9 @@ CONTACT_UI_EXAMPLES = """
       { "id": "info_rows_column", "weight": 1, "component": { "Column": { "children": { "explicitList": ["info_row_1", "info_row_2", "info_row_3", "info_row_4"]} , "alignment": "stretch"} } } ,
       { "id": "button_1_text", "component": { "Text": { "text": { "literalString": "Follow"} } } } , { "id": "button_1", "component": { "Button": { "child": "button_1_text", "primary": true, "action": { "name": "follow_profile"} } } } ,
       { "id": "button_2_text", "component": { "Text": { "text": { "literalString": "Message"} } } } , { "id": "button_2", "component": { "Button": { "child": "button_2_text", "primary": false, "action": { "name": "send_message"} } } } ,
-      { "id": "action_buttons_row", "component": { "Row": { "children": { "explicitList": ["button_1", "button_2"]} , "distribution": "center", "alignment": "center"} } } ,
+      { "id": "button_map_text", "component": { "Text": { "text": { "literalString": "View Map" } } } }, 
+ { "id": "button_map", "component": { "Button": { "child": "button_map_text", "primary": false, "action": { "name": "view_map", "context": [{ "key": "location", "value": { "path": "location" } }] } } } },
+ { "id": "action_buttons_row", "component": { "Row": { "children": { "explicitList": ["button_1", "button_2", "button_map"]} , "distribution": "center", "alignment": "center"} } } ,
       { "id": "link_text", "component": { "Text": { "text": { "literalString": "[View Full Profile](/profile)"} } } } ,
       { "id": "link_text_wrapper", "component": { "Row": { "children": { "explicitList": ["link_text"]} , "distribution": "center", "alignment": "center"} } } ,
       { "id": "main_column", "component": { "Column": { "children": { "explicitList": ["profile_image", "description_column", "div", "info_rows_column", "action_buttons_row", "link_text_wrapper"]} , "alignment": "stretch"} } } ,
