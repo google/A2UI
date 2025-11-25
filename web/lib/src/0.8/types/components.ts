@@ -44,6 +44,19 @@ export interface Action {
   }[];
 }
 
+export interface WebFrame {
+  url: StringValue;
+  height: number;
+  /**
+   * Defines the level of interactivity allowed.
+   */
+  interactionMode?: "readOnly" | "interactive";
+  /**
+   * A list of action names this iframe is permitted to trigger via postMessage.
+   */
+  allowedEvents?: string[];
+}
+
 export interface Text {
   text: StringValue;
   usageHint: "h1" | "h2" | "h3" | "h4" | "h5" | "caption" | "body";
@@ -52,12 +65,12 @@ export interface Text {
 export interface Image {
   url: StringValue;
   usageHint:
-    | "icon"
-    | "avatar"
-    | "smallFeature"
-    | "mediumFeature"
-    | "largeFeature"
-    | "header";
+  | "icon"
+  | "avatar"
+  | "smallFeature"
+  | "mediumFeature"
+  | "largeFeature"
+  | "header";
 }
 
 export interface Icon {
