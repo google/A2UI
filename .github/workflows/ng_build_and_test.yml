@@ -1,13 +1,15 @@
-name: Web (Lit) build and test
+name: Angular build and test
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'web/**'
+      - 'angular/**'
+      - 'web/lib/**'
   pull_request:
     paths:
-      - 'web/**'
+      - 'angular/**'
+      - 'web/lib/**'
 
 jobs:
   build-and-test:
@@ -29,14 +31,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-wireit-
 
-      - name: Install all workspaces' dependencies
-        working-directory: ./web
-        run: npm install --workspaces
+      - name: Install top-level deps
+        working-directory: ./angular
+        run: npm ci
 
-      - name: Build all workspaces
-        working-directory: ./web
-        run: npm run build --workspaces
+      - name: Install lib deps
+        working-directory: ./angular/projects/lib
+        run: npm ci
 
-      - name: Run all tests
-        working-directory: ./web
-        run: npm run test --workspace=tests
+      - name: Build lib
+        working-directory: ./angular
+        run: npm run build lib
