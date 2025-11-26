@@ -37,7 +37,7 @@ jobs:
 
       - name: Install lib deps
         working-directory: ./angular/projects/lib
-        run: npm ci
+        run: npm i ../../../web/lib && npm ci
 
       - name: Build lib
         working-directory: ./angular
