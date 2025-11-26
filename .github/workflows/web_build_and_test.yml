@@ -3,11 +3,7 @@ name: Web (Lit) build and test
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'web/**'
   pull_request:
-    paths:
-      - 'web/**'
 
 jobs:
   build-and-test:
