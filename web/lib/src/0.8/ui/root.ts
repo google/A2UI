@@ -30,8 +30,7 @@ import { map } from "lit/directives/map.js";
 import { effect } from "signal-utils/subtle/microtask-effect";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { StringValue } from "../types/primitives.js";
-import { AnyComponentNode, SurfaceID } from "../types/types";
-import { Theme } from "../types/types.js";
+import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
 
