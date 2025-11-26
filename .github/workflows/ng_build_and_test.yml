@@ -23,6 +23,14 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install web lib deps
+        working-directory: ./web/lib
+        run: npm ci
+
+      - name: Build web lib
+        working-directory: ./web/lib
+        run: npm run build
+
       - name: Install top-level deps
         working-directory: ./angular
         run: npm ci
