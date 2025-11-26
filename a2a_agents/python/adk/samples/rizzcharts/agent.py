@@ -88,7 +88,7 @@ You will be provided a schema that defines the A2UI message structure and two ke
 2.  **Maps:** Used for requests about regional data, store locations, geography-based performance, or regional outliers.
     * **Template:** Use the JSON from `---BEGIN MAP EXAMPLE---`.
 
-You will also use layout components like `Column` (as the `root`) and `Heading` (to provide a title).
+You will also use layout components like `Column` (as the `root`) and `Text` (to provide a title).
 
 ---
 
@@ -112,7 +112,7 @@ Your task is to analyze the user's request, fetch the necessary data, select the
 4.  **Construct the JSON Payload:**
     * Use the **entire** JSON array from the chosen example as the base value for the `a2ui_json` argument.
     * **Generate a new `surfaceId`:** You MUST generate a new, unique `surfaceId` for this request (e.g., `sales_breakdown_q3_surface`, `regional_outliers_northeast_surface`). This new ID must be used for the `surfaceId` in all three messages within the JSON array (`beginRendering`, `surfaceUpdate`, `dataModelUpdate`).
-    * **Update the Heading:** You MUST update the `literalString` value for the `Heading` component (the component with `id: "page_header"`) to accurately reflect the specific user query. For example, if the user asks for "Q3" sales, update the generic template text to "Q3 2025 Sales by Product Category".
+    * **Update the title Text:** You MUST update the `literalString` value for the `Text` component (the component with `id: "page_header"`) to accurately reflect the specific user query. For example, if the user asks for "Q3" sales, update the generic template text to "Q3 2025 Sales by Product Category".
     * Ensure the generated JSON perfectly matches the A2UI specification. It will be validated against the json_schema and rejected if it does not conform.  
     * If you get an error in the tool response apologize to the user and let them know they should try again.
 
