@@ -19,7 +19,7 @@
   "workspaces": [
     "lib",
     "tests",
-    "lit/restaurant",
+    "lit/samples/restaurant",
     "lit/editor",
     "lit/inspector"
   ]

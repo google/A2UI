@@ -26,14 +26,14 @@ import {
 } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { theme as uiTheme } from "./theme/theme.js";
-import { A2UIClient } from "./client";
+import { A2UIClient } from "./client.js";
 import {
   SnackbarAction,
   SnackbarMessage,
   SnackbarUUID,
   SnackType,
-} from "./types/types";
-import { type Snackbar } from "./ui/snackbar";
+} from "./types/types.js";
+import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
 import { v0_8 } from "@a2ui/web-lib";
 import * as UI from "@a2ui/web-lib/ui";
