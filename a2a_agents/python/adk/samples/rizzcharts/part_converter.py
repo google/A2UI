@@ -21,20 +21,10 @@ from a2a import types as a2a_types
 from google.genai import types as genai_types
 
 from google.adk.a2a.converters import part_converter
-from a2ui_ext import a2ui_MIME_TYPE
+from a2ui_ext import create_a2ui_part
 from a2ui_toolset import SendA2uiJsonToClientTool
 
 logger = logging.getLogger(__name__)
-
-def create_a2ui_part(a2ui_data: dict[str, Any]) -> a2a_types.Part:
-    return a2a_types.Part(
-        root=a2a_types.DataPart(
-            data=a2ui_data,
-            metadata={
-                "mimeType": a2ui_MIME_TYPE,
-            },
-        )
-    )
 
 class A2uiPartConverter:
 
