@@ -2,9 +2,9 @@
   "name": "@a2ui/angular",
   "version": "0.0.1",
   "dependencies": {
-    "@a2ui/web-lib": "0.1.0",
     "markdown-it": "^14.1.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@a2ui/web-lib": "file:../../../web/lib"
   },
   "peerDependencies": {
     "@angular/common": "^20.3.0",

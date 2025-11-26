@@ -27,7 +27,7 @@
   "private": true,
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",
-    "@a2ui/web-lib": "0.1.0",
+    "@a2ui/web-lib": "file:../../../web/lib",
     "@angular/cdk": "^20.2.10",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
