@@ -7,7 +7,10 @@
     "paths": {
       "@a2ui/angular": [
         "./projects/lib/src/public-api.ts"
-      ]
+      ],
+      "@a2a_chat_canvas/*": [
+        "./projects/a2a-chat-canvas/src/lib/*"
+      ],
     },
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
