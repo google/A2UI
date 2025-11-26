@@ -17,14 +17,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache .wireit
-        uses: actions/cache@v4
-        with:
-          path: web/.wireit
-          key: ${{ runner.os }}-wireit-${{ hashFiles('web/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-wireit-
-
       - name: Install all workspaces' dependencies
         working-directory: ./web
         run: npm install --workspaces
