@@ -23,14 +23,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache .wireit
-        uses: actions/cache@v4
-        with:
-          path: web/.wireit
-          key: ${{ runner.os }}-wireit-${{ hashFiles('web/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-wireit-
-
       - name: Install top-level deps
         working-directory: ./angular
         run: npm ci
