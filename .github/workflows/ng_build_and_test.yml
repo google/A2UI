@@ -37,7 +37,7 @@ jobs:
 
       - name: Install lib deps
         working-directory: ./angular/projects/lib
-        run: npm i --peer-dep ../../../web/lib && npm ci
+        run: npm ci
 
       - name: Build lib
         working-directory: ./angular
