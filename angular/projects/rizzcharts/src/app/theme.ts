@@ -247,36 +247,19 @@ export const theme: v0_8.Types.Theme = {
       },
     },
     Divider: {},
-    Heading: {
-      all: {
-        'color-c-p30': true,
-        'typography-f-sf': true,
-        'typography-v-r': true,
-        'typography-w-400': true,
-        'layout-m-0': true,
-        'layout-p-0': true,
-      },
-      level1: {
-        'typography-sz-tl': true,
-      },
-      level2: {
-        'typography-sz-tm': true,
-      },
-      level3: {
-        'typography-sz-ts': true,
-      },
-      level4: {
-        'typography-sz-bl': true,
-      },
-      level5: {
-        'typography-sz-bm': true,
-      },
-    },
     Image: {
-      'border-br-5': true,
-      'layout-el-cv': true,
-      'layout-w-100': true,
-      'layout-h-100': true,
+      all: {
+        'border-br-5': true,
+        'layout-el-cv': true,
+        'layout-w-100': true,
+        'layout-h-100': true,
+      },
+      avatar: {},
+      header: {},
+      icon: {},
+      largeFeature: {},
+      mediumFeature: {},
+      smallFeature: {},
     },
     Icon: {},
     List: {
@@ -313,9 +296,18 @@ export const theme: v0_8.Types.Theme = {
       element: {},
     },
     Text: {
-      'layout-w-100': true,
-      'layout-g-2': true,
-      'color-c-p30': true,
+      all: {
+        'layout-w-100': true,
+        'layout-g-2': true,
+        'color-c-p30': true,
+      },
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      caption: {},
+      body: {}
     },
     TextField: {
       container: {
