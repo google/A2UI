@@ -33,7 +33,7 @@ import { StringValue } from "../types/primitives.js";
 import { AnyComponentNode, SurfaceID } from "../types/types";
 import { Theme } from "../types/types.js";
 import { themeContext } from "./context/theme.js";
-import { structuralStyles } from "./styles";
+import { structuralStyles } from "./styles.js";
 
 type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
   AnyComponentNode,
