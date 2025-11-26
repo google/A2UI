@@ -21,7 +21,6 @@
     "tests",
     "lit/samples/restaurant",
     "lit/samples/contact",
-    "lit/editor",
     "lit/inspector"
   ]
 }
