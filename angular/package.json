@@ -76,6 +76,7 @@
     "vitest-image-snapshot": "^0.6.37"
   },
   "workspaces": [
+    "projects/*",
     "../web/lib"
   ]
 }
