@@ -172,6 +172,8 @@ A **Catalog** defines the contract between the server and the client for the UI 
 
 There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `a2ui.org:standard_catalog_0_8_0`.
 
+Catalog IDs are simple strings. While they can be anything, it's recommended to use an internet domain you own as a prefix (e.g., `my-company.com:my-custom-catalog`) to avoid collisions. Furthermore, if any changes are made to a catalog that could break compatibility between an agent and renderer, a new `catalogId` **must** be assigned. This ensures clear versioning and prevents unexpected behavior if an agent has changes but the client does not, or vice versa.
+
 The negotiation process allows the client and server to agree on which catalog to use for a given UI surface. This process is designed to be flexible, supporting standard, custom, and even dynamically-defined catalogs.
 
 The flow is as follows:
