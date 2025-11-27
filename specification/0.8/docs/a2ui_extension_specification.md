@@ -24,26 +24,31 @@ Catalog Definition Schema: A standard format for defining a library of component
 
 Server-to-Client Message Schema: The core wire format for messages sent from the agent to the client (e.g., surfaceUpdate, dataModelUpdate).
 
-Client-to-Server Event Schema: The core wire format for messages sent from the client to the agent (e.g., userAction, clientUiCapabilities).
+Client-to-Server Event Schema: The core wire format for messages sent from the client to the agent (e.g., userAction).
 
 Agent Capability Declaration
-Agents advertise their A2UI capabilities in their AgentCard within the AgentCapabilities.extensions list. The params object defines the agent's specific UI support, including which component catalogs it can generate and whether it accepts dynamic catalogs from the client.
+Agents advertise their A2UI capabilities in their AgentCard within the `AgentCapabilities.extensions` list. The `params` object defines the agent's specific UI support.
 
 Example AgentExtension block:
 
-Parameter Definitions
-params.supportedSchemas: (REQUIRED) An array of strings, where each string is a URI pointing to a component Catalog Definition Schema that the agent can generate. This could include the default catalog or custom catalogs or both.
+```json
+{
+  "uri": "https://a2ui.org/ext/a2a-ui/v0.8",
+  "description": "Ability to render A2UI",
+  "required": false,
+  "params": {
+    "acceptsInlineCatalogs": true
+  }
+}
+```
 
-params.acceptsDynamicSchemas: (OPTIONAL) A boolean indicating if the agent can accept a clientUiCapabilities message containing a dynamicCatalog. If omitted, this defaults to false.
+#### Parameter Definitions
+- `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
-Client Capability Declaration
-The client-to-server spec includes a clientUiCapabilities message. If a client wishes to use a specific catalog (other than the server's default) or provide its own dynamic catalog, it MUST send this message after the connection is established and before the first user prompt.
+Client Capabilities
+The client sends its capabilities to the server in an `a2uiClientCapabilities` object. This object is **not** sent as a standalone message, but is instead included in the `metadata` field of every A2A `Message` sent from the client to the server.
 
-This message allows the client to specify either:
-
-A catalogUri: A URI for a known, shared catalog (which must be one of the supportedSchemas from the agent).
-
-A dynamicCatalog: An inline Catalog Definition Schema object. This is only allowed if the agent's acceptsDynamicSchemas capability is true.
+This object allows the client to declare which catalogs it supports. For a complete definition of this object and the catalog negotiation process, please see the main [A2UI Protocol Specification](./a2ui_protocol.md).
 
 Extension Activation
 Clients indicate their desire to use the A2UI extension by specifying it via the transport-defined A2A extension activation mechanism.
