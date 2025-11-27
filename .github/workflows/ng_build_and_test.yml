@@ -39,4 +39,6 @@ jobs:
 
       - name: Build contact sample
         working-directory: ./angular
-        run: npm run build contact
+        run:
+          - npm run build contact
+          - npm run build restaurant
