@@ -26,7 +26,6 @@ import {
   Checkbox,
   DateTimeInput,
   Divider,
-  Heading,
   Icon,
   Image,
   MultipleChoice,
@@ -80,15 +79,15 @@ export type Theme = {
       label: Record<string, boolean>;
     };
     Divider: Record<string, boolean>;
-    Heading: {
+    Image: {
       all: Record<string, boolean>;
-      level1: Record<string, boolean>;
-      level2: Record<string, boolean>;
-      level3: Record<string, boolean>;
-      level4: Record<string, boolean>;
-      level5: Record<string, boolean>;
+      icon: Record<string, boolean>;
+      avatar: Record<string, boolean>;
+      smallFeature: Record<string, boolean>;
+      mediumFeature: Record<string, boolean>;
+      largeFeature: Record<string, boolean>;
+      header: Record<string, boolean>;
     };
-    Image: Record<string, boolean>;
     Icon: Record<string, boolean>;
     List: Record<string, boolean>;
     Modal: {
@@ -114,7 +113,16 @@ export type Theme = {
         selected: Record<string, boolean>;
       };
     };
-    Text: Record<string, boolean>;
+    Text: {
+      all: Record<string, boolean>;
+      h1: Record<string, boolean>;
+      h2: Record<string, boolean>;
+      h3: Record<string, boolean>;
+      h4: Record<string, boolean>;
+      h5: Record<string, boolean>;
+      caption: Record<string, boolean>;
+      body: Record<string, boolean>;
+    };
     TextField: {
       container: Record<string, boolean>;
       element: Record<string, boolean>;
@@ -310,11 +318,6 @@ interface BaseComponentNode {
   slotName?: string;
 }
 
-export interface HeadingNode extends BaseComponentNode {
-  type: "Heading";
-  properties: ResolvedHeading;
-}
-
 export interface TextNode extends BaseComponentNode {
   type: "Text";
   properties: ResolvedText;
@@ -416,7 +419,6 @@ export interface CustomNode extends BaseComponentNode {
  * A renderer would use this type for any given node in the component tree.
  */
 export type AnyComponentNode =
-  | HeadingNode
   | TextNode
   | IconNode
   | ImageNode
@@ -439,7 +441,6 @@ export type AnyComponentNode =
 
 // These components do not contain other components can reuse their
 // original interfaces.
-export type ResolvedHeading = Heading;
 export type ResolvedText = Text;
 export type ResolvedIcon = Icon;
 export type ResolvedImage = Image;

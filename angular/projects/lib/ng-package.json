@@ -3,5 +3,9 @@
   "dest": "../../dist/lib",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "allowedNonPeerDependencies": [
+    "markdown-it",
+    "@a2ui/web-lib"
+  ]
 }

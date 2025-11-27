@@ -27,12 +27,12 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "cp ../../specification/0.8/json/*.json ./src/0.8/schemas",
+      "command": "mkdir -p src/0.8/schemas && cp ../../specification/0.8/json/*.json src/0.8/schemas",
       "files": [
-        "src/config.prod.js"
+        "../../specification/0.8/json/*.json"
       ],
       "output": [
-        "dist/config.js"
+        "src/0.8/schemas/*.json"
       ]
     },
     "serve": {

@@ -44,20 +44,20 @@ export interface Action {
   }[];
 }
 
-export interface Heading {
-  text: StringValue;
-  /**
-   * The semantic importance level.
-   */
-  level?: "1" | "2" | "3" | "4" | "5";
-}
-
 export interface Text {
   text: StringValue;
+  usageHint: "h1" | "h2" | "h3" | "h4" | "h5" | "caption" | "body";
 }
 
 export interface Image {
   url: StringValue;
+  usageHint:
+    | "icon"
+    | "avatar"
+    | "smallFeature"
+    | "mediumFeature"
+    | "largeFeature"
+    | "header";
 }
 
 export interface Icon {

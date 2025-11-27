@@ -39,7 +39,7 @@
         "FORCE_COLOR": "1"
       },
       "dependencies": [
-        "<dependencies>#build:tsc"
+        "../lib:build"
       ],
       "files": [
         "**/*.ts",

@@ -41,7 +41,6 @@ import {
   isResolvedColumn,
   isResolvedDateTimeInput,
   isResolvedDivider,
-  isResolvedHeading,
   isResolvedIcon,
   isResolvedImage,
   isResolvedList,
@@ -517,16 +516,6 @@ export class A2UIModelProcessor implements ModelProcessor {
       weight: componentData.weight ?? "initial",
     };
     switch (componentType) {
-      case "Heading":
-        if (!isResolvedHeading(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.#objCtor({
-          ...baseNode,
-          type: "Heading",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
       case "Text":
         if (!isResolvedText(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);

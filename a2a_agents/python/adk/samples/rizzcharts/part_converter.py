@@ -21,20 +21,10 @@ from a2a import types as a2a_types
 from google.genai import types as genai_types
 
 from google.adk.a2a.converters import part_converter
-from a2ui_ext import a2ui_MIME_TYPE
+from a2ui_ext import create_a2ui_part
 from a2ui_toolset import SendA2uiJsonToClientTool
 
 logger = logging.getLogger(__name__)
-
-def create_a2ui_datapart(a2ui_data: dict[str, Any]) -> a2a_types.DataPart:
-    return a2a_types.Part(
-        root=a2a_types.DataPart(
-            data=a2ui_data,
-            metadata={
-                "mimeType": a2ui_MIME_TYPE,
-            },
-        )
-    )
 
 class A2uiPartConverter:
 
@@ -69,11 +59,11 @@ class A2uiPartConverter:
             if isinstance(json_data, list):
                 logger.info( f"Found {len(json_data)} messages. Creating individual DataParts." )
                 for message in json_data:
-                  final_parts.append(create_a2ui_datapart(message))
+                  final_parts.append(create_a2ui_part(message))
             else:
                 # Handle the case where a single JSON object is returned
                 logger.info("Received a single JSON object. Creating a DataPart." )
-                final_parts.append(create_a2ui_datapart(json_data))
+                final_parts.append(create_a2ui_part(json_data))
 
             return final_parts
           except Exception as e:

@@ -98,7 +98,7 @@ export function createA2UIPrompt(
       `The user's layout request is: "${combinedInstructions.join('" and "')}"`,
       `The Component Catalog you can use is: ${JSON.stringify(catalog)}`,
       `The A2UI Protocol Message Schema: "${JSON.stringify(
-        v0_8.Schemas.A2UIProtocolMessage
+        v0_8.Schemas.A2UIClientEventMessage
       )}"`,
 
       `Please return a valid A2UI Protocol Message object necessary to build the

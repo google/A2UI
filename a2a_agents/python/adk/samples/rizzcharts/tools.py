@@ -27,10 +27,7 @@ def get_store_sales() -> dict[str, Any]:
     """
 
     return {
-        "center": {
-            "lat": 34,
-            "lng": -118.2437
-        },
+        "center": {"lat": 34, "lng": -118.2437},
         "zoom": 10,
         "locations": [
             {
@@ -41,34 +38,14 @@ def get_store_sales() -> dict[str, Any]:
                 "outlier_reason": "Yes, 15% sales over baseline",
                 "background": "#4285F4",
                 "borderColor": "#FFFFFF",
-                "glyphColor": "#FFFFFF"
+                "glyphColor": "#FFFFFF",
             },
-            {
-                "lat": 34.0488,
-                "lng": -118.2518,
-                "name": "Downtown Flagship"
-            },
-            {
-                "lat": 34.1016,
-                "lng": -118.3287,
-                "name": "Hollywood Boulevard Store"
-            },
-            {
-                "lat": 34.1478,
-                "lng": -118.1445,
-                "name": "Pasadena Location"
-            },
-            {
-                "lat": 33.7701,
-                "lng": -118.1937,
-                "name": "Long Beach Outlet"
-            },
-            {
-                "lat": 34.0736,
-                "lng": -118.4004,
-                "name": "Beverly Hills Boutique"
-            }
-        ]
+            {"lat": 34.0488, "lng": -118.2518, "name": "Downtown Flagship"},
+            {"lat": 34.1016, "lng": -118.3287, "name": "Hollywood Boulevard Store"},
+            {"lat": 34.1478, "lng": -118.1445, "name": "Pasadena Location"},
+            {"lat": 33.7701, "lng": -118.1937, "name": "Long Beach Outlet"},
+            {"lat": 34.0736, "lng": -118.4004, "name": "Beverly Hills Boutique"},
+        ],
     }
 
 
@@ -80,42 +57,39 @@ def get_sales_data() -> dict[str, Any]:
         A dict containing the sales breakdown by product category.
     """
 
-    return [
-        {
-            "label": "Apparel",
-            "value": 41,
-            "drillDown": [
-                {"label": "Tops", "value": 31},
-                {"label": "Bottoms", "value": 38},
-                {"label": "Outerwear", "value": 20},
-                {"label": "Footwear", "value": 11},
-            ],
-        },
-        {
-            "label": "Home Goods",
-            "value": 15,
-            "drillDown": [
-                {"label": "Pillow", "value": 8},
-                {"label": "Coffee Maker", "value": 16},
-                {"label": "Area Rug", "value": 3},
-                {"label": "Bath Towels", "value": 14},
-            ],
-        },
-        {
-            "label": "Electronics",
-            "value": 28,
-            "drillDown": [
-                {"label": "Phones", "value": 25},
-                {"label": "Laptops", "value": 27},
-                {"label": "TVs", "value": 21},
-                {"label": "Other", "value": 27},
-            ],
-        },
-        {
-            "label": "Health & Beauty",
-            "value": 10
-        },
-        {
-            "label": "Other",
-            "value": 6
-        }]
+    return {
+        "sales_data": [
+            {
+                "label": "Apparel",
+                "value": 41,
+                "drillDown": [
+                    {"label": "Tops", "value": 31},
+                    {"label": "Bottoms", "value": 38},
+                    {"label": "Outerwear", "value": 20},
+                    {"label": "Footwear", "value": 11},
+                ],
+            },
+            {
+                "label": "Home Goods",
+                "value": 15,
+                "drillDown": [
+                    {"label": "Pillow", "value": 8},
+                    {"label": "Coffee Maker", "value": 16},
+                    {"label": "Area Rug", "value": 3},
+                    {"label": "Bath Towels", "value": 14},
+                ],
+            },
+            {
+                "label": "Electronics",
+                "value": 28,
+                "drillDown": [
+                    {"label": "Phones", "value": 25},
+                    {"label": "Laptops", "value": 27},
+                    {"label": "TVs", "value": 21},
+                    {"label": "Other", "value": 27},
+                ],
+            },
+            {"label": "Health & Beauty", "value": 10},
+            {"label": "Other", "value": 6},
+        ]
+    }

@@ -734,12 +734,12 @@ describe("A2UIModelProcessor", () => {
               {
                 id: "title-heading",
                 component: {
-                  Heading: {
-                    level: "1",
+                  Text: {
                     text: {
                       literalString: "Top Restaurants",
                     },
                   },
+                  usageHint: "h1",
                 },
               },
               {
@@ -805,12 +805,12 @@ describe("A2UIModelProcessor", () => {
               {
                 id: "template-name",
                 component: {
-                  Heading: {
-                    level: "3",
+                  Text: {
                     text: {
                       path: "name",
                     },
                   },
+                  usageHint: "h3",
                 },
               },
               {
@@ -1137,7 +1137,9 @@ describe("A2UIModelProcessor", () => {
               },
               {
                 id: "day-title",
-                component: { Heading: { text: { path: "title" } } },
+                component: {
+                  Text: { text: { path: "title" }, usageHint: "h1" },
+                },
               },
               {
                 id: "activity-list",

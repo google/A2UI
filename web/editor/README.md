@@ -1,4 +1,4 @@
-# A2UI Generator
+# A2UI Editor / Generator
 
 This is a UI to generate and visualize A2UI responses.
 
