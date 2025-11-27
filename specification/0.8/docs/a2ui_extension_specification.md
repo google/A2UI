@@ -12,7 +12,7 @@ This is the only URI accepted for this extension.
 
 ## Core Concepts
 
-The A2UI extension is built on three main concepts:
+The A2UI extension is built on the following main concepts:
 
 Surfaces: A "Surface" is a distinct, controllable region of the client's UI. The spec uses a surfaceId to direct updates to specific surfaces (e.g., a main content area, a side panel, or a new chat bubble). This allows a single agent stream to manage multiple UI areas independently.
 
@@ -26,7 +26,10 @@ Server-to-Client Message Schema: The core wire format for messages sent from the
 
 Client-to-Server Event Schema: The core wire format for messages sent from the client to the agent (e.g., userAction).
 
-Agent Capability Declaration
+Client Capabilities: The client sends its capabilities to the server in an `a2uiClientCapabilities` object. This object is included in the `metadata` field of every A2A `Message` sent from the client to the server.This object allows the client to declare which catalogs it supports.
+
+## Agent Card details
+
 Agents advertise their A2UI capabilities in their AgentCard within the `AgentCapabilities.extensions` list. The `params` object defines the agent's specific UI support.
 
 Example AgentExtension block:
@@ -42,15 +45,10 @@ Example AgentExtension block:
 }
 ```
 
-#### Parameter Definitions
+### Parameter Definitions
 - `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
-Client Capabilities
-The client sends its capabilities to the server in an `a2uiClientCapabilities` object. This object is **not** sent as a standalone message, but is instead included in the `metadata` field of every A2A `Message` sent from the client to the server.
-
-This object allows the client to declare which catalogs it supports. For a complete definition of this object and the catalog negotiation process, please see the main [A2UI Protocol Specification](./a2ui_protocol.md).
-
-Extension Activation
+## Extension Activation
 Clients indicate their desire to use the A2UI extension by specifying it via the transport-defined A2A extension activation mechanism.
 
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.

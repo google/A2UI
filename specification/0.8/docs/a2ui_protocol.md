@@ -203,8 +203,8 @@ The server (agent) advertises its capabilities in its Agent Card as part of the 
 
 In **every** message sent to the server, the client includes an `a2uiClientCapabilities` object within the A2A `Message` metadata. This object informs the server of all catalogs the client can render.
 
-- `supportedCatalogIds` (array of strings, required): A list of identifiers for all pre-defined catalogs the client supports. The client MUST always include the standard catalog ID here.
-- `inlineCatalogs` (array of objects, optional): An array of full Catalog Definition Documents. This allows a client to provide custom, on-the-fly catalogs. This should only be provided if the server has advertised `acceptsInlineCatalogs: true`.
+- `supportedCatalogIds` (array of strings, required): A list of identifiers for all pre-defined catalogs the client supports. The client must explicitly include the standard catalog ID here if it supports the standard catalog.
+- `inlineCatalogs` (array of objects, optional): An array of full Catalog Definition Documents. This allows a client to provide custom, on-the-fly catalogs. This may only be provided if the server has advertised `acceptsInlineCatalogs: true`.
 
 **Example A2A Message with Client Capabilities:**
 ```json
@@ -260,6 +260,9 @@ Each surface can use a different catalog, providing a high degree of flexibility
 #### Schemas for Developers
 
 When building an agent, it is recommended to use a resolved schema that includes the specific component catalog you are targeting (e.g., a custom schema combining `server_to_client.json` with your `my-company.com:custom-reporting-catalog-1.2` definition). This provides the LLM with a strict definition of all available components and their properties, leading to more reliable UI generation. The generic `server_to_client.json` is the abstract wire protocol, while the resolved schema is the concrete tool for generation.
+
+See `server_to_client_with_standard_catalog.json` for an example of a resolved 
+schema which has the components substituted in.
 
 ### 2.2. The `surfaceUpdate` Message
 
