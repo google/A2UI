@@ -36,3 +36,7 @@ jobs:
       - name: Build lib
         working-directory: ./angular
         run: npm run build lib
+
+      - name: Build contact sample
+        working-directory: ./angular
+        run: npm run build contact
