@@ -34,8 +34,6 @@ export class ChatService {
   readonly contextId = signal<string>('');
   readonly isA2aStreamOpen = signal(false);
 
-  public componentCatalog: string = '';
-
   constructor() {
     this.processor.events.subscribe(async (event) => {
       try {
@@ -84,9 +82,6 @@ export class ChatService {
 
     const a2aResponse = await this.a2aService.sendMessage(
       {
-        clientUiCapabilities: {
-          catalogUri: this.componentCatalog,
-        },
         request: [this.createUserMessagePart(message)],
       },
       this.contextId(),

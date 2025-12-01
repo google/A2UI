@@ -20,18 +20,20 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
 
 @Injectable({ providedIn: 'root' })
 export class A2aService {
+
+  public supportedCatalogUris: string[] = [];
+
   async sendMessage(message: v0_8.Types.A2UIClientEventMessage, contextId?: string): Promise<SendMessageSuccessResponse> {
-
-    let componentCatalog = '';
-    const capabilities = message.clientUiCapabilities;
-    if (capabilities && 'catalogUri' in capabilities) {
-      // TSC currently flags this as an error, so we need to cast to any.
-      // TODO: Fix the type definitions for ClientCapabilities.
-      componentCatalog = (capabilities as any).catalogUri ?? '';
-    }
-
     const response = await fetch('/a2a', {
-      body: JSON.stringify({ 'parts': message.request as Part[], 'component_catalog': componentCatalog, 'context_id': contextId }),
+      body: JSON.stringify({
+        'parts': message.request as Part[], 
+        'metadata': { 
+          "clientUiCapabilities": { 
+            "supportedCatalogUris": this.supportedCatalogUris 
+          } 
+        }, 
+        'context_id': contextId
+      }),
       method: 'POST',
     });
 

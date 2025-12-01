@@ -52,7 +52,7 @@ app.post('/a2a', (req, res) => {
     console.log('[a2a-middleware] Received data:', originalBody);
     
     const parts: Part[] = data['parts'];
-    const catalogUri: Part[] = data['component_catalog'];
+    const metadata: Record<string, any> = data['metadata'];
     const contextId: string | undefined = data['context_id'];
 
     const sendParams: MessageSendParams = {
@@ -62,11 +62,7 @@ app.post('/a2a', (req, res) => {
         role: 'user',
         parts,
         kind: 'message',
-        metadata: {
-          'clientUiCapabilities': {
-            'catalogUri': catalogUri
-          }
-        }
+        metadata: metadata,
       },
     };
 

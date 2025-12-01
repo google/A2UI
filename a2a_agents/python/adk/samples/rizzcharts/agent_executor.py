@@ -88,11 +88,7 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
                         uri=self._base_url,
                         description="Provides a declarative a2ui UI JSON structure in messages.",
                         params={
-                            "supportedCatalogUri": [
-                                STANDARD_CATALOG_URI,
-                                RIZZCHARTS_CATALOG_URI,
-                            ],
-                            "acceptsCustomCatalogsInline": True,
+                            "acceptsInlineCustomCatalog": False,
                         },
                     )
                 ],

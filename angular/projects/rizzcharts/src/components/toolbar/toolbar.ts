@@ -23,7 +23,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
-import { ChatService } from '@rizzcharts/services/chat_service';
+import { A2aService } from '@rizzcharts/services/a2a_service';
 
 @Component({
   selector: 'app-toolbar',
@@ -32,25 +32,20 @@ import { ChatService } from '@rizzcharts/services/chat_service';
   styleUrl: './toolbar.scss',
 })
 export class Toolbar {
-  readonly chatService = inject(ChatService);
+  readonly a2aService = inject(A2aService);
 
   catalogs = [
-    {value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json', viewValue: 'Standard'},
-    {value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json', viewValue: 'Rizzcharts Custom'},    
+    {
+      value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json', 
+      viewValue: 'Standard'
+    },
+    {
+      value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json', 
+      viewValue: 'Rizzcharts Custom'
+    },
   ];
 
-  selectedCatalog: string;
-
-  constructor() {
-    const catalog = this.catalogs[1].value;
-    this.chatService.componentCatalog = catalog;
-    this.selectedCatalog = catalog;
+  ngOnInit() {
+    this.a2aService.supportedCatalogUris = this.catalogs.map(c => c.value);    
   }
-
-  selectCatalog(event: MatSelectChange) {
-    const catalog = event.value;
-    console.log('selectCatalog ' + catalog);
-    this.chatService.componentCatalog = catalog;
-    this.selectedCatalog = catalog;
-  }  
 }
