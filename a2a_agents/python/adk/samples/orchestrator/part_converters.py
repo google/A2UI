@@ -27,11 +27,10 @@ logger = logging.getLogger(__name__)
 
 def convert_a2a_part_to_genai_part(
     a2a_part: a2a_types.Part,
-) -> Optional[genai_types.Part]:    
+) -> Optional[genai_types.Part]:           
     if is_a2ui_part(a2a_part):                
-        logger.info(f'Converting from A2UI a2a part: {a2a_part}')    
         genai_part = genai_types.Part(text=a2a_part.model_dump_json())
-        logger.info(f'Converted to A2UI genai part: {genai_part}')
+        logger.info(f'Converted A2UI part from A2A: {a2a_part.model_dump_json(exclude_none=True)} to GenAI: {genai_part.model_dump_json(exclude_none=True)}'[:200] + "...")    
         return genai_part
         
     return part_converter.convert_a2a_part_to_genai_part(a2a_part)
@@ -43,8 +42,7 @@ def convert_genai_part_to_a2a_part(
         try:
             a2a_part = a2a_types.Part.model_validate_json(part.text)
             if is_a2ui_part(a2a_part):           
-                logger.info(f'Converting from A2UI genai part: {part}')    
-                logger.info(f'Converted to A2UI a2a part: {a2a_part}')
+                logger.info(f'Converted A2UI part from GenAI: {part.model_dump_json(exclude_none=True)} to A2A: {a2a_part.model_dump_json(exclude_none=True)}'[:200] + "...")    
                 return a2a_part        
         except pydantic.ValidationError:
             # Expected for normal text input

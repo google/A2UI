@@ -178,7 +178,7 @@ export class ChatService {
     return {
       kind: 'data',
       data: message as any,
-      mimeType: 'application/json+a2aui',
+      metadata: {'mimeType': 'application/json+a2ui'},
     } as DataPart;
   }
 

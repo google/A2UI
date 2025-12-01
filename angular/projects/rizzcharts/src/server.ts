@@ -49,7 +49,7 @@ app.post('/a2a', (req, res) => {
   req.on('end', async () => {
     const data = JSON.parse(originalBody);
     
-    console.log('[a2a-middleware] Received data:', data);
+    console.log('[a2a-middleware] Received data:', originalBody);
     
     const parts: Part[] = data['parts'];
     const catalogUri: Part[] = data['component_catalog'];

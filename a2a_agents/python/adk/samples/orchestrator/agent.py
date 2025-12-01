@@ -22,11 +22,16 @@ from google.adk.models.lite_llm import LiteLlm
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.agents.remote_a2a_agent import RemoteA2aAgent, DEFAULT_TIMEOUT
 from google.adk.planners.built_in_planner import BuiltInPlanner
-from google.genai import types
+from google.genai import types as genai_types
 import httpx
 import re
 import part_converters
 from a2ui_ext import URI as A2UI_EXTENSION_URI
+from google.adk.agents.callback_context import  CallbackContext
+from google.adk.models.llm_request import LlmRequest
+from google.adk.models.llm_response import LlmResponse
+from subagent_route_manager import SubagentRouteManager
+from a2ui_ext import is_a2ui_part
 
 logger = logging.getLogger(__name__)
 
@@ -38,11 +43,41 @@ class OrchestratorAgent:
     SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
     
     @classmethod
+    async def programmtically_route_user_action_to_subagent(
+        cls,
+        callback_context: CallbackContext,
+        llm_request: LlmRequest,
+    ) -> LlmResponse:
+        if (
+            llm_request.contents
+            and (last_content := llm_request.contents[-1]).parts
+            and (a2a_part := part_converters.convert_genai_part_to_a2a_part(last_content.parts[-1]))
+            and is_a2ui_part(a2a_part)
+            and (user_action := a2a_part.root.data.get("userAction"))
+            and (surface_id := user_action.get("surfaceId"))
+            and (target_agent := await SubagentRouteManager.get_route_to_subagent_name(surface_id, callback_context.state))
+        ):
+            logger.info(f"Programmatically routing userAction for surfaceId '{surface_id}' to subagent '{target_agent}'")
+            return LlmResponse(
+                content=genai_types.Content(
+                    parts=[
+                        genai_types.Part(
+                            function_call=genai_types.FunctionCall(
+                                name="transfer_to_agent",
+                                args={"agent_name": target_agent},
+                            )
+                        )
+                    ]
+                )
+            )
+                     
+        return None
+
+    @classmethod
     async def build_agent(cls, subagent_urls: List[str]) -> LlmAgent:
         """Builds the LLM agent for the orchestrator_agent agent."""
 
         subagents = []
-        subagent_instructions = []
         for subagent_url in subagent_urls:
             async with httpx.AsyncClient() as httpx_client:
                 resolver = A2ACardResolver(
@@ -61,18 +96,7 @@ class OrchestratorAgent:
                     clean_name = f"_{clean_name}"
                 
                 # make remote agent
-                remote_a2a_agent = RemoteA2aAgent(
-                    clean_name, 
-                    subagent_card, 
-                    a2a_part_converter=part_converters.convert_a2a_part_to_genai_part,  
-                    httpx_client=httpx.AsyncClient(
-                       timeout=httpx.Timeout(timeout=DEFAULT_TIMEOUT), 
-                       headers={HTTP_EXTENSION_HEADER: A2UI_EXTENSION_URI}
-                    ))                
-                subagents.append(remote_a2a_agent)
-                
-                # make system instructions
-                subagent_instruction = f"* Subagent {clean_name}: " + json.dumps({
+                description = json.dumps({
                     "id": clean_name,
                     "name": subagent_card.name,
                     "description": subagent_card.description,
@@ -85,27 +109,33 @@ class OrchestratorAgent:
                         } for skill in subagent_card.skills
                     ]
                 }, indent=2)
-                subagent_instructions.append(subagent_instruction)
-
-        instructions = f"""
-You are an orchestrator agent. Your sole responsibility is to analyze the incoming user request, determine the user's intent, and route the task to exactly one of your expert subagents below.
-
-{"\n\n".join(subagent_instructions)}
-"""
-
-        logger.info(f'Creating orchestrator agent with instructions: {instructions}')
+                remote_a2a_agent = RemoteA2aAgent(
+                    clean_name, 
+                    subagent_card, 
+                    description=description, # This will be appended to system instructions
+                    a2a_part_converter=part_converters.convert_a2a_part_to_genai_part,
+                    genai_part_converter=part_converters.convert_genai_part_to_a2a_part,
+                      
+                    httpx_client=httpx.AsyncClient(
+                       timeout=httpx.Timeout(timeout=DEFAULT_TIMEOUT), 
+                       headers={HTTP_EXTENSION_HEADER: A2UI_EXTENSION_URI}
+                    ))                
+                subagents.append(remote_a2a_agent)
+                
+                logger.info(f'Created remote agent with description: {description}')
 
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini-2.5-flash")
         return LlmAgent(
             model=LiteLlm(model=LITELLM_MODEL),
             name="orchestrator_agent",
             description="An agent that orchestrates requests to multiple other agents",
-            instruction=instructions,
+            instruction="You are an orchestrator agent. Your sole responsibility is to analyze the incoming user request, determine the user's intent, and route the task to exactly one of your expert subagents",
             tools=[],
             planner=BuiltInPlanner(
-                thinking_config=types.ThinkingConfig(
+                thinking_config=genai_types.ThinkingConfig(
                     include_thoughts=True,
                 )
             ),
             sub_agents=subagents,
+            before_model_callback=cls.programmtically_route_user_action_to_subagent,
         )
