@@ -17,7 +17,7 @@
 @let surface = surfaces();
 
 @if (text()) {
-  <p>{{ text() }}</p>
+  <div [innerHTML]="text() | markdown"></div>
 } @else if (a2uiSurface() && surface.get(a2uiSurface()!)) {
   <a2ui-surface [surfaceId]="a2uiSurface()" [surface]="surface.get(a2uiSurface()!)!"></a2ui-surface>
 } @else {

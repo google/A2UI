@@ -21,9 +21,11 @@ import { Component, computed, inject, input, Signal } from '@angular/core';
 import { ChatService } from '@rizzcharts/services/chat_service';
 import { UiMessageContent } from '@rizzcharts/types/ui_message';
 
+import { MarkdownPipe } from '@rizzcharts/pipes/markdown.pipe';
+
 @Component({
   selector: 'message-content',
-  imports: [Surface],
+  imports: [Surface, MarkdownPipe],
   templateUrl: './message-content.html',
   styleUrl: './message-content.scss',
 })
