@@ -15,7 +15,7 @@
  */
 
 import { DynamicComponent } from '@a2ui/angular';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { CanvasService } from '../services/canvas_service';
 

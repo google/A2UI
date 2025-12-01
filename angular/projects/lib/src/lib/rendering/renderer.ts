@@ -29,7 +29,7 @@ import {
   untracked,
   ViewContainerRef,
 } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { Catalog } from './catalog';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -76,11 +76,15 @@ export class Renderer implements OnDestroy {
     let componentBindings: Binding[] | null = null;
 
     if (typeof config === 'function') {
+      console.log('config function', config);
       newComponent = await config();
     } else if (typeof config === 'object') {
+      console.log('config object', config);
       newComponent = await config.type();
       componentBindings = config.bindings(component as any);
     }
+
+    console.log('newComponent', newComponent);
 
     this.clear();
 

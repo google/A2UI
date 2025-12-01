@@ -16,7 +16,7 @@
 
 import { Part, SendMessageResponse, SendMessageSuccessResponse } from '@a2a-js/sdk';
 import { Injectable } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 
 @Injectable({ providedIn: 'root' })
 export class A2aService {

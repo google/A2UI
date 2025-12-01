@@ -15,7 +15,7 @@
  */
 
 import { Renderer } from '@a2ui/angular';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
