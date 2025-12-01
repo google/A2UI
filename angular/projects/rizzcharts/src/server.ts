@@ -81,6 +81,21 @@ app.post('/a2a', (req, res) => {
   });
 });
 
+app.get('/a2a/agent-card', async (req, res) => {
+  try {
+    const response = await fetchWithCustomHeader('http://localhost:10002/.well-known/agent-card.json');
+    if (!response.ok) {
+      res.status(response.status).json({ error: 'Failed to fetch agent card' });
+      return;
+    }
+    const card = await response.json();
+    res.json(card);
+  } catch (error) {
+    console.error('Error fetching agent card:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.use((req, res, next) => {
   angularApp
     .handle(req)

@@ -14,21 +14,24 @@
  limitations under the License.
  */
 
-import { Component, Inject, OnInit, Renderer2, signal } from '@angular/core';
+import { Component, Inject, OnInit, Renderer2, inject, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { ChatCanvas } from '@rizzcharts/components/chat-canvas/chat-canvas';
+import { MatButtonModule } from '@angular/material/button';
+import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
+import { ChatService } from '@a2a_chat_canvas/services/chat-service';
 import { Toolbar } from '@rizzcharts/components/toolbar/toolbar';
 import { environment } from '@rizzcharts/environments/environment';
 
 @Component({
   selector: 'app-root',
-  imports: [ChatCanvas, RouterOutlet, Toolbar],
+  imports: [A2aChatCanvas, RouterOutlet, Toolbar, MatButtonModule],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrl: './app.scss',
 })
 export class App implements OnInit {
   protected readonly title = signal('rizzcharts');
+  readonly chatService = inject(ChatService);
 
   constructor(
     private _renderer2: Renderer2,
@@ -41,5 +44,9 @@ export class App implements OnInit {
     script.async = true;
     script.defer = true;
     this._renderer2.appendChild(this._document.body, script);
+  }
+
+  sendMessage(text: string) {
+    this.chatService.sendMessage(text);
   }
 }

@@ -14,7 +14,12 @@
  limitations under the License.
  */
 
-import { provideA2UI } from '@a2ui/angular';
+import {
+  configureChatCanvasFeatures,
+  usingA2aService,
+  usingA2uiRenderers,
+  usingDefaultSanitizerMarkdownRenderer,
+} from '@a2a_chat_canvas/config';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
@@ -23,6 +28,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { RIZZ_CHARTS_CATALOG } from '@rizzcharts/a2ui-catalog/catalog';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { A2aService } from '../services/a2a_service';
 import { theme } from './theme';
 
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
@@ -34,10 +40,11 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideA2UI({
-      catalog: RIZZ_CHARTS_CATALOG,
-      theme: theme,
-    }),
     provideCharts(withDefaultRegisterables()),
+    configureChatCanvasFeatures(
+      usingA2aService(A2aService),
+      usingA2uiRenderers(RIZZ_CHARTS_CATALOG, theme),
+      usingDefaultSanitizerMarkdownRenderer(),
+    ),
   ],
 };
