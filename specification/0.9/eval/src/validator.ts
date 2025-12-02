@@ -64,7 +64,7 @@ export function validateSchema(
   if (data.updateComponents) {
     validateSurfaceUpdate(data.updateComponents, errors);
   } else if (data.updateDataModel) {
-    validateupdateDataModel(data.updateDataModel, errors);
+    validateUpdateDataModel(data.updateDataModel, errors);
   } else if (data.createSurface) {
     validateBeginRendering(data.createSurface, errors);
   } else if (data.deleteSurface) {
@@ -124,7 +124,7 @@ function validateSurfaceUpdate(data: any, errors: string[]) {
   }
 }
 
-function validateupdateDataModel(data: any, errors: string[]) {
+function validateUpdateDataModel(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
     errors.push("updateDataModel must have a 'surfaceId' property.");
   }
