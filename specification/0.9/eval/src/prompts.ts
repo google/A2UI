@@ -800,6 +800,45 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     ],
   },
   {
+    name: "nestedDataBinding",
+    description: "A project dashboard with deeply nested data binding.",
+    promptText: `Generate a stream of JSON messages for a Project Management Dashboard.
+    The output must consist of exactly two JSON objects, one after the other.
+
+    Message 1: 'updateComponents'
+    It should have a 'Text' (usageHint 'h1') "Project Dashboard".
+    Then a 'List' of projects bound to '/projects'.
+    Inside the list template, each item should be a 'Card' containing:
+    - A 'Text' (usageHint 'h2') bound to the project 'title'.
+    - A 'List' of tasks bound to the 'tasks' property of the project.
+    Inside the tasks list template, each item should be a 'Column' containing:
+    - A 'Text' bound to the task 'description'.
+    - A 'Row' for the assignee, containing:
+      - A 'Text' bound to 'assignee/name'.
+      - A 'Text' bound to 'assignee/role'.
+    - A 'List' of subtasks bound to 'subtasks'.
+    Inside the subtasks list template, each item should be a 'Text' bound to 'title'.
+
+    Message 2: 'updateDataModel'
+    Populate this dashboard with sample data:
+    - At least one project.
+    - The project should have a title, and a list of tasks.
+    - The task should have a description, an assignee object (with name and role), and a list of subtasks.`,
+    matchers: [
+      new MessageTypeMatcher("updateComponents"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Project Dashboard"),
+      new SurfaceUpdateSchemaMatcher("List"),
+      new SurfaceUpdateSchemaMatcher("Card"),
+      new SurfaceUpdateSchemaMatcher("List"), // Tasks list
+      new SurfaceUpdateSchemaMatcher("Column"),
+      new SurfaceUpdateSchemaMatcher("Row"), // Assignee row
+      new SurfaceUpdateSchemaMatcher("List"), // Subtasks list
+      new MessageTypeMatcher("updateDataModel"),
+      new BasicSchemaMatcher("updateDataModel.contents.projects"),
+    ],
+  },
+
+  {
     name: "profileEditor",
     description: "A user profile editing form.",
     promptText: `Generate a JSON message with a updateComponents property for editing a profile. 'Text' (h1) "Edit Profile". 'Image' (Current Avatar). 'Button' "Change Photo". 'TextField' "Display Name". 'TextField' "Bio" (multiline). 'TextField' "Website". 'Button' "Save Changes".`,

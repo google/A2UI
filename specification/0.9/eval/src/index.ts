@@ -35,23 +35,40 @@ const schemaFiles = [
 // ];
 
 // Add this function to extract JSON from markdown
-function extractJsonFromMarkdown(markdown: string): any | null {
-  const jsonBlockMatch = markdown.match(/```json\s*([\s\S]*?)\s*```/);
-  if (jsonBlockMatch && jsonBlockMatch[1]) {
-    try {
-      return JSON.parse(jsonBlockMatch[1]);
-    } catch (error) {
-      logger.error(`Failed to parse JSON from markdown: ${error}`);
-      return null;
+// Add this function to extract JSON from markdown
+function extractJsonFromMarkdown(markdown: string): any[] {
+  const jsonBlockRegex = /```json\s*([\s\S]*?)\s*```/g;
+  const matches = [...markdown.matchAll(jsonBlockRegex)];
+  const results: any[] = [];
+
+  for (const match of matches) {
+    if (match[1]) {
+      const content = match[1].trim();
+      // Try parsing as a single JSON object first
+      try {
+        results.push(JSON.parse(content));
+      } catch (error) {
+        // If that fails, try parsing as JSONL (line by line)
+        const lines = content.split("\n");
+        for (const line of lines) {
+          if (line.trim()) {
+            try {
+              results.push(JSON.parse(line));
+            } catch (e2) {
+              // Ignore invalid lines
+            }
+          }
+        }
+      }
     }
   }
-  return null;
+  return results;
 }
 
 interface InferenceResult {
   modelName: string;
   prompt: TestPrompt;
-  component: any;
+  components: any[];
   error: any;
   latency: number;
   validationResults: string[];
@@ -307,26 +324,34 @@ async function main() {
           const text = output?.text;
           const latency = output?.latency || 0;
 
-          let component = null;
+          let components: any[] = [];
           let error = null;
           let validationResults: string[] = [];
 
           if (text) {
             try {
-              component = extractJsonFromMarkdown(text);
+              components = extractJsonFromMarkdown(text);
 
               // Validate against the main schema
               const validate = ajv.getSchema(
                 "https://a2ui.dev/specification/0.9/server_to_client.json"
               );
-              if (validate && !validate(component)) {
-                validationResults = (validate.errors || []).map(
-                  (err) => `${err.instancePath} ${err.message}`
-                );
+
+              if (validate) {
+                for (const component of components) {
+                  if (!validate(component)) {
+                    validationResults = validationResults.concat(
+                      (validate.errors || []).map(
+                        (err) => `${err.instancePath} ${err.message}`
+                      )
+                    );
+                  }
+                }
               }
+
               // Also run original validator for more specific checks
               validationResults = validationResults.concat(
-                validateSchema(component, prompt.matchers)
+                validateSchema(components, prompt.matchers)
               );
 
               if (outputDir) {
@@ -344,7 +369,7 @@ async function main() {
                 );
                 fs.writeFileSync(
                   outputPath,
-                  JSON.stringify(component, null, 2)
+                  JSON.stringify(components, null, 2)
                 );
 
                 if (validationResults.length > 0) {
@@ -371,26 +396,12 @@ ${prompt.promptText
 ---
 `;
                   let jsonlBody = "";
-                  // Check if it's a updateComponents to add setup messages
-                  if (
-                    component &&
-                    (component.updateComponents ||
-                      (component.type && component.type === "updateComponents"))
-                  ) {
-                    const createSurfaceMsg = {
-                      createSurface: {
-                        surfaceId: "main",
-                      },
-                    };
-                    const dataModelUpdateMsg = {
-                      updateDataModel: {
-                        contents: {},
-                      },
-                    };
-                    jsonlBody += JSON.stringify(createSurfaceMsg) + "\n";
-                    jsonlBody += JSON.stringify(dataModelUpdateMsg) + "\n";
+                  // Check if we need to add setup messages
+                  // If we have updateComponents but no createSurface, maybe add it?
+                  // For now, just dump what we have.
+                  for (const comp of components) {
+                    jsonlBody += JSON.stringify(comp) + "\n";
                   }
-                  jsonlBody += JSON.stringify(component) + "\n";
 
                   fs.writeFileSync(samplePath, yamlHeader + jsonlBody);
                 }
@@ -415,7 +426,7 @@ ${prompt.promptText
           return {
             modelName: modelConfig.name,
             prompt,
-            component,
+            components,
             error,
             latency,
             validationResults,
@@ -448,7 +459,7 @@ ${prompt.promptText
           return {
             modelName: modelConfig.name,
             prompt,
-            component: null,
+            components: [],
             error,
             latency: Date.now() - startTime,
             validationResults: [],
@@ -500,7 +511,7 @@ ${prompt.promptText
       for (const result of resultsByModel[modelName]) {
         const hasError = !!result.error;
         const hasValidationFailures = result.validationResults.length > 0;
-        const hasComponent = !!result.component;
+        const hasComponent = result.components && result.components.length > 0;
 
         if (hasError || hasValidationFailures) {
           logger.info(`----------------------------------------`);
@@ -520,7 +531,7 @@ ${prompt.promptText
               );
             }
             logger.verbose("Generated output:");
-            logger.verbose(JSON.stringify(result.component, null, 2));
+            logger.verbose(JSON.stringify(result.components, null, 2));
           }
         }
       }

@@ -47,39 +47,57 @@ ajv.addSchema(
 const validate = ajv.compile(serverToClientSchema);
 
 export function validateSchema(
-  data: any,
+  data: any | any[],
   matchers?: SchemaMatcher[]
 ): string[] {
   const errors: string[] = [];
+  const messages = Array.isArray(data) ? data : [data];
 
-  const valid = validate(data);
-  if (!valid) {
-    if (validate.errors) {
-      validate.errors.forEach((err) => {
-        errors.push(`AJV: ${err.instancePath} ${err.message}`);
-      });
+  for (const message of messages) {
+    const valid = validate(message);
+    if (!valid) {
+      if (validate.errors) {
+        validate.errors.forEach((err) => {
+          errors.push(`AJV: ${err.instancePath} ${err.message}`);
+        });
+      }
     }
-  }
 
-  if (data.updateComponents) {
-    validateSurfaceUpdate(data.updateComponents, errors);
-  } else if (data.updateDataModel) {
-    validateDataModelUpdate(data.updateDataModel, errors);
-  } else if (data.createSurface) {
-    validateBeginRendering(data.createSurface, errors);
-  } else if (data.deleteSurface) {
-    validateDeleteSurface(data.deleteSurface, errors);
-  } else {
-    errors.push(
-      "A2UI Protocol message must have one of: updateComponents, updateDataModel, createSurface, deleteSurface."
-    );
+    if (message.updateComponents) {
+      validateSurfaceUpdate(message.updateComponents, errors);
+    } else if (message.updateDataModel) {
+      validateDataModelUpdate(message.updateDataModel, errors);
+    } else if (message.createSurface) {
+      validateBeginRendering(message.createSurface, errors);
+    } else if (message.deleteSurface) {
+      validateDeleteSurface(message.deleteSurface, errors);
+    } else {
+      errors.push(
+        "A2UI Protocol message must have one of: updateComponents, updateDataModel, createSurface, deleteSurface."
+      );
+    }
   }
 
   if (matchers) {
     for (const matcher of matchers) {
-      const result = matcher.validate(data);
-      if (!result.success) {
-        errors.push(result.error!);
+      let satisfied = false;
+      for (const message of messages) {
+        const result = matcher.validate(message);
+        if (result.success) {
+          satisfied = true;
+          break;
+        }
+      }
+      if (!satisfied) {
+        // We don't have a good way to get a specific error message since it failed on ALL messages.
+        // But we can try to find the "best" error or just report that it failed.
+        // For now, let's just report that it failed.
+        // Ideally SchemaMatcher would have a description.
+        // We can try to get the error from the first message if there is one, or just a generic message.
+        // Actually, let's just say "Matcher failed".
+        // If we really want, we could change SchemaMatcher to have a description.
+        // But for now:
+        errors.push(`Matcher failed to match any message in the stream.`);
       }
     }
   }
