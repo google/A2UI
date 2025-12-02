@@ -250,6 +250,8 @@ Container components (like `Row`, `Column`, `List`, and `Card`) have properties 
 
 This model allows the server to send component definitions in any order, as long as all necessary components are present before rendering is triggered.
 
+There must be exactly one component with the ID `root` in the component tree, acting as the root of the component tree. Until that component is defined, other component updates will have no visible effect, and they will be buffered until a root component is defined. Once a root component is defined, the client is responsible for rendering the tree in the best way possible based on the available data, skipping invalid references.
+
 ```mermaid
 flowchart TD
     subgraph "Server Stream"
