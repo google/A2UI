@@ -197,6 +197,12 @@ async function main() {
       description: "Clear the output directory before starting",
       default: false,
     })
+    .option("print-prompts", {
+      type: "boolean",
+      description:
+        "Print prompt metadata and output as JSONL stream to a separate file",
+      default: false,
+    })
     .help()
     .alias("h", "help").argv;
 
@@ -347,6 +353,46 @@ async function main() {
                     `${prompt.name}.${runIndex}.failed.txt`
                   );
                   fs.writeFileSync(failurePath, validationResults.join("\n"));
+                }
+
+                if (argv["print-prompts"]) {
+                  const samplePath = path.join(
+                    detailsDir,
+                    `${prompt.name}.${runIndex}.sample`
+                  );
+                  const yamlHeader = `---
+description: ${prompt.description}
+name: ${prompt.name}
+prompt: |
+${prompt.promptText
+  .split("\n")
+  .map((line) => "  " + line)
+  .join("\n")}
+---
+`;
+                  let jsonlBody = "";
+                  // Check if it's a updateComponents to add setup messages
+                  if (
+                    component &&
+                    (component.updateComponents ||
+                      (component.type && component.type === "updateComponents"))
+                  ) {
+                    const createSurfaceMsg = {
+                      createSurface: {
+                        surfaceId: "main",
+                      },
+                    };
+                    const dataModelUpdateMsg = {
+                      updateDataModel: {
+                        contents: {},
+                      },
+                    };
+                    jsonlBody += JSON.stringify(createSurfaceMsg) + "\n";
+                    jsonlBody += JSON.stringify(dataModelUpdateMsg) + "\n";
+                  }
+                  jsonlBody += JSON.stringify(component) + "\n";
+
+                  fs.writeFileSync(samplePath, yamlHeader + jsonlBody);
                 }
               }
             } catch (e) {
