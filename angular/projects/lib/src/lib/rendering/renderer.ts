@@ -76,15 +76,11 @@ export class Renderer implements OnDestroy {
     let componentBindings: Binding[] | null = null;
 
     if (typeof config === 'function') {
-      console.log('config function', config);
       newComponent = await config();
     } else if (typeof config === 'object') {
-      console.log('config object', config);
       newComponent = await config.type();
       componentBindings = config.bindings(component as any);
     }
-
-    console.log('newComponent', newComponent);
 
     this.clear();
 
