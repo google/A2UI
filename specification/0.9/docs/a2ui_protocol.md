@@ -109,7 +109,7 @@ The envelope defines four primary message types, and every message streamed by t
 
 ### `createSurface`
 
-This message instructs the client to configure a new surface, which is a designated area for rendering a UI. When this message is received, the client should be ready to receive `surfaceUpdate` and `dataModelUpdate` messages for the same `surfaceId`, and should render any buffered messages for that `surfaceId`. This allows the LLM to control whether it wants the UI rendered progressively by creating the surface and then sending updates, or all at once by sending the entire UI description and then the `createSurface` message.
+This message instructs the client to initialize a new surface, which is a designated area for rendering a UI. This message must be sent before any `surfaceUpdate`, `deleteSurface`, or `dataModelUpdate` messages that refer to the `surfaceId`.
 
 **Properties:**
 
@@ -131,7 +131,7 @@ This message instructs the client to configure a new surface, which is a designa
 
 ### `surfaceUpdate`
 
-This message provides a list of UI components to be added to or updated within a specific surface. If the client receives a `surfaceUpdate` for a `surfaceId` it has not yet seen, it should buffer the components and wait for a corresponding `createSurface` message before rendering. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
+This message provides a list of UI components to be added to or updated within a specific surface. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
 
 **Properties:**
 
@@ -173,7 +173,7 @@ This message provides a list of UI components to be added to or updated within a
 
 ### `dataModelUpdate`
 
-This message is used to send or update the data that populates the UI components. It allows the server to change the UI content without resending the entire component structure. If the client receives a `dataModelUpdate` for a `surfaceId` it has not yet created, it should buffer the update and wait for a corresponding `createSurface` message before applying it.
+This message is used to send or update the data that populates the UI components. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. It allows the server to change the UI's content without resending the entire component structure.
 
 **Properties:**
 
@@ -198,7 +198,7 @@ This message is used to send or update the data that populates the UI components
 
 ### `deleteSurface`
 
-This message instructs the client to remove a surface and all its associated components and data from the UI. It should also discard any buffered updates for that `surfaceId`.
+This message instructs the client to remove a surface and all its associated components and data from the UI.
 
 **Properties:**
 
