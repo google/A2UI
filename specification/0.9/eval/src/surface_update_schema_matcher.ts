@@ -18,7 +18,7 @@ import { SchemaMatcher, ValidationResult } from "./schema_matcher";
 
 /**
  * A schema matcher that validates the presence of a component type within a
- * `udpateComponents` message, and optionally validates the presence and value of
+ * `updateComponents` message, and optionally validates the presence and value of
  * a property on that component.
  */
 export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
@@ -36,20 +36,20 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
   }
 
   validate(schema: any): ValidationResult {
-    if (!schema.udpateComponents) {
+    if (!schema.updateComponents) {
       return {
         success: false,
-        error: `Expected a 'udpateComponents' message but found none.`,
+        error: `Expected a 'updateComponents' message but found none.`,
       };
     }
-    if (!Array.isArray(schema.udpateComponents.components)) {
+    if (!Array.isArray(schema.updateComponents.components)) {
       return {
         success: false,
-        error: `'udpateComponents' message does not contain a 'components' array.`,
+        error: `'updateComponents' message does not contain a 'components' array.`,
       };
     }
 
-    const components = schema.udpateComponents.components;
+    const components = schema.updateComponents.components;
 
     const matchingComponents = components.filter((c: any) => {
       return c.props && c.props.component === this.componentType;
