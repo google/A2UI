@@ -29,11 +29,11 @@
         {
           "id": "chart-title",
           "component": {
-            "Heading": {
-              "level": "2",
+            "Text": {
               "text": {
                 "path": "chart.title"
-              }
+              },
+              "usageHint": "h2"
             }
           }
         },

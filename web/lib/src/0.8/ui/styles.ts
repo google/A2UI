@@ -15,6 +15,6 @@
  */
 
 import { unsafeCSS } from "lit";
-import { structuralStyles as unsafeStructuralStyles } from "../styles";
+import { structuralStyles as unsafeStructuralStyles } from "../styles/index.js";
 
 export const structuralStyles = unsafeCSS(unsafeStructuralStyles);

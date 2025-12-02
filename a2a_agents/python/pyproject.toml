@@ -10,6 +10,7 @@ members = [
   "adk/samples/restaurant_finder",
   "adk/samples/contact_lookup",
   "adk/samples/rizzcharts",
+  "adk/samples/orchestrator",
 ]
 
 [tool.uv.sources]

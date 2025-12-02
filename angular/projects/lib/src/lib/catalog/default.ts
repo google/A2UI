@@ -15,7 +15,7 @@
  */
 
 import { inputBinding } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { Catalog } from '../rendering/catalog';
 import { Row } from './row';
 import { Column } from './column';
@@ -59,10 +59,19 @@ export const DEFAULT_CATALOG: Catalog = {
   Heading: {
     type: () => import('./heading').then((r) => r.Heading),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.HeadingNode).properties;
+      const properties = (node as v0_8.Types.TextNode).properties;
+      // Figure out the heading level based on the hint. If the hint isn't
+      // a hint for a heading, we can't render a heading.
+      let level: number;
+      if (["h1", "h2", "h3", "h4", "h5"].includes(properties.usageHint)) {
+        level = Number(properties.usageHint[1]);
+      } else {
+        throw new Error(`Cannot render heading: usageHint wasn't a heading level, it was ${properties.usageHint}`);
+      }
+
       return [
         inputBinding('text', () => properties.text),
-        inputBinding('level', () => properties.level),
+        inputBinding('level', () => level),
       ];
     },
   },

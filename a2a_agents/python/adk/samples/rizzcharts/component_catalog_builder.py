@@ -13,14 +13,15 @@
 # limitations under the License.
 
 from functools import cache
-from typing import Any, Optional
+from typing import Any, List, Optional
 from pathlib import Path
 import json
 import logging
+from agent import STANDARD_CATALOG_URI, RIZZCHARTS_CATALOG_URI
 
 logger = logging.getLogger(__name__)
 
-CLIENT_UI_CAPABILITIES_CATALOG_URI_KEY = "catalogUri"
+CLIENT_UI_CAPABILITIES_CATALOG_URI_KEY = "supportedCatalogUris"
 CLIENT_UI_CAPABILITIES_INLINE_CATALOG_KEY = "customClientCatalog"
 
 class ComponentCatalogBuilder:
@@ -34,14 +35,21 @@ class ComponentCatalogBuilder:
     def get_file_content(self, path: str) -> str:
         return Path(path).read_text()
 
-    def load_a2ui_schema(self, client_ui_capabilities: Optional[dict[str, Any]]) -> tuple[dict[str, Any], str]:
+    def load_a2ui_schema(self, client_ui_capabilities: Optional[dict[str, Any]]) -> tuple[dict[str, Any], Optional[str]]:
         """
         Returns:
             A tuple of the a2ui_schema and the catalog uri
         """
         try:      
             if client_ui_capabilities:                                
-                catalog_uri = client_ui_capabilities.get(CLIENT_UI_CAPABILITIES_CATALOG_URI_KEY)
+                supported_catalog_uris: List[str] = client_ui_capabilities.get(CLIENT_UI_CAPABILITIES_CATALOG_URI_KEY)
+                if RIZZCHARTS_CATALOG_URI in supported_catalog_uris:
+                    catalog_uri = RIZZCHARTS_CATALOG_URI
+                elif STANDARD_CATALOG_URI in supported_catalog_uris:
+                    catalog_uri = STANDARD_CATALOG_URI
+                else:
+                    catalog_uri = None
+
                 inline_catalog_str = client_ui_capabilities.get(CLIENT_UI_CAPABILITIES_INLINE_CATALOG_KEY)                
             elif self._default_catalog_uri:
                 logger.info(f"Using default catalog {self._default_catalog_uri} since client UI capabilities not found")

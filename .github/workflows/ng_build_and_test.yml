@@ -1,0 +1,46 @@
+name: Angular build and test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install web lib deps
+        working-directory: ./web/lib
+        run: npm ci
+
+      - name: Build web lib
+        working-directory: ./web/lib
+        run: npm run build
+
+      - name: Install top-level deps
+        working-directory: ./angular
+        run: npm ci
+
+      - name: Install lib deps
+        working-directory: ./angular/projects/lib
+        run: npm i
+
+      - name: Build lib
+        working-directory: ./angular
+        run: npm run build lib
+
+      - name: Build contact sample
+        working-directory: ./angular
+        run: npm run build contact
+
+      - name: Build restaurant sample
+        working-directory: ./angular
+        run: npm run build restaurant

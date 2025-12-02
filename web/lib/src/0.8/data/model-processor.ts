@@ -29,6 +29,8 @@ import {
   SurfaceID,
   SurfaceUpdateMessage,
   ModelProcessor,
+  ValueMap,
+  DataObject,
 } from "../types/types";
 import {
   isComponentArrayReference,
@@ -41,7 +43,6 @@ import {
   isResolvedColumn,
   isResolvedDateTimeInput,
   isResolvedDivider,
-  isResolvedHeading,
   isResolvedIcon,
   isResolvedImage,
   isResolvedList,
@@ -53,6 +54,7 @@ import {
   isResolvedText,
   isResolvedTextField,
   isResolvedVideo,
+  isValueMap,
 } from "./guards.js";
 
 /**
@@ -424,7 +426,11 @@ export class A2UIModelProcessor implements ModelProcessor {
   #handleDataModelUpdate(message: DataModelUpdate, surfaceId: SurfaceID): void {
     const surface = this.#getOrCreateSurface(surfaceId);
     const path = message.path ?? "/";
-    this.#setDataByPath(surface.dataModel, path, message.contents);
+    this.#setDataByPath(
+      surface.dataModel,
+      path,
+      message.contents
+    );
     this.#rebuildComponentTree(surface);
   }
 
@@ -517,16 +523,6 @@ export class A2UIModelProcessor implements ModelProcessor {
       weight: componentData.weight ?? "initial",
     };
     switch (componentType) {
-      case "Heading":
-        if (!isResolvedHeading(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.#objCtor({
-          ...baseNode,
-          type: "Heading",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
       case "Text":
         if (!isResolvedText(resolvedProperties)) {
           throw new Error(`Invalid data; expected ${componentType}`);

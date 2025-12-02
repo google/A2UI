@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { Renderer } from '../rendering/renderer';
 
 @Component({

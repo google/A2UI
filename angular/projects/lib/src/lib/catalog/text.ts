@@ -16,7 +16,7 @@
 
 import { Component, computed, inject, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { MarkdownRenderer } from '../data/markdown';
 
 @Component({
@@ -45,8 +45,8 @@ export class Text extends DynamicComponent {
     return value == null
       ? '(empty)'
       : this.markdownRenderer.render(
-          value,
-          v0_8.Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {})
+          String(value),
+          v0_8.Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
         );
   });
 }

@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
@@ -39,14 +39,15 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 })
 export class Heading extends DynamicComponent {
   readonly text = input.required<v0_8.Primitives.StringValue | null>();
+  // TODO: Render a different heading level based on this input.
   readonly level = input.required<string | undefined>();
   protected resolvedText = computed(() => super.resolvePrimitive(this.text()) ?? '');
 
   protected readonly classes = computed(() => {
-    const classKey = `level${this.level()}` as keyof typeof this.theme.components.Heading;
     return v0_8.Styles.merge(
-      this.theme.components.Heading.all,
-      this.theme.components.Heading[classKey]
+      this.theme.components.Text.all,
+      // TODO: Render a different heading level based on input.
+      // this.theme.components.Text[classKey]
     );
   });
 }

@@ -29,7 +29,6 @@ import { Checkbox } from "./checkbox.js";
 import { Column } from "./column.js";
 import { DateTimeInput } from "./datetime-input.js";
 import { Divider } from "./divider.js";
-import { Heading } from "./heading.js";
 import { Icon } from "./icon.js";
 import { Image } from "./image.js";
 import { List } from "./list.js";
@@ -55,7 +54,6 @@ export {
   Checkbox,
   DateTimeInput,
   Divider,
-  Heading,
   Icon,
   Image,
   List,
@@ -71,8 +69,6 @@ export {
   Video,
 };
 
-// TODO: Modal
-
 interface A2UITagNameMap {
   "a2ui-audioplayer": Audio;
   "a2ui-button": Button;
@@ -81,7 +77,6 @@ interface A2UITagNameMap {
   "a2ui-column": Column;
   "a2ui-datetimeinput": DateTimeInput;
   "a2ui-divider": Divider;
-  "a2ui-heading": Heading;
   "a2ui-icon": Icon;
   "a2ui-image": Image;
   "a2ui-list": List;

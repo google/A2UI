@@ -31,11 +31,11 @@
         {
           "id": "map-header",
           "component": {
-            "Heading": {
-              "level": "2",
+            "Text": {
               "text": {
                 "literalString": "Points of Interest in Los Angeles"
-              }
+              },
+              "usageHint": "h2"
             }
           }
         },        
@@ -74,11 +74,11 @@
         {
             "id": "location-name",
             "component": {
-                "Heading": {
-                    "level": "4",
+                "Text": {
                     "text": {
                         "path": "name"
-                    }
+                    },
+                    "usageHint": "h4"
                 }
             }
         },

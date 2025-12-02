@@ -1,0 +1,30 @@
+name: Web (Lit) build and test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install all workspaces' dependencies
+        working-directory: ./web
+        run: npm install --workspaces
+
+      - name: Build all workspaces
+        working-directory: ./web
+        run: npm run build --workspaces
+
+      - name: Run all tests
+        working-directory: ./web
+        run: npm run test --workspace=lib

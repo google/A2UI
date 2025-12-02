@@ -24,11 +24,15 @@ import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../index.js";
+import { ResolvedText } from "../types/types.js";
 
 @customElement("a2ui-text")
 export class Text extends Root {
   @property()
   accessor text: StringValue | null = null;
+
+  @property()
+  accessor usageHint: ResolvedText["usageHint"] | null = null;
 
   static styles = [
     structuralStyles,
@@ -67,8 +71,32 @@ export class Text extends Root {
           return html`(empty)`;
         }
 
+        let markdownText = textValue.toString();
+        switch (this.usageHint) {
+          case "h1":
+            markdownText = `# ${markdownText}`;
+            break;
+          case "h2":
+            markdownText = `## ${markdownText}`;
+            break;
+          case "h3":
+            markdownText = `### ${markdownText}`;
+            break;
+          case "h4":
+            markdownText = `#### ${markdownText}`;
+            break;
+          case "h5":
+            markdownText = `##### ${markdownText}`;
+            break;
+          case "caption":
+            markdownText = `*${markdownText}*`;
+            break;
+          default:
+            break; // Body.
+        }
+
         return html`${markdown(
-          textValue.toString(),
+          markdownText,
           Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
         )}`;
       }
@@ -78,8 +106,13 @@ export class Text extends Root {
   }
 
   render() {
+    const classes = Styles.merge(
+      this.theme.components.Image.all,
+      this.usageHint ? this.theme.components.Text[this.usageHint] : {}
+    );
+
     return html`<section
-      class=${classMap(this.theme.components.Text)}
+      class=${classMap(classes)}
       style=${this.theme.additionalStyles?.Text
         ? styleMap(this.theme.additionalStyles?.Text)
         : nothing}

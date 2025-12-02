@@ -3,12 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "description": "AI-first UI Toolkit Demo",
-  "main": "./dist/index.js",
-  "scripts": {
-    "build": "wireit"
-  },
   "repository": {
-    "directory": "packages/a2ui",
+    "directory": "web",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },
@@ -22,9 +18,8 @@
   "dependencies": {},
   "workspaces": [
     "lib",
-    "tests",
-    "restaurant",
-    "editor",
-    "inspector"
+    "lit/samples/restaurant",
+    "lit/samples/contact",
+    "lit/inspector"
   ]
 }
