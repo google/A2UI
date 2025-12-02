@@ -8,7 +8,7 @@
       "properties": {
         "createSurface": {
           "type": "object",
-          "description": "Signals the client to begin rendering a surface with a root component and specific styles. When this message is received, the client should expect a 'surfaceUpdate' message for the same 'surfaceId' that contains the component tree. One of the components in that tree MUST have the 'id' of 'root'.",
+          "description": "Signals the client to begin rendering a surface with a root component and specific styles. When this message is received, the client should expect a 'udpateComponents' message for the same 'surfaceId' that contains the component tree. One of the components in that tree MUST have the 'id' of 'root'.",
           "properties": {
             "surfaceId": {
               "type": "string",
@@ -27,7 +27,7 @@
     },
     {
       "properties": {
-        "surfaceUpdate": {
+        "udpateComponents": {
           "type": "object",
           "description": "Updates a surface with a new set of components.",
           "properties": {
@@ -62,12 +62,12 @@
           "additionalProperties": false
         }
       },
-      "required": ["surfaceUpdate"],
+      "required": ["udpateComponents"],
       "additionalProperties": false
     },
     {
       "properties": {
-        "dataModelUpdate": {
+        "udpateDataModel": {
           "type": "object",
           "description": "Updates the data model for a surface.",
           "properties": {
@@ -89,7 +89,7 @@
           "additionalProperties": false
         }
       },
-      "required": ["dataModelUpdate"],
+      "required": ["udpateDataModel"],
       "additionalProperties": false
     },
     {

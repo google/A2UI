@@ -61,17 +61,17 @@ export function validateSchema(
     }
   }
 
-  if (data.surfaceUpdate) {
-    validateSurfaceUpdate(data.surfaceUpdate, errors);
-  } else if (data.dataModelUpdate) {
-    validateDataModelUpdate(data.dataModelUpdate, errors);
+  if (data.udpateComponents) {
+    validateSurfaceUpdate(data.udpateComponents, errors);
+  } else if (data.udpateDataModel) {
+    validateDataModelUpdate(data.udpateDataModel, errors);
   } else if (data.createSurface) {
     validateBeginRendering(data.createSurface, errors);
   } else if (data.deleteSurface) {
     validateDeleteSurface(data.deleteSurface, errors);
   } else {
     errors.push(
-      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, createSurface, deleteSurface."
+      "A2UI Protocol message must have one of: udpateComponents, udpateDataModel, createSurface, deleteSurface."
     );
   }
 

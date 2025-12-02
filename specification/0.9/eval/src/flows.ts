@@ -69,7 +69,7 @@ DO NOT include any other text before or after the markdown code block.
 Example Output:
 \`\`\`json
 {
-  "surfaceUpdate": {
+  "udpateComponents": {
     "surfaceId": "contact_form_1",
     "components": [
       {

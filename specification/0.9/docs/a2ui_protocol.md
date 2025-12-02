@@ -25,8 +25,8 @@ The A2UI Protocol is designed for dynamically rendering user interfaces from a s
 Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
 
 - `createSurface`: Declares and configures a new UI area (a "surface") for rendering.
-- `surfaceUpdate`: Provides a list of component definitions to be added to or updated in a specific surface.
-- `dataModelUpdate`: Provides new data to be inserted into or to replace a surface's data model.
+- `udpateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
+- `udpateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
 
 ## Changes from previous versions
@@ -48,10 +48,10 @@ The A2UI protocol uses a unidirectional stream of JSON messages from the server 
 Here is an example sequence of events (which don't have to be in exactly this order):
 
 1.  **Create Surface:** The server sends a `createSurface` message to instruct the client to initialize a new, independent UI region.
-2.  **Update Surface:** The server sends one or more `surfaceUpdate` messages containing the definitions for all the components that will be part of the surface.
-3.  **Update Data Model:** The server can send `dataModelUpdate` messages at any time to populate or change the data that the UI components will display.
+2.  **Update Surface:** The server sends one or more `udpateComponents` messages containing the definitions for all the components that will be part of the surface.
+3.  **Update Data Model:** The server can send `udpateDataModel` messages at any time to populate or change the data that the UI components will display.
 4.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
-5.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `surfaceUpdate` and `dataModelUpdate` messages to dynamically change the UI.
+5.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `udpateComponents` and `udpateDataModel` messages to dynamically change the UI.
 6.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
 
 ```mermaid
@@ -60,14 +60,14 @@ sequenceDiagram
     participant Client
 
     Server->>+Client: 1. createSurface(surfaceId: "main")
-    Server->>+Client: 2. surfaceUpdate(surfaceId: "main", components: [...])
-    Server->>+Client: 3. dataModelUpdate(surfaceId: "main", contents: {...})
+    Server->>+Client: 2. udpateComponents(surfaceId: "main", components: [...])
+    Server->>+Client: 3. udpateDataModel(surfaceId: "main", contents: {...})
     Note right of Client: 4. Client renders the UI for the "main" surface
     Client-->>-Server: (UI is displayed)
 
     Note over Client, Server: Time passes, user interacts, or new data arrives...
 
-    Server->>+Client: 5. surfaceUpdate or dataModelUpdate (Dynamic Update)
+    Server->>+Client: 5. udpateComponents or udpateDataModel (Dynamic Update)
     Note right of Client: Client re-renders the UI to reflect changes
     Client-->>-Server: (UI is updated)
 
@@ -105,11 +105,11 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 ## Envelope Message Structure
 
-The envelope defines four primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `surfaceUpdate`, `dataModelUpdate`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
+The envelope defines four primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `udpateComponents`, `udpateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
 
 ### `createSurface`
 
-This message instructs the client to initialize a new surface, which is a designated area for rendering a UI. This message must be sent before any `surfaceUpdate`, `deleteSurface`, or `dataModelUpdate` messages that refer to the `surfaceId`.
+This message instructs the client to initialize a new surface, which is a designated area for rendering a UI. This message must be sent before any `udpateComponents`, `deleteSurface`, or `udpateDataModel` messages that refer to the `surfaceId`.
 
 **Properties:**
 
@@ -129,7 +129,7 @@ This message instructs the client to initialize a new surface, which is a design
 }
 ```
 
-### `surfaceUpdate`
+### `udpateComponents`
 
 This message provides a list of UI components to be added to or updated within a specific surface. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
 
@@ -142,7 +142,7 @@ This message provides a list of UI components to be added to or updated within a
 
 ```json
 {
-  "surfaceUpdate": {
+  "udpateComponents": {
     "surfaceId": "user_profile_card",
     "components": [
       {
@@ -171,7 +171,7 @@ This message provides a list of UI components to be added to or updated within a
 }
 ```
 
-### `dataModelUpdate`
+### `udpateDataModel`
 
 This message is used to send or update the data that populates the UI components. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. It allows the server to change the UI's content without resending the entire component structure.
 
@@ -185,7 +185,7 @@ This message is used to send or update the data that populates the UI components
 
 ```json
 {
-  "dataModelUpdate": {
+  "udpateDataModel": {
     "surfaceId": "user_profile_card",
     "path": "/user",
     "contents": {
@@ -219,8 +219,8 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"surfaceUpdate":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":{"explicitList":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}}},{"id":"first_name_label","props":{"component":"Text","text":{"literalString":"First Name"}}},{"id":"first_name_field","props":{"component":"TextField","label":{"literalString":"First Name"},"text":{"path":"/contact/firstName"},"textFieldType":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":{"literalString":"Last Name"}}},{"id":"last_name_field","props":{"component":"TextField","label":{"literalString":"Last Name"},"text":{"path":"/contact/lastName"},"textFieldType":"shortText"}},{"id":"email_label","props":{"component":"Text","text":{"literalString":"Email"}}},{"id":"email_field","props":{"component":"TextField","label":{"literalString":"Email"},"text":{"path":"/contact/email"},"textFieldType":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":{"literalString":"Phone"}}},{"id":"phone_field","props":{"component":"TextField","label":{"literalString":"Phone"},"text":{"path":"/contact/phone"},"textFieldType":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":{"literalString":"Notes"}}},{"id":"notes_field","props":{"component":"TextField","label":{"literalString":"Notes"},"text":{"path":"/contact/notes"},"textFieldType":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":{"literalString":"Submit"}}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
-{"dataModelUpdate": {"surfaceId": "contact_form_1", "path": "/contact", "contents": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
+{"udpateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":{"explicitList":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}}},{"id":"first_name_label","props":{"component":"Text","text":{"literalString":"First Name"}}},{"id":"first_name_field","props":{"component":"TextField","label":{"literalString":"First Name"},"text":{"path":"/contact/firstName"},"textFieldType":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":{"literalString":"Last Name"}}},{"id":"last_name_field","props":{"component":"TextField","label":{"literalString":"Last Name"},"text":{"path":"/contact/lastName"},"textFieldType":"shortText"}},{"id":"email_label","props":{"component":"Text","text":{"literalString":"Email"}}},{"id":"email_field","props":{"component":"TextField","label":{"literalString":"Email"},"text":{"path":"/contact/email"},"textFieldType":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":{"literalString":"Phone"}}},{"id":"phone_field","props":{"component":"TextField","label":{"literalString":"Phone"},"text":{"path":"/contact/phone"},"textFieldType":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":{"literalString":"Notes"}}},{"id":"notes_field","props":{"component":"TextField","label":{"literalString":"Notes"},"text":{"path":"/contact/notes"},"textFieldType":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":{"literalString":"Submit"}}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
+{"udpateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "contents": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
 {"createSurface": {"surfaceId": "contact_form_1"}}
 ```
 
@@ -230,7 +230,7 @@ A2UI's component model is designed for flexibility, separating the protocol's st
 
 ### The Component Object
 
-Each object in the `components` array of a `surfaceUpdate` message defines a single UI component. It has the following structure:
+Each object in the `components` array of a `udpateComponents` message defines a single UI component. It has the following structure:
 
 - `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
 - `weight` (number, optional): The relative weight of this component within a `Row` or `Column`, corresponding to the CSS `flex-grow` property.
@@ -240,7 +240,7 @@ This structure is designed to be both flexible and strictly validated.
 
 ### The Component Catalog
 
-The set of available UI components and their properties is defined in a **Component Catalog**. The standard catalog is defined in [`standard_catalog_definition.json`]. This allows for different clients to support different sets of components, including custom ones. The server must generate `surfaceUpdate` messages that conform to the component catalog understood by the client.
+The set of available UI components and their properties is defined in a **Component Catalog**. The standard catalog is defined in [`standard_catalog_definition.json`]. This allows for different clients to support different sets of components, including custom ones. The server must generate `udpateComponents` messages that conform to the component catalog understood by the client.
 
 ### UI Composition: The Adjacency List Model
 
@@ -255,7 +255,7 @@ There must be exactly one component with the ID `root` in the component tree, ac
 ```mermaid
 flowchart TD
     subgraph "Server Stream"
-        A("<b>surfaceUpdate</b><br>components: [root, title, button]")
+        A("<b>udpateComponents</b><br>components: [root, title, button]")
     end
 
     subgraph "Client-Side Buffer (Map)"
@@ -307,7 +307,7 @@ Components connect to the data model through data binding. Any component propert
 These properties use one of the `*OrPath` types defined in `common_types.json` (e.g., `stringOrPath`, `numberOrPath`).
 
 - **Literal Value**: To provide a static value, use the `literal*` property (e.g., `literalString`).
-- **Data Model Path**: To bind to a value in the data model, use the `path` property. The value of the path is a string that corresponds to a key in the `contents` of a `dataModelUpdate` message.
+- **Data Model Path**: To bind to a value in the data model, use the `path` property. The value of the path is a string that corresponds to a key in the `contents` of a `udpateDataModel` message.
 
 Paths are specified using [JSON Pointer] syntax.
 
