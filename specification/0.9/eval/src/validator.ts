@@ -66,7 +66,7 @@ export function validateSchema(
     if (message.updateComponents) {
       validateSurfaceUpdate(message.updateComponents, errors);
     } else if (message.updateDataModel) {
-      validateDataModelUpdate(message.updateDataModel, errors);
+      validateUpdateDataModel(message.updateDataModel, errors);
     } else if (message.createSurface) {
       validateBeginRendering(message.createSurface, errors);
     } else if (message.deleteSurface) {
@@ -119,10 +119,10 @@ function validateDeleteSurface(data: any, errors: string[]) {
 
 function validateSurfaceUpdate(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
-    errors.push("SurfaceUpdate must have a 'surfaceId' property.");
+    errors.push("UpdateComponents must have a 'surfaceId' property.");
   }
   if (!data.components || !Array.isArray(data.components)) {
-    errors.push("SurfaceUpdate must have a 'components' array.");
+    errors.push("UpdateComponents must have a 'components' array.");
     return;
   }
 
@@ -142,15 +142,15 @@ function validateSurfaceUpdate(data: any, errors: string[]) {
   }
 }
 
-function validateDataModelUpdate(data: any, errors: string[]) {
+function validateUpdateDataModel(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
-    errors.push("DataModelUpdate must have a 'surfaceId' property.");
+    errors.push("updateDataModel must have a 'surfaceId' property.");
   }
 
   const allowedTopLevel = ["surfaceId", "path", "contents"];
   for (const key in data) {
     if (!allowedTopLevel.includes(key)) {
-      errors.push(`DataModelUpdate has unexpected property: ${key}`);
+      errors.push(`updateDataModel has unexpected property: ${key}`);
     }
   }
 
@@ -159,7 +159,7 @@ function validateDataModelUpdate(data: any, errors: string[]) {
     data.contents === null ||
     Array.isArray(data.contents)
   ) {
-    errors.push("DataModelUpdate 'contents' property must be an object.");
+    errors.push("updateDataModel 'contents' property must be an object.");
     return;
   }
 }
@@ -177,28 +177,28 @@ function validateBoundValue(
   componentType: string,
   errors: string[]
 ) {
-  if (typeof prop !== "object" || prop === null || Array.isArray(prop)) {
+  // Allow primitives directly (shorthand syntax)
+  if (
+    typeof prop === "string" ||
+    typeof prop === "number" ||
+    typeof prop === "boolean" ||
+    Array.isArray(prop)
+  ) {
+    return;
+  }
+
+  if (typeof prop !== "object" || prop === null) {
     errors.push(
-      `Component '${componentId}' of type '${componentType}' property '${propName}' must be an object.`
+      `Component '${componentId}' of type '${componentType}' property '${propName}' must be a primitive or an object.`
     );
     return;
   }
+
   const keys = Object.keys(prop);
-  const allowedKeys = [
-    "literalString",
-    "literalNumber",
-    "literalBoolean",
-    "path",
-  ];
-  let validKeyCount = 0;
-  for (const key of keys) {
-    if (allowedKeys.includes(key)) {
-      validKeyCount++;
-    }
-  }
-  if (validKeyCount !== 1 || keys.length !== 1) {
+  // If it is an object, it MUST be a path binding
+  if (keys.length !== 1 || keys[0] !== "path") {
     errors.push(
-      `Component '${componentId}' of type '${componentType}' property '${propName}' must have exactly one key from [${allowedKeys.join(", ")}]. Found: ${keys.join(", ")}`
+      `Component '${componentId}' of type '${componentType}' property '${propName}' object must have exactly one key: 'path'. Found: ${keys.join(", ")}`
     );
   }
 }
@@ -213,7 +213,6 @@ function validateComponent(
     errors.push(`Component is missing an 'id'.`);
     return;
   }
-
 
   if (!component.props || typeof component.props !== "object") {
     errors.push(`Component '${id}' is missing 'props' object.`);
@@ -313,12 +312,13 @@ function validateComponent(
       checkRequired(["selections", "options"]);
       if (properties.selections) {
         if (
-          typeof properties.selections !== "object" ||
-          properties.selections === null ||
-          (!properties.selections.literalArray && !properties.selections.path)
+          !Array.isArray(properties.selections) &&
+          (typeof properties.selections !== "object" ||
+            properties.selections === null ||
+            !properties.selections.path)
         ) {
           errors.push(
-            `Component '${id}' of type '${componentType}' property 'selections' must have either 'literalArray' or 'path'.`
+            `Component '${id}' of type '${componentType}' property 'selections' must be an array of strings or an object with 'path'.`
           );
         }
       }
@@ -377,23 +377,26 @@ function validateComponent(
     case "Column":
     case "List":
       checkRequired(["children"]);
-      if (
-        properties.children &&
-        typeof properties.children === "object" &&
-        !Array.isArray(properties.children)
-      ) {
-        const hasExplicit = !!properties.children.explicitList;
-        const hasTemplate = !!properties.children.template;
-        if ((hasExplicit && hasTemplate) || (!hasExplicit && !hasTemplate)) {
+      if (properties.children) {
+        if (Array.isArray(properties.children)) {
+          checkRefs(properties.children);
+        } else if (
+          typeof properties.children === "object" &&
+          properties.children !== null
+        ) {
+          if (
+            !properties.children.componentId ||
+            !properties.children.dataBinding
+          ) {
+            errors.push(
+              `Component '${id}' children template must have 'componentId' and 'dataBinding'.`
+            );
+          }
+          checkRefs([properties.children.componentId]);
+        } else {
           errors.push(
-            `Component '${id}' must have either 'explicitList' or 'template' in children, but not both or neither.`
+            `Component '${id}' children must be an array of strings or a template object.`
           );
-        }
-        if (hasExplicit) {
-          checkRefs(properties.children.explicitList);
-        }
-        if (hasTemplate) {
-          checkRefs([properties.children.template?.componentId]);
         }
       }
       break;

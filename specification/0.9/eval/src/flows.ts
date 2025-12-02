@@ -74,9 +74,9 @@ Example Output:
     "components": [
       {
         "id": "root",
-        "component": "Column",
-        "children": {
-          "explicitList": [
+        "props": {
+          "component": "Column",
+          "children": [
             "first_name_label",
             "first_name_field"
           ]
@@ -84,15 +84,19 @@ Example Output:
       },
       {
         "id": "first_name_label",
-        "component": "Text",
-        "text": { "literalString": "First Name" }
+        "props": {
+          "component": "Text",
+          "text": "First Name"
+        }
       },
       {
         "id": "first_name_field",
-        "component": "TextField",
-        "label": { "literalString": "First Name" },
-        "text": { "path": "/contact/firstName" },
-        "textFieldType": "shortText"
+        "props": {
+          "component": "TextField",
+          "label": "First Name",
+          "text": { "path": "/contact/firstName" },
+          "textFieldType": "shortText"
+        }
       }
     ]
   }
