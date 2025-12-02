@@ -80,7 +80,9 @@
           "type": "object",
           "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
           "properties": {
-            "componentId": { "type": "string" },
+            "componentId": {
+              "$ref": "#/$defs/id"
+            },
             "dataBinding": { "type": "string" }
           },
           "required": ["componentId", "dataBinding"],
