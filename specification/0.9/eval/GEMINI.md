@@ -2,17 +2,17 @@
 
 This document outlines the validation rules implemented in the `validateSchema` function. The purpose of this validator is to check for constraints that are not easily expressed in the JSON schema itself, such as conditional requirements and reference integrity.
 
-An A2UI message is a JSON object that can have a `surfaceId` and one of the following properties, defining the message type: `beginRendering`, `updateComponents`, `updateDataModel`, or `deleteSurface`.
+An A2UI message is a JSON object that can have a `surfaceId` and one of the following properties, defining the message type: `createSurface`, `updateComponents`, `updateDataModel`, or `deleteSurface`.
 
 ## Common Properties
 
 - **`surfaceId`**: An optional string that identifies the UI surface the message applies to.
 
-## `BeginRendering` Message Rules
+## `createSurface` Message Rules
 
-- **Required**: Must have a `root` property, which is the ID of the root component to render.
+- **Required**: Must have a `surfaceId` property.
 
-## `SurfaceUpdate` Message Rules
+## `updateComponents` Message Rules
 
 ### 1. Component ID Integrity
 
@@ -24,11 +24,9 @@ An A2UI message is a JSON object that can have a `surfaceId` and one of the foll
 For each component in the `components` array, the following rules apply:
 
 - **General**:
-  - A component must have an `id` and a `componentProperties` object.
-  - The `componentProperties` object must contain exactly one key, which defines the component's type (e.g., "Heading", "Text").
+  - A component must have an `id` and a `props` object.
+  - The `props` object must contain a `component` property which defines the component's type (e.g., "Text", "Button").
 
-- **Heading**:
-  - **Required**: Must have a `text` property.
 - **Text**:
   - **Required**: Must have a `text` property.
 - **Image**:
@@ -47,7 +45,7 @@ For each component in the `components` array, the following rules apply:
   - **Required**: Must have a `value` property.
 - **Container Components** (`Row`, `Column`, `List`):
   - **Required**: Must have a `children` property.
-  - The `children` object must contain _either_ `explicitList` _or_ `template`, but not both.
+  - The `children` property must be either an array of strings (for static children) or a template object (for dynamic children derived from a data binding list).
 - **Card**:
   - **Required**: Must have a `child` property.
 - **Tabs**:
@@ -64,15 +62,15 @@ For each component in the `components` array, the following rules apply:
 - **Icon**:
   - **Required**: Must have a `name` property.
 
-## `DataModelUpdate` Message Rules
+## `updateDataModel` Message Rules
 
-- **Required**: A `DataModelUpdate` message must have a `contents` property.
+- **Required**: A `updateDataModel` message must have a `contents` property.
 - The `path` property is optional.
 - If `path` is not present, the `contents` object will replace the entire data model.
 - If `path` is present, the `contents` will be set at that location in the data model.
-- No other properties besides `path` and `contents` are allowed.
+- No other properties besides `path` and `contents` (and `surfaceId`) are allowed.
 
-## `DeleteSurface` Message Rules
+## `deleteSurface` Message Rules
 
-- **Required**: Must have a `delete` property set to `true`.
+- **Required**: Must have a `surfaceId` property.
 - No other properties are allowed.

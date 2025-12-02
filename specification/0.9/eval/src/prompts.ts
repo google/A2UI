@@ -116,7 +116,7 @@ The dog generator is another card which is a form that generates a fictional dog
   {
     name: "productGalleryData",
     description:
-      "A DataModelUpdate message to populate the product gallery data.",
+      "A updateDataModel message to populate the product gallery data.",
     promptText: `Generate a JSON message containing a updateDataModel to populate the data model for the product gallery. The update should target the path '/products' and include at least two products. Each product in the map should have keys 'id', 'name', and 'imageUrl'. For example:
     {
       "product1": {
@@ -169,7 +169,7 @@ The dog generator is another card which is a form that generates a fictional dog
   },
   {
     name: "updateDataModel",
-    description: "A DataModelUpdate message to update user data.",
+    description: "A updateDataModel message to update user data.",
     promptText: `Generate a JSON message with a 'updateDataModel' property. This is used to update the client's data model. The scenario is that a user has just logged in, and we need to populate their profile information. Create a single data model update message to set '/user/name' to "John Doe" and '/user/email' to "john.doe@example.com".`,
     matchers: [new MessageTypeMatcher("updateDataModel")],
   },
@@ -303,7 +303,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "musicPlayer",
     description: "A simple music player UI.",
-    promptText: `Generate a JSON message with a updateComponents property for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the literalString labels "Previous", "Play", and "Next" respectively.`,
+    promptText: `Generate a JSON message with a updateComponents property for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the labels "Previous", "Play", and "Next" respectively.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Column"),

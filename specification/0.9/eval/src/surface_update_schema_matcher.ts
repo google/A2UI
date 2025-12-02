@@ -128,71 +128,51 @@ export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
         : s1 === s2;
     };
 
-    // Handle new literal/path object structure
-    if (typeof actualValue === "object" && !Array.isArray(actualValue)) {
-      if (actualValue.literalString !== undefined) {
-        return (
-          typeof expectedValue === "string" &&
-          compareStrings(actualValue.literalString, expectedValue)
-        );
-      }
-      if (actualValue.literalNumber !== undefined) {
-        return actualValue.literalNumber === expectedValue;
-      }
-      if (actualValue.literalBoolean !== undefined) {
-        return actualValue.literalBoolean === expectedValue;
-      }
-      // Could also have a 'path' key, but for matching we'd expect a literal value in expectedValue
+    // 1. Direct Primitive Match (Shorthand)
+    if (typeof actualValue === "string" && typeof expectedValue === "string") {
+      return compareStrings(actualValue, expectedValue);
+    }
+    if (typeof actualValue === "number" && typeof expectedValue === "number") {
+      return actualValue === expectedValue;
+    }
+    if (
+      typeof actualValue === "boolean" &&
+      typeof expectedValue === "boolean"
+    ) {
+      return actualValue === expectedValue;
     }
 
-    // Handle array cases (e.g., for MultipleChoice options)
+    // 2. Object with Path (Should not match a literal expected value usually, unless expectedValue is the path object)
+    if (
+      typeof actualValue === "object" &&
+      !Array.isArray(actualValue) &&
+      actualValue.path
+    ) {
+      // If we are expecting a literal, a path binding is NOT a match.
+      return false;
+    }
+
+    // 3. Array Match (e.g. MultipleChoice options)
     if (Array.isArray(actualValue)) {
       for (const item of actualValue) {
-        if (typeof item === "object" && item !== null) {
-          // Check if the item itself is a bound value object
-          if (
-            item.literalString !== undefined &&
-            typeof expectedValue === "string" &&
-            compareStrings(item.literalString, expectedValue)
-          )
-            return true;
-          if (
-            item.literalNumber !== undefined &&
-            item.literalNumber === expectedValue
-          )
-            return true;
-          if (
-            item.literalBoolean !== undefined &&
-            item.literalBoolean === expectedValue
-          )
-            return true;
+        // Direct match in array
+        if (this.valueMatches(item, expectedValue)) {
+          return true;
+        }
 
-          // Check for structures like MultipleChoice options {label: {literalString: ...}, value: ...}
-          if (
-            item.label &&
-            typeof item.label === "object" &&
-            item.label.literalString !== undefined &&
-            typeof expectedValue === "string" &&
-            compareStrings(item.label.literalString, expectedValue)
-          ) {
+        // Check for structures like MultipleChoice options {label: "...", value: ...}
+        if (typeof item === "object" && item !== null) {
+          if (item.label && this.valueMatches(item.label, expectedValue)) {
             return true;
           }
-          if (item.value === expectedValue) {
+          if (item.value && this.valueMatches(item.value, expectedValue)) {
             return true;
           }
-        } else if (
-          typeof item === "string" &&
-          typeof expectedValue === "string" &&
-          compareStrings(item, expectedValue)
-        ) {
-          return true;
-        } else if (item === expectedValue) {
-          return true;
         }
       }
     }
 
-    // Fallback to direct comparison
+    // Fallback to direct comparison (e.g. for objects)
     return JSON.stringify(actualValue) === JSON.stringify(expectedValue);
   }
 }

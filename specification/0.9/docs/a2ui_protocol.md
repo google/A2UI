@@ -87,8 +87,8 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
 - **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string (JSON pointer).
 - **`childrenProperty`**: Defines how containers hold children. It supports:
 
-  - `explicitList`: A static array of component IDs.
-  - `template`: A dynamic generator that creates children based on a list in the data model.
+  - `array`: A static array of string component IDs.
+  - `object`: A template for generating children from a data binding list (requires a template `componentId` and a `dataBinding`).
 
 - **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
 - **`weight`**: The relative weight of a component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column. Defined here so that all weights are consistent and can be used for data binding.
@@ -149,21 +149,21 @@ This message provides a list of UI components to be added to or updated within a
         "id": "root",
         "props": {
           "component": "Column",
-          "children": { "explicitList": ["user_name", "user_title"] }
+          "children": ["user_name", "user_title"]
         }
       },
       {
         "id": "user_name",
         "props": {
           "component": "Text",
-          "text": { "literalString": "John Doe" }
+          "text": "John Doe"
         }
       },
       {
         "id": "user_title",
         "props": {
           "component": "Text",
-          "text": { "literalString": "Software Engineer" }
+          "text": "Software Engineer"
         }
       }
     ]
@@ -219,7 +219,7 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":{"explicitList":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}}},{"id":"first_name_label","props":{"component":"Text","text":{"literalString":"First Name"}}},{"id":"first_name_field","props":{"component":"TextField","label":{"literalString":"First Name"},"text":{"path":"/contact/firstName"},"textFieldType":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":{"literalString":"Last Name"}}},{"id":"last_name_field","props":{"component":"TextField","label":{"literalString":"Last Name"},"text":{"path":"/contact/lastName"},"textFieldType":"shortText"}},{"id":"email_label","props":{"component":"Text","text":{"literalString":"Email"}}},{"id":"email_field","props":{"component":"TextField","label":{"literalString":"Email"},"text":{"path":"/contact/email"},"textFieldType":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":{"literalString":"Phone"}}},{"id":"phone_field","props":{"component":"TextField","label":{"literalString":"Phone"},"text":{"path":"/contact/phone"},"textFieldType":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":{"literalString":"Notes"}}},{"id":"notes_field","props":{"component":"TextField","label":{"literalString":"Notes"},"text":{"path":"/contact/notes"},"textFieldType":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":{"literalString":"Submit"}}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"textFieldType":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"textFieldType":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"textFieldType":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"textFieldType":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"textFieldType":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
 {"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "contents": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
 {"createSurface": {"surfaceId": "contact_form_1"}}
 ```
@@ -259,9 +259,9 @@ flowchart TD
     end
 
     subgraph "Client-Side Buffer (Map)"
-        C("root: {id: 'root', component: 'Column', children: {explicitList: ['title', 'button']}}")
-        D("title: {id: 'title', component: 'Text', text: {literalString: 'Welcome'}}")
-        E("button: {id: 'button', component: 'Button', child: 'button_label'}")
+        C("root: {id: 'root', props: {component: 'Column', children: ['title', 'button']}}")
+        D("title: {id: 'title', props: {component: 'Text', text: 'Welcome'}}")
+        E("button: {id: 'button', props: {component: 'Button', child: 'button_label'}}")
     end
 
     subgraph "Rendered Widget Tree"
@@ -306,21 +306,70 @@ Components connect to the data model through data binding. Any component propert
 
 These properties use one of the `*OrPath` types defined in `common_types.json` (e.g., `stringOrPath`, `numberOrPath`).
 
-- **Literal Value**: To provide a static value, use the `literal*` property (e.g., `literalString`).
-- **Data Model Path**: To bind to a value in the data model, use the `path` property. The value of the path is a string that corresponds to a key in the `contents` of a `updateDataModel` message.
+- **Literal Value**: To provide a static value, use the value directly (e.g., `"text": "Hello"`).
+- **Data Model Path**: To bind to a value in the data model, use an object with a `path` property. The value of the path is a string that corresponds to a key in the `contents` of a `updateDataModel` message.
 
-Paths are specified using [JSON Pointer] syntax.
+Paths are specified using [JSON Pointer] syntax with the data model `contents` as the root.
 
-For components that use `childrenProperty`'s templates, the paths are relative paths within each data item in the list. For other uses, the paths are absolute paths within the data model.
+For components that use `childrenProperty`'s templates, the paths are relative paths within each data item in the list. For other uses, the paths are absolute paths within the data model `contents`.
 
-**Example of a `stringOrPath` object:**
+**Example of a `stringOrPath` property:**
 
 ```json
 // Static value
-"text": { "literalString": "Hello, World!" }
+"text": "Hello, World!"
 
 // Dynamic value bound to the data model
 "text": { "path": "/user/name" }
+```
+
+**Example of an update with data binding:**
+
+The surface update:
+
+```json
+{
+  "updateComponents": {
+    "surfaceId": "weather_card",
+    "components": [
+      {
+        "id": "root",
+        "props": {
+          "component": "Column",
+          "children": ["city_text", "temp_text"]
+        }
+      },
+      {
+        "id": "city_text",
+        "props": {
+          "component": "Text",
+          "text": { "path": "/city" }
+        }
+      },
+      {
+        "id": "temp_text",
+        "props": {
+          "component": "Text",
+          "text": { "path": "/temperature" }
+        }
+      }
+    ]
+  }
+}
+```
+
+And the corresponding data model update:
+
+```json
+{
+  "updateDataModel": {
+    "surfaceId": "weather_card",
+    "contents": {
+      "city": "San Francisco",
+      "temperature": "72°F"
+    }
+  }
+}
 ```
 
 ## Usage Pattern: The Prompt-Generate-Validate Loop
