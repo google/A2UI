@@ -17,7 +17,7 @@
 import { AnySchemaMatcher, BasicSchemaMatcher } from "./basic_schema_matcher";
 import { MessageTypeMatcher } from "./message_type_matcher";
 import { SchemaMatcher } from "./schema_matcher";
-import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
+import { UpdateComponentsSchemaMatcher } from "./update_components_schema_matcher";
 
 export interface TestPrompt {
   name: string;
@@ -63,27 +63,37 @@ The dog generator is another card which is a form that generates a fictional dog
 `,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Image"),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher(
+        new UpdateComponentsSchemaMatcher(
           "TextField",
           "label",
           "Dog breed name",
           true
         ),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Dog breed name", true),
+        new UpdateComponentsSchemaMatcher(
+          "Text",
+          "text",
+          "Dog breed name",
+          true
+        ),
       ]),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher(
+        new UpdateComponentsSchemaMatcher(
           "TextField",
           "label",
           "Number of legs",
           true
         ),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Number of legs", true),
+        new UpdateComponentsSchemaMatcher(
+          "Text",
+          "text",
+          "Number of legs",
+          true
+        ),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Generate", true),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Generate", true),
     ],
   },
   {
@@ -93,11 +103,11 @@ The dog generator is another card which is a form that generates a fictional dog
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a login form. It should have a "Login" text (usageHint 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Login"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "username", true),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "password", true),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Remember Me"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Sign In"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Login"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "username", true),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "password", true),
+      new UpdateComponentsSchemaMatcher("CheckBox", "label", "Remember Me"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Sign In"),
     ],
   },
   {
@@ -106,11 +116,11 @@ The dog generator is another card which is a form that generates a fictional dog
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a staticContext with the product ID, for example, 'productId': 'product123'. You should create a template component and then a list that uses it.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Add to Cart"),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Text"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Add to Cart"),
     ],
   },
   {
@@ -156,15 +166,15 @@ The dog generator is another card which is a form that generates a fictional dog
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a user settings page. Use a Tabs component with two tabs: "Profile" and "Notifications". The "Profile" tab should contain a simple column with a text field for the user's name. The "Notifications" tab should contain a checkbox for "Enable email notifications". Also, include a Modal component. The modal's entry point should be a button labeled "Delete Account", and its content should be a column with a confirmation text and two buttons: "Confirm Deletion" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "name", true),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher("TextField", "label", "name", true),
+      new UpdateComponentsSchemaMatcher(
         "CheckBox",
         "label",
         "Enable email notifications"
       ),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Delete Account"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Confirm Deletion"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Cancel"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Delete Account"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Confirm Deletion"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Cancel"),
     ],
   },
   {
@@ -219,71 +229,79 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
 `,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Simple Animal Explorer"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Search..."),
+      new UpdateComponentsSchemaMatcher(
+        "Text",
+        "text",
+        "Simple Animal Explorer"
+      ),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Search..."),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Mammalia"),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Mammalia"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Class: Mammalia"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Mammalia"),
       ]),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Carnivora"),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Carnivora"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Order: Carnivora"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Carnivora"),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Lion"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Tiger"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Wolf"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Lion"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Tiger"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Wolf"),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Artiodactyla"),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Artiodactyla"),
+        new UpdateComponentsSchemaMatcher(
+          "Text",
+          "text",
+          "Order: Artiodactyla"
+        ),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Artiodactyla"),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Giraffe"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Hippopotamus"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Giraffe"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Hippopotamus"),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Aves"),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Aves"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Class: Aves"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Aves"),
       ]),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher(
+        new UpdateComponentsSchemaMatcher(
           "Text",
           "text",
           "Order: Accipitriformes"
         ),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Accipitriformes"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Accipitriformes"),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Bald Eagle"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Bald Eagle"),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher(
+        new UpdateComponentsSchemaMatcher(
           "Text",
           "text",
           "Order: Struthioniformes"
         ),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Struthioniformes"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Struthioniformes"),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Ostrich"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Ostrich"),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher(
+        new UpdateComponentsSchemaMatcher(
           "Text",
           "text",
           "Order: Sphenisciformes"
         ),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Sphenisciformes"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Sphenisciformes"),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Penguin"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Penguin"),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Class: Reptilia"),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Reptilia"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Class: Reptilia"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Reptilia"),
       ]),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Crocodilia"),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Crocodilia"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Order: Crocodilia"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Crocodilia"),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Nile Crocodile"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Nile Crocodile"),
       new AnySchemaMatcher([
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Order: Squamata"),
-        new SurfaceUpdateSchemaMatcher("Text", "text", "Squamata"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Order: Squamata"),
+        new UpdateComponentsSchemaMatcher("Text", "text", "Squamata"),
       ]),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Komodo Dragon"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Ball Python"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Komodo Dragon"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Ball Python"),
     ],
   },
   {
@@ -292,12 +310,16 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a recipe card. It should have a 'Text' (usageHint 'h1') for the recipe title, "Classic Lasagna". Below the title, an 'Image' of the lasagna. Then, a 'Row' containing two 'Column's. The first column has a 'Text' (usageHint 'h2') "Ingredients" and a 'List' of ingredients (use 'Text' components for items: "Pasta", "Cheese", "Sauce"). The second column has a 'Text' (usageHint 'h2') "Instructions" and a 'List' of step-by-step instructions (use 'Text' components: "Boil pasta", "Layer ingredients", "Bake"). Finally, a 'Button' at the bottom labeled "Watch Video Tutorial".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Classic Lasagna"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Ingredients"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Instructions"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Watch Video Tutorial"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Classic Lasagna"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Ingredients"),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Instructions"),
+      new UpdateComponentsSchemaMatcher(
+        "Button",
+        "label",
+        "Watch Video Tutorial"
+      ),
     ],
   },
   {
@@ -306,14 +328,14 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the labels "Previous", "Play", and "Next" respectively.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Bohemian Rhapsody"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Queen"),
-      new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Previous"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Play"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Next"),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Bohemian Rhapsody"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Queen"),
+      new UpdateComponentsSchemaMatcher("Slider"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Previous"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Play"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Next"),
     ],
   },
   {
@@ -322,10 +344,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a weather forecast UI. It should have a 'Text' (usageHint 'h1') with the city name, "New York". Below it, a 'Row' with the current temperature as a 'Text' component ("68°F") and an 'Image' for the weather icon (e.g., a sun). Below that, a 'Divider'. Then, a 'List' component to display the 5-day forecast. Each item in the list should be a 'Row' with the day, an icon, and high/low temperatures.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "New York"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "68°F"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("List"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "New York"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "68°F"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("List"),
     ],
   },
   {
@@ -334,24 +356,24 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Create a customer feedback survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'MultipleChoice' question "How would you rate our service?" with options "Excellent", "Good", "Average", "Poor". Then a 'MultipleChoice' section for "What did you like?" with options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Customer Feedback"),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher("Text", "text", "Customer Feedback"),
+      new UpdateComponentsSchemaMatcher(
         "MultipleChoice",
         "options",
         (options: any[]) => options.some((o: any) => o.label === "Excellent")
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "MultipleChoice",
         "options",
         (options: any[]) =>
           options.some((o: any) => o.label === "Product Quality")
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "TextField",
         "label",
         "Any other comments?"
       ),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Submit Feedback"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Submit Feedback"),
     ],
   },
   {
@@ -360,10 +382,10 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a flight booking form. It should have a 'Text' (usageHint 'h1') "Book a Flight". Then a 'Row' with two 'TextField's for "Origin" and "Destination". Below that, a 'Row' with two 'DateTimeInput's for "Departure Date" and "Return Date" (initialize with empty values). Add a 'Slider' for "Passengers" (min 1, max 10, value 1). Finally, a 'Button' labeled "Search Flights".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Book a Flight"),
-      new SurfaceUpdateSchemaMatcher("DateTimeInput"),
-      new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Search Flights"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Book a Flight"),
+      new UpdateComponentsSchemaMatcher("DateTimeInput"),
+      new UpdateComponentsSchemaMatcher("Slider"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Search Flights"),
     ],
   },
   {
@@ -372,14 +394,14 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a simple dashboard. It should have a 'Text' (usageHint 'h1') "Sales Dashboard". Below, a 'Row' containing three 'Card's. The first card has a 'Text' "Revenue" and another 'Text' "$50,000". The second card has "New Customers" and "1,200". The third card has "Conversion Rate" and "4.5%".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Sales Dashboard"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Revenue"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "$50,000"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "New Customers"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "1,200"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Conversion Rate"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "4.5%"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Sales Dashboard"),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Revenue"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "$50,000"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "New Customers"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "1,200"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Conversion Rate"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "4.5%"),
     ],
   },
   {
@@ -388,12 +410,12 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a contact card. It should be a 'Card' with a 'Row'. The row contains an 'Image' (as an avatar) and a 'Column'. The column contains a 'Text' for the name "Jane Doe", a 'Text' for the email "jane.doe@example.com", and a 'Text' for the phone number "(123) 456-7890". Below the main row, add a 'Button' labeled "View on Map".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Jane Doe"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "jane.doe@example.com"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "(123) 456-7890"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "View on Map"),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Jane Doe"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "jane.doe@example.com"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "(123) 456-7890"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "View on Map"),
     ],
   },
   {
@@ -402,12 +424,12 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a calendar event creation form. It should have a 'Text' (usageHint 'h1') "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time" (initialize both with empty values). Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "New Event"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Event Title"),
-      new SurfaceUpdateSchemaMatcher("DateTimeInput"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "All-day event"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Save"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Cancel"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "New Event"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Event Title"),
+      new UpdateComponentsSchemaMatcher("DateTimeInput"),
+      new UpdateComponentsSchemaMatcher("CheckBox", "label", "All-day event"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Save"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Cancel"),
     ],
   },
   {
@@ -416,16 +438,16 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `Create a simplified e-commerce checkout page. It should have a 'Text' (usageHint 'h1') "Checkout". A 'Column' for shipping info with 'TextField's for "Name", "Address", "City", "Zip Code". A 'Column' for payment info with 'TextField's for "Card Number", "Expiry Date", "CVV". Finally, a 'Text' "Total: $99.99" and a 'Button' "Place Order".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Checkout"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Name"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Address"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "City"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Zip Code"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Card Number"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Expiry Date"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "CVV"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Total: $99.99"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Place Order"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Checkout"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Name"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Address"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "City"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Zip Code"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Card Number"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Expiry Date"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "CVV"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Total: $99.99"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Place Order"),
     ],
   },
   {
@@ -434,17 +456,17 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a social media post. It should be a 'Card' containing a 'Column'. The first item is a 'Row' with an 'Image' (user avatar) and a 'Text' (username "user123"). Below that, a 'Text' component for the post content: "Enjoying the beautiful weather today!". Then, an 'Image' for the main post picture. Finally, a 'Row' with three 'Button's: "Like", "Comment", and "Share".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "user123"),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "user123"),
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         "Enjoying the beautiful weather today!"
       ),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Like"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Comment"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Share"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Like"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Comment"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Share"),
     ],
   },
   {
@@ -463,12 +485,16 @@ The right side of the row is another 'Column' for product information:
 - A 'Text' component for the product description below the button.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Premium Leather Jacket"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "$299.99"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "S"),
-      new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "Black"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Add to Cart"),
+      new UpdateComponentsSchemaMatcher(
+        "Text",
+        "text",
+        "Premium Leather Jacket"
+      ),
+      new UpdateComponentsSchemaMatcher("Text", "text", "$299.99"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("MultipleChoice", "options", "S"),
+      new UpdateComponentsSchemaMatcher("MultipleChoice", "options", "Black"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Add to Cart"),
     ],
   },
   {
@@ -486,15 +512,15 @@ The right side of the row is another 'Column' for product information:
   Finally, a large 'Card' at the bottom with a 'Text' (usageHint 'h2') "Revenue Over Time" and a placeholder 'Image' with a valid URL to represent a line chart.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Company Dashboard"),
-      new SurfaceUpdateSchemaMatcher("DateTimeInput"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Apply Filters"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Total Revenue"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "$1,234,567"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "New Users"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "4,321"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Revenue Over Time"),
-      new SurfaceUpdateSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Company Dashboard"),
+      new UpdateComponentsSchemaMatcher("DateTimeInput"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Apply Filters"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Total Revenue"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "$1,234,567"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "New Users"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "4,321"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Revenue Over Time"),
+      new UpdateComponentsSchemaMatcher("Image"),
     ],
   },
   {
@@ -509,23 +535,35 @@ Below, use a 'List' to display three days. Each item in the list should be a 'Ca
 Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to mark as complete) and a 'Text' component with the activity description.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Paris Adventure"),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher("Text", "text", "Paris Adventure"),
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         "Day 1: Arrival & Eiffel Tower"
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         "Day 2: Museums & Culture"
       ),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Day 3: Art & Departure"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("CheckBox"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Visit the Eiffel Tower"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Visit the Louvre Museum"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Explore Montmartre"),
+      new UpdateComponentsSchemaMatcher(
+        "Text",
+        "text",
+        "Day 3: Art & Departure"
+      ),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("CheckBox"),
+      new UpdateComponentsSchemaMatcher(
+        "Text",
+        "text",
+        "Visit the Eiffel Tower"
+      ),
+      new UpdateComponentsSchemaMatcher(
+        "Text",
+        "text",
+        "Visit the Louvre Museum"
+      ),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Explore Montmartre"),
     ],
   },
   {
@@ -538,15 +576,15 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     Each card should just contain a 'Text' with the task name.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Project Tasks"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "To Do"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "In Progress"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Done"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Research"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Design"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Implementation"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Planning"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Project Tasks"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "To Do"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "In Progress"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Done"),
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Research"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Design"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Implementation"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Planning"),
     ],
   },
   {
@@ -555,10 +593,10 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a video call interface. It should have a 'Text' (usageHint 'h1') "Video Call". A 'Video' component (placeholder URL). Below that, a 'Row' with three 'Button's labeled "Mute", "Camera", and "End Call".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Video"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Mute"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Camera"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "End Call"),
+      new UpdateComponentsSchemaMatcher("Video"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Mute"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Camera"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "End Call"),
     ],
   },
   {
@@ -567,13 +605,13 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a file browser. It should have a 'Text' (usageHint 'h1') "My Files". A 'List' of 'Row's. Each row has an 'Icon' (folder or attachFile) and a 'Text' (filename). Examples (create these as static rows, not data bound): "Documents", "Images", "Work.txt".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "My Files"),
-      new SurfaceUpdateSchemaMatcher("List"),
-      new SurfaceUpdateSchemaMatcher("Row"),
-      new SurfaceUpdateSchemaMatcher("Icon"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Documents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Images"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Work.txt"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "My Files"),
+      new UpdateComponentsSchemaMatcher("List"),
+      new UpdateComponentsSchemaMatcher("Row"),
+      new UpdateComponentsSchemaMatcher("Icon"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Documents"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Images"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Work.txt"),
     ],
   },
   {
@@ -582,26 +620,30 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a chat room interface. It should have a 'Column' for the message history. Inside, include several 'Card's representing messages, each with a 'Text' for the sender and a 'Text' for the message body. Specifically include these messages: "Alice: Hi there!", "Bob: Hello!". At the bottom, a 'Row' with a 'TextField' (label "Type a message...") and a 'Button' labeled "Send".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Row"),
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("Row"),
       // Matchers for data-bound text or static text
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         (val: any) =>
           (typeof val === "string" && val.includes("Hi there!")) ||
           (typeof val === "object" && val.path)
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         (val: any) =>
           (typeof val === "string" && val.includes("Hello!")) ||
           (typeof val === "object" && val.path)
       ),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Type a message..."),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Send"),
+      new UpdateComponentsSchemaMatcher(
+        "TextField",
+        "label",
+        "Type a message..."
+      ),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Send"),
     ],
   },
   {
@@ -610,12 +652,12 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a fitness tracker dashboard. It should have a 'Text' (usageHint 'h1') "Daily Activity". A 'Row' of 'Card's. Each card should contain a 'Column' with a 'Text' label (e.g. "Steps") and a 'Text' value (e.g. "10,000"). Create cards for "Steps" ("10,000"), "Calories" ("500 kcal"), "Distance" ("5 km"). Below that, a 'Slider' for "Daily Goal" (initialize value to 50). Finally, a 'List' of recent workouts.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Daily Activity"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Steps"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "10,000"),
-      new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Calories"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "500 kcal"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Daily Activity"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Steps"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "10,000"),
+      new UpdateComponentsSchemaMatcher("Slider"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Calories"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "500 kcal"),
     ],
   },
   {
@@ -624,10 +666,10 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a smart home dashboard. It should have a 'Text' (usageHint 'h1') "Living Room". A 'Grid' (use 'Row's of 'Column's) of 'Card's. Cards for "Lights" (CheckBox, label "Lights", value true), "Thermostat" (Slider, value 72), "Music" (CheckBox, label "Music", value false). Ensure the CheckBox labels are exactly "Lights" and "Music".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Living Room"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Lights"),
-      new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Music"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Living Room"),
+      new UpdateComponentsSchemaMatcher("CheckBox", "label", "Lights"),
+      new UpdateComponentsSchemaMatcher("Slider"),
+      new UpdateComponentsSchemaMatcher("CheckBox", "label", "Music"),
     ],
   },
   {
@@ -639,23 +681,23 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     - "Desserts": 'List' containing IDs of separate 'Row' components. Create rows for "Cake - $8", "Pie - $7".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Gourmet Bistro"),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher("Text", "text", "Gourmet Bistro"),
+      new UpdateComponentsSchemaMatcher(
         "Tabs",
         "tabItems",
         (items: any[]) => items.length === 3
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "List",
         "children",
         (children: any[]) => children.length === 2
       ),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "Row",
         "children",
         (children: any[]) => children.length === 2
       ),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Soup"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Soup"),
     ],
   },
   {
@@ -664,11 +706,11 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a news aggregator. It should have a 'Text' (usageHint 'h1') "Top Headlines". A 'List' of 'Card's. Each card has a 'Column' with an 'Image', a 'Text' (headline), and a 'Text' (summary). Include headlines "Tech Breakthrough" and "Local Sports". Each card should have a 'Button' labeled "Read More". Create these as static components, not data bound.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Top Headlines"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Tech Breakthrough"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Read More"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Local Sports"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Top Headlines"),
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Tech Breakthrough"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Read More"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Local Sports"),
     ],
   },
   {
@@ -677,10 +719,10 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a photo editor. It should have a large 'Image' (photo). Below it, a 'Row' of 'Button's (Filters, Crop, Adjust). Below that, a 'Slider' for "Intensity" (initialize value to 50).`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Filters"),
-      new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Crop"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Filters"),
+      new UpdateComponentsSchemaMatcher("Slider"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Crop"),
     ],
   },
   {
@@ -689,14 +731,14 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a trivia quiz. It should have a 'Text' (usageHint 'h1') "Question 1". A 'Text' "What is the capital of France?". A 'MultipleChoice' for answers (options: "Paris", "London", "Berlin", "Madrid"). A 'Button' "Submit Answer".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Question 1"),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher("Text", "text", "Question 1"),
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         "What is the capital of France?"
       ),
-      new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "Paris"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Submit Answer"),
+      new UpdateComponentsSchemaMatcher("MultipleChoice", "options", "Paris"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Submit Answer"),
     ],
   },
   {
@@ -710,11 +752,11 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     Each button should be a 'Button' component.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "0"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "7"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "+"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "="),
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "0"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "7"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "+"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "="),
     ],
   },
   {
@@ -723,10 +765,14 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a job application form. It should have 'TextField's for "Name", "Email", "Phone", "Resume URL". A 'MultipleChoice' for "Years of Experience" (options: "0-1", "2-5", "5+"). A 'Button' "Submit Application". Create these as static components, not data bound.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Name"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Email"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Resume URL"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Submit Application"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Name"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Email"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Resume URL"),
+      new UpdateComponentsSchemaMatcher(
+        "Button",
+        "label",
+        "Submit Application"
+      ),
     ],
   },
   {
@@ -737,15 +783,15 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
 - For module 2, a 'Card' with 'Text' "Data Structures" and 'List' ("Arrays", "Linked Lists").`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         "Introduction to Computer Science"
       ),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Algorithms"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Sorting"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Data Structures"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Arrays"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Algorithms"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Sorting"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Data Structures"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Arrays"),
     ],
   },
   {
@@ -757,11 +803,11 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     - Row 3: 'Text' "AMZN", 'Text' "$3400.00", 'Text' "+0.8%".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Market Watch"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "AAPL"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "$150.00"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "GOOGL"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "AMZN"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Market Watch"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "AAPL"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "$150.00"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "GOOGL"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "AMZN"),
     ],
   },
   {
@@ -776,16 +822,16 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     Create these as static components, not data bound.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher(
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher(
         "Text",
         "text",
         "Episode 42: The Future of AI"
       ),
-      new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "1x"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Play/Pause"),
+      new UpdateComponentsSchemaMatcher("Slider"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "1x"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Play/Pause"),
     ],
   },
   {
@@ -796,11 +842,11 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     - Card 2: 'Row' with 'Image', 'Column' ('Text' "City Inn", 'Text' "3 Stars", 'Text' "$100/night"), 'Button' "Book".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Hotels in Tokyo"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Grand Hotel"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "5 Stars"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Book"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "City Inn"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Hotels in Tokyo"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Grand Hotel"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "5 Stars"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Book"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "City Inn"),
     ],
   },
   {
@@ -809,10 +855,18 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a notification center. It should have a 'Text' (usageHint 'h1') "Notifications". A 'List' of 'Card's. Include cards for "New message from Sarah" and "Your order has shipped". Each card should have a 'Button' "Dismiss".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Notifications"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "New message from Sarah"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Dismiss"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Your order has shipped"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Notifications"),
+      new UpdateComponentsSchemaMatcher(
+        "Text",
+        "text",
+        "New message from Sarah"
+      ),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Dismiss"),
+      new UpdateComponentsSchemaMatcher(
+        "Text",
+        "text",
+        "Your order has shipped"
+      ),
     ],
   },
   {
@@ -845,13 +899,13 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     - The task should have a description, an assignee object (with name and role), and a list of subtasks.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Project Dashboard"),
-      new SurfaceUpdateSchemaMatcher("List"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("List"), // Tasks list
-      new SurfaceUpdateSchemaMatcher("Column"),
-      new SurfaceUpdateSchemaMatcher("Row"), // Assignee row
-      new SurfaceUpdateSchemaMatcher("List"), // Subtasks list
+      new UpdateComponentsSchemaMatcher("Text", "text", "Project Dashboard"),
+      new UpdateComponentsSchemaMatcher("List"),
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("List"), // Tasks list
+      new UpdateComponentsSchemaMatcher("Column"),
+      new UpdateComponentsSchemaMatcher("Row"), // Assignee row
+      new UpdateComponentsSchemaMatcher("List"), // Subtasks list
       new MessageTypeMatcher("updateDataModel"),
       new BasicSchemaMatcher("updateDataModel.contents.projects"),
     ],
@@ -863,11 +917,11 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for editing a profile. 'Text' (h1) "Edit Profile". 'Image' (Current Avatar). 'Button' "Change Photo". 'TextField' "Display Name". 'TextField' "Bio" (multiline). 'TextField' "Website". 'Button' "Save Changes".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Edit Profile"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Change Photo"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Display Name"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Save Changes"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Edit Profile"),
+      new UpdateComponentsSchemaMatcher("Image"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Change Photo"),
+      new UpdateComponentsSchemaMatcher("TextField", "label", "Display Name"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Save Changes"),
     ],
   },
   {
@@ -880,10 +934,10 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     'Button' "Confirm Selection".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Select Seats"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Screen"),
-      new SurfaceUpdateSchemaMatcher("CheckBox"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Confirm Selection"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Select Seats"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Screen"),
+      new UpdateComponentsSchemaMatcher("CheckBox"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Confirm Selection"),
     ],
   },
   {
@@ -892,13 +946,13 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a flashcard app. 'Text' (h1) "Spanish Vocabulary". 'Card' (the flashcard). Inside the card, a 'Column' with 'Text' (h2) "Hola" (Front). 'Divider'. 'Text' "Hello" (Back - conceptually hidden, but rendered here). 'Row' of buttons: "Hard", "Good", "Easy".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Spanish Vocabulary"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Hola"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Hello"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Hard"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Good"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Easy"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Spanish Vocabulary"),
+      new UpdateComponentsSchemaMatcher("Card"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Hola"),
+      new UpdateComponentsSchemaMatcher("Text", "text", "Hello"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Hard"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Good"),
+      new UpdateComponentsSchemaMatcher("Button", "label", "Easy"),
     ],
   },
 ];

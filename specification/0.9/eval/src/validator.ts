@@ -17,7 +17,7 @@
 import Ajv from "ajv";
 import fs from "fs";
 import path from "path";
-import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
+import { UpdateComponentsSchemaMatcher } from "./update_components_schema_matcher";
 import { SchemaMatcher } from "./schema_matcher";
 
 const ajv = new Ajv({ strict: false, verbose: true });
@@ -73,7 +73,7 @@ export function validateSchema(
     }
 
     if (message.updateComponents) {
-      validateSurfaceUpdate(message.updateComponents, errors);
+      validateUpdateComponents(message.updateComponents, errors);
     } else if (message.updateDataModel) {
       validateUpdateDataModel(message.updateDataModel, errors);
     } else if (message.createSurface) {
@@ -126,7 +126,7 @@ function validateDeleteSurface(data: any, errors: string[]) {
   }
 }
 
-function validateSurfaceUpdate(data: any, errors: string[]) {
+function validateUpdateComponents(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
     errors.push("UpdateComponents must have a 'surfaceId' property.");
   }

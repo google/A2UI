@@ -21,7 +21,7 @@ import { SchemaMatcher, ValidationResult } from "./schema_matcher";
  * `updateComponents` message, and optionally validates the presence and value of
  * a property on that component.
  */
-export class SurfaceUpdateSchemaMatcher extends SchemaMatcher {
+export class UpdateComponentsSchemaMatcher extends SchemaMatcher {
   constructor(
     public componentType: string,
     public propertyName?: string,
