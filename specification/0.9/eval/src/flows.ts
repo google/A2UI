@@ -62,52 +62,20 @@ export const componentGeneratorFlow = ai.defineFlow(
       .map((s: any) => JSON.stringify(s, null, 2))
       .join("\n\n");
 
-    const fullPrompt = `You are an AI assistant. Based on the following request, generate a JSON object that conforms to the provided JSON Schemas. The output MUST be ONLY the JSON object enclosed in a markdown code block.
+    const fullPrompt = `You are an AI assistant. Based on the following request, generate a stream of JSON messages that conform to the provided JSON Schemas.
+The output MUST be a series of JSON objects, each enclosed in a markdown code block (or a single block with multiple objects).
 
-DO NOT include any other text before or after the markdown code block.
+Standard Instructions:
+1. Always start by generating a 'createSurface' message with surfaceId 'main'.
+2. Then, generate a 'updateComponents' message with surfaceId 'main' containing the requested UI.
+3. Ensure all component children are referenced by ID (using the 'children' or 'child' property with IDs), NOT nested inline as objects.
+4. If the request involves data binding, you may also generate 'updateDataModel' messages.
 
-Example Output:
-\`\`\`json
-{
-  "updateComponents": {
-    "surfaceId": "contact_form_1",
-    "components": [
-      {
-        "id": "root",
-        "props": {
-          "component": "Column",
-          "children": [
-            "first_name_label",
-            "first_name_field"
-          ]
-        }
-      },
-      {
-        "id": "first_name_label",
-        "props": {
-          "component": "Text",
-          "text": "First Name"
-        }
-      },
-      {
-        "id": "first_name_field",
-        "props": {
-          "component": "TextField",
-          "label": "First Name",
-          "text": { "path": "/contact/firstName" },
-          "textFieldType": "shortText"
-        }
-      }
-    ]
-  }
-}
-\`\`\`
+Schemas:
+${schemaDefs}
 
 Request:
 ${prompt}
-
-JSON Schemas:
-${schemaDefs}
 `;
     const estimatedInputTokens = Math.ceil(fullPrompt.length / 2.5);
     await rateLimiter.acquirePermit(

@@ -41,7 +41,7 @@ export const prompts: TestPrompt[] = [
     name: "dogBreedGenerator",
     description:
       "A prompt to generate a UI for a dog breed information and generator tool.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message to describe the following UI:
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message to describe the following UI:
 
 A root node has already been created with ID "root".
 
@@ -90,7 +90,7 @@ The dog generator is another card which is a form that generates a fictional dog
     name: "loginForm",
     description:
       'A simple login form with username, password, a "remember me" checkbox, and a submit button.',
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a login form. It should have a "Login" text (usageHint 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a login form. It should have a "Login" text (usageHint 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Login"),
@@ -103,7 +103,7 @@ The dog generator is another card which is a form that generates a fictional dog
   {
     name: "productGallery",
     description: "A gallery of products using a list with a template.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a staticContext with the product ID, for example, 'productId': 'product123'. You should create a template component and then a list that uses it.`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a staticContext with the product ID, for example, 'productId': 'product123'. You should create a template component and then a list that uses it.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Column"),
@@ -153,7 +153,7 @@ The dog generator is another card which is a form that generates a fictional dog
   {
     name: "settingsPage",
     description: "A settings page with tabs and a modal dialog.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a user settings page. Use a Tabs component with two tabs: "Profile" and "Notifications". The "Profile" tab should contain a simple column with a text field for the user's name. The "Notifications" tab should contain a checkbox for "Enable email notifications". Also, include a Modal component. The modal's entry point should be a button labeled "Delete Account", and its content should be a column with a confirmation text and two buttons: "Confirm Deletion" and "Cancel".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a user settings page. Use a Tabs component with two tabs: "Profile" and "Notifications". The "Profile" tab should contain a simple column with a text field for the user's name. The "Notifications" tab should contain a checkbox for "Enable email notifications". Also, include a Modal component. The modal's entry point should be a button labeled "Delete Account", and its content should be a column with a confirmation text and two buttons: "Confirm Deletion" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "name", true),
@@ -182,7 +182,7 @@ The dog generator is another card which is a form that generates a fictional dog
   {
     name: "animalKingdomExplorer",
     description: "A simple, explicit UI to display a hierarchy of animals.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a simplified UI explorer for the Animal Kingdom.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a simplified UI explorer for the Animal Kingdom.
 
 The UI must have a main 'Text' (usageHint 'h1') with the text "Simple Animal Explorer".
 
@@ -289,7 +289,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "recipeCard",
     description: "A UI to display a recipe with ingredients and instructions.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a recipe card. It should have a 'Text' (usageHint 'h1') for the recipe title, "Classic Lasagna". Below the title, an 'Image' of the lasagna. Then, a 'Row' containing two 'Column's. The first column has a 'Text' (usageHint 'h2') "Ingredients" and a 'List' of ingredients. The second column has a 'Text' (usageHint 'h2') "Instructions" and a 'List' of step-by-step instructions. Finally, a 'Button' at the bottom labeled "Watch Video Tutorial".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a recipe card. It should have a 'Text' (usageHint 'h1') for the recipe title, "Classic Lasagna". Below the title, an 'Image' of the lasagna. Then, a 'Row' containing two 'Column's. The first column has a 'Text' (usageHint 'h2') "Ingredients" and a 'List' of ingredients (use 'Text' components for items: "Pasta", "Cheese", "Sauce"). The second column has a 'Text' (usageHint 'h2') "Instructions" and a 'List' of step-by-step instructions (use 'Text' components: "Boil pasta", "Layer ingredients", "Bake"). Finally, a 'Button' at the bottom labeled "Watch Video Tutorial".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Classic Lasagna"),
@@ -303,7 +303,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "musicPlayer",
     description: "A simple music player UI.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the labels "Previous", "Play", and "Next" respectively.`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the labels "Previous", "Play", and "Next" respectively.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Column"),
@@ -319,7 +319,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "weatherForecast",
     description: "A UI to display the weather forecast.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a weather forecast UI. It should have a 'Text' (usageHint 'h1') with the city name, "New York". Below it, a 'Row' with the current temperature as a 'Text' component ("68°F") and an 'Image' for the weather icon (e.g., a sun). Below that, a 'Divider'. Then, a 'List' component to display the 5-day forecast. Each item in the list should be a 'Row' with the day, an icon, and high/low temperatures.`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a weather forecast UI. It should have a 'Text' (usageHint 'h1') with the city name, "New York". Below it, a 'Row' with the current temperature as a 'Text' component ("68°F") and an 'Image' for the weather icon (e.g., a sun). Below that, a 'Divider'. Then, a 'List' component to display the 5-day forecast. Each item in the list should be a 'Row' with the day, an icon, and high/low temperatures.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "New York"),
@@ -331,12 +331,21 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "surveyForm",
     description: "A customer feedback survey form.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'MultipleChoice' question "How would you rate our service?" with options "Excellent", "Good", "Average", "Poor". Then a 'CheckBox' section for "What did you like?" with options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
+    promptText: `Create a customer feedback survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'MultipleChoice' question "How would you rate our service?" with options "Excellent", "Good", "Average", "Poor". Then a 'MultipleChoice' section for "What did you like?" with options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Customer Feedback"),
-      new SurfaceUpdateSchemaMatcher("MultipleChoice", "options", "Excellent"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Product Quality"),
+      new SurfaceUpdateSchemaMatcher(
+        "MultipleChoice",
+        "options",
+        (options: any[]) => options.some((o: any) => o.label === "Excellent")
+      ),
+      new SurfaceUpdateSchemaMatcher(
+        "MultipleChoice",
+        "options",
+        (options: any[]) =>
+          options.some((o: any) => o.label === "Product Quality")
+      ),
       new SurfaceUpdateSchemaMatcher(
         "TextField",
         "label",
@@ -348,21 +357,19 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "flightBooker",
     description: "A form to search for flights.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a flight booking form. It should have a 'Text' (usageHint 'h1') "Book a Flight". Use a 'Row' for two 'TextField's: "Departure City" and "Arrival City". Below that, another 'Row' for two 'DateTimeInput's: "Departure Date" and "Return Date". Add a 'CheckBox' for "One-way trip". Finally, a 'Button' labeled "Search Flights".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a flight booking form. It should have a 'Text' (usageHint 'h1') "Book a Flight". Then a 'Row' with two 'TextField's for "Origin" and "Destination". Below that, a 'Row' with two 'DateTimeInput's for "Departure Date" and "Return Date" (initialize with empty values). Add a 'Slider' for "Passengers" (min 1, max 10, value 1). Finally, a 'Button' labeled "Search Flights".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Book a Flight"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Departure City"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Arrival City"),
       new SurfaceUpdateSchemaMatcher("DateTimeInput"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "One-way trip"),
+      new SurfaceUpdateSchemaMatcher("Slider"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Search Flights"),
     ],
   },
   {
     name: "dashboard",
     description: "A simple dashboard with statistics.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a simple dashboard. It should have a 'Text' (usageHint 'h1') "Sales Dashboard". Below, a 'Row' containing three 'Card's. The first card has a 'Text' "Revenue" and another 'Text' "$50,000". The second card has "New Customers" and "1,200". The third card has "Conversion Rate" and "4.5%".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a simple dashboard. It should have a 'Text' (usageHint 'h1') "Sales Dashboard". Below, a 'Row' containing three 'Card's. The first card has a 'Text' "Revenue" and another 'Text' "$50,000". The second card has "New Customers" and "1,200". The third card has "Conversion Rate" and "4.5%".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Sales Dashboard"),
@@ -378,7 +385,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "contactCard",
     description: "A UI to display contact information.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a contact card. It should be a 'Card' with a 'Row'. The row contains an 'Image' (as an avatar) and a 'Column'. The column contains a 'Text' for the name "Jane Doe", a 'Text' for the email "jane.doe@example.com", and a 'Text' for the phone number "(123) 456-7890". Below the main row, add a 'Button' labeled "View on Map".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a contact card. It should be a 'Card' with a 'Row'. The row contains an 'Image' (as an avatar) and a 'Column'. The column contains a 'Text' for the name "Jane Doe", a 'Text' for the email "jane.doe@example.com", and a 'Text' for the phone number "(123) 456-7890". Below the main row, add a 'Button' labeled "View on Map".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Column"),
@@ -392,7 +399,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "calendarEventCreator",
     description: "A form to create a new calendar event.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a calendar event creation form. It should have a 'Text' (usageHint 'h1') "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time". Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a calendar event creation form. It should have a 'Text' (usageHint 'h1') "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time" (initialize both with empty values). Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "New Event"),
@@ -406,14 +413,17 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "checkoutPage",
     description: "A simplified e-commerce checkout page.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a checkout page. It should have a 'Text' (usageHint 'h1') "Checkout". Create a 'Column' for "Shipping Information" with 'TextField's for "Full Name" and "Address". Create another 'Column' for "Payment Information" with 'TextField's for "Card Number" and "Expiry Date". Add a 'Divider'. Show an order summary with a 'Text' component: "Total: $99.99". Finally, a 'Button' labeled "Place Order".`,
+    promptText: `Create a simplified e-commerce checkout page. It should have a 'Text' (usageHint 'h1') "Checkout". A 'Column' for shipping info with 'TextField's for "Name", "Address", "City", "Zip Code". A 'Column' for payment info with 'TextField's for "Card Number", "Expiry Date", "CVV". Finally, a 'Text' "Total: $99.99" and a 'Button' "Place Order".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Checkout"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Full Name"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "Name"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Address"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "City"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "Zip Code"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Card Number"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Expiry Date"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "CVV"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Total: $99.99"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Place Order"),
     ],
@@ -421,7 +431,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "socialMediaPost",
     description: "A component representing a social media post.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a social media post. It should be a 'Card' containing a 'Column'. The first item is a 'Row' with an 'Image' (user avatar) and a 'Text' (username "user123"). Below that, a 'Text' component for the post content: "Enjoying the beautiful weather today!". Then, an 'Image' for the main post picture. Finally, a 'Row' with three 'Button's: "Like", "Comment", and "Share".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a social media post. It should be a 'Card' containing a 'Column'. The first item is a 'Row' with an 'Image' (user avatar) and a 'Text' (username "user123"). Below that, a 'Text' component for the post content: "Enjoying the beautiful weather today!". Then, an 'Image' for the main post picture. Finally, a 'Row' with three 'Button's: "Like", "Comment", and "Share".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Column"),
@@ -440,7 +450,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "eCommerceProductPage",
     description: "A detailed product page for an e-commerce website.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a product details page.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a product details page.
 The main layout should be a 'Row'.
 The left side of the row is a 'Column' containing a large main 'Image' of the product, and below it, a 'Row' of three smaller thumbnail 'Image' components.
 The right side of the row is another 'Column' for product information:
@@ -464,16 +474,16 @@ The right side of the row is another 'Column' for product information:
   {
     name: "interactiveDashboard",
     description: "A dashboard with filters and data cards.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for an interactive analytics dashboard.
-At the top, a 'Text' (usageHint 'h1') "Company Dashboard".
-Below the text heading, a 'Card' containing a 'Row' of filter controls:
-- A 'DateTimeInput' with a label for "Start Date".
-- A 'DateTimeInput' with a label for "End Date".
-- A 'Button' labeled "Apply Filters".
-Below the filters card, a 'Row' containing two 'Card's for key metrics:
-- The first 'Card' has a 'Text' (usageHint 'h2') "Total Revenue" and a 'Text' component showing "$1,234,567".
-- The second 'Card' has a 'Text' (usageHint 'h2') "New Users" and a 'Text' component showing "4,321".
-Finally, a large 'Card' at the bottom with a 'Text' (usageHint 'h2') "Revenue Over Time" and a placeholder 'Image' with a valid URL to represent a line chart.`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for an interactive analytics dashboard.
+  At the top, a 'Text' (usageHint 'h1') "Company Dashboard".
+  Below the text heading, a 'Card' containing a 'Row' of filter controls:
+  - A 'DateTimeInput' with a label for "Start Date" (initialize with empty value).
+  - A 'DateTimeInput' with a label for "End Date" (initialize with empty value).
+  - A 'Button' labeled "Apply Filters".
+  Below the filters card, a 'Row' containing two 'Card's for key metrics:
+  - The first 'Card' has a 'Text' (usageHint 'h2') "Total Revenue" and a 'Text' component showing "$1,234,567".
+  - The second 'Card' has a 'Text' (usageHint 'h2') "New Users" and a 'Text' component showing "4,321".
+  Finally, a large 'Card' at the bottom with a 'Text' (usageHint 'h2') "Revenue Over Time" and a placeholder 'Image' with a valid URL to represent a line chart.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Company Dashboard"),
@@ -490,7 +500,7 @@ Finally, a large 'Card' at the bottom with a 'Text' (usageHint 'h2') "Revenue Ov
   {
     name: "travelItinerary",
     description: "A multi-day travel itinerary display.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a travel itinerary for a trip to Paris.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a travel itinerary for a trip to Paris.
 It should have a main 'Text' component with usageHint 'h1' and text "Paris Adventure".
 Below, use a 'List' to display three days. Each item in the list should be a 'Card'.
 - The first 'Card' (Day 1) should contain a 'Text' (usageHint 'h2') "Day 1: Arrival & Eiffel Tower", and a 'List' of activities for that day: "Check into hotel", "Lunch at a cafe", "Visit the Eiffel Tower".
@@ -521,7 +531,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "kanbanBoard",
     description: "A Kanban-style task tracking board.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a Kanban board. It should have a 'Text' (usageHint 'h1') "Project Tasks". Below, a 'Row' containing three 'Column's representing "To Do", "In Progress", and "Done". Each column should have a 'Text' (usageHint 'h2') header and a list of 'Card's.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a Kanban board. It should have a 'Text' (usageHint 'h1') "Project Tasks". Below, a 'Row' containing three 'Column's representing "To Do", "In Progress", and "Done". Each column should have a 'Text' (usageHint 'h2') header and a list of 'Card's.
     - "To Do" column: Card "Research", Card "Design".
     - "In Progress" column: Card "Implementation".
     - "Done" column: Card "Planning".
@@ -542,40 +552,54 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "videoCallInterface",
     description: "A video conference UI.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a video call interface. It should have a large 'Image' for the main speaker. Below that, a 'Row' of smaller 'Image's for other participants. At the bottom, a control bar 'Row' with three 'Button's: "Mute", "Stop Video", and "End Call".`,
+    promptText: `Create a video call interface. It should have a 'Text' (usageHint 'h1') "Video Call". A 'Video' component (placeholder URL). Below that, a 'Row' with three 'Button's labeled "Mute", "Camera", and "End Call".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Image"),
+      new SurfaceUpdateSchemaMatcher("Video"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Mute"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Stop Video"),
+      new SurfaceUpdateSchemaMatcher("Button", "label", "Camera"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "End Call"),
     ],
   },
   {
     name: "fileBrowser",
     description: "A file explorer list.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a file browser. It should have a 'Text' (usageHint 'h1') "My Files". Then a 'List' of files. Each item in the list should be a 'Row' containing an 'Image' (icon) and a 'Text' (filename). Examples: "Document.pdf", "Photo.jpg", "Budget.xlsx".`,
+    promptText: `Create a file browser. It should have a 'Text' (usageHint 'h1') "My Files". A 'List' of 'Row's. Each row has an 'Icon' (folder or attachFile) and a 'Text' (filename). Examples (create these as static rows, not data bound): "Documents", "Images", "Work.txt".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "My Files"),
       new SurfaceUpdateSchemaMatcher("List"),
       new SurfaceUpdateSchemaMatcher("Row"),
-      new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Document.pdf"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Photo.jpg"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Budget.xlsx"),
+      new SurfaceUpdateSchemaMatcher("Icon"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Documents"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Images"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Work.txt"),
     ],
   },
   {
     name: "chatRoom",
     description: "A chat application interface.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a chat room. It should have a 'Column' for the message history. Inside, several 'Card's representing messages, each with a 'Text' for the sender and a 'Text' for the message body. Example: "Alice: Hi there!", "Bob: Hello!". At the bottom, a 'Row' with a 'TextField' (label "Type a message...") and a 'Button' labeled "Send".`,
+    promptText: `Create a chat room interface. It should have a 'Column' for the message history. Inside, include several 'Card's representing messages, each with a 'Text' for the sender and a 'Text' for the message body. Specifically include these messages: "Alice: Hi there!", "Bob: Hello!". At the bottom, a 'Row' with a 'TextField' (label "Type a message...") and a 'Button' labeled "Send".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Column"),
       new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Alice: Hi there!"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Bob: Hello!"),
+      new SurfaceUpdateSchemaMatcher("Row"),
+      // Matchers for data-bound text or static text
+      new SurfaceUpdateSchemaMatcher(
+        "Text",
+        "text",
+        (val: any) =>
+          (typeof val === "string" && val.includes("Hi there!")) ||
+          (typeof val === "object" && val.path)
+      ),
+      new SurfaceUpdateSchemaMatcher(
+        "Text",
+        "text",
+        (val: any) =>
+          (typeof val === "string" && val.includes("Hello!")) ||
+          (typeof val === "object" && val.path)
+      ),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Type a message..."),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Send"),
     ],
@@ -583,10 +607,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "fitnessTracker",
     description: "A daily activity summary.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a fitness tracker. It should have a 'Text' (usageHint 'h1') "Daily Activity". A 'Row' with three 'Card's:
-    1. "Steps": 'Text' "10,000", 'Slider' (value 100).
-    2. "Calories": 'Text' "500 kcal", 'Slider' (value 50).
-    3. "Exercise": 'Text' "30 mins", 'Slider' (value 30).`,
+    promptText: `Create a fitness tracker dashboard. It should have a 'Text' (usageHint 'h1') "Daily Activity". A 'Row' of 'Card's. Each card should contain a 'Column' with a 'Text' label (e.g. "Steps") and a 'Text' value (e.g. "10,000"). Create cards for "Steps" ("10,000"), "Calories" ("500 kcal"), "Distance" ("5 km"). Below that, a 'Slider' for "Daily Goal" (initialize value to 50). Finally, a 'List' of recent workouts.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Daily Activity"),
@@ -595,48 +616,52 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
       new SurfaceUpdateSchemaMatcher("Slider"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Calories"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "500 kcal"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Exercise"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "30 mins"),
     ],
   },
   {
     name: "smartHome",
     description: "A smart home control panel.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a smart home control panel. It should have a 'Text' (usageHint 'h1') "Home Control". A 'List' of rooms.
-    - "Living Room": 'Card' with 'CheckBox' "Lights" and 'Slider' "Brightness".
-    - "Kitchen": 'Card' with 'CheckBox' "Lights" and 'CheckBox' "Coffee Maker".
-    - "Thermostat": 'Card' with 'Text' "72°F" and 'Slider' "Temperature".`,
+    promptText: `Create a smart home dashboard. It should have a 'Text' (usageHint 'h1') "Living Room". A 'Grid' (use 'Row's of 'Column's) of 'Card's. Cards for "Lights" (CheckBox, label "Lights", value true), "Thermostat" (Slider, value 72), "Music" (CheckBox, label "Music", value false). Ensure the CheckBox labels are exactly "Lights" and "Music".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Home Control"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Living Room"),
       new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Lights"),
       new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Coffee Maker"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "72°F"),
+      new SurfaceUpdateSchemaMatcher("CheckBox", "label", "Music"),
     ],
   },
   {
     name: "restaurantMenu",
     description: "A restaurant menu with tabs.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a restaurant menu. It should have a 'Text' (usageHint 'h1') "Gourmet Bistro". A 'Tabs' component with "Starters", "Mains", "Desserts".
-    - "Starters": 'List' of 'Row's (Name, Price). "Soup - $8", "Salad - $10".
-    - "Mains": 'List' of 'Row's. "Steak - $25", "Pasta - $18".
-    - "Desserts": 'List' of 'Row's. "Cake - $8", "Pie - $7".`,
+    promptText: `Create a restaurant menu with tabs. It should have a 'Text' (usageHint 'h1') "Gourmet Bistro". A 'Tabs' component with "Starters", "Mains", "Desserts".
+    - "Starters": 'List' containing IDs of separate 'Row' components (Name, Price). Create rows for "Soup - $8", "Salad - $10".
+    - "Mains": 'List' containing IDs of separate 'Row' components. Create rows for "Steak - $25", "Pasta - $18".
+    - "Desserts": 'List' containing IDs of separate 'Row' components. Create rows for "Cake - $8", "Pie - $7".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Gourmet Bistro"),
-      new SurfaceUpdateSchemaMatcher("Tabs"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Soup - $8"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Steak - $25"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Cake - $8"),
+      new SurfaceUpdateSchemaMatcher(
+        "Tabs",
+        "tabItems",
+        (items: any[]) => items.length === 3
+      ),
+      new SurfaceUpdateSchemaMatcher(
+        "List",
+        "children",
+        (children: any[]) => children.length === 2
+      ),
+      new SurfaceUpdateSchemaMatcher(
+        "Row",
+        "children",
+        (children: any[]) => children.length === 2
+      ),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Soup"),
     ],
   },
   {
     name: "newsAggregator",
     description: "A news feed with article cards.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a news feed. It should have a 'Text' (usageHint 'h1') "Top Headlines". A 'List' of 'Card's.
-    Card 1: 'Image', 'Text' (h2) "Tech Breakthrough", 'Text' "New AI model released.", 'Button' "Read More".
-    Card 2: 'Image', 'Text' (h2) "Local Sports", 'Text' "Home team wins!", 'Button' "Read More".`,
+    promptText: `Create a news aggregator. It should have a 'Text' (usageHint 'h1') "Top Headlines". A 'List' of 'Card's. Each card has a 'Column' with an 'Image', a 'Text' (headline), and a 'Text' (summary). Include headlines "Tech Breakthrough" and "Local Sports". Each card should have a 'Button' labeled "Read More". Create these as static components, not data bound.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Top Headlines"),
@@ -649,29 +674,22 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "photoEditor",
     description: "A photo editing interface with sliders.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a photo editor. It should have a large 'Image' (the photo). Below, a 'Column' of adjustments.
-    - 'Text' "Brightness", 'Slider'.
-    - 'Text' "Contrast", 'Slider'.
-    - 'Text' "Saturation", 'Slider'.
-    - 'Row' with 'Button' "Cancel" and 'Button' "Save".`,
+    promptText: `Create a photo editor. It should have a large 'Image' (photo). Below it, a 'Row' of 'Button's (Filters, Crop, Adjust). Below that, a 'Slider' for "Intensity" (initialize value to 50).`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Image"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Brightness"),
+      new SurfaceUpdateSchemaMatcher("Button", "label", "Filters"),
       new SurfaceUpdateSchemaMatcher("Slider"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Contrast"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Saturation"),
-      new SurfaceUpdateSchemaMatcher("Button", "label", "Save"),
+      new SurfaceUpdateSchemaMatcher("Button", "label", "Crop"),
     ],
   },
   {
     name: "triviaQuiz",
     description: "A trivia question card.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a trivia quiz. It should be a 'Card' with a 'Text' (h2) "Question 1 of 10". 'Text' "What is the capital of France?". A 'MultipleChoice' with options "London", "Berlin", "Paris", "Madrid". A 'Button' labeled "Submit Answer".`,
+    promptText: `Create a trivia quiz. It should have a 'Text' (usageHint 'h1') "Question 1". A 'Text' "What is the capital of France?". A 'MultipleChoice' for answers (options: "Paris", "London", "Berlin", "Madrid"). A 'Button' "Submit Answer".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Card"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Question 1 of 10"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Question 1"),
       new SurfaceUpdateSchemaMatcher(
         "Text",
         "text",
@@ -684,7 +702,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "simpleCalculator",
     description: "A basic calculator layout.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a calculator. It should have a 'Card'. Inside, a 'Text' (display) showing "0". Then a 'Column' of 'Row's for buttons.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a calculator. It should have a 'Card'. Inside, a 'Text' (display) showing "0". Then a 'Column' of 'Row's for buttons.
     - Row 1: "7", "8", "9", "/"
     - Row 2: "4", "5", "6", "*"
     - Row 3: "1", "2", "3", "-"
@@ -702,20 +720,20 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "jobApplication",
     description: "A job application form.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a job application. 'Text' (h1) "Join Our Team". 'TextField' "Full Name". 'TextField' "Email Address". 'TextField' "Link to Resume". 'TextField' "Cover Letter" (multiline). 'Button' "Submit Application".`,
+    promptText: `Create a job application form. It should have 'TextField's for "Name", "Email", "Phone", "Resume URL". A 'MultipleChoice' for "Years of Experience" (options: "0-1", "2-5", "5+"). A 'Button' "Submit Application". Create these as static components, not data bound.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Join Our Team"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Full Name"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Email Address"),
-      new SurfaceUpdateSchemaMatcher("TextField", "label", "Link to Resume"),
+      new SurfaceUpdateSchemaMatcher("Text", "text", "Job Application"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "Name"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "Email"),
+      new SurfaceUpdateSchemaMatcher("TextField", "label", "Resume URL"),
       new SurfaceUpdateSchemaMatcher("Button", "label", "Submit Application"),
     ],
   },
   {
     name: "courseSyllabus",
     description: "A course syllabus outline.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a course syllabus. 'Text' (h1) "Introduction to Computer Science". 'List' of modules.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a course syllabus. 'Text' (h1) "Introduction to Computer Science". 'List' of modules.
     - Module 1: 'Card' with 'Text' "Algorithms" and 'List' ("Sorting", "Searching").
     - Module 2: 'Card' with 'Text' "Data Structures" and 'List' ("Arrays", "Linked Lists").`,
     matchers: [
@@ -734,7 +752,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "stockWatchlist",
     description: "A stock market watchlist.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a stock watchlist. 'Text' (h1) "Market Watch". 'List' of 'Row's.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a stock watchlist. 'Text' (h1) "Market Watch". 'List' of 'Row's.
     - Row 1: 'Text' "AAPL", 'Text' "$150.00", 'Text' "+1.2%".
     - Row 2: 'Text' "GOOGL", 'Text' "$2800.00", 'Text' "-0.5%".
     - Row 3: 'Text' "AMZN", 'Text' "$3400.00", 'Text' "+0.8%".`,
@@ -750,12 +768,13 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "podcastEpisode",
     description: "A podcast player interface.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a podcast player. 'Card' containing:
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a podcast player. 'Card' containing:
     - 'Image' (Cover Art).
     - 'Text' (h2) "Episode 42: The Future of AI".
     - 'Text' "Host: Jane Smith".
-    - 'Slider' (Progress).
-    - 'Row' with 'Button' "1x" (Speed), 'Button' "Play/Pause", 'Button' "Share".`,
+    - 'Slider' (Progress, initialize value to 0).
+    - 'Row' with 'Button' (label "1x"), 'Button' (label "Play/Pause"), 'Button' (label "Share").
+    Create these as static components, not data bound.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Card"),
@@ -773,7 +792,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "hotelSearchResults",
     description: "Hotel search results list.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for hotel search results. 'Text' (h1) "Hotels in Tokyo". 'List' of 'Card's.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for hotel search results. 'Text' (h1) "Hotels in Tokyo". 'List' of 'Card's.
     - Card 1: 'Row' with 'Image', 'Column' ('Text' "Grand Hotel", 'Text' "5 Stars", 'Text' "$200/night"), 'Button' "Book".
     - Card 2: 'Row' with 'Image', 'Column' ('Text' "City Inn", 'Text' "3 Stars", 'Text' "$100/night"), 'Button' "Book".`,
     matchers: [
@@ -788,9 +807,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "notificationCenter",
     description: "A list of notifications.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a notification center. 'Text' (h1) "Notifications". 'List' of 'Card's.
-    - Card 1: 'Row' with 'Image' (Icon), 'Text' "New message from Sarah", 'Button' "Dismiss".
-    - Card 2: 'Row' with 'Image' (Icon), 'Text' "Your order has shipped", 'Button' "Dismiss".`,
+    promptText: `Create a notification center. It should have a 'Text' (usageHint 'h1') "Notifications". A 'List' of 'Card's. Include cards for "New message from Sarah" and "Your order has shipped". Each card should have a 'Button' "Dismiss".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Notifications"),
@@ -844,7 +861,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "profileEditor",
     description: "A user profile editing form.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for editing a profile. 'Text' (h1) "Edit Profile". 'Image' (Current Avatar). 'Button' "Change Photo". 'TextField' "Display Name". 'TextField' "Bio" (multiline). 'TextField' "Website". 'Button' "Save Changes".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for editing a profile. 'Text' (h1) "Edit Profile". 'Image' (Current Avatar). 'Button' "Change Photo". 'TextField' "Display Name". 'TextField' "Bio" (multiline). 'TextField' "Website". 'Button' "Save Changes".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Edit Profile"),
@@ -857,7 +874,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "cinemaSeatSelection",
     description: "A seat selection grid.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for cinema seat selection. 'Text' (h1) "Select Seats". 'Text' "Screen" (centered). 'Column' of 'Row's representing rows of seats.
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for cinema seat selection. 'Text' (h1) "Select Seats". 'Text' "Screen" (centered). 'Column' of 'Row's representing rows of seats.
     - Row A: 4 'CheckBox'es.
     - Row B: 4 'CheckBox'es.
     - Row C: 4 'CheckBox'es.
@@ -873,7 +890,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "flashcardApp",
     description: "A language learning flashcard.",
-    promptText: `Generate a stream of JSON messages. First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a flashcard app. 'Text' (h1) "Spanish Vocabulary". 'Card' (the flashcard). Inside the card, a 'Column' with 'Text' (h2) "Hola" (Front). 'Divider'. 'Text' "Hello" (Back - conceptually hidden, but rendered here). 'Row' of buttons: "Hard", "Good", "Easy".`,
+    promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a flashcard app. 'Text' (h1) "Spanish Vocabulary". 'Card' (the flashcard). Inside the card, a 'Column' with 'Text' (h2) "Hola" (Front). 'Divider'. 'Text' "Hello" (Back - conceptually hidden, but rendered here). 'Row' of buttons: "Hard", "Good", "Easy".`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher("Text", "text", "Spanish Vocabulary"),

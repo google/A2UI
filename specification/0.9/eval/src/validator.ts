@@ -20,7 +20,7 @@ import path from "path";
 import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
 import { SchemaMatcher } from "./schema_matcher";
 
-const ajv = new Ajv({ strict: false });
+const ajv = new Ajv({ strict: false, verbose: true });
 
 const schemaDir = path.resolve(process.cwd(), "../");
 const serverToClientSchema = JSON.parse(
@@ -58,7 +58,16 @@ export function validateSchema(
     if (!valid) {
       if (validate.errors) {
         validate.errors.forEach((err) => {
-          errors.push(`AJV: ${err.instancePath} ${err.message}`);
+          let errorMsg = `AJV [Message ${messages.indexOf(message)}]: ${
+            err.instancePath
+          } ${err.message}`;
+          if (err.params) {
+            errorMsg += ` | Params: ${JSON.stringify(err.params)}`;
+          }
+          if (err.data !== undefined) {
+            errorMsg += ` | Data: ${JSON.stringify(err.data)}`;
+          }
+          errors.push(errorMsg);
         });
       }
     }
@@ -97,7 +106,7 @@ export function validateSchema(
         // Actually, let's just say "Matcher failed".
         // If we really want, we could change SchemaMatcher to have a description.
         // But for now:
-        errors.push(`Matcher failed to match any message in the stream.`);
+        errors.push(`Matcher failed: ${matcher.description}`);
       }
     }
   }
@@ -239,7 +248,7 @@ function validateComponent(
     for (const prop of props) {
       if (properties[prop] === undefined) {
         errors.push(
-          `Component '${id}' of type '${componentType}' is missing required property '${prop}'.`
+          `Component ${JSON.stringify(id)} of type '${componentType}' is missing required property '${prop}'.`
         );
       }
     }
@@ -249,7 +258,7 @@ function validateComponent(
     for (const id of ids) {
       if (id && !allIds.has(id)) {
         errors.push(
-          `Component '${id}' references non-existent component ID '${id}'.`
+          `Component ${JSON.stringify(id)} references non-existent component ID.`
         );
       }
     }

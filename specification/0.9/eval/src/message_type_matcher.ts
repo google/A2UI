@@ -20,7 +20,7 @@ import { SchemaMatcher, ValidationResult } from "./schema_matcher";
  * A concrete matcher that verifies the top-level message type.
  */
 export class MessageTypeMatcher extends SchemaMatcher {
-  constructor(private messageType: string) {
+  constructor(public messageType: string) {
     super();
   }
 
@@ -45,6 +45,6 @@ export class MessageTypeMatcher extends SchemaMatcher {
   }
 
   get description(): string {
-    return `Expected top-level message type to be '${this.messageType}'`;
+    return `Message type '${this.messageType}'`;
   }
 }

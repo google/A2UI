@@ -20,5 +20,14 @@ export interface ValidationResult {
 }
 
 export abstract class SchemaMatcher {
+  /**
+   * A human-readable description of what this matcher is looking for.
+   */
+  abstract get description(): string;
+
+  /**
+   * Validates that the given schema satisfies the matcher's criteria.
+   * @param schema The schema to validate (e.g. a message object).
+   */
   abstract validate(schema: any): ValidationResult;
 }

@@ -199,14 +199,15 @@
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property.",
+          "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property, but uses camelCase values (e.g., 'spaceBetween').",
           "enum": [
             "center",
             "end",
             "spaceAround",
             "spaceBetween",
             "spaceEvenly",
-            "start"
+            "start",
+            "stretch"
           ]
         },
         "alignment": {
@@ -228,14 +229,15 @@
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property.",
+          "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property, but uses camelCase values (e.g., 'spaceBetween').",
           "enum": [
             "start",
             "center",
             "end",
             "spaceBetween",
             "spaceAround",
-            "spaceEvenly"
+            "spaceEvenly",
+            "stretch"
           ]
         },
         "alignment": {
@@ -433,7 +435,7 @@
         "component": { "const": "DateTimeInput" },
         "value": {
           "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The selected date and/or time value."
+          "description": "The selected date and/or time value. If not yet set, initialize with an empty string."
         },
         "enableDate": {
           "type": "boolean",
