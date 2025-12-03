@@ -461,6 +461,7 @@
       "type": "object",
       "properties": {
         "component": { "const": "MultipleChoice" },
+        "description": "A component that allows the user to select one or more options from a set. Note: This component does not support a 'label' property. Use a separate Text component if a label is needed.",
         "selections": {
           "description": "The currently selected values for the component.",
           "$ref": "common_types.json#/$defs/stringArrayOrPath"

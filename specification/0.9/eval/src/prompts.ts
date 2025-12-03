@@ -184,12 +184,6 @@ The dog generator is another card which is a form that generates a fictional dog
     matchers: [new MessageTypeMatcher("updateDataModel")],
   },
   {
-    name: "uiRoot",
-    description: "A UIRoot message to set the initial UI and data roots.",
-    promptText: `Generate a JSON message with a 'createSurface' property. This message tells the client where to start rendering the UI. Set the UI root to a component with ID "mainLayout".`,
-    matchers: [new MessageTypeMatcher("createSurface")],
-  },
-  {
     name: "animalKingdomExplorer",
     description: "A simple, explicit UI to display a hierarchy of animals.",
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a simplified UI explorer for the Animal Kingdom.
