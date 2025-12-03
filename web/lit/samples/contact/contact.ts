@@ -40,6 +40,10 @@ import * as UI from "@a2ui/web-lib/ui";
 
 // Demo elements.
 import "./ui/ui.js";
+import { registerContactComponents } from "./ui/custom-components/register-components.js";
+
+// Register custom components for the contact app
+registerContactComponents();
 
 @customElement("a2ui-contact")
 export class A2UIContactFinder extends SignalWatcher(LitElement) {

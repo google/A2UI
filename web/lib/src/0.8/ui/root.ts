@@ -33,6 +33,7 @@ import { StringValue } from "../types/primitives.js";
 import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
+import { ComponentRegistry } from "./component-registry.js";
 
 type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
   AnyComponentNode,
@@ -134,11 +135,39 @@ export class Root extends SignalWatcher(LitElement) {
     }
 
     if (!Array.isArray(components)) {
-      console.warn("Found non-array children", components);
       return nothing;
     }
 
     return html` ${map(components, (component) => {
+      // 1. Check if there is a registered custom component or override.
+      if (this.enableCustomElements) {
+        const registry = ComponentRegistry.getInstance();
+        const registeredCtor = registry.get(component.type);
+        // We also check customElements.get for non-registered but defined elements
+        const elCtor = registeredCtor || customElements.get(component.type);
+
+        if (elCtor) {
+          const node = component as AnyComponentNode;
+          const el = new elCtor() as Root;
+          el.id = node.id;
+          if (node.slotName) {
+            el.slot = node.slotName;
+          }
+          el.component = node;
+          el.weight = node.weight ?? "initial";
+          el.processor = this.processor;
+          el.surfaceId = this.surfaceId;
+          el.dataContextPath = node.dataContextPath ?? "/";
+
+          for (const [prop, val] of Object.entries(component.properties)) {
+            // @ts-expect-error We're off the books.
+            el[prop] = val;
+          }
+          return html`${el}`;
+        }
+      }
+
+      // 2. Fallback to standard components.
       switch (component.type) {
         case "List": {
           const node = component as NodeOfType<"List">;
@@ -464,7 +493,10 @@ export class Root extends SignalWatcher(LitElement) {
           }
 
           const node = component as AnyComponentNode;
-          const elCtor = customElements.get(component.type);
+          const registry = ComponentRegistry.getInstance();
+          const registeredCtor = registry.get(component.type);
+          const elCtor = registeredCtor || customElements.get(component.type);
+
           if (!elCtor) {
             return html`Unknown element ${component.type}`;
           }
