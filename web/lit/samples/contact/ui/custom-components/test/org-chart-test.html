@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A2UI Hierarchy Graph Test (Contact Sample)</title>
+  <title>A2UI Org Chart Test (Contact Sample)</title>
   <style>
     body {
       font-family: sans-serif;
@@ -28,14 +28,14 @@
 </head>
 
 <body>
-  <h1>A2UI Hierarchy Graph Test (Contact Sample)</h1>
+  <h1>A2UI Org Chart Test (Contact Sample)</h1>
 
   <div class="container">
-    <hierarchy-graph id="graph"></hierarchy-graph>
+    <org-chart id="graph"></org-chart>
   </div>
 
   <script>
-    customElements.whenDefined('hierarchy-graph').then(() => {
+    customElements.whenDefined('org-chart').then(() => {
       const graph = document.getElementById('graph');
 
       graph.chain = [

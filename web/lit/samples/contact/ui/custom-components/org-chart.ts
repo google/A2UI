@@ -8,13 +8,14 @@ import { map } from 'lit/directives/map.js';
 const StateEvent = v0_8.Events.StateEvent;
 type Action = v0_8.Types.Action;
 
-export interface HierarchyNode {
+export interface OrgChartNode {
   title: string;
   name: string;
 }
 
-export class HierarchyGraph extends Root {
-  @property({ type: Array }) accessor chain: HierarchyNode[] = [];
+@customElement('org-chart')
+export class OrgChart extends Root {
+  @property({ type: Array }) accessor chain: OrgChartNode[] = [];
   @property({ type: Object }) accessor action: Action | null = null;
 
   static styles = [
@@ -104,7 +105,7 @@ export class HierarchyGraph extends Root {
     `;
   }
 
-  private handleNodeClick(node: HierarchyNode) {
+  private handleNodeClick(node: OrgChartNode) {
     if (!this.action) return;
 
     // Create a new action with the node's context merged in
