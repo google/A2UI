@@ -32,6 +32,9 @@ importers:
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
+      ajv-formats:
+        specifier: ^3.0.1
+        version: 3.0.1(ajv@8.17.1)
       genkit:
         specifier: ^1.24.0
         version: 1.24.0(@google-cloud/firestore@7.11.6)(firebase-admin@13.6.0)

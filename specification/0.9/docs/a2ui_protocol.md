@@ -24,7 +24,6 @@ The A2UI Protocol is designed for dynamically rendering user interfaces from a s
 
 Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
 
-- `createSurface`: Declares and configures a new UI area (a "surface") for rendering.
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
@@ -47,31 +46,30 @@ The A2UI protocol uses a unidirectional stream of JSON messages from the server 
 
 Here is an example sequence of events (which don't have to be in exactly this order):
 
-1.  **Create Surface:** The server sends a `createSurface` message to instruct the client to initialize a new, independent UI region.
-2.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
-3.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
-4.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
-5.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
-6.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
+1.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
+2.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
+3.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
+4.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
+5.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
 
 ```mermaid
 sequenceDiagram
     participant Server
     participant Client
 
-    Server->>+Client: 1. createSurface(surfaceId: "main")
-    Server->>+Client: 2. updateComponents(surfaceId: "main", components: [...])
-    Server->>+Client: 3. updateDataModel(surfaceId: "main", contents: {...})
-    Note right of Client: 4. Client renders the UI for the "main" surface
+    Server->>+Client: 1. updateComponents(surfaceId: "main", components: [...])
+    Server->>+Client: 2. updateDataModel(surfaceId: "main", contents: {...})
+    Note right of Client: 3. Client renders the UI for the "main" surface
+    Client-->>-Server: (UI is displayed)
     Client-->>-Server: (UI is displayed)
 
     Note over Client, Server: Time passes, user interacts, or new data arrives...
 
-    Server->>+Client: 5. updateComponents or updateDataModel (Dynamic Update)
+    Server->>+Client: 4. updateComponents or updateDataModel (Dynamic Update)
     Note right of Client: Client re-renders the UI to reflect changes
     Client-->>-Server: (UI is updated)
 
-    Server->>+Client: 6. deleteSurface(surfaceId: "main")
+    Server->>+Client: 5. deleteSurface(surfaceId: "main")
     Note right of Client: Client removes the UI for the "main" surface
     Client-->>-Server: (UI is gone)
 ```
@@ -105,37 +103,21 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 ## Envelope Message Structure
 
-The envelope defines four primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
+The envelope defines three primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
 
-### `createSurface`
 
-This message instructs the client to initialize a new surface, which is a designated area for rendering a UI. This message must be sent before any `updateComponents`, `deleteSurface`, or `updateDataModel` messages that refer to the `surfaceId`.
-
-**Properties:**
-
-- `surfaceId` (string, required): A unique identifier for the UI surface to be rendered.
-- `theme` (object, optional): Theming information for the UI, such as primary color.
-
-**Example:**
-
-```json
-{
-  "createSurface": {
-    "surfaceId": "user_profile_card",
-    "theme": {
-      "primaryColor": "#007bff"
-    }
-  }
-}
-```
 
 ### `updateComponents`
 
-This message provides a list of UI components to be added to or updated within a specific surface. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
+This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
+
+> [!NOTE]
+> Referencing a `surfaceId` in an `updateComponents` message will not automatically create the surface. The surface must be managed by the client application logic, or implicitly created if the client implementation chooses to support that, but the protocol does not strictly define the creation lifecycle step anymore.
 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be updated. This is typically a name with meaning (e.g. "user_profile_card"), and it has to be unique within the context of the GenUI session.
+- `catalogId` (string, required): The URI of the component catalog definition used for this update.
 - `components` (array, required): A list of component objects. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
 
 **Example:**
@@ -144,6 +126,7 @@ This message provides a list of UI components to be added to or updated within a
 {
   "updateComponents": {
     "surfaceId": "user_profile_card",
+    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json",
     "components": [
       {
         "id": "root",
@@ -173,7 +156,7 @@ This message provides a list of UI components to be added to or updated within a
 
 ### `updateDataModel`
 
-This message is used to send or update the data that populates the UI components. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. It allows the server to change the UI's content without resending the entire component structure.
+This message is used to send or update the data that populates the UI components. It allows the server to change the UI's content without resending the entire component structure.
 
 **Properties:**
 
@@ -219,9 +202,8 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
+{"updateComponents":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
 {"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "contents": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
-{"createSurface": {"surfaceId": "contact_form_1"}}
 ```
 
 ## Component Model

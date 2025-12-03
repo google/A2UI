@@ -15,12 +15,14 @@
  */
 
 import Ajv from "ajv";
+import addFormats from "ajv-formats";
 import fs from "fs";
 import path from "path";
 import { UpdateComponentsSchemaMatcher } from "./update_components_schema_matcher";
 import { SchemaMatcher } from "./schema_matcher";
 
 const ajv = new Ajv({ strict: false, verbose: true });
+addFormats(ajv);
 
 const schemaDir = path.resolve(process.cwd(), "../");
 const serverToClientSchema = JSON.parse(
@@ -76,13 +78,11 @@ export function validateSchema(
       validateUpdateComponents(message.updateComponents, errors);
     } else if (message.updateDataModel) {
       validateUpdateDataModel(message.updateDataModel, errors);
-    } else if (message.createSurface) {
-      validateBeginRendering(message.createSurface, errors);
     } else if (message.deleteSurface) {
       validateDeleteSurface(message.deleteSurface, errors);
     } else {
       errors.push(
-        "A2UI Protocol message must have one of: updateComponents, updateDataModel, createSurface, deleteSurface."
+        "A2UI Protocol message must have one of: updateComponents, updateDataModel, deleteSurface."
       );
     }
   }
@@ -130,6 +130,9 @@ function validateUpdateComponents(data: any, errors: string[]) {
   if (data.surfaceId === undefined) {
     errors.push("UpdateComponents must have a 'surfaceId' property.");
   }
+  if (data.catalogId === undefined) {
+    errors.push("UpdateComponents must have a 'catalogId' property.");
+  }
   if (!data.components || !Array.isArray(data.components)) {
     errors.push("UpdateComponents must have a 'components' array.");
     return;
@@ -173,11 +176,7 @@ function validateUpdateDataModel(data: any, errors: string[]) {
   }
 }
 
-function validateBeginRendering(data: any, errors: string[]) {
-  if (data.surfaceId === undefined) {
-    errors.push("CreateSurface message must have a 'surfaceId' property.");
-  }
-}
+
 
 function validateBoundValue(
   prop: any,

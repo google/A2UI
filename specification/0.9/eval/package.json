@@ -36,6 +36,7 @@
     "@genkit-ai/google-cloud": "^1.24.0",
     "@genkit-ai/google-genai": "^1.24.0",
     "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "genkit": "^1.24.0",
     "genkitx-anthropic": "^0.25.0",
     "winston": "^3.18.3",

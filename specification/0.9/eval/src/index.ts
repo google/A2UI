@@ -23,6 +23,7 @@ import { validateSchema } from "./validator";
 import { rateLimiter } from "./rateLimiter";
 import { logger, setupLogger } from "./logger";
 import Ajv from "ajv";
+import addFormats from "ajv-formats";
 
 const schemaFiles = [
   "../../json/common_types.json",
@@ -263,6 +264,7 @@ async function main() {
   }
 
   const ajv = new Ajv({ allErrors: true });
+  addFormats(ajv);
 
   const schemas: any = {};
   for (const file of schemaFiles) {
@@ -411,9 +413,6 @@ ${prompt.promptText
 ---
 `;
                   let jsonlBody = "";
-                  // Check if we need to add setup messages
-                  // If we have updateComponents but no createSurface, maybe add it?
-                  // For now, just dump what we have.
                   for (const comp of components) {
                     jsonlBody += JSON.stringify(comp) + "\n";
                   }
