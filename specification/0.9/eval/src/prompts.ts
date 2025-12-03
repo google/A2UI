@@ -723,7 +723,6 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     promptText: `Create a job application form. It should have 'TextField's for "Name", "Email", "Phone", "Resume URL". A 'MultipleChoice' for "Years of Experience" (options: "0-1", "2-5", "5+"). A 'Button' "Submit Application". Create these as static components, not data bound.`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
-      new SurfaceUpdateSchemaMatcher("Text", "text", "Job Application"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Name"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Email"),
       new SurfaceUpdateSchemaMatcher("TextField", "label", "Resume URL"),
@@ -734,8 +733,8 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     name: "courseSyllabus",
     description: "A course syllabus outline.",
     promptText: `First, generate a 'createSurface' message with surfaceId 'main'. Then, generate a 'updateComponents' message for a course syllabus. 'Text' (h1) "Introduction to Computer Science". 'List' of modules.
-    - Module 1: 'Card' with 'Text' "Algorithms" and 'List' ("Sorting", "Searching").
-    - Module 2: 'Card' with 'Text' "Data Structures" and 'List' ("Arrays", "Linked Lists").`,
+- For module 1, a 'Card' with 'Text' "Algorithms" and 'List' ("Sorting", "Searching").
+- For module 2, a 'Card' with 'Text' "Data Structures" and 'List' ("Arrays", "Linked Lists").`,
     matchers: [
       new MessageTypeMatcher("updateComponents"),
       new SurfaceUpdateSchemaMatcher(

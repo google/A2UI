@@ -110,7 +110,8 @@ function generateSummary(
 
     let totalModelFailedRuns = 0;
 
-    for (const promptName in promptsInModel) {
+    const sortedPromptNames = Object.keys(promptsInModel).sort();
+    for (const promptName of sortedPromptNames) {
       const runs = promptsInModel[promptName];
       const totalRuns = runs.length;
       const failedRuns = runs.filter(
@@ -132,7 +133,15 @@ function generateSummary(
     }
 
     const totalRunsForModel = resultsByModel[modelName].length;
-    summary += `\n\n**Total failed runs:** ${totalModelFailedRuns} / ${totalRunsForModel}`;
+    const successPercentage =
+      totalRunsForModel === 0
+        ? "0.0"
+        : (
+            ((totalRunsForModel - totalModelFailedRuns) / totalRunsForModel) *
+            100.0
+          ).toFixed(1);
+
+    summary += `\n\n**Total failed runs:** ${totalModelFailedRuns} / ${totalRunsForModel} (${successPercentage}% success)`;
   }
 
   summary += "\n\n---\n\n## Overall Summary\n";
@@ -150,7 +159,13 @@ function generateSummary(
   ].join(", ");
 
   summary += `\n- **Total tool failures:** ${totalToolErrorRuns} / ${totalRuns}`;
-  summary += `\n- **Number of runs with any failure (tool error or validation):** ${totalRunsWithAnyFailure} / ${totalRuns}`;
+  const successPercentage =
+    totalRuns === 0
+      ? "0.0"
+      : (((totalRuns - totalRunsWithAnyFailure) / totalRuns) * 100.0).toFixed(
+          1
+        );
+  summary += `\n- **Number of runs with any failure (tool error or validation):** ${totalRunsWithAnyFailure} / ${totalRuns} (${successPercentage}% success)`;
   const latencies = results.map((r) => r.latency).sort((a, b) => a - b);
   const totalLatency = latencies.reduce((acc, l) => acc + l, 0);
   const meanLatency = (totalLatency / totalRuns).toFixed(0);

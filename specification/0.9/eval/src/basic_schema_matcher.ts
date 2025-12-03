@@ -19,9 +19,17 @@ import { SchemaMatcher, ValidationResult } from "./schema_matcher";
 export class BasicSchemaMatcher extends SchemaMatcher {
   constructor(
     public propertyPath: string,
-    public propertyValue?: any,
+    public propertyValue?: any
   ) {
     super();
+  }
+
+  get description(): string {
+    return `Basic match for property '${this.propertyPath}'${
+      this.propertyValue !== undefined
+        ? ` with value '${JSON.stringify(this.propertyValue)}'`
+        : ""
+    }`;
   }
 
   validate(schema: any): ValidationResult {
@@ -54,7 +62,7 @@ export class BasicSchemaMatcher extends SchemaMatcher {
         const error = `Property '${
           this.propertyPath
         }' has value '${JSON.stringify(
-          actualValue,
+          actualValue
         )}', but expected '${JSON.stringify(this.propertyValue)}'.`;
         return { success: false, error };
       }
@@ -67,6 +75,10 @@ export class BasicSchemaMatcher extends SchemaMatcher {
 export class AnySchemaMatcher extends SchemaMatcher {
   constructor(public matchers: SchemaMatcher[]) {
     super();
+  }
+
+  get description(): string {
+    return `Any of: [${this.matchers.map((m) => m.description).join(", ")}]`;
   }
 
   validate(schema: any): ValidationResult {
@@ -91,6 +103,10 @@ export class AnySchemaMatcher extends SchemaMatcher {
 export class AllSchemaMatcher extends SchemaMatcher {
   constructor(public matchers: SchemaMatcher[]) {
     super();
+  }
+
+  get description(): string {
+    return `All of: [${this.matchers.map((m) => m.description).join(", ")}]`;
   }
 
   validate(schema: any): ValidationResult {
