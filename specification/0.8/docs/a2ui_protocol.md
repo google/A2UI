@@ -170,9 +170,9 @@ A2UI's component model is designed for flexibility, separating the protocol from
 
 A **Catalog** defines the contract between the server and the client for the UI that can be rendered. It contains a list of supported component types (e.g., `Row`, `Text`), their properties, and available styles. A catalog is defined by a **Catalog Definition Document**.
 
-There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `a2ui.org:standard_catalog_0_8_0`.
+There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json`.
 
-Catalog IDs are simple strings. While they can be anything, it's recommended to use an internet domain you own as a prefix (e.g., `my-company.com:my-custom-catalog`) to avoid collisions. Furthermore, if any changes are made to a catalog that could break compatibility between an agent and renderer, a new `catalogId` **must** be assigned. This ensures clear versioning and prevents unexpected behavior if an agent has changes but the client does not, or vice versa.
+Catalog IDs are simple string identifiers. While they can be anything, it is conventional to use a URI within a domain that you own, to simplify debugging, avoid confusion, and avoid name collisions. Furthermore, if any changes are made to a catalog that could break compatibility between an agent and renderer, a new `catalogId` **must** be assigned. This ensures clear versioning and prevents unexpected behavior if an agent has changes but the client does not, or vice versa.
 
 The negotiation process allows the client and server to agree on which catalog to use for a given UI surface. This process is designed to be flexible, supporting standard, custom, and even dynamically-defined catalogs.
 
@@ -203,10 +203,10 @@ The server (agent) advertises its capabilities in its Agent Card as part of the 
 
 #### 2. Client Declares Supported Catalogs
 
-In **every** message sent to the server, the client includes an `a2uiClientCapabilities` object within the A2A `Message` metadata. This object informs the server of all catalogs the client can render.
+In **every** message sent to the server, the client includes an `a2uiClientCapabilities` object within the A2A `Message` metadata. This object informs the agent server of all catalogs the client can render.
 
-- `supportedCatalogIds` (array of strings, required): A list of identifiers for all pre-defined catalogs the client supports. The client must explicitly include the standard catalog ID here if it supports the standard catalog.
-- `inlineCatalogs` (array of objects, optional): An array of full Catalog Definition Documents. This allows a client to provide custom, on-the-fly catalogs. This may only be provided if the server has advertised `acceptsInlineCatalogs: true`.
+- `supportedCatalogIds` (array of strings, required): A list of identifiers for all pre-defined catalogs the client supports. The client must explicitly include the standard catalog ID here if it supports the standard catalog. The contents of these catalogs are expected to be compiled into the agent server and not downloaded at runtime, in order to prevent malicious content being injected into the prompt dynamically, and ensure predictable results.
+- `inlineCatalogs` (array of objects, optional): An array of full Catalog Definition Documents. This allows a client to provide custom, on-the-fly catalogs, typically for use in local development workflows where it is faster to update a catalog in one place on the client. This may only be provided if the server has advertised `acceptsInlineCatalogs: true`.
 
 **Example A2A Message with Client Capabilities:**
 ```json
@@ -214,12 +214,12 @@ In **every** message sent to the server, the client includes an `a2uiClientCapab
   "metadata": {
     "a2uiClientCapabilities": {
       "supportedCatalogIds": [
-        "a2ui.org:standard_catalog_0_8_0",
-        "my-company.com:custom-reporting-catalog-1.2"
+        "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json",
+        "https://my-company.com/a2ui_catalogs/custom-reporting-catalog-1.2"
       ],
       "inlineCatalogs": [
         {
-          "catalogId": "my-company.com:temp-signature-pad-catalog",
+          "catalogId": "https://my-company.com/inline_catalogs/temp-signature-pad-catalog",
           "components": {
             "SignaturePad": {
               "type": "object",
@@ -245,23 +245,35 @@ The server receives the client's capabilities and chooses a catalog to use for a
 
 - `catalogId` (string, optional): The identifier of the chosen catalog. This ID must be one of the `supportedCatalogIds` or the `catalogId` from one of the `inlineCatalogs` provided by the client.
 
-If the `catalogId` is omitted, the client **MUST** default to the standard catalog for the protocol version (`a2ui.org:standard_catalog_0_8_0`).
+If the `catalogId` is omitted, the client **MUST** default to the standard catalog for the protocol version (`https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json`).
 
 **Example `beginRendering` Message:**
 ```json
 {
   "beginRendering": {
     "surfaceId": "unique-surface-1",
-    "catalogId": "my-company.com:custom-reporting-catalog-1.2",
+    "catalogId": "https://my-company.com/inline_catalogs/temp-signature-pad-catalog",
     "root": "root-component-id"
   }
 }
 ```
-Each surface can use a different catalog, providing a high degree of flexibility.
+
+Each surface can use a different catalog, providing a high degree of flexibility, particularly in multi-agent systems where different agents may support different catalogs.
 
 #### Schemas for Developers
 
-When building an agent, it is recommended to use a resolved schema that includes the specific component catalog you are targeting (e.g., a custom schema combining `server_to_client.json` with your `my-company.com:custom-reporting-catalog-1.2` definition). This provides the LLM with a strict definition of all available components and their properties, leading to more reliable UI generation. The generic `server_to_client.json` is the abstract wire protocol, while the resolved schema is the concrete tool for generation.
+When building an agent, it is recommended to use a resolved schema that includes the specific component catalog you are targeting (e.g., a custom schema combining `server_to_client.json` with your `https://my-company.com/a2ui_catalogs/custom-reporting-catalog-1.2` definition). This provides the LLM with a strict definition of all available components and their properties, as well as the catalog-specific styles, leading to more reliable UI generation. The generic `server_to_client.json` is the abstract wire protocol, while the resolved schema is the concrete tool for generation.
+
+In order to do the substitution, based on the standard `server_to_client_schema` and a `custom_catalog_definition` object, you can use JSON manipulation logic similar to:
+
+```py
+component_properties = custom_catalog_definition["components"]
+style_properties = custom_catalog_definition["components"]
+resolved_schema = copy.deepcopy(server_to_client_schema)
+
+resolved_schema["properties"]["surfaceUpdate"]["properties"]["components"]["items"]["properties"]["component"]["properties"] = component_properties
+resolved_schema["properties"]["beginRendering"]["properties"]["styles"]["properties"] = style_properties
+```
 
 See `server_to_client_with_standard_catalog.json` for an example of a resolved 
 schema which has the components substituted in.
