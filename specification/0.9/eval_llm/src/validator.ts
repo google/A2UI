@@ -89,7 +89,8 @@ export class Validator {
     const failureData = {
       failureType: "schema",
       pass: false,
-      reason: errors.join("\n"),
+      reason: "Schema validation failure",
+      issues: errors,
     };
 
     fs.writeFileSync(

@@ -34,12 +34,21 @@ export const evaluationFlow = ai.defineFlow(
     outputSchema: z.object({
       pass: z.boolean(),
       reason: z.string(),
+      issues: z.array(z.string()).optional(),
     }),
   },
   async ({ originalPrompt, generatedOutput, evalModel, schemas }) => {
     const schemaDefs = Object.values(schemas)
       .map((s: any) => JSON.stringify(s, null, 2))
       .join("\n\n");
+
+    const EvalResultSchema = z.object({
+      pass: z
+        .boolean()
+        .describe("Whether the generated UI meets the requirements"),
+      reason: z.string().describe("Summary of the reason for a failure."),
+      issues: z.array(z.string()).describe("List of specific issues found."),
+    });
 
     const evalPrompt = `You are an expert QA evaluator for a UI generation system.
 Your task is to evaluate whether the generated UI JSON matches the user's request and conforms to the expected behavior.
@@ -68,11 +77,30 @@ Instructions:
 - If the generated output is missing a component that is specified in the user request, it is required to exist in the output in order to pass the test. If it is not specified, it is not required.
 - If the request is vague about the contents of a label or other property, you can still pass the test as long as it can be construed as matching the intent.
 
-Return a YAML object with the following structure:
+Return a JSON object with the following schema:
 
-\`\`\`yaml
-pass: boolean  # Whether the generated UI meets the requirements
-reason: string # Explanation for a failure, using bullet points for multiple issues.
+\`\`\`json
+{
+  "type": "object",
+  "properties": {
+    "pass": {
+      "type": "boolean",
+      "description": "Whether the generated UI meets the requirements"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Summary of the reason for a failure."
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of specific issues found."
+    }
+  },
+  "required": ["pass", "reason", "issues"]
+}
 \`\`\`
 `;
 
@@ -103,56 +131,20 @@ reason: string # Explanation for a failure, using bullet points for multiple iss
         model: evalModelConfig.model || evalModel, // Use the model object if available, otherwise the string
         config: evalModelConfig.config,
         output: {
-          format: "text",
+          schema: EvalResultSchema,
         },
       });
 
-      const output = response.output;
-      if (!output) {
+      // Parse the output
+      const result = response.output;
+      if (!result) {
         throw new Error("No output from evaluation model");
-      }
-
-      // Parse the YAML output
-      let result: any;
-      if (typeof output === "string") {
-        try {
-          // Clean up potential markdown fences
-          const cleanedOutput = output
-            .replace(/```yaml\n/g, "")
-            .replace(/\n```/g, "");
-          result = yaml.load(cleanedOutput);
-          if (
-            typeof result !== "object" ||
-            result === null ||
-            result.pass === undefined
-          ) {
-            return {
-              pass: false,
-              reason:
-                "Failed to parse YAML evaluation result: Invalid structure - " +
-                output,
-            };
-          }
-        } catch (e) {
-          return {
-            pass: false,
-            reason:
-              "Failed to parse YAML evaluation result: " +
-              e +
-              "\nOutput: " +
-              output,
-          };
-        }
-      } else {
-        return {
-          pass: false,
-          reason: "Evaluation model did not return a string: " + typeof output,
-        };
       }
 
       return {
         pass: result.pass,
         reason: result.reason || "No reason provided",
+        issues: result.issues || [],
       };
     } catch (e: any) {
       logger.error(`Error during evaluation: ${e}`);

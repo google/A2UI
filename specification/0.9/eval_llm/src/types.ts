@@ -19,5 +19,6 @@ export interface EvaluatedResult extends ValidatedResult {
   evaluationResult?: {
     pass: boolean;
     reason: string;
+    issues?: string[];
   };
 }

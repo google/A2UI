@@ -75,7 +75,9 @@ export class Evaluator {
 
   private async runJob(result: ValidatedResult): Promise<EvaluatedResult> {
     const maxEvalRetries = 3;
-    let evaluationResult: { pass: boolean; reason: string } | undefined;
+    let evaluationResult:
+      | { pass: boolean; reason: string; issues?: string[] }
+      | undefined;
 
     for (let evalRetry = 0; evalRetry < maxEvalRetries; evalRetry++) {
       try {
@@ -115,7 +117,7 @@ export class Evaluator {
 
   private saveEvaluation(
     result: ValidatedResult,
-    evaluationResult: { pass: boolean; reason: string }
+    evaluationResult: { pass: boolean; reason: string; issues?: string[] }
   ) {
     if (!this.outputDir) return;
 
