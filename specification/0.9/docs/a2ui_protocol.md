@@ -12,7 +12,7 @@ A Specification for a JSON-Based, Streaming UI Protocol.
 **Version:** 0.9
 **Status:** Draft
 **Created:** Nov 20, 2025
-**Last Updated:** Dec 1, 2025
+**Last Updated:** Dec 3, 2025
 
 # A2UI (Agent to UI) Protocol v0.9
 
@@ -84,11 +84,11 @@ A2UI v0.9 is defined by three interacting JSON schemas.
 
 The [`common_types.json`] schema defines reusable primitives used throughout the protocol.
 
-- **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string (JSON pointer).
+- **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string ([JSON Pointer]).
 - **`childrenProperty`**: Defines how containers hold children. It supports:
 
   - `array`: A static array of string component IDs.
-  - `object`: A template for generating children from a data binding list (requires a template `componentId` and a `dataBinding`).
+  - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
 - **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
 - **`weight`**: The relative weight of a component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column. Defined here so that all weights are consistent and can be used for data binding.
@@ -219,7 +219,7 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"textFieldType":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"textFieldType":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"textFieldType":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"textFieldType":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"textFieldType":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
 {"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "contents": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
 {"createSurface": {"surfaceId": "contact_form_1"}}
 ```
@@ -275,6 +275,127 @@ flowchart TD
 
 ```
 
+## Data Binding, Scope, and State Management
+
+A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model). This section defines the precise mechanics of path resolution, variable scope during iteration, and the specific behaviors of two-way binding for interactive components.
+
+### Path Resolution & Scope
+
+Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a pointer is resolved depends on the current **Evaluation Scope**.
+
+#### The Root Scope
+
+By default, all components operate in the **Root Scope**.
+
+- The Root Scope corresponds to the top-level object of the `contents` provided in `updateDataModel`.
+- Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
+
+#### Collection Scopes (Relative Paths)
+
+When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `childrenProperty`, it creates a new **Child Scope** for each item in the bound array.
+
+- **Template Definition:** When a container binds its children to a path (e.g., `path: "/users"`), the client iterates over the array found at that location.
+- **Scope Instantiation:** For every item in the array, the client instantiates the template component.
+- **Relative Resolution:** Inside these instantiated components, any path that **does not** start with a forward slash `/` is treated as a **Relative Path**.
+
+  - A relative path `firstName` inside a template iterating over `/users` resolves to `/users/0/firstName` for the first item, `/users/1/firstName` for the second, etc.
+
+- **Mixing Scopes:** Components inside a Child Scope can still access the Root Scope by using an Absolute Path.
+
+#### Example: Scope Resolution
+
+**Data Model:**
+
+```json
+{
+  "company": "Acme Corp",
+  "employees": [
+    { "name": "Alice", "role": "Engineer" },
+    { "name": "Bob", "role": "Designer" }
+  ]
+}
+```
+
+**Component Definition:**
+
+```json
+{
+  "id": "employee_list",
+  "props": {
+    "component": "List",
+    "children": {
+      "path": "/employees",
+      "componentId": "employee_card_template"
+    }
+  }
+},
+{
+  "id": "employee_card_template",
+  "props": {
+    "component": "Column",
+    "children": ["name_text", "company_text"]
+  }
+},
+{
+  "id": "name_text",
+  "props": {
+    "component": "Text",
+    "text": { "path": "name" }
+    // "name" is Relative. Resolves to /employees/N/name
+  }
+},
+{
+  "id": "company_text",
+  "props": {
+    "component": "Text",
+    "text": { "path": "/company" }
+    // "/company" is Absolute. Resolves to "Acme Corp" globally.
+  }
+}
+```
+
+### Two-Way Binding & Input Components
+
+Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `MultipleChoice`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
+
+#### The Read/Write Contract
+
+Unlike static display components (like `Text`), input components modify the client-side data model immediately upon user interaction.
+
+1.  **Read (Model -> View):** When the component renders, it reads its value from the bound `path`. If the Data Model is updated via `updateDataModel`, the component re-renders to reflect the new value.
+2.  **Write (View -> Model):** When the user interacts with the component (e.g., types a character, toggles a box), the client **immediately** updates the value at the bound `path` in the local Data Model.
+
+#### Reactivity
+
+Because the local Data Model is the single source of truth, updates from input components are **reactive**.
+
+- If a `TextField` is bound to `/user/name`, and a separate `Text` label is also bound to `/user/name`, the label must update in real-time as the user types in the text field.
+
+#### Server Synchronization
+
+It is critical to note that Two-Way Binding is **local to the client**.
+
+- User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
+- The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
+- When a `userAction` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
+
+#### Example: Form Submission Pattern
+
+1.  **Bind:** `TextField` is bound to `/formData/email`.
+2.  **Interact:** User types "jane@example.com". The local model at `/formData/email` is updated.
+3.  **Action:** A "Submit" button has the following action definition:
+
+    ```json
+    "action": {
+      "name": "submit_form",
+      "context": {
+        "email": { "path": "/formData/email" }
+      }
+    }
+    ```
+
+4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `userAction` payload.
+
 ## Standard Component Catalog
 
 The [`standard_catalog_definition.json`] provides the baseline set of components.
@@ -300,78 +421,6 @@ The [`standard_catalog_definition.json`] provides the baseline set of components
 | **MultipleChoice** | A component for selecting one or more options.          |
 | **Slider**         | A slider for selecting a numeric value within a range.  |
 
-### Data Binding
-
-Components connect to the data model through data binding. Any component property that can be dynamic (like the `text` of a `Text` component) accepts an object that can specify either a literal value or a path to a value in the data model.
-
-These properties use one of the `*OrPath` types defined in `common_types.json` (e.g., `stringOrPath`, `numberOrPath`).
-
-- **Literal Value**: To provide a static value, use the value directly (e.g., `"text": "Hello"`).
-- **Data Model Path**: To bind to a value in the data model, use an object with a `path` property. The value of the path is a string that corresponds to a key in the `contents` of a `updateDataModel` message.
-
-Paths are specified using [JSON Pointer] syntax with the data model `contents` as the root.
-
-For components that use `childrenProperty`'s templates, the paths are relative paths within each data item in the list. For other uses, the paths are absolute paths within the data model `contents`.
-
-**Example of a `stringOrPath` property:**
-
-```json
-// Static value
-"text": "Hello, World!"
-
-// Dynamic value bound to the data model
-"text": { "path": "/user/name" }
-```
-
-**Example of an update with data binding:**
-
-The surface update:
-
-```json
-{
-  "updateComponents": {
-    "surfaceId": "weather_card",
-    "components": [
-      {
-        "id": "root",
-        "props": {
-          "component": "Column",
-          "children": ["city_text", "temp_text"]
-        }
-      },
-      {
-        "id": "city_text",
-        "props": {
-          "component": "Text",
-          "text": { "path": "/city" }
-        }
-      },
-      {
-        "id": "temp_text",
-        "props": {
-          "component": "Text",
-          "text": { "path": "/temperature" }
-        }
-      }
-    ]
-  }
-}
-```
-
-And the corresponding data model update:
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "weather_card",
-    "contents": {
-      "city": "San Francisco",
-      "temperature": "72°F"
-    }
-  }
-}
-```
-
 ## Usage Pattern: The Prompt-Generate-Validate Loop
 
 The A2UI protocol is designed to be used in a three-step loop with a Large Language Model:
@@ -387,6 +436,26 @@ The A2UI protocol is designed to be used in a three-step loop with a Large Langu
 3.  **Validate**: Validate the generated JSON against the A2UI schema. If the JSON is valid, it can be sent to the client for rendering. If it is invalid, the errors can be reported back to the LLM in a subsequent prompt, allowing it to self-correct.
 
 This loop allows for a high degree of flexibility and robustness, as the system can leverage the generative capabilities of the LLM while still enforcing the structural integrity of the UI protocol.
+
+### Standard Validation Error Format
+
+If validation fails, the client (or the system acting on behalf of the client) should send an `error` message back to the LLM. To ensure the LLM can understand and correct the error, use the following standard format within the `error` message payload:
+
+- `type` (string, required): Must be `"ValidationFailed"`.
+- `path` (string, required): A JSONPath or dot-notation string indicating the location of the error (e.g., `components[2].props.text`).
+- `message` (string, required): A human-readable description of the validation error.
+
+**Example Error Message:**
+
+```json
+{
+  "error": {
+    "type": "ValidationFailed",
+    "path": "components[2].props.text",
+    "message": "Expected stringOrPath, got integer"
+  }
+}
+```
 
 ## Client-to-Server Messages
 
@@ -413,3 +482,4 @@ This message is used to report a client-side error to the server.
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
+[RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901

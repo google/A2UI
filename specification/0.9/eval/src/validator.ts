@@ -393,12 +393,9 @@ function validateComponent(
           typeof properties.children === "object" &&
           properties.children !== null
         ) {
-          if (
-            !properties.children.componentId ||
-            !properties.children.dataBinding
-          ) {
+          if (!properties.children.componentId || !properties.children.path) {
             errors.push(
-              `Component '${id}' children template must have 'componentId' and 'dataBinding'.`
+              `Component '${id}' children template must have 'componentId' and 'path'.`
             );
           }
           checkRefs([properties.children.componentId]);
