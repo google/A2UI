@@ -18,7 +18,7 @@ import {
   configureChatCanvasFeatures,
   usingA2aService,
   usingA2uiRenderers,
-  usingDefaultSanitizerMarkdownRenderer,
+  usingMarkdownRenderer,
 } from '@a2a_chat_canvas/config';
 import {
   ApplicationConfig,
@@ -29,6 +29,7 @@ import { provideRouter } from '@angular/router';
 import { RIZZ_CHARTS_CATALOG } from '@rizzcharts/a2ui-catalog/catalog';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { A2aService } from '../services/a2a_service';
+import { RizzchartsMarkdownRendererService } from '../services/markdown-renderer.service';
 import { theme } from './theme';
 
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
@@ -44,7 +45,7 @@ export const appConfig: ApplicationConfig = {
     configureChatCanvasFeatures(
       usingA2aService(A2aService),
       usingA2uiRenderers(RIZZ_CHARTS_CATALOG, theme),
-      usingDefaultSanitizerMarkdownRenderer(),
+      usingMarkdownRenderer(RizzchartsMarkdownRendererService),
     ),
   ],
 };
