@@ -17,6 +17,10 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install editor deps
+        working-directory: ./editor
+        run: npm ci
+
       - name: Install all deps
         working-directory: ./samples/client/lit
         run: npm install --workspaces
