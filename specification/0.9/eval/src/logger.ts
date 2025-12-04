@@ -27,7 +27,7 @@ export const logger = winston.createLogger({
   transports: [consoleTransport],
 });
 
-export function setupLogger(outputDir: string, logLevel: string) {
+export function setupLogger(outputDir: string | undefined, logLevel: string) {
   // Ensure the global level allows debug logs so they reach the file transport
   logger.level = "debug";
 
@@ -36,16 +36,19 @@ export function setupLogger(outputDir: string, logLevel: string) {
 
   if (fileTransport) {
     logger.remove(fileTransport);
+    fileTransport = null;
   }
 
-  fileTransport = new winston.transports.File({
-    filename: path.join(outputDir, "output.log"),
-    level: "debug", // Always capture everything in the file
-    format: winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.json()
-    ),
-  });
+  if (outputDir) {
+    fileTransport = new winston.transports.File({
+      filename: path.join(outputDir, "output.log"),
+      level: "debug", // Always capture everything in the file
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      ),
+    });
 
-  logger.add(fileTransport);
+    logger.add(fileTransport);
+  }
 }

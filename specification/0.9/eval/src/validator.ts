@@ -1,426 +1,312 @@
-/*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- */
-
 import Ajv from "ajv";
-import fs from "fs";
-import path from "path";
-import { SurfaceUpdateSchemaMatcher } from "./surface_update_schema_matcher";
-import { SchemaMatcher } from "./schema_matcher";
+import * as fs from "fs";
+import * as path from "path";
+import * as yaml from "js-yaml";
 
-const ajv = new Ajv({ strict: false });
+import { GeneratedResult, ValidatedResult, IssueSeverity } from "./types";
+import { logger } from "./logger";
 
-const schemaDir = path.resolve(process.cwd(), "../");
-const serverToClientSchema = JSON.parse(
-  fs.readFileSync(
-    path.join(schemaDir, "json", "server_to_client.json"),
-    "utf-8"
-  )
-);
-const standardCatalogDefinitionSchema = JSON.parse(
-  fs.readFileSync(
-    path.join(schemaDir, "json", "standard_catalog_definition.json"),
-    "utf-8"
-  )
-);
-const commonTypesSchema = JSON.parse(
-  fs.readFileSync(path.join(schemaDir, "json", "common_types.json"), "utf-8")
-);
+export class Validator {
+  private ajv: Ajv;
+  private validateFn: any;
 
-ajv.addSchema(commonTypesSchema, "common_types.json");
-ajv.addSchema(
-  standardCatalogDefinitionSchema,
-  "standard_catalog_definition.json"
-);
-const validate = ajv.compile(serverToClientSchema);
+  constructor(
+    private schemas: Record<string, any>,
+    private outputDir?: string
+  ) {
+    this.ajv = new Ajv({ allErrors: true, strict: false }); // strict: false to be lenient with unknown keywords if any
+    for (const [name, schema] of Object.entries(schemas)) {
+      this.ajv.addSchema(schema, name);
+    }
+    this.validateFn = this.ajv.getSchema(
+      "https://a2ui.dev/specification/0.9/server_to_client.json"
+    );
+  }
 
-export function validateSchema(
-  data: any,
-  matchers?: SchemaMatcher[]
-): string[] {
-  const errors: string[] = [];
+  async run(results: GeneratedResult[]): Promise<ValidatedResult[]> {
+    logger.info(
+      `Starting Phase 2: Schema Validation (${results.length} items)`
+    );
+    const validatedResults: ValidatedResult[] = [];
+    let passedCount = 0;
+    let failedCount = 0;
 
-  const valid = validate(data);
-  if (!valid) {
-    if (validate.errors) {
-      validate.errors.forEach((err) => {
-        errors.push(`AJV: ${err.instancePath} ${err.message}`);
+    // Phase 2 is fast (CPU bound), so we can just iterate.
+    // If we wanted to be fancy we could chunk it, but for < 1000 items it's instant.
+
+    for (const result of results) {
+      if (result.error || !result.components) {
+        validatedResults.push({ ...result, validationErrors: [] }); // Already failed generation
+        continue;
+      }
+
+      const errors: string[] = [];
+      const components = result.components;
+
+      // 1. AJV Validation
+      if (this.validateFn) {
+        for (const component of components) {
+          if (!this.validateFn(component)) {
+            errors.push(
+              ...(this.validateFn.errors || []).map(
+                (err: any) => `${err.instancePath} ${err.message}`
+              )
+            );
+          }
+        }
+      }
+
+      // 2. Custom Validation (Referential Integrity, etc.)
+      this.validateCustom(components, errors);
+
+      if (errors.length > 0) {
+        failedCount++;
+        if (this.outputDir) {
+          this.saveFailure(result, errors);
+        }
+      } else {
+        passedCount++;
+      }
+
+      validatedResults.push({
+        ...result,
+        validationErrors: errors,
       });
     }
+
+    logger.info(
+      `Phase 2: Validation Complete. Passed: ${passedCount}, Failed: ${failedCount}`
+    );
+    return validatedResults;
   }
 
-  if (data.surfaceUpdate) {
-    validateSurfaceUpdate(data.surfaceUpdate, errors);
-  } else if (data.dataModelUpdate) {
-    validateDataModelUpdate(data.dataModelUpdate, errors);
-  } else if (data.createSurface) {
-    validateBeginRendering(data.createSurface, errors);
-  } else if (data.deleteSurface) {
-    validateDeleteSurface(data.deleteSurface, errors);
-  } else {
-    errors.push(
-      "A2UI Protocol message must have one of: surfaceUpdate, dataModelUpdate, createSurface, deleteSurface."
+  private saveFailure(result: GeneratedResult, errors: string[]) {
+    if (!this.outputDir) return;
+    const modelDir = path.join(
+      this.outputDir,
+      `output-${result.modelName.replace(/[\/:]/g, "_")}`
+    );
+    const detailsDir = path.join(modelDir, "details");
+    const failureData = {
+      pass: false,
+      reason: "Schema validation failure",
+      issues: errors.map((e) => ({
+        issue: e,
+        severity: "criticalSchema" as IssueSeverity,
+      })),
+      overallSeverity: "criticalSchema" as IssueSeverity,
+    };
+
+    fs.writeFileSync(
+      path.join(
+        detailsDir,
+        `${result.prompt.name}.${result.runNumber}.failed.yaml`
+      ),
+      yaml.dump(failureData)
     );
   }
 
-  if (matchers) {
-    for (const matcher of matchers) {
-      const result = matcher.validate(data);
-      if (!result.success) {
-        errors.push(result.error!);
-      }
-    }
-  }
+  private validateCustom(messages: any[], errors: string[]) {
+    let hasUpdateComponents = false;
+    let hasRootComponent = false;
 
-  return errors;
-}
+    for (const message of messages) {
+      if (message.updateComponents) {
+        hasUpdateComponents = true;
+        this.validateUpdateComponents(message.updateComponents, errors);
 
-function validateDeleteSurface(data: any, errors: string[]) {
-  if (data.surfaceId === undefined) {
-    errors.push("DeleteSurface must have a 'surfaceId' property.");
-  }
-  const allowed = ["surfaceId"];
-  for (const key in data) {
-    if (!allowed.includes(key)) {
-      errors.push(`DeleteSurface has unexpected property: ${key}`);
-    }
-  }
-}
-
-function validateSurfaceUpdate(data: any, errors: string[]) {
-  if (data.surfaceId === undefined) {
-    errors.push("SurfaceUpdate must have a 'surfaceId' property.");
-  }
-  if (!data.components || !Array.isArray(data.components)) {
-    errors.push("SurfaceUpdate must have a 'components' array.");
-    return;
-  }
-
-  const componentIds = new Set<string>();
-  for (const c of data.components) {
-    const id = c.id;
-    if (id) {
-      if (componentIds.has(id)) {
-        errors.push(`Duplicate component ID found: ${id}`);
-      }
-      componentIds.add(id);
-    }
-  }
-
-  for (const component of data.components) {
-    validateComponent(component, componentIds, errors);
-  }
-}
-
-function validateDataModelUpdate(data: any, errors: string[]) {
-  if (data.surfaceId === undefined) {
-    errors.push("DataModelUpdate must have a 'surfaceId' property.");
-  }
-
-  const allowedTopLevel = ["surfaceId", "path", "contents"];
-  for (const key in data) {
-    if (!allowedTopLevel.includes(key)) {
-      errors.push(`DataModelUpdate has unexpected property: ${key}`);
-    }
-  }
-
-  if (
-    typeof data.contents !== "object" ||
-    data.contents === null ||
-    Array.isArray(data.contents)
-  ) {
-    errors.push("DataModelUpdate 'contents' property must be an object.");
-    return;
-  }
-}
-
-function validateBeginRendering(data: any, errors: string[]) {
-  if (data.surfaceId === undefined) {
-    errors.push("CreateSurface message must have a 'surfaceId' property.");
-  }
-}
-
-function validateBoundValue(
-  prop: any,
-  propName: string,
-  componentId: string,
-  componentType: string,
-  errors: string[]
-) {
-  if (typeof prop !== "object" || prop === null || Array.isArray(prop)) {
-    errors.push(
-      `Component '${componentId}' of type '${componentType}' property '${propName}' must be an object.`
-    );
-    return;
-  }
-  const keys = Object.keys(prop);
-  const allowedKeys = [
-    "literalString",
-    "literalNumber",
-    "literalBoolean",
-    "path",
-  ];
-  let validKeyCount = 0;
-  for (const key of keys) {
-    if (allowedKeys.includes(key)) {
-      validKeyCount++;
-    }
-  }
-  if (validKeyCount !== 1 || keys.length !== 1) {
-    errors.push(
-      `Component '${componentId}' of type '${componentType}' property '${propName}' must have exactly one key from [${allowedKeys.join(", ")}]. Found: ${keys.join(", ")}`
-    );
-  }
-}
-
-function validateComponent(
-  component: any,
-  allIds: Set<string>,
-  errors: string[]
-) {
-  const id = component.id;
-  if (!id) {
-    errors.push(`Component is missing an 'id'.`);
-    return;
-  }
-
-
-  if (!component.props || typeof component.props !== "object") {
-    errors.push(`Component '${id}' is missing 'props' object.`);
-    return;
-  }
-
-  const properties = component.props;
-  const componentType = properties.component;
-  if (!componentType || typeof componentType !== "string") {
-    errors.push(
-      `Component '${id}' is missing 'component' property in 'props'.`
-    );
-    return;
-  }
-
-  if (typeof properties !== "object" || properties === null) {
-    errors.push(
-      `Component '${id}' has invalid properties for type '${componentType}'.`
-    );
-    return;
-  }
-
-  const checkRequired = (props: string[]) => {
-    for (const prop of props) {
-      if (properties[prop] === undefined) {
-        errors.push(
-          `Component '${id}' of type '${componentType}' is missing required property '${prop}'.`
-        );
-      }
-    }
-  };
-
-  const checkRefs = (ids: (string | undefined)[]) => {
-    for (const id of ids) {
-      if (id && !allIds.has(id)) {
-        errors.push(
-          `Component '${id}' references non-existent component ID '${id}'.`
-        );
-      }
-    }
-  };
-
-  switch (componentType) {
-    case "Text":
-      checkRequired(["text"]);
-      if (properties.text)
-        validateBoundValue(properties.text, "text", id, componentType, errors);
-      break;
-    case "Image":
-      checkRequired(["url"]);
-      if (properties.url)
-        validateBoundValue(properties.url, "url", id, componentType, errors);
-      break;
-    case "Video":
-      checkRequired(["url"]);
-      if (properties.url)
-        validateBoundValue(properties.url, "url", id, componentType, errors);
-      break;
-    case "AudioPlayer":
-      checkRequired(["url"]);
-      if (properties.url)
-        validateBoundValue(properties.url, "url", id, componentType, errors);
-      if (properties.description)
-        validateBoundValue(
-          properties.description,
-          "description",
-          id,
-          componentType,
-          errors
-        );
-      break;
-    case "TextField":
-      checkRequired(["label"]);
-      if (properties.label)
-        validateBoundValue(
-          properties.label,
-          "label",
-          id,
-          componentType,
-          errors
-        );
-      if (properties.text)
-        validateBoundValue(properties.text, "text", id, componentType, errors);
-      break;
-    case "DateTimeInput":
-      checkRequired(["value"]);
-      if (properties.value)
-        validateBoundValue(
-          properties.value,
-          "value",
-          id,
-          componentType,
-          errors
-        );
-      break;
-    case "MultipleChoice":
-      checkRequired(["selections", "options"]);
-      if (properties.selections) {
-        if (
-          typeof properties.selections !== "object" ||
-          properties.selections === null ||
-          (!properties.selections.literalArray && !properties.selections.path)
-        ) {
-          errors.push(
-            `Component '${id}' of type '${componentType}' property 'selections' must have either 'literalArray' or 'path'.`
-          );
-        }
-      }
-      if (Array.isArray(properties.options)) {
-        properties.options.forEach((option: any, index: number) => {
-          if (!option.label)
-            errors.push(
-              `Component '${id}' option at index ${index} missing 'label'.`
-            );
-          if (option.label)
-            validateBoundValue(
-              option.label,
-              "label",
-              id,
-              componentType,
-              errors
-            );
-          if (!option.value)
-            errors.push(
-              `Component '${id}' option at index ${index} missing 'value'.`
-            );
-        });
-      }
-      break;
-    case "Slider":
-      checkRequired(["value"]);
-      if (properties.value)
-        validateBoundValue(
-          properties.value,
-          "value",
-          id,
-          componentType,
-          errors
-        );
-      break;
-    case "CheckBox":
-      checkRequired(["value", "label"]);
-      if (properties.value)
-        validateBoundValue(
-          properties.value,
-          "value",
-          id,
-          componentType,
-          errors
-        );
-      if (properties.label)
-        validateBoundValue(
-          properties.label,
-          "label",
-          id,
-          componentType,
-          errors
-        );
-      break;
-    case "Row":
-    case "Column":
-    case "List":
-      checkRequired(["children"]);
-      if (
-        properties.children &&
-        typeof properties.children === "object" &&
-        !Array.isArray(properties.children)
-      ) {
-        const hasExplicit = !!properties.children.explicitList;
-        const hasTemplate = !!properties.children.template;
-        if ((hasExplicit && hasTemplate) || (!hasExplicit && !hasTemplate)) {
-          errors.push(
-            `Component '${id}' must have either 'explicitList' or 'template' in children, but not both or neither.`
-          );
-        }
-        if (hasExplicit) {
-          checkRefs(properties.children.explicitList);
-        }
-        if (hasTemplate) {
-          checkRefs([properties.children.template?.componentId]);
-        }
-      }
-      break;
-    case "Card":
-      checkRequired(["child"]);
-      checkRefs([properties.child]);
-      break;
-    case "Tabs":
-      checkRequired(["tabItems"]);
-      if (properties.tabItems && Array.isArray(properties.tabItems)) {
-        properties.tabItems.forEach((tab: any) => {
-          if (!tab.title) {
-            errors.push(`Tab item in component '${id}' is missing a 'title'.`);
+        // Check for root component in this message
+        if (message.updateComponents.components) {
+          for (const comp of message.updateComponents.components) {
+            if (comp.id === "root") {
+              hasRootComponent = true;
+            }
           }
-          if (!tab.child) {
-            errors.push(`Tab item in component '${id}' is missing a 'child'.`);
-          }
-          checkRefs([tab.child]);
-          if (tab.title)
-            validateBoundValue(tab.title, "title", id, componentType, errors);
-        });
+        }
+      } else if (message.updateDataModel) {
+        this.validateUpdateDataModel(message.updateDataModel, errors);
+      } else if (message.createSurface) {
+        this.validateBeginRendering(message.createSurface, errors);
+      } else if (message.deleteSurface) {
+        this.validateDeleteSurface(message.deleteSurface, errors);
+      } else {
+        // This should be caught by AJV usually, but good to have backup
+        // errors.push("Unknown message type");
       }
-      break;
-    case "Modal":
-      checkRequired(["entryPointChild", "contentChild"]);
-      checkRefs([properties.entryPointChild, properties.contentChild]);
-      break;
-    case "Button":
-      checkRequired(["child", "action"]);
-      checkRefs([properties.child]);
-      if (!properties.action || !properties.action.name) {
-        errors.push(`Component '${id}' Button action is missing a 'name'.`);
-      }
-      break;
-    case "Divider":
-      // No required properties
-      break;
-    case "Icon":
-      checkRequired(["name"]);
-      if (properties.name)
-        validateBoundValue(properties.name, "name", id, componentType, errors);
-      break;
-    default:
+    }
+
+    // Algorithmic check for root component
+    if (hasUpdateComponents && !hasRootComponent) {
       errors.push(
-        `Unknown component type '${componentType}' in component '${id}'.`
+        "Missing root component: At least one 'updateComponents' message must contain a component with id: 'root'."
       );
+    }
+  }
+
+  // ... Copied helper functions ...
+  private validateDeleteSurface(data: any, errors: string[]) {
+    if (data.surfaceId === undefined) {
+      errors.push("DeleteSurface must have a 'surfaceId' property.");
+    }
+    const allowed = ["surfaceId"];
+    for (const key in data) {
+      if (!allowed.includes(key)) {
+        errors.push(`DeleteSurface has unexpected property: ${key}`);
+      }
+    }
+  }
+
+  private validateUpdateComponents(data: any, errors: string[]) {
+    if (data.surfaceId === undefined) {
+      errors.push("UpdateComponents must have a 'surfaceId' property.");
+    }
+    if (!data.components || !Array.isArray(data.components)) {
+      errors.push("UpdateComponents must have a 'components' array.");
+      return;
+    }
+
+    const componentIds = new Set<string>();
+    for (const c of data.components) {
+      const id = c.id;
+      if (id) {
+        if (componentIds.has(id)) {
+          errors.push(`Duplicate component ID found: ${id}`);
+        }
+        componentIds.add(id);
+      }
+    }
+
+    for (const component of data.components) {
+      this.validateComponent(component, componentIds, errors);
+    }
+  }
+
+  private validateUpdateDataModel(data: any, errors: string[]) {
+    if (data.surfaceId === undefined) {
+      errors.push("updateDataModel must have a 'surfaceId' property.");
+    }
+
+    const allowedTopLevel = ["surfaceId", "path", "contents"];
+    for (const key in data) {
+      if (!allowedTopLevel.includes(key)) {
+        errors.push(`updateDataModel has unexpected property: ${key}`);
+      }
+    }
+
+    if (
+      typeof data.contents !== "object" ||
+      data.contents === null ||
+      Array.isArray(data.contents)
+    ) {
+      errors.push("updateDataModel 'contents' property must be an object.");
+      return;
+    }
+  }
+
+
+
+  private validateBoundValue(
+    prop: any,
+    propName: string,
+    componentId: string,
+    componentType: string,
+    errors: string[]
+  ) {
+    if (
+      typeof prop === "string" ||
+      typeof prop === "number" ||
+      typeof prop === "boolean" ||
+      Array.isArray(prop)
+    ) {
+      return;
+    }
+
+    if (typeof prop !== "object" || prop === null) {
+      errors.push(
+        `Component '${componentId}' of type '${componentType}' property '${propName}' must be a primitive or an object.`
+      );
+      return;
+    }
+
+    const keys = Object.keys(prop);
+    if (keys.length !== 1 || keys[0] !== "path") {
+      errors.push(
+        `Component '${componentId}' of type '${componentType}' property '${propName}' object must have exactly one key: 'path'. Found: ${keys.join(", ")}`
+      );
+    }
+  }
+
+  private validateComponent(
+    component: any,
+    allIds: Set<string>,
+    errors: string[]
+  ) {
+    const id = component.id;
+    if (!id) {
+      errors.push(`Component is missing an 'id'.`);
+      return;
+    }
+
+    if (!component.props || typeof component.props !== "object") {
+      errors.push(`Component '${id}' is missing 'props' object.`);
+      return;
+    }
+
+    const properties = component.props;
+    const componentType = properties.component;
+    if (!componentType || typeof componentType !== "string") {
+      errors.push(
+        `Component '${id}' is missing 'component' property in 'props'.`
+      );
+      return;
+    }
+
+    // Basic required checks that might be missed by AJV if it's lenient or if we want specific messages
+    // Actually AJV covers most of this, but the custom logic for 'children' and 'refs' is key.
+
+    const checkRefs = (ids: (string | undefined)[]) => {
+      for (const id of ids) {
+        if (id && !allIds.has(id)) {
+          errors.push(
+            `Component ${JSON.stringify(id)} references non-existent component ID.`
+          );
+        }
+      }
+    };
+
+    switch (componentType) {
+      case "Row":
+      case "Column":
+      case "List":
+        if (properties.children) {
+          if (Array.isArray(properties.children)) {
+            checkRefs(properties.children);
+          } else if (
+            typeof properties.children === "object" &&
+            properties.children !== null
+          ) {
+            if (properties.children.componentId) {
+              checkRefs([properties.children.componentId]);
+            }
+          }
+        }
+        break;
+      case "Card":
+        checkRefs([properties.child]);
+        break;
+      case "Tabs":
+        if (properties.tabItems && Array.isArray(properties.tabItems)) {
+          properties.tabItems.forEach((tab: any) => {
+            checkRefs([tab.child]);
+          });
+        }
+        break;
+      case "Modal":
+        checkRefs([properties.entryPointChild, properties.contentChild]);
+        break;
+      case "Button":
+        checkRefs([properties.child]);
+        break;
+    }
   }
 }

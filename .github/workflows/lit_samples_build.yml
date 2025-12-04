@@ -1,0 +1,36 @@
+name: Lit samples build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install lib's deps
+        working-directory: ./web/lib
+        run: npm ci
+
+      - name: Build lib
+        working-directory: ./web/lib
+        run: npm run build
+
+      - name: Install all lit samples workspaces' dependencies
+        working-directory: ./samples/client/lit
+        run: npm install --workspaces
+
+      - name: Build all lit samples workspaces
+        working-directory: ./samples/client/lit
+        run: npm run build --workspaces
+
+

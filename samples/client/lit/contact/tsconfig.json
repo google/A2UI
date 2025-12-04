@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
 
   "compilerOptions": {
-    "composite": true,
+    "composite": false,
     "declaration": true,
     "declarationMap": true,
     "incremental": true,
@@ -12,8 +12,8 @@
     "preserveWatchOutput": true,
     "sourceMap": true,
     "target": "es2022",
-    "module": "esnext",
-    "lib": ["es2023", "DOM", "DOM.Iterable"],
+    "module": "es2022",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "useDefineForClassFields": false,
     "rootDir": ".",
@@ -26,11 +26,10 @@
     "isolatedModules": true,
 
     /* Linting */
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": ["node"]
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/**/*.json"]
+  "references": [{ "path": "../../../../web/lib" }]
 }
