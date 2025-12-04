@@ -69,7 +69,9 @@ export {
   Video,
 };
 
-interface A2UITagNameMap {
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface HTMLElementTagNameMap {
   "a2ui-audioplayer": Audio;
   "a2ui-button": Button;
   "a2ui-card": Card;
@@ -91,10 +93,6 @@ interface A2UITagNameMap {
   "a2ui-textfield": TextField;
   "a2ui-video": Video;
 }
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface HTMLElementTagNameMap extends A2UITagNameMap {}
 }
 
 /**
