@@ -17,7 +17,7 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { type StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -27,13 +27,11 @@ import { Styles } from "../index.js";
 
 @customElement("a2ui-image")
 export class Image extends Root {
-  @property()
-  accessor url: StringValue | null = null;
+  @property() url: StringValue | null = null;
 
-  @property()
-  accessor usageHint: ResolvedImage["usageHint"] | null = null;
+  @property() usageHint: ResolvedImage["usageHint"] | null = null;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -55,7 +53,7 @@ export class Image extends Root {
     `,
   ];
 
-  #renderImage() {
+  private renderImage() {
     if (!this.url) {
       return nothing;
     }
@@ -95,7 +93,7 @@ export class Image extends Root {
     return html`(empty)`;
   }
 
-  render() {
+  override render() {
     const classes = Styles.merge(
       this.theme.components.Image.all,
       this.usageHint ? this.theme.components.Image[this.usageHint] : {}
@@ -107,7 +105,7 @@ export class Image extends Root {
         ? styleMap(this.theme.additionalStyles?.Image)
         : nothing}
     >
-      ${this.#renderImage()}
+      ${this.renderImage()}
     </section>`;
   }
 }

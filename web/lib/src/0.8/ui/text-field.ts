@@ -17,7 +17,7 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { type StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ResolvedTextField } from "../types/types";
 import { A2UIModelProcessor } from "../data/model-processor.js";
@@ -28,15 +28,15 @@ import { structuralStyles } from "./styles.js";
 @customElement("a2ui-textfield")
 export class TextField extends Root {
   @property()
-  accessor text: StringValue | null = null;
+  text: StringValue | null = null;
 
   @property()
-  accessor label: StringValue | null = null;
+  label: StringValue | null = null;
 
   @property()
-  accessor inputType: ResolvedTextField["type"] | null = null;
+  inputType: ResolvedTextField["type"] | null = null;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -60,7 +60,7 @@ export class TextField extends Root {
     `,
   ];
 
-  #setBoundValue(value: string) {
+  private setBoundValue(value: string) {
     if (!this.text || !this.processor) {
       return;
     }
@@ -79,7 +79,7 @@ export class TextField extends Root {
     );
   }
 
-  #renderField(value: string | number, label: string) {
+  private renderField(value: string | number, label: string) {
     return html` <section
       class=${classMap(this.theme.components.TextField.container)}
     >
@@ -101,7 +101,7 @@ export class TextField extends Root {
             return;
           }
 
-          this.#setBoundValue(evt.target.value);
+          this.setBoundValue(evt.target.value);
         }}
         name="data"
         id="data"
@@ -112,7 +112,7 @@ export class TextField extends Root {
     </section>`;
   }
 
-  render() {
+  override render() {
     const label = extractStringValue(
       this.label,
       this.component,
@@ -126,6 +126,6 @@ export class TextField extends Root {
       this.surfaceId
     );
 
-    return this.#renderField(value, label);
+    return this.renderField(value, label);
   }
 }

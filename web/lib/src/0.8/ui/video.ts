@@ -17,7 +17,7 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { type StringValue } from "../types/primitives.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -25,10 +25,9 @@ import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-video")
 export class Video extends Root {
-  @property()
-  accessor url: StringValue | null = null;
+  @property() url: StringValue | null = null;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -49,7 +48,7 @@ export class Video extends Root {
     `,
   ];
 
-  #renderVideo() {
+  renderVideo() {
     if (!this.url) {
       return nothing;
     }
@@ -83,14 +82,14 @@ export class Video extends Root {
     return html`(empty)`;
   }
 
-  render() {
+  override render() {
     return html`<section
       class=${classMap(this.theme.components.Video)}
       style=${this.theme.additionalStyles?.Video
         ? styleMap(this.theme.additionalStyles?.Video)
         : nothing}
     >
-      ${this.#renderVideo()}
+      ${this.renderVideo()}
     </section>`;
   }
 }

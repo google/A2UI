@@ -17,7 +17,7 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { NumberValue, StringValue } from "../types/primitives";
+import { type NumberValue, type StringValue } from "../types/primitives";
 import { ResolvedTextField } from "../types/types.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
@@ -28,21 +28,21 @@ import { extractNumberValue, extractStringValue } from "./utils/utils.js";
 @customElement("a2ui-slider")
 export class Slider extends Root {
   @property()
-  accessor value: NumberValue | null = null;
+  value: NumberValue | null = null;
 
   @property()
-  accessor minValue = 0;
+  minValue = 0;
 
   @property()
-  accessor maxValue = 0;
+  maxValue = 0;
 
   @property()
-  accessor label: StringValue | null = null;
+  label: StringValue | null = null;
 
   @property()
-  accessor inputType: ResolvedTextField["type"] | null = null;
+  inputType: ResolvedTextField["type"] | null = null;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -64,7 +64,7 @@ export class Slider extends Root {
     `,
   ];
 
-  #setBoundValue(value: string) {
+  private setBoundValue(value: string) {
     if (!this.value || !this.processor) {
       return;
     }
@@ -85,7 +85,7 @@ export class Slider extends Root {
     );
   }
 
-  #renderField(value: string | number) {
+  private renderField(value: string | number) {
     return html`<section
       class=${classMap(this.theme.components.Slider.container)}
     >
@@ -125,12 +125,12 @@ export class Slider extends Root {
     </section>`;
   }
 
-  render() {
+  override render() {
     if (this.value && typeof this.value === "object") {
       if ("literalNumber" in this.value && this.value.literalNumber) {
-        return this.#renderField(this.value.literalNumber);
+        return this.renderField(this.value.literalNumber);
       } else if ("literal" in this.value && this.value.literal !== undefined) {
-        return this.#renderField(this.value.literal);
+        return this.renderField(this.value.literal);
       } else if (this.value && "path" in this.value && this.value.path) {
         if (!this.processor || !this.component) {
           return html`(no processor)`;
@@ -150,7 +150,7 @@ export class Slider extends Root {
           return html`Invalid value`;
         }
 
-        return this.#renderField(textValue);
+        return this.renderField(textValue);
       }
     }
 

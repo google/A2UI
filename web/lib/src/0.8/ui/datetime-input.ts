@@ -17,7 +17,7 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { type StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -25,19 +25,17 @@ import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-datetimeinput")
 export class DateTimeInput extends Root {
-  @property()
-  accessor value: StringValue | null = null;
+  @property() value: StringValue | null = null;
 
-  @property()
-  accessor label: StringValue | null = null;
+  @property() label: StringValue | null = null;
 
   @property({ reflect: false, type: Boolean })
-  accessor enableDate = true;
+  enableDate = true;
 
   @property({ reflect: false, type: Boolean })
-  accessor enableTime = true;
+  enableTime = true;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -55,13 +53,13 @@ export class DateTimeInput extends Root {
         display: block;
         border-radius: 8px;
         padding: 8px;
-        border: 1px solid #ccc;
+        border: 1px solid ccc;
         width: 100%;
       }
     `,
   ];
 
-  #setBoundValue(value: string) {
+  private setBoundValue(value: string) {
     if (!this.value || !this.processor) {
       return;
     }
@@ -82,14 +80,14 @@ export class DateTimeInput extends Root {
     );
   }
 
-  #renderField(value: string) {
+  private renderField(value: string) {
     return html`<section
       class=${classMap(this.theme.components.DateTimeInput.container)}
     >
       <label
         for="data"
         class=${classMap(this.theme.components.DateTimeInput.label)}
-        >${this.#getPlaceholderText()}</label
+        >${this.getPlaceholderText()}</label
       >
       <input
         autocomplete="off"
@@ -102,18 +100,18 @@ export class DateTimeInput extends Root {
             return;
           }
 
-          this.#setBoundValue(evt.target.value);
+          this.setBoundValue(evt.target.value);
         }}
         id="data"
         name="data"
-        .value=${this.#formatInputValue(value)}
-        .placeholder=${this.#getPlaceholderText()}
-        .type=${this.#getInputType()}
+        .value=${this.formatInputValue(value)}
+        .placeholder=${this.getPlaceholderText()}
+        .type=${this.getInputType()}
       />
     </section>`;
   }
 
-  #getInputType() {
+  private getInputType() {
     if (this.enableDate && this.enableTime) {
       return "datetime-local";
     } else if (this.enableDate) {
@@ -125,19 +123,19 @@ export class DateTimeInput extends Root {
     return "datetime-local";
   }
 
-  #formatInputValue(value: string) {
-    const inputType = this.#getInputType();
+  private formatInputValue(value: string) {
+    const inputType = this.getInputType();
     const date = value ? new Date(value) : null;
 
     if (!date || isNaN(date.getTime())) {
       return "";
     }
 
-    const year = this.#padNumber(date.getFullYear());
-    const month = this.#padNumber(date.getMonth());
-    const day = this.#padNumber(date.getDate());
-    const hours = this.#padNumber(date.getHours());
-    const minutes = this.#padNumber(date.getMinutes());
+    const year = this.padNumber(date.getFullYear());
+    const month = this.padNumber(date.getMonth());
+    const day = this.padNumber(date.getDate());
+    const hours = this.padNumber(date.getHours());
+    const minutes = this.padNumber(date.getMinutes());
 
     // Browsers are picky with what format they allow for the `value` attribute of date/time inputs.
     // We need to parse it out of the provided value. Note that we don't use `toISOString`,
@@ -151,13 +149,13 @@ export class DateTimeInput extends Root {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  #padNumber(value: number) {
+  private padNumber(value: number) {
     return value.toString().padStart(2, "0");
   }
 
-  #getPlaceholderText() {
+  private getPlaceholderText() {
     // TODO: this should likely be passed from the model.
-    const inputType = this.#getInputType();
+    const inputType = this.getInputType();
 
     if (inputType === "date") {
       return "Date";
@@ -168,12 +166,12 @@ export class DateTimeInput extends Root {
     return "Date & Time";
   }
 
-  render() {
+  override render() {
     if (this.value && typeof this.value === "object") {
       if ("literalString" in this.value && this.value.literalString) {
-        return this.#renderField(this.value.literalString);
+        return this.renderField(this.value.literalString);
       } else if ("literal" in this.value && this.value.literal !== undefined) {
-        return this.#renderField(this.value.literal);
+        return this.renderField(this.value.literal);
       } else if (this.value && "path" in this.value && this.value.path) {
         if (!this.processor || !this.component) {
           return html`(no model)`;
@@ -188,7 +186,7 @@ export class DateTimeInput extends Root {
           return html`(invalid)`;
         }
 
-        return this.#renderField(textValue);
+        return this.renderField(textValue);
       }
     }
 

@@ -17,7 +17,7 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { type StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -25,10 +25,9 @@ import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-audioplayer")
 export class Audio extends Root {
-  @property()
-  accessor url: StringValue | null = null;
+  @property() url: StringValue | null = null;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -49,7 +48,7 @@ export class Audio extends Root {
     `,
   ];
 
-  #renderAudio() {
+  private renderAudio() {
     if (!this.url) {
       return nothing;
     }
@@ -90,7 +89,7 @@ export class Audio extends Root {
         ? styleMap(this.theme.additionalStyles?.AudioPlayer)
         : nothing}
     >
-      ${this.#renderAudio()}
+      ${this.renderAudio()}
     </section>`;
   }
 }

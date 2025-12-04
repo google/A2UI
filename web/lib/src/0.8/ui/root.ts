@@ -29,8 +29,8 @@ import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { effect } from "signal-utils/subtle/microtask-effect";
 import { A2UIModelProcessor } from "../data/model-processor.js";
-import { StringValue } from "../types/primitives.js";
-import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
+import { type StringValue } from "../types/primitives.js";
+import { type Theme, type AnyComponentNode, type SurfaceID } from "../types/types.js";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
 
@@ -43,37 +43,37 @@ type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
 @customElement("a2ui-root")
 export class Root extends SignalWatcher(LitElement) {
   @property()
-  accessor surfaceId: SurfaceID | null = null;
+  surfaceId: SurfaceID | null = null;
 
   @property()
-  accessor component: AnyComponentNode | null = null;
+  component: AnyComponentNode | null = null;
 
   @consume({ context: themeContext })
-  accessor theme!: Theme;
+  theme!: Theme;
 
   @property({ attribute: false })
-  accessor childComponents: AnyComponentNode[] | null = null;
+  childComponents: AnyComponentNode[] | null = null;
 
   @property({ attribute: false })
-  accessor processor: A2UIModelProcessor | null = null;
+  processor: A2UIModelProcessor | null = null;
 
   @property()
-  accessor dataContextPath: string = "";
+  dataContextPath: string = "";
 
   @property()
-  accessor enableCustomElements = false;
+  enableCustomElements = false;
 
   @property()
   set weight(weight: string | number) {
-    this.#weight = weight;
+    this.weight = weight;
     this.style.setProperty("--weight", `${weight}`);
   }
 
   get weight() {
-    return this.#weight;
+    return this.weight;
   }
 
-  #weight: string | number = 1;
+  private weight: string | number = 1;
 
   static styles = [
     structuralStyles,
@@ -90,16 +90,16 @@ export class Root extends SignalWatcher(LitElement) {
    * Holds the cleanup function for our effect.
    * We need this to stop the effect when the component is disconnected.
    */
-  #lightDomEffectDisposer: null | (() => void) = null;
+  private lightDomEffectDisposer: null | (() => void) = null;
 
   protected willUpdate(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has("childComponents")) {
-      if (this.#lightDomEffectDisposer) {
-        this.#lightDomEffectDisposer();
+      if (this.lightDomEffectDisposer) {
+        this.lightDomEffectDisposer();
       }
 
       // This effect watches the A2UI Children signal and updates the Light DOM.
-      this.#lightDomEffectDisposer = effect(() => {
+      this.lightDomEffectDisposer = effect(() => {
         // 1. Read the signal to create the subscription.
         const allChildren = this.childComponents ?? null;
 
@@ -118,8 +118,8 @@ export class Root extends SignalWatcher(LitElement) {
   disconnectedCallback(): void {
     super.disconnectedCallback();
 
-    if (this.#lightDomEffectDisposer) {
-      this.#lightDomEffectDisposer();
+    if (this.lightDomEffectDisposer) {
+      this.lightDomEffectDisposer();
     }
   }
 
@@ -490,7 +490,7 @@ export class Root extends SignalWatcher(LitElement) {
     })}`;
   }
 
-  render(): TemplateResult | typeof nothing {
+  override render(): TemplateResult | typeof nothing {
     return html`<slot></slot>`;
   }
 }

@@ -25,12 +25,12 @@ import { structuralStyles } from "./styles.js";
 @customElement("a2ui-column")
 export class Column extends Root {
   @property({ reflect: true, type: String })
-  accessor alignment: ResolvedColumn["alignment"] = "stretch";
+  alignment: ResolvedColumn["alignment"] = "stretch";
 
   @property({ reflect: true, type: String })
-  accessor distribution: ResolvedColumn["distribution"] = "start";
+  distribution: ResolvedColumn["distribution"] = "start";
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -91,7 +91,7 @@ export class Column extends Root {
     `,
   ];
 
-  render() {
+  override render() {
     return html`<section
       class=${classMap(this.theme.components.Column)}
       style=${this.theme.additionalStyles?.Column

@@ -28,12 +28,12 @@ import { Styles } from "../index.js";
 @customElement("a2ui-tabs")
 export class Tabs extends Root {
   @property()
-  accessor titles: StringValue[] | null = null;
+  titles: StringValue[] | null = null;
 
   @property()
-  accessor selected = 0;
+  selected = 0;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       :host {
@@ -59,7 +59,7 @@ export class Tabs extends Root {
     }
   }
 
-  #renderTabs() {
+  private renderTabs() {
     if (!this.titles) {
       return nothing;
     }
@@ -115,18 +115,18 @@ export class Tabs extends Root {
     </div>`;
   }
 
-  #renderSlot() {
+  private renderSlot() {
     return html`<slot name="current"></slot>`;
   }
 
-  render() {
+  override render() {
     return html`<section
       class=${classMap(this.theme.components.Tabs.container)}
       style=${this.theme.additionalStyles?.Tabs
         ? styleMap(this.theme.additionalStyles?.Tabs)
         : nothing}
     >
-      ${[this.#renderTabs(), this.#renderSlot()]}
+      ${[this.renderTabs(), this.renderSlot()]}
     </section>`;
   }
 }

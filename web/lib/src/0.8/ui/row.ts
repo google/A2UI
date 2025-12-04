@@ -25,12 +25,12 @@ import { structuralStyles } from "./styles.js";
 @customElement("a2ui-row")
 export class Row extends Root {
   @property({ reflect: true, type: String })
-  accessor alignment: ResolvedRow["alignment"] = "stretch";
+  alignment: ResolvedRow["alignment"] = "stretch";
 
   @property({ reflect: true, type: String })
-  accessor distribution: ResolvedRow["distribution"] = "start";
+  distribution: ResolvedRow["distribution"] = "start";
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -91,7 +91,7 @@ export class Row extends Root {
     `,
   ];
 
-  render() {
+  override render() {
     return html`<section
       class=${classMap(this.theme.components.Row)}
       style=${this.theme.additionalStyles?.Row

@@ -18,23 +18,23 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { markdown } from "./directives/directives.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { type StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../index.js";
-import { ResolvedText } from "../types/types.js";
+import { type ResolvedText } from "../types/types.js";
 
 @customElement("a2ui-text")
 export class Text extends Root {
   @property()
-  accessor text: StringValue | null = null;
+  text: StringValue | null = null;
 
   @property()
-  accessor usageHint: ResolvedText["usageHint"] | null = null;
+  usageHint: ResolvedText["usageHint"] | null = null;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       :host {
@@ -44,7 +44,7 @@ export class Text extends Root {
     `,
   ];
 
-  #renderText() {
+  private renderText() {
     if (this.text && typeof this.text === "object") {
       if ("literalString" in this.text && this.text.literalString) {
         return html`${markdown(
@@ -105,7 +105,7 @@ export class Text extends Root {
     return html`(empty)`;
   }
 
-  render() {
+  override render() {
     const classes = Styles.merge(
       this.theme.components.Image.all,
       this.usageHint ? this.theme.components.Text[this.usageHint] : {}
@@ -117,7 +117,7 @@ export class Text extends Root {
         ? styleMap(this.theme.additionalStyles?.Text)
         : nothing}
     >
-      ${this.#renderText()}
+      ${this.renderText()}
     </section>`;
   }
 }

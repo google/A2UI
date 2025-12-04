@@ -23,7 +23,7 @@ import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-divider")
 export class Divider extends Root {
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       :host {
@@ -40,7 +40,7 @@ export class Divider extends Root {
     `,
   ];
 
-  render() {
+  override render() {
     return html`<hr
       class=${classMap(this.theme.components.Divider)}
       style=${this.theme.additionalStyles?.Divider

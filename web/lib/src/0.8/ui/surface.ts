@@ -16,7 +16,7 @@
 
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { SurfaceID, Surface as SurfaceState } from "../types/types";
+import { type SurfaceID, type Surface as SurfaceState } from "../types/types";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { Root } from "./root.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -24,15 +24,15 @@ import { styleMap } from "lit/directives/style-map.js";
 @customElement("a2ui-surface")
 export class Surface extends Root {
   @property()
-  accessor surfaceId: SurfaceID | null = null;
+  override surfaceId: SurfaceID | null = null;
 
   @property()
-  accessor surface: SurfaceState | null = null;
+  surface: SurfaceState | null = null;
 
   @property()
-  accessor processor: A2UIModelProcessor | null = null;
+  override processor: A2UIModelProcessor | null = null;
 
-  static styles = [
+  static override styles = [
     css`
       :host {
         display: flex;
@@ -59,7 +59,7 @@ export class Surface extends Root {
     `,
   ];
 
-  #renderLogo() {
+  private renderLogo() {
     if (!this.surface?.styles.logoUrl) {
       return nothing;
     }
@@ -69,7 +69,7 @@ export class Surface extends Root {
     </div>`;
   }
 
-  #renderSurface() {
+  private renderSurface() {
     const styles: Record<string, string> = {};
     if (this.surface?.styles) {
       for (const [key, value] of Object.entries(this.surface.styles)) {
@@ -102,11 +102,11 @@ export class Surface extends Root {
     ></a2ui-root>`;
   }
 
-  render() {
+  override render() {
     if (!this.surface) {
       return nothing;
     }
 
-    return html`${[this.#renderLogo(), this.#renderSurface()]}`;
+    return html`${[this.renderLogo(), this.renderSurface()]}`;
   }
 }

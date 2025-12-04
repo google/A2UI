@@ -17,7 +17,7 @@
 import { html, css, PropertyValues, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { type StringValue } from "../types/primitives.js";
 import { A2UIModelProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -27,15 +27,15 @@ import { extractStringValue } from "./utils/utils.js";
 @customElement("a2ui-multiplechoice")
 export class MultipleChoice extends Root {
   @property()
-  accessor description: string | null = null;
+  description: string | null = null;
 
   @property()
-  accessor options: { label: StringValue; value: string }[] = [];
+  options: { label: StringValue; value: string }[] = [];
 
   @property()
-  accessor selections: StringValue | string[] = [];
+  selections: StringValue | string[] = [];
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -58,7 +58,7 @@ export class MultipleChoice extends Root {
     `,
   ];
 
-  #setBoundValue(value: string[]) {
+  private setBoundValue(value: string[]) {
     console.log(value);
     if (!this.selections || !this.processor) {
       return;
@@ -100,10 +100,10 @@ export class MultipleChoice extends Root {
       return;
     }
 
-    this.#setBoundValue(selectionValue as string[]);
+    this.setBoundValue(selectionValue as string[]);
   }
 
-  render() {
+  override render() {
     return html`<section class=${classMap(
       this.theme.components.MultipleChoice.container
     )}>
@@ -124,7 +124,7 @@ export class MultipleChoice extends Root {
             return;
           }
 
-          this.#setBoundValue([evt.target.value]);
+          this.setBoundValue([evt.target.value]);
         }}
       >
         ${this.options.map((option) => {
