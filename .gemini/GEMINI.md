@@ -14,7 +14,7 @@ The A2UI repository is organized into several key directories:
 -   `a2a_agents/python/`: Contains Python code relating to server-side integration of A2UI
     -   `a2ui_extension/`: Python implementation of the A2UI A2A extension.
     -   `adk/samples/`: Contains demo applications that showcase the A2UI protocol in action using the ADK framework.
--   `web/`: Contains the web-based client implementations (using Lit and Vite) for the samples, including a shared library (`web/lib`).
+-   `web/`: Contains the web-based client implementations (using Lit and Vite) for the samples, including a shared library (`renderers/lit`).
 -   `angular/`: Contains an alternative web-based client implementation using Angular.
 -   `eval/`: Contains a Genkit-based framework for evaluating LLM performance in generating A2UI responses.
 
@@ -75,7 +75,7 @@ npm start -- contact
 
 There are three renderers available for A2UI:
 
--   **Web (Lit)**: Located in `web/lib`, this is the primary web renderer used by the demos in `web/`.
+-   **Web (Lit)**: Located in `renderers/lit`, this is the primary web renderer used by the demos in `web/`.
 -   **Angular**: Located in `angular/projects/lib`, this is an alternative web renderer for Angular applications.
 -   **Flutter**: The Flutter renderer is in a separate repository: [https://github.com/flutter/genui](https://github.com/flutter/genui)
 

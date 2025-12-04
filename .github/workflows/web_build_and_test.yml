@@ -27,4 +27,4 @@ jobs:
 
       - name: Run all tests
         working-directory: ./web
-        run: npm run test --workspace=lib
+        run: npm run test --workspace=@a2ui/web-lib

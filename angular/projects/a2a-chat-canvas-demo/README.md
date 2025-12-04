@@ -11,7 +11,7 @@ Sample application using the Chat-Canvas component working with A2A and A2UI.
 ## Running
 
 1. Update the `src/environments/environment.ts` file with your Google Maps API key.
-2. Build the shared dependencies by running `npm run build` in the `web/lib` directory
+2. Build the shared dependencies by running `npm run build` in the `renderers/lit` directory
 3. Install the dependencies: `npm i`
 4. Run the A2A server for an agent
 5. Run the app:

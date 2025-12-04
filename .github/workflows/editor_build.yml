@@ -18,11 +18,11 @@ jobs:
           node-version: '20'
 
       - name: Install lib's deps
-        working-directory: ./web/lib
+        working-directory: ./renderers/lit
         run: npm ci
 
       - name: Build lib
-        working-directory: ./web/lib
+        working-directory: ./renderers/lit
         run: npm run build
 
       - name: Install editor deps

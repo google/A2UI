@@ -1,6 +1,6 @@
 {
   "files": [],
   "references": [
-    { "path": "lib" }
+    { "path": "../renderers/lit" }
   ]
 }

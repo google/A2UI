@@ -10,7 +10,7 @@ NOTE: [For the rizzcharts app](../../a2a_agents/python/adk/samples/rizzcharts/),
 
 ## Running
 
-1. Build the shared dependencies by running `npm run build` in the `web/lib` directory
+1. Build the shared dependencies by running `npm run build` in the `renderers/lit` directory
 2. Install the dependencies: `npm i`
 3. Run the relevant A2A server:
   * [For the restaurant app](../../a2a_agents/python/adk/samples/restaurant_finder/)
