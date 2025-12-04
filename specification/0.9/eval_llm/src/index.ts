@@ -25,6 +25,7 @@ import { Generator } from "./generator";
 import { Validator } from "./validator";
 import { Evaluator } from "./evaluator";
 import { EvaluatedResult } from "./types";
+import { analysisFlow } from "./analysis_flow";
 
 const schemaFiles = [
   "../../json/common_types.json",
@@ -42,7 +43,10 @@ function loadSchemas(): Record<string, any> {
   return schemas;
 }
 
-function generateSummary(results: EvaluatedResult[]): string {
+function generateSummary(
+  results: EvaluatedResult[],
+  analysisResults: Record<string, string>
+): string {
   const promptNameWidth = 40;
   const latencyWidth = 20;
   const failedRunsWidth = 15;
@@ -110,16 +114,19 @@ function generateSummary(results: EvaluatedResult[]): string {
       const evalFailedStr =
         evalFailedRuns > 0 ? `${evalFailedRuns} / ${totalRuns}` : "";
 
-      const minorCount = runs.filter(
-        (r) => r.evaluationResult?.overallSeverity === "minor"
-      ).length;
-      const significantCount = runs.filter(
-        (r) => r.evaluationResult?.overallSeverity === "significant"
-      ).length;
-      // Critical includes ONLY eval critical, NOT schema failures (which are criticalSchema)
-      const criticalCount = runs.filter(
-        (r) => r.evaluationResult?.overallSeverity === "critical"
-      ).length;
+      let minorCount = 0;
+      let significantCount = 0;
+      let criticalCount = 0;
+
+      for (const r of runs) {
+        if (r.evaluationResult?.issues) {
+          for (const issue of r.evaluationResult.issues) {
+            if (issue.severity === "minor") minorCount++;
+            else if (issue.severity === "significant") significantCount++;
+            else if (issue.severity === "critical") criticalCount++;
+          }
+        }
+      }
 
       const minorStr = minorCount > 0 ? `${minorCount}` : "";
       const significantStr = significantCount > 0 ? `${significantCount}` : "";
@@ -150,6 +157,10 @@ function generateSummary(results: EvaluatedResult[]): string {
         : ((successfulRuns / totalRunsForModel) * 100.0).toFixed(1);
 
     summary += `\n\n**Total successful runs:** ${successfulRuns} / ${totalRunsForModel} (${successPercentage}% success)`;
+
+    if (analysisResults[modelName]) {
+      summary += `\n\n### Failure Analysis\n\n${analysisResults[modelName]}`;
+    }
   }
 
   summary += "\n\n---\n\n## Overall Summary\n";
@@ -175,18 +186,21 @@ function generateSummary(results: EvaluatedResult[]): string {
     ),
   ].join(", ");
 
-  const totalMinor = results.filter(
-    (r) => r.evaluationResult?.overallSeverity === "minor"
-  ).length;
-  const totalSignificant = results.filter(
-    (r) => r.evaluationResult?.overallSeverity === "significant"
-  ).length;
-  const totalCritical = results.filter(
-    (r) => r.evaluationResult?.overallSeverity === "critical"
-  ).length;
-  const totalCriticalSchema = results.filter(
-    (r) => r.evaluationResult?.overallSeverity === "criticalSchema"
-  ).length;
+  let totalMinor = 0;
+  let totalSignificant = 0;
+  let totalCritical = 0;
+  let totalCriticalSchema = 0;
+
+  for (const r of results) {
+    if (r.evaluationResult?.issues) {
+      for (const issue of r.evaluationResult.issues) {
+        if (issue.severity === "minor") totalMinor++;
+        else if (issue.severity === "significant") totalSignificant++;
+        else if (issue.severity === "critical") totalCritical++;
+        else if (issue.severity === "criticalSchema") totalCriticalSchema++;
+      }
+    }
+  }
 
   summary += `\n- **Total tool failures:** ${totalToolErrorRuns} / ${totalRuns}`;
   const successPercentage =
@@ -377,8 +391,75 @@ async function main() {
   const evaluator = new Evaluator(schemas, argv["eval-model"], resultsBaseDir);
   const evaluatedResults = await evaluator.run(validatedResults);
 
+  // Phase 4: Failure Analysis
+  const analysisResults: Record<string, string> = {};
+  const resultsByModel: Record<string, EvaluatedResult[]> = {};
+  for (const result of evaluatedResults) {
+    if (!resultsByModel[result.modelName]) {
+      resultsByModel[result.modelName] = [];
+    }
+    resultsByModel[result.modelName].push(result);
+  }
+
+  for (const modelName in resultsByModel) {
+    const modelResults = resultsByModel[modelName];
+    const failures = modelResults
+      .filter(
+        (r) =>
+          r.error ||
+          r.validationErrors.length > 0 ||
+          (r.evaluationResult && !r.evaluationResult.pass)
+      )
+      .map((r) => {
+        let failureType = "Unknown";
+        let reason = "Unknown";
+        let issues: string[] = [];
+
+        if (r.error) {
+          failureType = "Tool Error";
+          reason = r.error.message || String(r.error);
+        } else if (r.validationErrors.length > 0) {
+          failureType = "Schema Validation";
+          reason = "Schema validation failed";
+          issues = r.validationErrors;
+        } else if (r.evaluationResult && !r.evaluationResult.pass) {
+          failureType = "Evaluation Failure";
+          reason = r.evaluationResult.reason;
+          if (r.evaluationResult.issues) {
+            issues = r.evaluationResult.issues.map(
+              (i) => `${i.severity}: ${i.issue}`
+            );
+          }
+        }
+
+        return {
+          promptName: r.prompt.name,
+          runNumber: r.runNumber,
+          failureType,
+          reason,
+          issues,
+        };
+      });
+
+    if (failures.length > 0) {
+      logger.info(`Running failure analysis for model: ${modelName}...`);
+      try {
+        const analysis = await analysisFlow({
+          modelName,
+          failures,
+          numRuns: modelResults.length,
+          evalModel: argv["eval-model"],
+        });
+        analysisResults[modelName] = analysis;
+      } catch (e) {
+        logger.error(`Failed to run failure analysis for ${modelName}: ${e}`);
+        analysisResults[modelName] = "Failed to run analysis.";
+      }
+    }
+  }
+
   // Summary
-  const summary = generateSummary(evaluatedResults);
+  const summary = generateSummary(evaluatedResults, analysisResults);
   logger.info(summary);
 
   if (resultsBaseDir) {
