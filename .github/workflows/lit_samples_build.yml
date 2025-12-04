@@ -26,11 +26,11 @@ jobs:
         run: npm run build
 
       - name: Install all lit samples workspaces' dependencies
-        working-directory: ./samples/web/lit
+        working-directory: ./samples/client/web/lit
         run: npm install --workspaces
 
       - name: Build all lit samples workspaces
-        working-directory: ./samples/web/lit
+        working-directory: ./samples/client/web/lit
         run: npm run build --workspaces
 
 
