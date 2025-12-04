@@ -14,15 +14,18 @@
  limitations under the License.
  */
 
-import { componentGeneratorFlow, ai } from "./flows";
 import * as fs from "fs";
 import * as path from "path";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+import { logger, setupLogger } from "./logger";
 import { modelsToTest } from "./models";
 import { prompts, TestPrompt } from "./prompts";
-import { validateSchema } from "./validator";
-import { rateLimiter } from "./rateLimiter";
-import { logger, setupLogger } from "./logger";
-import Ajv from "ajv";
+import { Generator } from "./generator";
+import { Validator } from "./validator";
+import { Evaluator } from "./evaluator";
+import { EvaluatedResult } from "./types";
+import { analysisFlow } from "./analysis_flow";
 
 const schemaFiles = [
   "../../json/common_types.json",
@@ -30,74 +33,58 @@ const schemaFiles = [
   "../../json/server_to_client.json",
 ];
 
-// const schemaFiles = [
-//   "../../../0.8/json/server_to_client_with_standard_catalog.json",
-// ];
-
-// Add this function to extract JSON from markdown
-// Add this function to extract JSON from markdown
-function extractJsonFromMarkdown(markdown: string): any[] {
-  const jsonBlockRegex = /```json\s*([\s\S]*?)\s*```/g;
-  const matches = [...markdown.matchAll(jsonBlockRegex)];
-  const results: any[] = [];
-
-  for (const match of matches) {
-    if (match[1]) {
-      const content = match[1].trim();
-      // Try parsing as a single JSON object first
-      try {
-        results.push(JSON.parse(content));
-      } catch (error) {
-        // If that fails, try parsing as JSONL (line by line)
-        const lines = content.split("\n");
-        for (const line of lines) {
-          if (line.trim()) {
-            try {
-              results.push(JSON.parse(line));
-            } catch (e2) {
-              // Ignore invalid lines
-            }
-          }
-        }
-      }
-    }
+function loadSchemas(): Record<string, any> {
+  const schemas: Record<string, any> = {};
+  for (const file of schemaFiles) {
+    const schemaString = fs.readFileSync(path.join(__dirname, file), "utf-8");
+    const schema = JSON.parse(schemaString);
+    schemas[path.basename(file)] = schema;
   }
-  return results;
-}
-
-interface InferenceResult {
-  modelName: string;
-  prompt: TestPrompt;
-  components: any[];
-  error: any;
-  latency: number;
-  validationResults: string[];
-  runNumber: number;
+  return schemas;
 }
 
 function generateSummary(
-  resultsByModel: Record<string, InferenceResult[]>,
-  results: InferenceResult[]
+  results: EvaluatedResult[],
+  analysisResults: Record<string, string>
 ): string {
   const promptNameWidth = 40;
   const latencyWidth = 20;
   const failedRunsWidth = 15;
+  const severityWidth = 15;
+
+  // Group by model
+  const resultsByModel: Record<string, EvaluatedResult[]> = {};
+  for (const result of results) {
+    if (!resultsByModel[result.modelName]) {
+      resultsByModel[result.modelName] = [];
+    }
+    resultsByModel[result.modelName].push(result);
+  }
 
   let summary = "# Evaluation Summary";
   for (const modelName in resultsByModel) {
     summary += `\n\n## Model: ${modelName}\n\n`;
     const header = `| ${"Prompt Name".padEnd(
       promptNameWidth
-    )} | ${"Avg Latency (ms)".padEnd(latencyWidth)} | ${"Failed Runs".padEnd(
+    )} | ${"Avg Latency (ms)".padEnd(latencyWidth)} | ${"Schema Fail".padEnd(
       failedRunsWidth
+    )} | ${"Eval Fail".padEnd(failedRunsWidth)} | ${"Minor".padEnd(
+      severityWidth
+    )} | ${"Significant".padEnd(severityWidth)} | ${"Critical".padEnd(
+      severityWidth
     )} |`;
     const divider = `|${"-".repeat(promptNameWidth + 2)}|${"-".repeat(
       latencyWidth + 2
-    )}|${"-".repeat(failedRunsWidth + 2)}|`;
+    )}|${"-".repeat(failedRunsWidth + 2)}|${"-".repeat(
+      failedRunsWidth + 2
+    )}|${"-".repeat(severityWidth + 2)}|${"-".repeat(
+      severityWidth + 2
+    )}|${"-".repeat(severityWidth + 2)}|`;
     summary += header;
     summary += `\n${divider}`;
 
-    const promptsInModel = resultsByModel[modelName].reduce(
+    const modelResults = resultsByModel[modelName];
+    const promptsInModel = modelResults.reduce(
       (acc, result) => {
         if (!acc[result.prompt.name]) {
           acc[result.prompt.name] = [];
@@ -105,58 +92,115 @@ function generateSummary(
         acc[result.prompt.name].push(result);
         return acc;
       },
-      {} as Record<string, InferenceResult[]>
+      {} as Record<string, EvaluatedResult[]>
     );
-
-    let totalModelFailedRuns = 0;
 
     const sortedPromptNames = Object.keys(promptsInModel).sort();
     for (const promptName of sortedPromptNames) {
       const runs = promptsInModel[promptName];
       const totalRuns = runs.length;
-      const failedRuns = runs.filter(
-        (r) => r.error || r.validationResults.length > 0
+      const schemaFailedRuns = runs.filter(
+        (r) => r.error || r.validationErrors.length > 0
       ).length;
+      const evalFailedRuns = runs.filter(
+        (r) => r.evaluationResult && !r.evaluationResult.pass
+      ).length;
+
       const totalLatency = runs.reduce((acc, r) => acc + r.latency, 0);
       const avgLatency = (totalLatency / totalRuns).toFixed(0);
 
-      totalModelFailedRuns += failedRuns;
+      const schemaFailedStr =
+        schemaFailedRuns > 0 ? `${schemaFailedRuns} / ${totalRuns}` : "";
+      const evalFailedStr =
+        evalFailedRuns > 0 ? `${evalFailedRuns} / ${totalRuns}` : "";
 
-      const failedRunsStr =
-        failedRuns > 0 ? `${failedRuns} / ${totalRuns}` : "";
+      let minorCount = 0;
+      let significantCount = 0;
+      let criticalCount = 0;
+
+      for (const r of runs) {
+        if (r.evaluationResult?.issues) {
+          for (const issue of r.evaluationResult.issues) {
+            if (issue.severity === "minor") minorCount++;
+            else if (issue.severity === "significant") significantCount++;
+            else if (issue.severity === "critical") criticalCount++;
+          }
+        }
+      }
+
+      const minorStr = minorCount > 0 ? `${minorCount}` : "";
+      const significantStr = significantCount > 0 ? `${significantCount}` : "";
+      const criticalStr = criticalCount > 0 ? `${criticalCount}` : "";
 
       summary += `\n| ${promptName.padEnd(
         promptNameWidth
-      )} | ${avgLatency.padEnd(latencyWidth)} | ${failedRunsStr.padEnd(
+      )} | ${avgLatency.padEnd(latencyWidth)} | ${schemaFailedStr.padEnd(
         failedRunsWidth
+      )} | ${evalFailedStr.padEnd(failedRunsWidth)} | ${minorStr.padEnd(
+        severityWidth
+      )} | ${significantStr.padEnd(severityWidth)} | ${criticalStr.padEnd(
+        severityWidth
       )} |`;
     }
 
-    const totalRunsForModel = resultsByModel[modelName].length;
+    const totalRunsForModel = modelResults.length;
+    const successfulRuns = modelResults.filter(
+      (r) =>
+        !r.error &&
+        r.validationErrors.length === 0 &&
+        (!r.evaluationResult || r.evaluationResult.pass)
+    ).length;
+
     const successPercentage =
       totalRunsForModel === 0
         ? "0.0"
-        : (
-            ((totalRunsForModel - totalModelFailedRuns) / totalRunsForModel) *
-            100.0
-          ).toFixed(1);
+        : ((successfulRuns / totalRunsForModel) * 100.0).toFixed(1);
 
-    summary += `\n\n**Total failed runs:** ${totalModelFailedRuns} / ${totalRunsForModel} (${successPercentage}% success)`;
+    summary += `\n\n**Total successful runs:** ${successfulRuns} / ${totalRunsForModel} (${successPercentage}% success)`;
+
+    if (analysisResults[modelName]) {
+      summary += `\n\n### Failure Analysis\n\n${analysisResults[modelName]}`;
+    }
   }
 
   summary += "\n\n---\n\n## Overall Summary\n";
   const totalRuns = results.length;
   const totalToolErrorRuns = results.filter((r) => r.error).length;
   const totalRunsWithAnyFailure = results.filter(
-    (r) => r.error || r.validationResults.length > 0
+    (r) =>
+      r.error ||
+      r.validationErrors.length > 0 ||
+      (r.evaluationResult && !r.evaluationResult.pass)
   ).length;
+
   const modelsWithFailures = [
     ...new Set(
       results
-        .filter((r) => r.error || r.validationResults.length > 0)
+        .filter(
+          (r) =>
+            r.error ||
+            r.validationErrors.length > 0 ||
+            (r.evaluationResult && !r.evaluationResult.pass)
+        )
         .map((r) => r.modelName)
     ),
   ].join(", ");
+
+  let totalMinor = 0;
+  let totalSignificant = 0;
+  let totalCritical = 0;
+  let totalCriticalSchema = 0;
+
+  for (const r of results) {
+    if (r.evaluationResult?.issues) {
+      for (const issue of r.evaluationResult.issues) {
+        if (issue.severity === "minor") totalMinor++;
+        else if (issue.severity === "significant") totalSignificant++;
+        else if (issue.severity === "critical") totalCritical++;
+        else if (issue.severity === "criticalSchema") totalCriticalSchema++;
+      }
+    }
+  }
 
   summary += `\n- **Total tool failures:** ${totalToolErrorRuns} / ${totalRuns}`;
   const successPercentage =
@@ -165,10 +209,17 @@ function generateSummary(
       : (((totalRuns - totalRunsWithAnyFailure) / totalRuns) * 100.0).toFixed(
           1
         );
-  summary += `\n- **Number of runs with any failure (tool error or validation):** ${totalRunsWithAnyFailure} / ${totalRuns} (${successPercentage}% success)`;
+  summary += `\n- **Number of runs with any failure (tool error, validation, or eval):** ${totalRunsWithAnyFailure} / ${totalRuns} (${successPercentage}% success)`;
+  summary += `\n- **Severity Breakdown:**`;
+  summary += `\n  - **Minor:** ${totalMinor}`;
+  summary += `\n  - **Significant:** ${totalSignificant}`;
+  summary += `\n  - **Critical (Eval):** ${totalCritical}`;
+  summary += `\n  - **Critical (Schema):** ${totalCriticalSchema}`;
+
   const latencies = results.map((r) => r.latency).sort((a, b) => a - b);
   const totalLatency = latencies.reduce((acc, l) => acc + l, 0);
-  const meanLatency = (totalLatency / totalRuns).toFixed(0);
+  const meanLatency =
+    totalRuns > 0 ? (totalLatency / totalRuns).toFixed(0) : "0";
   let medianLatency = 0;
   if (latencies.length > 0) {
     const mid = Math.floor(latencies.length / 2);
@@ -188,10 +239,6 @@ function generateSummary(
   return summary;
 }
 
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
-
-// Run the flow
 async function main() {
   const argv = await yargs(hideBin(process.argv))
     .option("log-level", {
@@ -224,20 +271,23 @@ async function main() {
       array: true,
       description: "Filter prompts by name prefix",
     })
+    .option("eval-model", {
+      type: "string",
+      description: "Model to use for evaluation",
+      default: "gemini-2.5-flash-lite",
+      choices: modelsToTest.map((m) => m.name),
+    })
     .option("clean-results", {
       type: "boolean",
       description: "Clear the output directory before starting",
       default: false,
     })
-    .option("print-prompts", {
-      type: "boolean",
-      description:
-        "Print prompt metadata and output as JSONL stream to a separate file",
-      default: false,
-    })
-    .help()
-    .alias("h", "help").argv;
 
+    .help()
+    .alias("h", "help")
+    .strict().argv;
+
+  // Filter Models
   let filteredModels = modelsToTest;
   if (argv.model && argv.model.length > 0) {
     const modelNames = argv.model as string[];
@@ -248,6 +298,7 @@ async function main() {
     }
   }
 
+  // Filter Prompts
   let filteredPrompts = prompts;
   if (argv.prompt && argv.prompt.length > 0) {
     const promptPrefixes = argv.prompt as string[];
@@ -262,304 +313,169 @@ async function main() {
     }
   }
 
-  const ajv = new Ajv({ allErrors: true });
+  // Determine Output Directory (Base)
+  // Note: Generator/Validator/Evaluator handle per-model subdirectories if outputDir is provided.
+  // But we need a base output dir to pass to them.
+  let resultsBaseDir: string | undefined;
+  const resultsArg = argv.results;
+  if (typeof resultsArg === "string") {
+    resultsBaseDir = resultsArg;
+  } else if (resultsArg === true) {
+    resultsBaseDir = "results";
+  }
 
-  const schemas: any = {};
-  for (const file of schemaFiles) {
-    const schemaString = fs.readFileSync(path.join(__dirname, file), "utf-8");
-    const schema = JSON.parse(schemaString);
-    schemas[file] = schema;
-    if (schema.$id) {
-      ajv.addSchema(schema, schema.$id);
+  // Clean Results
+  if (
+    argv["clean-results"] &&
+    resultsBaseDir &&
+    fs.existsSync(resultsBaseDir)
+  ) {
+    // Only clean if we are using the default structure or explicit path
+    // We should be careful not to delete root if user passed "/" (unlikely but possible)
+    // For safety, let's iterate over models and clean their specific dirs if they exist
+    // Or just clean the base dir if it looks like our results dir.
+    // The previous logic cleaned `outputDir` which was per-model.
+    // Here we might want to clean the whole results dir if it's the default "results".
+    if (resultsBaseDir === "results") {
+      fs.rmSync(resultsBaseDir, { recursive: true, force: true });
+    } else {
+      // If custom dir, maybe just clean it?
+      // User asked to clean results.
+      fs.rmSync(resultsBaseDir, { recursive: true, force: true });
     }
   }
 
-  const runsPerPrompt = argv["runs-per-prompt"];
+  // Setup Logger (Global)
+  // We need to setup logger to write to file?
+  // Previous logic setup logger per model output dir.
+  // Now we have multiple models potentially.
+  // We can setup logger to write to stdout/stderr primarily, and maybe a global log file?
+  // Or we can setup logger to NOT write to file, and let phases write their own logs?
+  // The `setupLogger` function takes an outputDir.
+  // If we have multiple models, where do we log?
+  // Maybe just log to the first model's dir or a "latest" dir?
+  // Or just console for now if multiple models?
+  // If single model, use that model's dir.
 
-  for (const modelConfig of filteredModels) {
-    const modelDirName = `output-${modelConfig.name.replace(/[\/:]/g, "_")}`;
-    let outputDir: string;
-
-    const resultsArg = argv.results;
-    if (typeof resultsArg === "string") {
-      if (filteredModels.length > 1) {
-        outputDir = path.join(resultsArg, modelDirName);
-      } else {
-        outputDir = resultsArg;
-      }
+  if (resultsBaseDir) {
+    if (filteredModels.length === 1) {
+      const modelDirName = `output-${filteredModels[0].name.replace(/[\/:]/g, "_")}`;
+      setupLogger(path.join(resultsBaseDir, modelDirName), argv["log-level"]);
     } else {
-      outputDir = path.join("results", modelDirName);
+      // If multiple models, maybe just log to console or a shared log?
+      // For now, let's just use console logging (default if setupLogger not called with dir?)
+      // Actually setupLogger needs a dir to create 'eval.log'.
+      // Let's create a 'combined' log if multiple models?
+      // Or just skip file logging for multiple models for now.
+      setupLogger(undefined, argv["log-level"]);
     }
+  } else {
+    setupLogger(undefined, argv["log-level"]);
+  }
 
-    if (argv["clean-results"] && fs.existsSync(outputDir)) {
-      fs.rmSync(outputDir, { recursive: true, force: true });
+  const schemas = loadSchemas();
+
+  // Phase 1: Generation
+  const generator = new Generator(schemas, resultsBaseDir);
+  const generatedResults = await generator.run(
+    filteredPrompts,
+    filteredModels,
+    argv["runs-per-prompt"]
+  );
+
+  // Phase 2: Validation
+  const validator = new Validator(schemas, resultsBaseDir);
+  const validatedResults = await validator.run(generatedResults);
+
+  // Phase 3: Evaluation
+  const evaluator = new Evaluator(schemas, argv["eval-model"], resultsBaseDir);
+  const evaluatedResults = await evaluator.run(validatedResults);
+
+  // Phase 4: Failure Analysis
+  const analysisResults: Record<string, string> = {};
+  const resultsByModel: Record<string, EvaluatedResult[]> = {};
+  for (const result of evaluatedResults) {
+    if (!resultsByModel[result.modelName]) {
+      resultsByModel[result.modelName] = [];
     }
+    resultsByModel[result.modelName].push(result);
+  }
 
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
+  for (const modelName in resultsByModel) {
+    const modelResults = resultsByModel[modelName];
+    const failures = modelResults
+      .filter(
+        (r) =>
+          r.error ||
+          r.validationErrors.length > 0 ||
+          (r.evaluationResult && !r.evaluationResult.pass)
+      )
+      .map((r) => {
+        let failureType = "Unknown";
+        let reason = "Unknown";
+        let issues: string[] = [];
 
-    const detailsDir = path.join(outputDir, "details");
-    if (!fs.existsSync(detailsDir)) {
-      fs.mkdirSync(detailsDir, { recursive: true });
-    }
-
-    setupLogger(outputDir, argv["log-level"]);
-    logger.info(`Output directory: ${outputDir}`);
-
-    const generationPromises: Promise<InferenceResult>[] = [];
-    let completedCount = 0;
-    let failedCount = 0;
-    const totalJobs = filteredPrompts.length * runsPerPrompt;
-
-    for (const prompt of filteredPrompts) {
-      const runJob = async (
-        runIndex: number,
-        retryCount: number = 0
-      ): Promise<InferenceResult> => {
-        if (retryCount > 0) {
-          logger.warn(
-            `[${modelConfig.name}] Retrying prompt ${prompt.name} (run ${runIndex}, attempt ${retryCount + 1})`
-          );
-        } else {
-          logger.verbose(
-            `Queueing generation for model: ${modelConfig.name}, prompt: ${prompt.name} (run ${runIndex})`
-          );
+        if (r.error) {
+          failureType = "Tool Error";
+          reason = r.error.message || String(r.error);
+        } else if (r.validationErrors.length > 0) {
+          failureType = "Schema Validation";
+          reason = "Schema validation failed";
+          issues = r.validationErrors;
+        } else if (r.evaluationResult && !r.evaluationResult.pass) {
+          failureType = "Evaluation Failure";
+          reason = r.evaluationResult.reason;
+          if (r.evaluationResult.issues) {
+            issues = r.evaluationResult.issues.map(
+              (i) => `${i.severity}: ${i.issue}`
+            );
+          }
         }
 
-        const startTime = Date.now();
+        return {
+          promptName: r.prompt.name,
+          runNumber: r.runNumber,
+          failureType,
+          reason,
+          issues,
+        };
+      });
 
-        try {
-          const output: any = await componentGeneratorFlow({
-            prompt: prompt.promptText,
-            modelConfig: modelConfig,
-            schemas,
-          });
-
-          const text = output?.text;
-          const latency = output?.latency || 0;
-
-          let components: any[] = [];
-          let error = null;
-          let validationResults: string[] = [];
-
-          if (text) {
-            try {
-              components = extractJsonFromMarkdown(text);
-
-              // Validate against the main schema
-              const validate = ajv.getSchema(
-                "https://a2ui.dev/specification/0.9/server_to_client.json"
-              );
-
-              if (validate) {
-                for (const component of components) {
-                  if (!validate(component)) {
-                    validationResults = validationResults.concat(
-                      (validate.errors || []).map(
-                        (err) => `${err.instancePath} ${err.message}`
-                      )
-                    );
-                  }
-                }
-              }
-
-              // Also run original validator for more specific checks
-              validationResults = validationResults.concat(
-                validateSchema(components, prompt.matchers)
-              );
-
-              if (outputDir) {
-                const inputPath = path.join(
-                  detailsDir,
-                  `${prompt.name}.input.txt`
-                );
-                fs.writeFileSync(inputPath, prompt.promptText);
-
-                const suffix =
-                  validationResults.length > 0 ? ".failed.json" : ".json";
-                const outputPath = path.join(
-                  detailsDir,
-                  `${prompt.name}.${runIndex}${suffix}`
-                );
-                fs.writeFileSync(
-                  outputPath,
-                  JSON.stringify(components, null, 2)
-                );
-
-                if (validationResults.length > 0) {
-                  const failurePath = path.join(
-                    detailsDir,
-                    `${prompt.name}.${runIndex}.failed.txt`
-                  );
-                  fs.writeFileSync(failurePath, validationResults.join("\n"));
-                }
-
-                if (argv["print-prompts"]) {
-                  const samplePath = path.join(
-                    detailsDir,
-                    `${prompt.name}.${runIndex}.sample`
-                  );
-                  const yamlHeader = `---
-description: ${prompt.description}
-name: ${prompt.name}
-prompt: |
-${prompt.promptText
-  .split("\n")
-  .map((line) => "  " + line)
-  .join("\n")}
----
-`;
-                  let jsonlBody = "";
-                  // Check if we need to add setup messages
-                  // If we have updateComponents but no createSurface, maybe add it?
-                  // For now, just dump what we have.
-                  for (const comp of components) {
-                    jsonlBody += JSON.stringify(comp) + "\n";
-                  }
-
-                  fs.writeFileSync(samplePath, yamlHeader + jsonlBody);
-                }
-              }
-            } catch (e) {
-              error = e;
-              validationResults.push(
-                "Failed to extract JSON from model output."
-              );
-              if (outputDir) {
-                const errorPath = path.join(
-                  detailsDir,
-                  `${prompt.name}.${runIndex}.output.txt`
-                );
-                fs.writeFileSync(errorPath, text || "No output text.");
-              }
-            }
-          } else {
-            error = new Error("No output text returned from model");
-          }
-
-          return {
-            modelName: modelConfig.name,
-            prompt,
-            components,
-            error,
-            latency,
-            validationResults,
-            runNumber: runIndex,
-          };
-        } catch (error: any) {
-          // Retry logic for tool errors (not validation failures)
-          if (retryCount < 1) {
-            logger.warn(
-              `Tool error for ${modelConfig.name}, prompt ${prompt.name}: ${error.message}. Retrying...`
-            );
-            return runJob(runIndex, retryCount + 1);
-          }
-
-          if (outputDir) {
-            const inputPath = path.join(detailsDir, `${prompt.name}.input.txt`);
-            fs.writeFileSync(inputPath, prompt.promptText);
-
-            const errorPath = path.join(
-              detailsDir,
-              `${prompt.name}.${runIndex}.error.json`
-            );
-            const errorOutput = {
-              message: error.message,
-              stack: error.stack,
-              ...error,
-            };
-            fs.writeFileSync(errorPath, JSON.stringify(errorOutput, null, 2));
-          }
-          return {
-            modelName: modelConfig.name,
-            prompt,
-            components: [],
-            error,
-            latency: Date.now() - startTime,
-            validationResults: [],
-            runNumber: runIndex,
-          };
-        }
-      };
-
-      for (let i = 1; i <= runsPerPrompt; i++) {
-        generationPromises.push(
-          runJob(i).then((result) => {
-            if (result.error) {
-              failedCount++;
-            } else {
-              completedCount++;
-            }
-            return result;
-          })
-        );
+    if (failures.length > 0) {
+      logger.info(`Running failure analysis for model: ${modelName}...`);
+      try {
+        const analysis = await analysisFlow({
+          modelName,
+          failures,
+          numRuns: modelResults.length,
+          evalModel: argv["eval-model"],
+        });
+        analysisResults[modelName] = analysis;
+      } catch (e) {
+        logger.error(`Failed to run failure analysis for ${modelName}: ${e}`);
+        analysisResults[modelName] = "Failed to run analysis.";
       }
     }
+  }
 
-    const progressInterval = setInterval(() => {
-      const queuedCount = rateLimiter.waitingCount;
-      const inProgressCount =
-        totalJobs - completedCount - failedCount - queuedCount;
-      const pct = Math.round(
-        ((completedCount + failedCount) / totalJobs) * 100
-      );
-      process.stderr.write(
-        `\r[${modelConfig.name}] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `
-      );
-    }, 1000);
+  // Summary
+  const summary = generateSummary(evaluatedResults, analysisResults);
+  logger.info(summary);
 
-    const results = await Promise.all(generationPromises);
-    clearInterval(progressInterval);
-    process.stderr.write("\n");
-
-    const resultsByModel: Record<string, InferenceResult[]> = {};
-    for (const result of results) {
-      if (!resultsByModel[result.modelName]) {
-        resultsByModel[result.modelName] = [];
+  if (resultsBaseDir) {
+    // Save summary to each model dir?
+    // Or just one summary?
+    // Previous logic saved summary.md in model dir.
+    for (const model of filteredModels) {
+      const modelDirName = `output-${model.name.replace(/[\/:]/g, "_")}`;
+      const modelDir = path.join(resultsBaseDir, modelDirName);
+      if (fs.existsSync(modelDir)) {
+        fs.writeFileSync(path.join(modelDir, "summary.md"), summary);
       }
-      resultsByModel[result.modelName].push(result);
-    }
-
-    logger.info("--- Generation Results ---");
-    for (const modelName in resultsByModel) {
-      for (const result of resultsByModel[modelName]) {
-        const hasError = !!result.error;
-        const hasValidationFailures = result.validationResults.length > 0;
-        const hasComponent = result.components && result.components.length > 0;
-
-        if (hasError || hasValidationFailures) {
-          logger.info(`----------------------------------------`);
-          logger.info(`Model: ${modelName}`);
-          logger.info(`----------------------------------------`);
-          logger.info(`Query: ${result.prompt.name} (run ${result.runNumber})`);
-
-          if (hasError) {
-            logger.error(
-              `Error generating component: ${JSON.stringify(result.error)}`
-            );
-          } else if (hasComponent) {
-            if (hasValidationFailures) {
-              logger.warn("Validation Failures:");
-              result.validationResults.forEach((failure) =>
-                logger.warn(`- ${failure}`)
-              );
-            }
-            logger.verbose("Generated output:");
-            logger.verbose(JSON.stringify(result.components, null, 2));
-          }
-        }
-      }
-    }
-
-    const summary = generateSummary(resultsByModel, results);
-    logger.info(summary);
-    if (outputDir) {
-      const summaryPath = path.join(outputDir, "summary.md");
-      fs.writeFileSync(summaryPath, summary);
     }
   }
 }
+
 if (require.main === module) {
   main().catch(console.error);
 }
