@@ -374,9 +374,21 @@ async function main() {
   }
 
   const schemas = loadSchemas();
+  const catalogRulesPath = path.join(
+    __dirname,
+    "../../json/standard_catalog_rules.txt"
+  );
+  let catalogRules: string | undefined;
+  if (fs.existsSync(catalogRulesPath)) {
+    catalogRules = fs.readFileSync(catalogRulesPath, "utf-8");
+  } else {
+    logger.warn(
+      `Catalog rules file not found at ${catalogRulesPath}. Proceeding without specific catalog rules.`
+    );
+  }
 
   // Phase 1: Generation
-  const generator = new Generator(schemas, resultsBaseDir);
+  const generator = new Generator(schemas, resultsBaseDir, catalogRules);
   const generatedResults = await generator.run(
     filteredPrompts,
     filteredModels,

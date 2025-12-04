@@ -28,10 +28,11 @@ export const componentGeneratorFlow = ai.defineFlow(
       prompt: z.string(),
       modelConfig: z.any(), // Ideally, we'd have a Zod schema for ModelConfiguration
       schemas: z.any(),
+      catalogRules: z.string().optional(),
     }),
     outputSchema: z.any(),
   },
-  async ({ prompt, modelConfig, schemas }) => {
+  async ({ prompt, modelConfig, schemas, catalogRules }) => {
     const schemaDefs = Object.values(schemas)
       .map((s: any) => JSON.stringify(s, null, 2))
       .join("\n\n");
@@ -50,6 +51,13 @@ Standard Instructions:
 8. STRICTLY follow the JSON Schemas. Do NOT add any properties that are not defined in the schema. Ensure ALL required properties are present.
 9. Do NOT invent data bindings or action contexts. Only use them if the prompt explicitly asks for them.
 10. Read the 'description' field of each component in the schema carefully. It contains critical usage instructions (e.g. regarding labels, single child limits, and layout behavior) that you MUST follow.
+11. **CRITICAL: 'weight' is a TOP-LEVEL property.** Do NOT put 'weight' inside 'props'. It must be a sibling of 'id' and 'props'.
+    INCORRECT: { "id": "...", "props": { "component": "...", "weight": 1 } }
+    CORRECT:   { "id": "...", "weight": 1, "props": { "component": "..." } }
+12. Do NOT define components inline inside 'child' or 'children'. Always use a string ID referencing a separate component definition.
+13. Do NOT use a 'style' property. Use standard properties like 'alignment', 'distribution', 'usageHint', etc.
+14. Do NOT invent properties that are not in the schema. Check the 'properties' list for each component type.
+${catalogRules ? `\nInstructions specific to this catalog:\n${catalogRules}` : ""}
 
 Schemas:
 ${schemaDefs}

@@ -45,7 +45,7 @@ The dog generator is another card which is a form that generates a fictional dog
 - Dog breed name (text input)
 - Number of legs (number input)
 - Button called “Generate” which takes the data above and generates a new dog description
-- Skills (MultipleChoice component)
+- Skills (CheckboxGroup component)
 - A divider
 - A section which shows the generated content
 `,
@@ -59,7 +59,7 @@ The dog generator is another card which is a form that generates a fictional dog
   {
     name: "productGallery",
     description: "A gallery of products using a list with a template.",
-    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a context with the product ID, for example, 'productId': 'product123' (use a literal string value, not a path). You should create a template component and then a list that uses it.`,
+    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a context with the product ID, for example, 'productId': 'static-id-123' (use this exact literal string). You should create a template component and then a list that uses it.`,
   },
   {
     name: "productGalleryData",
@@ -131,7 +131,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "musicPlayer",
     description: "A simple music player UI.",
-    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' for the song progress, and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the labels "Previous", "Play", and "Next" respectively.`,
+    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a music player. It should be a 'Card' containing a 'Column'. Inside the column, there's an 'Image' for the album art, a 'Text' for the song title "Bohemian Rhapsody", another 'Text' for the artist "Queen", a 'Slider' labeled "Progress", and a 'Row' with three 'Button' components. Each Button should have a child 'Text' component. The Text components should have the labels "Previous", "Play", and "Next" respectively.`,
   },
   {
     name: "weatherForecast",
@@ -141,12 +141,12 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "surveyForm",
     description: "A customer feedback survey form.",
-    promptText: `Create a customer feedback survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'MultipleChoice' question "How would you rate our service?" with options "Excellent", "Good", "Average", "Poor". Then a 'MultipleChoice' section for "What did you like?" with options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
+    promptText: `Create a customer feedback survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'RadioGroup' with label "How would you rate our service?" and options "Excellent", "Good", "Average", "Poor". Then a 'CheckboxGroup' with label "What did you like?" and options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
   },
   {
     name: "flightBooker",
     description: "A form to search for flights.",
-    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a flight booking form. It should have a 'Text' (usageHint 'h1') "Book a Flight". Then a 'Row' with two 'TextField's for "Origin" and "Destination". Below that, a 'Row' with two 'DateTimeInput's for "Departure Date" and "Return Date" (initialize with empty values). Add a 'Slider' for "Passengers" (min 1, max 10, value 1). Finally, a 'Button' labeled "Search Flights".`,
+    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a flight booking form. It should have a 'Text' (usageHint 'h1') "Book a Flight". Then a 'Row' with two 'TextField's for "Origin" and "Destination". Below that, a 'Row' with two 'DateTimeInput's for "Departure Date" and "Return Date" (initialize with empty values). Add a 'Slider' labeled "Passengers" (min 1, max 10, value 1). Finally, a 'Button' labeled "Search Flights".`,
   },
   {
     name: "dashboard",
@@ -183,9 +183,9 @@ The right side of the row is another 'Column' for product information:
 - A 'Text' (usageHint 'h1') for the product name, "Premium Leather Jacket".
 - A 'Text' component for the price, "$299.99".
 - A 'Divider'.
-- A 'Text' (usageHint 'h3') "Select Size", followed by a 'MultipleChoice' component with options "S", "M", "L", "XL".
-- A 'Text' (usageHint 'h3') "Select Color", followed by another 'MultipleChoice' component with options "Black", "Brown", "Red".
-- A 'Button' with the label "Add to Cart".
+- A 'RadioGroup' labeled "Select Size" with options "S", "M", "L", "XL".
+- A 'RadioGroup' labeled "Select Color" with options "Black", "Brown", "Red".
+- A 'Button' with a 'Text' child "Add to Cart".
 - A 'Text' component for the product description below the button.`,
   },
   {
@@ -240,12 +240,12 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "fitnessTracker",
     description: "A daily activity summary.",
-    promptText: `Create a fitness tracker dashboard. It should have a 'Text' (usageHint 'h1') "Daily Activity". A 'Row' of 'Card's. Each card should contain a 'Column' with a 'Text' label (e.g. "Steps") and a 'Text' value (e.g. "10,000"). Create cards for "Steps" ("10,000"), "Calories" ("500 kcal"), "Distance" ("5 km"). Below that, a 'Slider' for "Daily Goal" (initialize value to 50). Finally, a 'List' of recent workouts.`,
+    promptText: `Create a fitness tracker dashboard. It should have a 'Text' (usageHint 'h1') "Daily Activity", and a 'Row' of 'Card's. Each card should contain a 'Column' with a 'Text' label (e.g. "Steps") and a 'Text' value (e.g. "10,000"). Create cards for "Steps" ("10,000"), "Calories" ("500 kcal"), "Distance" ("5 km"). Below that, a 'Slider' labeled "Daily Goal" (initialize value to 50). Finally, a 'List' of recent workouts. Use 'Text' components for the list items, for example: "Morning Run", "Evening Yoga", "Gym Session".`,
   },
   {
     name: "smartHome",
     description: "A smart home control panel.",
-    promptText: `Create a smart home dashboard. It should have a 'Text' (usageHint 'h1') "Living Room". A 'Grid' (use 'Row's of 'Column's) of 'Card's. Cards for "Lights" (CheckBox, label "Lights", value true), "Thermostat" (Slider, value 72), "Music" (CheckBox, label "Music", value false). Ensure the CheckBox labels are exactly "Lights" and "Music".`,
+    promptText: `Create a smart home dashboard. It should have a 'Text' (usageHint 'h1') "Living Room". A 'Grid' of 'Card's. To create the grid, use a 'Column' that contains multiple 'Row's. Each 'Row' should contain 'Card's. Create a row with cards for "Lights" (CheckBox, label "Lights", value true) and "Thermostat" (Slider, label "Thermostat", value 72). Create another row with a card for "Music" (CheckBox, label "Music", value false). Ensure the CheckBox labels are exactly "Lights" and "Music".`,
   },
   {
     name: "restaurantMenu",
@@ -258,17 +258,17 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "newsAggregator",
     description: "A news feed with article cards.",
-    promptText: `Create a news aggregator. It should have a 'Text' (usageHint 'h1') "Top Headlines". A 'List' of 'Card's. Each card has a 'Column' with an 'Image', a 'Text' (headline), and a 'Text' (summary). Include headlines "Tech Breakthrough" and "Local Sports". Each card should have a 'Button' labeled "Read More". Create these as static components, not data bound.`,
+    promptText: `Create a news aggregator. The root component should be a 'Column'. Inside this column, place a 'Text' (usageHint 'h1') "Top Headlines". Below the text, place a 'List' of 'Card's. The 'List' should be a sibling of the 'Text', not a parent. Each card has a 'Column' with an 'Image', a 'Text' (headline), and a 'Text' (summary). Include headlines "Tech Breakthrough" and "Local Sports". Each card should have a 'Button' labeled "Read More". Create these as static components, not data bound.`,
   },
   {
     name: "photoEditor",
     description: "A photo editing interface with sliders.",
-    promptText: `Create a photo editor. It should have a large 'Image' (photo). Below it, a 'Row' of 'Button's (Filters, Crop, Adjust). Below that, a 'Slider' for "Intensity" (initialize value to 50).`,
+    promptText: `Create a photo editor. It should have a large 'Image' (photo). Below it, a 'Row' of 'Button's (Filters, Crop, Adjust). Below that, a 'Slider' labeled "Intensity" (initialize value to 50).`,
   },
   {
     name: "triviaQuiz",
     description: "A trivia question card.",
-    promptText: `Create a trivia quiz. It should have a 'Text' (usageHint 'h1') "Question 1". A 'Text' "What is the capital of France?". A 'MultipleChoice' for answers (options: "Paris", "London", "Berlin", "Madrid"). A 'Button' "Submit Answer".`,
+    promptText: `Create a trivia quiz. It should have a 'Text' (usageHint 'h1') "Question 1". A 'Text' "What is the capital of France?". A 'RadioGroup' for answers (options: "Paris", "London", "Berlin", "Madrid"). A 'Button' "Submit Answer".`,
   },
   {
     name: "simpleCalculator",
@@ -283,7 +283,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "jobApplication",
     description: "A job application form.",
-    promptText: `Create a job application form. It should have 'TextField's for "Name", "Email", "Phone", "Resume URL". A 'MultipleChoice' for "Years of Experience" (options: "0-1", "2-5", "5+"). A 'Button' "Submit Application". Create these as static components, not data bound.`,
+    promptText: `Create a job application form. It should have 'TextField's for "Name", "Email", "Phone", "Resume URL". A 'RadioGroup' labeled "Years of Experience" (options: "0-1", "2-5", "5+"). A 'Button' "Submit Application".`,
   },
   {
     name: "courseSyllabus",
@@ -307,8 +307,8 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     - 'Image' (Cover Art).
     - 'Text' (h2) "Episode 42: The Future of AI".
     - 'Text' "Host: Jane Smith".
-    - 'Slider' (Progress, initialize value to 0).
-    - 'Row' with 'Button' (label "1x"), 'Button' (label "Play/Pause"), 'Button' (label "Share").
+    - 'Slider' labeled "Progress" (initialize value to 0).
+    - 'Row' with 'Button' (child 'Text' "1x"), 'Button' (child 'Text' "Play/Pause"), 'Button' (child 'Text' "Share").
     Create these as static components, not data bound.`,
   },
   {
