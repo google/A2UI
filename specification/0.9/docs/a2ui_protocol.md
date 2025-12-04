@@ -423,17 +423,19 @@ This loop allows for a high degree of flexibility and robustness, as the system 
 
 If validation fails, the client (or the system acting on behalf of the client) should send an `error` message back to the LLM. To ensure the LLM can understand and correct the error, use the following standard format within the `error` message payload:
 
-- `type` (string, required): Must be `"ValidationFailed"`.
-- `path` (string, required): A JSONPath or dot-notation string indicating the location of the error (e.g., `components[2].props.text`).
-- `message` (string, required): A human-readable description of the validation error.
+- `code` (string, required): Must be `"VALIDATION_FAILED"`.
+- `surfaceId` (string, required): The ID of the surface where the error occurred.
+- `path` (string, required): The JSON pointer to the field that failed validation (e.g. `/components/0/props/text`).
+- `message` (string, required): A short one-sentence description of why validation failed.
 
 **Example Error Message:**
 
 ```json
 {
   "error": {
-    "type": "ValidationFailed",
-    "path": "components[2].props.text",
+    "code": "VALIDATION_FAILED",
+    "surfaceId": "user_profile_card",
+    "path": "/components/0/props/text",
     "message": "Expected stringOrPath, got integer"
   }
 }

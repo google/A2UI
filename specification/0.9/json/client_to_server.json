@@ -79,36 +79,49 @@
       ]
     },
     "error": {
-      "description": "Reports a client-side error. The content is flexible, but 'ValidationFailed' errors have a strict structure.",
+      "description": "Reports a client-side error.",
       "oneOf": [
         {
           "type": "object",
           "title": "Validation Failed Error",
           "properties": {
-            "type": {
-              "const": "ValidationFailed"
+            "code": {
+              "const": "VALIDATION_FAILED"
+            },
+            "surfaceId": {
+              "type": "string",
+              "description": "The id of the surface where the error occurred."
             },
             "path": {
               "type": "string",
-              "description": "The path to the invalid field (e.g. 'components[0].props.text')."
+              "description": "The JSON pointer to the field that failed validation (e.g. '/components/0/props/text')."
             },
             "message": {
               "type": "string",
-              "description": "A description of why validation failed."
+              "description": "A short one-sentence description of why validation failed."
             }
           },
-          "required": ["type", "path", "message"]
+          "required": ["code", "path", "message", "surfaceId"]
         },
         {
           "type": "object",
           "title": "Generic Error",
           "properties": {
-            "type": {
+            "code": {
               "not": {
-                "const": "ValidationFailed"
+                "const": "VALIDATION_FAILED"
               }
+            },
+            "message": {
+              "type": "string",
+              "description": "A short one-sentence description of why the error occurred."
+            },
+            "surfaceId": {
+              "type": "string",
+              "description": "The id of the surface where the error occurred."
             }
           },
+          "required": ["code", "surfaceId", "message"],
           "additionalProperties": true
         }
       ]
