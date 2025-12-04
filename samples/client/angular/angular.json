@@ -5,26 +5,30 @@
   "projects": {
     "lib": {
       "projectType": "library",
-      "root": "projects/lib",
-      "sourceRoot": "projects/lib/src",
+      "root": "../../renderers/angular",
+      "sourceRoot": "../../renderers/angular/src",
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular/build:ng-packagr",
+          "builder": "@angular-builder/custom-ng-packagr",
+          "options": {
+            "project": "../../renderers/angular/ng-package.json"
+          },
           "configurations": {
             "production": {
-              "tsConfig": "projects/lib/tsconfig.lib.prod.json"
+              "tsConfig": "../../renderers/angular/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/lib/tsconfig.lib.json"
+              "tsConfig": "../../renderers/angular/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular-builder/custom-karma",
           "options": {
-            "tsConfig": "projects/lib/tsconfig.spec.json"
+            "karmaConfig": "../../renderers/angular/karma.conf.js",
+            "tsConfig": "../../renderers/angular/tsconfig.spec.json"
           }
         }
       }

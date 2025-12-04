@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "../../renderers/web" },
+    { "path": "tests" },
+    { "path": "restaurant" },
+    { "path": "../../editor" },
+    { "path": "inspector" },
+    { "path": "contact" }
+  ]
+}

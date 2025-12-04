@@ -17,14 +17,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install all workspaces' dependencies
-        working-directory: ./web
+      - name: Install all deps
+        working-directory: ./samples/client/lit
         run: npm install --workspaces
 
       - name: Build all workspaces
-        working-directory: ./web
+        working-directory: ./samples/client/lit
         run: npm run build --workspaces
 
       - name: Run all tests
-        working-directory: ./web
+        working-directory: ./samples/client/lit
         run: npm run test --workspace=tests

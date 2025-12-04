@@ -18,29 +18,29 @@ jobs:
           node-version: '20'
 
       - name: Install web lib deps
-        working-directory: ./web/lib
+        working-directory: ./samples/client/lit/lib
         run: npm ci
 
       - name: Build web lib
-        working-directory: ./web/lib
+        working-directory: ./samples/client/lit/lib
         run: npm run build
 
       - name: Install top-level deps
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm ci
 
       - name: Install lib deps
-        working-directory: ./angular/projects/lib
+        working-directory: ./samples/client/angular/projects/lib
         run: npm i
 
       - name: Build lib
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm run build lib
 
       - name: Build contact sample
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm run build contact
 
       - name: Build restaurant sample
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm run build restaurant

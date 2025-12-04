@@ -1,27 +1,29 @@
 {
-  "name": "@a2ui/web-tests",
+  "name": "@a2ui/editor",
   "private": true,
   "version": "0.1.0",
-  "description": "A2UI Web Library Tests",
-  "main": "./dist/0.8/model.test.js",
-  "types": "./dist/0.8/model.test.d.ts",
+  "description": "A2UI Editor",
+  "main": "./dist/editor.js",
+  "types": "./dist/editor.d.ts",
   "type": "module",
   "scripts": {
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "dev": "wireit",
-    "test": "wireit"
+    "dev": "npm run serve --watch",
+    "test": "wireit",
+    "serve": "wireit"
   },
   "wireit": {
-    "dev": {
+    "serve": {
       "command": "vite dev",
       "dependencies": [
         "build"
-      ]
+      ],
+      "service": true
     },
     "test": {
-      "command": "node --test --enable-source-maps --test-reporter spec dist/0.8/*.test.js",
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/tests/**/*.test.js",
       "dependencies": [
         "build"
       ]
@@ -37,10 +39,10 @@
         "FORCE_COLOR": "1"
       },
       "dependencies": [
-        "../lib:build:tsc"
+        "./renderers/web:build"
       ],
       "files": [
-        "0.8/**/*.ts",
+        "**/*.ts",
         "tsconfig.json"
       ],
       "output": [
@@ -51,12 +53,12 @@
     }
   },
   "repository": {
-    "directory": "web/tests",
+    "directory": "editor",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },
   "files": [
-    "dist/src"
+    "dist"
   ],
   "keywords": [],
   "author": "Google",
@@ -64,12 +66,19 @@
   "bugs": {
     "url": "https://github.com/google/A2UI/issues"
   },
-  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "homepage": "https://github.com/google/A2UI/tree/main/editor#readme",
   "devDependencies": {
-    "@types/node": "^24.9.1",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.8.3",
+    "vite": "^7.1.11",
     "wireit": "^0.15.0-pre.2"
   },
   "dependencies": {
-    "@a2ui/web-lib": "^0.1.0"
+    "@a2ui/web-lib": "file:./renderers/web",
+    "@google/genai": "^1.22.0",
+    "@lit-labs/signals": "^0.1.3",
+    "@lit/context": "^1.1.4",
+    "@types/node": "^24.7.1",
+    "lit": "^3.3.1"
   }
 }

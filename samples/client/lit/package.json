@@ -17,10 +17,11 @@
   "devDependencies": {},
   "dependencies": {},
   "workspaces": [
-    "lib",
+    "../../renderers/web",
     "tests",
     "restaurant",
-    "editor",
-    "inspector"
+    "../../editor",
+    "inspector",
+    "contact"
   ]
 }
