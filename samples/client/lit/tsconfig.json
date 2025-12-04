@@ -1,0 +1,7 @@
+{
+  "files": [],
+  "references": [
+    { "path": "contact" },
+    { "path": "restaurant" }
+  ]
+}

@@ -1,10 +1,10 @@
 {
-  "name": "@a2ui/web",
+  "name": "@a2ui/lit-samples",
   "private": true,
   "version": "0.1.0",
   "description": "AI-first UI Toolkit Demo",
   "repository": {
-    "directory": "web",
+    "directory": "samples/client/lit",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },
@@ -13,16 +13,14 @@
   "bugs": {
     "url": "https://github.com/google/A2UI/issues"
   },
-  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "homepage": "https://github.com/google/A2UI/tree/main/samples/client/lit#readme",
   "scripts": {
     "build": "tsc -b"
   },
   "devDependencies": {},
   "dependencies": {},
   "workspaces": [
-    "lib",
-    "tests",
-    "editor",
-    "inspector"
+    "contact",
+    "restaurant"
   ]
 }

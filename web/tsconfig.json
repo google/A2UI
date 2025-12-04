@@ -3,8 +3,9 @@
   "references": [
     { "path": "lib" },
     { "path": "tests" },
-    { "path": "restaurant" },
+
     { "path": "editor" },
-    { "path": "inspector" }
+    { "path": "inspector" },
+    { "path": "../samples/client/lit" }
   ]
 }
