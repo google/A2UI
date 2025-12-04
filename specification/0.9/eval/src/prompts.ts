@@ -273,7 +273,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "simpleCalculator",
     description: "A basic calculator layout.",
-    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a calculator. It should have a 'Card'. Inside, a 'Text' (display) showing "0". Then a 'Column' of 'Row's for buttons.
+    promptText: `Generate a 'updateComponents' message with surfaceId 'main' for a calculator. It should have a 'Card'. Inside the card, there MUST be a single 'Column' that contains two things: a 'Text' (display) showing "0", and a nested 'Column' of 'Row's for the buttons.
     - Row 1: "7", "8", "9", "/"
     - Row 2: "4", "5", "6", "*"
     - Row 3: "1", "2", "3", "-"
@@ -327,7 +327,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     name: "nestedDataBinding",
     description: "A project dashboard with deeply nested data binding.",
     promptText: `Generate a stream of JSON messages for a Project Management Dashboard.
-    The output must consist of exactly three JSON objects, one after the other.
+    The output must consist of exactly two JSON objects, one after the other.
 
     Generate an updateComponents message with surfaceId 'main'.
     It should have a 'Text' (usageHint 'h1') "Project Dashboard".
@@ -343,7 +343,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     - A 'List' of subtasks bound to 'subtasks'.
     Inside the subtasks list template, each item should be a 'Text' bound to 'title'.
 
-    Message 3: 'updateDataModel'
+    Then generate an 'updateDataModel' message.
     Populate this dashboard with sample data:
     - At least one project.
     - The project should have a title, and a list of tasks.

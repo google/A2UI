@@ -46,7 +46,10 @@ Standard Instructions:
 4. Among the 'updateComponents' messages in the output, there MUST be one root component with id: 'root'.
 5. Components need to be nested within a root layout container (Column, Row). No need to add an extra container if the root is already a layout container.
 6. There shouldn't be any orphaned components: no components should be generated which don't have a parent, except for the root component.
-7. If the request involves data binding, you may also generate 'updateDataModel' messages.
+7. Do NOT output a list of lists (e.g. [[...]]). Output individual JSON objects separated by newlines.
+8. STRICTLY follow the JSON Schemas. Do NOT add any properties that are not defined in the schema. Ensure ALL required properties are present.
+9. Do NOT invent data bindings or action contexts. Only use them if the prompt explicitly asks for them.
+10. Read the 'description' field of each component in the schema carefully. It contains critical usage instructions (e.g. regarding labels, single child limits, and layout behavior) that you MUST follow.
 
 Schemas:
 ${schemaDefs}

@@ -112,6 +112,7 @@
                 "edit",
                 "event",
                 "error",
+                "fastForward",
                 "favorite",
                 "favoriteOff",
                 "folder",
@@ -127,23 +128,33 @@
                 "moreHoriz",
                 "notificationsOff",
                 "notifications",
+                "pause",
                 "payment",
                 "person",
                 "phone",
                 "photo",
+                "play",
                 "print",
                 "refresh",
+                "rewind",
                 "search",
                 "send",
                 "settings",
                 "share",
                 "shoppingCart",
+                "skipNext",
+                "skipPrevious",
                 "star",
                 "starHalf",
                 "starOff",
+                "stop",
                 "upload",
                 "visibility",
                 "visibilityOff",
+                "volumeDown",
+                "volumeMute",
+                "volumeOff",
+                "volumeUp",
                 "warning"
               ]
             },
@@ -191,6 +202,7 @@
     },
     "Row": {
       "type": "object",
+      "description": "A layout component that arranges its children horizontally. To create a grid layout, nest Columns within this Row.",
       "properties": {
         "component": { "const": "Row" },
         "children": {
@@ -199,7 +211,7 @@
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property, but uses camelCase values (e.g., 'spaceBetween').",
+          "description": "Defines the arrangement of children along the main axis (horizontally). Use 'spaceBetween' to push items to the edges, or 'start'/'end'/'center' to pack them together.",
           "enum": [
             "center",
             "end",
@@ -212,7 +224,7 @@
         },
         "alignment": {
           "type": "string",
-          "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
+          "description": "Defines the alignment of children along the cross axis (vertically). This is similar to the CSS 'align-items' property, but uses camelCase values (e.g., 'start').",
           "enum": ["start", "center", "end", "stretch"]
         }
       },
@@ -221,6 +233,7 @@
     },
     "Column": {
       "type": "object",
+      "description": "A layout component that arranges its children vertically. To create a grid layout, nest Rows within this Column.",
       "properties": {
         "component": { "const": "Column" },
         "children": {
@@ -229,7 +242,7 @@
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property, but uses camelCase values (e.g., 'spaceBetween').",
+          "description": "Defines the arrangement of children along the main axis (vertically). Use 'spaceBetween' to push items to the edges (e.g. header at top, footer at bottom), or 'start'/'end'/'center' to pack them together.",
           "enum": [
             "start",
             "center",
@@ -242,7 +255,7 @@
         },
         "alignment": {
           "type": "string",
-          "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
+          "description": "Defines the alignment of children along the cross axis (horizontally). This is similar to the CSS 'align-items' property.",
           "enum": ["center", "end", "start", "stretch"]
         }
       },
@@ -277,7 +290,7 @@
         "component": { "const": "Card" },
         "child": {
           "type": "string",
-          "description": "The ID of the component to be rendered inside the card."
+          "description": "The ID of the single child component to be rendered inside the card. To display multiple elements, you MUST wrap them in a layout component (like Column or Row) and pass that container's ID here. Do NOT pass multiple IDs or a non-existent ID."
         }
       },
       "required": ["component", "child"],
@@ -355,7 +368,7 @@
             "name": { "type": "string" },
             "context": {
               "type": "object",
-              "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths.",
+              "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
               "additionalProperties": {
                 "$ref": "common_types.json#/$defs/contextValue"
               }
@@ -441,7 +454,7 @@
       "type": "object",
       "properties": {
         "component": { "const": "MultipleChoice" },
-        "description": "A component that allows the user to select one or more options from a set. Note: This component does not support a 'label' property. Use a separate Text component if a label is needed.",
+        "description": "A component that allows the user to select one or more options from a set. Note: This component does not support a 'label' property. You MUST use a separate Text component if a label is needed.",
         "selections": {
           "description": "The currently selected values for the component.",
           "$ref": "common_types.json#/$defs/stringArrayOrPath"
@@ -477,6 +490,7 @@
       "type": "object",
       "properties": {
         "component": { "const": "Slider" },
+        "description": "A component that allows the user to select a value from a range. Note: This component does not have a 'label' property. You MUST place a Text component adjacent to this Slider if a label is required.",
         "value": {
           "$ref": "common_types.json#/$defs/numberOrPath",
           "description": "The current value of the slider."
@@ -495,3 +509,4 @@
     }
   }
 }
+
