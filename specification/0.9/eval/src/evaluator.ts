@@ -140,6 +140,7 @@ export class Evaluator {
       pass: boolean;
       reason: string;
       issues?: { issue: string; severity: IssueSeverity }[];
+      evalPrompt?: string;
     },
     overallSeverity?: IssueSeverity
   ) {
@@ -160,5 +161,15 @@ export class Evaluator {
       ),
       yaml.dump({ ...evaluationResult, overallSeverity })
     );
+
+    if (evaluationResult.evalPrompt) {
+      fs.writeFileSync(
+        path.join(
+          detailsDir,
+          `${result.prompt.name}.${result.runNumber}.eval_prompt.txt`
+        ),
+        evaluationResult.evalPrompt
+      );
+    }
   }
 }

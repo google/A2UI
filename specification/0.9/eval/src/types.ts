@@ -27,5 +27,6 @@ export interface EvaluatedResult extends ValidatedResult {
     reason: string;
     issues?: { issue: string; severity: IssueSeverity }[];
     overallSeverity?: IssueSeverity;
+    evalPrompt?: string;
   };
 }

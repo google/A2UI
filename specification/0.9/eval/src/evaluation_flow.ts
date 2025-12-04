@@ -42,6 +42,7 @@ export const evaluationFlow = ai.defineFlow(
           })
         )
         .optional(),
+      evalPrompt: z.string().optional(),
     }),
   },
   async ({ originalPrompt, generatedOutput, evalModel, schemas }) => {
@@ -178,6 +179,7 @@ Return a JSON object with the following schema:
         pass: result.pass,
         reason: result.reason || "No reason provided",
         issues: result.issues || [],
+        evalPrompt: evalPrompt,
       };
     } catch (e: any) {
       logger.error(`Error during evaluation: ${e}`);
