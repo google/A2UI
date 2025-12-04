@@ -203,11 +203,7 @@ export class Validator {
     }
   }
 
-  private validateBeginRendering(data: any, errors: string[]) {
-    if (data.surfaceId === undefined) {
-      errors.push("CreateSurface message must have a 'surfaceId' property.");
-    }
-  }
+
 
   private validateBoundValue(
     prop: any,
@@ -277,9 +273,6 @@ export class Validator {
         }
       }
     };
-
-    // We can reuse the switch case for specific logic not covered by AJV easily
-    // e.g. checking if children IDs exist in allIds
 
     switch (componentType) {
       case "Row":

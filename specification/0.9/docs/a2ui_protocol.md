@@ -12,7 +12,7 @@ A Specification for a JSON-Based, Streaming UI Protocol.
 **Version:** 0.9
 **Status:** Draft
 **Created:** Nov 20, 2025
-**Last Updated:** Dec 1, 2025
+**Last Updated:** Dec 3, 2025
 
 # A2UI (Agent to UI) Protocol v0.9
 
@@ -24,7 +24,6 @@ The A2UI Protocol is designed for dynamically rendering user interfaces from a s
 
 Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
 
-- `createSurface`: Declares and configures a new UI area (a "surface") for rendering.
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
@@ -47,31 +46,30 @@ The A2UI protocol uses a unidirectional stream of JSON messages from the server 
 
 Here is an example sequence of events (which don't have to be in exactly this order):
 
-1.  **Create Surface:** The server sends a `createSurface` message to instruct the client to initialize a new, independent UI region.
-2.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
-3.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
-4.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
-5.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
-6.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
+1.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
+2.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
+3.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
+4.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
+5.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
 
 ```mermaid
 sequenceDiagram
     participant Server
     participant Client
 
-    Server->>+Client: 1. createSurface(surfaceId: "main")
-    Server->>+Client: 2. updateComponents(surfaceId: "main", components: [...])
-    Server->>+Client: 3. updateDataModel(surfaceId: "main", contents: {...})
-    Note right of Client: 4. Client renders the UI for the "main" surface
+    Server->>+Client: 1. updateComponents(surfaceId: "main", components: [...])
+    Server->>+Client: 2. updateDataModel(surfaceId: "main", contents: {...})
+    Note right of Client: 3. Client renders the UI for the "main" surface
+    Client-->>-Server: (UI is displayed)
     Client-->>-Server: (UI is displayed)
 
     Note over Client, Server: Time passes, user interacts, or new data arrives...
 
-    Server->>+Client: 5. updateComponents or updateDataModel (Dynamic Update)
+    Server->>+Client: 4. updateComponents or updateDataModel (Dynamic Update)
     Note right of Client: Client re-renders the UI to reflect changes
     Client-->>-Server: (UI is updated)
 
-    Server->>+Client: 6. deleteSurface(surfaceId: "main")
+    Server->>+Client: 5. deleteSurface(surfaceId: "main")
     Note right of Client: Client removes the UI for the "main" surface
     Client-->>-Server: (UI is gone)
 ```
@@ -84,11 +82,11 @@ A2UI v0.9 is defined by three interacting JSON schemas.
 
 The [`common_types.json`] schema defines reusable primitives used throughout the protocol.
 
-- **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string (JSON pointer).
+- **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string ([JSON Pointer]).
 - **`childrenProperty`**: Defines how containers hold children. It supports:
 
   - `array`: A static array of string component IDs.
-  - `object`: A template for generating children from a data binding list (requires a template `componentId` and a `dataBinding`).
+  - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
 - **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
 - **`weight`**: The relative weight of a component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column. Defined here so that all weights are consistent and can be used for data binding.
@@ -105,37 +103,21 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 ## Envelope Message Structure
 
-The envelope defines four primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
+The envelope defines three primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
 
-### `createSurface`
 
-This message instructs the client to initialize a new surface, which is a designated area for rendering a UI. This message must be sent before any `updateComponents`, `deleteSurface`, or `updateDataModel` messages that refer to the `surfaceId`.
-
-**Properties:**
-
-- `surfaceId` (string, required): A unique identifier for the UI surface to be rendered.
-- `theme` (object, optional): Theming information for the UI, such as primary color.
-
-**Example:**
-
-```json
-{
-  "createSurface": {
-    "surfaceId": "user_profile_card",
-    "theme": {
-      "primaryColor": "#007bff"
-    }
-  }
-}
-```
 
 ### `updateComponents`
 
-This message provides a list of UI components to be added to or updated within a specific surface. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
+This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
+
+> [!NOTE]
+> Referencing a `surfaceId` in an `updateComponents` message will not automatically create the surface. The surface must be managed by the client application logic, or implicitly created if the client implementation chooses to support that, but the protocol does not strictly define the creation lifecycle step anymore.
 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be updated. This is typically a name with meaning (e.g. "user_profile_card"), and it has to be unique within the context of the GenUI session.
+- `catalogId` (string, required): The URI of the component catalog definition used for this update.
 - `components` (array, required): A list of component objects. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
 
 **Example:**
@@ -144,6 +126,7 @@ This message provides a list of UI components to be added to or updated within a
 {
   "updateComponents": {
     "surfaceId": "user_profile_card",
+    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json",
     "components": [
       {
         "id": "root",
@@ -173,7 +156,7 @@ This message provides a list of UI components to be added to or updated within a
 
 ### `updateDataModel`
 
-This message is used to send or update the data that populates the UI components. The `surfaceId` must refer to a surface that has already been created with a `createSurface` message. It allows the server to change the UI's content without resending the entire component structure.
+This message is used to send or update the data that populates the UI components. It allows the server to change the UI's content without resending the entire component structure.
 
 **Properties:**
 
@@ -219,9 +202,8 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"textFieldType":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"textFieldType":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"textFieldType":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"textFieldType":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"textFieldType":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
+{"updateComponents":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
 {"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "contents": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
-{"createSurface": {"surfaceId": "contact_form_1"}}
 ```
 
 ## Component Model
@@ -275,6 +257,127 @@ flowchart TD
 
 ```
 
+## Data Binding, Scope, and State Management
+
+A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model). This section defines the precise mechanics of path resolution, variable scope during iteration, and the specific behaviors of two-way binding for interactive components.
+
+### Path Resolution & Scope
+
+Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a pointer is resolved depends on the current **Evaluation Scope**.
+
+#### The Root Scope
+
+By default, all components operate in the **Root Scope**.
+
+- The Root Scope corresponds to the top-level object of the `contents` provided in `updateDataModel`.
+- Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
+
+#### Collection Scopes (Relative Paths)
+
+When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `childrenProperty`, it creates a new **Child Scope** for each item in the bound array.
+
+- **Template Definition:** When a container binds its children to a path (e.g., `path: "/users"`), the client iterates over the array found at that location.
+- **Scope Instantiation:** For every item in the array, the client instantiates the template component.
+- **Relative Resolution:** Inside these instantiated components, any path that **does not** start with a forward slash `/` is treated as a **Relative Path**.
+
+  - A relative path `firstName` inside a template iterating over `/users` resolves to `/users/0/firstName` for the first item, `/users/1/firstName` for the second, etc.
+
+- **Mixing Scopes:** Components inside a Child Scope can still access the Root Scope by using an Absolute Path.
+
+#### Example: Scope Resolution
+
+**Data Model:**
+
+```json
+{
+  "company": "Acme Corp",
+  "employees": [
+    { "name": "Alice", "role": "Engineer" },
+    { "name": "Bob", "role": "Designer" }
+  ]
+}
+```
+
+**Component Definition:**
+
+```json
+{
+  "id": "employee_list",
+  "props": {
+    "component": "List",
+    "children": {
+      "path": "/employees",
+      "componentId": "employee_card_template"
+    }
+  }
+},
+{
+  "id": "employee_card_template",
+  "props": {
+    "component": "Column",
+    "children": ["name_text", "company_text"]
+  }
+},
+{
+  "id": "name_text",
+  "props": {
+    "component": "Text",
+    "text": { "path": "name" }
+    // "name" is Relative. Resolves to /employees/N/name
+  }
+},
+{
+  "id": "company_text",
+  "props": {
+    "component": "Text",
+    "text": { "path": "/company" }
+    // "/company" is Absolute. Resolves to "Acme Corp" globally.
+  }
+}
+```
+
+### Two-Way Binding & Input Components
+
+Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `MultipleChoice`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
+
+#### The Read/Write Contract
+
+Unlike static display components (like `Text`), input components modify the client-side data model immediately upon user interaction.
+
+1.  **Read (Model -> View):** When the component renders, it reads its value from the bound `path`. If the Data Model is updated via `updateDataModel`, the component re-renders to reflect the new value.
+2.  **Write (View -> Model):** When the user interacts with the component (e.g., types a character, toggles a box), the client **immediately** updates the value at the bound `path` in the local Data Model.
+
+#### Reactivity
+
+Because the local Data Model is the single source of truth, updates from input components are **reactive**.
+
+- If a `TextField` is bound to `/user/name`, and a separate `Text` label is also bound to `/user/name`, the label must update in real-time as the user types in the text field.
+
+#### Server Synchronization
+
+It is critical to note that Two-Way Binding is **local to the client**.
+
+- User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
+- The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
+- When a `userAction` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
+
+#### Example: Form Submission Pattern
+
+1.  **Bind:** `TextField` is bound to `/formData/email`.
+2.  **Interact:** User types "jane@example.com". The local model at `/formData/email` is updated.
+3.  **Action:** A "Submit" button has the following action definition:
+
+    ```json
+    "action": {
+      "name": "submit_form",
+      "context": {
+        "email": { "path": "/formData/email" }
+      }
+    }
+    ```
+
+4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `userAction` payload.
+
 ## Standard Component Catalog
 
 The [`standard_catalog_definition.json`] provides the baseline set of components.
@@ -300,78 +403,6 @@ The [`standard_catalog_definition.json`] provides the baseline set of components
 | **MultipleChoice** | A component for selecting one or more options.          |
 | **Slider**         | A slider for selecting a numeric value within a range.  |
 
-### Data Binding
-
-Components connect to the data model through data binding. Any component property that can be dynamic (like the `text` of a `Text` component) accepts an object that can specify either a literal value or a path to a value in the data model.
-
-These properties use one of the `*OrPath` types defined in `common_types.json` (e.g., `stringOrPath`, `numberOrPath`).
-
-- **Literal Value**: To provide a static value, use the value directly (e.g., `"text": "Hello"`).
-- **Data Model Path**: To bind to a value in the data model, use an object with a `path` property. The value of the path is a string that corresponds to a key in the `contents` of a `updateDataModel` message.
-
-Paths are specified using [JSON Pointer] syntax with the data model `contents` as the root.
-
-For components that use `childrenProperty`'s templates, the paths are relative paths within each data item in the list. For other uses, the paths are absolute paths within the data model `contents`.
-
-**Example of a `stringOrPath` property:**
-
-```json
-// Static value
-"text": "Hello, World!"
-
-// Dynamic value bound to the data model
-"text": { "path": "/user/name" }
-```
-
-**Example of an update with data binding:**
-
-The surface update:
-
-```json
-{
-  "updateComponents": {
-    "surfaceId": "weather_card",
-    "components": [
-      {
-        "id": "root",
-        "props": {
-          "component": "Column",
-          "children": ["city_text", "temp_text"]
-        }
-      },
-      {
-        "id": "city_text",
-        "props": {
-          "component": "Text",
-          "text": { "path": "/city" }
-        }
-      },
-      {
-        "id": "temp_text",
-        "props": {
-          "component": "Text",
-          "text": { "path": "/temperature" }
-        }
-      }
-    ]
-  }
-}
-```
-
-And the corresponding data model update:
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "weather_card",
-    "contents": {
-      "city": "San Francisco",
-      "temperature": "72°F"
-    }
-  }
-}
-```
-
 ## Usage Pattern: The Prompt-Generate-Validate Loop
 
 The A2UI protocol is designed to be used in a three-step loop with a Large Language Model:
@@ -387,6 +418,28 @@ The A2UI protocol is designed to be used in a three-step loop with a Large Langu
 3.  **Validate**: Validate the generated JSON against the A2UI schema. If the JSON is valid, it can be sent to the client for rendering. If it is invalid, the errors can be reported back to the LLM in a subsequent prompt, allowing it to self-correct.
 
 This loop allows for a high degree of flexibility and robustness, as the system can leverage the generative capabilities of the LLM while still enforcing the structural integrity of the UI protocol.
+
+### Standard Validation Error Format
+
+If validation fails, the client (or the system acting on behalf of the client) should send an `error` message back to the LLM. To ensure the LLM can understand and correct the error, use the following standard format within the `error` message payload:
+
+- `code` (string, required): Must be `"VALIDATION_FAILED"`.
+- `surfaceId` (string, required): The ID of the surface where the error occurred.
+- `path` (string, required): The JSON pointer to the field that failed validation (e.g. `/components/0/props/text`).
+- `message` (string, required): A short one-sentence description of why validation failed.
+
+**Example Error Message:**
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_FAILED",
+    "surfaceId": "user_profile_card",
+    "path": "/components/0/props/text",
+    "message": "Expected stringOrPath, got integer"
+  }
+}
+```
 
 ## Client-to-Server Messages
 
@@ -413,3 +466,4 @@ This message is used to report a client-side error to the server.
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
+[RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901

@@ -37,6 +37,7 @@
     "@genkit-ai/google-genai": "^1.24.0",
     "@types/js-yaml": "^4.0.9",
     "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "genkit": "^1.24.0",
     "genkitx-anthropic": "^0.25.0",
     "js-yaml": "^4.1.1",

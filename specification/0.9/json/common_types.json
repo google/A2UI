@@ -70,6 +70,20 @@
       "type": "number",
       "description": "The relative weight of this component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
     },
+    "contextValue": {
+      "description": "A value that can be a string, number, boolean, or a path to a value.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        {
+          "type": "object",
+          "properties": { "path": { "type": "string" } },
+          "required": ["path"],
+          "additionalProperties": false
+        }
+      ]
+    },
     "childrenProperty": {
       "oneOf": [
         {
@@ -79,14 +93,17 @@
         },
         {
           "type": "object",
-          "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
+          "description": "A template for generating a dynamic list of children from a data model list. The `componentId` is the component to use as a template.",
           "properties": {
             "componentId": {
               "$ref": "#/$defs/id"
             },
-            "dataBinding": { "type": "string" }
+            "path": {
+              "type": "string",
+              "description": "The path to the list of component property objects in the data model."
+            }
           },
-          "required": ["componentId", "dataBinding"],
+          "required": ["componentId", "path"],
           "additionalProperties": false
         }
       ]
