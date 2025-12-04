@@ -27,10 +27,9 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2ui_ext import URI as A2UI_EXTENSION_URI
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension
 from agent import STANDARD_CATALOG_URI
-from a2ui_ext import is_a2ui_part
+from a2ui_ext import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI
 from google.adk.a2a.converters import event_converter
 from a2a.server.events import Event as A2AEvent
 from google.adk.events.event import Event
@@ -134,8 +133,8 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
         context: RequestContext,
         event_queue: EventQueue,
     ):
-        # Always activate the extension for this sample.
-        # if A2UI_EXTENSION_URI in context.requested_extensions:
+        # Always activate A2UI extension for this sample for easy inspection.
+        # try_activate_a2ui_extension(context)
         context.add_activated_extension(A2UI_EXTENSION_URI)
-
+        
         await super()._handle_request(context, event_queue)
