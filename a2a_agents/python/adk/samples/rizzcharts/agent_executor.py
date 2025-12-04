@@ -29,7 +29,7 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2ui_ext import A2UI_EXTENSION_URI, get_a2ui_agent_extension
+from a2ui_ext import A2UI_EXTENSION_URI, get_a2ui_agent_extension, try_activate_a2ui_extension
 from component_catalog_builder import ComponentCatalogBuilder
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2a.types import AgentExtension
@@ -122,9 +122,8 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
 
         if "base_url" not in session.state:
             session.state["base_url"] = self._base_url
-        
-        # Always activate A2UI extension for this sample for easy inspection.
-        use_ui = True # try_activate_a2ui_extension(context)
+                
+        use_ui = try_activate_a2ui_extension(context)
         if use_ui:
             a2ui_schema, catalog_uri = self._component_catalog_builder.load_a2ui_schema(client_ui_capabilities=context.message.metadata.get("clientUiCapabilities") if context.message and context.message.metadata else None)
 

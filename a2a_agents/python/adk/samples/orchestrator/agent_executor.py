@@ -133,8 +133,6 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
         context: RequestContext,
         event_queue: EventQueue,
     ):
-        # Always activate A2UI extension for this sample for easy inspection.
-        # try_activate_a2ui_extension(context)
-        context.add_activated_extension(A2UI_EXTENSION_URI)
+        try_activate_a2ui_extension(context)
         
         await super()._handle_request(context, event_queue)
