@@ -15,10 +15,17 @@ export interface ValidatedResult extends GeneratedResult {
   validationErrors: string[];
 }
 
+export type IssueSeverity =
+  | "minor"
+  | "significant"
+  | "critical"
+  | "criticalSchema";
+
 export interface EvaluatedResult extends ValidatedResult {
   evaluationResult?: {
     pass: boolean;
     reason: string;
-    issues?: string[];
+    issues?: { issue: string; severity: IssueSeverity }[];
+    overallSeverity?: IssueSeverity;
   };
 }

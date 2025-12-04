@@ -6,6 +6,7 @@ import { rateLimiter } from "./rateLimiter";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
+import { IssueSeverity } from "./types";
 
 export class Evaluator {
   constructor(
@@ -76,7 +77,11 @@ export class Evaluator {
   private async runJob(result: ValidatedResult): Promise<EvaluatedResult> {
     const maxEvalRetries = 3;
     let evaluationResult:
-      | { pass: boolean; reason: string; issues?: string[] }
+      | {
+          pass: boolean;
+          reason: string;
+          issues?: { issue: string; severity: IssueSeverity }[];
+        }
       | undefined;
 
     for (let evalRetry = 0; evalRetry < maxEvalRetries; evalRetry++) {
@@ -105,19 +110,38 @@ export class Evaluator {
       }
     }
 
+    let overallSeverity: IssueSeverity | undefined;
+    if (evaluationResult && !evaluationResult.pass && evaluationResult.issues) {
+      const severities = evaluationResult.issues.map((i) => i.severity);
+      if (severities.includes("critical")) {
+        overallSeverity = "critical";
+      } else if (severities.includes("significant")) {
+        overallSeverity = "significant";
+      } else if (severities.includes("minor")) {
+        overallSeverity = "minor";
+      }
+    }
+
     if (this.outputDir && evaluationResult) {
-      this.saveEvaluation(result, evaluationResult);
+      this.saveEvaluation(result, evaluationResult, overallSeverity);
     }
 
     return {
       ...result,
-      evaluationResult,
+      evaluationResult: evaluationResult
+        ? { ...evaluationResult, overallSeverity }
+        : undefined,
     };
   }
 
   private saveEvaluation(
     result: ValidatedResult,
-    evaluationResult: { pass: boolean; reason: string; issues?: string[] }
+    evaluationResult: {
+      pass: boolean;
+      reason: string;
+      issues?: { issue: string; severity: IssueSeverity }[];
+    },
+    overallSeverity?: IssueSeverity
   ) {
     if (!this.outputDir) return;
 
@@ -134,7 +158,7 @@ export class Evaluator {
         detailsDir,
         `${result.prompt.name}.${result.runNumber}.failed.yaml`
       ),
-      yaml.dump(evaluationResult)
+      yaml.dump({ ...evaluationResult, overallSeverity })
     );
   }
 }

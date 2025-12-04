@@ -2,7 +2,8 @@ import Ajv from "ajv";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
-import { GeneratedResult, ValidatedResult } from "./types";
+
+import { GeneratedResult, ValidatedResult, IssueSeverity } from "./types";
 import { logger } from "./logger";
 
 export class Validator {
@@ -87,10 +88,13 @@ export class Validator {
     );
     const detailsDir = path.join(modelDir, "details");
     const failureData = {
-      failureType: "schema",
       pass: false,
       reason: "Schema validation failure",
-      issues: errors,
+      issues: errors.map((e) => ({
+        issue: e,
+        severity: "criticalSchema" as IssueSeverity,
+      })),
+      overallSeverity: "criticalSchema" as IssueSeverity,
     };
 
     fs.writeFileSync(

@@ -46,6 +46,7 @@ function generateSummary(results: EvaluatedResult[]): string {
   const promptNameWidth = 40;
   const latencyWidth = 20;
   const failedRunsWidth = 15;
+  const severityWidth = 15;
 
   // Group by model
   const resultsByModel: Record<string, EvaluatedResult[]> = {};
@@ -63,10 +64,18 @@ function generateSummary(results: EvaluatedResult[]): string {
       promptNameWidth
     )} | ${"Avg Latency (ms)".padEnd(latencyWidth)} | ${"Schema Fail".padEnd(
       failedRunsWidth
-    )} | ${"Eval Fail".padEnd(failedRunsWidth)} |`;
+    )} | ${"Eval Fail".padEnd(failedRunsWidth)} | ${"Minor".padEnd(
+      severityWidth
+    )} | ${"Significant".padEnd(severityWidth)} | ${"Critical".padEnd(
+      severityWidth
+    )} |`;
     const divider = `|${"-".repeat(promptNameWidth + 2)}|${"-".repeat(
       latencyWidth + 2
-    )}|${"-".repeat(failedRunsWidth + 2)}|${"-".repeat(failedRunsWidth + 2)}|`;
+    )}|${"-".repeat(failedRunsWidth + 2)}|${"-".repeat(
+      failedRunsWidth + 2
+    )}|${"-".repeat(severityWidth + 2)}|${"-".repeat(
+      severityWidth + 2
+    )}|${"-".repeat(severityWidth + 2)}|`;
     summary += header;
     summary += `\n${divider}`;
 
@@ -101,11 +110,30 @@ function generateSummary(results: EvaluatedResult[]): string {
       const evalFailedStr =
         evalFailedRuns > 0 ? `${evalFailedRuns} / ${totalRuns}` : "";
 
+      const minorCount = runs.filter(
+        (r) => r.evaluationResult?.overallSeverity === "minor"
+      ).length;
+      const significantCount = runs.filter(
+        (r) => r.evaluationResult?.overallSeverity === "significant"
+      ).length;
+      // Critical includes ONLY eval critical, NOT schema failures (which are criticalSchema)
+      const criticalCount = runs.filter(
+        (r) => r.evaluationResult?.overallSeverity === "critical"
+      ).length;
+
+      const minorStr = minorCount > 0 ? `${minorCount}` : "";
+      const significantStr = significantCount > 0 ? `${significantCount}` : "";
+      const criticalStr = criticalCount > 0 ? `${criticalCount}` : "";
+
       summary += `\n| ${promptName.padEnd(
         promptNameWidth
       )} | ${avgLatency.padEnd(latencyWidth)} | ${schemaFailedStr.padEnd(
         failedRunsWidth
-      )} | ${evalFailedStr.padEnd(failedRunsWidth)} |`;
+      )} | ${evalFailedStr.padEnd(failedRunsWidth)} | ${minorStr.padEnd(
+        severityWidth
+      )} | ${significantStr.padEnd(severityWidth)} | ${criticalStr.padEnd(
+        severityWidth
+      )} |`;
     }
 
     const totalRunsForModel = modelResults.length;
@@ -147,6 +175,19 @@ function generateSummary(results: EvaluatedResult[]): string {
     ),
   ].join(", ");
 
+  const totalMinor = results.filter(
+    (r) => r.evaluationResult?.overallSeverity === "minor"
+  ).length;
+  const totalSignificant = results.filter(
+    (r) => r.evaluationResult?.overallSeverity === "significant"
+  ).length;
+  const totalCritical = results.filter(
+    (r) => r.evaluationResult?.overallSeverity === "critical"
+  ).length;
+  const totalCriticalSchema = results.filter(
+    (r) => r.evaluationResult?.overallSeverity === "criticalSchema"
+  ).length;
+
   summary += `\n- **Total tool failures:** ${totalToolErrorRuns} / ${totalRuns}`;
   const successPercentage =
     totalRuns === 0
@@ -155,6 +196,11 @@ function generateSummary(results: EvaluatedResult[]): string {
           1
         );
   summary += `\n- **Number of runs with any failure (tool error, validation, or eval):** ${totalRunsWithAnyFailure} / ${totalRuns} (${successPercentage}% success)`;
+  summary += `\n- **Severity Breakdown:**`;
+  summary += `\n  - **Minor:** ${totalMinor}`;
+  summary += `\n  - **Significant:** ${totalSignificant}`;
+  summary += `\n  - **Critical (Eval):** ${totalCritical}`;
+  summary += `\n  - **Critical (Schema):** ${totalCriticalSchema}`;
 
   const latencies = results.map((r) => r.latency).sort((a, b) => a - b);
   const totalLatency = latencies.reduce((acc, l) => acc + l, 0);

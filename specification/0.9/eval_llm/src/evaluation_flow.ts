@@ -34,7 +34,14 @@ export const evaluationFlow = ai.defineFlow(
     outputSchema: z.object({
       pass: z.boolean(),
       reason: z.string(),
-      issues: z.array(z.string()).optional(),
+      issues: z
+        .array(
+          z.object({
+            issue: z.string(),
+            severity: z.enum(["minor", "significant", "critical"]),
+          })
+        )
+        .optional(),
     }),
   },
   async ({ originalPrompt, generatedOutput, evalModel, schemas }) => {
@@ -47,7 +54,16 @@ export const evaluationFlow = ai.defineFlow(
         .boolean()
         .describe("Whether the generated UI meets the requirements"),
       reason: z.string().describe("Summary of the reason for a failure."),
-      issues: z.array(z.string()).describe("List of specific issues found."),
+      issues: z
+        .array(
+          z.object({
+            issue: z.string().describe("Description of the issue"),
+            severity: z
+              .enum(["minor", "significant", "critical"])
+              .describe("Severity of the issue"),
+          })
+        )
+        .describe("List of specific issues found."),
     });
 
     const evalPrompt = `You are an expert QA evaluator for a UI generation system.
@@ -77,6 +93,11 @@ Instructions:
 - If the generated output is missing a component that is specified in the user request, it is required to exist in the output in order to pass the test. If it is not specified, it is not required.
 - If the request is vague about the contents of a label or other property, you can still pass the test as long as it can be construed as matching the intent.
 
+Severity Definitions:
+- Minor: Merely cosmetic or a slight deviation from the request.
+- Significant: The UI isn't very ergonomic or would be hard to understand.
+- Critical: That part of the UI is left off, or the structure isn't valid and can't be rendered.
+
 Return a JSON object with the following schema:
 
 \`\`\`json
@@ -94,7 +115,19 @@ Return a JSON object with the following schema:
     "issues": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "issue": {
+            "type": "string",
+            "description": "Description of the issue"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["minor", "significant", "critical"],
+            "description": "Severity of the issue"
+          }
+        },
+        "required": ["issue", "severity"]
       },
       "description": "List of specific issues found."
     }
