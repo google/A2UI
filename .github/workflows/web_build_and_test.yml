@@ -19,7 +19,7 @@ jobs:
 
       - name: Install all workspaces' dependencies
         working-directory: ./web
-        run: npm install --workspaces
+        run: npm ci
 
       - name: Build all workspaces
         working-directory: ./web
