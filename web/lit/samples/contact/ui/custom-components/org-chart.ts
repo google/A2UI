@@ -39,18 +39,24 @@ export class OrgChart extends Root {
       flex-direction: column;
       align-items: center;
       padding: 12px 24px;
-      background: #ffffff;
+      background: #fff;
       border: 1px solid #e0e0e0;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       min-width: 200px;
       position: relative;
       transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
     }
 
     .node:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .node:focus {
+      outline: 2px solid #1a73e8;
+      outline-offset: 2px;
     }
 
     .node.current {
@@ -90,14 +96,14 @@ export class OrgChart extends Root {
         ${map(this.chain, (node, index) => {
       const isLast = index === this.chain.length - 1;
       return html`
-            <div 
+            <button 
               class="node ${isLast ? 'current' : ''}"
               @click=${() => this.handleNodeClick(node)}
-              style="cursor: pointer;"
+              aria-label="Select ${node.name} (${node.title})"
             >
               <span class="title">${node.title}</span>
               <span class="name">${node.name}</span>
-            </div>
+            </button>
             ${!isLast ? html`<div class="arrow">↓</div>` : ''}
           `;
     })}

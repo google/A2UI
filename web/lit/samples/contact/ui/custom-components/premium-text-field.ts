@@ -12,7 +12,7 @@ export class PremiumTextField extends Root {
       :host {
         display: block;
         padding: 16px;
-        background: #ffffff;
+        background: #fff;
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         border: 1px solid #e0e0e0;
