@@ -17,42 +17,31 @@
 import { CustomElementConstructorOf } from "./ui.js";
 
 export class ComponentRegistry {
-  private static instance: ComponentRegistry;
   private registry: Map<string, CustomElementConstructorOf<HTMLElement>> = new Map();
-
-  private constructor() {}
-
-  static getInstance(): ComponentRegistry {
-    if (!ComponentRegistry.instance) {
-      ComponentRegistry.instance = new ComponentRegistry();
-    }
-    return ComponentRegistry.instance;
-  }
 
   register(
     typeName: string,
     constructor: CustomElementConstructorOf<HTMLElement>,
     tagName?: string
   ) {
+    if (!/^[a-zA-Z0-9]+$/.test(typeName)) {
+      throw new Error(`[Registry] Invalid typeName '${typeName}'. Must be alphanumeric.`);
+    }
+
     this.registry.set(typeName, constructor);
     const actualTagName = tagName || `a2ui-custom-${typeName.toLowerCase()}`;
-    console.log(`[Registry] Registering ${typeName} as ${actualTagName}`);
 
     const existingName = customElements.getName(constructor);
     if (existingName) {
-      console.log(`[Registry] Constructor already registered as ${existingName}`);
       // Constructor is already registered.
       if (existingName !== actualTagName) {
-        console.warn(`Component ${typeName} is already registered as ${existingName}, but requested as ${actualTagName}. Using existing registration.`);
+        throw new Error(`Component ${typeName} is already registered as ${existingName}, but requested as ${actualTagName}.`);
       }
       return;
     }
 
     if (!customElements.get(actualTagName)) {
-      console.log(`[Registry] Defining ${actualTagName}`);
       customElements.define(actualTagName, constructor);
-    } else {
-      console.log(`[Registry] Tag ${actualTagName} already defined`);
     }
   }
 
@@ -60,3 +49,5 @@ export class ComponentRegistry {
     return this.registry.get(typeName);
   }
 }
+
+export const REGISTRY = new ComponentRegistry();
