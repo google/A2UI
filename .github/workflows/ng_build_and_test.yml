@@ -27,7 +27,7 @@ jobs:
 
       - name: Install top-level deps
         working-directory: ./angular
-        run: npm ci
+        run: npm i
 
       - name: Install lib deps
         working-directory: ./angular/projects/lib
