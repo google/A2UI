@@ -1,9 +1,0 @@
-{
-  "name": "a2ui",
-  "private": true,
-  "workspaces": [
-    "web",
-    "angular",
-    "samples/client/lit"
-  ]
-}
