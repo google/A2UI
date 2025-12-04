@@ -43,7 +43,7 @@ export class Validator {
       const errors: string[] = [];
       const components = result.components;
 
-      // 1. AJV Validation
+      // AJV Validation
       if (this.validateFn) {
         for (const component of components) {
           if (!this.validateFn(component)) {
@@ -56,7 +56,7 @@ export class Validator {
         }
       }
 
-      // 2. Custom Validation (Referential Integrity, etc.)
+      // Custom Validation (Referential Integrity, etc.)
       this.validateCustom(components, errors);
 
       if (errors.length > 0) {
@@ -125,13 +125,12 @@ export class Validator {
         }
       } else if (message.updateDataModel) {
         this.validateUpdateDataModel(message.updateDataModel, errors);
-      } else if (message.createSurface) {
-        this.validateBeginRendering(message.createSurface, errors);
       } else if (message.deleteSurface) {
         this.validateDeleteSurface(message.deleteSurface, errors);
       } else {
-        // This should be caught by AJV usually, but good to have backup
-        // errors.push("Unknown message type");
+        errors.push(
+          `Unknown message type in output: ${JSON.stringify(message)}`
+        );
       }
     }
 
