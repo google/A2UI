@@ -19,7 +19,7 @@ jobs:
 
       - name: Install web lib deps
         working-directory: ./renderers/lit
-        run: npm ci
+        run: npm i
 
       - name: Build web lib
         working-directory: ./renderers/lit
