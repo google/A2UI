@@ -18,8 +18,6 @@
   "dependencies": {},
   "workspaces": [
     "lib",
-    "lit/samples/restaurant",
-    "lit/samples/contact",
     "lit/inspector"
   ]
 }

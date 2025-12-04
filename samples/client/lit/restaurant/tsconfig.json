@@ -30,5 +30,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
-  }
+  },
+  "references": [{ "path": "../../../../web/lib" }]
 }

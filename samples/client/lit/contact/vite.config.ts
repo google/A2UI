@@ -26,7 +26,7 @@ export default async () => {
   config();
 
   const entry: Record<string, string> = {
-    restaurant: resolve(__dirname, "index.html"),
+    contact: resolve(__dirname, "index.html"),
   };
 
   return {
