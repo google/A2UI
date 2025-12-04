@@ -19,11 +19,11 @@ jobs:
 
       - name: Install Lit renderer dependencies
         working-directory: ./renderers/lit
-        run: npm ci
+        run: npm i
 
       - name: Install all workspaces' dependencies
         working-directory: ./web
-        run: npm ci
+        run: npm i
 
       - name: Build all workspaces
         working-directory: ./web
