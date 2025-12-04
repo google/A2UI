@@ -25,10 +25,9 @@ import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-audioplayer")
 export class Audio extends Root {
-  @property()
-  accessor url: StringValue | null = null;
+  @property() url: StringValue | null = null;
 
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -49,7 +48,7 @@ export class Audio extends Root {
     `,
   ];
 
-  #renderAudio() {
+  private renderAudio() {
     if (!this.url) {
       return nothing;
     }
@@ -90,7 +89,7 @@ export class Audio extends Root {
         ? styleMap(this.theme.additionalStyles?.AudioPlayer)
         : nothing}
     >
-      ${this.#renderAudio()}
+      ${this.renderAudio()}
     </section>`;
   }
 }
