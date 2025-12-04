@@ -24,7 +24,7 @@ import { ref } from "lit/directives/ref.js";
 
 @customElement("a2ui-modal")
 export class Modal extends Root {
-  static styles = [
+  static override styles = [
     structuralStyles,
     css`
       * {
@@ -58,28 +58,28 @@ export class Modal extends Root {
   ];
 
   @state()
-  accessor #showModal = false;
+  private showModal = false;
 
   @query("dialog")
-  accessor #modalRef: HTMLDialogElement | null = null;
+  private modalRef: HTMLDialogElement | null = null;
 
-  #closeModal() {
-    if (!this.#modalRef) {
+  private closeModal() {
+    if (!this.modalRef) {
       return;
     }
 
-    if (this.#modalRef.open) {
-      this.#modalRef.close();
+    if (this.modalRef.open) {
+      this.modalRef.close();
     }
 
-    this.#showModal = false;
+    this.showModal = false;
   }
 
-  render() {
-    if (!this.#showModal) {
+  override render() {
+    if (!this.showModal) {
       return html`<section
         @click=${() => {
-          this.#showModal = true;
+          this.showModal = true;
         }}
       >
         <slot name="entry"></slot>
@@ -95,7 +95,7 @@ export class Modal extends Root {
           return;
         }
 
-        this.#closeModal();
+        this.closeModal();
       }}
       ${ref((el?: Element) => {
         const showModalIfNeeded = () => {
@@ -118,7 +118,7 @@ export class Modal extends Root {
         <div id="controls">
           <button
             @click=${() => {
-        this.#closeModal();
+        this.closeModal();
       }}
           >
             <span class="g-icon">close</span>
