@@ -20,7 +20,7 @@ from a2a.types import AgentExtension, Part, DataPart
 
 logger = logging.getLogger(__name__)
 
-A2UI_EXTENSION_URI = "https://a2ui.org/ext/a2a-ui/v0.8"
+A2UI_EXTENSION_URI = "https://a2ui.org/a2a-extension/v0.8"
 
 MIME_TYPE_KEY = "mimeType"
 A2UI_MIME_TYPE = "application/json+a2ui"
