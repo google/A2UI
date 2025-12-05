@@ -48,9 +48,9 @@ app.post('/a2a', (req, res) => {
 
   req.on('end', async () => {
     const data = JSON.parse(originalBody);
-    
+
     console.log('[a2a-middleware] Received data:', originalBody);
-    
+
     const parts: Part[] = data['parts'];
     const metadata: Record<string, any> = data['metadata'];
     const contextId: string | undefined = data['context_id'];
@@ -116,7 +116,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 
 async function fetchWithCustomHeader(url: string | URL | Request, init?: RequestInit) {
   const headers = new Headers(init?.headers);
-  headers.set('X-A2A-Extensions', 'https://a2ui.org/ext/a2a-ui/v0.1');
+  headers.set('X-A2A-Extensions', 'https://a2ui.org/ext/a2a-ui/v0.8');
   const newInit = { ...init, headers };
   return fetch(url, newInit);
 }
