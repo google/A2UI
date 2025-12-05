@@ -27,10 +27,10 @@ from google.adk.agents.readonly_context import ReadonlyContext
 from tools import get_store_sales, get_sales_data
 from a2ui_toolset import A2uiToolset
 from a2ui_session_util import A2UI_ENABLED_STATE_KEY, A2UI_CATALOG_URI_STATE_KEY, A2UI_SCHEMA_STATE_KEY
+from a2ui.a2ui_extension import STANDARD_CATALOG_ID
 
 logger = logging.getLogger(__name__)
 
-STANDARD_CATALOG_URI = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json"
 RIZZCHARTS_CATALOG_URI = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json"
 
 class rizzchartsAgent:
@@ -59,14 +59,14 @@ class rizzchartsAgent:
     def get_instructions(cls, readonly_context: ReadonlyContext) -> str:
         use_ui = readonly_context.state.get(A2UI_ENABLED_STATE_KEY)
         if not use_ui:
-            raise ValueError("Only UI mode is supported")
+            raise ValueError("A2UI must be enabled to run rizzcharts agent")
 
         a2ui_schema = cls.get_a2ui_schema(readonly_context)
         catalog_uri = readonly_context.state.get(A2UI_CATALOG_URI_STATE_KEY)
         if catalog_uri == RIZZCHARTS_CATALOG_URI:
             map_example = cls.load_example("examples/rizzcharts_catalog/map.json", a2ui_schema)
             chart_example = cls.load_example("examples/rizzcharts_catalog/chart.json", a2ui_schema)
-        elif catalog_uri == STANDARD_CATALOG_URI:
+        elif catalog_uri == STANDARD_CATALOG_ID:
             map_example = cls.load_example("examples/standard_catalog/map.json", a2ui_schema)
             chart_example = cls.load_example("examples/standard_catalog/chart.json", a2ui_schema)
         else:

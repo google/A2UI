@@ -25,6 +25,11 @@ A2UI_EXTENSION_URI = "https://a2ui.org/a2a-extension/a2ui/v0.8"
 MIME_TYPE_KEY = "mimeType"
 A2UI_MIME_TYPE = "application/json+a2ui"
 
+A2UI_CLIENT_CAPABILITIES_KEY = "a2uiClientCapabilities"
+SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"
+INLINE_CATALOGS_KEY = "inlineCatalogs"
+
+STANDARD_CATALOG_ID = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json"
 
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
     """Creates an A2A Part containing A2UI data.
