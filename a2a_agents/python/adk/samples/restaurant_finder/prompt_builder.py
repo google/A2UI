@@ -18,13 +18,11 @@ A2UI_SCHEMA = r'''
   "title": "A2UI Message Schema",
   "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   "type": "object",
-  "additionalProperties": false,
-  "properties": {
+    "properties": {
     "beginRendering": {
       "type": "object",
       "description": "Signals the client to begin rendering a surface with a root component and specific styles.",
-      "additionalProperties": false,
-      "properties": {
+            "properties": {
         "surfaceId": {
           "type": "string",
           "description": "The unique identifier for the UI surface to be rendered."
@@ -36,8 +34,7 @@ A2UI_SCHEMA = r'''
         "styles": {
           "type": "object",
           "description": "Styling information for the UI.",
-          "additionalProperties": false,
-          "properties": {
+                    "properties": {
             "font": {
               "type": "string",
               "description": "The primary font for the UI."
@@ -55,8 +52,7 @@ A2UI_SCHEMA = r'''
     "surfaceUpdate": {
       "type": "object",
       "description": "Updates a surface with a new set of components.",
-      "additionalProperties": false,
-      "properties": {
+            "properties": {
         "surfaceId": {
           "type": "string",
           "description": "The unique identifier for the UI surface to be updated. If you are adding a new surface this *must* be a new, unique identified that has never been used for any existing surfaces shown."
@@ -68,8 +64,7 @@ A2UI_SCHEMA = r'''
           "items": {
             "type": "object",
             "description": "Represents a *single* component in a UI widget tree. This component could be one of many supported types.",
-            "additionalProperties": false,
-            "properties": {
+                        "properties": {
               "id": {
                 "type": "string",
                 "description": "The unique identifier for this component."
@@ -81,17 +76,14 @@ A2UI_SCHEMA = r'''
               "component": {
                 "type": "object",
                 "description": "A wrapper object that MUST contain exactly one key, which is the name of the component type (e.g., 'Heading'). The value is an object containing the properties for that specific component.",
-                "additionalProperties": false,
-                "properties": {
+                                "properties": {
                   "Text": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "text": {
                         "type": "object",
                         "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation.",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -118,13 +110,11 @@ A2UI_SCHEMA = r'''
                   },
                   "Image": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "url": {
                         "type": "object",
                         "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/url').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -161,13 +151,11 @@ A2UI_SCHEMA = r'''
                   },
                   "Icon": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "name": {
                         "type": "object",
                         "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string",
                             "enum": [
@@ -231,13 +219,11 @@ A2UI_SCHEMA = r'''
                   },
                   "Video": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "url": {
                         "type": "object",
                         "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/video/url').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -251,13 +237,11 @@ A2UI_SCHEMA = r'''
                   },
                   "AudioPlayer": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "url": {
                         "type": "object",
                         "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/song/url').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -269,8 +253,7 @@ A2UI_SCHEMA = r'''
                       "description": {
                         "type": "object",
                         "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. '/song/title').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -284,13 +267,11 @@ A2UI_SCHEMA = r'''
                   },
                   "Row": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "children": {
                         "type": "object",
                         "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "explicitList": {
                             "type": "array",
                             "items": {
@@ -300,8 +281,7 @@ A2UI_SCHEMA = r'''
                           "template": {
                             "type": "object",
                             "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
-                            "additionalProperties": false,
-                            "properties": {
+                                                        "properties": {
                               "componentId": {
                                 "type": "string"
                               },
@@ -335,13 +315,11 @@ A2UI_SCHEMA = r'''
                   },
                   "Column": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "children": {
                         "type": "object",
                         "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "explicitList": {
                             "type": "array",
                             "items": {
@@ -351,8 +329,7 @@ A2UI_SCHEMA = r'''
                           "template": {
                             "type": "object",
                             "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
-                            "additionalProperties": false,
-                            "properties": {
+                                                        "properties": {
                               "componentId": {
                                 "type": "string"
                               },
@@ -386,13 +363,11 @@ A2UI_SCHEMA = r'''
                   },
                   "List": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "children": {
                         "type": "object",
                         "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "explicitList": {
                             "type": "array",
                             "items": {
@@ -402,8 +377,7 @@ A2UI_SCHEMA = r'''
                           "template": {
                             "type": "object",
                             "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
-                            "additionalProperties": false,
-                            "properties": {
+                                                        "properties": {
                               "componentId": {
                                 "type": "string"
                               },
@@ -430,8 +404,7 @@ A2UI_SCHEMA = r'''
                   },
                   "Card": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "child": {
                         "type": "string",
                         "description": "The ID of the component to be rendered inside the card."
@@ -441,20 +414,17 @@ A2UI_SCHEMA = r'''
                   },
                   "Tabs": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "tabItems": {
                         "type": "array",
                         "description": "An array of objects, where each object defines a tab with a title and a child component.",
                         "items": {
                           "type": "object",
-                          "additionalProperties": false,
-                          "properties": {
+                                                    "properties": {
                             "title": {
                               "type": "object",
                               "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. '/options/title').",
-                              "additionalProperties": false,
-                              "properties": {
+                                                            "properties": {
                                 "literalString": {
                                   "type": "string"
                                 },
@@ -475,8 +445,7 @@ A2UI_SCHEMA = r'''
                   },
                   "Divider": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "axis": {
                         "type": "string",
                         "description": "The orientation of the divider.",
@@ -486,8 +455,7 @@ A2UI_SCHEMA = r'''
                   },
                   "Modal": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "entryPointChild": {
                         "type": "string",
                         "description": "The ID of the component that opens the modal when interacted with (e.g., a button)."
@@ -501,8 +469,7 @@ A2UI_SCHEMA = r'''
                   },
                   "Button": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "child": {
                         "type": "string",
                         "description": "The ID of the component to display in the button, typically a Text component."
@@ -514,8 +481,7 @@ A2UI_SCHEMA = r'''
                       "action": {
                         "type": "object",
                         "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "name": {
                             "type": "string"
                           },
@@ -523,16 +489,14 @@ A2UI_SCHEMA = r'''
                             "type": "array",
                             "items": {
                               "type": "object",
-                              "additionalProperties": false,
-                              "properties": {
+                                                            "properties": {
                                 "key": {
                                   "type": "string"
                                 },
                                 "value": {
                                   "type": "object",
                                   "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. '/user/name').",
-                                  "additionalProperties": false,
-                                  "properties": {
+                                                                    "properties": {
                                     "path": {
                                       "type": "string"
                                     },
@@ -559,13 +523,11 @@ A2UI_SCHEMA = r'''
                   },
                   "CheckBox": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "label": {
                         "type": "object",
                         "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. '/option/label').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -577,8 +539,7 @@ A2UI_SCHEMA = r'''
                       "value": {
                         "type": "object",
                         "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. '/filter/open').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalBoolean": {
                             "type": "boolean"
                           },
@@ -592,13 +553,11 @@ A2UI_SCHEMA = r'''
                   },
                   "TextField": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "label": {
                         "type": "object",
                         "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. '/user/name').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -610,8 +569,7 @@ A2UI_SCHEMA = r'''
                       "text": {
                         "type": "object",
                         "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. '/user/name').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -640,13 +598,11 @@ A2UI_SCHEMA = r'''
                   },
                   "DateTimeInput": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "value": {
                         "type": "object",
                         "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalString": {
                             "type": "string"
                           },
@@ -672,13 +628,11 @@ A2UI_SCHEMA = r'''
                   },
                   "MultipleChoice": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "selections": {
                         "type": "object",
                         "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. '/hotel/options').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalArray": {
                             "type": "array",
                             "items": {
@@ -695,13 +649,11 @@ A2UI_SCHEMA = r'''
                         "description": "An array of available options for the user to choose from.",
                         "items": {
                           "type": "object",
-                          "additionalProperties": false,
-                          "properties": {
+                                                    "properties": {
                             "label": {
                               "type": "object",
                               "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. '/option/label').",
-                              "additionalProperties": false,
-                              "properties": {
+                                                            "properties": {
                                 "literalString": {
                                   "type": "string"
                                 },
@@ -727,13 +679,11 @@ A2UI_SCHEMA = r'''
                   },
                   "Slider": {
                     "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
+                                        "properties": {
                       "value": {
                         "type": "object",
                         "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost').",
-                        "additionalProperties": false,
-                        "properties": {
+                                                "properties": {
                           "literalNumber": {
                             "type": "number"
                           },
@@ -765,8 +715,7 @@ A2UI_SCHEMA = r'''
     "dataModelUpdate": {
       "type": "object",
       "description": "Updates the data model for a surface.",
-      "additionalProperties": false,
-      "properties": {
+            "properties": {
         "surfaceId": {
           "type": "string",
           "description": "The unique identifier for the UI surface this data model update applies to."
@@ -781,8 +730,7 @@ A2UI_SCHEMA = r'''
           "items": {
             "type": "object",
             "description": "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
-            "additionalProperties": false,
-            "properties": {
+                        "properties": {
               "key": {
                 "type": "string",
                 "description": "The key for this data entry."
@@ -802,8 +750,7 @@ A2UI_SCHEMA = r'''
                 "items": {
                   "type": "object",
                   "description": "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
-                  "additionalProperties": false,
-                  "properties": {
+                                    "properties": {
                     "key": {
                       "type": "string"
                     },
@@ -830,8 +777,7 @@ A2UI_SCHEMA = r'''
     "deleteSurface": {
       "type": "object",
       "description": "Signals the client to delete the surface identified by 'surfaceId'.",
-      "additionalProperties": false,
-      "properties": {
+            "properties": {
         "surfaceId": {
           "type": "string",
           "description": "The unique identifier for the UI surface to be deleted."
