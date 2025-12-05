@@ -17,22 +17,23 @@
 import { AgentCard, Part, SendMessageSuccessResponse } from '@a2a-js/sdk';
 import { A2aService as A2aServiceInterface } from '@a2a_chat_canvas/interfaces/a2a-service';
 import { Injectable } from '@angular/core';
+import { CatalogService } from './catalog_service';
 
 @Injectable({ providedIn: 'root' })
 export class A2aService implements A2aServiceInterface {
-  public supportedCatalogUris: string[] = [
-    'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json',
-    'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json'
-  ];
   private contextId?: string;
 
+  constructor(private catalogService: CatalogService) { }
+
   async sendMessage(parts: Part[], signal?: AbortSignal): Promise<SendMessageSuccessResponse> {
+    const currentCatalogUris = this.catalogService.catalogUris;
+    console.log("Attaching supported A2UI catalogs to message: ", currentCatalogUris);
     const response = await fetch('/a2a', {
       body: JSON.stringify({
         'parts': parts,
         'metadata': {
-          "clientUiCapabilities": {
-            "supportedCatalogUris": this.supportedCatalogUris
+          "a2uiClientCapabilities": {
+            "supportedCatalogIds": currentCatalogUris
           }
         },
         'context_id': this.contextId

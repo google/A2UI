@@ -15,6 +15,7 @@
  */
 
 import { inject, Component } from '@angular/core';
+import { CatalogService } from '../../services/catalog_service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -22,8 +23,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectChange, MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {FormsModule} from '@angular/forms';
-import { A2aService } from '@rizzcharts/services/a2a_service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-toolbar',
@@ -32,7 +32,8 @@ import { A2aService } from '@rizzcharts/services/a2a_service';
   styleUrl: './toolbar.scss',
 })
 export class Toolbar {
-  readonly a2aService = inject(A2aService);
+  catalogService = inject(CatalogService);
+  selectedCatalogs: string[] = [];
 
   catalogs = [
     {
@@ -46,6 +47,12 @@ export class Toolbar {
   ];
 
   ngOnInit() {
-    this.a2aService.supportedCatalogUris = this.catalogs.map(c => c.value);    
+    this.selectedCatalogs = this.catalogs.map(c => c.value);
+    this.updateCatalogService();
   }
+
+  updateCatalogService() {
+    this.catalogService.catalogUris = this.selectedCatalogs;
+  }
+
 }
