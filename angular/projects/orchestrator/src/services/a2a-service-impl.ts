@@ -41,6 +41,11 @@ export class A2aServiceImpl implements A2aService {
   }
 
   async getAgentCard(): Promise<AgentCard> {
-    throw new Error('Unimplemented.');
+    const response = await fetch('/a2a/agent-card');
+    if (!response.ok) {
+      throw new Error('Failed to fetch agent card');
+    }
+    const card = await response.json() as AgentCard;
+    return card;
   }
 }
