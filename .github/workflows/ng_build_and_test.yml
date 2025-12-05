@@ -44,3 +44,7 @@ jobs:
       - name: Build restaurant sample
         working-directory: ./angular
         run: npm run build restaurant
+
+      - name: Build Rizzchart sample
+        working-directory: ./angular
+        run: npm run build rizzcharts
