@@ -22,6 +22,7 @@ import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
 import { ChatService } from '@a2a_chat_canvas/services/chat-service';
 import { Toolbar } from '@rizzcharts/components/toolbar/toolbar';
 import { environment } from '@rizzcharts/environments/environment';
+import { A2aService } from '@rizzcharts/services/a2a_service'
 
 @Component({
   selector: 'app-root',
@@ -30,9 +31,11 @@ import { environment } from '@rizzcharts/environments/environment';
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  protected readonly title = signal('rizzcharts');
+  protected readonly agentName = signal('');
   readonly chatService = inject(ChatService);
+  private readonly a2aService = inject(A2aService);
 
+  
   constructor(
     private _renderer2: Renderer2,
     @Inject(DOCUMENT) private _document: Document
@@ -44,6 +47,9 @@ export class App implements OnInit {
     script.async = true;
     script.defer = true;
     this._renderer2.appendChild(this._document.body, script);
+    this.a2aService.getAgentCard().then((card) => {
+      this.agentName.set(card.name);
+    });
   }
 
   sendMessage(text: string) {
