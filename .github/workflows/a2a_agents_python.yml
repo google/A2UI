@@ -1,0 +1,42 @@
+name: Python Agents CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'a2a_agents/python/**'
+  pull_request:
+    paths:
+      - 'a2a_agents/python/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # Specify a compatible Python version
+
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      
+    - name: Add uv to path
+      run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+    - name: Show uv version
+      working-directory: a2a_agents/python
+      run: uv --version
+
+    - name: uv sync
+      working-directory: a2a_agents/python
+      run: uv sync
+
+    - name: uv build
+      working-directory: a2a_agents/python
+      run: uv build
