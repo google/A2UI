@@ -307,7 +307,7 @@
         }
       }
     },
-    "a2a-chat-canvas-demo": {
+    "orchestrator": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -336,29 +336,29 @@
           "skipTests": true
         }
       },
-      "root": "projects/a2a-chat-canvas-demo",
-      "sourceRoot": "projects/a2a-chat-canvas-demo/src",
+      "root": "projects/orchestrator",
+      "sourceRoot": "projects/orchestrator/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "projects/a2a-chat-canvas-demo/src/main.ts",
-            "tsConfig": "projects/a2a-chat-canvas-demo/tsconfig.app.json",
+            "browser": "projects/orchestrator/src/main.ts",
+            "tsConfig": "projects/orchestrator/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/a2a-chat-canvas-demo/public"
+                "input": "projects/orchestrator/public"
               }
             ],
             "styles": [
-              "projects/a2a-chat-canvas-demo/src/styles.scss"
+              "projects/orchestrator/src/styles.scss"
             ],
-            "server": "projects/a2a-chat-canvas-demo/src/main.server.ts",
+            "server": "projects/orchestrator/src/main.server.ts",
             "outputMode": "server",
             "ssr": {
-              "entry": "projects/a2a-chat-canvas-demo/src/server.ts"
+              "entry": "projects/orchestrator/src/server.ts"
             }
           },
           "configurations": {
@@ -389,10 +389,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "a2a-chat-canvas-demo:build:production"
+              "buildTarget": "orchestrator:build:production"
             },
             "development": {
-              "buildTarget": "a2a-chat-canvas-demo:build:development"
+              "buildTarget": "orchestrator:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -404,16 +404,16 @@
           "builder": "@angular/build:karma",
           "options": {
             "codeCoverage": true,
-            "tsConfig": "projects/a2a-chat-canvas-demo/tsconfig.spec.json",
+            "tsConfig": "projects/orchestrator/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/a2a-chat-canvas-demo/public"
+                "input": "projects/orchestrator/public"
               }
             ],
             "styles": [
-              "projects/a2a-chat-canvas-demo/src/styles.scss"
+              "projects/orchestrator/src/styles.scss"
             ]
           }
         }

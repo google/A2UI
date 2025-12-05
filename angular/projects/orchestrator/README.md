@@ -16,6 +16,6 @@ Sample application using the Chat-Canvas component working with A2A and A2UI.
 4. Run the A2A server for an agent
 5. Run the app:
 
-- `npm start -- a2a-chat-canvas-demo`
+- `npm start -- orchestrator`
 
 6. Open http://localhost:4200/
