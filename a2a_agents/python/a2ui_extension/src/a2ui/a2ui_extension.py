@@ -25,6 +25,7 @@ A2UI_EXTENSION_URI = "https://a2ui.org/a2a-extension/a2ui/v0.8"
 MIME_TYPE_KEY = "mimeType"
 A2UI_MIME_TYPE = "application/json+a2ui"
 
+
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
     """Creates an A2A Part containing A2UI data.
 
@@ -43,6 +44,7 @@ def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
         )
     )
 
+
 def is_a2ui_part(part: Part) -> bool:
     """Checks if an A2A Part contains A2UI data.
 
@@ -52,9 +54,12 @@ def is_a2ui_part(part: Part) -> bool:
     Returns:
         True if the part contains A2UI data, False otherwise.
     """
-    return (isinstance(part.root, DataPart) 
-            and part.root.metadata 
-            and part.root.metadata.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE)
+    return (
+        isinstance(part.root, DataPart)
+        and part.root.metadata
+        and part.root.metadata.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE
+    )
+
 
 def get_a2ui_datapart(part: Part) -> Optional[DataPart]:
     """Extracts the DataPart containing A2UI data from an A2A Part, if present.
@@ -69,7 +74,10 @@ def get_a2ui_datapart(part: Part) -> Optional[DataPart]:
         return part.root
     return None
 
-def get_a2ui_agent_extension(accepts_inline_custom_catalog: bool = False) -> AgentExtension:
+
+def get_a2ui_agent_extension(
+    accepts_inline_custom_catalog: bool = False,
+) -> AgentExtension:
     """Creates the A2UI AgentExtension configuration.
 
     Args:
@@ -78,15 +86,16 @@ def get_a2ui_agent_extension(accepts_inline_custom_catalog: bool = False) -> Age
     Returns:
         The configured A2UI AgentExtension.
     """
-    params = {}    
+    params = {}
     if accepts_inline_custom_catalog:
-        params["acceptsInlineCustomCatalog"] = True # Only set if not default of False
+        params["acceptsInlineCustomCatalog"] = True  # Only set if not default of False
 
     return AgentExtension(
         uri=A2UI_EXTENSION_URI,
         description="Provides agent driven UI using the A2UI JSON format.",
         params=params if params else None,
     )
+
 
 def try_activate_a2ui_extension(context: RequestContext) -> bool:
     """Activates the A2UI extension if requested.

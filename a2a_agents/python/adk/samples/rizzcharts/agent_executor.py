@@ -29,7 +29,7 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2ui_ext import A2UI_EXTENSION_URI, get_a2ui_agent_extension, try_activate_a2ui_extension
+from a2ui.a2ui_extension import A2UI_EXTENSION_URI, get_a2ui_agent_extension, try_activate_a2ui_extension
 from component_catalog_builder import ComponentCatalogBuilder
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2a.types import AgentExtension

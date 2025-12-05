@@ -11,7 +11,7 @@ dependencies = [
     "google-genai>=1.27.0",
     "python-dotenv>=1.1.0",
     "litellm",
-    "a2ui_ext",
+    "a2ui",
     "jsonschema>=4.0.0",
 ]
 
@@ -23,4 +23,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.uv.sources]
-a2ui_ext = { workspace = true }
+a2ui = { workspace = true }

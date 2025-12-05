@@ -26,12 +26,11 @@ from google.genai import types as genai_types
 import httpx
 import re
 import part_converters
-from a2ui_ext import A2UI_EXTENSION_URI
 from google.adk.agents.callback_context import  CallbackContext
 from google.adk.models.llm_request import LlmRequest
 from google.adk.models.llm_response import LlmResponse
 from subagent_route_manager import SubagentRouteManager
-from a2ui_ext import is_a2ui_part
+from a2ui.a2ui_extension import is_a2ui_part, A2UI_EXTENSION_URI
 
 logger = logging.getLogger(__name__)
 

@@ -29,7 +29,7 @@ from google.adk.a2a.executor.a2a_agent_executor import (
 )
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension
 from agent import STANDARD_CATALOG_URI
-from a2ui_ext import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI
+from a2ui.a2ui_extension import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI
 from google.adk.a2a.converters import event_converter
 from a2a.server.events import Event as A2AEvent
 from google.adk.events.event import Event

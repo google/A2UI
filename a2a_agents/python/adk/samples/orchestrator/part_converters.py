@@ -19,7 +19,7 @@ from a2a import types as a2a_types
 from google.genai import types as genai_types
 
 from google.adk.a2a.converters import part_converter
-from a2ui_ext import is_a2ui_part
+from a2ui.a2ui_extension import is_a2ui_part
 
 import pydantic
 

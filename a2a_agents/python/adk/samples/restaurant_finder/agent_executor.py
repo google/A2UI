@@ -32,7 +32,7 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui_ext import create_a2ui_part, try_activate_a2ui_extension
+from a2ui.a2ui_extension import create_a2ui_part, try_activate_a2ui_extension
 from agent import RestaurantAgent
 
 logger = logging.getLogger(__name__)
