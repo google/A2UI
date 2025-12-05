@@ -1,6 +1,6 @@
-# A2A Chat-Canvas Demo
+# Orchestrator
 
-Sample application using the Chat-Canvas component working with A2A and A2UI.
+Sample application using the Chat-Canvas component working with multiple A2A and A2UI Agents.
 
 ## Prerequisites
 
