@@ -44,3 +44,11 @@ jobs:
       - name: Build restaurant sample
         working-directory: ./angular
         run: npm run build restaurant
+
+      - name: Build Rizzchart sample
+        working-directory: ./angular
+        run: npm run build rizzcharts
+
+      - name: Build A2A chat canvas demo
+        working-directory: ./angular
+        run: npm run build a2a-chat-canvas-demo
