@@ -7,8 +7,8 @@ on:
     paths:
       - 'a2a_agents/python/**'
   pull_request:
-    paths:
-      - 'a2a_agents/python/**'
+#     paths:
+#       - 'a2a_agents/python/**'
 
 jobs:
   build:
