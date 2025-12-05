@@ -32,7 +32,7 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui_ext import create_a2ui_part
+from a2ui_ext import create_a2ui_part, try_activate_a2ui_extension
 from agent import RestaurantAgent
 
 logger = logging.getLogger(__name__)
@@ -51,11 +51,15 @@ class RestaurantAgentExecutor(AgentExecutor):
         self,
         context: RequestContext,
         event_queue: EventQueue,
-        use_ui: bool = False,  # This will be passed by the a2ui wrapper
     ) -> None:
         query = ""
         ui_event_part = None
         action = None
+
+        logger.info(
+            f"--- Client requested extensions: {context.requested_extensions} ---"
+        )
+        use_ui = try_activate_a2ui_extension(context)
 
         # Determine which agent to use based on whether the a2ui extension is active.
         if use_ui:
