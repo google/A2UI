@@ -10,7 +10,11 @@ import * as fs from "fs";
 import * as path from "path";
 
 export class Generator {
-  constructor(private schemas: any, private outputDir?: string) {}
+  constructor(
+    private schemas: any,
+    private outputDir?: string,
+    private catalogRules?: string
+  ) {}
 
   async run(
     prompts: TestPrompt[],
@@ -76,6 +80,7 @@ export class Generator {
         prompt: prompt.promptText,
         modelConfig: model,
         schemas: this.schemas,
+        catalogRules: this.catalogRules,
       });
 
       const text = output?.text;

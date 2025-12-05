@@ -37,7 +37,7 @@
         { "$ref": "#/$defs/CheckBox" },
         { "$ref": "#/$defs/TextField" },
         { "$ref": "#/$defs/DateTimeInput" },
-        { "$ref": "#/$defs/MultipleChoice" },
+        { "$ref": "#/$defs/ChoicePicker" },
         { "$ref": "#/$defs/Slider" }
       ]
     },
@@ -112,6 +112,7 @@
                 "edit",
                 "event",
                 "error",
+                "fastForward",
                 "favorite",
                 "favoriteOff",
                 "folder",
@@ -127,23 +128,33 @@
                 "moreHoriz",
                 "notificationsOff",
                 "notifications",
+                "pause",
                 "payment",
                 "person",
                 "phone",
                 "photo",
+                "play",
                 "print",
                 "refresh",
+                "rewind",
                 "search",
                 "send",
                 "settings",
                 "share",
                 "shoppingCart",
+                "skipNext",
+                "skipPrevious",
                 "star",
                 "starHalf",
                 "starOff",
+                "stop",
                 "upload",
                 "visibility",
                 "visibilityOff",
+                "volumeDown",
+                "volumeMute",
+                "volumeOff",
+                "volumeUp",
                 "warning"
               ]
             },
@@ -191,6 +202,7 @@
     },
     "Row": {
       "type": "object",
+      "description": "A layout component that arranges its children horizontally. To create a grid layout, nest Columns within this Row.",
       "properties": {
         "component": { "const": "Row" },
         "children": {
@@ -199,7 +211,7 @@
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property, but uses camelCase values (e.g., 'spaceBetween').",
+          "description": "Defines the arrangement of children along the main axis (horizontally). Use 'spaceBetween' to push items to the edges, or 'start'/'end'/'center' to pack them together.",
           "enum": [
             "center",
             "end",
@@ -212,7 +224,7 @@
         },
         "alignment": {
           "type": "string",
-          "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
+          "description": "Defines the alignment of children along the cross axis (vertically). This is similar to the CSS 'align-items' property, but uses camelCase values (e.g., 'start').",
           "enum": ["start", "center", "end", "stretch"]
         }
       },
@@ -221,6 +233,7 @@
     },
     "Column": {
       "type": "object",
+      "description": "A layout component that arranges its children vertically. To create a grid layout, nest Rows within this Column.",
       "properties": {
         "component": { "const": "Column" },
         "children": {
@@ -229,7 +242,7 @@
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property, but uses camelCase values (e.g., 'spaceBetween').",
+          "description": "Defines the arrangement of children along the main axis (vertically). Use 'spaceBetween' to push items to the edges (e.g. header at top, footer at bottom), or 'start'/'end'/'center' to pack them together.",
           "enum": [
             "start",
             "center",
@@ -242,7 +255,7 @@
         },
         "alignment": {
           "type": "string",
-          "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
+          "description": "Defines the alignment of children along the cross axis (horizontally). This is similar to the CSS 'align-items' property.",
           "enum": ["center", "end", "start", "stretch"]
         }
       },
@@ -277,7 +290,7 @@
         "component": { "const": "Card" },
         "child": {
           "type": "string",
-          "description": "The ID of the component to be rendered inside the card."
+          "description": "The ID of the single child component to be rendered inside the card. To display multiple elements, you MUST wrap them in a layout component (like Column or Row) and pass that container's ID here. Do NOT pass multiple IDs or a non-existent ID. Do NOT define the child component inline."
         }
       },
       "required": ["component", "child"],
@@ -297,7 +310,10 @@
                 "description": "The tab title.",
                 "$ref": "common_types.json#/$defs/stringOrPath"
               },
-              "child": { "type": "string" }
+              "child": {
+                "type": "string",
+                "description": "The ID of the child component. Do NOT define the component inline."
+              }
             },
             "required": ["title", "child"],
             "additionalProperties": false
@@ -326,11 +342,11 @@
         "component": { "const": "Modal" },
         "entryPointChild": {
           "type": "string",
-          "description": "The ID of the component that opens the modal when interacted with (e.g., a button)."
+          "description": "The ID of the component that opens the modal when interacted with (e.g., a button). Do NOT define the component inline."
         },
         "contentChild": {
           "type": "string",
-          "description": "The ID of the component to be displayed inside the modal."
+          "description": "The ID of the component to be displayed inside the modal. Do NOT define the component inline."
         }
       },
       "required": ["component", "entryPointChild", "contentChild"],
@@ -342,7 +358,7 @@
         "component": { "const": "Button" },
         "child": {
           "type": "string",
-          "description": "The ID of the component to display in the button, typically a Text component."
+          "description": "The ID of the child component. Use a 'Text' component for a labeled button. Only use an 'Icon' if the requirements explicitly ask for an icon-only button. Do NOT define the child component inline."
         },
         "primary": {
           "type": "boolean",
@@ -355,7 +371,7 @@
             "name": { "type": "string" },
             "context": {
               "type": "object",
-              "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths.",
+              "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
               "additionalProperties": {
                 "$ref": "common_types.json#/$defs/contextValue"
               }
@@ -437,18 +453,25 @@
       "required": ["component", "value"],
       "additionalProperties": false
     },
-    "MultipleChoice": {
+    "ChoicePicker": {
       "type": "object",
+      "description": "A component that allows selecting one or more options from a list.",
       "properties": {
-        "component": { "const": "MultipleChoice" },
-        "description": "A component that allows the user to select one or more options from a set. Note: This component does not support a 'label' property. Use a separate Text component if a label is needed.",
-        "selections": {
-          "description": "The currently selected values for the component.",
-          "$ref": "common_types.json#/$defs/stringArrayOrPath"
+        "component": {
+          "const": "ChoicePicker"
+        },
+        "label": {
+          "$ref": "common_types.json#/$defs/stringOrPath",
+          "description": "The label for the group of options."
+        },
+        "usageHint": {
+          "type": "string",
+          "description": "A hint for how the choice picker should be displayed and behave.",
+          "enum": ["multipleSelection", "mutuallyExclusive"]
         },
         "options": {
           "type": "array",
-          "description": "An array of available options for the user to choose from.",
+          "description": "The list of available options to choose from.",
           "items": {
             "type": "object",
             "properties": {
@@ -458,36 +481,42 @@
               },
               "value": {
                 "type": "string",
-                "description": "The value to be associated with this option when selected."
+                "description": "The stable value associated with this option."
               }
             },
             "required": ["label", "value"],
             "additionalProperties": false
           }
         },
-        "maxAllowedSelections": {
-          "type": "integer",
-          "description": "The maximum number of options that the user is allowed to select."
+        "value": {
+          "$ref": "common_types.json#/$defs/stringArrayOrPath",
+          "description": "The list of currently selected values. This should be bound to a string array in the data model."
         }
       },
-      "required": ["component", "selections", "options"],
+      "required": ["component", "options", "value", "usageHint"],
       "additionalProperties": false
     },
     "Slider": {
       "type": "object",
       "properties": {
-        "component": { "const": "Slider" },
+        "component": {
+          "const": "Slider"
+        },
+        "label": {
+          "$ref": "common_types.json#/$defs/stringOrPath",
+          "description": "The label for the slider."
+        },
+        "min": {
+          "type": "number",
+          "description": "The minimum value of the slider."
+        },
+        "max": {
+          "type": "number",
+          "description": "The maximum value of the slider."
+        },
         "value": {
           "$ref": "common_types.json#/$defs/numberOrPath",
           "description": "The current value of the slider."
-        },
-        "minValue": {
-          "$ref": "common_types.json#/$defs/numberOrPath",
-          "description": "The minimum value of the slider."
-        },
-        "maxValue": {
-          "$ref": "common_types.json#/$defs/numberOrPath",
-          "description": "The maximum value of the slider."
         }
       },
       "required": ["component", "value"],

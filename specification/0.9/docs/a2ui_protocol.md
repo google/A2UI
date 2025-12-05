@@ -400,7 +400,7 @@ The [`standard_catalog_definition.json`] provides the baseline set of components
 | **CheckBox**       | A checkbox with a label and a boolean value.            |
 | **TextField**      | A field for user text input.                            |
 | **DateTimeInput**  | An input for date and/or time.                          |
-| **MultipleChoice** | A component for selecting one or more options.          |
+| **ChoicePicker**   | A component for selecting one or more options.          |
 | **Slider**         | A slider for selecting a numeric value within a range.  |
 
 ## Usage Pattern: The Prompt-Generate-Validate Loop

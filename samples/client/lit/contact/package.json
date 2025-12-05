@@ -39,7 +39,7 @@
         "FORCE_COLOR": "1"
       },
       "dependencies": [
-        "../../../../web/lib:build:tsc"
+        "../../../../renderers/lit:build:tsc"
       ],
       "files": [
         "**/*.ts",
@@ -53,7 +53,7 @@
     }
   },
   "repository": {
-    "directory": "web/restaurant",
+    "directory": "samples/client/lit/contact",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },
@@ -76,6 +76,6 @@
   },
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",
-    "@a2ui/web-lib": "file:../../../web/lib"
+    "@a2ui/web-lib": "file:../../../../renderers/lit"
   }
 }

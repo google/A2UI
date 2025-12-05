@@ -30,5 +30,6 @@
     "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
-  }
+  },
+  "exclude": ["vite.config.ts", "middleware", "dist"]
 }

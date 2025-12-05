@@ -17,9 +17,13 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install Lit renderer dependencies
+        working-directory: ./renderers/lit
+        run: npm i
+
       - name: Install all workspaces' dependencies
         working-directory: ./web
-        run: npm install --workspaces
+        run: npm i
 
       - name: Build all workspaces
         working-directory: ./web
@@ -27,4 +31,4 @@ jobs:
 
       - name: Run all tests
         working-directory: ./web
-        run: npm run test --workspace=lib
+        run: npm run test --workspace=@a2ui/web-lib

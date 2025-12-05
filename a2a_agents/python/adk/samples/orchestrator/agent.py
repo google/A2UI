@@ -26,7 +26,7 @@ from google.genai import types as genai_types
 import httpx
 import re
 import part_converters
-from a2ui_ext import URI as A2UI_EXTENSION_URI
+from a2ui_ext import A2UI_EXTENSION_URI
 from google.adk.agents.callback_context import  CallbackContext
 from google.adk.models.llm_request import LlmRequest
 from google.adk.models.llm_response import LlmResponse

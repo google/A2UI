@@ -78,7 +78,7 @@
     }
   },
   "repository": {
-    "directory": "web/lib",
+    "directory": "renderers/lit",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },

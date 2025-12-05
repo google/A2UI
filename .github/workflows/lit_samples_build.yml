@@ -18,11 +18,11 @@ jobs:
           node-version: '20'
 
       - name: Install lib's deps
-        working-directory: ./web/lib
-        run: npm ci
+        working-directory: ./renderers/lit
+        run: npm i
 
       - name: Build lib
-        working-directory: ./web/lib
+        working-directory: ./renderers/lit
         run: npm run build
 
       - name: Install all lit samples workspaces' dependencies

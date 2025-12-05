@@ -1,4 +1,3 @@
-
 import { evaluationFlow } from "./evaluation_flow";
 import { ValidatedResult, EvaluatedResult } from "./types";
 import { logger } from "./logger";
@@ -32,7 +31,22 @@ export class Evaluator {
 
     // Initialize results with skipped items
     for (const result of results) {
-      if (result.validationErrors.length > 0 || !result.components) {
+      if (result.validationErrors.length > 0) {
+        evaluatedResults.push({
+          ...result,
+          evaluationResult: {
+            pass: false,
+            reason: "Schema validation failure",
+            issues: [
+              {
+                issue: result.validationErrors.join("\n"),
+                severity: "criticalSchema",
+              },
+            ],
+            overallSeverity: "criticalSchema",
+          },
+        });
+      } else if (!result.components) {
         evaluatedResults.push({ ...result });
       }
     }

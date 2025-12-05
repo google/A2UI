@@ -20,7 +20,7 @@ from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from a2ui_ext import a2uiExtension
+from a2ui_ext import get_a2ui_agent_extension
 from agent import RestaurantAgent
 from agent_executor import RestaurantAgentExecutor
 from dotenv import load_dotenv
@@ -49,12 +49,9 @@ def main(host, port):
                     "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI is not TRUE."
                 )
 
-        hello_ext = a2uiExtension()
         capabilities = AgentCapabilities(
             streaming=True,
-            extensions=[
-                hello_ext.agent_extension(),
-            ],
+            extensions=[get_a2ui_agent_extension()],
         )
         skill = AgentSkill(
             id="find_restaurants",
@@ -78,8 +75,6 @@ def main(host, port):
         )
 
         agent_executor = RestaurantAgentExecutor(base_url=base_url)
-
-        agent_executor = hello_ext.wrap_executor(agent_executor)
 
         request_handler = DefaultRequestHandler(
             agent_executor=agent_executor,

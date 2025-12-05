@@ -13,90 +13,91 @@
 # limitations under the License.
 
 import logging
-from typing import Any
+from typing import Any, Optional
 
-from a2a.server.agent_execution import AgentExecutor, RequestContext
-from a2a.server.events.event_queue import EventQueue
-from a2a.types import AgentExtension, Task, Part, DataPart
+from a2a.server.agent_execution import RequestContext
+from a2a.types import AgentExtension, Part, DataPart
 
 logger = logging.getLogger(__name__)
 
-# --- Define a2ui UI constants ---
-_CORE_PATH = "a2ui.org/ext/a2a-ui/v0.1"
-URI = f"https://{_CORE_PATH}"
-a2ui_MIME_TYPE = "application/json+a2ui"
+A2UI_EXTENSION_URI = "https://a2ui.org/a2a-extension/a2ui/v0.8"
+
+MIME_TYPE_KEY = "mimeType"
+A2UI_MIME_TYPE = "application/json+a2ui"
 
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
+    """Creates an A2A Part containing A2UI data.
+
+    Args:
+        a2ui_data: The A2UI data dictionary.
+
+    Returns:
+        An A2A Part with a DataPart containing the A2UI data.
+    """
     return Part(
         root=DataPart(
             data=a2ui_data,
             metadata={
-                "mimeType": a2ui_MIME_TYPE,
+                MIME_TYPE_KEY: A2UI_MIME_TYPE,
             },
         )
     )
 
 def is_a2ui_part(part: Part) -> bool:
-    return isinstance(part.root, DataPart) and part.root.metadata and part.root.metadata.get("mimeType") == a2ui_MIME_TYPE
+    """Checks if an A2A Part contains A2UI data.
 
-class a2uiExtension:
-    """A generic a2ui UI extension that activates UI mode."""
+    Args:
+        part: The A2A Part to check.
 
-    def agent_extension(self) -> AgentExtension:
-        """Get the AgentExtension representing this extension."""
-        return AgentExtension(
-            uri=URI,
-            description="Provides a declarative a2ui UI JSON structure in messages.",
-            params={
-                "supportedSchemas": [
-                    "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/server_to_client_with_standard_catalog.json"
-                ],
-                "acceptsDynamicSchemas": True,
-            },
-        )
+    Returns:
+        True if the part contains A2UI data, False otherwise.
+    """
+    return (isinstance(part.root, DataPart) 
+            and part.root.metadata 
+            and part.root.metadata.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE)
 
-    def activate(self, context: RequestContext) -> bool:
-        """Checks if the a2ui UI extension was requested by the client."""
-        if URI in context.requested_extensions:
-            context.add_activated_extension(URI)
-            return True
-        return False
+def get_a2ui_datapart(part: Part) -> Optional[DataPart]:
+    """Extracts the DataPart containing A2UI data from an A2A Part, if present.
 
-    def wrap_executor(self, executor: AgentExecutor) -> AgentExecutor:
-        """Wrap an executor to activate the extension."""
-        return _a2uiExecutor(executor, self)
+    Args:
+        part: The A2A Part to extract A2UI data from.
 
+    Returns:
+        The DataPart containing A2UI data if present, None otherwise.
+    """
+    if is_a2ui_part(part):
+        return part.root
+    return None
 
-class _a2uiExecutor(AgentExecutor):
-    """Executor wrapper that activates the a2ui UI extension."""
+def get_a2ui_agent_extension(accepts_inline_custom_catalog: bool = False) -> AgentExtension:
+    """Creates the A2UI AgentExtension configuration.
 
-    def __init__(self, delegate: AgentExecutor, ext: a2uiExtension):
-        self._delegate = delegate
-        self._ext = ext
+    Args:
+        accepts_inline_custom_catalog: Whether the agent accepts inline custom catalogs.
 
-    async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
-        # The extension's ONLY job is to check for the header and log activation.
-        logger.info(
-            f"--- Client requested extensions: {context.requested_extensions} ---"
-        )
-        use_ui = self._ext.activate(context)
-        if use_ui:
-            logger.info("--- a2ui UI EXTENSION ACTIVATED ---")
-        else:
-            logger.info("--- a2ui UI EXTENSION *NOT* ACTIVE ---")
+    Returns:
+        The configured A2UI AgentExtension.
+    """
+    params = {}    
+    if accepts_inline_custom_catalog:
+        params["acceptsInlineCustomCatalog"] = True # Only set if not default of False
 
-        # All parsing logic is now handled correctly inside the delegate executor.
-        # We pass the `use_ui` flag to the delegate.
-        await self._delegate.execute(context, event_queue, use_ui=use_ui)
+    return AgentExtension(
+        uri=A2UI_EXTENSION_URI,
+        description="Provides agent driven UI using the A2UI JSON format.",
+        params=params if params else None,
+    )
 
-    async def cancel(
-        self, context: RequestContext, event_queue: EventQueue
-    ) -> Task | None:
-        return await self._delegate.cancel(context, event_queue)
+def try_activate_a2ui_extension(context: RequestContext) -> bool:
+    """Activates the A2UI extension if requested.
 
+    Args:
+        context: The request context to check.
 
-__all__ = [
-    "URI",
-    "a2uiExtension",
-    "a2ui_MIME_TYPE",
-]
+    Returns:
+        True if activated, False otherwise.
+    """
+    if A2UI_EXTENSION_URI in context.requested_extensions:
+        context.add_activated_extension(A2UI_EXTENSION_URI)
+        return True
+    return False
