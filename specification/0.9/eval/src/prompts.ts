@@ -45,7 +45,7 @@ The dog generator is another card which is a form that generates a fictional dog
 - Dog breed name (text input)
 - Number of legs (number input)
 - Button called “Generate” which takes the data above and generates a new dog description
-- Skills (CheckboxGroup component)
+- Skills (ChoicePicker component, usageHint 'multipleSelection')
 - A divider
 - A section which shows the generated content
 `,
@@ -141,7 +141,7 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "surveyForm",
     description: "A customer feedback survey form.",
-    promptText: `Create a customer feedback survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'RadioGroup' with label "How would you rate our service?" and options "Excellent", "Good", "Average", "Poor". Then a 'CheckboxGroup' with label "What did you like?" and options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
+    promptText: `Create a customer feedback survey form. It should have a 'Text' (usageHint 'h1') "Customer Feedback". Then a 'ChoicePicker' (usageHint 'mutuallyExclusive') with label "How would you rate our service?" and options "Excellent", "Good", "Average", "Poor". Then a 'ChoicePicker' (usageHint 'multipleSelection') with label "What did you like?" and options "Product Quality", "Price", "Customer Support". Finally, a 'TextField' with the label "Any other comments?" and a 'Button' labeled "Submit Feedback".`,
   },
   {
     name: "flightBooker",
@@ -183,8 +183,8 @@ The right side of the row is another 'Column' for product information:
 - A 'Text' (usageHint 'h1') for the product name, "Premium Leather Jacket".
 - A 'Text' component for the price, "$299.99".
 - A 'Divider'.
-- A 'RadioGroup' labeled "Select Size" with options "S", "M", "L", "XL".
-- A 'RadioGroup' labeled "Select Color" with options "Black", "Brown", "Red".
+- A 'ChoicePicker' (usageHint 'mutuallyExclusive') labeled "Select Size" with options "S", "M", "L", "XL".
+- A 'ChoicePicker' (usageHint 'mutuallyExclusive') labeled "Select Color" with options "Black", "Brown", "Red".
 - A 'Button' with a 'Text' child "Add to Cart".
 - A 'Text' component for the product description below the button.`,
   },
@@ -268,7 +268,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "triviaQuiz",
     description: "A trivia question card.",
-    promptText: `Create a trivia quiz. It should have a 'Text' (usageHint 'h1') "Question 1". A 'Text' "What is the capital of France?". A 'RadioGroup' for answers (options: "Paris", "London", "Berlin", "Madrid"). A 'Button' "Submit Answer".`,
+    promptText: `Create a trivia quiz. It should have a 'Text' (usageHint 'h1') "Question 1". A 'Text' "What is the capital of France?". A 'ChoicePicker' (usageHint 'mutuallyExclusive') for answers (options: "Paris", "London", "Berlin", "Madrid"). A 'Button' "Submit Answer".`,
   },
   {
     name: "simpleCalculator",
@@ -283,7 +283,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "jobApplication",
     description: "A job application form.",
-    promptText: `Create a job application form. It should have 'TextField's for "Name", "Email", "Phone", "Resume URL". A 'RadioGroup' labeled "Years of Experience" (options: "0-1", "2-5", "5+"). A 'Button' "Submit Application".`,
+    promptText: `Create a job application form. It should have 'TextField's for "Name", "Email", "Phone", "Resume URL". A 'ChoicePicker' (usageHint 'mutuallyExclusive') labeled "Years of Experience" (options: "0-1", "2-5", "5+"). A 'Button' "Submit Application".`,
   },
   {
     name: "courseSyllabus",

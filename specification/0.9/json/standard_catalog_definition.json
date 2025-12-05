@@ -37,8 +37,7 @@
         { "$ref": "#/$defs/CheckBox" },
         { "$ref": "#/$defs/TextField" },
         { "$ref": "#/$defs/DateTimeInput" },
-        { "$ref": "#/$defs/RadioGroup" },
-        { "$ref": "#/$defs/CheckboxGroup" },
+        { "$ref": "#/$defs/ChoicePicker" },
         { "$ref": "#/$defs/Slider" }
       ]
     },
@@ -454,54 +453,21 @@
       "required": ["component", "value"],
       "additionalProperties": false
     },
-    "RadioGroup": {
+    "ChoicePicker": {
       "type": "object",
-      "description": "A component that allows selecting a single option from a list using radio buttons.",
+      "description": "A component that allows selecting one or more options from a list.",
       "properties": {
         "component": {
-          "const": "RadioGroup"
+          "const": "ChoicePicker"
         },
         "label": {
           "$ref": "common_types.json#/$defs/stringOrPath",
           "description": "The label for the group of options."
         },
-        "options": {
-          "type": "array",
-          "description": "The list of available options to choose from.",
-          "items": {
-            "type": "object",
-            "properties": {
-              "label": {
-                "description": "The text to display for this option.",
-                "$ref": "common_types.json#/$defs/stringOrPath"
-              },
-              "value": {
-                "type": "string",
-                "description": "The stable value associated with this option."
-              }
-            },
-            "required": ["label", "value"],
-            "additionalProperties": false
-          }
-        },
-        "value": {
-          "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The currently selected value. This should be bound to a string in the data model."
-        }
-      },
-      "required": ["component", "options", "value"],
-      "additionalProperties": false
-    },
-    "CheckboxGroup": {
-      "type": "object",
-      "description": "A component that allows selecting multiple options from a list using checkboxes.",
-      "properties": {
-        "component": {
-          "const": "CheckboxGroup"
-        },
-        "label": {
-          "$ref": "common_types.json#/$defs/stringOrPath",
-          "description": "The label for the group of options."
+        "usageHint": {
+          "type": "string",
+          "description": "A hint for how the choice picker should be displayed and behave.",
+          "enum": ["multipleSelection", "mutuallyExclusive"]
         },
         "options": {
           "type": "array",
@@ -527,7 +493,7 @@
           "description": "The list of currently selected values. This should be bound to a string array in the data model."
         }
       },
-      "required": ["component", "options", "value"],
+      "required": ["component", "options", "value", "usageHint"],
       "additionalProperties": false
     },
     "Slider": {
