@@ -1,6 +1,6 @@
 # Chat-Canvas component working with A2A and A2UI
 
-You can refer to the `a2a-chat-canvas-demo` project as an example using this component.
+You can refer to the `orchestrator` project as an example using this component.
 
 ## Configure the UI surface dependencies
 
