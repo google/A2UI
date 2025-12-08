@@ -22,7 +22,6 @@ export * from './column';
 export * from './datetime-input';
 export * from './default';
 export * from './divider';
-export * from './heading';
 export * from './image';
 export * from './list';
 export * from './multiple-choice';
