@@ -19,7 +19,8 @@ hide:
 A new open source UI Toolkit to facilitate LLM-generated UIs. A2UI is built with <a href="https://a2a-protocol.org">A2A protocol</a> and allows an A2A agent to send interactive components instead of just text, using a high level framework-agnostic format that can be rendered natively on any surface (starting with examples for web and mobile).
 </p>
 
-[Join the Waitlist](https://goo.gle/a2ui-form){ .md-button .md-button--primary style="padding: 0.6rem 2rem; font-size: 1.1rem;" }
+[Get Started](onboarding/index.md){ .md-button .md-button--primary style="padding: 0.6rem 2rem; font-size: 1.1rem;" }
+[Join the Waitlist](https://goo.gle/a2ui-form){ .md-button style="padding: 0.6rem 2rem; font-size: 1.1rem;" }
 
 </div>
 

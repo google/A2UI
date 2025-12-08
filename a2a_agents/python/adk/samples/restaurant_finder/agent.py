@@ -93,7 +93,14 @@ class RestaurantAgent:
 
     def _build_agent(self, use_ui: bool) -> LlmAgent:
         """Builds the LLM agent for the restaurant agent."""
-        LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+        # Model Config Notes (you can change all of this to fit your needs)
+        # We are using LiteLLM for this sample for easy model exploration
+        # You can authenticate with an API_KEY for easy onboarding or gcloud for Vertex AI
+        # Determine default model based on auth
+        default_model = "gemini-2.5-flash"
+        if os.getenv("GEMINI_API_KEY"):
+            default_model = "gemini/gemini-2.5-flash"
+        LITELLM_MODEL = os.getenv("LITELLM_MODEL", default_model)
 
         if use_ui:
             # Construct the full prompt with UI instructions, examples, and schema

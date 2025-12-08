@@ -1,0 +1,14 @@
+site_name: A2UI Documentation
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+
+nav:
+  - Home: index.md
+  - Onboarding:
+    - Overview: onboarding/index.md
+    - Prerequisites: onboarding/prerequisites.md
+    - Troubleshooting: onboarding/troubleshooting.md

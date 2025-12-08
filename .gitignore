@@ -8,9 +8,8 @@ dist
 __pycache__
 *.pyc
 .angular
-
-# MkDocs build output
+a2ui_env_debug.txt
+*.code-workspace
+tmp/
 site/
-
-# Python virtual environment
 .venv/
