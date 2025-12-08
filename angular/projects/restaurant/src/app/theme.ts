@@ -254,12 +254,12 @@ export const theme: v0_8.Types.Theme = {
         'layout-w-100': true,
         'layout-h-100': true,
       },
-      icon: {},
       avatar: {},
-      smallFeature: {},
-      mediumFeature: {},
-      largeFeature: {},
       header: {},
+      icon: {},
+      largeFeature: {},
+      mediumFeature: {},
+      smallFeature: {},
     },
     Icon: {},
     List: {
@@ -302,7 +302,6 @@ export const theme: v0_8.Types.Theme = {
         'color-c-p30': true,
       },
       h1: {
-        'color-c-p30': true,
         'typography-f-sf': true,
         'typography-v-r': true,
         'typography-w-400': true,
@@ -311,7 +310,6 @@ export const theme: v0_8.Types.Theme = {
         'typography-sz-tl': true,
       },
       h2: {
-        'color-c-p30': true,
         'typography-f-sf': true,
         'typography-v-r': true,
         'typography-w-400': true,
@@ -320,7 +318,6 @@ export const theme: v0_8.Types.Theme = {
         'typography-sz-tm': true,
       },
       h3: {
-        'color-c-p30': true,
         'typography-f-sf': true,
         'typography-v-r': true,
         'typography-w-400': true,
@@ -329,7 +326,6 @@ export const theme: v0_8.Types.Theme = {
         'typography-sz-ts': true,
       },
       h4: {
-        'color-c-p30': true,
         'typography-f-sf': true,
         'typography-v-r': true,
         'typography-w-400': true,
@@ -338,7 +334,6 @@ export const theme: v0_8.Types.Theme = {
         'typography-sz-bl': true,
       },
       h5: {
-        'color-c-p30': true,
         'typography-f-sf': true,
         'typography-v-r': true,
         'typography-w-400': true,
@@ -346,8 +341,8 @@ export const theme: v0_8.Types.Theme = {
         'layout-p-0': true,
         'typography-sz-bm': true,
       },
-      caption: {},
       body: {},
+      caption: {},
     },
     TextField: {
       container: {
