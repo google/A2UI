@@ -58,7 +58,10 @@ export const DEFAULT_CATALOG: Catalog = {
     type: () => import('./image').then((r) => r.Image),
     bindings: (node) => {
       const properties = (node as v0_8.Types.ImageNode).properties;
-      return [inputBinding('url', () => properties.url)];
+      return [
+        inputBinding('url', () => properties.url),
+        inputBinding('usageHint', () => properties.usageHint),
+      ];
     },
   },
 

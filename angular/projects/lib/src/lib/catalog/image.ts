@@ -36,10 +36,10 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
     }
   `,
   template: `
-    @let resolvedUrl = this.resolvedUrl(); 
+    @let resolvedUrl = this.resolvedUrl();
 
     @if (resolvedUrl) {
-      <section [class]="theme.components.Image" [style]="theme.additionalStyles?.Image">
+      <section [class]="classes()" [style]="theme.additionalStyles?.Image">
         <img [src]="resolvedUrl" />
       </section>
     }
@@ -47,5 +47,16 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
 })
 export class Image extends DynamicComponent {
   readonly url = input.required<v0_8.Primitives.StringValue | null>();
+  readonly usageHint = input.required<v0_8.Types.ResolvedImage['usageHint'] | null>();
+
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
+
+  protected classes = computed(() => {
+    const usageHint = this.usageHint();
+
+    return v0_8.Styles.merge(
+      this.theme.components.Image.all,
+      usageHint ? this.theme.components.Image[usageHint] : {},
+    );
+  });
 }
