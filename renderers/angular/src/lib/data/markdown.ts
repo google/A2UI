@@ -17,11 +17,10 @@
 import { inject, Injectable, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import MarkdownIt from 'markdown-it';
-import { RenderRule } from 'markdown-it/lib/renderer.mjs';
 
 @Injectable({ providedIn: 'root' })
 export class MarkdownRenderer {
-  private originalClassMap = new Map<string, RenderRule | undefined>();
+  private originalClassMap = new Map<string, any>();
   private sanitizer = inject(DomSanitizer);
 
   private markdownIt = MarkdownIt({
@@ -87,7 +86,7 @@ export class MarkdownRenderer {
       }
 
       const key = `${tokenName}_open`;
-      const original: RenderRule | undefined = this.markdownIt.renderer.rules[key];
+      const original = this.markdownIt.renderer.rules[key];
       this.originalClassMap.set(key, original);
 
       this.markdownIt.renderer.rules[key] = (tokens, idx, options, env, self) => {

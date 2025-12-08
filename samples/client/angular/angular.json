@@ -20,12 +20,6 @@
             }
           },
           "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular/build:karma",
-          "options": {
-            "tsConfig": "projects/lib/tsconfig.spec.json"
-          }
         }
       }
     },
