@@ -180,8 +180,9 @@ The flow is as follows:
 
 #### 1. Server Advertises Capabilities
 
-The server (agent) advertises its capabilities in its Agent Card as part of the A2A protocol. For A2UI, this includes whether it can handle catalogs defined inline by the client.
+The server (agent) advertises its capabilities in its Agent Card as part of the A2A protocol. For A2UI, this includes which catalogs it supports and whether it can handle catalogs defined inline by the client.
 
+- `supportedCatalogIds` (array of strings, optional): A list of IDs for all pre-defined catalogs the agent is known to support.
 - `acceptsInlineCatalogs` (boolean, optional): If `true`, the server can process `inlineCatalogs` sent by the client. Defaults to `false`.
 
 **Example Server Agent Card Snippet:**
@@ -193,6 +194,10 @@ The server (agent) advertises its capabilities in its Agent Card as part of the 
       {
         "uri": "https://a2ui.org/ext/a2a-ui/v0.8",
         "params": {
+          "supportedCatalogIds": [
+            "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json",
+            "https://my-company.com/a2ui/v0.8/my_custom_catalog.json"
+          ],
           "acceptsInlineCatalogs": true
         }
       }
@@ -200,6 +205,8 @@ The server (agent) advertises its capabilities in its Agent Card as part of the 
   }
 }
 ```
+
+Note that this is not a strict contract and purely included as a signal to help orchestrators and clients identify agents with matching UI capabilities. At runtime, orchestrating agents may dynamically delegate tasks to subagents which support additional catalogs that the orchestrating agent did not advertise. Thus, clients should consider the advertised supportedCatalogIds as a subset of the true catalogs that the agent or its subagents may support.
 
 #### 2. Client Declares Supported Catalogs
 

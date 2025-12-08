@@ -6,7 +6,7 @@ This extension implements the A2UI (Agent-to-Agent UI) spec, a format for agents
 
 ## Extension URI
 
-The URI of this extension is https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/docs/a2ui_extension_specification.md
+The URI of this extension is https://a2ui.org/ext/a2a-ui/v0.8
 
 This is the only URI accepted for this extension.
 
@@ -40,12 +40,17 @@ Example AgentExtension block:
   "description": "Ability to render A2UI",
   "required": false,
   "params": {
+    "supportedCatalogIds": [
+      "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json",
+      "https://my-company.com/a2ui/v0.8/my_custom_catalog.json"
+    ],
     "acceptsInlineCatalogs": true
   }
 }
 ```
 
 ### Parameter Definitions
+- `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is a URI pointing to a component Catalog Definition Schema that the agent can generate.
 - `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
 ## Extension Activation

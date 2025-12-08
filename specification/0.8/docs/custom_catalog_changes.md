@@ -6,7 +6,7 @@ The previous mechanism, which involved a single, one-time `clientUiCapabilities`
 
 ## Key Changes to the Protocol
 
-1.  **Agent Capability Advertisement (`acceptsInlineCatalogs`)**: The agent's role in negotiation has been simplified. It now only declares whether it is capable of processing catalogs defined "inline" by the client.
+1.  **Agent Capability Advertisement (`supportedCatalogIds`, `acceptsInlineCatalogs`)**: The agent's role in negotiation has been expanded. It now can declare a list of supported catalog IDs, in addition to whether it is capable of processing catalogs defined "inline" by the client.
     *   **Relevant Doc**: [`a2ui_extension_specification.md`](./a2ui_extension_specification.md)
 
 2.  **Client Capabilities via A2A Metadata**: The client now sends its capabilities in an `a2uiClientCapabilities` object. Crucially, this is no longer a standalone message but is included in the `metadata` field of **every** A2A message sent to the agent.
@@ -29,7 +29,7 @@ The previous mechanism, which involved a single, one-time `clientUiCapabilities`
 
 Your responsibilities are to process the client's declared capabilities and make a rendering choice.
 
-1.  **Advertise Capability**: In the agent's capability card, add the `acceptsInlineCatalogs: true` parameter within the A2UI extension block if you intend to support catalogs sent dynamically from the client.
+1.  **Advertise Capability**: In the agent's capability card, add the `supportedCatalogIds` array and the `acceptsInlineCatalogs: true` parameter within the A2UI extension block to declare which catalogs you support and whether you can handle dynamic ones.
 
 2.  **Parse Client Capabilities**: On every incoming A2A message, your library must parse the `metadata.a2uiClientCapabilities` object to determine which catalogs the client supports. You will get a list of `supportedCatalogIds` and potentially a list of `inlineCatalogs`.
 
