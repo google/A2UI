@@ -3,7 +3,7 @@ node_modules
 .wireit
 dist
 .env
-.idx/
+.idx
 .vscode
 __pycache__
 *.pyc
