@@ -37,6 +37,11 @@ export class Message {
   /** Service for managing chat interactions. */
   private readonly chatService = inject(ChatService);
 
+  protected getAgentName(role: UiAgent) {
+    const rootagentName = role.name;
+    return role.subagentName ? `${rootagentName} + ${role.subagentName}` : rootagentName;
+  }
+
   /** Agent thought contents. */
   protected readonly agentThoughts = computed(() =>
     this.message().contents.filter((content) => containsAgentThought(content)),
