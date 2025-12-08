@@ -23,7 +23,7 @@ import { MarkdownRenderer } from '../data/markdown';
   selector: 'a2ui-text',
   template: `
     <section
-      [class]="theme.components.Text"
+      [class]="classes()"
       [style]="theme.additionalStyles?.Text"
       [innerHTML]="resolvedText()"
     ></section>
@@ -38,15 +38,52 @@ import { MarkdownRenderer } from '../data/markdown';
 export class Text extends DynamicComponent {
   private markdownRenderer = inject(MarkdownRenderer);
   readonly text = input.required<v0_8.Primitives.StringValue | null>();
+  readonly usageHint = input.required<v0_8.Types.ResolvedText['usageHint'] | null>();
 
   protected resolvedText = computed(() => {
-    const value = super.resolvePrimitive(this.text());
+    const usageHint = this.usageHint();
+    let value = super.resolvePrimitive(this.text());
 
-    return value == null
-      ? '(empty)'
-      : this.markdownRenderer.render(
-          String(value),
-          v0_8.Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
-        );
+    if (value == null) {
+      return '(empty)';
+    }
+
+    switch (usageHint) {
+      case 'h1':
+        value = `# ${value}`;
+        break;
+      case 'h2':
+        value = `## ${value}`;
+        break;
+      case 'h3':
+        value = `### ${value}`;
+        break;
+      case 'h4':
+        value = `#### ${value}`;
+        break;
+      case 'h5':
+        value = `##### ${value}`;
+        break;
+      case 'caption':
+        value = `*${value}*`;
+        break;
+      default:
+        value = String(value);
+        break;
+    }
+
+    return this.markdownRenderer.render(
+      value,
+      v0_8.Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
+    );
+  });
+
+  protected classes = computed(() => {
+    const usageHint = this.usageHint();
+
+    return v0_8.Styles.merge(
+      this.theme.components.Text.all,
+      usageHint ? this.theme.components.Text[usageHint] : {},
+    );
   });
 }
