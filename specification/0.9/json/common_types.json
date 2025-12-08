@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://a2ui.dev/specification/0.9/common_types.json",
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
@@ -66,9 +67,16 @@
       "type": "string",
       "description": "The unique identifier for this component."
     },
-    "weight": {
-      "type": "number",
-      "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property."
+    "ComponentCommon": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "weight": {
+          "type": "number",
+          "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property."
+        }
+      },
+      "required": ["id"]
     },
     "contextValue": {
       "description": "A value that can be a string, number, boolean, or a path to a value.",
