@@ -24,4 +24,4 @@ build-backend = "hatchling.build"
 
 [tool.uv.sources]
 a2ui = { workspace = true }
-google-adk = { git = "https://github.com/google/adk-python.git", rev = "4eb2a11" }
+google-adk = { git = "https://github.com/google/adk-python.git", rev = "143ad44" }
