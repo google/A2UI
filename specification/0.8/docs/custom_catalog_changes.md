@@ -35,7 +35,7 @@ Your responsibilities are to process the client's declared capabilities and make
 
 3.  **Choose a Catalog**: Before rendering a UI, decide which catalog to use. Your choice must be one of the catalogs advertised by the client in the capabilities object.
 
-4.  **Specify Catalog on Render**: When sending the `beginRendering` message for a surface, set the `catalogId` field to the ID of your chosen catalog (e.g., `"my-company.com:custom-catalog-1.2"`). If you do not set this field, you are implicitly requesting the use of the standard catalog.
+4.  **Specify Catalog on Render**: When sending the `beginRendering` message for a surface, set the `catalogId` field to the ID of your chosen catalog (e.g., `"https://my-company.com/inline_catalogs/my-custom-catalog"`). If you do not set this field, you are implicitly requesting the use of the standard catalog.
 
 5.  **Generate Compliant UI**: Ensure that all components generated in subsequent `surfaceUpdate` messages for that surface conform to the properties and types defined in the chosen catalog.
 
