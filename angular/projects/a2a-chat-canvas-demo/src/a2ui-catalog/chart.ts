@@ -16,7 +16,6 @@
 
 import { DynamicComponent } from '@a2ui/angular';
 import * as v0_8 from '@a2ui/web-lib/0.8';
-import { CommonModule } from '@angular/common';
 import { Component, computed, input, Signal, signal, ViewChild } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -35,8 +34,7 @@ ChartJS.register(ChartDataLabels);
 
 @Component({
   selector: 'a2ui-chart',
-  standalone: true,
-  imports: [BaseChartDirective, CommonModule, MatIconButton, MatIcon],
+  imports: [BaseChartDirective, MatIconButton, MatIcon],
   styles: `
     :host {
       display: block;

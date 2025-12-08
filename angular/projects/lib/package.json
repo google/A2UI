@@ -7,8 +7,8 @@
     "@a2ui/web-lib": "file:../../../renderers/lit"
   },
   "peerDependencies": {
-    "@angular/common": "^20.3.0",
-    "@angular/core": "^20.3.0"
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0"
   },
   "sideEffects": false
 }

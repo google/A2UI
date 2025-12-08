@@ -302,8 +302,7 @@
                 "glob": "**/*",
                 "input": "projects/a2a-chat-canvas/public"
               }
-            ],
-            "karmaConfig": "projects/a2a-chat-canvas/karma.conf.js"
+            ]
           }
         }
       }

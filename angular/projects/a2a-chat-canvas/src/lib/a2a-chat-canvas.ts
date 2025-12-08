@@ -28,7 +28,6 @@ import { CanvasService } from './services/canvas-service';
   selector: 'a2a-chat-canvas',
   templateUrl: './a2a-chat-canvas.html',
   styleUrl: './a2a-chat-canvas.scss',
-  standalone: true,
   imports: [Canvas, Chat],
 })
 export class A2aChatCanvas {

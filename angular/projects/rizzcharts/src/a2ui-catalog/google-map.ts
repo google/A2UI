@@ -16,7 +16,6 @@
 
 import { DynamicComponent } from '@a2ui/angular';
 import * as v0_8 from '@a2ui/web-lib/0.8';
-import { CommonModule } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatIconButton } from '@angular/material/button';
@@ -37,8 +36,7 @@ export interface CustomProperties {
 
 @Component({
   selector: 'a2ui-map',
-  standalone: true,
-  imports: [CommonModule, GoogleMapsModule, MatIconButton, MatIcon],
+  imports: [GoogleMapsModule, MatIconButton, MatIcon],
   styles: `
     :host {
       display: block;

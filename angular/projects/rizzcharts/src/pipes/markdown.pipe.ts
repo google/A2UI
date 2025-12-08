@@ -18,10 +18,7 @@ import { Pipe, PipeTransform, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import markdownit from 'markdown-it';
 
-@Pipe({
-  name: 'markdown',
-  standalone: true,
-})
+@Pipe({ name: 'markdown' })
 export class MarkdownPipe implements PipeTransform {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly md = markdownit({
@@ -44,9 +41,10 @@ export class MarkdownPipe implements PipeTransform {
 
   private configureRenderer() {
     // Open links in new tab
-    const defaultLinkOpenRender = this.md.renderer.rules['link_open'] || 
+    const defaultLinkOpenRender =
+      this.md.renderer.rules['link_open'] ||
       ((tokens, idx, options, env, self) => self.renderToken(tokens, idx, options));
-      
+
     this.md.renderer.rules['link_open'] = (tokens, idx, options, env, self) => {
       const token = tokens[idx];
       token.attrSet('target', '_blank');
