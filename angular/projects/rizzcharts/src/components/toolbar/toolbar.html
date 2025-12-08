@@ -24,7 +24,7 @@
 
   <mat-form-field>
     <mat-label>A2UI Component Catalog</mat-label>
-    <mat-select [(value)]="a2aService.supportedCatalogUris" multiple>
+    <mat-select [(value)]="a2aService.supportedCatalogIds" multiple>
       @for (option of catalogs; track option) {
         <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
       }

@@ -19,10 +19,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import {MatInputModule} from '@angular/material/input';
-import {MatSelectChange, MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {FormsModule} from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 import { A2aService } from '@rizzcharts/services/a2a_service';
 
 @Component({
@@ -36,16 +36,16 @@ export class Toolbar {
 
   catalogs = [
     {
-      value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json', 
+      value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json',
       viewValue: 'Standard'
     },
     {
-      value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json', 
+      value: 'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json',
       viewValue: 'Rizzcharts Custom'
     },
   ];
 
   ngOnInit() {
-    this.a2aService.supportedCatalogUris = this.catalogs.map(c => c.value);    
+    this.a2aService.supportedCatalogIds = this.catalogs.map(c => c.value);
   }
 }

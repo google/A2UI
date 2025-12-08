@@ -20,7 +20,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class A2aService implements A2aServiceInterface {
-  public supportedCatalogUris: string[] = [
+  public supportedCatalogIds: string[] = [
     'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json',
     'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json'
   ];
@@ -32,7 +32,7 @@ export class A2aService implements A2aServiceInterface {
         'parts': parts,
         'metadata': {
           "clientUiCapabilities": {
-            "supportedCatalogUris": this.supportedCatalogUris
+            "supportedCatalogIds": this.supportedCatalogIds
           }
         },
         'context_id': this.contextId
