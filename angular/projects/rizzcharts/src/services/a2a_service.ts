@@ -14,32 +14,53 @@
  limitations under the License.
  */
 
-import { Part, SendMessageResponse, SendMessageSuccessResponse } from '@a2a-js/sdk';
+import { AgentCard, Part, SendMessageSuccessResponse } from '@a2a-js/sdk';
+import { A2aService as A2aServiceInterface } from '@a2a_chat_canvas/interfaces/a2a-service';
 import { Injectable } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
 
 @Injectable({ providedIn: 'root' })
-export class A2aService {
-  async sendMessage(message: v0_8.Types.A2UIClientEventMessage, contextId?: string): Promise<SendMessageSuccessResponse> {
+export class A2aService implements A2aServiceInterface {
+  public supportedCatalogUris: string[] = [
+    'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json',
+    'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json'
+  ];
+  private contextId?: string;
 
-    let componentCatalog = '';
-    const capabilities = message.clientUiCapabilities;
-    if (capabilities && 'catalogUri' in capabilities) {
-      // TSC currently flags this as an error, so we need to cast to any.
-      // TODO: Fix the type definitions for ClientCapabilities.
-      componentCatalog = (capabilities as any).catalogUri ?? '';
-    }
-
+  async sendMessage(parts: Part[], signal?: AbortSignal): Promise<SendMessageSuccessResponse> {
     const response = await fetch('/a2a', {
-      body: JSON.stringify({ 'parts': message.request as Part[], 'component_catalog': componentCatalog, 'context_id': contextId }),
+      body: JSON.stringify({
+        'parts': parts,
+        'metadata': {
+          "clientUiCapabilities": {
+            "supportedCatalogUris": this.supportedCatalogUris
+          }
+        },
+        'context_id': this.contextId
+      }),
       method: 'POST',
+      signal,
     });
 
     if (response.ok) {
-      return await response.json();
+      const json = await response.json() as SendMessageSuccessResponse & { context_id?: string };
+      if (json.context_id) {
+        this.contextId = json.context_id;
+      }
+      return json;
     }
 
     const error = (await response.json()) as { error: string };
     throw new Error(error.error);
+  }
+
+  async getAgentCard(): Promise<AgentCard> {
+    const response = await fetch('/a2a/agent-card');
+    if (!response.ok) {
+      throw new Error('Failed to fetch agent card');
+    }
+    const card = await response.json() as AgentCard;
+    // Override iconUrl to use local asset
+    card.iconUrl = 'rizz-agent.png';
+    return card;
   }
 }

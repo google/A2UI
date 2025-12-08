@@ -77,12 +77,12 @@ A2UI_SCHEMA = r'''
                 "type": "object",
                 "description": "A wrapper object that MUST contain exactly one key, which is the name of the component type (e.g., 'Heading'). The value is an object containing the properties for that specific component.",
                 "properties": {
-                  "Heading": {
+                  "Text": {
                     "type": "object",
                     "properties": {
                       "text": {
                         "type": "object",
-                        "description": "The text content for the heading. This can be a literal string or a reference to a value in the data model ('path', e.g. 'doc.title').",
+                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation.",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -92,28 +92,18 @@ A2UI_SCHEMA = r'''
                           }
                         }
                       },
-                      "level": {
+                      "usageHint": {
                         "type": "string",
-                        "description": "The heading level, corresponding to HTML heading tags (e.g., '1' for <h1>, '2' for <h2>).",
-                        "enum": ["1", "2", "3", "4", "5"]
-                      }
-                    },
-                    "required": ["text"]
-                  },
-                  "Text": {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": "object",
-                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'hotel.description').",
-                        "properties": {
-                          "literalString": {
-                            "type": "string"
-                          },
-                          "path": {
-                            "type": "string"
-                          }
-                        }
+                        "description": "A hint for the base text style. One of:\n- `h1`: Largest heading.\n- `h2`: Second largest heading.\n- `h3`: Third largest heading.\n- `h4`: Fourth largest heading.\n- `h5`: Fifth largest heading.\n- `caption`: Small text for captions.\n- `body`: Standard body text.",
+                        "enum": [
+                          "h1",
+                          "h2",
+                          "h3",
+                          "h4",
+                          "h5",
+                          "caption",
+                          "body"
+                        ]
                       }
                     },
                     "required": ["text"]
@@ -123,7 +113,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "url": {
                         "type": "object",
-                        "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'thumbnail.url').",
+                        "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/url').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -143,6 +133,18 @@ A2UI_SCHEMA = r'''
                           "none",
                           "scale-down"
                         ]
+                      },
+                      "usageHint": {
+                        "type": "string",
+                        "description": "A hint for the image size and style. One of:\n- `icon`: Small square icon.\n- `avatar`: Circular avatar image.\n- `smallFeature`: Small feature image.\n- `mediumFeature`: Medium feature image.\n- `largeFeature`: Large feature image.\n- `header`: Full-width, full bleed, header image.",
+                        "enum": [
+                          "icon",
+                          "avatar",
+                          "smallFeature",
+                          "mediumFeature",
+                          "largeFeature",
+                          "header"
+                        ]
                       }
                     },
                     "required": ["url"]
@@ -152,10 +154,60 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "name": {
                         "type": "object",
-                        "description": "The name of the icon to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'icon.name').",
+                        "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
                         "properties": {
                           "literalString": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                              "accountCircle",
+                              "add",
+                              "arrowBack",
+                              "arrowForward",
+                              "attachFile",
+                              "calendarToday",
+                              "call",
+                              "camera",
+                              "check",
+                              "close",
+                              "delete",
+                              "download",
+                              "edit",
+                              "event",
+                              "error",
+                              "favorite",
+                              "favoriteOff",
+                              "folder",
+                              "help",
+                              "home",
+                              "info",
+                              "locationOn",
+                              "lock",
+                              "lockOpen",
+                              "mail",
+                              "menu",
+                              "moreVert",
+                              "moreHoriz",
+                              "notificationsOff",
+                              "notifications",
+                              "payment",
+                              "person",
+                              "phone",
+                              "photo",
+                              "print",
+                              "refresh",
+                              "search",
+                              "send",
+                              "settings",
+                              "share",
+                              "shoppingCart",
+                              "star",
+                              "starHalf",
+                              "starOff",
+                              "upload",
+                              "visibility",
+                              "visibilityOff",
+                              "warning"
+                            ]
                           },
                           "path": {
                             "type": "string"
@@ -170,7 +222,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "url": {
                         "type": "object",
-                        "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. 'video.url').",
+                        "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/video/url').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -188,7 +240,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "url": {
                         "type": "object",
-                        "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. 'song.url').",
+                        "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/song/url').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -200,7 +252,7 @@ A2UI_SCHEMA = r'''
                       },
                       "description": {
                         "type": "object",
-                        "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. 'song.title').",
+                        "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. '/song/title').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -371,7 +423,7 @@ A2UI_SCHEMA = r'''
                           "properties": {
                             "title": {
                               "type": "object",
-                              "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. 'options.title').",
+                              "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. '/options/title').",
                               "properties": {
                                 "literalString": {
                                   "type": "string"
@@ -443,7 +495,7 @@ A2UI_SCHEMA = r'''
                                 },
                                 "value": {
                                   "type": "object",
-                                  "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. 'user.name').",
+                                  "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. '/user/name').",
                                   "properties": {
                                     "path": {
                                       "type": "string"
@@ -474,7 +526,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "label": {
                         "type": "object",
-                        "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. 'option.label').",
+                        "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. '/option/label').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -486,7 +538,7 @@ A2UI_SCHEMA = r'''
                       },
                       "value": {
                         "type": "object",
-                        "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. 'filter.open').",
+                        "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. '/filter/open').",
                         "properties": {
                           "literalBoolean": {
                             "type": "boolean"
@@ -504,7 +556,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "label": {
                         "type": "object",
-                        "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. 'user.name').",
+                        "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. '/user/name').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -516,7 +568,7 @@ A2UI_SCHEMA = r'''
                       },
                       "text": {
                         "type": "object",
-                        "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. 'user.name').",
+                        "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. '/user/name').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -549,7 +601,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "value": {
                         "type": "object",
-                        "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. 'user.dob').",
+                        "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -579,7 +631,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "selections": {
                         "type": "object",
-                        "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. 'hotel.options').",
+                        "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. '/hotel/options').",
                         "properties": {
                           "literalArray": {
                             "type": "array",
@@ -600,7 +652,7 @@ A2UI_SCHEMA = r'''
                           "properties": {
                             "label": {
                               "type": "object",
-                              "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. 'option.label').",
+                              "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. '/option/label').",
                               "properties": {
                                 "literalString": {
                                   "type": "string"
@@ -630,7 +682,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "value": {
                         "type": "object",
-                        "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. 'restaurant.cost').",
+                        "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost').",
                         "properties": {
                           "literalNumber": {
                             "type": "number"
@@ -745,13 +797,13 @@ RESTAURANT_UI_EXAMPLES = """
     "surfaceId": "default",
     "components": [
       {{ "id": "root-column", "component": {{ "Column": {{ "children": {{ "explicitList": ["title-heading", "item-list"] }} }} }} }},
-      {{ "id": "title-heading", "component": {{ "Heading": {{ "level": "1", "text": {{ "literalString": "Top Restaurants" }} }} }} }},
+      {{ "id": "title-heading", "component": {{ "Text": {{ "usageHint": "h1", "text": {{ "literalString": "Top Restaurants" }} }} }} }},
       {{ "id": "item-list", "component": {{ "List": {{ "direction": "vertical", "children": {{ "template": {{ "componentId": "item-card-template", "dataBinding": "/items" }} }} }} }} }},
       {{ "id": "item-card-template", "component": {{ "Card": {{ "child": "card-layout" }} }} }},
       {{ "id": "card-layout", "component": {{ "Row": {{ "children": {{ "explicitList": ["template-image", "card-details"] }} }} }} }},
       {{ "id": "template-image", weight: 1, "component": {{ "Image": {{ "url": {{ "path": "imageUrl" }} }} }} }},
       {{ "id": "card-details", weight: 2, "component": {{ "Column": {{ "children": {{ "explicitList": ["template-name", "template-rating", "template-detail", "template-link", "template-book-button"] }} }} }} }},
-      {{ "id": "template-name", "component": {{ "Heading": {{ "level": "3", "text": {{ "path": "name" }} }} }} }},
+      {{ "id": "template-name", "component": {{ "Text": {{ "usageHint": "h3", "text": {{ "path": "name" }} }} }} }},
       {{ "id": "template-rating", "component": {{ "Text": {{ "text": {{ "path": "rating" }} }} }} }},
       {{ "id": "template-detail", "component": {{ "Text": {{ "text": {{ "path": "detail" }} }} }} }},
       {{ "id": "template-link", "component": {{ "Text": {{ "text": {{ "path": "infoLink" }} }} }} }},
@@ -793,13 +845,13 @@ RESTAURANT_UI_EXAMPLES = """
     "surfaceId": "default",
     "components": [
       {{ "id": "root-column", "component": {{ "Column": {{ "children": {{ "explicitList": ["title-heading", "restaurant-row-1"] }} }} }} }},
-      {{ "id": "title-heading", "component": {{ "Heading": {{ "level": "1", "text": {{ "literalString": "Top Restaurants" }} }} }} }},
+      {{ "id": "title-heading", "component": {{ "Text": {{ "usageHint": "h1", "text": {{ "literalString": "Top Restaurants" }} }} }} }},
       {{ "id": "restaurant-row-1", "component": {{ "Row": {{ "children": {{ "explicitList": ["item-card-1", "item-card-2"] }} }} }} }},
       {{ "id": "item-card-1", "weight": 1, "component": {{ "Card": {{ "child": "card-layout-1" }} }} }},
       {{ "id": "card-layout-1", "component": {{ "Column": {{ "children": {{ "explicitList": ["template-image-1", "card-details-1"] }} }} }} }},
       {{ "id": "template-image-1", "component": {{ "Image": {{ "url": {{ "path": "/items/0/imageUrl" }}, "width": "100%" }} }} }},
       {{ "id": "card-details-1", "component": {{ "Column": {{ "children": {{ "explicitList": ["template-name-1", "template-rating-1", "template-detail-1", "template-link-1", "template-book-button-1"] }} }} }} }},
-      {{ "id": "template-name-1", "component": {{ "Heading": {{ "level": "3", "text": {{ "path": "/items/0/name" }} }} }} }},
+      {{ "id": "template-name-1", "component": {{ "Text": {{ "usageHint": "h3", "text": {{ "path": "/items/0/name" }} }} }} }},
       {{ "id": "template-rating-1", "component": {{ "Text": {{ "text": {{ "path": "/items/0/rating" }} }} }} }},
       {{ "id": "template-detail-1", "component": {{ "Text": {{ "text": {{ "path": "/items/0/detail" }} }} }} }},
       {{ "id": "template-link-1", "component": {{ "Text": {{ "text": {{ "path": "/items/0/infoLink" }} }} }} }},
@@ -809,7 +861,7 @@ RESTAURANT_UI_EXAMPLES = """
       {{ "id": "card-layout-2", "component": {{ "Column": {{ "children": {{ "explicitList": ["template-image-2", "card-details-2"] }} }} }} }},
       {{ "id": "template-image-2", "component": {{ "Image": {{ "url": {{ "path": "/items/1/imageUrl" }}, "width": "100%" }} }} }},
       {{ "id": "card-details-2", "component": {{ "Column": {{ "children": {{ "explicitList": ["template-name-2", "template-rating-2", "template-detail-2", "template-link-2", "template-book-button-2"] }} }} }} }},
-      {{ "id": "template-name-2", "component": {{ "Heading": {{ "level": "3", "text": {{ "path": "/items/1/name" }} }} }} }},
+      {{ "id": "template-name-2", "component": {{ "Text": {{ "usageHint": "h3", "text": {{ "path": "/items/1/name" }} }} }} }},
       {{ "id": "template-rating-2", "component": {{ "Text": {{ "text": {{ "path": "/items/1/rating" }} }} }} }},
       {{ "id": "template-detail-2", "component": {{ "Text": {{ "text": {{ "path": "/items/1/detail" }} }} }} }},
       {{ "id": "template-link-2", "component": {{ "Text": {{ "text": {{ "path": "/items/1/infoLink" }} }} }} }},
@@ -851,7 +903,7 @@ RESTAURANT_UI_EXAMPLES = """
     "surfaceId": "booking-form",
     "components": [
       {{ "id": "booking-form-column", "component": {{ "Column": {{ "children": {{ "explicitList": ["booking-title", "restaurant-image", "restaurant-address", "party-size-field", "datetime-field", "dietary-field", "submit-button"] }} }} }} }},
-      {{ "id": "booking-title", "component": {{ "Heading": {{ "level": "2", "text": {{ "path": "title" }} }} }} }},
+      {{ "id": "booking-title", "component": {{ "Text": {{ "usageHint": "h2", "text": {{ "path": "title" }} }} }} }},
       {{ "id": "restaurant-image", "component": {{ "Image": {{ "url": {{ "path": "imageUrl" }} }} }} }},
       {{ "id": "restaurant-address", "component": {{ "Text": {{ "text": {{ "path": "address" }} }} }} }},
       {{ "id": "party-size-field", "component": {{ "TextField": {{ "label": {{ "literalString": "Party Size" }}, "text": {{ "path": "partySize" }}, "type": "number" }} }} }},
@@ -885,11 +937,11 @@ RESTAURANT_UI_EXAMPLES = """
     "components": [
       {{ "id": "confirmation-card", "component": {{ "Card": {{ "child": "confirmation-column" }} }} }},
       {{ "id": "confirmation-column", "component": {{ "Column": {{ "children": {{ "explicitList": ["confirm-title", "confirm-image", "divider1", "confirm-details", "divider2", "confirm-dietary", "divider3", "confirm-text"] }} }} }} }},
-      {{ "id": "confirm-title", "component": {{ "Heading": {{ "level": "2", "text": {{ "path": "title" }} }} }} }},
+      {{ "id": "confirm-title", "component": {{ "Text": {{ "usageHint": "h2", "text": {{ "path": "title" }} }} }} }},
       {{ "id": "confirm-image", "component": {{ "Image": {{ "url": {{ "path": "imageUrl" }} }} }} }},
       {{ "id": "confirm-details", "component": {{ "Text": {{ "text": {{ "path": "bookingDetails" }} }} }} }},
       {{ "id": "confirm-dietary", "component": {{ "Text": {{ "text": {{ "path": "dietaryRequirements" }} }} }} }},
-      {{ "id": "confirm-text", "component": {{ "Heading": {{ "level": "5", "text": {{ "literalString": "We look forward to seeing you!" }} }} }} }},
+      {{ "id": "confirm-text", "component": {{ "Text": {{ "usageHint": "h5", "text": {{ "literalString": "We look forward to seeing you!" }} }} }} }},
       {{ "id": "divider1", "component": {{ "Divider": {{}} }} }},
       {{ "id": "divider2", "component": {{ "Divider": {{}} }} }},
       {{ "id": "divider3", "component": {{ "Divider": {{}} }} }}

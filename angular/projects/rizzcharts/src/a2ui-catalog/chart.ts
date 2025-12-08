@@ -15,7 +15,7 @@
  */
 
 import { DynamicComponent } from '@a2ui/angular';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { CommonModule } from '@angular/common';
 import { Component, computed, input, Signal, signal, ViewChild } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';

@@ -29,7 +29,7 @@ import {
   untracked,
   ViewContainerRef,
 } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { Catalog } from './catalog';
 import { isPlatformBrowser } from '@angular/common';
 

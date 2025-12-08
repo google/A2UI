@@ -15,7 +15,7 @@
  */
 
 import { ModelProcessor, Surface } from '@a2ui/angular';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { Component, inject, signal } from '@angular/core';
 import { Client } from './client';
 

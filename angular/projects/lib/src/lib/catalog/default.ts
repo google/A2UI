@@ -15,7 +15,7 @@
  */
 
 import { inputBinding } from '@angular/core';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { Catalog } from '../rendering/catalog';
 import { Row } from './row';
 import { Column } from './column';

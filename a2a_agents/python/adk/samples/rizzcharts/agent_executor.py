@@ -29,7 +29,7 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2ui_ext import URI as A2UI_EXTENSION_URI
+from a2ui.a2ui_extension import A2UI_EXTENSION_URI, get_a2ui_agent_extension, try_activate_a2ui_extension
 from component_catalog_builder import ComponentCatalogBuilder
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2a.types import AgentExtension
@@ -83,19 +83,7 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
             default_output_modes=rizzchartsAgent.SUPPORTED_CONTENT_TYPES,
             capabilities=AgentCapabilities(
                 streaming=True,
-                extensions=[
-                    AgentExtension(
-                        uri=self._base_url,
-                        description="Provides a declarative a2ui UI JSON structure in messages.",
-                        params={
-                            "supportedCatalogUri": [
-                                STANDARD_CATALOG_URI,
-                                RIZZCHARTS_CATALOG_URI,
-                            ],
-                            "acceptsCustomCatalogsInline": True,
-                        },
-                    )
-                ],
+                extensions=[get_a2ui_agent_extension()],
             ),
             skills=[
                 AgentSkill(
@@ -134,12 +122,9 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
 
         if "base_url" not in session.state:
             session.state["base_url"] = self._base_url
-        
-        # Force True for this sample to ensure UI is always enabled
-        # use_ui = A2UI_EXTENSION_URI in context.requested_extensions
-        use_ui = True 
+                
+        use_ui = try_activate_a2ui_extension(context)
         if use_ui:
-            context.add_activated_extension(A2UI_EXTENSION_URI)
             a2ui_schema, catalog_uri = self._component_catalog_builder.load_a2ui_schema(client_ui_capabilities=context.message.metadata.get("clientUiCapabilities") if context.message and context.message.metadata else None)
 
             self._part_converter.set_a2ui_schema(a2ui_schema)

@@ -1,9 +1,9 @@
 node_modules
 .DS_Store
-.vscode
 .wireit
 dist
 .env
+.idx/
 .vscode
 __pycache__
 *.pyc

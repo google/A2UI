@@ -79,12 +79,12 @@ A2UI_SCHEMA = r'''
                 "type": "object",
                 "description": "A wrapper object that MUST contain exactly one key, which is the name of the component type (e.g., 'Heading'). The value is an object containing the properties for that specific component.",
                 "properties": {
-                  "Heading": {
+                  "Text": {
                     "type": "object",
                     "properties": {
                       "text": {
                         "type": "object",
-                        "description": "The text content for the heading. This can be a literal string or a reference to a value in the data model ('path', e.g. '/doc/title').",
+                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation.",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -94,28 +94,18 @@ A2UI_SCHEMA = r'''
                           }
                         }
                       },
-                      "level": {
+                      "usageHint": {
                         "type": "string",
-                        "description": "The heading level, corresponding to HTML heading tags (e.g., '1' for <h1>, '2' for <h2>).",
-                        "enum": ["1", "2", "3", "4", "5"]
-                      }
-                    },
-                    "required": ["text"]
-                  },
-                  "Text": {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": "object",
-                        "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/hotel/description').",
-                        "properties": {
-                          "literalString": {
-                            "type": "string"
-                          },
-                          "path": {
-                            "type": "string"
-                          }
-                        }
+                        "description": "A hint for the base text style. One of:\n- `h1`: Largest heading.\n- `h2`: Second largest heading.\n- `h3`: Third largest heading.\n- `h4`: Fourth largest heading.\n- `h5`: Fifth largest heading.\n- `caption`: Small text for captions.\n- `body`: Standard body text.",
+                        "enum": [
+                          "h1",
+                          "h2",
+                          "h3",
+                          "h4",
+                          "h5",
+                          "caption",
+                          "body"
+                        ]
                       }
                     },
                     "required": ["text"]
@@ -145,6 +135,18 @@ A2UI_SCHEMA = r'''
                           "none",
                           "scale-down"
                         ]
+                      },
+                      "usageHint": {
+                        "type": "string",
+                        "description": "A hint for the image size and style. One of:\n- `icon`: Small square icon.\n- `avatar`: Circular avatar image.\n- `smallFeature`: Small feature image.\n- `mediumFeature`: Medium feature image.\n- `largeFeature`: Large feature image.\n- `header`: Full-width, full bleed, header image.",
+                        "enum": [
+                          "icon",
+                          "avatar",
+                          "smallFeature",
+                          "mediumFeature",
+                          "largeFeature",
+                          "header"
+                        ]
                       }
                     },
                     "required": ["url"]
@@ -154,10 +156,60 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "name": {
                         "type": "object",
-                        "description": "The name of the icon to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/icon/name').",
+                        "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
                         "properties": {
                           "literalString": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                              "accountCircle",
+                              "add",
+                              "arrowBack",
+                              "arrowForward",
+                              "attachFile",
+                              "calendarToday",
+                              "call",
+                              "camera",
+                              "check",
+                              "close",
+                              "delete",
+                              "download",
+                              "edit",
+                              "event",
+                              "error",
+                              "favorite",
+                              "favoriteOff",
+                              "folder",
+                              "help",
+                              "home",
+                              "info",
+                              "locationOn",
+                              "lock",
+                              "lockOpen",
+                              "mail",
+                              "menu",
+                              "moreVert",
+                              "moreHoriz",
+                              "notificationsOff",
+                              "notifications",
+                              "payment",
+                              "person",
+                              "phone",
+                              "photo",
+                              "print",
+                              "refresh",
+                              "search",
+                              "send",
+                              "settings",
+                              "share",
+                              "shoppingCart",
+                              "star",
+                              "starHalf",
+                              "starOff",
+                              "upload",
+                              "visibility",
+                              "visibilityOff",
+                              "warning"
+                            ]
                           },
                           "path": {
                             "type": "string"

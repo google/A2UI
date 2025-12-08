@@ -16,7 +16,7 @@
 
 import { Component, computed, inject, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { MarkdownRenderer } from '../data/markdown';
 
 @Component({

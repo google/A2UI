@@ -24,7 +24,7 @@
 
   <mat-form-field>
     <mat-label>A2UI Component Catalog</mat-label>
-    <mat-select [(value)]="selectedCatalog" (selectionChange)="selectCatalog($event)">
+    <mat-select [(value)]="a2aService.supportedCatalogUris" multiple>
       @for (option of catalogs; track option) {
         <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
       }
@@ -32,5 +32,5 @@
   </mat-form-field> 
 
   <span class="example-spacer"></span>
-  <img src="wrenj.jpg" class="profile-photo" />
+  <img src="avatar.jpg" class="profile-photo" />
 </mat-toolbar>

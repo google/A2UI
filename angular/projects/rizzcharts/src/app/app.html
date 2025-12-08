@@ -16,7 +16,40 @@
 
 <main class="main">
   <app-toolbar></app-toolbar>
-  <chat-canvas></chat-canvas>
+  <a2a-chat-canvas [emptyHistoryTemplate]="welcomeMessage"></a2a-chat-canvas>
+  <ng-template #welcomeMessage>
+    <div class="empty-history">
+        <div class="agent-header">
+          <div class="agent-header-part">
+            <div class="agent-icon">
+              <img src="rizz-agent.png" class="large-icon" alt="Rizz agent icon" />
+            </div>
+          </div>
+          <div class="agent-header-part agent-name">
+            <strong>MyCharts Agent</strong>
+          </div>
+        </div>
+        <br />
+
+        <p class="empty-history-text">
+          I help you understand and visualize sales pipelines and analyze customer performance data.
+        </p>
+        <div class="suggestion-chips">
+          <button mat-stroked-button class="chip" (click)="sendMessage('Show me sales data for Q1')">
+            <span class="material-icons-outlined">pie_chart</span>
+            Show me sales data for Q1
+          </button>
+          <button mat-stroked-button class="chip" (click)="sendMessage('Show me 2024-Q3 sales report')">
+            <span class="material-icons-outlined">analytics</span>
+            Show me 2024-Q3 sales report
+          </button>
+          <button mat-stroked-button class="chip" (click)="sendMessage('Which stores have unique sales trends?')">
+            <span class="material-icons-outlined">local_mall</span>
+            Which stores have unique sales trends?
+          </button>
+        </div>
+    </div>
+  </ng-template>
 </main>
 
 <router-outlet />

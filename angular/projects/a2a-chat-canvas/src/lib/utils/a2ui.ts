@@ -15,7 +15,7 @@
  */
 
 import { Part } from '@a2a-js/sdk';
-import { v0_8 } from '@a2ui/web-lib';
+import * as v0_8 from '@a2ui/web-lib/0.8';
 import { isA2aDataPart } from './type-guards';
 
 /**

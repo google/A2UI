@@ -17,10 +17,7 @@
   "devDependencies": {},
   "dependencies": {},
   "workspaces": [
-    "lib",
-    "tests",
-    "restaurant",
-    "editor",
-    "inspector"
+    "../renderers/lit",
+    "lit/inspector"
   ]
 }

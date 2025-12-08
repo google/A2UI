@@ -57,12 +57,12 @@ class rizzchartsAgent:
 
     @classmethod
     def get_instructions(cls, readonly_context: ReadonlyContext) -> str:
-        use_ui = readonly_context.state[A2UI_ENABLED_STATE_KEY]
+        use_ui = readonly_context.state.get(A2UI_ENABLED_STATE_KEY)
         if not use_ui:
             raise ValueError("Only UI mode is supported")
 
         a2ui_schema = cls.get_a2ui_schema(readonly_context)
-        catalog_uri = readonly_context.state[A2UI_CATALOG_URI_STATE_KEY]
+        catalog_uri = readonly_context.state.get(A2UI_CATALOG_URI_STATE_KEY)
         if catalog_uri == RIZZCHARTS_CATALOG_URI:
             map_example = cls.load_example("examples/rizzcharts_catalog/map.json", a2ui_schema)
             chart_example = cls.load_example("examples/rizzcharts_catalog/chart.json", a2ui_schema)
@@ -134,7 +134,7 @@ Your task is to analyze the user's request, fetch the necessary data, select the
     @classmethod
     def build_agent(cls) -> LlmAgent:
         """Builds the LLM agent for the rizzchartsAgent agent."""
-        LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini-2.5-flash")
+        LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
         return LlmAgent(
             model=LiteLlm(model=LITELLM_MODEL),

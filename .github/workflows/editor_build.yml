@@ -1,0 +1,34 @@
+name: Editor build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install lib's deps
+        working-directory: ./renderers/lit
+        run: npm ci
+
+      - name: Build lib
+        working-directory: ./renderers/lit
+        run: npm run build
+
+      - name: Install editor deps
+        working-directory: ./editor
+        run: npm install
+
+      - name: Build editor
+        working-directory: ./editor
+        run: npm run build

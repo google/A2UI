@@ -6,34 +6,17 @@
   "oneOf": [
     {
       "properties": {
-        "createSurface": {
-          "type": "object",
-          "description": "Signals the client to begin rendering a surface with a root component and specific styles. When this message is received, the client should expect a 'surfaceUpdate' message for the same 'surfaceId' that contains the component tree. One of the components in that tree MUST have the 'id' of 'root'.",
-          "properties": {
-            "surfaceId": {
-              "type": "string",
-              "description": "The unique identifier for the UI surface to be rendered."
-            },
-            "theme": {
-              "$ref": "standard_catalog_definition.json#/$defs/Theme"
-            }
-          },
-          "required": ["surfaceId"],
-          "additionalProperties": false
-        }
-      },
-      "required": ["createSurface"],
-      "additionalProperties": false
-    },
-    {
-      "properties": {
-        "surfaceUpdate": {
+        "updateComponents": {
           "type": "object",
           "description": "Updates a surface with a new set of components.",
           "properties": {
             "surfaceId": {
               "type": "string",
               "description": "The unique identifier for the UI surface to be updated. If you are adding a new surface this *must* be a new, unique identified that has never been used for any existing surfaces shown."
+            },
+            "catalogId": {
+              "type": "string",
+              "description": "The URI identifier of the component catalog definition used for this update."
             },
             "components": {
               "type": "array",
@@ -58,16 +41,16 @@
               }
             }
           },
-          "required": ["surfaceId", "components"],
+          "required": ["surfaceId", "catalogId", "components"],
           "additionalProperties": false
         }
       },
-      "required": ["surfaceUpdate"],
+      "required": ["updateComponents"],
       "additionalProperties": false
     },
     {
       "properties": {
-        "dataModelUpdate": {
+        "updateDataModel": {
           "type": "object",
           "description": "Updates the data model for a surface.",
           "properties": {
@@ -89,7 +72,7 @@
           "additionalProperties": false
         }
       },
-      "required": ["dataModelUpdate"],
+      "required": ["updateDataModel"],
       "additionalProperties": false
     },
     {

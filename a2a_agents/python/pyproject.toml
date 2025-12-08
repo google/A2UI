@@ -14,6 +14,6 @@ members = [
 ]
 
 [tool.uv.sources]
-a2ui-ext = { path = "a2ui_extension", editable = true }
+a2ui = { path = "a2ui_extension", editable = true }
 # The key must match the package name
 a2ui-restaurant-finder = { path = "adk/samples/restaurant_finder", editable = true } # <-- Renamed here

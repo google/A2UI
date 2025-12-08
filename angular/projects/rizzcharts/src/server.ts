@@ -48,11 +48,11 @@ app.post('/a2a', (req, res) => {
 
   req.on('end', async () => {
     const data = JSON.parse(originalBody);
-    
-    console.log('[a2a-middleware] Received data:', data);
-    
+
+    console.log('[a2a-middleware] Received data:', originalBody);
+
     const parts: Part[] = data['parts'];
-    const catalogUri: Part[] = data['component_catalog'];
+    const metadata: Record<string, any> = data['metadata'];
     const contextId: string | undefined = data['context_id'];
 
     const sendParams: MessageSendParams = {
@@ -62,11 +62,7 @@ app.post('/a2a', (req, res) => {
         role: 'user',
         parts,
         kind: 'message',
-        metadata: {
-          'clientUiCapabilities': {
-            'catalogUri': catalogUri
-          }
-        }
+        metadata: metadata,
       },
     };
 
@@ -83,6 +79,21 @@ app.post('/a2a', (req, res) => {
 
     res.json(response);
   });
+});
+
+app.get('/a2a/agent-card', async (req, res) => {
+  try {
+    const response = await fetchWithCustomHeader('http://localhost:10002/.well-known/agent-card.json');
+    if (!response.ok) {
+      res.status(response.status).json({ error: 'Failed to fetch agent card' });
+      return;
+    }
+    const card = await response.json();
+    res.json(card);
+  } catch (error) {
+    console.error('Error fetching agent card:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.use((req, res, next) => {
@@ -105,7 +116,7 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 
 async function fetchWithCustomHeader(url: string | URL | Request, init?: RequestInit) {
   const headers = new Headers(init?.headers);
-  headers.set('X-A2A-Extensions', 'https://a2ui.org/ext/a2a-ui/v0.1');
+  headers.set('X-A2A-Extensions', 'https://a2ui.org/a2a-extension/a2ui/v0.8');
   const newInit = { ...init, headers };
   return fetch(url, newInit);
 }
