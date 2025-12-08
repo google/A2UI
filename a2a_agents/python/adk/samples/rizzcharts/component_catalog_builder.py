@@ -17,12 +17,10 @@ from typing import Any, List, Optional
 from pathlib import Path
 import json
 import logging
-from agent import STANDARD_CATALOG_URI, RIZZCHARTS_CATALOG_URI
-
+from agent import RIZZCHARTS_CATALOG_URI
+from a2ui.a2ui_extension import STANDARD_CATALOG_ID, SUPPORTED_CATALOG_IDS_KEY, INLINE_CATALOGS_KEY
 logger = logging.getLogger(__name__)
 
-CLIENT_UI_CAPABILITIES_CATALOG_URI_KEY = "supportedCatalogUris"
-CLIENT_UI_CAPABILITIES_INLINE_CATALOG_KEY = "customClientCatalog"
 
 class ComponentCatalogBuilder:
     def __init__(self, a2ui_schema_path: str, uri_to_local_catalog_path: dict[str, str], default_catalog_uri: Optional[str]):
@@ -40,17 +38,19 @@ class ComponentCatalogBuilder:
         Returns:
             A tuple of the a2ui_schema and the catalog uri
         """
-        try:      
+        try: 
+            logger.info(f"Loading A2UI client capabilities {client_ui_capabilities}")
+                 
             if client_ui_capabilities:                                
-                supported_catalog_uris: List[str] = client_ui_capabilities.get(CLIENT_UI_CAPABILITIES_CATALOG_URI_KEY)
+                supported_catalog_uris: List[str] = client_ui_capabilities.get(SUPPORTED_CATALOG_IDS_KEY)
                 if RIZZCHARTS_CATALOG_URI in supported_catalog_uris:
                     catalog_uri = RIZZCHARTS_CATALOG_URI
-                elif STANDARD_CATALOG_URI in supported_catalog_uris:
-                    catalog_uri = STANDARD_CATALOG_URI
+                elif STANDARD_CATALOG_ID in supported_catalog_uris:
+                    catalog_uri = STANDARD_CATALOG_ID
                 else:
                     catalog_uri = None
 
-                inline_catalog_str = client_ui_capabilities.get(CLIENT_UI_CAPABILITIES_INLINE_CATALOG_KEY)                
+                inline_catalog_str = client_ui_capabilities.get(INLINE_CATALOGS_KEY)                
             elif self._default_catalog_uri:
                 logger.info(f"Using default catalog {self._default_catalog_uri} since client UI capabilities not found")
                 catalog_uri = self._default_catalog_uri
@@ -59,7 +59,7 @@ class ComponentCatalogBuilder:
                 raise ValueError("Client UI capabilities not provided")        
             
             if catalog_uri and inline_catalog_str:
-                raise ValueError(f"Cannot set both {CLIENT_UI_CAPABILITIES_CATALOG_URI_KEY} and {CLIENT_UI_CAPABILITIES_INLINE_CATALOG_KEY} in ClientUiCapabilities: {client_ui_capabilities}")    
+                raise ValueError(f"Cannot set both {SUPPORTED_CATALOG_IDS_KEY} and {INLINE_CATALOGS_KEY} in ClientUiCapabilities: {client_ui_capabilities}")    
             elif catalog_uri:
                 if local_path := self._uri_to_local_catalog_path.get(catalog_uri):
                     logger.info(f"Loading local component catalog with uri {catalog_uri} and local path {local_path}")

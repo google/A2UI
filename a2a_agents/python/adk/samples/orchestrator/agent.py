@@ -31,10 +31,52 @@ from google.adk.models.llm_request import LlmRequest
 from google.adk.models.llm_response import LlmResponse
 from subagent_route_manager import SubagentRouteManager
 from a2ui.a2ui_extension import is_a2ui_part, A2UI_EXTENSION_URI
+from typing import override
+from a2a.types import TransportProtocol as A2ATransport
 
 logger = logging.getLogger(__name__)
+from a2a.client.middleware import ClientCallInterceptor
+from a2a.client.client import ClientConfig as A2AClientConfig
+from a2a.client.client_factory import ClientFactory as A2AClientFactory
+from a2ui.a2ui_extension import A2UI_CLIENT_CAPABILITIES_KEY
 
-STANDARD_CATALOG_URI = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json"
+class A2UIMetadataInterceptor(ClientCallInterceptor):
+    @override
+    async def intercept(
+        self,
+        method_name: str,
+        request_payload: dict[str, Any],
+        http_kwargs: dict[str, Any],
+        agent_card: AgentCard | None,
+        context: ClientCallContext | None,
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Enables the A2UI extension header and adds A2UI client capabilities to remote agent message metadata."""
+        logger.info("Intercepting client call to method: " + method_name + " and payload " + json.dumps(request_payload))
+                
+        if context and context.state and context.state.get("use_ui"):
+            # Add A2UI extension header
+            http_kwargs["headers"] = {HTTP_EXTENSION_HEADER: A2UI_EXTENSION_URI}
+            
+            # Add A2UI client capabilities (supported catalogs, etc) to message metadata
+            if (params := request_payload.get("params")) and (message := params.get("message")):            
+                client_capabilities = context.state.get("client_capabilities")                
+                if "metadata" not in message:
+                    message["metadata"] = {}
+                message["metadata"][A2UI_CLIENT_CAPABILITIES_KEY] = client_capabilities
+                logger.info(f"Added client capabilities to remote agent message metadata: {client_capabilities}")
+                        
+        return request_payload, http_kwargs
+
+class A2AClientFactoryWithA2UIMetadata(A2AClientFactory):
+    @override
+    def create(
+        self,
+        card: AgentCard,
+        consumers: list[Consumer] | None = None,
+        interceptors: list[ClientCallInterceptor] | None = None,
+    ) -> Client:
+        # Add A2UI metadata interceptor
+        return super().create(card, consumers, (interceptors or []) + [A2UIMetadataInterceptor()])
 
 class OrchestratorAgent:
     """An agent that runs an ecommerce dashboard"""
@@ -113,12 +155,18 @@ class OrchestratorAgent:
                     subagent_card, 
                     description=description, # This will be appended to system instructions
                     a2a_part_converter=part_converters.convert_a2a_part_to_genai_part,
-                    genai_part_converter=part_converters.convert_genai_part_to_a2a_part,
-                      
-                    httpx_client=httpx.AsyncClient(
-                       timeout=httpx.Timeout(timeout=DEFAULT_TIMEOUT), 
-                       headers={HTTP_EXTENSION_HEADER: A2UI_EXTENSION_URI}
-                    ))                
+                    genai_part_converter=part_converters.convert_genai_part_to_a2a_part,                      
+                    a2a_client_factory=A2AClientFactoryWithA2UIMetadata(
+                        config=A2AClientConfig(
+                            httpx_client=httpx.AsyncClient(
+                                timeout=httpx.Timeout(timeout=DEFAULT_TIMEOUT),
+                            ),
+                            streaming=False,
+                            polling=False,
+                            supported_transports=[A2ATransport.jsonrpc],
+                        )
+                    )
+                )
                 subagents.append(remote_a2a_agent)
                 
                 logger.info(f'Created remote agent with description: {description}')

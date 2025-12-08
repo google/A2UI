@@ -107,7 +107,7 @@ export class Text extends Root {
 
   render() {
     const classes = Styles.merge(
-      this.theme.components.Image.all,
+      this.theme.components.Text.all,
       this.usageHint ? this.theme.components.Text[this.usageHint] : {}
     );
 

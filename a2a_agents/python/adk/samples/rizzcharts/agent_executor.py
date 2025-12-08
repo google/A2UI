@@ -29,12 +29,13 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2ui.a2ui_extension import A2UI_EXTENSION_URI, get_a2ui_agent_extension, try_activate_a2ui_extension
+from a2ui.a2ui_extension import A2UI_EXTENSION_URI, get_a2ui_agent_extension, try_activate_a2ui_extension, A2UI_CLIENT_CAPABILITIES_KEY
 from component_catalog_builder import ComponentCatalogBuilder
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2a.types import AgentExtension
 from a2ui_session_util import A2UI_ENABLED_STATE_KEY, A2UI_CATALOG_URI_STATE_KEY, A2UI_SCHEMA_STATE_KEY
-from agent import STANDARD_CATALOG_URI, RIZZCHARTS_CATALOG_URI
+from agent import RIZZCHARTS_CATALOG_URI
+from a2ui.a2ui_extension import STANDARD_CATALOG_ID
 
 from agent import rizzchartsAgent
 import part_converter
@@ -54,10 +55,10 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
         self._component_catalog_builder = ComponentCatalogBuilder(
             a2ui_schema_path=str(spec_root.joinpath("server_to_client.json")),
             uri_to_local_catalog_path={
-                STANDARD_CATALOG_URI: str(spec_root.joinpath("standard_catalog_definition.json")),
+                STANDARD_CATALOG_ID: str(spec_root.joinpath("standard_catalog_definition.json")),
                 RIZZCHARTS_CATALOG_URI: "rizzcharts_catalog_definition.json",
             },
-            default_catalog_uri=STANDARD_CATALOG_URI
+            default_catalog_uri=STANDARD_CATALOG_ID
         )
         agent = rizzchartsAgent.build_agent()
         runner = Runner(
@@ -125,7 +126,7 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
                 
         use_ui = try_activate_a2ui_extension(context)
         if use_ui:
-            a2ui_schema, catalog_uri = self._component_catalog_builder.load_a2ui_schema(client_ui_capabilities=context.message.metadata.get("clientUiCapabilities") if context.message and context.message.metadata else None)
+            a2ui_schema, catalog_uri = self._component_catalog_builder.load_a2ui_schema(client_ui_capabilities=context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY) if context.message and context.message.metadata else None)
 
             self._part_converter.set_a2ui_schema(a2ui_schema)
         
