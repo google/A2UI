@@ -64,7 +64,7 @@ Activating this extension implies that the server can send A2UI-specific message
 
 ## Data Encoding
 
-A2UI messages are encoded as `DataPart`s within the A2A `Part` structure.
+A2UI messages are encoded as an A2A `DataPart`.
 
 To identify a `DataPart` as containing A2UI data, it must have the following metadata:
 
