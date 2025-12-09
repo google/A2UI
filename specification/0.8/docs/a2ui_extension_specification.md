@@ -6,7 +6,7 @@ This extension implements the A2UI (Agent-to-Agent UI) spec, a format for agents
 
 ## Extension URI
 
-The URI of this extension is https://a2ui.org/ext/a2a-ui/v0.8
+The URI of this extension is https://a2ui.org/a2a-extension/a2ui/v0.8
 
 This is the only URI accepted for this extension.
 
@@ -36,7 +36,7 @@ Example AgentExtension block:
 
 ```json
 {
-  "uri": "https://a2ui.org/ext/a2a-ui/v0.8",
+  "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
   "description": "Ability to render A2UI",
   "required": false,
   "params": {
@@ -61,3 +61,29 @@ For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTT
 For gRPC, this is indicated via the X-A2A-Extensions metadata value.
 
 Activating this extension implies that the server can send A2UI-specific messages (like surfaceUpdate) and the client is expected to send A2UI-specific events (like userAction).
+
+## Data Encoding
+
+A2UI messages are encoded as `DataPart`s within the A2A `Part` structure.
+
+To identify a `DataPart` as containing A2UI data, it must have the following metadata:
+
+- `mimeType`: `application/json+a2ui`
+
+The `data` field of the `DataPart` contains the A2UI JSON message (e.g., `surfaceUpdate`, `userAction`).
+
+Example A2UI DataPart:
+
+```json
+{
+  "data": {
+    "beginRendering": {
+      "surfaceId": "outlier_stores_map_surface",
+    }
+  },
+  "kind": "data",
+  "metadata": {
+    "mimeType": "application/json+a2ui"
+  }
+}
+```

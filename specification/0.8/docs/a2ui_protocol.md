@@ -192,7 +192,7 @@ The server (agent) advertises its capabilities in its Agent Card as part of the 
   "capabilities": {
     "extensions": [
       {
-        "uri": "https://a2ui.org/ext/a2a-ui/v0.8",
+        "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
         "params": {
           "supportedCatalogIds": [
             "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json",
