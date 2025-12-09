@@ -29,7 +29,7 @@ import {
   untracked,
   ViewContainerRef,
 } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types, Styles } from '@a2ui/web-lib/0.8';
 import { Catalog } from './catalog';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -44,8 +44,8 @@ export class Renderer implements OnDestroy {
   private currentRef: ComponentRef<unknown> | null = null;
   private isDestroyed = false;
 
-  readonly surfaceId = input.required<v0_8.Types.SurfaceID>();
-  readonly component = input.required<v0_8.Types.AnyComponentNode>();
+  readonly surfaceId = input.required<Types.SurfaceID>();
+  readonly component = input.required<Types.AnyComponentNode>();
 
   constructor() {
     effect(() => {
@@ -59,7 +59,7 @@ export class Renderer implements OnDestroy {
 
     if (!Renderer.hasInsertedStyles && isPlatformBrowser(platformId)) {
       const styles = document.createElement('style');
-      styles.textContent = v0_8.Styles.structuralStyles;
+      styles.textContent = Styles.structuralStyles;
       document.head.appendChild(styles);
       Renderer.hasInsertedStyles = true;
     }
@@ -70,7 +70,7 @@ export class Renderer implements OnDestroy {
     this.clear();
   }
 
-  private async render(surfaceId: v0_8.Types.SurfaceID, component: v0_8.Types.AnyComponentNode) {
+  private async render(surfaceId: Types.SurfaceID, component: Types.AnyComponentNode) {
     const config = this.catalog[component.type];
     let newComponent: Type<unknown> | null = null;
     let componentBindings: Binding[] | null = null;

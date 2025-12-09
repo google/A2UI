@@ -16,13 +16,13 @@
 
 import { Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-audio',
   template: `
-    @let resolvedUrl = this.resolvedUrl(); 
-    
+    @let resolvedUrl = this.resolvedUrl();
+
     @if (resolvedUrl) {
       <section [class]="theme.components.AudioPlayer" [style]="theme.additionalStyles?.AudioPlayer">
         <audio controls [src]="resolvedUrl"></audio>
@@ -45,6 +45,6 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
   `
 })
 export class Audio extends DynamicComponent {
-  readonly url = input.required<v0_8.Primitives.StringValue | null>();
+  readonly url = input.required<Primitives.StringValue | null>();
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 }

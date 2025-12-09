@@ -15,7 +15,7 @@
  */
 
 import { DynamicComponent } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types, Primitives } from '@a2ui/web-lib/0.8';
 import { Component, computed, input, Signal, signal, ViewChild } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -121,16 +121,16 @@ ChartJS.register(ChartDataLabels);
     </div>
   `,
 })
-export class Chart extends DynamicComponent<v0_8.Types.CustomNode> {
+export class Chart extends DynamicComponent<Types.CustomNode> {
   readonly type = input.required<string>();
   protected readonly chartType = computed(() => this.type() as ChartType);
 
-  readonly title = input<v0_8.Primitives.StringValue | null>();
+  readonly title = input<Primitives.StringValue | null>();
   protected readonly resolvedTitle: Signal<string | null> = computed(() =>
     super.resolvePrimitive(this.title() ?? null),
   );
 
-  readonly chartData = input.required<v0_8.Primitives.StringValue | null>();
+  readonly chartData = input.required<Primitives.StringValue | null>();
   protected readonly resolvedPieChartData: Signal<
     Map<string, ChartData<'pie', number[], string>> | undefined
   > = computed(() => {
@@ -191,7 +191,7 @@ export class Chart extends DynamicComponent<v0_8.Types.CustomNode> {
   };
 
   private resolvePieChartData(
-    pathPrefix: v0_8.Primitives.StringValue,
+    pathPrefix: Primitives.StringValue,
   ): Map<string, ChartData<'pie', number[], string>> | undefined {
     const dataMap = new Map<string, ChartData<'pie', number[], string>>();
     const labels: string[] = [];
@@ -199,8 +199,8 @@ export class Chart extends DynamicComponent<v0_8.Types.CustomNode> {
     if (pathPrefix?.path) {
       for (let index: number = 0; index < 500; index++) {
         const itemPrefix = `${pathPrefix.path}[${index}]`;
-        const labelPath: v0_8.Primitives.StringValue = { path: `${itemPrefix}.label` };
-        const valuePath: v0_8.Primitives.NumberValue = { path: `${itemPrefix}.value` };
+        const labelPath: Primitives.StringValue = { path: `${itemPrefix}.label` };
+        const valuePath: Primitives.NumberValue = { path: `${itemPrefix}.value` };
         const label = super.resolvePrimitive(labelPath);
         const value = super.resolvePrimitive(valuePath);
         if (label === null || value === null) {
@@ -214,10 +214,10 @@ export class Chart extends DynamicComponent<v0_8.Types.CustomNode> {
         const drilldownPathPrefix = `${itemPrefix}.drillDown`;
         for (let jindex: number = 0; jindex < 500; jindex++) {
           const drilldownItemPrefix = `${drilldownPathPrefix}[${jindex}]`;
-          const drilldownLabelPath: v0_8.Primitives.StringValue = {
+          const drilldownLabelPath: Primitives.StringValue = {
             path: `${drilldownItemPrefix}.label`,
           };
-          const drilldownValuePath: v0_8.Primitives.NumberValue = {
+          const drilldownValuePath: Primitives.NumberValue = {
             path: `${drilldownItemPrefix}.value`,
           };
           const drilldownLabel = super.resolvePrimitive(drilldownLabelPath);

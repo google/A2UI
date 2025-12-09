@@ -15,7 +15,7 @@
  */
 
 import { Component, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 
@@ -33,11 +33,11 @@ import { Renderer } from '../rendering/renderer';
       overflow: auto;
     }
 
-    :host([direction="vertical"]) section {
+    :host([direction='vertical']) section {
       display: grid;
     }
 
-    :host([direction="horizontal"]) section {
+    :host([direction='horizontal']) section {
       display: flex;
       max-width: 100%;
       overflow-x: scroll;
@@ -58,6 +58,6 @@ import { Renderer } from '../rendering/renderer';
     </section>
   `,
 })
-export class List extends DynamicComponent<v0_8.Types.ListNode> {
+export class List extends DynamicComponent<Types.ListNode> {
   readonly direction = input<'vertical' | 'horizontal'>('vertical');
 }

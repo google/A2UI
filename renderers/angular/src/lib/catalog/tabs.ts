@@ -15,9 +15,9 @@
  */
 
 import { Component, computed, input, signal } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
+import { Styles, Types } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-tabs',
@@ -32,7 +32,8 @@ import { Renderer } from '../rendering/renderer';
           <button
             (click)="this.selectedIndex.set($index)"
             [disabled]="selectedIndex === $index"
-            [class]="buttonClasses()[selectedIndex]">
+            [class]="buttonClasses()[selectedIndex]"
+          >
             {{ resolvePrimitive(tab.title) }}
           </button>
         }
@@ -54,16 +55,16 @@ import { Renderer } from '../rendering/renderer';
 })
 export class Tabs extends DynamicComponent {
   protected selectedIndex = signal(0);
-  readonly tabs = input.required<v0_8.Types.ResolvedTabItem[]>();
+  readonly tabs = input.required<Types.ResolvedTabItem[]>();
 
   protected readonly buttonClasses = computed(() => {
     const selectedIndex = this.selectedIndex();
 
     return this.tabs().map((_, index) => {
       return index === selectedIndex
-        ? v0_8.Styles.merge(
+        ? Styles.merge(
             this.theme.components.Tabs.controls.all,
-            this.theme.components.Tabs.controls.selected
+            this.theme.components.Tabs.controls.selected,
           )
         : this.theme.components.Tabs.controls.all;
     });

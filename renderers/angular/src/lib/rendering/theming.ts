@@ -14,9 +14,9 @@
  limitations under the License.
  */
 
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { InjectionToken } from '@angular/core';
 
 export const Theme = new InjectionToken<Theme>('Theme');
 
-export type Theme = v0_8.Types.Theme;
+export type Theme = Types.Theme;

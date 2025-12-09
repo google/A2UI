@@ -15,9 +15,9 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
+import { Types } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-row',
@@ -83,14 +83,14 @@ import { Renderer } from '../rendering/renderer';
   template: `
     <section [class]="classes()" [style]="theme.additionalStyles?.Row">
       @for (child of component().properties.children; track child) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
     </section>
   `,
 })
-export class Row extends DynamicComponent<v0_8.Types.RowNode> {
-  readonly alignment = input<v0_8.Types.ResolvedRow['alignment']>('stretch');
-  readonly distribution = input<v0_8.Types.ResolvedRow['distribution']>('start');
+export class Row extends DynamicComponent<Types.RowNode> {
+  readonly alignment = input<Types.ResolvedRow['alignment']>('stretch');
+  readonly distribution = input<Types.ResolvedRow['distribution']>('start');
 
   protected readonly classes = computed(() => ({
     ...this.theme.components.Row,

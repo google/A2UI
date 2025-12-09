@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 
@@ -79,14 +79,14 @@ import { Renderer } from '../rendering/renderer';
   template: `
     <section [class]="classes()" [style]="theme.additionalStyles?.Column">
       @for (child of component().properties.children; track child) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
     </section>
   `,
 })
-export class Column extends DynamicComponent<v0_8.Types.ColumnNode> {
-  readonly alignment = input<v0_8.Types.ResolvedColumn['alignment']>('stretch');
-  readonly distribution = input<v0_8.Types.ResolvedColumn['distribution']>('start');
+export class Column extends DynamicComponent<Types.ColumnNode> {
+  readonly alignment = input<Types.ResolvedColumn['alignment']>('stretch');
+  readonly distribution = input<Types.ResolvedColumn['distribution']>('start');
 
   protected readonly classes = computed(() => ({
     ...this.theme.components.Column,

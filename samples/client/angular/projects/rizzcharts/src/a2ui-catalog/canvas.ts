@@ -15,7 +15,7 @@
  */
 
 import { DynamicComponent } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
 
@@ -38,7 +38,7 @@ import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
   `,
   template: `<section></section>`,
 })
-export class Canvas extends DynamicComponent<v0_8.Types.CustomNode> implements OnInit {
+export class Canvas extends DynamicComponent<Types.CustomNode> implements OnInit {
   private readonly canvasService = inject(CanvasService);
 
   readonly isCanvasOpened = computed(() => this.canvasService.surfaceId() === this.surfaceId());
@@ -54,7 +54,7 @@ export class Canvas extends DynamicComponent<v0_8.Types.CustomNode> implements O
   protected openCanvas() {
     this.canvasService.openSurfaceInCanvas(
       this.surfaceId()!,
-      this.component().properties['children'] as v0_8.Types.AnyComponentNode[],
+      this.component().properties['children'] as Types.AnyComponentNode[],
     );
   }
 }

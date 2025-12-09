@@ -20,7 +20,7 @@ import { ChatService } from '@a2a_chat_canvas/services/chat-service';
 import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
 import { isA2aDataPart } from '@a2a_chat_canvas/utils/type-guards';
 import { Surface } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Component, computed, inject, input } from '@angular/core';
 
 /**
@@ -45,9 +45,7 @@ export class A2uiDataPart implements RendererComponent {
     const part = this.uiMessageContent().data as Part;
     if (isA2aDataPart(part)) {
       if (part.data && typeof part.data === 'object' && 'beginRendering' in part.data) {
-        const beginRenderingMessage = part.data[
-          'beginRendering'
-        ] as v0_8.Types.BeginRenderingMessage;
+        const beginRenderingMessage = part.data['beginRendering'] as Types.BeginRenderingMessage;
         return beginRenderingMessage.surfaceId;
       }
     }

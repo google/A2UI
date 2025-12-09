@@ -15,7 +15,7 @@
  */
 
 import { inputBinding } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Catalog } from '../rendering/catalog';
 import { Row } from './row';
 import { Column } from './column';
@@ -25,7 +25,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Row: {
     type: () => Row,
     bindings: (node) => {
-      const properties = (node as v0_8.Types.RowNode).properties;
+      const properties = (node as Types.RowNode).properties;
       return [
         inputBinding('alignment', () => properties.alignment ?? 'stretch'),
         inputBinding('distribution', () => properties.distribution ?? 'start'),
@@ -36,7 +36,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Column: {
     type: () => Column,
     bindings: (node) => {
-      const properties = (node as v0_8.Types.ColumnNode).properties;
+      const properties = (node as Types.ColumnNode).properties;
       return [
         inputBinding('alignment', () => properties.alignment ?? 'stretch'),
         inputBinding('distribution', () => properties.distribution ?? 'start'),
@@ -47,7 +47,7 @@ export const DEFAULT_CATALOG: Catalog = {
   List: {
     type: () => import('./list').then((r) => r.List),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.ListNode).properties;
+      const properties = (node as Types.ListNode).properties;
       return [inputBinding('direction', () => properties.direction ?? 'vertical')];
     },
   },
@@ -57,7 +57,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Image: {
     type: () => import('./image').then((r) => r.Image),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.ImageNode).properties;
+      const properties = (node as Types.ImageNode).properties;
       return [
         inputBinding('url', () => properties.url),
         inputBinding('usageHint', () => properties.usageHint),
@@ -68,7 +68,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Icon: {
     type: () => import('./icon').then((r) => r.Icon),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.IconNode).properties;
+      const properties = (node as Types.IconNode).properties;
       return [inputBinding('name', () => properties.name)];
     },
   },
@@ -76,7 +76,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Video: {
     type: () => import('./video').then((r) => r.Video),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.VideoNode).properties;
+      const properties = (node as Types.VideoNode).properties;
       return [inputBinding('url', () => properties.url)];
     },
   },
@@ -84,7 +84,7 @@ export const DEFAULT_CATALOG: Catalog = {
   AudioPlayer: {
     type: () => import('./audio').then((r) => r.Audio),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.AudioPlayerNode).properties;
+      const properties = (node as Types.AudioPlayerNode).properties;
       return [inputBinding('url', () => properties.url)];
     },
   },
@@ -92,7 +92,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Text: {
     type: () => Text,
     bindings: (node) => {
-      const properties = (node as v0_8.Types.TextNode).properties;
+      const properties = (node as Types.TextNode).properties;
       return [
         inputBinding('text', () => properties.text),
         inputBinding('usageHint', () => properties.usageHint || null),
@@ -103,7 +103,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Button: {
     type: () => import('./button').then((r) => r.Button),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.ButtonNode).properties;
+      const properties = (node as Types.ButtonNode).properties;
       return [inputBinding('action', () => properties.action)];
     },
   },
@@ -113,7 +113,7 @@ export const DEFAULT_CATALOG: Catalog = {
   MultipleChoice: {
     type: () => import('./multiple-choice').then((r) => r.MultipleChoice),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.MultipleChoiceNode).properties;
+      const properties = (node as Types.MultipleChoiceNode).properties;
       return [
         inputBinding('options', () => properties.options || []),
         inputBinding('value', () => properties.selections),
@@ -125,7 +125,7 @@ export const DEFAULT_CATALOG: Catalog = {
   TextField: {
     type: () => import('./text-field').then((r) => r.TextField),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.TextFieldNode).properties;
+      const properties = (node as Types.TextFieldNode).properties;
       return [
         inputBinding('text', () => properties.text ?? null),
         inputBinding('label', () => properties.label),
@@ -137,7 +137,7 @@ export const DEFAULT_CATALOG: Catalog = {
   DateTimeInput: {
     type: () => import('./datetime-input').then((r) => r.DatetimeInput),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.DateTimeInputNode).properties;
+      const properties = (node as Types.DateTimeInputNode).properties;
       return [
         inputBinding('enableDate', () => properties.enableDate),
         inputBinding('enableTime', () => properties.enableTime),
@@ -149,7 +149,7 @@ export const DEFAULT_CATALOG: Catalog = {
   CheckBox: {
     type: () => import('./checkbox').then((r) => r.Checkbox),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.CheckboxNode).properties;
+      const properties = (node as Types.CheckboxNode).properties;
       return [
         inputBinding('label', () => properties.label),
         inputBinding('value', () => properties.value),
@@ -160,7 +160,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Slider: {
     type: () => import('./slider').then((r) => r.Slider),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.SliderNode).properties;
+      const properties = (node as Types.SliderNode).properties;
       return [
         inputBinding('value', () => properties.value),
         inputBinding('minValue', () => properties.minValue),
@@ -173,7 +173,7 @@ export const DEFAULT_CATALOG: Catalog = {
   Tabs: {
     type: () => import('./tabs').then((r) => r.Tabs),
     bindings: (node) => {
-      const properties = (node as v0_8.Types.TabsNode).properties;
+      const properties = (node as Types.TabsNode).properties;
       return [inputBinding('tabs', () => properties.tabItems)];
     },
   },

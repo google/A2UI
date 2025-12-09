@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives } from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
@@ -53,7 +53,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   `,
 })
 export class Slider extends DynamicComponent {
-  readonly value = input.required<v0_8.Primitives.NumberValue | null>();
+  readonly value = input.required<Primitives.NumberValue | null>();
   readonly label = input('');
   readonly minValue = input.required<number | undefined>();
   readonly maxValue = input.required<number | undefined>();

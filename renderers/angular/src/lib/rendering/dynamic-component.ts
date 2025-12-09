@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types, Primitives } from '@a2ui/web-lib/0.8';
 import { Directive, inject, input } from '@angular/core';
 import { ModelProcessor } from '../data';
 import { Theme } from './theming';
@@ -26,17 +26,15 @@ let idCounter = 0;
     '[style.--weight]': 'weight()',
   },
 })
-export abstract class DynamicComponent<
-  T extends v0_8.Types.AnyComponentNode = v0_8.Types.AnyComponentNode
-> {
+export abstract class DynamicComponent<T extends Types.AnyComponentNode = Types.AnyComponentNode> {
   protected readonly processor = inject(ModelProcessor);
   protected readonly theme = inject(Theme);
 
-  readonly surfaceId = input.required<v0_8.Types.SurfaceID | null>();
+  readonly surfaceId = input.required<Types.SurfaceID | null>();
   readonly component = input.required<T>();
   readonly weight = input.required<string | number>();
 
-  protected sendAction(action: v0_8.Types.Action): Promise<v0_8.Types.ServerToClientMessage[]> {
+  protected sendAction(action: Types.Action): Promise<Types.ServerToClientMessage[]> {
     const component = this.component();
     const surfaceId = this.surfaceId() ?? undefined;
     const context: Record<string, unknown> = {};
@@ -57,7 +55,7 @@ export abstract class DynamicComponent<
       }
     }
 
-    const message: v0_8.Types.A2UIClientEventMessage = {
+    const message: Types.A2UIClientEventMessage = {
       userAction: {
         name: action.name,
         sourceComponentId: component.id,
@@ -70,15 +68,11 @@ export abstract class DynamicComponent<
     return this.processor.dispatch(message);
   }
 
-  protected resolvePrimitive(value: v0_8.Primitives.StringValue | null): string | null;
-  protected resolvePrimitive(value: v0_8.Primitives.BooleanValue | null): boolean | null;
-  protected resolvePrimitive(value: v0_8.Primitives.NumberValue | null): number | null;
+  protected resolvePrimitive(value: Primitives.StringValue | null): string | null;
+  protected resolvePrimitive(value: Primitives.BooleanValue | null): boolean | null;
+  protected resolvePrimitive(value: Primitives.NumberValue | null): number | null;
   protected resolvePrimitive(
-    value:
-      | v0_8.Primitives.StringValue
-      | v0_8.Primitives.BooleanValue
-      | v0_8.Primitives.NumberValue
-      | null
+    value: Primitives.StringValue | Primitives.BooleanValue | Primitives.NumberValue | null,
   ) {
     const component = this.component();
     const surfaceId = this.surfaceId();

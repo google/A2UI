@@ -16,14 +16,15 @@
 
 import { Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-checkbox',
   template: `
     <section
       [class]="theme.components.CheckBox.container"
-      [style]="theme.additionalStyles?.CheckBox">
+      [style]="theme.additionalStyles?.CheckBox"
+    >
       <input
         autocomplete="off"
         type="checkbox"
@@ -33,9 +34,9 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
         (change)="handleChange($event)"
       />
 
-      <label
-        [htmlFor]="inputId"
-        [class]="theme.components.CheckBox.label">{{ resolvedLabel() }}</label>
+      <label [htmlFor]="inputId" [class]="theme.components.CheckBox.label">{{
+        resolvedLabel()
+      }}</label>
     </section>
   `,
   styles: `
@@ -50,11 +51,11 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
       display: block;
       width: 100%;
     }
-  `
+  `,
 })
 export class Checkbox extends DynamicComponent {
-  readonly value = input.required<v0_8.Primitives.BooleanValue | null>();
-  readonly label = input.required<v0_8.Primitives.StringValue | null>();
+  readonly value = input.required<Primitives.BooleanValue | null>();
+  readonly label = input.required<Primitives.StringValue | null>();
 
   protected inputChecked = computed(() => super.resolvePrimitive(this.value()) ?? false);
   protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));

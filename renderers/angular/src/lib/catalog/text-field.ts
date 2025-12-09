@@ -15,7 +15,7 @@
  */
 
 import { computed, Component, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives, Types } from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
@@ -26,7 +26,9 @@ import { DynamicComponent } from '../rendering/dynamic-component';
       flex: var(--weight);
     }
 
-    section, input, label {
+    section,
+    input,
+    label {
       box-sizing: border-box;
     }
 
@@ -45,9 +47,9 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
     <section [class]="theme.components.TextField.container">
       @if (resolvedLabel) {
-        <label 
-          [for]="inputId"
-          [class]="theme.components.TextField.label">{{resolvedLabel}}</label>
+        <label [for]="inputId" [class]="theme.components.TextField.label">{{
+          resolvedLabel
+        }}</label>
       }
 
       <input
@@ -61,12 +63,12 @@ import { DynamicComponent } from '../rendering/dynamic-component';
         [type]="inputType() === 'number' ? 'number' : 'text'"
       />
     </section>
-  `
+  `,
 })
 export class TextField extends DynamicComponent {
-  readonly text = input.required<v0_8.Primitives.StringValue | null>();
-  readonly label = input.required<v0_8.Primitives.StringValue | null>();
-  readonly inputType = input.required<v0_8.Types.ResolvedTextField['type'] | null>();
+  readonly text = input.required<Primitives.StringValue | null>();
+  readonly label = input.required<Primitives.StringValue | null>();
+  readonly inputType = input.required<Types.ResolvedTextField['type'] | null>();
 
   protected inputValue = computed(() => super.resolvePrimitive(this.text()) || '');
   protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));

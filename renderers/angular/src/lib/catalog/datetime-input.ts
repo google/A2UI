@@ -16,7 +16,7 @@
 
 import { computed, Component, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-datetime-input',
@@ -51,7 +51,7 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
   `,
 })
 export class DatetimeInput extends DynamicComponent {
-  readonly value = input.required<v0_8.Primitives.StringValue | null>();
+  readonly value = input.required<Primitives.StringValue | null>();
   readonly enableDate = input.required<boolean>();
   readonly enableTime = input.required<boolean>();
   protected readonly inputId = super.getUniqueId('a2ui-datetime-input');

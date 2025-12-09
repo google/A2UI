@@ -15,8 +15,8 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
+import { Primitives } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-multiple-choice',
@@ -54,8 +54,8 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   `,
 })
 export class MultipleChoice extends DynamicComponent {
-  readonly options = input.required<{ label: v0_8.Primitives.StringValue; value: string }[]>();
-  readonly value = input.required<v0_8.Primitives.StringValue | null>();
+  readonly options = input.required<{ label: Primitives.StringValue; value: string }[]>();
+  readonly value = input.required<Primitives.StringValue | null>();
   readonly description = input.required<string>();
 
   protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
@@ -71,7 +71,7 @@ export class MultipleChoice extends DynamicComponent {
     this.processor.setData(
       this.component(),
       this.processor.resolvePath(path, this.component().dataContextPath),
-      event.target.value
+      event.target.value,
     );
   }
 }

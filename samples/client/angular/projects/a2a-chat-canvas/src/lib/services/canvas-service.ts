@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Injectable, signal } from '@angular/core';
 
 /**
@@ -27,14 +27,14 @@ export class CanvasService {
   /** The ID of the A2UI surface currently displayed in the canvas. */
   readonly surfaceId = signal<string | null>(null);
   /** The root component nodes of the A2UI surface to be rendered. */
-  readonly contents = signal<v0_8.Types.AnyComponentNode[] | null>(null);
+  readonly contents = signal<Types.AnyComponentNode[] | null>(null);
 
   /**
    * Opens a specific A2UI surface in the canvas.
    * @param surfaceId The ID of the surface to open.
    * @param contents The root component nodes of the surface.
    */
-  openSurfaceInCanvas(surfaceId: string, contents: v0_8.Types.AnyComponentNode[]) {
+  openSurfaceInCanvas(surfaceId: string, contents: Types.AnyComponentNode[]) {
     this.surfaceId.set(surfaceId);
     this.contents.set([...contents]);
   }

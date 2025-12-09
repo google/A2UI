@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Renderer } from '../rendering/renderer';
 
 @Component({
@@ -44,8 +44,8 @@ import { Renderer } from '../rendering/renderer';
   },
 })
 export class Surface {
-  readonly surfaceId = input.required<v0_8.Types.SurfaceID | null>();
-  readonly surface = input.required<v0_8.Types.Surface | null>();
+  readonly surfaceId = input.required<Types.SurfaceID | null>();
+  readonly surface = input.required<Types.Surface | null>();
 
   protected readonly styles = computed(() => {
     const surface = this.surface();

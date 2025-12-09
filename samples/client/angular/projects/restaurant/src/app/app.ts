@@ -15,7 +15,7 @@
  */
 
 import { ModelProcessor, Surface } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Component, inject, signal } from '@angular/core';
 import { Client } from './client';
 
@@ -42,7 +42,7 @@ export class App {
     const body = data.get('body') ?? null;
 
     if (body) {
-      const message = body as v0_8.Types.A2UIClientEventMessage;
+      const message = body as Types.A2UIClientEventMessage;
       await this.client.makeRequest(message);
       this.hasData.set(true);
     }

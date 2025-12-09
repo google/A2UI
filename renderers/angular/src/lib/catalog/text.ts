@@ -16,7 +16,7 @@
 
 import { Component, computed, inject, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives, Styles, Types } from '@a2ui/web-lib/0.8';
 import { MarkdownRenderer } from '../data/markdown';
 
 @Component({
@@ -37,8 +37,8 @@ import { MarkdownRenderer } from '../data/markdown';
 })
 export class Text extends DynamicComponent {
   private markdownRenderer = inject(MarkdownRenderer);
-  readonly text = input.required<v0_8.Primitives.StringValue | null>();
-  readonly usageHint = input.required<v0_8.Types.ResolvedText['usageHint'] | null>();
+  readonly text = input.required<Primitives.StringValue | null>();
+  readonly usageHint = input.required<Types.ResolvedText['usageHint'] | null>();
 
   protected resolvedText = computed(() => {
     const usageHint = this.usageHint();
@@ -74,14 +74,14 @@ export class Text extends DynamicComponent {
 
     return this.markdownRenderer.render(
       value,
-      v0_8.Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
+      Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
     );
   });
 
   protected classes = computed(() => {
     const usageHint = this.usageHint();
 
-    return v0_8.Styles.merge(
+    return Styles.merge(
       this.theme.components.Text.all,
       usageHint ? this.theme.components.Text[usageHint] : {},
     );

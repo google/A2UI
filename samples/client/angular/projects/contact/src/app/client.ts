@@ -15,7 +15,7 @@
  */
 
 import { A2AServerPayload, ModelProcessor } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Injectable, inject, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
@@ -36,12 +36,12 @@ export class Client {
     });
   }
 
-  async makeRequest(request: v0_8.Types.A2UIClientEventMessage | string) {
-    let messages: v0_8.Types.ServerToClientMessage[];
+  async makeRequest(request: Types.A2UIClientEventMessage | string) {
+    let messages: Types.ServerToClientMessage[];
 
     try {
       this.isLoading.set(true);
-      const response = await this.send(request as v0_8.Types.A2UIClientEventMessage);
+      const response = await this.send(request as Types.A2UIClientEventMessage);
       messages = response;
     } catch (err) {
       console.error(err);
@@ -55,9 +55,7 @@ export class Client {
     return messages;
   }
 
-  async send(
-    message: v0_8.Types.A2UIClientEventMessage
-  ): Promise<v0_8.Types.ServerToClientMessage[]> {
+  async send(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
     const response = await fetch('/a2a', {
       body: JSON.stringify(message),
       method: 'POST',
@@ -65,7 +63,7 @@ export class Client {
 
     if (response.ok) {
       const data = (await response.json()) as A2AServerPayload;
-      const messages: v0_8.Types.ServerToClientMessage[] = [];
+      const messages: Types.ServerToClientMessage[] = [];
 
       if ('error' in data) {
         throw new Error(data.error);

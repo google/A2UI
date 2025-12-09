@@ -14,24 +14,24 @@
  limitations under the License.
  */
 
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Data, Types } from '@a2ui/web-lib/0.8';
 import { Injectable } from '@angular/core';
 import { firstValueFrom, Subject } from 'rxjs';
 
 export interface DispatchedEvent {
-  message: v0_8.Types.A2UIClientEventMessage;
-  completion: Subject<v0_8.Types.ServerToClientMessage[]>;
+  message: Types.A2UIClientEventMessage;
+  completion: Subject<Types.ServerToClientMessage[]>;
 }
 
 @Injectable({ providedIn: 'root' })
-export class ModelProcessor extends v0_8.Data.A2UIModelProcessor {
+export class ModelProcessor extends Data.A2UIModelProcessor {
   readonly events = new Subject<DispatchedEvent>();
 
   override setData(
-    node: v0_8.Types.AnyComponentNode,
+    node: Types.AnyComponentNode,
     relativePath: string,
-    value: v0_8.Types.DataValue,
-    surfaceId?: v0_8.Types.SurfaceID | null
+    value: Types.DataValue,
+    surfaceId?: Types.SurfaceID | null,
   ) {
     // Override setData to convert from optional inputs (which can be null)
     // to undefined so that this correctly falls back to the default value for
@@ -39,8 +39,8 @@ export class ModelProcessor extends v0_8.Data.A2UIModelProcessor {
     return super.setData(node, relativePath, value, surfaceId ?? undefined);
   }
 
-  dispatch(message: v0_8.Types.A2UIClientEventMessage): Promise<v0_8.Types.ServerToClientMessage[]> {
-    const completion = new Subject<v0_8.Types.ServerToClientMessage[]>();
+  dispatch(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
+    const completion = new Subject<Types.ServerToClientMessage[]>();
     this.events.next({ message, completion });
     return firstValueFrom(completion);
   }

@@ -15,8 +15,8 @@
  */
 
 import { Component, computed, input } from '@angular/core';
+import { Primitives, Styles, Types } from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-image',
@@ -46,15 +46,15 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
   `,
 })
 export class Image extends DynamicComponent {
-  readonly url = input.required<v0_8.Primitives.StringValue | null>();
-  readonly usageHint = input.required<v0_8.Types.ResolvedImage['usageHint'] | null>();
+  readonly url = input.required<Primitives.StringValue | null>();
+  readonly usageHint = input.required<Types.ResolvedImage['usageHint'] | null>();
 
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 
   protected classes = computed(() => {
     const usageHint = this.usageHint();
 
-    return v0_8.Styles.merge(
+    return Styles.merge(
       this.theme.components.Image.all,
       usageHint ? this.theme.components.Image[usageHint] : {},
     );

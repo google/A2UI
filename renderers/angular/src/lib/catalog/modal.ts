@@ -16,7 +16,7 @@
 
 import { Component, signal, viewChild, ElementRef, effect } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { Renderer } from '../rendering';
 
 @Component({
@@ -32,18 +32,20 @@ import { Renderer } from '../rendering';
             </button>
           </div>
 
-          <ng-container 
-            a2ui-renderer 
-            [surfaceId]="surfaceId()!" 
-            [component]="component().properties.contentChild"/>
+          <ng-container
+            a2ui-renderer
+            [surfaceId]="surfaceId()!"
+            [component]="component().properties.contentChild"
+          />
         </section>
       </dialog>
     } @else {
       <section (click)="showDialog.set(true)">
-        <ng-container 
-          a2ui-renderer 
-          [surfaceId]="surfaceId()!" 
-          [component]="component().properties.entryPointChild"/>
+        <ng-container
+          a2ui-renderer
+          [surfaceId]="surfaceId()!"
+          [component]="component().properties.entryPointChild"
+        />
       </section>
     }
   `,
@@ -73,7 +75,7 @@ import { Renderer } from '../rendering';
     }
   `,
 })
-export class Modal extends DynamicComponent<v0_8.Types.ModalNode> {
+export class Modal extends DynamicComponent<Types.ModalNode> {
   protected readonly showDialog = signal(false);
   protected readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('dialog');
 

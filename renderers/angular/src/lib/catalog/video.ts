@@ -16,7 +16,7 @@
 
 import { Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-video',
@@ -42,9 +42,9 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
       width: 100%;
       box-sizing: border-box;
     }
-  `
+  `,
 })
 export class Video extends DynamicComponent {
-  readonly url = input.required<v0_8.Primitives.StringValue | null>();
+  readonly url = input.required<Primitives.StringValue | null>();
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 }

@@ -15,7 +15,7 @@
  */
 
 import { Component, input } from '@angular/core';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 
@@ -44,8 +44,8 @@ import { Renderer } from '../rendering/renderer';
     }
   `,
 })
-export class Button extends DynamicComponent<v0_8.Types.ButtonNode> {
-  readonly action = input.required<v0_8.Types.Action | null>();
+export class Button extends DynamicComponent<Types.ButtonNode> {
+  readonly action = input.required<Types.Action | null>();
 
   protected handleClick() {
     const action = this.action();

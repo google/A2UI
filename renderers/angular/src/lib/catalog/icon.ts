@@ -16,7 +16,7 @@
 
 import { Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Primitives } from '@a2ui/web-lib/0.8';
 
 @Component({
   selector: 'a2ui-icon',
@@ -29,16 +29,16 @@ import * as v0_8 from '@a2ui/web-lib/0.8';
     }
   `,
   template: `
-    @let resolvedName = this.resolvedName(); 
+    @let resolvedName = this.resolvedName();
 
     @if (resolvedName) {
       <section [class]="theme.components.Icon" [style]="theme.additionalStyles?.Icon">
-        <span class="g-icon">{{resolvedName}}</span>
+        <span class="g-icon">{{ resolvedName }}</span>
       </section>
     }
   `,
 })
 export class Icon extends DynamicComponent {
-  readonly name = input.required<v0_8.Primitives.StringValue | null>();
+  readonly name = input.required<Primitives.StringValue | null>();
   protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
 }

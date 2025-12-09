@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/web-lib/0.8';
 
 export interface A2TextPayload {
   kind: 'text';
@@ -23,7 +23,7 @@ export interface A2TextPayload {
 
 export interface A2DataPayload {
   kind: 'data';
-  data: v0_8.Types.ServerToClientMessage;
+  data: Types.ServerToClientMessage;
 }
 
 export type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | { error: string };
