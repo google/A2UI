@@ -3,7 +3,11 @@ name: Editor build
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'a2a_agents/python/adk/samples/**'
   pull_request:
+    paths-ignore:
+      - 'a2a_agents/python/adk/samples/**'
 
 jobs:
   build:
