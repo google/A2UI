@@ -34,6 +34,7 @@ import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
 import { ComponentRegistry, REGISTRY } from './component-registry.js';
+import { ThemeManager } from "./theme/manager.js";
 
 type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
   AnyComponentNode,
@@ -93,6 +94,23 @@ export class Root extends SignalWatcher(LitElement) {
    */
   #lightDomEffectDisposer: null | (() => void) = null;
 
+  #themeUnsubscribe: null | (() => void) = null;
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.#themeUnsubscribe = ThemeManager.subscribe((sheets) => {
+      if (this.shadowRoot) {
+        const elementStyles = (this.constructor as typeof LitElement).elementStyles;
+        const baseStyles = elementStyles.map(s => {
+          if (s instanceof CSSStyleSheet) return s;
+          return s.styleSheet;
+        }).filter((s): s is CSSStyleSheet => !!s);
+
+        this.shadowRoot.adoptedStyleSheets = [...baseStyles, ...sheets];
+      }
+    });
+  }
+
   protected willUpdate(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has("childComponents")) {
       if (this.#lightDomEffectDisposer) {
@@ -121,6 +139,10 @@ export class Root extends SignalWatcher(LitElement) {
 
     if (this.#lightDomEffectDisposer) {
       this.#lightDomEffectDisposer();
+    }
+
+    if (this.#themeUnsubscribe) {
+      this.#themeUnsubscribe();
     }
   }
 
@@ -251,6 +273,7 @@ export class Root extends SignalWatcher(LitElement) {
             .url=${node.properties.url ?? null}
             .dataContextPath=${node.dataContextPath ?? ""}
             .usageHint=${node.properties.usageHint}
+            .fit=${node.properties.fit}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-image>`;
         }

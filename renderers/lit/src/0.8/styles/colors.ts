@@ -21,24 +21,32 @@ const color = <C extends PaletteKeyVals>(src: PaletteKey<C>) =>
   `
     ${src
       .map((key: string) => {
-        return `.color-bc-${key} { border-color: var(${toProp(key)}); }`;
+        const inverseKey = getInverseKey(key);
+        return `.color-bc-${key} { border-color: light-dark(var(${toProp(
+          key
+        )}), var(${toProp(inverseKey)})); }`;
       })
       .join("\n")}
 
     ${src
       .map((key: string) => {
+        const inverseKey = getInverseKey(key);
         const vals = [
-          `.color-bgc-${key} { background-color: var(${toProp(key)}); }`,
-          `.color-bbgc-${key}::backdrop { background-color: var(${toProp(
+          `.color-bgc-${key} { background-color: light-dark(var(${toProp(
             key
-          )}); }`,
+          )}), var(${toProp(inverseKey)})); }`,
+          `.color-bbgc-${key}::backdrop { background-color: light-dark(var(${toProp(
+            key
+          )}), var(${toProp(inverseKey)})); }`,
         ];
 
         for (let o = 0.1; o < 1; o += 0.1) {
           vals.push(`.color-bbgc-${key}_${(o * 100).toFixed(0)}::backdrop {
-            background-color: oklch(from var(${toProp(
+            background-color: light-dark(oklch(from var(${toProp(
               key
-            )}) l c h / calc(alpha * ${o.toFixed(1)}) );
+            )}) l c h / calc(alpha * ${o.toFixed(1)})), oklch(from var(${toProp(
+              inverseKey
+            )}) l c h / calc(alpha * ${o.toFixed(1)})) );
           }
         `);
         }
@@ -49,10 +57,25 @@ const color = <C extends PaletteKeyVals>(src: PaletteKey<C>) =>
 
   ${src
     .map((key: string) => {
-      return `.color-c-${key} { color: var(${toProp(key)}); }`;
+      const inverseKey = getInverseKey(key);
+      return `.color-c-${key} { color: light-dark(var(${toProp(
+        key
+      )}), var(${toProp(inverseKey)})); }`;
     })
     .join("\n")}
   `;
+
+const getInverseKey = (key: string): string => {
+  const match = key.match(/^([a-z]+)(\d+)$/);
+  if (!match) return key;
+  const [, prefix, shadeStr] = match;
+  const shade = parseInt(shadeStr, 10);
+  const target = 100 - shade;
+  const inverseShade = shades.reduce((prev, curr) =>
+    Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev
+  );
+  return `${prefix}${inverseShade}`;
+};
 
 const keyFactory = <K extends PaletteKeyVals>(prefix: K) => {
   return shades.map((v) => `${prefix}${v}`) as PaletteKey<K>;

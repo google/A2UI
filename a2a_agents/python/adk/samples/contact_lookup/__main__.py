@@ -39,7 +39,7 @@ class MissingAPIKeyError(Exception):
 
 @click.command()
 @click.option("--host", default="localhost")
-@click.option("--port", default=10002)
+@click.option("--port", default=10003)
 def main(host, port):
     try:
         # Check for API key only if Vertex AI is not configured

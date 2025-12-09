@@ -55,7 +55,6 @@ const button = {
   "border-c-n70": true,
   "border-bs-s": true,
   "color-bgc-s30": true,
-  "color-c-n100": true,
   "behavior-ho-80": true,
 };
 
@@ -120,6 +119,7 @@ const orderedList = {
   "layout-m-0": true,
   "typography-sz-bm": true,
   "layout-as-n": true,
+  "color-c-n10": true,
 };
 
 const unorderedList = {
@@ -129,6 +129,7 @@ const unorderedList = {
   "layout-m-0": true,
   "typography-sz-bm": true,
   "layout-as-n": true,
+  "color-c-n10": true,
 };
 
 const listItem = {
@@ -138,6 +139,7 @@ const listItem = {
   "layout-m-0": true,
   "typography-sz-bm": true,
   "layout-as-n": true,
+  "color-c-n10": true,
 };
 
 const pre = {
@@ -159,25 +161,19 @@ const video = {
   "layout-el-cv": true,
 };
 
-const aLight = v0_8.Styles.merge(a, { "color-c-n5": true });
-const inputLight = v0_8.Styles.merge(input, { "color-c-n5": true });
-const textareaLight = v0_8.Styles.merge(textarea, { "color-c-n5": true });
-const buttonLight = v0_8.Styles.merge(button, { "color-c-n100": true });
-const h1Light = v0_8.Styles.merge(h1, { "color-c-n5": true });
-const h2Light = v0_8.Styles.merge(h2, { "color-c-n5": true });
-const h3Light = v0_8.Styles.merge(h3, { "color-c-n5": true });
-const bodyLight = v0_8.Styles.merge(body, { "color-c-n5": true });
-const pLight = v0_8.Styles.merge(p, { "color-c-n35": true });
-const preLight = v0_8.Styles.merge(pre, { "color-c-n35": true });
-const orderedListLight = v0_8.Styles.merge(orderedList, {
-  "color-c-n35": true,
-});
-const unorderedListLight = v0_8.Styles.merge(unorderedList, {
-  "color-c-n35": true,
-});
-const listItemLight = v0_8.Styles.merge(listItem, {
-  "color-c-n35": true,
-});
+const aLight = v0_8.Styles.merge(a, {});
+const inputLight = v0_8.Styles.merge(input, {});
+const textareaLight = v0_8.Styles.merge(textarea, {});
+const buttonLight = v0_8.Styles.merge(button, {});
+const h1Light = v0_8.Styles.merge(h1, {});
+const h2Light = v0_8.Styles.merge(h2, {});
+const h3Light = v0_8.Styles.merge(h3, {});
+const bodyLight = v0_8.Styles.merge(body, {});
+const pLight = v0_8.Styles.merge(p, {});
+const preLight = v0_8.Styles.merge(pre, {});
+const orderedListLight = v0_8.Styles.merge(orderedList, {});
+const unorderedListLight = v0_8.Styles.merge(unorderedList, {});
+const listItemLight = v0_8.Styles.merge(listItem, {});
 
 export const theme: v0_8.Types.Theme = {
   additionalStyles: {
@@ -196,10 +192,9 @@ export const theme: v0_8.Types.Theme = {
       "border-bw-0": true,
       "border-bs-s": true,
       "color-bgc-p30": true,
-      "color-c-n100": true,
       "behavior-ho-70": true,
     },
-    Card: { "border-br-9": true, "color-bgc-p100": true, "layout-p-4": true },
+    Card: { "border-br-9": true, "layout-p-4": true },
     CheckBox: {
       element: {
         "layout-m-0": true,
@@ -254,7 +249,7 @@ export const theme: v0_8.Types.Theme = {
         "layout-w-100": true,
         "layout-h-100": true,
       },
-      avatar: {},
+      avatar: { "is-avatar": true },
       header: {},
       icon: {},
       largeFeature: {},
@@ -299,7 +294,6 @@ export const theme: v0_8.Types.Theme = {
       all: {
         "layout-w-100": true,
         "layout-g-2": true,
-        "color-c-p30": true,
       },
       h1: {
         "typography-f-sf": true,

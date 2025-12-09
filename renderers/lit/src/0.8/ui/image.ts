@@ -33,6 +33,9 @@ export class Image extends Root {
   @property()
   accessor usageHint: ResolvedImage["usageHint"] | null = null;
 
+  @property()
+  accessor fit: "contain" | "cover" | "fill" | "none" | "scale-down" | null = null;
+
   static styles = [
     structuralStyles,
     css`
@@ -51,6 +54,7 @@ export class Image extends Root {
         display: block;
         width: 100%;
         height: 100%;
+        object-fit: var(--object-fit, fill);
       }
     `,
   ];
@@ -103,9 +107,10 @@ export class Image extends Root {
 
     return html`<section
       class=${classMap(classes)}
-      style=${this.theme.additionalStyles?.Image
-        ? styleMap(this.theme.additionalStyles?.Image)
-        : nothing}
+      style=${styleMap({
+        ...(this.theme.additionalStyles?.Image ?? {}),
+        "--object-fit": this.fit ?? "fill",
+      })}
     >
       ${this.#renderImage()}
     </section>`;

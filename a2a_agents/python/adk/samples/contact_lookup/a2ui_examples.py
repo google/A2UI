@@ -67,7 +67,7 @@ CONTACT_UI_EXAMPLES = """
   { "beginRendering": { "surfaceId":"contact-card","root":"main_card"} },
   { "surfaceUpdate": { "surfaceId":"contact-card",
     "components":[
-      { "id": "profile_image", "component": { "Image": { "url": { "path": "imageUrl"} } } } ,
+      { "id": "profile_image", "component": { "Image": { "url": { "path": "imageUrl"}, "usageHint": "avatar", "fit": "cover" } } } ,
       { "id": "user_heading", "weight": 1, "component": { "Text": { "text": { "path": "name"} , "usageHint": "h2"} } } ,
       { "id": "description_text_1", "component": { "Text": { "text": { "path": "title"} } } } ,
       { "id": "description_text_2", "component": { "Text": { "text": { "path": "team"} } } } ,
