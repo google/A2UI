@@ -11,8 +11,8 @@ dependencies = [
     "google-genai>=1.27.0",
     "python-dotenv>=1.1.0",
     "litellm",
-    "a2ui",
     "jsonschema>=4.0.0",
+    "a2ui @ file:../../../../a2a_agents/python/a2ui_extension",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -22,6 +22,8 @@ packages = ["."]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.uv.sources]
-a2ui = { workspace = true }
 google-adk = { git = "https://github.com/google/adk-python.git", rev = "143ad44" }

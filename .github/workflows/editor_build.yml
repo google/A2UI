@@ -4,10 +4,10 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - 'a2a_agents/python/adk/samples/**'
+      - 'samples/agent/adk/**'
   pull_request:
     paths-ignore:
-      - 'a2a_agents/python/adk/samples/**'
+      - 'samples/agent/adk/**'
 
 jobs:
   build:

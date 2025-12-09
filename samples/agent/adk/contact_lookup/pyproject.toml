@@ -1,7 +1,7 @@
 [project]
-name = "rizzcharts"
+name = "a2ui-contact-lookup"
 version = "0.1.0"
-description = "Sample Google ADK-based rizzcharts agent that uses a2ui extension with a custom catalog and is hosted as an A2A server agent."
+description = "Sample Google ADK-based Contact Lookup agent that uses a2ui extension and is hosted as an A2A server agent."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -11,8 +11,8 @@ dependencies = [
     "google-genai>=1.27.0",
     "python-dotenv>=1.1.0",
     "litellm",
-    "a2ui",
     "jsonschema>=4.0.0",
+    "a2ui @ file:../../../../a2a_agents/python/a2ui_extension",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -22,5 +22,5 @@ packages = ["."]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv.sources]
-a2ui = { workspace = true }
+[tool.hatch.metadata]
+allow-direct-references = true

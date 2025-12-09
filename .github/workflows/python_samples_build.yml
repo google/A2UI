@@ -5,10 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'a2a_agents/python/adk/samples/**'
+      - 'samples/agent/adk/**'
+      - 'a2a_agents/python/a2ui_extension/**'
   pull_request:
     paths:
-      - 'a2a_agents/python/adk/samples/**'
+      - 'samples/agent/adk/**'
+      - 'a2a_agents/python/a2ui_extension/**'
 
 jobs:
   build:
@@ -30,17 +32,17 @@ jobs:
           pip install uv
 
       - name: Build contact_lookup
-        working-directory: a2a_agents/python/adk/samples/contact_lookup
+        working-directory: samples/agent/adk/contact_lookup
         run: uv build .
 
       - name: Build orchestrator
-        working-directory: a2a_agents/python/adk/samples/orchestrator
+        working-directory: samples/agent/adk/orchestrator
         run: uv build .
 
       - name: Build restaurant_finder
-        working-directory: a2a_agents/python/adk/samples/restaurant_finder
+        working-directory: samples/agent/adk/restaurant_finder
         run: uv build .
 
       - name: Build rizzcharts
-        working-directory: a2a_agents/python/adk/samples/rizzcharts
+        working-directory: samples/agent/adk/rizzcharts
         run: uv build .
