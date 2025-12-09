@@ -1,0 +1,42 @@
+name: Python Projects Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    name: Build Python Projects
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install `uv` globally
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+
+      - name: Build contact_lookup
+        working-directory: a2a_agents/python/adk/samples/contact_lookup
+        run: uv build .
+
+      - name: Build orchestrator
+        working-directory: a2a_agents/python/adk/samples/orchestrator
+        run: uv build .
+
+      - name: Build restaurant_finder
+        working-directory: a2a_agents/python/adk/samples/restaurant_finder
+        run: uv build .
+
+      - name: Build rizzcharts
+        working-directory: a2a_agents/python/adk/samples/rizzcharts
+        run: uv build .
