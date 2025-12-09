@@ -1,10 +1,10 @@
 {
-  "name": "@a2ui/restaurant",
+  "name": "@a2ui/shell",
   "private": true,
   "version": "0.1.0",
-  "description": "A2UI Restaurant Demo",
-  "main": "./dist/restaurant.js",
-  "types": "./dist/restaurant.d.ts",
+  "description": "A2UI Universal Shell",
+  "main": "./dist/shell.js",
+  "types": "./dist/shell.d.ts",
   "type": "module",
   "scripts": {
     "prepack": "npm run build",
@@ -53,7 +53,7 @@
     }
   },
   "repository": {
-    "directory": "samples/client/lit/restaurant",
+    "directory": "samples/client/lit/shell",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },
