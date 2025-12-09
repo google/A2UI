@@ -92,7 +92,7 @@ export const plugin = (): Plugin => {
                       {
                         kind: "data",
                         data: clientEvent,
-                        mimeType: A2AUI_MIME_TYPE,
+                        metadata: { 'mimeType': A2AUI_MIME_TYPE },
                       } as Part,
                     ],
                     kind: "message",

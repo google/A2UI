@@ -17,7 +17,7 @@
 import { AgentCard, SendMessageSuccessResponse } from '@a2a-js/sdk';
 import { PART_RESOLVERS } from '@a2a_chat_canvas/a2a-renderer/tokens';
 import { A2A_SERVICE } from '@a2a_chat_canvas/interfaces/a2a-service';
-import { UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
+import { UiAgent, UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
 import { extractA2aPartsFromResponse } from '@a2a_chat_canvas/utils/a2a';
 import { extractA2uiDataParts } from '@a2a_chat_canvas/utils/a2ui';
 import { convertPartToUiMessageContent } from '@a2a_chat_canvas/utils/ui-message-utils';
@@ -148,6 +148,7 @@ export class ChatService {
 
     this.updateLastMessage((msg) => ({
       ...msg,
+      role: this.createRole(response),
       contents: [...msg.contents, ...newContents],
       status: 'completed',
       lastUpdated: new Date().toISOString(),
@@ -246,15 +247,36 @@ export class ChatService {
       type: 'ui_message',
       id: uuid(),
       contextId: this.contextId() ?? '',
-      role: {
-        type: 'ui_agent',
-        name: this.agentCard()?.name ?? 'Agent',
-        iconUrl: this.agentCard()?.iconUrl ?? 'gemini-color.svg',
-      },
+      role: this.createRole(),
       contents: [],
       status: 'pending',
       created: nowTimestamp,
       lastUpdated: nowTimestamp,
     };
+  }
+
+  /**
+   * Creates the agent role based on the agent card and the message response if available.
+   *
+   * @param response The reponse message received from the agent.
+   * @returns A new UiAgent object representing the agent that the user is chatting with.
+   */
+  private createRole(response?: SendMessageSuccessResponse): UiAgent {
+    const rootagentRole: UiAgent = {
+      type: 'ui_agent',
+      name: this.agentCard()?.name ?? 'Agent',
+      iconUrl: this.agentCard()?.iconUrl ?? 'gemini-color.svg',
+    };
+
+    const subagentCard = response?.result?.metadata?.['a2a_subagent'];
+    if (!subagentCard) {
+      return rootagentRole;
+    }
+    const agentRole: UiAgent = {
+      ...rootagentRole,
+      subagentName: (subagentCard as AgentCard).name,
+    }
+
+    return agentRole;
   }
 }

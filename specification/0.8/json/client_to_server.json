@@ -40,44 +40,6 @@
         "context"
       ]
     },
-    "clientUiCapabilities": {
-      "type": "object",
-      "description": "Informs the server about the client's capabilities, such as the component catalog it supports. Exactly ONE of the properties in this object must be set.",
-      "properties": {
-        "catalogUri": {
-          "type": "string",
-          "format": "uri",
-          "description": "A URI pointing to a predefined component catalog schema that the server advertized, and the client supports."
-        },
-        "dynamicCatalog": {
-          "type": "object",
-          "description": "An inline JSON object that defines the client's supported components.",
-          "properties": {
-            "components": {
-              "type": "object",
-              "title": "Components",
-              "description": "A map where each key is a component name and the value is a JSON Schema defining an object containing its properties.",
-              "additionalProperties": {
-                "$ref": "https://json-schema.org/draft/2020-12/schema"
-              }
-            },
-            "styles": {
-              "title": "Styles",
-              "description": "A schema that defines a catalog of A2UI styles. Each key is a style name, and each value is the JSON schema for that style's properties.",
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "https://json-schema.org/draft/2020-12/schema"
-              }
-            }
-          },
-          "required": ["components"]
-        }
-      },
-      "oneOf": [
-        { "required": ["catalogUri"] },
-        { "required": ["dynamicCatalog"] }
-      ]
-    },
     "error": {
       "type": "object",
       "description": "Reports a client-side error. The content is flexible.",
@@ -86,7 +48,6 @@
   },
   "oneOf": [
     { "required": ["userAction"] },
-    { "required": ["clientUiCapabilities"] },
     { "required": ["error"] }
   ]
 }

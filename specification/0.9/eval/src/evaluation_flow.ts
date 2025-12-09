@@ -93,6 +93,7 @@ Instructions:
 - If label text is similar but not exact, you can still pass the test as long as the meaning is the same. (e.g. "Cancel" vs "Cancel Order")
 - If the generated output is missing a component that is specified in the user request, it is required to exist in the output in order to pass the test. If it is not specified, it is not required.
 - If the request is vague about the contents of a label or other property, you can still pass the test as long as it can be construed as matching the intent.
+- Unless explicitly required to be absent by the user request, extra components or attributes are allowed.
 
 Severity Definitions:
 - Minor: Merely cosmetic or a slight deviation from the request.

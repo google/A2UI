@@ -35,6 +35,10 @@ export interface UiAgent {
   readonly name: string;
   /** The URL of the agent's icon. */
   readonly iconUrl: string;
+  /** The display name of the sub-agent. */
+  readonly subagentName?: string;
+  /** The URL of the sub-agent's icon. */
+  readonly subagentIconUrl?: string;
 }
 
 /**

@@ -23,7 +23,7 @@
 >
   @if (isRoleAgent(role)) {
     <agent-header
-      [agentName]="role.name"
+      [agentName]="getAgentName(role)"
       [agentIconUrl]="role.iconUrl"
       [agentThoughts]="agentThoughts()"
       [showProgressIndicator]="showProgressIndicator()"

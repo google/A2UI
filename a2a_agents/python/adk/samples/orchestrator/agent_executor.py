@@ -14,6 +14,7 @@
 
 import asyncio
 import logging
+import json
 from typing import List, Optional, override
 from google.adk.agents.invocation_context import new_invocation_context_id
 from google.adk.events.event_actions import EventActions
@@ -84,6 +85,20 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
         )
 
         for a2a_event in a2a_events:
+            # Try to populate subagent agent card if available.
+            subagent_card = None
+            if (active_subagent_name := event.author):
+                # We need to find the subagent by name
+                if (subagent := next((sub for sub in invocation_context.agent.sub_agents if sub.name == active_subagent_name), None)):
+                    try:
+                        subagent_card = json.loads(subagent.description)
+                    except Exception:
+                        logger.warning(f"Failed to parse agent description for {active_subagent_name}")
+            if subagent_card:
+                if a2a_event.metadata is None:
+                    a2a_event.metadata = {}
+                a2a_event.metadata["a2a_subagent"] = subagent_card
+                        
             for a2a_part in a2a_event.status.message.parts:
                 if (
                     is_a2ui_part(a2a_part)

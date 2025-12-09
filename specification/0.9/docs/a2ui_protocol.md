@@ -14,8 +14,6 @@ A Specification for a JSON-Based, Streaming UI Protocol.
 **Created:** Nov 20, 2025
 **Last Updated:** Dec 3, 2025
 
-# A2UI (Agent to UI) Protocol v0.9
-
 A Specification for a JSON-Based, Streaming UI Protocol
 
 ## Introduction
@@ -24,6 +22,7 @@ The A2UI Protocol is designed for dynamically rendering user interfaces from a s
 
 Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
 
+- `createSurface`: Signals the client to create a new surface and begin rendering it.
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
@@ -46,19 +45,21 @@ The A2UI protocol uses a unidirectional stream of JSON messages from the server 
 
 Here is an example sequence of events (which don't have to be in exactly this order):
 
-1.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
-2.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
-3.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
-4.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
-5.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
+1.  **Create Surface:** The server sends a `createSurface` message to initialize the surface.
+2.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
+3.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
+4.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
+5.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
+6.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
 
 ```mermaid
 sequenceDiagram
     participant Server
     participant Client
 
-    Server->>+Client: 1. updateComponents(surfaceId: "main", components: [...])
-    Server->>+Client: 2. updateDataModel(surfaceId: "main", contents: {...})
+    Server->>+Client: 1. createSurface(surfaceId: "main")
+    Server->>+Client: 2. updateComponents(surfaceId: "main", components: [...])
+    Server->>+Client: 2. updateDataModel(surfaceId: "main", op: "replace", value: {...})
     Note right of Client: 3. Client renders the UI for the "main" surface
     Client-->>-Server: (UI is displayed)
     Client-->>-Server: (UI is displayed)
@@ -103,21 +104,35 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 ## Envelope Message Structure
 
-The envelope defines three primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
+The envelope defines four primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
 
+### `createSurface`
 
+This message signals the client to create a new surface and begin rendering it. This message MUST be sent before the first `updateComponents` message that references this `surfaceId`. One of the components in one of the components lists MUST have an `id` of `root` to serve as the root of the component tree.
+
+**Properties:**
+
+- `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
+- `catalogId` (string, required): A string that uniquely identifies the component catalog used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+
+**Example:**
+
+```json
+{
+  "createSurface": {
+    "surfaceId": "user_profile_card",
+    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json"
+  }
+}
+```
 
 ### `updateComponents`
 
-This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
-
-> [!NOTE]
-> Referencing a `surfaceId` in an `updateComponents` message will not automatically create the surface. The surface must be managed by the client application logic, or implicitly created if the client implementation chooses to support that, but the protocol does not strictly define the creation lifecycle step anymore.
+This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may not be sent until after a `createSurface` message that references this `surfaceId` has been sent.
 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be updated. This is typically a name with meaning (e.g. "user_profile_card"), and it has to be unique within the context of the GenUI session.
-- `catalogId` (string, required): The URI of the component catalog definition used for this update.
 - `components` (array, required): A list of component objects. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
 
 **Example:**
@@ -126,28 +141,21 @@ This message provides a list of UI components to be added to or updated within a
 {
   "updateComponents": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json",
     "components": [
       {
         "id": "root",
-        "props": {
-          "component": "Column",
-          "children": ["user_name", "user_title"]
-        }
+        "component": "Column",
+        "children": ["user_name", "user_title"]
       },
       {
         "id": "user_name",
-        "props": {
-          "component": "Text",
-          "text": "John Doe"
-        }
+        "component": "Text",
+        "text": "John Doe"
       },
       {
         "id": "user_title",
-        "props": {
-          "component": "Text",
-          "text": "Software Engineer"
-        }
+        "component": "Text",
+        "text": "Software Engineer"
       }
     ]
   }
@@ -161,8 +169,9 @@ This message is used to send or update the data that populates the UI components
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface this data model update applies to.
-- `path` (string, optional): A path to a specific location within the data model (e.g., `/user/name`). If omitted or set to `/`, the entire data model for the surface will be replaced.
-- `contents` (object, required): The data to be updated in the data model. This can be any valid JSON object.
+- `path` (string, optional): A JSON Pointer to a specific location within the data model (e.g., `/user/name`). If omitted or set to `/`, the entire data model for the surface will be replaced.
+- `op` (string, optional): The operation to perform on the data model. Must be 'add', 'replace' or 'remove'. If omitted, defaults to 'replace'.
+- `value` (object): The data to be updated in the data model. This can be any valid JSON object. Required if `op` is 'add' or 'replace'. Not allowed if `op` is 'remove'.
 
 **Example:**
 
@@ -171,7 +180,8 @@ This message is used to send or update the data that populates the UI components
   "updateDataModel": {
     "surfaceId": "user_profile_card",
     "path": "/user",
-    "contents": {
+    "op": "replace",
+    "value": {
       "name": "Jane Doe",
       "title": "Software Engineer"
     }
@@ -202,8 +212,9 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"updateComponents":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json","components":[{"id":"root","props":{"component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]}},{"id":"first_name_label","props":{"component":"Text","text":"First Name"}},{"id":"first_name_field","props":{"component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"}},{"id":"last_name_label","props":{"component":"Text","text":"Last Name"}},{"id":"last_name_field","props":{"component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"}},{"id":"email_label","props":{"component":"Text","text":"Email"}},{"id":"email_field","props":{"component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"}},{"id":"phone_label","props":{"component":"Text","text":"Phone"}},{"id":"phone_field","props":{"component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"}},{"id":"notes_label","props":{"component":"Text","text":"Notes"}},{"id":"notes_field","props":{"component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"}},{"id":"submit_button_label","props":{"component":"Text","text":"Submit"}},{"id":"submit_button","props":{"component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}}]}}
-{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "contents": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
+{"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json"}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
+{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "op": "replace", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
 ```
 
 ## Component Model
@@ -216,7 +227,8 @@ Each object in the `components` array of a `updateComponents` message defines a 
 
 - `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
 - `weight` (number, optional): The relative weight of this component within a `Row` or `Column`, corresponding to the CSS `flex-grow` property.
-- `props` (object, required): An object containing the component-specific properties. This includes a `component` property that specifies the component's type (e.g., `"Text"`) and any other properties relevant to that component.
+- `component` (string, required): Specifies the component's type (e.g., `"Text"`).
+- **Component Properties**: Other properties relevant to the specific component type (e.g., `text`, `url`, `children`) are included directly in the component object.
 
 This structure is designed to be both flexible and strictly validated.
 
@@ -241,9 +253,9 @@ flowchart TD
     end
 
     subgraph "Client-Side Buffer (Map)"
-        C("root: {id: 'root', props: {component: 'Column', children: ['title', 'button']}}")
-        D("title: {id: 'title', props: {component: 'Text', text: 'Welcome'}}")
-        E("button: {id: 'button', props: {component: 'Button', child: 'button_label'}}")
+        C("root: {id: 'root', component: 'Column', children: ['title', 'button']}")
+        D("title: {id: 'title', component: 'Text', text: 'Welcome'}")
+        E("button: {id: 'button', component: 'Button', child: 'button_label'}")
     end
 
     subgraph "Rendered Widget Tree"
@@ -269,7 +281,7 @@ Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a po
 
 By default, all components operate in the **Root Scope**.
 
-- The Root Scope corresponds to the top-level object of the `contents` provided in `updateDataModel`.
+- The Root Scope corresponds to the top-level object of the `value` provided in `updateDataModel`.
 - Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
 
 #### Collection Scopes (Relative Paths)
@@ -303,36 +315,28 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 ```json
 {
   "id": "employee_list",
-  "props": {
-    "component": "List",
-    "children": {
-      "path": "/employees",
-      "componentId": "employee_card_template"
-    }
+  "component": "List",
+  "children": {
+    "path": "/employees",
+    "componentId": "employee_card_template"
   }
 },
 {
   "id": "employee_card_template",
-  "props": {
-    "component": "Column",
-    "children": ["name_text", "company_text"]
-  }
+  "component": "Column",
+  "children": ["name_text", "company_text"]
 },
 {
   "id": "name_text",
-  "props": {
-    "component": "Text",
-    "text": { "path": "name" }
-    // "name" is Relative. Resolves to /employees/N/name
-  }
+  "component": "Text",
+  "text": { "path": "name" }
+  // "name" is Relative. Resolves to /employees/N/name
 },
 {
   "id": "company_text",
-  "props": {
-    "component": "Text",
-    "text": { "path": "/company" }
-    // "/company" is Absolute. Resolves to "Acme Corp" globally.
-  }
+  "component": "Text",
+  "text": { "path": "/company" }
+  // "/company" is Absolute. Resolves to "Acme Corp" globally.
 }
 ```
 
@@ -425,7 +429,7 @@ If validation fails, the client (or the system acting on behalf of the client) s
 
 - `code` (string, required): Must be `"VALIDATION_FAILED"`.
 - `surfaceId` (string, required): The ID of the surface where the error occurred.
-- `path` (string, required): The JSON pointer to the field that failed validation (e.g. `/components/0/props/text`).
+- `path` (string, required): The JSON pointer to the field that failed validation (e.g. `/components/0/text`).
 - `message` (string, required): A short one-sentence description of why validation failed.
 
 **Example Error Message:**
@@ -435,7 +439,7 @@ If validation fails, the client (or the system acting on behalf of the client) s
   "error": {
     "code": "VALIDATION_FAILED",
     "surfaceId": "user_profile_card",
-    "path": "/components/0/props/text",
+    "path": "/components/0/text",
     "message": "Expected stringOrPath, got integer"
   }
 }

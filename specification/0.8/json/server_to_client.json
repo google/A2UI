@@ -13,6 +13,10 @@
           "type": "string",
           "description": "The unique identifier for the UI surface to be rendered."
         },
+        "catalogId": {
+          "type": "string",
+          "description": "The identifier of the component catalog to use for this surface. If omitted, the client MUST default to the standard catalog for this A2UI version (a2ui.org:standard_catalog_0_8_0)."
+        },
         "root": {
           "type": "string",
           "description": "The ID of the root component to render."
