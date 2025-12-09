@@ -1,14 +1,18 @@
-name: Python Projects Build
+name: Build python samples
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'a2a_agents/python/adk/samples/**'
   pull_request:
+    paths:
+      - 'a2a_agents/python/adk/samples/**'
 
 jobs:
   build:
-    name: Build Python Projects
+    name: Build samples
     runs-on: ubuntu-latest
 
     steps:
