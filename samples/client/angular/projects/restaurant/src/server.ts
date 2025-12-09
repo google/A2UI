@@ -61,7 +61,7 @@ app.post('/a2a', (req, res) => {
             {
               kind: 'data',
               data: clientEvent,
-              mimeType: 'application/json+a2aui',
+              metadata: { 'mimeType': 'application/json+a2aui' },
             } as Part,
           ],
           kind: 'message',
