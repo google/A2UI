@@ -1,0 +1,43 @@
+.content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Fixed to 3 columns */
+  grid-gap: 10px; /* Adjust gap as needed */
+  grid-auto-rows: minmax(50px, auto); /* Adjust row height as needed */
+}
+
+.content > * {
+  break-inside: avoid;
+}
+
+.component {
+  border: solid 1px #ccc;;
+  border-radius: 5px;
+  width: 300px;
+  height: 150px;
+}
+
+header {
+  margin: 20px 0 10px 0;
+}
+hr {
+  border: none;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.filter {
+  margin: 30px 0;
+}
+.filter input {
+  border: 1px solid #ccc;
+  padding: 15px;
+  width: 20%;
+}
+
+.welcome {
+  margin: 10px 0 10px 0;
+}
+
+.gallery-title {
+  margin: 10px 0 30px 0;
+}

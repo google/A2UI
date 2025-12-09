@@ -1,0 +1,26 @@
+<header>
+    <h1>A2UI</h1>
+</header>
+<hr />
+<main>
+    <h2 class="gallery-title">Component Gallery</h2>
+    <p class="welcome">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sequi adipisci sunt est officia nobis cupiditate voluptatum dolorem vel corporis voluptatem nihil mollitia asperiores dignissimos autem vitae, ducimus possimus distinctio quos.</p>
+    <section class="filter">
+        <input placeholder="Filter Components">
+    </section>
+    <section class="content">
+        @for(component of components(); track component.name ) {
+            <div (click)="previewComponent(component)" [ngStyle]="{'background': component.color}">
+                <div class="component">
+                    <p>{{ component.id }}</p>
+                </div>
+                <p>{{ component.name }}</p>
+            </div>
+        }
+    </section>
+</main>
+<footer>&copy; Google 2025</footer>
+
+@if(showDialog()) {
+    <app-dialog [component]="selectedComponent()!" (close)="closeDialog()" />
+}

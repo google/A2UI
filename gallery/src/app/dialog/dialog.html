@@ -1,0 +1,15 @@
+<div class="dialog-overlay" (click)="close.emit()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <button class="close-button" (click)="close.emit()">X</button>
+    <div class="dialog-body">
+      <div class="component-data">
+        <h2>{{ component().name }}</h2>
+        <p>ID: {{ component().id }}</p>
+        <pre>{{ component() | json }}</pre>
+      </div>
+      <div class="component-src">
+        <pre><code>// Source code will go here</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
