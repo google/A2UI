@@ -80,7 +80,7 @@ class ContactAgent:
 
     def _build_agent(self, use_ui: bool) -> LlmAgent:
         """Builds the LLM agent for the contact agent."""
-        LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini-2.5-flash")
+        LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
         if use_ui:
             instruction = get_ui_prompt(self.base_url, CONTACT_UI_EXAMPLES)

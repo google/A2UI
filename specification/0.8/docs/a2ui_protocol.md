@@ -62,13 +62,12 @@ Communication occurs via a JSON Lines (JSONL) stream. The client parses each lin
 
 - `surfaceUpdate`: Provides a list of component definitions to be added to or updated in a specific UI area called a "surface."
 - `dataModelUpdate`: Provides new data to be inserted into or to replace a surface's data model. Each surface has its own data model.
-- `beginRendering`: Signals to the client that it has enough information to perform the initial render, specifying the ID of the root component.
+- `beginRendering`: Signals to the client that it has enough information to perform the initial render, specifying the ID of the root component and, optionally, the component catalog to use.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
 
-Client-to-server communication for user interactions is handled separately via a JSON payload sent to a REST API. This message can be one of several types:
+Client-to-server communication for user interactions is handled separately via an A2A message. This message can be one of two types:
 
 - `userAction`: Reports a user-initiated action from a component.
-- `clientUiCapabilities`: Informs the server about the client's capabilities, such as the component catalog it supports.
 - `error`: Reports a client-side error.
   This keeps the primary data stream unidirectional.
 
@@ -167,13 +166,124 @@ The following is a complete, minimal example of a JSONL stream that renders a us
 
 A2UI's component model is designed for flexibility, separating the protocol from the component set.
 
-### 2.1. The Catalog: Defining Components
+### 2.1. Catalog Negotiation
 
-Unlike previous versions with a fixed component set, A2UI now defines components in a **Catalog**. A catalog is a schema that defines the available component types (e.g., `Row`, `Text`) and their supported properties. This allows for different clients to support different sets of components, including custom ones. The server must generate `surfaceUpdate` messages that conform to the component catalog understood by the client. Clients can inform the server of the catalog they support using the `clientUiCapabilities` message.
+A **Catalog** defines the contract between the server and the client for the UI that can be rendered. It contains a list of supported component types (e.g., `Row`, `Text`), their properties, and available styles. A catalog is defined by a **Catalog Definition Document**.
+
+There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json`.
+
+Catalog IDs are simple string identifiers. While they can be anything, it is conventional to use a URI within a domain that you own, to simplify debugging, avoid confusion, and avoid name collisions. Furthermore, if any changes are made to a catalog that could break compatibility between an agent and renderer, a new `catalogId` **must** be assigned. This ensures clear versioning and prevents unexpected behavior if an agent has changes but the client does not, or vice versa.
+
+The negotiation process allows the client and server to agree on which catalog to use for a given UI surface. This process is designed to be flexible, supporting standard, custom, and even dynamically-defined catalogs.
+
+The flow is as follows:
+
+#### 1. Server Advertises Capabilities
+
+The server (agent) advertises its capabilities in its Agent Card as part of the A2A protocol. For A2UI, this includes which catalogs it supports and whether it can handle catalogs defined inline by the client.
+
+- `supportedCatalogIds` (array of strings, optional): A list of IDs for all pre-defined catalogs the agent is known to support.
+- `acceptsInlineCatalogs` (boolean, optional): If `true`, the server can process `inlineCatalogs` sent by the client. Defaults to `false`.
+
+**Example Server Agent Card Snippet:**
+```json
+{
+  "name": "Restaurant Finder",
+  "capabilities": {
+    "extensions": [
+      {
+        "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
+        "params": {
+          "supportedCatalogIds": [
+            "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json",
+            "https://my-company.com/a2ui/v0.8/my_custom_catalog.json"
+          ],
+          "acceptsInlineCatalogs": true
+        }
+      }
+    ]
+  }
+}
+```
+
+Note that this is not a strict contract and purely included as a signal to help orchestrators and clients identify agents with matching UI capabilities. At runtime, orchestrating agents may dynamically delegate tasks to subagents which support additional catalogs that the orchestrating agent did not advertise. Thus, clients should consider the advertised supportedCatalogIds as a subset of the true catalogs that the agent or its subagents may support.
+
+#### 2. Client Declares Supported Catalogs
+
+In **every** message sent to the server, the client includes an `a2uiClientCapabilities` object within the A2A `Message` metadata. This object informs the agent server of all catalogs the client can render.
+
+- `supportedCatalogIds` (array of strings, required): A list of identifiers for all pre-defined catalogs the client supports. The client must explicitly include the standard catalog ID here if it supports the standard catalog. The contents of these catalogs are expected to be compiled into the agent server and not downloaded at runtime, in order to prevent malicious content being injected into the prompt dynamically, and ensure predictable results.
+- `inlineCatalogs` (array of objects, optional): An array of full Catalog Definition Documents. This allows a client to provide custom, on-the-fly catalogs, typically for use in local development workflows where it is faster to update a catalog in one place on the client. This may only be provided if the server has advertised `acceptsInlineCatalogs: true`.
+
+**Example A2A Message with Client Capabilities:**
+```json
+{
+  "metadata": {
+    "a2uiClientCapabilities": {
+      "supportedCatalogIds": [
+        "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json",
+        "https://my-company.com/a2ui_catalogs/custom-reporting-catalog-1.2"
+      ],
+      "inlineCatalogs": [
+        {
+          "catalogId": "https://my-company.com/inline_catalogs/temp-signature-pad-catalog",
+          "components": {
+            "SignaturePad": {
+              "type": "object",
+              "properties": { "penColor": { "type": "string" } }
+            }
+          },
+          "styles": {}
+        }
+      ]
+    }
+  },
+  "message": {
+    "prompt": {
+      "text": "Find me a good restaurant"
+    }
+  }
+}
+```
+
+#### 3. Server Chooses Catalog and Renders
+
+The server receives the client's capabilities and chooses a catalog to use for a specific UI surface. The server specifies its choice in the `beginRendering` message using the `catalogId` field.
+
+- `catalogId` (string, optional): The identifier of the chosen catalog. This ID must be one of the `supportedCatalogIds` or the `catalogId` from one of the `inlineCatalogs` provided by the client.
+
+If the `catalogId` is omitted, the client **MUST** default to the standard catalog for the protocol version (`https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json`).
+
+**Example `beginRendering` Message:**
+```json
+{
+  "beginRendering": {
+    "surfaceId": "unique-surface-1",
+    "catalogId": "https://my-company.com/inline_catalogs/temp-signature-pad-catalog",
+    "root": "root-component-id"
+  }
+}
+```
+
+Each surface can use a different catalog, providing a high degree of flexibility, particularly in multi-agent systems where different agents may support different catalogs.
 
 #### Schemas for Developers
 
-When building an agent, it is recommended to use a resolved schema that includes the specific component catalog you are targeting (e.g., `server_to_client_with_standard_catalog.json`). This provides the LLM with a strict definition of all available components and their properties, leading to more reliable UI generation. The generic `server_to_client.json` is the abstract wire protocol, while the resolved schema is the concrete tool for generation.
+When building an agent, it is recommended to use a resolved schema that includes the specific component catalog you are targeting (e.g., a custom schema combining `server_to_client.json` with your `https://my-company.com/a2ui_catalogs/custom-reporting-catalog-1.2` definition). This provides the LLM with a strict definition of all available components and their properties, as well as the catalog-specific styles, leading to more reliable UI generation. The generic `server_to_client.json` is the abstract wire protocol, while the resolved schema is the concrete tool for generation.
+
+In order to do the substitution, based on the standard `server_to_client_schema` and a `custom_catalog_definition` object, you can use JSON manipulation logic similar to:
+
+```py
+component_properties = custom_catalog_definition["components"]
+style_properties = custom_catalog_definition["components"]
+resolved_schema = copy.deepcopy(server_to_client_schema)
+
+resolved_schema["properties"]["surfaceUpdate"]["properties"]["components"]["items"]["properties"]["component"]["properties"] = component_properties
+resolved_schema["properties"]["beginRendering"]["properties"]["styles"]["properties"] = style_properties
+```
+
+See `server_to_client_with_standard_catalog.json` for an example of a resolved 
+schema which has the components substituted in.
 
 ### 2.2. The `surfaceUpdate` Message
 
@@ -414,7 +524,7 @@ While the server-to-client UI definition is a one-way stream (e.g., over SSE), u
 
 ### 5.1. The Client Event Message
 
-The client sends a single JSON object that acts as a wrapper. It must contain exactly one of the following keys: `userAction`, `clientUiCapabilities`, or `error`.
+The client sends a single JSON object that acts as a wrapper. It must contain exactly one of the following keys: `userAction` or `error`.
 
 ### 5.2. The `userAction` Message
 
@@ -430,60 +540,11 @@ The `userAction` object has the following structure:
 
 The process for resolving the `action.context` remains the same: the client iterates over the `context` array, resolves all literal or data-bound values, and constructs the `context` object.
 
-### 5.3. The `clientUiCapabilities` Message
-
-This message is sent by the client to inform the server about its capabilities. This is crucial for supporting different component sets, allowing the server to generate UI that is compatible with the client. The message must contain exactly one of the following properties: `catalogUri` or `dynamicCatalog`.
-
-- `catalogUri`: A URI pointing to a predefined component catalog schema that the client supports.
-- `dynamicCatalog`: An inline JSON object, conforming to the Catalog Schema, that defines the client's supported components. This is useful for development or for clients with highly custom component sets.
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    Client->>+Server: POST /event (clientUiCapabilities with catalog)
-    Server-->>-Client: HTTP 200 OK
-    Note over Server: Server now knows which catalog to use.
-    Server->>+Client: SSE Connection (JSONL Stream using client's catalog)
-    Client-->>-Server: (Renders UI based on custom/specified catalog)
-```
-
-#### `dynamicCatalog`
-
-The `dynamicCatalog` property allows the client to send an inline JSON object that defines its entire supported component set. This is especially useful for development or for clients with highly custom components. The object must conform to the Catalog Schema, containing `components`.
-
-- `components`: An object where each key is the name of a component (e.g., `"MyCustomCard"`) and the value is a valid JSON object schema defining the properties for that component.
-
-**Example of a `clientUiCapabilities` message:**
-
-```json
-{
-  "clientUiCapabilities": {
-    "dynamicCatalog": {
-      "components": {
-        "MyCustomCard": {
-          "type": "object",
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "child": {
-              "type": "string"
-            }
-          },
-          "required": ["title", "child"]
-        }
-      }
-    }
-  }
-}
-```
-
-### 5.4. The `error` Message
+### 5.3. The `error` Message
 
 This message provides a feedback mechanism for the server. It is sent when the client encounters an error, for instance, during UI rendering or data binding. The content of the object is flexible and can contain any relevant error information.
 
-### 5.5. Event Flow Example (`userAction`)
+### 5.4. Event Flow Example (`userAction`)
 
 1.  **Component Definition** (from `surfaceUpdate`):
 

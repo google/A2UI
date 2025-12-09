@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 public final class A2uiExtension {
   private static final Logger logger = Logger.getLogger(A2uiExtension.class.getName());
 
-  public static final String A2UI_EXTENSION_URI = "https://a2ui.org/a2a-extension/v0.1";
+  public static final String A2UI_EXTENSION_URI = "https://a2ui.org/a2a-extension/a2ui/v0.8";
   public static final String MIME_TYPE_KEY = "mimeType";
   public static final String A2UI_MIME_TYPE = "application/json+a2ui";
 

@@ -6,13 +6,13 @@ This extension implements the A2UI (Agent-to-Agent UI) spec, a format for agents
 
 ## Extension URI
 
-The URI of this extension is https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/docs/a2ui_extension_specification.md
+The URI of this extension is https://a2ui.org/a2a-extension/a2ui/v0.8
 
 This is the only URI accepted for this extension.
 
 ## Core Concepts
 
-The A2UI extension is built on three main concepts:
+The A2UI extension is built on the following main concepts:
 
 Surfaces: A "Surface" is a distinct, controllable region of the client's UI. The spec uses a surfaceId to direct updates to specific surfaces (e.g., a main content area, a side panel, or a new chat bubble). This allows a single agent stream to manage multiple UI areas independently.
 
@@ -24,28 +24,36 @@ Catalog Definition Schema: A standard format for defining a library of component
 
 Server-to-Client Message Schema: The core wire format for messages sent from the agent to the client (e.g., surfaceUpdate, dataModelUpdate).
 
-Client-to-Server Event Schema: The core wire format for messages sent from the client to the agent (e.g., userAction, clientUiCapabilities).
+Client-to-Server Event Schema: The core wire format for messages sent from the client to the agent (e.g., userAction).
 
-Agent Capability Declaration
-Agents advertise their A2UI capabilities in their AgentCard within the AgentCapabilities.extensions list. The params object defines the agent's specific UI support, including which component catalogs it can generate and whether it accepts dynamic catalogs from the client.
+Client Capabilities: The client sends its capabilities to the server in an `a2uiClientCapabilities` object. This object is included in the `metadata` field of every A2A `Message` sent from the client to the server.This object allows the client to declare which catalogs it supports.
+
+## Agent Card details
+
+Agents advertise their A2UI capabilities in their AgentCard within the `AgentCapabilities.extensions` list. The `params` object defines the agent's specific UI support.
 
 Example AgentExtension block:
 
-Parameter Definitions
-params.supportedSchemas: (REQUIRED) An array of strings, where each string is a URI pointing to a component Catalog Definition Schema that the agent can generate. This could include the default catalog or custom catalogs or both.
+```json
+{
+  "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
+  "description": "Ability to render A2UI",
+  "required": false,
+  "params": {
+    "supportedCatalogIds": [
+      "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json",
+      "https://my-company.com/a2ui/v0.8/my_custom_catalog.json"
+    ],
+    "acceptsInlineCatalogs": true
+  }
+}
+```
 
-params.acceptsDynamicSchemas: (OPTIONAL) A boolean indicating if the agent can accept a clientUiCapabilities message containing a dynamicCatalog. If omitted, this defaults to false.
+### Parameter Definitions
+- `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is a URI pointing to a component Catalog Definition Schema that the agent can generate.
+- `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
-Client Capability Declaration
-The client-to-server spec includes a clientUiCapabilities message. If a client wishes to use a specific catalog (other than the server's default) or provide its own dynamic catalog, it MUST send this message after the connection is established and before the first user prompt.
-
-This message allows the client to specify either:
-
-A catalogUri: A URI for a known, shared catalog (which must be one of the supportedSchemas from the agent).
-
-A dynamicCatalog: An inline Catalog Definition Schema object. This is only allowed if the agent's acceptsDynamicSchemas capability is true.
-
-Extension Activation
+## Extension Activation
 Clients indicate their desire to use the A2UI extension by specifying it via the transport-defined A2A extension activation mechanism.
 
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.
@@ -53,3 +61,29 @@ For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTT
 For gRPC, this is indicated via the X-A2A-Extensions metadata value.
 
 Activating this extension implies that the server can send A2UI-specific messages (like surfaceUpdate) and the client is expected to send A2UI-specific events (like userAction).
+
+## Data Encoding
+
+A2UI messages are encoded as an A2A `DataPart`.
+
+To identify a `DataPart` as containing A2UI data, it must have the following metadata:
+
+- `mimeType`: `application/json+a2ui`
+
+The `data` field of the `DataPart` contains the A2UI JSON message (e.g., `surfaceUpdate`, `userAction`).
+
+Example A2UI DataPart:
+
+```json
+{
+  "data": {
+    "beginRendering": {
+      "surfaceId": "outlier_stores_map_surface",
+    }
+  },
+  "kind": "data",
+  "metadata": {
+    "mimeType": "application/json+a2ui"
+  }
+}
+```

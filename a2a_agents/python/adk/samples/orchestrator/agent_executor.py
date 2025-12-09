@@ -14,7 +14,10 @@
 
 import asyncio
 import logging
+import json
 from typing import List, Optional, override
+from google.adk.agents.invocation_context import new_invocation_context_id
+from google.adk.events.event_actions import EventActions
 
 from a2a.server.agent_execution import RequestContext
 from google.adk.agents.llm_agent import LlmAgent
@@ -28,8 +31,7 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutor,
 )
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension
-from agent import STANDARD_CATALOG_URI
-from a2ui.a2ui_extension import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI
+from a2ui.a2ui_extension import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI, STANDARD_CATALOG_ID, SUPPORTED_CATALOG_IDS_KEY, get_a2ui_agent_extension, A2UI_CLIENT_CAPABILITIES_KEY
 from google.adk.a2a.converters import event_converter
 from a2a.server.events import Event as A2AEvent
 from google.adk.events.event import Event
@@ -83,6 +85,20 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
         )
 
         for a2a_event in a2a_events:
+            # Try to populate subagent agent card if available.
+            subagent_card = None
+            if (active_subagent_name := event.author):
+                # We need to find the subagent by name
+                if (subagent := next((sub for sub in invocation_context.agent.sub_agents if sub.name == active_subagent_name), None)):
+                    try:
+                        subagent_card = json.loads(subagent.description)
+                    except Exception:
+                        logger.warning(f"Failed to parse agent description for {active_subagent_name}")
+            if subagent_card:
+                if a2a_event.metadata is None:
+                    a2a_event.metadata = {}
+                a2a_event.metadata["a2a_subagent"] = subagent_card
+                        
             for a2a_part in a2a_event.status.message.parts:
                 if (
                     is_a2ui_part(a2a_part)
@@ -111,28 +127,36 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
             default_output_modes=OrchestratorAgent.SUPPORTED_CONTENT_TYPES,
             capabilities=AgentCapabilities(
                 streaming=True,
-                extensions=[
-                    AgentExtension(
-                        uri=self._base_url,
-                        description="Provides a declarative a2ui UI JSON structure in messages.",
-                        params={
-                            "supportedCatalogUri": [
-                                STANDARD_CATALOG_URI,
-                            ],
-                            "acceptsCustomCatalogsInline": True,
-                        },
-                    )
-                ],
+                extensions=[get_a2ui_agent_extension()],
             ),
             skills=[],
         )
 
     @override
-    async def _handle_request(
+    async def _prepare_session(
         self,
         context: RequestContext,
-        event_queue: EventQueue,
+        run_request: AgentRunRequest,
+        runner: Runner,
     ):
-        try_activate_a2ui_extension(context)
+        session = await super()._prepare_session(context, run_request, runner)
         
-        await super()._handle_request(context, event_queue)
+        if try_activate_a2ui_extension(context):
+            client_capabilities = context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY) if context.message and context.message.metadata else None
+            
+            await runner.session_service.append_event(
+                    session,
+                    Event(
+                        invocation_id=new_invocation_context_id(),
+                        author="system",
+                        actions=EventActions(
+                            state_delta={ 
+                                # These values are used to configure A2UI messages to remote agent calls         
+                                "use_ui": True,
+                                "client_capabilities": client_capabilities 
+                            }
+                        ),
+                    ),
+                )
+            
+        return session

@@ -3,7 +3,11 @@ name: Angular build and test
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'a2a_agents/python/adk/samples/**'
   pull_request:
+    paths-ignore:
+      - 'a2a_agents/python/adk/samples/**'
 
 jobs:
   build-and-test:
@@ -25,30 +29,30 @@ jobs:
         working-directory: ./renderers/lit
         run: npm run build
 
+      - name: Install renderer deps
+        working-directory: ./renderers/angular
+        run: npm i
+
+      - name: Build Angular renderer
+        working-directory: ./renderers/angular
+        run: npm run build
+
       - name: Install top-level deps
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm i
-
-      - name: Install lib deps
-        working-directory: ./angular/projects/lib
-        run: npm i
-
-      - name: Build lib
-        working-directory: ./angular
-        run: npm run build lib
 
       - name: Build contact sample
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm run build contact
 
       - name: Build restaurant sample
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm run build restaurant
 
       - name: Build Rizzchart sample
-        working-directory: ./angular
+        working-directory: ./samples/client/angular
         run: npm run build rizzcharts
 
-      - name: Build A2A chat canvas demo
-        working-directory: ./angular
-        run: npm run build a2a-chat-canvas-demo
+      - name: Build Orchestrator
+        working-directory: ./samples/client/angular
+        run: npm run build orchestrator

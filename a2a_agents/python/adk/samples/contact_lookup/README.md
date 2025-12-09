@@ -20,6 +20,13 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
 
    ```bash
    echo "GEMINI_API_KEY=your_api_key_here" > .env
+   ```
+
+3. Run the server:
+
+   ```bash
+   uv run .
+   ```
 
 
 ## Disclaimer

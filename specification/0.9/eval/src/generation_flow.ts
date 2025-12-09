@@ -41,19 +41,17 @@ export const componentGeneratorFlow = ai.defineFlow(
 The output MUST be a series of JSON objects, each enclosed in a markdown code block (or a single block with multiple objects).
 
 Standard Instructions:
-1. Generate a 'updateComponents' message with surfaceId 'main' and catalogId 'https://a2ui.dev/specification/0.9/standard_catalog_definition.json' containing the requested UI.
-2. Ensure all component children are referenced by ID (using the 'children' or 'child' property with IDs), NOT nested inline as objects.
-3. If the request involves data binding, you may also generate 'updateDataModel' messages.
-4. Among the 'updateComponents' messages in the output, there MUST be one root component with id: 'root'.
-5. Components need to be nested within a root layout container (Column, Row). No need to add an extra container if the root is already a layout container.
-6. There shouldn't be any orphaned components: no components should be generated which don't have a parent, except for the root component.
-7. Do NOT output a list of lists (e.g. [[...]]). Output individual JSON objects separated by newlines.
-8. STRICTLY follow the JSON Schemas. Do NOT add any properties that are not defined in the schema. Ensure ALL required properties are present.
-9. Do NOT invent data bindings or action contexts. Only use them if the prompt explicitly asks for them.
-10. Read the 'description' field of each component in the schema carefully. It contains critical usage instructions (e.g. regarding labels, single child limits, and layout behavior) that you MUST follow.
-11. **CRITICAL: 'weight' is a TOP-LEVEL property.** Do NOT put 'weight' inside 'props'. It must be a sibling of 'id' and 'props'.
-    INCORRECT: { "id": "...", "props": { "component": "...", "weight": 1 } }
-    CORRECT:   { "id": "...", "weight": 1, "props": { "component": "..." } }
+1. Generate a 'createSurface' message with surfaceId 'main' and catalogId 'https://a2ui.dev/specification/0.9/standard_catalog_definition.json'.
+2. Generate a 'updateComponents' message with surfaceId 'main' containing the requested UI.
+3. Ensure all component children are referenced by ID (using the 'children' or 'child' property with IDs), NOT nested inline as objects.
+4. If the request involves data binding, you may also generate 'updateDataModel' messages.
+5. Among the 'updateComponents' messages in the output, there MUST be one root component with id: 'root'.
+6. Components need to be nested within a root layout container (Column, Row). No need to add an extra container if the root is already a layout container.
+7. There shouldn't be any orphaned components: no components should be generated which don't have a parent, except for the root component.
+8. Do NOT output a list of lists (e.g. [[...]]). Output individual JSON objects separated by newlines.
+9. STRICTLY follow the JSON Schemas. Do NOT add any properties that are not defined in the schema. Ensure ALL required properties are present.
+10. Do NOT invent data bindings or action contexts. Only use them if the prompt explicitly asks for them.
+11. Read the 'description' field of each component in the schema carefully. It contains critical usage instructions (e.g. regarding labels, single child limits, and layout behavior) that you MUST follow.
 12. Do NOT define components inline inside 'child' or 'children'. Always use a string ID referencing a separate component definition.
 13. Do NOT use a 'style' property. Use standard properties like 'alignment', 'distribution', 'usageHint', etc.
 14. Do NOT invent properties that are not in the schema. Check the 'properties' list for each component type.

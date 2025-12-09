@@ -1,4 +1,4 @@
-import Ajv from "ajv";
+import Ajv from "ajv/dist/2020";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
@@ -44,11 +44,43 @@ export class Validator {
       const components = result.components;
 
       // AJV Validation
-      if (this.validateFn) {
-        for (const component of components) {
-          if (!this.validateFn(component)) {
+      // AJV Validation
+      if (this.ajv) {
+        for (const message of components) {
+          // Smart validation: check which key is present and validate against that specific definition
+          // to avoid noisy "oneOf" errors.
+          let validated = false;
+          const schemaUri =
+            "https://a2ui.dev/specification/0.9/server_to_client.json";
+
+          if (message.createSurface) {
+            validated = this.ajv.validate(
+              `${schemaUri}#/$defs/CreateSurfaceMessage`,
+              message
+            );
+          } else if (message.updateComponents) {
+            validated = this.ajv.validate(
+              `${schemaUri}#/$defs/UpdateComponentsMessage`,
+              message
+            );
+          } else if (message.updateDataModel) {
+            validated = this.ajv.validate(
+              `${schemaUri}#/$defs/UpdateDataModelMessage`,
+              message
+            );
+          } else if (message.deleteSurface) {
+            validated = this.ajv.validate(
+              `${schemaUri}#/$defs/DeleteSurfaceMessage`,
+              message
+            );
+          } else {
+            // Fallback to top-level validation if no known key matches (or if it's empty/invalid structure)
+            validated = this.validateFn(message);
+          }
+
+          if (!validated) {
             errors.push(
-              ...(this.validateFn.errors || []).map(
+              ...(this.ajv.errors || []).map(
                 (err: any) => `${err.instancePath} ${err.message}`
               )
             );
@@ -109,10 +141,18 @@ export class Validator {
   private validateCustom(messages: any[], errors: string[]) {
     let hasUpdateComponents = false;
     let hasRootComponent = false;
+    const createdSurfaces = new Set<string>();
 
     for (const message of messages) {
       if (message.updateComponents) {
         hasUpdateComponents = true;
+        const surfaceId = message.updateComponents.surfaceId;
+        if (surfaceId && !createdSurfaces.has(surfaceId)) {
+          errors.push(
+            `updateComponents message received for surface '${surfaceId}' before createSurface message.`
+          );
+        }
+
         this.validateUpdateComponents(message.updateComponents, errors);
 
         // Check for root component in this message
@@ -122,6 +162,11 @@ export class Validator {
               hasRootComponent = true;
             }
           }
+        }
+      } else if (message.createSurface) {
+        this.validateCreateSurface(message.createSurface, errors);
+        if (message.createSurface.surfaceId) {
+          createdSurfaces.add(message.createSurface.surfaceId);
         }
       } else if (message.updateDataModel) {
         this.validateUpdateDataModel(message.updateDataModel, errors);
@@ -143,6 +188,21 @@ export class Validator {
   }
 
   // ... Copied helper functions ...
+  private validateCreateSurface(data: any, errors: string[]) {
+    if (data.surfaceId === undefined) {
+      errors.push("createSurface must have a 'surfaceId' property.");
+    }
+    if (data.catalogId === undefined) {
+      errors.push("createSurface must have a 'catalogId' property.");
+    }
+    const allowed = ["surfaceId", "catalogId"];
+    for (const key in data) {
+      if (!allowed.includes(key)) {
+        errors.push(`createSurface has unexpected property: ${key}`);
+      }
+    }
+  }
+
   private validateDeleteSurface(data: any, errors: string[]) {
     if (data.surfaceId === undefined) {
       errors.push("DeleteSurface must have a 'surfaceId' property.");
@@ -173,6 +233,27 @@ export class Validator {
         }
         componentIds.add(id);
       }
+
+      // Smart Component Validation
+      if (this.ajv && c.component) {
+        const componentType = c.component;
+        const schemaUri =
+          "https://a2ui.dev/specification/0.9/standard_catalog_definition.json";
+
+        const defRef = `${schemaUri}#/$defs/${componentType}`;
+
+        const valid = this.ajv.validate(defRef, c);
+        if (!valid) {
+          errors.push(
+            ...(this.ajv.errors || []).map(
+              (err: any) =>
+                `${err.instancePath} ${err.message} (in component '${
+                  c.id || "unknown"
+                }')`
+            )
+          );
+        }
+      }
     }
 
     for (const component of data.components) {
@@ -181,57 +262,22 @@ export class Validator {
   }
 
   private validateUpdateDataModel(data: any, errors: string[]) {
-    if (data.surfaceId === undefined) {
-      errors.push("updateDataModel must have a 'surfaceId' property.");
-    }
+    // Schema validation handles types, required fields (surfaceId, op), and extra properties.
+    // We only need to validate the conditional requirement of 'value' based on 'op'.
 
-    const allowedTopLevel = ["surfaceId", "path", "contents"];
-    for (const key in data) {
-      if (!allowedTopLevel.includes(key)) {
-        errors.push(`updateDataModel has unexpected property: ${key}`);
+    if (data.op === "remove") {
+      if (data.value !== undefined) {
+        errors.push(
+          "updateDataModel 'value' property must not be present when op is 'remove'."
+        );
       }
-    }
-
-    if (
-      typeof data.contents !== "object" ||
-      data.contents === null ||
-      Array.isArray(data.contents)
-    ) {
-      errors.push("updateDataModel 'contents' property must be an object.");
-      return;
-    }
-  }
-
-
-
-  private validateBoundValue(
-    prop: any,
-    propName: string,
-    componentId: string,
-    componentType: string,
-    errors: string[]
-  ) {
-    if (
-      typeof prop === "string" ||
-      typeof prop === "number" ||
-      typeof prop === "boolean" ||
-      Array.isArray(prop)
-    ) {
-      return;
-    }
-
-    if (typeof prop !== "object" || prop === null) {
-      errors.push(
-        `Component '${componentId}' of type '${componentType}' property '${propName}' must be a primitive or an object.`
-      );
-      return;
-    }
-
-    const keys = Object.keys(prop);
-    if (keys.length !== 1 || keys[0] !== "path") {
-      errors.push(
-        `Component '${componentId}' of type '${componentType}' property '${propName}' object must have exactly one key: 'path'. Found: ${keys.join(", ")}`
-      );
+    } else {
+      // op is 'add' or 'replace' (schema validates enum values)
+      if (data.value === undefined) {
+        errors.push(
+          `updateDataModel 'value' property is required when op is '${data.op}'.`
+        );
+      }
     }
   }
 
@@ -246,17 +292,9 @@ export class Validator {
       return;
     }
 
-    if (!component.props || typeof component.props !== "object") {
-      errors.push(`Component '${id}' is missing 'props' object.`);
-      return;
-    }
-
-    const properties = component.props;
-    const componentType = properties.component;
+    const componentType = component.component;
     if (!componentType || typeof componentType !== "string") {
-      errors.push(
-        `Component '${id}' is missing 'component' property in 'props'.`
-      );
+      errors.push(`Component '${id}' is missing 'component' property.`);
       return;
     }
 
@@ -277,34 +315,34 @@ export class Validator {
       case "Row":
       case "Column":
       case "List":
-        if (properties.children) {
-          if (Array.isArray(properties.children)) {
-            checkRefs(properties.children);
+        if (component.children) {
+          if (Array.isArray(component.children)) {
+            checkRefs(component.children);
           } else if (
-            typeof properties.children === "object" &&
-            properties.children !== null
+            typeof component.children === "object" &&
+            component.children !== null
           ) {
-            if (properties.children.componentId) {
-              checkRefs([properties.children.componentId]);
+            if (component.children.componentId) {
+              checkRefs([component.children.componentId]);
             }
           }
         }
         break;
       case "Card":
-        checkRefs([properties.child]);
+        checkRefs([component.child]);
         break;
       case "Tabs":
-        if (properties.tabItems && Array.isArray(properties.tabItems)) {
-          properties.tabItems.forEach((tab: any) => {
+        if (component.tabItems && Array.isArray(component.tabItems)) {
+          component.tabItems.forEach((tab: any) => {
             checkRefs([tab.child]);
           });
         }
         break;
       case "Modal":
-        checkRefs([properties.entryPointChild, properties.contentChild]);
+        checkRefs([component.entryPointChild, component.contentChild]);
         break;
       case "Button":
-        checkRefs([properties.child]);
+        checkRefs([component.child]);
         break;
     }
   }

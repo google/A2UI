@@ -1,0 +1,18 @@
+<div class="app-container">
+  <div class="main-sidebar">
+    <h1 class="app-title">A2UI Gallery</h1>
+    <div class="nav-buttons">
+      <div class="nav-btn" [class.active]="currentView === 'library'" (click)="setView('library')">
+        <span>📚</span> Library
+      </div>
+      <div class="nav-btn" [class.active]="currentView === 'gallery'" (click)="setView('gallery')">
+        <span>🎨</span> Gallery
+      </div>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <app-library *ngIf="currentView === 'library'"></app-library>
+    <app-gallery *ngIf="currentView === 'gallery'"></app-gallery>
+  </div>
+</div>
