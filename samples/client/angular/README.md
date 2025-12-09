@@ -20,4 +20,5 @@ NOTE: [For the rizzcharts app](../../../a2a_agents/python/adk/samples/rizzcharts
   * `npm start -- restaurant`
   * `npm start -- contact`
   * `npm start -- rizzcharts`
+  * `npm start -- gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
