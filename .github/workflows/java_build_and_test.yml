@@ -1,0 +1,34 @@
+name: Java sample build and test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'a2a_agents/java/**'
+  pull_request:
+    paths:
+      - 'a2a_agents/java/**'
+
+jobs:
+  build-and-test:
+    name: Build and test Java agent sample
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        working-directory: a2a_agents/java
+        run: mvn clean install
+
+      - name: Run Tests
+        working-directory: a2a_agents/java
+        run: mvn test
