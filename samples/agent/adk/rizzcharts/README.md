@@ -13,7 +13,7 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
 1. Navigate to the samples directory:
 
    ```bash
-   cd a2a_agents/python/adk/samples/rizzcharts
+   cd samples/agent/adk/rizzcharts
    ```
 
 2. Create an environment file with your API key:

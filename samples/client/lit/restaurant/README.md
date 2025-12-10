@@ -9,6 +9,6 @@ This is a UI to generate and visualize A2UI responses.
 ## Running
 
 1. Install the dependencies: `npm i`
-2. Run the [A2A server](../../a2a_agents/python/adk/samples/restaurant_finder/)
+2. Run the [A2A server](../../../agent/adk/restaurant_finder/)
 3. Run the dev server: `npm run dev`
 4. Open http://localhost:5173/

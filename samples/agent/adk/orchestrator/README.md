@@ -28,24 +28,24 @@ Subagents are configured using RemoteA2aAgent which translates ADK events to A2A
    Open a new terminal for each command
 
    ```bash
-   cd a2a_agents/python/adk/samples/restaurant_finder
+   cd samples/agent/adk/restaurant_finder
    uv run . --port=10003
    ```
 
    ```bash
-   cd a2a_agents/python/adk/samples/contact_lookup
+   cd samples/agent/adk/contact_lookup
    uv run . --port=10004
    ```
 
    ```bash
-   cd a2a_agents/python/adk/samples/rizzcharts
+   cd samples/agent/adk/rizzcharts
    uv run . --port=10005
    ```
 
 3. Run the orchestrator agent:
 
    ```bash
-   cd a2a_agents/python/adk/samples/orchestrator
+   cd samples/agent/adk/orchestrator
    uv run . --port=10002 --subagent_urls=http://localhost:10003 --subagent_urls=http://localhost:10004 --subagent_urls=http://localhost:10005
    ```
 
