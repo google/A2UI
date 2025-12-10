@@ -5,6 +5,7 @@
   "description": "A2UI Lit Samples",
   "workspaces": [
     "contact",
-    "restaurant"
+    "restaurant",
+    "shell"
   ]
 }
