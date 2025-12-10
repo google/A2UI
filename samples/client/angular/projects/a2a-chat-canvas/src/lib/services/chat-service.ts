@@ -21,7 +21,7 @@ import { UiAgent, UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-
 import { extractA2aPartsFromResponse } from '@a2a_chat_canvas/utils/a2a';
 import { extractA2uiDataParts } from '@a2a_chat_canvas/utils/a2ui';
 import { convertPartToUiMessageContent } from '@a2a_chat_canvas/utils/ui-message-utils';
-import { ModelProcessor, DispatchedEvent } from '@a2ui/angular';
+import { MessageProcessor, DispatchedEvent } from '@a2ui/angular';
 import { inject, Injectable, resource, signal } from '@angular/core';
 import { v4 as uuid } from 'uuid';
 
@@ -36,7 +36,7 @@ export class ChatService {
   /** Service for interacting with the A2A (Agent-to-Agent) API. */
   private readonly a2aService = inject(A2A_SERVICE);
   /** Processor for handling A2UI messages and managing UI state. */
-  private readonly a2uiModelProcessor = inject(ModelProcessor);
+  private readonly a2uiMessageProcessor = inject(MessageProcessor);
   /** Resolvers for converting A2A parts to UI message content. */
   private readonly partResolvers = inject(PART_RESOLVERS);
 
@@ -63,17 +63,17 @@ export class ChatService {
   readonly history = signal<UiMessage[]>([]);
   /** Signal indicating whether an A2A stream is currently open. */
   readonly isA2aStreamOpen = signal(false);
-  /** Signal holding the current A2UI surfaces managed by the A2UI ModelProcessor. */
-  readonly a2uiSurfaces = signal(new Map(this.a2uiModelProcessor.getSurfaces()));
+  /** Signal holding the current A2UI surfaces managed by the A2UI MessageProcessor. */
+  readonly a2uiSurfaces = signal(new Map(this.a2uiMessageProcessor.getSurfaces()));
 
   /**
-   * Subscribes to events dispatched from the A2UI ModelProcessor.
+   * Subscribes to events dispatched from the A2UI MessageProcessor.
    * This is a TEMPORARY handler for user actions. Clients should override this
    * to implement their own event handling logic, potentially dispatching
    * events to their own state management or making different API calls.
    */
   constructor() {
-    this.a2uiModelProcessor.events.subscribe(async (event: DispatchedEvent) => {
+    this.a2uiMessageProcessor.events.subscribe(async (event: DispatchedEvent) => {
       try {
         // TODO: Replace this with a more robust event handling mechanism.
         // Currently, it just sends the event message back to the agent.
@@ -155,8 +155,8 @@ export class ChatService {
     }));
 
     // Let A2UI Renderer process the A2UI data parts in agent response.
-    this.a2uiModelProcessor.processMessages(extractA2uiDataParts(agentResponseParts));
-    this.a2uiSurfaces.set(new Map(this.a2uiModelProcessor.getSurfaces()));
+    this.a2uiMessageProcessor.processMessages(extractA2uiDataParts(agentResponseParts));
+    this.a2uiSurfaces.set(new Map(this.a2uiMessageProcessor.getSurfaces()));
   }
 
   /**

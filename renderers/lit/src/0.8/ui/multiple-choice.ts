@@ -18,7 +18,7 @@ import { html, css, PropertyValues, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
-import { A2UIModelProcessor } from "../data/model-processor.js";
+import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
@@ -74,7 +74,7 @@ export class MultipleChoice extends Root {
       this.component,
       this.selections.path,
       value,
-      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
     );
   }
 
@@ -93,7 +93,7 @@ export class MultipleChoice extends Root {
     const selectionValue = this.processor.getData(
       this.component,
       this.selections.path!,
-      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
     );
 
     if (!Array.isArray(selectionValue)) {

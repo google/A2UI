@@ -20,13 +20,13 @@ export * as Primitives from "./types/primitives.js";
 export * as Styles from "./styles/index.js";
 import * as Guards from "./data/guards.js";
 
-import { create as createSignalA2UIModelProcessor } from "./data/signal-model-processor.js";
-import { A2UIModelProcessor } from "./data/model-processor.js";
+import { create as createSignalA2uiMessageProcessor } from "./data/signal-model-processor.js";
+import { A2uiMessageProcessor } from "./data/model-processor.js";
 import A2UIClientEventMessage from "./schemas/server_to_client_with_standard_catalog.json" with { type: "json" };
 
 export const Data = {
-  createSignalA2UIModelProcessor,
-  A2UIModelProcessor,
+  createSignalA2uiMessageProcessor,
+  A2uiMessageProcessor,
   Guards,
 };
 

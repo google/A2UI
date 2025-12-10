@@ -24,7 +24,7 @@ export interface DispatchedEvent {
 }
 
 @Injectable({ providedIn: 'root' })
-export class ModelProcessor extends Data.A2UIModelProcessor {
+export class MessageProcessor extends Data.A2uiMessageProcessor {
   readonly events = new Subject<DispatchedEvent>();
 
   override setData(

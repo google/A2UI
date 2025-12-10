@@ -16,7 +16,7 @@
 
 import { Types, Primitives } from '@a2ui/web-lib/0.8';
 import { Directive, inject, input } from '@angular/core';
-import { ModelProcessor } from '../data';
+import { MessageProcessor } from '../data';
 import { Theme } from './theming';
 
 let idCounter = 0;
@@ -27,7 +27,7 @@ let idCounter = 0;
   },
 })
 export abstract class DynamicComponent<T extends Types.AnyComponentNode = Types.AnyComponentNode> {
-  protected readonly processor = inject(ModelProcessor);
+  protected readonly processor = inject(MessageProcessor);
   protected readonly theme = inject(Theme);
 
   readonly surfaceId = input.required<Types.SurfaceID | null>();

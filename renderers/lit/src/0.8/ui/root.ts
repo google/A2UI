@@ -28,7 +28,7 @@ import {
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { effect } from "signal-utils/subtle/microtask-effect";
-import { A2UIModelProcessor } from "../data/model-processor.js";
+import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { StringValue } from "../types/primitives.js";
 import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
 import { themeContext } from "./context/theme.js";
@@ -57,7 +57,7 @@ export class Root extends SignalWatcher(LitElement) {
   accessor childComponents: AnyComponentNode[] | null = null;
 
   @property({ attribute: false })
-  accessor processor: A2UIModelProcessor | null = null;
+  accessor processor: A2uiMessageProcessor | null = null;
 
   @property()
   accessor dataContextPath: string = "";

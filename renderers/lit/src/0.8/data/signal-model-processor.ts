@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { A2UIModelProcessor } from "./model-processor.js";
+import { A2uiMessageProcessor } from "./model-processor.js";
 
 import { SignalArray } from "signal-utils/array";
 import { SignalMap } from "signal-utils/map";
@@ -22,7 +22,7 @@ import { SignalObject } from "signal-utils/object";
 import { SignalSet } from "signal-utils/set";
 
 export function create() {
-  return new A2UIModelProcessor({
+  return new A2uiMessageProcessor({
     arrayCtor: SignalArray as unknown as ArrayConstructor,
     mapCtor: SignalMap as unknown as MapConstructor,
     objCtor: SignalObject as unknown as ObjectConstructor,
