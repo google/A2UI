@@ -58,6 +58,7 @@ export interface Image {
     | "mediumFeature"
     | "largeFeature"
     | "header";
+  fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
 }
 
 export interface Icon {
