@@ -19,7 +19,7 @@ import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { NumberValue, StringValue } from "../types/primitives";
 import { ResolvedTextField } from "../types/types.js";
-import { A2UIModelProcessor } from "../data/model-processor.js";
+import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
@@ -81,7 +81,7 @@ export class Slider extends Root {
       this.component,
       this.value.path,
       value,
-      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
     );
   }
 
@@ -139,7 +139,7 @@ export class Slider extends Root {
         const textValue = this.processor.getData(
           this.component,
           this.value.path,
-          this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+          this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
 
         if (textValue === null) {

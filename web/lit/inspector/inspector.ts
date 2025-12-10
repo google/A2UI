@@ -415,7 +415,7 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
     this.#lastItem = globalThis.localStorage.getItem(LAST_ITEM_KEY) ?? "";
   }
 
-  #processor = v0_8.Data.createSignalA2UIModelProcessor();
+  #processor = v0_8.Data.createSignalA2uiMessageProcessor();
 
   #renderSurfacesOrMessages() {
     if (this.#requesting) {

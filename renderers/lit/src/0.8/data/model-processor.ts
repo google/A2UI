@@ -28,7 +28,7 @@ import {
   Surface,
   SurfaceID,
   SurfaceUpdateMessage,
-  ModelProcessor,
+  MessageProcessor,
   ValueMap,
   DataObject,
 } from "../types/types";
@@ -61,7 +61,7 @@ import {
  * Processes and consolidates A2UIProtocolMessage objects into a structured,
  * hierarchical model of UI surfaces.
  */
-export class A2UIModelProcessor implements ModelProcessor {
+export class A2uiMessageProcessor implements MessageProcessor {
   static readonly DEFAULT_SURFACE_ID = "@default";
 
   #mapCtor: MapConstructor = Map;
@@ -131,7 +131,7 @@ export class A2UIModelProcessor implements ModelProcessor {
   getData(
     node: AnyComponentNode,
     relativePath: string,
-    surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
+    surfaceId = A2uiMessageProcessor.DEFAULT_SURFACE_ID
   ): DataValue | null {
     const surface = this.#getOrCreateSurface(surfaceId);
     if (!surface) return null;
@@ -154,7 +154,7 @@ export class A2UIModelProcessor implements ModelProcessor {
     node: AnyComponentNode | null,
     relativePath: string,
     value: DataValue,
-    surfaceId = A2UIModelProcessor.DEFAULT_SURFACE_ID
+    surfaceId = A2uiMessageProcessor.DEFAULT_SURFACE_ID
   ): void {
     if (!node) {
       console.warn("No component node set");

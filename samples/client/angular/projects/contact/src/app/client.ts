@@ -14,13 +14,13 @@
  limitations under the License.
  */
 
-import { A2AServerPayload, ModelProcessor } from '@a2ui/angular';
+import { A2AServerPayload, MessageProcessor } from '@a2ui/angular';
 import { Types } from '@a2ui/web-lib/0.8';
 import { Injectable, inject, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class Client {
-  private processor = inject(ModelProcessor);
+  private processor = inject(MessageProcessor);
 
   readonly isLoading = signal(false);
 

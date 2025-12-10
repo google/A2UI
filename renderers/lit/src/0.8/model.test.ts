@@ -45,11 +45,11 @@ const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
   return value;
 };
 
-describe("A2UIModelProcessor", () => {
-  let processor = new v0_8.Data.A2UIModelProcessor();
+describe("A2uiMessageProcessor", () => {
+  let processor = new v0_8.Data.A2uiMessageProcessor();
 
   beforeEach(() => {
-    processor = new v0_8.Data.A2UIModelProcessor();
+    processor = new v0_8.Data.A2uiMessageProcessor();
   });
 
   describe("Basic Initialization and State", () => {

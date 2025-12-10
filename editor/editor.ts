@@ -450,7 +450,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   }
   #renderMode: RenderMode = "surfaces";
 
-  #processor = v0_8.Data.createSignalA2UIModelProcessor();
+  #processor = v0_8.Data.createSignalA2uiMessageProcessor();
   #a2uiClient = new A2UIClient();
 
   constructor() {

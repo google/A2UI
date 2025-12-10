@@ -20,7 +20,7 @@ import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
 import { ResolvedTextField } from "../types/types";
-import { A2UIModelProcessor } from "../data/model-processor.js";
+import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { extractStringValue } from "./utils/utils.js";
 import { structuralStyles } from "./styles.js";
@@ -75,7 +75,7 @@ export class TextField extends Root {
       this.component,
       this.text.path,
       value,
-      this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
     );
   }
 

@@ -36,7 +36,7 @@ import {
 } from "./components";
 import { StringValue } from "./primitives";
 
-export type ModelProcessor = {
+export type MessageProcessor = {
   getSurfaces(): ReadonlyMap<string, Surface>;
   clearSurfaces(): void;
   processMessages(messages: ServerToClientMessage[]): void;
@@ -454,24 +454,24 @@ export type ResolvedSlider = Slider;
 export interface ResolvedRow {
   children: AnyComponentNode[];
   distribution?:
-    | "start"
-    | "center"
-    | "end"
-    | "spaceBetween"
-    | "spaceAround"
-    | "spaceEvenly";
+  | "start"
+  | "center"
+  | "end"
+  | "spaceBetween"
+  | "spaceAround"
+  | "spaceEvenly";
   alignment?: "start" | "center" | "end" | "stretch";
 }
 
 export interface ResolvedColumn {
   children: AnyComponentNode[];
   distribution?:
-    | "start"
-    | "center"
-    | "end"
-    | "spaceBetween"
-    | "spaceAround"
-    | "spaceEvenly";
+  | "start"
+  | "center"
+  | "end"
+  | "spaceBetween"
+  | "spaceAround"
+  | "spaceEvenly";
   alignment?: "start" | "center" | "end" | "stretch";
 }
 

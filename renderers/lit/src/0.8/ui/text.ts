@@ -20,7 +20,7 @@ import { markdown } from "./directives/directives.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
-import { A2UIModelProcessor } from "../data/model-processor.js";
+import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../index.js";
@@ -60,7 +60,7 @@ export class Text extends Root {
         const value = this.processor.getData(
           this.component,
           this.text.path,
-          this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+          this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
 
         if (value !== null && value !== undefined) {

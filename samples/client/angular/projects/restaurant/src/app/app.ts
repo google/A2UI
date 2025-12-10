@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { ModelProcessor, Surface } from '@a2ui/angular';
+import { MessageProcessor, Surface } from '@a2ui/angular';
 import { Types } from '@a2ui/web-lib/0.8';
 import { Component, inject, signal } from '@angular/core';
 import { Client } from './client';
@@ -27,7 +27,7 @@ import { Client } from './client';
 })
 export class App {
   protected client = inject(Client);
-  protected processor = inject(ModelProcessor);
+  protected processor = inject(MessageProcessor);
 
   protected hasData = signal(false);
 

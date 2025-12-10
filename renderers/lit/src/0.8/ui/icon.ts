@@ -19,7 +19,7 @@ import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
-import { A2UIModelProcessor } from "../data/model-processor.js";
+import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
@@ -69,7 +69,7 @@ export class Icon extends Root {
         const iconName = this.processor.getData(
           this.component,
           this.name.path,
-          this.surfaceId ?? A2UIModelProcessor.DEFAULT_SURFACE_ID
+          this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
         if (!iconName) {
           return html`Invalid icon name`;
