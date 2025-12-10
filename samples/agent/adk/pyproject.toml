@@ -1,0 +1,6 @@
+[tool.uv.workspace]
+members = ["contact_lookup", "orchestrator", "restaurant_finder", "rizzcharts"]
+
+[tool.uv.sources]
+a2ui = { path = "../../../a2a_agents/python/a2ui_extension" }
+

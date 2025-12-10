@@ -1,7 +1,0 @@
-[tool.uv.workspace]
-members = [
-    "adk/contact_lookup",
-    "adk/orchestrator",
-    "adk/restaurant_finder",
-    "adk/rizzcharts"
-]
