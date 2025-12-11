@@ -61,7 +61,7 @@ class MarkdownDirective extends Directive {
 
   #originalClassMap = new Map<string, RenderRule | undefined>();
   #applyTagClassMap(tagClassMap: Record<string, string[]>) {
-    Object.entries(tagClassMap).forEach(([tag, classes]) => {
+    Object.entries(tagClassMap).forEach(([tag]) => {
       let tokenName;
       switch (tag) {
         case "p":
@@ -100,34 +100,27 @@ class MarkdownDirective extends Directive {
       }
 
       const key = `${tokenName}_open`;
-      const original: RenderRule | undefined =
-        this.#markdownIt.renderer.rules[key];
-      this.#originalClassMap.set(key, original);
-
       this.#markdownIt.renderer.rules[key] = (
         tokens,
         idx,
         options,
-        env,
+        _env,
         self
       ) => {
         const token = tokens[idx];
-        for (const clazz of classes) {
+        const tokenClasses = tagClassMap[token.tag] ?? [];
+        for (const clazz of tokenClasses) {
           token.attrJoin("class", clazz);
         }
 
-        if (original) {
-          return original.call(this, tokens, idx, options, env, self);
-        } else {
-          return self.renderToken(tokens, idx, options);
-        }
+        return self.renderToken(tokens, idx, options);
       };
     });
   }
 
   #unapplyTagClassMap() {
-    for (const [key, original] of this.#originalClassMap) {
-      this.#markdownIt.renderer.rules[key] = original;
+    for (const [key] of this.#originalClassMap) {
+      delete this.#markdownIt.renderer.rules[key];
     }
 
     this.#originalClassMap.clear();

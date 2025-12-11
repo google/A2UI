@@ -45,8 +45,8 @@ const color = <C extends PaletteKeyVals>(src: PaletteKey<C>) =>
             background-color: light-dark(oklch(from var(${toProp(
               key
             )}) l c h / calc(alpha * ${o.toFixed(1)})), oklch(from var(${toProp(
-              inverseKey
-            )}) l c h / calc(alpha * ${o.toFixed(1)})) );
+            inverseKey
+          )}) l c h / calc(alpha * ${o.toFixed(1)})) );
           }
         `);
         }
@@ -91,6 +91,10 @@ export const colors = [
   `
     .color-bgc-transparent {
       background-color: transparent;
+    }
+
+    :host {
+      color-scheme: var(--color-scheme);
     }
   `,
 ];

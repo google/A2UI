@@ -35,7 +35,6 @@ export class Button extends Root {
         display: block;
         flex: var(--weight);
         min-height: 0;
-        overflow: auto;
       }
     `,
   ];

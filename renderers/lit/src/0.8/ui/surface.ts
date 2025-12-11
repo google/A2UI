@@ -37,7 +37,6 @@ export class Surface extends Root {
       :host {
         display: flex;
         min-height: 0;
-        overflow: auto;
         max-height: 100%;
         flex-direction: column;
         gap: 16px;
@@ -75,17 +74,19 @@ export class Surface extends Root {
       for (const [key, value] of Object.entries(this.surface.styles)) {
         switch (key) {
           case "primaryColor": {
-            for (let i = 0; i <= 100; i++) {
-              styles[`--p-${i}`] = `color-mix(in srgb, ${value} ${
-                100 - i
-              }%, #fff ${i}%)`;
-            }
+            // Ignored for now.
+            // for (let i = 0; i <= 100; i++) {
+            //   styles[`--p-${i}`] = `color-mix(in srgb, ${value} ${
+            //     100 - i
+            //   }%, #fff ${i}%)`;
+            // }
             break;
           }
 
           case "font": {
-            styles["--font-family"] = value;
-            styles["--font-family-flex"] = value;
+            // Ignored for now.
+            // styles["--font-family"] = value;
+            // styles["--font-family-flex"] = value;
             break;
           }
         }

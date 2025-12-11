@@ -1,3 +1,5 @@
+import { v0_8 } from "@a2ui/web-lib";
+
 /**
  * Configuration interface for the Universal App Shell.
  */
@@ -6,9 +8,11 @@ export interface AppConfig {
   key: string;
   /** Display title of the application */
   title: string;
+  /** The background for the page */
+  background?: string;
   /** Path to the hero image */
-  heroImage: string;
-  /** Path to the dark mode hero image (optional) */
+  heroImage?: string;
+  /** Path to the hero image */
   heroImageDark?: string;
   /** Placeholder text for the input field */
   placeholder: string;
@@ -17,5 +21,5 @@ export interface AppConfig {
   /** Optional server URL for the agent (e.g., http://localhost:10003) */
   serverUrl?: string;
   /** Theme overrides (CSS Variables) */
-  theme: Record<string, string>;
+  theme?: v0_8.Types.Theme;
 }

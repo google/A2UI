@@ -41,6 +41,15 @@ export class Text extends Root {
         display: block;
         flex: var(--weight);
       }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
+        line-height: inherit;
+        font: inherit;
+      }
     `,
   ];
 
@@ -109,10 +118,21 @@ export class Text extends Root {
       this.usageHint ? this.theme.components.Text[this.usageHint] : {}
     );
 
+    let additionalStyles: Record<string, string> = {};
+    const styles = this.theme.additionalStyles?.Text;
+    if (styles) {
+      if ("h1" in styles) {
+        const hint = this.usageHint ?? "body";
+        additionalStyles = styles[hint] as Record<string, string>;
+      } else {
+        additionalStyles = styles;
+      }
+    }
+
     return html`<section
       class=${classMap(classes)}
       style=${this.theme.additionalStyles?.Text
-        ? styleMap(this.theme.additionalStyles?.Text)
+        ? styleMap(additionalStyles)
         : nothing}
     >
       ${this.#renderText()}
