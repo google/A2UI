@@ -6,9 +6,9 @@ This is a UI to generate and visualize A2UI responses.
 
 1. [nodejs](https://nodejs.org/en)
 
-## Building and Running
+## Running
 
-This sample depends on the Lit renderer. To build and run this sample, you need to first build the renderer and then build the sample.
+This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
 
 1. **Build the renderer:**
    ```bash
@@ -17,20 +17,14 @@ This sample depends on the Lit renderer. To build and run this sample, you need 
    npm run build
    ```
 
-2. **Build and run this sample:**
+2. **Run this sample:**
    ```bash
    cd - # back to the sample directory
    npm install
-   npm run dev
    ```
 
-After running `npm run dev`, you can open http://localhost:5173/ to view the sample.
+3. **Run the servers:**
+   - Run the [A2A server](../../../agent/adk/restaurant_finder/)
+   - Run the dev server: `npm run dev`
 
-_Note: The original running instructions are preserved below._
-
-## Running
-
-1. Install the dependencies: `npm i`
-2. Run the [A2A server](../../../agent/adk/restaurant_finder/)
-3. Run the dev server: `npm run dev`
-4. Open http://localhost:5173/
+After starting the dev server, you can open http://localhost:5173/ to view the sample.
