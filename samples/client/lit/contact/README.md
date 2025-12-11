@@ -8,7 +8,23 @@ This is a UI to generate and visualize A2UI responses.
 
 ## Running
 
-1. Install the dependencies: `npm i`
-2. Run the [A2A server](../../../agent/adk/contact_lookup/)
-3. Run the dev server: `npm run dev`
-4. Open http://localhost:5173/
+This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
+
+1. **Build the renderer:**
+   ```bash
+   cd ../../../renderers/lit
+   npm install
+   npm run build
+   ```
+
+2. **Run this sample:**
+   ```bash
+   cd - # back to the sample directory
+   npm install
+   ```
+
+3. **Run the servers:**
+   - Run the [A2A server](../../../agent/adk/contact_lookup/)
+   - Run the dev server: `npm run dev`
+
+After starting the dev server, you can open http://localhost:5173/ to view the sample.

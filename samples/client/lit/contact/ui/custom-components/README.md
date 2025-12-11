@@ -8,13 +8,13 @@ Create a new Lit component file in `lib/src/0.8/ui/custom-components/`.
 Example: `my-component.ts`
 
 ```typescript
-import { html, css } from 'lit';
-import { property } from 'lit/decorators.js';
+import { html, css } from "lit";
+import { property } from "lit/decorators.js";
 
-import { Root } from '../root.js';
+import { Root } from "../root.js";
 
 export class MyComponent extends Root {
-  @property() accessor myProp: string = 'Default';
+  @property() accessor myProp: string = "Default";
 
   static styles = [
     ...Root.styles, // Inherit base styles
@@ -24,7 +24,7 @@ export class MyComponent extends Root {
         padding: 16px;
         border: 1px solid #ccc;
       }
-    `
+    `,
   ];
 
   render() {
@@ -44,12 +44,12 @@ Update `lib/src/0.8/ui/custom-components/index.ts` to register your new componen
 You must pass the desired tag name as the third argument.
 
 ```typescript
-import { REGISTRY } from '../component-registry.js';
-import { MyComponent } from './my-component.js'; // Import your component
+import { componentRegistry } from "../component-registry.js";
+import { MyComponent } from "./my-component.js"; // Import your component
 
 export function registerCustomComponents() {
   // Register with explicit tag name
-  REGISTRY.register('MyComponent', MyComponent, 'my-component');
+  componentRegistry.register("MyComponent", MyComponent, "my-component");
 }
 
 export { MyComponent }; // Export for type usage if needed
@@ -88,7 +88,7 @@ Example: `lib/my_component_schema.json`
 In your client application (e.g., `contact` sample), ensure you import and call the registration function.
 
 ```typescript
-import { registerCustomComponents } from '@a2ui/web-lib/ui';
+import { registerCustomComponents } from "@a2ui/web-lib/ui";
 
 // Call this once at startup
 registerCustomComponents();
@@ -109,24 +109,33 @@ You can replace standard A2UI components (like `TextField`, `Video`, `Button`) w
     ```typescript
     // 1. Define your override
     class MyPremiumTextField extends Root {
-      @property() accessor label = '';
-      @property() accessor text = '';
+      @property() accessor label = "";
+      @property() accessor text = "";
 
-      static styles = [...Root.styles, css`/* your premium styles */`];
+      static styles = [
+        ...Root.styles,
+        css`
+          /* your premium styles */
+        `,
+      ];
 
       render() {
         return html`
           <div class="premium-field">
             <label>${this.label}</label>
-            <input .value="${this.text}">
+            <input .value="${this.text}" />
           </div>
         `;
       }
     }
 
     // 2. Register with the STANDARD type name
-    import { REGISTRY } from '@a2ui/web-lib/ui';
-    REGISTRY.register('TextField', MyPremiumTextField, 'my-premium-textfield');
+    import { componentRegistry } from "@a2ui/web-lib/ui";
+    componentRegistry.register(
+      "TextField",
+      MyPremiumTextField,
+      "my-premium-textfield"
+    );
     ```
 
 **Result:**
@@ -137,6 +146,7 @@ When the server sends a `TextField` component, the client will now render `<my-p
 You can verify the component by creating a simple HTML test file or by sending a server message with the new component type.
 
 **Server message example:**
+
 ```json
 {
   "surfaceId": "main",
@@ -152,6 +162,6 @@ You can verify the component by creating a simple HTML test file or by sending a
 
 ## Troubleshooting
 
--   **`NotSupportedError`**: If you see "constructor has already been used", ensure you **removed** the `@customElement` decorator from your component class.
--   **Component not rendering**: Check if `registerCustomComponents()` is actually called. Verify the tag name in the DOM matches what you registered (e.g., `<my-component>` vs `<a2ui-custom-mycomponent>`).
--   **Styles missing**: Ensure `static styles` includes `...Root.styles`.
+- **`NotSupportedError`**: If you see "constructor has already been used", ensure you **removed** the `@customElement` decorator from your component class.
+- **Component not rendering**: Check if `registerCustomComponents()` is actually called. Verify the tag name in the DOM matches what you registered (e.g., `<my-component>` vs `<a2ui-custom-mycomponent>`).
+- **Styles missing**: Ensure `static styles` includes `...Root.styles`.

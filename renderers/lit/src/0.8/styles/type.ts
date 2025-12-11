@@ -136,6 +136,14 @@ export const type = `
     white-space: pre-line;
   }
 
+  .typography-ws-nw {
+    white-space: nowrap;
+  }
+
+  .typography-td-none {
+    text-decoration: none;
+  }
+
   /** Weights **/
 
   ${new Array(9)

@@ -138,6 +138,8 @@ export type Theme = {
     h1: Record<string, boolean>;
     h2: Record<string, boolean>;
     h3: Record<string, boolean>;
+    h4: Record<string, boolean>;
+    h5: Record<string, boolean>;
     iframe: Record<string, boolean>;
     input: Record<string, boolean>;
     p: Record<string, boolean>;
@@ -152,7 +154,6 @@ export type Theme = {
     h3: string[];
     h4: string[];
     h5: string[];
-    h6: string[];
     ul: string[];
     ol: string[];
     li: string[];
@@ -177,7 +178,17 @@ export type Theme = {
     Row?: Record<string, string>;
     Slider?: Record<string, string>;
     Tabs?: Record<string, string>;
-    Text?: Record<string, string>;
+    Text?:
+      | Record<string, string>
+      | {
+          h1: Record<string, string>;
+          h2: Record<string, string>;
+          h3: Record<string, string>;
+          h4: Record<string, string>;
+          h5: Record<string, string>;
+          body: Record<string, string>;
+          caption: Record<string, string>;
+        };
     TextField?: Record<string, string>;
     Video?: Record<string, string>;
   };
@@ -274,7 +285,7 @@ export type ValueMap = DataObject & {
   valueNumber?: number;
   valueBoolean?: boolean;
   valueMap?: ValueMap[];
-}
+};
 
 export interface DeleteSurfaceMessage {
   surfaceId: string;

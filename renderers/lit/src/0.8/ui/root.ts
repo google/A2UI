@@ -33,8 +33,7 @@ import { StringValue } from "../types/primitives.js";
 import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
-import { ComponentRegistry, REGISTRY } from './component-registry.js';
-import { ThemeManager } from "./theme/manager.js";
+import { componentRegistry } from "./component-registry.js";
 
 type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
   AnyComponentNode,
@@ -82,6 +81,7 @@ export class Root extends SignalWatcher(LitElement) {
     css`
       :host {
         display: flex;
+        flex-direction: column;
         gap: 8px;
         max-height: 80%;
       }
@@ -93,23 +93,6 @@ export class Root extends SignalWatcher(LitElement) {
    * We need this to stop the effect when the component is disconnected.
    */
   #lightDomEffectDisposer: null | (() => void) = null;
-
-  #themeUnsubscribe: null | (() => void) = null;
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.#themeUnsubscribe = ThemeManager.subscribe((sheets) => {
-      if (this.shadowRoot) {
-        const elementStyles = (this.constructor as typeof LitElement).elementStyles;
-        const baseStyles = elementStyles.map(s => {
-          if (s instanceof CSSStyleSheet) return s;
-          return s.styleSheet;
-        }).filter((s): s is CSSStyleSheet => !!s);
-
-        this.shadowRoot.adoptedStyleSheets = [...baseStyles, ...sheets];
-      }
-    });
-  }
 
   protected willUpdate(changedProperties: PropertyValues<this>): void {
     if (changedProperties.has("childComponents")) {
@@ -140,10 +123,6 @@ export class Root extends SignalWatcher(LitElement) {
     if (this.#lightDomEffectDisposer) {
       this.#lightDomEffectDisposer();
     }
-
-    if (this.#themeUnsubscribe) {
-      this.#themeUnsubscribe();
-    }
   }
 
   /**
@@ -163,7 +142,7 @@ export class Root extends SignalWatcher(LitElement) {
     return html` ${map(components, (component) => {
       // 1. Check if there is a registered custom component or override.
       if (this.enableCustomElements) {
-        const registeredCtor = REGISTRY.get(component.type);
+        const registeredCtor = componentRegistry.get(component.type);
         // We also check customElements.get for non-registered but defined elements
         const elCtor = registeredCtor || customElements.get(component.type);
 
@@ -522,7 +501,7 @@ export class Root extends SignalWatcher(LitElement) {
     }
 
     const node = component as AnyComponentNode;
-    const registeredCtor = REGISTRY.get(component.type);
+    const registeredCtor = componentRegistry.get(component.type);
     const elCtor = registeredCtor || customElements.get(component.type);
 
     if (!elCtor) {
