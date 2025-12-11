@@ -74,7 +74,10 @@ export class Surface extends Root {
       for (const [key, value] of Object.entries(this.surface.styles)) {
         switch (key) {
           case "primaryColor": {
-            // Ignored for now.
+            // Ignored for now. This is due to the fact that the sample agents
+            // produce values for these and if they are used here then they will
+            // override the values at the app level.
+            //
             // for (let i = 0; i <= 100; i++) {
             //   styles[`--p-${i}`] = `color-mix(in srgb, ${value} ${
             //     100 - i
@@ -84,7 +87,10 @@ export class Surface extends Root {
           }
 
           case "font": {
-            // Ignored for now.
+            // Ignored for now. This is due to the fact that the sample agents
+            // produce values for these and if they are used here then they will
+            // override the values at the app level.
+            //
             // styles["--font-family"] = value;
             // styles["--font-family-flex"] = value;
             break;
