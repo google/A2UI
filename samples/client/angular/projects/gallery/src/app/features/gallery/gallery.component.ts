@@ -1,3 +1,18 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Surface } from '@a2ui/angular';
@@ -18,9 +33,9 @@ interface GallerySample {
       <div class="sidebar">
         <h2>Gallery Samples</h2>
         <div class="nav-list">
-          <div 
-            *ngFor="let sample of samples" 
-            class="nav-item" 
+          <div
+            *ngFor="let sample of samples"
+            class="nav-item"
             [class.active]="activeSection === sample.id"
             (click)="scrollTo(sample.id)">
             {{ sample.title }}
@@ -30,9 +45,9 @@ interface GallerySample {
 
       <div class="main-content" (scroll)="onScroll($event)">
         <div class="component-list">
-          <div 
-            *ngFor="let sample of samples" 
-            class="component-section" 
+          <div
+            *ngFor="let sample of samples"
+            class="component-section"
             [id]="'section-' + sample.id">
             <div class="section-header">
               <div>
@@ -43,12 +58,12 @@ interface GallerySample {
                 {{ showJsonId === sample.id ? 'Hide JSON' : 'Show JSON' }}
               </button>
             </div>
-            
+
             <div class="content-wrapper" [class.with-json]="showJsonId === sample.id">
               <div class="preview-card">
                 <a2ui-surface [surfaceId]="'gallery-' + sample.id" [surface]="sample.surface"></a2ui-surface>
               </div>
-              
+
               <div class="json-pane" *ngIf="showJsonId === sample.id">
                 <pre>{{ getJson(sample.surface) }}</pre>
               </div>
@@ -60,44 +75,44 @@ interface GallerySample {
   `,
   styles: [`
     .gallery-container { display: flex; height: calc(100vh - 64px); overflow: hidden; }
-    .sidebar { 
-      width: 250px; 
-      background: #f5f5f5; 
-      border-right: 1px solid #ddd; 
-      display: flex; 
+    .sidebar {
+      width: 250px;
+      background: #f5f5f5;
+      border-right: 1px solid #ddd;
+      display: flex;
       flex-direction: column;
       overflow-y: auto;
     }
     .sidebar h2 { padding: 20px; margin: 0; font-size: 18px; border-bottom: 1px solid #ddd; }
     .nav-list { padding: 10px 0; }
-    .nav-item { 
-      padding: 10px 20px; 
-      cursor: pointer; 
+    .nav-item {
+      padding: 10px 20px;
+      cursor: pointer;
       transition: all 0.2s;
       font-size: 14px;
       border-left: 3px solid transparent;
     }
     .nav-item:hover { background: #e0e0e0; }
-    .nav-item.active { 
-      background: #e8f0fe; 
+    .nav-item.active {
+      background: #e8f0fe;
       color: #1a73e8;
       border-left-color: #1a73e8;
       font-weight: 500;
     }
-    
+
     .main-content { flex: 1; overflow-y: auto; scroll-behavior: smooth; padding: 20px 40px; }
     .component-section { margin-bottom: 60px; scroll-margin-top: 20px; }
-    .section-header { 
-      display: flex; 
-      justify-content: space-between; 
+    .section-header {
+      display: flex;
+      justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 20px; 
-      padding-bottom: 10px; 
-      border-bottom: 1px solid #eee; 
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
     }
     .component-section h3 { font-size: 24px; margin: 0 0 8px 0; }
     .description { color: #666; margin: 0; }
-    
+
     .json-toggle {
       padding: 6px 12px;
       background: #f0f0f0;
@@ -107,26 +122,26 @@ interface GallerySample {
       font-size: 12px;
     }
     .json-toggle:hover { background: #e0e0e0; }
-    
+
     .content-wrapper { display: flex; gap: 20px; height: 500px; }
     .content-wrapper.with-json .preview-card { flex: 1; }
-    .preview-card { 
+    .preview-card {
       flex: 1;
-      border: 1px solid #ddd; 
-      border-radius: 8px; 
-      padding: 24px; 
-      background: white; 
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 24px;
+      background: white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       overflow-y: auto;
     }
-    
-    .json-pane { 
-      flex: 1; 
-      overflow-y: auto; 
-      background: #2d2d2d; 
-      color: #f8f8f2; 
-      padding: 20px; 
-      border-radius: 8px; 
+
+    .json-pane {
+      flex: 1;
+      overflow-y: auto;
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 20px;
+      border-radius: 8px;
       font-family: monospace;
       font-size: 12px;
     }
