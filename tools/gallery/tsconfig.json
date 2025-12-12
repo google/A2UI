@@ -21,7 +21,15 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@a2ui/angular": [
+        "../../renderers/angular/src/public-api.ts"
+      ],
+      "@a2ui/web-lib/*": [
+        "../../renderers/lit/src/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
