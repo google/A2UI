@@ -34,8 +34,7 @@ Version 0.9 of the A2UI protocol represents a philosophical shift from previous 
 This "prompt-first" approach offers several advantages:
 
 1.  **Richer Schema:** The protocol is no longer limited by the constraints of structured output formats. This allows for more readable, complex, and expressive component catalogs.
-2.  **Improved Generative Performance:** By providing the schema and examples in the prompt, the LLM has more context, leading to more relevant JSON generation.
-3.  **Modularity:** The schema is now refactored into separate, more manageable components (e.g., [`common_types.json`], [`standard_catalog_definition.json`], [`server_to_client.json`]), improving maintainability and modularity.
+2.  **Modularity:** The schema is now refactored into separate, more manageable components (e.g., [`common_types.json`], [`standard_catalog_definition.json`], [`server_to_client.json`]), improving maintainability and modularity.
 
 The main disadvantage of this approach is that it requires more complex post-generation validation, as the LLM is not strictly constrained by the schema. This requires robust error handling and correction, so the system can identify discrepancies and attempt to fix them before rendering, or request a retry or correction from the LLM.
 
@@ -386,26 +385,26 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 The [`standard_catalog_definition.json`] provides the baseline set of components.
 
-| Component          | Description                                             |
-| :----------------- | :------------------------------------------------------ |
-| **Text**           | Displays text. Supports simple Markdown.                |
-| **Image**          | Displays an image from a URL.                           |
-| **Icon**           | Displays a system-provided icon from a predefined list. |
-| **Video**          | Displays a video from a URL.                            |
-| **AudioPlayer**    | A player for audio content from a URL.                  |
-| **Row**            | A horizontal layout container.                          |
-| **Column**         | A vertical layout container.                            |
-| **List**           | A scrollable list of components.                        |
-| **Card**           | A container with card-like styling.                     |
-| **Tabs**           | A set of tabs, each with a title and child component.   |
-| **Divider**        | A horizontal or vertical dividing line.                 |
-| **Modal**          | A dialog that appears over the main content.            |
-| **Button**         | A clickable button that dispatches an action.           |
-| **CheckBox**       | A checkbox with a label and a boolean value.            |
-| **TextField**      | A field for user text input.                            |
-| **DateTimeInput**  | An input for date and/or time.                          |
-| **ChoicePicker**   | A component for selecting one or more options.          |
-| **Slider**         | A slider for selecting a numeric value within a range.  |
+| Component         | Description                                                                            |
+| :---------------- | :------------------------------------------------------------------------------------- |
+| **Text**          | Displays text. Supports simple Markdown.                                               |
+| **Image**         | Displays an image from a URL.                                                          |
+| **Icon**          | Displays a system-provided icon from a predefined list.                                |
+| **Video**         | Displays a video from a URL.                                                           |
+| **AudioPlayer**   | A player for audio content from a URL.                                                 |
+| **Row**           | A horizontal layout container.                                                         |
+| **Column**        | A vertical layout container.                                                           |
+| **List**          | A scrollable list of components.                                                       |
+| **Card**          | A container with card-like styling.                                                    |
+| **Tabs**          | A set of tabs, each with a title and child component.                                  |
+| **Divider**       | A horizontal or vertical dividing line.                                                |
+| **Modal**         | A dialog that appears over the main content triggered by a button in the main content. |
+| **Button**        | A clickable button that dispatches an action.                                          |
+| **CheckBox**      | A checkbox with a label and a boolean value.                                           |
+| **TextField**     | A field for user text input.                                                           |
+| **DateTimeInput** | An input for date and/or time.                                                         |
+| **ChoicePicker**  | A component for selecting one or more options.                                         |
+| **Slider**        | A slider for selecting a numeric value within a range.                                 |
 
 ## Usage Pattern: The Prompt-Generate-Validate Loop
 
