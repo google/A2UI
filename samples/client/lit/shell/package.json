@@ -1,7 +1,7 @@
 {
   "name": "@a2ui/shell",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.8.1",
   "description": "A2UI Universal Shell",
   "main": "./dist/shell.js",
   "types": "./dist/shell.d.ts",

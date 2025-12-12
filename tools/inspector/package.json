@@ -1,7 +1,7 @@
 {
   "name": "@a2ui/inspector",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.8.1",
   "description": "A2UI Inspector",
   "main": "./dist/inspector.js",
   "types": "./dist/inspector.d.ts",

@@ -1,7 +1,6 @@
 {
   "name": "@a2ui/web-lib",
-  "private": true,
-  "version": "0.1.0",
+  "version": "0.8.1",
   "description": "A2UI Web Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

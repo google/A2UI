@@ -1,7 +1,7 @@
 {
   "name": "@a2ui/contact",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.8.1",
   "description": "A2UI Contact Demo",
   "main": "./dist/contact.js",
   "types": "./dist/contact.d.ts",
