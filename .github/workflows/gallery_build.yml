@@ -1,0 +1,65 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Gallery build
+
+on:
+  push:
+    paths:
+      - 'tools/gallery/**'
+      - 'renderers/angular/**'
+      - 'renderers/lit/**'
+      - '.github/workflows/gallery_build.yml'
+  pull_request:
+    paths:
+      - 'tools/gallery/**'
+      - 'renderers/angular/**'
+      - 'renderers/lit/**'
+      - '.github/workflows/gallery_build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install lit renderer deps
+        working-directory: ./renderers/lit
+        run: npm ci
+
+      - name: Build lit renderer
+        working-directory: ./renderers/lit
+        run: npm run build
+
+      - name: Install angular renderer deps
+        working-directory: ./renderers/angular
+        run: npm ci
+
+      - name: Build angular renderer
+        working-directory: ./renderers/angular
+        run: npm run build
+
+      - name: Install gallery deps
+        working-directory: ./tools/gallery
+        run: npm install
+
+      - name: Build gallery
+        working-directory: ./tools/gallery
+        run: npm run build
