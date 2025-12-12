@@ -1,7 +1,7 @@
 {
-  "name": "@a2ui/web-lib",
+  "name": "@a2ui/lit",
   "version": "0.8.1",
-  "description": "A2UI Web Library",
+  "description": "A2UI Lit Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
