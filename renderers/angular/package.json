@@ -5,7 +5,7 @@
     "build": "ng build"
   },
   "dependencies": {
-    "@a2ui/web-lib": "file:../lit",
+    "@a2ui/lit": "file:../lit",
     "markdown-it": "^14.1.0",
     "tslib": "^2.3.0"
   },
