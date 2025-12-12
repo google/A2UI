@@ -40,8 +40,8 @@ import {
   SnackType,
 } from "./types/types.js";
 import { DrawableCanvas } from "./ui/ui.js";
-import { v0_8 } from "@a2ui/web-lib";
-import * as UI from "@a2ui/web-lib/ui";
+import { v0_8 } from "@a2ui/lit";
+import * as UI from "@a2ui/lit/ui";
 
 type UserMode = "upload" | "sketch";
 type RenderMode = "surfaces" | "messages";
@@ -529,16 +529,16 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
       return html`<section id="surfaces">
         ${repeat(
-          this.#processor.getSurfaces(),
-          ([surfaceId]) => surfaceId,
-          ([surfaceId, surface]) => {
-            return html`<a2ui-surface
+        this.#processor.getSurfaces(),
+        ([surfaceId]) => surfaceId,
+        ([surfaceId, surface]) => {
+          return html`<a2ui-surface
               .surfaceId=${surfaceId}
               .surface=${surface}
               .processor=${this.#processor}
             ></a2-uisurface>`;
-          }
-        )}
+        }
+      )}
       </section>`;
     }
 
@@ -550,11 +550,11 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       <div>${JSON.stringify(this.#lastMessages, null, 2)}</div>
       <button
         @click=${async () => {
-          const content = JSON.stringify(this.#lastMessages, null, 2);
-          await navigator.clipboard.writeText(content);
+        const content = JSON.stringify(this.#lastMessages, null, 2);
+        await navigator.clipboard.writeText(content);
 
-          this.snackbar(html`Copied to clipboard`, SnackType.INFORMATION);
-        }}
+        this.snackbar(html`Copied to clipboard`, SnackType.INFORMATION);
+      }}
       >
         <span class="g-icon filled round">content_copy</span> Copy to Clipboard
       </button>
@@ -589,8 +589,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       ${this.#image}
       <button
         @click=${() => {
-          this.#image = null;
-        }}
+        this.#image = null;
+      }}
         type="button"
       >
         <span class="g-icon filled round">delete</span>
@@ -615,26 +615,26 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       <div>
         <button
           class=${classMap({
-            "typography-w-500": true,
-            "typography-f-s": true,
-            "typography-sz-bl": true,
-          })}
+      "typography-w-500": true,
+      "typography-f-s": true,
+      "typography-sz-bl": true,
+    })}
           ?disabled=${this.#requesting}
           type="button"
           @click=${() => {
-            const file = document.createElement("input");
-            file.type = "file";
-            file.accept = "image/*";
-            file.click();
+        const file = document.createElement("input");
+        file.type = "file";
+        file.accept = "image/*";
+        file.click();
 
-            file.addEventListener("input", () => {
-              if (!file.files) {
-                return;
-              }
+        file.addEventListener("input", () => {
+          if (!file.files) {
+            return;
+          }
 
-              this.#processImage(file.files[0]);
-            });
-          }}
+          this.#processImage(file.files[0]);
+        });
+      }}
         >
           Upload Image
         </button>
@@ -655,28 +655,28 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       <div id="controls">
         <button
           class=${classMap({
-            active: this.userMode === "upload",
-            "typography-w-400": true,
-            "typography-f-s": true,
-            "typography-sz-tm": true,
-          })}
+      active: this.userMode === "upload",
+      "typography-w-400": true,
+      "typography-f-s": true,
+      "typography-sz-tm": true,
+    })}
           @click=${() => {
-            this.userMode = "upload";
-          }}
+        this.userMode = "upload";
+      }}
           type="button"
         >
           <span class="g-icon filled round">upload</span>Upload
         </button>
         <button
           class=${classMap({
-            active: this.userMode === "sketch",
-            "typography-w-400": true,
-            "typography-f-s": true,
-            "typography-sz-tm": true,
-          })}
+        active: this.userMode === "sketch",
+        "typography-w-400": true,
+        "typography-f-s": true,
+        "typography-sz-tm": true,
+      })}
           @click=${() => {
-            this.userMode = "sketch";
-          }}
+        this.userMode = "sketch";
+      }}
           type="button"
         >
           <span class="g-icon filled round">draw</span>Sketch
@@ -684,33 +684,33 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       </div>
       <div
         @dragstart=${(evt: Event) => {
-          evt.preventDefault();
-        }}
+        evt.preventDefault();
+      }}
         @dragenter=${(evt: Event) => {
-          evt.preventDefault();
-          this.#draggingImage = true;
-        }}
+        evt.preventDefault();
+        this.#draggingImage = true;
+      }}
         @dragleave=${(evt: Event) => {
-          evt.preventDefault();
-          this.#draggingImage = false;
-        }}
+        evt.preventDefault();
+        this.#draggingImage = false;
+      }}
         @dragover=${(evt: Event) => {
-          evt.preventDefault();
-        }}
+        evt.preventDefault();
+      }}
         @drop=${(evt: DragEvent) => {
-          evt.preventDefault();
-          this.#draggingImage = false;
+        evt.preventDefault();
+        this.#draggingImage = false;
 
-          if (!evt.dataTransfer) {
-            return;
-          }
+        if (!evt.dataTransfer) {
+          return;
+        }
 
-          if (evt.dataTransfer.files.length === 0) {
-            return;
-          }
+        if (evt.dataTransfer.files.length === 0) {
+          return;
+        }
 
-          this.#processImage(evt.dataTransfer.files[0]);
-        }}
+        this.#processImage(evt.dataTransfer.files[0]);
+      }}
         id="upload"
         class=${classMap({ active: this.userMode === "upload" })}
       >
@@ -725,32 +725,32 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       <textarea
         name="instructions"
         class=${classMap({
-          "typography-w-400": true,
-          "typography-f-s": true,
-          "typography-sz-bl": true,
-        })}
+        "typography-w-400": true,
+        "typography-f-s": true,
+        "typography-sz-bl": true,
+      })}
         @keydown=${(evt: KeyboardEvent) => {
-          if (evt.key !== "Enter" || evt.shiftKey) {
-            return;
-          }
+        if (evt.key !== "Enter" || evt.shiftKey) {
+          return;
+        }
 
-          if (!(evt.target instanceof HTMLTextAreaElement)) {
-            return;
-          }
+        if (!(evt.target instanceof HTMLTextAreaElement)) {
+          return;
+        }
 
-          evt.preventDefault();
-          const form = evt.target.closest("form")!;
-          form.dispatchEvent(new SubmitEvent("submit", { bubbles: true }));
-        }}
+        evt.preventDefault();
+        const form = evt.target.closest("form")!;
+        form.dispatchEvent(new SubmitEvent("submit", { bubbles: true }));
+      }}
         placeholder="Optional: Provide a text description with more details."
       ></textarea>
       <button
         ?disabled=${this.#requesting}
         class=${classMap({
-          "typography-w-500": true,
-          "typography-f-s": true,
-          "typography-sz-bl": true,
-        })}
+        "typography-w-500": true,
+        "typography-f-s": true,
+        "typography-sz-bl": true,
+      })}
         type="submit"
       >
         Generate UI
@@ -778,26 +778,26 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
           id="controls-container"
           slot="slot-0"
           @submit=${async (evt: SubmitEvent) => {
-            evt.preventDefault();
-            const formData = new FormData(evt.target as HTMLFormElement);
-            const instructions = formData.get("instructions");
-            if (instructions === null) {
-              return;
-            }
+        evt.preventDefault();
+        const formData = new FormData(evt.target as HTMLFormElement);
+        const instructions = formData.get("instructions");
+        if (instructions === null) {
+          return;
+        }
 
-            let img: HTMLImageElement | null = this.#image;
-            if (this.userMode === "sketch" && this.#drawableCanvas) {
-              img = await this.#drawableCanvas.getValue();
-            }
+        let img: HTMLImageElement | null = this.#image;
+        if (this.userMode === "sketch" && this.#drawableCanvas) {
+          img = await this.#drawableCanvas.getValue();
+        }
 
-            const messages = await this.#processRequest(
-              img,
-              instructions as string
-            );
-            this.#lastMessages = messages;
-            this.#processor.clearSurfaces();
-            this.#processor.processMessages(messages);
-          }}
+        const messages = await this.#processRequest(
+          img,
+          instructions as string
+        );
+        this.#lastMessages = messages;
+        this.#processor.clearSurfaces();
+        this.#processor.processMessages(messages);
+      }}
         >
           <h2 class="typography-w-400 typography-f-s typography-sz-tl">
             Describe your UI
@@ -812,9 +812,9 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
             <button
               id="render-mode"
               @click=${() => {
-                this.renderMode =
-                  this.renderMode === "messages" ? "surfaces" : "messages";
-              }}
+        this.renderMode =
+          this.renderMode === "messages" ? "surfaces" : "messages";
+      }}
             >
               <span
                 class=${classMap({ active: this.#renderMode === "surfaces" })}
@@ -838,19 +838,19 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   #renderSnackbar() {
     return html`<ui-snackbar
       ${ref((el: Element | undefined) => {
-        if (!el) {
-          this.#snackbar = undefined;
-        }
+      if (!el) {
+        this.#snackbar = undefined;
+      }
 
-        this.#snackbar = el as Snackbar;
-        for (const pendingMessage of this.#pendingSnackbarMessages) {
-          const { message, id, persistent, type, actions } =
-            pendingMessage.message;
-          this.snackbar(message, type, actions, persistent, id);
-        }
+      this.#snackbar = el as Snackbar;
+      for (const pendingMessage of this.#pendingSnackbarMessages) {
+        const { message, id, persistent, type, actions } =
+          pendingMessage.message;
+        this.snackbar(message, type, actions, persistent, id);
+      }
 
-        this.#pendingSnackbarMessages.length = 0;
-      })}
+      this.#pendingSnackbarMessages.length = 0;
+    })}
     ></ui-snackbar>`;
   }
 

@@ -15,7 +15,7 @@
  */
 
 import { AppConfig } from "./types.js";
-import { v0_8 } from "@a2ui/web-lib";
+import { v0_8 } from "@a2ui/lit";
 
 /** Elements */
 

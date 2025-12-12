@@ -14,12 +14,12 @@
  limitations under the License.
  */
 
-import { v0_8 } from "@a2ui/web-lib";
+import { v0_8 } from "@a2ui/lit";
 
 const catalog: v0_8.Types.ClientCapabilitiesDynamic = {
   components:
     v0_8.Schemas.A2UIClientEventMessage["properties"]["surfaceUpdate"][
-      "properties"
+    "properties"
     ]["components"]["items"]["properties"]["component"]["properties"],
   styles: {},
 };

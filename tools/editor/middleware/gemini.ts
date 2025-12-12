@@ -17,7 +17,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { Plugin, ViteDevServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
-import { v0_8 } from "@a2ui/web-lib";
+import { v0_8 } from "@a2ui/lit";
 import { createA2UIPrompt, createImageParsePrompt } from "./prompts";
 
 // TODO: Reenable.
