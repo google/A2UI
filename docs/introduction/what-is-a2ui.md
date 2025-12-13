@@ -1,231 +1,87 @@
 # What is A2UI?
 
-**A2UI (Agent to UI) is a declarative UI protocol for agent-driven interfaces.** It enables AI agents to generate rich, interactive user interfaces that can be rendered natively across different platforms—web, mobile, and desktop—without executing arbitrary code.
+**A2UI (Agent to UI) is a declarative UI protocol for agent-driven interfaces.** AI agents generate rich, interactive UIs that render natively across platforms (web, mobile, desktop) without executing arbitrary code.
 
-Think of A2UI as a universal language for describing user interfaces that AI agents can speak fluently.
+## The Problem
 
-## The Problem: Agents Need to Speak UI
+**Text-only agent interactions are inefficient:**
 
-Imagine an agent designed to help you book a restaurant table. A text-only interaction might involve a clunky back-and-forth:
+```
+User: "Book a table for 2 tomorrow at 7pm"
+Agent: "Okay, for what day?"
+User: "Tomorrow"
+Agent: "What time?"
+...
+```
 
-**User:** "Book a table for 2."
-**Agent:** "Okay, for what day?"
-**User:** "Tomorrow."
-**Agent:** "What time?"
-**User:** "Maybe 7pm"
-**Agent:** "We do not have reservation availability then, any other times?"
-**User:** "When do you have reservations?"
-**Agent:** "We have availability at 5:00, 5:30, 6:00, 8:30, 9:00, 9:30 and 10:00. Do any of those work for you?"
+**Better:** Agent generates a form with date picker, time selector, and submit button. Users interact with UI, not text.
 
-This is slow and inefficient. A better experience would be for the **agent to generate** a simple form with a date picker, time selector, and submit button. With A2UI, LLMs can compose bespoke UIs from a catalog of widgets to provide a graphical, beautiful, easy-to-use interface for the exact task at hand.
+## The Challenge
 
-## The Challenge: Rendering Across Trust Boundaries
+In multi-agent systems, agents often run remotely (different servers, organizations). They can't directly manipulate your UI—they must send messages.
 
-We are entering the era of the multi-agent mesh. Agents from Google are talking to agents from Cisco, IBM, SAP, and Salesforce to solve complex tasks. This is why we collectively created the [Agent-to-Agent (A2A) Protocol](https://a2a-protocol.org) and donated it to the Linux Foundation: to enable agents to collaborate even when they don't share memory, tools, or context.
+**Traditional approach:** Send HTML/JavaScript in iframes
+- Heavy, visually disjointed
+- Security complexity
+- Doesn't match app styling
 
-However, this decentralization creates a user interface problem.
+**Need:** Transmit UI that's safe like data, expressive like code.
 
-If your agent lives inside your application, it can directly manipulate the view layer (e.g., DOM). But in a multi-agent world, the agent doing the work is often remote—running in the background, on a different server, or owned by a different organization. **It cannot touch your UI directly; it must send messages.**
+## The Solution
 
-Historically, rendering UI from a remote, untrusted source meant sending HTML or JavaScript and sandboxing it inside **iframes**. This approach is heavy, visually disjointed (it rarely matches your app's native styling), and introduces complexity around security boundaries.
+A2UI: JSON messages describing UI that:
+- LLMs generate as structured output
+- Travel over any transport (A2A, AG UI, SSE, WebSockets)
+- Client renders using its own native components
 
-**We needed a way to transmit UI that is safe like data, but expressive like code.**
+**Result:** Client controls security and styling, agent-generated UI feels native.
 
-## The Solution: UI as a Sequence of Messages
-
-A2UI provides a standard format that can be:
-
-- **Generated on the fly** as structured output by an LLM
-- **Used as a template** and hydrated with values
-
-The agent generating this response might be a remote A2A agent or the orchestrator the user is interacting with. The JSON payload can be sent to the client over A2A, AG UI, and potentially other transports.
-
-**The client application renders using its own native UI components.** This means the client retains full control over styling and security, ensuring the agent's output always feels native to your app.
-
-### Example: From Agent to UI
-
-Here's how an agent describes a simple form in A2UI:
+### Example
 
 ```json
-{
-  "createSurface": {
-    "surfaceId": "booking",
-    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json"
-  }
-}
+{"createSurface": {"surfaceId": "booking"}}
 ```
 
 ```json
-{
-  "updateComponents": {
-    "surfaceId": "booking",
-    "components": [
-      {
-        "id": "root",
-        "Column": {
-          "children": {"array": ["title", "date-picker", "submit-btn"]}
-        }
-      },
-      {
-        "id": "title",
-        "Text": {
-          "text": {"literal": "Book Your Table"},
-          "style": "headline"
-        }
-      },
-      {
-        "id": "date-picker",
-        "DatePicker": {
-          "label": {"literal": "Select Date"},
-          "value": {"path": "/booking/date"}
-        }
-      },
-      {
-        "id": "submit-btn",
-        "Button": {
-          "text": {"literal": "Confirm"},
-          "onClick": {"actionId": "confirm_booking"}
-        }
-      }
-    ]
-  }
-}
+{"updateComponents": {"surfaceId": "booking", "components": [
+  {"id": "title", "Text": {"text": {"literal": "Book Your Table"}, "style": "headline"}},
+  {"id": "date-picker", "DatePicker": {"value": {"path": "/booking/date"}}},
+  {"id": "submit-btn", "Button": {"text": {"literal": "Confirm"}, "onClick": {"actionId": "confirm_booking"}}}
+]}}
 ```
 
-The client receives these JSON messages and renders them as native components—whether that's Angular on web, Flutter on mobile, or React on desktop.
+Client renders as native components (Angular, Flutter, React, etc.).
 
-## Core Value Propositions
+## Core Value
 
-### 1. Security: Data vs. Code
+**1. Security:** Declarative data, not code. Agent requests components from client's trusted catalog. No code execution risk.
 
-Running arbitrary code generated by an LLM presents significant security risks. **A2UI is a declarative data format, not executable code.**
+**2. Native Feel:** No iframes. Client renders with its own UI framework. Inherits app styling, accessibility, performance.
 
-Your client application maintains a "catalog" of trusted, pre-approved UI components (e.g., `Card`, `Button`, `TextField`), and the agent can only request to render components from that catalog. This reduces the risk of UI injection and other vulnerabilities.
-
-**Traditional approach:**
-```
-Agent sends: <script>maliciousCode()</script>
-Risk: Code execution vulnerability ⚠️
-```
-
-**A2UI approach:**
-```
-Agent sends: {"Button": {"text": "Click me"}}
-Client: Checks catalog → Renders trusted Button component ✅
-```
-
-### 2. Native Feel: No iframes
-
-Historically, rendering UI from a remote source meant sandboxing HTML/JavaScript in iframes. This creates problems:
-
-- **Visual inconsistency**: Iframe UI doesn't inherit your app's styles
-- **Performance overhead**: Each iframe is a separate document
-- **Integration complexity**: Communication between iframe and host is cumbersome
-- **Accessibility issues**: Screen readers struggle with nested iframes
-
-A2UI takes a different approach: **the agent sends a blueprint of native components** that the client renders using its own UI framework.
-
-This means the UI:
-- Inherits your app's styling and theme
-- Uses your app's accessibility features
-- Performs like native UI (no iframe overhead)
-- Integrates seamlessly with your app
-
-### 3. Portability: Write Once, Render Anywhere
-
-The A2UI protocol defines an abstract component tree. **One agent response works on web, Flutter, and native mobile.**
-
-The client is responsible for mapping these abstract components to its native widget implementations:
-
-- **Web**: Lit components, Angular components, React components
-- **Mobile**: Flutter widgets, SwiftUI views (planned), Jetpack Compose (planned)
-- **Desktop**: Flutter desktop, native desktop frameworks
-
-The same JSON from an agent renders beautifully on every platform, with each platform's native look and feel.
-
-```
-                    ┌─────────────────┐
-                    │  Agent sends    │
-                    │  A2UI JSON      │
-                    └────────┬────────┘
-                             │
-            ┌────────────────┼────────────────┐
-            │                │                │
-            ▼                ▼                ▼
-    ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-    │   Angular   │  │   Flutter   │  │    React    │
-    │  Component  │  │   Widget    │  │  Component  │
-    └─────────────┘  └─────────────┘  └─────────────┘
-```
+**3. Portability:** One agent response works everywhere. Same JSON renders on web (Lit/Angular/React), mobile (Flutter/SwiftUI/Jetpack Compose), desktop.
 
 ## Design Principles
 
-A2UI was designed around three key principles:
+**1. LLM-Friendly:** Flat component list with ID references. Easy to generate incrementally, correct mistakes, stream.
 
-### 1. LLM-Friendly & Incrementally Updateable
+**2. Framework-Agnostic:** Agent sends abstract component tree. Client maps to native widgets (web/mobile/desktop).
 
-The UI is represented as a **flat list of components with ID references**, which is easy for LLMs to generate incrementally.
-
-**Traditional nested JSON:**
-```json
-{
-  "type": "Column",
-  "children": [
-    {"type": "Text", "text": "Hello"},
-    {"type": "Button", "text": "Click"}
-  ]
-}
-```
-Problem: LLM must generate perfect nesting in one pass.
-
-**A2UI flat structure:**
-```json
-[
-  {"id": "root", "Column": {"children": {"array": ["text1", "btn1"]}}},
-  {"id": "text1", "Text": {"text": {"literal": "Hello"}}},
-  {"id": "btn1", "Button": {"text": {"literal": "Click"}}}
-]
-```
-Benefit: LLM can add components one at a time, correct mistakes, and stream incrementally.
-
-### 2. Framework-Agnostic and Portable
-
-A2UI separates the UI *structure* from the UI *implementation*.
-
-The agent sends a description of the component tree and its associated data model. Your client application maps these abstract descriptions to its native widgets—be it web components, Flutter widgets, React components, SwiftUI views, or something else entirely.
-
-### 3. Separation of Concerns
-
-The protocol cleanly separates three layers:
-
-1. **UI Structure** (components and layout)
-2. **Application State** (data model)
-3. **Client-Side Rendering** (widget implementation)
-
-This separation enables powerful features:
-- **Data binding**: Components automatically update when data changes
-- **Reactive updates**: Change data, not structure, for dynamic UIs
-- **Clean architecture**: Clear boundaries between agent and client
+**3. Separation of Concerns:** Three layers—UI structure, application state, client rendering. Enables data binding, reactive updates, clean architecture.
 
 ## What A2UI Is NOT
 
-To clarify what A2UI is, it's helpful to understand what it's not:
-
-- **Not a framework**: A2UI is a protocol. You use it with frameworks like AG UI, GenUI SDK, or your own app
-- **Not a replacement for HTML**: A2UI is for agent-generated UIs, not hand-coded websites
-- **Not a styling system**: The client controls all styling; agents describe structure, not appearance
-- **Not a state management solution**: A2UI describes UI; you still need app logic and state management
-- **Not limited to web**: Works on any platform with a renderer implementation
+- Not a framework (it's a protocol)
+- Not a replacement for HTML (for agent-generated UIs, not static sites)
+- Not a styling system (client controls styling)
+- Not limited to web (works anywhere)
 
 ## Key Concepts
 
-Before diving deeper, here are the core concepts:
-
-- **Surface**: A canvas where components are rendered (like a dialog, sidebar, or main view)
-- **Component**: A UI element (button, text field, card, etc.)
-- **Data Model**: The application state that components bind to
-- **Catalog**: The set of available component types
-- **Message**: A JSON object describing a UI operation (create surface, update components, etc.)
+- **Surface**: Canvas for components (dialog, sidebar, main view)
+- **Component**: UI element (Button, TextField, Card, etc.)
+- **Data Model**: Application state, components bind to it
+- **Catalog**: Available component types
+- **Message**: JSON object (createSurface, updateComponents, etc.)
 
 ## Next Steps
 

@@ -6,77 +6,13 @@ Welcome to the A2UI community! We're building the future of agent-driven interfa
 
 A2UI is an open-source project licensed under Apache 2.0. We welcome contributions from developers, researchers, and anyone interested in advancing agentic user interfaces.
 
-### Ways to Contribute
+## Community Showcase
 
-- **Report Issues**: Found a bug? Have a feature request? [Open an issue on GitHub](https://github.com/google/A2UI/issues)
-- **Submit Pull Requests**: Improvements to documentation, bug fixes, and new features are always welcome
-- **Build Renderers**: Create A2UI renderers for new frameworks (React, Vue, SwiftUI, Jetpack Compose)
-- **Share Examples**: Build cool agents or demos and share them with the community
-- **Improve Docs**: Help make our documentation clearer and more comprehensive
-
-## GitHub Repository
-
-All development happens on GitHub:
-
-**[github.com/google/A2UI](https://github.com/google/A2UI)**
-
-- Star the repo to show your support
-- Watch for updates and releases
-- Fork to start contributing
-
-## Communication Channels
-
-### GitHub Discussions
-
-For questions, ideas, and general discussion, use [GitHub Discussions](https://github.com/google/A2UI/discussions):
-
-- **Q&A**: Ask questions and help others
-- **Ideas**: Propose new features or improvements
-- **Show and Tell**: Share what you've built with A2UI
-
-### GitHub Issues
-
-For bug reports and feature requests, use [GitHub Issues](https://github.com/google/A2UI/issues):
-
-- Search existing issues before creating new ones
-- Provide clear reproduction steps for bugs
-- Include code samples and error messages when relevant
-
-## Contributing Guidelines
-
-### Code Contributions
-
-1. **Fork and Clone** the repository
-2. **Create a Branch** for your feature or fix
-3. **Make Your Changes** with clear, descriptive commits
-4. **Test Thoroughly** - add tests for new features
-5. **Submit a Pull Request** with a clear description
-
-### Documentation Contributions
-
-Documentation is just as important as code! To contribute to docs:
-
-1. Docs are in the `docs/` directory
-2. We use MkDocs with Material theme
-3. Follow the existing structure and style
-4. Test your changes locally: `mkdocs serve`
-
-### Renderer Contributions
-
-Want to build a renderer for a new framework?
-
-1. Check the [Roadmap](roadmap.md) to avoid duplicate work
-2. Follow the existing renderer patterns (see `renderers/angular` or `renderers/lit`)
-3. Include comprehensive tests and examples
-4. Document setup and usage
+Coming soon...
 
 ## Project Partners
 
 A2UI is developed in collaboration with several organizations:
-
-### AG UI / CopilotKit
-
-[AG UI](https://ag-ui.com/) and [CopilotKit](https://www.copilotkit.ai/) provide day-zero compatibility with A2UI, enabling developers to build rich, state-synced applications that render dynamic UIs from agents.
 
 ### Google Opal
 
@@ -88,7 +24,22 @@ The [Flutter GenUI SDK](https://docs.flutter.dev/ai/genui) uses A2UI as the UI d
 
 ### Gemini Enterprise
 
-A2UI is being integrated into Gemini Enterprise to enable custom agents to render rich, interactive UIs within enterprise applications.
+A2UI is being integrated into [Gemini Enterprise](https://cloud.google.com/gemini-enterprise?e=48754805) to enable custom agents to render rich, interactive UIs within enterprise applications.
+
+### AG UI / CopilotKit
+
+[AG UI](https://ag-ui.com/) and [CopilotKit](https://www.copilotkit.ai/) provide day-zero compatibility with A2UI, enabling developers to build rich, state-synced applications that render dynamic UIs from agents.
+
+### A2A
+
+Google's [A2A team](https://a2a-protocol.org/) have been core contributors to A2UI's development, with support from the A2A Technical Steering Committee (TSC).
+
+### ... and more
+
+There are many organizations and individuals contributing to A2UI's development.
+
+If you have made signiciant contributions to A2UI, please submit your name to this list.
+
 
 ## Code of Conduct
 
@@ -117,9 +68,18 @@ Significant contributors may be invited to join the project's maintainer team.
 - **Star the repo** to bookmark and show support
 - **Follow releases** to get notified of new versions
 
+## Ways to Contribute
+
+**[github.com/google/A2UI](https://github.com/google/A2UI)**
+
+- **Report Issues**: Found a bug? [Open an issue](https://github.com/google/A2UI/issues)
+- **Build Renderers**: See the [roadmap](roadmap.md) for planned frameworks
+- **Share Examples**: Post with `#A2UI` on X/LinkedIn, start a [discussion](https://github.com/google/A2UI/discussions)
+- **Improve Docs**: PRs welcome in the `docs/` directory
+
 ## Questions?
 
-- Check the [documentation](introduction.md)
+- Check the [documentation](introduction/what-is-a2ui.md)
 - Search [GitHub Discussions](https://github.com/google/A2UI/discussions)
 - Ask in [GitHub Issues](https://github.com/google/A2UI/issues)
 

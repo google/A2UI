@@ -38,6 +38,7 @@ nav:
       - Who is it For?: introduction/who-is-it-for.md
       - How Can I Use It?: introduction/how-to-use.md
       - Where is it Used?: introduction/where-is-it-used.md
+      - Agent UI Ecosystem: introduction/agent-ui-ecosystem.md
   - Quickstart: quickstart.md
   - A2UI Composer ⭐: composer.md
   - Developer Guides:
