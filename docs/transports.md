@@ -1,0 +1,1 @@
+A2UI can use the [Agent2Agent (A2A) protocol](https://a2a-protocol.org) for secure transport, while mitigating risks like UI injection through a clean separation of structure and data.
