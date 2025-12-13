@@ -91,7 +91,8 @@ class ContactAgentExecutor(AgentExecutor):
 
         if ui_event_part:
             logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
-            action = ui_event_part.get("actionName")
+            # Fix: Check both 'actionName' and 'name'
+            action = ui_event_part.get("name")
             ctx = ui_event_part.get("context", {})
 
             if action == "view_profile":
@@ -107,6 +108,9 @@ class ContactAgentExecutor(AgentExecutor):
             elif action == "send_message":
                 contact_name = ctx.get("contactName", "Unknown")
                 query = f"USER_WANTS_TO_MESSAGE: {contact_name}"
+
+            elif action == "follow_contact":
+                 query = "ACTION: follow_contact"
 
             elif action == "view_full_profile":
                 contact_name = ctx.get("contactName", "Unknown")
@@ -173,7 +177,7 @@ class ContactAgentExecutor(AgentExecutor):
                                     "Received a single JSON object. Creating a DataPart."
                                 )
                                 final_parts.append(create_a2ui_part(json_data))
-
+ 
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to parse UI JSON: {e}")
                         final_parts.append(Part(root=TextPart(text=json_string)))

@@ -93,7 +93,7 @@ CONTACT_UI_EXAMPLES = """
       { "id": "call_text_column", "component": { "Column": { "children": { "explicitList": ["call_primary_text", "call_secondary_text"]} , "distribution": "start", "alignment": "start"} } } ,
       { "id": "info_row_4", "component": { "Row": { "children": { "explicitList": ["call_icon", "call_text_column"]} , "distribution": "start", "alignment": "start"} } } ,
       { "id": "info_rows_column", "weight": 1, "component": { "Column": { "children": { "explicitList": ["info_row_1", "info_row_2", "info_row_3", "info_row_4"]} , "alignment": "stretch"} } } ,
-      { "id": "button_1_text", "component": { "Text": { "text": { "literalString": "Follow"} } } } , { "id": "button_1", "component": { "Button": { "child": "button_1_text", "primary": true, "action": { "name": "follow_profile"} } } } ,
+      { "id": "button_1_text", "component": { "Text": { "text": { "literalString": "Follow"} } } } , { "id": "button_1", "component": { "Button": { "child": "button_1_text", "primary": true, "action": { "name": "follow_contact"} } } } ,
       { "id": "button_2_text", "component": { "Text": { "text": { "literalString": "Message"} } } } , { "id": "button_2", "component": { "Button": { "child": "button_2_text", "primary": false, "action": { "name": "send_message"} } } } ,
       { "id": "action_buttons_row", "component": { "Row": { "children": { "explicitList": ["button_1", "button_2"]} , "distribution": "center", "alignment": "center"} } } ,
       { "id": "link_text", "component": { "Text": { "text": { "literalString": "[View Full Profile](/profile)"} } } } ,
@@ -144,4 +144,19 @@ CONTACT_UI_EXAMPLES = """
   } }
 ]
 ---END ACTION_CONFIRMATION_EXAMPLE---
-"""
+
+---BEGIN FOLLOW_SUCCESS_EXAMPLE---
+[
+  { "beginRendering": { "surfaceId": "contact-card", "root": "success_card"} },
+  { "surfaceUpdate": {
+    "surfaceId": "contact-card",
+    "components": [
+      { "id": "success_icon", "component": { "Icon": { "name": { "literalString": "check_circle"}, "size": 48.0, "color": "#4CAF50"} } } ,
+      { "id": "success_text", "component": { "Text": { "text": { "literalString": "Successfully Followed"}, "usageHint": "h2"} } } ,
+      { "id": "success_column", "component": { "Column": { "children": { "explicitList": ["success_icon", "success_text"]} , "alignment": "center"} } } ,
+      { "id": "success_card", "component": { "Card": { "child": "success_column"} } }
+    ]
+  } }
+]
+---END FOLLOW_SUCCESS_EXAMPLE---
+
