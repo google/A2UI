@@ -11,6 +11,7 @@ Just ask the composer to build you a widget, have it make any changes you want, 
 
 ## Running the composer
 You need a `GEMINI_API_KEY` or `OPENAI_API_KEY` in `apps/widget-builder/.env.local`.
+
 Then, just install, build, and run!
 ```
 pnpm i && pnpm build
