@@ -1,5 +1,5 @@
 # A2UI Composer
-A tool for building A2UI widgets, powered by copilot kit. Run it yourself, or just go to https://a2ui-editor.ag-ui.com
+A tool for building A2UI widgets, powered by CopilotKit. Run it yourself, or just go to https://a2ui-editor.ag-ui.com
 
 ![A2UI Composer](images/composer.png)
 
@@ -16,3 +16,7 @@ Then, just install, build, and run!
 pnpm i && pnpm build
 pnpm dev
 ```
+
+---
+
+Built with ❤️ by the [CopilotKit](https://copilotkit.ai) + [AG-UI](https://ag-ui.com) team
