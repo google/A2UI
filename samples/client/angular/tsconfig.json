@@ -56,9 +56,6 @@
     },
     {
       "path": "./projects/contact/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/gallery/tsconfig.app.json"
     }
   ]
 }
