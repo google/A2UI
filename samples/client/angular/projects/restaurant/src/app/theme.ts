@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import { Styles, Types } from '@a2ui/web-lib/0.8';
 
 /** Elements */
 
@@ -25,6 +25,8 @@ const a = {
   'layout-as-n': true,
   'layout-dis-iflx': true,
   'layout-al-c': true,
+  'typography-td-none': true,
+  'color-c-p40': true,
 };
 
 const audio = {
@@ -55,7 +57,6 @@ const button = {
   'border-c-n70': true,
   'border-bs-s': true,
   'color-bgc-s30': true,
-  'color-c-n100': true,
   'behavior-ho-80': true,
 };
 
@@ -65,22 +66,6 @@ const heading = {
   'typography-w-500': true,
   'layout-mt-0': true,
   'layout-mb-2': true,
-  'color-c-n10': true,
-};
-
-const h1 = {
-  ...heading,
-  'typography-sz-tl': true,
-};
-
-const h2 = {
-  ...heading,
-  'typography-sz-tm': true,
-};
-
-const h3 = {
-  ...heading,
-  'typography-sz-ts': true,
 };
 
 const iframe = {
@@ -120,6 +105,7 @@ const orderedList = {
   'layout-m-0': true,
   'typography-sz-bm': true,
   'layout-as-n': true,
+  'color-c-n10': true,
 };
 
 const unorderedList = {
@@ -129,6 +115,7 @@ const unorderedList = {
   'layout-m-0': true,
   'typography-sz-bm': true,
   'layout-as-n': true,
+  'color-c-n10': true,
 };
 
 const listItem = {
@@ -138,6 +125,7 @@ const listItem = {
   'layout-m-0': true,
   'typography-sz-bm': true,
   'layout-as-n': true,
+  'color-c-n10': true,
 };
 
 const pre = {
@@ -159,30 +147,64 @@ const video = {
   'layout-el-cv': true,
 };
 
-const aLight = v0_8.Styles.merge(a, { 'color-c-n5': true });
-const inputLight = v0_8.Styles.merge(input, { 'color-c-n5': true });
-const textareaLight = v0_8.Styles.merge(textarea, { 'color-c-n5': true });
-const buttonLight = v0_8.Styles.merge(button, { 'color-c-n100': true });
-const h1Light = v0_8.Styles.merge(h1, { 'color-c-n5': true });
-const h2Light = v0_8.Styles.merge(h2, { 'color-c-n5': true });
-const h3Light = v0_8.Styles.merge(h3, { 'color-c-n5': true });
-const bodyLight = v0_8.Styles.merge(body, { 'color-c-n5': true });
-const pLight = v0_8.Styles.merge(p, { 'color-c-n35': true });
-const preLight = v0_8.Styles.merge(pre, { 'color-c-n35': true });
-const orderedListLight = v0_8.Styles.merge(orderedList, {
-  'color-c-n35': true,
-});
-const unorderedListLight = v0_8.Styles.merge(unorderedList, {
-  'color-c-n35': true,
-});
-const listItemLight = v0_8.Styles.merge(listItem, {
-  'color-c-n35': true,
-});
+const aLight = Styles.merge(a, {});
+const inputLight = Styles.merge(input, {});
+const textareaLight = Styles.merge(textarea, {});
+const buttonLight = Styles.merge(button, {});
+const bodyLight = Styles.merge(body, {});
+const pLight = Styles.merge(p, {});
+const preLight = Styles.merge(pre, {});
+const orderedListLight = Styles.merge(orderedList, {});
+const unorderedListLight = Styles.merge(unorderedList, {});
+const listItemLight = Styles.merge(listItem, {});
 
-export const theme: v0_8.Types.Theme = {
+export const theme: Types.Theme = {
   additionalStyles: {
     Button: {
       '--n-35': 'var(--n-100)',
+      '--n-10': 'var(--n-0)',
+      background:
+        'linear-gradient(135deg, light-dark(#818cf8, #06b6d4) 0%, light-dark(#a78bfa, #3b82f6) 100%)',
+      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+      padding: '12px 28px',
+      textTransform: 'uppercase',
+    },
+    Text: {
+      h1: {
+        color: 'transparent',
+        background:
+          'linear-gradient(135deg, light-dark(#818cf8, #06b6d4) 0%, light-dark(#a78bfa, #3b82f6) 100%)',
+        '-webkit-background-clip': 'text',
+        'background-clip': 'text',
+        '-webkit-text-fill-color': 'transparent',
+      },
+      h2: {
+        color: 'transparent',
+        background:
+          'linear-gradient(135deg, light-dark(#818cf8, #06b6d4) 0%, light-dark(#a78bfa, #3b82f6) 100%)',
+        '-webkit-background-clip': 'text',
+        'background-clip': 'text',
+        '-webkit-text-fill-color': 'transparent',
+      },
+      h3: {
+        color: 'transparent',
+        background:
+          'linear-gradient(135deg, light-dark(#818cf8, #06b6d4) 0%, light-dark(#a78bfa, #3b82f6) 100%)',
+        '-webkit-background-clip': 'text',
+        'background-clip': 'text',
+        '-webkit-text-fill-color': 'transparent',
+      },
+      h4: {},
+      h5: {},
+      body: {},
+      caption: {},
+    },
+    Card: {
+      background:
+        'radial-gradient(circle at top left, light-dark(transparent, rgba(6, 182, 212, 0.15)), transparent 40%), radial-gradient(circle at bottom right, light-dark(transparent, rgba(139, 92, 246, 0.15)), transparent 40%), linear-gradient(135deg, light-dark(rgba(255, 255, 255, 0.7), rgba(30, 41, 59, 0.7)), light-dark(rgba(255, 255, 255, 0.7), rgba(15, 23, 42, 0.8)))',
+    },
+    TextField: {
+      '--p-0': 'light-dark(var(--n-0), #1e293b)',
     },
   },
   components: {
@@ -196,10 +218,10 @@ export const theme: v0_8.Types.Theme = {
       'border-bw-0': true,
       'border-bs-s': true,
       'color-bgc-p30': true,
-      'color-c-n100': true,
       'behavior-ho-70': true,
+      'typography-w-400': true,
     },
-    Card: { 'border-br-9': true, 'color-bgc-p100': true, 'layout-p-4': true },
+    Card: { 'border-br-9': true, 'layout-p-4': true, 'color-bgc-n100': true },
     CheckBox: {
       element: {
         'layout-m-0': true,
@@ -230,14 +252,24 @@ export const theme: v0_8.Types.Theme = {
       'layout-g-2': true,
     },
     DateTimeInput: {
-      container: {},
-      label: {},
+      container: {
+        'typography-sz-bm': true,
+        'layout-w-100': true,
+        'layout-g-2': true,
+        'layout-dsp-flexhor': true,
+        'layout-al-c': true,
+        'typography-ws-nw': true,
+      },
+      label: {
+        'color-c-p30': true,
+        'typography-sz-bm': true,
+      },
       element: {
         'layout-pt-2': true,
         'layout-pb-2': true,
         'layout-pl-3': true,
         'layout-pr-3': true,
-        'border-br-12': true,
+        'border-br-2': true,
         'border-bw-1': true,
         'border-bs-s': true,
         'color-bgc-p100': true,
@@ -254,7 +286,7 @@ export const theme: v0_8.Types.Theme = {
         'layout-w-100': true,
         'layout-h-100': true,
       },
-      avatar: {},
+      avatar: { 'is-avatar': true },
       header: {},
       icon: {},
       largeFeature: {},
@@ -299,7 +331,6 @@ export const theme: v0_8.Types.Theme = {
       all: {
         'layout-w-100': true,
         'layout-g-2': true,
-        'color-c-p30': true,
       },
       h1: {
         'typography-f-sf': true,
@@ -307,7 +338,7 @@ export const theme: v0_8.Types.Theme = {
         'typography-w-400': true,
         'layout-m-0': true,
         'layout-p-0': true,
-        'typography-sz-tl': true,
+        'typography-sz-hs': true,
       },
       h2: {
         'typography-f-sf': true,
@@ -315,7 +346,7 @@ export const theme: v0_8.Types.Theme = {
         'typography-w-400': true,
         'layout-m-0': true,
         'layout-p-0': true,
-        'typography-sz-tm': true,
+        'typography-sz-tl': true,
       },
       h3: {
         'typography-f-sf': true,
@@ -323,7 +354,7 @@ export const theme: v0_8.Types.Theme = {
         'typography-w-400': true,
         'layout-m-0': true,
         'layout-p-0': true,
-        'typography-sz-ts': true,
+        'typography-sz-tl': true,
       },
       h4: {
         'typography-f-sf': true,
@@ -351,9 +382,11 @@ export const theme: v0_8.Types.Theme = {
         'layout-g-2': true,
         'layout-dsp-flexhor': true,
         'layout-al-c': true,
+        'typography-ws-nw': true,
       },
       label: {
         'layout-flx-0': true,
+        'color-c-p30': true,
       },
       element: {
         'typography-sz-bm': true,
@@ -361,7 +394,7 @@ export const theme: v0_8.Types.Theme = {
         'layout-pb-2': true,
         'layout-pl-3': true,
         'layout-pr-3': true,
-        'border-br-12': true,
+        'border-br-2': true,
         'border-bw-1': true,
         'border-bs-s': true,
         'color-bgc-p100': true,
@@ -380,11 +413,11 @@ export const theme: v0_8.Types.Theme = {
     audio,
     body: bodyLight,
     button: buttonLight,
-    h1: h1Light,
-    h2: h2Light,
-    h3: h3Light,
-    h4: {},
-    h5: {},
+    h1: heading,
+    h2: heading,
+    h3: heading,
+    h4: heading,
+    h5: heading,
     iframe,
     input: inputLight,
     p: pLight,
@@ -394,11 +427,11 @@ export const theme: v0_8.Types.Theme = {
   },
   markdown: {
     p: [...Object.keys(pLight)],
-    h1: [...Object.keys(h1Light)],
-    h2: [...Object.keys(h2Light)],
-    h3: [...Object.keys(h3Light)],
-    h4: [],
-    h5: [],
+    h1: [...Object.keys(heading)],
+    h2: [...Object.keys(heading)],
+    h3: [...Object.keys(heading)],
+    h4: [...Object.keys(heading)],
+    h5: [...Object.keys(heading)],
     ul: [...Object.keys(unorderedListLight)],
     ol: [...Object.keys(orderedListLight)],
     li: [...Object.keys(listItemLight)],

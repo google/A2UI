@@ -14,24 +14,44 @@
  limitations under the License.
  */
 
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Primitives, Styles, Types } from '@a2ui/web-lib/0.8';
 import { MarkdownRenderer } from '../data/markdown';
+
+interface HintedStyles {
+  h1: Record<string, string>;
+  h2: Record<string, string>;
+  h3: Record<string, string>;
+  h4: Record<string, string>;
+  h5: Record<string, string>;
+  body: Record<string, string>;
+  caption: Record<string, string>;
+}
 
 @Component({
   selector: 'a2ui-text',
   template: `
     <section
       [class]="classes()"
-      [style]="theme.additionalStyles?.Text"
+      [style]="additionalStyles()"
       [innerHTML]="resolvedText()"
     ></section>
   `,
+  encapsulation: ViewEncapsulation.None,
   styles: `
-    :host {
+    a2ui-text {
       display: block;
       flex: var(--weight);
+    }
+
+    a2ui-text h1,
+    a2ui-text h2,
+    a2ui-text h3,
+    a2ui-text h4,
+    a2ui-text h5 {
+      line-height: inherit;
+      font: inherit;
     }
   `,
 })
@@ -86,4 +106,32 @@ export class Text extends DynamicComponent {
       usageHint ? this.theme.components.Text[usageHint] : {},
     );
   });
+
+  protected additionalStyles = computed(() => {
+    const usageHint = this.usageHint();
+    const styles = this.theme.additionalStyles?.Text;
+
+    if (!styles) {
+      return null;
+    }
+
+    let additionalStyles: Record<string, string> = {};
+
+    if (this.areHintedStyles(styles)) {
+      additionalStyles = styles[usageHint ?? 'body'];
+    } else {
+      additionalStyles = styles;
+    }
+
+    return additionalStyles;
+  });
+
+  private areHintedStyles(styles: unknown): styles is HintedStyles {
+    if (typeof styles !== 'object' || !styles || Array.isArray(styles)) {
+      return false;
+    }
+
+    const expected = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'caption', 'body'];
+    return expected.every((v) => v in styles);
+  }
 }
