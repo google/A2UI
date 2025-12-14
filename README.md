@@ -7,7 +7,7 @@ to generate or populate rich user interfaces.
 
 <img src="docs/assets/a2ui_composer_gallery.png" alt="Gallery of A2UI components" height="400">
 
-*A gallery of UIs composed by A2UI and rendered by TODO(confirm).*
+*A gallery of A2UI rendered cards, showing a variety of UI compositions that A2UI can achieve.*
 
 ## ⚠️ Status: Experimental
 
