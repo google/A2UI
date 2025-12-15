@@ -14,7 +14,7 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 Key features:
 
 - ✅ Streaming JSONL message format
-- ✅ Four core message types (`createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface`)
+- ✅ Four core message types (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, `deleteSurface`)
 - ✅ Adjacency list component model
 - ✅ JSON Pointer-based data binding
 - ✅ Separation of structure and state

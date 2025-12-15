@@ -20,8 +20,6 @@ The Opal team at Google has been a **core contributor to A2UI** from the beginni
 >
 > **— Dimitri Glazkov**, Principal Engineer, Opal Team
 
-**Status:** ✅ In production, with A2UI integration expanding
-
 **Learn more:** [opal.google](http://opal.google)
 
 ---
@@ -43,8 +41,6 @@ A2UI is being integrated to allow enterprise agents to render **rich, interactiv
 >
 > **— Fred Jabbour**, Product Manager, Gemini Enterprise
 
-**Status:** 🚧 Integration in progress
-
 **Learn more:** [Gemini Enterprise](https://cloud.google.com/gemini)
 
 ---
@@ -65,8 +61,6 @@ GenUI SDK uses **A2UI as the underlying protocol** for communication between ser
 > "Our developers choose Flutter because it lets them quickly create expressive, brand-rich, custom design systems that feel great on every platform. A2UI was a great fit for Flutter's GenUI SDK because it ensures that every user, on every platform, gets a high quality native feeling experience."
 >
 > **— Vijay Menon**, Engineering Director, Dart & Flutter
-
-**Status:** ✅ Stable and in production
 
 **Try it:**
 - [GenUI Documentation](https://docs.flutter.dev/ai/genui)
@@ -94,8 +88,6 @@ AG UI excels at creating high-bandwidth connections between custom frontends and
 >
 > **— Atai Barkai**, Founder of CopilotKit and AG UI
 
-**Status:** ✅ Compatible and supported
-
 **Learn more:**
 - [AG UI](https://ag-ui.com/)
 - [CopilotKit](https://www.copilotkit.ai/)
@@ -106,7 +98,7 @@ AG UI excels at creating high-bandwidth connections between custom frontends and
 
 As Google adopts AI across the company, A2UI provides a **standardized way for AI agents to exchange user interfaces**, not just text.
 
-**Internal adoption:**
+**Internal agent adoption:**
 
 - **Multi-agent workflows**: Multiple agents contribute to the same surface
 - **Remote agent support**: Agents running on different services can provide UI
@@ -116,8 +108,6 @@ As Google adopts AI across the company, A2UI provides a **standardized way for A
 > "Much like A2A lets any agent talk to another agent regardless of platform, A2UI standardizes the user interface layer and supports remote agent use cases through an orchestrator. This has been incredibly powerful for internal teams, allowing them to rapidly develop agents where rich user interfaces are the norm, not the exception. As Google pushes further into generative UI, A2UI provides a perfect platform for server-driven UI that renders on any client."
 >
 > **— James Wren**, Senior Staff Engineer, AI Powered Google
-
-**Status:** ✅ Internal adoption growing
 
 ---
 

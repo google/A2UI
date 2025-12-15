@@ -107,40 +107,45 @@ In the web app, try these prompts:
 
 Let's peek at what the agent is sending. Here's a simplified example of the JSON messages:
 
-### Creating a Surface
-
-```json
-{"createSurface": {"surfaceId": "main", "title": "Restaurant Finder"}}
-```
-
-This tells the client to create a new UI surface with ID "main".
-
-### Adding Components
+### Defining the UI
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "header",
-        "Text": {
-          "text": {"literal": "Book Your Table"},
-          "style": "headline"
+        "component": {
+          "Text": {
+            "text": {"literalString": "Book Your Table"},
+            "usageHint": "h1"
+          }
         }
       },
       {
         "id": "date-picker",
-        "DatePicker": {
-          "label": {"literal": "Select Date"},
-          "value": {"path": "/reservation/date"}
+        "component": {
+          "DateTimeInput": {
+            "label": {"literalString": "Select Date"},
+            "value": {"path": "/reservation/date"},
+            "enableDate": true
+          }
         }
       },
       {
         "id": "submit-btn",
-        "Button": {
-          "text": {"literal": "Confirm Reservation"},
-          "onClick": {"actionId": "confirm_booking"}
+        "component": {
+          "Button": {
+            "child": "submit-text",
+            "action": {"name": "confirm_booking"}
+          }
+        }
+      },
+      {
+        "id": "submit-text",
+        "component": {
+          "Text": {"text": {"literalString": "Confirm Reservation"}}
         }
       }
     ]
@@ -148,26 +153,37 @@ This tells the client to create a new UI surface with ID "main".
 }
 ```
 
-This adds three components to the surface: a text header, a date picker, and a button.
+This defines the UI components for the surface: a text header, a date picker, and a button.
 
-### Updating Data
+### Populating Data
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
-    "op": "replace",
-    "path": "/reservation",
-    "value": {
-      "date": "2025-12-15",
-      "time": "19:00",
-      "guests": 2
-    }
+    "contents": [
+      {
+        "key": "reservation",
+        "valueMap": [
+          {"key": "date", "valueString": "2025-12-15"},
+          {"key": "time", "valueString": "19:00"},
+          {"key": "guests", "valueInt": 2}
+        ]
+      }
+    ]
   }
 }
 ```
 
 This populates the data model that components can bind to.
+
+### Signaling Render
+
+```json
+{"beginRendering": {"surfaceId": "main", "root": "header"}}
+```
+
+This tells the client it has enough information to render the UI.
 
 !!! tip "It's Just JSON"
     Notice how readable and structured this is? LLMs can generate this easily, and it's safe to transmit and render—no code execution required.

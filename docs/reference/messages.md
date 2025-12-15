@@ -8,7 +8,7 @@ All A2UI messages are JSON objects sent as JSON Lines (JSONL). Each line contain
 
 - `beginRendering`
 - `surfaceUpdate`
-- `updateDataModel`
+- `dataModelUpdate`
 - `deleteSurface`
 
 ## beginRendering
@@ -214,7 +214,7 @@ The component with `id: "greeting"` is updated (not duplicated).
 
 ---
 
-## updateDataModel
+## dataModelUpdate
 
 Update the data model that components bind to.
 
@@ -222,7 +222,7 @@ Update the data model that components bind to.
 
 ```typescript
 {
-  updateDataModel: {
+  dataModelUpdate: {
     surfaceId: string;      // Required: Target surface
     path?: string;          // Optional: Path to a location in the model
     contents: Array<{       // Required: Data entries
@@ -256,7 +256,7 @@ If `path` is omitted, `contents` replaces the entire data model for the surface.
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
     "contents": [
       {
@@ -278,7 +278,7 @@ If `path` is provided, `contents` updates the data at that location.
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
     "path": "user",
     "contents": [
@@ -296,7 +296,7 @@ This will change `/user/email` without affecting `/user/name`.
 - Components automatically re-render when their bound data changes.
 - Prefer granular updates to specific paths over replacing the entire model.
 - Data model is a plain JSON object.
-- Any data transformation (e.g., formatting a date) must be done by the server before sending the `updateDataModel` message.
+- Any data transformation (e.g., formatting a date) must be done by the server before sending the `dataModelUpdate` message.
 
 ---
 
@@ -360,7 +360,7 @@ Remove a surface and all its components and data.
 ### Requirements
 
 1. `beginRendering` must come after the initial `surfaceUpdate` messages for that surface.
-2. `surfaceUpdate` can come before or after `updateDataModel`.
+2. `surfaceUpdate` can come before or after `dataModelUpdate`.
 3. Messages for different surfaces are independent.
 4. Multiple messages can update the same surface incrementally.
 
@@ -368,7 +368,7 @@ Remove a surface and all its components and data.
 
 ```jsonl
 {"surfaceUpdate": {"surfaceId": "main", "components": [...]}}
-{"updateDataModel": {"surfaceId": "main", "contents": {...}}}
+{"dataModelUpdate": {"surfaceId": "main", "contents": {...}}}
 {"beginRendering": {"surfaceId": "main", "root": "root-id"}}
 ```
 
@@ -379,7 +379,7 @@ Remove a surface and all its components and data.
 {"surfaceUpdate": {"surfaceId": "main", "components": [...]}}  // Body
 {"beginRendering": {"surfaceId": "main", "root": "root-id"}} // Initial render
 {"surfaceUpdate": {"surfaceId": "main", "components": [...]}}  // Footer (after initial render)
-{"updateDataModel": {"surfaceId": "main", "contents": {...}}}   // Populate data
+{"dataModelUpdate": {"surfaceId": "main", "contents": {...}}}   // Populate data
 ```
 
 ## Validation
