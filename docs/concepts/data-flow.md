@@ -10,6 +10,8 @@ Agent (LLM) → A2UI Generator → Transport (SSE/WS/A2A)
 Client (Stream Reader) → Message Parser → Renderer → Native UI
 ```
 
+![end-to-end-data-flow](../assets/end-to-end-data-flow.png)
+
 ## Message Format
 
 A2UI defines a sequence of JSON messages that describe the UI. When streamed, these messages are often formatted as **JSON Lines (JSONL)**, where each line is a complete JSON object.
@@ -24,22 +26,20 @@ A2UI defines a sequence of JSON messages that describe the UI. When streamed, th
 
 ## Lifecycle Example: Restaurant Booking
 
-**1. User Input:** "Book a table for 2 tomorrow at 7pm"
+**User:** "Book a table for 2 tomorrow at 7pm"
 
-**2. Agent streams components:** The agent sends the definitions for the UI components. Note the first `surfaceUpdate` for a `surfaceId` effectively creates the surface.
+**1. Agent defines UI structure:**
 
 ```json
 {"surfaceUpdate": {"surfaceId": "booking", "components": [
-  {"id": "root", "component": {"Column": {"children": {"explicitList": ["header", "guests-field", "datetime-field", "submit-btn"]}}}},
+  {"id": "root", "component": {"Column": {"children": {"explicitList": ["header", "guests-field", "submit-btn"]}}}},
   {"id": "header", "component": {"Text": {"text": {"literalString": "Confirm Reservation"}, "usageHint": "h1"}}},
-  {"id": "guests-field", "component": {"TextField": {"label": {"literalString": "Number of Guests"}, "text": {"path": "/reservation/guests"}}}},
-  {"id": "datetime-field", "component": {"DateTimeInput": {"value": {"path": "/reservation/datetime"}, "enableDate": true, "enableTime": true}}},
-  {"id": "submit-btn-text", "component": {"Text": {"text": {"literalString": "Confirm"}}}},
-  {"id": "submit-btn", "component": {"Button": {"child": "submit-btn-text", "action": {"name": "confirm_reservation", "context": [{"key": "reservationDetails", "value": {"path": "/reservation"}}]}}}}
+  {"id": "guests-field", "component": {"TextField": {"label": {"literalString": "Guests"}, "text": {"path": "/reservation/guests"}}}},
+  {"id": "submit-btn", "component": {"Button": {"child": "submit-text", "action": {"name": "confirm", "context": [{"key": "details", "value": {"path": "/reservation"}}]}}}}
 ]}}
 ```
 
-**3. Agent populates data:** The agent sends the data extracted from the user's prompt.
+**2. Agent populates data:**
 
 ```json
 {"dataModelUpdate": {"surfaceId": "booking", "path": "/reservation", "contents": [
@@ -48,47 +48,33 @@ A2UI defines a sequence of JSON messages that describe the UI. When streamed, th
 ]}}
 ```
 
-**4. Agent signals to render:** The agent sends the `beginRendering` message, telling the client it has enough information to show the UI.
+**3. Agent signals render:**
 
 ```json
 {"beginRendering": {"surfaceId": "booking", "root": "root"}}
 ```
-*The client now renders a form with the data pre-filled.*
 
-**5. User interacts:** The user changes the number of guests to 3. The `TextField` is bound to `/reservation/guests`, so the client's data model is updated automatically. No message is sent to the agent yet.
+**4. User edits guests to "3"** → Client updates `/reservation/guests` automatically (no message to agent yet)
 
-**6. User submits:** The user clicks the "Confirm" button. The client sends a `userAction` message.
+**5. User clicks "Confirm"** → Client sends action with updated data:
 
 ```json
-{"userAction": {
-  "name": "confirm_reservation",
-  "surfaceId": "booking",
-  "sourceComponentId": "submit-btn",
-  "timestamp": "2025-12-15T20:01:00Z",
-  "context": {
-    "reservationDetails": {
-      "datetime": "2025-12-16T19:00:00Z",
-      "guests": "3"
-    }
-  }
-}}
+{"userAction": {"name": "confirm", "surfaceId": "booking", "context": {"details": {"datetime": "2025-12-16T19:00:00Z", "guests": "3"}}}}
 ```
 
-**7. Agent responds:** The agent processes the action and could respond with a confirmation message, for example by sending a new `surfaceUpdate` that replaces the form with a `Text` component.
-
-**8. Clean up (optional):** After the flow is complete, the agent can send `{"deleteSurface": {"surfaceId": "booking"}}` to remove the UI.
+**6. Agent responds** → Updates UI or sends `{"deleteSurface": {"surfaceId": "booking"}}` to clean up
 
 ## Transport Options
 
-**SSE (Server-Sent Events):** Unidirectional HTTP streaming, most common for web
-**WebSockets:** Bidirectional, real-time
-**A2A Protocol:** Multi-agent systems, wrapped in artifacts
-**HTTP Polling:** Simple but loses streaming benefits (not recommended)
+- **A2A Protocol**: Multi-agent systems, can also be used for agent to UI communication
+- **AG UI**: Bidirectional, real-time
+- ... others
+
+See [transports](../transports.md) for more details.
 
 ## Progressive Rendering
 
-**Traditional:** Wait 3s → Render complete UI all at once
-**A2UI:** 0.2s surface → 0.5s header → 1.0s form → 1.5s fields → 2.0s data
+Instead of waiting for the entire response to be generated before showing anything to the user, chunks of the response can be streamed to the client as they are generated and progressively rendered.
 
 Users see UI building in real-time instead of staring at a spinner.
 
@@ -102,9 +88,3 @@ Users see UI building in real-time instead of staring at a spinner.
 **Batching:** Buffer updates for 16ms, batch render together
 **Diffing:** Compare old/new components, update only changed properties
 **Granular updates:** Update `/user/name` not entire `/` model
-
-## Next Steps
-
-- **[Components & Structure](components.md)**: Learn about the adjacency list model
-- **[Data Binding](data-binding.md)**: Understand how components bind to data
-- **[Agent Development Guide](../guides/agent-development.md)**: Build agents that generate A2UI
