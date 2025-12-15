@@ -19,51 +19,14 @@ Integrate A2UI into your application using the renderer for your platform.
 npm install @a2ui/web-lib lit @lit-labs/signals
 ```
 
-The Lit renderer uses a `MessageProcessor` to manage state and `<a2ui-surface>` components to render the UI. It uses Lit Signals (`@lit-labs/signals`) to automatically update the UI when the state changes.
+The Lit renderer uses:
+- **Message Processor**: Manages A2UI state and processes incoming messages
+- **`<a2ui-surface>` component**: Renders surfaces in your app
+- **Lit Signals**: Provides reactive state management for automatic UI updates
 
-```typescript
-import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
-import { v0_8 } from '@a2ui/web-lib';
-import '@a2ui/web-lib/ui'; // Registers all <a2ui-*> components
+TODO: Add verified setup example.
 
-// 1. Create a message processor
-const processor = v0_8.Data.createSignalA2uiMessageProcessor();
-
-@customElement('my-a2ui-app')
-export class MyA2uiApp extends LitElement {
-  
-  constructor() {
-    super();
-    
-    // 2. Connect to a stream of A2UI messages
-    const eventSource = new EventSource('/api/a2ui-stream');
-    eventSource.onmessage = (event) => {
-      const message = JSON.parse(event.data) as v0_8.Types.ServerToClientMessage;
-      // 3. Process incoming messages
-      processor.processMessages([message]);
-    };
-  }
-  
-  render() {
-    // 4. Render the surface. It will update automatically.
-    return html`
-      <a2ui-surface
-        surfaceId="main"
-        .processor=${processor}
-        @a2uiaction=${this.handleAction}
-      ></a2ui-surface>
-    `;
-  }
-  
-  // 5. Handle user actions
-  async handleAction(event: v0_8.Events.StateEvent<'a2ui.action'>) {
-    // Logic to resolve context and send action to the backend...
-    const action = event.detail.action;
-    console.log('Action dispatched:', action.name);
-  }
-}
-```
+**See working example:** [Lit shell sample](https://github.com/google/a2ui/tree/main/samples/client/lit/shell)
 
 ## Angular
 
@@ -71,151 +34,66 @@ export class MyA2uiApp extends LitElement {
 npm install @a2ui/angular @a2ui/web-lib
 ```
 
-The Angular renderer provides a `Surface` component to render A2UI surfaces and a `MessageProcessor` service to handle incoming messages.
+The Angular renderer provides:
+- **`provideA2UI()` function**: Configures A2UI in your app config
+- **`Surface` component**: Renders A2UI surfaces
+- **`MessageProcessor` service**: Handles incoming A2UI messages
 
-**1. Provide the MessageProcessor**
+TODO: Add verified setup example.
 
-In your `app.config.ts`, provide the `MessageProcessor`.
-
-```typescript
-// app.config.ts
-import { ApplicationConfig } from '@angular/core';
-import { MessageProcessor } from '@a2ui/angular';
-
-export const appConfig: ApplicationConfig = {
-  providers: [MessageProcessor],
-};
-```
-
-**2. Use the Surface Component**
-
-In your component, inject the `MessageProcessor` and use the `a2ui-surface` component in your template.
-
-```typescript
-// app.component.ts
-import { Component, inject, OnInit } from '@angular/core';
-import { MessageProcessor, Surface } from '@a2ui/angular';
-
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [Surface],
-  template: '<a2ui-surface surfaceId="main"></a2ui-surface>'
-})
-export class AppComponent implements OnInit {
-  processor = inject(MessageProcessor);
-
-  ngOnInit() {
-    // Connect to a stream of A2UI messages
-    const eventSource = new EventSource('/api/a2ui-stream');
-    eventSource.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      this.processor.processMessages([message]);
-    };
-
-    // Example of handling an action
-    this.processor.events.subscribe(async (event) => {
-      // Send action to backend...
-      const response = await fetch('/api/action', { 
-        method: 'POST',
-        body: JSON.stringify(event.message)
-      });
-      const messages = await response.json();
-      
-      // Process response and complete the event
-      this.processor.processMessages(messages);
-      event.completion.next(messages);
-    });
-  }
-}
-```
+**See working example:** [Angular restaurant sample](https://github.com/google/a2ui/tree/main/samples/client/angular/projects/restaurant)
 
 ## Flutter (GenUI SDK)
 
-```yaml
-dependencies:
-  flutter_genui: ^0.1.0
+```bash
+flutter pub add flutter_genui
 ```
 
-```dart
-import 'package:flutter_genui/flutter_genui.dart';
+Flutter uses the GenUI SDK which provides native A2UI rendering.
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: GenUIScreen(
-        agentUrl: 'https://your-agent-endpoint.com',
-        onAction: (action) => print('Action: $action'),
-      ),
-    );
-  }
-}
-```
+TODO: Add setup guide for Flutter GenUI.
 
 **Docs:** [GenUI SDK](https://docs.flutter.dev/ai/genui) | [GitHub](https://github.com/flutter/genui)
 
 ## Connecting to Agents
 
-### Server-Sent Events (SSE)
+Your client application needs to:
+1. **Receive A2UI messages** from the agent (via transport)
+2. **Process messages** using the Message Processor
+3. **Send user actions** back to the agent
 
-```typescript
-const eventSource = new EventSource('/api/a2ui-stream');
-eventSource.onmessage = (event) => renderer.processMessage(JSON.parse(event.data));
-```
+Common transport options:
+- **Server-Sent Events (SSE)**: One-way streaming from server to client
+- **WebSockets**: Bidirectional real-time communication
+- **A2A Protocol**: Standardized agent-to-agent communication with A2UI support
 
-### WebSockets
+TODO: Add transport implementation examples.
 
-```typescript
-const ws = new WebSocket('wss://your-server.com/a2ui');
-ws.onmessage = (event) => renderer.processMessage(JSON.parse(event.data));
-ws.send(JSON.stringify(action)); // Send actions
-```
-
-### A2A Protocol
-
-```typescript
-import { A2AClient } from '@a2a/client';
-
-const client = new A2AClient({agentUrl: 'https://your-a2a-agent.com'});
-client.on('artifact', (artifact) => {
-  if (artifact.type === 'application/json+a2ui' && artifact.content) {
-    renderer.processMessage(JSON.parse(artifact.content));
-  }
-});
-```
+**See:** [Transports guide](../transports.md)
 
 ## Handling User Actions
 
-```typescript
-const renderer = new A2UIRenderer({
-  onAction: async (action) => {
-    const response = await fetch('/api/actions', {method: 'POST', body: JSON.stringify(action)});
-    const messages = await response.json();
-    messages.forEach(msg => renderer.processMessage(msg));
-  }
-});
-```
+When users interact with A2UI components (clicking buttons, submitting forms, etc.), the client:
+1. Captures the action event from the component
+2. Resolves any data context needed for the action
+3. Sends the action to the agent
+4. Processes the agent's response messages
+
+TODO: Add action handling examples.
 
 ## Error Handling
 
-```typescript
-const renderer = new A2UIRenderer({
-  onError: (error) => {
-    console.error('A2UI Error:', error);
-    // Optionally send errors back to agent for correction
-  }
-});
-```
+Common errors to handle:
+- **Invalid Surface ID**: Surface referenced before `beginRendering` was received
+- **Invalid Component ID**: Component IDs must be unique within a surface
+- **Invalid Data Path**: Check data model structure and JSON Pointer syntax
+- **Schema Validation Failed**: Verify message format matches A2UI specification
 
-**Common Errors:**
-- `INVALID_SURFACE_ID`: A surface was referenced before a `beginRendering` message was received for it.
-- `INVALID_COMPONENT_ID`: Check component IDs are unique
-- `INVALID_PATH`: Verify data model structure
-- `SCHEMA_VALIDATION_FAILED`: Check message format
+TODO: Add error handling examples.
 
 ## Next Steps
 
+- **[Quickstart](../quickstart.md)**: Try the demo application
 - **[Theming & Styling](theming.md)**: Customize the look and feel
 - **[Custom Components](custom-components.md)**: Extend the component catalog
 - **[Agent Development](agent-development.md)**: Build agents that generate A2UI

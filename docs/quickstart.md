@@ -6,7 +6,7 @@ Get hands-on with A2UI by running the restaurant finder demo. This guide will ha
 
 By the end of this quickstart, you'll have:
 
-- ✅ A running Angular web app with A2UI renderer
+- ✅ A running web app with A2UI Lit renderer
 - ✅ A Gemini-powered agent that generates dynamic UIs
 - ✅ An interactive restaurant finder with form generation, time selection, and confirmation flows
 - ✅ Understanding of how A2UI messages flow from agent to UI
@@ -36,7 +36,7 @@ Export your Gemini API key as an environment variable:
 export GEMINI_API_KEY="your_gemini_api_key_here"
 ```
 
-## Step 3: Navigate to the Angular Client
+## Step 3: Navigate to the Lit Client
 
 ```bash
 cd samples/client/lit
@@ -56,11 +56,11 @@ This command will:
 1. Install all dependencies
 2. Build the A2UI renderer
 3. Start the A2A restaurant finder agent (Python backend)
-4. Launch the Angular development server
-5. Open your browser to `http://localhost:4200`
+4. Launch the development server
+5. Open your browser to `http://localhost:5173`
 
 !!! success "Demo Running"
-    If everything worked, you should see the Angular app in your browser. The agent is now ready to generate UI!
+    If everything worked, you should see the web app in your browser. The agent is now ready to generate UI!
 
 ## Step 5: Try It Out
 
@@ -84,8 +84,8 @@ In the web app, try these prompts:
                                │ Streams JSONL messages
                                v
                         ┌──────────────┐
-                        │ Angular App  │
-                        │ (A2UI        │
+                        │   Web App    │
+                        │ (A2UI Lit    │
                         │  Renderer)   │
                         └──────────────┘
                                │
@@ -96,11 +96,11 @@ In the web app, try these prompts:
                         └──────────────┘
 ```
 
-1. **You send a message** via the Angular UI
+1. **You send a message** via the web UI
 2. **The A2A agent** receives it and sends the conversation to Gemini
 3. **Gemini generates** A2UI JSON messages describing the UI
-4. **The A2A agent streams** these messages back to the Angular app
-5. **The A2UI renderer** converts them into native Angular components
+4. **The A2A agent streams** these messages back to the web app
+5. **The A2UI renderer** converts them into native web components
 6. **You see the UI** rendered in your browser
 
 ## Anatomy of an A2UI Message
@@ -225,7 +225,7 @@ Now that you've seen A2UI in action, you're ready to:
 
 ### Port Already in Use
 
-If port 4200 is already in use, the Angular dev server will automatically try the next available port. Check the terminal output for the actual URL.
+If port 5173 is already in use, the dev server will automatically try the next available port. Check the terminal output for the actual URL.
 
 ### API Key Issues
 
@@ -252,7 +252,7 @@ pip install -r requirements.txt
 ### Still Having Issues?
 
 - Check the [GitHub Issues](https://github.com/google/a2ui/issues)
-- Review the [samples/client/angular/README.md](https://github.com/google/a2ui/tree/main/samples/client/angular)
+- Review the [samples/client/lit/README.md](https://github.com/google/a2ui/tree/main/samples/client/lit)
 - Join the community discussions
 
 ## Understanding the Demo Code
@@ -260,8 +260,8 @@ pip install -r requirements.txt
 Want to see how it works? Check out:
 
 - **Agent Code**: `samples/agent/adk/restaurant_finder/` - The Python A2A agent
-- **Client Code**: `samples/client/angular/` - The Angular client with A2UI renderer
-- **A2UI Renderer**: `renderers/angular/` - The Angular renderer implementation
+- **Client Code**: `samples/client/lit/` - The Lit web client with A2UI renderer
+- **A2UI Renderer**: `web-lib/` - The web renderer implementation
 
 Each directory has its own README with detailed documentation.
 
