@@ -11,7 +11,7 @@ User Input → Agent Logic → LLM → A2UI JSON → Stream to Client
 1. **Receive** user message
 2. **Process** with LLM (Gemini, GPT, Claude, etc.)
 3. **Generate** A2UI JSON messages
-4. **Stream** to client via transport
+4. **Send** to client via transport
 
 ## Example Agents
 
