@@ -60,9 +60,10 @@ app.post('/a2a', (req, res) => {
         parts,
         kind: 'message',
         metadata: {
-          clientUiCapabilities: {
-            catalogUri:
+          a2uiClientCapabilities: {
+            supportedCatalogIds: [
               'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json',
+            ],
           },
         },
       },
@@ -97,7 +98,9 @@ app.post('/a2a', (req, res) => {
 
 app.get('/a2a/agent-card', async (req, res) => {
   try {
-    const response = await fetchWithCustomHeader('http://localhost:10002/.well-known/agent-card.json');
+    const response = await fetchWithCustomHeader(
+      'http://localhost:10002/.well-known/agent-card.json',
+    );
     if (!response.ok) {
       res.status(response.status).json({ error: 'Failed to fetch agent card' });
       return;

@@ -49,8 +49,8 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
 
     def __init__(self, base_url: str):
         self._base_url = base_url
-        
-        spec_root = Path(__file__).parent / "../../../../../specification/0.8/json"
+
+        spec_root = Path(__file__).parent / "../../../../specification/0.8/json"
         
         self._component_catalog_builder = ComponentCatalogBuilder(
             a2ui_schema_path=str(spec_root.joinpath("server_to_client.json")),
