@@ -1,29 +1,34 @@
-# Custom Components
+# Custom Component Catalogs
 
-Extend A2UI with your own custom components. This guide shows you how to register custom widgets in your client application and use them from agents.
+Extend A2UI by defining **custom catalogs** that include your own components. This guide shows you how to register custom widgets in your client application and have agents use them by referencing your catalog.
 
-## Why Custom Components?
+## Why Custom Catalogs?
 
-The A2UI Standard Catalog provides common UI elements (buttons, text fields, cards, etc.), but your application might need specialized components:
+The A2UI Standard Catalog provides common UI elements (buttons, text fields, etc.), but your application might need specialized components:
 
 - **Domain-specific widgets**: Stock tickers, medical charts, CAD viewers
 - **Third-party integrations**: Google Maps, payment forms, chat widgets
 - **Brand-specific components**: Custom date pickers, product cards, dashboards
 
-Custom components let you extend A2UI while maintaining security and type safety.
+Custom catalogs allow agents and clients to agree on a shared, extended set of components while maintaining security and type safety.
 
-## How Custom Components Work
+## How Custom Catalogs Work
+
+1.  **Client Defines Catalog**: You create a catalog definition and register the corresponding component implementations in your client app.
+2.  **Client Announces Support**: The client informs the agent which catalogs it supports, including your custom one.
+3.  **Agent Selects Catalog**: The agent chooses your custom catalog for a given UI surface.
+4.  **Agent Generates UI**: The agent generates `surfaceUpdate` messages using components from your catalog *by name*.
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │              Agent (Server Side)                    │
 │                                                     │
-│  Generates:                                         │
+│  1. Chooses "my-company-catalog"                    │
+│  2. Generates a component from that catalog:        │
 │  {                                                  │
 │    "id": "map",                                     │
-│    "CustomComponent": {                            │
-│      "name": "GoogleMap",                          │
-│      "properties": {                               │
+│    "component": {                                  │
+│      "GoogleMap": {                                │
 │        "center": {"lat": 37.7749, "lng": -122.43}, │
 │        "zoom": 12                                  │
 │      }                                             │
@@ -37,13 +42,14 @@ Custom components let you extend A2UI while maintaining security and type safety
 ┌─────────────────────────────────────────────────────┐
 │              Client Application                     │
 │                                                     │
-│  Widget Registry:                                   │
+│  Widget Registry knows how to render components     │
+│  from "my-company-catalog":                         │
 │  {                                                  │
 │    "GoogleMap": GoogleMapComponent ← Your code     │
 │  }                                                  │
 │                                                     │
-│  Renderer looks up "GoogleMap" and instantiates    │
-│  your GoogleMapComponent with the properties       │
+│  Renderer sees the "GoogleMap" component and       │
+│  instantiates your implementation.                 │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -52,88 +58,79 @@ Custom components let you extend A2UI while maintaining security and type safety
 ### Lit / Web Components
 
 ```typescript
-import { A2UIRenderer } from '@a2ui/renderer-lit';
 import { LitElement, html, css } from 'lit';
+import { property } from 'lit/decorators.js';
+import { componentRegistry, registerCustomComponents } from '@a2ui/web-lib/ui';
 
-// 1. Define your custom component
+// 1. Define your custom component class.
+//    The component name (e.g., 'GoogleMap') is inferred from the registration.
 class GoogleMapComponent extends LitElement {
-  static properties = {
-    center: { type: Object },
-    zoom: { type: Number }
-  };
+  @property({ type: Object }) center = { lat: 0, lng: 0 };
+  @property({ type: Number }) zoom = 10;
 
-  constructor() {
-    super();
-    this.center = { lat: 0, lng: 0 };
-    this.zoom = 10;
-  }
+  static styles = css`
+    :host { display: block; width: 100%; height: 400px; background-color: #f0f0f0; }
+    #map { width: 100%; height: 100%; }
+  `;
 
   render() {
-    return html`
-      <div id="map"></div>
-    `;
+    return html`<div id="map"></div>`;
   }
 
   firstUpdated() {
-    // Initialize Google Maps
-    new google.maps.Map(this.shadowRoot.getElementById('map'), {
-      center: this.center,
-      zoom: this.zoom
-    });
+    // Initialize Google Maps (placeholder logic)
+    console.log(`Initializing GoogleMap at ${this.center.lat},${this.center.lng} with zoom ${this.zoom}`);
+    // new google.maps.Map(this.shadowRoot.getElementById('map'), { center: this.center, zoom: this.zoom });
   }
 }
 
-// 2. Register the custom component
-customElements.define('google-map', GoogleMapComponent);
-
-// 3. Register with A2UI renderer
-const renderer = new A2UIRenderer({
-  container: document.getElementById('app'),
-  customComponents: new Map([
-    ['GoogleMap', 'google-map']
-  ])
+// 2. Register the custom component with A2UI.
+//    The string key 'GoogleMap' is the name the agent will use in A2UI messages.
+registerCustomComponents({
+  GoogleMap: GoogleMapComponent,
 });
-```
 
+// You can also access the registry directly if needed, but registerCustomComponents is preferred.
+// console.log(componentRegistry.get('GoogleMap'));
+```
 ### Angular
 
 ```typescript
 // google-map.component.ts
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-google-map',
+  standalone: true,
   template: `<div #mapContainer style="width: 100%; height: 400px;"></div>`,
 })
 export class GoogleMapComponent implements OnInit {
-  @Input() center: { lat: number; lng: number };
+  @Input() center: { lat: number; lng: number } = { lat: 0, lng: 0 };
   @Input() zoom: number = 10;
-  @ViewChild('mapContainer') mapContainer: ElementRef;
+  @ViewChild('mapContainer') mapContainer!: ElementRef;
 
   ngOnInit() {
-    new google.maps.Map(this.mapContainer.nativeElement, {
-      center: this.center,
-      zoom: this.zoom
-    });
+    // Initialize Google Maps (placeholder logic)
+    console.log(`Initializing GoogleMap at ${
+      this.center.lat
+    },${this.center.lng} with zoom ${this.zoom}`);
+    // new google.maps.Map(this.mapContainer.nativeElement, { center: this.center, zoom: this.zoom });
   }
 }
 
-// app.module.ts
-import { A2UIModule } from '@a2ui/renderer-angular';
+// app.config.ts
+import { ApplicationConfig } from '@angular/core';
+import { provideA2UI } from '@a2ui/angular';
+import { GoogleMapComponent } from './google-map.component';
 
-@NgModule({
-  declarations: [GoogleMapComponent],
-  imports: [
-    A2UIModule.forRoot({
-      customComponents: [
-        { name: 'GoogleMap', component: GoogleMapComponent }
-      ]
-    })
-  ]
-})
-export class AppModule {}
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideA2UI({
+      customComponents: [{ name: 'GoogleMap', type: GoogleMapComponent }]
+    }),
+  ],
+};
 ```
-
 ### Flutter
 
 ```dart
@@ -141,49 +138,62 @@ import 'package:flutter/material.dart';
 import 'package:flutter_genui/flutter_genui.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-// 1. Define custom widget
+// 1. Define your custom widget.
 class GoogleMapWidget extends StatelessWidget {
   final Map<String, dynamic> properties;
 
-  GoogleMapWidget({required this.properties});
+  const GoogleMapWidget({super.key, required this.properties});
 
   @override
   Widget build(BuildContext context) {
     final lat = properties['center']['lat'] as double;
     final lng = properties['center']['lng'] as double;
-    final zoom = properties['zoom'] as double? ?? 10.0;
+    final zoom = (properties['zoom'] as num?)?.toDouble() ?? 10.0;
 
     return GoogleMap(
       initialCameraPosition: CameraPosition(
         target: LatLng(lat, lng),
         zoom: zoom,
       ),
+      // Other GoogleMap properties as needed
     );
   }
 }
 
-// 2. Register with GenUI
-GenUIRenderer(
-  customComponents: {
-    'GoogleMap': (props) => GoogleMapWidget(properties: props),
-  },
-)
+// 2. Register with GenUI by providing a customComponentRenderers map
+//    to your GenUIScreen.
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: GenUIScreen(
+        agentUrl: 'https://your-agent-endpoint.com', // Your agent URL
+        customComponentRenderers: {
+          // The string key 'GoogleMap' is the name the agent will use.
+          'GoogleMap': (context, properties) =>
+              GoogleMapWidget(properties: properties),
+        },
+      ),
+    );
+  }
+}
 ```
 
-## Agent-Side: Using Custom Components
+## Agent-Side: Using Components from a Custom Catalog
 
-Once registered on the client, agents can use custom components:
+Once registered on the client, agents can use components from your custom catalog directly in `surfaceUpdate` messages. The agent will specify the `catalogId` in the `beginRendering` message to indicate which catalog its components belong to.
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "location-map",
-        "CustomComponent": {
-          "name": "GoogleMap",
-          "properties": {
+        "component": {
+          "GoogleMap": {
             "center": {"lat": 37.7749, "lng": -122.4194},
             "zoom": 13,
             "markers": [
@@ -234,14 +244,13 @@ class StockTickerComponent extends LitElement {
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "stock-ticker",
-        "CustomComponent": {
-          "name": "StockTicker",
-          "properties": {
+        "component": {
+          "StockTicker": {
             "symbol": {"path": "/stock/symbol"},
             "price": {"path": "/stock/price"},
             "change": {"path": "/stock/change"}
@@ -255,15 +264,14 @@ class StockTickerComponent extends LitElement {
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
-    "op": "replace",
     "path": "/stock",
-    "value": {
-      "symbol": "GOOGL",
-      "price": 142.50,
-      "change": 2.3
-    }
+    "contents": [
+      { "key": "symbol", "valueString": "GOOGL" },
+      { "key": "price", "valueNumber": 142.50 },
+      { "key": "change", "valueNumber": 2.3 }
+    ]
   }
 }
 ```
@@ -319,11 +327,15 @@ async def handle_action(action: dict, context):
 
         # Show confirmation
         yield {
-            "updateComponents": {
+            "surfaceUpdate": {
                 "surfaceId": action['surfaceId'],
                 "components": [{
                     "id": "confirmation",
-                    "Text": {"text": {"literal": "Payment successful!"}}
+                    "component": {
+                        "Text": {
+                            "text": {"literalString": "Payment successful!"}
+                        }
+                    }
                 }]
             }
         }
@@ -539,15 +551,14 @@ customElements.define('a2ui-chart', ChartComponent);
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "sales-chart",
-        "CustomComponent": {
-          "name": "Chart",
-          "properties": {
-            "type": {"literal": "line"},
+        "component": {
+          "Chart": {
+            "type": {"literalString": "line"},
             "data": {
               "path": "/chartData"
             }

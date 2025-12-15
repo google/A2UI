@@ -47,25 +47,27 @@ A2UI styling works in layers:
 
 ## Layer 1: Semantic Styles
 
-Agents specify semantic styles, not visual properties:
+Agents specify semantic hints, not visual properties:
 
 ```json
 {
   "id": "title",
-  "Text": {
-    "text": {"literal": "Welcome"},
-    "style": "headline"  ← Semantic, not "font-size: 24px"
+  "component": {
+    "Text": {
+      "text": {"literalString": "Welcome"},
+      "usageHint": "h1"
+    }
   }
 }
 ```
 
-**Available semantic styles:**
+**Available `usageHint` values (for `Text` component):**
 
-- **Text**: `headline`, `subheading`, `body`, `caption`, `overline`
-- **Button**: `primary`, `secondary`, `text`, `outlined`
-- **Card**: `elevated`, `filled`, `outlined`
+- `h1`, `h2`, `h3`, `h4`, `h5`: For headings of different levels.
+- `body`: For standard body text.
+- `caption`: For smaller, caption-style text.
 
-The client maps these to actual visual styles.
+The client renderer maps these hints to actual visual styles from your theme.
 
 ## Layer 2: Theme Configuration
 
@@ -479,19 +481,23 @@ a2ui-card:hover {
 // ✅ Good: Semantic
 {
   "id": "title",
-  "Text": {
-    "text": {"literal": "Welcome"},
-    "style": "headline"
+  "component": {
+    "Text": {
+      "text": {"literalString": "Welcome"},
+      "usageHint": "h1"
+    }
   }
 }
 
 // ❌ Bad: Don't specify visual properties from agent
 {
   "id": "title",
-  "Text": {
-    "text": {"literal": "Welcome"},
-    "fontSize": 24,  ← Not part of A2UI protocol
-    "color": "#FF0000"
+  "component": {
+    "Text": {
+      "text": {"literalString": "Welcome"},
+      "fontSize": 24,
+      "color": "#FF0000"
+    }
   }
 }
 ```
