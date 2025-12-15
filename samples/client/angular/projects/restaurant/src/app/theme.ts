@@ -14,11 +14,7 @@
  limitations under the License.
  */
 
-<<<<<<< HEAD
-import * as v0_8 from '@a2ui/lit/0.8';
-=======
-import { Styles, Types } from '@a2ui/web-lib/0.8';
->>>>>>> main
+import { Styles, Types } from '@a2ui/lit/0.8';
 
 /** Elements */
 
