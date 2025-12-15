@@ -87,7 +87,6 @@ Instead of deeply nested JSON trees, A2UI represents components as a **flat list
 - ✅ Flat structure is easy for LLMs to generate
 - ✅ Can send components incrementally
 - ✅ Can update any component by ID
-- ✅ Can reuse components by referencing the same ID
 - ✅ Clear separation of structure and data
 
 ## Component Anatomy
