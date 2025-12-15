@@ -1,6 +1,6 @@
 # Data Binding
 
-Data binding is the mechanism that connects UI components to application state. It's what makes A2UI interfaces reactive and dynamic without requiring code execution.
+Data binding is the mechanism that connects UI components to application state. It's what allows A2UI to efficiently define layouts for large arrays of data, or to show updated content without being regenerated from scratch.
 
 ## The Separation of Structure and State
 
