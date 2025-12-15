@@ -22,7 +22,7 @@ A2UI styling works in layers:
 
 ```
 ┌────────────────────────────────────────────┐
-│  1. Component Styles (Semantic)            │  ← Agent specifies
+│  1. Component usage hints (Semantic)            │  ← Agent specifies
 │     "This is a headline"                   │
 └──────────────────┬─────────────────────────┘
                    │
