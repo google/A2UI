@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.13"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -9,6 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "a2ui-contact-lookup",
+    "a2ui-contact-multiple-surfaces",
     "a2ui-restaurant-finder",
     "orchestrator",
     "rizzcharts",
@@ -46,6 +47,34 @@ requires-dist = [{ name = "a2a-sdk", specifier = ">=0.3.0" }]
 name = "a2ui-contact-lookup"
 version = "0.1.0"
 source = { editable = "contact_lookup" }
+dependencies = [
+    { name = "a2a-sdk" },
+    { name = "a2ui" },
+    { name = "click" },
+    { name = "google-adk" },
+    { name = "google-genai" },
+    { name = "jsonschema" },
+    { name = "litellm", version = "1.80.5", source = { registry = "https://us-python.pkg.dev/artifact-foundry-prod/ah-3p-staging-python/simple/" }, marker = "python_full_version >= '3.14'" },
+    { name = "litellm", version = "1.80.7", source = { registry = "https://us-python.pkg.dev/artifact-foundry-prod/ah-3p-staging-python/simple/" }, marker = "python_full_version < '3.14'" },
+    { name = "python-dotenv" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "a2a-sdk", specifier = ">=0.3.0" },
+    { name = "a2ui", directory = "../../../a2a_agents/python/a2ui_extension" },
+    { name = "click", specifier = ">=8.1.8" },
+    { name = "google-adk", specifier = ">=1.8.0" },
+    { name = "google-genai", specifier = ">=1.27.0" },
+    { name = "jsonschema", specifier = ">=4.0.0" },
+    { name = "litellm" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
+]
+
+[[package]]
+name = "a2ui-contact-multiple-surfaces"
+version = "0.1.0"
+source = { editable = "contact_multiple_surfaces" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "a2ui" },

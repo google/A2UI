@@ -68,6 +68,10 @@ export class Surface extends Root {
     </div>`;
   }
 
+  @property()
+  accessor enableCustomElements = false;
+
+
   #renderSurface() {
     const styles: Record<string, string> = {};
     if (this.surface?.styles) {
@@ -106,6 +110,7 @@ export class Surface extends Root {
       .childComponents=${this.surface?.componentTree
         ? [this.surface.componentTree]
         : null}
+      .enableCustomElements=${this.enableCustomElements}
     ></a2ui-root>`;
   }
 

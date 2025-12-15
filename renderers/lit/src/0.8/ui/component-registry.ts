@@ -17,13 +17,15 @@
 import { CustomElementConstructorOf } from "./ui.js";
 
 export class ComponentRegistry {
+  private schemas: Map<string, unknown> = new Map();
   private registry: Map<string, CustomElementConstructorOf<HTMLElement>> =
     new Map();
 
   register(
     typeName: string,
     constructor: CustomElementConstructorOf<HTMLElement>,
-    tagName?: string
+    tagName?: string,
+    schema?: unknown
   ) {
     if (!/^[a-zA-Z0-9]+$/.test(typeName)) {
       throw new Error(
@@ -32,6 +34,9 @@ export class ComponentRegistry {
     }
 
     this.registry.set(typeName, constructor);
+    if (schema) {
+      this.schemas.set(typeName, schema);
+    }
     const actualTagName = tagName || `a2ui-custom-${typeName.toLowerCase()}`;
 
     const existingName = customElements.getName(constructor);
@@ -52,6 +57,14 @@ export class ComponentRegistry {
 
   get(typeName: string): CustomElementConstructorOf<HTMLElement> | undefined {
     return this.registry.get(typeName);
+  }
+
+  getInlineCatalog(): { components: { [key: string]: unknown } } {
+    const components: { [key: string]: unknown } = {};
+    for (const [key, value] of this.schemas) {
+      components[key] = value;
+    }
+    return { components };
   }
 }
 
