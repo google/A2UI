@@ -18,9 +18,9 @@ A2UI is developed in collaboration with several organizations:
 
 [Opal](http://opal.google) lets users build, edit, and share AI mini-apps using natural language. The Opal team has been a core contributor to A2UI's development.
 
-### Flutter / GenUI SDK
+### Flutter
 
-The [Flutter GenUI SDK](https://docs.flutter.dev/ai/genui) uses A2UI as the UI declaration format for generating dynamic, personalized UIs in Flutter applications.
+The [GenUI SDK for Flutter](https://docs.flutter.dev/ai/genui) uses A2UI as the UI declaration format for generating dynamic, personalized UIs in Flutter applications.
 
 ### Gemini Enterprise
 

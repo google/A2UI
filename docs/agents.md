@@ -2,6 +2,10 @@
 
 Agents are server-side programs that generate A2UI messages in response to user requests.
 
+The actual component rendering is done by the [renderer](renderers.md),
+after messages are [transported](transport.md) to the client.
+The agent is only responsible for generating the A2UI messages.
+
 ## How Agents Work
 
 ```
@@ -10,60 +14,38 @@ User Input → Agent Logic → LLM → A2UI JSON → Send to Client
 
 1. **Receive** user message
 2. **Process** with LLM (Gemini, GPT, Claude, etc.)
-3. **Generate** A2UI JSON messages
+3. **Generate** A2UI JSON messages as structured output
 4. **Send** to client via transport
 
-## Example Agents
+User interactions from the client can be treated as new user input.
+
+## Sample Agents
 
 The A2UI repository includes sample agents you can learn from:
 
-| Agent | Description | Code |
-|-------|-------------|------|
-| **Restaurant Finder** | Table reservations with forms | [View](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder) |
-| **Contact Lookup** | Search with result lists | [View](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup) |
-| **Rizzcharts** | Custom components demo | [View](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts) |
+- [Restaurant Finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder) 
+    - Table reservations with forms
+    - Written with the ADK
+- [Contact Lookup](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup) 
+    - Search with result lists
+    - Written with the ADK
+- [Rizzcharts](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts) 
+    - A2UI Custom components demo
+    - Written with the ADK
 
-## Agent Frameworks
+## Different types of agents you will use A2A with
 
-You can build A2UI agents with any framework:
+### 1. User Facing Agent (standalone)
 
-| Framework | Status | Notes |
-|-----------|--------|-------|
-| **A2A Protocol** | ✅ Supported | Native integration via extension |
-| **ADK** | 📋 In Design | Sample implementations available |
-| **Custom** | ✅ Supported | Use any LLM + JSON generation |
+A user facing agent is one that is directly interacted with by the user. 
 
-## Quick Example
+### 2. User Facing Agent as a host for a Remote Agent
 
-```python
-import google.generativeai as genai
+This is a pattern where the user facing agent is a host for one or more remote agents. The user facing agent will call the remote agent and the remote agent will generate the A2UI messages. This is a common pattern in [A2A](https://a2a-protocol.org) with the client agent calling the server agent.
 
-# Include A2UI schema in prompt
-prompt = """
-Generate A2UI JSON for a booking form.
-Use createSurface, updateComponents, updateDataModel.
-"""
+- The user facing agent may "passthrough" the A2UI message without altering them
+- The user facing agent may alter the A2UI message before sending it to the client
 
-response = model.generate_content(prompt)
+### 3. Remote Agent
 
-# Parse and stream to client
-for line in response.text.split('\n'):
-    if line.strip():
-        yield json.loads(line)  # Stream JSONL
-```
-
-## Building an Agent
-
-Key steps:
-
-1. **Choose an LLM** (Gemini, GPT, Claude)
-2. **Include A2UI schema** in prompts or use structured output
-3. **Generate JSON messages** (JSONL format)
-4. **Validate** against schema
-5. **Stream** to clients
-
-## Next Steps
-
-- **[Agent Development Guide](guides/agent-development.md)**: Detailed how-to
-- **[Quickstart](quickstart.md)**: Run the restaurant agent
-- **[Specification](specification/v0.8-a2ui.md)**: Protocol details
+A remote agent is not directly a part of the user facing UI. Instead it is registered in as a remote agent and can be called by the user facing agent. This is a common pattern in [A2A](https://a2a-protocol.org) with the client agent calling the server agent.

@@ -46,7 +46,7 @@ export GEMINI_API_KEY="your_gemini_api_key_here"
 ## Step 3: Navigate to the Angular Client
 
 ```bash
-cd samples/client/angular
+cd samples/client/lit
 ```
 
 ## Step 4: Install and Run
@@ -55,7 +55,7 @@ Run the one-command demo launcher:
 
 ```bash
 npm install
-npm run demo:restaurant
+npm run demo:all
 ```
 
 This command will:

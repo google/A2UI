@@ -2,6 +2,10 @@
 
 Transports deliver A2UI messages from agents to clients. A2UI is transport-agnostic—use any method that can send JSON.
 
+The actual component rendering is done by the [renderer](renderers.md),
+and the [agents](agents.md) are responsible for generating the A2UI messages.
+Getting the messages from the agent to the client is the job of the transport.
+
 ## How It Works
 
 ```
@@ -20,54 +24,56 @@ A2UI messages are JSON objects sent as a stream (JSONL format). The transport la
 | **WebSockets** | 💡 Proposed | Real-time bidirectional |
 | **SSE (Server-Sent Events)** | 💡 Proposed | Web streaming |
 
-## A2A Protocol (Recommended)
+## A2A Protocol
 
-The [Agent2Agent (A2A) protocol](https://a2a-protocol.org) provides secure, standardized agent communication with built-in A2UI support.
+The [Agent2Agent (A2A) protocol](https://a2a-protocol.org) provides secure,
+standardized agent communication.  An A2A extension provides easy integration with A2UI.
 
 **Benefits:**
+
 - Security and authentication built-in
-- Multi-agent coordination
-- Clean separation of structure and data
-- Mitigates UI injection risks
+- Bindings for many message formats, auth, and transport protocols
+- Clean separation of concerns
+
+If you are using A2A, this should be nearly automatic.
+
+TODO: Add a detailed guide.
 
 **See:** [A2A Extension Specification](specification/v0.8-a2a-extension.md)
 
-## AG UI / CopilotKit
+## AG UI
 
-[AG UI](https://ag-ui.com/) and [CopilotKit](https://www.copilotkit.ai/) have day-zero A2UI compatibility, handling state sync and message transport automatically.
+[AG UI](https://ag-ui.com/) translates from A2UI messages to AG UI messages, and handles transport and state sync automatically.
+
+If you are using AG UI, this should be automatic.
+
+TODO: Add a detailed guide.
 
 ## Custom Transports
 
 You can use any transport that sends JSON:
 
 **HTTP/REST:**
+
 ```javascript
-const response = await fetch('/api/a2ui', {
-  method: 'POST',
-  body: JSON.stringify(userMessage)
-});
-const messages = await response.json();
+// TODO: Add an example
 ```
 
 **WebSockets:**
+
 ```javascript
-const ws = new WebSocket('wss://api.example.com/a2ui');
-ws.onmessage = (event) => {
-  const message = JSON.parse(event.data);
-  renderer.processMessage(message);
-};
+// TODO: Add an example
 ```
 
 **Server-Sent Events:**
+
 ```javascript
-const eventSource = new EventSource('/api/a2ui-stream');
-eventSource.onmessage = (event) => {
-  renderer.processMessage(JSON.parse(event.data));
-};
+// TODO: Add an example
+```
+
 ```
 
 ## Next Steps
 
 - **[A2A Protocol Docs](https://a2a-protocol.org)**: Learn about A2A
 - **[A2A Extension Spec](specification/v0.8-a2a-extension.md)**: A2UI + A2A details
-- **[Agent Development](guides/agent-development.md)**: Build agents that stream A2UI

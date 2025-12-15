@@ -2,6 +2,12 @@
 
 Renderers convert A2UI JSON messages into native UI components for different platforms.
 
+The [agents](agents.md) are responsible for generating the A2UI messages, 
+and the [transports](transports.md) are responsible for delivering the messages to the client.
+The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, and render surfaces (widgets).
+
+You have a lot of flexibility, to bring custom comonents to a renderer, or build your own renderer to support your UI component framework.
+
 ## Available Renderers
 
 | Renderer | Platform | Status | Links |
@@ -19,10 +25,10 @@ Check the [Roadmap](roadmap.md) for more.
 A2UI JSON → Renderer → Native Components → Your App
 ```
 
-1. **Receive** A2UI messages from an agent
-2. **Parse** the JSON and validate against schema
+1. **Receive** A2UI messages from the transport
+2. **Parse** the JSON and validate against the schema
 3. **Render** using platform-native components
-4. **Client Style** according to your app's theme
+4. **Style** according to your app's theme
 
 ## Quick Start
 
@@ -32,17 +38,31 @@ A2UI JSON → Renderer → Native Components → Your App
 npm install @a2ui/lit
 ```
 
+TODO: Add a quickstart guide
+
 **Angular:**
 
 ```bash
 npm install @a2ui/angular
 ```
 
+TODO: Add a quickstart guide
+
 **Flutter:**
 
 ```bash
 flutter pub add flutter_genui
 ```
+
+TODO: Add a quickstart guide
+
+## Adding custom components to a renderer
+
+TODO: Add a guide
+
+## Theming or styling a renderer
+
+TODO: Add a guide
 
 ## Building a Renderer
 
@@ -53,13 +73,15 @@ Want to build a renderer for your platform?
 
 ### Key requirements:
 
-- Parse A2UI JSON messages
+- Parse A2UI JSON messages, specifically the adjacency list format
 - Map A2UI components to native widgets
-- Handle data binding and updates
+- Handle data binding, lifecycle events
+- Support streamed events (poentially with chunks out of order and duplicated)
+- Support server initiated updates
 - Support user actions
 
 ### Next Steps
 
 - **[Client Setup Guide](guides/client-setup.md)**: Integration instructions
-- **[Quickstart](quickstart.md)**: Try the Angular renderer
+- **[Quickstart](quickstart.md)**: Try the Lit renderer
 - **[Component Reference](reference/components.md)**: What components to support
