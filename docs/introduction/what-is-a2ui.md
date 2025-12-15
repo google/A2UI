@@ -21,6 +21,7 @@ Agent: "What time?"
 In multi-agent systems, agents often run remotely (different servers, organizations). They can't directly manipulate your UI—they must send messages.
 
 **Traditional approach:** Send HTML/JavaScript in iframes
+
 - Heavy, visually disjointed
 - Security complexity
 - Doesn't match app styling
@@ -30,6 +31,7 @@ In multi-agent systems, agents often run remotely (different servers, organizati
 ## The Solution
 
 A2UI: JSON messages describing UI that:
+
 - LLMs generate as structured output
 - Travel over any transport (A2A, AG UI, SSE, WebSockets)
 - Client renders using its own native components
@@ -79,8 +81,8 @@ Client renders these messages as native components (Angular, Flutter, React, etc
 
 - Not a framework (it's a protocol)
 - Not a replacement for HTML (for agent-generated UIs, not static sites)
-- Not a styling system (client controls styling)
-- Not limited to web (works anywhere)
+- Not a robust styling system (client controls styling with limited serverside styling support)
+- Not limited to web (works on mobile and desktop)
 
 ## Key Concepts
 
@@ -90,11 +92,4 @@ Client renders these messages as native components (Angular, Flutter, React, etc
 - **Catalog**: Available component types
 - **Message**: JSON object (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, etc.)
 
-## Next Steps
-
-Now that you understand what A2UI is, explore:
-
-- **[Who is A2UI for?](who-is-it-for.md)** - Understand if A2UI is right for your use case
-- **[How can I use it?](how-to-use.md)** - Learn the different ways to integrate A2UI
-- **[Where is it used?](where-is-it-used.md)** - See real-world examples and integrations
-- **[Quickstart Guide](../quickstart.md)** - Get hands-on in 5 minutes
+For a comparison of similar projects, see [Agent UI Ecosystem](agent-ui-ecosystem.md).

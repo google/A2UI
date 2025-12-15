@@ -157,8 +157,9 @@ root_agent = Agent(
 Your agent will no longer strictly output text. Instead, it will output text and a **JSON list** of A2UI messages.
 
 The `A2UI_SCHEMA` that we imported is a standard JSON schema that defines valid operations like:
-*   `render` (displaying a UI)
-*   `update` (changing data in an existing UI)
+
+* `render` (displaying a UI)
+* `update` (changing data in an existing UI)
 
 Because the output is structured JSON, you may parse and validate it before sending it to the client.
 
@@ -174,6 +175,5 @@ jsonschema.validate(
 ```
 
 By validating the output against `A2UI_SCHEMA`, you ensure that your client never receives malformed UI instructions.
-
 
 TODO: Continue this guide with examples of how to parse, validate, and send the output to the client renderer   without the A2A extension.

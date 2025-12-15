@@ -121,103 +121,6 @@ As Google adopts AI across the company, A2UI provides a **standardized way for A
 
 ---
 
-## Example Use Cases
-
-### Enterprise Workflow Automation
-
-**Industry:** Various (HR, Finance, Operations)
-
-**Scenario:** Employees interact with multiple AI agents for different tasks (expense reports, time off requests, IT support, data queries).
-
-**A2UI enables:**
-- Consistent UI/UX across all agents
-- Branded experience matching company design system
-- Secure rendering of UI from third-party agents
-- Mobile and desktop support for field workers
-
-**Example agents:**
-- Expense report agent generates receipt upload forms
-- IT support agent creates troubleshooting wizards
-- Analytics agent provides interactive dashboards
-
----
-
-### Customer Service Platforms
-
-**Industry:** E-commerce, SaaS, Support
-
-**Scenario:** Customer service agents assist users through complex processes (returns, account setup, troubleshooting).
-
-**A2UI enables:**
-- Rich forms for data collection
-- Step-by-step wizards for processes
-- Interactive troubleshooting guides
-- Order status displays and timelines
-
-**Example agents:**
-- Return processing agent generates return forms
-- Account setup agent creates onboarding wizards
-- Product recommendation agent shows comparison tables
-
----
-
-### Data Analysis & Reporting
-
-**Industry:** Business Intelligence, Analytics
-
-**Scenario:** Users query data and AI agents generate custom reports and visualizations.
-
-**A2UI enables:**
-- Dynamic chart generation based on queries
-- Interactive data tables with filtering/sorting
-- Custom dashboards for different metrics
-- Drill-down interfaces for detailed analysis
-
-**Example agents:**
-- Sales analytics agent generates revenue charts
-- User behavior agent creates funnel visualizations
-- Performance monitoring agent shows real-time dashboards
-
----
-
-### Healthcare Applications
-
-**Industry:** Healthcare, Medical
-
-**Scenario:** Doctors, nurses, and patients interact with AI agents for scheduling, diagnostics support, and patient information.
-
-**A2UI enables:**
-- HIPAA-compliant UI rendering (no code execution)
-- Structured data collection forms
-- Timeline views for patient history
-- Medication and treatment plans display
-
-**Example agents:**
-- Appointment scheduling agent with calendar picker
-- Diagnostic support agent with symptom checkers
-- Patient education agent with interactive guides
-
----
-
-### Financial Services
-
-**Industry:** Banking, Fintech, Insurance
-
-**Scenario:** Customers and advisors use AI agents for account management, investment recommendations, and claims processing.
-
-**A2UI enables:**
-- Secure forms for sensitive data entry
-- Transaction approval workflows
-- Portfolio visualization and analysis
-- Claims submission with document upload
-
-**Example agents:**
-- Investment advisor agent with portfolio charts
-- Claims processing agent with form generation
-- Fraud detection agent with transaction timelines
-
----
-
 ## Community Projects
 
 The A2UI community is building exciting projects:
@@ -245,51 +148,13 @@ Have you built something with A2UI? [Share it with the community!](../community.
 
 ---
 
-## Industry Adoption
+## Next Steps
 
-A2UI is gaining traction across industries:
-
-| Industry | Use Cases | Status |
-|----------|-----------|--------|
-| **Technology** | Multi-agent platforms, dev tools | ✅ Active |
-| **Enterprise Software** | Workflow automation, internal tools | ✅ Active |
-| **Consumer Apps** | Mobile apps with AI features | ✅ Active |
-| **Healthcare** | Patient portals, diagnostic support | 🚧 Pilot |
-| **Financial Services** | Client portals, advisory tools | 🚧 Pilot |
-| **E-commerce** | Shopping assistants, product finders | 🚧 Pilot |
-| **Education** | Learning platforms, tutoring agents | 💡 Exploring |
+- [Quickstart Guide](../quickstart.md) - Try the demo
+- [Agent Development](../guides/agent-development.md) - Build an agent
+- [Client Setup](../guides/client-setup.md) - Integrate a renderer
+- [Community](../community.md) - Join the community
 
 ---
 
-## Getting Started
-
-Inspired by these examples? Here's how to start:
-
-1. **Try the Demo** - [Quickstart Guide](../quickstart.md)
-2. **Build an Agent** - [Agent Development Guide](../guides/agent-development.md)
-3. **Integrate a Renderer** - [Client Setup Guide](../guides/client-setup.md)
-4. **Join the Community** - [Community](../community.md)
-
----
-
-## Share Your Story
-
-Using A2UI in production? We'd love to hear about it!
-
-- **Open a discussion** on [GitHub Discussions](https://github.com/google/A2UI/discussions)
-- **Write a blog post** and we'll share it
-- **Submit a case study** for the documentation
-- **Contribute an example** to the samples directory
-
-Contact us through GitHub or at the A2UI repository.
-
----
-
-## Stay Updated
-
-- **Watch the repo**: [github.com/google/A2UI](https://github.com/google/A2UI)
-- **Star the project**: Show your support
-- **Follow releases**: Get notified of new versions
-- **Join discussions**: Participate in the community
-
-The A2UI ecosystem is growing. Be part of it!
+**Using A2UI in production?** Share your story on [GitHub Discussions](https://github.com/google/A2UI/discussions).
