@@ -159,4 +159,5 @@ CONTACT_UI_EXAMPLES = """
   } }
 ]
 ---END FOLLOW_SUCCESS_EXAMPLE---
+"""
 
