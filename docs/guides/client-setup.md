@@ -51,9 +51,7 @@ flutter pub add flutter_genui
 
 Flutter uses the GenUI SDK which provides native A2UI rendering.
 
-TODO: Add setup guide for Flutter GenUI.
-
-**Docs:** [GenUI SDK](https://docs.flutter.dev/ai/genui) | [GitHub](https://github.com/flutter/genui)
+**Docs:** [GenUI SDK](https://docs.flutter.dev/ai/genui) | [GitHub](https://github.com/flutter/genui) | [README in GenUI Flutter Package](https://github.com/flutter/genui/blob/main/packages/genui/README.md#getting-started-with-genui)
 
 ## Connecting to Agents
 

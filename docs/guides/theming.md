@@ -20,29 +20,14 @@ This ensures:
 
 A2UI styling works in layers:
 
-```
-┌────────────────────────────────────────────┐
-│  1. Semantic Hints                         │  ← Agent provides hints
-│     "This is a headline" (usageHint: "h1") │
-└──────────────────┬─────────────────────────┘
-                   │
-                   ▼
-┌────────────────────────────────────────────┐
-│  2. Theme Configuration                    │  ← You configure
-│     Colors, fonts, spacing, etc.           │
-└──────────────────┬─────────────────────────┘
-                   │
-                   ▼
-┌────────────────────────────────────────────┐
-│  3. Component Overrides                    │  ← You customize
-│     CSS/styles for specific components     │
-└──────────────────┬─────────────────────────┘
-                   │
-                   ▼
-┌────────────────────────────────────────────┐
-│  4. Rendered Output                        │
-│     Native platform widgets                │
-└────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A["1. Semantic Hints<br/>Agent provides hints<br/>(e.g., usageHint: 'h1')"]
+    B["2. Theme Configuration<br/>You configure<br/>(colors, fonts, spacing)"]
+    C["3. Component Overrides<br/>You customize<br/>(CSS/styles for specific components)"]
+    D["4. Rendered Output<br/>Native platform widgets"]
+
+    A --> B --> C --> D
 ```
 
 ## Layer 1: Semantic Hints

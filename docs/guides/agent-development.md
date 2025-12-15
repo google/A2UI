@@ -165,6 +165,9 @@ Because the output is structured JSON, you may parse and validate it before send
 
 ```python
 # 1. Parse the JSON
+# Warning: Parsing the output as JSON is a fragile implementation useful for documentation.
+# LLMs often put Markdown fences around JSON output, and can make other mistakes.
+# Rely on frameworks to parse the JSON for you.
 parsed_json_data = json.loads(json_string_cleaned)
 
 # 2. Validate against A2UI_SCHEMA
