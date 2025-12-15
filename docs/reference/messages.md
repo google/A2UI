@@ -1,6 +1,6 @@
 # Message Types
 
-This reference provides detailed documentation for all A2UI message types. For a higher-level overview, see the [Protocol Specification](protocol.md).
+This reference provides detailed documentation for all A2UI message types.
 
 ## Message Format
 
@@ -30,12 +30,12 @@ Signals the client that it has enough information to perform the initial render 
 
 ### Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `surfaceId` | string | ✅ | Unique identifier for this surface. |
-| `root` | string | ✅ | The `id` of the component that should be the root of the UI tree for this surface. |
-| `catalogId` | string | ❌ | Identifier for the component catalog. Defaults to the v0.8 standard catalog if omitted. |
-| `styles` | object | ❌ | Styling information for the UI, as defined by the catalog. |
+| Property    | Type   | Required | Description                                                                             |
+| ----------- | ------ | -------- | --------------------------------------------------------------------------------------- |
+| `surfaceId` | string | ✅        | Unique identifier for this surface.                                                     |
+| `root`      | string | ✅        | The `id` of the component that should be the root of the UI tree for this surface.      |
+| `catalogId` | string | ❌        | Identifier for the component catalog. Defaults to the v0.8 standard catalog if omitted. |
+| `styles`    | object | ❌        | Styling information for the UI, as defined by the catalog.                              |
 
 ### Examples
 
@@ -93,10 +93,10 @@ Add or update components within a surface.
 
 ### Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `surfaceId` | string | ✅ | ID of the surface to update |
-| `components` | array | ✅ | Array of component definitions |
+| Property     | Type   | Required | Description                    |
+| ------------ | ------ | -------- | ------------------------------ |
+| `surfaceId`  | string | ✅        | ID of the surface to update    |
+| `components` | array  | ✅        | Array of component definitions |
 
 ### Component Object
 
@@ -205,12 +205,12 @@ The component with `id: "greeting"` is updated (not duplicated).
 
 ### Errors
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| Surface not found | `surfaceId` does not exist | Ensure a unique `surfaceId` is used consistently for a given surface. Surfaces are implicitly created on first update. |
-| Invalid component type | Unknown component type | Check component type exists in the negotiated catalog. |
-| Invalid property | Property doesn't exist for this type | Verify against catalog schema. |
-| Circular reference | Component references itself as a child | Fix component hierarchy. |
+| Error                  | Cause                                  | Solution                                                                                                               |
+| ---------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Surface not found      | `surfaceId` does not exist             | Ensure a unique `surfaceId` is used consistently for a given surface. Surfaces are implicitly created on first update. |
+| Invalid component type | Unknown component type                 | Check component type exists in the negotiated catalog.                                                                 |
+| Invalid property       | Property doesn't exist for this type   | Verify against catalog schema.                                                                                         |
+| Circular reference     | Component references itself as a child | Fix component hierarchy.                                                                                               |
 
 ---
 
@@ -238,11 +238,11 @@ Update the data model that components bind to.
 
 ### Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `surfaceId` | string | ✅ | ID of the surface to update. |
-| `path` | string | ❌ | Path to a location within the data model (e.g., 'user'). If omitted, the update applies to the root. |
-| `contents` | array | ✅ | An array of data entries as an adjacency list. Each entry has a `key` and a typed `value*` property. |
+| Property    | Type   | Required | Description                                                                                          |
+| ----------- | ------ | -------- | ---------------------------------------------------------------------------------------------------- |
+| `surfaceId` | string | ✅        | ID of the surface to update.                                                                         |
+| `path`      | string | ❌        | Path to a location within the data model (e.g., 'user'). If omitted, the update applies to the root. |
+| `contents`  | array  | ✅        | An array of data entries as an adjacency list. Each entry has a `key` and a typed `value*` property. |
 
 ### The `contents` Adjacency List
 
@@ -316,9 +316,9 @@ Remove a surface and all its components and data.
 
 ### Properties
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `surfaceId` | string | ✅ | ID of the surface to delete |
+| Property    | Type   | Required | Description                 |
+| ----------- | ------ | -------- | --------------------------- |
+| `surfaceId` | string | ✅        | ID of the surface to delete |
 
 ### Examples
 
@@ -349,9 +349,9 @@ Remove a surface and all its components and data.
 
 ### Errors
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| (None - deletes are idempotent) | | |
+| Error                           | Cause | Solution |
+| ------------------------------- | ----- | -------- |
+| (None - deletes are idempotent) |       |          |
 
 ---
 
@@ -391,7 +391,6 @@ All messages should be validated against:
 
 ## Further Reading
 
-- **[Protocol Specification](protocol.md)**: High-level protocol overview
 - **[Component Gallery](components.md)**: All available component types
 - **[Data Binding Guide](../concepts/data-binding.md)**: How data binding works
 - **[Agent Development Guide](../guides/agent-development.md)**: Generate valid messages

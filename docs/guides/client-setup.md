@@ -4,22 +4,27 @@ Integrate A2UI into your application using the renderer for your platform.
 
 ## Renderers
 
-| Renderer | Platform | Status |
-|----------|----------|--------|
-| **Lit (Web Components)** | Web | ✅ Stable |
-| **Angular** | Web | ✅ Stable |
-| **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ Stable |
-| **React** | Web | 🚧 Coming Q1 2026 |
-| **SwiftUI** | iOS/macOS | 🚧 Planned Q2 2026 |
-| **Jetpack Compose** | Android | 🚧 Planned Q2 2026 |
+| Renderer                 | Platform           | Status            |
+| ------------------------ | ------------------ | ----------------- |
+| **Lit (Web Components)** | Web                | ✅ Stable          |
+| **Angular**              | Web                | ✅ Stable          |
+| **Flutter (GenUI SDK)**  | Mobile/Desktop/Web | ✅ Stable          |
+| **React**                | Web                | 🚧 Coming Q1 2026  |
+| **SwiftUI**              | iOS/macOS          | 🚧 Planned Q2 2026 |
+| **Jetpack Compose**      | Android            | 🚧 Planned Q2 2026 |
 
 ## Web Components (Lit)
+
+!!! warning "Attention"
+    The Lit client library is not yet published to NPM. Check back in the
+    coming days.
 
 ```bash
 npm install @a2ui/web-lib lit @lit-labs/signals
 ```
 
 The Lit renderer uses:
+
 - **Message Processor**: Manages A2UI state and processes incoming messages
 - **`<a2ui-surface>` component**: Renders surfaces in your app
 - **Lit Signals**: Provides reactive state management for automatic UI updates
@@ -30,11 +35,16 @@ TODO: Add verified setup example.
 
 ## Angular
 
+!!! warning "Attention"
+    The Angular client library is not yet published to NPM. Check back in the
+    coming days.
+
 ```bash
 npm install @a2ui/angular @a2ui/web-lib
 ```
 
 The Angular renderer provides:
+
 - **`provideA2UI()` function**: Configures A2UI in your app config
 - **`Surface` component**: Renders A2UI surfaces
 - **`MessageProcessor` service**: Handles incoming A2UI messages

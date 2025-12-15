@@ -219,7 +219,7 @@ Now that you've seen A2UI in action, you're ready to:
 - **[Learn Core Concepts](concepts/overview.md)**: Understand surfaces, components, and data binding
 - **[Set Up Your Own Client](guides/client-setup.md)**: Integrate A2UI into your own app
 - **[Build an Agent](guides/agent-development.md)**: Create agents that generate A2UI responses
-- **[Explore the Protocol](reference/protocol.md)**: Dive into the technical specification
+- **[Explore the Protocol](reference/messages.md)**: Dive into the technical specification
 
 ## Troubleshooting
 
