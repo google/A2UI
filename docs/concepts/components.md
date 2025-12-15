@@ -43,37 +43,65 @@ Instead of deeply nested JSON trees, A2UI represents components as a **flat list
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "root",
-        "Column": {
-          "children": {"array": ["greeting", "button-row"]}
+        "component": {
+          "Column": {
+            "children": {"explicitList": ["greeting", "button-row"]}
+          }
         }
       },
       {
         "id": "greeting",
-        "Text": {
-          "text": {"literal": "Hello"}
+        "component": {
+          "Text": {
+            "text": {"literalString": "Hello"}
+          }
         }
       },
       {
         "id": "button-row",
-        "Row": {
-          "children": {"array": ["cancel-btn", "ok-btn"]}
+        "component": {
+          "Row": {
+            "children": {"explicitList": ["cancel-btn", "ok-btn"]}
+          }
         }
       },
       {
         "id": "cancel-btn",
-        "Button": {
-          "text": {"literal": "Cancel"}
+        "component": {
+          "Button": {
+            "child": "cancel-btn-text",
+            "action": {"name": "cancel_action"}
+          }
+        }
+      },
+      {
+        "id": "cancel-btn-text",
+        "component": {
+          "Text": {
+            "text": {"literalString": "Cancel"}
+          }
         }
       },
       {
         "id": "ok-btn",
-        "Button": {
-          "text": {"literal": "OK"}
+        "component": {
+          "Button": {
+            "child": "ok-btn-text",
+            "action": {"name": "ok_action"}
+          }
+        }
+      },
+      {
+        "id": "ok-btn-text",
+        "component": {
+          "Text": {
+            "text": {"literalString": "OK"}
+          }
         }
       }
     ]
@@ -101,16 +129,18 @@ Every component has:
 ```json
 {
   "id": "welcome-message",
-  "Text": {
-    "text": {"literal": "Welcome to A2UI"},
-    "style": "headline"
+  "component": {
+    "Text": {
+      "text": {"literalString": "Welcome to A2UI"},
+      "usageHint": "h1"
+    }
   }
 }
 ```
 
 - **id**: `"welcome-message"` - Unique identifier
 - **Type**: `Text` - This is a text component
-- **Properties**: `text` and `style` - Configuration
+- **Properties**: `text` and `usageHint` - Configuration
 
 ### Component Types
 
@@ -118,58 +148,49 @@ A2UI defines a **Standard Catalog** of component types:
 
 #### Layout Components
 
-- **Row**: Horizontal layout container
-- **Column**: Vertical layout container
-- **Stack**: Layered layout (z-axis stacking)
-- **Spacer**: Empty space for layout control
+- **Row**: Arranges components horizontally.
+- **Column**: Arranges components vertically.
+- **List**: A scrollable list of components, arranged horizontally or vertically.
 
 #### Display Components
 
-- **Text**: Display text content
-- **Image**: Display images
-- **Icon**: Display icons
-- **Divider**: Visual separator line
-- **ProgressIndicator**: Loading or progress display
+- **Text**: Displays a string of text.
+- **Image**: Displays an image from a URL.
+- **Icon**: Displays a named icon from a predefined set.
+- **Video**: Displays a video player from a URL.
+- **AudioPlayer**: Displays an audio player from a URL.
+- **Divider**: A thin horizontal or vertical line.
 
 #### Interactive Components
 
-- **Button**: Clickable button
-- **IconButton**: Icon-based button
-- **TextField**: Text input field
-- **NumberInput**: Numeric input
-- **Checkbox**: Boolean toggle
-- **RadioGroup**: Multiple choice selection
-- **Dropdown**: Dropdown/select menu
-- **DatePicker**: Date selection
-- **TimePicker**: Time selection
+- **Button**: A clickable button that triggers an action.
+- **CheckBox**: A checkbox that can be toggled on or off.
+- **TextField**: A field for user text input.
+- **DateTimeInput**: An input for selecting a date, time, or both.
+- **MultipleChoice**: A component for selecting one or more options from a list.
+- **Slider**: A slider for selecting a value from a range.
 
 #### Container Components
 
-- **Card**: Container with elevation/border
-- **Modal**: Overlay dialog
-- **ExpansionPanel**: Collapsible section
-- **Tabs**: Tabbed interface
-
-#### Specialized Components
-
-- **Timeline**: Event timeline display
-- **DataTable**: Table for structured data
-- **List**: Scrollable list
-- **CustomComponent**: For client-defined components
+- **Card**: A container with elevation and rounded corners, grouping related content.
+- **Tabs**: A component that displays a set of tabs, each with its own content.
+- **Modal**: A dialog that appears on top of the main content.
 
 ## Children: Static vs. Dynamic
 
 Components can contain children in two ways:
 
-### 1. Static Children (Array)
+### 1. Static Children (explicitList)
 
 A fixed list of child component IDs:
 
 ```json
 {
   "id": "toolbar",
-  "Row": {
-    "children": {"array": ["back-btn", "title", "menu-btn"]}
+  "component": {
+    "Row": {
+      "children": {"explicitList": ["back-btn", "title", "menu-btn"]}
+    }
   }
 }
 ```
@@ -183,10 +204,14 @@ Generate children from a data array using a template:
 ```json
 {
   "id": "item-list",
-  "Column": {
-    "children": {
-      "path": "/items",
-      "componentId": "item-template"
+  "component": {
+    "Column": {
+      "children": {
+        "template": {
+          "dataBinding": "/items",
+          "componentId": "item-template"
+        }
+      }
     }
   }
 }
@@ -211,11 +236,14 @@ This says: "For each item in the data at `/items`, render the `item-template` co
 ```json
 {
   "id": "item-template",
-  "Card": {
-    "children": {"array": ["item-name", "item-price"]}
+  "component": {
+    "Card": {
+      "child": "item-content" 
+    }
   }
 }
 ```
+*Note: For simplicity, the template's content components like "item-content", "item-name", and "item-price" are not shown here. The key is that `item-template` is a reusable component definition.*
 
 **Result:** Three cards are rendered, one for each item in the array.
 
@@ -230,8 +258,10 @@ Properties can be **literal values** or **data bindings**.
 ```json
 {
   "id": "title",
-  "Text": {
-    "text": {"literal": "Welcome"}
+  "component": {
+    "Text": {
+      "text": {"literalString": "Welcome"}
+    }
   }
 }
 ```
@@ -243,8 +273,10 @@ The text will always be "Welcome".
 ```json
 {
   "id": "username",
-  "Text": {
-    "text": {"path": "/user/name"}
+  "component": {
+    "Text": {
+      "text": {"path": "/user/name"}
+    }
   }
 }
 ```
@@ -272,8 +304,10 @@ Components that are direct children of `Row` or `Column` can have a **weight** p
 ```json
 {
   "id": "main-row",
-  "Row": {
-    "children": {"array": ["sidebar", "content"]}
+  "component": {
+    "Row": {
+      "children": {"explicitList": ["sidebar", "content"]}
+    }
   }
 }
 ```
@@ -281,8 +315,11 @@ Components that are direct children of `Row` or `Column` can have a **weight** p
 ```json
 {
   "id": "sidebar",
-  "Card": {
-    "weight": {"literal": 1}
+  "weight": 1,
+  "component": {
+    "Card": {
+      "child": "sidebar-content"
+    }
   }
 }
 ```
@@ -290,8 +327,11 @@ Components that are direct children of `Row` or `Column` can have a **weight** p
 ```json
 {
   "id": "content",
-  "Card": {
-    "weight": {"literal": 3}
+  "weight": 3,
+  "component": {
+    "Card": {
+      "child": "main-content"
+    }
   }
 }
 ```
@@ -306,17 +346,26 @@ The adjacency list model shines when updating UIs:
 
 ### Adding Components
 
-Send a new `updateComponents` message with additional components:
+Send a new `surfaceUpdate` message with additional components:
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
+        "id": "new-button-text",
+        "component": {
+          "Text": {"text": {"literalString": "Click Me"}}
+        }
+      },
+      {
         "id": "new-button",
-        "Button": {
-          "text": {"literal": "Click Me"}
+        "component": {
+          "Button": {
+            "child": "new-button-text",
+            "action": {"name": "new_action"}
+          }
         }
       }
     ]
@@ -326,18 +375,19 @@ Send a new `updateComponents` message with additional components:
 
 ### Updating Existing Components
 
-Send an `updateComponents` message with the same ID but new properties:
+Send a `surfaceUpdate` message with the same ID but new properties:
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
-        "id": "existing-button",
-        "Button": {
-          "text": {"literal": "Updated Text"},
-          "disabled": {"literal": true}
+        "id": "existing-button-text",
+        "component": {
+          "Text": {
+            "text": {"literalString": "Updated Text"}
+          }
         }
       }
     ]
@@ -345,7 +395,7 @@ Send an `updateComponents` message with the same ID but new properties:
 }
 ```
 
-The client merges the new properties into the existing component.
+The client merges the new properties into the existing component. *Note: In this example, we update the `Text` component that is the button's child to change its label.*
 
 ### Removing Components
 
@@ -353,13 +403,15 @@ Update a parent to remove a child from its `children` array:
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "container",
-        "Column": {
-          "children": {"array": ["child1", "child3"]}
+        "component": {
+          "Column": {
+            "children": {"explicitList": ["child1", "child3"]}
+          }
         }
       }
     ]
@@ -432,33 +484,57 @@ root → content-card → item
 // ❌ Mixing literal content with structure
 {
   "id": "profile",
-  "Card": {
-    "children": {"array": ["name-text", "email-text"]}
+  "component": {
+    "Card": {
+      "child": "profile-content"
+    }
+  }
+}
+{
+  "id": "profile-content",
+  "component": {
+    "Column": {
+       "children": {"explicitList": ["name-text", "email-text"]}
+    }
   }
 }
 {
   "id": "name-text",
-  "Text": {
-    "text": {"literal": "Alice Smith"}
+  "component": {
+    "Text": {
+      "text": {"literalString": "Alice Smith"}
+    }
   }
 }
 
 // ✅ Use data binding for content
 {
   "id": "profile",
-  "Card": {
-    "children": {"array": ["name-text", "email-text"]}
+  "component": {
+     "Card": {
+      "child": "profile-content"
+    }
+  }
+}
+{
+  "id": "profile-content",
+  "component": {
+    "Column": {
+       "children": {"explicitList": ["name-text", "email-text"]}
+    }
   }
 }
 {
   "id": "name-text",
-  "Text": {
-    "text": {"path": "/user/name"}
+  "component": {
+    "Text": {
+      "text": {"path": "/user/name"}
+    }
   }
 }
 ```
 
-Then update content via `updateDataModel` without touching components.
+Then update content via `dataModelUpdate` without touching components.
 
 ### 4. Reuse Components with Templates
 
@@ -468,107 +544,103 @@ For repeating patterns, use dynamic children:
 // ✅ One template, many instances
 {
   "id": "message-list",
-  "Column": {
-    "children": {
-      "path": "/messages",
-      "componentId": "message-card"
+  "component": {
+    "Column": {
+      "children": {
+        "template": {
+          "dataBinding": "/messages",
+          "componentId": "message-card"
+        }
+      }
     }
   }
 }
 {
   "id": "message-card",
-  "Card": {
-    "children": {"array": ["message-text", "message-time"]}
+  "component": {
+    "Card": {
+      "child": "message-content"
+    }
+  }
+}
+{
+  "id": "message-content",
+  "component": {
+     "Row": {
+        "children": {"explicitList": ["message-text", "message-time"]}
+     }
   }
 }
 ```
 
 ## Example: Building a Form
 
-Let's build a login form step by step:
-
-### Step 1: Create the Container
+Let's build a login form. The following `surfaceUpdate` message contains all the components needed to render a complete login form. In a real application, these could be streamed in smaller batches.
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "login-form",
-        "Card": {
-          "children": {"array": ["form-title", "form-fields", "submit-btn"]}
+        "component": {
+          "Card": {
+            "child": "form-content"
+          }
         }
-      }
-    ]
-  }
-}
-```
-
-### Step 2: Add the Title
-
-```json
-{
-  "updateComponents": {
-    "surfaceId": "main",
-    "components": [
+      },
+      {
+        "id": "form-content",
+        "component": {
+          "Column": {
+            "children": {"explicitList": ["form-title", "email-field", "password-field", "submit-btn"]}
+          }
+        }
+      },
       {
         "id": "form-title",
-        "Text": {
-          "text": {"literal": "Sign In"},
-          "style": "headline"
-        }
-      }
-    ]
-  }
-}
-```
-
-### Step 3: Add Form Fields
-
-```json
-{
-  "updateComponents": {
-    "surfaceId": "main",
-    "components": [
-      {
-        "id": "form-fields",
-        "Column": {
-          "children": {"array": ["email-field", "password-field"]}
+        "component": {
+          "Text": {
+            "text": {"literalString": "Sign In"},
+            "usageHint": "h1"
+          }
         }
       },
       {
         "id": "email-field",
-        "TextField": {
-          "label": {"literal": "Email"},
-          "value": {"path": "/login/email"}
+        "component": {
+          "TextField": {
+            "label": {"literalString": "Email"},
+            "text": {"path": "/login/email"}
+          }
         }
       },
       {
         "id": "password-field",
-        "TextField": {
-          "label": {"literal": "Password"},
-          "type": {"literal": "password"},
-          "value": {"path": "/login/password"}
+        "component": {
+          "TextField": {
+            "label": {"literalString": "Password"},
+            "textFieldType": "obscured",
+            "text": {"path": "/login/password"}
+          }
         }
-      }
-    ]
-  }
-}
-```
-
-### Step 4: Add Submit Button
-
-```json
-{
-  "updateComponents": {
-    "surfaceId": "main",
-    "components": [
+      },
       {
         "id": "submit-btn",
-        "Button": {
-          "text": {"literal": "Sign In"},
-          "onClick": {"actionId": "submit_login"}
+        "component": {
+          "Button": {
+            "child": "submit-btn-text",
+            "action": {"name": "submit_login"}
+          }
+        }
+      },
+      {
+        "id": "submit-btn-text",
+        "component": {
+          "Text": {
+            "text": {"literalString": "Sign In"}
+          }
         }
       }
     ]
@@ -586,10 +658,9 @@ A complete login form with:
 - Password input (masked)
 - Submit button
 
-All sent as four separate messages that can be streamed incrementally!
+All defined in a single, declarative message!
 
 ## Next Steps
 
 - **[Data Binding](data-binding.md)**: Learn how to connect components to data
-- **[Component Gallery](../reference/components.md)**: See all available component types
-- **[Standard Catalog](../reference/catalog.md)**: Detailed component specifications
+- **[Component Reference](../reference/components.md)**: See all available component types

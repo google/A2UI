@@ -3,7 +3,7 @@
 Agents are server-side programs that generate A2UI messages in response to user requests.
 
 The actual component rendering is done by the [renderer](renderers.md),
-after messages are [transported](transport.md) to the client.
+after messages are [transported](transports.md) to the client.
 The agent is only responsible for generating the A2UI messages.
 
 ## How Agents Work

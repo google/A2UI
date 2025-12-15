@@ -34,6 +34,10 @@ async def handle_message(message: str, context):
 
 **Node.js + A2A:**
 
+```bash
+npm install @a2a/server
+```
+
 ```javascript
 import { A2AServer } from '@a2a/server';
 
@@ -57,7 +61,7 @@ import google.generativeai as genai
 
 model = genai.GenerativeModel('gemini-1.5-pro', generation_config={
     'response_mime_type': 'application/json',
-    'response_schema': a2ui_schema  # Load from specification/0.9/json/server_to_client.json
+    'response_schema': a2ui_schema  # Load from specification/0.8/json/server_to_client_with_standard_catalog.json
 })
 
 response = model.generate_content(f"Generate A2UI for: {user_message}")
@@ -71,13 +75,14 @@ ui_message = json.loads(response.text)
 Include schema/examples in prompt, validate after generation:
 
 ```python
-SYSTEM_PROMPT = """Generate A2UI JSONL for user requests.
+SYSTEM_PROMPT = """Generate a sequence of A2UI JSON messages for user requests.
+Messages are sent one per line.
 
-Message types: createSurface, updateComponents, updateDataModel, deleteSurface
+Message types: surfaceUpdate, dataModelUpdate, beginRendering, deleteSurface
 
 Example:
-{"createSurface": {"surfaceId": "form", "title": "Form"}}
-{"updateComponents": {"surfaceId": "form", "components": [...]}}
+{"surfaceUpdate": {"surfaceId": "form", "components": [{"id": "root", "component": {"Column": {"children": {"explicitList": ["greeting"]}}}}, {"id": "greeting", "component": {"Text": {"text": {"literalString": "Hello!"}}}}]}}
+{"beginRendering": {"surfaceId": "form", "root": "root"}}
 """
 
 def generate_ui(user_message: str) -> list:
@@ -94,7 +99,7 @@ Always validate messages before sending:
 ```python
 import jsonschema
 
-with open('specification/0.9/json/server_to_client.json') as f:
+with open('specification/0.8/json/server_to_client_with_standard_catalog.json') as f:
     schema = json.load(f)
 
 def validate_message(message: dict) -> tuple[bool, str]:
@@ -107,14 +112,21 @@ def validate_message(message: dict) -> tuple[bool, str]:
 
 For self-correction, send validation errors back to the LLM and ask it to fix.
 
-## Streaming
+## Streaming A2UI Messages
 
-Stream messages incrementally for better UX:
+A2UI is designed to be streamed. By sending messages incrementally, the client can render UI progressively, which creates a much better user experience. A sequence of JSON messages can be streamed using a format like JSON Lines (JSONL), often over a transport like Server-Sent Events (SSE).
 
 ```python
 async def stream_ui(user_message: str):
-    yield {"createSurface": {"surfaceId": "main", "title": "Response"}}
+    # First, send the component structure
+    yield {"surfaceUpdate": {"surfaceId": "main", "components": [
+        {"id": "root", "component": {"Column": {"children": {"explicitList": ["title"]}}}},
+        {"id": "title", "component": {"Text": {"text": {"literalString": "Response"}}}}
+    ]}}
+    # Then, tell the client it's ready to render
+    yield {"beginRendering": {"surfaceId": "main", "root": "root"}}
 
+    prompt = f"Generate A2UI component updates for: {user_message}"
     response_stream = model.generate_content(prompt, stream=True)
     buffer = ""
     for chunk in response_stream:
@@ -126,6 +138,7 @@ async def stream_ui(user_message: str):
             if line.strip():
                 msg = json.loads(line)
                 if validate_message(msg)[0]:
+                    # Stream subsequent updates
                     yield msg
 ```
 
@@ -134,15 +147,15 @@ async def stream_ui(user_message: str):
 ```python
 @agent.handle_action
 async def handle_action(action: dict, context):
-    if action['actionId'] == 'submit_form':
+    if action['name'] == 'submit_form':
         form_data = context.get_data_model(action['surfaceId'])
         # Process and respond with UI update
-        yield {"updateComponents": {...}}
+        yield {"surfaceUpdate": {"surfaceId": action['surfaceId'], "components": [{...}]}}
 ```
 
 ## Best Practices
 
-1. **Progressive disclosure**: Send createSurface, then updateComponents, then updateDataModel
+1. **Progressive disclosure**: Send `surfaceUpdate` messages to define components, then `beginRendering` to show the UI, and `dataModelUpdate` to populate it with data.
 2. **Separate structure from data**: Use path bindings, not hardcoded literals
 3. **Descriptive IDs**: Use `"user-profile-card"` not `"comp1"`
 4. **Handle errors**: Show error UI instead of crashing
@@ -153,26 +166,47 @@ async def handle_action(action: dict, context):
 from google.adk import Agent
 from a2ui_extension import A2UIExtension
 import google.generativeai as genai
+import json
 
 agent = Agent(name="RestaurantAgent", extensions=[A2UIExtension()])
 model = genai.GenerativeModel('gemini-1.5-pro')
 
 @agent.handle_message
 async def handle_message(message: str, context):
-    yield {"createSurface": {"surfaceId": "main", "title": "Restaurant Finder"}}
+    # 1. Send initial components and signal to render
+    yield {"surfaceUpdate": {"surfaceId": "main", "components": [
+        {"id": "root", "component": {"Column": {"children": {"explicitList": ["title"]}}}},
+        {"id": "title", "component": {"Text": {"text": {"literalString": "Restaurant Finder"}}}}
+    ]}}
+    yield {"beginRendering": {"surfaceId": "main", "root": "root"}}
 
-    prompt = f"Generate A2UI JSONL for restaurant booking. User: {message}"
+    # 2. Ask the LLM to generate the rest of the UI
+    prompt = f"Generate a sequence of A2UI JSON messages for a restaurant booking flow. User said: {message}"
     response = model.generate_content(prompt)
 
+    # 3. Stream the LLM's response to the client
     for line in response.text.strip().split('\n'):
         if line.strip():
             yield json.loads(line)
 
 @agent.handle_action
 async def handle_action(action: dict, context):
-    if action['actionId'] == 'confirm_booking':
-        yield {"updateComponents": {"surfaceId": action['surfaceId'],
-               "components": [{"id": "confirmation", "Text": {"text": {"literal": "Confirmed!"}}}]}}
+    # 4. Handle a user action
+    if action['name'] == 'confirm_booking':
+        # Respond with a UI update
+        yield {
+            "surfaceUpdate": {
+                "surfaceId": action['surfaceId'],
+                "components": [{
+                    "id": "confirmation",
+                    "component": {
+                        "Text": {
+                            "text": {"literalString": "Confirmed!"}
+                        }
+                    }
+                }]
+            }
+        }
 
 if __name__ == '__main__':
     agent.serve(port=8000)
@@ -180,7 +214,7 @@ if __name__ == '__main__':
 
 ## Next Steps
 
-- **[Protocol Reference](../reference/protocol.md)**: Full A2UI specification
+- **[Message Reference](../reference/messages.md)**: Full A2UI specification
 - **[Component Gallery](../reference/components.md)**: See all available components
 - **[Custom Components](custom-components.md)**: Extend the component catalog
 - **[Sample Agents](https://github.com/google/a2ui/tree/main/samples/agent)**: Real-world examples

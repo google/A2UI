@@ -76,7 +76,7 @@ Want to build a renderer for your platform?
 - Parse A2UI JSON messages, specifically the adjacency list format
 - Map A2UI components to native widgets
 - Handle data binding, lifecycle events
-- Support streamed events (poentially with chunks out of order and duplicated)
+- Process a sequence of incremental A2UI messages to build and update the UI
 - Support server initiated updates
 - Support user actions
 

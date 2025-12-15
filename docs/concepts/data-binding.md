@@ -97,8 +97,10 @@ Fixed values that never change:
 ```json
 {
   "id": "title",
-  "Text": {
-    "text": {"literal": "Welcome to Our Store"}
+  "component": {
+    "Text": {
+      "text": {"literalString": "Welcome to Our Store"}
+    }
   }
 }
 ```
@@ -112,8 +114,10 @@ Values that come from the data model:
 ```json
 {
   "id": "username",
-  "Text": {
-    "text": {"path": "/user/name"}
+  "component": {
+    "Text": {
+      "text": {"path": "/user/name"}
+    }
   }
 }
 ```
@@ -142,131 +146,6 @@ If the data model updates to:
 
 The text **automatically updates** to "Bob".
 
-## Updating the Data Model
-
-Use the `updateDataModel` message to change data:
-
-### Replace Operation
-
-Replace a value at a specific path:
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "replace",
-    "path": "/user/name",
-    "value": "Charlie"
-  }
-}
-```
-
-**Before:**
-
-```json
-{
-  "user": {
-    "name": "Alice"
-  }
-}
-```
-
-**After:**
-
-```json
-{
-  "user": {
-    "name": "Charlie"
-  }
-}
-```
-
-### Add Operation
-
-Add a new property or array element:
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "add",
-    "path": "/user/age",
-    "value": 30
-  }
-}
-```
-
-**Before:**
-
-```json
-{
-  "user": {
-    "name": "Alice"
-  }
-}
-```
-
-**After:**
-
-```json
-{
-  "user": {
-    "name": "Alice",
-    "age": 30
-  }
-}
-```
-
-**Adding to arrays:**
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "add",
-    "path": "/items/-",
-    "value": "New Item"
-  }
-}
-```
-
-The `-` means "append to end of array".
-
-### Remove Operation
-
-Remove a property or array element:
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "remove",
-    "path": "/user/age"
-  }
-}
-```
-
-**Before:**
-
-```json
-{
-  "user": {
-    "name": "Alice",
-    "age": 30
-  }
-}
-```
-
-**After:**
-
-```json
-{
-  "user": {
-    "name": "Alice"
-  }
-}
-```
-
 ## Reactive Components
 
 When the data model changes, **all components bound to that data automatically update**.
@@ -278,8 +157,10 @@ When the data model changes, **all components bound to that data automatically u
 ```json
 {
   "id": "status",
-  "Text": {
-    "text": {"path": "/order/status"}
+  "component": {
+    "Text": {
+      "text": {"path": "/order/status"}
+    }
   }
 }
 ```
@@ -300,11 +181,12 @@ When the data model changes, **all components bound to that data automatically u
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
-    "op": "replace",
-    "path": "/order/status",
-    "value": "Shipped"
+    "path": "/order",
+    "contents": [
+      { "key": "status", "valueString": "Shipped" }
+    ]
   }
 }
 ```
@@ -315,11 +197,12 @@ When the data model changes, **all components bound to that data automatically u
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
-    "op": "replace",
-    "path": "/order/status",
-    "value": "Delivered"
+    "path": "/order",
+    "contents": [
+      { "key": "status", "valueString": "Delivered" }
+    ]
   }
 }
 ```
@@ -327,34 +210,6 @@ When the data model changes, **all components bound to that data automatically u
 **Display:** "Delivered"
 
 No component updates needed—just data updates!
-
-## Conditional Rendering
-
-You can show/hide components based on data by binding the `visible` property:
-
-```json
-{
-  "id": "premium-badge",
-  "Icon": {
-    "name": {"literal": "star"},
-    "visible": {"path": "/user/premium"}
-  }
-}
-```
-
-**Data:**
-
-```json
-{
-  "user": {
-    "premium": true
-  }
-}
-```
-
-**Result:** Icon is visible.
-
-If data changes to `"premium": false`, the icon hides automatically.
 
 ## Dynamic Lists
 
@@ -367,10 +222,14 @@ Use data binding with dynamic children to render lists:
 ```json
 {
   "id": "product-list",
-  "Column": {
-    "children": {
-      "path": "/products",
-      "componentId": "product-card"
+  "component": {
+    "Column": {
+      "children": {
+        "template": {
+          "dataBinding": "/products",
+          "componentId": "product-card"
+        }
+      }
     }
   }
 }
@@ -381,11 +240,14 @@ Use data binding with dynamic children to render lists:
 ```json
 {
   "id": "product-card",
-  "Card": {
-    "children": {"array": ["product-name", "product-price"]}
+  "component": {
+    "Card": {
+      "child": "product-content"
+    }
   }
 }
 ```
+*Note: The content of the card is omitted for brevity.*
 
 **Data:**
 
@@ -405,13 +267,15 @@ Use data binding with dynamic children to render lists:
 
 When a template is instantiated for an array item, paths are **scoped** to that item.
 
-**Template:**
+**Template's Text Child:**
 
 ```json
 {
   "id": "product-name",
-  "Text": {
-    "text": {"path": "/name"}
+  "component": {
+    "Text": {
+      "text": {"path": "/name"}
+    }
   }
 }
 ```
@@ -424,34 +288,7 @@ When a template is instantiated for an array item, paths are **scoped** to that 
 
 - `/name` resolves to `/products/1/name` → "Gadget"
 
-### Adding Items Dynamically
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "add",
-    "path": "/products/-",
-    "value": {"name": "Thingamajig", "price": 24.99}
-  }
-}
-```
-
-A fourth card automatically appears!
-
-### Removing Items
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "remove",
-    "path": "/products/1"
-  }
-}
-```
-
-The second card (Gadget) is removed from the UI.
+*Note: Adding or removing items from the `/products` array in the data model will automatically cause the client to render or remove the corresponding components.*
 
 ## Input Bindings
 
@@ -462,9 +299,11 @@ Interactive components can update the data model when users interact with them.
 ```json
 {
   "id": "name-input",
-  "TextField": {
-    "label": {"literal": "Your Name"},
-    "value": {"path": "/form/name"}
+  "component": {
+    "TextField": {
+      "label": {"literalString": "Your Name"},
+      "text": {"path": "/form/name"}
+    }
   }
 }
 ```
@@ -488,9 +327,11 @@ When the user types in this field, the value at `/form/name` is automatically up
 ```json
 {
   "id": "terms-checkbox",
-  "Checkbox": {
-    "label": {"literal": "I agree to the terms"},
-    "checked": {"path": "/form/agreedToTerms"}
+  "component": {
+    "CheckBox": {
+      "label": {"literalString": "I agree to the terms"},
+      "value": {"path": "/form/agreedToTerms"}
+    }
   }
 }
 ```
@@ -505,20 +346,22 @@ When the user types in this field, the value at `/form/name` is automatically up
 }
 ```
 
-### Dropdown
+### Multiple Choice
 
 ```json
 {
   "id": "country-select",
-  "Dropdown": {
-    "label": {"literal": "Country"},
-    "value": {"path": "/form/country"},
-    "options": {
-      "literal": [
-        {"value": "us", "label": "United States"},
-        {"value": "ca", "label": "Canada"},
-        {"value": "mx", "label": "Mexico"}
-      ]
+  "component": {
+    "MultipleChoice": {
+      "selections": {"path": "/form/country"},
+      "options": {
+        "literalArray": [
+          {"value": "us", "label": "United States"},
+          {"value": "ca", "label": "Canada"},
+          {"value": "mx", "label": "Mexico"}
+        ]
+      },
+      "maxAllowedSelections": 1
     }
   }
 }
@@ -529,7 +372,7 @@ When the user types in this field, the value at `/form/name` is automatically up
 ```json
 {
   "form": {
-    "country": "ca"
+    "country": ["ca"]
   }
 }
 ```
@@ -538,71 +381,91 @@ When the user types in this field, the value at `/form/name` is automatically up
 
 Let's build a reactive shopping cart interface.
 
-### Components
+### 1. Define the UI Structure
+
+First, the agent sends the component structure for the cart.
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "cart",
-        "Card": {
-          "children": {"array": ["cart-title", "item-list", "total", "checkout-btn"]}
+        "component": {
+          "Card": { "child": "cart-content" }
+        }
+      },
+      {
+        "id": "cart-content",
+        "component": {
+          "Column": {
+            "children": {"explicitList": ["cart-title", "item-list", "total", "checkout-btn-text", "checkout-btn"]}
+          }
         }
       },
       {
         "id": "cart-title",
-        "Text": {
-          "text": {"literal": "Your Cart"},
-          "style": "headline"
+        "component": {
+          "Text": {
+            "text": {"literalString": "Your Cart"},
+            "usageHint": "h1"
+          }
         }
       },
       {
         "id": "item-list",
-        "Column": {
-          "children": {
-            "path": "/cart/items",
-            "componentId": "cart-item"
+        "component": {
+          "Column": {
+            "children": {
+              "template": {
+                "dataBinding": "/cart/items",
+                "componentId": "cart-item"
+              }
+            }
           }
         }
       },
       {
         "id": "cart-item",
-        "Row": {
-          "children": {"array": ["item-name", "item-quantity", "item-price"]}
+        "component": {
+          "Row": {
+            "children": {"explicitList": ["item-name", "item-quantity", "item-price"]}
+          }
         }
       },
       {
         "id": "item-name",
-        "Text": {
-          "text": {"path": "/name"}
-        }
+        "component": { "Text": { "text": {"path": "/name"} } }
       },
       {
         "id": "item-quantity",
-        "Text": {
-          "text": {"path": "/quantity"}
-        }
+        "component": { "Text": { "text": {"path": "/quantity"} } }
       },
       {
         "id": "item-price",
-        "Text": {
-          "text": {"path": "/price"}
-        }
+        "component": { "Text": { "text": {"path": "/price"} } }
       },
       {
         "id": "total",
-        "Text": {
-          "text": {"path": "/cart/total"},
-          "style": "headline"
+        "component": {
+          "Text": {
+            "text": {"path": "/cart/total"},
+            "usageHint": "h1"
+          }
         }
       },
       {
+        "id": "checkout-btn-text",
+        "component": { "Text": { "text": {"literalString": "Checkout"} } }
+      },
+      {
         "id": "checkout-btn",
-        "Button": {
-          "text": {"literal": "Checkout"},
-          "onClick": {"actionId": "checkout"}
+        "component": {
+          "Button": {
+            "child": "checkout-btn-text",
+            "action": {"name": "checkout"}
+          }
         }
       }
     ]
@@ -610,127 +473,56 @@ Let's build a reactive shopping cart interface.
 }
 ```
 
-### Initial Data
+### 2. Populate with Initial Data
+
+Next, the agent sends the initial data for the cart.
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
-    "op": "replace",
-    "path": "/",
-    "value": {
-      "cart": {
-        "items": [
-          {"name": "Widget", "quantity": 2, "price": "$19.98"},
-          {"name": "Gadget", "quantity": 1, "price": "$19.99"}
-        ],
-        "total": "$39.97"
+    "contents": [
+      {
+        "key": "cart",
+        "valueMap": [
+          {
+            "key": "items",
+            "valueString": "[{\"name\": \"Widget\", \"quantity\": 2, \"price\": \"$19.98\"}, {\"name\": \"Gadget\", \"quantity\": 1, \"price\": \"$19.99\"}]"
+          },
+          {
+            "key": "total",
+            "valueString": "$39.97"
+          }
+        ]
       }
-    }
+    ]
   }
 }
 ```
+*(Note: For dynamic lists, the data for the list itself is often sent as a stringified JSON array that the client then parses.)*
 
 **Rendered UI:**
+A card is displayed showing the two items and the total, all driven by the data model.
 
-```
-┌─────────────────────────────────┐
-│ Your Cart                       │
-├─────────────────────────────────┤
-│ Widget      2      $19.98       │
-│ Gadget      1      $19.99       │
-├─────────────────────────────────┤
-│ $39.97                          │
-│ [Checkout]                      │
-└─────────────────────────────────┘
-```
+### 3. Update the Data
 
-### Add an Item
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "add",
-    "path": "/cart/items/-",
-    "value": {"name": "Doohickey", "quantity": 3, "price": "$44.97"}
-  }
-}
-```
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "replace",
-    "path": "/cart/total",
-    "value": "$84.94"
-  }
-}
-```
-
-**Rendered UI (automatically updates):**
-
-```
-┌─────────────────────────────────┐
-│ Your Cart                       │
-├─────────────────────────────────┤
-│ Widget      2      $19.98       │
-│ Gadget      1      $19.99       │
-│ Doohickey   3      $44.97       │
-├─────────────────────────────────┤
-│ $84.94                          │
-│ [Checkout]                      │
-└─────────────────────────────────┘
-```
-
-### Remove an Item
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "remove",
-    "path": "/cart/items/0"
-  }
-}
-```
-
-```json
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "replace",
-    "path": "/cart/total",
-    "value": "$64.96"
-  }
-}
-```
-
-**Widget is gone, total updated, UI reflects changes automatically.**
+To add a new item, the agent only needs to send a `dataModelUpdate` message with the new list of items and the new total. The UI will automatically update to show the new item because the `item-list` component is bound to `/cart/items`.
 
 ## Best Practices
 
 ### 1. Use Granular Updates
 
-```json
-// ❌ Bad: Replace entire model
-{
-  "updateDataModel": {
-    "surfaceId": "main",
-    "op": "replace",
-    "path": "/",
-    "value": {/* huge object */}
-  }
-}
+When possible, update only the part of the data model that changed, rather than replacing the entire object.
 
-// ✅ Good: Update only what changed
+```json
+// ✅ Good: Update only the user's name
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
-    "op": "replace",
-    "path": "/user/name",
-    "value": "Alice"
+    "path": "/user",
+    "contents": [
+      { "key": "name", "valueString": "Alice" }
+    ]
   }
 }
 ```
@@ -741,78 +533,19 @@ Let's build a reactive shopping cart interface.
 {
   "user": {/* user data */},
   "cart": {/* cart data */},
-  "products": {/* product data */},
   "ui": {/* UI state */}
 }
 ```
+Keeping related data together makes the model easier to manage.
 
-Keep related data together and separate concerns.
+### 3. Pre-Compute Display Values
 
-### 3. Use UI State for Interactions
-
-```json
-{
-  "ui": {
-    "loading": false,
-    "selectedProductId": 42,
-    "modalOpen": false,
-    "currentPage": 1
-  }
-}
-```
-
-Store UI-specific state (loading, selection, pagination) in a dedicated section.
-
-### 4. Avoid Deep Nesting
+It's often better for the agent to format data (like currency) before sending it.
 
 ```json
-// ❌ Hard to bind to
-{
-  "data": {
-    "entities": {
-      "users": {
-        "byId": {
-          "123": {
-            "profile": {
-              "name": "Alice"
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// Path: /data/entities/users/byId/123/profile/name
-
-// ✅ Flatter is better
-{
-  "user": {
-    "name": "Alice"
-  }
-}
-
-// Path: /user/name
-```
-
-### 5. Pre-Compute Display Values
-
-```json
-// ❌ Agent has to format every time
-{
-  "price": 19.99
-}
-
 // ✅ Send formatted values
 {
   "price": "$19.99"
 }
 ```
-
-Components display what they receive. Do formatting server-side.
-
-## Next Steps
-
-- **[Agent Development Guide](../guides/agent-development.md)**: Build agents that generate data-bound UIs
-- **[Client Setup Guide](../guides/client-setup.md)**: Implement data binding in your renderer
-- **[Protocol Reference](../reference/protocol.md)**: Full specification of data binding
+Components should focus on displaying data, not transforming it.

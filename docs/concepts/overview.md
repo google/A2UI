@@ -17,7 +17,7 @@ A2UI is built around three core ideas:
 A **surface** is a logical container for a set of UI components. Think of it as a canvas where the agent paints the interface.
 
 - Each surface has a unique ID (e.g., `"main"`, `"sidebar"`)
-- Surfaces are created with `createSurface` messages
+- A surface is implicitly created when the client receives the first `surfaceUpdate` for a new `surfaceId`.
 - Surfaces can be deleted with `deleteSurface` messages
 - Your app can have multiple surfaces active at once
 
@@ -32,7 +32,7 @@ A **surface** is a logical container for a set of UI components. Think of it as 
 - `TextField` - Text input fields
 - `Card` - Container with elevation/border
 - `Row` / `Column` - Layout containers
-- `Image`, `DatePicker`, `Timeline`, etc.
+- `Image`, `Icon`, `Slider`, etc.
 
 Components are defined in the **Standard Catalog**, which specifies what components are available and what properties they support.
 
@@ -61,32 +61,21 @@ A component can bind to `/user/name` to display "Alice" or `/items/0/title` to d
 
 A2UI defines four message types that flow from server to client:
 
-### 1. createSurface
+### 1. surfaceUpdate
 
-Initializes a new UI surface.
-
-```json
-{
-  "createSurface": {
-    "surfaceId": "main",
-    "title": "My App"
-  }
-}
-```
-
-### 2. updateComponents
-
-Adds or updates components in a surface.
+Adds or updates components in a surface. The first `surfaceUpdate` for a given `surfaceId` implicitly creates that surface.
 
 ```json
 {
-  "updateComponents": {
+  "surfaceUpdate": {
     "surfaceId": "main",
     "components": [
       {
         "id": "greeting",
-        "Text": {
-          "text": {"literal": "Hello, World!"}
+        "component": {
+          "Text": {
+            "text": {"literalString": "Hello, World!"}
+          }
         }
       }
     ]
@@ -94,22 +83,34 @@ Adds or updates components in a surface.
 }
 ```
 
-### 3. updateDataModel
+### 2. dataModelUpdate
 
-Updates the data model for a surface.
+Updates the data model for a surface using a key-value adjacency list.
 
 ```json
 {
-  "updateDataModel": {
+  "dataModelUpdate": {
     "surfaceId": "main",
-    "op": "replace",
-    "path": "/user/name",
-    "value": "Alice"
+    "path": "/user",
+    "contents": [
+      { "key": "name", "valueString": "Alice" }
+    ]
   }
 }
 ```
 
-Supports JSON Patch operations: `replace`, `add`, `remove`.
+### 3. beginRendering
+
+Signals to the client that it has enough information to perform the initial render of a surface.
+
+```json
+{
+  "beginRendering": {
+    "surfaceId": "main",
+    "root": "greeting"
+  }
+}
+```
 
 ### 4. deleteSurface
 
@@ -133,35 +134,32 @@ sequenceDiagram
     participant Client
     participant UI
 
-    Agent->>Client: createSurface(surfaceId: "main")
-    Client->>UI: Initialize surface
+    Agent->>Client: surfaceUpdate(surfaceId: "main", components: [...])
+    Client->>UI: Store component definitions
 
-    Agent->>Client: updateComponents([...])
-    Client->>UI: Add component definitions
+    Agent->>Client: dataModelUpdate({...})
+    Client->>UI: Populate data model
 
-    Agent->>Client: updateDataModel({...})
-    Client->>UI: Populate data
-
-    UI->>Client: Render complete
-    Client->>Agent: (Optional) Rendering confirmation
+    Agent->>Client: beginRendering(surfaceId: "main", root: "rootId")
+    Client->>UI: Render complete UI from stored definitions and data
 
     Note over Agent,UI: User interacts with UI
 
     UI->>Agent: userAction event
-    Agent->>Client: updateComponents (dynamic update)
+    Agent->>Client: surfaceUpdate (dynamic update)
     Client->>UI: Re-render updated components
 ```
 
 ### Step-by-Step
 
-1. **Create Surface**: Agent sends `createSurface` to initialize a UI container
-2. **Add Components**: Agent sends `updateComponents` with component definitions
-3. **Populate Data**: Agent sends `updateDataModel` to provide data
-4. **Render**: Client renders the UI using native widgets
+1. **Define Components**: Agent sends one or more `surfaceUpdate` messages with component definitions. The client stores these but does not render yet.
+2. **Populate Data**: Agent sends `dataModelUpdate` messages to provide the necessary data for the components.
+3. **Begin Rendering**: Agent sends `beginRendering`, telling the client to now build and display the UI using the components and data it has received.
+4. **Render**: Client renders the UI using native widgets.
 5. **User Interaction**: User clicks a button, fills a form, etc.
-6. **Send Action**: Client sends a `userAction` message to the agent
-7. **Dynamic Update**: Agent responds with new `updateComponents` or `updateDataModel` messages
-8. **Re-render**: Client updates the UI to reflect changes
+6. **Send Action**: Client sends a `userAction` message to the agent.
+7. **Dynamic Update**: Agent responds with new `surfaceUpdate` or `dataModelUpdate` messages.
+8. **Re-render**: Client updates the UI to reflect the changes.
 
 ## Progressive Rendering
 
@@ -176,17 +174,17 @@ Client: [renders everything at once]
 
 **A2UI approach:**
 ```
-Agent: Creating surface...
-Client: [shows loading state]
-
 Agent: Here's the header...
-Client: [renders header]
+Client: [stores header definition]
 
-Agent: Here's the form...
-Client: [renders form]
+Agent: Here's the main content structure...
+Client: [stores content definition]
 
-Agent: Here's the data...
-Client: [populates form with data]
+Agent: Here's the data for the content...
+Client: [stores data]
+
+Agent: Okay, render it now.
+Client: [renders header and content with data instantly]
 ```
 
 This creates a more responsive user experience, especially with slow LLMs or complex UIs.

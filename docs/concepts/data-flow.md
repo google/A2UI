@@ -10,51 +10,73 @@ Agent (LLM) → A2UI Generator → Transport (SSE/WS/A2A)
 Client (Stream Reader) → Message Parser → Renderer → Native UI
 ```
 
-## Message Format: JSONL
+## Message Format
 
-A2UI uses JSON Lines (JSONL): one complete JSON object per line.
+A2UI defines a sequence of JSON messages that describe the UI. When streamed, these messages are often formatted as **JSON Lines (JSONL)**, where each line is a complete JSON object.
 
 ```jsonl
-{"createSurface":{"surfaceId":"main","title":"App"}}
-{"updateComponents":{"surfaceId":"main","components":[...]}}
-{"updateDataModel":{"surfaceId":"main","op":"replace","path":"/","value":{...}}}
+{"surfaceUpdate":{"surfaceId":"main","components":[...]}}
+{"dataModelUpdate":{"surfaceId":"main","contents":[{"key":"user","valueMap":[{"key":"name","valueString":"Alice"}]}]}}
+{"beginRendering":{"surfaceId":"main","root":"root-component"}}
 ```
 
-**Why JSONL?** Streaming-friendly, LLM-friendly, error-resilient, simple.
+**Why this format?** A sequence of self-contained JSON objects is streaming-friendly, easy for LLMs to generate incrementally, and resilient to errors.
 
 ## Lifecycle Example: Restaurant Booking
 
 **1. User Input:** "Book a table for 2 tomorrow at 7pm"
 
-**2. Agent creates surface:**
-```json
-{"createSurface": {"surfaceId": "booking", "title": "Table Reservation"}}
-```
+**2. Agent streams components:** The agent sends the definitions for the UI components. Note the first `surfaceUpdate` for a `surfaceId` effectively creates the surface.
 
-**3. Agent streams components:**
 ```json
-{"updateComponents": {"surfaceId": "booking", "components": [
-  {"id": "header", "Text": {"text": {"literal": "Confirm Reservation"}, "style": "headline"}},
-  {"id": "date-field", "DatePicker": {"value": {"path": "/reservation/date"}}},
-  {"id": "time-field", "TimePicker": {"value": {"path": "/reservation/time"}}},
-  {"id": "guests-field", "NumberInput": {"value": {"path": "/reservation/guests"}}},
-  {"id": "submit", "Button": {"text": {"literal": "Confirm"}, "onClick": {"actionId": "confirm_reservation"}}}
+{"surfaceUpdate": {"surfaceId": "booking", "components": [
+  {"id": "root", "component": {"Column": {"children": {"explicitList": ["header", "guests-field", "datetime-field", "submit-btn"]}}}},
+  {"id": "header", "component": {"Text": {"text": {"literalString": "Confirm Reservation"}, "usageHint": "h1"}}},
+  {"id": "guests-field", "component": {"TextField": {"label": {"literalString": "Number of Guests"}, "text": {"path": "/reservation/guests"}}}},
+  {"id": "datetime-field", "component": {"DateTimeInput": {"value": {"path": "/reservation/datetime"}, "enableDate": true, "enableTime": true}}},
+  {"id": "submit-btn-text", "component": {"Text": {"text": {"literalString": "Confirm"}}}},
+  {"id": "submit-btn", "component": {"Button": {"child": "submit-btn-text", "action": {"name": "confirm_reservation", "context": [{"key": "reservationDetails", "value": {"path": "/reservation"}}]}}}}
 ]}}
 ```
 
-**4. Agent populates data:**
+**3. Agent populates data:** The agent sends the data extracted from the user's prompt.
+
 ```json
-{"updateDataModel": {"surfaceId": "booking", "op": "replace", "path": "/reservation",
-  "value": {"date": "2025-12-13", "time": "19:00", "guests": 2}}}
+{"dataModelUpdate": {"surfaceId": "booking", "path": "/reservation", "contents": [
+  {"key": "datetime", "valueString": "2025-12-16T19:00:00Z"},
+  {"key": "guests", "valueString": "2"}
+]}}
 ```
 
-**5. User interacts:** Changes time to 8:00pm → Client sends data update to agent
+**4. Agent signals to render:** The agent sends the `beginRendering` message, telling the client it has enough information to show the UI.
 
-**6. User submits:** Clicks "Confirm" button → Client sends `{"userAction": {"actionId": "confirm_reservation"}}`
+```json
+{"beginRendering": {"surfaceId": "booking", "root": "root"}}
+```
+*The client now renders a form with the data pre-filled.*
 
-**7. Agent responds:** Sends updateComponents with confirmation message
+**5. User interacts:** The user changes the number of guests to 3. The `TextField` is bound to `/reservation/guests`, so the client's data model is updated automatically. No message is sent to the agent yet.
 
-**8. Clean up (optional):** Agent sends `{"deleteSurface": {"surfaceId": "booking"}}`
+**6. User submits:** The user clicks the "Confirm" button. The client sends a `userAction` message.
+
+```json
+{"userAction": {
+  "name": "confirm_reservation",
+  "surfaceId": "booking",
+  "sourceComponentId": "submit-btn",
+  "timestamp": "2025-12-15T20:01:00Z",
+  "context": {
+    "reservationDetails": {
+      "datetime": "2025-12-16T19:00:00Z",
+      "guests": "3"
+    }
+  }
+}}
+```
+
+**7. Agent responds:** The agent processes the action and could respond with a confirmation message, for example by sending a new `surfaceUpdate` that replaces the form with a `Text` component.
+
+**8. Clean up (optional):** After the flow is complete, the agent can send `{"deleteSurface": {"surfaceId": "booking"}}` to remove the UI.
 
 ## Transport Options
 

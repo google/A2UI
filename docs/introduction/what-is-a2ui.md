@@ -39,18 +39,25 @@ A2UI: JSON messages describing UI that:
 ### Example
 
 ```json
-{"createSurface": {"surfaceId": "booking"}}
-```
-
-```json
-{"updateComponents": {"surfaceId": "booking", "components": [
-  {"id": "title", "Text": {"text": {"literal": "Book Your Table"}, "style": "headline"}},
-  {"id": "date-picker", "DatePicker": {"value": {"path": "/booking/date"}}},
-  {"id": "submit-btn", "Button": {"text": {"literal": "Confirm"}, "onClick": {"actionId": "confirm_booking"}}}
+{"surfaceUpdate": {"surfaceId": "booking", "components": [
+  {"id": "title", "component": {"Text": {"text": {"literalString": "Book Your Table"}, "usageHint": "h1"}}},
+  {"id": "datetime", "component": {"DateTimeInput": {"value": {"path": "/booking/date"}, "enableDate": true}}},
+  {"id": "submit-text", "component": {"Text": {"text": {"literalString": "Confirm"}}}},
+  {"id": "submit-btn", "component": {"Button": {"child": "submit-text", "action": {"name": "confirm_booking"}}}}
 ]}}
 ```
 
-Client renders as native components (Angular, Flutter, React, etc.).
+```json
+{"dataModelUpdate": {"surfaceId": "booking", "contents": [
+  {"key": "booking", "valueMap": [{"key": "date", "valueString": "2025-12-16T19:00:00Z"}]}
+]}}
+```
+
+```json
+{"beginRendering": {"surfaceId": "booking", "root": "title"}}
+```
+
+Client renders these messages as native components (Angular, Flutter, React, etc.).
 
 ## Core Value
 
@@ -81,7 +88,7 @@ Client renders as native components (Angular, Flutter, React, etc.).
 - **Component**: UI element (Button, TextField, Card, etc.)
 - **Data Model**: Application state, components bind to it
 - **Catalog**: Available component types
-- **Message**: JSON object (createSurface, updateComponents, etc.)
+- **Message**: JSON object (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, etc.)
 
 ## Next Steps
 

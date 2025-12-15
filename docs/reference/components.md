@@ -1,6 +1,6 @@
 # Component Gallery
 
-This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://github.com/google/A2UI/blob/main/specification/0.9/json/standard_catalog_definition.json).
+This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json).
 
 ## Layout Components
 
@@ -11,18 +11,19 @@ Horizontal layout container. Children are arranged left-to-right.
 ```json
 {
   "id": "toolbar",
-  "Row": {
-    "children": {"array": ["btn1", "btn2", "btn3"]},
-    "gap": {"literal": 8},
-    "alignment": {"literal": "center"}
+  "component": {
+    "Row": {
+      "children": {"explicitList": ["btn1", "btn2", "btn3"]},
+      "alignment": "center"
+    }
   }
 }
 ```
 
 **Properties:**
 
-- `children`: Static array or dynamic template
-- `gap`: Spacing between children (number)
+- `children`: Static array (`explicitList`) or dynamic `template`
+- `distribution`: Horizontal distribution of children (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
 - `alignment`: Vertical alignment (`start`, `center`, `end`, `stretch`)
 
 ### Column
@@ -32,44 +33,19 @@ Vertical layout container. Children are arranged top-to-bottom.
 ```json
 {
   "id": "content",
-  "Column": {
-    "children": {"array": ["header", "body", "footer"]},
-    "gap": {"literal": 16}
+  "component": {
+    "Column": {
+      "children": {"explicitList": ["header", "body", "footer"]}
+    }
   }
 }
 ```
 
 **Properties:**
 
-- `children`: Static array or dynamic template
-- `gap`: Spacing between children (number)
+- `children`: Static array (`explicitList`) or dynamic `template`
+- `distribution`: Vertical distribution of children (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
 - `alignment`: Horizontal alignment (`start`, `center`, `end`, `stretch`)
-
-### Stack
-
-Layered layout (z-axis stacking). Children overlap.
-
-```json
-{
-  "id": "card-with-badge",
-  "Stack": {
-    "children": {"array": ["background", "badge"]}
-  }
-}
-```
-
-### Spacer
-
-Empty space for layout control.
-
-```json
-{
-  "id": "spacer",
-  "Spacer": {
-    "size": {"literal": 24}
-  }
-}
-```
 
 ## Display Components
 
@@ -80,14 +56,16 @@ Display text content with optional styling.
 ```json
 {
   "id": "title",
-  "Text": {
-    "text": {"literal": "Welcome to A2UI"},
-    "style": "headline"
+  "component": {
+    "Text": {
+      "text": {"literalString": "Welcome to A2UI"},
+      "usageHint": "h1"
+    }
   }
 }
 ```
 
-**Styles:** `headline`, `subheading`, `body`, `caption`, `overline`
+**`usageHint` values:** `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
 
 ### Image
 
@@ -96,11 +74,10 @@ Display images from URLs.
 ```json
 {
   "id": "logo",
-  "Image": {
-    "src": {"literal": "https://example.com/logo.png"},
-    "alt": {"literal": "Company Logo"},
-    "width": {"literal": 200},
-    "height": {"literal": 100}
+  "component": {
+    "Image": {
+      "url": {"literalString": "https://example.com/logo.png"}
+    }
   }
 }
 ```
@@ -112,10 +89,10 @@ Display icons using Material Icons or custom icon sets.
 ```json
 {
   "id": "check-icon",
-  "Icon": {
-    "name": {"literal": "check_circle"},
-    "color": {"literal": "green"},
-    "size": {"literal": 24}
+  "component": {
+    "Icon": {
+      "name": {"literalString": "check_circle"}
+    }
   }
 }
 ```
@@ -127,27 +104,13 @@ Visual separator line.
 ```json
 {
   "id": "separator",
-  "Divider": {
-    "orientation": {"literal": "horizontal"}
+  "component": {
+    "Divider": {
+      "axis": "horizontal"
+    }
   }
 }
 ```
-
-### ProgressIndicator
-
-Loading or progress display.
-
-```json
-{
-  "id": "loader",
-  "ProgressIndicator": {
-    "type": {"literal": "circular"},
-    "value": {"path": "/uploadProgress"}
-  }
-}
-```
-
-**Types:** `circular`, `linear`
 
 ## Interactive Components
 
@@ -157,31 +120,29 @@ Clickable button with action support.
 
 ```json
 {
-  "id": "submit-btn",
-  "Button": {
-    "text": {"literal": "Submit"},
-    "variant": {"literal": "primary"},
-    "onClick": {"actionId": "submit_form"},
-    "disabled": {"path": "/form/isSubmitting"}
+  "id": "submit-btn-text",
+  "component": {
+    "Text": {
+      "text": { "literalString": "Submit" }
+    }
   }
 }
-```
-
-**Variants:** `primary`, `secondary`, `text`, `outlined`
-
-### IconButton
-
-Icon-based button.
-
-```json
 {
-  "id": "delete-btn",
-  "IconButton": {
-    "icon": {"literal": "delete"},
-    "onClick": {"actionId": "delete_item"}
+  "id": "submit-btn",
+  "component": {
+    "Button": {
+      "child": "submit-btn-text",
+      "primary": true,
+      "action": {"name": "submit_form"}
+    }
   }
 }
 ```
+
+**Properties:**
+- `child`: The ID of the component to display in the button (e.g., a Text or Icon).
+- `primary`: Boolean indicating if this is a primary action.
+- `action`: The action to perform on click.
 
 ### TextField
 
@@ -190,116 +151,28 @@ Text input field.
 ```json
 {
   "id": "email-input",
-  "TextField": {
-    "label": {"literal": "Email Address"},
-    "value": {"path": "/user/email"},
-    "type": {"literal": "email"},
-    "placeholder": {"literal": "you@example.com"},
-    "required": {"literal": true}
+  "component": {
+    "TextField": {
+      "label": {"literalString": "Email Address"},
+      "text": {"path": "/user/email"},
+      "textFieldType": "shortText"
+    }
   }
 }
 ```
 
-**Types:** `text`, `email`, `password`, `url`, `tel`, `search`
-
-### NumberInput
-
-Numeric input field.
-
-```json
-{
-  "id": "age-input",
-  "NumberInput": {
-    "label": {"literal": "Age"},
-    "value": {"path": "/user/age"},
-    "min": {"literal": 0},
-    "max": {"literal": 120}
-  }
-}
-```
-
-### Checkbox
+**`textFieldType` values:** `date`, `longText`, `number`, `shortText`, `obscured`
 
 Boolean toggle.
 
 ```json
 {
   "id": "terms-checkbox",
-  "Checkbox": {
-    "label": {"literal": "I agree to the terms"},
-    "checked": {"path": "/form/agreedToTerms"}
-  }
-}
-```
-
-### RadioGroup
-
-Multiple choice selection (single option).
-
-```json
-{
-  "id": "size-selector",
-  "RadioGroup": {
-    "label": {"literal": "Size"},
-    "value": {"path": "/product/size"},
-    "options": {
-      "literal": [
-        {"value": "s", "label": "Small"},
-        {"value": "m", "label": "Medium"},
-        {"value": "l", "label": "Large"}
-      ]
+  "component": {
+    "Checkbox": {
+      "label": {"literalString": "I agree to the terms"},
+      "value": {"path": "/form/agreedToTerms"}
     }
-  }
-}
-```
-
-### Dropdown
-
-Dropdown/select menu.
-
-```json
-{
-  "id": "country-select",
-  "Dropdown": {
-    "label": {"literal": "Country"},
-    "value": {"path": "/user/country"},
-    "options": {
-      "literal": [
-        {"value": "us", "label": "United States"},
-        {"value": "ca", "label": "Canada"},
-        {"value": "uk", "label": "United Kingdom"}
-      ]
-    }
-  }
-}
-```
-
-### DatePicker
-
-Date selection.
-
-```json
-{
-  "id": "birthday-picker",
-  "DatePicker": {
-    "label": {"literal": "Birthday"},
-    "value": {"path": "/user/birthday"},
-    "min": {"literal": "1900-01-01"},
-    "max": {"literal": "2025-12-31"}
-  }
-}
-```
-
-### TimePicker
-
-Time selection.
-
-```json
-{
-  "id": "appointment-time",
-  "TimePicker": {
-    "label": {"literal": "Appointment Time"},
-    "value": {"path": "/appointment/time"}
   }
 }
 ```
@@ -313,14 +186,13 @@ Container with elevation/border and padding.
 ```json
 {
   "id": "info-card",
-  "Card": {
-    "children": {"array": ["card-header", "card-body"]},
-    "variant": {"literal": "elevated"}
+  "component": {
+    "Card": {
+      "child": "card-content"
+    }
   }
 }
 ```
-
-**Variants:** `elevated`, `filled`, `outlined`
 
 ### Modal
 
@@ -329,25 +201,11 @@ Overlay dialog.
 ```json
 {
   "id": "confirmation-modal",
-  "Modal": {
-    "children": {"array": ["modal-content"]},
-    "open": {"path": "/ui/modalOpen"},
-    "title": {"literal": "Confirm Action"}
-  }
-}
-```
-
-### ExpansionPanel
-
-Collapsible section.
-
-```json
-{
-  "id": "faq-item",
-  "ExpansionPanel": {
-    "title": {"literal": "What is A2UI?"},
-    "children": {"array": ["faq-answer"]},
-    "expanded": {"path": "/ui/faqExpanded"}
+  "component": {
+    "Modal": {
+      "entryPointChild": "open-modal-btn",
+      "contentChild": "modal-content"
+    }
   }
 }
 ```
@@ -359,82 +217,31 @@ Tabbed interface.
 ```json
 {
   "id": "settings-tabs",
-  "Tabs": {
-    "value": {"path": "/ui/selectedTab"},
-    "tabs": {
-      "literal": [
-        {"value": "general", "label": "General"},
-        {"value": "privacy", "label": "Privacy"},
-        {"value": "advanced", "label": "Advanced"}
+  "component": {
+    "Tabs": {
+      "tabItems": [
+        {"title": {"literalString": "General"}, "child": "general-settings"},
+        {"title": {"literalString": "Privacy"}, "child": "privacy-settings"},
+        {"title": {"literalString": "Advanced"}, "child": "advanced-settings"}
       ]
-    },
-    "children": {"array": ["tab-content"]}
+    }
   }
 }
 ```
-
-## Specialized Components
-
-### Timeline
-
-Event timeline display.
-
-```json
-{
-  "id": "order-timeline",
-  "Timeline": {
-    "items": {"path": "/order/events"},
-    "itemTemplate": "timeline-item"
-  }
-}
-```
-
-### DataTable
-
-Table for structured data.
-
-```json
-{
-  "id": "users-table",
-  "DataTable": {
-    "columns": {
-      "literal": [
-        {"key": "name", "label": "Name"},
-        {"key": "email", "label": "Email"},
-        {"key": "role", "label": "Role"}
-      ]
-    },
-    "data": {"path": "/users"}
-  }
-}
-```
-
-### List
 
 Scrollable list of items.
 
 ```json
 {
   "id": "message-list",
-  "List": {
-    "items": {"path": "/messages"},
-    "itemTemplate": "message-item"
-  }
-}
-```
-
-### CustomComponent
-
-For client-defined custom components.
-
-```json
-{
-  "id": "google-map",
-  "CustomComponent": {
-    "name": "GoogleMap",
-    "properties": {
-      "center": {"literal": {"lat": 37.7749, "lng": -122.4194}},
-      "zoom": {"literal": 12}
+  "component": {
+    "List": {
+      "children": {
+        "template": {
+          "dataBinding": "/messages",
+          "componentId": "message-item"
+        }
+      }
     }
   }
 }
@@ -444,9 +251,8 @@ For client-defined custom components.
 
 Most components support these common properties:
 
-- `id` (required): Unique identifier
-- `visible`: Show/hide component (`booleanOrPath`)
-- `weight`: Flex-grow value when in Row/Column (`numberOrPath`)
+- `id` (required): Unique identifier for the component instance.
+- `weight`: Flex-grow value when the component is a direct child of a Row or Column. This property is specified alongside `id` and `component`.
 
 ## Live Examples
 

@@ -12,7 +12,7 @@ Getting the messages from the agent to the client is the job of the transport.
 Agent → Transport → Client Renderer
 ```
 
-A2UI messages are JSON objects sent as a stream (JSONL format). The transport layer handles delivery.
+A2UI defines a sequence of JSON messages. The transport layer is responsible for delivering this sequence from the agent to the client. A common transport mechanism is a stream using a format like JSON Lines (JSONL), where each line is a single A2UI message.
 
 ## Available Transports
 
