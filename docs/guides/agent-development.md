@@ -11,210 +11,169 @@ Building an A2UI agent:
 3. **Validate & stream** → Check schema, send to client
 4. **Handle actions** → Respond to user interactions
 
-## Setup
+## Start with a simple agent
 
-**Python + ADK:**
+We will use the ADK to build a simple agent.  We will start with text and eventually upgrade it to A2UI.
+
+See step by step instructions at the [ADK quickstart](https://google.github.io/adk-docs/get-started/python/).
 
 ```bash
-pip install google-adk a2ui-extension
+pip install google-adk
+adk create my_agent
 ```
+
+Then edit the `my_agent/agent.py` file with a very simple agent for restaurant recommendations.
 
 ```python
-from google.adk import Agent
-from a2ui_extension import A2UIExtension
+import json
+from google.adk.agents.llm_agent import Agent
+from google.adk.tools.tool_context import ToolContext
 
-agent = Agent(name="MyAgent", extensions=[A2UIExtension()])
+def get_restaurants(tool_context: ToolContext) -> str:
+    """Call this tool to get a list of restaurants."""
+    return json.dumps([
+        {
+            "name": "Xi'an Famous Foods",
+            "detail": "Spicy and savory hand-pulled noodles.",
+            "imageUrl": "http://localhost:10002/static/shrimpchowmein.jpeg",
+            "rating": "★★★★☆",
+            "infoLink": "[More Info](https://www.xianfoods.com/)",
+            "address": "81 St Marks Pl, New York, NY 10003"
+        },
+        {
+            "name": "Han Dynasty",
+            "detail": "Authentic Szechuan cuisine.",
+            "imageUrl": "http://localhost:10002/static/mapotofu.jpeg",
+            "rating": "★★★★☆",
+            "infoLink": "[More Info](https://www.handynasty.net/)",
+            "address": "90 3rd Ave, New York, NY 10003"
+        },
+        {
+            "name": "RedFarm",
+            "detail": "Modern Chinese with a farm-to-table approach.",
+            "imageUrl": "http://localhost:10002/static/beefbroccoli.jpeg",
+            "rating": "★★★★☆",
+            "infoLink": "[More Info](https://www.redfarmnyc.com/)",
+            "address": "529 Hudson St, New York, NY 10014"
+        },
+    ])
 
-@agent.handle_message
-async def handle_message(message: str, context):
-    ui_messages = await generate_ui(message)
-    for msg in ui_messages:
-        yield msg
+AGENT_INSTRUCTION="""
+You are a helpful restaurant finding assistant. Your goal is to help users find and book restaurants using a rich UI.
+
+To achieve this, you MUST follow this logic:
+
+1.  **For finding restaurants:**
+    a. You MUST call the `get_restaurants` tool. Extract the cuisine, location, and a specific number (`count`) of restaurants from the user's query (e.g., for "top 5 chinese places", count is 5).
+    b. After receiving the data, you MUST follow the instructions precisely to generate the final a2ui UI JSON, using the appropriate UI example from the `prompt_builder.py` based on the number of restaurants."""
+
+root_agent = Agent(
+    model='gemini-2.5-flash',
+    name="restaurant_agent",
+    description="An agent that finds restaurants and helps book tables.",
+    instruction=AGENT_INSTRUCTION,
+    tools=[get_restaurants],
+)
 ```
 
-**Node.js + A2A:**
+Don't forget to set the `GOOGLE_API_KEY` environment variable to run this example.  
 
 ```bash
-npm install @a2a/server
+echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
 ```
 
-```javascript
-import { A2AServer } from '@a2a/server';
+You can test out this agent with the ADK web interface:
 
-const server = new A2AServer({name: 'MyAgent'});
-server.onMessage(async (message) => {
-  const uiMessages = await generateA2UI(message);
-  for (const msg of uiMessages) {
-    await server.sendArtifact({type: 'application/a2ui+jsonl', content: JSON.stringify(msg)});
-  }
-});
+```bash
+adk web
 ```
+
+Select `my_agent` from the list, and ask questions about restaurants in new york.  You should see a list of restaurants in the UI as plain text.
 
 ## Generating A2UI Messages
 
-### Approach 1: Structured Output
+Getting the LLM to generate A2UI messages requires some prompt engineering.  
 
-Use LLM structured output (Gemini `response_schema`, OpenAI function calling):
+!!! warning "Attention"
+    This is an area we are still designing.  The developer ergonomics of this are not yet finalized.
 
-```python
-import google.generativeai as genai
+For now, let's copy the `a2ui_schema.py` from the contact lookup example.  This is the easiest way to get the A2UI schema and examples for your agent (subject to change).
 
-model = genai.GenerativeModel('gemini-1.5-pro', generation_config={
-    'response_mime_type': 'application/json',
-    'response_schema': a2ui_schema  # Load from specification/0.8/json/server_to_client_with_standard_catalog.json
-})
-
-response = model.generate_content(f"Generate A2UI for: {user_message}")
-ui_message = json.loads(response.text)
+```bash
+cp samples/agent/adk/contact_lookup/a2ui_schema.py my_agent/
 ```
 
-**Pros:** Guaranteed valid JSON, faster | **Cons:** Less flexible, model-specific
-
-### Approach 2: Prompt-Based (Recommended)
-
-Include schema/examples in prompt, validate after generation:
+First lets add the new imports to the `agent.py` file:
 
 ```python
-SYSTEM_PROMPT = """Generate a sequence of A2UI JSON messages for user requests.
-Messages are sent one per line.
+# The schema for any A2UI message.  This never changes.
+from .a2ui_schema import A2UI_SCHEMA
+```
 
-Message types: surfaceUpdate, dataModelUpdate, beginRendering, deleteSurface
+Now we will modify the agent instructions to generate A2UI messages instead of plain text.  We will leave a placeholder for future UI examples.
 
-Example:
-{"surfaceUpdate": {"surfaceId": "form", "components": [{"id": "root", "component": {"Column": {"children": {"explicitList": ["greeting"]}}}}, {"id": "greeting", "component": {"Text": {"text": {"literalString": "Hello!"}}}}]}}
-{"beginRendering": {"surfaceId": "form", "root": "root"}}
+```python
+
+# Eventually you can copy & paste some UI examples here, for few-shot in context learning
+RESTAURANT_UI_EXAMPLES = """
 """
 
-def generate_ui(user_message: str) -> list:
-    response = model.generate_content(f"{SYSTEM_PROMPT}\n\nUser: {user_message}")
-    return [json.loads(line) for line in response.text.strip().split('\n') if line.strip()]
+# Construct the full prompt with UI instructions, examples, and schema
+A2UI_AND_AGENT_INSTRUCTION = AGENT_INSTRUCTION + f"""
+
+Your final output MUST be a a2ui UI JSON response.
+
+To generate the response, you MUST follow these rules:
+1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
+2.  The first part is your conversational text response.
+3.  The second part is a single, raw JSON object which is a list of A2UI messages.
+4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
+
+--- UI TEMPLATE RULES ---
+-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
+-   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
+-   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
+-   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
+-   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
+
+{RESTAURANT_UI_EXAMPLES}
+
+---BEGIN A2UI JSON SCHEMA---
+{A2UI_SCHEMA}
+---END A2UI JSON SCHEMA---
+"""
+
+root_agent = Agent(
+    model='gemini-2.5-flash',
+    name="restaurant_agent",
+    description="An agent that finds restaurants and helps book tables.",
+    instruction=A2UI_AND_AGENT_INSTRUCTION,
+    tools=[get_restaurants],
+)
 ```
 
-**Pros:** Flexible, works with any LLM | **Cons:** Requires validation
+## Understanding the Output
 
-## Validation
+Your agent will no longer strictly output text. Instead, it will output text and a **JSON list** of A2UI messages.
 
-Always validate messages before sending:
+The `A2UI_SCHEMA` that we imported is a standard JSON schema that defines valid operations like:
+*   `render` (displaying a UI)
+*   `update` (changing data in an existing UI)
+
+Because the output is structured JSON, you may parse and validate it before sending it to the client.
 
 ```python
-import jsonschema
+# 1. Parse the JSON
+parsed_json_data = json.loads(json_string_cleaned)
 
-with open('specification/0.8/json/server_to_client_with_standard_catalog.json') as f:
-    schema = json.load(f)
-
-def validate_message(message: dict) -> tuple[bool, str]:
-    try:
-        jsonschema.validate(instance=message, schema=schema)
-        return True, None
-    except jsonschema.ValidationError as e:
-        return False, str(e)
+# 2. Validate against A2UI_SCHEMA
+# This ensures the LLM generated valid A2UI commands
+jsonschema.validate(
+    instance=parsed_json_data, schema=self.a2ui_schema_object
+)
 ```
 
-For self-correction, send validation errors back to the LLM and ask it to fix.
+By validating the output against `A2UI_SCHEMA`, you ensure that your client never receives malformed UI instructions.
 
-## Streaming A2UI Messages
 
-A2UI is designed to be streamed. By sending messages incrementally, the client can render UI progressively, which creates a much better user experience. A sequence of JSON messages can be streamed using a format like JSON Lines (JSONL), often over a transport like Server-Sent Events (SSE).
-
-```python
-async def stream_ui(user_message: str):
-    # First, send the component structure
-    yield {"surfaceUpdate": {"surfaceId": "main", "components": [
-        {"id": "root", "component": {"Column": {"children": {"explicitList": ["title"]}}}},
-        {"id": "title", "component": {"Text": {"text": {"literalString": "Response"}}}}
-    ]}}
-    # Then, tell the client it's ready to render
-    yield {"beginRendering": {"surfaceId": "main", "root": "root"}}
-
-    prompt = f"Generate A2UI component updates for: {user_message}"
-    response_stream = model.generate_content(prompt, stream=True)
-    buffer = ""
-    for chunk in response_stream:
-        buffer += chunk.text
-        lines = buffer.split('\n')
-        buffer = lines[-1]
-
-        for line in lines[:-1]:
-            if line.strip():
-                msg = json.loads(line)
-                if validate_message(msg)[0]:
-                    # Stream subsequent updates
-                    yield msg
-```
-
-## Handling User Actions
-
-```python
-@agent.handle_action
-async def handle_action(action: dict, context):
-    if action['name'] == 'submit_form':
-        form_data = context.get_data_model(action['surfaceId'])
-        # Process and respond with UI update
-        yield {"surfaceUpdate": {"surfaceId": action['surfaceId'], "components": [{...}]}}
-```
-
-## Best Practices
-
-1. **Progressive disclosure**: Send `surfaceUpdate` messages to define components, then `beginRendering` to show the UI, and `dataModelUpdate` to populate it with data.
-2. **Separate structure from data**: Use path bindings, not hardcoded literals
-3. **Descriptive IDs**: Use `"user-profile-card"` not `"comp1"`
-4. **Handle errors**: Show error UI instead of crashing
-
-## Complete Example
-
-```python
-from google.adk import Agent
-from a2ui_extension import A2UIExtension
-import google.generativeai as genai
-import json
-
-agent = Agent(name="RestaurantAgent", extensions=[A2UIExtension()])
-model = genai.GenerativeModel('gemini-1.5-pro')
-
-@agent.handle_message
-async def handle_message(message: str, context):
-    # 1. Send initial components and signal to render
-    yield {"surfaceUpdate": {"surfaceId": "main", "components": [
-        {"id": "root", "component": {"Column": {"children": {"explicitList": ["title"]}}}},
-        {"id": "title", "component": {"Text": {"text": {"literalString": "Restaurant Finder"}}}}
-    ]}}
-    yield {"beginRendering": {"surfaceId": "main", "root": "root"}}
-
-    # 2. Ask the LLM to generate the rest of the UI
-    prompt = f"Generate a sequence of A2UI JSON messages for a restaurant booking flow. User said: {message}"
-    response = model.generate_content(prompt)
-
-    # 3. Stream the LLM's response to the client
-    for line in response.text.strip().split('\n'):
-        if line.strip():
-            yield json.loads(line)
-
-@agent.handle_action
-async def handle_action(action: dict, context):
-    # 4. Handle a user action
-    if action['name'] == 'confirm_booking':
-        # Respond with a UI update
-        yield {
-            "surfaceUpdate": {
-                "surfaceId": action['surfaceId'],
-                "components": [{
-                    "id": "confirmation",
-                    "component": {
-                        "Text": {
-                            "text": {"literalString": "Confirmed!"}
-                        }
-                    }
-                }]
-            }
-        }
-
-if __name__ == '__main__':
-    agent.serve(port=8000)
-```
-
-## Next Steps
-
-- **[Message Reference](../reference/messages.md)**: Full A2UI specification
-- **[Component Gallery](../reference/components.md)**: See all available components
-- **[Custom Components](custom-components.md)**: Extend the component catalog
-- **[Sample Agents](https://github.com/google/a2ui/tree/main/samples/agent)**: Real-world examples
+TODO: Continue this guide with examples of how to parse, validate, and send the output to the client renderer   without the A2A extension.
