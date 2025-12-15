@@ -37,7 +37,6 @@ Instead of deeply nested JSON trees, A2UI represents components as a **flat list
 
 - LLM must generate perfect nesting in one pass
 - Hard to update a deeply nested component
-- Can't reference the same component multiple times
 - Difficult to stream incrementally
 
 ### A2UI Adjacency List (✅ The Right Way)
