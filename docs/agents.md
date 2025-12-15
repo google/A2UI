@@ -5,7 +5,7 @@ Agents are server-side programs that generate A2UI messages in response to user 
 ## How Agents Work
 
 ```
-User Input → Agent Logic → LLM → A2UI JSON → Stream to Client
+User Input → Agent Logic → LLM → A2UI JSON → Send to Client
 ```
 
 1. **Receive** user message
