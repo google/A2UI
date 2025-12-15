@@ -40,7 +40,6 @@ import { Renderer } from '../rendering/renderer';
       display: block;
       flex: var(--weight);
       min-height: 0;
-      overflow: auto;
     }
   `,
 })
