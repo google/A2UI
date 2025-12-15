@@ -36,13 +36,6 @@ Export your Gemini API key as an environment variable:
 export GEMINI_API_KEY="your_gemini_api_key_here"
 ```
 
-!!! tip "Persistent API Key"
-    To avoid re-exporting the key in each terminal session, add it to your shell profile:
-    ```bash
-    echo 'export GEMINI_API_KEY="your_gemini_api_key_here"' >> ~/.bashrc  # or ~/.zshrc
-    source ~/.bashrc  # or ~/.zshrc
-    ```
-
 ## Step 3: Navigate to the Angular Client
 
 ```bash

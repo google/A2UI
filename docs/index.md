@@ -1,6 +1,5 @@
 ---
 hide:
-  - navigation
   - toc
 ---
 
@@ -21,19 +20,25 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 </div>
 
+!!! warning "️Status: Early Stage Public Preview"
+    A2UI is currently in **v0.8 (Public Preview)**. The specification and
+    implementations are functional but are still evolving. We are opening the project to
+    foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
+    Expect changes.
+
 ## At a Glance
 
 A2UI is currently [v0.8](/specification/v0.8-a2ui.md),
-Apache 2.0 licensed, 
-created by Google with contributions from CopilotKit and the open source community, 
+Apache 2.0 licensed,
+created by Google with contributions from CopilotKit and the open source community,
 and is in active development [on GitHub](https://github.com/google/A2UI).
 
 The problem A2UI solves is: **how can AI agents safely send rich UIs across trust boundaries?**
 
 Instead of text-only responses or risky code execution, A2UI lets agents send **declarative component descriptions** that clients render using their own native widgets. It's like having agents speak a universal UI language.
 
-In this repo you will find 
-[A2UI specifications](/specification/v0.8-a2ui.md) 
+In this repo you will find
+[A2UI specifications](/specification/v0.8-a2ui.md)
 and implementations for
 [renderers](/renderers.md) (eg: Angular, Flutter, etc.) on the client side,
 and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages between agents and clients.
@@ -66,12 +71,11 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 
 </div>
 
-
 ## Get Started in 5 Minutes
 
 <div class="grid cards" markdown>
 
--   :material-clock-fast:{ .lg .middle } **[Quickstart Guide](quickstart.md)**
+- :material-clock-fast:{ .lg .middle } **[Quickstart Guide](quickstart.md)**
 
     ---
 
@@ -79,7 +83,7 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 
     [:octicons-arrow-right-24: Get started](quickstart.md)
 
--   :material-book-open-variant:{ .lg .middle } **[Core Concepts](concepts/overview.md)**
+- :material-book-open-variant:{ .lg .middle } **[Core Concepts](concepts/overview.md)**
 
     ---
 
@@ -87,7 +91,7 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 
     [:octicons-arrow-right-24: Learn concepts](concepts/overview.md)
 
--   :material-code-braces:{ .lg .middle } **[Developer Guides](guides/client-setup.md)**
+- :material-code-braces:{ .lg .middle } **[Developer Guides](guides/client-setup.md)**
 
     ---
 
@@ -95,7 +99,7 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 
     [:octicons-arrow-right-24: Start building](guides/client-setup.md)
 
--   :material-file-document:{ .lg .middle } **[Protocol Reference](reference/v0.8-a2ui.md)**
+- :material-file-document:{ .lg .middle } **[Protocol Reference](reference/v0.8-a2ui.md)**
 
     ---
 
@@ -151,4 +155,3 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 CopilotKit has a public [A2UI Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder) to try out as well.
 
 [![A2UI Composer](assets/A2UI-widget-builder.png)](https://go.copilotkit.ai/A2UI-widget-builder)
-
