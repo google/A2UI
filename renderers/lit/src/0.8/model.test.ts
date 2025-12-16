@@ -16,8 +16,8 @@
 
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
-import { v0_8 } from "@a2ui/web-lib";
-import {DataMap, DataValue} from "./types/types";
+import { v0_8 } from "@a2ui/lit";
+import { DataMap, DataValue } from "./types/types";
 
 // Helper function to strip reactivity for clean comparisons.
 const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {

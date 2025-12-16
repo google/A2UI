@@ -16,7 +16,7 @@
 
 import { Component, signal, viewChild, ElementRef, effect } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/lit/0.8';
 import { Renderer } from '../rendering';
 
 @Component({

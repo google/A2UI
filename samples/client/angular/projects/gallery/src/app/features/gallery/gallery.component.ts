@@ -16,7 +16,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Surface } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/web-lib/0.8';
+import * as v0_8 from '@a2ui/lit/0.8';
 
 interface GallerySample {
   id: string;

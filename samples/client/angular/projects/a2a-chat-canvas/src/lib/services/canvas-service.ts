@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Types } from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/lit/0.8';
 import { Injectable, signal } from '@angular/core';
 
 /**

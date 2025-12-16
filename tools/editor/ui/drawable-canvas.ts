@@ -18,7 +18,7 @@ import { LitElement, css, html, nothing, svg, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { EnumValue } from "../types/types";
 import { ItemSelect } from "./item-select";
-import { v0_8 } from "@a2ui/web-lib";
+import { v0_8 } from "@a2ui/lit";
 
 type RenderMode = "free" | "line" | "rect";
 interface Path {
@@ -350,8 +350,7 @@ export class DrawableCanvas extends LitElement {
   render() {
     return html`${svg`
       <svg
-        viewBox="${this.#adjustment.x} ${this.#adjustment.y} ${
-        this.#bounds.width
+        viewBox="${this.#adjustment.x} ${this.#adjustment.y} ${this.#bounds.width
       } ${this.#bounds.height}"
         @pointerdown=${this.#startDrawing}
         @pointermove=${this.#draw}
@@ -365,20 +364,20 @@ export class DrawableCanvas extends LitElement {
       <div id="controls">
         <item-select
           @change=${(e: Event) => {
-            if (!(e.target instanceof ItemSelect)) {
-              return;
-            }
+        if (!(e.target instanceof ItemSelect)) {
+          return;
+        }
 
-            this.mode = e.target.value as RenderMode;
-          }}
+        this.mode = e.target.value as RenderMode;
+      }}
           .values=${values}
           .value=${this.mode}
         ></item-select>
 
         <button
           @click=${() => {
-            this.clear();
-          }}
+        this.clear();
+      }}
         >
           <span class="g-icon filled round">delete</span> Clear
         </button>
