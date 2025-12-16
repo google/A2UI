@@ -70,7 +70,7 @@ Want to build a renderer for your platform?
 
 - See the [Roadmap](roadmap.md) for planned frameworks.
 - Review existing renderers for patterns.
-- Check out the [Renderer Development Guide](guides/renderer-development.md) for details on implementing a renderer.
+- Check out our [Renderer Development Guide](guides/renderer-development.md) for details on implementing a renderer.
 
 ### Key requirements:
 
