@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/angular",
-  "version": "0.0.1",
+  "version": "0.8.1",
   "scripts": {
     "build": "ng build"
   },
