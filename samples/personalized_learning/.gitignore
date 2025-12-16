@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Environment
+.env
+
+# Runtime files
+demo-message-log.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large media assets (generate via NotebookLM - see NOTEBOOKLM_GUIDE.md)
+public/assets/*.m4a
+public/assets/*.mp4
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

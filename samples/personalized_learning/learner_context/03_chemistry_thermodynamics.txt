@@ -1,0 +1,165 @@
+CHEMISTRY: THERMODYNAMICS AND GIBBS FREE ENERGY
+Source: OpenStax Chemistry, Chapters 5 & 16 - Thermochemistry and Thermodynamics
+================================================================================
+
+WHAT IS THERMODYNAMICS?
+-----------------------
+
+Thermodynamics is the study of relationships between energy and work in chemical and physical processes. It tells us:
+- Whether a reaction will happen spontaneously
+- How much energy is involved
+- Which direction a reaction will go
+
+SPONTANEOUS PROCESSES
+---------------------
+
+A spontaneous process occurs naturally without continuous external energy input.
+
+Important: "Spontaneous" does NOT mean "fast." It means the process is thermodynamically favorable - the system naturally moves in that direction.
+
+Examples of spontaneous processes:
+- Ice melting at room temperature
+- A ball rolling downhill
+- Iron rusting
+- ATP hydrolysis to ADP + Pi
+
+What makes a process spontaneous? The system moves toward greater stability (lower free energy).
+
+ENTHALPY (ΔH)
+-------------
+
+Enthalpy change measures heat absorbed or released at constant pressure.
+
+- Negative ΔH = EXOTHERMIC = releases heat
+- Positive ΔH = ENDOTHERMIC = absorbs heat
+
+Calculation: ΔH = (Energy to break bonds in reactants) - (Energy released forming bonds in products)
+
+If products have stronger bonds than reactants, ΔH is negative (exothermic).
+
+ENTROPY (ΔS)
+------------
+
+Entropy is a measure of disorder or dispersal of energy and matter.
+
+- Systems tend toward higher entropy (more disorder)
+- Positive ΔS = increase in disorder = favorable
+- Negative ΔS = decrease in disorder = unfavorable
+
+Examples:
+- Gas expanding into vacuum → entropy increases (favorable)
+- Ice melting to liquid → entropy increases (favorable)
+- Organizing a messy room → entropy decreases (requires energy input)
+
+GIBBS FREE ENERGY (ΔG) - THE KEY CONCEPT
+----------------------------------------
+
+Gibbs Free Energy combines enthalpy and entropy to predict spontaneity:
+
+    ΔG = ΔH - TΔS
+
+Where:
+- ΔG = Gibbs free energy change
+- ΔH = enthalpy change
+- T = temperature (in Kelvin)
+- ΔS = entropy change
+
+THE RULE:
+- ΔG < 0 (negative) → SPONTANEOUS (favorable, releases free energy)
+- ΔG > 0 (positive) → NON-SPONTANEOUS (unfavorable, requires energy input)
+- ΔG = 0 → AT EQUILIBRIUM
+
+WHAT DOES NEGATIVE ΔG REALLY MEAN?
+----------------------------------
+
+When ΔG is negative, the PRODUCTS have LOWER FREE ENERGY than the REACTANTS.
+
+Lower free energy = more stable
+
+So a spontaneous reaction (negative ΔG) is one where the products are more stable than the reactants. Energy is released because the system moves "downhill" energetically to a more stable state.
+
+This is NOT because energy was "stored" somewhere and got released. It's because stability increased, and that stability difference manifests as released energy.
+
+THE SECOND LAW OF THERMODYNAMICS
+--------------------------------
+
+All spontaneous processes increase the entropy of the universe.
+
+For a process to be spontaneous:
+- Either it releases enough heat to compensate for any entropy decrease
+- Or it increases entropy enough to compensate for any heat absorbed
+- Or both (exothermic AND entropy increase = definitely spontaneous)
+
+ATP HYDROLYSIS IN THERMODYNAMIC TERMS
+-------------------------------------
+
+ATP + H2O → ADP + Pi
+
+ΔG° ≈ -30.5 kJ/mol (under cellular conditions)
+
+This negative ΔG tells us:
+- The reaction is SPONTANEOUS
+- Products (ADP + Pi) are MORE STABLE than reactants (ATP)
+- Energy is released because the system moves to a lower energy state
+
+The -30.5 kJ/mol is NOT "energy stored in the phosphate bond."
+It is the FREE ENERGY DIFFERENCE between ATP and its products.
+
+WHY IS ADP + Pi MORE STABLE THAN ATP?
+-------------------------------------
+
+Several factors make the products lower in free energy:
+
+1. ELECTROSTATIC REPULSION
+   - ATP has four negative charges crowded on three phosphate groups
+   - These negative charges repel each other
+   - Hydrolysis separates these charges, reducing repulsion
+   - Less repulsion = more stable = lower energy
+
+2. RESONANCE STABILIZATION
+   - Inorganic phosphate (Pi) has excellent resonance stabilization
+   - More resonance structures = more stable electron distribution
+   - ADP also has better resonance than ATP
+
+3. SOLVATION (HYDRATION)
+   - ADP and Pi are better stabilized by surrounding water molecules
+   - Better solvation = lower energy = more stable
+
+Combined, these factors make ADP + Pi about 30.5 kJ/mol more stable than ATP under cellular conditions.
+
+THE COMPRESSED SPRING ANALOGY
+-----------------------------
+
+Think of ATP like a COMPRESSED SPRING, not like a battery:
+
+Compressed spring:
+- High potential energy (strained state)
+- Unstable, wants to release
+- Energy not "stored in the metal"
+- Energy is in the CONFIGURATION
+
+When spring releases:
+- Moves to relaxed state
+- Lower potential energy (stable state)
+- Can do work during transition
+
+Similarly, ATP:
+- High free energy (strained molecular configuration)
+- Unstable due to charge repulsion
+- Energy not "stored in bonds"
+- Energy is in the unstable CONFIGURATION
+
+When ATP hydrolyzes:
+- Moves to stable state (ADP + Pi)
+- Lower free energy
+- Releases ~30.5 kJ/mol that can do cellular work
+
+KEY TAKEAWAYS
+-------------
+
+1. ΔG (Gibbs Free Energy) determines spontaneity
+2. Negative ΔG means products are MORE STABLE than reactants
+3. Energy is released when systems move toward stability
+4. ATP hydrolysis has ΔG = -30.5 kJ/mol because ADP + Pi is more stable
+5. This is NOT "energy stored in bonds" - it's a stability difference
+6. The compressed spring is a better analogy than a battery
