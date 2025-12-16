@@ -1,0 +1,20 @@
+# Enforce LF line endings for all text files to ensure cross-platform consistency
+* text=auto eol=lf
+
+# Unix executables require LF line endings
+*.sh eol=lf
+*.bash eol=lf
+Makefile eol=lf
+
+# Binary files should not be modified by Git
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary
