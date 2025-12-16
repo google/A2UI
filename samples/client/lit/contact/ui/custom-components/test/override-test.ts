@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { componentRegistry, Root } from "@a2ui/web-lib/ui";
+import { componentRegistry, Root } from "@a2ui/lit/ui";
 import { html, css } from "lit";
 import { property } from "lit/decorators.js";
 // 1. Define the override

@@ -20,7 +20,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref, Ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
 import { EnumValue } from "../types/types";
-import { v0_8 } from "@a2ui/web-lib";
+import { v0_8 } from "@a2ui/lit";
 
 @customElement("item-select")
 export class ItemSelect extends LitElement {
@@ -320,27 +320,27 @@ export class ItemSelect extends LitElement {
     };
 
     return html`${this.autoActivate
-        ? nothing
-        : html`<button
+      ? nothing
+      : html`<button
             class=${classMap(classes)}
             @click=${() => {
-              if (!this.#selectorRef.value) {
-                return;
-              }
+          if (!this.#selectorRef.value) {
+            return;
+          }
 
-              this.#selectorRef.value.showModal();
-            }}
+          this.#selectorRef.value.showModal();
+        }}
             ${ref(this.#toggleRef)}
           >
             ${renderedValue.icon
-              ? html`<span class="g-icon filled">${renderedValue.icon}</span>`
-              : nothing}
+          ? html`<span class="g-icon filled">${renderedValue.icon}</span>`
+          : nothing}
             ${renderedValue.title
-              ? html`<span class="title">${renderedValue.title}</span>`
-              : nothing}
+          ? html`<span class="title">${renderedValue.title}</span>`
+          : nothing}
             ${this.showDownArrow
-              ? html`<span class="g-icon filled">arrow_drop_down</span>`
-              : nothing}
+          ? html`<span class="g-icon filled">arrow_drop_down</span>`
+          : nothing}
           </button>`}
 
       <dialog
@@ -349,130 +349,130 @@ export class ItemSelect extends LitElement {
         popover
         ${ref(this.#selectorRef)}
         @keydown=${(evt: KeyboardEvent) => {
-          const forwards =
-            evt.key === "ArrowDown" || (evt.key === "Tab" && !evt.shiftKey);
-          const backwards =
-            evt.key === "ArrowUp" || (evt.key === "Tab" && evt.shiftKey);
-          if (backwards && this.#highlighted > 0) {
-            this.#highlighted--;
-            this.requestUpdate();
-          }
-
-          if (forwards && this.#highlighted < this.values.length - 1) {
-            this.#highlighted++;
-            this.requestUpdate();
-          }
-
-          if (evt.key === "Enter") {
-            evt.preventDefault();
-            this.#handleChange();
-          }
-        }}
-        @click=${(evt: PointerEvent) => {
-          const [top] = evt.composedPath();
-          if (top !== this.#selectorRef.value || !this.#selectorRef.value) {
-            return;
-          }
-
-          this.#selectorRef.value.close();
-          this.dispatchEvent(
-            new Event("close", {
-              cancelable: true,
-              bubbles: true,
-              composed: true,
-            })
-          );
-        }}
-        @beforetoggle=${(evt: ToggleEvent) => {
-          this.#highlighted = this.#selected;
+        const forwards =
+          evt.key === "ArrowDown" || (evt.key === "Tab" && !evt.shiftKey);
+        const backwards =
+          evt.key === "ArrowUp" || (evt.key === "Tab" && evt.shiftKey);
+        if (backwards && this.#highlighted > 0) {
+          this.#highlighted--;
           this.requestUpdate();
+        }
 
-          if (evt.newState === "closed") {
-            return;
-          }
+        if (forwards && this.#highlighted < this.values.length - 1) {
+          this.#highlighted++;
+          this.requestUpdate();
+        }
 
-          // Position this directly because the relevant CSS properties aren't
-          // available everywhere yet.
-          if (!this.#toggleRef.value) {
-            return;
-          }
+        if (evt.key === "Enter") {
+          evt.preventDefault();
+          this.#handleChange();
+        }
+      }}
+        @click=${(evt: PointerEvent) => {
+        const [top] = evt.composedPath();
+        if (top !== this.#selectorRef.value || !this.#selectorRef.value) {
+          return;
+        }
 
-          const bounds = this.#toggleRef.value.getBoundingClientRect();
-          let { left, top, bottom } = bounds;
-          if (left + 296 > window.innerWidth) {
-            left = window.innerWidth - 296;
-          }
+        this.#selectorRef.value.close();
+        this.dispatchEvent(
+          new Event("close", {
+            cancelable: true,
+            bubbles: true,
+            composed: true,
+          })
+        );
+      }}
+        @beforetoggle=${(evt: ToggleEvent) => {
+        this.#highlighted = this.#selected;
+        this.requestUpdate();
 
-          if (top + 420 > window.innerHeight) {
-            top = window.innerHeight - 420;
-          }
+        if (evt.newState === "closed") {
+          return;
+        }
 
-          const adjustment = bounds.height + 8;
-          if (this.alignment === "bottom") {
-            // Adjust to below the button.
-            top += adjustment;
-            this.style.setProperty("--top", `${top}px`);
-          } else {
-            // Adjust so that it's the distance from the viewport bottom.
-            bottom = window.innerHeight - bottom + adjustment;
-            this.style.setProperty("--bottom", `${bottom}px`);
-          }
-          this.style.setProperty("--left", `${left}px`);
-        }}
+        // Position this directly because the relevant CSS properties aren't
+        // available everywhere yet.
+        if (!this.#toggleRef.value) {
+          return;
+        }
+
+        const bounds = this.#toggleRef.value.getBoundingClientRect();
+        let { left, top, bottom } = bounds;
+        if (left + 296 > window.innerWidth) {
+          left = window.innerWidth - 296;
+        }
+
+        if (top + 420 > window.innerHeight) {
+          top = window.innerHeight - 420;
+        }
+
+        const adjustment = bounds.height + 8;
+        if (this.alignment === "bottom") {
+          // Adjust to below the button.
+          top += adjustment;
+          this.style.setProperty("--top", `${top}px`);
+        } else {
+          // Adjust so that it's the distance from the viewport bottom.
+          bottom = window.innerHeight - bottom + adjustment;
+          this.style.setProperty("--bottom", `${bottom}px`);
+        }
+        this.style.setProperty("--left", `${left}px`);
+      }}
       >
         ${this.heading
-          ? html`<h1 class="heading">${this.heading}</h1>`
-          : nothing}
+        ? html`<h1 class="heading">${this.heading}</h1>`
+        : nothing}
         <menu>
           ${repeat(
-            this.#values,
-            (v) => v.id,
-            (value, idx) => {
-              if (value.hidden) {
-                return nothing;
-              }
+          this.#values,
+          (v) => v.id,
+          (value, idx) => {
+            if (value.hidden) {
+              return nothing;
+            }
 
-              const classes: Record<string, boolean> = {
-                double: value.description !== undefined,
-                icon: value.icon !== undefined,
-                tag: value.tag !== undefined,
-                active: idx === this.#highlighted,
-                round: true,
-                "w-500": true,
-                "sans-flex": true,
-              };
+            const classes: Record<string, boolean> = {
+              double: value.description !== undefined,
+              icon: value.icon !== undefined,
+              tag: value.tag !== undefined,
+              active: idx === this.#highlighted,
+              round: true,
+              "w-500": true,
+              "sans-flex": true,
+            };
 
-              return html`<li>
+            return html`<li>
                 <button
                   ?autofocus=${idx === this.#highlighted}
                   @pointerover=${() => {
-                    this.#highlighted = idx;
-                    this.requestUpdate();
-                  }}
+                this.#highlighted = idx;
+                this.requestUpdate();
+              }}
                   @pointerdown=${() => {
-                    this.#handleChange();
-                  }}
+                this.#handleChange();
+              }}
                   class=${classMap(classes)}
                 >
                   ${value.icon
-                    ? html`<span class="g-icon filled">${value.icon}</span>`
-                    : nothing}
+                ? html`<span class="g-icon filled">${value.icon}</span>`
+                : nothing}
                   <span>
                     <span class="title">${value.title}</span>
 
                     ${value.description
-                      ? html`<span class="description"
+                ? html`<span class="description"
                           >${value.description}</span
                         >`
-                      : nothing}
+                : nothing}
                   </span>
                   ${value.tag
-                    ? html`<span class="i-tag">${value.tag}</span>`
-                    : nothing}
+                ? html`<span class="i-tag">${value.tag}</span>`
+                : nothing}
                 </button>
               </li>`;
-            }
-          )}
+          }
+        )}
         </menu>
       </dialog>`;
   }

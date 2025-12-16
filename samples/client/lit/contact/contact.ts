@@ -35,8 +35,8 @@ import {
 } from "./types/types.js";
 import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
-import { v0_8 } from "@a2ui/web-lib";
-import * as UI from "@a2ui/web-lib/ui";
+import { v0_8 } from "@a2ui/lit";
+import * as UI from "@a2ui/lit/ui";
 
 // Demo elements.
 import "./ui/ui.js";
@@ -246,62 +246,62 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
     return html`<section id="surfaces">
       ${repeat(
-        this.#processor.getSurfaces(),
-        ([surfaceId]) => surfaceId,
-        ([surfaceId, surface]) => {
-          return html`<a2ui-surface
+      this.#processor.getSurfaces(),
+      ([surfaceId]) => surfaceId,
+      ([surfaceId, surface]) => {
+        return html`<a2ui-surface
               @a2uiaction=${async (
-                evt: v0_8.Events.StateEvent<"a2ui.action">
-              ) => {
-                const [target] = evt.composedPath();
-                if (!(target instanceof HTMLElement)) {
-                  return;
+          evt: v0_8.Events.StateEvent<"a2ui.action">
+        ) => {
+            const [target] = evt.composedPath();
+            if (!(target instanceof HTMLElement)) {
+              return;
+            }
+
+            const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] =
+              {};
+            if (evt.detail.action.context) {
+              const srcContext = evt.detail.action.context;
+              for (const item of srcContext) {
+                if (item.value.literalBoolean) {
+                  context[item.key] = item.value.literalBoolean;
+                } else if (item.value.literalNumber) {
+                  context[item.key] = item.value.literalNumber;
+                } else if (item.value.literalString) {
+                  context[item.key] = item.value.literalString;
+                } else if (item.value.path) {
+                  const path = this.#processor.resolvePath(
+                    item.value.path,
+                    evt.detail.dataContextPath
+                  );
+                  const value = this.#processor.getData(
+                    evt.detail.sourceComponent,
+                    path,
+                    surfaceId
+                  );
+                  context[item.key] = value;
                 }
+              }
+            }
 
-                const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] =
-                  {};
-                if (evt.detail.action.context) {
-                  const srcContext = evt.detail.action.context;
-                  for (const item of srcContext) {
-                    if (item.value.literalBoolean) {
-                      context[item.key] = item.value.literalBoolean;
-                    } else if (item.value.literalNumber) {
-                      context[item.key] = item.value.literalNumber;
-                    } else if (item.value.literalString) {
-                      context[item.key] = item.value.literalString;
-                    } else if (item.value.path) {
-                      const path = this.#processor.resolvePath(
-                        item.value.path,
-                        evt.detail.dataContextPath
-                      );
-                      const value = this.#processor.getData(
-                        evt.detail.sourceComponent,
-                        path,
-                        surfaceId
-                      );
-                      context[item.key] = value;
-                    }
-                  }
-                }
+            const message: v0_8.Types.A2UIClientEventMessage = {
+              userAction: {
+                surfaceId: surfaceId,
+                name: evt.detail.action.name,
+                sourceComponentId: target.id,
+                timestamp: new Date().toISOString(),
+                context,
+              },
+            };
 
-                const message: v0_8.Types.A2UIClientEventMessage = {
-                  userAction: {
-                    surfaceId: surfaceId,
-                    name: evt.detail.action.name,
-                    sourceComponentId: target.id,
-                    timestamp: new Date().toISOString(),
-                    context,
-                  },
-                };
-
-                await this.#sendAndProcessMessage(message);
-              }}
+            await this.#sendAndProcessMessage(message);
+          }}
               .surfaceId=${surfaceId}
               .surface=${surface}
               .processor=${this.#processor}
             ></a2-uisurface>`;
-        }
-      )}
+      }
+    )}
     </section>`;
   }
 

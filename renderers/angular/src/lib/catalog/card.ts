@@ -17,7 +17,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import { Types } from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/lit/0.8';
 
 @Component({
   selector: 'a2ui-card',
@@ -54,4 +54,4 @@ import { Types } from '@a2ui/web-lib/0.8';
     </section>
   `,
 })
-export class Card extends DynamicComponent<Types.CardNode> {}
+export class Card extends DynamicComponent<Types.CardNode> { }

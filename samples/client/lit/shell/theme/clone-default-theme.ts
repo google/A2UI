@@ -14,20 +14,9 @@
  limitations under the License.
  */
 
-import { componentRegistry } from "@a2ui/lit/ui";
-import { OrgChart } from "./org-chart.js";
-import { PremiumTextField } from "./premium-text-field.js";
+import { theme } from "./default-theme.js";
+import { v0_8 } from "@a2ui/lit";
 
-export function registerContactComponents() {
-  // Register OrgChart
-  componentRegistry.register("OrgChart", OrgChart, "org-chart");
-
-  // Register PremiumTextField as an override for TextField
-  componentRegistry.register(
-    "TextField",
-    PremiumTextField,
-    "premium-text-field"
-  );
-
-  console.log("Registered Contact App Custom Components");
+export function cloneDefaultTheme(): v0_8.Types.Theme {
+  return structuredClone(theme);
 }

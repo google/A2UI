@@ -17,7 +17,7 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import { Styles, Types } from '@a2ui/web-lib/0.8';
+import { Styles, Types } from '@a2ui/lit/0.8';
 
 @Component({
   selector: 'a2ui-tabs',
@@ -63,9 +63,9 @@ export class Tabs extends DynamicComponent {
     return this.tabs().map((_, index) => {
       return index === selectedIndex
         ? Styles.merge(
-            this.theme.components.Tabs.controls.all,
-            this.theme.components.Tabs.controls.selected,
-          )
+          this.theme.components.Tabs.controls.all,
+          this.theme.components.Tabs.controls.selected,
+        )
         : this.theme.components.Tabs.controls.all;
     });
   });
