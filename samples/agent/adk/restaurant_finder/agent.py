@@ -114,7 +114,6 @@ class RestaurantAgent:
             name="restaurant_agent",
             description="An agent that finds restaurants and helps book tables.",
             instruction=instruction,
-            tools=[get_restaurants],
         )
 
     async def stream(self, query, session_id) -> AsyncIterable[dict[str, Any]]:

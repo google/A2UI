@@ -1,6 +1,14 @@
 from typing import List, Dict, Any
-from ui_schema import LLMOutput, RestaurantListData, BookingFormData, ConfirmationData, Widget
+from ui_schema import LLMOutput, RestaurantListData, BookingFormData, ConfirmationData, Widget, Restaurant, DynamicRestaurantListData
 from a2ui_validator import validate_a2ui_messages
+from tools import fetch_restaurant_data
+
+_surface_id_counter = 0
+
+def _get_unique_surface_id(base_id: str) -> str:
+    global _surface_id_counter
+    _surface_id_counter += 1
+    return f"{base_id}_{_surface_id_counter}"
 
 def render_ui(llm_output: LLMOutput, base_url: str) -> List[Dict[str, Any]]:
     messages = []
@@ -11,6 +19,8 @@ def render_ui(llm_output: LLMOutput, base_url: str) -> List[Dict[str, Any]]:
             messages.extend(render_booking_form(BookingFormData(**widget.data), base_url))
         elif widget.type == "confirmation":
             messages.extend(render_confirmation(ConfirmationData(**widget.data), base_url))
+        elif widget.type == "dynamic_restaurant_list":
+            messages.extend(render_dynamic_restaurant_list(DynamicRestaurantListData(**widget.data), base_url))
         else:
             # Log warning or raise error for unknown type
             pass
@@ -35,8 +45,7 @@ def _create_data_model_items(restaurants: List[Restaurant]) -> List[Dict[str, An
         })
     return items
 
-def render_restaurant_list(data: RestaurantListData, base_url: str) -> List[Dict[str, Any]]:
-    surface_id = "restaurant_list"
+def _create_restaurant_list_messages(surface_id: str, restaurants: List[Restaurant]) -> List[Dict[str, Any]]:
     begin_rendering = {
         "beginRendering": {
             "surfaceId": surface_id,
@@ -78,14 +87,24 @@ def render_restaurant_list(data: RestaurantListData, base_url: str) -> List[Dict
             "path": "/",
             "contents": [
                 {"key": "title", "valueString": "Found Restaurants"},
-                {"key": "items", "valueMap": _create_data_model_items(data.restaurants)}
+                {"key": "items", "valueMap": _create_data_model_items(restaurants)}
             ]
         }
     }
-
     return [begin_rendering, surface_update, data_model_update]
+
+def render_restaurant_list(data: RestaurantListData, base_url: str) -> List[Dict[str, Any]]:
+    surface_id = _get_unique_surface_id("restaurant_list")
+    return _create_restaurant_list_messages(surface_id, data.restaurants)
+
+def render_dynamic_restaurant_list(data: DynamicRestaurantListData, base_url: str) -> List[Dict[str, Any]]:
+    restaurants_data = fetch_restaurant_data(data.cuisine, data.location, data.count, base_url)
+    restaurants = [Restaurant(**r) for r in restaurants_data]
+    surface_id = _get_unique_surface_id("restaurant_list")
+    return _create_restaurant_list_messages(surface_id, restaurants)
+
 def render_booking_form(data: BookingFormData, base_url: str) -> List[Dict[str, Any]]:
-    surface_id = "booking_form"
+    surface_id = _get_unique_surface_id("booking_form")
     begin_rendering = {
         "beginRendering": {
             "surfaceId": surface_id,
@@ -137,7 +156,7 @@ def render_booking_form(data: BookingFormData, base_url: str) -> List[Dict[str, 
     return [begin_rendering, surface_update, data_model_update]
 
 def render_confirmation(data: ConfirmationData, base_url: str) -> List[Dict[str, Any]]:
-    surface_id = "confirmation"
+    surface_id = _get_unique_surface_id("confirmation")
     begin_rendering = {
         "beginRendering": {
             "surfaceId": surface_id,

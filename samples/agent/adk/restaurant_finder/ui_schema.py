@@ -26,8 +26,13 @@ class ConfirmationData(BaseModel):
     imageUrl: str
 
 class Widget(BaseModel):
-    type: Literal["restaurant_list", "booking_form", "confirmation"]
+    type: Literal["restaurant_list", "booking_form", "confirmation", "dynamic_restaurant_list"]
     data: Dict[str, Any]
 
 class LLMOutput(BaseModel):
     widgets: List[Widget]
+
+class DynamicRestaurantListData(BaseModel):
+    cuisine: str
+    location: str
+    count: int = 5
