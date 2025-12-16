@@ -1,0 +1,39 @@
+{
+  "name": "motia-a2ui",
+  "version": "0.9.0",
+  "description": "A2UI Protocol v0.9 implementation using Motia",
+  "type": "module",
+  "scripts": {
+    "dev": "motia dev",
+    "build": "motia build",
+    "start": "motia start",
+    "test": "bash test-a2ui.sh"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "@motiadev/plugin-bullmq": "0.17.6-beta.187",
+    "@motiadev/plugin-endpoint": "0.17.6-beta.187",
+    "@motiadev/plugin-logs": "0.17.6-beta.187",
+    "@motiadev/plugin-observability": "0.17.6-beta.187",
+    "@motiadev/plugin-states": "0.17.6-beta.187",
+    "cors": "^2.8.5",
+    "motia": "0.17.6-beta.187",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/node": "^22.15.29",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "a2ui",
+    "agent-to-ui",
+    "motia",
+    "llm",
+    "generative-ai"
+  ],
+  "license": "Apache-2.0"
+}
