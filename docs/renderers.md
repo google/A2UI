@@ -2,7 +2,7 @@
 
 Renderers convert A2UI JSON messages into native UI components for different platforms.
 
-The [agents](agents.md) are responsible for generating the A2UI messages, 
+The [agents](agents.md) are responsible for generating the A2UI messages,
 and the [transports](transports.md) are responsible for delivering the messages to the client.
 The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, and render surfaces (widgets).
 
@@ -66,10 +66,11 @@ TODO: Add a guide
 
 ## Building a Renderer
 
-Want to build a renderer for your platform? 
+Want to build a renderer for your platform?
 
 - See the [Roadmap](roadmap.md) for planned frameworks.
 - Review existing renderers for patterns.
+- Check out our [Renderer Development Guide](guides/renderer-development.md) for details on implementing a renderer.
 
 ### Key requirements:
 
