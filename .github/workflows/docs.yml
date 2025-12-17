@@ -23,6 +23,7 @@ on:
       - "requirements-docs.txt"
       - "mkdocs.yml"
       - "docs/**"
+      - "specification/**"
   pull_request:
     branches:
       - main
@@ -31,6 +32,7 @@ on:
       - "requirements-docs.txt"
       - "mkdocs.yml"
       - "docs/**"
+      - "specification/**"
 
 jobs:
   build_and_deploy:
@@ -68,6 +70,11 @@ jobs:
 
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
+
+      - name: Sync Specification Schemas to Docs
+        run: |
+          mkdir -p docs/specification/0.9
+          cp -r specification/0.9/json/*.json docs/specification/0.9/
 
       - name: Build Documentation (PR Check)
         if: github.event_name == 'pull_request'
