@@ -61,8 +61,14 @@ class InstrumentedLiteLlm(LiteLlm):
         logger.info("InstrumentedLiteLlm.generate_content_async called")
         start_time = time.time()
         try:
-            async for chunk in super().generate_content_async(*args, **kwargs):
-                yield chunk
+            try:
+                async for chunk in super().generate_content_async(*args, **kwargs):
+                    yield chunk
+            except ValueError as e:
+                if "No message in response" in str(e):
+                    logger.warning(f"Ignored ValueError from LiteLlm (likely empty stop chunk): {e}")
+                    return
+                raise e
         finally:
             duration = (time.time() - start_time) * 1000
             instrumentation.track_inference(duration)
