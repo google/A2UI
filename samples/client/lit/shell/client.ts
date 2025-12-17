@@ -97,16 +97,53 @@ export class A2UIClient {
     }
 
     const result = (response as SendMessageSuccessResponse).result as Task;
-    if (result.kind === "task" && result.status.message?.parts) {
-      const messages: v0_8.Types.ServerToClientMessage[] = [];
+    const messages: v0_8.Types.ServerToClientMessage[] = [];
+    
+    console.log("A2A Response:", JSON.stringify(result, null, 2));
+    
+    // Check for parts in the task status message (streaming/task-based responses)
+    if (result.kind === "task" && result.status?.message?.parts) {
+      console.log("Found parts in task status message");
       for (const part of result.status.message.parts) {
         if (part.kind === 'data') {
           messages.push(part.data as v0_8.Types.ServerToClientMessage);
         }
       }
-      return messages;
+      if (messages.length > 0) return messages;
+    }
+    
+    // Check for parts in artifacts (blocking responses)
+    if (result.artifacts && result.artifacts.length > 0) {
+      console.log("Found artifacts:", result.artifacts.length);
+      for (const artifact of result.artifacts) {
+        if (artifact.parts) {
+          for (const part of artifact.parts) {
+            console.log("Artifact part kind:", part.kind);
+            if (part.kind === 'data') {
+              messages.push(part.data as v0_8.Types.ServerToClientMessage);
+            }
+          }
+        }
+      }
+      if (messages.length > 0) return messages;
+    }
+    
+    // Check for parts in the last history message (agent response)
+    if (result.history && result.history.length > 0) {
+      console.log("Found history:", result.history.length);
+      const lastMessage = result.history[result.history.length - 1];
+      console.log("Last message role:", lastMessage.role);
+      if (lastMessage.role === 'agent' && lastMessage.parts) {
+        for (const part of lastMessage.parts) {
+          console.log("History part kind:", part.kind);
+          if (part.kind === 'data') {
+            messages.push(part.data as v0_8.Types.ServerToClientMessage);
+          }
+        }
+      }
     }
 
-    return [];
+    console.log("Total messages found:", messages.length);
+    return messages;
   }
 }
