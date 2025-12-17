@@ -134,7 +134,14 @@ The best way to understand A2UI is to run the samples.
     Open a new terminal window:
 
     ```bash
-    cd samples/client/lit/shell
+    cd renderers/lit
+    npm install
+    ```
+
+    Then, in the same terminal, run:
+
+    ```bash
+    cd ../../samples/client/lit/shell
     npm install
     npm run dev
     ```
