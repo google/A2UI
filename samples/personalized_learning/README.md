@@ -1,110 +1,21 @@
 # Personalized Learning Demo
 
-A full-stack A2UI sample demonstrating personalized educational content generation.
+A full-stack A2UI sample demonstrating personalized educational content generation with remote AI agents.
 
 **Contributed by Google Public Sector's Rapid Innovation Team.**
 
-## Overview
+![Architecture Diagram](assets/architecture.jpg)
 
-This demo shows how A2UI enables AI agents to generate rich, interactive learning materials tailored to individual learners:
+## What This Demo Shows
 
-- **Flashcards** - Generated dynamically from OpenStax textbook content
-- **Audio** - Personalized podcasts (via NotebookLM)
-- **Video** - Educational explainers
-- **Quizzes** - Interactive assessment with explanations
+- **Remote Agent Deployment** - Deploy an AI agent to Vertex AI Agent Engine
+- **A2A Protocol** - Agent-to-Agent communication between frontend and cloud agent
+- **Custom UI Components** - Extend A2UI with Flashcard and QuizCard components
+- **Intelligent Content Matching** - LLM-powered mapping of topics to OpenStax textbook chapters
 
-### The Personalization Pipeline
+## Getting Started
 
-At Google Public Sector, we're developing approaches that combine LLMs, knowledge graphs, and learner performance data to produce personalized content across courses—and across a person's academic and professional life.
-
-For this demo, that personalization is represented by context files in `learner_context/` describing a fictional learner (Maria) and her learning needs.
-
-## Quick Start
-
-**Open [Quickstart.ipynb](Quickstart.ipynb)** and follow the steps. The notebook handles:
-
-1. GCP authentication and API setup
-2. Agent deployment to Vertex AI Agent Engine
-3. Environment configuration
-4. Frontend installation
-5. (Optional) Audio/video generation with NotebookLM
-
-Or manually:
-
-```bash
-# 1. Configure environment
-cp .env.template .env
-# Edit .env with your GCP project details
-
-# 2. Build the A2UI renderer
-cd ../../renderers/lit && npm install && npm run build && cd -
-
-# 3. Install and run
-npm install
-npm run dev
-```
-
-Then open http://localhost:5174
-
-## Demo Prompts
-
-| Try This | What Happens |
-|----------|--------------|
-| "Help me understand ATP" | Flashcards from OpenStax |
-| "Quiz me on bond energy" | Interactive quiz cards |
-| "Play the podcast" | Audio player |
-| "Show me a video" | Video player |
-
-## Generating Your Own Audio & Video
-
-The demo includes sample media files. To generate personalized content:
-
-1. **Generate a podcast** using [NotebookLM](https://notebooklm.google.com/):
-   - Upload files from `learner_context/`
-   - Generate an Audio Overview
-   - Download and save as `public/assets/podcast.m4a`
-
-2. **Create a video** (screen recording, AI video tool, or slide presentation)
-   - Save as `public/assets/demo.mp4`
-
-See **Step 7** in the [Quickstart notebook](Quickstart.ipynb) for detailed instructions.
-
-## Custom A2UI Components
-
-This demo demonstrates A2UI's extensibility by registering custom components:
-
-- **Flashcard** (`src/flashcard.ts`) - Flippable study cards with front/back content
-- **QuizCard** (`src/quiz-card.ts`) - Interactive multiple-choice with instant feedback
-
-To register custom components:
-
-```typescript
-import { Flashcard } from "./flashcard.js";
-import * as UI from "@a2ui/web-lib/ui";
-
-UI.componentRegistry.register("Flashcard", Flashcard, "a2ui-flashcard");
-```
-
-Then use in A2UI JSON:
-```json
-{
-  "id": "card1",
-  "component": {
-    "Flashcard": {
-      "front": {"literalString": "What is ATP?"},
-      "back": {"literalString": "Adenosine Triphosphate..."}
-    }
-  }
-}
-```
-
-## Content Attribution
-
-Educational content sourced from [OpenStax Biology for AP® Courses](https://openstax.org/details/books/biology-ap-courses), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-
-## Security Notice
-
-> **Warning:** When building production applications, treat any agent outside your control as potentially untrusted. This demo connects to Agent Engine within your own GCP project. Always review agent code before deploying.
+**Open [Quickstart.ipynb](Quickstart.ipynb)** - the notebook walks you through setup, deployment, and running the demo.
 
 ## License
 
