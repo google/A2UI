@@ -557,6 +557,152 @@ def get_video_content(tool_context: ToolContext = None) -> str:
     return json.dumps(a2ui)
 
 
+def generate_quiz(topic: str = "ATP", count: int = 2, tool_context: ToolContext = None) -> str:
+    """
+    Generate A2UI quiz cards for the specified topic.
+    Uses intelligent OpenStax chapter matching for accurate source attribution.
+
+    Args:
+        topic: The topic to generate quiz questions for (default: ATP)
+        count: Number of quiz questions to generate (default: 2)
+        tool_context: ADK tool context (optional)
+
+    Returns:
+        JSON string with A2UI content and source attribution
+    """
+    # Fetch content from OpenStax with intelligent matching
+    openstax_result = fetch_openstax_content(topic)
+
+    source_url = openstax_result.get("url", "")
+    source_title = openstax_result.get("title", "")
+    content = openstax_result.get("content", "")
+
+    # Generate quiz questions using Gemini
+    quiz_data = generate_quiz_from_content(topic, content, count)
+
+    if not quiz_data:
+        # Fallback quiz
+        quiz_data = [
+            {
+                "question": f"What is {topic}?",
+                "options": [
+                    {"label": "Option A", "value": "a", "isCorrect": False},
+                    {"label": "The correct answer", "value": "b", "isCorrect": True},
+                    {"label": "Option C", "value": "c", "isCorrect": False},
+                    {"label": "Option D", "value": "d", "isCorrect": False},
+                ],
+                "explanation": f"This topic requires further study. Check your textbook for details on {topic}.",
+                "category": topic
+            }
+        ]
+
+    # Build A2UI components
+    actual_count = min(count, len(quiz_data))
+    quiz_ids = [f"quiz{i}" for i in range(actual_count)]
+
+    components = [
+        {"id": "mainColumn", "component": {"Column": {
+            "children": {"explicitList": ["headerText", "quizRow"]},
+            "distribution": "start",
+            "alignment": "stretch"
+        }}},
+        {"id": "headerText", "component": {"Text": {
+            "text": {"literalString": f"Quick Quiz: {topic}"},
+            "usageHint": "h3"
+        }}},
+        {"id": "quizRow", "component": {"Row": {
+            "children": {"explicitList": quiz_ids},
+            "distribution": "start",
+            "alignment": "stretch",
+            "wrap": True
+        }}}
+    ]
+
+    for i, quiz in enumerate(quiz_data[:actual_count]):
+        options = []
+        for opt in quiz.get("options", []):
+            options.append({
+                "label": {"literalString": opt.get("label", "")},
+                "value": opt.get("value", str(i)),
+                "isCorrect": opt.get("isCorrect", False)
+            })
+
+        components.append({
+            "id": f"quiz{i}",
+            "component": {"QuizCard": {
+                "question": {"literalString": quiz.get("question", "Question?")},
+                "options": options,
+                "explanation": {"literalString": quiz.get("explanation", "")},
+                "category": {"literalString": quiz.get("category", topic)}
+            }}
+        })
+
+    a2ui = [
+        {"beginRendering": {"surfaceId": "learningContent", "root": "mainColumn"}},
+        {"surfaceUpdate": {"surfaceId": "learningContent", "components": components}}
+    ]
+
+    result = {
+        "a2ui": a2ui,
+        "source": {
+            "url": source_url,
+            "title": source_title,
+            "provider": "OpenStax Biology for AP Courses"
+        } if source_url else None
+    }
+
+    return json.dumps(result)
+
+
+def generate_quiz_from_content(topic: str, content: str, count: int) -> List[Dict]:
+    """Use Gemini to generate quiz questions from textbook content."""
+    prompt = f"""Based on this educational content about {topic}, create {count} MCAT-style multiple choice quiz questions.
+
+Each question should:
+1. Test conceptual understanding, not just memorization
+2. Include 4 options (A, B, C, D) with plausible distractors
+3. Have exactly ONE correct answer
+4. Include a detailed explanation using gym/fitness analogies where possible
+
+Content:
+{content if content else f"General knowledge about {topic} for AP Biology / MCAT preparation."}
+
+Return ONLY a JSON array with this exact format (no markdown, no explanation):
+[
+  {{
+    "question": "Question text here?",
+    "options": [
+      {{"label": "Option A text", "value": "a", "isCorrect": false}},
+      {{"label": "Option B text", "value": "b", "isCorrect": true}},
+      {{"label": "Option C text", "value": "c", "isCorrect": false}},
+      {{"label": "Option D text", "value": "d", "isCorrect": false}}
+    ],
+    "explanation": "Detailed explanation of why B is correct...",
+    "category": "{topic}"
+  }}
+]"""
+
+    try:
+        project = os.getenv("GOOGLE_CLOUD_PROJECT")
+        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+        client = genai_direct.Client(vertexai=True, project=project, location=location)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=prompt,
+        )
+        text = response.text.strip()
+
+        # Clean up markdown if present
+        text = re.sub(r"^```(?:json)?\s*", "", text)
+        text = re.sub(r"\s*```$", "", text)
+
+        questions = json.loads(text)
+        return questions[:count] if isinstance(questions, list) else []
+    except Exception as e:
+        logger.error(f"Failed to generate quiz with Gemini: {e}")
+        return []
+
+
 def get_learner_context(tool_context: ToolContext = None) -> str:
     """
     Get information about the current learner's profile.
@@ -599,8 +745,9 @@ Your response MUST be ONLY the A2UI JSON returned by the tools - no explanatory 
 
 ## Available Content Types
 1. **Flashcards** - Call `generate_flashcards` tool for spaced repetition cards
-2. **Audio/Podcast** - Call `get_audio_content` tool for the personalized podcast
-3. **Video** - Call `get_video_content` tool for the educational video
+2. **Quiz** - Call `generate_quiz` tool for MCAT-style multiple choice questions
+3. **Audio/Podcast** - Call `get_audio_content` tool for the personalized podcast
+4. **Video** - Call `get_video_content` tool for the educational video
 
 ## Response Format
 CRITICAL: Your response should be ONLY the raw A2UI JSON array returned by the tools.
@@ -636,7 +783,7 @@ def build_root_agent() -> LlmAgent:
         name="personalized_learning_agent",
         description="An agent that generates personalized A2UI learning materials including flashcards, audio, and video content.",
         instruction=AGENT_INSTRUCTION,
-        tools=[generate_flashcards, get_audio_content, get_video_content, get_learner_context],
+        tools=[generate_flashcards, generate_quiz, get_audio_content, get_video_content, get_learner_context],
     )
 
 
