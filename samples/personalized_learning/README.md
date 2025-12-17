@@ -55,6 +55,49 @@ Then open http://localhost:5174
 | "Play the podcast" | Audio player |
 | "Show me a video" | Video player |
 
+## Generating Your Own Audio & Video
+
+The demo includes sample media files. To generate personalized content:
+
+1. **Generate a podcast** using [NotebookLM](https://notebooklm.google.com/):
+   - Upload files from `learner_context/`
+   - Generate an Audio Overview
+   - Download and save as `public/assets/podcast.m4a`
+
+2. **Create a video** (screen recording, AI video tool, or slide presentation)
+   - Save as `public/assets/demo.mp4`
+
+See **Step 7** in the [Quickstart notebook](Quickstart.ipynb) for detailed instructions.
+
+## Custom A2UI Components
+
+This demo demonstrates A2UI's extensibility by registering custom components:
+
+- **Flashcard** (`src/flashcard.ts`) - Flippable study cards with front/back content
+- **QuizCard** (`src/quiz-card.ts`) - Interactive multiple-choice with instant feedback
+
+To register custom components:
+
+```typescript
+import { Flashcard } from "./flashcard.js";
+import * as UI from "@a2ui/web-lib/ui";
+
+UI.componentRegistry.register("Flashcard", Flashcard, "a2ui-flashcard");
+```
+
+Then use in A2UI JSON:
+```json
+{
+  "id": "card1",
+  "component": {
+    "Flashcard": {
+      "front": {"literalString": "What is ATP?"},
+      "back": {"literalString": "Adenosine Triphosphate..."}
+    }
+  }
+}
+```
+
 ## Content Attribution
 
 Educational content sourced from [OpenStax Biology for AP® Courses](https://openstax.org/details/books/biology-ap-courses), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

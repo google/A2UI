@@ -90,6 +90,63 @@ if (!AGENT_ENGINE_CONFIG.projectNumber || !AGENT_ENGINE_CONFIG.resourceId) {
   console.warn("         Agent Engine features will not work. See QUICKSTART.md for setup.");
 }
 
+// =============================================================================
+// OpenStax Source Attribution - Maps topics to specific textbook sections
+// =============================================================================
+const OPENSTAX_BASE = "https://openstax.org/books/biology-ap-courses/pages/";
+
+const OPENSTAX_SECTIONS: Record<string, { slug: string; title: string }> = {
+  // ATP and Energy
+  "atp": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
+  "bond energy": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
+  "energy currency": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
+  "hydrolysis": { slug: "6-4-atp-adenosine-triphosphate", title: "ATP: Adenosine Triphosphate" },
+  // Thermodynamics
+  "thermodynamics": { slug: "6-3-the-laws-of-thermodynamics", title: "The Laws of Thermodynamics" },
+  "gibbs": { slug: "6-2-potential-kinetic-free-and-activation-energy", title: "Potential, Kinetic, Free, and Activation Energy" },
+  "free energy": { slug: "6-2-potential-kinetic-free-and-activation-energy", title: "Potential, Kinetic, Free, and Activation Energy" },
+  // Metabolism
+  "metabolism": { slug: "6-1-energy-and-metabolism", title: "Energy and Metabolism" },
+  "enzymes": { slug: "6-5-enzymes", title: "Enzymes" },
+  "glycolysis": { slug: "7-2-glycolysis", title: "Glycolysis" },
+  "krebs": { slug: "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", title: "Oxidation of Pyruvate and the Citric Acid Cycle" },
+  "citric acid": { slug: "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", title: "Oxidation of Pyruvate and the Citric Acid Cycle" },
+  "oxidative phosphorylation": { slug: "7-4-oxidative-phosphorylation", title: "Oxidative Phosphorylation" },
+  "electron transport": { slug: "7-4-oxidative-phosphorylation", title: "Oxidative Phosphorylation" },
+  // Photosynthesis
+  "photosynthesis": { slug: "8-1-overview-of-photosynthesis", title: "Overview of Photosynthesis" },
+  "light reactions": { slug: "8-2-the-light-dependent-reaction-of-photosynthesis", title: "The Light-Dependent Reactions" },
+  "calvin cycle": { slug: "8-3-using-light-to-make-organic-molecules", title: "Using Light to Make Organic Molecules" },
+  // Cell structure
+  "cell membrane": { slug: "5-1-components-and-structure", title: "Cell Membrane Components and Structure" },
+  "transport": { slug: "5-2-passive-transport", title: "Passive Transport" },
+  // Default
+  "default": { slug: "6-introduction", title: "Chapter 6: Metabolism" },
+};
+
+function getOpenStaxSource(topic: string): { provider: string; title: string; url: string } {
+  const topicLower = topic.toLowerCase();
+
+  // Find matching section
+  for (const [keyword, section] of Object.entries(OPENSTAX_SECTIONS)) {
+    if (keyword !== "default" && topicLower.includes(keyword)) {
+      return {
+        provider: "OpenStax Biology for AP Courses",
+        title: section.title,
+        url: OPENSTAX_BASE + section.slug,
+      };
+    }
+  }
+
+  // Default fallback
+  const defaultSection = OPENSTAX_SECTIONS["default"];
+  return {
+    provider: "OpenStax Biology for AP Courses",
+    title: defaultSection.title,
+    url: OPENSTAX_BASE + defaultSection.slug,
+  };
+}
+
 // Dynamic import for google genai (ESM)
 let genai: any = null;
 
@@ -455,16 +512,13 @@ Replace all [BRACKETED] placeholders with actual content. Vary which option is c
       return null;
     }
 
-    // Always use OpenStax source - ignore any source from Gemini
+    // Match topic to specific OpenStax section for better attribution
+    const source = getOpenStaxSource(topic);
     return {
       format: "quiz",
       surfaceId: "learningContent",
       a2ui: a2ui,
-      source: {
-        provider: "OpenStax Biology for AP Courses",
-        title: "Chapter 6: Metabolism",
-        url: "https://openstax.org/books/biology-ap-courses/pages/6-introduction",
-      },
+      source,
     };
   } catch (error) {
     console.error("[API Server] Local quiz generation failed:", error);
