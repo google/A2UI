@@ -2,7 +2,7 @@
   "name": "@a2ui/angular",
   "version": "0.8.1",
   "scripts": {
-    "build": "ng build"
+    "build": "ng build && node postprocess-build.mjs"
   },
   "dependencies": {
     "@a2ui/lit": "file:../lit",

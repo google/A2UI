@@ -38,7 +38,7 @@ Build agent orchestration platforms, frameworks, or UI integrations.
 
 Do you bring remote agents into your app?
 
-Do you ship your agent into other apps you don't necissarily control?
+Do you ship your agent into other apps you don't necessarily control?
 
 **Why A2UI:**
 
