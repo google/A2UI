@@ -1,0 +1,53 @@
+{
+  "name": "nativescript",
+  "main": "./src/main.ts",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@a2a-js/sdk": "^0.3.4",
+    "@a2ui/lit": "file:../../../renderers/lit",
+    "@angular/animations": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/platform-browser-dynamic": "^21.0.0",
+    "@angular/router": "^21.0.0",
+    "@google/genai": "^1.22.0",
+    "@nativescript/angular": "21.0.0-rc.2",
+    "@nativescript/core": "^9.0.0",
+    "rxjs": "~7.8.0",
+    "zone.js": "~0.16.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^21.0.0",
+    "@angular/build": "^21.0.0",
+    "@angular/cli": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/compiler-cli": "^21.0.0",
+    "@nativescript/ios": "9.0.2",
+    "@nativescript/tailwind": "^2.1.0",
+    "@nativescript/types": "~9.0.0",
+    "@nativescript/webpack": "~5.0.28",
+    "@ngtools/webpack": "^21.0.0",
+    "tailwindcss": "~3.4.0",
+    "typescript": "~5.9.2"
+  },
+  "overrides": {
+    "@angular-devkit/build-angular": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/animations": "^21.0.0",
+    "@angular/build": "^21.0.0",
+    "@angular/cli": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/compiler-cli": "^21.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@angular/platform-browser": "^21.0.0",
+    "@angular/platform-browser-dynamic": "^21.0.0",
+    "@angular/router": "^21.0.0",
+    "@nativescript/angular": "21.0.0-rc.2",
+    "@nativescript/core": "^9.0.0",
+    "rxjs": "~7.8.0"
+  }
+}

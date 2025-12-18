@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "ES2020",
+    "moduleResolution": "bundler",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noEmitHelpers": true,
+    "noEmitOnError": true,
+    "skipLibCheck": true,
+    "lib": ["ESNext", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "@/*": ["src/*"],
+      "@a2ui/nativescript": ["../../../renderers/nativescript/src/public-api.ts"],
+      "@a2ui/lit": ["../../../renderers/lit/src/index.ts"],
+      "@a2ui/lit/*": ["../../../renderers/lit/src/*"]
+    }
+  },
+  "include": ["src/tests/**/*.ts", "src/**/*.ios.ts", "src/**/*.android.ts"],
+  "files": ["./src/main.ts", "./references.d.ts", "./src/polyfills.ts"],
+  "exclude": ["node_modules", "platforms", "e2e"]
+}
