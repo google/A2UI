@@ -14,6 +14,7 @@
 
 import json
 import logging
+import instrumentation
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
@@ -48,6 +49,17 @@ class RestaurantAgentExecutor(AgentExecutor):
         self.text_agent = RestaurantAgent(base_url=base_url, use_ui=False)
 
     async def execute(
+        self,
+        context: RequestContext,
+        event_queue: EventQueue,
+    ) -> None:
+        instrumentation.start_request()
+        try:
+            await self._execute_internal(context, event_queue)
+        finally:
+            instrumentation.end_request()
+
+    async def _execute_internal(
         self,
         context: RequestContext,
         event_queue: EventQueue,
