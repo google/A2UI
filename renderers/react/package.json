@@ -1,0 +1,84 @@
+{
+  "name": "@a2ui/react",
+  "version": "0.8.1",
+  "description": "A2UI React Renderer",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "dev": "tsc -b --watch",
+    "clean": "rm -rf dist"
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc -b --pretty",
+      "env": {
+        "FORCE_COLOR": "1"
+      },
+      "dependencies": [
+        "../lit:build:tsc"
+      ],
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/",
+        "!dist/**/*.min.js{,.map}"
+      ],
+      "clean": "if-file-deleted"
+    }
+  },
+  "repository": {
+    "directory": "renderers/react",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "a2ui",
+    "react",
+    "semi-ui",
+    "agent-ui"
+  ],
+  "author": "DouyinFE",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "homepage": "https://github.com/google/A2UI/tree/main/renderers/react#readme",
+  "dependencies": {
+    "@a2ui/lit": "file:../lit",
+    "@douyinfe/semi-ui": "^2.75.1"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "typescript": "^5.8.3",
+    "wireit": "^0.15.0-pre.2"
+  }
+}

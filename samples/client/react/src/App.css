@@ -1,0 +1,172 @@
+.shell {
+  display: block;
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100%;
+  color: light-dark(var(--n-10), var(--n-90));
+  font-family: var(--font-family);
+  padding: var(--bb-grid-size-3);
+}
+
+.theme-toggle {
+  position: fixed !important;
+  top: var(--bb-grid-size-3);
+  right: var(--bb-grid-size-4);
+  width: 48px;
+  height: 48px;
+  border-radius: 50% !important;
+  background: light-dark(var(--n-100), var(--n-0)) !important;
+  color: var(--p-30) !important;
+  font-size: 24px;
+  z-index: 100;
+}
+
+.hero-img {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1280/720;
+  height: auto;
+  margin: 0 auto var(--bb-grid-size-6);
+  display: block;
+  background: var(--background-image-light) center center / contain no-repeat;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hero-img {
+    background-image: var(--background-image-dark);
+  }
+}
+
+body[theme-mode="dark"] .hero-img {
+  background-image: var(--background-image-dark);
+}
+
+body[theme-mode="light"] .hero-img {
+  background-image: var(--background-image-light);
+}
+
+.input-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  animation: fadeIn 1s cubic-bezier(0, 0, 0.3, 1) 1s backwards;
+}
+
+.input-form h1.app-title {
+  color: light-dark(var(--p-40), var(--n-90));
+  margin: 0;
+  text-align: center;
+}
+
+.input-row {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.message-input {
+  flex: 1;
+}
+
+.message-input input {
+  border-radius: 32px !important;
+  padding: 16px 24px !important;
+}
+
+.pending {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 1s cubic-bezier(0, 0, 0.3, 1) 0.3s backwards;
+  gap: 16px;
+}
+
+.loading-text {
+  color: light-dark(var(--n-40), var(--n-60));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.surfaces {
+  width: 100%;
+  max-width: 100svw;
+  animation: fadeIn 1s cubic-bezier(0, 0, 0.3, 1) 0.3s backwards;
+}
+
+/* Card styles */
+.a2ui-card {
+  background: light-dark(
+    rgba(255, 255, 255, 0.9),
+    rgba(30, 41, 59, 0.8)
+  ) !important;
+  backdrop-filter: blur(10px);
+}
+
+.a2ui-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Typography in cards */
+.surfaces h3 {
+  margin: 0 0 4px 0 !important;
+  color: light-dark(var(--n-10), var(--n-95));
+  font-weight: 600;
+}
+
+.surfaces p {
+  margin: 4px 0 !important;
+  color: light-dark(var(--n-40), var(--n-70));
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Rating stars */
+.semi-rating {
+  color: #fbbf24 !important;
+}
+
+/* Image in cards */
+.surfaces .semi-image {
+  flex-shrink: 0;
+}
+
+/* Link styles in text */
+.surfaces a {
+  color: var(--p-40);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.surfaces a:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
