@@ -15,7 +15,7 @@ RUN mkdir -p /app/learner_context
 # Set environment variables
 ENV PORT=8080
 # GOOGLE_CLOUD_PROJECT must be set at runtime
-ENV GOOGLE_CLOUD_LOCATION=us-central1
+ENV GOOGLE_CLOUD_LOCATION=global
 
 # Expose port
 EXPOSE 8080

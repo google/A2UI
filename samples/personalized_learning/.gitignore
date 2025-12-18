@@ -11,6 +11,11 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+*.egg-info/
+build/
+
+# ADK local runtime
+.adk/
 
 # Environment
 .env

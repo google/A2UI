@@ -57,7 +57,13 @@ def _load_from_local(filename: str) -> Optional[str]:
 
 def load_context_file(filename: str) -> Optional[str]:
     """
-    Load a context file, trying GCS first then falling back to local.
+    Load a context file with fallback chain: local files → GCS.
+
+    Priority order:
+    1. Local files (for development with adk web)
+    2. GCS bucket (for Agent Engine deployment)
+
+    This matches the fallback order in agent.py's _safe_get_combined_context().
 
     Args:
         filename: Name of the context file (e.g., "01_maria_learner_profile.txt")
@@ -65,13 +71,13 @@ def load_context_file(filename: str) -> Optional[str]:
     Returns:
         File content as string, or None if not found
     """
-    # Try GCS first
-    content = _load_from_gcs(filename)
+    # Try local files first (for local development)
+    content = _load_from_local(filename)
     if content:
         return content
 
-    # Fall back to local
-    return _load_from_local(filename)
+    # Fall back to GCS (for Agent Engine)
+    return _load_from_gcs(filename)
 
 
 def load_all_context() -> dict[str, str]:
