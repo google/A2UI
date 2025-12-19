@@ -38,7 +38,42 @@ A2UI JSON → Renderer → Native Components → Your App
 npm install @a2ui/lit
 ```
 
-TODO: Add a quickstart guide
+##### Usage
+```typescript
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { v0_8 } from '@a2ui/lit';
+// Import UI components registry
+import '@a2ui/lit/ui'; 
+
+@customElement('my-app')
+export class MyApp extends LitElement {
+  // 1. Create a MessageProcessor
+  #processor = v0_8.Data.createSignalA2uiMessageProcessor();
+
+  // 2. Feed it messages (e.g., from your transport)
+  handleMessage(message: v0_8.Types.ServerToClientMessage) {
+    this.#processor.processMessages([message]);
+  }
+
+  render() {
+    // 3. Render the surfaces
+    return html`
+      ${repeat(
+        this.#processor.getSurfaces(),
+        ([id]) => id,
+        ([id, surface]) => html`
+          <a2ui-surface
+            .surfaceId=${id}
+            .surface=${surface}
+            .processor=${this.#processor}
+          ></a2ui-surface>
+        `
+      )}
+    `;
+  }
+}
+```
 
 **Angular:**
 
@@ -46,7 +81,32 @@ TODO: Add a quickstart guide
 npm install @a2ui/angular
 ```
 
-TODO: Add a quickstart guide
+##### Usage
+```typescript
+import { Component, inject } from '@angular/core';
+import { MessageProcessor, Surface } from '@a2ui/angular';
+import { Types } from '@a2ui/lit/0.8';
+
+@Component({
+  selector: 'app-root',
+  template: `
+    @for (surface of processor.surfaces(); track surface.id) {
+       <a2ui-surface [surfaceId]="surface.id" [surface]="surface.state" />
+    }
+  `,
+  imports: [Surface],
+  standalone: true
+})
+export class AppComponent {
+  // 1. Inject the MessageProcessor
+  protected processor = inject(MessageProcessor);
+
+  // 2. Feed it messages
+  handleMessage(message: Types.ServerToClientMessage) {
+    this.processor.processMessages([message]);
+  }
+}
+```
 
 **Flutter:**
 
@@ -54,7 +114,21 @@ TODO: Add a quickstart guide
 flutter pub add flutter_genui
 ```
 
-TODO: Add a quickstart guide
+##### Usage
+See the [GenUI Quickstart](https://docs.flutter.dev/ai/genui/get-started) for a complete tutorial.
+
+```dart
+// 1. Define your widgets
+class MyWidgetFactory extends WidgetFactory {
+  // ... map A2UI types to Flutter widgets
+}
+
+// 2. Use the GenUiArea
+GenUiArea(
+  messageStream: myMessageStream,
+  widgetFactory: MyWidgetFactory(),
+)
+```
 
 ## Adding custom components to a renderer
 
