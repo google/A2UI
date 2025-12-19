@@ -36,3 +36,9 @@ public/assets/*.mp4
 .vscode/
 *.swp
 *.swo
+
+# Firebase cache
+.firebase/
+
+# Temporary A2UI copy for Cloud Run deployment
+a2ui-web-lib/

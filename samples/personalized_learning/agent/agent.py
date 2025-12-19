@@ -45,7 +45,7 @@ from google.adk.tools import ToolContext
 # persist in the deployed agent even though os.environ is not pickled.
 # ============================================================================
 _CONFIG_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
-_CONFIG_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
+_CONFIG_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 
 # Use relative imports - required for proper wheel packaging and Agent Engine deployment
 # These may fail in Agent Engine where files aren't available
@@ -79,8 +79,8 @@ if not _HAS_OPENSTAX:
         "This may result in less accurate educational content."
     )
 
-# Model configuration - use Gemini 3 Flash
-MODEL_ID = os.getenv("GENAI_MODEL", "gemini-3-flash-preview")
+# Model configuration - use Gemini 2.5 Flash (available in us-central1)
+MODEL_ID = os.getenv("GENAI_MODEL", "gemini-2.5-flash")
 
 # Supported content formats
 SUPPORTED_FORMATS = ["flashcards", "audio", "podcast", "video", "quiz"]
@@ -768,11 +768,11 @@ async def _generate_a2ui_content(
     from google import genai
     from google.genai import types
 
-    # Initialize client with VertexAI - use global region for Gemini 3
+    # Initialize client with VertexAI - use us-central1 for consistency with Agent Engine
     # Use module-level config variables (captured by cloudpickle) with
     # environment variable fallback for local development
     project = _CONFIG_PROJECT or os.getenv("GOOGLE_CLOUD_PROJECT")
-    location = _CONFIG_LOCATION or os.getenv("GOOGLE_CLOUD_LOCATION", "global")
+    location = _CONFIG_LOCATION or os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 
     if not project:
         logger.error("GOOGLE_CLOUD_PROJECT not configured")
@@ -957,7 +957,7 @@ class ServerSideAgent:
         from vertexai.agent_engines import AdkApp
 
         # Model configuration
-        model_id = os.getenv("GENAI_MODEL", "gemini-2.0-flash")
+        model_id = os.getenv("GENAI_MODEL", "gemini-2.5-flash")
 
         # Create a simple agent with basic instruction
         # Tools would need to be defined inline here too to avoid imports

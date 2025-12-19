@@ -46,6 +46,12 @@ def main():
         help="GCP location (default: us-central1)",
     )
     parser.add_argument(
+        "--context-bucket",
+        type=str,
+        default=None,
+        help="GCS bucket for learner context (default: {project}-learner-context)",
+    )
+    parser.add_argument(
         "--list",
         action="store_true",
         help="List deployed agents instead of deploying",
@@ -57,9 +63,13 @@ def main():
         print("ERROR: --project flag or GOOGLE_CLOUD_PROJECT environment variable is required")
         sys.exit(1)
 
+    # Set context bucket (default to {project}-learner-context)
+    context_bucket = args.context_bucket or f"{args.project}-learner-context"
+
     # Set environment variables
     os.environ["GOOGLE_CLOUD_PROJECT"] = args.project
     os.environ["GOOGLE_CLOUD_LOCATION"] = args.location
+    os.environ["GCS_CONTEXT_BUCKET"] = context_bucket
 
     # Import Vertex AI modules
     import vertexai
@@ -82,6 +92,7 @@ def main():
     print(f"Deploying Personalized Learning Agent...")
     print(f"  Project: {args.project}")
     print(f"  Location: {args.location}")
+    print(f"  Context bucket: gs://{context_bucket}/learner_context/")
     print()
 
     # =========================================================================
@@ -96,93 +107,530 @@ def main():
     import xml.etree.ElementTree as ET
     from typing import Any
     from google.adk.agents import Agent
-    from google.adk.apps.app import App
-    from google.adk.agents.context_cache_config import ContextCacheConfig
     from google.adk.tools import ToolContext
     from vertexai.agent_engines import AdkApp
 
-    model_id = os.getenv("GENAI_MODEL", "gemini-2.0-flash")
+    model_id = os.getenv("GENAI_MODEL", "gemini-2.5-flash")
     SURFACE_ID = "learningContent"
 
     # =========================================================================
     # OPENSTAX CONTENT - Chapter mappings and content fetching
     # =========================================================================
 
-    # OpenStax Biology for AP Courses - Chapter mappings
+    # =========================================================================
+    # COMPLETE OpenStax Biology AP Courses - Chapter mappings
+    # Copied from agent/openstax_chapters.py for Agent Engine deployment
+    # =========================================================================
+
     OPENSTAX_CHAPTERS = {
-        # Chapter 6: Metabolism
-        "6-1-energy-and-metabolism": "6.1 Energy and Metabolism",
-        "6-2-potential-kinetic-free-and-activation-energy": "6.2 Potential, Kinetic, Free, and Activation Energy",
-        "6-3-the-laws-of-thermodynamics": "6.3 The Laws of Thermodynamics",
-        "6-4-atp-adenosine-triphosphate": "6.4 ATP: Adenosine Triphosphate",
-        "6-5-enzymes": "6.5 Enzymes",
-        # Chapter 7: Cellular Respiration
-        "7-1-energy-in-living-systems": "7.1 Energy in Living Systems",
-        "7-2-glycolysis": "7.2 Glycolysis",
-        "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle": "7.3 Oxidation of Pyruvate and the Citric Acid Cycle",
-        "7-4-oxidative-phosphorylation": "7.4 Oxidative Phosphorylation",
-        # Chapter 10: Cell Reproduction
-        "10-1-cell-division": "10.1 Cell Division",
-        "10-2-the-cell-cycle": "10.2 The Cell Cycle",
-        "10-3-control-of-the-cell-cycle": "10.3 Control of the Cell Cycle",
-        "10-4-cancer-and-the-cell-cycle": "10.4 Cancer and the Cell Cycle",
-        # Chapter 11: Meiosis and Sexual Reproduction
-        "11-1-the-process-of-meiosis": "11.1 The Process of Meiosis",
-        "11-2-sexual-reproduction": "11.2 Sexual Reproduction",
-        # Chapter 13: Modern Understandings of Inheritance
-        "13-1-chromosomal-theory-and-genetic-linkages": "13.1 Chromosomal Theory and Genetic Linkages",
-        "13-2-chromosomal-basis-of-inherited-disorders": "13.2 Chromosomal Basis of Inherited Disorders",
+        # Unit 1: The Chemistry of Life
+        "1-1-the-science-of-biology": "The Science of Biology",
+        "1-2-themes-and-concepts-of-biology": "Themes and Concepts of Biology",
+        "2-1-atoms-isotopes-ions-and-molecules-the-building-blocks": "Atoms, Isotopes, Ions, and Molecules: The Building Blocks",
+        "2-2-water": "Water",
+        "2-3-carbon": "Carbon",
+        "3-1-synthesis-of-biological-macromolecules": "Synthesis of Biological Macromolecules",
+        "3-2-carbohydrates": "Carbohydrates",
+        "3-3-lipids": "Lipids",
+        "3-4-proteins": "Proteins",
+        "3-5-nucleic-acids": "Nucleic Acids",
+        # Unit 2: The Cell
+        "4-1-studying-cells": "Studying Cells",
+        "4-2-prokaryotic-cells": "Prokaryotic Cells",
+        "4-3-eukaryotic-cells": "Eukaryotic Cells",
+        "4-4-the-endomembrane-system-and-proteins": "The Endomembrane System and Proteins",
+        "4-5-cytoskeleton": "Cytoskeleton",
+        "4-6-connections-between-cells-and-cellular-activities": "Connections Between Cells and Cellular Activities",
+        "5-1-components-and-structure": "Cell Membrane Components and Structure",
+        "5-2-passive-transport": "Passive Transport",
+        "5-3-active-transport": "Active Transport",
+        "5-4-bulk-transport": "Bulk Transport",
+        "6-1-energy-and-metabolism": "Energy and Metabolism",
+        "6-2-potential-kinetic-free-and-activation-energy": "Potential, Kinetic, Free, and Activation Energy",
+        "6-3-the-laws-of-thermodynamics": "The Laws of Thermodynamics",
+        "6-4-atp-adenosine-triphosphate": "ATP: Adenosine Triphosphate",
+        "6-5-enzymes": "Enzymes",
+        "7-1-energy-in-living-systems": "Energy in Living Systems",
+        "7-2-glycolysis": "Glycolysis",
+        "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle": "Oxidation of Pyruvate and the Citric Acid Cycle",
+        "7-4-oxidative-phosphorylation": "Oxidative Phosphorylation",
+        "7-5-metabolism-without-oxygen": "Metabolism Without Oxygen",
+        "7-6-connections-of-carbohydrate-protein-and-lipid-metabolic-pathways": "Connections of Carbohydrate, Protein, and Lipid Metabolic Pathways",
+        "7-7-regulation-of-cellular-respiration": "Regulation of Cellular Respiration",
+        "8-1-overview-of-photosynthesis": "Overview of Photosynthesis",
+        "8-2-the-light-dependent-reaction-of-photosynthesis": "The Light-Dependent Reactions of Photosynthesis",
+        "8-3-using-light-to-make-organic-molecules": "Using Light to Make Organic Molecules",
+        "9-1-signaling-molecules-and-cellular-receptors": "Signaling Molecules and Cellular Receptors",
+        "9-2-propagation-of-the-signal": "Propagation of the Signal",
+        "9-3-response-to-the-signal": "Response to the Signal",
+        "9-4-signaling-in-single-celled-organisms": "Signaling in Single-Celled Organisms",
+        "10-1-cell-division": "Cell Division",
+        "10-2-the-cell-cycle": "The Cell Cycle",
+        "10-3-control-of-the-cell-cycle": "Control of the Cell Cycle",
+        "10-4-cancer-and-the-cell-cycle": "Cancer and the Cell Cycle",
+        "10-5-prokaryotic-cell-division": "Prokaryotic Cell Division",
+        # Unit 3: Genetics
+        "11-1-the-process-of-meiosis": "The Process of Meiosis",
+        "11-2-sexual-reproduction": "Sexual Reproduction",
+        "12-1-mendels-experiments-and-the-laws-of-probability": "Mendel's Experiments and the Laws of Probability",
+        "12-2-characteristics-and-traits": "Characteristics and Traits",
+        "12-3-laws-of-inheritance": "Laws of Inheritance",
+        "13-1-chromosomal-theory-and-genetic-linkages": "Chromosomal Theory and Genetic Linkages",
+        "13-2-chromosomal-basis-of-inherited-disorders": "Chromosomal Basis of Inherited Disorders",
+        "14-1-historical-basis-of-modern-understanding": "Historical Basis of Modern Understanding of DNA",
+        "14-2-dna-structure-and-sequencing": "DNA Structure and Sequencing",
+        "14-3-basics-of-dna-replication": "Basics of DNA Replication",
+        "14-4-dna-replication-in-prokaryotes": "DNA Replication in Prokaryotes",
+        "14-5-dna-replication-in-eukaryotes": "DNA Replication in Eukaryotes",
+        "14-6-dna-repair": "DNA Repair",
+        "15-1-the-genetic-code": "The Genetic Code",
+        "15-2-prokaryotic-transcription": "Prokaryotic Transcription",
+        "15-3-eukaryotic-transcription": "Eukaryotic Transcription",
+        "15-4-rna-processing-in-eukaryotes": "RNA Processing in Eukaryotes",
+        "15-5-ribosomes-and-protein-synthesis": "Ribosomes and Protein Synthesis",
+        "16-1-regulation-of-gene-expression": "Regulation of Gene Expression",
+        "16-2-prokaryotic-gene-regulation": "Prokaryotic Gene Regulation",
+        "16-3-eukaryotic-epigenetic-gene-regulation": "Eukaryotic Epigenetic Gene Regulation",
+        "16-4-eukaryotic-transcriptional-gene-regulation": "Eukaryotic Transcriptional Gene Regulation",
+        "16-5-eukaryotic-post-transcriptional-gene-regulation": "Eukaryotic Post-transcriptional Gene Regulation",
+        "16-6-eukaryotic-translational-and-post-translational-gene-regulation": "Eukaryotic Translational and Post-translational Gene Regulation",
+        "16-7-cancer-and-gene-regulation": "Cancer and Gene Regulation",
+        "17-1-biotechnology": "Biotechnology",
+        "17-2-mapping-genomes": "Mapping Genomes",
+        "17-3-whole-genome-sequencing": "Whole-Genome Sequencing",
+        "17-4-applying-genomics": "Applying Genomics",
+        "17-5-genomics-and-proteomics": "Genomics and Proteomics",
+        # Unit 4: Evolutionary Processes
+        "18-1-understanding-evolution": "Understanding Evolution",
+        "18-2-formation-of-new-species": "Formation of New Species",
+        "18-3-reconnection-and-rates-of-speciation": "Reconnection and Rates of Speciation",
+        "19-1-population-evolution": "Population Evolution",
+        "19-2-population-genetics": "Population Genetics",
+        "19-3-adaptive-evolution": "Adaptive Evolution",
+        "20-1-organizing-life-on-earth": "Organizing Life on Earth",
+        "20-2-determining-evolutionary-relationships": "Determining Evolutionary Relationships",
+        "20-3-perspectives-on-the-phylogenetic-tree": "Perspectives on the Phylogenetic Tree",
+        # Unit 5: Biological Diversity
+        "21-1-viral-evolution-morphology-and-classification": "Viral Evolution, Morphology, and Classification",
+        "21-2-virus-infection-and-hosts": "Virus Infection and Hosts",
+        "21-3-prevention-and-treatment-of-viral-infections": "Prevention and Treatment of Viral Infections",
+        "21-4-other-acellular-entities-prions-and-viroids": "Other Acellular Entities: Prions and Viroids",
+        "22-1-prokaryotic-diversity": "Prokaryotic Diversity",
+        "22-2-structure-of-prokaryotes": "Structure of Prokaryotes",
+        "22-3-prokaryotic-metabolism": "Prokaryotic Metabolism",
+        "22-4-bacterial-diseases-in-humans": "Bacterial Diseases in Humans",
+        "22-5-beneficial-prokaryotes": "Beneficial Prokaryotes",
+        # Unit 6: Plant Structure and Function
+        "23-1-the-plant-body": "The Plant Body",
+        "23-2-stems": "Stems",
+        "23-3-roots": "Roots",
+        "23-4-leaves": "Leaves",
+        "23-5-transport-of-water-and-solutes-in-plants": "Transport of Water and Solutes in Plants",
+        "23-6-plant-sensory-systems-and-responses": "Plant Sensory Systems and Responses",
+        # Unit 7: Animal Structure and Function
+        "24-1-animal-form-and-function": "Animal Form and Function",
+        "24-2-animal-primary-tissues": "Animal Primary Tissues",
+        "24-3-homeostasis": "Homeostasis",
+        "25-1-digestive-systems": "Digestive Systems",
+        "25-2-nutrition-and-energy-production": "Nutrition and Energy Production",
+        "25-3-digestive-system-processes": "Digestive System Processes",
+        "25-4-digestive-system-regulation": "Digestive System Regulation",
+        "26-1-neurons-and-glial-cells": "Neurons and Glial Cells",
+        "26-2-how-neurons-communicate": "How Neurons Communicate",
+        "26-3-the-central-nervous-system": "The Central Nervous System",
+        "26-4-the-peripheral-nervous-system": "The Peripheral Nervous System",
+        "26-5-nervous-system-disorders": "Nervous System Disorders",
+        "27-1-sensory-processes": "Sensory Processes",
+        "27-2-somatosensation": "Somatosensation",
+        "27-3-taste-and-smell": "Taste and Smell",
+        "27-4-hearing-and-vestibular-sensation": "Hearing and Vestibular Sensation",
+        "27-5-vision": "Vision",
+        "28-1-types-of-hormones": "Types of Hormones",
+        "28-2-how-hormones-work": "How Hormones Work",
+        "28-3-regulation-of-body-processes": "Regulation of Body Processes",
+        "28-4-regulation-of-hormone-production": "Regulation of Hormone Production",
+        "28-5-endocrine-glands": "Endocrine Glands",
+        "29-1-types-of-skeletal-systems": "Types of Skeletal Systems",
+        "29-2-bone": "Bone",
+        "29-3-joints-and-skeletal-movement": "Joints and Skeletal Movement",
+        "29-4-muscle-contraction-and-locomotion": "Muscle Contraction and Locomotion",
+        "30-1-systems-of-gas-exchange": "Systems of Gas Exchange",
+        "30-2-gas-exchange-across-respiratory-surfaces": "Gas Exchange Across Respiratory Surfaces",
+        "30-3-breathing": "Breathing",
+        "30-4-transport-of-gases-in-human-bodily-fluids": "Transport of Gases in Human Bodily Fluids",
+        "31-1-overview-of-the-circulatory-system": "Overview of the Circulatory System",
+        "31-2-components-of-the-blood": "Components of the Blood",
+        "31-3-mammalian-heart-and-blood-vessels": "Mammalian Heart and Blood Vessels",
+        "31-4-blood-flow-and-blood-pressure-regulation": "Blood Flow and Blood Pressure Regulation",
+        "32-1-osmoregulation-and-osmotic-balance": "Osmoregulation and Osmotic Balance",
+        "32-2-the-kidneys-and-osmoregulatory-organs": "The Kidneys and Osmoregulatory Organs",
+        "32-3-excretion-systems": "Excretion Systems",
+        "32-4-nitrogenous-wastes": "Nitrogenous Wastes",
+        "32-5-hormonal-control-of-osmoregulatory-functions": "Hormonal Control of Osmoregulatory Functions",
+        "33-1-innate-immune-response": "Innate Immune Response",
+        "33-2-adaptive-immune-response": "Adaptive Immune Response",
+        "33-3-antibodies": "Antibodies",
+        "33-4-disruptions-in-the-immune-system": "Disruptions in the Immune System",
+        "34-1-reproduction-methods": "Reproduction Methods",
+        "34-2-fertilization": "Fertilization",
+        "34-3-human-reproductive-anatomy-and-gametogenesis": "Human Reproductive Anatomy and Gametogenesis",
+        "34-4-hormonal-control-of-human-reproduction": "Hormonal Control of Human Reproduction",
+        "34-5-fertilization-and-early-embryonic-development": "Fertilization and Early Embryonic Development",
+        "34-6-organogenesis-and-vertebrate-axis-formation": "Organogenesis and Vertebrate Axis Formation",
+        "34-7-human-pregnancy-and-birth": "Human Pregnancy and Birth",
+        # Unit 8: Ecology
+        "35-1-the-scope-of-ecology": "The Scope of Ecology",
+        "35-2-biogeography": "Biogeography",
+        "35-3-terrestrial-biomes": "Terrestrial Biomes",
+        "35-4-aquatic-biomes": "Aquatic Biomes",
+        "35-5-climate-and-the-effects-of-global-climate-change": "Climate and the Effects of Global Climate Change",
+        "36-1-population-demography": "Population Demography",
+        "36-2-life-histories-and-natural-selection": "Life Histories and Natural Selection",
+        "36-3-environmental-limits-to-population-growth": "Environmental Limits to Population Growth",
+        "36-4-population-dynamics-and-regulation": "Population Dynamics and Regulation",
+        "36-5-human-population-growth": "Human Population Growth",
+        "36-6-community-ecology": "Community Ecology",
+        "36-7-behavioral-biology-proximate-and-ultimate-causes-of-behavior": "Behavioral Biology: Proximate and Ultimate Causes of Behavior",
+        "37-1-ecology-for-ecosystems": "Ecology for Ecosystems",
+        "37-2-energy-flow-through-ecosystems": "Energy Flow Through Ecosystems",
+        "37-3-biogeochemical-cycles": "Biogeochemical Cycles",
+        "38-1-the-biodiversity-crisis": "The Biodiversity Crisis",
+        "38-2-the-importance-of-biodiversity-to-human-life": "The Importance of Biodiversity to Human Life",
+        "38-3-threats-to-biodiversity": "Threats to Biodiversity",
+        "38-4-preserving-biodiversity": "Preserving Biodiversity",
     }
 
+    # Complete chapter to module ID mapping
     CHAPTER_TO_MODULES = {
-        # Chapter 6
+        # Unit 1: The Chemistry of Life
+        "1-1-the-science-of-biology": ["m62716"],
+        "1-2-themes-and-concepts-of-biology": ["m62717", "m62718"],
+        "2-1-atoms-isotopes-ions-and-molecules-the-building-blocks": ["m62719"],
+        "2-2-water": ["m62720"],
+        "2-3-carbon": ["m62721", "m62722"],
+        "3-1-synthesis-of-biological-macromolecules": ["m62723"],
+        "3-2-carbohydrates": ["m62724"],
+        "3-3-lipids": ["m62726"],
+        "3-4-proteins": ["m62730"],
+        "3-5-nucleic-acids": ["m62733", "m62735"],
+        # Unit 2: The Cell
+        "4-1-studying-cells": ["m62736"],
+        "4-2-prokaryotic-cells": ["m62738"],
+        "4-3-eukaryotic-cells": ["m62740"],
+        "4-4-the-endomembrane-system-and-proteins": ["m62742", "m62743"],
+        "4-5-cytoskeleton": ["m62744"],
+        "4-6-connections-between-cells-and-cellular-activities": ["m62746"],
+        "5-1-components-and-structure": ["m62780"],
+        "5-2-passive-transport": ["m62773"],
+        "5-3-active-transport": ["m62753"],
+        "5-4-bulk-transport": ["m62770", "m62772"],
+        "6-1-energy-and-metabolism": ["m62761"],
+        "6-2-potential-kinetic-free-and-activation-energy": ["m62763"],
+        "6-3-the-laws-of-thermodynamics": ["m62764"],
         "6-4-atp-adenosine-triphosphate": ["m62767"],
-        "6-1-energy-and-metabolism": ["m62763"],
-        "6-2-potential-kinetic-free-and-activation-energy": ["m62764"],
-        "6-3-the-laws-of-thermodynamics": ["m62765"],
-        # Chapter 7
-        "7-1-energy-in-living-systems": ["m62827"],
-        "7-4-oxidative-phosphorylation": ["m62830"],
-        # Chapter 10: Cell Reproduction
-        "10-1-cell-division": ["m62803"],
-        "10-2-the-cell-cycle": ["m62804"],
-        "10-3-control-of-the-cell-cycle": ["m62805"],
-        "10-4-cancer-and-the-cell-cycle": ["m62806"],
-        # Chapter 11: Meiosis
-        "11-1-the-process-of-meiosis": ["m62810"],
-        "11-2-sexual-reproduction": ["m62811"],
-        # Chapter 13: Inheritance
-        "13-1-chromosomal-theory-and-genetic-linkages": ["m62821"],
-        "13-2-chromosomal-basis-of-inherited-disorders": ["m62822"],
+        "6-5-enzymes": ["m62768", "m62778"],
+        "7-1-energy-in-living-systems": ["m62784"],
+        "7-2-glycolysis": ["m62785"],
+        "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle": ["m62786"],
+        "7-4-oxidative-phosphorylation": ["m62787"],
+        "7-5-metabolism-without-oxygen": ["m62788"],
+        "7-6-connections-of-carbohydrate-protein-and-lipid-metabolic-pathways": ["m62789"],
+        "7-7-regulation-of-cellular-respiration": ["m62790", "m62791", "m62792"],
+        "8-1-overview-of-photosynthesis": ["m62793"],
+        "8-2-the-light-dependent-reaction-of-photosynthesis": ["m62794"],
+        "8-3-using-light-to-make-organic-molecules": ["m62795", "m62796"],
+        "9-1-signaling-molecules-and-cellular-receptors": ["m62797"],
+        "9-2-propagation-of-the-signal": ["m62798"],
+        "9-3-response-to-the-signal": ["m62799"],
+        "9-4-signaling-in-single-celled-organisms": ["m62800", "m62801"],
+        "10-1-cell-division": ["m62802"],
+        "10-2-the-cell-cycle": ["m62803"],
+        "10-3-control-of-the-cell-cycle": ["m62804"],
+        "10-4-cancer-and-the-cell-cycle": ["m62805"],
+        "10-5-prokaryotic-cell-division": ["m62806", "m62808"],
+        # Unit 3: Genetics
+        "11-1-the-process-of-meiosis": ["m62809"],
+        "11-2-sexual-reproduction": ["m62810", "m62811"],
+        "12-1-mendels-experiments-and-the-laws-of-probability": ["m62812", "m62813"],
+        "12-2-characteristics-and-traits": ["m62817"],
+        "12-3-laws-of-inheritance": ["m62819"],
+        "13-1-chromosomal-theory-and-genetic-linkages": ["m62820"],
+        "13-2-chromosomal-basis-of-inherited-disorders": ["m62821", "m62822"],
+        "14-1-historical-basis-of-modern-understanding": ["m62823"],
+        "14-2-dna-structure-and-sequencing": ["m62824"],
+        "14-3-basics-of-dna-replication": ["m62825"],
+        "14-4-dna-replication-in-prokaryotes": ["m62826"],
+        "14-5-dna-replication-in-eukaryotes": ["m62827", "m62828"],
+        "14-6-dna-repair": ["m62829", "m62830"],
+        "15-1-the-genetic-code": ["m62833"],
+        "15-2-prokaryotic-transcription": ["m62837"],
+        "15-3-eukaryotic-transcription": ["m62838"],
+        "15-4-rna-processing-in-eukaryotes": ["m62840"],
+        "15-5-ribosomes-and-protein-synthesis": ["m62842", "m62843"],
+        "16-1-regulation-of-gene-expression": ["m62844"],
+        "16-2-prokaryotic-gene-regulation": ["m62845"],
+        "16-3-eukaryotic-epigenetic-gene-regulation": ["m62846"],
+        "16-4-eukaryotic-transcriptional-gene-regulation": ["m62847"],
+        "16-5-eukaryotic-post-transcriptional-gene-regulation": ["m62848"],
+        "16-6-eukaryotic-translational-and-post-translational-gene-regulation": ["m62849"],
+        "16-7-cancer-and-gene-regulation": ["m62850", "m62851"],
+        "17-1-biotechnology": ["m62852"],
+        "17-2-mapping-genomes": ["m62853"],
+        "17-3-whole-genome-sequencing": ["m62855"],
+        "17-4-applying-genomics": ["m62857"],
+        "17-5-genomics-and-proteomics": ["m62860", "m62861"],
+        # Unit 4: Evolutionary Processes
+        "18-1-understanding-evolution": ["m62862"],
+        "18-2-formation-of-new-species": ["m62863"],
+        "18-3-reconnection-and-rates-of-speciation": ["m62864", "m62865"],
+        "19-1-population-evolution": ["m62866"],
+        "19-2-population-genetics": ["m62867"],
+        "19-3-adaptive-evolution": ["m62868", "m62869"],
+        "20-1-organizing-life-on-earth": ["m62870"],
+        "20-2-determining-evolutionary-relationships": ["m62871"],
+        "20-3-perspectives-on-the-phylogenetic-tree": ["m62872", "m62873"],
+        # Unit 5: Biological Diversity
+        "21-1-viral-evolution-morphology-and-classification": ["m62874"],
+        "21-2-virus-infection-and-hosts": ["m62875"],
+        "21-3-prevention-and-treatment-of-viral-infections": ["m62876"],
+        "21-4-other-acellular-entities-prions-and-viroids": ["m62877", "m62878"],
+        "22-1-prokaryotic-diversity": ["m62879"],
+        "22-2-structure-of-prokaryotes": ["m62880"],
+        "22-3-prokaryotic-metabolism": ["m62881"],
+        "22-4-bacterial-diseases-in-humans": ["m62882"],
+        "22-5-beneficial-prokaryotes": ["m62883", "m62884"],
+        # Unit 6: Plant Structure and Function
+        "23-1-the-plant-body": ["m62885"],
+        "23-2-stems": ["m62886"],
+        "23-3-roots": ["m62887"],
+        "23-4-leaves": ["m62888"],
+        "23-5-transport-of-water-and-solutes-in-plants": ["m62889"],
+        "23-6-plant-sensory-systems-and-responses": ["m62890", "m62891"],
+        # Unit 7: Animal Structure and Function
+        "24-1-animal-form-and-function": ["m62892"],
+        "24-2-animal-primary-tissues": ["m62893"],
+        "24-3-homeostasis": ["m62894", "m62895"],
+        "25-1-digestive-systems": ["m62896"],
+        "25-2-nutrition-and-energy-production": ["m62897"],
+        "25-3-digestive-system-processes": ["m62898"],
+        "25-4-digestive-system-regulation": ["m62899", "m62900"],
+        "26-1-neurons-and-glial-cells": ["m62901"],
+        "26-2-how-neurons-communicate": ["m62902"],
+        "26-3-the-central-nervous-system": ["m62903"],
+        "26-4-the-peripheral-nervous-system": ["m62904"],
+        "26-5-nervous-system-disorders": ["m62905", "m62906"],
+        "27-1-sensory-processes": ["m62907"],
+        "27-2-somatosensation": ["m62908"],
+        "27-3-taste-and-smell": ["m62909"],
+        "27-4-hearing-and-vestibular-sensation": ["m62910"],
+        "27-5-vision": ["m62911", "m62912"],
+        "28-1-types-of-hormones": ["m62913"],
+        "28-2-how-hormones-work": ["m62914"],
+        "28-3-regulation-of-body-processes": ["m62915"],
+        "28-4-regulation-of-hormone-production": ["m62916"],
+        "28-5-endocrine-glands": ["m62917", "m62918"],
+        "29-1-types-of-skeletal-systems": ["m62919"],
+        "29-2-bone": ["m62920"],
+        "29-3-joints-and-skeletal-movement": ["m62921"],
+        "29-4-muscle-contraction-and-locomotion": ["m62922", "m62923"],
+        "30-1-systems-of-gas-exchange": ["m62924"],
+        "30-2-gas-exchange-across-respiratory-surfaces": ["m62925"],
+        "30-3-breathing": ["m62926"],
+        "30-4-transport-of-gases-in-human-bodily-fluids": ["m62927", "m62928"],
+        "31-1-overview-of-the-circulatory-system": ["m62929"],
+        "31-2-components-of-the-blood": ["m62930"],
+        "31-3-mammalian-heart-and-blood-vessels": ["m62931"],
+        "31-4-blood-flow-and-blood-pressure-regulation": ["m62932", "m62933"],
+        "32-1-osmoregulation-and-osmotic-balance": ["m62934"],
+        "32-2-the-kidneys-and-osmoregulatory-organs": ["m62935"],
+        "32-3-excretion-systems": ["m62936"],
+        "32-4-nitrogenous-wastes": ["m62937"],
+        "32-5-hormonal-control-of-osmoregulatory-functions": ["m62938", "m62939"],
+        "33-1-innate-immune-response": ["m62940"],
+        "33-2-adaptive-immune-response": ["m62941"],
+        "33-3-antibodies": ["m62942"],
+        "33-4-disruptions-in-the-immune-system": ["m62943", "m62944"],
+        "34-1-reproduction-methods": ["m62945"],
+        "34-2-fertilization": ["m62946"],
+        "34-3-human-reproductive-anatomy-and-gametogenesis": ["m62947"],
+        "34-4-hormonal-control-of-human-reproduction": ["m62948"],
+        "34-5-fertilization-and-early-embryonic-development": ["m62949"],
+        "34-6-organogenesis-and-vertebrate-axis-formation": ["m62950"],
+        "34-7-human-pregnancy-and-birth": ["m62951", "m62952"],
+        # Unit 8: Ecology
+        "35-1-the-scope-of-ecology": ["m62953"],
+        "35-2-biogeography": ["m62954"],
+        "35-3-terrestrial-biomes": ["m62955"],
+        "35-4-aquatic-biomes": ["m62956"],
+        "35-5-climate-and-the-effects-of-global-climate-change": ["m62957", "m62958"],
+        "36-1-population-demography": ["m62959"],
+        "36-2-life-histories-and-natural-selection": ["m62960"],
+        "36-3-environmental-limits-to-population-growth": ["m62961"],
+        "36-4-population-dynamics-and-regulation": ["m62962"],
+        "36-5-human-population-growth": ["m62963"],
+        "36-6-community-ecology": ["m62964"],
+        "36-7-behavioral-biology-proximate-and-ultimate-causes-of-behavior": ["m62965", "m62966"],
+        "37-1-ecology-for-ecosystems": ["m62967"],
+        "37-2-energy-flow-through-ecosystems": ["m62968"],
+        "37-3-biogeochemical-cycles": ["m62969", "m62970"],
+        "38-1-the-biodiversity-crisis": ["m62971"],
+        "38-2-the-importance-of-biodiversity-to-human-life": ["m62972"],
+        "38-3-threats-to-biodiversity": ["m62973"],
+        "38-4-preserving-biodiversity": ["m62974", "m62975"],
     }
 
+    # Complete keyword hints for fast matching (Tier 1)
     KEYWORD_HINTS = {
         # Energy & Metabolism
-        "atp": ["6-4-atp-adenosine-triphosphate", "7-1-energy-in-living-systems"],
-        "bond": ["6-4-atp-adenosine-triphosphate", "6-2-potential-kinetic-free-and-activation-energy"],
-        "energy": ["6-1-energy-and-metabolism", "6-4-atp-adenosine-triphosphate"],
-        "hydrolysis": ["6-4-atp-adenosine-triphosphate"],
-        "phosphate": ["6-4-atp-adenosine-triphosphate", "7-4-oxidative-phosphorylation"],
-        "thermodynamics": ["6-3-the-laws-of-thermodynamics"],
-        "metabolism": ["6-1-energy-and-metabolism"],
+        "atp": ["6-4-atp-adenosine-triphosphate", "6-1-energy-and-metabolism"],
+        "adenosine triphosphate": ["6-4-atp-adenosine-triphosphate"],
+        "photosynthesis": ["8-1-overview-of-photosynthesis", "8-2-the-light-dependent-reaction-of-photosynthesis"],
+        "plants make food": ["8-1-overview-of-photosynthesis"],
+        "chloroplast": ["8-1-overview-of-photosynthesis", "4-3-eukaryotic-cells"],
+        "chlorophyll": ["8-2-the-light-dependent-reaction-of-photosynthesis"],
+        "calvin cycle": ["8-3-using-light-to-make-organic-molecules"],
+        "light reaction": ["8-2-the-light-dependent-reaction-of-photosynthesis"],
+        "cellular respiration": ["7-1-energy-in-living-systems", "7-4-oxidative-phosphorylation"],
         "glycolysis": ["7-2-glycolysis"],
-        "respiration": ["7-4-oxidative-phosphorylation", "7-1-energy-in-living-systems"],
+        "krebs": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
+        "citric acid": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
+        "tca cycle": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
         "electron transport": ["7-4-oxidative-phosphorylation"],
-        # Cell Division & Meiosis
-        "meiosis": ["11-1-the-process-of-meiosis", "11-2-sexual-reproduction"],
+        "oxidative phosphorylation": ["7-4-oxidative-phosphorylation"],
+        "fermentation": ["7-5-metabolism-without-oxygen"],
+        "anaerobic": ["7-5-metabolism-without-oxygen"],
+        "mitochondria": ["7-4-oxidative-phosphorylation", "4-3-eukaryotic-cells"],
+        "mitochondrion": ["7-4-oxidative-phosphorylation", "4-3-eukaryotic-cells"],
+        # Cell Division
         "mitosis": ["10-1-cell-division", "10-2-the-cell-cycle"],
-        "cell division": ["10-1-cell-division", "10-2-the-cell-cycle"],
+        "meiosis": ["11-1-the-process-of-meiosis"],
         "cell cycle": ["10-2-the-cell-cycle", "10-3-control-of-the-cell-cycle"],
-        "cancer": ["10-4-cancer-and-the-cell-cycle"],
-        "sexual reproduction": ["11-2-sexual-reproduction", "11-1-the-process-of-meiosis"],
-        "gamete": ["11-1-the-process-of-meiosis", "11-2-sexual-reproduction"],
-        "chromosome": ["13-1-chromosomal-theory-and-genetic-linkages", "11-1-the-process-of-meiosis"],
-        "crossing over": ["11-1-the-process-of-meiosis"],
-        "genetic variation": ["11-1-the-process-of-meiosis", "11-2-sexual-reproduction"],
-        # Genetics & Inheritance
-        "inheritance": ["13-1-chromosomal-theory-and-genetic-linkages", "13-2-chromosomal-basis-of-inherited-disorders"],
-        "genetic disorder": ["13-2-chromosomal-basis-of-inherited-disorders"],
-        "linkage": ["13-1-chromosomal-theory-and-genetic-linkages"],
+        "cell division": ["10-1-cell-division"],
+        "cancer": ["10-4-cancer-and-the-cell-cycle", "16-7-cancer-and-gene-regulation"],
+        # Molecular Biology
+        "dna": ["14-2-dna-structure-and-sequencing", "14-3-basics-of-dna-replication"],
+        "rna": ["15-4-rna-processing-in-eukaryotes", "3-5-nucleic-acids"],
+        "mrna": ["15-4-rna-processing-in-eukaryotes", "15-5-ribosomes-and-protein-synthesis"],
+        "trna": ["15-5-ribosomes-and-protein-synthesis"],
+        "rrna": ["15-5-ribosomes-and-protein-synthesis"],
+        "transcription": ["15-2-prokaryotic-transcription", "15-3-eukaryotic-transcription"],
+        "translation": ["15-5-ribosomes-and-protein-synthesis"],
+        "protein synthesis": ["15-5-ribosomes-and-protein-synthesis"],
+        "protein": ["3-4-proteins", "15-5-ribosomes-and-protein-synthesis"],
+        "enzyme": ["6-5-enzymes"],
+        "gene expression": ["16-1-regulation-of-gene-expression"],
+        "genetic code": ["15-1-the-genetic-code"],
+        "central dogma": ["15-1-the-genetic-code", "15-5-ribosomes-and-protein-synthesis"],
+        "codon": ["15-1-the-genetic-code"],
+        "anticodon": ["15-5-ribosomes-and-protein-synthesis"],
+        "ribosome": ["15-5-ribosomes-and-protein-synthesis", "4-3-eukaryotic-cells"],
+        "replication": ["14-3-basics-of-dna-replication", "14-4-dna-replication-in-prokaryotes"],
+        # Cell Structure
+        "cell membrane": ["5-1-components-and-structure"],
+        "plasma membrane": ["5-1-components-and-structure"],
+        "membrane": ["5-1-components-and-structure", "5-2-passive-transport"],
+        "phospholipid": ["5-1-components-and-structure", "3-3-lipids"],
+        "osmosis": ["5-2-passive-transport", "32-1-osmoregulation-and-osmotic-balance"],
+        "diffusion": ["5-2-passive-transport"],
+        "active transport": ["5-3-active-transport"],
+        "cytoskeleton": ["4-5-cytoskeleton"],
+        "organelle": ["4-3-eukaryotic-cells", "4-4-the-endomembrane-system-and-proteins"],
+        "nucleus": ["4-3-eukaryotic-cells"],
+        "endoplasmic reticulum": ["4-4-the-endomembrane-system-and-proteins"],
+        "golgi": ["4-4-the-endomembrane-system-and-proteins"],
+        "lysosome": ["4-4-the-endomembrane-system-and-proteins"],
+        "vesicle": ["5-4-bulk-transport", "4-4-the-endomembrane-system-and-proteins"],
+        "endocytosis": ["5-4-bulk-transport"],
+        "exocytosis": ["5-4-bulk-transport"],
+        "signal transduction": ["9-1-signaling-molecules-and-cellular-receptors", "9-2-propagation-of-the-signal"],
+        "cell signaling": ["9-1-signaling-molecules-and-cellular-receptors"],
+        # Nervous System
+        "neuron": ["26-1-neurons-and-glial-cells", "26-2-how-neurons-communicate"],
+        "nervous system": ["26-1-neurons-and-glial-cells", "26-3-the-central-nervous-system"],
+        "brain": ["26-3-the-central-nervous-system"],
+        "action potential": ["26-2-how-neurons-communicate"],
+        "synapse": ["26-2-how-neurons-communicate"],
+        "senses": ["27-1-sensory-processes"],
+        "vision": ["27-5-vision"],
+        "hearing": ["27-4-hearing-and-vestibular-sensation"],
+        # Circulatory System
+        "heart": ["31-1-overview-of-the-circulatory-system", "31-3-mammalian-heart-and-blood-vessels"],
+        "blood": ["31-2-components-of-the-blood", "31-1-overview-of-the-circulatory-system"],
+        "circulatory": ["31-1-overview-of-the-circulatory-system"],
+        "cardiovascular": ["31-1-overview-of-the-circulatory-system"],
+        # Immune System
+        "immune": ["33-1-innate-immune-response", "33-2-adaptive-immune-response"],
+        "antibod": ["33-3-antibodies"],
+        "infection": ["33-1-innate-immune-response"],
+        "vaccine": ["33-2-adaptive-immune-response"],
+        # Other Body Systems
+        "respiration": ["30-1-systems-of-gas-exchange", "30-3-breathing"],
+        "breathing": ["30-3-breathing"],
+        "lung": ["30-1-systems-of-gas-exchange"],
+        "digestion": ["25-1-digestive-systems", "25-3-digestive-system-processes"],
+        "stomach": ["25-1-digestive-systems"],
+        "intestine": ["25-3-digestive-system-processes"],
+        "hormone": ["28-1-types-of-hormones", "28-2-how-hormones-work"],
+        "endocrine": ["28-5-endocrine-glands", "28-1-types-of-hormones", "28-2-how-hormones-work"],
+        "endocrine system": ["28-5-endocrine-glands", "28-1-types-of-hormones", "28-2-how-hormones-work"],
+        "muscle": ["29-4-muscle-contraction-and-locomotion"],
+        "bone": ["29-2-bone"],
+        "skeleton": ["29-1-types-of-skeletal-systems"],
+        "kidney": ["32-2-the-kidneys-and-osmoregulatory-organs"],
+        "excretion": ["32-3-excretion-systems"],
+        "reproduction": ["34-1-reproduction-methods", "34-3-human-reproductive-anatomy-and-gametogenesis"],
+        "reproductive": ["34-1-reproduction-methods", "34-3-human-reproductive-anatomy-and-gametogenesis"],
+        "reproductive system": ["34-1-reproduction-methods", "34-3-human-reproductive-anatomy-and-gametogenesis", "34-4-hormonal-control-of-human-reproduction"],
+        "pregnancy": ["34-7-human-pregnancy-and-birth"],
+        "embryo": ["34-5-fertilization-and-early-embryonic-development"],
+        # Evolution & Genetics
+        "evolution": ["18-1-understanding-evolution", "19-1-population-evolution"],
+        "darwin": ["18-1-understanding-evolution"],
+        "natural selection": ["19-3-adaptive-evolution", "36-2-life-histories-and-natural-selection"],
+        "speciation": ["18-2-formation-of-new-species"],
+        "genetics": ["12-1-mendels-experiments-and-the-laws-of-probability", "12-3-laws-of-inheritance"],
+        "mendel": ["12-1-mendels-experiments-and-the-laws-of-probability"],
+        "inheritance": ["12-3-laws-of-inheritance"],
+        "heredity": ["12-3-laws-of-inheritance"],
+        "mutation": ["14-6-dna-repair"],
+        "phylogen": ["20-2-determining-evolutionary-relationships"],
+        # Microorganisms
+        "virus": ["21-1-viral-evolution-morphology-and-classification", "21-2-virus-infection-and-hosts"],
+        "bacteria": ["22-1-prokaryotic-diversity", "22-4-bacterial-diseases-in-humans"],
+        "prokaryote": ["4-2-prokaryotic-cells", "22-1-prokaryotic-diversity"],
+        "eukaryote": ["4-3-eukaryotic-cells"],
+        # Plants
+        "plant": ["23-1-the-plant-body"],
+        "leaf": ["23-4-leaves"],
+        "root": ["23-3-roots"],
+        "stem": ["23-2-stems"],
+        "xylem": ["23-5-transport-of-water-and-solutes-in-plants"],
+        "phloem": ["23-5-transport-of-water-and-solutes-in-plants"],
+        # Ecology
+        "ecology": ["35-1-the-scope-of-ecology", "36-6-community-ecology"],
+        "ecosystem": ["37-1-ecology-for-ecosystems", "37-2-energy-flow-through-ecosystems"],
+        "food chain": ["37-2-energy-flow-through-ecosystems"],
+        "food web": ["37-2-energy-flow-through-ecosystems"],
+        "biome": ["35-3-terrestrial-biomes", "35-4-aquatic-biomes"],
+        "population": ["36-1-population-demography", "36-3-environmental-limits-to-population-growth"],
+        "climate": ["35-5-climate-and-the-effects-of-global-climate-change"],
+        "climate change": ["35-5-climate-and-the-effects-of-global-climate-change"],
+        "biodiversity": ["38-1-the-biodiversity-crisis", "38-4-preserving-biodiversity"],
+        "carbon cycle": ["37-3-biogeochemical-cycles"],
+        "nitrogen cycle": ["37-3-biogeochemical-cycles"],
+        # Chemistry Basics
+        "atom": ["2-1-atoms-isotopes-ions-and-molecules-the-building-blocks"],
+        "water": ["2-2-water"],
+        "carbon": ["2-3-carbon"],
+        "carbohydrate": ["3-2-carbohydrates"],
+        "lipid": ["3-3-lipids"],
+        "nucleic acid": ["3-5-nucleic-acids"],
+        # Biotechnology
+        "biotechnology": ["17-1-biotechnology"],
+        "crispr": ["17-1-biotechnology"],
+        "cloning": ["17-1-biotechnology"],
+        "genome": ["17-2-mapping-genomes", "17-3-whole-genome-sequencing"],
+        "genomics": ["17-4-applying-genomics", "17-5-genomics-and-proteomics"],
     }
 
     def get_openstax_url(chapter_slug: str) -> str:
@@ -223,24 +671,106 @@ def main():
         except Exception:
             return re.sub(r'<[^>]+>', ' ', cnxml_content).strip()
 
+    def get_chapter_list_for_llm() -> str:
+        """Return a formatted list of all chapters for LLM context.
+
+        Uses the complete OPENSTAX_CHAPTERS mapping defined above.
+        """
+        lines = []
+        for slug, title in OPENSTAX_CHAPTERS.items():
+            lines.append(f"- {slug}: {title}")
+        return "\n".join(lines)
+
+    def llm_match_topic_to_chapters(topic: str, max_chapters: int = 2) -> list:
+        """Use Gemini to match a topic to the most relevant chapter slugs (Tier 2 matching).
+
+        This is called when keyword matching (Tier 1) fails. It handles:
+        - Misspellings (e.g., "meitosis" -> meiosis)
+        - Alternate terms (e.g., "cell energy" -> ATP)
+        - Complex queries that don't match simple keywords
+
+        Returns empty list [] if the topic is not covered in the biology textbook.
+        """
+        from google import genai
+        from google.genai import types
+
+        try:
+            # Use us-central1 for consistency with Agent Engine
+            client = genai.Client(
+                vertexai=True,
+                project=os.environ.get("GOOGLE_CLOUD_PROJECT"),
+                location="us-central1",
+            )
+
+            chapter_list = get_chapter_list_for_llm()
+
+            prompt = f"""You are a biology textbook expert. Match the user's topic to the MOST relevant chapters.
+
+User's topic: "{topic}"
+
+Available chapters from OpenStax Biology for AP Courses:
+{chapter_list}
+
+INSTRUCTIONS:
+1. Return EXACTLY {max_chapters} chapter slugs that BEST match the topic
+2. Order by relevance - put the MOST relevant chapter FIRST
+3. For biology topics (even misspelled like "meitosis"), ALWAYS find matching chapters
+4. Return empty [] ONLY for non-biology topics (physics, history, literature, etc.)
+5. Match the topic DIRECTLY - "reproductive system" should match reproduction chapters (34-*), not meiosis
+
+EXAMPLES:
+- "reproductive system" → ["34-3-human-reproductive-anatomy-and-gametogenesis", "34-1-reproduction-methods"]
+- "endocrine system" → ["28-5-endocrine-glands", "28-1-types-of-hormones"]
+- "meiosis" → ["11-1-the-process-of-meiosis", "11-2-sexual-reproduction"]
+- "ATP" → ["6-4-atp-adenosine-triphosphate", "6-1-energy-and-metabolism"]
+- "quantum physics" → []
+
+Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biology):"""
+
+            response = client.models.generate_content(
+                model=model_id,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                ),
+            )
+
+            slugs = json.loads(response.text.strip())
+            if isinstance(slugs, list):
+                # Validate that returned slugs actually exist in our chapter mapping
+                valid_slugs = [s for s in slugs if s in OPENSTAX_CHAPTERS]
+                return valid_slugs[:max_chapters]
+
+        except Exception as e:
+            logger.warning(f"LLM chapter matching failed: {e}")
+
+        return []  # Return empty if LLM fails
+
     def fetch_openstax_content(topic: str) -> dict:
-        """Fetch OpenStax content for a topic using keyword matching."""
+        """Fetch OpenStax content for a topic using keyword matching with LLM fallback."""
         import urllib.request
         import urllib.error
 
         topic_lower = topic.lower()
         matched_slugs = set()
 
+        # First try keyword matching (fast path)
         for keyword, slugs in KEYWORD_HINTS.items():
             if keyword in topic_lower:
                 matched_slugs.update(slugs)
 
-        # If no match found, return empty with note (don't default to ATP)
+        # If no keyword match, use LLM to find relevant chapters
+        if not matched_slugs:
+            llm_slugs = llm_match_topic_to_chapters(topic)
+            if llm_slugs:
+                matched_slugs.update(llm_slugs)
+
+        # If still no match (LLM found nothing relevant), return empty with clear message
         if not matched_slugs:
             return {
                 "content": "",
                 "sources": [],
-                "note": f"No specific OpenStax chapter found for '{topic}'. This topic may not be covered in the current chapter mappings."
+                "note": f"I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum."
             }
 
         chapter_slugs = list(matched_slugs)[:2]
@@ -249,8 +779,13 @@ def main():
 
         for slug in chapter_slugs:
             module_ids = CHAPTER_TO_MODULES.get(slug, [])
+            if not module_ids:
+                # Skip chapters without module mappings
+                continue
+
             title = OPENSTAX_CHAPTERS.get(slug, slug)
             url = get_openstax_url(slug)
+            chapter_content_found = False
 
             for module_id in module_ids:
                 github_url = f"https://raw.githubusercontent.com/openstax/osbooks-biology-bundle/main/modules/{module_id}/index.cnxml"
@@ -260,10 +795,13 @@ def main():
                         text = parse_cnxml_to_text(cnxml)
                         if text:
                             content_parts.append(f"## {title}\n\n{text}")
+                            chapter_content_found = True
                 except Exception:
                     pass
 
-            sources.append({"title": title, "url": url, "provider": "OpenStax Biology for AP Courses"})
+            # Only add source if we actually got content for this chapter
+            if chapter_content_found:
+                sources.append({"title": title, "url": url, "provider": "OpenStax Biology for AP Courses"})
 
         return {
             "content": "\n\n---\n\n".join(content_parts) if content_parts else "",
@@ -276,13 +814,13 @@ def main():
 
     async def generate_flashcards(
         tool_context: ToolContext,
-        topic: str = "ATP and bond energy",
+        topic: str,
     ) -> str:
         """
         Generate personalized flashcard content as A2UI JSON.
 
         Args:
-            topic: The topic for flashcards (e.g., "ATP hydrolysis", "bond energy")
+            topic: The topic for flashcards (e.g., "endocrine system", "photosynthesis", "meiosis")
 
         Returns:
             A2UI JSON string for Flashcard components
@@ -296,18 +834,30 @@ def main():
             location=os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1"),
         )
 
-        # Fetch OpenStax content for context
+        # Fetch OpenStax content for context - REQUIRED
         openstax_data = fetch_openstax_content(topic)
         textbook_context = openstax_data.get("content", "")
         sources = openstax_data.get("sources", [])
 
-        # Ask LLM for simple flashcard content with schema, we'll wrap in A2UI structure
-        prompt = f'''Create 4 MCAT study flashcards about "{topic}" for Maria (pre-med, loves gym analogies).
-Address the misconception that "energy is stored in bonds" - actually, bond BREAKING requires energy.
-Use gym/sports analogies in the answers.
+        # If no OpenStax content found, return an error message instead of making up content
+        if not textbook_context or not sources:
+            components = [
+                {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "message"]}, "distribution": "start", "alignment": "stretch"}}},
+                {"id": "header", "component": {"Text": {"text": {"literalString": f"No Content Available: {topic}"}, "usageHint": "h3"}}},
+                {"id": "message", "component": {"Text": {"text": {"literalString": f"Sorry, I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum, or try rephrasing your request with more specific biology terms."}}}},
+            ]
+            a2ui = [
+                {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
+                {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
+            ]
+            return json.dumps({"format": "flashcards", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": {"title": "No content found", "url": "", "provider": "OpenStax Biology for AP Courses"}})
 
-Use this textbook content as your source:
-{textbook_context[:3000] if textbook_context else "Use your knowledge of AP Biology."}'''
+        prompt = f'''Create 4 MCAT study flashcards about "{topic}" for Maria (pre-med, loves gym analogies).
+Use gym/sports analogies in the answers where appropriate.
+IMPORTANT: Base all content ONLY on the textbook content provided below. Do not add information not present in the source.
+
+Textbook source content:
+{textbook_context[:4000]}'''
 
         flashcard_schema = {
             "type": "array",
@@ -331,6 +881,16 @@ Use this textbook content as your source:
             ),
         )
         cards = json.loads(response.text.strip())
+
+        # Handle case where LLM returns empty or invalid response
+        if not cards or not isinstance(cards, list) or len(cards) == 0:
+            logger.warning(f"LLM returned empty flashcards for topic: {topic}")
+            # Create a default flashcard based on the source content
+            cards = [{
+                "front": f"What is the main topic covered in {sources[0].get('title', topic)}?",
+                "back": f"This chapter covers key concepts related to {topic}. Review the OpenStax source for detailed information.",
+                "category": "Biology"
+            }]
 
         # Build proper A2UI structure programmatically
         card_ids = [f"c{i+1}" for i in range(len(cards))]
@@ -356,26 +916,24 @@ Use this textbook content as your source:
             {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
         ]
 
-        # Include source citation
-        source_info = None
-        if sources:
-            source_info = {
-                "title": sources[0].get("title", ""),
-                "url": sources[0].get("url", ""),
-                "provider": sources[0].get("provider", "OpenStax Biology for AP Courses"),
-            }
+        # Include source citation (we already verified sources exist above)
+        source_info = {
+            "title": sources[0].get("title", ""),
+            "url": sources[0].get("url", ""),
+            "provider": sources[0].get("provider", "OpenStax Biology for AP Courses"),
+        }
 
         return json.dumps({"format": "flashcards", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": source_info})
 
     async def generate_quiz(
         tool_context: ToolContext,
-        topic: str = "ATP and bond energy",
+        topic: str,
     ) -> str:
         """
         Generate personalized quiz questions as A2UI JSON.
 
         Args:
-            topic: The topic for quiz questions
+            topic: The topic for quiz questions (e.g., "endocrine system", "photosynthesis")
 
         Returns:
             A2UI JSON string for QuizCard components
@@ -389,18 +947,31 @@ Use this textbook content as your source:
             location=os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1"),
         )
 
-        # Fetch OpenStax content for context
+        # Fetch OpenStax content for context - REQUIRED
         openstax_data = fetch_openstax_content(topic)
         textbook_context = openstax_data.get("content", "")
         sources = openstax_data.get("sources", [])
 
-        # Ask LLM for simple quiz content with schema, we'll wrap in A2UI structure
+        # If no OpenStax content found, return an error message instead of making up content
+        if not textbook_context or not sources:
+            components = [
+                {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "message"]}, "distribution": "start", "alignment": "stretch"}}},
+                {"id": "header", "component": {"Text": {"text": {"literalString": f"No Content Available: {topic}"}, "usageHint": "h3"}}},
+                {"id": "message", "component": {"Text": {"text": {"literalString": f"Sorry, I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum, or try rephrasing your request with more specific biology terms."}}}},
+            ]
+            a2ui = [
+                {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
+                {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
+            ]
+            return json.dumps({"format": "quiz", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": {"title": "No content found", "url": "", "provider": "OpenStax Biology for AP Courses"}})
+
         prompt = f'''Create 2 MCAT quiz questions about "{topic}" for Maria (pre-med, loves gym analogies).
 Each question should have 4 options (a, b, c, d) with exactly one correct answer.
-Use gym/sports analogies in explanations.
+Use gym/sports analogies in explanations where appropriate.
+IMPORTANT: Base all content ONLY on the textbook content provided below. Do not add information not present in the source.
 
-Use this textbook content as your source:
-{textbook_context[:3000] if textbook_context else "Use your knowledge of AP Biology."}'''
+Textbook source content:
+{textbook_context[:4000]}'''
 
         quiz_schema = {
             "type": "array",
@@ -437,6 +1008,22 @@ Use this textbook content as your source:
         )
         quizzes = json.loads(response.text.strip())
 
+        # Handle case where LLM returns empty or invalid response
+        if not quizzes or not isinstance(quizzes, list) or len(quizzes) == 0:
+            logger.warning(f"LLM returned empty quiz for topic: {topic}")
+            # Create a default quiz question based on the source content
+            quizzes = [{
+                "question": f"Which of the following best describes {topic}?",
+                "options": [
+                    {"label": f"A key concept in {sources[0].get('title', 'biology')}", "value": "a", "isCorrect": True},
+                    {"label": "A topic not covered in AP Biology", "value": "b", "isCorrect": False},
+                    {"label": "An unrelated scientific concept", "value": "c", "isCorrect": False},
+                    {"label": "None of the above", "value": "d", "isCorrect": False},
+                ],
+                "explanation": f"Review the OpenStax chapter on {sources[0].get('title', topic)} for more details.",
+                "category": "Biology"
+            }]
+
         # Build proper A2UI structure programmatically
         quiz_ids = [f"q{i+1}" for i in range(len(quizzes))]
         components = [
@@ -470,14 +1057,12 @@ Use this textbook content as your source:
             {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
         ]
 
-        # Include source citation
-        source_info = None
-        if sources:
-            source_info = {
-                "title": sources[0].get("title", ""),
-                "url": sources[0].get("url", ""),
-                "provider": sources[0].get("provider", "OpenStax Biology for AP Courses"),
-            }
+        # Include source citation (we already verified sources exist above)
+        source_info = {
+            "title": sources[0].get("title", ""),
+            "url": sources[0].get("url", ""),
+            "provider": sources[0].get("provider", "OpenStax Biology for AP Courses"),
+        }
 
         return json.dumps({"format": "quiz", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": source_info})
 
@@ -518,61 +1103,91 @@ Use this textbook content as your source:
             "sources": source_citations
         })
 
+    # GCS media URLs (publicly accessible)
+    # Media bucket follows pattern: {PROJECT_ID}-media
+    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT", "a2ui-test")
+    MEDIA_BUCKET = f"{project_id}-media"
+    PODCAST_URL = f"https://storage.googleapis.com/{MEDIA_BUCKET}/assets/podcast.m4a"
+    VIDEO_URL = f"https://storage.googleapis.com/{MEDIA_BUCKET}/assets/video.mp4"
+
+    async def get_audio_content(tool_context: ToolContext) -> str:
+        """
+        Get the personalized learning podcast as an A2UI AudioPlayer component.
+
+        Returns:
+            A2UI JSON string for AudioPlayer component
+        """
+        components = [
+            {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "descText", "player"]}, "distribution": "start", "alignment": "stretch"}}},
+            {"id": "header", "component": {"Text": {"text": {"literalString": "Personalized Learning Podcast"}, "usageHint": "h3"}}},
+            {"id": "descText", "component": {"Text": {"text": {"literalString": "A podcast tailored for Maria covering ATP, bond energy, and common MCAT misconceptions. Uses gym and sports analogies to explain complex biochemistry concepts."}}}},
+            {"id": "player", "component": {"AudioPlayer": {"url": {"literalString": PODCAST_URL}, "description": {"literalString": "ATP & Bond Energy - MCAT Review"}}}},
+        ]
+
+        a2ui = [
+            {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
+            {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
+        ]
+
+        return json.dumps({"format": "audio", "a2ui": a2ui, "surfaceId": SURFACE_ID})
+
+    async def get_video_content(tool_context: ToolContext) -> str:
+        """
+        Get the personalized learning video as an A2UI Video component.
+
+        Returns:
+            A2UI JSON string for Video component
+        """
+        components = [
+            {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "descText", "videoPlayer"]}, "distribution": "start", "alignment": "stretch"}}},
+            {"id": "header", "component": {"Text": {"text": {"literalString": "Video Lesson"}, "usageHint": "h3"}}},
+            {"id": "descText", "component": {"Text": {"text": {"literalString": "A visual explanation of ATP hydrolysis and bond energy concepts, designed for visual learners preparing for the MCAT."}}}},
+            {"id": "videoPlayer", "component": {"Video": {"url": {"literalString": VIDEO_URL}}}},
+        ]
+
+        a2ui = [
+            {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
+            {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
+        ]
+
+        return json.dumps({"format": "video", "a2ui": a2ui, "surfaceId": SURFACE_ID})
+
     # Create the agent WITH tools
     agent = Agent(
         name="personalized_learning_agent",
         model=model_id,
-        instruction="""You are a personalized learning assistant for biology students. You have access to OpenStax Biology for AP Courses textbook content.
+        instruction="""You are a personalized learning assistant for biology students. You help with ANY biology topic - from endocrine system to evolution, from genetics to ecology.
 
 TOOLS AVAILABLE:
-- generate_flashcards(topic) - Creates study flashcards as A2UI components
-- generate_quiz(topic) - Creates quiz questions as A2UI components
+- generate_flashcards(topic) - Creates study flashcards. ALWAYS pass the user's exact topic.
+- generate_quiz(topic) - Creates quiz questions. ALWAYS pass the user's exact topic.
 - get_textbook_content(topic) - Gets textbook content from OpenStax for answering questions
+- get_audio_content() - Plays a pre-recorded podcast about metabolism concepts
+- get_video_content() - Shows a pre-recorded video lesson
 
-WHEN TO USE TOOLS:
-- User asks for "flashcards" → call generate_flashcards with the topic
-- User asks for "quiz" or "test me" → call generate_quiz with the topic
-- User asks ANY biology question → You MUST call get_textbook_content(topic) FIRST before answering
+CRITICAL: When user asks for flashcards or quiz on a topic, you MUST pass that EXACT topic to the tool.
+Example: User says "quiz me on endocrine system" → call generate_quiz(topic="endocrine system")
+Example: User says "flashcards for photosynthesis" → call generate_flashcards(topic="photosynthesis")
 
-CRITICAL RULES FOR ANSWERING QUESTIONS:
-1. ALWAYS call get_textbook_content(topic) before answering biology questions
-2. The tool returns content AND source URLs - you MUST include these URLs in your response
-3. Format citations as clickable markdown links: [Chapter Title](https://openstax.org/books/biology-ap-courses/pages/...)
-4. NEVER make up chapter numbers or URLs - only use what the tool returns
-5. If the tool returns no content for a topic, say "This topic isn't in my current OpenStax chapter mappings" and answer from general knowledge
+WHEN TO USE TOOLS - CALL IMMEDIATELY WITHOUT ASKING:
+- User asks for "flashcards" → IMMEDIATELY call generate_flashcards with the EXACT topic they mentioned
+- User asks for "quiz" or "test me" → IMMEDIATELY call generate_quiz with the EXACT topic they mentioned
+- User asks for "podcast", "audio", or "listen" → IMMEDIATELY call get_audio_content() - DO NOT ask for confirmation
+- User asks for "video", "watch", or "show me" → IMMEDIATELY call get_video_content() - DO NOT ask for confirmation
+
+IMPORTANT: For podcast and video requests, call the tool IMMEDIATELY. Do NOT ask "would you like to listen?" or "would you like to watch?". Just call the tool right away.
 
 LEARNER PROFILE (Maria):
 - Pre-med student preparing for MCAT
 - Loves sports/gym analogies
-- Misconception: thinks "energy is stored in bonds"
-- Reality: Bond BREAKING requires energy; energy released when MORE STABLE products form
+- Visual-kinesthetic learner
 
-Always use gym/sports analogies. Be encouraging and focus on correcting misconceptions.""",
-        tools=[generate_flashcards, generate_quiz, get_textbook_content],
+Always use gym/sports analogies where appropriate. Be encouraging and supportive.""",
+        tools=[generate_flashcards, generate_quiz, get_textbook_content, get_audio_content, get_video_content],
     )
 
-    # =========================================================================
-    # CONTEXT CACHING CONFIGURATION (EXPERIMENTAL)
-    # =========================================================================
-    # Context caching allows reuse of large instructions across requests,
-    # improving speed and reducing token costs.
-    # - min_tokens: Minimum context size to trigger caching (2048 recommended)
-    # - ttl_seconds: How long to keep cache (600 = 10 minutes)
-    # - cache_intervals: Max times cache is reused before refresh
-    # =========================================================================
-    cache_config = ContextCacheConfig(
-        min_tokens=2048,
-        ttl_seconds=600,
-        cache_intervals=10,
-    )
-
-    # Wrap agent in App with caching, then in AdkApp for deployment
-    adk_inner_app = App(
-        name="personalized_learning_app",
-        root_agent=agent,
-        context_cache_config=cache_config,
-    )
-    app = AdkApp(app=adk_inner_app, enable_tracing=True)
+    # Wrap agent in AdkApp for deployment (skip App wrapper to avoid version issues)
+    app = AdkApp(agent=agent, enable_tracing=True)
 
     print("Starting deployment (this takes 2-5 minutes)...")
 
@@ -592,11 +1207,13 @@ Always use gym/sports analogies. Be encouraging and focus on correcting misconce
     print(f"Resource Name: {remote_app.resource_name}")
     resource_id = remote_app.resource_name.split("/")[-1]
     print(f"Resource ID: {resource_id}")
+    print(f"Context Bucket: gs://{context_bucket}/learner_context/")
     print()
     print("Next steps:")
     print(f"  1. Copy the Resource ID above")
     print(f"  2. Paste it into the notebook's AGENT_RESOURCE_ID variable")
-    print(f"  3. Run the remaining notebook cells to configure and start the demo")
+    print(f"  3. Upload learner context files to gs://{context_bucket}/learner_context/")
+    print(f"  4. Run the remaining notebook cells to configure and start the demo")
 
 
 if __name__ == "__main__":

@@ -361,8 +361,8 @@ async def _llm_match_topic_to_chapters(topic: str, max_chapters: int = 3) -> lis
         from google.genai import types
 
         project = os.getenv("GOOGLE_CLOUD_PROJECT")
-        location = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
-        model = os.getenv("GENAI_MODEL", "gemini-3-flash-preview")
+        location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+        model = os.getenv("GENAI_MODEL", "gemini-2.5-flash")
 
         client = genai.Client(
             vertexai=True,

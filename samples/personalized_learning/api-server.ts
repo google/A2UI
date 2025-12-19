@@ -18,7 +18,8 @@
 
 import { createServer } from "http";
 import { execSync } from "child_process";
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync, existsSync } from "fs";
+import { join } from "path";
 import { config } from "dotenv";
 
 // Load environment variables
@@ -68,6 +69,7 @@ resetLog();
 
 const PORT = parseInt(process.env.API_PORT || "8080");
 const PROJECT = process.env.GOOGLE_CLOUD_PROJECT;
+// Use us-central1 region for consistency with Agent Engine
 const LOCATION = process.env.GOOGLE_CLOUD_LOCATION || "us-central1";
 const MODEL = process.env.GENAI_MODEL || "gemini-2.5-flash";
 
@@ -79,9 +81,10 @@ if (!PROJECT) {
 
 // Agent Engine Configuration - set via environment variables
 // See QUICKSTART.md for deployment instructions
+// Note: Agent Engine is deployed in us-central1 (not global like Gemini API)
 const AGENT_ENGINE_CONFIG = {
   projectNumber: process.env.AGENT_ENGINE_PROJECT_NUMBER || "",
-  location: LOCATION,
+  location: process.env.AGENT_ENGINE_LOCATION || "us-central1",
   resourceId: process.env.AGENT_ENGINE_RESOURCE_ID || "",
 };
 
@@ -175,7 +178,23 @@ interface ChatRequest {
 }
 
 // Get Google Cloud access token
-function getAccessToken(): string {
+// In Cloud Run, use the metadata server. Locally, use gcloud CLI.
+async function getAccessToken(): Promise<string> {
+  // Try metadata server first (Cloud Run environment)
+  try {
+    const metadataUrl = "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token";
+    const response = await fetch(metadataUrl, {
+      headers: { "Metadata-Flavor": "Google" },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data.access_token;
+    }
+  } catch {
+    // Not in Cloud Run, fall through to gcloud
+  }
+
+  // Fall back to gcloud CLI (local development)
   try {
     const token = execSync("gcloud auth print-access-token", {
       encoding: "utf-8",
@@ -193,7 +212,7 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
   // Use :streamQuery endpoint with stream_query method for ADK agents
   const url = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${location}/reasoningEngines/${resourceId}:streamQuery`;
 
-  const accessToken = getAccessToken();
+  const accessToken = await getAccessToken();
   const message = context ? `Generate ${format} for: ${context}` : `Generate ${format}`;
 
   console.log(`[API Server] Querying Agent Engine: ${format}`);
@@ -702,6 +721,46 @@ async function main() {
         res.end(JSON.stringify({ error: error.message }));
       }
       return;
+    }
+
+    // Static file serving for frontend
+    const MIME_TYPES: Record<string, string> = {
+      ".html": "text/html",
+      ".js": "application/javascript",
+      ".css": "text/css",
+      ".json": "application/json",
+      ".png": "image/png",
+      ".jpg": "image/jpeg",
+      ".svg": "image/svg+xml",
+      ".ico": "image/x-icon",
+    };
+
+    // Serve static files (Vite builds to dist/, but index.html is in root for dev)
+    if (req.method === "GET") {
+      let filePath = req.url === "/" ? "/index.html" : req.url || "/index.html";
+
+      // Remove query string
+      filePath = filePath.split("?")[0];
+
+      // Try dist/ first (production build), then root (development)
+      const distPath = join(process.cwd(), "dist", filePath);
+      const rootPath = join(process.cwd(), filePath);
+
+      const fullPath = existsSync(distPath) ? distPath : rootPath;
+
+      if (existsSync(fullPath)) {
+        try {
+          const content = readFileSync(fullPath);
+          const ext = filePath.substring(filePath.lastIndexOf("."));
+          const contentType = MIME_TYPES[ext] || "application/octet-stream";
+
+          res.writeHead(200, { "Content-Type": contentType });
+          res.end(content);
+          return;
+        } catch (err) {
+          // Fall through to 404
+        }
+      }
     }
 
     // 404 for other routes

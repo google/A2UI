@@ -5,6 +5,22 @@
  * This client talks to the remote agent (locally or on Agent Engine).
  */
 
+import { getIdToken } from "./firebase-auth";
+
+// Helper to get auth headers for API requests
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  const token = await getIdToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return headers;
+}
+
 export interface SourceInfo {
   url: string;
   title: string;
@@ -38,9 +54,7 @@ export class A2AClient {
     try {
       const response = await fetch(`${this.baseUrl}/a2a/query`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({
           message: context ? `${format}:${context}` : format,
           session_id: this.getSessionId(),
@@ -99,9 +113,7 @@ export class A2AClient {
     try {
       const response = await fetch(`${this.baseUrl}/a2a/stream`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({
           message: context ? `${format}:${context}` : format,
           session_id: this.getSessionId(),

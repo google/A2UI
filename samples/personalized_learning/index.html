@@ -736,10 +736,125 @@
       .a2ui-link .material-symbols-outlined {
         font-size: 14px;
       }
+
+      /* Login Screen */
+      #login-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--main-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .login-container {
+        text-align: center;
+      }
+
+      .login-card {
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 48px;
+        max-width: 400px;
+      }
+
+      .login-logo {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 24px;
+        background: var(--gemini-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .login-logo .material-symbols-outlined {
+        font-size: 40px;
+        color: white;
+      }
+
+      .login-card h1 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        background: var(--gemini-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .login-subtitle {
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .login-restriction {
+        color: var(--accent-blue);
+        font-size: 12px;
+        margin-bottom: 24px;
+      }
+
+      .google-signin-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 12px 24px;
+        background: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1f1f1f;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+        font-family: inherit;
+      }
+
+      .google-signin-btn:hover {
+        background: #f8f9fa;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .google-signin-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .login-error {
+        color: #f87171;
+        font-size: 13px;
+        margin-top: 16px;
+        min-height: 20px;
+      }
+
+      /* Sign out button in header */
+      #sign-out-btn {
+        font-size: 12px;
+        padding: 6px 12px;
+        background: transparent;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      #sign-out-btn:hover {
+        background: var(--sidebar-hover);
+      }
     </style>
   </head>
   <body>
-    <div class="app-container">
+    <div class="app-container" id="app-container" style="display: none;">
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="sidebar-header">
@@ -845,6 +960,7 @@
             <button class="header-btn">
               <span class="material-symbols-outlined">more_vert</span>
             </button>
+            <button id="sign-out-btn">Sign out</button>
           </div>
         </header>
 

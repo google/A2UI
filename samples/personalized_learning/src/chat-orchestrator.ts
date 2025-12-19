@@ -7,6 +7,21 @@
 
 import { A2UIRenderer } from "./a2ui-renderer";
 import { A2AClient } from "./a2a-client";
+import { getIdToken } from "./firebase-auth";
+
+// Helper to get auth headers for API requests
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  const token = await getIdToken();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return headers;
+}
 
 // Types for conversation history
 interface Message {
@@ -141,7 +156,7 @@ Keep ALL responses:
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({
           systemPrompt: `You are an intent classifier. Analyze the user's message and conversation context to determine their intent.
 
@@ -260,7 +275,7 @@ Examples:
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await getAuthHeaders(),
         body: JSON.stringify({
           systemPrompt: this.systemPrompt,
           intentGuidance,
