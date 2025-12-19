@@ -13,14 +13,15 @@ import {
   User,
 } from "firebase/auth";
 
-// Firebase configuration
+// Firebase configuration - reads from environment variables set in .env
+// These are populated by the Quickstart notebook or can be set manually
 const firebaseConfig = {
-  apiKey: "AIzaSyAIlBsbtnUrDQUELiegmZgsRgNmJan48PE",
-  authDomain: "a2ui-test.firebaseapp.com",
-  projectId: "a2ui-test",
-  storageBucket: "a2ui-test.firebasestorage.app",
-  messagingSenderId: "854605452886",
-  appId: "1:854605452886:web:9e6786ef7855a510228df7",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
 };
 
 // Initialize Firebase

@@ -89,6 +89,7 @@ Keep ALL responses:
 
   /**
    * Process a user message and generate a response.
+   * Uses combined intent+response endpoint to reduce latency.
    */
   async processMessage(
     userMessage: string,
@@ -97,15 +98,38 @@ Keep ALL responses:
     // Add to history
     this.conversationHistory.push({ role: "user", content: userMessage });
 
-    // Detect intent using LLM
-    const intent = await this.detectIntentWithLLM(userMessage);
-    console.log(`[Orchestrator] Detected intent: ${intent}`);
+    // Try combined endpoint first (single LLM call for intent + response + keywords)
+    let intent: Intent;
+    let responseText: string;
+    let keywords: string | undefined;
 
-    // Generate main response
-    const response = await this.generateResponse(userMessage, intent);
+    console.log("========================================");
+    console.log("[Orchestrator] PROCESSING USER MESSAGE");
+    console.log(`[Orchestrator] User said: "${userMessage}"`);
+    console.log("========================================");
+
+    try {
+      const combinedResult = await this.getCombinedIntentAndResponse(userMessage);
+      intent = combinedResult.intent as Intent;
+      responseText = combinedResult.text;
+      keywords = combinedResult.keywords;
+      console.log("========================================");
+      console.log("[Orchestrator] GEMINI RESPONSE RECEIVED");
+      console.log(`[Orchestrator] Detected intent: ${intent}`);
+      console.log(`[Orchestrator] Keywords: ${keywords || "(none)"}`);
+      console.log(`[Orchestrator] Response text: ${responseText.substring(0, 100)}...`);
+      console.log("========================================");
+    } catch (error) {
+      console.warn("[Orchestrator] Combined endpoint failed, falling back to separate calls");
+      // Fallback to separate calls if combined endpoint fails
+      intent = await this.detectIntentWithLLM(userMessage);
+      console.log(`[Orchestrator] Fallback detected intent: ${intent}`);
+      const response = await this.generateResponse(userMessage, intent);
+      responseText = response.text;
+    }
 
     // Update the message element with the response text
-    this.setMessageText(messageElement, response.text);
+    this.setMessageText(messageElement, responseText);
 
     // If we need A2UI content, fetch and render it
     if (intent !== "general" && intent !== "greeting") {
@@ -117,10 +141,31 @@ Keep ALL responses:
 
       try {
         // Fetch A2UI content from the agent
+        // Use LLM-generated keywords if available (handles typos, adds related terms)
+        // Fall back to user message + response context if keywords not available
+        const topicContext = keywords
+          ? keywords  // Keywords are already corrected and expanded by Gemini
+          : `User request: ${userMessage}\nAssistant context: ${responseText}`;
+
+        console.log("========================================");
+        console.log("[Orchestrator] CALLING AGENT ENGINE FOR A2UI CONTENT");
+        console.log(`[Orchestrator] Intent (format): ${intent}`);
+        console.log(`[Orchestrator] Topic context being sent:`);
+        console.log(`[Orchestrator]   "${topicContext}"`);
+        console.log(`[Orchestrator] Keywords available: ${keywords ? "YES" : "NO (using fallback)"}`);
+        console.log("========================================");
+
         const a2uiResult = await this.a2aClient.generateContent(
           intent,
-          userMessage
+          topicContext
         );
+
+        console.log("========================================");
+        console.log("[Orchestrator] AGENT ENGINE RESPONSE RECEIVED");
+        console.log(`[Orchestrator] Format: ${a2uiResult?.format}`);
+        console.log(`[Orchestrator] Source: ${JSON.stringify(a2uiResult?.source)}`);
+        console.log(`[Orchestrator] A2UI messages: ${a2uiResult?.a2ui?.length || 0}`);
+        console.log("========================================");
 
         // Remove placeholder
         placeholder.remove();
@@ -141,7 +186,38 @@ Keep ALL responses:
     }
 
     // Add assistant response to history
-    this.conversationHistory.push({ role: "assistant", content: response.text });
+    this.conversationHistory.push({ role: "assistant", content: responseText });
+  }
+
+  /**
+   * Get combined intent and response in a single LLM call.
+   * This reduces latency by eliminating one round-trip.
+   * For content-generating intents, also returns keywords for better content retrieval.
+   */
+  private async getCombinedIntentAndResponse(message: string): Promise<{ intent: string; text: string; keywords?: string }> {
+    const recentContext = this.conversationHistory.slice(-4).map(m =>
+      `${m.role}: ${m.content}`
+    ).join("\n");
+
+    const response = await fetch("/api/chat-with-intent", {
+      method: "POST",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify({
+        systemPrompt: this.systemPrompt,
+        messages: this.conversationHistory.slice(-10).map((m) => ({
+          role: m.role,
+          parts: [{ text: m.content }],
+        })),
+        userMessage: message,
+        recentContext: recentContext,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Combined API error: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   /**

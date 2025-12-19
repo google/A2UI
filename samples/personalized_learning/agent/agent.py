@@ -11,8 +11,9 @@ to Agent Engine.
 import json
 import logging
 import os
+import time
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 # Load environment variables from .env file for local development
 # In Agent Engine, these will be set by the deployment environment
@@ -294,6 +295,45 @@ Use surfaceId: "{SURFACE_ID}"
 Output ONLY valid JSON, no markdown."""
 
 
+# ============================================================================
+# CACHING FOR PERFORMANCE
+# ============================================================================
+
+# Context cache with TTL
+_CONTEXT_CACHE: dict[str, Tuple[str, float]] = {}
+_CONTEXT_CACHE_TTL = 300  # 5 minutes
+
+
+def _get_cached_context() -> str:
+    """
+    Get combined context with TTL-based caching.
+
+    This avoids 6 GCS reads per request by caching the combined context
+    for 5 minutes. The cache is invalidated after TTL expires.
+    """
+    cache_key = "combined_context"
+    now = time.time()
+
+    if cache_key in _CONTEXT_CACHE:
+        content, cached_at = _CONTEXT_CACHE[cache_key]
+        if now - cached_at < _CONTEXT_CACHE_TTL:
+            logger.info("Using cached learner context (cache hit)")
+            return content
+
+    # Cache miss - load fresh
+    content = _safe_get_combined_context()
+    _CONTEXT_CACHE[cache_key] = (content, now)
+    logger.info("Loaded and cached learner context (cache miss)")
+    return content
+
+
+def clear_context_cache() -> None:
+    """Clear the context cache. Useful for testing."""
+    global _CONTEXT_CACHE
+    _CONTEXT_CACHE = {}
+    logger.info("Context cache cleared")
+
+
 # Wrapper functions with priority: local files -> GCS -> embedded fallback
 def _safe_get_combined_context() -> str:
     """
@@ -385,22 +425,34 @@ async def generate_flashcards(
     Returns:
         A2UI JSON for flashcard components that can be rendered in the chat
     """
-    logger.info(f"Generating flashcards for topic: {topic or 'general'}")
+    logger.info("=" * 60)
+    logger.info("GENERATE_FLASHCARDS CALLED")
+    logger.info(f"Topic received: {topic or '(none)'}")
+    logger.info("=" * 60)
 
-    # Get learner context (profile, preferences, misconceptions)
-    learner_context = _safe_get_combined_context()
+    # Get learner context (profile, preferences, misconceptions) - uses cache
+    learner_context = _get_cached_context()
 
     # Fetch OpenStax content for the topic
     openstax_content = ""
     sources = []
     if topic and _HAS_OPENSTAX:
+        logger.info(f"Fetching OpenStax content for topic: {topic}")
         try:
             content_result = await fetch_content_for_topic(topic, max_chapters=2)
             openstax_content = content_result.get("combined_content", "")
             sources = content_result.get("sources", [])
-            logger.info(f"Fetched OpenStax content from {len(sources)} chapters")
+            matched_chapters = content_result.get("matched_chapters", [])
+            logger.info(f"OpenStax fetch result:")
+            logger.info(f"  - Matched chapters: {matched_chapters}")
+            logger.info(f"  - Sources: {sources}")
+            logger.info(f"  - Content length: {len(openstax_content)} chars")
+            if not openstax_content:
+                logger.warning("NO CONTENT RETURNED from OpenStax fetch!")
         except Exception as e:
-            logger.warning(f"Failed to fetch OpenStax content: {e}")
+            logger.error(f"FAILED to fetch OpenStax content: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
 
     # Combine learner context with OpenStax source material
     if openstax_content:
@@ -449,8 +501,8 @@ async def generate_quiz(
     """
     logger.info(f"Generating quiz for topic: {topic or 'general'}")
 
-    # Get learner context (profile, preferences, misconceptions)
-    learner_context = _safe_get_combined_context()
+    # Get learner context (profile, preferences, misconceptions) - uses cache
+    learner_context = _get_cached_context()
 
     # Fetch OpenStax content for the topic
     openstax_content = ""

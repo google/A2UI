@@ -541,11 +541,8 @@ export class A2AClient {
               },
             },
           ],
-          source: {
-            provider: "OpenStax Biology for AP Courses",
-            title: "Chapter 6: Metabolism",
-            url: "https://openstax.org/books/biology-ap-courses/pages/6-introduction",
-          },
+          // Note: This is fallback content shown when Agent Engine fails.
+          // The actual topic-specific source comes from the Agent Engine response.
         };
 
       default:

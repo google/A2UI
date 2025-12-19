@@ -13,8 +13,10 @@ import json
 import logging
 import os
 import re
+import time
 import xml.etree.ElementTree as ET
-from typing import Optional
+from concurrent.futures import ThreadPoolExecutor
+from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +29,21 @@ GITHUB_RAW_BASE = "https://raw.githubusercontent.com/openstax/osbooks-biology-bu
 
 # CNXML namespace
 CNXML_NS = {"cnxml": "http://cnx.rice.edu/cnxml"}
+
+# ============================================================================
+# MODULE CONTENT CACHING
+# ============================================================================
+
+# Module cache with TTL - caches parsed content to avoid re-fetching
+_MODULE_CACHE: dict[str, Tuple[str, float]] = {}
+_MODULE_CACHE_TTL = 3600  # 1 hour (content rarely changes)
+
+
+def clear_module_cache() -> None:
+    """Clear the module cache. Useful for testing."""
+    global _MODULE_CACHE
+    _MODULE_CACHE = {}
+    logger.info("Module cache cleared")
 
 
 def parse_cnxml_to_text(cnxml_content: str) -> str:
@@ -219,9 +236,41 @@ def fetch_module_content(module_id: str, parse: bool = True) -> Optional[str]:
     return content
 
 
+def fetch_module_content_cached(module_id: str, parse: bool = True) -> Optional[str]:
+    """
+    Fetch a module's content with TTL-based caching.
+
+    This wraps fetch_module_content with caching to avoid re-fetching
+    the same content within the TTL period.
+
+    Args:
+        module_id: The module ID (e.g., "m62767")
+        parse: If True, parse CNXML to plain text. If False, return raw CNXML.
+
+    Returns:
+        Module content as text, or None if not found.
+    """
+    cache_key = f"{module_id}_{parse}"
+    now = time.time()
+
+    if cache_key in _MODULE_CACHE:
+        content, cached_at = _MODULE_CACHE[cache_key]
+        if now - cached_at < _MODULE_CACHE_TTL:
+            logger.debug(f"Cache hit for module {module_id}")
+            return content
+
+    # Cache miss - fetch fresh
+    content = fetch_module_content(module_id, parse)
+    if content:
+        _MODULE_CACHE[cache_key] = (content, now)
+        logger.debug(f"Cached module {module_id}")
+
+    return content
+
+
 def fetch_chapter_content(chapter_slug: str) -> Optional[dict]:
     """
-    Fetch all content for a chapter by fetching its modules.
+    Fetch all content for a chapter by fetching its modules in parallel.
 
     Args:
         chapter_slug: The chapter slug (e.g., "6-4-atp-adenosine-triphosphate")
@@ -243,12 +292,26 @@ def fetch_chapter_content(chapter_slug: str) -> Optional[dict]:
     module_ids = CHAPTER_TO_MODULES[chapter_slug]
     title = OPENSTAX_CHAPTERS.get(chapter_slug, chapter_slug)
 
-    # Fetch content from all modules
+    # Fetch content from all modules in parallel with caching
     content_parts = []
-    for module_id in module_ids:
-        module_content = fetch_module_content(module_id)
-        if module_content:
-            content_parts.append(module_content)
+    if len(module_ids) > 1:
+        # Use parallel fetching for multiple modules
+        with ThreadPoolExecutor(max_workers=min(len(module_ids), 5)) as executor:
+            futures = {executor.submit(fetch_module_content_cached, mid): mid
+                       for mid in module_ids}
+            for future in futures:
+                try:
+                    result = future.result()
+                    if result:
+                        content_parts.append(result)
+                except Exception as e:
+                    logger.warning(f"Failed to fetch module: {e}")
+    else:
+        # Single module - no need for threading overhead
+        for module_id in module_ids:
+            module_content = fetch_module_content_cached(module_id)
+            if module_content:
+                content_parts.append(module_content)
 
     if not content_parts:
         logger.warning(f"No content fetched for chapter: {chapter_slug}")
@@ -265,7 +328,7 @@ def fetch_chapter_content(chapter_slug: str) -> Optional[dict]:
 
 def fetch_multiple_chapters(chapter_slugs: list[str]) -> list[dict]:
     """
-    Fetch content for multiple chapters (synchronous version).
+    Fetch content for multiple chapters in parallel.
 
     Args:
         chapter_slugs: List of chapter slugs to fetch.
@@ -273,11 +336,27 @@ def fetch_multiple_chapters(chapter_slugs: list[str]) -> list[dict]:
     Returns:
         List of chapter content dicts.
     """
+    if not chapter_slugs:
+        return []
+
+    if len(chapter_slugs) == 1:
+        # Single chapter - no need for threading overhead
+        chapter = fetch_chapter_content(chapter_slugs[0])
+        return [chapter] if chapter else []
+
+    # Parallel fetch for multiple chapters
     results = []
-    for slug in chapter_slugs:
-        chapter = fetch_chapter_content(slug)
-        if chapter:
-            results.append(chapter)
+    with ThreadPoolExecutor(max_workers=min(len(chapter_slugs), 3)) as executor:
+        futures = {executor.submit(fetch_chapter_content, slug): slug
+                   for slug in chapter_slugs}
+        for future in futures:
+            try:
+                result = future.result()
+                if result:
+                    results.append(result)
+            except Exception as e:
+                logger.warning(f"Failed to fetch chapter: {e}")
+
     return results
 
 
@@ -298,11 +377,132 @@ async def fetch_multiple_chapters_async(chapter_slugs: list[str]) -> list[dict]:
     return await asyncio.to_thread(fetch_multiple_chapters, chapter_slugs)
 
 
+async def fetch_modules_for_topic(topic: str, max_modules: int = 3) -> dict:
+    """
+    Search for relevant modules using keyword matching and fetch their content.
+
+    This is the NEW module-based approach that fetches individual modules
+    instead of entire chapters, resulting in:
+    - Faster fetches (smaller content chunks)
+    - More relevant content (specific modules vs entire chapters)
+
+    Args:
+        topic: The user's topic/question
+        max_modules: Maximum number of modules to fetch
+
+    Returns:
+        Dict with matched modules and their content.
+    """
+    logger.info("=" * 60)
+    logger.info("FETCH_MODULES_FOR_TOPIC CALLED")
+    logger.info(f"Topic: {topic}")
+    logger.info(f"Max modules: {max_modules}")
+    logger.info("=" * 60)
+
+    from .openstax_modules import search_modules, get_source_citation, MODULE_INDEX, get_module_url
+
+    # Search for matching modules using keyword matching
+    logger.info("Step 1: Searching for modules using keyword matching...")
+    matched_modules = search_modules(topic, max_results=max_modules)
+    logger.info(f"Keyword matching found {len(matched_modules)} modules: {[m.get('id', m.get('title', 'unknown')) for m in matched_modules]}")
+
+    if not matched_modules:
+        # Fall back to LLM matching for chapter, then get first module
+        logger.info("Step 2: No keyword matches - falling back to LLM matching...")
+        chapter_slugs = await _llm_match_topic_to_chapters(topic, 1)
+        logger.info(f"LLM matched chapters: {chapter_slugs}")
+        if chapter_slugs:
+            # Import chapter-to-module mapping as fallback
+            from .openstax_chapters import CHAPTER_TO_MODULES
+            if chapter_slugs[0] in CHAPTER_TO_MODULES:
+                module_ids = CHAPTER_TO_MODULES[chapter_slugs[0]][:max_modules]
+                logger.info(f"Found modules from chapter mapping: {module_ids}")
+                for mid in module_ids:
+                    if mid in MODULE_INDEX:
+                        info = MODULE_INDEX[mid]
+                        matched_modules.append({
+                            "id": mid,
+                            "title": info["title"],
+                            "unit": info["unit"],
+                            "chapter": info["chapter"],
+                            "url": get_module_url(mid),
+                        })
+            else:
+                logger.warning(f"Chapter {chapter_slugs[0]} not found in CHAPTER_TO_MODULES mapping")
+        else:
+            logger.warning("LLM matching also returned no chapters!")
+
+    if not matched_modules:
+        logger.error(f"NO MODULES FOUND for topic: {topic}")
+        logger.error("Both keyword matching and LLM fallback failed!")
+        return {
+            "topic": topic,
+            "matched_modules": [],
+            "combined_content": "",
+            "sources": [],
+        }
+
+    logger.info(f"Final matched modules: {[m.get('id') for m in matched_modules]}")
+
+    # Fetch module content in parallel
+    module_ids = [m["id"] for m in matched_modules]
+
+    if len(module_ids) > 1:
+        # Parallel fetch for multiple modules
+        contents = []
+        with ThreadPoolExecutor(max_workers=min(len(module_ids), 5)) as executor:
+            futures = {executor.submit(fetch_module_content_cached, mid): mid
+                       for mid in module_ids}
+            for future in futures:
+                try:
+                    result = future.result()
+                    if result:
+                        mid = futures[future]
+                        contents.append((mid, result))
+                except Exception as e:
+                    logger.warning(f"Failed to fetch module: {e}")
+    else:
+        # Single module - no threading overhead
+        contents = []
+        for mid in module_ids:
+            content = fetch_module_content_cached(mid)
+            if content:
+                contents.append((mid, content))
+
+    if not contents:
+        logger.warning(f"No content fetched for topic: {topic}")
+        return {
+            "topic": topic,
+            "matched_modules": matched_modules,
+            "combined_content": "",
+            "sources": [],
+        }
+
+    # Build combined content with source attribution
+    combined_parts = []
+    for mid, content in contents:
+        if mid in MODULE_INDEX:
+            info = MODULE_INDEX[mid]
+            url = get_module_url(mid)
+            combined_parts.append(f"## {info['title']}\nSource: {url}\n\n{content}")
+
+    # Generate source citation
+    source_citation = get_source_citation(module_ids)
+
+    return {
+        "topic": topic,
+        "matched_modules": matched_modules,
+        "combined_content": "\n\n===\n\n".join(combined_parts),
+        "sources": [source_citation],
+    }
+
+
 async def fetch_content_for_topic(topic: str, max_chapters: int = 3) -> dict:
     """
     Use LLM to match a topic to relevant chapters, then fetch their content.
 
     This is the main entry point for getting OpenStax content based on a user query.
+    Now delegates to module-based fetching for better performance.
 
     Args:
         topic: The user's topic/question
@@ -311,40 +511,18 @@ async def fetch_content_for_topic(topic: str, max_chapters: int = 3) -> dict:
     Returns:
         Dict with matched chapters and their content.
     """
-    from .openstax_chapters import OPENSTAX_CHAPTERS, KEYWORD_HINTS
+    # Use the new module-based fetching for better performance
+    result = await fetch_modules_for_topic(topic, max_modules=max_chapters)
 
-    # First, try keyword matching for quick results
-    topic_lower = topic.lower()
-    matched_slugs = set()
-
-    for keyword, slugs in KEYWORD_HINTS.items():
-        if keyword in topic_lower:
-            matched_slugs.update(slugs)
-
-    # If we have matches, use them
-    if matched_slugs:
-        chapter_slugs = list(matched_slugs)[:max_chapters]
-    else:
-        # Fall back to LLM matching
-        chapter_slugs = await _llm_match_topic_to_chapters(topic, max_chapters)
-
-    # Fetch the content using async version to avoid blocking the event loop
-    chapters = await fetch_multiple_chapters_async(chapter_slugs)
-
+    # Convert module format to chapter format for backward compatibility
     return {
-        "topic": topic,
+        "topic": result["topic"],
         "matched_chapters": [
-            {"slug": c["chapter_slug"], "title": c["title"], "url": c["url"]}
-            for c in chapters
+            {"slug": m.get("id", ""), "title": m.get("title", ""), "url": m.get("url", "")}
+            for m in result.get("matched_modules", [])
         ],
-        "combined_content": "\n\n===\n\n".join([
-            f"## {c['title']}\nSource: {c['url']}\n\n{c['content']}"
-            for c in chapters
-        ]),
-        "sources": [
-            {"provider": "OpenStax Biology for AP Courses", "title": c["title"], "url": c["url"]}
-            for c in chapters
-        ],
+        "combined_content": result.get("combined_content", ""),
+        "sources": result.get("sources", []),
     }
 
 

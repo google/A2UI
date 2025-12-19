@@ -123,8 +123,12 @@ const OPENSTAX_SECTIONS: Record<string, { slug: string; title: string }> = {
   // Cell structure
   "cell membrane": { slug: "5-1-components-and-structure", title: "Cell Membrane Components and Structure" },
   "transport": { slug: "5-2-passive-transport", title: "Passive Transport" },
-  // Default
-  "default": { slug: "6-introduction", title: "Chapter 6: Metabolism" },
+  // Reproduction
+  "reproductive system": { slug: "34-1-reproduction-methods", title: "Reproduction Methods" },
+  "reproductive": { slug: "34-1-reproduction-methods", title: "Reproduction Methods" },
+  "reproduction": { slug: "34-1-reproduction-methods", title: "Reproduction Methods" },
+  // Default - intentionally empty to avoid wrong citations
+  "default": { slug: "", title: "Biology Content" },
 };
 
 function getOpenStaxSource(topic: string): { provider: string; title: string; url: string } {
@@ -177,9 +181,21 @@ interface ChatRequest {
   userMessage: string;
 }
 
-// Get Google Cloud access token
+// =============================================================================
+// ACCESS TOKEN CACHING
+// =============================================================================
+let cachedAccessToken: { token: string; expiresAt: number } | null = null;
+
+// Get Google Cloud access token with caching
 // In Cloud Run, use the metadata server. Locally, use gcloud CLI.
 async function getAccessToken(): Promise<string> {
+  // Check cache first
+  const now = Date.now();
+  if (cachedAccessToken && cachedAccessToken.expiresAt > now + 60000) {
+    // Return cached token if it has more than 1 minute of validity
+    return cachedAccessToken.token;
+  }
+
   // Try metadata server first (Cloud Run environment)
   try {
     const metadataUrl = "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token";
@@ -188,6 +204,12 @@ async function getAccessToken(): Promise<string> {
     });
     if (response.ok) {
       const data = await response.json();
+      // Cache the token (typical expiry is 1 hour, we use 58 minutes to be safe)
+      cachedAccessToken = {
+        token: data.access_token,
+        expiresAt: now + 3480000, // 58 minutes
+      };
+      console.log("[API Server] Cached access token from metadata server");
       return data.access_token;
     }
   } catch {
@@ -199,6 +221,12 @@ async function getAccessToken(): Promise<string> {
     const token = execSync("gcloud auth print-access-token", {
       encoding: "utf-8",
     }).trim();
+    // Cache the token
+    cachedAccessToken = {
+      token: token,
+      expiresAt: now + 3480000, // 58 minutes
+    };
+    console.log("[API Server] Cached access token from gcloud CLI");
     return token;
   } catch (error) {
     console.error("[API Server] Failed to get access token:", error);
@@ -580,6 +608,126 @@ async function handleChatRequest(request: ChatRequest): Promise<{ text: string }
   }
 }
 
+// =============================================================================
+// COMBINED INTENT + RESPONSE ENDPOINT
+// Combines intent detection and response generation in a single LLM call
+// =============================================================================
+interface CombinedChatRequest {
+  systemPrompt: string;
+  messages: ChatMessage[];
+  userMessage: string;
+  recentContext?: string;
+}
+
+interface CombinedChatResponse {
+  intent: string;
+  text: string;
+  keywords?: string;  // Comma-separated keywords for content-generating intents
+}
+
+async function handleCombinedChatRequest(request: CombinedChatRequest): Promise<CombinedChatResponse> {
+  const { systemPrompt, messages, userMessage, recentContext } = request;
+
+  const combinedSystemPrompt = `${systemPrompt}
+
+## RESPONSE FORMAT
+You MUST respond with a valid JSON object. The format depends on the intent:
+
+For content-generating intents (flashcards, podcast, video, quiz):
+{
+  "intent": "<one of: flashcards, podcast, video, quiz>",
+  "text": "<your conversational response>",
+  "keywords": "<comma-separated biology keywords for content retrieval>"
+}
+
+For non-content intents (greeting, general):
+{
+  "intent": "<greeting or general>",
+  "text": "<your conversational response>"
+}
+
+## INTENT CLASSIFICATION
+First analyze the user's message and conversation context to determine their intent:
+- flashcards: user wants study cards, review cards, flashcards, or is confirming a flashcard offer
+- podcast: user wants audio content, podcast, or to listen to something
+- video: user wants to watch something or see a video
+- quiz: user wants to be tested or take a quiz
+- greeting: user is just saying hello/hi
+- general: questions, explanations, or general conversation
+
+IMPORTANT: Consider the conversation context. If the user previously discussed flashcards/podcasts/videos and says things like "yes", "sure", "do it", "show me" - they are CONFIRMING a previous offer.
+
+## KEYWORDS (for flashcards, podcast, video, quiz only)
+When the intent is content-generating, you MUST include a "keywords" field with:
+1. The CORRECTED topic (fix any spelling mistakes the user made)
+2. Related biology terms that would help find relevant textbook content
+3. Specific subtopics within that subject area
+
+Examples:
+- User says "endicrone system" → keywords: "endocrine, hormone, pituitary, thyroid, adrenal, pancreas, metabolism, homeostasis"
+- User says "ATP eneryg" → keywords: "ATP, adenosine triphosphate, energy, bond, hydrolysis, ADP, phosphate"
+- User says "sell division" → keywords: "cell division, mitosis, meiosis, chromosome, DNA replication, cytokinesis"
+
+The keywords help the content retrieval system find the right OpenStax textbook sections even when the user misspells words.
+
+Then provide an appropriate conversational response following your tutor persona.`;
+
+  // Convert messages to Gemini format
+  const contents = messages.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: m.parts,
+  }));
+
+  // Add recent context if provided
+  let contextualMessage = userMessage;
+  if (recentContext) {
+    contextualMessage = `Recent conversation:\n${recentContext}\n\nCurrent message: "${userMessage}"`;
+  }
+
+  contents.push({
+    role: "user",
+    parts: [{ text: contextualMessage }],
+  });
+
+  try {
+    const response = await genai.models.generateContent({
+      model: MODEL,
+      contents,
+      config: {
+        systemInstruction: combinedSystemPrompt,
+        responseMimeType: "application/json",
+      },
+    });
+
+    const responseText = response.text?.trim() || "";
+    console.log("[API Server] Combined response:", responseText.substring(0, 200));
+
+    try {
+      const parsed = JSON.parse(responseText);
+      const result: CombinedChatResponse = {
+        intent: parsed.intent || "general",
+        text: parsed.text || "I apologize, I couldn't generate a response.",
+      };
+      // Include keywords if present (for content-generating intents)
+      if (parsed.keywords) {
+        result.keywords = parsed.keywords;
+        console.log("[API Server] Keywords for content retrieval:", parsed.keywords);
+      }
+      return result;
+    } catch (parseError) {
+      console.error("[API Server] Failed to parse combined response:", parseError);
+      // Fallback: return general intent with raw text
+      return {
+        intent: "general",
+        text: responseText || "I apologize, I couldn't generate a response.",
+      };
+    }
+  } catch (error) {
+    console.error("[API Server] Error calling Gemini for combined request:", error);
+    throw error;
+  }
+}
+
 function parseBody(req: any): Promise<any> {
   return new Promise((resolve, reject) => {
     let body = "";
@@ -639,7 +787,11 @@ async function main() {
     if (req.url === "/a2ui-agent/a2a/query" && req.method === "POST") {
       try {
         const body = await parseBody(req);
-        console.log("[API Server] A2A query received:", body.message);
+        console.log("[API Server] ========================================");
+        console.log("[API Server] A2A QUERY - REQUESTING A2UI CONTENT");
+        console.log("[API Server] Full message:", body.message);
+        console.log("[API Server] Session ID:", body.session_id);
+        console.log("[API Server] ========================================");
 
         // LOG: Client → Server request for A2UI content
         logMessage("CLIENT_TO_SERVER", "/a2ui-agent/a2a/query", {
@@ -651,6 +803,10 @@ async function main() {
         const parts = (body.message || "flashcards").split(":");
         const format = parts[0].trim();
         const context = parts.slice(1).join(":").trim();
+
+        console.log("[API Server] Parsed format:", format);
+        console.log("[API Server] Parsed context (keywords):", context);
+        console.log("[API Server] This context will be sent to Agent Engine for topic matching");
 
         let result = await queryAgentEngine(format, context);
 
@@ -717,6 +873,52 @@ async function main() {
         res.end(JSON.stringify(result));
       } catch (error: any) {
         console.error("[API Server] Error:", error);
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+      return;
+    }
+
+    // Combined chat endpoint - performs intent detection AND response in one LLM call
+    if (req.url === "/api/chat-with-intent" && req.method === "POST") {
+      try {
+        const body = await parseBody(req);
+        console.log("[API Server] ========================================");
+        console.log("[API Server] COMBINED CHAT REQUEST RECEIVED");
+        console.log("[API Server] User message:", body.userMessage);
+        console.log("[API Server] Conversation history length:", body.messages?.length || 0);
+        console.log("[API Server] ========================================");
+
+        // LOG: Client → Server combined request
+        logMessage("CLIENT_TO_SERVER", "/api/chat-with-intent", {
+          description: "Browser client requesting combined intent+response (latency optimization)",
+          userMessage: body.userMessage,
+          recentContext: body.recentContext,
+          conversationLength: body.messages?.length || 0,
+          fullMessages: body.messages,
+        });
+
+        const result = await handleCombinedChatRequest(body);
+
+        console.log("[API Server] ========================================");
+        console.log("[API Server] GEMINI COMBINED RESPONSE:");
+        console.log("[API Server] Intent:", result.intent);
+        console.log("[API Server] Keywords:", result.keywords || "(none - not a content intent)");
+        console.log("[API Server] Text:", result.text.substring(0, 200));
+        console.log("[API Server] ========================================");
+
+        // LOG: Server → Client combined response
+        logMessage("SERVER_TO_CLIENT", "/api/chat-with-intent", {
+          description: "Combined intent detection and response in single LLM call",
+          intent: result.intent,
+          keywords: result.keywords,
+          responseText: result.text,
+        });
+
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(result));
+      } catch (error: any) {
+        console.error("[API Server] Combined chat error:", error);
         res.writeHead(500, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: error.message }));
       }

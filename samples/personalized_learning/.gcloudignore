@@ -27,8 +27,7 @@ node_modules/
 .git/
 .gitignore
 
-# Local config
-.env
+# Local config (but NOT .env - needed for Vite build to get VITE_FIREBASE_* vars)
 .env.local
 *.log
 
