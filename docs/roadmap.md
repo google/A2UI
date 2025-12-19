@@ -80,7 +80,7 @@ Many research projects across multiple Google teams, including integration into 
 - Angular renderer (thanks Angular team!)
 - Web components (Lit) renderer (thanks Opal team & friends!)
 - AG UI / CopilotKit integration (thanks CopilotKit team!)
-- Github public release (Apache 2.0)
+- GitHub public release (Apache 2.0)
 
 ## Upcoming Milestones
 
