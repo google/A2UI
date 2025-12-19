@@ -122,7 +122,7 @@ async function fetchWithCustomHeader(url: string | URL | Request, init?: Request
 
 async function createOrGetClient() {
   // Create a client pointing to the agent's Agent Card URL.
-  client ??= await A2AClient.fromCardUrl('http://localhost:10002/.well-known/agent-card.json', {
+  client ??= await A2AClient.fromCardUrl('http://localhost:10003/.well-known/agent-card.json', {
     fetchImpl: fetchWithCustomHeader,
   });
 
