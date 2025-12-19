@@ -1,0 +1,481 @@
+/**
+ * A2UI Demo Application Styles
+ */
+
+.demo-container {
+  display: flex;
+  height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Sidebar */
+.demo-sidebar {
+  width: 220px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.demo-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.demo-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.demo-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.demo-nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.demo-nav-item {
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  text-align: left;
+  text-transform: capitalize;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.demo-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.demo-nav-item.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-weight: 500;
+}
+
+.demo-options {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.demo-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.demo-checkbox input {
+  accent-color: #667eea;
+}
+
+.demo-theme-toggle {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.demo-theme-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.demo-theme-btn {
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.demo-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.demo-theme-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 500;
+}
+
+.demo-description {
+  padding: 12px 20px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.demo-description p {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+/* Main Content */
+.demo-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.demo-render-area {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-render-area .a2ui-root {
+  flex: 1;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+/* Action Log */
+.demo-action-log {
+  height: 140px;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 16px 20px;
+  overflow: auto;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  border-top: 1px solid #313244;
+}
+
+.demo-action-log-header {
+  color: #6c7086;
+  margin-bottom: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.demo-action-log-empty {
+  color: #585b70;
+  font-style: italic;
+}
+
+.demo-action-log-entry {
+  margin-bottom: 6px;
+  padding: 4px 0;
+}
+
+.action-type {
+  color: #89dceb;
+}
+
+.action-name {
+  color: #a6e3a1;
+}
+
+.action-params {
+  color: #9399b2;
+}
+
+/* JSON Panel */
+.demo-json-panel {
+  width: 400px;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  overflow: auto;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  border-left: 1px solid #313244;
+}
+
+.demo-json-section {
+  padding: 16px;
+  border-bottom: 1px solid #313244;
+}
+
+.demo-json-section h3 {
+  margin: 0 0 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #89b4fa;
+  font-weight: 500;
+}
+
+.demo-json-section pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.6;
+  color: #a6adc8;
+}
+
+/* =============================================================================
+ * PROTOCOL DEMO STYLES
+ * ============================================================================= */
+
+.protocol-demo {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f5f5f7;
+}
+
+.protocol-controls {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  color: #fff;
+  padding: 20px 24px;
+}
+
+.protocol-controls h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.protocol-description {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 600px;
+}
+
+.protocol-options {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.protocol-option {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.protocol-option label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.protocol-option select,
+.protocol-option input[type="range"] {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.protocol-option input[type="range"] {
+  padding: 0;
+  width: 200px;
+}
+
+.protocol-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.protocol-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.protocol-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.protocol-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.protocol-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.protocol-btn.primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.protocol-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 300px 300px;
+  gap: 1px;
+  background: #e5e5e5;
+  overflow: hidden;
+}
+
+.protocol-surfaces {
+  background: #fff;
+  padding: 20px;
+  overflow: auto;
+}
+
+.protocol-surfaces h3,
+.protocol-log h3,
+.protocol-actions h3 {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.protocol-empty {
+  color: #999;
+  font-style: italic;
+  font-size: 13px;
+  padding: 20px;
+  text-align: center;
+}
+
+.protocol-surface-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.protocol-surface-wrapper {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.protocol-surface-label {
+  background: #f5f5f5;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.protocol-surface-wrapper .a2ui-surface {
+  padding: 16px;
+}
+
+.protocol-log,
+.protocol-actions {
+  background: #1e1e2e;
+  padding: 16px;
+  overflow: auto;
+  color: #cdd6f4;
+}
+
+.protocol-log h3,
+.protocol-actions h3 {
+  color: #89b4fa;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.protocol-log-content {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 11px;
+}
+
+.protocol-message {
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.protocol-message.beginRendering {
+  border-left: 3px solid #a6e3a1;
+}
+
+.protocol-message.surfaceUpdate {
+  border-left: 3px solid #89dceb;
+}
+
+.protocol-message.dataModelUpdate {
+  border-left: 3px solid #f9e2af;
+}
+
+.protocol-message.deleteSurface {
+  border-left: 3px solid #f38ba8;
+}
+
+.msg-type {
+  font-weight: 600;
+  color: #89dceb;
+}
+
+.msg-surface {
+  color: #cba6f7;
+}
+
+.msg-detail {
+  color: #6c7086;
+  font-size: 10px;
+}
+
+.protocol-action {
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  border-left: 3px solid #cba6f7;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-surface {
+  color: #cba6f7;
+}
+
+.action-name {
+  color: #a6e3a1;
+  font-weight: 600;
+}
+
+.action-context {
+  color: #6c7086;
+  font-size: 10px;
+}
