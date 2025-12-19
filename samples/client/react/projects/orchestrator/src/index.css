@@ -1,0 +1,62 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #1e293b;
+  --bg-secondary: #0f172a;
+  --bg-tertiary: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-color: #334155;
+  --accent-primary: #22c55e;
+  --accent-secondary: #16a34a;
+  --accent-primary-alpha: rgba(34, 197, 94, 0.2);
+  --input-bg: #1e293b;
+  --input-area-bg: #1e293b;
+  --input-disabled-bg: #334155;
+  --card-bg: #1e293b;
+  --code-bg: #334155;
+  --chat-history-bg: transparent;
+  --canvas-bg: #1e293b;
+  --agent-avatar-bg: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  --user-avatar-bg: #334155;
+  --user-avatar-color: #f1f5f9;
+  --send-button-bg: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  --close-button-bg: #334155;
+  --close-button-hover-bg: #475569;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

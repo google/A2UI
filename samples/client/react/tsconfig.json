@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./projects/lib" },
+    { "path": "./projects/contact" },
+    { "path": "./projects/restaurant" },
+    { "path": "./projects/rizzcharts" },
+    { "path": "./projects/orchestrator" },
+    { "path": "./projects/gallery" },
+    { "path": "./projects/a2a-chat-canvas" }
+  ]
+}
