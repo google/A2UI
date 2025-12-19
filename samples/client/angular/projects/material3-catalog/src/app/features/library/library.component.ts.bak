@@ -35,7 +35,6 @@ export class LibraryComponent {
     this.dialog.nativeElement.showModal();
   }
 
-
   closeDialog() {
     this.dialog.nativeElement.close();
   }
@@ -323,31 +322,31 @@ export class LibraryComponent {
       }),
     },
     {
-      name: 'MdIcon',
+      name: 'Material 3',
       tag: 'Material',
-      surface: this.createSingleComponentSurface('Row', {
+      surface: this.createSingleComponentSurface('Column', {
         children: [
-          this.createComponent('MdIcon', { fontIcon: { literalString: 'home' } }),
-          this.createComponent('MdIcon', { fontIcon: { literalString: 'settings' } }),
-          this.createComponent('MdIcon', { fontIcon: { literalString: 'favorite' } })
-        ],
-        distribution: 'space-around'
-      })
-    },
-    {
-      name: 'MdFilledButton',
-      tag: 'Material',
-      surface: this.createSingleComponentSurface('MdFilledButton', {
-        disabled: { literalBoolean: false },
-        label: { literalString: 'Filled Button' }
-      })
-    },
-    {
-      name: 'MdCheckbox',
-      tag: 'Material',
-      surface: this.createSingleComponentSurface('MdCheckbox', {
-        label: { literalString: 'Checkbox' },
-        checked: { literalBoolean: true }
+          this.createComponent('Heading', { text: { literalString: 'Material 3 Components' } }),
+          this.createComponent('Row', {
+            children: [
+              this.createComponent('MdIcon', {
+                fontIcon: { literalString: 'home' }
+              }),
+              this.createComponent('MdIcon', {
+                fontIcon: { literalString: 'settings' }
+              })
+            ],
+            distribution: 'space-around'
+          }),
+          this.createComponent('MdFilledButton', {
+            disabled: { literalBoolean: false },
+            child: this.createComponent('Text', { text: { literalString: 'Filled Button' } })
+          }),
+          this.createComponent('MdCheckbox', {
+            label: { literalString: 'Checkbox' },
+            checked: { literalBoolean: true }
+          })
+        ]
       })
     },
     {
@@ -588,36 +587,6 @@ export class LibraryComponent {
           }),
         },
       ],
-    },
-    {
-      name: 'Material',
-      samples: [
-        {
-          name: 'MdIcon',
-          surface: this.createSingleComponentSurface('Row', {
-            children: [
-              this.createComponent('MdIcon', { fontIcon: { literalString: 'home' } }),
-              this.createComponent('MdIcon', { fontIcon: { literalString: 'settings' } }),
-              this.createComponent('MdIcon', { fontIcon: { literalString: 'favorite' } })
-            ],
-            distribution: 'space-around'
-          })
-        },
-        {
-          name: 'MdFilledButton',
-          surface: this.createSingleComponentSurface('MdFilledButton', {
-            disabled: { literalBoolean: false },
-            label: { literalString: 'Filled Button' }
-          })
-        },
-        {
-          name: 'MdCheckbox',
-          surface: this.createSingleComponentSurface('MdCheckbox', {
-            label: { literalString: 'Checkbox' },
-            checked: { literalBoolean: true }
-          })
-        },
-      ]
     },
     {
       name: 'Custom',

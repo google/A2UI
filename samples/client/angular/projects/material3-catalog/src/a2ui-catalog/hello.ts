@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'a2ui-hello',
@@ -13,4 +13,8 @@ import { Component } from '@angular/core';
     }
   `],
 })
-export class Hello {}
+export class Hello {
+  @Input() component: any;
+  @Input() surfaceId: string = '';
+  @Input() weight: any;
+}
