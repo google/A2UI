@@ -30,7 +30,7 @@
   "private": true,
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",
-    "@a2ui/lit": "file:../../../renderers/lit",
+    "@a2ui/lit": "^0.8.1",
     "@angular/cdk": "^20.2.10",
     "@angular/common": "^21.0.3",
     "@angular/compiler": "^21.0.3",
@@ -81,7 +81,6 @@
     "vitest": "^4.0.15"
   },
   "workspaces": [
-    "projects/*",
-    "../../../renderers/lit"
+    "projects/*"
   ]
 }
