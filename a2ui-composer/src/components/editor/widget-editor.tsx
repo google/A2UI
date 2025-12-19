@@ -3,10 +3,12 @@
 import { useState, useCallback } from "react";
 import {
   CopilotChat,
+  JsonSerializable,
   useAgentContext,
   useFrontendTool,
 } from "@copilotkit/react-core/v2";
 import { z } from "zod";
+import { parseRobustJSON } from "@/lib/json-parser";
 import { EditorHeader } from "./editor-header";
 import { CodeEditor } from "./code-editor";
 import { PreviewPane } from "./preview-pane";
@@ -18,7 +20,7 @@ import {
 } from "@/components/ui/resizable";
 import { useWidgets } from "@/contexts/widgets-context";
 import type { Widget, DataState } from "@/types/widget";
-import type { ComponentInstance } from "@copilotkit/a2ui-renderer";
+import type { ComponentInstance } from "@copilotkitnext/a2ui-renderer";
 
 interface WidgetEditorProps {
   widget: Widget;
@@ -109,12 +111,12 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
 
   useAgentContext({
     description: "The current data",
-    value: activeData,
+    value: activeData as Record<string, JsonSerializable>,
   });
 
   useAgentContext({
     description: "The current components",
-    value: components,
+    value: components as unknown as JsonSerializable[],
   });
 
   // Tool for AI to edit the widget
@@ -126,21 +128,61 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
       data: z
         .string()
         .optional()
-        .describe("The new data object for the widget in JSON. Optional."),
+        .describe(
+          "The new data object for the widget as a JSON string, not a raw JSON object. Optional.",
+        ),
       components: z
         .string()
         .optional()
-        .describe("The new components array for the widget in JSON. Optional."),
+        .describe(
+          "The new components array for the widget as a JSON string, not a raw JSON object. Optional.",
+        ),
     }),
+    render: ({ args, status }) => {
+      const isBuilding = status !== "complete";
+
+      return (
+        <details className="my-4">
+          <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground transition-colors px-2 py-1">
+            {isBuilding ? (
+              <span className="animate-pulse mb-4">
+                Generating component...
+              </span>
+            ) : (
+              <span>View details</span>
+            )}
+          </summary>
+          <pre className="mt-2 text-xs bg-card border border-border rounded-lg p-4 overflow-auto max-h-48 w-full font-mono text-card-foreground shadow-sm">
+            {JSON.stringify(args, null, 2)}
+          </pre>
+        </details>
+      );
+    },
     handler: async ({ data, components: newComponents }) => {
-      if (data !== undefined) {
-        handleUpdateDataState(activeDataStateIndex, JSON.parse(data));
+      try {
+        if (data !== undefined) {
+          handleUpdateDataState(
+            activeDataStateIndex,
+            parseRobustJSON(data) as Record<string, unknown>,
+          );
+        }
+        if (newComponents !== undefined) {
+          // Pretty-print the JSON for the editor
+          const prettyJson = JSON.stringify(
+            parseRobustJSON(newComponents),
+            null,
+            2,
+          );
+          handleComponentsChange(prettyJson);
+        }
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+        return {
+          success: false,
+          error: `Invalid JSON, make sure it is stringified: ${error}`,
+        };
       }
-      if (newComponents !== undefined) {
-        // Pretty-print the JSON for the editor
-        const prettyJson = JSON.stringify(JSON.parse(newComponents), null, 2);
-        handleComponentsChange(prettyJson);
-      }
+
       return {
         success: true,
         updated: {
@@ -200,13 +242,13 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
       </div>
 
       {/* Right: Chat column - styled like left sidebar */}
-      <div className="w-[400px] flex-shrink-0 border-2 border-white bg-white/50 rounded-lg overflow-hidden">
+      <div className="w-[400px] shrink-0 border-2 border-white bg-white rounded-lg overflow-hidden">
         <CopilotChat
           threadId={widget.id}
           className="h-full"
           feather={{ className: "right-0" }}
           inputProps={{
-            className: "border border-white/80 shadow-sm bg-white/50",
+            className: "border shadow-sm bg-white/50",
             sendButton: {
               className:
                 "enabled:bg-gradient-to-br enabled:from-violet-500 enabled:to-indigo-600 enabled:hover:from-violet-600 enabled:hover:to-indigo-700 enabled:border-0",

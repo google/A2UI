@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Copy, Check, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { Widget } from '@/types/widget';
+import { useState } from "react";
+import { Copy, Check, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { Widget } from "@/types/widget";
 
 interface EditorHeaderProps {
   widget: Widget;
@@ -21,9 +21,9 @@ export function EditorHeader({ widget }: EditorHeaderProps) {
 
   const handleDownload = () => {
     const json = JSON.stringify(widget.components, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `a2ui-${widget.id}.json`;
     document.body.appendChild(a);
@@ -39,7 +39,7 @@ export function EditorHeader({ widget }: EditorHeaderProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="gap-2 text-muted-foreground"
+          className="gap-2 text-muted-foreground cursor-pointer"
           onClick={handleCopyJson}
         >
           {copied ? (
@@ -47,11 +47,11 @@ export function EditorHeader({ widget }: EditorHeaderProps) {
           ) : (
             <Copy className="h-4 w-4" />
           )}
-          {copied ? 'Copied!' : 'Copy JSON'}
+          {copied ? "Copied!" : "Copy JSON"}
         </Button>
         <Button
           size="sm"
-          className="gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700"
+          className="gap-2 rounded-full bg-emerald-600 hover:bg-emerald-700 cursor-pointer"
           onClick={handleDownload}
         >
           <Download className="h-4 w-4" />

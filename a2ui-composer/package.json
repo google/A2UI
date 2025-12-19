@@ -24,10 +24,11 @@
     "hono": "^4.6.18",
     "localforage": "^1.10.0",
     "lucide-react": "^0.556.0",
-    "next": "16.0.8",
+    "next": "16.0.10",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-resizable-panels": "^3.0.6",
+    "shiki": "^3.20.0",
     "tailwind-merge": "^3.4.0",
     "uuid": "^13.0.0",
     "zod": "^3.25.75"

@@ -9,16 +9,16 @@ import { A2UI_SYSTEM_PROMPT } from "../a2ui-prompt";
 
 const determineModel = () => {
   if (process.env.GEMINI_API_KEY?.trim()) {
-    return "google/gemini-3-pro-preview";
+    return "google/gemini-2.5-flash";
   }
   if (process.env.OPENAI_API_KEY?.trim()) {
     console.warn(
       "[CopilotKit] GEMINI_API_KEY not found, falling back to OpenAI",
     );
-    return "openai/gpt-4o";
+    return "openai/gpt-4.1-mini";
   }
   console.warn("[CopilotKit] No GEMINI_API_KEY or OPENAI_API_KEY found");
-  return "google/gemini-3-pro-preview";
+  return "google/gemini-2.5-flash";
 };
 
 const agent = new BasicAgent({
