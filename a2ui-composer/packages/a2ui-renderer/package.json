@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "typescript": "5.9.2"
