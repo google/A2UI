@@ -1,0 +1,228 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 16px;
+  position: relative;
+}
+
+.surfaces {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 24px 0;
+  animation: fadeIn 0.5s cubic-bezier(0, 0, 0.3, 1) backwards;
+}
+
+.surface {
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  animation: fadeIn 0.5s cubic-bezier(0, 0, 0.3, 1) backwards;
+}
+
+.hero-img {
+  width: 200px;
+  height: auto;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.app-title {
+  font-weight: 400;
+  font-size: 2rem;
+  color: #374151;
+}
+
+body.dark .app-title {
+  color: #f3f4f6;
+}
+
+.input-group {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.input-group input {
+  display: block;
+  flex: 1;
+  border-radius: 32px;
+  padding: 16px 24px;
+  border: 1px solid #9ca3af;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: white;
+  color: #111827;
+}
+
+body.dark .input-group input {
+  background: #1f2937;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.input-group input:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+}
+
+.input-group button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 32px;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.input-group button:hover:not(:disabled) {
+  background: #ea580c;
+}
+
+.input-group button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pending {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  animation: fadeIn 0.5s cubic-bezier(0, 0, 0.3, 1) backwards;
+  color: #6b7280;
+}
+
+body.dark .pending {
+  color: #9ca3af;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #f97316;
+  border-radius: 50%;
+  animation: rotate 1s linear infinite;
+}
+
+body.dark .spinner {
+  border-color: #374151;
+  border-top-color: #f97316;
+}
+
+.loading-text {
+  font-size: 14px;
+  animation: fadeIn 0.3s ease;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #4b5563;
+  font-size: 14px;
+  margin-top: 16px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+body.dark .back-button {
+  border-color: #4b5563;
+  color: #9ca3af;
+}
+
+.back-button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+body.dark .back-button:hover {
+  background: #374151;
+  border-color: #6b7280;
+}
+
+.theme-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #f97316;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  background: #ea580c;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
