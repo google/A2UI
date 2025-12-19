@@ -15,8 +15,12 @@
 import json
 import logging
 import os
-from typing import List
+from typing import Any, List
+from a2a.types import AgentCard
+from a2a.client.client import Consumer
 from a2a.client import A2ACardResolver
+from a2a.client.client import Client
+from a2a.client.middleware import ClientCallContext
 from a2a.extensions.common import HTTP_EXTENSION_HEADER
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.agents.llm_agent import LlmAgent

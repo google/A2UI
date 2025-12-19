@@ -30,6 +30,7 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
+from google.adk.a2a.converters.request_converter import AgentRunRequest
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension
 from a2ui.a2ui_extension import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI, STANDARD_CATALOG_ID, SUPPORTED_CATALOG_IDS_KEY, get_a2ui_agent_extension, A2UI_CLIENT_CAPABILITIES_KEY
 from google.adk.a2a.converters import event_converter
