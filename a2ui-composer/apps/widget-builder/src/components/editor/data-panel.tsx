@@ -49,6 +49,9 @@ export function DataPanel({
   };
 
   const handleTabDoubleClick = (index: number) => {
+    if (!dataStates[index]) {
+      return;
+    }
     const newName = prompt('Rename state:', dataStates[index].name);
     if (newName && newName.trim()) {
       onRenameState(index, newName.trim());
