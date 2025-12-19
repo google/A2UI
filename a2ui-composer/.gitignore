@@ -27,6 +27,7 @@ coverage
 
 # Build Outputs
 .next/
+next-env.d.ts
 out/
 build
 dist
