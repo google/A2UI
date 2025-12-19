@@ -4,13 +4,13 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { MessageProcessor } from '../../src/a2ui/processor/MessageProcessor'
+import { MessageProcessor } from '../../src/processor/MessageProcessor'
 import type {
   BeginRenderingMessage,
   SurfaceUpdateMessage,
   DataModelUpdateMessage,
   DeleteSurfaceMessage,
-} from '../../src/a2ui/processor/types'
+} from '../../src/processor/types'
 
 describe('MessageProcessor', () => {
   let processor: MessageProcessor

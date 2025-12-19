@@ -5,18 +5,18 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
-import { MessageProcessor } from '../../src/a2ui/processor/MessageProcessor'
-import { A2UISurface } from '../../src/a2ui/surface/A2UISurface'
+import { MessageProcessor } from '../../src/processor/MessageProcessor'
+import { A2UISurface } from '../../src/surface/A2UISurface'
 import type {
   BeginRenderingMessage,
   SurfaceUpdateMessage,
   DataModelUpdateMessage,
   DeleteSurfaceMessage,
   A2UIClientAction,
-} from '../../src/a2ui/processor/types'
+} from '../../src/processor/types'
 
 // Import components to register them
-import '../../src/a2ui/components/index'
+import '../../src/components/index'
 
 describe('Integration: Full Protocol Scenarios', () => {
   let processor: MessageProcessor

@@ -5,13 +5,13 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { A2UIProvider } from '../../src/a2ui/context'
-import { Text } from '../../src/a2ui/components/display/Text'
-import { Button } from '../../src/a2ui/components/interactive/Button'
-import { Card } from '../../src/a2ui/components/layout/Card'
-import { Row } from '../../src/a2ui/components/layout/Row'
-import { Column } from '../../src/a2ui/components/layout/Column'
-import { CheckBox } from '../../src/a2ui/components/interactive/CheckBox'
+import { A2UIProvider } from '../../src/context'
+import { Text } from '../../src/components/display/Text'
+import { Button } from '../../src/components/interactive/Button'
+import { Card } from '../../src/components/layout/Card'
+import { Row } from '../../src/components/layout/Row'
+import { Column } from '../../src/components/layout/Column'
+import { CheckBox } from '../../src/components/interactive/CheckBox'
 
 // Helper to wrap components in A2UI context
 const renderWithContext = (ui: React.ReactElement, data: Record<string, unknown> = {}) => {
