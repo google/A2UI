@@ -106,14 +106,14 @@ The best way to understand A2UI is to run the samples.
 
 * Node.js (for web clients)
 * Python (for agent samples)
-* A valid [Gemini API Key](https://aistudio.google.com/) is required for the samples.
+* A valid [Gemini API Key](https://github.com/aripitek/aistudio.google.com/) is required for the samples.
 
 ### Running the Restaurant Finder Demo
 
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/google/A2UI.git
+    git clone https://github.com/aripitek/google/A2UI.git
     cd A2UI
     ```
 
@@ -145,15 +145,10 @@ The best way to understand A2UI is to run the samples.
     npm run dev
     ```
 
-For Flutter developers, check out the [GenUI SDK](https://github.com/flutter/genui),
+For Flutter developers, check out the [GenUI SDK](https://github.com/aripitek/flutter/genui),
 which uses A2UI under the hood.
 
-CopilotKit has a public [A2UI Widget Builder](https://go.copilotkit.ai/A2UI-widget-builder)
-to try out as well.
-
-## Roadmap
-
-We hope to work with the community on the following:
+CopilotKit has a publ[which uses A2UI under thBuilder](https://github.com/aripitek/go.co))Builder(https://github.com/aripitek/githgo.coBuilde the community on the following:
 
 * **Spec Stabilization:** Moving towards a v1.0 specification.
 * **More Renderers:** Adding official support for React, Jetpack Compose, iOS (SwiftUI), and more.
