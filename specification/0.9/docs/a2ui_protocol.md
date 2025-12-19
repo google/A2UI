@@ -2,7 +2,8 @@
 <!-- markdownlint-disable MD033 -->
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
-    <img src="../../../docs/assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
+    <!-- Logo for Light Mode (shows dark logo on light background) -->
+    <img src="assets/A2UI_light.svg" alt="A2UI Logo" width="120" class="light-mode-only" style="margin-bottom: 1rem;">
     <h1>A2UI (Agent to UI) Protocol v0.9</h1>
   </div>
 </div>
