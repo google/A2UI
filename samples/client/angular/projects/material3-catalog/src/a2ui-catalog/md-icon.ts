@@ -1,19 +1,18 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, computed, input, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DynamicComponent } from '@a2ui/angular';
+import { Primitives } from '@a2ui/lit/0.8';
 
 @Component({
-  selector: 'md-icon',
+  selector: 'catalog-md-icon',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
-    <mat-icon
-      [fontSet]="fontSet"
-      [fontIcon]="fontIcon"
-      class="md-icon"
-    >
+    <md-icon [style.font-family]="resolvedFontSet()">
+      {{ resolvedFontIcon() }}
       <ng-content></ng-content>
-    </mat-icon>
+    </md-icon>
   `,
   styles: [`
     :host {
@@ -24,16 +23,16 @@ import { CommonModule } from '@angular/common';
   `],
   encapsulation: ViewEncapsulation.None,
 })
-export class MdIcon {
-  // MatIcon properties we might want to map if they existed in catalog
-  @Input() fontSet: string = 'material-icons';
-  @Input() fontIcon: string = '';
+export class MdIcon extends DynamicComponent {
+  readonly fontSet = input<Primitives.StringValue | string | null>(null);
+  readonly fontIcon = input<Primitives.StringValue | string | null>(null);
 
-  // Since catalog defined no properties, we rely on ng-content for the icon name
-  // usage: <md-icon>settings</md-icon>
-
-  // Properties injected by renderer or potentially inherited
-  @Input() component: any;
-  @Input() weight: any;
-  @Input() surfaceId: string = '';
+  protected resolvedFontSet = computed(() => {
+    const v = this.fontSet();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.StringValue) : (v as string)) ?? '';
+  });
+  protected resolvedFontIcon = computed(() => {
+    const v = this.fontIcon();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.StringValue) : (v as string)) ?? '';
+  });
 }

@@ -1,47 +1,73 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, computed, input, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DynamicComponent } from '@a2ui/angular';
+import { Primitives } from '@a2ui/lit/0.8';
 
 @Component({
-  selector: 'md-filled-button',
+  selector: 'catalog-md-filled-button',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
-    <button mat-flat-button 
-      [disabled]="disabled" 
-      [attr.type]="type"
-      class="md-filled-button">
-      
-      <!-- Leading Icon (if trailingIcon is false and hasIcon is true) -->
-      <ng-content select="[slot=icon]" *ngIf="hasIcon && !trailingIcon"></ng-content>
-      
-      <!-- Label -->
-      {{ label }}
+    <md-filled-button
+      [disabled]="resolvedDisabled()"
+      [href]="resolvedHref()"
+      [target]="resolvedTarget()"
+      [trailingIcon]="resolvedTrailingIcon()"
+      [type]="resolvedType()">
+      <ng-content select="[slot=icon]"></ng-content>
+      {{ resolvedLabel() }}
       <ng-content></ng-content>
-
-      <!-- Trailing Icon (if trailingIcon is true) -->
-      <ng-content select="[slot=icon]" *ngIf="hasIcon && trailingIcon"></ng-content>
-    </button>
+    </md-filled-button>
   `,
   styles: [`
-    md-filled-button {
+    catalog-md-filled-button {
       display: inline-block;
+      flex: var(--weight);
     }
   `],
   encapsulation: ViewEncapsulation.None,
 })
-export class MdFilledButton {
-  @Input() label: string = '';
-  @Input() disabled: boolean = false;
-  @Input() softDisabled: boolean = false; // Not directly supported by MatButton, handled via disabled or custom styles
-  @Input() href: string = '';
-  @Input() target: string = '';
-  @Input() trailingIcon: boolean = false;
-  @Input() hasIcon: boolean = false;
-  @Input() type: string = 'submit';
+export class MdFilledButton extends DynamicComponent {
+  readonly label = input<Primitives.StringValue | string | null>(null);
+  readonly disabled = input<Primitives.BooleanValue | boolean | null>(null);
+  readonly softDisabled = input<Primitives.BooleanValue | boolean | null>(null);
+  readonly href = input<Primitives.StringValue | string | null>(null);
+  readonly target = input<Primitives.StringValue | string | null>(null);
+  readonly trailingIcon = input<Primitives.BooleanValue | boolean | null>(null);
+  readonly hasIcon = input<Primitives.BooleanValue | boolean | null>(null);
+  readonly type = input<Primitives.StringValue | string | null>(null);
 
-  @Input() component: any;
-  @Input() surfaceId: string = '';
-  @Input() weight: any;
+  protected resolvedLabel = computed(() => {
+    const v = this.label();
+    return (v && typeof v === 'object') ? this.resolvePrimitive(v) : (v as string);
+  });
+  protected resolvedDisabled = computed(() => {
+    const v = this.disabled();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.BooleanValue) : (v as boolean)) ?? false;
+  });
+  protected resolvedSoftDisabled = computed(() => {
+    const v = this.softDisabled();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.BooleanValue) : (v as boolean)) ?? false;
+  });
+  protected resolvedHref = computed(() => {
+    const v = this.href();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.StringValue) : (v as string)) ?? '';
+  });
+  protected resolvedTarget = computed(() => {
+    const v = this.target();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.StringValue) : (v as string)) ?? '';
+  });
+  protected resolvedTrailingIcon = computed(() => {
+    const v = this.trailingIcon();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.BooleanValue) : (v as boolean)) ?? false;
+  });
+  protected resolvedHasIcon = computed(() => {
+    const v = this.hasIcon();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.BooleanValue) : (v as boolean)) ?? false;
+  });
+  protected resolvedType = computed(() => {
+    const v = this.type();
+    return ((v && typeof v === 'object') ? this.resolvePrimitive(v as Primitives.StringValue) : (v as string)) ?? 'submit';
+  });
 }
