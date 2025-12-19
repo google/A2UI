@@ -1,0 +1,100 @@
+<!--
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<script lang="ts">
+	import type { Types, Primitives } from '@a2ui/lit/0.8';
+	import type { SvelteMessageProcessor } from '../data/processor.js';
+	import { resolveString } from '../utils/primitives.js';
+	import { classMap, styleMap } from '../utils/classes.js';
+	import { generateId } from '../utils/primitives.js';
+
+	interface Props {
+		surfaceId: Types.SurfaceID | null;
+		component: Types.TextFieldNode;
+		weight: string | number;
+		processor: SvelteMessageProcessor;
+		theme: Types.Theme;
+		text: Primitives.StringValue | null;
+		label: Primitives.StringValue | null;
+		inputType: Types.ResolvedTextField['type'] | null;
+	}
+
+	let { surfaceId, component, weight, processor, theme, text, label, inputType }: Props = $props();
+
+	const inputId = generateId('a2ui-input');
+
+	let inputValue = $derived(resolveString(processor, component, surfaceId, text) ?? '');
+	let resolvedLabel = $derived(resolveString(processor, component, surfaceId, label));
+
+	let containerClasses = $derived(classMap(theme.components.TextField?.container));
+	let labelClasses = $derived(classMap(theme.components.TextField?.label));
+	let inputClasses = $derived(classMap(theme.components.TextField?.element));
+	let inputStyles = $derived(styleMap(theme.additionalStyles?.TextField));
+
+	function handleInput(event: Event) {
+		const path = text?.path;
+
+		if (!(event.target instanceof HTMLInputElement) || !path) {
+			return;
+		}
+
+		processor.setData(component, path, event.target.value, surfaceId);
+	}
+</script>
+
+<div class="a2ui-textfield-host" style="--weight: {weight}">
+	<section class={containerClasses}>
+		{#if resolvedLabel}
+			<label for={inputId} class={labelClasses}>
+				{resolvedLabel}
+			</label>
+		{/if}
+
+		<input
+			autocomplete="off"
+			class={inputClasses}
+			style={inputStyles}
+			oninput={handleInput}
+			id={inputId}
+			value={inputValue}
+			placeholder="Please enter a value"
+			type={inputType === 'number' ? 'number' : 'text'}
+		/>
+	</section>
+</div>
+
+<style>
+	.a2ui-textfield-host {
+		display: flex;
+		flex: var(--weight);
+	}
+
+	section,
+	input,
+	label {
+		box-sizing: border-box;
+	}
+
+	input {
+		display: block;
+		width: 100%;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 4px;
+	}
+</style>
