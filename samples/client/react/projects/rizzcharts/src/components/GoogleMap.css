@@ -1,0 +1,127 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+.map-box-container {
+  background-color: var(--a2ui-surface-container, #1e1e2e);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 28px 32px;
+  margin: 0 auto;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.map-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--a2ui-on-surface, #ffffff);
+  letter-spacing: -0.02em;
+}
+
+.map-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.map-box-container .icon-button {
+  background: transparent;
+  border: none;
+  color: var(--a2ui-on-surface-secondary, #a0a0a0);
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.map-box-container .icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--a2ui-on-surface, #ffffff);
+}
+
+.map-container {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.map-placeholder {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 40px 24px;
+  text-align: center;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-placeholder p {
+  margin: 8px 0;
+  color: var(--a2ui-on-surface-secondary, #a0a0a0);
+  font-size: 14px;
+}
+
+.map-placeholder .map-hint {
+  font-size: 12px;
+  color: #666;
+}
+
+.map-placeholder .pin-list {
+  margin-top: 24px;
+  text-align: left;
+  width: 100%;
+  max-width: 400px;
+}
+
+.map-placeholder .pin-list h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--a2ui-on-surface, #ffffff);
+}
+
+.map-placeholder .pin-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.map-placeholder .pin-list li {
+  padding: 8px 12px;
+  margin: 4px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: var(--a2ui-on-surface-secondary, #a0a0a0);
+  font-size: 13px;
+}
+
+.map-placeholder .pin-list li strong {
+  color: var(--a2ui-on-surface, #ffffff);
+}

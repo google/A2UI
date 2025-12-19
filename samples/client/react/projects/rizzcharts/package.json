@@ -1,0 +1,29 @@
+{
+  "name": "@a2ui/sample-rizzcharts-react",
+  "version": "0.8.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@a2ui/lit": "*",
+    "@a2ui/react": "*",
+    "@vis.gl/react-google-maps": "^1.4.0",
+    "chart.js": "^4.4.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@a2ui/vite-plugin-a2a": "*",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.0"
+  }
+}

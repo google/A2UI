@@ -1,0 +1,184 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  height: 100vh;
+  padding: 0 16px;
+}
+
+.app .a2a-chat-canvas {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.welcome {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  animation: fadeIn 0.5s cubic-bezier(0, 0, 0.3, 1) backwards;
+}
+
+.app-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.app-title {
+  font-weight: 600;
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.welcome-text {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.app .chat-history {
+  background: var(--bg-secondary);
+}
+
+.app .chat-history.empty {
+  background: var(--bg-secondary);
+}
+
+.app .agent-avatar {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+}
+
+.app .user-avatar {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.app .send-button {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+}
+
+.app .input-area {
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+}
+
+.app .chat-input {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.app .chat-input::placeholder {
+  color: var(--text-muted);
+}
+
+.app .chat-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.app .message-sender {
+  color: var(--text-primary);
+}
+
+.app .message-time {
+  color: var(--text-muted);
+}
+
+.app .message-body {
+  color: var(--text-secondary);
+}
+
+.app .text-content {
+  color: var(--text-secondary);
+}
+
+.app .subagent-name {
+  color: var(--text-muted);
+}
+
+.app .empty-state {
+  color: var(--text-muted);
+}
+
+.app .json-content {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  overflow-x: auto;
+}
+
+.app .a2ui-content {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.app .embedded-surface {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+}
+
+.app .canvas {
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
+}
+
+.app .canvas-header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.app .close-button {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.app .close-button:hover {
+  background: var(--border-color);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

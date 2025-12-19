@@ -1,0 +1,36 @@
+{
+  "name": "@a2ui/a2a-chat-canvas",
+  "version": "0.8.1",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b --pretty",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@a2ui/lit": "*",
+    "@a2ui/react": "*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@a2a-js/sdk": "^0.3.4",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
