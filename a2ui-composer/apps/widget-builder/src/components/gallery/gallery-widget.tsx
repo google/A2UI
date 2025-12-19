@@ -1,7 +1,7 @@
 'use client';
 
 import { Widget } from '@/types/widget';
-import { A2UIViewer } from '@copilotkitnext/a2ui-renderer';
+import { A2UIViewer } from '@copilotkit/a2ui-renderer';
 
 interface GalleryWidgetProps {
   widget: Widget;

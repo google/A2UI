@@ -9,10 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@copilotkit/react-core": "^1.50.0",
-    "@copilotkit/react-ui": "^1.50.0",
-    "@copilotkit/runtime": "^1.50.0",
-    "@copilotkitnext/a2ui-renderer": "workspace:*",
+    "@copilotkit/react-core": "^1.50.1",
+    "@copilotkit/react-ui": "^1.50.1",
+    "@copilotkit/runtime": "^1.50.1",
+    "@copilotkit/a2ui-renderer": "1.50.1",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",

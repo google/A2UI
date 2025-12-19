@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { WidgetInput } from './widget-input';
 import { useWidgets } from '@/contexts/widgets-context';
 import type { Widget } from '@/types/widget';
-import type { ComponentInstance } from '@copilotkitnext/a2ui-renderer';
+import type { ComponentInstance } from '@copilotkit/a2ui-renderer';
 
 const DEFAULT_COMPONENTS: ComponentInstance[] = [
   {

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/resizable";
 import { useWidgets } from "@/contexts/widgets-context";
 import type { Widget, DataState } from "@/types/widget";
-import type { ComponentInstance } from "@copilotkitnext/a2ui-renderer";
+import type { ComponentInstance } from "@copilotkit/a2ui-renderer";
 
 interface WidgetEditorProps {
   widget: Widget;

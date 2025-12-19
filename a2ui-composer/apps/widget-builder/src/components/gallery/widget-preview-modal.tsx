@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { X, RotateCcw, ExternalLink } from 'lucide-react';
 import { Widget } from '@/types/widget';
 import { Button } from '@/components/ui/button';
-import { A2UIViewer } from '@copilotkitnext/a2ui-renderer';
+import { A2UIViewer } from '@copilotkit/a2ui-renderer';
 import Editor from '@monaco-editor/react';
 
 interface WidgetPreviewModalProps {
