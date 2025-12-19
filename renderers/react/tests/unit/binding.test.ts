@@ -11,12 +11,12 @@ import {
   isPathReference,
   isLiteralValue,
   extractLiteralValue,
-} from '../../src/a2ui/binding/json-pointer'
+} from '../../src/binding/json-pointer'
 import {
   resolveValue,
   needsResolution,
   resolveDeep,
-} from '../../src/a2ui/binding/resolver'
+} from '../../src/binding/resolver'
 
 // ===========================================================================
 // JSON Pointer Tests (RFC 6901)

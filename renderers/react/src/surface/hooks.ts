@@ -20,11 +20,8 @@ export function useSurfaceIds(processor?: MessageProcessor): string[] {
     [proc]
   );
 
-  const getSnapshot = useCallback(() => {
-    return proc.getSurfaceIds();
-  }, [proc]);
-
-  // We need to track version for the snapshot to update
+  // We track version (not surface IDs directly) because getSurfaceIds() returns
+  // a new array each time, which would cause infinite re-renders with useSyncExternalStore
   const version = useSyncExternalStore(
     subscribe,
     () => proc.getVersion(),

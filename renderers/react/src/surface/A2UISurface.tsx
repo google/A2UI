@@ -46,7 +46,7 @@ interface ComponentNodeProps {
  * Renders a single component node from the adjacency list
  */
 function ComponentNode({ componentId }: ComponentNodeProps): ReactElement | null {
-  const { surface, resolveValue, dispatchAction } = useSurfaceContext();
+  const { surface, resolveValue } = useSurfaceContext();
   const stored = surface.components.get(componentId);
 
   if (!stored) {

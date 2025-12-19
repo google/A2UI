@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeAll } from 'vitest'
 import Ajv from 'ajv'
-import serverToClientSchema from '../../src/a2ui/schemas/server_to_client.json'
+import serverToClientSchema from '../../src/schemas/server_to_client.json'
 
 describe('A2UI Schema Conformance', () => {
   let ajv: Ajv
