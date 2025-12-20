@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/angular",
-  "version": "0.8.1",
+  "version": "0.8.3",
   "dependencies": {
     "markdown-it": "^14.1.0",
     "tslib": "^2.3.0",

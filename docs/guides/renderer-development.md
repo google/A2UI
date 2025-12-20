@@ -77,6 +77,6 @@ To ensure a consistent user experience across platforms, A2UI defines a standard
 - **Button**: A clickable element that triggers a `userAction`. Must be able to contain a `child` component (typically Text or Icon) and may vary in style based on the `primary` boolean.
 - **CheckBox**: A checkbox that can be toggled, reflecting a boolean value.
 - **TextField**: An input field for text. Must support a `label`, `text` (value), `textFieldType` (`shortText`, `longText`, `number`, `obscured`, `date`), and `validationRegexp`.
-- **DateTimeInput**: A dedicated input for selecting a date and/or time. Must support `enableDate`, `enableTime`, and an `outputFormat`.
+- **DateTimeInput**: A dedicated input for selecting a date and/or time. Must support `enableDate` and `enableTime`.
 - **MultipleChoice**: A component for selecting one or more options from a list (`options`). Must support `maxAllowedSelections` and bind `selections` to a list or single value.
 - **Slider**: A slider for selecting a numeric value (`value`) from a defined range (`minValue`, `maxValue`).
