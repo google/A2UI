@@ -4,7 +4,7 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
 
 The orchestrator agent needs the A2UI extension enabled by adding the header X-A2A-Extensions=https://a2ui.org/a2a-extension/a2ui/v0.8 to requests, however it is hardcoded to true for this sample to simplify inspection.
 
-The orchestrator does an inference call on every request to decide which agent to route to, and then uses transfer_to_agent in ADK to pass the original message to the subagent. This routing is done on subsequent calls including on A2UI userAction, and a future version could optimize this by programatically routing userAction to the agent that created the surface using before_model_callback to shortcut the orchestrator LLM.
+The orchestrator does an inference call on every request to decide which agent to route to, and then uses transfer_to_agent in ADK to pass the original message to the subagent. This routing is done on subsequent calls including on A2UI userAction, and a future version could optimize this by programmatically routing userAction to the agent that created the surface using before_model_callback to shortcut the orchestrator LLM.
 
 Subagents are configured using RemoteA2aAgent which translates ADK events to A2A messages that are sent to the subagent's A2A server. The HTTP header X-A2A-Extensions=https://a2ui.org/a2a-extension/a2ui/v0.8 is added to requests from the RemoteA2aAgent to enable the A2UI extension.
 
