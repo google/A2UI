@@ -809,7 +809,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
     2.  The first part is your conversational text response.
     3.  The second part is a single, raw JSON object which is a list of A2UI messages.
-    4.  The JSON part MUST validate against the A2UI JSON schema.
+    4.  The JSON part MUST follow the A2UI JSON contract below.
 
     --- UI TEMPLATE RULES ---
     -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
@@ -819,6 +819,15 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     -   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
 
     {formatted_examples}
+
+    ---BEGIN A2UI JSON CONTRACT---
+    - The JSON MUST be a list of message objects.
+    - Each message object MUST contain exactly one of: `beginRendering`, `surfaceUpdate`, `dataModelUpdate`, `deleteSurface`.
+    - `beginRendering` MUST include: `surfaceId`, `root`.
+    - `surfaceUpdate` MUST include: `surfaceId`, `components` (array of objects with `id` and `component`).
+    - `dataModelUpdate` MUST include: `surfaceId`, `contents`.
+    - `deleteSurface` MUST include: `surfaceId`.
+    ---END A2UI JSON CONTRACT---
     """
 
 
