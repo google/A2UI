@@ -40,6 +40,12 @@ export class LibraryComponent {
     this.dialog.nativeElement.close();
   }
 
+  onDialogClick(event: MouseEvent) {
+    if (event.target === this.dialog.nativeElement) {
+      this.closeDialog();
+    }
+  }
+
   scrollTo(name: string) {
     this.activeSection = name;
     const element = document.getElementById('section-' + name);

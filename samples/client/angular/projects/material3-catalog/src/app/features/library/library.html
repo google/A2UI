@@ -16,21 +16,26 @@
  
 <section class="block-gallery">
   @for (block of blocks; track block.name) {
-    <article class="block-card" (click)="openDialog(block)" animate.enter="fade-in">
+    <article class="block-card" animate.enter="fade-in">
       <section class="block-header">
         <p class="block-title">{{ block.name }}</p>
+        <button class="icon-button" (click)="openDialog(block)" aria-label="View Code">
+          <span class="material-icons">code</span>
+        </button>
       </section>
       <a2ui-surface [surfaceId]="'lib-' + block.name" [surface]="block.surface" />
     </article>
   }
 </section>
 
-<dialog #dialog>
+<dialog #dialog (click)="onDialogClick($event)">
   <article>
     @if (selectedBlock) {
       <section class="block-header">
         <p class="block-title">{{ selectedBlock.name }}</p>
-        <button (click)="closeDialog()">Close</button>
+        <button class="icon-button" (click)="closeDialog()" aria-label="Close">
+          <span class="material-icons">close</span>
+        </button>
       </section>
       <div class="dialog-content-grid">
         <section class="block-surface">

@@ -74,7 +74,7 @@ dialog article {
 .block-title {
   font-weight: bold;
   font-size: 1.3rem;
-  margin-top: 2px;
+  margin: 0;
 }
 
 .block-gallery {
@@ -126,6 +126,51 @@ dialog .dialog-content-grid > .block-surface {
   }
 }
 
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444746;
+  /* Material 3 on-surface-variant equivalent */
+  transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+  background-color: rgba(68, 71, 70, 0.08);
+  /* on-surface-variant with opacity */
+}
+
+.icon-button:active {
+  background-color: rgba(68, 71, 70, 0.12);
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  /* Default size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
 @keyframes fade-in {
   from {
     opacity: 0;

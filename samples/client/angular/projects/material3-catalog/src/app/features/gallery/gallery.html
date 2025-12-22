@@ -22,8 +22,8 @@
           <h3>{{ sample.title }}</h3>
           <p class="description">{{ sample.description }}</p>
         </div>
-        <button class="json-toggle" (click)="openDialog(sample)">
-          {{ showJsonId === sample.id ? 'Hide JSON' : 'Show JSON' }}
+        <button class="icon-button" (click)="openDialog(sample)" aria-label="View Code">
+          <span class="material-icons">code</span>
         </button>
       </section>
 
@@ -37,12 +37,14 @@
   }
 </article>
 
-<dialog #dialog>
+<dialog #dialog (click)="onDialogClick($event)">
   <article>
     @if (selectedSample) {
       <section class="section-header">
         <p class="section-title">{{ selectedSample.title }}</p>
-        <button (click)="closeDialog()">Close</button>
+        <button class="icon-button" (click)="closeDialog()" aria-label="Close">
+          <span class="material-icons">close</span>
+        </button>
       </section>
       <div class="dialog-content-grid">
         <section class="sample-surface">

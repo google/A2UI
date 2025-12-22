@@ -173,6 +173,12 @@ export class GalleryComponent {
     this.dialog.nativeElement.close();
   }
 
+  onDialogClick(event: MouseEvent) {
+    if (event.target === this.dialog.nativeElement) {
+      this.closeDialog();
+    }
+  }
+
   scrollTo(id: string) {
     this.activeSection = id;
     const element = document.getElementById('section-' + id);
