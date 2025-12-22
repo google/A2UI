@@ -1,0 +1,83 @@
+CHEMISTRY: BOND ENERGY AND BOND STRENGTH
+Source: OpenStax Chemistry, Chapter 7 - Chemical Bonding and Molecular Geometry
+=========================================================================
+
+BOND ENERGY DEFINITION
+----------------------
+
+Bond energy (also called bond dissociation energy) is the energy REQUIRED to break a covalent bond in a gaseous substance.
+
+Key point: This is always a POSITIVE value. You must PUT IN energy to break a bond. Breaking bonds is an endothermic process.
+
+"The energy required to break a specific covalent bond in one mole of gaseous molecules is called the bond energy or the bond dissociation energy."
+
+CRITICAL INSIGHT: THE "ENERGY STORED IN BONDS" MYTH
+---------------------------------------------------
+
+The phrase "energy stored in bonds" is scientifically misleading.
+
+Bonds do NOT store energy like containers or batteries. Instead:
+- FORMING bonds RELEASES energy (exothermic)
+- BREAKING bonds REQUIRES energy (endothermic)
+
+When we say a molecule has "high energy bonds," we really mean that the molecule itself is in an unstable, high-energy configuration relative to its potential products.
+
+HOW REACTIONS RELEASE OR ABSORB ENERGY
+--------------------------------------
+
+In any chemical reaction:
+1. Energy is REQUIRED to break bonds in the reactants
+2. Energy is RELEASED when new bonds form in products
+
+The NET energy change depends on the balance:
+- If more energy is released forming products than required to break reactants → EXOTHERMIC (releases heat)
+- If more energy is required to break reactants than released forming products → ENDOTHERMIC (absorbs heat)
+
+EXAMPLE: Why does burning fuel release energy?
+
+When you burn methane (CH4 + 2O2 → CO2 + 2H2O):
+- Energy IN: Breaking C-H bonds and O=O bonds
+- Energy OUT: Forming C=O bonds and O-H bonds
+
+The C=O and O-H bonds that form are STRONGER (more stable) than the bonds that break. More energy is released forming products than consumed breaking reactants. The NET result is energy release.
+
+This is NOT because energy was "stored in" the methane bonds. It's because the products (CO2 and H2O) are more thermodynamically stable than the reactants.
+
+BOND STRENGTH AND STABILITY
+---------------------------
+
+Stronger bonds = more stable molecules = lower energy state
+
+When a reaction produces molecules with stronger bonds (more stable), energy is released because the system moves to a lower energy state.
+
+Think of it like a ball rolling downhill:
+- High position = high potential energy = less stable
+- Low position = low potential energy = more stable
+- The ball releases energy (kinetic) as it moves to the more stable position
+
+Similarly:
+- Reactants at higher energy = less stable configuration
+- Products at lower energy = more stable configuration
+- Energy is released as the system moves toward stability
+
+COMMON BOND ENERGIES (kJ/mol)
+-----------------------------
+- C-H: 414
+- C-C: 347
+- C=C: 611
+- C≡C: 837
+- O-H: 464
+- O=O: 498
+- C=O: 803
+- N≡N: 946 (very strong, very stable)
+
+Note: Triple bonds are strongest, then double, then single. This is why N2 gas is so unreactive - the triple bond is extremely stable.
+
+KEY TAKEAWAY FOR MARIA
+----------------------
+
+When your biology textbook says "ATP releases energy," it does NOT mean energy was stored in ATP's phosphate bonds like electricity in a battery.
+
+It means: The products of ATP hydrolysis (ADP + phosphate) are MORE STABLE than ATP. The system releases energy when moving to this more stable state.
+
+This is the same principle as burning fuel - it's all about relative stability of reactants vs. products, measured by Gibbs Free Energy (ΔG).
