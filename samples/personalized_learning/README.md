@@ -89,7 +89,8 @@ The same request from different students (with different learner profiles) produ
 
 | File | Purpose |
 |------|---------|
-| [deploy.py](deploy.py) | Agent definition with tools, keyword mappings, and deployment logic |
+| [deploy.py](deploy.py) | Deployment script with embedded agent code for Agent Engine |
+| [agent/agent.py](agent/agent.py) | Modular agent code for local development |
 | [api-server.ts](api-server.ts) | Node.js server handling intent detection and Agent Engine proxy |
 | [src/chat-orchestrator.ts](src/chat-orchestrator.ts) | Frontend orchestration: routes intents to appropriate handlers |
 | [src/a2a-client.ts](src/a2a-client.ts) | A2A protocol client with fallback content |
@@ -110,7 +111,7 @@ Here's what happens when a user asks "Quiz me on photosynthesis":
 The frontend sends the message to `/api/chat-with-intent`:
 
 ```typescript
-// src/chat-orchestrator.ts:197-221
+// src/chat-orchestrator.ts:205-229
 const response = await fetch("/api/chat-with-intent", {
   method: "POST",
   body: JSON.stringify({
@@ -127,7 +128,7 @@ const response = await fetch("/api/chat-with-intent", {
 The API server uses Gemini to detect intent AND extract keywords in one call:
 
 ```typescript
-// api-server.ts:631-673
+// api-server.ts:639-681
 const combinedSystemPrompt = `${systemPrompt}
 
 ## INTENT CLASSIFICATION
@@ -158,7 +159,7 @@ When the intent is content-generating, include a "keywords" field with:
 Based on the detected intent, the orchestrator calls the A2A client:
 
 ```typescript
-// src/chat-orchestrator.ts:158-161
+// src/chat-orchestrator.ts:161-165
 const a2uiResult = await this.a2aClient.generateContent(
   intent,  // "quiz"
   topicContext  // keywords from Gemini
@@ -170,7 +171,7 @@ const a2uiResult = await this.a2aClient.generateContent(
 The API server proxies the request to Agent Engine using `:streamQuery`:
 
 ```typescript
-// api-server.ts:238-278
+// api-server.ts:241
 const url = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${location}/reasoningEngines/${resourceId}:streamQuery`;
 
 const requestPayload = {
@@ -187,7 +188,7 @@ const requestPayload = {
 The ADK agent receives the request and executes the appropriate tool:
 
 ```python
-# deploy.py:933-1014 (generate_quiz function)
+# deploy.py:484-565 (generate_quiz function)
 async def generate_quiz(tool_context: ToolContext, topic: str) -> str:
     # Fetch OpenStax content for context
     openstax_data = fetch_openstax_content(topic)
@@ -227,7 +228,7 @@ if not matched_slugs:
 
 Then fetch content:
 ```python
-# deploy.py:787-796 - GitHub fetch
+# deploy.py:788-797 - GitHub fetch
 github_url = f"https://raw.githubusercontent.com/openstax/osbooks-biology-bundle/main/modules/{module_id}/index.cnxml"
 with urllib.request.urlopen(github_url, timeout=10) as response:
     cnxml = response.read().decode('utf-8')
@@ -485,7 +486,7 @@ export class Flashcard extends LitElement {
 An interactive multiple-choice quiz with immediate feedback:
 
 ```typescript
-// src/quiz-card.ts:36-348
+// src/quiz-card.ts:35-348
 @customElement("a2ui-quizcard")
 export class QuizCard extends LitElement {
   @property({ attribute: false }) question: StringValue | null = null;
@@ -645,7 +646,7 @@ See [Quickstart.ipynb](Quickstart.ipynb) Step 7 for detailed instructions.
 **Solutions**:
 1. Check API server logs for errors
 2. Verify Gemini API access
-3. The [api-server.ts:815-828](api-server.ts) has fallback logic that should generate quizzes locally
+3. The [api-server.ts:822-836](api-server.ts) has fallback logic that should generate quizzes locally
 
 ### Checking Agent Engine Logs
 
