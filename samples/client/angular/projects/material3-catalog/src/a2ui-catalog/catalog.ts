@@ -52,13 +52,6 @@ export const MATERIAL3_CATALOG = {
       inputBinding('pivot', () => ('pivot' in properties && properties['pivot']) ?? undefined),
     ],
   },
-  MdNavigationBar: {
-    type: () => import('./md-navigation-bar').then(c => c.MdNavigationBar),
-    bindings: ({ properties }) => [
-      inputBinding('activeIndex', () => ('activeIndex' in properties && properties['activeIndex']) ?? undefined),
-      inputBinding('hideInactiveLabels', () => ('hideInactiveLabels' in properties && properties['hideInactiveLabels']) ?? undefined),
-    ],
-  },
   MdOutlinedSegmentedButtonSet: {
     type: () => import('./md-outlined-segmented-button-set').then(c => c.MdOutlinedSegmentedButtonSet),
     bindings: ({ properties }) => [

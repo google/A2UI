@@ -26,7 +26,10 @@ BLACKLIST = {
     "MdItem",
     "MdElevation",
     "MdNavigationDrawerModal",
+    "MdNavigationBar",
 }
+
+
 
 PROPERTY_BLACKLIST = {
     "buttons",
@@ -49,8 +52,6 @@ PROPERTY_BLACKLIST = {
 # Standard components - Metadata for Catalog Definition
 STANDARD_COMPONENTS = {
     "Text": {
-      "type": "object",
-      "additionalProperties": False,
       "properties": {
         "text": { "type": "object", "properties": { "literalString": { "type": "string" }, "path": { "type": "string" } } },
         "usageHint": { "type": "string", "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"] }
@@ -58,8 +59,6 @@ STANDARD_COMPONENTS = {
       "required": ["text"]
     },
     "Image": {
-      "type": "object",
-      "additionalProperties": False,
       "properties": {
         "url": { "type": "object", "properties": { "literalString": { "type": "string" }, "path": { "type": "string" } } },
         "fit": { "type": "string", "enum": ["contain", "cover", "fill", "none", "scale-down"] },
@@ -68,16 +67,12 @@ STANDARD_COMPONENTS = {
       "required": ["url"]
     },
     "Video": {
-      "type": "object",
-      "additionalProperties": False,
       "properties": {
         "url": { "type": "object", "properties": { "literalString": { "type": "string" }, "path": { "type": "string" } } }
       },
       "required": ["url"]
     },
     "AudioPlayer": {
-        "type": "object",
-        "additionalProperties": False,
         "properties": {
           "url": { "type": "object", "properties": { "literalString": { "type": "string" }, "path": { "type": "string" } } },
           "description": { "type": "object", "properties": { "literalString": { "type": "string" }, "path": { "type": "string" } } }
@@ -85,48 +80,24 @@ STANDARD_COMPONENTS = {
         "required": ["url"]
     },
     "Row": {
-      "type": "object",
-      "additionalProperties": False,
       "properties": {
-        "children": {
-          "type": "object",
-          "properties": {
-            "explicitList": { "type": "array", "items": { "type": "string" } },
-            "template": { "type": "object", "properties": { "componentId": { "type": "string" }, "dataBinding": { "type": "string" } }, "required": ["componentId", "dataBinding"] }
-          }
-        },
+        "children": { "type": "array", "items": { "type": "string" } },
         "distribution": { "type": "string", "enum": ["center", "end", "spaceAround", "spaceBetween", "spaceEvenly", "start"] },
         "alignment": { "type": "string", "enum": ["start", "center", "end", "stretch"] }
       },
       "required": ["children"]
     },
     "Column": {
-      "type": "object",
-      "additionalProperties": False,
       "properties": {
-        "children": {
-          "type": "object",
-          "properties": {
-            "explicitList": { "type": "array", "items": { "type": "string" } },
-            "template": { "type": "object", "properties": { "componentId": { "type": "string" }, "dataBinding": { "type": "string" } }, "required": ["componentId", "dataBinding"] }
-          }
-        },
+        "children": { "type": "array", "items": { "type": "string" } },
         "distribution": { "type": "string", "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly"] },
         "alignment": { "type": "string", "enum": ["center", "end", "start", "stretch"] }
       },
       "required": ["children"]
     },
     "List": {
-      "type": "object",
-      "additionalProperties": False,
       "properties": {
-        "children": {
-          "type": "object",
-          "properties": {
-            "explicitList": { "type": "array", "items": { "type": "string" } },
-            "template": { "type": "object", "properties": { "componentId": { "type": "string" }, "dataBinding": { "type": "string" } }, "required": ["componentId", "dataBinding"] }
-          }
-        },
+        "children": { "type": "array", "items": { "type": "string" } },
         "direction": { "type": "string", "enum": ["vertical", "horizontal"] },
         "alignment": { "type": "string", "enum": ["start", "center", "end", "stretch"] }
       },
@@ -488,216 +459,205 @@ class ExampleParser(HTMLParser):
         if self.stack:
             self.current_text.append(data)
 
-def extract_examples_from_md(filepath: str) -> Dict[str, List[Dict]]:
+class TextStripper(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.text_parts = []
+    
+    def handle_data(self, data):
+        cleaned = data.strip()
+        if cleaned:
+            self.text_parts.append(cleaned)
+            
+    def get_text(self):
+        return "\n".join(self.text_parts)
+
+def extract_examples_from_md(filepath: str) -> List[Dict]:
     with open(filepath, 'r') as f:
         content = f.read()
 
-    examples = {}
-    
-    # 1. Split by Component Section? The MD file has headers like '# Button'.
-    # We can assume examples belong to the last seen header.
-    # OR simpler: check tags in html and associate with components?
-    # Mixing: The file is big.
-    # The structure:
-    # # Header
-    # ...
-    # ```html
-    # <tag>...</tag>
-    # ```
-    # ...
-    
-    # Let's iterate lines.
-    
     lines = content.split('\n')
-    current_component = None
+    valid_examples = []
+    
+    current_header = ""
+    current_text_lines = []
+    
     in_code_block = False
     code_block_lines = []
     
-    # Map tag-name to ComponentName to associate examples
-    # We'll do this association later, for now just collect valid HTML blocks.
-    html_blocks = []
-    
     for line in lines:
-        if line.strip().startswith('```html'):
+        stripped = line.strip()
+        
+        # Header detection
+        if stripped.startswith('#') and not in_code_block:
+            current_header = stripped.lstrip('#').strip()
+            current_text_lines = [] # Reset text on new header
+            continue
+                
+        if stripped.startswith('```html'):
             in_code_block = True
             code_block_lines = []
             continue
-        if line.strip().startswith('```') and in_code_block:
+            
+        if stripped.startswith('```') and in_code_block:
             in_code_block = False
-            html_blocks.append("\n".join(code_block_lines))
+            block_content = "\n".join(code_block_lines)
+            
+            # Use TextStripper on accumulated text
+            full_text_blob = "\n".join(current_text_lines)
+            # Remove comment markers to expose content to parser
+            full_text_blob = full_text_blob.replace('<!--', '').replace('-->', '')
+            
+            stripper = TextStripper()
+            stripper.feed(full_text_blob)
+            final_description = stripper.get_text()
+
+            # Process Block
+            if '<script' in block_content or '<style' in block_content or '<svg' in block_content:
+                pass 
+            else:
+                parser = ExampleParser()
+                parser.feed(block_content)
+                if parser.roots:
+                     valid_examples.append({
+                        "nodes": parser.roots,
+                        "header": current_header,
+                        "description": final_description
+                     })
+            
+            current_text_lines = [] # Consumed text
             continue
             
         if in_code_block:
             code_block_lines.append(line)
-            
-    # Now parse all blocks
-    valid_examples = []
-    dropped_count = 0
+        else:
+            if stripped:
+                current_text_lines.append(stripped)
     
-    for block in html_blocks:
-        # Check blacklist
-        if '<script' in block or '<style' in block or '<svg' in block:
-            dropped_count += 1
-            print(f"Dropping example due to script/style/svg: {block[:50]}...")
-            continue
-            
-        parser = ExampleParser()
-        parser.feed(block)
-        
-        # each root in this block is a potential example
-        if parser.roots:
-            valid_examples.append(parser.roots)
-
-    print(f"Extracted {len(valid_examples)} valid example blocks. Dropped {dropped_count}.")
+    print(f"Extracted {len(valid_examples)} valid example blocks.")
     return valid_examples
 
-def convert_node_to_json(node, tag_to_class):
+
+def convert_node_to_json(node, tag_to_class, component_list):
     tag = node['tag']
-    
-    # Resolve Class Name
-    # Default to Text if unknown? Or ignore?
-    # If tag starts with md-, try to find class.
-    # If standard HTML, map to Text? or Column?
     
     comp_type = "Text"
     props = {}
     
     if tag.startswith('md-'):
-        # Map md-filled-button -> MdFilledButton
-        # We need the exact class name from our previous scan.
-        # tag_to_class map needed.
         if tag in tag_to_class:
             comp_type = tag_to_class[tag]
-            
-            # Attributes to properties
-            # kebab-case attr -> camelCase prop
             for k, v in node['attrs'].items():
                 if k == 'class' or k.startswith('data-'): continue
                 prop_name = to_camel_case(k)
-                # Value determination
-                if v is None: # Boolean attribute presence
+                if v is None:
                     props[prop_name] = {"literalBoolean": True}
                 else:
                     props[prop_name] = {"literalString": v}
             
-            # Text Content -> label if available?
             text = node.get('text', '')
             if text:
-                # If component has 'label' property, set it?
-                # or 'text'?
-                # For safety, let's assume 'label' for most Md stuff, or 'text' for Textfield.
-                # MdCheckbox, MdButton -> label
-                # MdIcon -> fontIcon? No, usage is <md-icon>name</md-icon> usually.
                 if tag == 'md-icon':
                     props['fontIcon'] = {"literalString": text}
-                elif 'label' in ['label', 'text', 'value']: # heuristic
-                    # We might overwrite attribute?
+                elif 'label' in ['label', 'text', 'value']: 
                     props['label'] = {"literalString": text}
                     
     elif tag == 'div':
         comp_type = "Column"
-        # Map children
         
     else:
-        # Unknown tag, maybe just text?
-        # If it has text content, make it a Text component
         if node['text'].strip():
              comp_type = "Text"
              props['text'] = {"literalString": node['text']}
         else:
-            return None # Skip empty unknown tags
+            return None
 
-    # Children
-    children_defs = []
+    # Process children
+    child_ids = []
     
     for child in node['children']:
-        c_json = convert_node_to_json(child, tag_to_class)
-        if c_json:
-            children_defs.append(c_json)
+        c_id = convert_node_to_json(child, tag_to_class, component_list)
+        if c_id:
+            child_ids.append(c_id)
             
-    # If standard container (Column/Row/div), attributes imply layout? 
-    # Ignore for now.
-    
-    result = {
-        "type": comp_type,
-        "properties": props
+    if child_ids and comp_type not in ["Text", "MdIcon"]:
+        props['children'] = child_ids
+        
+    # Generate ID
+    my_id = node.get('id')
+    if not my_id:
+        my_id = f"gen-{id(node)}"
+        
+    # Create Component Object
+    component_obj = {
+        "id": my_id,
+        "component": {
+            comp_type: props
+        }
     }
     
-    if children_defs and comp_type not in ["Text", "MdIcon"]:
-        # Assign explicitList
-        ids = []
-        defs = []
-        for i, child in enumerate(children_defs):
-            cid = f"child-{i}-{id(child)}"
-            ids.append(cid)
-            child['id'] = cid
-            defs.append(child)
-            
-        # Use simple list for children to match Angular component expectation
-        result['properties']['children'] = ids
-        result['children_definitions'] = defs
-        
-    return result
+    component_list.append(component_obj)
+    return my_id
 
-def generate_library_json(components: List[tuple], examples_raw: List[List[Dict]], output_path: str):
-    # Map tag -> ClassName
+def generate_library_json(components: List[tuple], examples_raw: List[Dict], output_path: str):
     tag_to_class = {}
     class_to_tag = {}
     
-    # standard
     for k in STANDARD_COMPONENTS:
         tag_to_class[k.lower()] = k
         class_to_tag[k] = k.lower()
         
-    # material
     for cls_name, _, _ in components:
-        # derive tag?
-        # We need the original tag from ClassDef.
-        # But here we just have cls_name.
-        # We can re-derive kebab.
         kebab = to_kebab_case(cls_name)
         if not kebab.startswith('md-'): kebab = f"md-{kebab}"
         tag_to_class[kebab] = cls_name
         class_to_tag[cls_name] = kebab
 
-    # Group examples by component type
     component_examples = {cls_name: [] for cls_name, _, _ in components}
     
-    for root_nodes in examples_raw:
-        # A block might create multiple components.
-        # We need to assign them to a "primary" component if possible?
-        # The prompt says: "If there are multiple examples for a certain component, 
-        # implement all of them in the single entry for that component."
-        # This implies we should find WHICH component this example belongs to.
-        # Usually checking the root tag is enough.
+    for ex in examples_raw:
+        root_nodes = ex['nodes']
+        target_classes = set()
         
-        # Since examples are just lists of nodes, we can try to associate each node with its type.
+        # Recursively Identify target classes
+        def scan_targets(nodes):
+            for node in nodes:
+                tag = node['tag']
+                if tag in tag_to_class:
+                    target_classes.add(tag_to_class[tag])
+                scan_targets(node['children'])
         
-        for node in root_nodes:
-            tag = node['tag']
-            if tag in tag_to_class:
-                cls = tag_to_class[tag]
-                json_node = convert_node_to_json(node, tag_to_class)
-                if json_node and cls in component_examples:
-                    component_examples[cls].append(json_node)
+        scan_targets(root_nodes)
+        
+        # We need to process this example for EACH target class to ensure unique IDs if reused?
+        # Or safely reuse if we clone? 
+        # Actually, convert_node_to_json appends to a list.
+        # If we run it once, we get one set of components.
+        # If we associate that set with multiple components, it's fine as long as they are in different blocks.
+        
+        # But wait, we want to generate a fresh list for each block to be safe and clean.
+        
+        for cls in target_classes:
+            if cls in component_examples:
+                component_examples[cls].append({
+                    "header": ex['header'],
+                    "description": ex['description'],
+                    "nodes": root_nodes # Pass raw nodes, convert later per block
+                })
     
-    # Build final blocks
     blocks = []
     
-    # Standard Components (simplified set)
-    # ... (Keep previous standard blocks or just minimal)
-    
-    # Material Components with Examples
     for cls_name, _, props in components:
         examples = component_examples.get(cls_name, [])
         
+        flat_components = []
+        root_ids = []
+        
         if not examples:
-            # Fallback to default generated property demo
+            # Default Demo
             demo_props = {}
             for pname, pdef in props.items():
                 if pname.startswith('_'): continue
-                
-                # Priority: Check type first!
                 if pdef.type_str == "boolean":
                     demo_props[pname] = {"literalBoolean": False}
                 elif pdef.type_str == "number":
@@ -707,59 +667,86 @@ def generate_library_json(components: List[tuple], examples_raw: List[List[Dict]
                 elif pdef.type_str == "string":
                      demo_props[pname] = {"literalString": "value"}
             
-            # Special case for MdNavigationBar to avoid crash
-            children_defs = []
+            # Special case for MdNavigationBar
             if cls_name == "MdNavigationBar":
-                demo_props["activeIndex"] = {"literalNumber": -1}
-                demo_props["children"] = ["nav-tab-1", "nav-tab-2"]
-                children_defs = [
-                    {
-                        "type": "MdNavigationTab",
-                        "id": "nav-tab-1",
-                        "properties": {"label": {"literalString": "Tab 1"}}
-                    },
-                    {
-                        "type": "MdNavigationTab", 
-                        "id": "nav-tab-2",
-                        "properties": {"label": {"literalString": "Tab 2"}}
-                    }
-                ]
-
-            block = {
-                "name": cls_name,
-                "tag": "Material",
-                "type": cls_name,
-                "properties": demo_props
-            }
-            if children_defs:
-                block["children_definitions"] = children_defs
-            
-            blocks.append(block)
-        else:
-            # Render all examples in a Column
-            # We must wrap them
-            child_ids = []
-            child_defs = []
-            
-            for i, ex in enumerate(examples):
-                cid = f"ex-{cls_name}-{i}"
-                ex['id'] = cid
-                child_ids.append(cid)
-                child_defs.append(ex)
+                demo_props["activeIndex"] = {"literalNumber": 0}
                 
-            blocks.append({
-                "name": cls_name,
-                "tag": "Material",
-                "type": "Column",
-                "properties": {
-                    "alignment": "center",
-                    "children": child_ids
-                },
-                "children_definitions": child_defs
+                # Add children manually
+                c1_id = "nav-tab-1"
+                c2_id = "nav-tab-2"
+                
+                flat_components.append({
+                    "id": c1_id,
+                    "component": {
+                        "MdNavigationTab": {"label": {"literalString": "Tab 1"}}
+                    }
+                })
+                flat_components.append({
+                    "id": c2_id,
+                    "component": {
+                        "MdNavigationTab": {"label": {"literalString": "Tab 2"}}
+                    }
+                })
+                
+                demo_props["children"] = [c1_id, c2_id]
+
+            root_id = f"demo-{cls_name}"
+            flat_components.append({
+                "id": root_id,
+                "component": {
+                    cls_name: demo_props
+                }
             })
+            root_ids.append(root_id)
+
+        else:
+            # Render examples
+            for i, ex_data in enumerate(examples):
+                # Header/Desc as separate components if needed? 
+                # For now just render the nodes.
+                
+                for j, node in enumerate(ex_data['nodes']):
+                    # We MUST deep copy node to avoid ID collisions or mutation issues between runs if reused
+                    import copy
+                    node_copy = copy.deepcopy(node)
+                    
+                    # Ensure unique IDs for this iteration
+                    def rekey_ids(n, prefix):
+                        if 'id' in n: n['id'] = f"{prefix}-{n['id']}"
+                        else: n['id'] = f"{prefix}-{id(n)}"
+                        for c in n['children']: rekey_ids(c, prefix)
+                        
+                    rekey_ids(node_copy, f"ex-{cls_name}-{i}-{j}")
+                    
+                    c_id = convert_node_to_json(node_copy, tag_to_class, flat_components)
+                    if c_id:
+                        root_ids.append(c_id)
+
+        # Create a container if multiple roots
+        final_root_id = root_ids[0] if root_ids else "empty"
+        
+        if len(root_ids) > 1:
+            final_root_id = f"group-{cls_name}"
+            flat_components.append({
+                "id": final_root_id,
+                "component": {
+                     "Column": {
+                        "children": root_ids,
+                        "alignment": "center"  # Optional styling
+                    }
+                }
+            })
+            
+        blocks.append({
+            "name": cls_name,
+            "tag": "Material",
+            "rootId": final_root_id,
+            "components": flat_components
+        })
 
     with open(output_path, 'w') as f:
         json.dump(blocks, f, indent=2)
+
 
 def main():
     if not os.path.exists(CATALOG_DIR):
@@ -804,7 +791,6 @@ def main():
                 "description": p_def.description
             }
         components_json[cls.name] = {
-            "type": "object",
             "properties": props_json
         }
         filename, kebab = generate_implementation(cls, final_props, CATALOG_DIR)
