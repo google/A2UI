@@ -15,6 +15,10 @@ RUN sed -i 's|file:../../renderers/lit|file:./a2ui-web-lib|g' package.json
 # (the source code imports from @a2ui/web-lib but the actual package is @a2ui/lit)
 RUN sed -i 's|"name": "@a2ui/lit"|"name": "@a2ui/web-lib"|g' a2ui-web-lib/package.json
 
+# Remove prepack script to prevent rebuild during npm install
+# (we copy pre-built dist/; the wireit build references ../../specification/ which doesn't exist)
+RUN sed -i '/"prepack":/d' a2ui-web-lib/package.json
+
 # Install dependencies using public npm registry
 RUN npm install --registry https://registry.npmjs.org/
 

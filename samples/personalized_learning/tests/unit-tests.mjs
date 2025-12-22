@@ -223,7 +223,7 @@ function getFallbackContent(format) {
                   id: "videoPlayer",
                   component: {
                     Video: {
-                      src: { literalString: "/assets/demo.mp4" },
+                      src: { literalString: "/assets/video.mp4" },
                       title: { literalString: "ATP Hydrolysis Explained" },
                     },
                   },

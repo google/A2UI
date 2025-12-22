@@ -51,6 +51,15 @@ export class A2AClient {
   ): Promise<A2UIResponse> {
     console.log(`[A2AClient] Requesting ${format} content`);
 
+    // For audio/video, always use local fallback content.
+    // The deployed agent returns GCS URLs which won't work locally,
+    // and we only have one pre-built podcast/video anyway.
+    const lowerFormat = format.toLowerCase();
+    if (lowerFormat === "podcast" || lowerFormat === "audio" || lowerFormat === "video") {
+      console.log(`[A2AClient] Using local fallback for ${format} (pre-built content)`);
+      return this.getFallbackContent(format);
+    }
+
     try {
       const response = await fetch(`${this.baseUrl}/a2a/query`, {
         method: "POST",
@@ -387,7 +396,7 @@ export class A2AClient {
                     id: "videoPlayer",
                     component: {
                       Video: {
-                        url: { literalString: "/assets/demo.mp4" },
+                        url: { literalString: "/assets/video.mp4" },
                       },
                     },
                   },

@@ -1,6 +1,14 @@
 /**
  * Firebase Authentication for Personalized Learning Demo
- * Restricts access to @google.com email addresses
+ *
+ * By default, restricts access to @google.com email addresses.
+ * To customize access:
+ *   - Change ALLOWED_DOMAIN to your organization's domain
+ *   - Add specific emails to ALLOWED_EMAILS whitelist
+ *   - Or set ALLOWED_DOMAIN to "" and use only the whitelist
+ *
+ * LOCAL DEV MODE: If VITE_FIREBASE_API_KEY is not set, auth is bypassed
+ * and the app runs without requiring sign-in.
  */
 
 import { initializeApp } from "firebase/app";
@@ -11,6 +19,7 @@ import {
   onAuthStateChanged,
   signOut,
   User,
+  Auth,
 } from "firebase/auth";
 
 // Firebase configuration - reads from environment variables set in .env
@@ -24,33 +33,71 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Check if Firebase is configured (API key present)
+export const isFirebaseConfigured = !!firebaseConfig.apiKey;
+
+// Initialize Firebase only if configured
+let app: ReturnType<typeof initializeApp> | null = null;
+let auth: Auth | null = null;
+
+if (isFirebaseConfigured) {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+} else {
+  console.log("[Auth] Firebase not configured - running in local dev mode (no auth required)");
+}
 
 // Google provider with domain restriction hint
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
-  hd: "google.com", // Hint to show only google.com accounts
+  hd: "google.com", // Hint to show only google.com accounts (change if using different domain)
 });
 
-// Allowed email domain
+// ============================================================================
+// ACCESS CONTROL CONFIGURATION
+// ============================================================================
+
+// Allowed email domain (e.g., "google.com", "yourcompany.com")
+// Set to empty string "" to disable domain-based access and use only the whitelist
 const ALLOWED_DOMAIN = "google.com";
 
+// Whitelist of specific email addresses that are always allowed,
+// regardless of domain. Add emails here to grant access to external collaborators.
+// Example: ["alice@example.com", "bob@partner.org", "charlie@university.edu"]
+const ALLOWED_EMAILS: string[] = [
+  // "collaborator@example.com",
+  // "reviewer@partner.org",
+];
+
+// ============================================================================
+
 /**
- * Check if user's email is from allowed domain
+ * Check if user's email is allowed (by domain or whitelist)
  */
-function isAllowedDomain(email: string | null): boolean {
+function isAllowedEmail(email: string | null): boolean {
   if (!email) return false;
-  return email.endsWith(`@${ALLOWED_DOMAIN}`);
+
+  // Check whitelist first
+  if (ALLOWED_EMAILS.includes(email.toLowerCase())) {
+    return true;
+  }
+
+  // Check domain if configured
+  if (ALLOWED_DOMAIN && email.endsWith(`@${ALLOWED_DOMAIN}`)) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
  * Get current user if authenticated and from allowed domain
+ * In local dev mode (no Firebase), returns null
  */
 export function getCurrentUser(): User | null {
+  if (!auth) return null;
   const user = auth.currentUser;
-  if (user && isAllowedDomain(user.email)) {
+  if (user && isAllowedEmail(user.email)) {
     return user;
   }
   return null;
@@ -58,8 +105,10 @@ export function getCurrentUser(): User | null {
 
 /**
  * Get ID token for API requests
+ * In local dev mode, returns null (API server should allow unauthenticated requests locally)
  */
 export async function getIdToken(): Promise<string | null> {
+  if (!auth) return null;
   const user = getCurrentUser();
   if (!user) return null;
   try {
@@ -73,13 +122,18 @@ export async function getIdToken(): Promise<string | null> {
 /**
  * Sign in with Google
  * Returns user if successful and from allowed domain, null otherwise
+ * In local dev mode, this should not be called (UI bypasses auth)
  */
 export async function signInWithGoogle(): Promise<User | null> {
+  if (!auth) {
+    console.warn("[Auth] signInWithGoogle called but Firebase not configured");
+    return null;
+  }
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    if (!isAllowedDomain(user.email)) {
+    if (!isAllowedEmail(user.email)) {
       console.warn(`[Auth] User ${user.email} not from ${ALLOWED_DOMAIN}`);
       await signOut(auth);
       throw new Error(`Access restricted to @${ALLOWED_DOMAIN} accounts`);
@@ -100,6 +154,7 @@ export async function signInWithGoogle(): Promise<User | null> {
  * Sign out current user
  */
 export async function signOutUser(): Promise<void> {
+  if (!auth) return;
   await signOut(auth);
   console.log("[Auth] Signed out");
 }
@@ -107,12 +162,21 @@ export async function signOutUser(): Promise<void> {
 /**
  * Subscribe to auth state changes
  * Callback receives user if authenticated and from allowed domain, null otherwise
+ * In local dev mode, immediately calls back with a mock "authenticated" state
  */
 export function onAuthChange(
   callback: (user: User | null) => void
 ): () => void {
+  // Local dev mode: no Firebase, skip auth entirely
+  if (!auth) {
+    // Immediately trigger callback as "authenticated" in local dev mode
+    // We pass null but main.ts will check isFirebaseConfigured to bypass auth
+    setTimeout(() => callback(null), 0);
+    return () => {}; // No-op unsubscribe
+  }
+
   return onAuthStateChanged(auth, (user) => {
-    if (user && isAllowedDomain(user.email)) {
+    if (user && isAllowedEmail(user.email)) {
       callback(user);
     } else {
       callback(null);
@@ -122,7 +186,9 @@ export function onAuthChange(
 
 /**
  * Check if user is authenticated
+ * In local dev mode, returns false (but app bypasses auth check)
  */
 export function isAuthenticated(): boolean {
+  if (!auth) return false;
   return getCurrentUser() !== null;
 }

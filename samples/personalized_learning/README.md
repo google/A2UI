@@ -521,49 +521,26 @@ export class QuizCard extends LitElement {
 
 ### Quick Start
 
+> **Prerequisites:** Complete Steps 1-6 in [Quickstart.ipynb](Quickstart.ipynb) first to set up GCP, deploy the agent, and configure environment variables.
+
 ```bash
 cd samples/personalized_learning
-
-# Install dependencies
 npm install
-
-# Set environment variables
-export GOOGLE_CLOUD_PROJECT=your-project-id
-export GEMINI_API_KEY=your-api-key  # For local agent only
-
-# Run the demo
 npm run dev
 ```
 
 Open http://localhost:5174
 
-### Running with Local Agent (No Deployment)
+### With vs Without a Deployed Agent
 
-For development without Agent Engine, the A2A client includes fallback content:
+The demo works in two modes:
 
-```typescript
-// src/a2a-client.ts:178-556
-private getFallbackContent(format: string): A2UIResponse {
-  switch (format.toLowerCase()) {
-    case "flashcards":
-      return { /* pre-built flashcard A2UI */ };
-    case "quiz":
-      return { /* pre-built quiz A2UI */ };
-    // ...
-  }
-}
-```
+| Mode | How it works | When to use |
+|------|--------------|-------------|
+| **With deployed agent** | Requests go to Agent Engine, which fetches live OpenStax content | Production, full demo |
+| **Without deployed agent** | Falls back to pre-built sample content in [a2a-client.ts](src/a2a-client.ts) | Quick local testing |
 
-### Running with Deployed Agent
-
-1. Deploy the agent (see [Quickstart.ipynb](Quickstart.ipynb) Step 4)
-2. Set environment variables:
-   ```bash
-   export GOOGLE_CLOUD_PROJECT=your-project-id
-   export AGENT_ENGINE_PROJECT_NUMBER=123456789
-   export AGENT_ENGINE_RESOURCE_ID=your-resource-id
-   ```
-3. Run: `npm run dev`
+The code automatically falls back to sample content if the agent is unreachable—no configuration change needed.
 
 ---
 

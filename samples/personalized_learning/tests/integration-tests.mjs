@@ -125,7 +125,7 @@ function getFallbackContent(format) {
             surfaceId,
             components: [
               { id: "videoCard", component: { Card: { child: "videoPlayer" } } },
-              { id: "videoPlayer", component: { Video: { src: { literalString: "/assets/demo.mp4" } } } },
+              { id: "videoPlayer", component: { Video: { src: { literalString: "/assets/video.mp4" } } } },
             ],
           },
         },

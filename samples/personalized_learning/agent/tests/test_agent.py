@@ -157,7 +157,7 @@ def test_video_example():
     assert "beginRendering" in VIDEO_EXAMPLE
     assert "surfaceUpdate" in VIDEO_EXAMPLE
     assert "Video" in VIDEO_EXAMPLE
-    assert "/assets/demo.mp4" in VIDEO_EXAMPLE
+    assert "/assets/video.mp4" in VIDEO_EXAMPLE
 
 
 @test("get_system_prompt generates flashcards prompt")

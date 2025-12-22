@@ -3,6 +3,6 @@
 #
 # Expected files:
 #   - podcast.m4a  (Audio podcast generated from NotebookLM)
-#   - demo.mp4     (Educational video)
+#   - video.mp4    (Educational video)
 #
 # These files are gitignored due to their size.

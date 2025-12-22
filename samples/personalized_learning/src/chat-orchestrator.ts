@@ -1,7 +1,7 @@
 /*
  * Chat Orchestrator
  *
- * Orchestrates the chat flow between the user, Gemini 3 Pro, and the A2A agent.
+ * Orchestrates the chat flow between the user, Gemini, and the A2A agent.
  * Determines when to generate A2UI content and manages async artifact generation.
  */
 
@@ -45,7 +45,10 @@ export class ChatOrchestrator {
   private renderer: A2UIRenderer;
   private a2aClient: A2AClient;
 
-  // System prompt for the main chat agent
+  // System prompt for conversational responses.
+  // Note: Maria's profile also appears in agent/agent.py (for content generation) and
+  // learner_context/ files (for dynamic personalization). This duplication is intentional—
+  // the frontend and agent operate independently and both need learner context.
   private systemPrompt = `You are a personalized MCAT tutor helping Maria, a pre-med student at Cymbal University.
 You have access to her learning profile and know she struggles with understanding ATP and bond energy concepts.
 

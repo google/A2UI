@@ -706,7 +706,7 @@ async def get_video_content(
                         "id": "videoPlayer",
                         "component": {
                             "Video": {
-                                "url": {"literalString": "/assets/demo.mp4"},
+                                "url": {"literalString": "/assets/video.mp4"},
                             }
                         },
                     },
@@ -874,6 +874,10 @@ async def _generate_a2ui_content(
 # AGENT DEFINITION
 # ============================================================================
 
+# System prompt for tool selection and agent behavior.
+# Note: Maria's profile also appears in src/chat-orchestrator.ts (for chat responses)
+# and learner_context/ files (for dynamic personalization). This duplication is
+# intentional—the frontend and agent operate independently.
 SYSTEM_PROMPT = """# Personalized Learning Agent
 
 You are a personalized learning assistant that helps students study biology more effectively.

@@ -241,7 +241,15 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
   const url = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectNumber}/locations/${location}/reasoningEngines/${resourceId}:streamQuery`;
 
   const accessToken = await getAccessToken();
-  const message = context ? `Generate ${format} for: ${context}` : `Generate ${format}`;
+
+  // For audio/video, don't include topic context - we only have one pre-built podcast/video
+  // Including a topic might confuse the agent into thinking we want topic-specific content
+  let message: string;
+  if (format === "podcast" || format === "audio" || format === "video") {
+    message = format === "video" ? "Play the video" : "Play the podcast";
+  } else {
+    message = context ? `Generate ${format} for: ${context}` : `Generate ${format}`;
+  }
 
   console.log(`[API Server] Querying Agent Engine: ${format}`);
   console.log(`[API Server] URL: ${url}`);

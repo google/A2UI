@@ -203,7 +203,7 @@ Example A2UI JSON for a video player:
           "id": "videoPlayer",
           "component": {{
             "Video": {{
-              "url": {{"literalString": "/assets/demo.mp4"}}
+              "url": {{"literalString": "/assets/video.mp4"}}
             }}
           }}
         }},

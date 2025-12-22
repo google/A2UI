@@ -141,13 +141,14 @@ def deploy_cloud_run(project_id: str, service_name: str, region: str) -> str:
     print(f"Source: {demo_dir}")
 
     # Enable required APIs first and wait for propagation
-    print("\nEnabling Cloud Run, Cloud Build, and IAP APIs...")
+    print("\nEnabling required APIs...")
     run_command([
         "gcloud", "services", "enable",
         "run.googleapis.com",
         "cloudbuild.googleapis.com",
         "artifactregistry.googleapis.com",
         "iap.googleapis.com",
+        "aiplatform.googleapis.com",  # For Gemini API access
         "--project", project_id,
         "--quiet",
     ], check=False)  # Don't fail if already enabled
@@ -189,6 +190,25 @@ def deploy_cloud_run(project_id: str, service_name: str, region: str) -> str:
             "--quiet",
         ], check=False)
 
+        # Grant Artifact Registry writer permission for pushing Docker images
+        # This is required for Cloud Run source deployments
+        run_command([
+            "gcloud", "projects", "add-iam-policy-binding", project_id,
+            "--member", f"serviceAccount:{cloudbuild_sa}",
+            "--role", "roles/artifactregistry.writer",
+            "--quiet",
+        ], check=False)
+
+        # Grant Vertex AI User permission to the compute service account
+        # This allows Cloud Run to call the Gemini API
+        print("\nGranting Vertex AI permissions to Cloud Run service account...")
+        run_command([
+            "gcloud", "projects", "add-iam-policy-binding", project_id,
+            "--member", f"serviceAccount:{compute_sa}",
+            "--role", "roles/aiplatform.user",
+            "--quiet",
+        ], check=False)
+
     print("Waiting for API and IAM permissions to propagate (30 seconds)...")
     time.sleep(30)
 
@@ -211,13 +231,14 @@ def deploy_cloud_run(project_id: str, service_name: str, region: str) -> str:
             env_vars.append(f"AGENT_ENGINE_RESOURCE_ID={agent_resource_id}")
 
         # Deploy using gcloud run deploy with --source
-        # Note: We use --no-allow-unauthenticated for IAP protection
+        # We use --allow-unauthenticated since Firebase Auth handles access control.
+        # The app requires @google.com sign-in (configurable in src/firebase-auth.ts).
         cmd = [
             "gcloud", "run", "deploy", service_name,
             "--source", str(demo_dir),
             "--region", region,
             "--project", project_id,
-            "--no-allow-unauthenticated",  # Require authentication via IAP
+            "--allow-unauthenticated",  # Firebase Auth handles access control
             "--memory", "1Gi",
             "--timeout", "300",
             "--quiet",  # Auto-confirm prompts (e.g., enabling APIs)
@@ -448,15 +469,17 @@ def main():
     if not args.firebase_only:
         deploy_cloud_run(project_id, args.service_name, args.region)
 
-        # Configure IAP access
-        allowed_users = args.allow_users.split(",") if args.allow_users else None
-        configure_iap_access(
-            project_id,
-            args.service_name,
-            args.region,
-            allowed_users=allowed_users,
-            allowed_domain=args.allow_domain,
-        )
+        # Only configure IAP access if explicitly requested AND not using Firebase Hosting
+        # When using Firebase Hosting, access is controlled by Firebase Auth instead
+        if args.cloud_run_only and (args.allow_users or args.allow_domain):
+            allowed_users = args.allow_users.split(",") if args.allow_users else None
+            configure_iap_access(
+                project_id,
+                args.service_name,
+                args.region,
+                allowed_users=allowed_users,
+                allowed_domain=args.allow_domain,
+            )
 
     # Deploy Firebase Hosting
     if not args.cloud_run_only:
@@ -473,23 +496,23 @@ def main():
     print("=" * 60)
 
     if not args.cloud_run_only:
-        print(f"\nYour demo is available at:")
-        print(f"  https://{project_id}.web.app")
-        print(f"  https://{project_id}.firebaseapp.com")
+        print(f"\n✅ Demo is live at: https://{project_id}.web.app")
+        print(f"\nAccess is controlled by Firebase Authentication.")
+        print(f"Users must sign in with a @google.com account (configurable in src/firebase-auth.ts).")
 
-    if not args.firebase_only:
+    if args.cloud_run_only:
         print(f"\nCloud Run service: {args.service_name}")
         print(f"Region: {args.region}")
-        print(f"\nAuthentication: IAP-protected (Google sign-in required)")
-
-        if args.allow_domain:
-            print(f"  Allowed domain: {args.allow_domain}")
-        if args.allow_users:
-            print(f"  Allowed users: {args.allow_users}")
-        if not args.allow_domain and not args.allow_users:
-            print(f"\n  ⚠️  No access granted yet. Use --allow-domain or --allow-users")
-            print(f"     Or run: gcloud run services add-iam-policy-binding {args.service_name} \\")
-            print(f"       --region={args.region} --member='user:EMAIL' --role='roles/run.invoker'")
+        if args.allow_domain or args.allow_users:
+            print(f"\nAuthentication: IAP-protected")
+            if args.allow_domain:
+                print(f"  Allowed domain: {args.allow_domain}")
+            if args.allow_users:
+                print(f"  Allowed users: {args.allow_users}")
+        else:
+            print(f"\n⚠️  Cloud Run deployed with --no-allow-unauthenticated.")
+            print(f"   Grant access with: gcloud run services add-iam-policy-binding {args.service_name} \\")
+            print(f"     --region={args.region} --member='user:EMAIL' --role='roles/run.invoker'")
 
     print()
 

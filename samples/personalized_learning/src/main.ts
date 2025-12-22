@@ -16,6 +16,7 @@ import {
   signInWithGoogle,
   signOutUser,
   getIdToken,
+  isFirebaseConfigured,
 } from "./firebase-auth";
 
 // Store current user for display
@@ -24,6 +25,15 @@ let currentUserEmail: string | null = null;
 // Initialize the application
 async function init() {
   console.log("[Demo] Initializing...");
+
+  // Local dev mode: skip auth if Firebase not configured
+  if (!isFirebaseConfigured) {
+    console.log("[Demo] Running in local dev mode (no auth required)");
+    currentUserEmail = "Local Dev User";
+    showApp();
+    initializeApp();
+    return;
+  }
 
   // Set up auth state listener
   onAuthChange((user) => {
