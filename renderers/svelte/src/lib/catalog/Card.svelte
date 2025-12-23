@@ -50,6 +50,14 @@
 
 	section {
 		height: 100%;
+		width: 100%;
+		min-height: 0;
+		overflow: auto;
 		box-sizing: border-box;
+	}
+
+	section > :global(*) {
+		height: 100%;
+		width: 100%;
 	}
 </style>

@@ -37,9 +37,11 @@
 </script>
 
 <div class="a2ui-audio-host" style="--weight: {weight}">
-	<audio src={audioUrl} controls class={audioClasses} style={audioStyles}>
-		Your browser does not support the audio element.
-	</audio>
+	<section class={audioClasses} style={audioStyles}>
+		<audio src={audioUrl} controls>
+			Your browser does not support the audio element.
+		</audio>
+	</section>
 </div>
 
 <style>
@@ -47,6 +49,7 @@
 		display: block;
 		flex: var(--weight);
 		min-height: 0;
+		overflow: auto;
 	}
 
 	audio {

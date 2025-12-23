@@ -31,29 +31,29 @@
 
 	let { surfaceId, component, weight, processor, theme, name }: Props = $props();
 
-	let iconName = $derived(resolveString(processor, component, surfaceId, name) ?? '');
+	// Convert camelCase to snake_case for Material Symbols compatibility
+	// e.g., "calendarToday" -> "calendar_today"
+	function toSnakeCase(str: string): string {
+		return str.replace(/([A-Z])/g, '_$1').toLowerCase();
+	}
+
+	let iconName = $derived.by(() => {
+		const resolved = resolveString(processor, component, surfaceId, name);
+		return resolved ? toSnakeCase(resolved) : '';
+	});
 	let iconClasses = $derived(classMap(theme.components.Icon));
 	let iconStyles = $derived(styleMap(theme.additionalStyles?.Icon));
 </script>
 
-<span class="g-icon {iconClasses}" style="--weight: {weight}; {iconStyles}">
-	{iconName}
-</span>
+<section class="a2ui-icon-host {iconClasses}" style="--weight: {weight}; {iconStyles}">
+	<span class="g-icon">{iconName}</span>
+</section>
 
 <style>
-	.g-icon {
-		font-family: 'Material Symbols Outlined', sans-serif;
-		font-weight: normal;
-		font-style: normal;
-		font-size: 24px;
-		line-height: 1;
-		letter-spacing: normal;
-		text-transform: none;
-		display: inline-block;
-		white-space: nowrap;
-		word-wrap: normal;
-		direction: ltr;
-		-webkit-font-smoothing: antialiased;
+	.a2ui-icon-host {
+		display: block;
 		flex: var(--weight);
+		min-height: 0;
+		overflow: auto;
 	}
 </style>

@@ -16,6 +16,7 @@
 
 <script lang="ts">
 	import type { Types } from '@a2ui/lit/0.8';
+	import { Styles } from '@a2ui/lit/0.8';
 	import type { SvelteMessageProcessor } from '../data/processor.js';
 	import { resolveString } from '../utils/primitives.js';
 	import { classMap, styleMap } from '../utils/classes.js';
@@ -43,10 +44,17 @@
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const tabsTheme = theme.components.Tabs as any;
 	let containerClasses = $derived(classMap(tabsTheme?.container));
-	let tabClasses = $derived(classMap(tabsTheme?.controls?.all ?? {}));
-	let activeTabClasses = $derived(classMap(tabsTheme?.controls?.selected ?? {}));
 	let contentClasses = $derived(classMap(tabsTheme?.element));
 	let containerStyles = $derived(styleMap(theme.additionalStyles?.Tabs));
+
+	function getButtonClasses(index: number): string {
+		if (index === selectedIndex) {
+			return classMap(
+				Styles.merge(tabsTheme?.controls?.all ?? {}, tabsTheme?.controls?.selected ?? {})
+			);
+		}
+		return classMap({ ...(tabsTheme?.controls?.all ?? {}) });
+	}
 
 	function selectTab(index: number) {
 		selectedIndex = index;
@@ -55,13 +63,11 @@
 
 <div class="a2ui-tabs-host" style="--weight: {weight}">
 	<section class={containerClasses} style={containerStyles}>
-		<div class="tab-bar" role="tablist">
+		<div id="buttons" class={contentClasses}>
 			{#each tabTitles as title, index}
 				<button
-					role="tab"
-					class="{tabClasses} {index === selectedIndex ? activeTabClasses : ''}"
-					class:active={index === selectedIndex}
-					aria-selected={index === selectedIndex}
+					disabled={index === selectedIndex}
+					class={getButtonClasses(index)}
 					onclick={() => selectTab(index)}
 				>
 					{title}
@@ -69,50 +75,15 @@
 			{/each}
 		</div>
 
-		<div class="tab-content {contentClasses}" role="tabpanel">
-			{#if selectedTab}
-				<Renderer {surfaceId} component={selectedTab.child} />
-			{/if}
-		</div>
+		{#if selectedTab}
+			<Renderer {surfaceId} component={selectedTab.child} />
+		{/if}
 	</section>
 </div>
 
 <style>
 	.a2ui-tabs-host {
-		display: flex;
-		flex-direction: column;
+		display: block;
 		flex: var(--weight);
-		min-height: 0;
-	}
-
-	section {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-	}
-
-	.tab-bar {
-		display: flex;
-		border-bottom: 1px solid currentColor;
-		gap: 4px;
-	}
-
-	.tab-bar button {
-		padding: 8px 16px;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		border-bottom: 2px solid transparent;
-		margin-bottom: -1px;
-	}
-
-	.tab-bar button.active {
-		border-bottom-color: currentColor;
-	}
-
-	.tab-content {
-		flex: 1;
-		min-height: 0;
-		padding: 16px 0;
 	}
 </style>

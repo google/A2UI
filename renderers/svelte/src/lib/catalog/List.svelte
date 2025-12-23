@@ -53,19 +53,19 @@
 
 	section {
 		display: grid;
-		gap: 16px;
 	}
 
 	.horizontal section {
 		display: flex;
 		flex-direction: row;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
+		max-width: 100%;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		scrollbar-width: none;
 	}
 
 	.horizontal section > :global(*) {
-		flex-shrink: 0;
-		max-width: 80%;
-		scroll-snap-align: start;
+		flex: 1 0 fit-content;
+		max-width: min(80%, 400px);
 	}
 </style>

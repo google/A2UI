@@ -103,6 +103,11 @@
 </script>
 
 <div class="a2ui-surface" style={styleString}>
+	{#if surface?.styles?.logoUrl}
+		<div id="surface-logo">
+			<img src={surface.styles.logoUrl} alt="" />
+		</div>
+	{/if}
 	{#if surfaceId && surface?.componentTree}
 		<Renderer {surfaceId} component={surface.componentTree} />
 	{/if}
@@ -115,5 +120,15 @@
 		max-height: 100%;
 		flex-direction: column;
 		gap: 16px;
+	}
+
+	#surface-logo {
+		display: flex;
+		justify-content: center;
+	}
+
+	#surface-logo img {
+		width: 50%;
+		max-width: 220px;
 	}
 </style>

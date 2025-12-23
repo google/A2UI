@@ -52,9 +52,35 @@
 		return 'date';
 	});
 
+	let placeholderText = $derived.by(() => {
+		if (inputType === 'date') return 'Date';
+		if (inputType === 'time') return 'Time';
+		return 'Date & Time';
+	});
+
+	function padNumber(value: number): string {
+		return value.toString().padStart(2, '0');
+	}
+
+	let formattedValue = $derived.by(() => {
+		const date = currentValue ? new Date(currentValue) : null;
+		if (!date || isNaN(date.getTime())) return '';
+
+		const year = padNumber(date.getFullYear());
+		const month = padNumber(date.getMonth() + 1);
+		const day = padNumber(date.getDate());
+		const hours = padNumber(date.getHours());
+		const minutes = padNumber(date.getMinutes());
+
+		if (inputType === 'date') return `${year}-${month}-${day}`;
+		if (inputType === 'time') return `${hours}:${minutes}`;
+		return `${year}-${month}-${day}T${hours}:${minutes}`;
+	});
+
 	let containerClasses = $derived(classMap(theme.components.DateTimeInput?.container));
 	let inputClasses = $derived(classMap(theme.components.DateTimeInput?.element));
-	let containerStyles = $derived(styleMap(theme.additionalStyles?.DateTimeInput));
+	let labelClasses = $derived(classMap(theme.components.DateTimeInput?.label));
+	let inputStyles = $derived(styleMap(theme.additionalStyles?.DateTimeInput));
 
 	function handleInput(event: Event) {
 		const path = value?.path;
@@ -68,12 +94,19 @@
 </script>
 
 <div class="a2ui-datetime-host" style="--weight: {weight}">
-	<section class={containerClasses} style={containerStyles}>
+	<section class={containerClasses}>
+		<label for={inputId} class={labelClasses}>
+			{placeholderText}
+		</label>
 		<input
 			type={inputType}
+			autocomplete="off"
 			id={inputId}
+			name="data"
 			class={inputClasses}
-			value={currentValue}
+			style={inputStyles}
+			value={formattedValue}
+			placeholder={placeholderText}
 			oninput={handleInput}
 		/>
 	</section>
@@ -81,18 +114,17 @@
 
 <style>
 	.a2ui-datetime-host {
-		display: flex;
+		display: block;
 		flex: var(--weight);
-	}
-
-	section {
-		display: flex;
-		width: 100%;
+		min-height: 0;
+		overflow: auto;
 	}
 
 	input {
 		display: block;
+		border-radius: 8px;
+		padding: 8px;
+		border: 1px solid #ccc;
 		width: 100%;
-		box-sizing: border-box;
 	}
 </style>

@@ -101,17 +101,7 @@
 		background: none;
 	}
 
-	dialog::backdrop {
-		background: rgba(0, 0, 0, 0.5);
-	}
-
 	dialog section {
-		background: white;
-		padding: 16px;
-		border-radius: 8px;
-		min-width: 300px;
-		max-width: 90vw;
-		max-height: 90vh;
 		overflow: auto;
 	}
 
@@ -124,17 +114,9 @@
 	.controls button {
 		padding: 0;
 		background: none;
-		width: 24px;
-		height: 24px;
+		width: 20px;
+		height: 20px;
 		border: none;
 		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.g-icon {
-		font-family: 'Material Symbols Outlined', sans-serif;
-		font-size: 20px;
 	}
 </style>

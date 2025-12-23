@@ -83,7 +83,8 @@ export const DEFAULT_CATALOG: Catalog = {
 			const properties = (node as Types.ImageNode).properties;
 			return {
 				url: properties.url,
-				usageHint: properties.usageHint ?? null
+				usageHint: properties.usageHint ?? null,
+				fit: properties.fit ?? null
 			};
 		}
 	},

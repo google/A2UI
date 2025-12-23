@@ -68,24 +68,20 @@
 
 <div class="a2ui-slider-host" style="--weight: {weight}">
 	<section class={containerClasses} style={containerStyles}>
-		{#if label}
-			<label for={inputId} class={labelClasses}>
-				{label}
-			</label>
-		{/if}
-
-		<div class="slider-row">
-			<input
-				type="range"
-				id={inputId}
-				class={inputClasses}
-				value={currentValue}
-				min={min}
-				max={max}
-				oninput={handleInput}
-			/>
-			<span class="value-display">{currentValue}</span>
-		</div>
+		<label for={inputId} class={labelClasses}>
+			{label}
+		</label>
+		<input
+			type="range"
+			autocomplete="off"
+			id={inputId}
+			class={inputClasses}
+			value={currentValue}
+			min={min}
+			max={max}
+			oninput={handleInput}
+		/>
+		<span class={labelClasses}>{currentValue}</span>
 	</section>
 </div>
 
@@ -93,28 +89,10 @@
 	.a2ui-slider-host {
 		display: block;
 		flex: var(--weight);
-		min-height: 0;
 	}
 
-	section {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.slider-row {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-
-	input[type='range'] {
-		flex: 1;
-	}
-
-	.value-display {
-		min-width: 40px;
-		text-align: right;
-		font-variant-numeric: tabular-nums;
+	input {
+		display: block;
+		width: 100%;
 	}
 </style>

@@ -18,7 +18,7 @@
 	},
 	"dependencies": {
 		"@a2ui/svelte": "file:../../../../../renderers/svelte",
-		"@a2ui-samples/lib": "workspace:*"
+		"@a2ui-samples/lib": "*"
 	},
 	"devDependencies": {
 		"@a2a-js/sdk": "^0.3.4",

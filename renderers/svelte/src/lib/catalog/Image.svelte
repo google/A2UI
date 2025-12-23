@@ -28,18 +28,25 @@
 		theme: Types.Theme;
 		url: Primitives.StringValue | null;
 		usageHint?: Types.ResolvedImage['usageHint'] | null;
+		fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down' | null;
 	}
 
-	let { surfaceId, component, weight, processor, theme, url, usageHint }: Props = $props();
+	let { surfaceId, component, weight, processor, theme, url, usageHint, fit }: Props = $props();
 
 	let resolvedUrl = $derived(resolveString(processor, component, surfaceId, url) ?? '');
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let imageClasses = $derived(classMap((theme.components.Image as any)?.all ?? {}));
+	let imageClasses = $derived.by(() => {
+		const allClasses = (theme.components.Image as any)?.all ?? {};
+		const hintClasses = usageHint ? (theme.components.Image as any)?.[usageHint] ?? {} : {};
+		return classMap({ ...allClasses, ...hintClasses });
+	});
 	let imageStyles = $derived(styleMap(theme.additionalStyles?.Image));
 </script>
 
-<div class="a2ui-image-host" style="--weight: {weight}" data-usage-hint={usageHint}>
-	<img src={resolvedUrl} alt="" class={imageClasses} style={imageStyles} />
+<div class="a2ui-image-host" style="--weight: {weight}; --object-fit: {fit ?? 'fill'}" data-usage-hint={usageHint}>
+	<section class={imageClasses} style={imageStyles}>
+		<img src={resolvedUrl} alt="" />
+	</section>
 </div>
 
 <style>
@@ -47,36 +54,13 @@
 		display: block;
 		flex: var(--weight);
 		min-height: 0;
+		overflow: auto;
 	}
 
 	img {
 		display: block;
-		max-width: 100%;
-		height: auto;
-		object-fit: contain;
-	}
-
-	[data-usage-hint='icon'] img {
-		width: 24px;
-		height: 24px;
-	}
-
-	[data-usage-hint='avatar'] img {
-		width: 48px;
-		height: 48px;
-		border-radius: 50%;
-		object-fit: cover;
-	}
-
-	[data-usage-hint='feature'] img {
 		width: 100%;
-		max-height: 200px;
-		object-fit: cover;
-	}
-
-	[data-usage-hint='header'] img {
-		width: 100%;
-		max-height: 300px;
-		object-fit: cover;
+		height: 100%;
+		object-fit: var(--object-fit, fill);
 	}
 </style>

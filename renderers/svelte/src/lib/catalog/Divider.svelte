@@ -33,14 +33,22 @@
 	let dividerStyles = $derived(styleMap(theme.additionalStyles?.Divider));
 </script>
 
-<hr class={dividerClasses} style="--weight: {weight}; {dividerStyles}" />
+<div class="a2ui-divider-host" style="--weight: {weight}">
+	<hr class={dividerClasses} style={dividerStyles} />
+</div>
 
 <style>
-	hr {
+	.a2ui-divider-host {
 		display: block;
 		flex: var(--weight);
+		min-height: 0;
+		overflow: auto;
+	}
+
+	hr {
+		height: 1px;
+		background: #ccc;
 		border: none;
-		border-top: 1px solid currentColor;
-		margin: 8px 0;
+		margin: 0;
 	}
 </style>

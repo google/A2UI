@@ -79,43 +79,43 @@
 		box-sizing: border-box;
 	}
 
-	section :global(.align-start) {
+	section:global(.align-start) {
 		align-items: start;
 	}
 
-	section :global(.align-center) {
+	section:global(.align-center) {
 		align-items: center;
 	}
 
-	section :global(.align-end) {
+	section:global(.align-end) {
 		align-items: end;
 	}
 
-	section :global(.align-stretch) {
+	section:global(.align-stretch) {
 		align-items: stretch;
 	}
 
-	section :global(.distribute-start) {
+	section:global(.distribute-start) {
 		justify-content: start;
 	}
 
-	section :global(.distribute-center) {
+	section:global(.distribute-center) {
 		justify-content: center;
 	}
 
-	section :global(.distribute-end) {
+	section:global(.distribute-end) {
 		justify-content: end;
 	}
 
-	section :global(.distribute-spaceBetween) {
+	section:global(.distribute-spaceBetween) {
 		justify-content: space-between;
 	}
 
-	section :global(.distribute-spaceAround) {
+	section:global(.distribute-spaceAround) {
 		justify-content: space-around;
 	}
 
-	section :global(.distribute-spaceEvenly) {
+	section:global(.distribute-spaceEvenly) {
 		justify-content: space-evenly;
 	}
 </style>

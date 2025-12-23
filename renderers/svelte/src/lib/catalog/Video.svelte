@@ -37,10 +37,12 @@
 </script>
 
 <div class="a2ui-video-host" style="--weight: {weight}">
-	<!-- svelte-ignore a11y_media_has_caption -->
-	<video src={videoUrl} controls class={videoClasses} style={videoStyles}>
-		<track kind="captions" />
-	</video>
+	<section class={videoClasses} style={videoStyles}>
+		<!-- svelte-ignore a11y_media_has_caption -->
+		<video src={videoUrl} controls>
+			<track kind="captions" />
+		</video>
+	</section>
 </div>
 
 <style>
@@ -48,11 +50,11 @@
 		display: block;
 		flex: var(--weight);
 		min-height: 0;
+		overflow: auto;
 	}
 
 	video {
 		display: block;
 		width: 100%;
-		max-width: 100%;
 	}
 </style>

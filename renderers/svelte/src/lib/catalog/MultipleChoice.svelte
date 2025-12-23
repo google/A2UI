@@ -52,6 +52,7 @@
 
 	let containerClasses = $derived(classMap(theme.components.MultipleChoice?.container));
 	let selectClasses = $derived(classMap(theme.components.MultipleChoice?.element));
+	let labelClasses = $derived(classMap(theme.components.MultipleChoice?.label));
 	let containerStyles = $derived(styleMap(theme.additionalStyles?.MultipleChoice));
 
 	function handleChange(event: Event) {
@@ -67,8 +68,8 @@
 
 <div class="a2ui-multiple-choice-host" style="--weight: {weight}">
 	<section class={containerClasses} style={containerStyles}>
-		<select id={selectId} class={selectClasses} value={currentValue} onchange={handleChange}>
-			<option value="" disabled>{description}</option>
+		<label for={selectId} class={labelClasses}>{description}</label>
+		<select id={selectId} name="data" class={selectClasses} value={currentValue} onchange={handleChange}>
 			{#each resolvedOptions as option}
 				<option value={option}>{option}</option>
 			{/each}
@@ -78,18 +79,13 @@
 
 <style>
 	.a2ui-multiple-choice-host {
-		display: flex;
+		display: block;
 		flex: var(--weight);
-	}
-
-	section {
-		display: flex;
-		width: 100%;
+		min-height: 0;
+		overflow: auto;
 	}
 
 	select {
-		display: block;
 		width: 100%;
-		box-sizing: border-box;
 	}
 </style>
