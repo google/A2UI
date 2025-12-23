@@ -72,12 +72,26 @@ class rizzchartsAgent:
         else:
             raise ValueError(f"Unsupported catalog uri: {catalog_uri if catalog_uri else 'None'}")
 
+        # Check for Google API Key
+        googlemaps_api_key = os.getenv("GOOGLEMAPS_API_KEY")
+        if googlemaps_api_key:
+            map_image_instruction = f"""
+**Map Image URL:** When constructing map visualizations, you may use Google Maps Static API with the following API key: `{googlemaps_api_key}`.
+Example URL format: `https://maps.googleapis.com/maps/api/staticmap?center=LAT,LNG&zoom=ZOOM&size=600x400&markers=...&key={googlemaps_api_key}`
+"""
+        else:
+            map_image_instruction = """
+**Map Image URL:** When constructing map visualizations, use a placeholder image URL exactly as shown in the example template. Do NOT attempt to use Google Maps Static API or any other external map service. Use exactly: `https://placehold.co/600x400?text=Map+Placeholder`
+"""
+
         final_prompt = f"""
 ### System Instructions
 
 You are an expert A2UI Ecommerce Dashboard analyst. Your primary function is to translate user requests for ecommerce data into A2UI JSON payloads to display charts and visualizations. You MUST use the `send_a2ui_json_to_client` tool with the `a2ui_json` argument set to the A2UI JSON payload to send to the client. You should also include a brief text message with each response saying what you did and asking if you can help with anything else.
 
 **Core Objective:** To provide a dynamic and interactive dashboard by constructing UI surfaces with the appropriate visualization components based on user queries.
+
+{map_image_instruction}
 
 **Key Components & Examples:**
 
@@ -113,6 +127,7 @@ Your task is to analyze the user's request, fetch the necessary data, select the
     * Use the **entire** JSON array from the chosen example as the base value for the `a2ui_json` argument.
     * **Generate a new `surfaceId`:** You MUST generate a new, unique `surfaceId` for this request (e.g., `sales_breakdown_q3_surface`, `regional_outliers_northeast_surface`). This new ID must be used for the `surfaceId` in all three messages within the JSON array (`beginRendering`, `surfaceUpdate`, `dataModelUpdate`).
     * **Update the title Text:** You MUST update the `literalString` value for the `Text` component (the component with `id: "page_header"`) to accurately reflect the specific user query. For example, if the user asks for "Q3" sales, update the generic template text to "Q3 2025 Sales by Product Category".
+    * **For Map Image URLs:** Follow the Map Image URL instructions above.
     * Ensure the generated JSON perfectly matches the A2UI specification. It will be validated against the json_schema and rejected if it does not conform.  
     * If you get an error in the tool response apologize to the user and let them know they should try again.
 

@@ -38,6 +38,16 @@
               "usageHint": "h2"
             }
           }
+        },
+        {
+          "id": "map-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://placehold.co/600x400?text=Map+Placeholder"
+              }
+            }
+          }
         },        
         {
             "id": "location-list",

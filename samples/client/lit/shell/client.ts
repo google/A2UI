@@ -18,7 +18,7 @@ import { Part, SendMessageSuccessResponse, Task } from "@a2a-js/sdk";
 import { A2AClient } from "@a2a-js/sdk/client";
 import { v0_8 } from "@a2ui/lit";
 
-const A2AUI_MIME_TYPE = "application/json+a2aui";
+const A2AUI_MIME_TYPE = "application/json+a2ui";
 
 export class A2UIClient {
   #serverUrl: string;
@@ -97,13 +97,44 @@ export class A2UIClient {
     }
 
     const result = (response as SendMessageSuccessResponse).result as Task;
-    if (result.kind === "task" && result.status.message?.parts) {
-      const messages: v0_8.Types.ServerToClientMessage[] = [];
-      for (const part of result.status.message.parts) {
-        if (part.kind === 'data') {
-          messages.push(part.data as v0_8.Types.ServerToClientMessage);
+    console.log("Full Server Response Result:", JSON.stringify(result, null, 2));
+
+    let responseParts = result.status.message?.parts;
+
+    // Fallback: If no parts in status.message, check the last agent message in history
+    if (!responseParts && result.history && result.history.length > 0) {
+      // Iterate backwards to find the last agent message
+      for (let i = result.history.length - 1; i >= 0; i--) {
+        const msg = result.history[i];
+        if (msg.role === 'agent' && msg.parts && msg.parts.length > 0) {
+          responseParts = msg.parts;
+          console.log("Found parts in history at index", i);
+          break;
         }
       }
+    }
+
+    if (result.kind === "task" && responseParts) {
+      const messages: v0_8.Types.ServerToClientMessage[] = [];
+      for (const part of responseParts) {
+        console.log("Client Received part:", JSON.stringify(part, null, 2));
+
+        if (part.kind === 'data') {
+          let data = part.data;
+          if (typeof data === 'string') {
+            try {
+              data = JSON.parse(data);
+              console.log("Parsed string data:", data);
+            } catch (e) {
+              console.error("Failed to parse part.data string:", e);
+            }
+          }
+          messages.push(data as v0_8.Types.ServerToClientMessage);
+        } else if (part.kind === 'text') {
+            console.log("Ignored text part:", part.text);
+        }
+      }
+      console.log("Final messages to process:", messages);
       return messages;
     }
 

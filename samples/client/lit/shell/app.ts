@@ -45,11 +45,13 @@ import "./ui/ui.js";
 import { AppConfig } from "./configs/types.js";
 import { config as restaurantConfig } from "./configs/restaurant.js";
 import { config as contactsConfig } from "./configs/contacts.js";
+import { config as rizzchartsConfig } from "./configs/rizzcharts.js";
 import { styleMap } from "lit/directives/style-map.js";
 
 const configs: Record<string, AppConfig> = {
   restaurant: restaurantConfig,
   contacts: contactsConfig,
+  rizzcharts: rizzchartsConfig,
 };
 
 @customElement("a2ui-shell")
