@@ -107,10 +107,11 @@ class ContactAgentExecutor(AgentExecutor):
             
             elif action == "send_message":
                 contact_name = ctx.get("contactName", "Unknown")
-                query = f"USER_WANTS_TO_MESSAGE: {contact_name}"
+                query = f"ACTION: send_message to {contact_name}"
 
             elif action == "follow_contact":
-                 query = "ACTION: follow_contact"
+                 contact_name = ctx.get("contactName", "Unknown")
+                 query = f"ACTION: follow_contact for {contact_name}"
 
             elif action == "view_full_profile":
                 contact_name = ctx.get("contactName", "Unknown")
