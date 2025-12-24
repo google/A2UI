@@ -182,6 +182,7 @@ A2UI_SCHEMA = r'''
                               "help",
                               "home",
                               "info",
+                              "link",
                               "locationOn",
                               "lock",
                               "lockOpen",
