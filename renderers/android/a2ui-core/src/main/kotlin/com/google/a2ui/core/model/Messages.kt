@@ -52,7 +52,15 @@ data class ComponentWrapper(
     val Row: ContainerProperties? = null,
     val Box: ContainerProperties? = null,
     val Image: ImageProperties? = null,
-    val TextField: TextFieldProperties? = null
+    val TextField: TextFieldProperties? = null,
+    val Checkbox: CheckboxProperties? = null,
+    val Slider: SliderProperties? = null,
+    val Card: CardProperties? = null,
+    val Tabs: TabsProperties? = null,
+    val Modal: ModalProperties? = null,
+    val DateTimeInput: DateTimeInputProperties? = null,
+    val Video: VideoProperties? = null,
+    val Audio: AudioProperties? = null
 )
 
 @Serializable

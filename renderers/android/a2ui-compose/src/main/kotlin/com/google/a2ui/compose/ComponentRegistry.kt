@@ -2,11 +2,18 @@ package com.google.a2ui.compose
 
 import androidx.compose.runtime.Composable
 import com.google.a2ui.compose.components.ButtonRenderer
+import com.google.a2ui.compose.components.CardRenderer
+import com.google.a2ui.compose.components.CheckboxRenderer
 import com.google.a2ui.compose.components.ColumnRenderer
+import com.google.a2ui.compose.components.DateTimeRenderer
 import com.google.a2ui.compose.components.ImageRenderer
+import com.google.a2ui.compose.components.ModalRenderer
 import com.google.a2ui.compose.components.RowRenderer
+import com.google.a2ui.compose.components.SliderRenderer
+import com.google.a2ui.compose.components.TabsRenderer
 import com.google.a2ui.compose.components.TextFieldRenderer
 import com.google.a2ui.compose.components.TextRenderer
+import com.google.a2ui.compose.components.VideoRenderer
 import com.google.a2ui.core.model.ComponentWrapper
 
 typealias ComponentRenderer = @Composable (ComponentWrapper, A2UIContext) -> Unit
@@ -22,6 +29,15 @@ object ComponentRegistry {
         register("Row") { wrapper, ctx -> RowRenderer(wrapper.Row!!, ctx) }
         register("Image") { wrapper, ctx -> ImageRenderer(wrapper.Image!!, ctx) }
         register("TextField") { wrapper, ctx -> TextFieldRenderer(wrapper.TextField!!, ctx) }
+        
+        // Register new components
+        register("Checkbox") { wrapper, ctx -> CheckboxRenderer(wrapper.Checkbox!!, ctx) }
+        register("Slider") { wrapper, ctx -> SliderRenderer(wrapper.Slider!!, ctx) }
+        register("Card") { wrapper, ctx -> CardRenderer(wrapper.Card!!, ctx) }
+        register("Tabs") { wrapper, ctx -> TabsRenderer(wrapper.Tabs!!, ctx) }
+        register("Modal") { wrapper, ctx -> ModalRenderer(wrapper.Modal!!, ctx) }
+        register("DateTimeInput") { wrapper, ctx -> DateTimeRenderer(wrapper.DateTimeInput!!, ctx) }
+        register("Video") { wrapper, ctx -> VideoRenderer(wrapper.Video!!, ctx) }
     }
 
     fun register(type: String, renderer: ComponentRenderer) {
@@ -45,6 +61,14 @@ object ComponentRegistry {
             wrapper.Box != null -> "Box"
             wrapper.Image != null -> "Image"
             wrapper.TextField != null -> "TextField"
+            wrapper.Checkbox != null -> "Checkbox"
+            wrapper.Slider != null -> "Slider"
+            wrapper.Card != null -> "Card"
+            wrapper.Tabs != null -> "Tabs"
+            wrapper.Modal != null -> "Modal"
+            wrapper.DateTimeInput != null -> "DateTimeInput"
+            wrapper.Video != null -> "Video"
+            wrapper.Audio != null -> "Audio" // Audio maps to Video/Media renderer usually or separate
             else -> null
         }
     }
