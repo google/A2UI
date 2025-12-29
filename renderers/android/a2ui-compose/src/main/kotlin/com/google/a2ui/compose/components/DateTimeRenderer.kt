@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import com.google.a2ui.compose.A2UIContext
 import com.google.a2ui.core.model.DateTimeInputProperties
+import kotlinx.serialization.json.JsonPrimitive
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -58,7 +59,7 @@ fun DateTimeRenderer(
                         datePickerState.selectedDateMillis?.let { millis ->
                             val s = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date(millis))
                             props.onValueChange?.let { action ->
-                                context.onUserAction(action, mapOf("value" to s))
+                                context.onUserAction(action, "unknown_source_id", mapOf("value" to JsonPrimitive(s)))
                             }
                         }
                     }

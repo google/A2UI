@@ -62,6 +62,7 @@ data class Action(
 )
 
 @Serializable
+data class ContextEntry(
     val key: String,
     val value: BoundValue
 )
@@ -137,5 +138,18 @@ data class AudioProperties(
     val url: BoundValue? = null,
     val autoPlay: Boolean? = false,
     val controls: Boolean? = true
+)
+
+@Serializable
+data class IconProperties(
+    val name: BoundValue? = null,
+    val size: Double? = null,
+    val color: String? = null
+)
+
+@Serializable
+data class DividerProperties(
+    val thickness: Double? = null,
+    val color: String? = null
 )
 

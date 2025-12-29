@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import com.google.a2ui.compose.A2UIComponent
 import com.google.a2ui.compose.A2UIContext
 import com.google.a2ui.core.model.ModalProperties
+import kotlinx.serialization.json.JsonElement
 
 @Composable
 fun ModalRenderer(
@@ -21,7 +22,7 @@ fun ModalRenderer(
         AlertDialog(
             onDismissRequest = {
                 props.onDismiss?.let { action ->
-                    context.onUserAction(action, emptyMap())
+                    context.onUserAction(action, "unknown_source_id", emptyMap<String, JsonElement>())
                 }
             },
             title = {
@@ -40,7 +41,7 @@ fun ModalRenderer(
                 Button(
                     onClick = {
                         props.onDismiss?.let { action ->
-                            context.onUserAction(action, emptyMap())
+                            context.onUserAction(action, "unknown_source_id", emptyMap<String, JsonElement>())
                         }
                     }
                 ) {

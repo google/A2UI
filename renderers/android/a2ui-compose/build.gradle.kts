@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -31,7 +32,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
 }
 
@@ -46,6 +47,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.kotlinx.serialization.json)
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation(kotlin("reflect"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

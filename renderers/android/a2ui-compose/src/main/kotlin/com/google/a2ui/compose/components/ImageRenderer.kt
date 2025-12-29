@@ -10,9 +10,15 @@ fun ImageRenderer(
     properties: ImageProperties,
     context: A2UIContext
 ) {
-    val url = context.resolveString(properties.url)
-    // AsyncImage from Coil is standard, but keeping dependencies minimal for this implementation task.
-    // For MVP without network permission config, just showing text placeholder.
-    // In real app, add Coil dependency.
-    Text("Image: $url")
+    val rawUrl = context.resolveString(properties.url)
+    val url = rawUrl?.replace("localhost", "10.0.2.2")
+
+    if (url != null) {
+        coil.compose.AsyncImage(
+            model = url,
+            contentDescription = context.resolveString(properties.altText),
+            modifier = androidx.compose.ui.Modifier,
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+        )
+    }
 }

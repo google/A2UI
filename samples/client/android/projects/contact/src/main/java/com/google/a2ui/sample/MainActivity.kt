@@ -19,6 +19,7 @@ import com.google.a2ui.compose.A2UISurface
 import com.google.a2ui.core.model.ServerMessage
 import com.google.a2ui.core.state.SurfaceState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
@@ -49,10 +50,14 @@ fun SampleA2UIScreen() {
         withContext(Dispatchers.IO) {
             try {
                 // Send an initial query to start the conversation
-                val messages = a2aClient.sendMessage("Find contact info for Sarah Lee")
+                val messages = a2aClient.sendMessage("Find contact info for Alex Jordan")
                 
                 withContext(Dispatchers.Main) {
-                    messages.forEach { surfaceState.applyUpdate(it) }
+                    android.util.Log.d("MainActivity", "Applying ${messages.size} updates to surface.")
+                    messages.forEach { 
+                        android.util.Log.d("MainActivity", "Applying update: $it")
+                        surfaceState.applyUpdate(it) 
+                    }
                     isLoading = false
                 }
             } catch (e: Exception) {
@@ -75,11 +80,27 @@ fun SampleA2UIScreen() {
         }
     } else {
         A2UISurface(
-            surfaceId = "main", // Ensure this matches what the agent returns in BeginRendering
+            surfaceId = "contact-card", // Matches server's "contact-card" surface ID
             state = surfaceState,
-            onUserAction = { action, src ->
-                Log.d("A2UI", "Action: ${action.name} from $src")
-                // TODO: Handle user actions by calling a2aClient.sendEvent(action.parameters)
+            onUserAction = { action, src, contextMap ->
+                Log.d("A2UI", "Action: ${action.name} from $src with $contextMap")
+                Log.d("A2UI", "Action: ${action.name} from $src with $contextMap")
+                
+                // Construct the JSON object for the user action context
+                val actionData = kotlinx.serialization.json.JsonObject(contextMap)
+                
+                // Launch a coroutine to send the event to the server
+                // Note: ideally this should be handled by a ViewModel to avoid leak
+                kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val updates = a2aClient.sendEvent(actionData)
+                        withContext(Dispatchers.Main) {
+                            updates.forEach { surfaceState.applyUpdate(it) }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
             }
         )
     }

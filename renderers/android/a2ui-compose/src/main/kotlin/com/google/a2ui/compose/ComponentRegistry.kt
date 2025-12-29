@@ -14,6 +14,8 @@ import com.google.a2ui.compose.components.TabsRenderer
 import com.google.a2ui.compose.components.TextFieldRenderer
 import com.google.a2ui.compose.components.TextRenderer
 import com.google.a2ui.compose.components.VideoRenderer
+import com.google.a2ui.compose.components.IconRenderer
+import com.google.a2ui.compose.components.DividerRenderer
 import com.google.a2ui.core.model.ComponentWrapper
 
 typealias ComponentRenderer = @Composable (ComponentWrapper, A2UIContext) -> Unit
@@ -38,6 +40,8 @@ object ComponentRegistry {
         register("Modal") { wrapper, ctx -> ModalRenderer(wrapper.Modal!!, ctx) }
         register("DateTimeInput") { wrapper, ctx -> DateTimeRenderer(wrapper.DateTimeInput!!, ctx) }
         register("Video") { wrapper, ctx -> VideoRenderer(wrapper.Video!!, ctx) }
+        register("Icon") { wrapper, ctx -> IconRenderer.Render(wrapper, ctx) }
+        register("Divider") { wrapper, ctx -> DividerRenderer(wrapper.Divider!!, ctx) }
     }
 
     fun register(type: String, renderer: ComponentRenderer) {
@@ -68,7 +72,9 @@ object ComponentRegistry {
             wrapper.Modal != null -> "Modal"
             wrapper.DateTimeInput != null -> "DateTimeInput"
             wrapper.Video != null -> "Video"
-            wrapper.Audio != null -> "Audio" // Audio maps to Video/Media renderer usually or separate
+            wrapper.Audio != null -> "Audio"
+            wrapper.Icon != null -> "Icon"
+            wrapper.Divider != null -> "Divider"
             else -> null
         }
     }

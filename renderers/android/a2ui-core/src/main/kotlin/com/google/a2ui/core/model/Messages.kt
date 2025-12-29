@@ -60,7 +60,9 @@ data class ComponentWrapper(
     val Modal: ModalProperties? = null,
     val DateTimeInput: DateTimeInputProperties? = null,
     val Video: VideoProperties? = null,
-    val Audio: AudioProperties? = null
+    val Audio: AudioProperties? = null,
+    val Icon: IconProperties? = null,
+    val Divider: DividerProperties? = null
 )
 
 @Serializable

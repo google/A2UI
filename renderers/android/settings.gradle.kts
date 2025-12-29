@@ -17,6 +17,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+
 }
 
 rootProject.name = "A2UI-Android-Renderer"

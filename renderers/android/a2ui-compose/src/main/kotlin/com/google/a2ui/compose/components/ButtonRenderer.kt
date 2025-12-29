@@ -27,15 +27,18 @@ fun ButtonRenderer(
             // To fix this properly, I should pass the ID to the renderer.
             // But let's stick to current plan and fix registry separately.
             // I'll emit "unknown" for now and fix later.
-            context.onUserAction(action, "unknown_source_id") 
+            context.onUserAction(action, "unknown_source_id", emptyMap())
         }
+        Unit
     }
 
     Button(onClick = onClick) {
         if (properties.label != null) {
             Text(text = context.resolveString(properties.label))
-        } else if (properties.child != null) {
-            A2UIComponent(id = properties.child, context = context)
+        } else {
+            properties.child?.let { childId ->
+                A2UIComponent(id = childId, context = context)
+            }
         }
     }
 }

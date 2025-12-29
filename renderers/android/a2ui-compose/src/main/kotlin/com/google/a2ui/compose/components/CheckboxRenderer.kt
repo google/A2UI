@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import com.google.a2ui.compose.A2UIContext
 import com.google.a2ui.core.model.CheckboxProperties
+import kotlinx.serialization.json.JsonPrimitive
 
 @Composable
 fun CheckboxRenderer(
@@ -22,7 +23,7 @@ fun CheckboxRenderer(
             onCheckedChange = { isChecked ->
                 props.onCheckedChange?.let { action ->
                     // In a real app we'd pass the new value in the context
-                    context.onUserAction(action, mapOf("checked" to isChecked))
+                    context.onUserAction(action, "unknown_source_id", mapOf("checked" to JsonPrimitive(isChecked)))
                 }
             }
         )

@@ -1,7 +1,8 @@
+plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("plugin.serialization") version "1.9.0" // Hardcoding version for simplicity or if not in catalog
-
+    kotlin("plugin.serialization")
+}
 
 android {
     namespace = "com.google.a2ui.sample"
@@ -37,7 +38,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {

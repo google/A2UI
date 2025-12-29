@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import com.google.a2ui.compose.A2UIComponent
 import com.google.a2ui.compose.A2UIContext
 import com.google.a2ui.core.model.TabsProperties
+import kotlinx.serialization.json.JsonPrimitive
 
 @Composable
 fun TabsRenderer(
@@ -25,7 +26,7 @@ fun TabsRenderer(
                     selected = index == selectedIndex,
                     onClick = {
                         props.onTabSelected?.let { action ->
-                             context.onUserAction(action, mapOf("index" to index.toDouble()))
+                             context.onUserAction(action, "unknown_source_id", mapOf("index" to JsonPrimitive(index.toDouble())))
                         }
                     },
                     text = { Text(title) }

@@ -17,10 +17,17 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+    versionCatalogs {
+        create("libs") {
+            from(files("../../../renderers/android/gradle/libs.versions.toml"))
+        }
+    }
 }
 
 rootProject.name = "A2UI-Android-Sample"
-include(":app")
+include(":projects:contact")
+include(":projects:orchestrator")
+include(":projects:restaurant")
 
 includeBuild("../../../renderers/android") {
     dependencySubstitution {

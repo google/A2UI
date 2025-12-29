@@ -2,6 +2,7 @@ package com.google.a2ui.core.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 sealed class ClientMessage {
@@ -12,7 +13,7 @@ sealed class ClientMessage {
         val surfaceId: String,
         val sourceComponentId: String,
         val timestamp: String,
-        val context: Map<String, Any?>
+        val context: Map<String, JsonElement>
     ) : ClientMessage()
     
     @Serializable
