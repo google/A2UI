@@ -21,9 +21,9 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "./tsconfig.spec.json"
+            "browsers": ["chromium"]
           }
         }
       }
