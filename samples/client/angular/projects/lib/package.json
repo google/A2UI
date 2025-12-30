@@ -3,8 +3,7 @@
   "version": "0.8.3",
   "dependencies": {
     "markdown-it": "^14.1.0",
-    "tslib": "^2.3.0",
-    "@a2ui/lit": "file:../../../../../renderers/lit"
+    "tslib": "^2.3.0"
   },
   "peerDependencies": {
     "@angular/common": "^21.0.0",
