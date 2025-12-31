@@ -42,6 +42,11 @@ export default async () => {
         },
         define: {},
         resolve: {
+            alias: {
+                "lit": resolve(__dirname, "node_modules/lit"),
+                "@lit/context": resolve(__dirname, "node_modules/@lit/context"),
+                "@lit-labs/signals": resolve(__dirname, "node_modules/@lit-labs/signals"),
+            },
             dedupe: ["lit", "@lit/context", "@lit-labs/signals"],
         },
     } satisfies UserConfig;

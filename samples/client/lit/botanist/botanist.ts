@@ -17,11 +17,11 @@
 import { SignalWatcher } from "@lit-labs/signals";
 import { provide } from "@lit/context";
 import {
-    LitElement,
-    html,
-    css,
-    nothing,
-    unsafeCSS,
+  LitElement,
+  html,
+  css,
+  nothing,
+  unsafeCSS,
 } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { theme as uiTheme } from "./theme/theme.js";
@@ -39,27 +39,27 @@ registerBotanistComponents();
 
 @customElement("a2ui-botanist")
 export class A2UIBotanist extends SignalWatcher(LitElement) {
-    @provide({ context: UI.Context.themeContext })
-    accessor theme: v0_8.Types.Theme = uiTheme;
+  @provide({ context: UI.Context.themeContext })
+  theme: v0_8.Types.Theme = uiTheme;
 
-    @state()
-    private _requesting = false;
+  @state()
+  private _requesting = false;
 
-    @state()
-    private _error: string | null = null;
+  @state()
+  private _error: string | null = null;
 
-    @state()
-    private _lastMessages: v0_8.Types.ServerToClientMessage[] = [];
+  @state()
+  private _lastMessages: v0_8.Types.ServerToClientMessage[] = [];
 
-    @state()
-    private _searchQuery = "";
+  @state()
+  private _searchQuery = "";
 
-    private _processor = v0_8.Data.createSignalA2uiMessageProcessor();
-    private _a2uiClient = new A2UIClient();
+  private _processor = v0_8.Data.createSignalA2uiMessageProcessor();
+  private _a2uiClient = new A2UIClient();
 
-    static styles = [
-        unsafeCSS(v0_8.Styles.structuralStyles),
-        css`
+  static styles = [
+    unsafeCSS(v0_8.Styles.structuralStyles),
+    css`
       :host {
         display: block;
         max-width: 800px;
@@ -273,20 +273,20 @@ export class A2UIBotanist extends SignalWatcher(LitElement) {
         }
       }
     `,
+  ];
+
+  render() {
+    return [
+      this._renderHeader(),
+      this._maybeRenderBackButton(),
+      this._maybeRenderForm(),
+      this._maybeRenderData(),
+      this._maybeRenderError(),
     ];
+  }
 
-    render() {
-        return [
-            this._renderHeader(),
-            this._maybeRenderBackButton(),
-            this._maybeRenderForm(),
-            this._maybeRenderData(),
-            this._maybeRenderError(),
-        ];
-    }
-
-    private _renderHeader() {
-        return html`
+  private _renderHeader() {
+    return html`
       <header class="header">
         <span class="logo">🌱</span>
         <div>
@@ -295,36 +295,36 @@ export class A2UIBotanist extends SignalWatcher(LitElement) {
         </div>
       </header>
     `;
-    }
+  }
 
-    private _maybeRenderBackButton() {
-        if (this._lastMessages.length === 0) return nothing;
-        if (this._requesting) return nothing;
+  private _maybeRenderBackButton() {
+    if (this._lastMessages.length === 0) return nothing;
+    if (this._requesting) return nothing;
 
-        return html`
+    return html`
       <button class="back-button" @click=${this._handleReset}>
         <span class="g-icon">arrow_back</span>
         New Search
       </button>
     `;
-    }
+  }
 
-    private _handleReset() {
-        this._lastMessages = [];
-        this._processor.clearSurfaces();
-        this._searchQuery = "";
-    }
+  private _handleReset() {
+    this._lastMessages = [];
+    this._processor.clearSurfaces();
+    this._searchQuery = "";
+  }
 
-    private _maybeRenderError() {
-        if (!this._error) return nothing;
-        return html`<div class="error">${this._error}</div>`;
-    }
+  private _maybeRenderError() {
+    if (!this._error) return nothing;
+    return html`<div class="error">${this._error}</div>`;
+  }
 
-    private _maybeRenderForm() {
-        if (this._requesting) return nothing;
-        if (this._lastMessages.length > 0) return nothing;
+  private _maybeRenderForm() {
+    if (this._requesting) return nothing;
+    if (this._lastMessages.length > 0) return nothing;
 
-        return html`
+    return html`
       <section class="search-section">
         <form @submit=${this._handleSubmit}>
           <div class="search-row">
@@ -338,8 +338,8 @@ export class A2UIBotanist extends SignalWatcher(LitElement) {
               placeholder="Ask me about plants... e.g., 'Air purifying plants for my bedroom'"
               ?disabled=${this._requesting}
               @input=${(e: InputEvent) => {
-                this._searchQuery = (e.target as HTMLInputElement).value;
-            }}
+        this._searchQuery = (e.target as HTMLInputElement).value;
+      }}
             />
             <button type="submit" ?disabled=${this._requesting}>
               <span class="g-icon filled-heavy">search</span>
@@ -367,118 +367,118 @@ export class A2UIBotanist extends SignalWatcher(LitElement) {
         </form>
       </section>
     `;
-    }
+  }
 
-    private async _quickSearch(query: string) {
-        this._searchQuery = query;
-        await this._sendAndProcessMessage(query);
-    }
+  private async _quickSearch(query: string) {
+    this._searchQuery = query;
+    await this._sendAndProcessMessage(query);
+  }
 
-    private async _handleSubmit(evt: Event) {
-        evt.preventDefault();
-        if (!(evt.target instanceof HTMLFormElement)) return;
+  private async _handleSubmit(evt: Event) {
+    evt.preventDefault();
+    if (!(evt.target instanceof HTMLFormElement)) return;
 
-        const data = new FormData(evt.target);
-        const body = data.get("body") as string;
-        if (!body) return;
+    const data = new FormData(evt.target);
+    const body = data.get("body") as string;
+    if (!body) return;
 
-        await this._sendAndProcessMessage(body);
-    }
+    await this._sendAndProcessMessage(body);
+  }
 
-    private _maybeRenderData() {
-        if (this._requesting) {
-            return html`
+  private _maybeRenderData() {
+    if (this._requesting) {
+      return html`
         <div class="pending">
           <span class="g-icon filled-heavy rotate">progress_activity</span>
           <span>Searching the plant database...</span>
         </div>
       `;
-        }
+    }
 
-        const surfaces = this._processor.getSurfaces();
-        if (surfaces.size === 0) {
-            return nothing;
-        }
+    const surfaces = this._processor.getSurfaces();
+    if (surfaces.size === 0) {
+      return nothing;
+    }
 
-        return html`
+    return html`
       <section id="surfaces">
         ${repeat(
-            this._processor.getSurfaces(),
-            ([surfaceId]) => surfaceId,
-            ([surfaceId, surface]) => {
-                return html`
+      this._processor.getSurfaces(),
+      ([surfaceId]) => surfaceId,
+      ([surfaceId, surface]) => {
+        return html`
               <a2ui-surface
                 @a2uiaction=${async (evt: v0_8.Events.StateEvent<"a2ui.action">) => {
-                        const [target] = evt.composedPath();
-                        if (!(target instanceof HTMLElement)) return;
+            const [target] = evt.composedPath();
+            if (!(target instanceof HTMLElement)) return;
 
-                        const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] = {};
-                        if (evt.detail.action.context) {
-                            for (const item of evt.detail.action.context) {
-                                if (item.value.literalBoolean !== undefined) {
-                                    context[item.key] = item.value.literalBoolean;
-                                } else if (item.value.literalNumber !== undefined) {
-                                    context[item.key] = item.value.literalNumber;
-                                } else if (item.value.literalString !== undefined) {
-                                    context[item.key] = item.value.literalString;
-                                } else if (item.value.path) {
-                                    const path = this._processor.resolvePath(
-                                        item.value.path,
-                                        evt.detail.dataContextPath
-                                    );
-                                    const value = this._processor.getData(
-                                        evt.detail.sourceComponent,
-                                        path,
-                                        surfaceId
-                                    );
-                                    context[item.key] = value;
-                                }
-                            }
-                        }
+            const context: Record<string, unknown> = {};
+            if (evt.detail.action && (evt.detail.action as any).context && evt.detail.sourceComponent) {
+              for (const item of (evt.detail.action as any).context) {
+                if (item.value.literalBoolean !== undefined) {
+                  context[item.key] = item.value.literalBoolean;
+                } else if (item.value.literalNumber !== undefined) {
+                  context[item.key] = item.value.literalNumber;
+                } else if (item.value.literalString !== undefined) {
+                  context[item.key] = item.value.literalString;
+                } else if (item.value.path) {
+                  const path = this._processor.resolvePath(
+                    item.value.path,
+                    evt.detail.dataContextPath
+                  );
+                  const value = this._processor.getData(
+                    evt.detail.sourceComponent,
+                    path,
+                    surfaceId
+                  );
+                  context[item.key] = value;
+                }
+              }
+            }
 
-                        const message: v0_8.Types.A2UIClientEventMessage = {
-                            userAction: {
-                                surfaceId: surfaceId,
-                                name: evt.detail.action.name,
-                                sourceComponentId: target.id,
-                                timestamp: new Date().toISOString(),
-                                context,
-                            },
-                        };
+            const message: v0_8.Types.A2UIClientEventMessage = {
+              userAction: {
+                surfaceId: surfaceId,
+                name: evt.detail.action.name,
+                sourceComponentId: target.id,
+                timestamp: new Date().toISOString(),
+                context,
+              },
+            };
 
-                        await this._sendAndProcessMessage(message);
-                    }}
+            await this._sendAndProcessMessage(message);
+          }}
                 .surfaceId=${surfaceId}
                 .surface=${surface}
                 .processor=${this._processor}
               ></a2ui-surface>
             `;
-            }
-        )}
+      }
+    )}
       </section>
     `;
-    }
+  }
 
-    private async _sendAndProcessMessage(request: string | v0_8.Types.A2UIClientEventMessage) {
-        const messages = await this._sendMessage(request);
-        this._lastMessages = messages;
-        this._processor.clearSurfaces();
-        this._processor.processMessages(messages);
-    }
+  private async _sendAndProcessMessage(request: string | v0_8.Types.A2UIClientEventMessage) {
+    const messages = await this._sendMessage(request);
+    this._lastMessages = messages;
+    this._processor.clearSurfaces();
+    this._processor.processMessages(messages);
+  }
 
-    private async _sendMessage(
-        message: string | v0_8.Types.A2UIClientEventMessage
-    ): Promise<v0_8.Types.ServerToClientMessage[]> {
-        try {
-            this._requesting = true;
-            this._error = null;
-            const response = await this._a2uiClient.send(message);
-            return response;
-        } catch (err) {
-            this._error = `Error: ${err}`;
-            return [];
-        } finally {
-            this._requesting = false;
-        }
+  private async _sendMessage(
+    message: string | v0_8.Types.A2UIClientEventMessage
+  ): Promise<v0_8.Types.ServerToClientMessage[]> {
+    try {
+      this._requesting = true;
+      this._error = null;
+      const response = await this._a2uiClient.send(message);
+      return response;
+    } catch (err) {
+      this._error = `Error: ${err}`;
+      return [];
+    } finally {
+      this._requesting = false;
     }
+  }
 }
