@@ -42,7 +42,7 @@ export default async () => {
         },
         define: {},
         resolve: {
-            dedupe: ["lit"],
+            dedupe: ["lit", "@lit/context", "@lit-labs/signals"],
         },
     } satisfies UserConfig;
 };

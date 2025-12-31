@@ -199,7 +199,50 @@ class BotanistAgent:
                     )
                     if not json_string.strip() or json_string_cleaned == "[]":
                         logger.info(
-                            "--- BotanistAgent.stream: Empty JSON list found. Assuming valid (e.g., 'no results'). ---"
+                            "--- BotanistAgent.stream: Empty JSON list found. Generating No Results card. ---"
+                        )
+                        message = {
+                            "surfaceId": "botanist_search_results",
+                            "surfaceUpdate": {
+                                "components": [
+                                    {
+                                        "id": "root",
+                                        "weight": 1.0,
+                                        "componentProperties": {
+                                            "Column": {
+                                                "children": {
+                                                    "explicitList": [
+                                                        "msg_text",
+                                                        "reset_btn",
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                    },
+                                    {
+                                        "id": "msg_text",
+                                        "weight": 1.0,
+                                        "componentProperties": {
+                                            "Text": {
+                                                "text": f"No plants found matching your search. Try searching for something else like 'Palms' or 'Flowering plants'."
+                                            }
+                                        },
+                                    },
+                                    {
+                                        "id": "reset_btn",
+                                        "weight": 0.0,
+                                        "componentProperties": {
+                                            "Button": {
+                                                "label": "Try Another Search",
+                                                "action": {"name": "search_plants"},
+                                            }
+                                        },
+                                    },
+                                ]
+                            },
+                        }
+                        final_response_content = (
+                            f"No results found.---a2ui_JSON---{json.dumps([message])}"
                         )
                         is_valid = True
                     else:

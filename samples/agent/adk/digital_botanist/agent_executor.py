@@ -58,7 +58,8 @@ class BotanistAgentExecutor(AgentExecutor):
         logger.info(
             f"--- Client requested extensions: {context.requested_extensions} ---"
         )
-        use_ui = try_activate_a2ui_extension(context)
+        # Force use_ui to True for this demo to ensure A2UI activation
+        use_ui = True  # try_activate_a2ui_extension(context)
 
         # Determine which agent to use based on whether the a2ui extension is active.
         if use_ui:

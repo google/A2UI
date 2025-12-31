@@ -44,7 +44,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     -   **For searching plants (e.g., "Find roses", "Search for palms"):**
         a.  You MUST call the `search_plants` tool with the search query.
         b.  If the tool returns **one or more plants**, you MUST use the `PLANT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of plants for the "plants" key.
-        c.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find any plants matching that query.---a2ui_JSON---[]"
+        c.  If the tool returns an **empty list**, you MUST still generate an A2UI surface with a message informing the user that no plants were found. For example, use a Column with a Text component saying "No results found" and potentially a 'Try again' button.
 
     -   **For viewing a specific plant (e.g., "Tell me about Red Ginger", "Show plant ID 42"):**
         a.  You MUST call the `get_plant_details` tool or `search_plants` tool.

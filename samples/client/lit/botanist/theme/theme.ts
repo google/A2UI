@@ -17,11 +17,140 @@
 import { v0_8 } from "@a2ui/lit";
 
 export const theme: v0_8.Types.Theme = {
-    font: "Nunito, sans-serif",
-    primaryColor: "#2E7D32",
-    secondaryColor: "#81C784",
-    backgroundColor: "#F1F8E9",
-    surfaceColor: "#FFFFFF",
-    textColor: "#1B5E20",
-    borderRadius: "16px",
+    components: {
+        AudioPlayer: {},
+        Button: {
+            "botanist-button": true
+        },
+        Card: {
+            "botanist-card": true
+        },
+        Column: {
+            "botanist-column": true
+        },
+        CheckBox: {
+            container: {},
+            element: {},
+            label: {},
+        },
+        DateTimeInput: {
+            container: {},
+            element: {},
+            label: {},
+        },
+        Divider: {
+            "botanist-divider": true
+        },
+        Image: {
+            all: { "botanist-image": true },
+            icon: {},
+            avatar: {},
+            smallFeature: {},
+            mediumFeature: {},
+            largeFeature: {},
+            header: {},
+        },
+        Icon: {
+            "botanist-icon": true
+        },
+        List: {
+            "botanist-list": true
+        },
+        Modal: {
+            backdrop: {},
+            element: {},
+        },
+        MultipleChoice: {
+            container: {},
+            element: {},
+            label: {},
+        },
+        Row: {
+            "botanist-row": true
+        },
+        Slider: {
+            container: {},
+            element: {},
+            label: {},
+        },
+        Tabs: {
+            container: {},
+            element: {},
+            controls: {
+                all: {},
+                selected: {},
+            },
+        },
+        Text: {
+            all: { "botanist-text": true },
+            h1: { "botanist-h1": true },
+            h2: { "botanist-h2": true },
+            h3: { "botanist-h3": true },
+            h4: { "botanist-h4": true },
+            h5: { "botanist-h5": true },
+            caption: { "botanist-caption": true },
+            body: { "botanist-body": true },
+        },
+        TextField: {
+            container: {},
+            element: {},
+            label: {},
+        },
+        Video: {},
+    },
+    elements: {
+        a: {},
+        audio: {},
+        body: {},
+        button: {},
+        h1: {},
+        h2: {},
+        h3: {},
+        h4: {},
+        h5: {},
+        iframe: {},
+        input: {},
+        p: {},
+        pre: {},
+        textarea: {},
+        video: {},
+    },
+    markdown: {
+        p: [],
+        h1: [],
+        h2: [],
+        h3: [],
+        h4: [],
+        h5: [],
+        ul: [],
+        ol: [],
+        li: [],
+        a: [],
+        strong: [],
+        em: [],
+    },
+    additionalStyles: {
+        Text: {
+            body: {
+                "font-family": "Nunito, sans-serif",
+                "color": "#1B5E20"
+            },
+            h1: {
+                "font-family": "Nunito, sans-serif",
+                "color": "#2E7D32",
+                "font-weight": "700"
+            },
+            h2: {},
+            h3: {},
+            h4: {},
+            h5: {},
+            caption: {}
+        },
+        Card: {
+            "background": "#FFFFFF",
+            "border-radius": "16px",
+            "box-shadow": "0 4px 12px rgba(46, 125, 50, 0.15)",
+            "border": "1px solid rgba(46, 125, 50, 0.1)"
+        }
+    }
 };
