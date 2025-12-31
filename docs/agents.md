@@ -32,6 +32,9 @@ The A2UI repository includes sample agents you can learn from:
 - [Rizzcharts](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts) 
     - A2UI Custom components demo
     - Written with the ADK
+- [Orchestrator](https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator) 
+    - Passes A2UI messages from remote subagents
+    - Written with the ADK
 
 ## Different types of agents you will use A2A with
 
