@@ -7,7 +7,7 @@ import { ChatService } from '../services/chat.service';
 @Component({
   selector: 'a2ui-canvas',
   standalone: true,
-  imports: [NativeScriptCommonModule],
+  imports: [NativeScriptCommonModule, Renderer],
   schemas: [NO_ERRORS_SCHEMA],
   template: `
     <StackLayout class="canvas-container" *ngIf="surface()">
@@ -20,10 +20,12 @@ import { ChatService } from '../services/chat.service';
       
       <ScrollView class="canvas-content">
         <StackLayout class="surface-wrapper">
-          <!-- Dynamic A2UI content will be rendered here -->
+          <!-- Dynamic A2UI content rendered here -->
           <ng-container 
             *ngIf="surface()?.root"
-            [a2uiRenderer]="surface()!.root!">
+            a2ui-renderer
+            [surfaceId]="surface()!.surfaceId!"
+            [component]="surface()!.root!">
           </ng-container>
         </StackLayout>
       </ScrollView>

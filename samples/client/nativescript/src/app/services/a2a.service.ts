@@ -37,8 +37,9 @@ export interface ChatMessage {
 @Injectable({ providedIn: 'root' })
 export class A2aService {
   // Configure your A2A server endpoint here
-  private readonly serverUrl = 'http://localhost:10000';
-  private readonly endpoint = '/a2a';
+  private readonly serverUrl = 'http://localhost:10002';
+  // A2A SDK uses root endpoint for JSON-RPC
+  private readonly endpoint = '/';
 
   private readonly _connected = signal(false);
   private readonly _agentCard = signal<AgentCard | null>(null);
@@ -70,7 +71,7 @@ export class A2aService {
   async getAgentCard(): Promise<AgentCard | null> {
     try {
       const response = await Http.request({
-        url: `${this.serverUrl}/.well-known/agent.json`,
+        url: `${this.serverUrl}/.well-known/agent-card.json`,
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         timeout: 5000,
@@ -101,17 +102,18 @@ export class A2aService {
     this._loading.set(true);
     
     try {
-      const taskId = this.generateTaskId();
+      const messageId = this.generateTaskId();
+      const requestId = this.generateTaskId();
       const requestBody = {
         jsonrpc: '2.0',
-        id: taskId,
-        method: 'tasks/send',
+        id: requestId,
+        method: 'message/send',
         params: {
-          id: taskId,
           message: {
+            messageId: messageId,
             role: 'user',
             parts: parts.map(p => ({
-              type: p.type,
+              kind: p.type,  // A2A uses 'kind' not 'type'
               text: p.text,
               mimeType: p.mimeType,
               data: p.data,

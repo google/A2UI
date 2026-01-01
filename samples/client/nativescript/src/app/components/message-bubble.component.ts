@@ -164,6 +164,10 @@ export class MessageBubbleComponent {
   
   readonly formattedTime = computed(() => {
     const date = this._message().timestamp;
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const hour12 = hours % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
   });
 }

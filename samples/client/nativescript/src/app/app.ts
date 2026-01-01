@@ -1,7 +1,6 @@
 import { Component, NO_ERRORS_SCHEMA, OnInit, inject } from '@angular/core';
 import { NativeScriptCommonModule } from '@nativescript/angular';
 import { isIOS, Screen } from '@nativescript/core';
-import { Renderer } from '@a2ui/nativescript';
 import { Types } from '../a2ui-lit-types';
 import { ChatService } from './services/chat.service';
 import { ChatInputComponent } from './components/chat-input.component';
@@ -13,7 +12,6 @@ import { CanvasComponent } from './components/canvas.component';
   standalone: true,
   imports: [
     NativeScriptCommonModule,
-    Renderer,
     ChatInputComponent,
     ChatHistoryComponent,
     CanvasComponent,
@@ -41,7 +39,8 @@ import { CanvasComponent } from './components/canvas.component';
           <Label 
             class="header-status"
             [class.connected]="chatService.connected()"
-            [text]="chatService.connected() ? 'Connected' : 'Connecting...'">
+            [class.demo-mode]="chatService.demoModeActive()"
+            [text]="getStatusText()">
           </Label>
         </StackLayout>
         
@@ -161,6 +160,10 @@ import { CanvasComponent } from './components/canvas.component';
       vertical-align: bottom;
       margin-bottom: 8;
     }
+    
+    .header-status.demo-mode {
+      color: #f59e0b;
+    }
   `]
 })
 export class App implements OnInit {
@@ -174,6 +177,15 @@ export class App implements OnInit {
         console.log('Could not connect to A2A server, running in demo mode');
       }
     });
+  }
+
+  getStatusText(): string {
+    if (this.chatService.connected()) {
+      return 'Connected';
+    } else if (this.chatService.demoModeActive()) {
+      return 'Demo Mode';
+    }
+    return 'Connecting...';
   }
 
   onSendMessage(message: string): void {

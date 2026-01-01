@@ -429,6 +429,7 @@ export interface A2uiMessage {
   root?: Node | SimpleNode;
   surfaceId?: string;
   data?: Record<string, DataValue>;
+  dataModels?: DataMap;
 }
 
 export interface Surface {

@@ -31,6 +31,10 @@ export class ChatService {
   readonly agentCard = this.a2aService.agentCard;
   readonly agentName = this.a2aService.agentName;
   readonly connected = this.a2aService.connected;
+  
+  // Demo mode status
+  private readonly _demoModeActive = signal(false);
+  readonly demoModeActive = this._demoModeActive.asReadonly();
 
   readonly hasMessages = computed(() => this._messages().length > 0);
   readonly lastMessage = computed(() => {
@@ -41,6 +45,7 @@ export class ChatService {
   async connect(): Promise<boolean> {
     const connected = await this.a2aService.connect();
     this.demoMode = !connected;
+    this._demoModeActive.set(!connected);
     return connected;
   }
 
@@ -120,38 +125,64 @@ export class ChatService {
     let actions: Types.Action[] = [];
 
     try {
-      // Handle A2A response format
+      // Handle A2A JSON-RPC response format
       const result = response?.result;
       
-      if (result?.status?.message?.parts) {
-        for (const part of result.status.message.parts) {
-          if (part.type === 'text' && part.text) {
-            content += part.text;
-          }
-          
-          // Check for A2UI content
-          if (part.metadata?.['a2ui/surface']) {
-            const surface = part.metadata['a2ui/surface'] as Types.A2uiMessage;
-            surfaces.push(surface);
-            this._currentSurface.set(surface);
-          }
-        }
+      // Extract parts from the response
+      let parts: any[] = [];
+      
+      if (result?.kind === 'task') {
+        // Task response format - get message parts and artifact parts
+        parts = [
+          ...(result.status?.message?.parts ?? []),
+          ...(result.artifacts ?? []).flatMap((artifact: any) => artifact.parts ?? []),
+        ];
+      } else if (result?.kind === 'message') {
+        // Message response format
+        parts = result.parts ?? [];
+      } else if (result?.status?.message?.parts) {
+        // Alternative format
+        parts = result.status.message.parts;
       }
-
-      // Also check for artifacts
-      if (result?.artifacts) {
-        for (const artifact of result.artifacts) {
-          if (artifact.parts) {
-            for (const part of artifact.parts) {
-              if (part.metadata?.['a2ui/surface']) {
-                const surface = part.metadata['a2ui/surface'] as Types.A2uiMessage;
-                surfaces.push(surface);
-                this._currentSurface.set(surface);
-              }
+      
+      // Process parts
+      for (const part of parts) {
+        // Handle text parts
+        if (part.kind === 'text' && part.text) {
+          content += part.text;
+        }
+        
+        // Handle data parts with A2UI content
+        if (part.kind === 'data' && part.data && typeof part.data === 'object') {
+          const data = part.data;
+          
+          // Check for A2UI message types
+          if ('beginRendering' in data || 'surfaceUpdate' in data) {
+            const surfaceData = data.beginRendering || data.surfaceUpdate;
+            if (surfaceData) {
+              console.log('Found A2UI surface:', surfaceData.surfaceId);
+              const surface: Types.A2uiMessage = {
+                surfaceId: surfaceData.surfaceId,
+                root: surfaceData.root,
+                dataModels: surfaceData.dataModels,
+              };
+              surfaces.push(surface);
+              this._currentSurface.set(surface);
             }
           }
         }
+        
+        // Legacy: check metadata for a2ui/surface
+        if (part.metadata?.['a2ui/surface']) {
+          const surface = part.metadata['a2ui/surface'] as Types.A2uiMessage;
+          surfaces.push(surface);
+          this._currentSurface.set(surface);
+        }
       }
+
+      // Log for debugging
+      console.log('Processed response - content:', content, 'surfaces:', surfaces.length);
+      
     } catch (e) {
       console.error('Error processing response:', e);
       content = 'Received a response but could not parse it.';
