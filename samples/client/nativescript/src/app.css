@@ -1,3 +1,173 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ========================================
+   A2UI NativeScript Theme - Dark Mode
+   ======================================== */
+
+/* Base App Styles */
+Page {
+  background-color: #0f0f23;
+}
+
+ActionBar {
+  background-color: #0f0f23;
+  color: #ffffff;
+}
+
+/* Typography */
+.text-primary {
+  color: #ffffff;
+}
+
+.text-secondary {
+  color: #9ca3af;
+}
+
+.text-muted {
+  color: #6b7280;
+}
+
+.text-accent {
+  color: #6366f1;
+}
+
+/* Backgrounds */
+.bg-primary {
+  background-color: #0f0f23;
+}
+
+.bg-secondary {
+  background-color: #1e1e3f;
+}
+
+.bg-card {
+  background-color: #1a1a2e;
+}
+
+.bg-accent {
+  background-color: #6366f1;
+}
+
+.bg-gradient {
+  background: linear-gradient(180deg, #0a0a1f 0%, #12122e 50%, #1a1a3e 100%);
+}
+
+/* Buttons */
+.btn {
+  font-size: 15;
+  font-weight: 500;
+  padding: 12 24;
+  border-radius: 12;
+  text-transform: none;
+}
+
+.btn-primary {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+.btn-primary:active {
+  background-color: #4f46e5;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #6366f1;
+  border-width: 1;
+  border-color: #6366f1;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: #9ca3af;
+}
+
+/* Cards */
+.card {
+  background-color: #1e1e3f;
+  border-radius: 16;
+  border-width: 1;
+  border-color: #2a2a4a;
+}
+
+.card-elevated {
+  background-color: #1e1e3f;
+  border-radius: 16;
+}
+
+/* Inputs */
+.input {
+  font-size: 16;
+  color: #ffffff;
+  background-color: #1a1a2e;
+  border-radius: 12;
+  border-width: 1;
+  border-color: #2a2a4a;
+  padding: 12 16;
+}
+
+.input:focus {
+  border-color: #6366f1;
+}
+
+/* Spacing utilities */
+.m-0 { margin: 0; }
+.m-1 { margin: 4; }
+.m-2 { margin: 8; }
+.m-3 { margin: 12; }
+.m-4 { margin: 16; }
+.m-5 { margin: 20; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 4; }
+.p-2 { padding: 8; }
+.p-3 { padding: 12; }
+.p-4 { padding: 16; }
+.p-5 { padding: 20; }
+
+/* Border radius */
+.rounded-sm { border-radius: 4; }
+.rounded { border-radius: 8; }
+.rounded-md { border-radius: 12; }
+.rounded-lg { border-radius: 16; }
+.rounded-xl { border-radius: 24; }
+.rounded-full { border-radius: 9999; }
+
+/* Font sizes */
+.text-xs { font-size: 10; }
+.text-sm { font-size: 12; }
+.text-base { font-size: 14; }
+.text-lg { font-size: 16; }
+.text-xl { font-size: 18; }
+.text-2xl { font-size: 24; }
+.text-3xl { font-size: 30; }
+
+/* Font weights */
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+/* Shadows (iOS only) */
+.shadow-sm {
+  ios-shadow-color: #000000;
+  ios-shadow-opacity: 0.1;
+  ios-shadow-radius: 4;
+  ios-shadow-offset: 0, 2;
+}
+
+.shadow {
+  ios-shadow-color: #000000;
+  ios-shadow-opacity: 0.15;
+  ios-shadow-radius: 8;
+  ios-shadow-offset: 0, 4;
+}
+
+.shadow-lg {
+  ios-shadow-color: #000000;
+  ios-shadow-opacity: 0.2;
+  ios-shadow-radius: 16;
+  ios-shadow-offset: 0, 8;
+}

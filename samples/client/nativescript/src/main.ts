@@ -6,19 +6,26 @@ import {
 } from '@nativescript/angular';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { withInterceptorsFromDi } from '@angular/common/http';
-// import { routes } from './app/app.routes';
 import { App } from './app/app';
-import { Catalog } from '@a2ui/nativescript';
+import { Catalog, Theme, MessageProcessor } from '@a2ui/nativescript';
 import { NativeScriptCatalog } from './app/catalog';
+import { defaultTheme } from './app/theme';
+import { A2aService } from './app/services/a2a.service';
+import { ChatService } from './app/services/chat.service';
 
 runNativeScriptAngularApp({
   appModuleBootstrap: () => {
     return bootstrapApplication(App, {
       providers: [
         provideNativeScriptHttpClient(withInterceptorsFromDi()),
-        // provideNativeScriptRouter(routes),
         provideZonelessChangeDetection(),
+        // A2UI Renderer providers
         { provide: Catalog, useValue: NativeScriptCatalog },
+        { provide: Theme, useValue: defaultTheme },
+        MessageProcessor,
+        // Chat services
+        A2aService,
+        ChatService,
       ],
     });
   },

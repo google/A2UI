@@ -3,3 +3,4 @@
  */
 
 export * from './lib/rendering';
+export * from './lib/data';
