@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Part, SendMessageSuccessResponse, Task } from "@a2a-js/sdk";
+import { Part, SendMessageSuccessResponse } from "@a2a-js/sdk";
 import { A2AClient } from "@a2a-js/sdk/client";
 import { v0_8 } from "@a2ui/lit";
 
@@ -36,24 +36,24 @@ export class A2UIClient {
   async #getClient() {
     if (!this.#client) {
       // Default to localhost:10002 if no URL provided (fallback for restaurant app default)
-      const baseUrl = this.#serverUrl || "http://localhost:10002";
+      const baseUrl = this.#serverUrl || "http://localhost:10005";
 
       this.#client = await A2AClient.fromCardUrl(
-        `${baseUrl}/.well-known/agent-card.json`,
-        {
-          fetchImpl: async (url, init) => {
-            const headers = new Headers(init?.headers);
-            headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.8");
-            return fetch(url, { ...init, headers });
+          `${baseUrl}/.well-known/agent-card.json`,
+          {
+            fetchImpl: async (url, init) => {
+              const headers = new Headers(init?.headers);
+              headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.8");
+              return fetch(url, { ...init, headers });
+            }
           }
-        }
       );
     }
     return this.#client;
   }
 
   async send(
-    message: v0_8.Types.A2UIClientEventMessage | string
+      message: v0_8.Types.A2UIClientEventMessage | string
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
     const client = await this.#getClient();
 
@@ -96,17 +96,32 @@ export class A2UIClient {
       throw new Error(response.error.message);
     }
 
-    const result = (response as SendMessageSuccessResponse).result as Task;
-    if (result.kind === "task" && result.status.message?.parts) {
-      const messages: v0_8.Types.ServerToClientMessage[] = [];
-      for (const part of result.status.message.parts) {
+    const result = (response as SendMessageSuccessResponse).result as any;
+    const messages: v0_8.Types.ServerToClientMessage[] = [];
+
+    if (result.metadata?.a2a_subagent) {
+      messages.push({
+        a2a_subagent: result.metadata.a2a_subagent,
+      } as any);
+    }
+
+    let responseParts = result.status?.message?.parts;
+
+    if (!responseParts && result.history?.length > 0) {
+      const lastMessage = result.history[result.history.length - 1];
+      if (lastMessage.role === "agent") {
+        responseParts = lastMessage.parts;
+      }
+    }
+
+    if (responseParts) {
+      for (const part of responseParts) {
         if (part.kind === 'data') {
           messages.push(part.data as v0_8.Types.ServerToClientMessage);
         }
       }
-      return messages;
     }
 
-    return [];
+    return messages;
   }
 }

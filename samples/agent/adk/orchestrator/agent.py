@@ -15,7 +15,7 @@
 import json
 import logging
 import os
-from typing import List
+from typing import List, Any
 from a2a.client import A2ACardResolver
 from a2a.extensions.common import HTTP_EXTENSION_HEADER
 from google.adk.models.lite_llm import LiteLlm
@@ -32,11 +32,11 @@ from google.adk.models.llm_response import LlmResponse
 from subagent_route_manager import SubagentRouteManager
 from a2ui.a2ui_extension import is_a2ui_part, A2UI_EXTENSION_URI
 from typing import override
-from a2a.types import TransportProtocol as A2ATransport
+from a2a.types import TransportProtocol as A2ATransport, AgentCard
 
 logger = logging.getLogger(__name__)
-from a2a.client.middleware import ClientCallInterceptor
-from a2a.client.client import ClientConfig as A2AClientConfig
+from a2a.client.middleware import ClientCallInterceptor, ClientCallContext
+from a2a.client.client import ClientConfig as A2AClientConfig, Consumer, Client
 from a2a.client.client_factory import ClientFactory as A2AClientFactory
 from a2ui.a2ui_extension import A2UI_CLIENT_CAPABILITIES_KEY
 

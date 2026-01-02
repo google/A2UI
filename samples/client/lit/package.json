@@ -9,13 +9,16 @@
     "shell"
   ],
   "scripts": {
-    "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
-    "serve:agent:contact_lookup": "cd ../../agent/adk/contact_lookup && uv run .",
+    "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run . --port=10002",
+    "serve:agent:contact_lookup": "cd ../../agent/adk/contact_lookup && uv run . --port=10003",
     "serve:agent:contact_multi_surface": "cd ../../agent/adk/contact_multiple_surfaces && uv run .",
     "serve:shell": "cd shell && npm run dev",
     "build:renderer": "cd ../../../renderers/lit && npm install && npm run build",
-    "demo:all": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST,CONT1\" -c \"magenta,blue,green\" \"npm run serve:shell\" \"npm run serve:agent:restaurant\" \"npm run serve:agent:contact_lookup\"",
-    "demo:restaurant": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST\" -c \"magenta,blue\" \"npm run serve:shell\" \"npm run serve:agent:restaurant\""
+    "demo:all": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST,CONT1\" -c \"magenta,blue,green\" \"npm run serve:shell\" \"npm run serve:agent:restaurant\" \"npm run serve:agent:contact_lookup\" \"npm run serve:agent:orchestrator\"",
+    "demo:restaurant": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST\" -c \"magenta,blue\" \"npm run serve:shell\" \"npm run serve:agent:restaurant\"",
+    "serve:agent:orchestrator": "cd ../../agent/adk/orchestrator && uv run . --port=10005 --subagent_urls=http://localhost:10002 --subagent_urls=http://localhost:10003",
+    "serve:orchestrator": "cd orchestrator && npm run dev",
+    "demo:orchestrator": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST,CONT1\" -c \"magenta,blue,green\" \"npm run serve:orchestrator\" \"npm run serve:agent:restaurant\" \"npm run serve:agent:contact_lookup\" \"npm run serve:agent:orchestrator\""
   },
   "devDependencies": {
     "concurrently": "9.2.1"
