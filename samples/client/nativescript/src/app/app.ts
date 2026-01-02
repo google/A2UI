@@ -1,11 +1,12 @@
-import { Component, NO_ERRORS_SCHEMA, OnInit, inject } from "@angular/core";
+import { Component, NO_ERRORS_SCHEMA, OnInit, inject, ViewChild, ElementRef } from "@angular/core";
 import { NativeScriptCommonModule } from "@nativescript/angular";
-import { isIOS, Screen, Dialogs } from "@nativescript/core";
+import { isIOS, Screen, Dialogs, View } from "@nativescript/core";
 import { Types } from "../a2ui-lit-types";
 import { ChatService } from "./services/chat.service";
 import { ChatInputComponent } from "./components/chat-input.component";
 import { ChatHistoryComponent } from "./components/chat-history.component";
 import { CanvasComponent } from "./components/canvas.component";
+import { showMenu, MenuConfig } from "./components/menu";
 
 @Component({
   selector: "ns-app",
@@ -46,7 +47,7 @@ import { CanvasComponent } from "./components/canvas.component";
         </StackLayout>
 
         <StackLayout col="2" class="header-actions">
-          <Label class="header-action-btn" text="⋯" (tap)="onMenuTap()">
+          <Label #menuButton class="header-action-btn" text="⋯" (tap)="onMenuTap()">
           </Label>
         </StackLayout>
       </GridLayout>
@@ -178,6 +179,9 @@ export class App implements OnInit {
   readonly chatService = inject(ChatService);
   readonly isIOS = isIOS;
 
+  @ViewChild('menuButton', { read: ElementRef, static: false })
+  menuButtonRef!: ElementRef;
+
   ngOnInit(): void {
     // Try to connect to the A2A server
     this.chatService.connect().then((connected) => {
@@ -207,57 +211,70 @@ export class App implements OnInit {
     const isDemo = this.chatService.demoModeActive();
     const serverAvailable = this.chatService.isServerAvailable();
 
-    const actions = [
-      "Clear Chat",
-      isDemo ? "🔴 Switch to Live Mode" : "🟢 Switch to Demo Mode",
-      "Show All Demo Surfaces",
-      "Cancel",
-    ];
+    // Build menu items
+    const menuConfig: MenuConfig = {
+      title: "A2UI Demo Options",
+      items: [
+        { 
+          id: "clear-chat", 
+          title: "Clear Chat",
+          icon: isIOS ? "trash" : "ic_delete"
+        },
+        { 
+          id: "toggle-mode", 
+          title: isDemo ? "Switch to Live Mode" : "Switch to Demo Mode",
+          icon: isIOS ? (isDemo ? "antenna.radiowaves.left.and.right" : "play.circle") : "ic_sync",
+          disabled: isDemo && !serverAvailable
+        },
+        { 
+          id: "showcase", 
+          title: "Show All Demo Surfaces",
+          icon: isIOS ? "square.stack.3d.up" : "ic_view_module"
+        },
+      ],
+    };
 
-    // Only show live mode option if server is available
-    if (!serverAvailable && isDemo) {
-      actions[1] = "⚠️ Live Mode (Server Unavailable)";
+    // Get the anchor view for the menu
+    const anchorView: View = this.menuButtonRef?.nativeElement;
+    
+    if (!anchorView) {
+      console.warn('Menu button not available');
+      return;
     }
 
-    const result = await Dialogs.action({
-      title: "A2UI Demo Options",
-      message: `Current Mode: ${isDemo ? "Demo" : "Live"}\nServer: ${
-        serverAvailable ? "Available" : "Unavailable"
-      }`,
-      actions: actions,
-      cancelButtonText: "Cancel",
-    });
+    // Show native menu
+    const result = await showMenu(anchorView, menuConfig);
 
-    switch (result) {
-      case "Clear Chat":
+    if (!result) return;
+
+    switch (result.itemId) {
+      case "clear-chat":
         this.chatService.clearMessages();
         break;
 
-      case "🔴 Switch to Live Mode":
-        if (serverAvailable) {
-          this.chatService.setDemoMode(false);
-          await Dialogs.alert({
-            title: "Live Mode Enabled",
-            message: "Messages will now be sent to the A2A server.",
-            okButtonText: "OK",
-          });
+      case "toggle-mode":
+        if (isDemo) {
+          if (serverAvailable) {
+            this.chatService.setDemoMode(false);
+            await Dialogs.alert({
+              title: "Live Mode Enabled",
+              message: "Messages will now be sent to the A2A server.",
+              okButtonText: "OK",
+            });
+          } else {
+            await Dialogs.alert({
+              title: "Server Unavailable",
+              message:
+                "The A2A server is not reachable. Make sure it's running on localhost:10002 and restart the app.",
+              okButtonText: "OK",
+            });
+          }
+        } else {
+          this.chatService.setDemoMode(true);
         }
         break;
 
-      case "🟢 Switch to Demo Mode":
-        this.chatService.setDemoMode(true);
-        break;
-
-      case "⚠️ Live Mode (Server Unavailable)":
-        await Dialogs.alert({
-          title: "Server Unavailable",
-          message:
-            "The A2A server is not reachable. Make sure it's running on localhost:10002 and restart the app.",
-          okButtonText: "OK",
-        });
-        break;
-
-      case "Show All Demo Surfaces":
+      case "showcase":
         // Send a showcase message to display all components
         this.chatService.sendMessage("showcase");
         break;

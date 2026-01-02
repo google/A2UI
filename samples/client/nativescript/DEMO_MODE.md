@@ -155,6 +155,23 @@ Displays all button styles:
 
 ---
 
+### 📱 Native Platform Menus
+**Triggers:** `menu`, `popup`, `dropdown`
+
+Displays native platform menus:
+- Uses iOS UIAlertController with action sheet style
+- Uses Android PopupMenu for native dropdown
+- Demonstrates menu items with icons
+- Shows destructive item styling
+- Action items send events to agent
+
+**Example messages:**
+- "Show me a menu"
+- "Display a dropdown"
+- "Popup menu demo"
+
+---
+
 ### 🎨 Full Component Showcase
 **Triggers:** `all`, `showcase`, `components`, `demo`, `everything`
 
@@ -210,6 +227,7 @@ Returns a text message listing all available commands (no surface).
 | List | `list`, `task`, `todo`, `items`, `scroll` | "Show my todo list" |
 | Gallery | `image`, `photo`, `gallery`, `picture` | "Display photos" |
 | Buttons | `button`, `action`, `click` | "Show button variants" |
+| Menu | `menu`, `popup`, `dropdown` | "Show a dropdown menu" |
 | Showcase | `all`, `showcase`, `components`, `demo`, `everything` | "Show all components" |
 | Welcome | `hello`, `hi`, `hey`, `welcome`, `start` | "Hi there!" |
 | Help | `help`, `what can`, `commands`, `options` | "Help me" |

@@ -78,4 +78,12 @@ export const NativeScriptCatalog: Catalog = {
       inputBinding('node', () => component),
     ],
   } as CatalogEntry<Types.AnyComponentNode>,
+  
+  // Interactive components
+  ['Menu' as string]: {
+    type: async () => (await import('./components/menu/menu.component')).MenuComponent,
+    bindings: (component) => [
+      inputBinding('node', () => component),
+    ],
+  } as CatalogEntry<Types.AnyComponentNode>,
 };

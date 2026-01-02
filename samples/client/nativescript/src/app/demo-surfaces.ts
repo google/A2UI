@@ -54,7 +54,8 @@ export const DEMO_WELCOME_SURFACE: Types.A2uiMessage = {
               { type: 'Text', id: 'cmd-5', text: '• "list" - Scrollable list demo', textStyle: 'body' },
               { type: 'Text', id: 'cmd-6', text: '• "gallery" - Image showcase', textStyle: 'body' },
               { type: 'Text', id: 'cmd-7', text: '• "buttons" - All button variants', textStyle: 'body' },
-              { type: 'Text', id: 'cmd-8', text: '• "showcase" - Full component demo', textStyle: 'body' },
+              { type: 'Text', id: 'cmd-8', text: '• "menu" - Native platform menus', textStyle: 'body' },
+              { type: 'Text', id: 'cmd-9', text: '• "showcase" - Full component demo', textStyle: 'body' },
             ],
           },
           {
@@ -1164,6 +1165,134 @@ export const DEMO_SHOWCASE_SURFACE: Types.A2uiMessage = {
 };
 
 // ============================================================
+// MENU DEMO SURFACE
+// ============================================================
+export const DEMO_MENU_SURFACE: Types.A2uiMessage = {
+  surfaceId: 'demo-menu',
+  root: {
+    type: 'Column',
+    id: 'menu-root',
+    children: [
+      {
+        type: 'Text',
+        id: 'menu-title',
+        text: '📱 Native Platform Menus',
+        textStyle: 'title',
+      },
+      {
+        type: 'Spacer',
+        id: 'menu-spacer-1',
+        height: 16,
+      },
+      {
+        type: 'Card',
+        id: 'menu-card-1',
+        title: 'Menu Component',
+        subtitle: 'Uses native platform menus (iOS UIMenu, Android PopupMenu)',
+        children: [
+          {
+            type: 'Text',
+            id: 'menu-desc',
+            text: 'The Menu component displays native platform menus when tapped. On iOS it uses UIAlertController with action sheet style, on Android it uses PopupMenu.',
+            textStyle: 'body',
+          },
+          {
+            type: 'Spacer',
+            id: 'menu-spacer-2',
+            height: 16,
+          },
+          {
+            type: 'Row',
+            id: 'menu-examples-row',
+            children: [
+              {
+                type: 'Menu',
+                id: 'options-menu',
+                label: '⋮',
+                title: 'Options',
+                items: [
+                  { id: 'edit', title: 'Edit', icon: 'pencil' },
+                  { id: 'share', title: 'Share', icon: 'square.and.arrow.up' },
+                  { id: 'duplicate', title: 'Duplicate', icon: 'doc.on.doc' },
+                  { id: 'delete', title: 'Delete', destructive: true, icon: 'trash' },
+                ],
+              },
+              {
+                type: 'Spacer',
+                id: 'menu-btn-spacer',
+                width: 16,
+              },
+              {
+                type: 'Menu',
+                id: 'actions-menu',
+                label: 'Actions',
+                title: 'Quick Actions',
+                items: [
+                  { id: 'new-doc', title: 'New Document', icon: 'doc.badge.plus' },
+                  { id: 'new-folder', title: 'New Folder', icon: 'folder.badge.plus' },
+                  { id: 'import', title: 'Import File', icon: 'square.and.arrow.down' },
+                ],
+              },
+              {
+                type: 'Spacer',
+                id: 'menu-btn-spacer-2',
+                width: 16,
+              },
+              {
+                type: 'Menu',
+                id: 'sort-menu',
+                label: 'Sort ▾',
+                title: 'Sort By',
+                items: [
+                  { id: 'sort-name', title: 'Name' },
+                  { id: 'sort-date', title: 'Date Modified' },
+                  { id: 'sort-size', title: 'Size' },
+                  { id: 'sort-type', title: 'Type' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 'Spacer',
+        id: 'menu-spacer-3',
+        height: 16,
+      },
+      {
+        type: 'Card',
+        id: 'menu-card-2',
+        title: 'Usage in A2UI',
+        children: [
+          {
+            type: 'Text',
+            id: 'menu-usage',
+            text: 'Menu items can trigger actions just like buttons. Each item can have an optional icon, and can be marked as destructive (shown in red) or disabled.',
+            textStyle: 'body',
+          },
+          {
+            type: 'Spacer',
+            id: 'menu-spacer-4',
+            height: 12,
+          },
+          {
+            type: 'Column',
+            id: 'menu-features',
+            children: [
+              { type: 'Text', id: 'mf-1', text: '• Native look and feel on each platform', textStyle: 'body' },
+              { type: 'Text', id: 'mf-2', text: '• Supports icons (SF Symbols on iOS)', textStyle: 'body' },
+              { type: 'Text', id: 'mf-3', text: '• Destructive items shown in red', textStyle: 'body' },
+              { type: 'Text', id: 'mf-4', text: '• Can disable individual items', textStyle: 'body' },
+              { type: 'Text', id: 'mf-5', text: '• Actions sent back to agent', textStyle: 'body' },
+            ],
+          },
+        ],
+      },
+    ],
+  } as Types.Node,
+};
+
+// ============================================================
 // DEMO RESPONSE ROUTER
 // ============================================================
 export function getDemoResponse(query: string): { text: string; surface?: Types.A2uiMessage } {
@@ -1225,6 +1354,14 @@ export function getDemoResponse(query: string): { text: string; surface?: Types.
     };
   }
   
+  // Menu queries
+  if (q.includes('menu') || q.includes('popup') || q.includes('dropdown')) {
+    return {
+      text: '📱 Here\'s a demo of native platform menus:',
+      surface: DEMO_MENU_SURFACE,
+    };
+  }
+  
   // Showcase/All components
   if (q.includes('all') || q.includes('showcase') || q.includes('components') || q.includes('demo') || q.includes('everything')) {
     return {
@@ -1253,6 +1390,7 @@ export function getDemoResponse(query: string): { text: string; surface?: Types.
 📋 **"list"** - Scrollable task list
 🖼️ **"gallery"** - Image gallery showcase
 🔘 **"buttons"** - All button variants
+📱 **"menu"** - Native platform menus
 🎨 **"showcase"** - Full component demo
 
 Each command displays an interactive UI surface!`,
@@ -1287,6 +1425,7 @@ export function getAllDemoSurfaces(): Types.A2uiMessage[] {
     DEMO_LIST_SURFACE,
     DEMO_IMAGE_SURFACE,
     DEMO_BUTTONS_SURFACE,
+    DEMO_MENU_SURFACE,
     DEMO_SHOWCASE_SURFACE,
   ];
 }
