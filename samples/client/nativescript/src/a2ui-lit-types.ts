@@ -408,10 +408,13 @@ export interface SimpleNode {
   url?: string;
   src?: string;
   fit?: 'cover' | 'contain' | 'fill';
+  usageHint?: string;
   placeholder?: string;
   value?: string;
   helperText?: string;
+  secure?: boolean;
   orientation?: 'horizontal' | 'vertical';
+  direction?: 'horizontal' | 'vertical';
   height?: number;
   width?: number | string;
   horizontalAlignment?: 'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround';

@@ -19,6 +19,7 @@ export interface UiMessage {
 export class ChatService {
   private readonly a2aService = inject(A2aService);
   private demoMode = true; // Start in demo mode
+  private serverAvailable = false; // Track if server was reachable
   
   private readonly _messages = signal<UiMessage[]>([]);
   private readonly _status = signal<MessageStatus>('idle');
@@ -32,9 +33,42 @@ export class ChatService {
   readonly agentName = this.a2aService.agentName;
   readonly connected = this.a2aService.connected;
   
-  // Demo mode status
-  private readonly _demoModeActive = signal(false);
+  // Demo mode status - can be toggled even when server is available
+  private readonly _demoModeActive = signal(true); // Start in demo mode by default
   readonly demoModeActive = this._demoModeActive.asReadonly();
+
+  /**
+   * Toggle between demo mode and live mode.
+   * Returns the new demo mode state.
+   */
+  toggleDemoMode(): boolean {
+    // Only allow toggling if server was reachable at some point
+    if (!this.serverAvailable) {
+      console.log('Cannot toggle to live mode - server not available');
+      return true; // Stay in demo mode
+    }
+    
+    this.demoMode = !this.demoMode;
+    this._demoModeActive.set(this.demoMode);
+    console.log(`Demo mode: ${this.demoMode ? 'ON' : 'OFF'}`);
+    return this.demoMode;
+  }
+
+  /**
+   * Force demo mode on/off
+   */
+  setDemoMode(enabled: boolean): void {
+    this.demoMode = enabled;
+    this._demoModeActive.set(enabled);
+    console.log(`Demo mode set to: ${enabled ? 'ON' : 'OFF'}`);
+  }
+
+  /**
+   * Check if server is available for live mode
+   */
+  isServerAvailable(): boolean {
+    return this.serverAvailable;
+  }
 
   readonly hasMessages = computed(() => this._messages().length > 0);
   readonly lastMessage = computed(() => {
@@ -44,8 +78,13 @@ export class ChatService {
 
   async connect(): Promise<boolean> {
     const connected = await this.a2aService.connect();
-    this.demoMode = !connected;
-    this._demoModeActive.set(!connected);
+    this.serverAvailable = connected;
+    
+    // Stay in demo mode by default, but user can toggle if server is available
+    if (connected) {
+      console.log('Server connected! You can toggle to live mode via the menu.');
+    }
+    
     return connected;
   }
 
@@ -124,59 +163,74 @@ export class ChatService {
     let surfaces: Types.A2uiMessage[] = [];
     let actions: Types.Action[] = [];
 
+    // Debug: log the response structure
+    console.log('Processing A2A response:', JSON.stringify(response).substring(0, 500));
+
     try {
       // Handle A2A JSON-RPC response format
       const result = response?.result;
       
-      // Extract parts from the response
-      let parts: any[] = [];
-      
-      if (result?.kind === 'task') {
-        // Task response format - get message parts and artifact parts
-        parts = [
-          ...(result.status?.message?.parts ?? []),
-          ...(result.artifacts ?? []).flatMap((artifact: any) => artifact.parts ?? []),
-        ];
-      } else if (result?.kind === 'message') {
-        // Message response format
-        parts = result.parts ?? [];
-      } else if (result?.status?.message?.parts) {
-        // Alternative format
-        parts = result.status.message.parts;
-      }
-      
-      // Process parts
-      for (const part of parts) {
-        // Handle text parts
-        if (part.kind === 'text' && part.text) {
-          content += part.text;
+      if (!result) {
+        console.log('No result in response');
+        content = 'No response from agent.';
+      } else {
+        console.log('Response result kind:', result?.kind);
+        
+        // Extract parts from the response
+        let parts: any[] = [];
+        
+        if (result?.kind === 'task') {
+          // Task response format - get message parts and artifact parts
+          console.log('Task state:', result?.status?.state);
+          parts = [
+            ...(result.status?.message?.parts ?? []),
+            ...(result.artifacts ?? []).flatMap((artifact: any) => artifact.parts ?? []),
+          ];
+        } else if (result?.kind === 'message') {
+          // Message response format
+          parts = result.parts ?? [];
+        } else if (result?.status?.message?.parts) {
+          // Alternative format
+          parts = result.status.message.parts;
         }
         
-        // Handle data parts with A2UI content
-        if (part.kind === 'data' && part.data && typeof part.data === 'object') {
-          const data = part.data;
+        console.log('Extracted', parts.length, 'parts');
+        
+        // Process parts
+        for (const part of parts) {
+          console.log('Part:', part.kind, part.text?.substring(0, 50));
           
-          // Check for A2UI message types
-          if ('beginRendering' in data || 'surfaceUpdate' in data) {
-            const surfaceData = data.beginRendering || data.surfaceUpdate;
-            if (surfaceData) {
-              console.log('Found A2UI surface:', surfaceData.surfaceId);
-              const surface: Types.A2uiMessage = {
-                surfaceId: surfaceData.surfaceId,
-                root: surfaceData.root,
-                dataModels: surfaceData.dataModels,
-              };
-              surfaces.push(surface);
-              this._currentSurface.set(surface);
+          // Handle text parts
+          if (part.kind === 'text' && part.text) {
+            content += part.text;
+          }
+        
+          // Handle data parts with A2UI content
+          if (part.kind === 'data' && part.data && typeof part.data === 'object') {
+            const data = part.data;
+          
+            // Check for A2UI message types
+            if ('beginRendering' in data || 'surfaceUpdate' in data) {
+              const surfaceData = data.beginRendering || data.surfaceUpdate;
+              if (surfaceData) {
+                console.log('Found A2UI surface:', surfaceData.surfaceId);
+                const surface: Types.A2uiMessage = {
+                  surfaceId: surfaceData.surfaceId,
+                  root: surfaceData.root,
+                  dataModels: surfaceData.dataModels,
+                };
+                surfaces.push(surface);
+                this._currentSurface.set(surface);
+              }
             }
           }
-        }
         
-        // Legacy: check metadata for a2ui/surface
-        if (part.metadata?.['a2ui/surface']) {
-          const surface = part.metadata['a2ui/surface'] as Types.A2uiMessage;
-          surfaces.push(surface);
-          this._currentSurface.set(surface);
+          // Legacy: check metadata for a2ui/surface
+          if (part.metadata?.['a2ui/surface']) {
+            const surface = part.metadata['a2ui/surface'] as Types.A2uiMessage;
+            surfaces.push(surface);
+            this._currentSurface.set(surface);
+          }
         }
       }
 

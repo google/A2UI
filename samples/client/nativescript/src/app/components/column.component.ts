@@ -6,14 +6,18 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
 @Component({
   selector: 'a2ui-column',
   standalone: true,
-  imports: [NativeScriptCommonModule],
+  imports: [NativeScriptCommonModule, Renderer],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <StackLayout 
       class="a2ui-column"
       [horizontalAlignment]="horizontalAlign">
       <ng-container *ngFor="let child of children">
-        <ng-container [a2uiRenderer]="child"></ng-container>
+        <ng-container 
+          a2ui-renderer
+          [surfaceId]="surfaceId()"
+          [component]="child">
+        </ng-container>
       </ng-container>
     </StackLayout>
   `,

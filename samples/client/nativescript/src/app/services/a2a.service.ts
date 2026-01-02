@@ -95,6 +95,11 @@ export class A2aService {
     return null;
   }
 
+  // Supported A2UI catalog URIs - tells the agent we support A2UI rendering
+  private readonly supportedCatalogIds = [
+    'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json'
+  ];
+
   async sendMessage(
     parts: MessagePart[],
     onUpdate?: (data: any) => void
@@ -119,8 +124,16 @@ export class A2aService {
               data: p.data,
             })),
           },
+          // Tell the agent we support A2UI - this activates the A2UI extension
+          metadata: {
+            a2uiClientCapabilities: {
+              supportedCatalogIds: this.supportedCatalogIds
+            }
+          }
         },
       };
+
+      console.log('Sending A2A request with A2UI capabilities');
 
       const response = await Http.request({
         url: `${this.serverUrl}${this.endpoint}`,
@@ -128,6 +141,8 @@ export class A2aService {
         headers: { 
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          // This header tells the A2A server to activate the A2UI extension
+          'X-A2A-Extensions': 'https://a2ui.org/a2a-extension/a2ui/v0.8',
         },
         content: JSON.stringify(requestBody),
         timeout: 60000,

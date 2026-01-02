@@ -16,6 +16,7 @@
     "@google/genai": "^1.22.0",
     "@nativescript/angular": "21.0.0-rc.2",
     "@nativescript/core": "^9.0.0",
+    "@nativescript/iqkeyboardmanager": "^2.1.2",
     "rxjs": "~7.8.0",
     "zone.js": "~0.16.0"
   },
