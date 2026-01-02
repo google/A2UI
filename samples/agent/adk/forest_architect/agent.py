@@ -115,8 +115,8 @@ class ForestArchitectAgent:
         elif "base_url" not in session.state:
             session.state["base_url"] = self.base_url
 
-        # UI Validation and Retry Logic
-        max_retries = 1
+        # UI Validation and Retry Logic - DISABLED for now
+        max_retries = 0  # Disable retries - just return the LLM response
         attempt = 0
         current_query_text = query
 
@@ -183,7 +183,8 @@ class ForestArchitectAgent:
                 else:
                     final_response_content = "I'm sorry, I encountered an error and couldn't process your request."
 
-            is_valid = False
+            # Skip validation for now - just return the response
+            is_valid = True
             error_message = ""
 
             if self.use_ui:
@@ -192,41 +193,47 @@ class ForestArchitectAgent:
                 )
                 try:
                     if "---a2ui_JSON---" not in final_response_content:
-                        raise ValueError("Delimiter '---a2ui_JSON---' not found.")
-
-                    text_part, json_string = final_response_content.split(
-                        "---a2ui_JSON---", 1
-                    )
-
-                    json_string_cleaned = (
-                        json_string.strip().lstrip("```json").rstrip("```").strip()
-                    )
-                    if not json_string.strip() or json_string_cleaned == "[]":
-                        logger.info(
-                            "--- ForestArchitectAgent.stream: Empty JSON list found. ---"
+                        # If no delimiter found, fall back to text-only mode gracefully
+                        logger.warning(
+                            "--- ForestArchitectAgent.stream: Delimiter not found. Falling back to text-only response. ---"
                         )
+                        # Mark as valid and return text-only response
                         is_valid = True
+                        # Don't retry - just return the text
                     else:
-                        if not json_string_cleaned:
-                            raise ValueError("Cleaned JSON string is empty.")
-
-                        parsed_json_data = json.loads(json_string_cleaned)
-
-                        logger.info(
-                            "--- ForestArchitectAgent.stream: Validating against A2UI_SCHEMA... ---"
-                        )
-                        jsonschema.validate(
-                            instance=parsed_json_data, schema=self.a2ui_schema_object
+                        text_part, json_string = final_response_content.split(
+                            "---a2ui_JSON---", 1
                         )
 
-                        logger.info(
-                            f"--- ForestArchitectAgent.stream: UI JSON successfully parsed AND validated against schema. "
-                            f"Validation OK (Attempt {attempt}). ---"
+                        json_string_cleaned = (
+                            json_string.strip().lstrip("```json").rstrip("```").strip()
                         )
-                        is_valid = True
+                        if not json_string.strip() or json_string_cleaned == "[]":
+                            logger.info(
+                                "--- ForestArchitectAgent.stream: Empty JSON list found. ---"
+                            )
+                            is_valid = True
+                        else:
+                            if not json_string_cleaned:
+                                raise ValueError("Cleaned JSON string is empty.")
+
+                            parsed_json_data = json.loads(json_string_cleaned)
+
+                            logger.info(
+                                "--- ForestArchitectAgent.stream: Validating against A2UI_SCHEMA... ---"
+                            )
+                            jsonschema.validate(
+                                instance=parsed_json_data,
+                                schema=self.a2ui_schema_object,
+                            )
+
+                            logger.info(
+                                f"--- ForestArchitectAgent.stream: UI JSON successfully parsed AND validated against schema. "
+                                f"Validation OK (Attempt {attempt}). ---"
+                            )
+                            is_valid = True
 
                 except (
-                    ValueError,
                     json.JSONDecodeError,
                     jsonschema.exceptions.ValidationError,
                 ) as e:

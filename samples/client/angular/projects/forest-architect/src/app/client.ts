@@ -63,16 +63,26 @@ export class Client {
 
         if (response.ok) {
             const data = (await response.json()) as A2AServerPayload;
+            console.log('[client] Raw A2A response:', JSON.stringify(data, null, 2));
             const messages: Types.ServerToClientMessage[] = [];
 
             if ('error' in data) {
                 throw new Error(data.error);
             } else {
                 for (const item of data) {
-                    if (item.kind === 'text') continue;
-                    messages.push(item.data);
+                    console.log('[client] Processing part:', item);
+                    if (item.kind === 'text') {
+                        console.log('[client] Skipping text part');
+                        continue;
+                    }
+                    // Handle data parts - the A2UI messages are in item.data
+                    if (item.kind === 'data' && item.data) {
+                        console.log('[client] Found data part:', item.data);
+                        messages.push(item.data);
+                    }
                 }
             }
+            console.log('[client] Final messages to process:', messages.length);
             return messages;
         }
 
