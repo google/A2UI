@@ -1,0 +1,10 @@
+{
+  "beginRendering": {
+    "surfaceId": "default",
+    "root": "root-column",
+    "styles": {
+      "primaryColor": "#FF0000",
+      "font": "Roboto"
+    }
+  }
+}

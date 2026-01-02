@@ -1,0 +1,91 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+  height: 90%;
+  padding: 10px 4px;
+}
+.message-list {
+  flex: 1;
+  width: 100%;
+}
+.message-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 8px;
+}
+.user {
+  align-self: flex-end;
+  background-color: #007bff;
+  margin-left: 20%;
+  margin-right: 8px;
+}
+.user-text {
+  color: white;
+}
+.assistant {
+  align-self: flex-start;
+  background-color: white;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+.assistant-text {
+  color: black;
+}
+.input-area {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  background-color: white;
+  border-top-width: 1px;
+  border-top-color: #ddd;
+  border-top-style: solid;
+}
+.input {
+  flex: 1;
+  padding: 8px;
+  border-width: 1px;
+  border-color: #ddd;
+  border-style: solid;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+.send-btn {
+  padding: 8px 16px;
+  background-color: #007bff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.send-text {
+  color: white;
+}
+.schema-container {
+  border-width: 1px;
+  border-color: #eee;
+  border-style: solid;
+  border-radius: 4px;
+  background-color: #fff;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.2;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.loading-text {
+  animation: blink 1.4s infinite both;
+  color: #666;
+}

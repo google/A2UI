@@ -41,7 +41,9 @@ export class Client {
 
     try {
       this.isLoading.set(true);
+      console.log('makeRequest', request);
       const response = await this.send(request as Types.A2UIClientEventMessage);
+      console.log('makeRequest response', response);
       messages = response;
     } catch (err) {
       console.error(err);
@@ -64,6 +66,7 @@ export class Client {
     });
 
     if (response.ok) {
+      console.log('response', response);
       const data = (await response.json()) as A2AServerPayload;
       const messages: Types.ServerToClientMessage[] = [];
 

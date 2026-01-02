@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build rizzcharts",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:angular": "node dist/angular/server/server.mjs",
@@ -13,7 +13,9 @@
     "serve:ssr:contact": "node dist/contact/server/server.mjs",
     "build:lit": "cd ../../../renderers/lit && npm i && npm run build",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
-    "demo:restaurant": "npm run build:lit && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\""
+    "serve:agent:rizzcharts": "cd ../../agent/adk/rizzcharts && uv run .",
+    "demo:restaurant": "npm run build:lit && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
+    "demo:rizzcharts": "npm run build:lit && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:rizzcharts\" \"npm start -- rizzcharts\""
   },
   "prettier": {
     "printWidth": 100,

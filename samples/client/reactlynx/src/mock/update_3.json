@@ -1,0 +1,21 @@
+{
+  "surfaceUpdate": {
+    "surfaceId": "default",
+    "components": [
+      {
+        "id": "content-image",
+        "component": {
+          "Image": {
+            "src": {
+              "literalString": "https://qcloud.dpfile.com/pc/-oId2S64uPzY-12mAjkXhngyfPtH-AacRO6PSPqGUpee7A9mCbtGEdsuvkS_JJIfY0q73sB2DyQcgmKUxZFQtw.jpg"
+            },
+            "styles": {
+              "width": "100px",
+              "height": "100px"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

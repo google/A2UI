@@ -48,6 +48,7 @@ export class App {
     }
 
     const data = new FormData(event.target);
+    console.log('data', data);
     const body = data.get('body') ?? null;
 
     if (body) {

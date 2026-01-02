@@ -1,0 +1,34 @@
+{
+  "name": "reactlynx",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "rspeedy build",
+    "dev": "rspeedy dev",
+    "preview": "rspeedy preview",
+    "test": "vitest run",
+    "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run ."
+  },
+  "dependencies": {
+    "@lynx-js/react": "^0.115.2",
+    "@a2ui/lit": "file:../../../renderers/lit",
+    "@a2a-js/sdk": "^0.3.4",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@lynx-js/preact-devtools": "^5.0.1-cf9aef5",
+    "@lynx-js/qrcode-rsbuild-plugin": "^0.4.3",
+    "@lynx-js/react-rsbuild-plugin": "^0.12.3",
+    "@lynx-js/rspeedy": "^0.12.4",
+    "@lynx-js/types": "3.4.11",
+    "@rsbuild/plugin-type-check": "1.3.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/react": "^18.3.25",
+    "jsdom": "^27.3.0",
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

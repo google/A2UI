@@ -1,0 +1,19 @@
+{
+  "surfaceUpdate": {
+    "surfaceId": "default",
+    "components": [
+      {
+        
+        "id": "title-heading",
+        "component": {
+          "Text": {
+            "usageHint": "h1",
+            "text": {
+              "literalString": "Hello Lynx"
+            }
+          }
+        }     
+      }
+    ]
+  }
+}

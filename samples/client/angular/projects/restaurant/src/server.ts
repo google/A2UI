@@ -36,7 +36,7 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
-  })
+  }),
 );
 
 app.post('/a2a', (req, res) => {
@@ -61,7 +61,7 @@ app.post('/a2a', (req, res) => {
             {
               kind: 'data',
               data: clientEvent,
-              metadata: { 'mimeType': 'application/json+a2aui' },
+              metadata: { mimeType: 'application/json+a2aui' },
             } as Part,
           ],
           kind: 'message',
@@ -96,6 +96,7 @@ app.post('/a2a', (req, res) => {
 });
 
 app.use((req, res, next) => {
+  console.log('use req', req);
   angularApp
     .handle(req)
     .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))

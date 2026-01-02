@@ -1,0 +1,20 @@
+{
+  "surfaceUpdate": {
+    "surfaceId": "default",
+    "components": [
+      {
+        "id": "root-column",
+        "component": {
+          "Column": {
+            "children": {
+              "explicitList": [
+                "title-heading",
+                "content-image"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

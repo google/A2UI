@@ -38,7 +38,7 @@ class MissingAPIKeyError(Exception):
 
 
 @click.command()
-@click.option("--host", default="localhost")
+@click.option("--host", default="10.5.110.62")
 @click.option("--port", default=10002)
 def main(host, port):
     try:
@@ -61,7 +61,7 @@ def main(host, port):
             examples=["Find me the top 10 chinese restaurants in the US"],
         )
 
-        base_url = f"http://{host}:{port}"
+        base_url = f"http://10.5.110.62:{port}"
 
         agent_card = AgentCard(
             name="Restaurant Agent",
@@ -89,8 +89,8 @@ def main(host, port):
 
         app.add_middleware(
             CORSMiddleware,
-            allow_origin_regex=r"http://localhost:\d+",
-            allow_credentials=True,
+            allow_origins=["*"],
+            allow_credentials=False,
             allow_methods=["*"],
             allow_headers=["*"],
         )
