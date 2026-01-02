@@ -30,6 +30,7 @@ Key features:
 | **SwiftUI** | 📋 Planned | iOS/macOS | Planned for Q2 2026 |
 | **Jetpack Compose** | 📋 Planned | Android | Planned for Q2 2026 |
 | **Vue** | 💡 Proposed | Web | Community interest |
+| [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed | Web | [Community interest](https://news.ycombinator.com/item?id=46287728) |
 | **ShadCN (React)** | 💡 Proposed | Web | Community interest |
 
 ### Transports
