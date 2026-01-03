@@ -34,7 +34,7 @@ export class TextField extends Root {
   accessor label: StringValue | null = null;
 
   @property()
-  accessor inputType: ResolvedTextField["type"] | null = null;
+  accessor textFieldType: ResolvedTextField["type"] | null = null;
 
   static styles = [
     structuralStyles,
@@ -107,7 +107,7 @@ export class TextField extends Root {
         id="data"
         .value=${value}
         .placeholder=${"Please enter a value"}
-        type=${this.inputType === "number" ? "number" : "text"}
+        type=${this.textFieldType === "number" ? "number" : "text"}
       />
     </section>`;
   }
