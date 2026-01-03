@@ -1,0 +1,142 @@
+BIOLOGY: ATP AND CELLULAR RESPIRATION
+Source: OpenStax Biology, Chapter 6 - Metabolism & Chapter 7 - Cellular Respiration
+===================================================================================
+
+ATP: THE ENERGY CURRENCY OF THE CELL
+------------------------------------
+
+Adenosine triphosphate (ATP) is the primary energy carrier in all living cells.
+
+Structure:
+- Adenine (nitrogenous base)
+- Ribose (5-carbon sugar)
+- Three phosphate groups (α, β, γ)
+
+The phosphate groups are connected by phosphoanhydride bonds. The bond between the β and γ phosphates is the one typically hydrolyzed in energy-releasing reactions.
+
+ATP HYDROLYSIS
+--------------
+
+ATP + H2O → ADP + Pi + Energy
+
+When the terminal (γ) phosphate is removed:
+- ATP becomes ADP (adenosine diphosphate)
+- Inorganic phosphate (Pi) is released
+- Energy is released that can power cellular work
+
+This energy drives:
+- Muscle contraction
+- Active transport across membranes
+- Biosynthesis of molecules
+- Cell division
+- Nerve impulse transmission
+
+HOW MUCH ENERGY?
+----------------
+
+Under standard conditions: ΔG° = -30.5 kJ/mol
+Under cellular conditions: ΔG can be -50 to -65 kJ/mol (even more favorable!)
+
+This is significant - enough to drive many cellular processes.
+
+THE "ENERGY CURRENCY" METAPHOR
+------------------------------
+
+ATP is called "energy currency" because:
+- It's the common medium of energy exchange
+- Catabolic reactions (breaking down food) "deposit" energy by making ATP
+- Anabolic reactions (building molecules) "withdraw" energy by using ATP
+- It's constantly recycled (humans make ~40 kg of ATP per day!)
+
+However, the "currency" metaphor can be misleading if students think ATP "stores" energy like a wallet stores money. A better understanding:
+
+ATP is like a CHARGED BATTERY that powers devices, but the "charge" isn't stored IN the battery material - the battery is in a high-energy state that releases energy when it moves to a lower-energy state.
+
+Even better: ATP is like a COMPRESSED SPRING ready to release.
+
+CELLULAR RESPIRATION: MAKING ATP
+--------------------------------
+
+Cellular respiration harvests energy from glucose to make ATP:
+
+C6H12O6 + 6O2 → 6CO2 + 6H2O + ~30-32 ATP
+
+Three main stages:
+1. Glycolysis (cytoplasm): Glucose → 2 Pyruvate + 2 ATP
+2. Citric Acid Cycle (mitochondria): Pyruvate → CO2 + electron carriers
+3. Oxidative Phosphorylation (mitochondria): Electron carriers → ~26-28 ATP
+
+WHY DOES GLUCOSE OXIDATION RELEASE ENERGY?
+------------------------------------------
+
+The same principle as ATP hydrolysis:
+
+The products (CO2 + H2O) are MORE STABLE than the reactants (glucose + O2).
+
+- CO2 has very strong C=O double bonds (803 kJ/mol each)
+- H2O has strong O-H bonds (464 kJ/mol each)
+- These products are in a lower energy state than glucose
+
+The energy difference is captured by converting ADP + Pi → ATP.
+
+So glucose doesn't "contain" energy that gets released - rather, breaking down glucose produces more stable products, and that stability difference is captured as ATP.
+
+COUPLING REACTIONS
+------------------
+
+ATP hydrolysis is "coupled" to energy-requiring reactions:
+
+Example - Muscle contraction:
+- Myosin needs energy to change shape and pull actin
+- ATP binds to myosin
+- ATP hydrolysis releases energy
+- Energy drives the conformational change
+- Muscle contracts
+
+The spontaneous reaction (ATP → ADP + Pi, negative ΔG) drives the non-spontaneous reaction (muscle protein shape change, positive ΔG).
+
+Combined: ΔG_total = ΔG_ATP + ΔG_muscle = negative (spontaneous overall)
+
+ATP-ADP CYCLE
+-------------
+
+ATP is constantly recycled:
+
+ENERGY IN (from food):
+Cellular Respiration: ADP + Pi → ATP (requires energy)
+
+ENERGY OUT (for work):
+Cellular Work: ATP → ADP + Pi (releases energy)
+
+A typical cell turns over its entire ATP pool every 1-2 minutes!
+
+THE KEY INSIGHT FOR MARIA
+-------------------------
+
+Biology correctly teaches that:
+- ATP hydrolysis releases energy
+- This energy powers cellular work
+- ATP is constantly regenerated
+
+The chemistry clarification:
+- The energy isn't "stored IN" the phosphate bonds
+- ATP is in a high-energy, unstable molecular configuration
+- ADP + Pi is in a lower-energy, more stable configuration
+- The energy "released" is the difference between these states (ΔG)
+- This is measured by Gibbs Free Energy
+
+UNIFYING BIOLOGY AND CHEMISTRY
+------------------------------
+
+Both subjects teach the same fundamental principle:
+- Systems move toward lower energy (greater stability)
+- When they do, energy is released
+- This is true for glucose → CO2 + H2O
+- This is true for ATP → ADP + Pi
+- This is true for any spontaneous reaction
+
+The language differs:
+- Biology: "Energy is released from ATP"
+- Chemistry: "Products are more stable than reactants (negative ΔG)"
+
+Both are describing the same phenomenon. Maria already understands this from biology - she just needs to connect it to chemistry terminology.
