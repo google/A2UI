@@ -16,7 +16,7 @@
 from a2a.server.agent_execution import RequestContext
 from a2a.types import DataPart, TextPart, Part
 from a2ui import a2ui_extension
-
+from a2ui.a2ui_extension import AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY, AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY
 from unittest.mock import MagicMock
 
 
@@ -64,12 +64,24 @@ def test_get_a2ui_agent_extension():
     assert agent_extension.params is None
 
 
-def test_get_a2ui_agent_extension_with_inline_custom_catalog():
+def test_get_a2ui_agent_extension_with_accepts_inline_catalogs():
+    accepts_inline_catalogs = True
     agent_extension = a2ui_extension.get_a2ui_agent_extension(
-        accepts_inline_custom_catalog=True
+        accepts_inline_catalogs=accepts_inline_catalogs
     )
     assert agent_extension.uri == a2ui_extension.A2UI_EXTENSION_URI
     assert agent_extension.params is not None
+    assert agent_extension.params.get(AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY) == accepts_inline_catalogs
+    
+    
+def test_get_a2ui_agent_extension_with_supported_catalog_ids():
+    supported_catalog_ids = ["a", "b", "c"]
+    agent_extension = a2ui_extension.get_a2ui_agent_extension(
+        supported_catalog_ids=supported_catalog_ids
+    )
+    assert agent_extension.uri == a2ui_extension.A2UI_EXTENSION_URI
+    assert agent_extension.params is not None
+    assert agent_extension.params.get(AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY) == supported_catalog_ids
 
 
 def test_try_activate_a2ui_extension():
