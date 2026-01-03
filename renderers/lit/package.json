@@ -30,7 +30,7 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "mkdir -p src/0.8/schemas && cp ../../specification/0.8/json/*.json src/0.8/schemas",
+      "command": "shx mkdir -p src/0.8/schemas && shx cp ../../specification/0.8/json/*.json src/0.8/schemas",
       "files": [
         "../../specification/0.8/json/*.json"
       ],
@@ -95,6 +95,7 @@
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.10.1",
     "google-artifactregistry-auth": "^3.5.0",
+    "shx": "^0.3.4",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
