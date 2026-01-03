@@ -40,5 +40,8 @@ import { Primitives } from '@a2ui/lit/0.8';
 })
 export class Icon extends DynamicComponent {
   readonly name = input.required<Primitives.StringValue | null>();
-  protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
+  protected readonly resolvedName = computed(() => {
+    const name = this.resolvePrimitive(this.name());
+    return name ? name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`) : null;
+  });
 }
