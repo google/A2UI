@@ -7,6 +7,7 @@
   "dependencies": {
     "@a2ui/lit": "file:../lit",
     "markdown-it": "^14.1.0",
+    "rxjs": "^7.8.0",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
@@ -21,27 +22,21 @@
     "@angular/compiler-cli": "^21.0.3",
     "@angular/core": "^21.0.0",
     "@types/express": "^5.0.1",
-    "@types/jasmine": "~5.1.0",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^20.17.19",
     "@types/uuid": "^10.0.0",
-    "@vitest/browser": "^4.0.15",
+    "@vitest/browser": "^4.0.16",
+    "@vitest/browser-playwright": "^4.0.16",
     "cypress": "^15.6.0",
     "google-artifactregistry-auth": "^3.5.0",
-    "jasmine-core": "~5.9.0",
     "jsdom": "^27.2.0",
-    "karma": "^6.4.4",
-    "karma-chrome-launcher": "^3.2.0",
-    "karma-coverage": "^2.2.1",
-    "karma-jasmine": "^5.1.0",
-    "karma-jasmine-html-reporter": "^2.1.0",
     "ng-packagr": "^21.0.0",
     "playwright": "^1.56.1",
     "prettier": "^3.6.2",
     "sass": "^1.93.2",
     "tslib": "^2.8.1",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.16"
   },
   "sideEffects": false,
   "prettier": {
