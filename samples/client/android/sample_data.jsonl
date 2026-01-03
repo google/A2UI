@@ -1,0 +1,5 @@
+{"surfaceUpdate": {"surfaceId": "demo", "components": [{"id": "root", "component": {"Column": {"children": {"explicitList": ["card_1", "card_2"]}}}}]} }
+{"surfaceUpdate": {"surfaceId": "demo", "components": [{"id": "card_1", "component": {"Box": {"children": {"explicitList": ["text_1", "btn_1"]}}}}]} }
+{"surfaceUpdate": {"surfaceId": "demo", "components": [{"id": "text_1", "component": {"Text": {"text": {"literalString": "Hello A2UI"}, "usageHint": "h1"}}}} }
+{"surfaceUpdate": {"surfaceId": "demo", "components": [{"id": "btn_1", "component": {"Button": {"label": {"literalString": "Click Me"}, "action": {"name": "hello"}}}}]} }
+{"beginRendering": {"surfaceId": "demo", "root": "root"}}
