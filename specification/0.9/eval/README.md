@@ -14,6 +14,13 @@ To use the models, you need to set the following environment variables with your
 
 You can set these in a `.env` file in the root of the project, or in your shell's configuration file (e.g., `.bashrc`, `.zshrc`).
 
+A `.env.example` file is provided as a template:
+
+```bash
+cp .env.example .env
+# Edit .env with your API keys (do not commit .env)
+```
+
 You also need to install dependencies before running:
 
 ```bash
