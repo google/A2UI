@@ -15,7 +15,36 @@
  -->
 
 <main class="main">
-  <a2a-chat-canvas [messageDecorator]="demoMessageDecorator"></a2a-chat-canvas>
+  <a2a-chat-canvas [messageDecorator]="demoMessageDecorator" [emptyHistoryTemplate]="welcomeMessage"></a2a-chat-canvas>
 </main>
+
+<ng-template #welcomeMessage>
+  <div class="empty-history">
+      <div class="agent-header">
+        <div class="agent-header-part agent-name">
+          <strong>{{ agentName() }}</strong>
+        </div>
+      </div>
+      <br />
+
+      <p class="empty-history-text">
+        I help you orchestrate tasks across multiple agents.
+      </p>
+      <div class="suggestion-chips">
+        <button mat-stroked-button class="chip" (click)="sendMessage('List Chinese restaurants in New York')">
+          <span class="material-icons-outlined">restaurant</span>
+          List restaurants
+        </button>
+        <button mat-stroked-button class="chip" (click)="sendMessage('List all contacts')">
+          <span class="material-icons-outlined">contacts</span>
+          List contacts
+        </button>
+        <button mat-stroked-button class="chip" (click)="sendMessage('Show me charts')">
+          <span class="material-icons-outlined">analytics</span>
+          Show me charts
+        </button>
+      </div>
+  </div>
+</ng-template>
 
 <router-outlet />
