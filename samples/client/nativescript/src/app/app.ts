@@ -9,7 +9,16 @@ import {
   AfterViewInit,
 } from "@angular/core";
 import { NativeScriptCommonModule } from "@nativescript/angular";
-import { isIOS, Screen, Dialogs, View, ScrollView } from "@nativescript/core";
+import {
+  isIOS,
+  Screen,
+  Dialogs,
+  View,
+  ScrollView,
+  Page,
+  EventData,
+  GridLayout,
+} from "@nativescript/core";
 import { Types } from "../a2ui-lit-types";
 import { ChatService } from "./services/chat.service";
 import { ChatInputComponent } from "./components/chat-input.component";
@@ -31,6 +40,7 @@ import { showMenu, MenuConfig } from "./components/menu";
 })
 export class App implements OnInit, AfterViewInit, OnDestroy {
   readonly chatService = inject(ChatService);
+  page = inject(Page);
   readonly isIOS = isIOS;
 
   @ViewChild("menuButtonContainer", { read: ElementRef, static: false })
@@ -48,6 +58,8 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
       keyboardManager.keyboardAppearance = UIKeyboardAppearance.Dark;
       keyboardManager.shouldResignOnTouchOutside = true;
       keyboardManager.keyboardDistanceFromTextField = 0;
+      // const vc = this.page.ios as UIViewController;
+      // keyboardManager.disabledDistanceHandlingClasses.addObject(vc.class());
     }
   }
 

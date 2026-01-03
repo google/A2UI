@@ -8,7 +8,7 @@
 
 /* Base App Styles */
 Page {
-  background: linear-gradient(180deg, #0a0a1f 0%, #12122e 50%, #1a1a3e 100%);
+  background: #1a1a3e;
 }
 
 ActionBar {

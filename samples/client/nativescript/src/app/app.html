@@ -1,5 +1,5 @@
 <GridLayout rows="*" class="app-root" statusBarStyle="light">
-  <GridLayout class="app-container" rows="auto,*" [class.ios]="isIOS">
+  <GridLayout class="app-container" rows="auto,*,auto" [class.ios]="isIOS">
     <!-- Header -->
     <GridLayout class="app-header" rows="auto" columns="auto, *, auto">
       <StackLayout col="0" class="header-avatar">
@@ -23,7 +23,12 @@
           class="header-menu-container"
           (loaded)="onMenuContainerLoaded()"
         >
-          <label class="header-action-btn" text="⋯" (tap)="onMenuTap()" [marginTop]="isIOS ? 0 : -3">
+          <label
+            class="header-action-btn"
+            text="⋯"
+            (tap)="onMenuTap()"
+            [marginTop]="isIOS ? 0 : -3"
+          >
           </label>
         </StackLayout>
       </StackLayout>
@@ -44,5 +49,5 @@
     </GridLayout>
   </GridLayout>
   <!-- Chat Input -->
-  <a2ui-chat-input [row]="2" (send)="onSendMessage($event)"> </a2ui-chat-input>
+  <a2ui-chat-input (send)="onSendMessage($event)"> </a2ui-chat-input>
 </GridLayout>

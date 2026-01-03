@@ -9,6 +9,5 @@ This is a sample NativeScript Angular application using the A2UI NativeScript re
 
 ## Structure
 
--   `src/app/catalog.ts`: Implements the A2UI Catalog mapping.
 -   `src/app/components/`: Contains the NativeScript implementations of A2UI components.
--   `src/app/app.component.ts`: Main entry point demonstrating the renderer.
+-   `src/app/app.ts`: Main entry point demonstrating the renderer.

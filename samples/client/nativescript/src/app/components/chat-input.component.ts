@@ -4,9 +4,10 @@ import {
   NO_ERRORS_SCHEMA,
   output,
   input,
+  inject,
 } from "@angular/core";
 import { NativeScriptCommonModule } from "@nativescript/angular";
-import { isIOS } from "@nativescript/core";
+import { EventData, isIOS } from "@nativescript/core";
 
 @Component({
   selector: "a2ui-chat-input",
@@ -16,8 +17,9 @@ import { isIOS } from "@nativescript/core";
       [row]="row()"
       rows="auto"
       columns="*, auto"
-      class="input-container align-bottom"
+      class="input-container"
       [class.ios]="isIOS"
+      (loaded)="loadedBottomBar($event)"
     >
       <TextField
         col="0"
@@ -60,6 +62,7 @@ import { isIOS } from "@nativescript/core";
         border-color: #2a2a4a;
         margin: 4 8 4 8;
         padding: 4 6 4 16;
+        vertical-align: bottom;
       }
 
       .input-container.ios {
@@ -101,6 +104,7 @@ import { isIOS } from "@nativescript/core";
 export class ChatInputComponent {
   row = input(0);
   send = output<string>();
+  loaded = output<EventData>();
 
   readonly inputText = signal("");
   readonly isIOS = isIOS;
@@ -115,5 +119,9 @@ export class ChatInputComponent {
       this.send.emit(text);
       this.inputText.set("");
     }
+  }
+
+  loadedBottomBar(args: EventData) {
+    this.loaded.emit(args);
   }
 }
