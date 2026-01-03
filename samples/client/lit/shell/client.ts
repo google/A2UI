@@ -97,13 +97,45 @@ export class A2UIClient {
     }
 
     const result = (response as SendMessageSuccessResponse).result as Task;
-    if (result.kind === "task" && result.status.message?.parts) {
-      const messages: v0_8.Types.ServerToClientMessage[] = [];
-      for (const part of result.status.message.parts) {
-        if (part.kind === 'data') {
-          messages.push(part.data as v0_8.Types.ServerToClientMessage);
+    console.debug("Full Server Response Result:", JSON.stringify(result, null, 2));
+
+    let responseParts = result.status.message?.parts;
+
+    // Fallback: If no parts in status.message, check the last agent message in history
+    if (!responseParts && result.history && result.history.length > 0) {
+      // Iterate backwards to find the last agent message
+      for (let i = result.history.length - 1; i >= 0; i--) {
+        const msg = result.history[i];
+        if (msg.role === 'agent' && msg.parts && msg.parts.length > 0) {
+          responseParts = msg.parts;
+          console.debug("Found parts in history at index", i);
+          break;
         }
       }
+    }
+
+    if (result.kind === "task" && responseParts) {
+      const messages: v0_8.Types.ServerToClientMessage[] = [];
+      for (const part of responseParts) {
+        console.debug("Client Received part:", JSON.stringify(part, null, 2));
+
+        if (part.kind === 'data') {
+          let data = part.data;
+          // Handle string-encoded JSON data parts
+          if (typeof data === 'string') {
+            try {
+              data = JSON.parse(data);
+              console.debug("Parsed string data:", data);
+            } catch (e) {
+              console.error("Failed to parse part.data string:", e);
+            }
+          }
+          messages.push(data as v0_8.Types.ServerToClientMessage);
+        } else if (part.kind === 'text') {
+          console.debug("Ignored text part:", part.text);
+        }
+      }
+      console.debug("Final messages to process:", messages);
       return messages;
     }
 
