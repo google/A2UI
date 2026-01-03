@@ -56,19 +56,47 @@ You can use any transport that sends JSON:
 **HTTP/REST:**
 
 ```javascript
-// TODO: Add an example
+const response = await fetch('/api/agent', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(clientEventMessage)
+});
+
+if (response.ok) {
+  const serverMessages = await response.json();
+  // Pass messages to your A2UI renderer
+  processor.processMessages(serverMessages);
+}
 ```
 
 **WebSockets:**
 
 ```javascript
-// TODO: Add an example
+const socket = new WebSocket('ws://localhost:8080');
+
+socket.addEventListener('open', () => {
+  socket.send(JSON.stringify(clientEventMessage));
+});
+
+socket.addEventListener('message', (event) => {
+  const serverMessage = JSON.parse(event.data);
+  // Pass individual message to your A2UI renderer
+  processor.processMessages([serverMessage]);
+});
 ```
 
 **Server-Sent Events:**
 
 ```javascript
-// TODO: Add an example
+const eventSource = new EventSource('/api/agent/stream');
+
+eventSource.onmessage = (event) => {
+  const serverMessage = JSON.parse(event.data);
+  // Pass individual message to your A2UI renderer
+  processor.processMessages([serverMessage]);
+};
 ```
 
 ```
