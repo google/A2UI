@@ -1,6 +1,15 @@
-import { Component, NO_ERRORS_SCHEMA, OnInit, inject, ViewChild, ElementRef } from "@angular/core";
+import {
+  Component,
+  NO_ERRORS_SCHEMA,
+  OnInit,
+  OnDestroy,
+  inject,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from "@angular/core";
 import { NativeScriptCommonModule } from "@nativescript/angular";
-import { isIOS, Screen, Dialogs, View } from "@nativescript/core";
+import { isIOS, Screen, Dialogs, View, ScrollView } from "@nativescript/core";
 import { Types } from "../a2ui-lit-types";
 import { ChatService } from "./services/chat.service";
 import { ChatInputComponent } from "./components/chat-input.component";
@@ -10,7 +19,6 @@ import { showMenu, MenuConfig } from "./components/menu";
 
 @Component({
   selector: "ns-app",
-  standalone: true,
   imports: [
     NativeScriptCommonModule,
     ChatInputComponent,
@@ -18,169 +26,28 @@ import { showMenu, MenuConfig } from "./components/menu";
     CanvasComponent,
   ],
   schemas: [NO_ERRORS_SCHEMA],
-  template: `
-    <GridLayout
-      class="app-container"
-      rows="auto, *, auto, auto"
-      [class.ios]="isIOS"
-    >
-      <!-- Header -->
-      <GridLayout
-        row="0"
-        class="app-header"
-        rows="auto"
-        columns="auto, *, auto"
-      >
-        <StackLayout col="0" class="header-avatar">
-          <Label class="avatar-text" text="✨"></Label>
-        </StackLayout>
-
-        <StackLayout col="1" class="header-content">
-          <Label class="header-title" [text]="chatService.agentName()"></Label>
-          <Label
-            class="header-status"
-            [class.connected]="chatService.connected()"
-            [class.demo-mode]="chatService.demoModeActive()"
-            [text]="getStatusText()"
-          >
-          </Label>
-        </StackLayout>
-
-        <StackLayout col="2" class="header-actions">
-          <Label #menuButton class="header-action-btn" text="⋯" (tap)="onMenuTap()">
-          </Label>
-        </StackLayout>
-      </GridLayout>
-
-      <!-- Chat History -->
-      <GridLayout row="1">
-        <a2ui-chat-history></a2ui-chat-history>
-      </GridLayout>
-
-      <!-- Canvas (when surface is available) -->
-      @if (chatService.currentSurface()) {
-      <a2ui-canvas row="1" class="floating-canvas"> </a2ui-canvas>
-      }
-
-      <!-- Loading indicator -->
-      <StackLayout
-        row="2"
-        class="loading-container"
-        *ngIf="chatService.loading()"
-      >
-        <ActivityIndicator
-          busy="true"
-          width="24"
-          height="24"
-        ></ActivityIndicator>
-        <Label class="loading-text" text="Agent is thinking..."></Label>
-      </StackLayout>
-
-      <!-- Chat Input -->
-      <a2ui-chat-input row="3" (send)="onSendMessage($event)">
-      </a2ui-chat-input>
-    </GridLayout>
-  `,
-  styles: [
-    `
-      .app-container {
-        background: linear-gradient(
-          180deg,
-          #0a0a1f 0%,
-          #12122e 50%,
-          #1a1a3e 100%
-        );
-        background-color: #0f0f23;
-      }
-
-      .app-container.ios {
-        padding-top: 5;
-      }
-
-      .app-header {
-        padding: 16;
-        border-bottom-width: 1;
-        border-bottom-color: #2a2a4a;
-      }
-
-      .header-avatar {
-        width: 44;
-        height: 44;
-        background-color: #6366f1;
-        border-radius: 22;
-        vertical-align: center;
-      }
-
-      .avatar-text {
-        font-size: 20;
-        text-align: center;
-        vertical-align: center;
-        height: 44;
-      }
-
-      .header-content {
-        margin-left: 12;
-        vertical-align: center;
-      }
-
-      .header-title {
-        font-size: 18;
-        font-weight: 600;
-        color: #ffffff;
-      }
-
-      .header-status {
-        font-size: 12;
-        color: #9ca3af;
-        margin-top: 2;
-      }
-
-      .header-status.connected {
-        color: #22c55e;
-      }
-
-      .header-status.demo-mode {
-        color: #f59e0b;
-      }
-
-      .header-actions {
-        vertical-align: center;
-      }
-
-      .header-action-btn {
-        font-size: 24;
-        color: #a5b4fc;
-        padding: 8;
-        background-color: #1e1b4b;
-        border-radius: 8;
-      }
-
-      .loading-container {
-        padding: 8 16;
-        horizontal-align: center;
-        orientation: horizontal;
-      }
-
-      .loading-text {
-        font-size: 13;
-        color: #9ca3af;
-        margin-left: 8;
-        vertical-align: center;
-      }
-
-      .floating-canvas {
-        vertical-align: bottom;
-        margin-bottom: 8;
-      }
-    `,
-  ],
+  templateUrl: "./app.html",
+  styleUrls: ["./app-root.css"],
 })
-export class App implements OnInit {
+export class App implements OnInit, AfterViewInit, OnDestroy {
   readonly chatService = inject(ChatService);
   readonly isIOS = isIOS;
 
-  @ViewChild('menuButton', { read: ElementRef, static: false })
-  menuButtonRef!: ElementRef;
+  @ViewChild("menuButtonContainer", { read: ElementRef, static: false })
+  menuButtonContainerRef!: ElementRef;
+
+  private iosMenuButton: any = null;
+  private menuSetupComplete = false;
+
+  constructor() {
+    if (__APPLE__) {
+      const keyboardManager = IQKeyboardManager.sharedManager();
+      keyboardManager.enable = true;
+      keyboardManager.enableAutoToolbar = false;
+      keyboardManager.shouldResignOnTouchOutside = true;
+      keyboardManager.keyboardDistanceFromTextField = 0;
+    }
+  }
 
   ngOnInit(): void {
     // Try to connect to the A2A server
@@ -191,63 +58,113 @@ export class App implements OnInit {
     });
   }
 
-  getStatusText(): string {
-    if (this.chatService.demoModeActive()) {
-      if (this.chatService.isServerAvailable()) {
-        return "Demo Mode (Server Available)";
-      }
-      return "Demo Mode";
-    } else if (this.chatService.connected()) {
-      return "Connected to Server";
+  ngAfterViewInit(): void {
+    if (isIOS) {
+      setTimeout(() => this.setupIOSHeaderMenu(), 100);
     }
-    return "Connecting...";
   }
 
-  onSendMessage(message: string): void {
-    this.chatService.sendMessage(message);
+  ngOnDestroy(): void {
+    if (this.iosMenuButton) {
+      this.iosMenuButton.removeFromSuperview();
+      this.iosMenuButton = null;
+    }
   }
 
-  async onMenuTap(): Promise<void> {
+  onMenuContainerLoaded(): void {
+    if (isIOS && !this.menuSetupComplete) {
+      setTimeout(() => this.setupIOSHeaderMenu(), 50);
+    }
+  }
+
+  /**
+   * Setup native iOS dropdown menu for the header
+   */
+  private setupIOSHeaderMenu(): void {
+    if (!isIOS || this.menuSetupComplete) return;
+
+    const container: View = this.menuButtonContainerRef?.nativeElement;
+    if (!container?.nativeView) return;
+
+    const nativeView = container.nativeView as any;
+
+    try {
+      // Build menu actions
+      const actions = NSMutableArray.alloc().init();
+
+      // Clear Chat action
+      const clearAction = UIAction.actionWithTitleImageIdentifierHandler(
+        "Clear Chat",
+        UIImage.systemImageNamed("trash"),
+        "clear-chat",
+        () => this.handleHeaderMenuAction("clear-chat")
+      );
+      actions.addObject(clearAction);
+
+      // Toggle Mode action
+      const isDemo = this.chatService.demoModeActive();
+      const toggleAction = UIAction.actionWithTitleImageIdentifierHandler(
+        isDemo ? "Switch to Live Mode" : "Switch to Demo Mode",
+        UIImage.systemImageNamed(
+          isDemo ? "antenna.radiowaves.left.and.right" : "play.circle"
+        ),
+        "toggle-mode",
+        () => this.handleHeaderMenuAction("toggle-mode")
+      );
+      actions.addObject(toggleAction);
+
+      // Show All Demo Surfaces action
+      const showcaseAction = UIAction.actionWithTitleImageIdentifierHandler(
+        "Show All Demo Surfaces",
+        UIImage.systemImageNamed("square.stack.3d.up"),
+        "showcase",
+        () => this.handleHeaderMenuAction("showcase")
+      );
+      actions.addObject(showcaseAction);
+
+      // Create menu
+      const menu = UIMenu.menuWithTitleImageIdentifierOptionsChildren(
+        "",
+        null,
+        "header-menu",
+        UIMenuOptions.DisplayInline,
+        actions
+      );
+
+      // Create transparent button overlay
+      const button = UIButton.buttonWithType(UIButtonType.System);
+      button.frame = CGRectMake(
+        0,
+        0,
+        nativeView.bounds.size.width || 44,
+        nativeView.bounds.size.height || 44
+      );
+      button.autoresizingMask =
+        UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+      button.backgroundColor = UIColor.clearColor;
+      button.setTitleForState("", 0);
+
+      // Attach menu
+      button.menu = menu;
+      button.showsMenuAsPrimaryAction = true;
+
+      // Add to view
+      nativeView.addSubview(button);
+      this.iosMenuButton = button;
+      this.menuSetupComplete = true;
+    } catch (error) {
+      console.error("Error setting up iOS header menu:", error);
+    }
+  }
+
+  /**
+   * Handle header menu action selection
+   */
+  private async handleHeaderMenuAction(actionId: string): Promise<void> {
     const isDemo = this.chatService.demoModeActive();
     const serverAvailable = this.chatService.isServerAvailable();
 
-    // Build menu items
-    const menuConfig: MenuConfig = {
-      title: "A2UI Demo Options",
-      items: [
-        { 
-          id: "clear-chat", 
-          title: "Clear Chat",
-          icon: isIOS ? "trash" : "ic_delete"
-        },
-        { 
-          id: "toggle-mode", 
-          title: isDemo ? "Switch to Live Mode" : "Switch to Demo Mode",
-          icon: isIOS ? (isDemo ? "antenna.radiowaves.left.and.right" : "play.circle") : "ic_sync",
-          disabled: isDemo && !serverAvailable
-        },
-        { 
-          id: "showcase", 
-          title: "Show All Demo Surfaces",
-          icon: isIOS ? "square.stack.3d.up" : "ic_view_module"
-        },
-      ],
-    };
-
-    // Get the anchor view for the menu
-    const anchorView: View = this.menuButtonRef?.nativeElement;
-    
-    if (!anchorView) {
-      console.warn('Menu button not available');
-      return;
-    }
-
-    // Show native menu
-    const result = await showMenu(anchorView, menuConfig);
-
-    if (!result) return;
-
-    switch (result.itemId) {
+    switch (actionId) {
       case "clear-chat":
         this.chatService.clearMessages();
         break;
@@ -272,12 +189,80 @@ export class App implements OnInit {
         } else {
           this.chatService.setDemoMode(true);
         }
+        // Rebuild menu to reflect new state
+        this.menuSetupComplete = false;
+        if (this.iosMenuButton) {
+          this.iosMenuButton.removeFromSuperview();
+          this.iosMenuButton = null;
+        }
+        setTimeout(() => this.setupIOSHeaderMenu(), 100);
         break;
 
       case "showcase":
-        // Send a showcase message to display all components
         this.chatService.sendMessage("showcase");
         break;
+    }
+  }
+
+  getStatusText(): string {
+    if (this.chatService.demoModeActive()) {
+      if (this.chatService.isServerAvailable()) {
+        return "Demo Mode (Server Available)";
+      }
+      return "Demo Mode";
+    } else if (this.chatService.connected()) {
+      return "Connected to Server";
+    }
+    return "Connecting...";
+  }
+
+  onSendMessage(message: string): void {
+    this.chatService.sendMessage(message);
+  }
+
+  /**
+   * Handle menu tap - Android fallback (iOS uses native UIButton menu)
+   */
+  async onMenuTap(): Promise<void> {
+    // On iOS, the native UIButton handles the menu display
+    if (isIOS) return;
+
+    const isDemo = this.chatService.demoModeActive();
+    const serverAvailable = this.chatService.isServerAvailable();
+
+    // Build menu items for Android
+    const menuConfig: MenuConfig = {
+      title: "A2UI Demo Options",
+      items: [
+        {
+          id: "clear-chat",
+          title: "Clear Chat",
+        },
+        {
+          id: "toggle-mode",
+          title: isDemo ? "Switch to Live Mode" : "Switch to Demo Mode",
+          disabled: isDemo && !serverAvailable,
+        },
+        {
+          id: "showcase",
+          title: "Show All Demo Surfaces",
+        },
+      ],
+    };
+
+    // Get the anchor view for the menu
+    const container: View = this.menuButtonContainerRef?.nativeElement;
+
+    if (!container) {
+      console.warn("Menu button container not available");
+      return;
+    }
+
+    // Show native menu
+    const result = await showMenu(container, menuConfig);
+
+    if (result) {
+      await this.handleHeaderMenuAction(result.itemId);
     }
   }
 }

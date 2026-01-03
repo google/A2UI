@@ -5,7 +5,6 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
 
 @Component({
   selector: 'a2ui-textfield',
-  standalone: true,
   imports: [NativeScriptCommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -41,7 +40,7 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
       font-size: 13;
       font-weight: 500;
       color: #9ca3af;
-      margin-bottom: 4;
+      margin-bottom: 6;
     }
     
     .a2ui-textfield {
@@ -52,6 +51,7 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
       border-width: 1;
       border-color: #2a2a4a;
       padding: 12 16;
+      placeholder-color: #999;
     }
     
     .a2ui-textfield:focus {

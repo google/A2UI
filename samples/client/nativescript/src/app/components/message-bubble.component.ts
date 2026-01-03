@@ -4,7 +4,6 @@ import { UiMessage } from '../services/chat.service';
 
 @Component({
   selector: 'a2ui-message-bubble',
-  standalone: true,
   imports: [NativeScriptCommonModule],
   template: `
     <StackLayout 
@@ -89,6 +88,7 @@ import { UiMessage } from '../services/chat.service';
       font-size: 16;
       background-color: #6366f1;
       border-radius: 16;
+      color: white;
       text-align: center;
       vertical-align: center;
     }

@@ -5,7 +5,6 @@ import { Types, SimpleNode, Action } from '../../a2ui-lit-types';
 
 @Component({
   selector: 'a2ui-card',
-  standalone: true,
   imports: [NativeScriptCommonModule, Renderer],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

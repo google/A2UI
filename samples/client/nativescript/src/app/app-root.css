@@ -1,0 +1,93 @@
+.app-root {
+  background: linear-gradient(180deg, #0a0a1f 0%, #12122e 50%, #1a1a3e 100%);
+}
+.app-container {
+  background-color: transparent;
+}
+.app-container.ios {
+  padding-top: 5;
+}
+
+.app-header {
+  padding: 16;
+  border-bottom-width: 1;
+  border-bottom-color: #2a2a4a;
+}
+
+.header-avatar {
+  width: 44;
+  height: 44;
+  background-color: #6366f1;
+  border-radius: 22;
+  vertical-align: center;
+}
+
+.avatar-text {
+  font-size: 20;
+  text-align: center;
+  vertical-align: center;
+  height: 44;
+  color: white;
+}
+
+.header-content {
+  margin-left: 12;
+  vertical-align: center;
+}
+
+.header-title {
+  font-size: 18;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.header-status {
+  font-size: 12;
+  color: #9ca3af;
+  margin-top: 2;
+}
+
+.header-status.connected {
+  color: #22c55e;
+}
+
+.header-status.demo-mode {
+  color: #f59e0b;
+}
+
+.header-actions {
+  vertical-align: center;
+}
+
+.header-menu-container {
+  width: 44;
+  height: 44;
+  background-color: #1e1b4b;
+  border-radius: 25;
+}
+
+.header-action-btn {
+  font-size: 24;
+  color: #a5b4fc;
+  padding: 8;
+  text-align: center;
+  vertical-align: center;
+}
+
+.loading-container {
+  padding: 8 16;
+  horizontal-align: center;
+  orientation: horizontal;
+}
+
+.loading-text {
+  font-size: 13;
+  color: #9ca3af;
+  margin-left: 8;
+  vertical-align: center;
+}
+
+.floating-canvas {
+  vertical-align: bottom;
+  margin-bottom: 8;
+}

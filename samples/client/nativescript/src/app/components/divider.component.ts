@@ -5,16 +5,15 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
 
 @Component({
   selector: 'a2ui-divider',
-  standalone: true,
   imports: [NativeScriptCommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <StackLayout 
+    <ContentView 
       class="a2ui-divider"
       [class.vertical]="orientation === 'vertical'"
       [height]="orientation === 'horizontal' ? 1 : '100%'"
       [width]="orientation === 'vertical' ? 1 : '100%'">
-    </StackLayout>
+    </ContentView>
   `,
   styles: [`
     .a2ui-divider {

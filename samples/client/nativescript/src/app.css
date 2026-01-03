@@ -8,7 +8,7 @@
 
 /* Base App Styles */
 Page {
-  background-color: #0f0f23;
+  background: linear-gradient(180deg, #0a0a1f 0%, #12122e 50%, #1a1a3e 100%);
 }
 
 ActionBar {
@@ -113,42 +113,100 @@ ActionBar {
 }
 
 /* Spacing utilities */
-.m-0 { margin: 0; }
-.m-1 { margin: 4; }
-.m-2 { margin: 8; }
-.m-3 { margin: 12; }
-.m-4 { margin: 16; }
-.m-5 { margin: 20; }
+.m-0 {
+  margin: 0;
+}
+.m-1 {
+  margin: 4;
+}
+.m-2 {
+  margin: 8;
+}
+.m-3 {
+  margin: 12;
+}
+.m-4 {
+  margin: 16;
+}
+.m-5 {
+  margin: 20;
+}
 
-.p-0 { padding: 0; }
-.p-1 { padding: 4; }
-.p-2 { padding: 8; }
-.p-3 { padding: 12; }
-.p-4 { padding: 16; }
-.p-5 { padding: 20; }
+.p-0 {
+  padding: 0;
+}
+.p-1 {
+  padding: 4;
+}
+.p-2 {
+  padding: 8;
+}
+.p-3 {
+  padding: 12;
+}
+.p-4 {
+  padding: 16;
+}
+.p-5 {
+  padding: 20;
+}
 
 /* Border radius */
-.rounded-sm { border-radius: 4; }
-.rounded { border-radius: 8; }
-.rounded-md { border-radius: 12; }
-.rounded-lg { border-radius: 16; }
-.rounded-xl { border-radius: 24; }
-.rounded-full { border-radius: 9999; }
+.rounded-sm {
+  border-radius: 4;
+}
+.rounded {
+  border-radius: 8;
+}
+.rounded-md {
+  border-radius: 12;
+}
+.rounded-lg {
+  border-radius: 16;
+}
+.rounded-xl {
+  border-radius: 24;
+}
+.rounded-full {
+  border-radius: 9999;
+}
 
 /* Font sizes */
-.text-xs { font-size: 10; }
-.text-sm { font-size: 12; }
-.text-base { font-size: 14; }
-.text-lg { font-size: 16; }
-.text-xl { font-size: 18; }
-.text-2xl { font-size: 24; }
-.text-3xl { font-size: 30; }
+.text-xs {
+  font-size: 10;
+}
+.text-sm {
+  font-size: 12;
+}
+.text-base {
+  font-size: 14;
+}
+.text-lg {
+  font-size: 16;
+}
+.text-xl {
+  font-size: 18;
+}
+.text-2xl {
+  font-size: 24;
+}
+.text-3xl {
+  font-size: 30;
+}
 
 /* Font weights */
-.font-normal { font-weight: 400; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
+.font-normal {
+  font-weight: 400;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
 
 /* Shadows (iOS only) */
 .shadow-sm {

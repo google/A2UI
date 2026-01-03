@@ -847,7 +847,7 @@ export const DEMO_IMAGE_SURFACE: Types.A2uiMessage = {
               {
                 type: 'Image',
                 id: 'thumb-img-1',
-                url: 'https://picsum.photos/100/100?random=1',
+                url: 'https://picsum.photos/300/300?random=1',
                 usageHint: 'smallFeature',
               },
             ],
@@ -859,7 +859,7 @@ export const DEMO_IMAGE_SURFACE: Types.A2uiMessage = {
               {
                 type: 'Image',
                 id: 'thumb-img-2',
-                url: 'https://picsum.photos/100/100?random=2',
+                url: 'https://picsum.photos/300/300?random=2',
                 usageHint: 'smallFeature',
               },
             ],
@@ -871,7 +871,7 @@ export const DEMO_IMAGE_SURFACE: Types.A2uiMessage = {
               {
                 type: 'Image',
                 id: 'thumb-img-3',
-                url: 'https://picsum.photos/100/100?random=3',
+                url: 'https://picsum.photos/300/300?random=3',
                 usageHint: 'smallFeature',
               },
             ],
@@ -893,6 +893,11 @@ export const DEMO_IMAGE_SURFACE: Types.A2uiMessage = {
             label: '📤 Upload',
             variant: 'primary',
             action: { name: 'upload' },
+          },
+          {
+            type: 'Spacer',
+            id: 'spacer-g2',
+            width: 8,  
           },
           {
             type: 'Button',
@@ -1027,6 +1032,7 @@ export const DEMO_SHOWCASE_SURFACE: Types.A2uiMessage = {
           { type: 'Text', id: 'text-title', text: 'Title Style', textStyle: 'title' },
           { type: 'Text', id: 'text-subtitle', text: 'Subtitle Style', textStyle: 'subtitle' },
           { type: 'Text', id: 'text-body', text: 'Body text style for regular content and paragraphs.', textStyle: 'body' },
+          { type: 'Spacer', id: 'spacer-text-1', height: 4 },
           { type: 'Text', id: 'text-caption', text: 'Caption style for metadata and small text', textStyle: 'caption' },
           { type: 'Text', id: 'text-code', text: 'const code = "monospace";', textStyle: 'code' },
         ],
@@ -1174,26 +1180,14 @@ export const DEMO_MENU_SURFACE: Types.A2uiMessage = {
     id: 'menu-root',
     children: [
       {
-        type: 'Text',
-        id: 'menu-title',
-        text: '📱 Native Platform Menus',
-        textStyle: 'title',
-      },
-      {
-        type: 'Spacer',
-        id: 'menu-spacer-1',
-        height: 16,
-      },
-      {
         type: 'Card',
         id: 'menu-card-1',
-        title: 'Menu Component',
-        subtitle: 'Uses native platform menus (iOS UIMenu, Android PopupMenu)',
+        title: 'Native Platform Menus',
         children: [
           {
             type: 'Text',
             id: 'menu-desc',
-            text: 'The Menu component displays native platform menus when tapped. On iOS it uses UIAlertController with action sheet style, on Android it uses PopupMenu.',
+            text: 'Tap the buttons below to see native dropdown menus. On iOS uses UIMenu, on Android uses PopupMenu.',
             textStyle: 'body',
           },
           {
@@ -1262,28 +1256,17 @@ export const DEMO_MENU_SURFACE: Types.A2uiMessage = {
       {
         type: 'Card',
         id: 'menu-card-2',
-        title: 'Usage in A2UI',
+        title: 'Features',
         children: [
-          {
-            type: 'Text',
-            id: 'menu-usage',
-            text: 'Menu items can trigger actions just like buttons. Each item can have an optional icon, and can be marked as destructive (shown in red) or disabled.',
-            textStyle: 'body',
-          },
-          {
-            type: 'Spacer',
-            id: 'menu-spacer-4',
-            height: 12,
-          },
           {
             type: 'Column',
             id: 'menu-features',
             children: [
               { type: 'Text', id: 'mf-1', text: '• Native look and feel on each platform', textStyle: 'body' },
-              { type: 'Text', id: 'mf-2', text: '• Supports icons (SF Symbols on iOS)', textStyle: 'body' },
+              { type: 'Text', id: 'mf-2', text: '• Supports SF Symbols icons on iOS', textStyle: 'body' },
               { type: 'Text', id: 'mf-3', text: '• Destructive items shown in red', textStyle: 'body' },
-              { type: 'Text', id: 'mf-4', text: '• Can disable individual items', textStyle: 'body' },
-              { type: 'Text', id: 'mf-5', text: '• Actions sent back to agent', textStyle: 'body' },
+              { type: 'Text', id: 'mf-4', text: '• Items can be disabled', textStyle: 'body' },
+              { type: 'Text', id: 'mf-5', text: '• Menu selections trigger actions', textStyle: 'body' },
             ],
           },
         ],

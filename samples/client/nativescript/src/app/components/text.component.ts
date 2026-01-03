@@ -5,7 +5,6 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
 
 @Component({
   selector: 'a2ui-text',
-  standalone: true,
   imports: [NativeScriptCommonModule],
   schemas: [NO_ERRORS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,7 +37,7 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
     
     .text-body {
       font-size: 15;
-      line-height: 6;
+      line-height: 3;
     }
     
     .text-caption {

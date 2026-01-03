@@ -1,23 +1,22 @@
 import {
   Component,
-  EventEmitter,
-  Output,
   signal,
-  inject,
   NO_ERRORS_SCHEMA,
+  output,
+  input,
 } from "@angular/core";
 import { NativeScriptCommonModule } from "@nativescript/angular";
 import { isIOS } from "@nativescript/core";
 
 @Component({
   selector: "a2ui-chat-input",
-  standalone: true,
   imports: [NativeScriptCommonModule],
   template: `
     <GridLayout
+      [row]="row()"
       rows="auto"
       columns="*, auto"
-      class="input-container"
+      class="input-container align-bottom"
       [class.ios]="isIOS"
     >
       <TextField
@@ -46,6 +45,7 @@ import { isIOS } from "@nativescript/core";
           text="→"
           horizontalAlignment="center"
           verticalAlignment="center"
+          [marginTop]="isIOS ? 0 : -6"
         >
         </Label>
       </GridLayout>
@@ -58,7 +58,7 @@ import { isIOS } from "@nativescript/core";
         border-radius: 28;
         border-width: 1;
         border-color: #2a2a4a;
-        margin: 8;
+        margin: 4 8 4 8;
         padding: 4 6 4 16;
       }
 
@@ -99,7 +99,8 @@ import { isIOS } from "@nativescript/core";
   schemas: [NO_ERRORS_SCHEMA],
 })
 export class ChatInputComponent {
-  @Output() send = new EventEmitter<string>();
+  row = input(0);
+  send = output<string>();
 
   readonly inputText = signal("");
   readonly isIOS = isIOS;

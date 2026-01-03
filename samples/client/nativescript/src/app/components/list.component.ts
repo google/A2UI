@@ -5,7 +5,6 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
 
 @Component({
   selector: 'a2ui-list',
-  standalone: true,
   imports: [NativeScriptCommonModule, Renderer],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

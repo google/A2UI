@@ -2,15 +2,12 @@
  * Native Menu Module
  * 
  * This module provides native platform menus for iOS and Android.
- * - iOS: Uses UIAlertController in action sheet style with popover support
+ * - iOS: Uses UIButton with UIMenu for native dropdown menus
  * - Android: Uses android.widget.PopupMenu for native popup menus
- * 
- * The correct platform-specific implementation is automatically selected
- * at build time based on the platform (menu.ios.ts or menu.android.ts).
  * 
  * Usage:
  * ```typescript
- * import { showMenu, MenuConfig } from './menu/menu';
+ * import { showMenu, MenuConfig } from './menu';
  * 
  * const config: MenuConfig = {
  *   title: 'Options',
@@ -28,8 +25,34 @@
  * ```
  */
 
-export { showMenu, MenuItem, MenuConfig, MenuResult } from './menu.common';
+// Re-export types from common
+export { MenuItem, MenuConfig, MenuResult } from './menu.common';
 
-// Note: The actual platform-specific exports are handled by NativeScript's
-// build system which will include either menu.ios.ts or menu.android.ts
-// based on the target platform.
+import { isAndroid, isIOS, View } from '@nativescript/core';
+import { MenuConfig as MenuConfigType, MenuResult as MenuResultType } from './menu.common';
+
+// Import platform-specific implementations
+let platformShowMenu: (anchorView: View, config: MenuConfigType) => Promise<MenuResultType | null>;
+
+if (isAndroid) {
+  // Android implementation
+  platformShowMenu = require('./menu.android').showMenu;
+} else if (isIOS) {
+  // iOS implementation
+  platformShowMenu = require('./menu.ios').showMenu;
+} else {
+  // Fallback
+  platformShowMenu = require('./menu.common').showMenu;
+}
+
+/**
+ * Shows a native platform menu anchored to the given view.
+ * On iOS, uses UIMenu with UIButton for native dropdown appearance.
+ * On Android, uses PopupMenu for native popup appearance.
+ */
+export function showMenu(
+  anchorView: View,
+  config: MenuConfigType
+): Promise<MenuResultType | null> {
+  return platformShowMenu(anchorView, config);
+}

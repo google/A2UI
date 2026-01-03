@@ -5,7 +5,6 @@ import { Types, SimpleNode } from '../../a2ui-lit-types';
 
 @Component({
   selector: 'a2ui-image',
-  standalone: true,
   imports: [NativeScriptCommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

@@ -149,9 +149,24 @@ export class A2aService {
       });
 
       if (response.statusCode === 200) {
-        const data = typeof response.content === 'string'
-          ? JSON.parse(response.content)
-          : response.content;
+        // NativeScript Http returns HttpContent object, not raw string
+        // We need to use toJSON() or toString() to get the actual content
+        let data: any;
+        const content = response.content;
+        
+        if (typeof content === 'string') {
+          data = JSON.parse(content);
+        } else if (content && typeof content.toJSON === 'function') {
+          // HttpContent object - use toJSON() to parse directly
+          data = content.toJSON();
+        } else if (content && typeof content.toString === 'function') {
+          // Fallback: try toString then parse
+          const str = content.toString();
+          data = JSON.parse(str);
+        } else {
+          // Last resort: assume it's already parsed
+          data = content;
+        }
         
         if (onUpdate) {
           onUpdate(data);
