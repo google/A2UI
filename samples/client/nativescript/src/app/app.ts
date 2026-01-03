@@ -44,6 +44,8 @@ export class App implements OnInit, AfterViewInit, OnDestroy {
       const keyboardManager = IQKeyboardManager.sharedManager();
       keyboardManager.enable = true;
       keyboardManager.enableAutoToolbar = false;
+      keyboardManager.overrideKeyboardAppearance = true;
+      keyboardManager.keyboardAppearance = UIKeyboardAppearance.Dark;
       keyboardManager.shouldResignOnTouchOutside = true;
       keyboardManager.keyboardDistanceFromTextField = 0;
     }
