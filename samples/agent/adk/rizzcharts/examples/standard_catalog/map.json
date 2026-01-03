@@ -38,6 +38,16 @@
               "usageHint": "h2"
             }
           }
+        },
+        {
+          "id": "map-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "/map-placeholder.png"
+              }
+            }
+          }
         },        
         {
             "id": "location-list",
