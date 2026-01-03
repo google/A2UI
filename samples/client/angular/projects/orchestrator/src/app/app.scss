@@ -15,3 +15,66 @@
 main {
     height: 100vh;
 }
+
+.empty-history {
+  display: block;
+  padding-bottom: 8rem;
+  padding-top: 2rem;
+  text-align: center;
+}
+
+.empty-history-text {
+  margin: 0;
+  font: var(--mat-sys-display-small);
+  margin-bottom: 2rem;
+}
+
+.agent-header {
+  display: flex;
+  align-items: center;
+  flex-flow: row wrap;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.agent-header-part {
+  margin-inline-end: 1.25rem;
+  margin-block: 8px;
+  font-size: 1.5rem;
+}
+
+.agent-name {
+  background: linear-gradient(
+    90deg,
+    #217bfe 28.03%,
+    #078efb 49.56%,
+    #ac87eb 71.1%
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.chip {
+  // Override Material button styles to look like a chip
+    border-radius: 100px !important; // Force pill shape
+    padding: 10px 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    height: auto !important;
+    line-height: 25px !important; // Match icon height
+  .material-icons-outlined {
+    font-size: 20px;
+    margin-right: 8px;
+      line-height: 1; // Prevent icon from affecting line height
+      position: relative;
+      top: 4px; // Move icon down slightly to match text
+  }
+}

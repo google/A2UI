@@ -15,8 +15,10 @@
  */
 
 import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
+import { ChatService } from '@a2a_chat_canvas/services/chat-service';
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnInit, Renderer2 } from '@angular/core';
+import { Component, Inject, OnInit, Renderer2, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { RouterOutlet } from '@angular/router';
 import { environment } from '../environments/environment';
 import { demoMessageDecorator } from '../message-decorator/demo-message-decorator';
@@ -25,10 +27,12 @@ import { demoMessageDecorator } from '../message-decorator/demo-message-decorato
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  imports: [A2aChatCanvas, RouterOutlet],
+  imports: [A2aChatCanvas, RouterOutlet, MatButtonModule],
 })
 export class App implements OnInit {
   protected demoMessageDecorator = demoMessageDecorator;
+  protected readonly agentName = signal('Orchestrator Agent');
+  private readonly chatService = inject(ChatService);
 
   constructor(
     private _renderer2: Renderer2,
@@ -41,5 +45,9 @@ export class App implements OnInit {
     script.async = true;
     script.defer = true;
     this._renderer2.appendChild(this._document.body, script);
+  }
+
+  sendMessage(text: string) {
+    this.chatService.sendMessage(text);
   }
 }

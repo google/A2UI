@@ -30,4 +30,4 @@ url = "https://pypi.org/simple"
 default = true
 
 [tool.uv.sources]
-a2ui = { path = "../../../../a2a_agents/python/a2ui_extension" }
+a2ui = { path = "../../../../a2a_agents/python/a2ui_extension", editable = true }
