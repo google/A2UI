@@ -79,7 +79,7 @@ There are three renderers available for A2UI:
 
 -   **Web (Lit)**: Located in `renderers/lit`, this is the primary web renderer used by the demos in `web/`.
 -   **Angular**: Located in `angular/projects/lib`, this is an alternative web renderer for Angular applications.
--   **Flutter**: Located in `renderers/flutter`, this directory contains a README pointing to the Flutter Gen UI SDK.
+-   **Flutter**: Located in `renderers/flutter`, this directory contains a README pointing to the [Flutter Gen UI SDK](https://github.com/flutter/genui) repository.
 
 ## Keeping This Guide Updated
 
