@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, NO_ERRORS_SCHEMA } from '@angular/core';
 import { NativeScriptCommonModule } from '@nativescript/angular';
-import { DynamicComponent } from '@a2ui/nativescript';
-import { Types, SimpleNode } from '../../a2ui-lit-types';
+import { DynamicComponent, Types } from '@a2ui/nativescript';
+import { SimpleNode, Action } from '../../a2ui-types';
 
 @Component({
   selector: 'a2ui-textfield',
@@ -110,9 +110,8 @@ export class TextFieldComponent extends DynamicComponent<any> {
     if (node?.id) {
       this.sendAction({
         name: `${node.id}:change`,
-        id: `${node.id}:change`,
         payload: { value },
-      });
+      } as Action);
     }
   }
 }

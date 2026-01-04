@@ -1,6 +1,6 @@
 import { Component, NO_ERRORS_SCHEMA, ChangeDetectionStrategy, ElementRef, ViewChild, signal, AfterViewInit, OnDestroy } from '@angular/core';
-import { Types } from '../../../a2ui-lit-types';
-import { DynamicComponent } from '@a2ui/nativescript';
+import { DynamicComponent, Types } from '@a2ui/nativescript';
+import { Action } from '../../../a2ui-types';
 import { NativeScriptCommonModule } from '@nativescript/angular';
 import { View, isIOS, isAndroid } from '@nativescript/core';
 import { showMenu, MenuConfig, MenuItem } from './index';
@@ -179,10 +179,9 @@ export class MenuComponent extends DynamicComponent<any> implements AfterViewIni
     } else {
       this.sendAction({
         name: itemId,
-        id: itemId,
         label: itemTitle,
         payload: { itemId, title: itemTitle }
-      });
+      } as Action);
     }
   }
 
@@ -277,5 +276,5 @@ interface MenuItemNode {
   icon?: string;
   destructive?: boolean;
   disabled?: boolean;
-  action?: Types.Action;
+  action?: Action;
 }

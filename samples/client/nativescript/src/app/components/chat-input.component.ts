@@ -66,7 +66,7 @@ import { EventData, isIOS } from "@nativescript/core";
       }
 
       .input-container.ios {
-        margin-bottom: 24;
+        margin-bottom: 14;
       }
 
       .message-input {

@@ -1,6 +1,5 @@
 import { inputBinding } from '@angular/core';
-import { Catalog, CatalogEntry } from '@a2ui/nativescript';
-import { Types } from '../a2ui-lit-types';
+import { Catalog, CatalogEntry, Types } from '@a2ui/nativescript';
 
 export const NativeScriptCatalog: Catalog = {
   // Core components

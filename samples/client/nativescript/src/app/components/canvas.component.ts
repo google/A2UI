@@ -6,8 +6,8 @@ import {
   NO_ERRORS_SCHEMA,
 } from "@angular/core";
 import { NativeScriptCommonModule } from "@nativescript/angular";
-import { Renderer } from "@a2ui/nativescript";
-import { Types } from "../../a2ui-lit-types";
+import { Renderer, Types } from "@a2ui/nativescript";
+import { A2uiMessage } from "../../a2ui-types";
 import { ChatService } from "../services/chat.service";
 
 @Component({

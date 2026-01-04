@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from "@angular/core";
 import { Http, HttpResponse } from "@nativescript/core";
-import { Types } from "../../a2ui-lit-types";
+import { Types } from "@a2ui/nativescript";
+import { A2uiMessage } from "../../a2ui-types";
 
 export interface AgentCard {
   name: string;
@@ -30,7 +31,7 @@ export interface ChatMessage {
   role: "user" | "agent";
   content: string;
   timestamp: Date;
-  surfaces?: Types.A2uiMessage[];
+  surfaces?: A2uiMessage[];
   status?: "sending" | "sent" | "error";
 }
 

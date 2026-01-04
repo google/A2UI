@@ -5,8 +5,8 @@ import {
   Input,
   inject,
 } from "@angular/core";
-import { Types, SimpleNode } from "../../a2ui-lit-types";
-import { DynamicComponent } from "@a2ui/nativescript";
+import { DynamicComponent, Types } from "@a2ui/nativescript";
+import { SimpleNode } from "../../a2ui-types";
 import { NativeScriptCommonModule } from "@nativescript/angular";
 import { shareText } from "@nativescript/social-share";
 import { Page } from "@nativescript/core";

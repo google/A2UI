@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { A2aService, ChatMessage, MessagePart, AgentCard } from './a2a.service';
-import { Types } from '../../a2ui-lit-types';
+import { Types } from '@a2ui/nativescript';
+import { A2uiMessage, Action } from '../../a2ui-types';
 import { getDemoResponse } from '../demo-surfaces';
 
 export type MessageStatus = 'idle' | 'sending' | 'streaming' | 'error';
@@ -10,7 +11,7 @@ export interface UiMessage {
   role: 'user' | 'agent';
   content: string;
   timestamp: Date;
-  surfaces?: Types.A2uiMessage[];
+  surfaces?: A2uiMessage[];
   status: 'sending' | 'sent' | 'error';
   actions?: Types.Action[];
 }
@@ -23,7 +24,7 @@ export class ChatService {
   
   private readonly _messages = signal<UiMessage[]>([]);
   private readonly _status = signal<MessageStatus>('idle');
-  private readonly _currentSurface = signal<Types.A2uiMessage | null>(null);
+  private readonly _currentSurface = signal<A2uiMessage | null>(null);
 
   readonly messages = this._messages.asReadonly();
   readonly status = this._status.asReadonly();
@@ -137,7 +138,7 @@ export class ChatService {
 
   private processDemoResponse(messageId: string, query: string): void {
     const demoResponse = getDemoResponse(query);
-    const surfaces: Types.A2uiMessage[] = [];
+    const surfaces: A2uiMessage[] = [];
     
     if (demoResponse.surface) {
       surfaces.push(demoResponse.surface);
@@ -160,7 +161,7 @@ export class ChatService {
 
   private processResponse(messageId: string, response: any): void {
     let content = '';
-    let surfaces: Types.A2uiMessage[] = [];
+    let surfaces: A2uiMessage[] = [];
     let actions: Types.Action[] = [];
 
     try {
@@ -190,7 +191,7 @@ export class ChatService {
         // Accumulate A2UI messages by surfaceId
         // The server sends separate beginRendering, surfaceUpdate, and dataModelUpdate parts
         // We need to combine them into a single surface with all messages
-        const a2uiMessagesBySurface: Map<string, Types.A2uiMessage[]> = new Map();
+        const a2uiMessagesBySurface: Map<string, A2uiMessage[]> = new Map();
         
         // Process parts
         for (const part of parts) {
@@ -201,7 +202,7 @@ export class ChatService {
         
           // Handle data parts with A2UI content
           if (part.kind === 'data' && part.data && typeof part.data === 'object') {
-            const data = part.data as Types.A2uiMessage;
+            const data = part.data as A2uiMessage;
           
             // Check for A2UI message types - these are the raw A2UI protocol messages
             if ('beginRendering' in data || 'surfaceUpdate' in data || 'dataModelUpdate' in data) {
@@ -222,7 +223,7 @@ export class ChatService {
         
           // Legacy: check metadata for a2ui/surface
           if (part.metadata?.['a2ui/surface']) {
-            const surface = part.metadata['a2ui/surface'] as Types.A2uiMessage;
+            const surface = part.metadata['a2ui/surface'] as A2uiMessage;
             surfaces.push(surface);
           }
         }
@@ -271,7 +272,7 @@ export class ChatService {
    * Converts A2UI protocol messages (beginRendering, surfaceUpdate, dataModelUpdate)
    * into a component tree structure that the renderer can display.
    */
-  private buildSurfaceFromMessages(surfaceId: string, messages: any[]): Types.A2uiMessage | null {
+  private buildSurfaceFromMessages(surfaceId: string, messages: any[]): A2uiMessage | null {
     let rootId: string | null = null;
     const componentsById: Map<string, any> = new Map();
     const dataModel: Map<string, any> = new Map();
@@ -513,10 +514,10 @@ export class ChatService {
     return node as Types.AnyComponentNode;
   }
 
-  handleAction(action: Types.Action): void {
+  handleAction(action: Action): void {
     console.log('Action triggered:', action);
     // Send action back to agent if needed
-    const actionId = action.id || action.name;
+    const actionId = action.name;
     if (actionId) {
       this.sendMessage(`[Action: ${actionId}]`);
     }

@@ -9,14 +9,13 @@ module.exports = (env) => {
 
 	webpack.chainWebpack((config) => {
 		const appNodeModules = resolve(__dirname, 'node_modules');
-		const litTypesPath = resolve(__dirname, '../../../renderers/lit/src/0.8/types');
 		
 		// Configure alias to resolve @a2ui packages from source
 		config.resolve.alias.set('@a2ui/nativescript', resolve(__dirname, '../../../renderers/nativescript/src/public-api.ts'));
 		
-		// Point to our custom NativeScript-compatible entry for lit types
-		config.resolve.alias.set('@a2ui/lit/0.8', resolve(__dirname, 'src/a2ui-lit-types.ts'));
-		config.resolve.alias.set('@a2ui/lit', resolve(__dirname, 'src/a2ui-lit-types.ts'));
+		// Point to our shim that only exports types (no runtime code from lit)
+		config.resolve.alias.set('@a2ui/lit/0.8', resolve(__dirname, 'src/a2ui-lit-shim.ts'));
+		config.resolve.alias.set('@a2ui/lit', resolve(__dirname, 'src/a2ui-lit-shim.ts'));
 		
 		// Ensure all modules resolve from the app's node_modules
 		config.resolve.modules.prepend(appNodeModules);

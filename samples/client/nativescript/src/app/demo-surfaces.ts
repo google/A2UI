@@ -1,4 +1,4 @@
-import { Types } from "../a2ui-lit-types";
+import { A2uiMessage, SimpleNode } from "../a2ui-types";
 
 /**
  * Comprehensive demo surfaces for showcasing ALL A2UI capabilities.
@@ -20,7 +20,7 @@ import { Types } from "../a2ui-lit-types";
 // ============================================================
 // WELCOME SURFACE
 // ============================================================
-export const DEMO_WELCOME_SURFACE: Types.A2uiMessage = {
+export const DEMO_WELCOME_SURFACE: A2uiMessage = {
   surfaceId: "demo-welcome",
   root: {
     type: "Column",
@@ -124,13 +124,13 @@ export const DEMO_WELCOME_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // RESTAURANT FINDER SURFACE
 // ============================================================
-export const DEMO_RESTAURANT_SURFACE: Types.A2uiMessage = {
+export const DEMO_RESTAURANT_SURFACE: A2uiMessage = {
   surfaceId: "demo-restaurants",
   root: {
     type: "Column",
@@ -290,13 +290,13 @@ export const DEMO_RESTAURANT_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // CONTACT DETAILS SURFACE
 // ============================================================
-export const DEMO_CONTACT_SURFACE: Types.A2uiMessage = {
+export const DEMO_CONTACT_SURFACE: A2uiMessage = {
   surfaceId: "demo-contact",
   root: {
     type: "Column",
@@ -482,13 +482,13 @@ export const DEMO_CONTACT_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // ANALYTICS DASHBOARD SURFACE
 // ============================================================
-export const DEMO_CHART_SURFACE: Types.A2uiMessage = {
+export const DEMO_CHART_SURFACE: A2uiMessage = {
   surfaceId: "demo-analytics",
   root: {
     type: "Column",
@@ -725,13 +725,13 @@ export const DEMO_CHART_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // FORM INPUT SURFACE
 // ============================================================
-export const DEMO_FORM_SURFACE: Types.A2uiMessage = {
+export const DEMO_FORM_SURFACE: A2uiMessage = {
   surfaceId: "demo-form",
   root: {
     type: "Column",
@@ -870,13 +870,13 @@ export const DEMO_FORM_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // LIST COMPONENT SURFACE
 // ============================================================
-export const DEMO_LIST_SURFACE: Types.A2uiMessage = {
+export const DEMO_LIST_SURFACE: A2uiMessage = {
   surfaceId: "demo-list",
   root: {
     type: "Column",
@@ -1103,13 +1103,13 @@ export const DEMO_LIST_SURFACE: Types.A2uiMessage = {
         action: { name: "addTask" },
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // IMAGE GALLERY SURFACE
 // ============================================================
-export const DEMO_IMAGE_SURFACE: Types.A2uiMessage = {
+export const DEMO_IMAGE_SURFACE: A2uiMessage = {
   surfaceId: "demo-gallery",
   root: {
     type: "Column",
@@ -1235,13 +1235,13 @@ export const DEMO_IMAGE_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // BUTTON VARIANTS SURFACE
 // ============================================================
-export const DEMO_BUTTONS_SURFACE: Types.A2uiMessage = {
+export const DEMO_BUTTONS_SURFACE: A2uiMessage = {
   surfaceId: "demo-buttons",
   root: {
     type: "Column",
@@ -1374,13 +1374,13 @@ export const DEMO_BUTTONS_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // FULL COMPONENT SHOWCASE SURFACE
 // ============================================================
-export const DEMO_SHOWCASE_SURFACE: Types.A2uiMessage = {
+export const DEMO_SHOWCASE_SURFACE: A2uiMessage = {
   surfaceId: "demo-showcase",
   root: {
     type: "Column",
@@ -1619,13 +1619,13 @@ export const DEMO_SHOWCASE_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
 // MENU DEMO SURFACE
 // ============================================================
-export const DEMO_MENU_SURFACE: Types.A2uiMessage = {
+export const DEMO_MENU_SURFACE: A2uiMessage = {
   surfaceId: "demo-menu",
   root: {
     type: "Column",
@@ -1766,7 +1766,7 @@ export const DEMO_MENU_SURFACE: Types.A2uiMessage = {
         ],
       },
     ],
-  } as Types.Node,
+  } as SimpleNode,
 };
 
 // ============================================================
@@ -1774,7 +1774,7 @@ export const DEMO_MENU_SURFACE: Types.A2uiMessage = {
 // ============================================================
 export function getDemoResponse(query: string): {
   text: string;
-  surface?: Types.A2uiMessage;
+  surface?: A2uiMessage;
 } {
   const q = query.toLowerCase().trim();
 
@@ -1947,7 +1947,7 @@ Or say **"help"** for the full list!`,
 /**
  * Get all available demo surfaces for testing
  */
-export function getAllDemoSurfaces(): Types.A2uiMessage[] {
+export function getAllDemoSurfaces(): A2uiMessage[] {
   return [
     DEMO_WELCOME_SURFACE,
     DEMO_RESTAURANT_SURFACE,

@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, NO_ERRORS_SCHEMA } from '@angular/core';
 import { NativeScriptCommonModule } from '@nativescript/angular';
-import { DynamicComponent, Renderer } from '@a2ui/nativescript';
-import { Types, SimpleNode, Action } from '../../a2ui-lit-types';
+import { DynamicComponent, Renderer, Types } from '@a2ui/nativescript';
+import { SimpleNode, Action } from '../../a2ui-types';
 
 @Component({
   selector: 'a2ui-card',

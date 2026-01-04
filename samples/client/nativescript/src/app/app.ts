@@ -19,7 +19,8 @@ import {
   EventData,
   GridLayout,
 } from "@nativescript/core";
-import { Types } from "../a2ui-lit-types";
+import { Types } from "@a2ui/nativescript";
+import { A2uiMessage } from "../a2ui-types";
 import { ChatService } from "./services/chat.service";
 import { ChatInputComponent } from "./components/chat-input.component";
 import { ChatHistoryComponent } from "./components/chat-history.component";

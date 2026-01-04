@@ -14,14 +14,18 @@
       "~/*": ["src/*"],
       "@/*": ["src/*"],
       "@a2ui/nativescript": ["../../../renderers/nativescript/src/public-api.ts"],
-      "@a2ui/lit": ["src/a2ui-lit-types.ts"],
-      "@a2ui/lit/0.8": ["src/a2ui-lit-types.ts"],
+      "@a2ui/lit": ["src/a2ui-lit-shim.ts"],
+      "@a2ui/lit/0.8": ["src/a2ui-lit-shim.ts"],
+      "@a2ui/lit/0.8/types/*": ["../../../renderers/lit/src/0.8/types/*"],
       "@angular/core": ["node_modules/@angular/core"],
       "rxjs": ["node_modules/rxjs"],
       "rxjs/*": ["node_modules/rxjs/*"]
     }
   },
-  "include": ["src/**/*.ts", "../../../renderers/nativescript/src/**/*.ts"],
+  "include": [
+    "src/**/*.ts", 
+    "../../../renderers/nativescript/src/**/*.ts"
+  ],
   "files": ["./src/main.ts", "./references.d.ts", "./src/polyfills.ts"],
   "exclude": ["node_modules", "platforms", "e2e"]
 }

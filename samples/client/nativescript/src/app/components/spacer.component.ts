@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, NO_ERRORS_SCHEMA } from '@angular/core';
 import { NativeScriptCommonModule } from '@nativescript/angular';
-import { DynamicComponent } from '@a2ui/nativescript';
-import { Types, SimpleNode } from '../../a2ui-lit-types';
+import { DynamicComponent, Types } from '@a2ui/nativescript';
+import { SimpleNode } from '../../a2ui-types';
 
 @Component({
   selector: 'a2ui-spacer',
