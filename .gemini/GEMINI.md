@@ -13,10 +13,11 @@ The A2UI repository is organized into several key directories:
     -   `client_to_server.json`: Defines the schema for event messages sent from the client to the server.
 -   `a2a_agents/python/`: Contains Python code relating to server-side integration of A2UI
     -   `a2ui_extension/`: Python implementation of the A2UI A2A extension.
-    -   `adk/samples/`: Contains demo applications that showcase the A2UI protocol in action using the ADK framework.
--   `web/`: Contains the web-based client implementations (using Lit and Vite) for the samples, including a shared library (`renderers/lit`).
--   `angular/`: Contains an alternative web-based client implementation using Angular.
--   `eval/`: Contains a Genkit-based framework for evaluating LLM performance in generating A2UI responses.
+-   `samples/agent/adk/`: Contains demo applications that showcase the A2UI protocol in action using the ADK framework.
+-   `samples/client/lit/`: Contains the web-based client implementations (using Lit and Vite) for the samples, including a shared library (`renderers/lit`).
+-   `renderers/angular/`: Contains an alternative web-based client implementation using Angular.
+-   `specification/0.8/eval/`: Contains a Genkit-based framework for evaluating LLM performance in generating A2UI responses for protocol version 0.8.
+-   `specification/0.9/eval/`: Contains a Genkit-based framework for evaluating LLM performance in generating A2UI responses for protocol version 0.9.
 
 ## A2UI Specification Overview
 
@@ -40,33 +41,33 @@ The formal, machine-readable definitions of the protocol are maintained as JSON 
 
 ## Running the Demos
 
-There are three demos available in the `a2a_samples/` directory. Each demo has a corresponding web client in the `web/` and `angular/` directories. To run a demo, you will need to start both the server and the client.
+There are four demos available in the `samples/agent/adk/` directory: `contact_lookup`, `orchestrator`, `restaurant_finder`, and `rizzcharts`. Each demo has a corresponding web client in the `samples/client/lit/` and `samples/client/angular/` directories. To run a demo, you will need to start both the server and the client.
 
 ### Running a Demo Server
 
 To run a demo server, navigate to the demo's directory and run the `__main__.py` script. For example, to run the contact lookup demo:
 
 ```bash
-cd a2a_samples/a2ui_contact_lookup
+cd samples/agent/adk/contact_lookup
 python -m __main__
 ```
 
 ### Running a Demo Client (Lit)
 
-To run a demo client, navigate to the corresponding client directory in `web/` and start the development server. For example, to run the contact lookup client:
+To run a demo client, navigate to the corresponding client directory in `samples/client/lit/` and start the development server. For example, to run the contact lookup client:
 
 ```bash
-cd web/contact
+cd samples/client/lit/contact
 npm install
 npm run dev
 ```
 
 ### Running a Demo Client (Angular)
 
-To run a demo client, navigate to the `angular/` directory and start the development server with the project name. For example, to run the contact lookup client:
+To run a demo client, navigate to the `samples/client/angular/` directory and start the development server with the project name. For example, to run the contact lookup client:
 
 ```bash
-cd angular
+cd samples/client/angular
 npm install
 npm start -- contact
 ```
@@ -75,8 +76,8 @@ npm start -- contact
 
 There are three renderers available for A2UI:
 
--   **Web (Lit)**: Located in `renderers/lit`, this is the primary web renderer used by the demos in `web/`.
--   **Angular**: Located in `angular/projects/lib`, this is an alternative web renderer for Angular applications.
+-   **Web (Lit)**: Located in `renderers/lit/src/0.8/ui`, this is the primary web renderer used by the demos in `samples/client/lit/`.
+-   **Angular**: Located in `renderers/angular/src/lib`, this is an alternative web renderer for Angular applications.
 -   **Flutter**: The Flutter renderer is in a separate repository: [https://github.com/flutter/genui](https://github.com/flutter/genui)
 
 ## Keeping This Guide Updated
