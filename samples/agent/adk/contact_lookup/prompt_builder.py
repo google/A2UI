@@ -113,6 +113,6 @@ if __name__ == "__main__":
     my_base_url = "http://localhost:8000"
     contact_prompt = get_ui_prompt(my_base_url, CONTACT_UI_EXAMPLES)
     print(contact_prompt)
-    with open("generated_prompt.txt", "w") as f:
+    with open("generated_prompt.txt", "w", encoding="utf-8") as f:
         f.write(contact_prompt)
     print("\nGenerated prompt saved to generated_prompt.txt")

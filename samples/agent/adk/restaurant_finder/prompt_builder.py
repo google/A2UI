@@ -859,6 +859,6 @@ if __name__ == "__main__":
     print(restaurant_prompt)
 
     # This demonstrates how you could save the prompt to a file for inspection
-    with open("generated_prompt.txt", "w") as f:
+    with open("generated_prompt.txt", "w", encoding="utf-8") as f:
         f.write(restaurant_prompt)
     print("\nGenerated prompt saved to generated_prompt.txt")
