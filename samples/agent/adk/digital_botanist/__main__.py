@@ -33,8 +33,8 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Path to plant images
-ASSETS_DIR = Path(__file__).parent.parent.parent.parent.parent / "assets"
+# Path to plant images (local assets folder)
+ASSETS_DIR = Path(__file__).parent / "assets"
 
 
 class MissingAPIKeyError(Exception):

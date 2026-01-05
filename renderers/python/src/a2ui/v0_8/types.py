@@ -106,6 +106,18 @@ class A2UIMessage(TypedDict, total=False):
 
 
 @dataclass
+class ComponentNode:
+    """A resolved component node with data context."""
+
+    id: str
+    comp_type: str
+    properties: dict[str, Any]
+    data_context_path: str = "/"
+    weight: float = 1.0
+    children: list["ComponentNode"] = field(default_factory=list)
+
+
+@dataclass
 class Surface:
     """Represents a rendered UI surface."""
 
@@ -114,3 +126,4 @@ class Surface:
     components: dict[str, Component] = field(default_factory=dict)
     data_model: dict[str, Any] = field(default_factory=dict)
     styles: dict[str, Any] = field(default_factory=dict)
+    component_tree: Optional[ComponentNode] = None

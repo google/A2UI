@@ -21,8 +21,8 @@ from google.adk.tools.tool_context import ToolContext
 
 logger = logging.getLogger(__name__)
 
-# Path to the plant data
-ASSETS_DIR = Path(__file__).parent.parent.parent.parent.parent / "assets"
+# Path to the plant data (local assets folder)
+ASSETS_DIR = Path(__file__).parent / "assets"
 PLANTS_FILE = ASSETS_DIR / "heartyculture_plants.json"
 
 # Cache for plant data
@@ -82,7 +82,7 @@ def search_plants(
             plant_copy = plant.copy()
             if base_url := tool_context.state.get("base_url"):
                 if plant_copy.get("image"):
-                    plant_copy["image"] = f"{base_url}/static{plant_copy['image']}"
+                    plant_copy["image"] = f"{base_url}{plant_copy['image']}"
 
             results.append(plant_copy)
 
@@ -113,7 +113,7 @@ def get_plant_details(plant_id: int, tool_context: ToolContext) -> str:
             plant_copy = plant.copy()
             if base_url := tool_context.state.get("base_url"):
                 if plant_copy.get("image"):
-                    plant_copy["image"] = f"{base_url}/static{plant_copy['image']}"
+                    plant_copy["image"] = f"{base_url}{plant_copy['image']}"
 
             logger.info(
                 f"  - Success: Found plant {plant_copy.get('common_name', plant_copy.get('scientific_name'))}"
@@ -181,7 +181,7 @@ def get_plants_by_category(
             plant_copy = plant.copy()
             if base_url := tool_context.state.get("base_url"):
                 if plant_copy.get("image"):
-                    plant_copy["image"] = f"{base_url}/static{plant_copy['image']}"
+                    plant_copy["image"] = f"{base_url}{plant_copy['image']}"
 
             results.append(plant_copy)
 

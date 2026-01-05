@@ -15,13 +15,13 @@
 """HTML Renderer for A2UI components."""
 
 from html import escape
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 from ..processor import MessageProcessor
-from ..data_model import DataModel
+from ..types import ComponentNode
 
 
 class HTMLRenderer:
-    """Renders A2UI components to HTML strings."""
+    """Renders A2UI component tree to HTML strings."""
 
     # Default styles for A2UI components
     DEFAULT_CSS = """
@@ -105,50 +105,25 @@ class HTMLRenderer:
         processor: MessageProcessor,
         base_url: str = "http://localhost:10004",
     ):
-        """Initialize the renderer.
-
-        Args:
-            processor: The MessageProcessor containing surfaces.
-            base_url: Base URL for resolving relative URLs (e.g., for images).
-        """
+        """Initialize the renderer."""
         self._processor = processor
         self._base_url = base_url
 
     def render_surface(self, surface_id: str) -> str:
-        """Render a surface to HTML.
-
-        Args:
-            surface_id: The surface ID to render.
-
-        Returns:
-            HTML string representation of the surface.
-        """
+        """Render a surface to HTML using component tree."""
         surface = self._processor.get_surface(surface_id)
         if not surface:
             return ""
 
-        # Get data model for resolving paths
-        data_model = DataModel()
-        data_model._data = surface.data_model
+        # Use component tree if available (with resolved properties)
+        if surface.component_tree:
+            html = self._render_node(surface.component_tree)
+            return f'<div class="a2ui-surface">{html}</div>'
 
-        # Build component map
-        component_map = surface.components
-
-        # Render all components
-        html_parts = []
-        for comp_id, comp in component_map.items():
-            html = self._render_component(comp, component_map, data_model)
-            if html:
-                html_parts.append(html)
-
-        return f'<div class="a2ui-surface">{"".join(html_parts)}</div>'
+        return '<div class="a2ui-surface"></div>'
 
     def render_all_surfaces(self) -> str:
-        """Render all surfaces to HTML.
-
-        Returns:
-            HTML string with all surfaces.
-        """
+        """Render all surfaces to HTML."""
         surfaces = self._processor.get_surfaces()
         html_parts = []
         for surface_id in surfaces:
@@ -158,31 +133,11 @@ class HTMLRenderer:
         return "".join(html_parts)
 
     def get_css(self) -> str:
-        """Get the default CSS for A2UI components.
-
-        Returns:
-            CSS string.
-        """
+        """Get the default CSS for A2UI components."""
         return self.DEFAULT_CSS
 
-    def _resolve(self, value: Any, data_model: DataModel, default: str = "") -> str:
-        """Resolve an A2UI value to a string."""
-        return data_model.resolve_value(value, default)
-
-    def _render_component(
-        self,
-        component: dict,
-        component_map: dict,
-        data_model: DataModel,
-    ) -> str:
-        """Render a single component to HTML."""
-        comp_wrapper = component.get("component", {})
-        if not comp_wrapper:
-            return ""
-
-        comp_type = list(comp_wrapper.keys())[0]
-        props = comp_wrapper[comp_type]
-
+    def _render_node(self, node: ComponentNode) -> str:
+        """Render a ComponentNode to HTML."""
         renderers = {
             "Text": self._render_text,
             "Heading": self._render_heading,
@@ -193,38 +148,53 @@ class HTMLRenderer:
             "List": self._render_list,
             "Button": self._render_button,
             "Divider": self._render_divider,
+            "Icon": self._render_icon,
         }
 
-        renderer = renderers.get(comp_type)
+        renderer = renderers.get(node.comp_type)
         if renderer:
-            return renderer(props, component_map, data_model)
+            return renderer(node)
 
         return ""
 
-    def _render_text(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
-        """Render Text component."""
-        text = escape(self._resolve(props.get("text"), data_model))
-        hint = props.get("usageHint", "")
-        css_class = "a2ui-title" if hint == "h3" else "a2ui-text"
-        return f'<p class="{css_class}">{text}</p>'
+    def _get_prop(self, node: ComponentNode, key: str, default: Any = "") -> Any:
+        """Get a property from node with a default value."""
+        value = node.properties.get(key, default)
+        if value is None:
+            return default
+        return value
 
-    def _render_heading(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_children(self, node: ComponentNode) -> str:
+        """Render all children of a node."""
+        if not node.children:
+            return ""
+        return "".join(self._render_node(child) for child in node.children)
+
+    def _render_text(self, node: ComponentNode) -> str:
+        """Render Text component."""
+        text = escape(str(self._get_prop(node, "text")))
+        hint = self._get_prop(node, "usageHint", "")
+
+        if hint == "h1":
+            return f'<h2 class="a2ui-heading">{text}</h2>'
+        elif hint == "h2":
+            return f'<h3 class="a2ui-heading">{text}</h3>'
+        elif hint == "h3":
+            return f'<p class="a2ui-title">{text}</p>'
+
+        return f'<p class="a2ui-text">{text}</p>'
+
+    def _render_heading(self, node: ComponentNode) -> str:
         """Render Heading component."""
-        text = escape(self._resolve(props.get("text"), data_model))
-        level = props.get("level", 2)
-        level = max(1, min(6, level))  # Clamp to valid heading level
+        text = escape(str(self._get_prop(node, "text")))
+        level = self._get_prop(node, "level", 2)
+        level = max(1, min(6, int(level)))
         return f'<h{level} class="a2ui-heading">{text}</h{level}>'
 
-    def _render_image(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_image(self, node: ComponentNode) -> str:
         """Render Image component."""
-        url = self._resolve(props.get("url"), data_model)
-        alt = escape(self._resolve(props.get("alt"), data_model))
+        url = str(self._get_prop(node, "url"))
+        alt = escape(str(self._get_prop(node, "alt")))
 
         # Handle relative URLs
         if url.startswith("/"):
@@ -232,66 +202,53 @@ class HTMLRenderer:
 
         return f'<img src="{escape(url)}" alt="{alt}" class="a2ui-image" />'
 
-    def _render_card(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_card(self, node: ComponentNode) -> str:
         """Render Card component."""
-        child_id = props.get("child")
-        child_html = ""
-        if child_id and child_id in component_map:
-            child_html = self._render_component(
-                component_map[child_id], component_map, data_model
-            )
-        return f'<div class="a2ui-card">{child_html}</div>'
+        children_html = self._render_children(node)
+        return f'<div class="a2ui-card">{children_html}</div>'
 
-    def _render_row(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_row(self, node: ComponentNode) -> str:
         """Render Row component."""
-        children_html = self._render_children(props, component_map, data_model)
+        children_html = self._render_children(node)
         return f'<div class="a2ui-row">{children_html}</div>'
 
-    def _render_column(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_column(self, node: ComponentNode) -> str:
         """Render Column component."""
-        children_html = self._render_children(props, component_map, data_model)
+        children_html = self._render_children(node)
         return f'<div class="a2ui-column">{children_html}</div>'
 
-    def _render_list(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_list(self, node: ComponentNode) -> str:
         """Render List component."""
-        children_html = self._render_children(props, component_map, data_model)
+        children_html = self._render_children(node)
         return f'<div class="a2ui-list">{children_html}</div>'
 
-    def _render_button(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_button(self, node: ComponentNode) -> str:
         """Render Button component."""
-        label = escape(self._resolve(props.get("label"), data_model, "Button"))
+        # Try label first, then check for child text
+        label = self._get_prop(node, "label")
+        if not label and node.children:
+            # Find child text component
+            for child in node.children:
+                if child.comp_type == "Text":
+                    label = self._get_prop(child, "text")
+                    break
+        label = escape(str(label)) if label else "Button"
         return f'<button class="a2ui-button">{label}</button>'
 
-    def _render_divider(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
+    def _render_divider(self, node: ComponentNode) -> str:
         """Render Divider component."""
         return '<hr class="a2ui-divider" />'
 
-    def _render_children(
-        self, props: dict, component_map: dict, data_model: DataModel
-    ) -> str:
-        """Render children of a container component."""
-        children_prop = props.get("children", {})
-        explicit_list = children_prop.get("explicitList", [])
-
-        html_parts = []
-        for child_id in explicit_list:
-            if child_id in component_map:
-                html = self._render_component(
-                    component_map[child_id], component_map, data_model
-                )
-                if html:
-                    html_parts.append(html)
-
-        return "".join(html_parts)
+    def _render_icon(self, node: ComponentNode) -> str:
+        """Render Icon component (as emoji or text)."""
+        name = str(self._get_prop(node, "name", ""))
+        # Map common icon names to emojis
+        icon_map = {
+            "eco": "🌿",
+            "local_florist": "🌸",
+            "menu_book": "📖",
+            "tag": "🏷️",
+            "shopping_cart": "🛒",
+        }
+        icon = icon_map.get(name, f"[{name}]")
+        return f'<span class="a2ui-icon">{icon}</span>'
