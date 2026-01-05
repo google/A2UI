@@ -1,0 +1,61 @@
+{
+  "name": "@a2ui/react-native",
+  "version": "0.1.0",
+  "description": "A2UI React Native Renderer",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "react-native": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "type": "module",
+  "react-native": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --ext .ts,.tsx",
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "directory": "renderers/react-native",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "a2ui",
+    "react-native",
+    "agent",
+    "ui",
+    "google"
+  ],
+  "author": "Barathwaj Ramamoorthy <rbarathwaj@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "homepage": "https://github.com/google/A2UI/tree/main/renderers/react-native#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/react": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.7.0",
+    "react": "18.2.0",
+    "react-native": "0.73.0",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0"
+  }
+}
