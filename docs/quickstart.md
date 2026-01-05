@@ -243,10 +243,13 @@ The demo uses Python for the A2A agent. If you encounter Python errors:
 # Make sure Python 3.10+ is installed
 python3 --version
 
+# Make sure uv is installed
+uv --version
+
 # The demo should auto-install dependencies via the npm script
 # If not, manually install them:
 cd ../../agent/adk/restaurant_finder
-pip install -r requirements.txt
+uv sync
 ```
 
 ### Still Having Issues?
