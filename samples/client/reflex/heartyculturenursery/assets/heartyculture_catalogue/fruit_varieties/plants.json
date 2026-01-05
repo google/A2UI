@@ -1,0 +1,922 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Actinidia Deliciosa",
+    "common_name": "Kiwi",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/kiwi.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Artocarpus Altilis",
+    "common_name": "Bread Fruit",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/bread_fruit.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Annona Muricata",
+    "common_name": "Sours soup",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/sours_soup.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Pouteria Caimito",
+    "common_name": "Abiu Fruit",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/abiu_fruit.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Jackfruit(Chandra)",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/jackfruitchandra.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "All time Jackfruit",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/all_time_jackfruit.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Anacardium Ocidentale",
+    "common_name": "Cashewnut Graft",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/cashewnut_graft.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Gumless Jack",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/gumless_jack.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Seedless Jackfruit",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/seedless_jackfruit.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Ananas Comosus",
+    "common_name": "Pineapple",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/pineapple.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Lalbhag Madura Jack",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/lalbhag_madura_jack.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Jackfruit",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/jackfruit.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Annona Cherimola",
+    "common_name": "Ramphal",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/ramphal.png"
+  },
+  {
+    "id": 14,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Jackfruit Seedling",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/jackfruit_seedling.png"
+  },
+  {
+    "id": 15,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Vietnam EarlyJackfruit",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/vietnam_earlyjackfruit.jpeg"
+  },
+  {
+    "id": 16,
+    "scientific_name": "Jasminum smabc",
+    "common_name": "Red Custard Apple",
+    "category": "Fruit Varieties",
+    "page": 36,
+    "image": "/heartyculture_catalogue/fruit_varieties/red_custard_apple.png"
+  },
+  {
+    "id": 17,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Red Jack",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/red_jack.png"
+  },
+  {
+    "id": 18,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Jackfruit (Cempedak)",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/jackfruit_cempedak.png"
+  },
+  {
+    "id": 19,
+    "scientific_name": "Annona Squammosa",
+    "common_name": "Custard Apple Golden",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/custard_apple_golden.png"
+  },
+  {
+    "id": 20,
+    "scientific_name": "Artocarpus Laucha Buch",
+    "common_name": "Monkey Jackfruit",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/monkey_jackfruit.png"
+  },
+  {
+    "id": 21,
+    "scientific_name": "Averrhoa Carambola",
+    "common_name": "Komrekh Graft",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/komrekh_graft.png"
+  },
+  {
+    "id": 22,
+    "scientific_name": "Annona Squammosa",
+    "common_name": "Sethaphal",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/sethaphal.png"
+  },
+  {
+    "id": 23,
+    "scientific_name": "Artocarpus Heterophyllus",
+    "common_name": "Campadak",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/campadak.png"
+  },
+  {
+    "id": 24,
+    "scientific_name": "Arachis Hypogaea",
+    "common_name": "Peanut Butter fruit",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/peanut_butter_fruit.png"
+  },
+  {
+    "id": 25,
+    "scientific_name": "Averrhoa Bilimbi",
+    "common_name": "Bilimbi",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/bilimbi.png"
+  },
+  {
+    "id": 26,
+    "scientific_name": "Citrus",
+    "common_name": "Lemon wine",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/lemon_wine.png"
+  },
+  {
+    "id": 27,
+    "scientific_name": "Citrus X Sinensis",
+    "common_name": "Mosambi Orange",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/mosambi_orange.png"
+  },
+  {
+    "id": 28,
+    "scientific_name": "Grewia Asiatica",
+    "common_name": "Palsa",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/palsa.png"
+  },
+  {
+    "id": 29,
+    "scientific_name": "Citrus",
+    "common_name": "Maltha Lemon",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/maltha_lemon.png"
+  },
+  {
+    "id": 30,
+    "scientific_name": "Citrus X Sinensis",
+    "common_name": "Green Orange",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/green_orange.png"
+  },
+  {
+    "id": 31,
+    "scientific_name": "Citrus Limon",
+    "common_name": "Lemon",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/lemon.png"
+  },
+  {
+    "id": 32,
+    "scientific_name": "Citrus",
+    "common_name": "Gaja(Lime)",
+    "category": "Fruit Varieties",
+    "page": 37,
+    "image": "/heartyculture_catalogue/fruit_varieties/gajalime.png"
+  },
+  {
+    "id": 33,
+    "scientific_name": "Citrus Maxima",
+    "common_name": "Pomelo",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/pomelo.png"
+  },
+  {
+    "id": 34,
+    "scientific_name": "Citrus Aurantifolia(lime)",
+    "common_name": "Acid lime budded",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/acid_lime_budded.png"
+  },
+  {
+    "id": 35,
+    "scientific_name": "Citrus Sinesis",
+    "common_name": "Sweet Lime",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/sweet_lime.png"
+  },
+  {
+    "id": 36,
+    "scientific_name": "Citrus  X Sinesis",
+    "common_name": "Orange Grafted",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/orange_grafted.png"
+  },
+  {
+    "id": 37,
+    "scientific_name": "Citrus",
+    "common_name": "Thai Lime",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/thai_lime.png"
+  },
+  {
+    "id": 38,
+    "scientific_name": "Jasminum smabc",
+    "common_name": "Budha’s lime",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/budhas_lime.png"
+  },
+  {
+    "id": 39,
+    "scientific_name": "Citrus X Sinesis",
+    "common_name": "Variegated Orange",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/variegated_orange.png"
+  },
+  {
+    "id": 40,
+    "scientific_name": "Citrus",
+    "common_name": "Lime",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/lime.png"
+  },
+  {
+    "id": 41,
+    "scientific_name": "Citrus X Sinesis",
+    "common_name": "Orange",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/orange.png"
+  },
+  {
+    "id": 42,
+    "scientific_name": "Morinda Citrifolin",
+    "common_name": "Noni",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/noni.png"
+  },
+  {
+    "id": 43,
+    "scientific_name": "Citrus X Sinesis",
+    "common_name": "Coorg Orange",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/coorg_orange.png"
+  },
+  {
+    "id": 44,
+    "scientific_name": "Carissa",
+    "common_name": "Karonda",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/karonda.png"
+  },
+  {
+    "id": 45,
+    "scientific_name": "Casimiroa Edulis",
+    "common_name": "White Sapota",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/white_sapota.png"
+  },
+  {
+    "id": 46,
+    "scientific_name": "Cyanococcus",
+    "common_name": "Blueberry",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/blueberry.png"
+  },
+  {
+    "id": 47,
+    "scientific_name": "Euterpe Oleracea",
+    "common_name": "Acai Berry",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/acai_berry.png"
+  },
+  {
+    "id": 48,
+    "scientific_name": "Chrysophyllum Caintio",
+    "common_name": "Milk Fruit",
+    "category": "Fruit Varieties",
+    "page": 38,
+    "image": "/heartyculture_catalogue/fruit_varieties/milk_fruit.png"
+  },
+  {
+    "id": 49,
+    "scientific_name": "Dillenia Indica",
+    "common_name": "Elephant Apple",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/elephant_apple.png"
+  },
+  {
+    "id": 50,
+    "scientific_name": "Ficus Auriculata",
+    "common_name": "Fig Austrian Variety",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/fig_austrian_variety.png"
+  },
+  {
+    "id": 51,
+    "scientific_name": "Areca Catechu",
+    "common_name": "Arecanut",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/arecanut.png"
+  },
+  {
+    "id": 52,
+    "scientific_name": "Durio Zibethinus",
+    "common_name": "Durian",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/durian.png"
+  },
+  {
+    "id": 53,
+    "scientific_name": "Ficus Glomerata",
+    "common_name": "Fig",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/fig.png"
+  },
+  {
+    "id": 54,
+    "scientific_name": "Cocus Nucifera",
+    "common_name": "Coconut Green Dwarf",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/coconut_green_dwarf.png"
+  },
+  {
+    "id": 55,
+    "scientific_name": "Dimocarpus Longan",
+    "common_name": "Longan",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/longan.png"
+  },
+  {
+    "id": 55,
+    "scientific_name": "Fortunella Japonica",
+    "common_name": "Israel Orange",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/israel_orange.png"
+  },
+  {
+    "id": 56,
+    "scientific_name": "Cocos Nucifera",
+    "common_name": "Coconut Hybrid Ned",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/coconut_hybrid_ned.png"
+  },
+  {
+    "id": 57,
+    "scientific_name": "Eriobotrya Japonica",
+    "common_name": "Loquot",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/loquot.png"
+  },
+  {
+    "id": 58,
+    "scientific_name": "Frabaria Ananassa",
+    "common_name": "Strawberry",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/strawberry.png"
+  },
+  {
+    "id": 58,
+    "scientific_name": "Eugenia Jambolana",
+    "common_name": "Jamun",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/jamun.png"
+  },
+  {
+    "id": 59,
+    "scientific_name": "Ficus Carica",
+    "common_name": "Anjeer",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/anjeer.png"
+  },
+  {
+    "id": 60,
+    "scientific_name": "Eugenia Uniflora",
+    "common_name": "Surinam Cherry",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/surinam_cherry.png"
+  },
+  {
+    "id": 61,
+    "scientific_name": "Garcina Mangostona",
+    "common_name": "Mangosteen",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/mangosteen.png"
+  },
+  {
+    "id": 62,
+    "scientific_name": "Morus Spp",
+    "common_name": "Mulberry",
+    "category": "Fruit Varieties",
+    "page": 39,
+    "image": "/heartyculture_catalogue/fruit_varieties/mulberry.png"
+  },
+  {
+    "id": 63,
+    "scientific_name": "Malpighia Glabra",
+    "common_name": "Barbabos Cherry",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/barbabos_cherry.png"
+  },
+  {
+    "id": 64,
+    "scientific_name": "Magnifera Indica",
+    "common_name": "Mango Alphonso",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/mango_alphonso.png"
+  },
+  {
+    "id": 65,
+    "scientific_name": "Hylocereus Undatus",
+    "common_name": "Dragon Fruit red",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/dragon_fruit_red.png"
+  },
+  {
+    "id": 66,
+    "scientific_name": "Malus Domestica",
+    "common_name": "Apple",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/apple.png"
+  },
+  {
+    "id": 67,
+    "scientific_name": "Magnifera Indica",
+    "common_name": "Mango Banganapali",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/mango_banganapali.png"
+  },
+  {
+    "id": 68,
+    "scientific_name": "Hylocereus Undatus",
+    "common_name": "Dragon Fruit pink",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/dragon_fruit_pink.png"
+  },
+  {
+    "id": 69,
+    "scientific_name": "Manikara Achras",
+    "common_name": "Cricket Ball",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/cricket_ball.png"
+  },
+  {
+    "id": 70,
+    "scientific_name": "Magnifera Indica",
+    "common_name": "Mango Manglova",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/mango_manglova.png"
+  },
+  {
+    "id": 71,
+    "scientific_name": "Hylocereus Undatus",
+    "common_name": "Dragon fruit yellow",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/dragon_fruit_yellow.png"
+  },
+  {
+    "id": 72,
+    "scientific_name": "Manikara Acharas",
+    "common_name": "Kalipathy",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/kalipathy.png"
+  },
+  {
+    "id": 73,
+    "scientific_name": "Jasminum smabc",
+    "common_name": "Mango Malika",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/mango_malika.png"
+  },
+  {
+    "id": 74,
+    "scientific_name": "Litchi Chinesis",
+    "common_name": "Litchi",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/litchi.png"
+  },
+  {
+    "id": 75,
+    "scientific_name": "Momordica Cochininesis",
+    "common_name": "Gac Fruit",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/gac_fruit.png"
+  },
+  {
+    "id": 76,
+    "scientific_name": "Luvi Luvi fruit",
+    "common_name": "Luvi Luvi",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/luvi_luvi.png"
+  },
+  {
+    "id": 77,
+    "scientific_name": "Lansium Domesticum",
+    "common_name": "Langsat",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/langsat.png"
+  },
+  {
+    "id": 78,
+    "scientific_name": "Manilkara Zapota",
+    "common_name": "Mamey Sapota",
+    "category": "Fruit Varieties",
+    "page": 40,
+    "image": "/heartyculture_catalogue/fruit_varieties/mamey_sapota.png"
+  },
+  {
+    "id": 79,
+    "scientific_name": "Musa",
+    "common_name": "Banana Rasathli",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/banana_rasathli.png"
+  },
+  {
+    "id": 80,
+    "scientific_name": "Perismmons",
+    "common_name": "Japanese Perismmon",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/japanese_perismmon.png"
+  },
+  {
+    "id": 81,
+    "scientific_name": "Musa",
+    "common_name": "Banana Yelaki",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/banana_yelaki.png"
+  },
+  {
+    "id": 82,
+    "scientific_name": "Persea Americana",
+    "common_name": "Butter Fruit",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/butter_fruit.png"
+  },
+  {
+    "id": 83,
+    "scientific_name": "Phyllanthus acdus",
+    "common_name": "Gooseberry star",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/gooseberry_star.png"
+  },
+  {
+    "id": 84,
+    "scientific_name": "Nephelium Lappaceum",
+    "common_name": "Rambuttan",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/rambuttan.png"
+  },
+  {
+    "id": 85,
+    "scientific_name": "Pouteria Campechina",
+    "common_name": "Egg Fruit",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/egg_fruit.png"
+  },
+  {
+    "id": 86,
+    "scientific_name": "Prunus Persica",
+    "common_name": "Peach",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/peach.png"
+  },
+  {
+    "id": 87,
+    "scientific_name": "Musa",
+    "common_name": "Banana red",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/banana_red.png"
+  },
+  {
+    "id": 88,
+    "scientific_name": "Passiflora Edilus",
+    "common_name": "Passion fruit",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/passion_fruit.png"
+  },
+  {
+    "id": 89,
+    "scientific_name": "Psidium Cattleianum",
+    "common_name": "Strawberry Guava",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/strawberry_guava.png"
+  },
+  {
+    "id": 90,
+    "scientific_name": "Nephelium Mutabile",
+    "common_name": "Pulsan",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/pulsan.png"
+  },
+  {
+    "id": 91,
+    "scientific_name": "Psidium Guajava",
+    "common_name": "Guava Thailand",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/guava_thailand.png"
+  },
+  {
+    "id": 92,
+    "scientific_name": "Punica Granatum",
+    "common_name": "Pomgranate seedless",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/pomgranate_seedless.png"
+  },
+  {
+    "id": 93,
+    "scientific_name": "Synsepalum Dulcificum",
+    "common_name": "Miracle fruit",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/miracle_fruit.png"
+  },
+  {
+    "id": 94,
+    "scientific_name": "Psidium Guajava",
+    "common_name": "Guava Black",
+    "category": "Fruit Varieties",
+    "page": 41,
+    "image": "/heartyculture_catalogue/fruit_varieties/guava_black.png"
+  },
+  {
+    "id": 95,
+    "scientific_name": "Pyrus Communis",
+    "common_name": "Pears",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/pears.png"
+  },
+  {
+    "id": 96,
+    "scientific_name": "Syzgium Jambos",
+    "common_name": "Rose apple",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/rose_apple.png"
+  },
+  {
+    "id": 97,
+    "scientific_name": "Rubus Fruiticous",
+    "common_name": "Raspberry",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/raspberry.png"
+  },
+  {
+    "id": 98,
+    "scientific_name": "Syzgium Malaccense",
+    "common_name": "Water Apple",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/water_apple.png"
+  },
+  {
+    "id": 99,
+    "scientific_name": "Salacca Zalacca",
+    "common_name": "Salak",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/salak.png"
+  },
+  {
+    "id": 100,
+    "scientific_name": "Solanum Betaceum",
+    "common_name": "Tree Tomato",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/tree_tomato.png"
+  },
+  {
+    "id": 101,
+    "scientific_name": "Solanum Muricatum",
+    "common_name": "Papino Fruit",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/papino_fruit.png"
+  },
+  {
+    "id": 102,
+    "scientific_name": "Sandoricum Koctjape",
+    "common_name": "Santol fruit",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/santol_fruit.png"
+  },
+  {
+    "id": 103,
+    "scientific_name": "Ziziphus Mauritiana",
+    "common_name": "Ber",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/ber.png"
+  },
+  {
+    "id": 104,
+    "scientific_name": "Spondias Dulcis",
+    "common_name": "Hog Plum Sweet",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/hog_plum_sweet.png"
+  },
+  {
+    "id": 105,
+    "scientific_name": "Spondias Dulcis",
+    "common_name": "Hog Plum Sour",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/hog_plum_sour.png"
+  },
+  {
+    "id": 106,
+    "scientific_name": "Vitis Vinifera",
+    "common_name": "Grapes Blue",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/grapes_blue.png"
+  },
+  {
+    "id": 107,
+    "scientific_name": "Syzygium Zeylanicum",
+    "common_name": "Cat Eye Fruit",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/cat_eye_fruit.png"
+  },
+  {
+    "id": 108,
+    "scientific_name": "Elapagnus",
+    "common_name": "Silver Berry",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/silver_berry.png"
+  },
+  {
+    "id": 109,
+    "scientific_name": "Parmentiera Edulis",
+    "common_name": "Guajilote fruit",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/guajilote_fruit.png"
+  },
+  {
+    "id": 110,
+    "scientific_name": "Artocarpus Hirsutus",
+    "common_name": "Wild Jackfruit",
+    "category": "Fruit Varieties",
+    "page": 42,
+    "image": "/heartyculture_catalogue/fruit_varieties/wild_jackfruit.png"
+  },
+  {
+    "id": 111,
+    "scientific_name": "Mammea Americana",
+    "common_name": "Apricot",
+    "category": "Fruit Varieties",
+    "page": 43,
+    "image": "/heartyculture_catalogue/fruit_varieties/apricot.png"
+  },
+  {
+    "id": 112,
+    "scientific_name": "Carabao Teats",
+    "common_name": "Susong Kalabow",
+    "category": "Fruit Varieties",
+    "page": 43,
+    "image": "/heartyculture_catalogue/fruit_varieties/susong_kalabow.png"
+  },
+  {
+    "id": 113,
+    "scientific_name": "Eugenia Victoriana",
+    "common_name": "Sundrop Fruit",
+    "category": "Fruit Varieties",
+    "page": 43,
+    "image": "/heartyculture_catalogue/fruit_varieties/sundrop_fruit.png"
+  }
+]

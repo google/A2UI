@@ -1,0 +1,130 @@
+[
+  {
+    "id": "1",
+    "common_name": "Monkey Thorn",
+    "scientific_name": "Acacia Galpini",
+    "image": "/heartyculture_catalogue/tree_species/monkey_thorn.png",
+    "category": "Tree Species",
+    "quantity": 9
+  },
+  {
+    "id": "2",
+    "common_name": "CatTail Plant",
+    "scientific_name": "Acalypha hispida",
+    "image": "/heartyculture_catalogue/flowering_shrubs/cattail_plant.png",
+    "category": "Flowering Shrubs",
+    "quantity": 2
+  },
+  {
+    "id": "3",
+    "common_name": "African Violet",
+    "scientific_name": "Saintpaulia ionantha",
+    "image": "/heartyculture_catalogue/flowering_shrubs/african_violet.png",
+    "category": "Flowering Shrubs",
+    "quantity": 3
+  },
+  {
+    "id": "4",
+    "common_name": "Chinese Perfume Plant",
+    "scientific_name": "Aglaia odorata",
+    "image": "/heartyculture_catalogue/flowering_shrubs/chinese_perfume_plant.png",
+    "category": "Flowering Shrubs",
+    "quantity": 3
+  },
+  {
+    "id": "6",
+    "common_name": "Red Ginger",
+    "scientific_name": "Alpinia purpurata",
+    "image": "/heartyculture_catalogue/flowering_shrubs/red_ginger.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  },
+  {
+    "id": "12",
+    "common_name": "Barleria Cristata",
+    "scientific_name": "Barleria Cristata",
+    "image": "/heartyculture_catalogue/flowering_shrubs/barleria_cristata.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  },
+  {
+    "id": "18",
+    "common_name": "Shrimp plant",
+    "scientific_name": "Beleperone Gutata Red",
+    "image": "/heartyculture_catalogue/flowering_shrubs/shrimp_plant.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  },
+  {
+    "id": "15",
+    "common_name": "White Bauhinia",
+    "scientific_name": "Bauhinea Aciminata",
+    "image": "/heartyculture_catalogue/flowering_shrubs/white_bauhinia.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  },
+  {
+    "id": "16",
+    "common_name": "Red bauhinia",
+    "scientific_name": "bauhinia galpinii",
+    "image": "/heartyculture_catalogue/flowering_shrubs/red_bauhinia.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  },
+  {
+    "id": "20",
+    "common_name": "Sindhur Tree",
+    "scientific_name": "Bixa Orellana",
+    "image": "/heartyculture_catalogue/flowering_shrubs/sindhur_tree.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  },
+  {
+    "id": "27",
+    "common_name": "Peacock Flower",
+    "scientific_name": "Caesalpinia Pulcherrima Yellow",
+    "image": "/heartyculture_catalogue/flowering_shrubs/peacock_flower.png",
+    "category": "Flowering Shrubs",
+    "quantity": 6
+  },
+  {
+    "id": "25",
+    "common_name": "Pink peacock flower",
+    "scientific_name": "Caesalpinia Pulcherrima Pink",
+    "image": "/heartyculture_catalogue/flowering_shrubs/pink_peacock_flower.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  },
+  {
+    "id": "7",
+    "common_name": "tropic frost",
+    "scientific_name": "Cordyline fruticosa",
+    "image": "/heartyculture_catalogue/cordyline_varieties/tropic_frost.png",
+    "category": "Cordyline Varieties",
+    "quantity": 1
+  },
+  {
+    "id": "5",
+    "common_name": "pink diamond",
+    "scientific_name": "Cordyline fruticosa",
+    "image": "/heartyculture_catalogue/cordyline_varieties/pink_diamond.png",
+    "category": "Cordyline Varieties",
+    "quantity": 1
+  },
+  {
+    "id": "64",
+    "common_name": "Scarlet clock vine",
+    "scientific_name": "Thumbergia coccinea",
+    "image": "/heartyculture_catalogue/climbers_creepers/scarlet_clock_vine.png",
+    "category": "Climbers & Creepers",
+    "quantity": 1
+  },
+  {
+    "id": "51",
+    "common_name": "Firecracker Flower",
+    "scientific_name": "Crossandra infundibuliformis",
+    "image": "/heartyculture_catalogue/flowering_shrubs/firecracker_flower.png",
+    "category": "Flowering Shrubs",
+    "quantity": 1
+  }
+]

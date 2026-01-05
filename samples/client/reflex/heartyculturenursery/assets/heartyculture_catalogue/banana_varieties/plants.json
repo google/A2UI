@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Musa",
+    "common_name": "Red Banana",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/red_banana.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Musa",
+    "common_name": "Karpuravalli Banana (Honey Banana)",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/karpuravalli_banana_honey_banana.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Musa",
+    "common_name": "Pachanadan Banana",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/pachanadan_banana.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Musa",
+    "common_name": "Monthan Banana (Curry Banana)",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/monthan_banana_curry_banana.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Musa",
+    "common_name": "G9 Banana (Grand Nain Banana)",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/g9_banana_grand_nain_banana.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Musa",
+    "common_name": "Nendran Banana",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/nendran_banana.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Musa",
+    "common_name": "Kadali Banana",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/kadali_banana.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Musa",
+    "common_name": "Poovan Banana",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/poovan_banana.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Musa",
+    "common_name": "Kundal Nendran Banana",
+    "category": "Banana Plant Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/banana_varieties/kundal_nendran_banana.png"
+  }
+]

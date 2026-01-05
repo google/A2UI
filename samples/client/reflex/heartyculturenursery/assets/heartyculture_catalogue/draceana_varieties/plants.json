@@ -1,0 +1,100 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Draceana trifasciata",
+    "common_name": "Snake plant",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/snake_plant.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Dracaena Mahatma",
+    "common_name": "Hawaiian Ti Plant",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/hawaiian_ti_plant.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Dracaena fragrans",
+    "common_name": "Cornstalk Plant",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/cornstalk_plant.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Dracaena marginata",
+    "common_name": "Pink",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/pink.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Dracaena marginata",
+    "common_name": "Green",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/green.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Dracaena marginata",
+    "common_name": "Gold",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/gold.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Dracaena marginata",
+    "common_name": "White",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/white.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Dracaena reflexa",
+    "common_name": "Song of Jamaica",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/song_of_jamaica.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Dracaena reflexa",
+    "common_name": "Song of India",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/song_of_india.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Dracaena surculosa",
+    "common_name": "Gold-Dust Dracaena",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/gold-dust_dracaena.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Dracaena tornado",
+    "common_name": "Tornado Dracaena",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/tornado_dracaena.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Dracaena warneckii",
+    "common_name": "Dracaena White Stripes",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/dracaena_white_stripes.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Dracaena lemon lime",
+    "common_name": "Dracaena Lemon Lime",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/dracaena_lemon_lime.png"
+  },
+  {
+    "id": 14,
+    "scientific_name": "Dracaena gold",
+    "common_name": "Golden Draceana",
+    "category": "Draceana Varieties",
+    "image": "/heartyculture_catalogue/draceana_varieties/golden_draceana.png"
+  }
+]

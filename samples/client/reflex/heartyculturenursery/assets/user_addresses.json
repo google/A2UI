@@ -1,0 +1,24 @@
+[
+    {
+        "id": "5b4d7b37-08f9-45f1-8fc8-079580fc54dc",
+        "name": "Ramprasad Reddy",
+        "phone": "08919029601",
+        "address_line1": "H No 5-4-43/44, Green Space Residency, F 402,",
+        "address_line2": " Road No 28",
+        "landmark": "",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500089"
+    },
+    {
+        "id": "a82b007f-e397-434c-bcd4-f2b728e7c58d",
+        "name": "Anusha",
+        "phone": "9052151166",
+        "address_line1": "H No 5-4-43/44, Green Space Residency, F 402",
+        "address_line2": ", Road No 28",
+        "landmark": "",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500089"
+    }
+]

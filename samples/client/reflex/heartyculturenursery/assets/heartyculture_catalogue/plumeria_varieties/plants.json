@@ -1,0 +1,674 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Plumeria",
+    "common_name": "Angus AI",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/angus_ai.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Plumeria",
+    "common_name": "Aunty Lisa",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/aunty_lisa.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Plumeria",
+    "common_name": "Bill Moragne SR",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/bill_moragne_sr.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Plumeria",
+    "common_name": "Blush Pink",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/blush_pink.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Plumeria",
+    "common_name": "Camra",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/camra.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Plumeria",
+    "common_name": "Carmen",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/carmen.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Plumeria",
+    "common_name": "Carter",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/carter.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Plumeria",
+    "common_name": "Celadine",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/celadine.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Plumeria",
+    "common_name": "Cherry Pie",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/cherry_pie.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Plumeria",
+    "common_name": "Cool Aid",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/cool_aid.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Plumeria",
+    "common_name": "Cuban",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/cuban.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Plumeria",
+    "common_name": "Cotton Candy",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/cotton_candy.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Plumeria",
+    "common_name": "Mele Matson",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/mele_matson.png"
+  },
+  {
+    "id": 14,
+    "scientific_name": "Plumeria",
+    "common_name": "Pink Kiss",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/pink_kiss.png"
+  },
+  {
+    "id": 15,
+    "scientific_name": "Plumeria",
+    "common_name": "Pudica",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/pudica.png"
+  },
+  {
+    "id": 16,
+    "scientific_name": "Plumeria",
+    "common_name": "Sun Germain",
+    "category": "Plumeria Varieties",
+    "page": 23,
+    "image": "/heartyculture_catalogue/plumeria_varieties/sun_germain.png"
+  },
+  {
+    "id": 17,
+    "scientific_name": "Plumeria",
+    "common_name": "Dean Conklin",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/dean_conklin.png"
+  },
+  {
+    "id": 18,
+    "scientific_name": "Plumeria",
+    "common_name": "Cyndi Moragne",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/cyndi_moragne.png"
+  },
+  {
+    "id": 19,
+    "scientific_name": "Plumeria",
+    "common_name": "Daisy Wileox",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/daisy_wileox.png"
+  },
+  {
+    "id": 20,
+    "scientific_name": "Plumeria",
+    "common_name": "Duke",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/duke.png"
+  },
+  {
+    "id": 21,
+    "scientific_name": "Plumeria",
+    "common_name": "Dwarf Pink Singapore",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/dwarf_pink_singapore.png"
+  },
+  {
+    "id": 22,
+    "scientific_name": "Plumeria",
+    "common_name": "Grove Farm",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/grove_farm.jpeg"
+  },
+  {
+    "id": 23,
+    "scientific_name": "Plumeria",
+    "common_name": "Guillot Sunset",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/guillot_sunset.jpeg"
+  },
+  {
+    "id": 24,
+    "scientific_name": "Plumeria",
+    "common_name": "Heidi",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/heidi.jpeg"
+  },
+  {
+    "id": 25,
+    "scientific_name": "Plumeria",
+    "common_name": "Hilo Beauty",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/hilo_beauty.jpeg"
+  },
+  {
+    "id": 26,
+    "scientific_name": "Plumeria",
+    "common_name": "India",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/india.jpeg"
+  },
+  {
+    "id": 27,
+    "scientific_name": "Plumeria",
+    "common_name": "Intense Rainbow",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/intense_rainbow.jpeg"
+  },
+  {
+    "id": 28,
+    "scientific_name": "Plumeria",
+    "common_name": "Japanese Pearl Shell",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/japanese_pearl_shell.jpeg"
+  },
+  {
+    "id": 29,
+    "scientific_name": "Plumeria",
+    "common_name": "Jeanne Cecile",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/jeanne_cecile.png"
+  },
+  {
+    "id": 30,
+    "scientific_name": "Plumeria",
+    "common_name": "Jeannie Moragne JR",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/jeannie_moragne_jr.jpeg"
+  },
+  {
+    "id": 31,
+    "scientific_name": "Plumeria",
+    "common_name": "Just Peachy",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/just_peachy.jpeg"
+  },
+  {
+    "id": 32,
+    "scientific_name": "Plumeria",
+    "common_name": "Kahana",
+    "category": "Plumeria Varieties",
+    "page": 24,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kahana.jpeg"
+  },
+  {
+    "id": 33,
+    "scientific_name": "Plumeria",
+    "common_name": "Kalani",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kalani.png"
+  },
+  {
+    "id": 34,
+    "scientific_name": "Plumeria",
+    "common_name": "Kaneohe Sunburst",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kaneohe_sunburst.jpeg"
+  },
+  {
+    "id": 35,
+    "scientific_name": "Plumeria",
+    "common_name": "Katie Moragne",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/katie_moragne.jpeg"
+  },
+  {
+    "id": 36,
+    "scientific_name": "Plumeria",
+    "common_name": "Kauka Wilder",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kauka_wilder.png"
+  },
+  {
+    "id": 37,
+    "scientific_name": "Plumeria",
+    "common_name": "Key West Red",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/key_west_red.png"
+  },
+  {
+    "id": 38,
+    "scientific_name": "Plumeria",
+    "common_name": "Kimi Beauty",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kimi_beauty.png"
+  },
+  {
+    "id": 39,
+    "scientific_name": "Plumeria",
+    "common_name": "Kimi Moragne",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kimi_moragne.png"
+  },
+  {
+    "id": 40,
+    "scientific_name": "Plumeria",
+    "common_name": "Kimo",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kimo.png"
+  },
+  {
+    "id": 41,
+    "scientific_name": "Plumeria",
+    "common_name": "Kona Hybrid #26",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/kona_hybrid_26.png"
+  },
+  {
+    "id": 42,
+    "scientific_name": "Plumeria",
+    "common_name": "Lei Rainbow",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/lei_rainbow.png"
+  },
+  {
+    "id": 43,
+    "scientific_name": "Plumeria",
+    "common_name": "Lurline",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/lurline.png"
+  },
+  {
+    "id": 44,
+    "scientific_name": "Plumeria",
+    "common_name": "Madame Poni",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/madame_poni.png"
+  },
+  {
+    "id": 45,
+    "scientific_name": "Plumeria",
+    "common_name": "Magnum Opus",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/magnum_opus.png"
+  },
+  {
+    "id": 46,
+    "scientific_name": "Plumeria",
+    "common_name": "Marie's Secret",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/maries_secret.png"
+  },
+  {
+    "id": 47,
+    "scientific_name": "Plumeria",
+    "common_name": "Maui Mini",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/maui_mini.png"
+  },
+  {
+    "id": 48,
+    "scientific_name": "Plumeria",
+    "common_name": "Moiliili Gold",
+    "category": "Plumeria Varieties",
+    "page": 25,
+    "image": "/heartyculture_catalogue/plumeria_varieties/moiliili_gold.png"
+  },
+  {
+    "id": 49,
+    "scientific_name": "Plumeria",
+    "common_name": "Moir Pink",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/moir_pink.png"
+  },
+  {
+    "id": 50,
+    "scientific_name": "Plumeria",
+    "common_name": "Moragne #23",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/moragne_23.png"
+  },
+  {
+    "id": 51,
+    "scientific_name": "Plumeria",
+    "common_name": "Moragne #27",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/moragne_27.png"
+  },
+  {
+    "id": 52,
+    "scientific_name": "Plumeria",
+    "common_name": "Nebells Rainbow",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/nebells_rainbow.png"
+  },
+  {
+    "id": 53,
+    "scientific_name": "Plumeria",
+    "common_name": "Orange Crush",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/orange_crush.png"
+  },
+  {
+    "id": 54,
+    "scientific_name": "Plumeria",
+    "common_name": "Paia Hawaiian Protest Church",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/paia_hawaiian_protest_church.png"
+  },
+  {
+    "id": 55,
+    "scientific_name": "Plumeria",
+    "common_name": "Pauahi Alii",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/pauahi_alii.png"
+  },
+  {
+    "id": 56,
+    "scientific_name": "Plumeria",
+    "common_name": "Paul Weissich",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/paul_weissich.png"
+  },
+  {
+    "id": 57,
+    "scientific_name": "Plumeria",
+    "common_name": "Peach Glow Shell",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/peach_glow_shell.png"
+  },
+  {
+    "id": 58,
+    "scientific_name": "Plumeria",
+    "common_name": "Pink Pansy",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/pink_pansy.png"
+  },
+  {
+    "id": 59,
+    "scientific_name": "Plumeria",
+    "common_name": "Pink Ruffles",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/pink_ruffles.png"
+  },
+  {
+    "id": 60,
+    "scientific_name": "Plumeria",
+    "common_name": "Pinwheel Rainbow",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/pinwheel_rainbow.png"
+  },
+  {
+    "id": 61,
+    "scientific_name": "Plumeria",
+    "common_name": "Pushpa",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/pushpa.png"
+  },
+  {
+    "id": 62,
+    "scientific_name": "Plumeria",
+    "common_name": "Puu Kahea",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/puu_kahea.png"
+  },
+  {
+    "id": 63,
+    "scientific_name": "Plumeria",
+    "common_name": "Raspberry",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/raspberry.png"
+  },
+  {
+    "id": 64,
+    "scientific_name": "Plumeria",
+    "common_name": "Red Moragne",
+    "category": "Plumeria Varieties",
+    "page": 26,
+    "image": "/heartyculture_catalogue/plumeria_varieties/red_moragne.png"
+  },
+  {
+    "id": 65,
+    "scientific_name": "Plumeria",
+    "common_name": "Royal Hawaiian",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/royal_hawaiian.png"
+  },
+  {
+    "id": 66,
+    "scientific_name": "Plumeria",
+    "common_name": "Samoan Fluff",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/samoan_fluff.png"
+  },
+  {
+    "id": 67,
+    "scientific_name": "Plumeria",
+    "common_name": "Scott Pratt",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/scott_pratt.png"
+  },
+  {
+    "id": 68,
+    "scientific_name": "Plumeria",
+    "common_name": "Sharon Lavonne",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/sharon_lavonne.png"
+  },
+  {
+    "id": 69,
+    "scientific_name": "Plumeria",
+    "common_name": "Singapore",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/singapore.png"
+  },
+  {
+    "id": 70,
+    "scientific_name": "Plumeria",
+    "common_name": "Slaughter Pink",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/slaughter_pink.png"
+  },
+  {
+    "id": 71,
+    "scientific_name": "Plumeria",
+    "common_name": "Tangerine",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/tangerine.png"
+  },
+  {
+    "id": 72,
+    "scientific_name": "Plumeria",
+    "common_name": "Ted's 15-16",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/teds_15-16.png"
+  },
+  {
+    "id": 73,
+    "scientific_name": "Plumeria",
+    "common_name": "Tillie Hughes",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/tillie_hughes.png"
+  },
+  {
+    "id": 74,
+    "scientific_name": "Plumeria",
+    "common_name": "Tuba's Fire",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/tubas_fire.png"
+  },
+  {
+    "id": 75,
+    "scientific_name": "Plumeria",
+    "common_name": "Uncle Robbie",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/uncle_robbie.png"
+  },
+  {
+    "id": 76,
+    "scientific_name": "Plumeria",
+    "common_name": "Vera Cruz Rose",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/vera_cruz_rose.png"
+  },
+  {
+    "id": 77,
+    "scientific_name": "Plumeria",
+    "common_name": "Uncle Ron",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/uncle_ron.jpeg"
+  },
+  {
+    "id": 78,
+    "scientific_name": "Plumeria",
+    "common_name": "Zil Karat",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/zil_karat.png"
+  },
+  {
+    "id": 79,
+    "scientific_name": "Plumeria",
+    "common_name": "Angus AZ",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/angus_az.png"
+  },
+  {
+    "id": 80,
+    "scientific_name": "Plumeria",
+    "common_name": "Celadine",
+    "category": "Plumeria Varieties",
+    "page": 27,
+    "image": "/heartyculture_catalogue/plumeria_varieties/celadine_1.png"
+  },
+  {
+    "id": 81,
+    "scientific_name": "Plumeria",
+    "common_name": "Defel",
+    "category": "Plumeria Varieties",
+    "page": 28,
+    "image": "/heartyculture_catalogue/plumeria_varieties/defel.png"
+  },
+  {
+    "id": 82,
+    "scientific_name": "Plumeria",
+    "common_name": "Donald Angus Red",
+    "category": "Plumeria Varieties",
+    "page": 28,
+    "image": "/heartyculture_catalogue/plumeria_varieties/donald_angus_red.png"
+  },
+  {
+    "id": 83,
+    "scientific_name": "Plumeria",
+    "common_name": "Julie Morjim",
+    "category": "Plumeria Varieties",
+    "page": 28,
+    "image": "/heartyculture_catalogue/plumeria_varieties/julie_morjim.png"
+  },
+  {
+    "id": 84,
+    "scientific_name": "Plumeria",
+    "common_name": "King Kalakaua",
+    "category": "Plumeria Varieties",
+    "page": 28,
+    "image": "/heartyculture_catalogue/plumeria_varieties/king_kalakaua.png"
+  }
+]

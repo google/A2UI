@@ -1,0 +1,290 @@
+[
+  {
+    "id": 1,
+    "title": "African Marigold F2 Yellow",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/African_Marigold_F2_Yellow.jpg"
+  },
+  {
+    "id": 2,
+    "title": "African Marigold Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/African_Marigold_Mix.jpg"
+  },
+  {
+    "id": 3,
+    "title": "Alocasia Pola",
+    "price": "Rs. 599.00",
+    "image": "/scraped_new/Alocasia_pola.jpg"
+  },
+  {
+    "id": 4,
+    "title": "Amaranthus Love Lies Bleeding",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Amaranthus_Love_Lies_Bleeding.jpg"
+  },
+  {
+    "id": 5,
+    "title": "Amaranthus Pygmy Torch",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Amaranthus_Pygmy_Torch.jpg"
+  },
+  {
+    "id": 6,
+    "title": "Amaranthus Red",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Amaranthus_Red.jpg"
+  },
+  {
+    "id": 7,
+    "title": "Balsam Tom Thumb Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Balsam_Tom_Thumb_Mix.jpg"
+  },
+  {
+    "id": 8,
+    "title": "Capsicum Choice Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Capsicum_Choice_Mix.jpg"
+  },
+  {
+    "id": 9,
+    "title": "Capsicum Orange",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Capsicum_Orange.jpg"
+  },
+  {
+    "id": 10,
+    "title": "Celosia Icecream Series",
+    "price": "Rs. 149.00",
+    "image": "/scraped_new/Celosia_Icecream_Series.jpg"
+  },
+  {
+    "id": 11,
+    "title": "Celosia Plumosa Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Celosia_Plumosa_Mix.jpg"
+  },
+  {
+    "id": 12,
+    "title": "Coleus Rainbow Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Coleus_Rainbow_Mix.jpg"
+  },
+  {
+    "id": 13,
+    "title": "Cosmos Bright Light",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Cosmos_Bright_Light.jpg"
+  },
+  {
+    "id": 14,
+    "title": "Curly Kale",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Curly_Kale.png"
+  },
+  {
+    "id": 15,
+    "title": "French Bonanza Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/French_Bonanza_Mix.jpg"
+  },
+  {
+    "id": 16,
+    "title": "Gazania Sunshine Hybrids Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Gazania_Sunshine_Hybrids_Mix.jpg"
+  },
+  {
+    "id": 17,
+    "title": "Gomphrena Choice Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Gomphrena_Choice_Mix.jpg"
+  },
+  {
+    "id": 18,
+    "title": "Gomphrena Strawberry Fields",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Gomphrena_Strawberry_Fields.jpg"
+  },
+  {
+    "id": 19,
+    "title": "Zinnia Pulcino Dwarf Mixed",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/innia_Pulcino_Dwarf_Mixed.jpg"
+  },
+  {
+    "id": 20,
+    "title": "Ipomoea Morning Glory",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Ipomoea_Morning_Glory.jpg"
+  },
+  {
+    "id": 21,
+    "title": "Marigold Afr Taishan F1 Orange",
+    "price": "Rs. 249.00",
+    "image": "/scraped_new/Marigold_Afr_Taishan_F1_Orange.jpg"
+  },
+  {
+    "id": 22,
+    "title": "Marigold Afr Taishan Gold",
+    "price": "Rs. 249.00",
+    "image": "/scraped_new/Marigold_Afr_Taishan_Gold.jpg"
+  },
+  {
+    "id": 23,
+    "title": "Marigold Afr Taishan Yellow",
+    "price": "Rs. 199.00",
+    "image": "/scraped_new/Marigold_Afr_Taishan_Yellow.jpg"
+  },
+  {
+    "id": 24,
+    "title": "Marigold African Vanilla",
+    "price": "Rs. 249.00",
+    "image": "/scraped_new/Marigold_African_Vanilla.jpg"
+  },
+  {
+    "id": 25,
+    "title": "Peas",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Peas.jpg"
+  },
+  {
+    "id": 26,
+    "title": "Pelargonium (Geranium) Colorama Mix",
+    "price": "Rs. 199.00",
+    "image": "/scraped_new/Pelargonium__Geranium_Colorama_Mix.jpg"
+  },
+  {
+    "id": 27,
+    "title": "Petunia N C Dwarf Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Petunia_N_C_Dwarf_Mix.jpg"
+  },
+  {
+    "id": 28,
+    "title": "Petunia N C Stars Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Petunia_N_C_Stars_Mix.png"
+  },
+  {
+    "id": 29,
+    "title": "Portulaca Grandiflora Double Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Portulaca_Grandiflora_Double_Mix.jpg"
+  },
+  {
+    "id": 30,
+    "title": "Radish Red Long",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Radish_Red_Long.png"
+  },
+  {
+    "id": 31,
+    "title": "Rudbeckia Rustic Dwarf Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Rudbeckia_Rustic_Dwarf_Mix.jpg"
+  },
+  {
+    "id": 32,
+    "title": "Salvia Saint Johns Fire Red",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Salvia_Saint_Johns_Fire_Red.jpg"
+  },
+  {
+    "id": 33,
+    "title": "Salvia Splendens F1 Cleopatra Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Salvia_Splendens_F1_Cleopatra_Mix.jpg"
+  },
+  {
+    "id": 34,
+    "title": "Stock Hot Cakes Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Stock_Hot_Cakes_Mix.jpg"
+  },
+  {
+    "id": 35,
+    "title": "Sunflower Helianthus Teddy Bear",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Sunflower_Helianthus_Teddy_Bear.jpg"
+  },
+  {
+    "id": 36,
+    "title": "Verbena F1 Quartz XP Mix",
+    "price": "Rs. 249.00",
+    "image": "/scraped_new/Verbena_F1_Quartz_XP_Mix.jpg"
+  },
+  {
+    "id": 37,
+    "title": "Verbena I F Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Verbena_I_F_Mix.jpg"
+  },
+  {
+    "id": 38,
+    "title": "Vinca Pacifica XP F1 Series",
+    "price": "Rs. 249.00",
+    "image": "/scraped_new/Vinca_Pacifica_XP_F1_Series.jpg"
+  },
+  {
+    "id": 39,
+    "title": "Vinca Rosea Magenta Dwarf",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Vinca_Rosea_Magenta_Dwarf.jpg"
+  },
+  {
+    "id": 40,
+    "title": "Vinca Rosea Red Cherry",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Vinca_Rosea_Red_Cherry.jpg"
+  },
+  {
+    "id": 41,
+    "title": "Zinnia Canary Bird Yellow",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Zinnia_Canary_Bird_Yellow.jpg"
+  },
+  {
+    "id": 42,
+    "title": "Zinnia Dahlia Flowered Mix",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Zinnia_Dahlia_Flowered_Mix.jpg"
+  },
+  {
+    "id": 43,
+    "title": "Zinnia Illumination Deep Rose",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Zinnia_Illumination_Deep_Rose.jpg"
+  },
+  {
+    "id": 44,
+    "title": "Zinnia Orange King",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Zinnia_Orange_King.jpg"
+  },
+  {
+    "id": 45,
+    "title": "Zinnia Polar Bear White",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Zinnia_Polar_Bear_White.jpg"
+  },
+  {
+    "id": 46,
+    "title": "Zinnia Royal Purple",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Zinnia_Royal_Purple.jpg"
+  },
+  {
+    "id": 47,
+    "title": "Zinnia Scarlet Flame",
+    "price": "Rs. 99.00",
+    "image": "/scraped_new/Zinnia_Scarlet_Flame.jpg"
+  },
+  {
+    "id": 48,
+    "title": "Zinnia Zahara Mix",
+    "price": "Rs. 199.00",
+    "image": "/scraped_new/Zinnia_Zahara_Mix.jpg"
+  }
+]

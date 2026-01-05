@@ -1,0 +1,114 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Philodendron Selloum",
+    "common_name": "Tree philodendron",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/tree_philodendron.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Philodendron painted lady",
+    "common_name": "Philodendron painted lady",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_painted_lady.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Philodendron xanadu",
+    "common_name": "Giant Winterbourn",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/giant_winterbourn.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Philodendron 'Birkin'",
+    "common_name": "Philodendron 'Birkin'",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_birkin.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Philodendron red congo",
+    "common_name": "Philodendron red congo",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_red_congo.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Philodendron selloum gold",
+    "common_name": "Philodendron selloum gold",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_selloum_gold.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Philodendronburle marx",
+    "common_name": "Philodendronburle marx",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendronburle_marx.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Philodendronceylon gold",
+    "common_name": "Philodendronceylon gold",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendronceylon_gold.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Philodendron giganteum",
+    "common_name": "blizzard green",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/blizzard_green.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Philodendron nangaritense",
+    "common_name": "Philodendron nangaritense",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_nangaritense.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Philodendron paraiso verde",
+    "common_name": "Philodendron paraiso verde",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_paraiso_verde.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Philodendron joepii",
+    "common_name": "Philodendron joepii",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_joepii.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Philodendron moonshine",
+    "common_name": "Philodendron moonshine",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_moonshine.png"
+  },
+  {
+    "id": 14,
+    "scientific_name": "Philodendron pink princess",
+    "common_name": "Philodendron pink princess",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_pink_princess.png"
+  },
+  {
+    "id": 15,
+    "scientific_name": "Philodendron ring of fire",
+    "common_name": "Philodendron ring of fire",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_ring_of_fire.png"
+  },
+  {
+    "id": 16,
+    "scientific_name": "Philodendron billietiae",
+    "common_name": "Philodendron billietiae",
+    "category": "Philodendron Varieties",
+    "image": "/heartyculture_catalogue/philodendron_varieties/philodendron_billietiae.png"
+  }
+]

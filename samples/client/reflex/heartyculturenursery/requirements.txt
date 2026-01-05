@@ -1,0 +1,8 @@
+﻿reflex==0.8.20
+google-auth-oauthlib
+google-auth
+requests
+razorpay
+python-dotenv
+
+reflex==0.8.20

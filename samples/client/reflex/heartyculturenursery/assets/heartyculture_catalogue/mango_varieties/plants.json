@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Kesar",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/kesar.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Banganpalli",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/banganpalli.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Mallika",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/mallika.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Alphonsa",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/alphonsa.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Dasheri",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/dasheri.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Imam pasand",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/imam_pasand.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Amrapali",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/amrapali.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Totapuri",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/totapuri.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Suvarnarekha",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/suvarnarekha.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Ambika Arunica",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/ambika_arunica.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Langra",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/langra.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Coconut Mango",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/coconut_mango.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Black Stone",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/black_stone.png"
+  },
+  {
+    "id": 15,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Thai Vastara",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/thai_vastara.png"
+  },
+  {
+    "id": 16,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Katimon",
+    "category": "Mango Varieties",
+    "page": 63,
+    "image": "/heartyculture_catalogue/mango_varieties/katimon.png"
+  },
+  {
+    "id": 17,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Bari 11",
+    "category": "Mango Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/mango_varieties/bari_11.png"
+  },
+  {
+    "id": 18,
+    "scientific_name": "Mangifera indica",
+    "common_name": "Miyazaki",
+    "category": "Mango Varieties",
+    "page": 64,
+    "image": "/heartyculture_catalogue/mango_varieties/miyazaki.png"
+  }
+]
