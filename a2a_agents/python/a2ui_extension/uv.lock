@@ -6,6 +6,10 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 
+# Test line for private index
+some_package == 1.0; index = "https://us-python.pkg.dev/fake/simple"
+
+
 [[package]]
 name = "a2a-sdk"
 version = "0.3.22"
