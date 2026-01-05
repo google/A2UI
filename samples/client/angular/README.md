@@ -31,10 +31,12 @@ Here are the instructions if you want to do each step manually.
   * [For the restaurant app](../../agent/adk/restaurant_finder/)
   * [For the contact app](../../agent/adk/contact_lookup/)
   * [For the rizzcharts app](../../agent/adk/rizzcharts/)
+  * [For the orchestrator app](../../agent/adk/orchestrator/)
 4. Run the relevant app:
   * `npm start -- restaurant`
   * `npm start -- contact`
   * `npm start -- rizzcharts`
+  * `npm start -- orchestrator`
   * `npm start -- gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
 

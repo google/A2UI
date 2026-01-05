@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 from a2a.server.agent_execution import RequestContext
 from a2a.types import AgentExtension, Part, DataPart
@@ -29,7 +29,7 @@ A2UI_CLIENT_CAPABILITIES_KEY = "a2uiClientCapabilities"
 SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"
 INLINE_CATALOGS_KEY = "inlineCatalogs"
 
-STANDARD_CATALOG_ID = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/0.8/json/standard_catalog_definition.json"
+STANDARD_CATALOG_ID = "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json"
 
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
     """Creates an A2A Part containing A2UI data.
@@ -80,20 +80,28 @@ def get_a2ui_datapart(part: Part) -> Optional[DataPart]:
     return None
 
 
+AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"
+AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY = "acceptsInlineCatalogs"
+
 def get_a2ui_agent_extension(
-    accepts_inline_custom_catalog: bool = False,
+    accepts_inline_catalogs: bool = False,
+    supported_catalog_ids: List[str] = [],
 ) -> AgentExtension:
     """Creates the A2UI AgentExtension configuration.
 
     Args:
-        accepts_inline_custom_catalog: Whether the agent accepts inline custom catalogs.
+        accepts_inline_catalogs: Whether the agent accepts inline custom catalogs.
+        supported_catalog_ids: All pre-defined catalogs the agent is known to support.
 
     Returns:
         The configured A2UI AgentExtension.
     """
     params = {}
-    if accepts_inline_custom_catalog:
-        params["acceptsInlineCustomCatalog"] = True  # Only set if not default of False
+    if accepts_inline_catalogs:
+        params[AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY] = True  # Only set if not default of False
+
+    if supported_catalog_ids:
+        params[AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY] = supported_catalog_ids
 
     return AgentExtension(
         uri=A2UI_EXTENSION_URI,

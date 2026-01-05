@@ -15,7 +15,6 @@
 import json
 import logging
 import os
-from typing import List
 from a2a.client import A2ACardResolver
 from a2a.extensions.common import HTTP_EXTENSION_HEADER
 from google.adk.models.lite_llm import LiteLlm
@@ -30,15 +29,17 @@ from google.adk.agents.callback_context import  CallbackContext
 from google.adk.models.llm_request import LlmRequest
 from google.adk.models.llm_response import LlmResponse
 from subagent_route_manager import SubagentRouteManager
-from a2ui.a2ui_extension import is_a2ui_part, A2UI_EXTENSION_URI
-from typing import override
+from typing import Any, override, List
 from a2a.types import TransportProtocol as A2ATransport
 
-logger = logging.getLogger(__name__)
-from a2a.client.middleware import ClientCallInterceptor
+from a2a.client.client import Consumer, Client
+from a2a.client.middleware import ClientCallContext, ClientCallInterceptor
 from a2a.client.client import ClientConfig as A2AClientConfig
 from a2a.client.client_factory import ClientFactory as A2AClientFactory
-from a2ui.a2ui_extension import A2UI_CLIENT_CAPABILITIES_KEY
+from a2ui.a2ui_extension import is_a2ui_part, A2UI_CLIENT_CAPABILITIES_KEY, A2UI_EXTENSION_URI, AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY, AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY, get_a2ui_agent_extension
+from a2a.types import AgentCapabilities, AgentCard, AgentExtension
+
+logger = logging.getLogger(__name__)
 
 class A2UIMetadataInterceptor(ClientCallInterceptor):
     @override
@@ -115,10 +116,13 @@ class OrchestratorAgent:
         return None
 
     @classmethod
-    async def build_agent(cls, subagent_urls: List[str]) -> LlmAgent:
+    async def build_agent(cls, base_url: str, subagent_urls: List[str]) -> (LlmAgent, AgentCard):
         """Builds the LLM agent for the orchestrator_agent agent."""
 
         subagents = []
+        supported_catalog_ids = set()
+        skills = []
+        accepts_inline_catalogs = False
         for subagent_url in subagent_urls:
             async with httpx.AsyncClient() as httpx_client:
                 resolver = A2ACardResolver(
@@ -126,7 +130,14 @@ class OrchestratorAgent:
                     base_url=subagent_url,
                 )
                 
-                subagent_card =  await resolver.get_agent_card()
+                subagent_card =  await resolver.get_agent_card()                
+                for extension in subagent_card.capabilities.extensions or []:
+                    if extension.uri == A2UI_EXTENSION_URI and extension.params:
+                        supported_catalog_ids.update(extension.params.get(AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY) or [])
+                        accepts_inline_catalogs |= bool(extension.params.get(AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY))
+                
+                skills.extend(subagent_card.skills)
+                
                 logger.info('Successfully fetched public agent card:' + subagent_card.model_dump_json(indent=2, exclude_none=True))
                 
                 # clean name for adk
@@ -172,7 +183,7 @@ class OrchestratorAgent:
                 logger.info(f'Created remote agent with description: {description}')
 
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
-        return LlmAgent(
+        agent = LlmAgent(
             model=LiteLlm(model=LITELLM_MODEL),
             name="orchestrator_agent",
             description="An agent that orchestrates requests to multiple other agents",
@@ -186,3 +197,21 @@ class OrchestratorAgent:
             sub_agents=subagents,
             before_model_callback=cls.programmtically_route_user_action_to_subagent,
         )
+
+        agent_card = AgentCard(
+            name="Orchestrator Agent",
+            description="This agent orchestrates requests to multiple subagents.",
+            url=base_url,
+            version="1.0.0",
+            default_input_modes=OrchestratorAgent.SUPPORTED_CONTENT_TYPES,
+            default_output_modes=OrchestratorAgent.SUPPORTED_CONTENT_TYPES,
+            capabilities=AgentCapabilities(
+                streaming=True,
+                extensions=[get_a2ui_agent_extension(
+                    accepts_inline_catalogs=accepts_inline_catalogs,
+                    supported_catalog_ids=list(supported_catalog_ids))],
+            ),
+            skills=skills,
+        )
+
+        return agent, agent_card

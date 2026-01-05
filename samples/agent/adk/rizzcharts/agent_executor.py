@@ -84,7 +84,8 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
             default_output_modes=rizzchartsAgent.SUPPORTED_CONTENT_TYPES,
             capabilities=AgentCapabilities(
                 streaming=True,
-                extensions=[get_a2ui_agent_extension()],
+                extensions=[get_a2ui_agent_extension(
+                    supported_catalog_ids=[STANDARD_CATALOG_ID, RIZZCHARTS_CATALOG_URI])],
             ),
             skills=[
                 AgentSkill(

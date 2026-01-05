@@ -71,7 +71,7 @@ class ComponentCatalogBuilder:
                 logger.info(f"Loading inline component catalog {inline_catalog_str[:200]}")
                 catalog_json = json.loads(inline_catalog_str)
             else:
-                raise ValueError("Client UI capabilities not provided")
+                raise ValueError("No supported catalogs found in client UI capabilities")
 
             logger.info(f"Loading A2UI schema at {self._a2ui_schema_path}")
             a2ui_schema = self.get_file_content(self._a2ui_schema_path)

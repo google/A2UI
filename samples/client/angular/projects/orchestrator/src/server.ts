@@ -62,7 +62,7 @@ app.post('/a2a', (req, res) => {
         metadata: {
           a2uiClientCapabilities: {
             supportedCatalogIds: [
-              'https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json',
+              'https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json',
             ],
           },
         },

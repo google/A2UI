@@ -31,7 +31,7 @@ from a2ui.a2ui_extension import STANDARD_CATALOG_ID
 
 logger = logging.getLogger(__name__)
 
-RIZZCHARTS_CATALOG_URI = "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/a2a_agents/python/adk/samples/rizzcharts/rizzcharts_catalog_definition.json"
+RIZZCHARTS_CATALOG_URI = "https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json"
 
 class rizzchartsAgent:
     """An agent that runs an ecommerce dashboard"""

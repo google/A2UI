@@ -26,12 +26,12 @@ from a2a.server.events.event_queue import EventQueue
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+from google.adk.a2a.converters.request_converter import AgentRunRequest
 from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2a.types import AgentCapabilities, AgentCard, AgentExtension
-from a2ui.a2ui_extension import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI, STANDARD_CATALOG_ID, SUPPORTED_CATALOG_IDS_KEY, get_a2ui_agent_extension, A2UI_CLIENT_CAPABILITIES_KEY
+from a2ui.a2ui_extension import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI, STANDARD_CATALOG_ID, SUPPORTED_CATALOG_IDS_KEY, A2UI_CLIENT_CAPABILITIES_KEY
 from google.adk.a2a.converters import event_converter
 from a2a.server.events import Event as A2AEvent
 from google.adk.events.event import Event
@@ -48,9 +48,7 @@ logger = logging.getLogger(__name__)
 class OrchestratorAgentExecutor(A2aAgentExecutor):
     """Contact AgentExecutor Example."""
 
-    def __init__(self, base_url: str, agent: LlmAgent):
-        self._base_url = base_url
-
+    def __init__(self, agent: LlmAgent):
         config = A2aAgentExecutorConfig(
             gen_ai_part_converter=part_converters.convert_genai_part_to_a2a_part,
             a2a_part_converter=part_converters.convert_a2a_part_to_genai_part,
@@ -116,21 +114,6 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
                     )
 
         return a2a_events
-
-    def get_agent_card(self) -> AgentCard:
-        return AgentCard(
-            name="Orchestrator Agent",
-            description="This agent orchestrates to multiple subagents to provide.",
-            url=self._base_url,
-            version="1.0.0",
-            default_input_modes=OrchestratorAgent.SUPPORTED_CONTENT_TYPES,
-            default_output_modes=OrchestratorAgent.SUPPORTED_CONTENT_TYPES,
-            capabilities=AgentCapabilities(
-                streaming=True,
-                extensions=[get_a2ui_agent_extension()],
-            ),
-            skills=[],
-        )
 
     @override
     async def _prepare_session(
