@@ -70,6 +70,33 @@ export interface DividerComponent extends BaseComponent {
   type: 'Divider';
   thickness?: number;
   color?: string;
+  orientation?: 'horizontal' | 'vertical';
+}
+
+export interface VideoComponent extends BaseComponent {
+  type: 'Video';
+  url: BoundValue | string;
+  poster?: BoundValue | string;
+  autoplay?: boolean;
+  controls?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  onPlayAction?: string;
+  onPauseAction?: string;
+  onEndAction?: string;
+}
+
+export interface AudioPlayerComponent extends BaseComponent {
+  type: 'AudioPlayer';
+  url: BoundValue | string;
+  title?: BoundValue | string;
+  artist?: BoundValue | string;
+  artwork?: BoundValue | string;
+  autoplay?: boolean;
+  loop?: boolean;
+  onPlayAction?: string;
+  onPauseAction?: string;
+  onEndAction?: string;
 }
 
 // =============================================================================
@@ -132,6 +159,7 @@ export interface CheckboxComponent extends BaseComponent {
   type: 'Checkbox';
   checked: BoundValue | boolean;
   label?: BoundValue | string;
+  disabled?: BoundValue | boolean;
   onChangeAction?: string;
 }
 
@@ -141,20 +169,25 @@ export interface SliderComponent extends BaseComponent {
   min?: number;
   max?: number;
   step?: number;
+  label?: BoundValue | string;
   onChangeAction?: string;
 }
 
 export interface DateTimeInputComponent extends BaseComponent {
   type: 'DateTimeInput';
   value: BoundValue | string;
-  mode?: 'date' | 'time' | 'datetime';
+  label?: BoundValue | string;
+  enableDate?: boolean;
+  enableTime?: boolean;
   onChangeAction?: string;
 }
 
 export interface MultipleChoiceComponent extends BaseComponent {
   type: 'MultipleChoice';
-  options: BoundValue | Array<{ value: string; label: string }>;
-  selectedValue: BoundValue | string;
+  options: Array<{ value: string; label: BoundValue | string }>;
+  selections: BoundValue | string;
+  label?: BoundValue | string;
+  placeholder?: string;
   onChangeAction?: string;
 }
 
@@ -164,14 +197,15 @@ export interface MultipleChoiceComponent extends BaseComponent {
 
 export interface ModalComponent extends BaseComponent {
   type: 'Modal';
-  visible: BoundValue | boolean;
+  entryPoint: string; // Component ID for trigger
+  content: string; // Component ID for modal content
   onDismissAction?: string;
 }
 
 export interface TabsComponent extends BaseComponent {
   type: 'Tabs';
-  tabs: Array<{ id: string; label: string; content: string }>;
-  activeTab: BoundValue | string;
+  tabs: Array<{ id: string; label: BoundValue | string; content: string }>;
+  selectedIndex?: BoundValue | number;
   onChangeAction?: string;
 }
 
@@ -184,6 +218,8 @@ export type A2UIComponent =
   | ImageComponent
   | IconComponent
   | DividerComponent
+  | VideoComponent
+  | AudioPlayerComponent
   | RowComponent
   | ColumnComponent
   | CardComponent

@@ -42,6 +42,16 @@ export {
   A2UICard,
   A2UIList,
   A2UITextField,
+  A2UIModal,
+  A2UITabs,
+  A2UICheckbox,
+  A2UISlider,
+  A2UIDateTimeInput,
+  A2UIMultipleChoice,
+  A2UIIcon,
+  A2UIDivider,
+  A2UIVideo,
+  A2UIAudioPlayer,
 } from './components';
 
 export type {
@@ -53,6 +63,16 @@ export type {
   A2UICardProps,
   A2UIListProps,
   A2UITextFieldProps,
+  A2UIModalProps,
+  A2UITabsProps,
+  A2UICheckboxProps,
+  A2UISliderProps,
+  A2UIDateTimeInputProps,
+  A2UIMultipleChoiceProps,
+  A2UIIconProps,
+  A2UIDividerProps,
+  A2UIVideoProps,
+  A2UIAudioPlayerProps,
 } from './components';
 
 // =============================================================================
@@ -166,6 +186,10 @@ export type {
   ModalComponent,
   TabsComponent,
 
+  // Media Components
+  VideoComponent,
+  AudioPlayerComponent,
+
   // Union Type
   A2UIComponent,
 
@@ -204,3 +228,24 @@ export type {
   UseA2UIStreamOptions,
   UseA2UIStreamResult,
 } from './hooks/useA2UIStream';
+
+// =============================================================================
+// Theming
+// =============================================================================
+
+export {
+  A2UIThemeProvider,
+  useA2UITheme,
+  createTheme,
+  lightTheme,
+  darkTheme,
+} from './theme';
+
+export type {
+  A2UITheme,
+  ColorPalette,
+  Typography,
+  Spacing,
+  BorderRadius,
+  ComponentStyles,
+} from './theme';

@@ -18,6 +18,16 @@ import type {
   CardComponent,
   ListComponent,
   TextFieldComponent,
+  ModalComponent,
+  TabsComponent,
+  CheckboxComponent,
+  SliderComponent,
+  DateTimeInputComponent,
+  MultipleChoiceComponent,
+  IconComponent,
+  DividerComponent,
+  VideoComponent,
+  AudioPlayerComponent,
 } from '../types/a2ui-types';
 import { A2UIText } from '../components/Text';
 import { A2UIButton } from '../components/Button';
@@ -27,6 +37,16 @@ import { A2UIColumn } from '../components/Column';
 import { A2UICard } from '../components/Card';
 import { A2UIList } from '../components/List';
 import { A2UITextField } from '../components/TextField';
+import { A2UIModal } from '../components/Modal';
+import { A2UITabs } from '../components/Tabs';
+import { A2UICheckbox } from '../components/Checkbox';
+import { A2UISlider } from '../components/Slider';
+import { A2UIDateTimeInput } from '../components/DateTimeInput';
+import { A2UIMultipleChoice } from '../components/MultipleChoice';
+import { A2UIIcon } from '../components/Icon';
+import { A2UIDivider } from '../components/Divider';
+import { A2UIVideo } from '../components/Video';
+import { A2UIAudioPlayer } from '../components/AudioPlayer';
 
 interface ComponentLookup {
   [id: string]: A2UIComponent;
@@ -199,15 +219,129 @@ export const A2UIRenderer: React.FC<A2UIRendererProps> = ({
           />
         );
 
-      default:
-        console.warn(`[A2UI] Unknown component type: ${component.type}`);
+      case 'Modal': {
+        const modalComponent = component as ModalComponent;
         return (
-          <View key={key ?? component.id} style={styles.unknownComponent}>
+          <A2UIModal
+            key={key ?? component.id}
+            component={modalComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+            renderChild={(childId: string) => renderComponent(childId)}
+          />
+        );
+      }
+
+      case 'Tabs': {
+        const tabsComponent = component as TabsComponent;
+        return (
+          <A2UITabs
+            key={key ?? component.id}
+            component={tabsComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+            renderChild={(childId: string) => renderComponent(childId)}
+          />
+        );
+      }
+
+      case 'Checkbox':
+        return (
+          <A2UICheckbox
+            key={key ?? component.id}
+            component={component as CheckboxComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'Slider':
+        return (
+          <A2UISlider
+            key={key ?? component.id}
+            component={component as SliderComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'DateTimeInput':
+        return (
+          <A2UIDateTimeInput
+            key={key ?? component.id}
+            component={component as DateTimeInputComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'MultipleChoice':
+        return (
+          <A2UIMultipleChoice
+            key={key ?? component.id}
+            component={component as MultipleChoiceComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'Icon':
+        return (
+          <A2UIIcon
+            key={key ?? component.id}
+            component={component as IconComponent}
+            dataModel={dataModel}
+          />
+        );
+
+      case 'Divider':
+        return (
+          <A2UIDivider
+            key={key ?? component.id}
+            component={component as DividerComponent}
+            dataModel={dataModel}
+          />
+        );
+
+      case 'Video':
+        return (
+          <A2UIVideo
+            key={key ?? component.id}
+            component={component as VideoComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'AudioPlayer':
+        return (
+          <A2UIAudioPlayer
+            key={key ?? component.id}
+            component={component as AudioPlayerComponent}
+            dataModel={dataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      default: {
+        const unknownComponent = component as unknown as { type: string; id: string };
+        console.warn(`[A2UI] Unknown component type: ${unknownComponent.type}`);
+        return (
+          <View key={key ?? unknownComponent.id} style={styles.unknownComponent}>
             <Text style={styles.unknownText}>
-              Unknown: {component.type}
+              Unknown: {unknownComponent.type}
             </Text>
           </View>
         );
+      }
     }
   }, [componentLookup, dataModel, surfaceId, onAction, customComponents]);
 
@@ -318,6 +452,90 @@ export const A2UIRenderer: React.FC<A2UIRendererProps> = ({
           <A2UITextField
             key={key}
             component={component as TextFieldComponent}
+            dataModel={itemDataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'Checkbox':
+        return (
+          <A2UICheckbox
+            key={key}
+            component={component as CheckboxComponent}
+            dataModel={itemDataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'Slider':
+        return (
+          <A2UISlider
+            key={key}
+            component={component as SliderComponent}
+            dataModel={itemDataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'DateTimeInput':
+        return (
+          <A2UIDateTimeInput
+            key={key}
+            component={component as DateTimeInputComponent}
+            dataModel={itemDataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'MultipleChoice':
+        return (
+          <A2UIMultipleChoice
+            key={key}
+            component={component as MultipleChoiceComponent}
+            dataModel={itemDataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'Icon':
+        return (
+          <A2UIIcon
+            key={key}
+            component={component as IconComponent}
+            dataModel={itemDataModel}
+          />
+        );
+
+      case 'Divider':
+        return (
+          <A2UIDivider
+            key={key}
+            component={component as DividerComponent}
+            dataModel={itemDataModel}
+          />
+        );
+
+      case 'Video':
+        return (
+          <A2UIVideo
+            key={key}
+            component={component as VideoComponent}
+            dataModel={itemDataModel}
+            surfaceId={surfaceId}
+            onAction={onAction}
+          />
+        );
+
+      case 'AudioPlayer':
+        return (
+          <A2UIAudioPlayer
+            key={key}
+            component={component as AudioPlayerComponent}
             dataModel={itemDataModel}
             surfaceId={surfaceId}
             onAction={onAction}
