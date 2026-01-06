@@ -4,7 +4,7 @@
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
   "$defs": {
-    "CallExpression": {
+    "FunctionCall": {
       "type": "object",
       "description": "Invokes a named function on the client.",
       "properties": {
@@ -26,8 +26,7 @@
           "default": "boolean"
         }
       },
-      "required": ["call"],
-      "additionalProperties": false
+      "required": ["call"]
     },
     "DynamicString": {
       "description": "Represents a value that can be either a literal string, a path to a string in the data model, or a function call returning a string.",
@@ -43,7 +42,7 @@
         },
         {
           "allOf": [
-            { "$ref": "#/$defs/CallExpression" },
+            { "$ref": "#/$defs/FunctionCall" },
             {
               "properties": {
                 "returnType": { "const": "string" }
@@ -68,7 +67,7 @@
         },
         {
           "allOf": [
-            { "$ref": "#/$defs/CallExpression" },
+            { "$ref": "#/$defs/FunctionCall" },
             {
               "properties": {
                 "returnType": { "const": "number" }
@@ -93,7 +92,7 @@
         },
         {
           "allOf": [
-            { "$ref": "#/$defs/CallExpression" },
+            { "$ref": "#/$defs/FunctionCall" },
             {
               "properties": {
                 "returnType": { "const": "boolean" }
@@ -120,7 +119,7 @@
         },
         {
           "allOf": [
-            { "$ref": "#/$defs/CallExpression" },
+            { "$ref": "#/$defs/FunctionCall" },
             {
               "properties": {
                 "returnType": { "const": "array" }
@@ -170,7 +169,7 @@
           "required": ["path"],
           "additionalProperties": false
         },
-        { "$ref": "#/$defs/CallExpression" }
+        { "$ref": "#/$defs/FunctionCall" }
       ]
     },
     "childrenProperty": {

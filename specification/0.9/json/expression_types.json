@@ -4,30 +4,6 @@
   "title": "A2UI Expression Types",
   "description": "Type definitions for A2UI client-side function calls and logic expressions.",
   "$defs": {
-    "FunctionCall": {
-      "type": "object",
-      "description": "Invokes a named function on the client.",
-      "properties": {
-        "call": {
-          "type": "string",
-          "description": "The name of the function to call."
-        },
-        "args": {
-          "type": "object",
-          "description": "Arguments passed to the function.",
-          "additionalProperties": {
-            "$ref": "common_types.json#/$defs/DynamicValue"
-          }
-        },
-        "returnType": {
-          "type": "string",
-          "enum": ["string", "number", "boolean", "array", "object", "any"],
-          "description": "The expected return type. Defaults to 'boolean' if not specified.",
-          "default": "boolean"
-        }
-      },
-      "required": ["call"]
-    },
     "CheckRule": {
       "type": "object",
       "description": "A single validaton rule applied to an input component.",
@@ -78,7 +54,7 @@
         },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
+            { "$ref": "common_types.json#/$defs/FunctionCall" },
             {
               "properties": {
                 "returnType": { "const": "boolean" }

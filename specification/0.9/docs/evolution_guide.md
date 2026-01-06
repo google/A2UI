@@ -176,7 +176,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 - **Renamed**: `dataModelUpdate` -> `updateDataModel`.
 - **Standard JSON**: The `value` property is now a standard **JSON object**.
-- **Op**: The `op` property is added to allow for more complex updates (e.g., `replace`, `remove`).
+- **Simplified**: The system relies on upsert semantics, so the client will create or update the data model at the specified path, or remove it if the value is null.
 - **Structure**: `{ "name": "Alice" }`
 - **Reason**: LLMs are trained to generate JSON objects. Forcing them to generate an "adjacency list" representation of a map was inefficient and error-prone.
 
@@ -214,7 +214,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.8.1:**
 
-- **Array of Pairs**: `context: [{ "key": "id", "value": "123" }]`
+- **Array of Pairs**: `context: [{ "key": "id", "value": { "literalString": "123" } }]`
 - **Reason**: Easy to parse, hard to generate.
 
 **v0.9:**
@@ -227,18 +227,20 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 **v0.8.1:**
 
 - Property: `textFieldType` (e.g., "email", "password").
+- Validation: `validationRegexp`.
 
 **v0.9:**
 
 - Property: **`usageHint`**.
-- **Reason**: Consistency with `Text` and `Image` components which already used `usageHint`.
+- Validation: **`checks`** (generic list of function calls).
+- **Reason**: Consistency with `Text` and `Image` components which already used `usageHint`. Validation is now more flexible and reusable.
 
 ### 6.3. ChoicePicker (vs MultipleChoice)
 
 **v0.8.1:**
 
 - Component: **`MultipleChoice`**.
-- Properties: `selections` (array), `maxAllowedSelections` (integer).
+- Properties: `selections` (typed wrapper), `maxAllowedSelections` (integer).
 
 **v0.9:**
 
