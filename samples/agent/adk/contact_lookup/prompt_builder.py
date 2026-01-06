@@ -69,7 +69,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     -   **For finding contacts (e.g., "Who is Alex Jordan?"):**
         a.  You MUST call the `get_contact_info` tool.
         b.  If the tool returns a **single contact**, you MUST use the `CONTACT_CARD_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the contact's details. If additional important fields (like 'favorite_framework' or 'meetupPlace') are present, you MUST add a new 'Row' to the 'info_rows_column' (matching the structure of existing info rows).
-            - Use the 'link' icon if the value is a URL.
+
             - Use the 'calendar_today' icon if the value represents a date, time, or schedule.
             - Use the 'location_on' icon if the value represents a location or place.
             - Otherwise, use the 'star' icon.
@@ -79,7 +79,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     -   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
         a.  You MUST call the `get_contact_info` tool with the specific name.
         b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template. If additional important fields are present, you MUST add a new 'Row' to the 'info_rows_column' with:
-            - The 'link' icon for URLs.
+
             - The 'calendar_today' icon for date/time/schedule.
             - The 'location_on' icon for location/place.
             - The 'star' icon for others.
