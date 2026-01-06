@@ -31,95 +31,99 @@ INLINE_CATALOGS_KEY = "inlineCatalogs"
 
 STANDARD_CATALOG_ID = "https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json"
 
+
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
-    """Creates an A2A Part containing A2UI data.
+  """Creates an A2A Part containing A2UI data.
 
-    Args:
-        a2ui_data: The A2UI data dictionary.
+  Args:
+      a2ui_data: The A2UI data dictionary.
 
-    Returns:
-        An A2A Part with a DataPart containing the A2UI data.
-    """
-    return Part(
-        root=DataPart(
-            data=a2ui_data,
-            metadata={
-                MIME_TYPE_KEY: A2UI_MIME_TYPE,
-            },
-        )
-    )
+  Returns:
+      An A2A Part with a DataPart containing the A2UI data.
+  """
+  return Part(
+      root=DataPart(
+          data=a2ui_data,
+          metadata={
+              MIME_TYPE_KEY: A2UI_MIME_TYPE,
+          },
+      )
+  )
 
 
 def is_a2ui_part(part: Part) -> bool:
-    """Checks if an A2A Part contains A2UI data.
+  """Checks if an A2A Part contains A2UI data.
 
-    Args:
-        part: The A2A Part to check.
+  Args:
+      part: The A2A Part to check.
 
-    Returns:
-        True if the part contains A2UI data, False otherwise.
-    """
-    return (
-        isinstance(part.root, DataPart)
-        and part.root.metadata
-        and part.root.metadata.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE
-    )
+  Returns:
+      True if the part contains A2UI data, False otherwise.
+  """
+  return (
+      isinstance(part.root, DataPart)
+      and part.root.metadata
+      and part.root.metadata.get(MIME_TYPE_KEY) == A2UI_MIME_TYPE
+  )
 
 
 def get_a2ui_datapart(part: Part) -> Optional[DataPart]:
-    """Extracts the DataPart containing A2UI data from an A2A Part, if present.
+  """Extracts the DataPart containing A2UI data from an A2A Part, if present.
 
-    Args:
-        part: The A2A Part to extract A2UI data from.
+  Args:
+      part: The A2A Part to extract A2UI data from.
 
-    Returns:
-        The DataPart containing A2UI data if present, None otherwise.
-    """
-    if is_a2ui_part(part):
-        return part.root
-    return None
+  Returns:
+      The DataPart containing A2UI data if present, None otherwise.
+  """
+  if is_a2ui_part(part):
+    return part.root
+  return None
 
 
 AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"
 AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY = "acceptsInlineCatalogs"
 
+
 def get_a2ui_agent_extension(
     accepts_inline_catalogs: bool = False,
     supported_catalog_ids: List[str] = [],
 ) -> AgentExtension:
-    """Creates the A2UI AgentExtension configuration.
+  """Creates the A2UI AgentExtension configuration.
 
-    Args:
-        accepts_inline_catalogs: Whether the agent accepts inline custom catalogs.
-        supported_catalog_ids: All pre-defined catalogs the agent is known to support.
+  Args:
+      accepts_inline_catalogs: Whether the agent accepts inline custom catalogs.
+      supported_catalog_ids: All pre-defined catalogs the agent is known to support.
 
-    Returns:
-        The configured A2UI AgentExtension.
-    """
-    params = {}
-    if accepts_inline_catalogs:
-        params[AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY] = True  # Only set if not default of False
-
-    if supported_catalog_ids:
-        params[AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY] = supported_catalog_ids
-
-    return AgentExtension(
-        uri=A2UI_EXTENSION_URI,
-        description="Provides agent driven UI using the A2UI JSON format.",
-        params=params if params else None,
+  Returns:
+      The configured A2UI AgentExtension.
+  """
+  params = {}
+  if accepts_inline_catalogs:
+    params[AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY] = (
+        True  # Only set if not default of False
     )
+
+  if supported_catalog_ids:
+    params[AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY] = supported_catalog_ids
+
+  return AgentExtension(
+      uri=A2UI_EXTENSION_URI,
+      description="Provides agent driven UI using the A2UI JSON format.",
+      params=params if params else None,
+  )
 
 
 def try_activate_a2ui_extension(context: RequestContext) -> bool:
-    """Activates the A2UI extension if requested.
+  """Activates the A2UI extension if requested.
 
-    Args:
-        context: The request context to check.
+  Args:
+      context: The request context to check.
 
-    Returns:
-        True if activated, False otherwise.
-    """
-    if A2UI_EXTENSION_URI in context.requested_extensions:
-        context.add_activated_extension(A2UI_EXTENSION_URI)
-        return True
-    return False
+  Returns:
+      True if activated, False otherwise.
+  """
+  if A2UI_EXTENSION_URI in context.requested_extensions:
+    context.add_activated_extension(A2UI_EXTENSION_URI)
+    return True
+  return False
