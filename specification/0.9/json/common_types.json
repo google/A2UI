@@ -84,7 +84,7 @@
       "properties": {
         "checks": {
           "type": "array",
-          "description": "A list of checks to perform on this component's value.",
+          "description": "A list of checks to perform on this component's value. If not specified, or if the list is empty, the component is considered valid.",
           "items": { "$ref": "check_types.json#/$defs/CheckRule" }
         }
       }

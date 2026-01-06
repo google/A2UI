@@ -1,0 +1,167 @@
+{
+  "schema": "server_to_client.json",
+  "tests": [
+    {
+      "description": "TextField with valid checks",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "Email",
+              "text": { "path": "/formData/email" },
+              "checks": [
+                {
+                  "check": "required",
+                  "args": { "value": { "path": "/formData/email" } },
+                  "message": "Email is required"
+                },
+                {
+                  "check": "email",
+                  "args": { "value": { "path": "/formData/email" } },
+                  "message": "Must be valid email"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "TextField with missing explicit args (passes static schema validation, fails runtime)",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "tf2",
+              "component": "TextField",
+              "label": "Email",
+              "text": { "path": "/formData/email" },
+              "checks": [
+                {
+                  "check": "required",
+                  "args": {},
+                  "message": "Email is required"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "ChoicePicker with valid checks",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "cp1",
+              "component": "ChoicePicker",
+              "label": "Interests",
+              "usageHint": "multipleSelection",
+              "options": [
+                { "label": "Code", "value": "code" },
+                { "label": "Design", "value": "design" }
+              ],
+              "value": { "path": "/formData/interests" },
+              "checks": [
+                {
+                  "check": "length",
+                  "args": {
+                    "value": { "path": "/formData/interests" },
+                    "min": 1
+                  },
+                  "message": "Select at least one"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Slider with valid checks",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "sl1",
+              "component": "Slider",
+              "label": "Rating",
+              "min": 1,
+              "max": 5,
+              "value": { "path": "/formData/rating" },
+              "checks": [
+                {
+                  "check": "numeric",
+                  "args": {
+                    "value": { "path": "/formData/rating" },
+                    "min": 3
+                  },
+                  "message": "Rating must be > 3"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "CheckBox with valid checks",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "cb1",
+              "component": "CheckBox",
+              "label": "I agree",
+              "value": { "path": "/formData/agreed" },
+              "checks": [
+                {
+                  "check": "required",
+                  "args": { "value": { "path": "/formData/agreed" } },
+                  "message": "Must agree"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "DateTimeInput with valid checks",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "dt1",
+              "component": "DateTimeInput",
+              "label": "Date",
+              "value": { "path": "/formData/date" },
+              "checks": [
+                {
+                  "check": "required",
+                  "args": { "value": { "path": "/formData/date" } },
+                  "message": "Date required"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

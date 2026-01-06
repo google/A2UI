@@ -169,8 +169,7 @@ This message is used to send or update the data that populates the UI components
 
 - `surfaceId` (string, required): The unique identifier for the UI surface this data model update applies to.
 - `path` (string, optional): A JSON Pointer to a specific location within the data model (e.g., `/user/name`). If omitted or set to `/`, the entire data model for the surface will be replaced.
-- `op` (string, optional): The operation to perform on the data model. Must be 'add', 'replace' or 'remove'. If omitted, defaults to 'replace'.
-- `value` (object): The data to be updated in the data model. This can be any valid JSON object. Required if `op` is 'add' or 'replace'. Not allowed if `op` is 'remove'.
+- `value` (object): The data to be updated in the data model. If present, the value at `path` is updated/created. If this field is omitted, the data at `path` is **removed**.
 
 **Example:**
 
@@ -179,7 +178,6 @@ This message is used to send or update the data that populates the UI components
   "updateDataModel": {
     "surfaceId": "user_profile_card",
     "path": "/user",
-    "op": "replace",
     "value": {
       "name": "Jane Doe",
       "title": "Software Engineer"
@@ -213,7 +211,7 @@ The following example demonstrates a complete interaction to render a Contact Fo
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json"}}
 {"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
-{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "op": "replace", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
+{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
 ```
 
 ## Component Model
@@ -341,7 +339,7 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 
 ### Two-Way Binding & Input Components
 
-Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `MultipleChoice`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
+Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `ChoicePicker`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
 
 #### The Read/Write Contract
 
@@ -390,42 +388,48 @@ A2UI v0.9 introduces explicit client-side validation to provide immediate feedba
 
 The client registers a set of named **Check Functions** (e.g., `required`, `regex`, `email`) in a `CheckCatalog`. The server references these checks by name. This avoids sending executable code.
 
-Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message.
+Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message that can be displayed when the component is rendered.
 
 ```json
 "checks": [
   {
     "check": "required",
+    "args": { "value": { "path": "/formData/zip" } },
     "message": "Zip code is required"
   },
   {
     "check": "regex",
-    "args": { "pattern": "^[0-9]{5}$" },
+    "args": {
+      "value": { "path": "/formData/zip" },
+      "pattern": "^[0-9]{5}$"
+    },
     "message": "Must be a 5-digit zip code"
   }
 ]
 ```
 
-### Conditional State (Enabling Buttons)
+### Example: Button Validation
 
-Components like `Button` have an `enabled` property that can accept a **Logic Expression**. This allows the button's state to depend on the validity of other components or custom logic.
+Buttons can also define `checks`. If any check fails, the button is automatically disabled. This allows the button's state to depend on the validity of data in the model.
 
 ```json
 {
   "component": "Button",
   "text": "Submit",
-  "enabled": {
-    "and": [
-      { "check": "isValid", "args": { "id": "zip_code_field" } },
-      { "check": "isValid", "args": { "id": "zip_code_field" } },
-      {
-        "or": [
-          { "check": "isServerOnline" },
-          { "check": "allowOfflineSubmit" }
-        ]
-      }
-    ]
-  }
+  "checks": [
+    {
+      "and": [
+        { "check": "required", "args": { "value": { "path": "/formData/terms" } } },
+        {
+          "or": [
+            { "check": "required", "args": { "value": { "path": "/formData/email" } } },
+            { "check": "required", "args": { "value": { "path": "/formData/phone" } } }
+          ]
+        }
+      ],
+      "message": "You must accept terms AND provide either email or phone"
+    }
+  ]
 }
 ```
 
@@ -516,6 +520,7 @@ This message is sent by the client upon connection to inform the server of its c
 
 - `supportedCatalogIds` (array of strings, required): URIs of supported component catalogs.
 - `supportedCheckCatalogIds`: A list of URIs for the check catalogs supported by the client.
+- `inlineCatalogs`: An array of inline component catalog definitions provided directly by the client (useful for custom or ad-hoc components).
 - `inlineCheckCatalogs`: An array of check catalog definitions provided directly by the client (useful for custom or ad-hoc checks).
 
 ### `error`

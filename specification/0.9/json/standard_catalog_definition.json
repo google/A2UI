@@ -432,6 +432,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
           "properties": {
@@ -443,17 +444,6 @@
             "primary": {
               "type": "boolean",
               "description": "Indicates if this button should be styled as the primary action."
-            },
-            "enabled": {
-              "description": "Determines whether the button is enabled. Can be a simple boolean or a validation expression.",
-              "oneOf": [
-                {
-                  "$ref": "common_types.json#/$defs/booleanOrPath"
-                },
-                {
-                  "$ref": "validation_types.json#/$defs/LogicExpression"
-                }
-              ]
             },
             "action": {
               "type": "object",
@@ -481,6 +471,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
           "properties": {

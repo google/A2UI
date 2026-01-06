@@ -9,72 +9,109 @@
       "name": "required",
       "description": "Checks that the value is not null, undefined, or empty.",
       "parameters": {
-        "type": "object",
-        "additionalProperties": false
+        "allOf": [{ "$ref": "#/$defs/valueParam" }],
+        "unevaluatedProperties": false
       }
     },
     {
       "name": "regex",
       "description": "Checks that the value matches a regular expression string.",
       "parameters": {
-        "type": "object",
-        "properties": {
-          "pattern": {
-            "type": "string",
-            "description": "The regex pattern to match against."
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" },
+              "pattern": {
+                "type": "string",
+                "description": "The regex pattern to match against."
+              }
+            },
+            "required": ["pattern"]
           }
-        },
-        "required": ["pattern"],
-        "additionalProperties": false
+        ],
+        "unevaluatedProperties": false
       }
     },
     {
       "name": "length",
       "description": "Checks string length constraints.",
       "parameters": {
-        "type": "object",
-        "properties": {
-          "min": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "The minimum allowed length."
-          },
-          "max": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "The maximum allowed length."
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" },
+              "min": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The minimum allowed length."
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The maximum allowed length."
+              }
+            },
+            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
           }
-        },
-        "anyOf": [{ "required": ["min"] }, { "required": ["max"] }],
-        "additionalProperties": false
+        ],
+        "unevaluatedProperties": false
       }
     },
     {
       "name": "numeric",
       "description": "Checks numeric range constraints.",
       "parameters": {
-        "type": "object",
-        "properties": {
-          "min": {
-            "type": "number",
-            "description": "The minimum allowed value."
-          },
-          "max": {
-            "type": "number",
-            "description": "The maximum allowed value."
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "number" },
+              "min": {
+                "type": "number",
+                "description": "The minimum allowed value."
+              },
+              "max": {
+                "type": "number",
+                "description": "The maximum allowed value."
+              }
+            },
+            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
           }
-        },
-        "anyOf": [{ "required": ["min"] }, { "required": ["max"] }],
-        "additionalProperties": false
+        ],
+        "unevaluatedProperties": false
       }
     },
     {
       "name": "email",
       "description": "Checks that the value is a valid email address.",
       "parameters": {
-        "type": "object",
-        "additionalProperties": false
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" }
+            }
+          }
+        ],
+        "unevaluatedProperties": false
       }
     }
-  ]
+  ],
+  "$defs": {
+    "valueParam": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "The value to check."
+        }
+      },
+      "required": ["value"]
+    }
+  }
 }

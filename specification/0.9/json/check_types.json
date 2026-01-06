@@ -20,14 +20,14 @@
           }
         }
       },
-      "required": ["check"],
-      "additionalProperties": false
+      "required": ["check"]
     },
     "CheckRule": {
       "type": "object",
       "description": "A single check rule applied to an input component.",
+      "unevaluatedProperties": false,
       "allOf": [
-        { "$ref": "#/$defs/CheckCall" },
+        { "$ref": "#/$defs/LogicExpression" },
         {
           "type": "object",
           "properties": {
@@ -52,8 +52,7 @@
               "minItems": 1
             }
           },
-          "required": ["and"],
-          "additionalProperties": false
+          "required": ["and"]
         },
         {
           "properties": {
@@ -63,30 +62,26 @@
               "minItems": 1
             }
           },
-          "required": ["or"],
-          "additionalProperties": false
+          "required": ["or"]
         },
         {
           "properties": {
             "not": { "$ref": "#/$defs/LogicExpression" }
           },
-          "required": ["not"],
-          "additionalProperties": false
+          "required": ["not"]
         },
         { "$ref": "#/$defs/CheckCall" },
         {
           "properties": {
             "true": { "const": true }
           },
-          "required": ["true"],
-          "additionalProperties": false
+          "required": ["true"]
         },
         {
           "properties": {
             "false": { "const": true }
           },
-          "required": ["false"],
-          "additionalProperties": false
+          "required": ["false"]
         }
       ]
     },
