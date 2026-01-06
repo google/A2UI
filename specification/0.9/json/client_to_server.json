@@ -87,11 +87,43 @@
           "additionalProperties": true
         }
       ]
+    },
+    "clientUiCapabilities": {
+      "$ref": "#/definitions/clientUiCapabilities"
     }
   },
   "oneOf": [
     { "required": ["userAction"] },
     { "required": ["clientUiCapabilities"] },
     { "required": ["error"] }
-  ]
+  ],
+  "definitions": {
+    "clientUiCapabilities": {
+      "type": "object",
+      "description": "Describes the client's UI rendering capabilities.",
+      "properties": {
+        "supportedCatalogIds": {
+          "type": "array",
+          "description": "The URI of each of the component catalogs that is supported by the client.",
+          "items": { "type": "string" }
+        },
+        "inlineCatalogs": {
+          "type": "array",
+          "description": "An array of inline catalog definitions.",
+          "items": { "type": "object" }
+        },
+        "supportedCheckCatalogIds": {
+          "type": "array",
+          "description": "A list of check catalog URIs supported by the client.",
+          "items": { "type": "string" }
+        },
+        "inlineCheckCatalogs": {
+          "type": "array",
+          "description": "A list of check catalogs defined inline by the client.",
+          "items": { "$ref": "check_types.json#/$defs/CheckCatalog" }
+        }
+      },
+      "required": ["supportedCatalogIds"]
+    }
+  }
 }

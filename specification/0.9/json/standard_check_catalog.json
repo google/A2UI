@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.dev/specification/0.9/standard_check_catalog.json",
+  "title": "A2UI Standard Check Catalog",
+  "description": "Definitions for the standard set of A2UI checks.",
+  "catalogId": "https://a2ui.dev/specification/0.9/standard_check_catalog.json",
+  "checks": [
+    {
+      "name": "required",
+      "description": "Checks that the value is not null, undefined, or empty.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "regex",
+      "description": "Checks that the value matches a regular expression string.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "The regex pattern to match against."
+          }
+        },
+        "required": ["pattern"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "length",
+      "description": "Checks string length constraints.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The minimum allowed length."
+          },
+          "max": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The maximum allowed length."
+          }
+        },
+        "anyOf": [{ "required": ["min"] }, { "required": ["max"] }],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "numeric",
+      "description": "Checks numeric range constraints.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "number",
+            "description": "The minimum allowed value."
+          },
+          "max": {
+            "type": "number",
+            "description": "The maximum allowed value."
+          }
+        },
+        "anyOf": [{ "required": ["min"] }, { "required": ["max"] }],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "email",
+      "description": "Checks that the value is a valid email address.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false
+      }
+    }
+  ]
+}

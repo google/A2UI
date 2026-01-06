@@ -78,6 +78,17 @@
       },
       "required": ["id"]
     },
+    "Checkable": {
+      "description": "Properties for components that support client-side checks.",
+      "type": "object",
+      "properties": {
+        "checks": {
+          "type": "array",
+          "description": "A list of checks to perform on this component's value.",
+          "items": { "$ref": "check_types.json#/$defs/CheckRule" }
+        }
+      }
+    },
     "contextValue": {
       "description": "A value that can be a string, number, boolean, or a path to a value.",
       "oneOf": [

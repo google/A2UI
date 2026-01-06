@@ -444,6 +444,17 @@
               "type": "boolean",
               "description": "Indicates if this button should be styled as the primary action."
             },
+            "enabled": {
+              "description": "Determines whether the button is enabled. Can be a simple boolean or a validation expression.",
+              "oneOf": [
+                {
+                  "$ref": "common_types.json#/$defs/booleanOrPath"
+                },
+                {
+                  "$ref": "validation_types.json#/$defs/LogicExpression"
+                }
+              ]
+            },
             "action": {
               "type": "object",
               "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
@@ -492,6 +503,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
           "properties": {
@@ -508,10 +520,6 @@
               "type": "string",
               "description": "The type of input field to display.",
               "enum": ["longText", "number", "shortText", "obscured"]
-            },
-            "validationRegexp": {
-              "type": "string",
-              "description": "A regular expression used for client-side validation of the input."
             }
           },
           "required": ["component", "label"]
@@ -523,6 +531,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
           "properties": {
@@ -557,13 +566,12 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
           "description": "A component that allows selecting one or more options from a list.",
           "properties": {
-            "component": {
-              "const": "ChoicePicker"
-            },
+            "component": { "const": "ChoicePicker" },
             "label": {
               "$ref": "common_types.json#/$defs/stringOrPath",
               "description": "The label for the group of options."
@@ -597,7 +605,7 @@
               "description": "The list of currently selected values. This should be bound to a string array in the data model."
             }
           },
-          "required": ["component", "options", "value", "usageHint"]
+          "required": ["component", "options", "value"]
         }
       ],
       "unevaluatedProperties": false
@@ -606,6 +614,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
           "properties": {

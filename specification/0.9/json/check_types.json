@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.dev/specification/0.9/check_types.json",
+  "title": "A2UI Check Types",
+  "description": "Type definitions for A2UI client-side checks and logic expressions.",
+  "$defs": {
+    "CheckCall": {
+      "type": "object",
+      "description": "Invokes a named check function on the client.",
+      "properties": {
+        "check": {
+          "type": "string",
+          "description": "The name of the check function to call."
+        },
+        "args": {
+          "type": "object",
+          "description": "Arguments passed to the function.",
+          "additionalProperties": {
+            "$ref": "common_types.json#/$defs/contextValue"
+          }
+        }
+      },
+      "required": ["check"],
+      "additionalProperties": false
+    },
+    "CheckRule": {
+      "type": "object",
+      "description": "A single check rule applied to an input component.",
+      "allOf": [
+        { "$ref": "#/$defs/CheckCall" },
+        {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "The error message to display if the check fails."
+            }
+          },
+          "required": ["message"]
+        }
+      ]
+    },
+    "LogicExpression": {
+      "type": "object",
+      "description": "A boolean expression used for conditional state (e.g. 'enabled').",
+      "oneOf": [
+        {
+          "properties": {
+            "and": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LogicExpression" },
+              "minItems": 1
+            }
+          },
+          "required": ["and"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "or": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LogicExpression" },
+              "minItems": 1
+            }
+          },
+          "required": ["or"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "not": { "$ref": "#/$defs/LogicExpression" }
+          },
+          "required": ["not"],
+          "additionalProperties": false
+        },
+        { "$ref": "#/$defs/CheckCall" },
+        {
+          "properties": {
+            "true": { "const": true }
+          },
+          "required": ["true"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "false": { "const": true }
+          },
+          "required": ["false"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "CheckDefinition": {
+      "type": "object",
+      "description": "Describes a check function's interface.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the check function."
+        },
+        "description": {
+          "type": "string",
+          "description": "A human-readable description of what the check does."
+        },
+        "parameters": {
+          "type": "object",
+          "description": "A JSON Schema describing the expected arguments (args) for this check.",
+          "$ref": "https://json-schema.org/draft/2020-12/schema"
+        }
+      },
+      "required": ["name", "parameters"]
+    },
+    "CheckCatalog": {
+      "type": "object",
+      "description": "A collection of check definitions.",
+      "properties": {
+        "catalogId": {
+          "type": "string",
+          "description": "Unique identifier for this catalog."
+        },
+        "checks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/CheckDefinition" }
+        }
+      },
+      "required": ["catalogId", "checks"]
+    }
+  }
+}

@@ -381,6 +381,54 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `userAction` payload.
 
+
+## Client-Side Validation
+
+A2UI v0.9 introduces explicit client-side validation to provide immediate feedback to users without round-tripping to the server.
+
+### Registered Check Functions
+
+The client registers a set of named **Check Functions** (e.g., `required`, `regex`, `email`) in a `CheckCatalog`. The server references these checks by name. This avoids sending executable code.
+
+Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message.
+
+```json
+"checks": [
+  {
+    "check": "required",
+    "message": "Zip code is required"
+  },
+  {
+    "check": "regex",
+    "args": { "pattern": "^[0-9]{5}$" },
+    "message": "Must be a 5-digit zip code"
+  }
+]
+```
+
+### Conditional State (Enabling Buttons)
+
+Components like `Button` have an `enabled` property that can accept a **Logic Expression**. This allows the button's state to depend on the validity of other components or custom logic.
+
+```json
+{
+  "component": "Button",
+  "text": "Submit",
+  "enabled": {
+    "and": [
+      { "check": "isValid", "args": { "id": "zip_code_field" } },
+      { "check": "isValid", "args": { "id": "zip_code_field" } },
+      {
+        "or": [
+          { "check": "isServerOnline" },
+          { "check": "allowOfflineSubmit" }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ## Standard Component Catalog
 
 The [`standard_catalog_definition.json`] provides the baseline set of components.
@@ -460,11 +508,21 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
+### `clientUiCapabilities`
+
+This message is sent by the client upon connection to inform the server of its capabilities, including supported component catalogs and validation catalogs.
+
+**Properties:**
+
+- `supportedCatalogIds` (array of strings, required): URIs of supported component catalogs.
+- `supportedCheckCatalogIds`: A list of URIs for the check catalogs supported by the client.
+- `inlineCheckCatalogs`: An array of check catalog definitions provided directly by the client (useful for custom or ad-hoc checks).
+
 ### `error`
 
 This message is used to report a client-side error to the server.
 
-[`standard_catalog_definition.json`]: ../json/standard_catalog_definition.json
+[`standard_check_catalog.json`]: ../json/standard_check_catalog.json
 [`common_types.json`]: ../json/common_types.json
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
