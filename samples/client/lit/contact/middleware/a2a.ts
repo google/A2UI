@@ -25,7 +25,6 @@ import {
 } from "@a2a-js/sdk";
 import { v4 as uuidv4 } from "uuid";
 
-
 const A2UI_MIME_TYPE = "application/json+a2ui";
 
 const fetchWithCustomHeader: typeof fetch = async (url, init) => {
