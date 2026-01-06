@@ -45,14 +45,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Types } from '@a2ui/lit/0.8';
 import { Styles } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 import A2UIRenderer from '../rendering/renderer.vue';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UITabs',
 
   mixins: [DynamicComponentMixin],
@@ -76,17 +75,16 @@ export default Vue.extend({
 
   methods: {
     getTabTitle(tab: Types.ResolvedTabItem): string | null {
-      return (this as any).resolvePrimitive(tab.title);
+      return this.resolvePrimitive(tab.title) as string | null;
     },
 
     getButtonClasses(index: number): Record<string, boolean> {
-      const theme = (this as any).theme as Types.Theme;
       return index === this.selectedIndex
         ? Styles.merge(
-            theme.components.Tabs.controls.all,
-            theme.components.Tabs.controls.selected
+            this.theme.components.Tabs.controls.all,
+            this.theme.components.Tabs.controls.selected
           )
-        : theme.components.Tabs.controls.all;
+        : this.theme.components.Tabs.controls.all;
     },
   },
 });

@@ -31,13 +31,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 import A2UIRenderer from '../rendering/renderer.vue';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIRow',
 
   mixins: [DynamicComponentMixin],
@@ -59,13 +58,12 @@ export default Vue.extend({
 
   computed: {
     children(): Types.AnyComponentNode[] {
-      return ((this as any).component as Types.RowNode).properties.children || [];
+      return (this.component as Types.RowNode).properties.children || [];
     },
 
     classes(): Record<string, boolean> {
-      const theme = (this as any).theme as Types.Theme;
       return {
-        ...theme.components.Row,
+        ...this.theme.components.Row,
         [`align-${this.alignment}`]: true,
         [`distribute-${this.distribution}`]: true,
       };

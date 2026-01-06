@@ -38,12 +38,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UICheckbox',
 
   mixins: [DynamicComponentMixin],
@@ -67,17 +66,17 @@ export default Vue.extend({
 
   computed: {
     inputChecked(): boolean {
-      const value = (this as any).resolvePrimitive(this.value);
-      return value ?? false;
+      const value = this.resolvePrimitive(this.value);
+      return (value as boolean) ?? false;
     },
 
     resolvedLabel(): string | null {
-      return (this as any).resolvePrimitive(this.label);
+      return this.resolvePrimitive(this.label) as string | null;
     },
   },
 
   created() {
-    this.inputId = (this as any).getUniqueId('a2ui-checkbox');
+    this.inputId = this.getUniqueId('a2ui-checkbox');
   },
 
   methods: {
@@ -87,7 +86,7 @@ export default Vue.extend({
 
       if (!target || !path) return;
 
-      (this as any).setData(path, target.checked);
+      this.setData(path, target.checked);
     },
   },
 });

@@ -24,11 +24,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
 import { Styles } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 import { markdownRenderer } from '../data/markdown';
 
 interface HintedStyles {
@@ -41,7 +40,7 @@ interface HintedStyles {
   caption: Record<string, string>;
 }
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIText',
 
   mixins: [DynamicComponentMixin],
@@ -60,7 +59,7 @@ export default Vue.extend({
   computed: {
     resolvedText(): string {
       const usageHint = this.usageHint;
-      let value = (this as any).resolvePrimitive(this.text);
+      let value = this.resolvePrimitive(this.text) as string | null;
 
       if (value == null) {
         return '(empty)';
@@ -90,27 +89,24 @@ export default Vue.extend({
           break;
       }
 
-      const theme = (this as any).theme as Types.Theme;
       return markdownRenderer.render(
         value,
-        Styles.appendToAll(theme.markdown, ['ol', 'ul', 'li'], {})
+        Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {})
       );
     },
 
     classes(): Record<string, boolean> {
       const usageHint = this.usageHint;
-      const theme = (this as any).theme as Types.Theme;
 
       return Styles.merge(
-        theme.components.Text.all,
-        usageHint ? theme.components.Text[usageHint as keyof typeof theme.components.Text] : {}
+        this.theme.components.Text.all,
+        usageHint ? this.theme.components.Text[usageHint as keyof typeof this.theme.components.Text] : {}
       );
     },
 
     additionalStyles(): Record<string, string> | null {
       const usageHint = this.usageHint;
-      const theme = (this as any).theme as Types.Theme;
-      const styles = theme.additionalStyles?.Text;
+      const styles = this.theme.additionalStyles?.Text;
 
       if (!styles) {
         return null;

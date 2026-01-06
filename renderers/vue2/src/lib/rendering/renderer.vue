@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import type { Component as VueComponent, PropType } from 'vue';
 import type { Types } from '@a2ui/lit/0.8';
 import { Styles } from '@a2ui/lit/0.8';
@@ -35,7 +35,14 @@ import { CATALOG_KEY, type Catalog, type CatalogEntry } from './catalog';
 // Track whether structural styles have been injected
 let hasInsertedStyles = false;
 
-export default Vue.extend({
+// Interface for renderer-specific injections
+interface RendererInstance extends Vue {
+  catalog: Catalog;
+}
+
+const TypedVue = Vue as VueConstructor<RendererInstance>;
+
+export default TypedVue.extend({
   name: 'A2UIRenderer',
 
   inject: {
@@ -81,7 +88,7 @@ export default Vue.extend({
 
   methods: {
     async resolveComponent() {
-      const catalog = (this as any).catalog as Catalog;
+      const catalog = this.catalog;
 
       if (!catalog) {
         console.error('Catalog not provided. Make sure to use the A2UI plugin.');

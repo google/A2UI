@@ -44,17 +44,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
 interface SelectOption {
   label: Primitives.StringValue;
   value: string;
 }
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIMultipleChoice',
 
   mixins: [DynamicComponentMixin],
@@ -86,10 +85,10 @@ export default Vue.extend({
 
       // Handle path binding
       if (this.value.path) {
-        const resolved = (this as any).processor.getData(
-          (this as any).component,
+        const resolved = this.processor.getData(
+          this.component,
           this.value.path,
-          (this as any).surfaceId ?? undefined
+          this.surfaceId ?? undefined
         );
         if (Array.isArray(resolved)) {
           return resolved[0] ?? '';
@@ -107,12 +106,12 @@ export default Vue.extend({
   },
 
   created() {
-    this.inputId = (this as any).getUniqueId('a2ui-select');
+    this.inputId = this.getUniqueId('a2ui-select');
   },
 
   methods: {
     getOptionLabel(option: SelectOption): string | null {
-      return (this as any).resolvePrimitive(option.label);
+      return this.resolvePrimitive(option.label) as string | null;
     },
 
     handleChange(event: Event) {
@@ -122,7 +121,7 @@ export default Vue.extend({
       if (!target || !path) return;
 
       // Store as array for consistency
-      (this as any).setData(path, [target.value]);
+      this.setData(path, [target.value]);
     },
   },
 });

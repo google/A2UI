@@ -30,13 +30,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 import A2UIRenderer from '../rendering/renderer.vue';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIButton',
 
   mixins: [DynamicComponentMixin],
@@ -54,14 +53,14 @@ export default Vue.extend({
 
   computed: {
     buttonNode(): Types.ButtonNode {
-      return (this as any).component as Types.ButtonNode;
+      return this.component as Types.ButtonNode;
     },
   },
 
   methods: {
     handleClick() {
       if (this.action) {
-        (this as any).sendAction(this.action);
+        this.sendAction(this.action);
       }
     },
   },

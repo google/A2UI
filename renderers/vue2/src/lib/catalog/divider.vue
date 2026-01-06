@@ -15,20 +15,21 @@
 -->
 
 <template>
-  <hr
-    class="a2ui-divider"
-    :class="[theme.components.Divider, axisClass]"
-    :style="[weightStyle, theme.additionalStyles && theme.additionalStyles.Divider]"
-  />
+  <div class="a2ui-divider-wrapper" :style="weightStyle">
+    <hr
+      class="a2ui-divider"
+      :class="theme.components.Divider"
+      :style="theme.additionalStyles && theme.additionalStyles.Divider"
+    />
+  </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIDivider',
 
   mixins: [DynamicComponentMixin],
@@ -39,31 +40,19 @@ export default Vue.extend({
       default: 'horizontal',
     },
   },
-
-  computed: {
-    axisClass(): string {
-      return `a2ui-divider--${this.axis || 'horizontal'}`;
-    },
-  },
 });
 </script>
 
 <style>
+.a2ui-divider-wrapper {
+  display: block;
+  min-height: 0;
+  overflow: auto;
+}
+
 .a2ui-divider {
-  flex: var(--weight);
-  margin: 0;
-  border: none;
-  background-color: currentColor;
-  opacity: 0.2;
-}
-
-.a2ui-divider--horizontal {
-  width: 100%;
   height: 1px;
-}
-
-.a2ui-divider--vertical {
-  width: 1px;
-  height: 100%;
+  background: #ccc;
+  border: none;
 }
 </style>

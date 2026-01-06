@@ -29,12 +29,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIVideo',
 
   mixins: [DynamicComponentMixin],
@@ -48,7 +47,7 @@ export default Vue.extend({
 
   computed: {
     resolvedUrl(): string | null {
-      return (this as any).resolvePrimitive(this.url);
+      return this.resolvePrimitive(this.url) as string | null;
     },
   },
 });

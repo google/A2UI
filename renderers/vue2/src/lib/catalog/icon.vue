@@ -23,10 +23,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
 // Map A2UI icon names to Material Symbols names
 const ICON_MAP: Record<string, string> = {
@@ -80,7 +79,7 @@ const ICON_MAP: Record<string, string> = {
   warning: 'warning',
 };
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIIcon',
 
   mixins: [DynamicComponentMixin],
@@ -94,7 +93,7 @@ export default Vue.extend({
 
   computed: {
     resolvedName(): string {
-      const name = (this as any).resolvePrimitive(this.name);
+      const name = this.resolvePrimitive(this.name) as string | null;
       if (!name) return '';
       return ICON_MAP[name] || name;
     },

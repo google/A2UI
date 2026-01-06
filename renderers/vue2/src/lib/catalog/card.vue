@@ -38,12 +38,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 import A2UIRenderer from '../rendering/renderer.vue';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UICard',
 
   mixins: [DynamicComponentMixin],
@@ -54,7 +53,7 @@ export default Vue.extend({
 
   computed: {
     cardNode(): Types.CardNode {
-      return (this as any).component as Types.CardNode;
+      return this.component as Types.CardNode;
     },
 
     singleChild(): Types.AnyComponentNode | null {

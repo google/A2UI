@@ -39,12 +39,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIDateTimeInput',
 
   mixins: [DynamicComponentMixin],
@@ -90,7 +89,7 @@ export default Vue.extend({
     },
 
     formattedValue(): string {
-      const rawValue = (this as any).resolvePrimitive(this.value);
+      const rawValue = this.resolvePrimitive(this.value) as string | null;
       if (!rawValue) return '';
 
       try {
@@ -110,7 +109,7 @@ export default Vue.extend({
   },
 
   created() {
-    this.inputId = (this as any).getUniqueId('a2ui-datetime');
+    this.inputId = this.getUniqueId('a2ui-datetime');
   },
 
   methods: {
@@ -150,7 +149,7 @@ export default Vue.extend({
         }
       }
 
-      (this as any).setData(path, isoValue);
+      this.setData(path, isoValue);
     },
   },
 });

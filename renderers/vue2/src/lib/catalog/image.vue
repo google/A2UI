@@ -30,13 +30,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
 import { Styles } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UIImage',
 
   mixins: [DynamicComponentMixin],
@@ -58,16 +57,15 @@ export default Vue.extend({
 
   computed: {
     resolvedUrl(): string | null {
-      return (this as any).resolvePrimitive(this.url);
+      return this.resolvePrimitive(this.url) as string | null;
     },
 
     classes(): Record<string, boolean> {
       const usageHint = this.usageHint;
-      const theme = (this as any).theme as Types.Theme;
 
       return Styles.merge(
-        theme.components.Image.all,
-        usageHint ? theme.components.Image[usageHint as keyof typeof theme.components.Image] : {}
+        this.theme.components.Image.all,
+        usageHint ? this.theme.components.Image[usageHint as keyof typeof this.theme.components.Image] : {}
       );
     },
 

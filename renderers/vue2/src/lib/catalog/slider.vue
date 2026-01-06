@@ -40,12 +40,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UISlider',
 
   mixins: [DynamicComponentMixin],
@@ -77,7 +76,7 @@ export default Vue.extend({
 
   computed: {
     currentValue(): number {
-      const resolved = (this as any).resolvePrimitive(this.value);
+      const resolved = this.resolvePrimitive(this.value);
       if (typeof resolved === 'number') {
         return resolved;
       }
@@ -86,7 +85,7 @@ export default Vue.extend({
   },
 
   created() {
-    this.inputId = (this as any).getUniqueId('a2ui-slider');
+    this.inputId = this.getUniqueId('a2ui-slider');
   },
 
   methods: {
@@ -96,7 +95,7 @@ export default Vue.extend({
 
       if (!target || !path) return;
 
-      (this as any).setData(path, target.valueAsNumber);
+      this.setData(path, target.valueAsNumber);
     },
   },
 });

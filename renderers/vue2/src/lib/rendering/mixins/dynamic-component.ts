@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import Vue from 'vue';
+import Vue, { VueConstructor } from 'vue';
 import type { Types, Primitives } from '@a2ui/lit/0.8';
 import type { Theme } from '../theming';
 import type { MessageProcessor } from '../../data/processor';
@@ -27,7 +27,7 @@ let idCounter = 0;
  * Interface describing the properties provided by the DynamicComponentMixin.
  * Components using the mixin should extend this interface for proper typing.
  */
-export interface DynamicComponentInstance {
+export interface DynamicComponentInstance extends Vue {
   // Injected properties
   processor: MessageProcessor;
   theme: Theme;
@@ -43,6 +43,22 @@ export interface DynamicComponentInstance {
   getUniqueId(prefix: string): string;
   setData(path: string, value: Types.DataValue): void;
 }
+
+/**
+ * Typed Vue constructor for components using DynamicComponentMixin.
+ * Use this instead of Vue.extend() to get proper typing for mixin methods.
+ *
+ * Usage:
+ * ```typescript
+ * import { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
+ *
+ * export default DynamicComponentVue.extend({
+ *   // ... component definition
+ *   // this.resolvePrimitive, this.sendAction, etc. are properly typed
+ * });
+ * ```
+ */
+export const DynamicComponentVue = Vue as VueConstructor<DynamicComponentInstance>;
 
 /**
  * Vue mixin that provides common functionality for all A2UI dynamic components.
@@ -65,7 +81,7 @@ export interface DynamicComponentInstance {
  * });
  * ```
  */
-const DynamicComponentMixin = Vue.extend({
+const DynamicComponentMixin = DynamicComponentVue.extend({
   inject: {
     processor: { from: PROCESSOR_KEY },
     theme: { from: THEME_KEY },
@@ -113,7 +129,7 @@ const DynamicComponentMixin = Vue.extend({
       } else if ((value as any).literal != null) {
         return (value as any).literal;
       } else if (value.path) {
-        return (this as any).processor.getData(
+        return this.processor.getData(
           this.component,
           value.path,
           this.surfaceId ?? undefined
@@ -141,7 +157,7 @@ const DynamicComponentMixin = Vue.extend({
       const component = this.component as Types.AnyComponentNode;
       const surfaceId = this.surfaceId ?? undefined;
       const context: Record<string, unknown> = {};
-      const processor = (this as any).processor as MessageProcessor;
+      const processor = this.processor;
 
       if (action.context) {
         for (const item of action.context) {
@@ -194,8 +210,7 @@ const DynamicComponentMixin = Vue.extend({
       path: string,
       value: Types.DataValue
     ): void {
-      const processor = (this as any).processor as MessageProcessor;
-      (processor).setData(this.component as Types.AnyComponentNode, path, value, this.surfaceId ?? undefined);
+      this.processor.setData(this.component as Types.AnyComponentNode, path, value, this.surfaceId ?? undefined);
     },
   },
 });

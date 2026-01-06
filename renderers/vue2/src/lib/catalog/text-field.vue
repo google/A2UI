@@ -38,12 +38,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import type { PropType } from 'vue';
 import type { Primitives, Types } from '@a2ui/lit/0.8';
-import DynamicComponentMixin from '../rendering/mixins/dynamic-component';
+import DynamicComponentMixin, { DynamicComponentVue } from '../rendering/mixins/dynamic-component';
 
-export default Vue.extend({
+export default DynamicComponentVue.extend({
   name: 'A2UITextField',
 
   mixins: [DynamicComponentMixin],
@@ -71,12 +70,12 @@ export default Vue.extend({
 
   computed: {
     inputValue(): string {
-      const value = (this as any).resolvePrimitive(this.text);
-      return value ?? '';
+      const value = this.resolvePrimitive(this.text);
+      return (value as string) ?? '';
     },
 
     resolvedLabel(): string | null {
-      return (this as any).resolvePrimitive(this.label);
+      return this.resolvePrimitive(this.label) as string | null;
     },
 
     nativeInputType(): string {
@@ -94,7 +93,7 @@ export default Vue.extend({
   },
 
   created() {
-    this.inputId = (this as any).getUniqueId('a2ui-input');
+    this.inputId = this.getUniqueId('a2ui-input');
   },
 
   methods: {
@@ -104,7 +103,7 @@ export default Vue.extend({
 
       if (!target || !path) return;
 
-      (this as any).setData(path, target.value);
+      this.setData(path, target.value);
     },
   },
 });
