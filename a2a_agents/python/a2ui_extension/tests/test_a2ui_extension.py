@@ -100,3 +100,13 @@ def test_try_activate_a2ui_extension_not_requested():
 
     assert not a2ui_extension.try_activate_a2ui_extension(context)
     context.add_activated_extension.assert_not_called()
+
+
+def test_wrap_as_json_array():
+    schema = {"type": "object"}
+    wrapped = a2ui_extension.wrap_as_json_array(schema)
+    assert wrapped == {"type": "array", "items": schema}
+
+    import pytest
+    with pytest.raises(ValueError):
+        a2ui_extension.wrap_as_json_array({})
