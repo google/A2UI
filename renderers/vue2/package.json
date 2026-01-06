@@ -1,7 +1,7 @@
 {
   "name": "@a2ui/vue2",
   "version": "0.8.0",
-  "description": "A2UI Vue 2 Renderer - Render A2UI components using Vue 2.6 with Options API",
+  "description": "A2UI Vue 2 Renderer - Render A2UI components using Vue 2.6 with Options API By Zoulx",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.cjs",
