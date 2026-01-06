@@ -5,10 +5,16 @@ This directory contains test cases and a runner for validating the A2UI JSON sch
 ## Prerequisites
 
 - **Python 3**
-- **ajv-cli**: The tests use `ajv` to perform schema validation.
-  ```bash
-  npm install -g ajv-cli
-  ```
+- **pnpm**: The tests use `pnpm` to run `ajv-cli`.
+
+## Installation (Optional)
+
+To speed up test execution, install the dependencies locally:
+
+```bash
+cd specification/0.9/test
+pnpm install
+```
 
 ## Running Tests
 

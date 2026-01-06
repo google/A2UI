@@ -22,10 +22,11 @@
         "returnType": {
           "type": "string",
           "description": "The expected return type of the function call.",
-          "enum": ["string", "number", "boolean", "array", "object", "any"]
+          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "default": "boolean"
         }
       },
-      "required": ["call", "returnType"],
+      "required": ["call"],
       "additionalProperties": false
     },
     "DynamicString": {
@@ -46,7 +47,8 @@
             {
               "properties": {
                 "returnType": { "const": "string" }
-              }
+              },
+              "required": ["returnType"]
             }
           ]
         }
@@ -70,7 +72,8 @@
             {
               "properties": {
                 "returnType": { "const": "number" }
-              }
+              },
+              "required": ["returnType"]
             }
           ]
         }
@@ -121,7 +124,8 @@
             {
               "properties": {
                 "returnType": { "const": "array" }
-              }
+              },
+              "required": ["returnType"]
             }
           ]
         }

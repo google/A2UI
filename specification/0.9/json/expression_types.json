@@ -22,7 +22,8 @@
         "returnType": {
           "type": "string",
           "enum": ["string", "number", "boolean", "array", "object", "any"],
-          "description": "The expected return type."
+          "description": "The expected return type. Defaults to 'boolean' if not specified.",
+          "default": "boolean"
         }
       },
       "required": ["call"]
@@ -81,8 +82,7 @@
             {
               "properties": {
                 "returnType": { "const": "boolean" }
-              },
-              "required": ["returnType"]
+              }
             }
           ]
         },

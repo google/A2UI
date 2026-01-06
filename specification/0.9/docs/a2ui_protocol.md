@@ -397,7 +397,6 @@ Input components (like `TextField`, `CheckBox`) can define a list of checks. Eac
   {
     "call": "required",
     "args": { "value": { "path": "/formData/zip" } },
-    "returnType": "boolean",
     "message": "Zip code is required"
   },
   {
@@ -406,7 +405,6 @@ Input components (like `TextField`, `CheckBox`) can define a list of checks. Eac
       "value": { "path": "/formData/zip" },
       "pattern": "^[0-9]{5}$"
     },
-    "returnType": "boolean",
     "message": "Must be a 5-digit zip code"
   }
 ]
@@ -423,11 +421,11 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
   "checks": [
     {
       "and": [
-        { "call": "required", "args": { "value": { "path": "/formData/terms" } }, "returnType": "boolean" },
+        { "call": "required", "args": { "value": { "path": "/formData/terms" } } },
         {
           "or": [
-            { "call": "required", "args": { "value": { "path": "/formData/email" } }, "returnType": "boolean" },
-            { "call": "required", "args": { "value": { "path": "/formData/phone" } }, "returnType": "boolean" }
+            { "call": "required", "args": { "value": { "path": "/formData/email" } } },
+            { "call": "required", "args": { "value": { "path": "/formData/phone" } } }
           ]
         }
       ],
