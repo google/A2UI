@@ -278,23 +278,11 @@ export class Validator {
   }
 
   private validateUpdateDataModel(data: any, errors: string[]) {
-    // Schema validation handles types, required fields (surfaceId, op), and extra properties.
-    // We only need to validate the conditional requirement of 'value' based on 'op'.
-
-    if (data.op === "remove") {
-      if (data.value !== undefined) {
-        errors.push(
-          "updateDataModel 'value' property must not be present when op is 'remove'."
-        );
-      }
-    } else {
-      // op is 'add' or 'replace' (schema validates enum values)
-      if (data.value === undefined) {
-        errors.push(
-          `updateDataModel 'value' property is required when op is '${data.op}'.`
-        );
-      }
-    }
+    // Schema validation handles types and basic structure.
+    // 'op' is removed in v0.9, so we don't need to validate it or its relationship with 'value'.
+    // We strictly rely on the schema for this message type now.
+    // Check if 'value' is present. If it is NOT present, it implies a deletion (if path is present).
+    // If path is missing and value is missing, it deletes the entire root (valid but rare).
   }
 
   private validateComponent(
