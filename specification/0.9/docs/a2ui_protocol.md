@@ -82,7 +82,7 @@ A2UI v0.9 is defined by three interacting JSON schemas.
 
 The [`common_types.json`] schema defines reusable primitives used throughout the protocol.
 
-- **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string ([JSON Pointer]).
+- **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `CallExpression` (function call).
 - **`childrenProperty`**: Defines how containers hold children. It supports:
 
   - `array`: A static array of string component IDs.
@@ -281,6 +281,8 @@ By default, all components operate in the **Root Scope**.
 - The Root Scope corresponds to the top-level object of the `value` provided in `updateDataModel`.
 - Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
 
+
+
 #### Collection Scopes (Relative Paths)
 
 When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `childrenProperty`, it creates a new **Child Scope** for each item in the bound array.
@@ -380,29 +382,31 @@ It is critical to note that Two-Way Binding is **local to the client**.
 4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `userAction` payload.
 
 
-## Client-Side Validation
+## Client-Side Logic & Validation
 
-A2UI v0.9 introduces explicit client-side validation to provide immediate feedback to users without round-tripping to the server.
+A2UI v0.9 generalizes client-side logic into **Functions**. These can be used for validation, data transformation, and dynamic property binding.
 
-### Registered Check Functions
+### Registered Functions
 
-The client registers a set of named **Check Functions** (e.g., `required`, `regex`, `email`) in a `CheckCatalog`. The server references these checks by name. This avoids sending executable code.
+The client registers a set of named **Functions** (e.g., `required`, `regex`, `email`, `add`, `concat`) in a `FunctionCatalog`. The server references these functions by name. This avoids sending executable code.
 
-Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message that can be displayed when the component is rendered.
+Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message that can be displayed when the component is rendered. Note that for validation checks, the function must return a boolean.
 
 ```json
 "checks": [
   {
-    "check": "required",
+    "call": "required",
     "args": { "value": { "path": "/formData/zip" } },
+    "returnType": "boolean",
     "message": "Zip code is required"
   },
   {
-    "check": "regex",
+    "call": "regex",
     "args": {
       "value": { "path": "/formData/zip" },
       "pattern": "^[0-9]{5}$"
     },
+    "returnType": "boolean",
     "message": "Must be a 5-digit zip code"
   }
 ]
@@ -419,11 +423,11 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
   "checks": [
     {
       "and": [
-        { "check": "required", "args": { "value": { "path": "/formData/terms" } } },
+        { "call": "required", "args": { "value": { "path": "/formData/terms" } }, "returnType": "boolean" },
         {
           "or": [
-            { "check": "required", "args": { "value": { "path": "/formData/email" } } },
-            { "check": "required", "args": { "value": { "path": "/formData/phone" } } }
+            { "call": "required", "args": { "value": { "path": "/formData/email" } }, "returnType": "boolean" },
+            { "call": "required", "args": { "value": { "path": "/formData/phone" } }, "returnType": "boolean" }
           ]
         }
       ],
@@ -519,15 +523,15 @@ This message is sent by the client upon connection to inform the server of its c
 **Properties:**
 
 - `supportedCatalogIds` (array of strings, required): URIs of supported component catalogs.
-- `supportedCheckCatalogIds`: A list of URIs for the check catalogs supported by the client.
+- `supportedFunctionCatalogIds`: A list of URIs for the function catalogs supported by the client.
 - `inlineCatalogs`: An array of inline component catalog definitions provided directly by the client (useful for custom or ad-hoc components).
-- `inlineCheckCatalogs`: An array of check catalog definitions provided directly by the client (useful for custom or ad-hoc checks).
+- `inlineFunctionCatalogs`: An array of function catalog definitions provided directly by the client (useful for custom or ad-hoc functions).
 
 ### `error`
 
 This message is used to report a client-side error to the server.
 
-[`standard_check_catalog.json`]: ../json/standard_check_catalog.json
+[`standard_function_catalog.json`]: ../json/standard_function_catalog.json
 [`common_types.json`]: ../json/common_types.json
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json

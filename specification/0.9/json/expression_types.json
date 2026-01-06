@@ -1,30 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.dev/specification/0.9/check_types.json",
-  "title": "A2UI Check Types",
-  "description": "Type definitions for A2UI client-side checks and logic expressions.",
+  "$id": "https://a2ui.dev/specification/0.9/expression_types.json",
+  "title": "A2UI Expression Types",
+  "description": "Type definitions for A2UI client-side function calls and logic expressions.",
   "$defs": {
-    "CheckCall": {
+    "FunctionCall": {
       "type": "object",
-      "description": "Invokes a named check function on the client.",
+      "description": "Invokes a named function on the client.",
       "properties": {
-        "check": {
+        "call": {
           "type": "string",
-          "description": "The name of the check function to call."
+          "description": "The name of the function to call."
         },
         "args": {
           "type": "object",
           "description": "Arguments passed to the function.",
           "additionalProperties": {
-            "$ref": "common_types.json#/$defs/contextValue"
+            "$ref": "common_types.json#/$defs/DynamicValue"
           }
+        },
+        "returnType": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "description": "The expected return type."
         }
       },
-      "required": ["check"]
+      "required": ["call"]
     },
     "CheckRule": {
       "type": "object",
-      "description": "A single check rule applied to an input component.",
+      "description": "A single validaton rule applied to an input component.",
       "unevaluatedProperties": false,
       "allOf": [
         { "$ref": "#/$defs/LogicExpression" },
@@ -70,7 +75,17 @@
           },
           "required": ["not"]
         },
-        { "$ref": "#/$defs/CheckCall" },
+        {
+          "allOf": [
+            { "$ref": "#/$defs/FunctionCall" },
+            {
+              "properties": {
+                "returnType": { "const": "boolean" }
+              },
+              "required": ["returnType"]
+            }
+          ]
+        },
         {
           "properties": {
             "true": { "const": true }
@@ -85,40 +100,45 @@
         }
       ]
     },
-    "CheckDefinition": {
+    "FunctionDefinition": {
       "type": "object",
-      "description": "Describes a check function's interface.",
+      "description": "Describes a function's interface.",
       "properties": {
         "name": {
           "type": "string",
-          "description": "The unique name of the check function."
+          "description": "The unique name of the function."
         },
         "description": {
           "type": "string",
-          "description": "A human-readable description of what the check does."
+          "description": "A human-readable description of what the function does."
         },
         "parameters": {
           "type": "object",
-          "description": "A JSON Schema describing the expected arguments (args) for this check.",
+          "description": "A JSON Schema describing the expected arguments (args) for this function.",
           "$ref": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "returnType": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "description": "The type of value this function returns."
         }
       },
-      "required": ["name", "parameters"]
+      "required": ["name", "parameters", "returnType"]
     },
-    "CheckCatalog": {
+    "FunctionCatalog": {
       "type": "object",
-      "description": "A collection of check definitions.",
+      "description": "A collection of function definitions.",
       "properties": {
         "catalogId": {
           "type": "string",
           "description": "Unique identifier for this catalog."
         },
-        "checks": {
+        "functions": {
           "type": "array",
-          "items": { "$ref": "#/$defs/CheckDefinition" }
+          "items": { "$ref": "#/$defs/FunctionDefinition" }
         }
       },
-      "required": ["catalogId", "checks"]
+      "required": ["catalogId", "functions"]
     }
   }
 }

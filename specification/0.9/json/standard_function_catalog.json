@@ -1,13 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.dev/specification/0.9/standard_check_catalog.json",
-  "title": "A2UI Standard Check Catalog",
-  "description": "Definitions for the standard set of A2UI checks.",
-  "catalogId": "https://a2ui.dev/specification/0.9/standard_check_catalog.json",
-  "checks": [
+  "$id": "https://a2ui.dev/specification/0.9/standard_function_catalog.json",
+  "title": "A2UI Standard Function Catalog",
+  "description": "Definitions for the standard set of A2UI functions.",
+  "catalogId": "https://a2ui.dev/specification/0.9/standard_function_catalog.json",
+  "functions": [
     {
       "name": "required",
       "description": "Checks that the value is not null, undefined, or empty.",
+      "returnType": "boolean",
       "parameters": {
         "allOf": [{ "$ref": "#/$defs/valueParam" }],
         "unevaluatedProperties": false
@@ -16,6 +17,7 @@
     {
       "name": "regex",
       "description": "Checks that the value matches a regular expression string.",
+      "returnType": "boolean",
       "parameters": {
         "allOf": [
           { "$ref": "#/$defs/valueParam" },
@@ -37,6 +39,7 @@
     {
       "name": "length",
       "description": "Checks string length constraints.",
+      "returnType": "boolean",
       "parameters": {
         "allOf": [
           { "$ref": "#/$defs/valueParam" },
@@ -64,6 +67,7 @@
     {
       "name": "numeric",
       "description": "Checks numeric range constraints.",
+      "returnType": "boolean",
       "parameters": {
         "allOf": [
           { "$ref": "#/$defs/valueParam" },
@@ -89,6 +93,7 @@
     {
       "name": "email",
       "description": "Checks that the value is a valid email address.",
+      "returnType": "boolean",
       "parameters": {
         "allOf": [
           { "$ref": "#/$defs/valueParam" },

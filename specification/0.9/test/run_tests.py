@@ -15,9 +15,9 @@ SCHEMAS = {
     "server_to_client.json": os.path.join(SCHEMA_DIR, "server_to_client.json"),
     "common_types.json": os.path.join(SCHEMA_DIR, "common_types.json"),
     "standard_catalog_definition.json": os.path.join(SCHEMA_DIR, "standard_catalog_definition.json"),
-    "check_types.json": os.path.join(SCHEMA_DIR, "check_types.json"),
+    "expression_types.json": os.path.join(SCHEMA_DIR, "expression_types.json"),
     "client_to_server.json": os.path.join(SCHEMA_DIR, "client_to_server.json"),
-    "standard_check_catalog.json": os.path.join(SCHEMA_DIR, "standard_check_catalog.json"),
+    "standard_function_catalog.json": os.path.join(SCHEMA_DIR, "standard_function_catalog.json"),
 }
 
 def validate_ajv(schema_path, data_path, all_schemas):

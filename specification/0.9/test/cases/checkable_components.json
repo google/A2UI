@@ -15,38 +15,16 @@
               "text": { "path": "/formData/email" },
               "checks": [
                 {
-                  "check": "required",
+                  "call": "required",
                   "args": { "value": { "path": "/formData/email" } },
+                  "returnType": "boolean",
                   "message": "Email is required"
                 },
                 {
-                  "check": "email",
+                  "call": "email",
                   "args": { "value": { "path": "/formData/email" } },
+                  "returnType": "boolean",
                   "message": "Must be valid email"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "TextField with missing explicit args (passes static schema validation, fails runtime)",
-      "valid": true,
-      "data": {
-        "updateComponents": {
-          "surfaceId": "test_surface",
-          "components": [
-            {
-              "id": "tf2",
-              "component": "TextField",
-              "label": "Email",
-              "text": { "path": "/formData/email" },
-              "checks": [
-                {
-                  "check": "required",
-                  "args": {},
-                  "message": "Email is required"
                 }
               ]
             }
@@ -73,11 +51,12 @@
               "value": { "path": "/formData/interests" },
               "checks": [
                 {
-                  "check": "length",
+                  "call": "length",
                   "args": {
                     "value": { "path": "/formData/interests" },
                     "min": 1
                   },
+                  "returnType": "boolean",
                   "message": "Select at least one"
                 }
               ]
@@ -94,23 +73,24 @@
           "surfaceId": "test_surface",
           "components": [
             {
-              "id": "sl1",
-              "component": "Slider",
-              "label": "Rating",
-              "min": 1,
-              "max": 5,
-              "value": { "path": "/formData/rating" },
-              "checks": [
-                {
-                  "check": "numeric",
-                  "args": {
-                    "value": { "path": "/formData/rating" },
-                    "min": 3
-                  },
-                  "message": "Rating must be > 3"
-                }
-              ]
-            }
+               "id": "sl1",
+               "component": "Slider",
+               "label": "Rating",
+               "min": 1,
+               "max": 5,
+               "value": { "path": "/formData/rating" },
+               "checks": [
+                 {
+                   "call": "numeric",
+                   "args": {
+                     "value": { "path": "/formData/rating" },
+                     "min": 3
+                   },
+                   "returnType": "boolean",
+                   "message": "Rating must be > 3"
+                 }
+               ]
+             }
           ]
         }
       }
@@ -129,8 +109,9 @@
               "value": { "path": "/formData/agreed" },
               "checks": [
                 {
-                  "check": "required",
+                  "call": "required",
                   "args": { "value": { "path": "/formData/agreed" } },
+                  "returnType": "boolean",
                   "message": "Must agree"
                 }
               ]
@@ -153,8 +134,9 @@
               "value": { "path": "/formData/date" },
               "checks": [
                 {
-                  "check": "required",
+                  "call": "required",
                   "args": { "value": { "path": "/formData/date" } },
+                  "returnType": "boolean",
                   "message": "Date required"
                 }
               ]

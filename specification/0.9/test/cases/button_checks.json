@@ -16,11 +16,23 @@
               "checks": [
                 {
                   "and": [
-                    { "check": "required", "args": { "value": { "path": "/formData/terms" } } },
+                    {
+                      "call": "required",
+                      "args": { "value": { "path": "/formData/terms" } },
+                      "returnType": "boolean"
+                    },
                     {
                       "or": [
-                        { "check": "required", "args": { "value": { "path": "/formData/email" } } },
-                        { "check": "required", "args": { "value": { "path": "/formData/phone" } } }
+                        {
+                          "call": "required",
+                          "args": { "value": { "path": "/formData/email" } },
+                          "returnType": "boolean"
+                        },
+                        {
+                          "call": "required",
+                          "args": { "value": { "path": "/formData/phone" } },
+                          "returnType": "boolean"
+                        }
                       ]
                     }
                   ],
@@ -53,7 +65,7 @@
       }
     },
     {
-      "description": "Button with invalid check structure (missing message)",
+      "description": "Button with invalid check structure (missing returnType)",
       "valid": false,
       "data": {
         "updateComponents": {
@@ -66,7 +78,7 @@
               "action": { "name": "submit" },
               "checks": [
                 {
-                  "check": "required",
+                  "call": "required",
                   "args": { "value": "foo" }
                 }
               ]
