@@ -18,7 +18,7 @@ import { Part, SendMessageSuccessResponse, Task } from "@a2a-js/sdk";
 import { A2AClient } from "@a2a-js/sdk/client";
 import { v0_8 } from "@a2ui/lit";
 
-const A2AUI_MIME_TYPE = "application/json+a2aui";
+const A2UI_MIME_TYPE = "application/json+a2ui";
 
 export class A2UIClient {
   #serverUrl: string;
@@ -67,7 +67,7 @@ export class A2UIClient {
           parts = [{
             kind: "data",
             data: parsed as unknown as Record<string, unknown>,
-            mimeType: A2AUI_MIME_TYPE,
+            mimeType: A2UI_MIME_TYPE,
           } as Part];
         } else {
           parts = [{ kind: "text", text: message }];
@@ -79,7 +79,7 @@ export class A2UIClient {
       parts = [{
         kind: "data",
         data: message as unknown as Record<string, unknown>,
-        mimeType: A2AUI_MIME_TYPE,
+        mimeType: A2UI_MIME_TYPE,
       } as Part];
     }
 
