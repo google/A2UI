@@ -57,7 +57,7 @@
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The text content to display. While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation."
             },
-            "usageHint": {
+            "variant": {
               "type": "string",
               "description": "A hint for the base text style.",
               "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
@@ -85,7 +85,7 @@
               "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
               "enum": ["contain", "cover", "fill", "none", "scale-down"]
             },
-            "usageHint": {
+            "variant": {
               "type": "string",
               "description": "A hint for the image size and style.",
               "enum": [
@@ -245,9 +245,9 @@
             "component": { "const": "Row" },
             "children": {
               "description": "Defines the children. Use an array of strings for a fixed set of children, or a template object to generate children from a data list. Children cannot be defined inline, they must be referred to by ID.",
-              "$ref": "common_types.json#/$defs/childrenProperty"
+              "$ref": "common_types.json#/$defs/ChildList"
             },
-            "distribution": {
+            "justify": {
               "type": "string",
               "description": "Defines the arrangement of children along the main axis (horizontally). Use 'spaceBetween' to push items to the edges, or 'start'/'end'/'center' to pack them together.",
               "enum": [
@@ -260,7 +260,7 @@
                 "stretch"
               ]
             },
-            "alignment": {
+            "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis (vertically). This is similar to the CSS 'align-items' property, but uses camelCase values (e.g., 'start').",
               "enum": ["start", "center", "end", "stretch"]
@@ -282,9 +282,9 @@
             "component": { "const": "Column" },
             "children": {
               "description": "Defines the children. Use an array of strings for a fixed set of children, or a template object to generate children from a data list. Children cannot be defined inline, they must be referred to by ID.",
-              "$ref": "common_types.json#/$defs/childrenProperty"
+              "$ref": "common_types.json#/$defs/ChildList"
             },
-            "distribution": {
+            "justify": {
               "type": "string",
               "description": "Defines the arrangement of children along the main axis (vertically). Use 'spaceBetween' to push items to the edges (e.g. header at top, footer at bottom), or 'start'/'end'/'center' to pack them together.",
               "enum": [
@@ -297,7 +297,7 @@
                 "stretch"
               ]
             },
-            "alignment": {
+            "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis (horizontally). This is similar to the CSS 'align-items' property.",
               "enum": ["center", "end", "start", "stretch"]
@@ -318,14 +318,14 @@
             "component": { "const": "List" },
             "children": {
               "description": "Defines the children. Use an array of strings for a fixed set of children, or a template object to generate children from a data list.",
-              "$ref": "common_types.json#/$defs/childrenProperty"
+              "$ref": "common_types.json#/$defs/ChildList"
             },
             "direction": {
               "type": "string",
               "description": "The direction in which the list items are laid out.",
               "enum": ["vertical", "horizontal"]
             },
-            "alignment": {
+            "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis.",
               "enum": ["start", "center", "end", "stretch"]
@@ -362,7 +362,7 @@
           "type": "object",
           "properties": {
             "component": { "const": "Tabs" },
-            "tabItems": {
+            "tabs": {
               "type": "array",
               "description": "An array of objects, where each object defines a tab with a title and a child component.",
               "items": {
@@ -382,7 +382,7 @@
               }
             }
           },
-          "required": ["component", "tabItems"]
+          "required": ["component", "tabs"]
         }
       ],
       "unevaluatedProperties": false
@@ -414,16 +414,16 @@
           "type": "object",
           "properties": {
             "component": { "const": "Modal" },
-            "entryPointChild": {
+            "trigger": {
               "type": "string",
               "description": "The ID of the component that opens the modal when interacted with (e.g., a button). Do NOT define the component inline."
             },
-            "contentChild": {
+            "content": {
               "type": "string",
               "description": "The ID of the component to be displayed inside the modal. Do NOT define the component inline."
             }
           },
-          "required": ["component", "entryPointChild", "contentChild"]
+          "required": ["component", "trigger", "content"]
         }
       ],
       "unevaluatedProperties": false
@@ -503,11 +503,11 @@
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The text label for the input field."
             },
-            "text": {
+            "value": {
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The value of the text field."
             },
-            "usageHint": {
+            "variant": {
               "type": "string",
               "description": "The type of input field to display.",
               "enum": ["longText", "number", "shortText", "obscured"]
@@ -567,7 +567,7 @@
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The label for the group of options."
             },
-            "usageHint": {
+            "variant": {
               "type": "string",
               "description": "A hint for how the choice picker should be displayed and behave.",
               "enum": ["multipleSelection", "mutuallyExclusive"]

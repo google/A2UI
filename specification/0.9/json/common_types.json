@@ -172,7 +172,7 @@
         { "$ref": "#/$defs/FunctionCall" }
       ]
     },
-    "childrenProperty": {
+    "ChildList": {
       "oneOf": [
         {
           "type": "array",

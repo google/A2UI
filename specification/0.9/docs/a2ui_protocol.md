@@ -82,8 +82,8 @@ A2UI v0.9 is defined by three interacting JSON schemas.
 
 The [`common_types.json`] schema defines reusable primitives used throughout the protocol.
 
-- **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `CallExpression` (function call).
-- **`childrenProperty`**: Defines how containers hold children. It supports:
+- **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `FunctionCall` (function call).
+- **`ChildList`**: Defines how containers hold children. It supports:
 
   - `array`: A static array of string component IDs.
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
@@ -210,7 +210,7 @@ The following example demonstrates a complete interaction to render a Contact Fo
 
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json"}}
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","value":{"path":"/contact/notes"},"variant":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
 {"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
 ```
 
@@ -285,7 +285,7 @@ By default, all components operate in the **Root Scope**.
 
 #### Collection Scopes (Relative Paths)
 
-When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `childrenProperty`, it creates a new **Child Scope** for each item in the bound array.
+When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `ChildList`, it creates a new **Child Scope** for each item in the bound array.
 
 - **Template Definition:** When a container binds its children to a path (e.g., `path: "/users"`), the client iterates over the array found at that location.
 - **Scope Instantiation:** For every item in the array, the client instantiates the template component.
@@ -362,7 +362,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 - User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
 - The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
-- When a `userAction` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
+- When a `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
 
 #### Example: Form Submission Pattern
 
@@ -379,7 +379,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
     }
     ```
 
-4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `userAction` payload.
+4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `action` payload.
 
 
 ## Client-Side Logic & Validation
@@ -502,7 +502,7 @@ If validation fails, the client (or the system acting on behalf of the client) s
 
 The protocol also defines messages that the client can send to the server, which are defined in the [`client_to_server.json`] schema. These are used for handling user interactions and reporting client-side information.
 
-### `userAction`
+### `action`
 
 This message is sent when the user interacts with a component that has an `action` defined, such as a `Button`.
 
@@ -514,7 +514,7 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
-### `clientUiCapabilities`
+### `capabilities`
 
 This message is sent by the client upon connection to inform the server of its capabilities, including supported component catalogs and validation catalogs.
 

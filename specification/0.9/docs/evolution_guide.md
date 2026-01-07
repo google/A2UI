@@ -11,7 +11,7 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 
 ### Summary Table
 
-| Feature               | v0.8.1                                   | v0.9                                                 |
+| Feature               | v0.8.1                                 | v0.9                                                 |
 | :-------------------- | :------------------------------------- | :--------------------------------------------------- |
 | **Philosophy**        | Structured Output / Function Calling   | Prompt-First / In-Context Schema                     |
 | **Message Types**     | `beginRendering`, `surfaceUpdate`, ... | `createSurface`, `updateComponents`, ...             |
@@ -82,19 +82,21 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 **Example:**
 
 **v0.8.1 (`beginRendering`)**:
+
 ```json
 {
   "beginRendering": {
     "surfaceId": "user_profile_card",
     "root": "root",
     "styles": {
-      "primaryColor": "#007bff",
+      "primaryColor": "#007bff"
     }
   }
 }
 ```
 
 **v0.9 (`createSurface`)**:
+
 ```json
 {
   "createSurface": {
@@ -204,9 +206,9 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- **Implicit Typing**: `stringOrPath`, `numberOrPath`, etc. are defined in `common_types.json`.
+- **Implicit Typing**: `DynamicString`, `DynamicNumber`, etc. are defined in `common_types.json`.
 - **Structure**: The schema allows `string` OR `{ "path": "..." }`.
-- **Reason**: Much more natural JSON. `{ "text": "Hello" }` is valid. `{ "text": { "path": "/msg" } }` is valid. No need for `{ "text": { "literalString": "Hello" } }`.
+- **Reason**: Much more natural JSON. `{ "text": "Hello" }` is valid. `{ "value": { "path": "/msg" } }` is valid. No need for `{ "text": { "literalString": "Hello" } }`.
 
 ## 6. Component-Specific Changes
 
@@ -231,9 +233,9 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- Property: **`usageHint`**.
+- Property: **`variant`**.
 - Validation: **`checks`** (generic list of function calls).
-- **Reason**: Consistency with `Text` and `Image` components which already used `usageHint`. Validation is now more flexible and reusable.
+- **Reason**: Consistency with `Text` and `Image` components which already used `variant`. Validation is now more flexible and reusable. Also, `text` was renamed to **`value`** to match other input components.
 
 ### 6.3. ChoicePicker (vs MultipleChoice)
 
@@ -245,8 +247,8 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 **v0.9:**
 
 - Component: **`ChoicePicker`**.
-- Properties: **`value`** (array), **`usageHint`** (enum: `multipleSelection`, `mutuallyExclusive`). The `maxAllowedSelections` property was removed.
-- **Reason**: `ChoicePicker` is a more generic name that covers both radio buttons (mutually exclusive) and checkboxes (multiple selection). The `usageHint` controls the behavior, simplifying the component surface area.
+- Properties: **`value`** (array), **`variant`** (enum: `multipleSelection`, `mutuallyExclusive`). The `maxAllowedSelections` property was removed.
+- **Reason**: `ChoicePicker` is a more generic name that covers both radio buttons (mutually exclusive) and checkboxes (multiple selection). The `variant` controls the behavior, simplifying the component surface area.
 
 ### 6.4. Slider
 
@@ -276,3 +278,20 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
   }
   ```
 - **Result**: The LLM sees this and can "self-correct" in the next turn.
+
+## 8. Property Rename Summary (Migration Quick Reference)
+
+For developers migrating from earlier versions, here is a quick reference of property renaming:
+
+| Component          | Old Name               | New Name       |
+| :----------------- | :--------------------- | :------------- |
+| **Row / Column**   | `distribution`         | `justify`      |
+| **Row / Column**   | `alignment`            | `align`        |
+| **Modal**          | `entryPointChild`      | `trigger`      |
+| **Modal**          | `contentChild`         | `content`      |
+| **Tabs**           | `tabItems`             | `tabs`         |
+| **TextField**      | `text`                 | `value`        |
+| **Many**           | `usageHint`            | `variant`      |
+| **Client Message** | `userAction`           | `action`       |
+| **Client Message** | `clientUiCapabilities` | `capabilities` |
+| **Common Type**    | `childrenProperty`     | `ChildList`    |

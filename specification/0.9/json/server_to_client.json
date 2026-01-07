@@ -12,6 +12,7 @@
   ],
   "$defs": {
     "CreateSurfaceMessage": {
+      "type": "object",
       "properties": {
         "createSurface": {
           "type": "object",
@@ -35,6 +36,7 @@
       "additionalProperties": false
     },
     "UpdateComponentsMessage": {
+      "type": "object",
       "properties": {
         "updateComponents": {
           "type": "object",
@@ -62,6 +64,7 @@
       "additionalProperties": false
     },
     "UpdateDataModelMessage": {
+      "type": "object",
       "properties": {
         "updateDataModel": {
           "type": "object",
@@ -88,6 +91,7 @@
       "additionalProperties": false
     },
     "DeleteSurfaceMessage": {
+      "type": "object",
       "properties": {
         "deleteSurface": {
           "type": "object",

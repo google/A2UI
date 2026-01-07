@@ -5,7 +5,7 @@
   "minProperties": 1,
   "maxProperties": 1,
   "properties": {
-    "userAction": {
+    "action": {
       "type": "object",
       "description": "Reports a user-initiated action from a component.",
       "properties": {
@@ -88,17 +88,17 @@
         }
       ]
     },
-    "clientUiCapabilities": {
-      "$ref": "#/definitions/clientUiCapabilities"
+    "capabilities": {
+      "$ref": "#/definitions/capabilities"
     }
   },
   "oneOf": [
-    { "required": ["userAction"] },
-    { "required": ["clientUiCapabilities"] },
+    { "required": ["action"] },
+    { "required": ["capabilities"] },
     { "required": ["error"] }
   ],
   "definitions": {
-    "clientUiCapabilities": {
+    "capabilities": {
       "type": "object",
       "description": "Describes the client's UI rendering capabilities.",
       "properties": {
@@ -112,15 +112,15 @@
           "description": "An array of inline catalog definitions.",
           "items": { "type": "object" }
         },
-        "supportedCheckCatalogIds": {
+        "supportedFunctionCatalogIds": {
           "type": "array",
-          "description": "A list of check catalog URIs supported by the client.",
+          "description": "A list of function catalog URIs supported by the client.",
           "items": { "type": "string" }
         },
-        "inlineCheckCatalogs": {
+        "inlineFunctionCatalogs": {
           "type": "array",
-          "description": "A list of check catalogs defined inline by the client.",
-          "items": { "$ref": "check_types.json#/$defs/CheckCatalog" }
+          "description": "A list of function catalogs defined inline by the client.",
+          "items": { "$ref": "expression_types.json#/$defs/FunctionCatalog" }
         }
       },
       "required": ["supportedCatalogIds"]
