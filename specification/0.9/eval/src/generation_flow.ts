@@ -53,7 +53,7 @@ Standard Instructions:
 10. Do NOT invent data bindings or action contexts. Only use them if the prompt explicitly asks for them.
 11. Read the 'description' field of each component in the schema carefully. It contains critical usage instructions.
 12. Do NOT define components inline inside 'child' or 'children'. Always use a string ID referencing a separate component definition.
-13. Do NOT use a 'style' property. Use standard properties like 'alignment', 'distribution', 'usageHint', etc.
+13. Do NOT use a 'style' property. Use standard properties like 'align', 'justify', 'variant', etc.
 14. Do NOT invent properties that are not in the schema. Check the 'properties' list for each component type.
 15. Use 'checks' property for validation rules if required.
 ${catalogRules ? `\nInstructions specific to this catalog:\n${catalogRules}` : ""}

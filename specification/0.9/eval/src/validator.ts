@@ -336,14 +336,14 @@ export class Validator {
         checkRefs([component.child]);
         break;
       case "Tabs":
-        if (component.tabItems && Array.isArray(component.tabItems)) {
-          component.tabItems.forEach((tab: any) => {
+        if (component.tabs && Array.isArray(component.tabs)) {
+          component.tabs.forEach((tab: any) => {
             checkRefs([tab.child]);
           });
         }
         break;
       case "Modal":
-        checkRefs([component.entryPointChild, component.contentChild]);
+        checkRefs([component.trigger, component.content]);
         break;
       case "Button":
         checkRefs([component.child]);
