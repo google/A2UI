@@ -381,7 +381,6 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `action` payload.
 
-
 ## Client-Side Logic & Validation
 
 A2UI v0.9 generalizes client-side logic into **Functions**. These can be used for validation, data transformation, and dynamic property binding.

@@ -119,7 +119,7 @@ _A traditional graph representation using an array of node objects. High structu
 }
 ```
 
-### **Option B: Hybrid Adjacency Map (Recommended)**
+### **Option B: Hybrid Adjacency Map (HAM) (Recommended)**
 
 _Minimal overhead. Keys act as definitions. Type is inferred from context. Literals can be inlined or referenced via pointers._
 
@@ -130,12 +130,13 @@ _Minimal overhead. Keys act as definitions. Type is inferred from context. Liter
     "nodes": {
       "root": { "user": "*user_data" },
       "user_data": {
-        "name": "Jane Doe",                   // Literal (Primitive)
-        "roles": "*user_roles",               // Pointer (Graph Node)
-        "tags": ["Active", "Premium"],        // Literals (Simple List)
+        "name": "*user_name",
+        "roles": "*user_roles",
+        "tags": ["Active", "Premium"],
         "settings": "*user_settings"
       },
       "user_roles": ["*role_admin", "*role_editor"],
+      "user_name": "Jane Doe",
       "role_admin": { "title": "Admin", "access": ["all"] },
       "role_editor": { "title": "Editor", "access": ["read", "write"] },
       // Example of a null node
@@ -201,6 +202,75 @@ The Hybrid Adjacency Map format encourages a mixed strategy that balances token 
     "nodes": {
       "user_settings": null
     }
+  }
+}
+```
+
+## **Data Binding**
+
+Data binding in the Hybrid Adjacency Map system replaces JSON Pointers with a graph-based lookup strategy called **Node Binding**. This system is designed to completely eliminate the need for list indices in binding definitions.
+
+### **The `binding` Object**
+
+Instead of a string path, components use a `binding` object to resolve values:
+
+```json
+"text": {
+  "binding": {
+    "node": "user_data",
+    "key": "name"
+  }
+}
+```
+
+- **`node` (Optional):** The absolute ID of the node to bind to. If omitted, the binding applies to the current **Data Context**.
+- **`key` (Optional):** The property name to lookup on the target node.
+  - If the target node is a Map/Object, `key` is required to access a property.
+  - If the target node is a Primitive (String/Number) or if you want the object itself, `key` is omitted.
+
+### **Rule: No Implicit Deep Traversal**
+
+To prevent "index shifting" issues, the `key` property **MUST NOT** be a path. It can only reference a direct property of the node.
+
+- **Valid:** `"key": "address"` (returns the value of address, which might be a pointer `*addr_1`).
+- **Valid:** `"key": "tags"` (returns the list of tags).
+- **Prohibited:** `"key": "address/city"` (Deep traversals must be done by following pointers or binding to the specific node `addr_1`).
+- **Prohibited:** `"key": "tags/0"` (Indices are strictly forbidden).
+
+### **Handling Lists (ChildList)**
+
+Since we cannot use indices (e.g. `users/0`), iterating over lists is handled exclusively by the `ChildList` component type.
+
+1. **Bind to List:** The `ChildList` binds to a property that contains a list (e.g. `user_list`).
+2. **Iterate:** The client iterates over the list.
+3. **Set Context:** For each item, the client sets the **Data Context** for the child template.
+   - If the item is a pointer (`*u1`), the context becomes the node `u1`.
+   - If the item is a literal (e.g. `{"name": "Alice"}`), the context becomes that literal map.
+
+**Example: Templated List**
+
+```json
+// Data
+"nodes": {
+  "root": { "users": ["*u1", "*u2"] },
+  "u1": { "name": "Alice" },
+  "u2": { "name": "Bob" }
+}
+
+// UI
+{
+  "component": "List",
+  "children": {
+    "binding": { "node": "root", "key": "users" },
+    "template": "user_card"
+  }
+},
+{
+  "id": "user_card",
+  "component": "Text",
+  "text": {
+    // Omitting "node" binds to the current item (u1 or u2)
+    "binding": { "key": "name" }
   }
 }
 ```
