@@ -4,8 +4,32 @@
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
   "$defs": {
-    "stringOrPath": {
-      "description": "Represents a value that can be either a literal string or a path to a value in the data model.",
+    "FunctionCall": {
+      "type": "object",
+      "description": "Invokes a named function on the client.",
+      "properties": {
+        "call": {
+          "type": "string",
+          "description": "The name of the function to call."
+        },
+        "args": {
+          "type": "object",
+          "description": "Arguments passed to the function.",
+          "additionalProperties": {
+            "$ref": "#/$defs/DynamicValue"
+          }
+        },
+        "returnType": {
+          "type": "string",
+          "description": "The expected return type of the function call.",
+          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "default": "boolean"
+        }
+      },
+      "required": ["call"]
+    },
+    "DynamicString": {
+      "description": "Represents a value that can be either a literal string, a path to a string in the data model, or a function call returning a string.",
       "oneOf": [
         { "type": "string" },
         {
@@ -15,11 +39,22 @@
           },
           "required": ["path"],
           "additionalProperties": false
+        },
+        {
+          "allOf": [
+            { "$ref": "#/$defs/FunctionCall" },
+            {
+              "properties": {
+                "returnType": { "const": "string" }
+              },
+              "required": ["returnType"]
+            }
+          ]
         }
       ]
     },
-    "numberOrPath": {
-      "description": "Represents a value that can be either a literal number or a path to a value in the data model.",
+    "DynamicNumber": {
+      "description": "Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.",
       "oneOf": [
         { "type": "number" },
         {
@@ -29,11 +64,22 @@
           },
           "required": ["path"],
           "additionalProperties": false
+        },
+        {
+          "allOf": [
+            { "$ref": "#/$defs/FunctionCall" },
+            {
+              "properties": {
+                "returnType": { "const": "number" }
+              },
+              "required": ["returnType"]
+            }
+          ]
         }
       ]
     },
-    "booleanOrPath": {
-      "description": "Represents a value that can be either a literal boolean or a path to a value in the data model.",
+    "DynamicBoolean": {
+      "description": "Represents a value that can be either a literal boolean, a path to a boolean in the data model, or a function call returning a boolean.",
       "oneOf": [
         { "type": "boolean" },
         {
@@ -43,11 +89,21 @@
           },
           "required": ["path"],
           "additionalProperties": false
+        },
+        {
+          "allOf": [
+            { "$ref": "#/$defs/FunctionCall" },
+            {
+              "properties": {
+                "returnType": { "const": "boolean" }
+              }
+            }
+          ]
         }
       ]
     },
-    "stringArrayOrPath": {
-      "description": "Represents a value that can be either a literal array of strings or a path to a value in the data model.",
+    "DynamicStringList": {
+      "description": "Represents a value that can be either a literal array of strings, a path to a string array in the data model, or a function call returning a string array.",
       "oneOf": [
         {
           "type": "array",
@@ -60,6 +116,17 @@
           },
           "required": ["path"],
           "additionalProperties": false
+        },
+        {
+          "allOf": [
+            { "$ref": "#/$defs/FunctionCall" },
+            {
+              "properties": {
+                "returnType": { "const": "array" }
+              },
+              "required": ["returnType"]
+            }
+          ]
         }
       ]
     },
@@ -78,21 +145,34 @@
       },
       "required": ["id"]
     },
-    "contextValue": {
-      "description": "A value that can be a string, number, boolean, or a path to a value.",
+    "Checkable": {
+      "description": "Properties for components that support client-side checks.",
+      "type": "object",
+      "properties": {
+        "checks": {
+          "type": "array",
+          "description": "A list of checks to perform. These are function calls that must return a boolean indicating validity.",
+          "items": { "$ref": "expression_types.json#/$defs/CheckRule" }
+        }
+      }
+    },
+    "DynamicValue": {
+      "description": "A value that can be a literal, a path, or a function call returning any type.",
       "oneOf": [
         { "type": "string" },
         { "type": "number" },
         { "type": "boolean" },
+
         {
           "type": "object",
           "properties": { "path": { "type": "string" } },
           "required": ["path"],
           "additionalProperties": false
-        }
+        },
+        { "$ref": "#/$defs/FunctionCall" }
       ]
     },
-    "childrenProperty": {
+    "ChildList": {
       "oneOf": [
         {
           "type": "array",
