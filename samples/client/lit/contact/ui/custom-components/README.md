@@ -88,7 +88,7 @@ Example: `lib/my_component_schema.json`
 In your client application (e.g., `contact` sample), ensure you import and call the registration function.
 
 ```typescript
-import { registerCustomComponents } from "@a2ui/web-lib/ui";
+import { registerCustomComponents } from "@a2ui/lit/ui";
 
 // Call this once at startup
 registerCustomComponents();
@@ -130,7 +130,7 @@ You can replace standard A2UI components (like `TextField`, `Video`, `Button`) w
     }
 
     // 2. Register with the STANDARD type name
-    import { componentRegistry } from "@a2ui/web-lib/ui";
+    import { componentRegistry } from "@a2ui/lit/ui";
     componentRegistry.register(
       "TextField",
       MyPremiumTextField,

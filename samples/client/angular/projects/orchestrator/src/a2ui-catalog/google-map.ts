@@ -15,7 +15,7 @@
  */
 
 import { DynamicComponent } from '@a2ui/angular';
-import { Types, Primitives } from '@a2ui/web-lib/0.8';
+import { Types, Primitives } from '@a2ui/lit/0.8';
 import { Component, computed, input } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatIconButton } from '@angular/material/button';

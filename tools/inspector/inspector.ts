@@ -30,8 +30,8 @@ import {
   SnackbarUUID,
   SnackType,
 } from "./types/types.js";
-import { v0_8 } from "@a2ui/web-lib";
-import * as UI from "@a2ui/web-lib/ui";
+import { v0_8 } from "@a2ui/lit";
+import * as UI from "@a2ui/lit/ui";
 import { map } from "lit/directives/map.js";
 
 const LAST_ITEM_KEY = "last-item-value";
@@ -451,12 +451,12 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
 
     return html`<section id="surfaces">
       ${map(this.#processor.getSurfaces(), ([surfaceId, surface]) => {
-        return html`<a2ui-surface
+      return html`<a2ui-surface
               .surfaceId=${surfaceId}
               .surface=${surface}
               .processor=${this.#processor}
             ></a2-uisurface>`;
-      })}
+    })}
     </section>`;
   }
 
@@ -464,33 +464,33 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
     return html`<textarea
         name="instructions"
         class=${classMap({
-          "typography-w-400": true,
-          "typography-f-s": true,
-          "typography-sz-bl": true,
-        })}
+      "typography-w-400": true,
+      "typography-f-s": true,
+      "typography-sz-bl": true,
+    })}
         @keydown=${(evt: KeyboardEvent) => {
-          if (evt.key !== "Enter" || evt.shiftKey) {
-            return;
-          }
+        if (evt.key !== "Enter" || evt.shiftKey) {
+          return;
+        }
 
-          if (!(evt.target instanceof HTMLTextAreaElement)) {
-            return;
-          }
+        if (!(evt.target instanceof HTMLTextAreaElement)) {
+          return;
+        }
 
-          evt.preventDefault();
-          const form = evt.target.closest("form")!;
-          form.dispatchEvent(new SubmitEvent("submit", { bubbles: true }));
-        }}
+        evt.preventDefault();
+        const form = evt.target.closest("form")!;
+        form.dispatchEvent(new SubmitEvent("submit", { bubbles: true }));
+      }}
         placeholder="Provide the A2UI payload."
         .value=${this.#lastItem}
       ></textarea>
       <button
         ?disabled=${this.#requesting}
         class=${classMap({
-          "typography-w-500": true,
-          "typography-f-s": true,
-          "typography-sz-bl": true,
-        })}
+        "typography-w-500": true,
+        "typography-f-s": true,
+        "typography-sz-bl": true,
+      })}
         type="submit"
       >
         Generate UI
@@ -517,30 +517,30 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
           id="controls-container"
           slot="slot-0"
           @submit=${async (evt: SubmitEvent) => {
-            evt.preventDefault();
-            const formData = new FormData(evt.target as HTMLFormElement);
-            const instructions = formData.get("instructions");
-            if (instructions === null) {
-              return;
-            }
+        evt.preventDefault();
+        const formData = new FormData(evt.target as HTMLFormElement);
+        const instructions = formData.get("instructions");
+        if (instructions === null) {
+          return;
+        }
 
-            try {
-              const instructionsStr = instructions as string;
+        try {
+          const instructionsStr = instructions as string;
 
-              globalThis.localStorage.setItem(LAST_ITEM_KEY, instructionsStr);
-              const messages = JSON.parse(instructionsStr);
+          globalThis.localStorage.setItem(LAST_ITEM_KEY, instructionsStr);
+          const messages = JSON.parse(instructionsStr);
 
-              console.log(messages);
+          console.log(messages);
 
-              this.#processor.clearSurfaces();
-              console.log(this.#processor.getSurfaces().size);
-              this.#processor.processMessages(messages);
-              this.requestUpdate();
-            } catch (err) {
-              console.warn(err);
-              this.snackbar(html`Unable to render UI`, SnackType.ERROR);
-            }
-          }}
+          this.#processor.clearSurfaces();
+          console.log(this.#processor.getSurfaces().size);
+          this.#processor.processMessages(messages);
+          this.requestUpdate();
+        } catch (err) {
+          console.warn(err);
+          this.snackbar(html`Unable to render UI`, SnackType.ERROR);
+        }
+      }}
         >
           <h2 class="typography-w-400 typography-f-s typography-sz-tl">
             Enter your A2UI
@@ -562,19 +562,19 @@ export class A2UILayoutInspector extends SignalWatcher(LitElement) {
   #renderSnackbar() {
     return html`<ui-snackbar
       ${ref((el: Element | undefined) => {
-        if (!el) {
-          this.#snackbar = undefined;
-        }
+      if (!el) {
+        this.#snackbar = undefined;
+      }
 
-        this.#snackbar = el as Snackbar;
-        for (const pendingMessage of this.#pendingSnackbarMessages) {
-          const { message, id, persistent, type, actions } =
-            pendingMessage.message;
-          this.snackbar(message, type, actions, persistent, id);
-        }
+      this.#snackbar = el as Snackbar;
+      for (const pendingMessage of this.#pendingSnackbarMessages) {
+        const { message, id, persistent, type, actions } =
+          pendingMessage.message;
+        this.snackbar(message, type, actions, persistent, id);
+      }
 
-        this.#pendingSnackbarMessages.length = 0;
-      })}
+      this.#pendingSnackbarMessages.length = 0;
+    })}
     ></ui-snackbar>`;
   }
 

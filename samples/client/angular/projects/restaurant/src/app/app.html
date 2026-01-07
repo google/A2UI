@@ -16,12 +16,14 @@
 
 @if (client.isLoading()) {
   <div class="pending">
-    <span class="g-icon filled-heavy rotate">progress_activity</span>
-    Awaiting an answer...
+    <div class="spinner"></div>
+    <div class="loading-text">{{loadingTextLines[loadingTextIndex()]}}</div>
   </div>
 } @else if (!hasData()) {
   <form (submit)="handleSubmit($event)">
-    <h1>Restaurant Finder</h1>
+    <img class="hero-img" src="hero-img" src="hero.png" alt="Image of the restaurant">
+
+    <h1 class="app-title">Restaurant Finder</h1>
     <div>
       <input
         required
@@ -32,7 +34,6 @@
         type="text"
         [disabled]="client.isLoading()"
       />
-
       <button type="submit" [disabled]="client.isLoading()">
         <span class="g-icon filled-heavy">send</span>
       </button>
@@ -47,3 +48,7 @@
     }
   </div>
 }
+
+<button (click)="toggleTheme(toggleButton)" class="theme-toggle" #toggleButton>
+  <span class="g-icon filled-heavy"></span>
+</button>

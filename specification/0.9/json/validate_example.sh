@@ -14,25 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SCHEMA_DIR="/Users/gspencer/code/a2ui/specification/0.9"
-SERVER_SCHEMA="${SCHEMA_DIR}/server_to_client.json"
-COMMON_TYPES="${SCHEMA_DIR}/common_types.json"
-COMPONENT_CATALOG="${SCHEMA_DIR}/component_catalog.json"
-EXAMPLE_FILE="${SCHEMA_DIR}/contact_form_example.jsonl"
-TEMP_FILE="${SCHEMA_DIR}/temp_message.json"
-
+SERVER_SCHEMA="server_to_client.json"
+COMMON_TYPES="common_types.json"
+COMPONENT_CATALOG="standard_catalog_definition.json"
+EXAMPLE_FILE="contact_form_example.jsonl"
+i=0
 while read -r line; do
+  ((i++))
+  TEMP_FILE="example_line_${i}.json"
   echo "$line" | jq '.' > "${TEMP_FILE}"
   if [ $? -ne 0 ]; then
     echo "jq failed to parse line: $line"
+    rm "${TEMP_FILE}"
     continue
   fi
-  ajv validate --verbose -s "${SERVER_SCHEMA}" -r "${COMMON_TYPES}" -r "${COMPONENT_CATALOG}" --spec=draft2020 -d "${TEMP_FILE}"
+  pnpx ajv-cli validate --verbose --strict=false -s "${SERVER_SCHEMA}" -r "${COMMON_TYPES}" -r "${COMPONENT_CATALOG}" -r "expression_types.json" --spec=draft2020 -d "${TEMP_FILE}"
   if [ $? -ne 0 ]; then
     echo "Validation failed for line: $line"
   fi
+  rm "${TEMP_FILE}"
 done < "${EXAMPLE_FILE}"
-
-rm "${TEMP_FILE}"
 
 echo "Validation complete."

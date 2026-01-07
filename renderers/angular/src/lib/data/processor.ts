@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Data, Types } from '@a2ui/web-lib/0.8';
+import { Data, Types } from '@a2ui/lit/0.8';
 import { Injectable } from '@angular/core';
 import { firstValueFrom, Subject } from 'rxjs';
 

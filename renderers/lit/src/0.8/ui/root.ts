@@ -348,7 +348,6 @@ export class Root extends SignalWatcher(LitElement) {
             .dataContextPath=${node.dataContextPath ?? ""}
             .enableDate=${node.properties.enableDate ?? true}
             .enableTime=${node.properties.enableTime ?? true}
-            .outputFormat=${node.properties.outputFormat}
             .value=${node.properties.value}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-datetimeinput>`;

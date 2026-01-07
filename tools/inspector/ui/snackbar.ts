@@ -20,7 +20,7 @@ import { SnackbarMessage, SnackbarUUID, SnackType } from "../types/types";
 import { repeat } from "lit/directives/repeat.js";
 import { SnackbarActionEvent } from "../events/events";
 import { classMap } from "lit/directives/class-map.js";
-import { v0_8 } from "@a2ui/web-lib";
+import { v0_8 } from "@a2ui/lit";
 
 const DEFAULT_TIMEOUT = 8000;
 
@@ -236,63 +236,63 @@ export class Snackbar extends LitElement {
     }
 
     return html` ${icon
-        ? html`<span
+      ? html`<span
             class=${classMap({
-              "g-icon": true,
-              round: true,
-              filled: true,
-              rotate,
-            })}
+        "g-icon": true,
+        round: true,
+        filled: true,
+        rotate,
+      })}
             >${icon}</span
           >`
-        : nothing}
+      : nothing}
       <div id="messages">
         ${repeat(
-          this.#messages,
-          (message) => message.id,
-          (message) => {
-            return html`<div>${message.message}</div>`;
-          }
-        )}
+        this.#messages,
+        (message) => message.id,
+        (message) => {
+          return html`<div>${message.message}</div>`;
+        }
+      )}
       </div>
       <div id="actions">
         ${repeat(
-          this.#messages,
-          (message) => message.id,
-          (message) => {
-            if (!message.actions) {
-              return nothing;
-            }
+        this.#messages,
+        (message) => message.id,
+        (message) => {
+          if (!message.actions) {
+            return nothing;
+          }
 
-            return html`${repeat(
-              message.actions,
-              (action) => action.value,
-              (action) => {
-                return html`<button
+          return html`${repeat(
+            message.actions,
+            (action) => action.value,
+            (action) => {
+              return html`<button
                   @click=${() => {
-                    this.hide();
-                    this.dispatchEvent(
-                      new SnackbarActionEvent(
-                        action.action,
-                        action.value,
-                        action.callback
-                      )
-                    );
-                  }}
+                  this.hide();
+                  this.dispatchEvent(
+                    new SnackbarActionEvent(
+                      action.action,
+                      action.value,
+                      action.callback
+                    )
+                  );
+                }}
                 >
                   ${action.title}
                 </button>`;
-              }
-            )}`;
-          }
-        )}
+            }
+          )}`;
+        }
+      )}
       </div>
       <button
         id="close"
         @click=${() => {
-          this.hide();
-          this.dispatchEvent(new SnackbarActionEvent("dismiss"));
-        }}
+        this.hide();
+        this.dispatchEvent(new SnackbarActionEvent("dismiss"));
+      }}
       >
         <span class="g-icon">close</span>
       </button>`;
