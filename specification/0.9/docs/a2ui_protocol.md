@@ -82,11 +82,11 @@ A2UI v0.9 is defined by three interacting JSON schemas.
 
 The [`common_types.json`] schema defines reusable primitives used throughout the protocol.
 
-- **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `FunctionCall` (function call).
+- **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `binding` object (Node Binding), or a `FunctionCall` (function call).
 - **`ChildList`**: Defines how containers hold children. It supports:
 
   - `array`: A static array of string component IDs.
-  - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
+  - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data `binding` object).
 
 - **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
 - **`weight`**: The relative weight of a component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column. Defined here so that all weights are consistent and can be used for data binding.
@@ -163,13 +163,14 @@ This message provides a list of UI components to be added to or updated within a
 
 ### `updateDataModel`
 
-This message is used to send or update the data that populates the UI components. It allows the server to change the UI's content without resending the entire component structure.
+This message is used to send or update the data that populates the UI components. It uses the **Hybrid Adjacency Map** format, which treats data as a flat graph of nodes.
 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface this data model update applies to.
-- `path` (string, optional): A JSON Pointer to a specific location within the data model (e.g., `/user/name`). If omitted or set to `/`, the entire data model for the surface will be replaced.
-- `value` (object): The data to be updated in the data model. If present, the value at `path` is updated/created. If this field is omitted, the data at `path` is **removed**.
+- `nodes` (object, required): A map where keys are Node IDs and values are the node content.
+    - To **delete** a node, prefix the key with `!` and set the value to `null`.
+    - To **reference** another node (inside a list or object), use a string prefixed with `*` (e.g., `"*user_profile"`).
 
 **Example:**
 
@@ -177,10 +178,12 @@ This message is used to send or update the data that populates the UI components
 {
   "updateDataModel": {
     "surfaceId": "user_profile_card",
-    "path": "/user",
-    "value": {
-      "name": "Jane Doe",
-      "title": "Software Engineer"
+    "nodes": {
+      "root": { "user": "*user_data" },
+      "user_data": {
+        "name": "Jane Doe",
+        "title": "Software Engineer"
+      }
     }
   }
 }
@@ -210,8 +213,8 @@ The following example demonstrates a complete interaction to render a Contact Fo
 
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json"}}
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","value":{"path":"/contact/notes"},"variant":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
-{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"binding":{"node":"contact","key":"firstName"}},"variant":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"binding":{"node":"contact","key":"lastName"}},"variant":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","value":{"binding":{"node":"contact","key":"email"}},"variant":"shortText","checks":[{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"binding":{"node":"contact","key":"phone"}},"variant":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","value":{"binding":{"node":"contact","key":"notes"}},"variant":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
+{"updateDataModel": {"surfaceId": "contact_form_1", "nodes": {"contact": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}}
 ```
 
 ## Component Model
@@ -266,120 +269,92 @@ flowchart TD
 
 ```
 
-## Data Binding, Scope, and State Management
+## Data Binding with Hybrid Adjacency Map
 
-A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model). This section defines the precise mechanics of path resolution, variable scope during iteration, and the specific behaviors of two-way binding for interactive components.
+A2UI v0.9 uses the **Hybrid Adjacency Map (HAM)** for data management. This system treats data as a graph of nodes rather than a monolithic JSON trees, eliminating the need for complex path pointers and list indices.
 
-### Path Resolution & Scope
+### The Hybrid Adjacency Map Structure
 
-Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a pointer is resolved depends on the current **Evaluation Scope**.
+Data is flattened into a single map of **ID-to-Value**.
 
-#### The Root Scope
+1.  **Container:** A single JSON Object (`nodes`).
+2.  **Keys:** The Node IDs (e.g., `"user_data"`, `"role_admin"`).
+3.  **Values:** The Node Content.
+    *   **Literals:** Strings, Numbers, Booleans, Nulls.
+    *   **Structures:** Lists or Maps that can contain literals or **Pointers**.
+4.  **Pointers:** A string prefixed with `*` is a pointer to another node ID (e.g., `"*user_profile"`). Pointers can only appear inside Lists or Maps.
+5.  **Hoisting:** If a literal string starts with `*`, it must be hoisted to its own node and referenced via pointer to avoid ambiguity.
 
-By default, all components operate in the **Root Scope**.
+### Node Binding
 
-- The Root Scope corresponds to the top-level object of the `value` provided in `updateDataModel`.
-- Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
-
-
-
-#### Collection Scopes (Relative Paths)
-
-When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `ChildList`, it creates a new **Child Scope** for each item in the bound array.
-
-- **Template Definition:** When a container binds its children to a path (e.g., `path: "/users"`), the client iterates over the array found at that location.
-- **Scope Instantiation:** For every item in the array, the client instantiates the template component.
-- **Relative Resolution:** Inside these instantiated components, any path that **does not** start with a forward slash `/` is treated as a **Relative Path**.
-
-  - A relative path `firstName` inside a template iterating over `/users` resolves to `/users/0/firstName` for the first item, `/users/1/firstName` for the second, etc.
-
-- **Mixing Scopes:** Components inside a Child Scope can still access the Root Scope by using an Absolute Path.
-
-#### Example: Scope Resolution
-
-**Data Model:**
+Components bind to data using a **Node Binding** object, not a path string.
 
 ```json
-{
-  "company": "Acme Corp",
-  "employees": [
-    { "name": "Alice", "role": "Engineer" },
-    { "name": "Bob", "role": "Designer" }
-  ]
+"text": {
+  "binding": {
+    "node": "user_data",
+    "key": "name"
+  }
 }
 ```
 
-**Component Definition:**
+-   **`node` (Optional):** The absolute ID of the node to bind to. If omitted, it binds to the current **Data Context**.
+-   **`key` (Optional):** The property name to lookup on the target node. Required if the node is an object/map. Omitted if the node is a primitive or if you want the value/object itself.
+
+**Rule: No Implicit Deep Traversal**
+The `key` MUST be a direct property. You cannot use paths like `"key": "address/city"`. You must bind to the distinct node.
+
+### Handling Lists (ChildList)
+
+Iterating over lists involves the `ChildList` component.
+
+1.  **Bind:** The `ChildList` binds to a property containing a list of items (literals or pointers).
+2.  **Iterate:** For each item in the list:
+    *   If it's a **Pointer** (`*id`), the Data Context for the child template becomes the node `id`.
+    *   If it's a **Literal**, the Data Context becomes that literal value.
+
+**Example:**
 
 ```json
+// Data Model
+"nodes": {
+  "root": { "users": ["*u1", "*u2"] },
+  "u1": { "name": "Alice" },
+  "u2": { "name": "Bob" }
+}
+
+// UI Component
 {
-  "id": "employee_list",
   "component": "List",
   "children": {
-    "path": "/employees",
-    "componentId": "employee_card_template"
+    "binding": { "node": "root", "key": "users" },
+    "template": "user_card"
   }
-},
-{
-  "id": "employee_card_template",
-  "component": "Column",
-  "children": ["name_text", "company_text"]
-},
-{
-  "id": "name_text",
-  "component": "Text",
-  "text": { "path": "name" }
-  // "name" is Relative. Resolves to /employees/N/name
-},
-{
-  "id": "company_text",
-  "component": "Text",
-  "text": { "path": "/company" }
-  // "/company" is Absolute. Resolves to "Acme Corp" globally.
 }
 ```
 
 ### Two-Way Binding & Input Components
 
-Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `ChoicePicker`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
+Input components (`TextField`, `CheckBox`, etc.) imply **Two-Way Binding**.
 
-#### The Read/Write Contract
+1.  **Read:** The component reads the value from the `binding`.
+2.  **Write:** When the user interacts, the client updates the **Node** in the local HAM.
+3.  **Sync:** Changes are sent to the server via `action` messages. The action's `context` can also use bindings to send updated data.
 
-Unlike static display components (like `Text`), input components modify the client-side data model immediately upon user interaction.
+```json
+// TextField Binding
+"value": {
+  "binding": { "node": "form_data", "key": "email" }
+}
 
-1.  **Read (Model -> View):** When the component renders, it reads its value from the bound `path`. If the Data Model is updated via `updateDataModel`, the component re-renders to reflect the new value.
-2.  **Write (View -> Model):** When the user interacts with the component (e.g., types a character, toggles a box), the client **immediately** updates the value at the bound `path` in the local Data Model.
-
-#### Reactivity
-
-Because the local Data Model is the single source of truth, updates from input components are **reactive**.
-
-- If a `TextField` is bound to `/user/name`, and a separate `Text` label is also bound to `/user/name`, the label must update in real-time as the user types in the text field.
-
-#### Server Synchronization
-
-It is critical to note that Two-Way Binding is **local to the client**.
-
-- User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
-- The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
-- When a `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
-
-#### Example: Form Submission Pattern
-
-1.  **Bind:** `TextField` is bound to `/formData/email`.
-2.  **Interact:** User types "jane@example.com". The local model at `/formData/email` is updated.
-3.  **Action:** A "Submit" button has the following action definition:
-
-    ```json
-    "action": {
-      "name": "submit_form",
-      "context": {
-        "email": { "path": "/formData/email" }
-      }
-    }
-    ```
-
-4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `action` payload.
+// Button Action
+"action": {
+  "name": "submit",
+  "context": {
+    "email": { "binding": { "node": "form_data", "key": "email" } }
+  }
+}
+```
 
 ## Client-Side Logic & Validation
 
@@ -395,13 +370,13 @@ Input components (like `TextField`, `CheckBox`) can define a list of checks. Eac
 "checks": [
   {
     "call": "required",
-    "args": { "value": { "path": "/formData/zip" } },
+    "args": { "value": { "binding": {"node": "form_data", "key": "zip"} } },
     "message": "Zip code is required"
   },
   {
     "call": "regex",
     "args": {
-      "value": { "path": "/formData/zip" },
+      "value": { "binding": {"node": "form_data", "key": "zip"} },
       "pattern": "^[0-9]{5}$"
     },
     "message": "Must be a 5-digit zip code"
@@ -420,11 +395,11 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
   "checks": [
     {
       "and": [
-        { "call": "required", "args": { "value": { "path": "/formData/terms" } } },
+        { "call": "required", "args": { "value": { "binding": {"node": "root", "key": "terms"} } } },
         {
           "or": [
-            { "call": "required", "args": { "value": { "path": "/formData/email" } } },
-            { "call": "required", "args": { "value": { "path": "/formData/phone" } } }
+            { "call": "required", "args": { "value": { "binding": {"node": "root", "key": "email"} } } },
+            { "call": "required", "args": { "value": { "binding": {"node": "root", "key": "phone"} } } }
           ]
         }
       ],
@@ -492,7 +467,7 @@ If validation fails, the client (or the system acting on behalf of the client) s
     "code": "VALIDATION_FAILED",
     "surfaceId": "user_profile_card",
     "path": "/components/0/text",
-    "message": "Expected stringOrPath, got integer"
+    "message": "Expected stringOrBinding, got integer"
   }
 }
 ```
