@@ -1,6 +1,19 @@
-# **Design Proposal: Flat Adjacency Map**
+# **Design Proposal: Hybrid Adjacency Map**
 
 This proposal outlines a JSON data structure designed to represent graph data (such as nested objects and lists) in a way that is optimized for Large Language Model (LLM) generation and manipulation.
+
+## **The Logical Data**
+
+Consider this simple nested data structure that we wish to represent and update:
+
+```json
+{
+  "user": {
+    "name": "Jane Doe",
+    "roles": ["Admin", "Editor"]
+  }
+}
+```
 
 ## **Current solution**
 
@@ -21,7 +34,7 @@ The current `updateDataModel` (for v0.9) looks like this:
 }
 ```
 
-Where the "path" is the path to be replaced, in JSON pointer format, which can include indices. For instance to replace the "Editor" item with "Owner", the path would be "/user/roles/1":
+When we want to update this object, we send the path to the object, and the value to be updated. The "path" is the path to be replaced, in JSON pointer format, which can include indices. For instance to replace the "Editor" item with "Owner", the path would be "/user/roles/1":
 
 ```json
 {
@@ -33,35 +46,23 @@ Where the "path" is the path to be replaced, in JSON pointer format, which can i
 }
 ```
 
-But if we had already removed the "Admin" item, the index would actually be "0", and the LLM would have to track that.
+But if we had already removed the "Admin" item, the index would actually be "0", and the LLM would have to track that, and be informed of any external mutations to the list.
 
 ## **The Problem**
 
 LLMs struggle with manipulating standard JSON arrays because they rely on numeric indices.
 
-1. **Hallucination:** Models often lose count in long lists, e.g. modifying index `5` instead of `4`.
-2. **Volatility:** Removing an item at an index shifts the indices of all subsequent items, requiring the model to mentally re-index the entire list to perform further updates.
+1. **Hallucination:** Even without mutations, LLMs often lose count in long lists, e.g. modifying index `5` instead of `4`.
+2. **Non-Local Scope:** Indices are not local to the item in the list, but rather a property of the list. If we add or remove an item in the list, the indices of all subsequent items change, and the LLM needs to be informed of this mutation if it isn't responsible for the mutation.
+3. **Volatility:** Even if it is responsible for the mutation, adding or removing an item shifts the indices of all subsequent items, requiring the model to mentally re-index the entire list to perform further updates.
 
 ## **The Solution**
 
-The robust solution is to treat the data as a graph (Adjacency List) where every item has a unique, stable String ID. This removes the concept of "index" entirely. However, standard adjacency lists are verbose.
+A robust solution is to treat the data as a graph (Adjacency List) where every item has a unique, stable ID. This removes the concept of "index" entirely.  Standard adjacency lists are verbose, however.
 
-This proposal introduces the **Flat Adjacency Map**, a format that retains the stability of explicit IDs while minimizing token overhead.
+This proposal introduces the **Hybrid Adjacency Map**, a format that retains the stability of explicit IDs while minimizing token overhead.
 
-## **The Logical Data**
-
-Consider this simple nested data structure that we wish to represent and update:
-
-```json
-{
-  "user": {
-    "name": "Jane Doe",
-    "roles": ["Admin", "Editor"]
-  }
-}
-```
-
-## **The Flat Adjacency Map Format**
+## **The Hybrid Adjacency Map Format**
 
 The data is flattened into a single map of ID-to-Value.
 
@@ -72,15 +73,15 @@ The data is flattened into a single map of ID-to-Value.
    - **Top-Level Primitive (String, Number, Boolean, Null):** ALWAYS a Literal Value. `null` is a valid value.
    - **List/Map:** A structure that defines relationships.
 
-4. **Deletion:** To delete a node `foo`, you must send the node ID prefixed with `!` and any value (e.g., `"!user_data": null`). Node IDs cannot start with a “!”.
+4. **Deletion:** To delete a node `foo`, you must send the node ID prefixed with `!` and any value (e.g., `"!user_data": null`). Node IDs cannot start with a “!”. The value is ignored, and is typically sent as `null`.
 5. **Pointers:** References to other nodes are allowed _only_ inside Lists or Maps. They are prefixed with a sigil (default: `*`).
-6. **No Escaping (Hoisting Rule):** There is no escape character. If a literal string inside a list or map happens to start with `*`, it **MUST** be hoisted to a top-level node and referenced via pointer.
+6. **No Escaping (Hoisting Rule):** There is no escape character (LLMs are not good at escaping). If a literal string inside a list or map happens to start with `*`, it **MUST** be hoisted to a top-level node and referenced via pointer.
 
 ## **Comparison**
 
 ### **Option A: Standard Adjacency List (Verbose)**
 
-_A traditional graph representation using an array of node objects. High structural overhead due to repeated keys (`"id"`, `"value"`)._
+_A traditional graph representation using an array of node objects. High structural overhead due to repeated keys (`"id"`, `"value"`), and no hybrid representation that allows for literals in lists and maps._
 
 ```json
 {
@@ -90,20 +91,37 @@ _A traditional graph representation using an array of node objects. High structu
       { "id": "root", "value": { "user": "user_data" } },
       {
         "id": "user_data",
-        "value": { "name": "user_name", "roles": "user_roles" }
+        "value": {
+          "name": "user_name",
+          "roles": "user_roles",
+          "tags": "user_tags",
+          "settings": "user_settings"
+        }
       },
       { "id": "user_name", "value": "Jane Doe" },
       { "id": "user_roles", "value": ["role_admin", "role_editor"] },
-      { "id": "role_admin", "value": "Admin" },
-      { "id": "role_editor", "value": "Editor" }
+      { "id": "user_tags", "value": ["tag_active", "tag_premium"] },
+      { "id": "role_admin", "value": { "title": "val_admin", "access": "access_all" } },
+      { "id": "role_editor", "value": { "title": "val_editor", "access": "access_rw" } },
+      { "id": "val_admin", "value": "Admin" },
+      { "id": "val_editor", "value": "Editor" },
+      { "id": "access_all", "value": ["val_all"] },
+      { "id": "access_rw", "value": ["val_read", "val_write"] },
+      { "id": "val_all", "value": "all" },
+      { "id": "val_read", "value": "read" },
+      { "id": "val_write", "value": "write" },
+      { "id": "tag_active", "value": "Active" },
+      { "id": "tag_premium", "value": "Premium" },
+      { "id": "user_settings", "value": null },
+      { "id": "note_ref", "value": "* This is a literal string starting with an asterisk" }
     ]
   }
 }
 ```
 
-### **Option B: Flat Adjacency Map (Optimized)**
+### **Option B: Hybrid Adjacency Map (Recommended)**
 
-_Minimal overhead. Keys act as definitions. Type is inferred from context._
+_Minimal overhead. Keys act as definitions. Type is inferred from context. Literals can be inlined or referenced via pointers._
 
 ```json
 {
@@ -111,22 +129,37 @@ _Minimal overhead. Keys act as definitions. Type is inferred from context._
     "surfaceId": "user_profile_card",
     "nodes": {
       "root": { "user": "*user_data" },
-      "user_data": { "name": "*user_name", "roles": "*user_roles" },
-      "user_name": "Jane Doe",
-      "user_roles": ["*role_admin", "*role_editor", "*note_ref"],
-      "role_admin": "Admin",
-      "role_editor": "Editor",
-      "note_ref": "* This is a literal comment starting with a star"
+      "user_data": {
+        "name": "Jane Doe",                   // Literal (Primitive)
+        "roles": "*user_roles",               // Pointer (Graph Node)
+        "tags": ["Active", "Premium"],        // Literals (Simple List)
+        "settings": "*user_settings"
+      },
+      "user_roles": ["*role_admin", "*role_editor"],
+      "role_admin": { "title": "Admin", "access": ["all"] },
+      "role_editor": { "title": "Editor", "access": ["read", "write"] },
+      // Example of a null node
+      "user_settings": null,
+      // Example of the hoisting rule for a restricted character
+      "note_ref": "* This is a literal string starting with an asterisk"
     }
   }
 }
 ```
 
+## **Hybrid Approach: Efficiency vs. Atomicity**
+
+The Hybrid Adjacency Map format encourages a mixed strategy that balances token efficiency with update granularity:
+
+1.  **Use Literals for Static/Simple Data:** Primitives (strings, numbers) and simple lists (like tags or enums) should remain as literals. This avoids the overhead of creating definitions for every distinct string.
+2.  **Use Pointers (`*`) for Complex/Mutable Data:** Entities that are shared, frequently updated, or complex (like `user_roles`) should be extracted to nodes. This allows you to update a single role (e.g. changing permissions) without re-sending the entire user object or list of roles.
+3.  **LLM Resilience:** LLMs heavily favor standard JSON patterns and may accidentally output literals (e.g. `["Admin"]`) even when instructed to use IDs. A strict "IDs-only" system would break on these "lazy" generations. This hybrid format allows them, so long as they follow the hoisting rule.
+
 ## **Key Benefits**
 
-1. **Safety:** Leaf nodes (the bulk of the data) are treated as raw values. The parser never scans root nodes for pointers, so no accidental "broken link" errors occur if the text content happens to start with `*`.
-2. **Zero Ambiguity:** A string starting with `*` inside a list or map is _always_ a pointer. A string starting with `*` at the root is _always_ a literal.
-3. **Atomic Updates:** Updates are atomic and require no path or index calculation. The LLM simply provides the ID and the new value.
+1. **No Indexing:** The LLM never needs to calculate an index or path to update a node. It simply provides the ID and the new value. To update list order, it rewrites the list node, reordering the IDs. Mutations are localized.
+2. **Safety:** Leaf nodes (the bulk of the data) are treated as raw values. The parser never scans root nodes for pointers, so no accidental "broken link" errors occur if the text content happens to start with `*`.
+3. **Zero Ambiguity:** A string starting with `*` not at the top level (i.e. inside a list or map) is _always_ a pointer. A string starting with `*` at the root is _always_ a literal.
 
 ## **Handling Updates**
 
@@ -143,11 +176,11 @@ _Minimal overhead. Keys act as definitions. Type is inferred from context._
 }
 ```
 
-**Scenario: Deleting a Node** To delete a node (e.g., `role_editor`), the LLM provides the key prefixed with `-` and sets the value to `null`.
+**Scenario: Deleting a Node** To delete a node (e.g., `role_editor`), the LLM provides the key prefixed with `!` and sets the value to `null`.
 
 - This removes the ID `role_editor` from the registry.
 
-```javascript
+```json
 {
   "updateDataModel": {
     "surfaceId": "user_profile_card",
@@ -166,15 +199,15 @@ _Minimal overhead. Keys act as definitions. Type is inferred from context._
   "updateDataModel": {
     "surfaceId": "user_profile_card",
     "nodes": {
-      "user_name": null
+      "user_settings": null
     }
   }
 }
 ```
 
-## **Parsing Logic (Dart)**
+## **Example Parsing Logic (Dart)**
 
-The parser logic handles the special `-` prefix for deletion.
+The parser logic handles the special `!` prefix for deletion.
 
 ```dart
 // A registry of all active nodes
