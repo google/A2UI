@@ -82,8 +82,8 @@ A2UI v0.9 is defined by three interacting JSON schemas.
 
 The [`common_types.json`] schema defines reusable primitives used throughout the protocol.
 
-- **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string ([JSON Pointer]).
-- **`childrenProperty`**: Defines how containers hold children. It supports:
+- **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `FunctionCall` (function call).
+- **`ChildList`**: Defines how containers hold children. It supports:
 
   - `array`: A static array of string component IDs.
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
@@ -169,8 +169,7 @@ This message is used to send or update the data that populates the UI components
 
 - `surfaceId` (string, required): The unique identifier for the UI surface this data model update applies to.
 - `path` (string, optional): A JSON Pointer to a specific location within the data model (e.g., `/user/name`). If omitted or set to `/`, the entire data model for the surface will be replaced.
-- `op` (string, optional): The operation to perform on the data model. Must be 'add', 'replace' or 'remove'. If omitted, defaults to 'replace'.
-- `value` (object): The data to be updated in the data model. This can be any valid JSON object. Required if `op` is 'add' or 'replace'. Not allowed if `op` is 'remove'.
+- `value` (object): The data to be updated in the data model. If present, the value at `path` is updated/created. If this field is omitted, the data at `path` is **removed**.
 
 **Example:**
 
@@ -179,7 +178,6 @@ This message is used to send or update the data that populates the UI components
   "updateDataModel": {
     "surfaceId": "user_profile_card",
     "path": "/user",
-    "op": "replace",
     "value": {
       "name": "Jane Doe",
       "title": "Software Engineer"
@@ -212,8 +210,8 @@ The following example demonstrates a complete interaction to render a Contact Fo
 
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json"}}
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
-{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "op": "replace", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","value":{"path":"/contact/notes"},"variant":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
+{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
 ```
 
 ## Component Model
@@ -283,9 +281,11 @@ By default, all components operate in the **Root Scope**.
 - The Root Scope corresponds to the top-level object of the `value` provided in `updateDataModel`.
 - Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
 
+
+
 #### Collection Scopes (Relative Paths)
 
-When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `childrenProperty`, it creates a new **Child Scope** for each item in the bound array.
+When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `ChildList`, it creates a new **Child Scope** for each item in the bound array.
 
 - **Template Definition:** When a container binds its children to a path (e.g., `path: "/users"`), the client iterates over the array found at that location.
 - **Scope Instantiation:** For every item in the array, the client instantiates the template component.
@@ -341,7 +341,7 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 
 ### Two-Way Binding & Input Components
 
-Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `MultipleChoice`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
+Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `ChoicePicker`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
 
 #### The Read/Write Contract
 
@@ -362,7 +362,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 - User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
 - The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
-- When a `userAction` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
+- When a `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
 
 #### Example: Form Submission Pattern
 
@@ -379,7 +379,61 @@ It is critical to note that Two-Way Binding is **local to the client**.
     }
     ```
 
-4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `userAction` payload.
+4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `action` payload.
+
+
+## Client-Side Logic & Validation
+
+A2UI v0.9 generalizes client-side logic into **Functions**. These can be used for validation, data transformation, and dynamic property binding.
+
+### Registered Functions
+
+The client registers a set of named **Functions** (e.g., `required`, `regex`, `email`, `add`, `concat`) in a `FunctionCatalog`. The server references these functions by name. This avoids sending executable code.
+
+Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message that can be displayed when the component is rendered. Note that for validation checks, the function must return a boolean.
+
+```json
+"checks": [
+  {
+    "call": "required",
+    "args": { "value": { "path": "/formData/zip" } },
+    "message": "Zip code is required"
+  },
+  {
+    "call": "regex",
+    "args": {
+      "value": { "path": "/formData/zip" },
+      "pattern": "^[0-9]{5}$"
+    },
+    "message": "Must be a 5-digit zip code"
+  }
+]
+```
+
+### Example: Button Validation
+
+Buttons can also define `checks`. If any check fails, the button is automatically disabled. This allows the button's state to depend on the validity of data in the model.
+
+```json
+{
+  "component": "Button",
+  "text": "Submit",
+  "checks": [
+    {
+      "and": [
+        { "call": "required", "args": { "value": { "path": "/formData/terms" } } },
+        {
+          "or": [
+            { "call": "required", "args": { "value": { "path": "/formData/email" } } },
+            { "call": "required", "args": { "value": { "path": "/formData/phone" } } }
+          ]
+        }
+      ],
+      "message": "You must accept terms AND provide either email or phone"
+    }
+  ]
+}
+```
 
 ## Standard Component Catalog
 
@@ -448,7 +502,7 @@ If validation fails, the client (or the system acting on behalf of the client) s
 
 The protocol also defines messages that the client can send to the server, which are defined in the [`client_to_server.json`] schema. These are used for handling user interactions and reporting client-side information.
 
-### `userAction`
+### `action`
 
 This message is sent when the user interacts with a component that has an `action` defined, such as a `Button`.
 
@@ -460,11 +514,22 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
+### `capabilities`
+
+This message is sent by the client upon connection to inform the server of its capabilities, including supported component catalogs and validation catalogs.
+
+**Properties:**
+
+- `supportedCatalogIds` (array of strings, required): URIs of supported component catalogs.
+- `supportedFunctionCatalogIds`: A list of URIs for the function catalogs supported by the client.
+- `inlineCatalogs`: An array of inline component catalog definitions provided directly by the client (useful for custom or ad-hoc components).
+- `inlineFunctionCatalogs`: An array of function catalog definitions provided directly by the client (useful for custom or ad-hoc functions).
+
 ### `error`
 
 This message is used to report a client-side error to the server.
 
-[`standard_catalog_definition.json`]: ../json/standard_catalog_definition.json
+[`standard_function_catalog.json`]: ../json/standard_function_catalog.json
 [`common_types.json`]: ../json/common_types.json
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json

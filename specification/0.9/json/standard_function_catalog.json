@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.dev/specification/0.9/standard_function_catalog.json",
+  "title": "A2UI Standard Function Catalog",
+  "description": "Definitions for the standard set of A2UI functions.",
+  "catalogId": "https://a2ui.dev/specification/0.9/standard_function_catalog.json",
+  "functions": [
+    {
+      "name": "required",
+      "description": "Checks that the value is not null, undefined, or empty.",
+      "returnType": "boolean",
+      "parameters": {
+        "allOf": [{ "$ref": "#/$defs/valueParam" }],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "regex",
+      "description": "Checks that the value matches a regular expression string.",
+      "returnType": "boolean",
+      "parameters": {
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" },
+              "pattern": {
+                "type": "string",
+                "description": "The regex pattern to match against."
+              }
+            },
+            "required": ["pattern"]
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "length",
+      "description": "Checks string length constraints.",
+      "returnType": "boolean",
+      "parameters": {
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" },
+              "min": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The minimum allowed length."
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "The maximum allowed length."
+              }
+            },
+            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "numeric",
+      "description": "Checks numeric range constraints.",
+      "returnType": "boolean",
+      "parameters": {
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "number" },
+              "min": {
+                "type": "number",
+                "description": "The minimum allowed value."
+              },
+              "max": {
+                "type": "number",
+                "description": "The maximum allowed value."
+              }
+            },
+            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "email",
+      "description": "Checks that the value is a valid email address.",
+      "returnType": "boolean",
+      "parameters": {
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" }
+            }
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    }
+  ],
+  "$defs": {
+    "valueParam": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "The value to check."
+        }
+      },
+      "required": ["value"]
+    }
+  }
+}
