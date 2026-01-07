@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.dev/specification/0.9/expression_types.json",
+  "title": "A2UI Expression Types",
+  "description": "Type definitions for A2UI client-side function calls and logic expressions.",
+  "$defs": {
+    "CheckRule": {
+      "type": "object",
+      "description": "A single validaton rule applied to an input component.",
+      "unevaluatedProperties": false,
+      "allOf": [
+        { "$ref": "#/$defs/LogicExpression" },
+        {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "The error message to display if the check fails."
+            }
+          },
+          "required": ["message"]
+        }
+      ]
+    },
+    "LogicExpression": {
+      "type": "object",
+      "description": "A boolean expression used for conditional state (e.g. 'enabled').",
+      "oneOf": [
+        {
+          "properties": {
+            "and": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LogicExpression" },
+              "minItems": 1
+            }
+          },
+          "required": ["and"]
+        },
+        {
+          "properties": {
+            "or": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/LogicExpression" },
+              "minItems": 1
+            }
+          },
+          "required": ["or"]
+        },
+        {
+          "properties": {
+            "not": { "$ref": "#/$defs/LogicExpression" }
+          },
+          "required": ["not"]
+        },
+        {
+          "allOf": [
+            { "$ref": "common_types.json#/$defs/FunctionCall" },
+            {
+              "properties": {
+                "returnType": { "const": "boolean" }
+              }
+            }
+          ]
+        },
+        {
+          "properties": {
+            "true": { "const": true }
+          },
+          "required": ["true"]
+        },
+        {
+          "properties": {
+            "false": { "const": true }
+          },
+          "required": ["false"]
+        }
+      ]
+    },
+    "FunctionDefinition": {
+      "type": "object",
+      "description": "Describes a function's interface.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The unique name of the function."
+        },
+        "description": {
+          "type": "string",
+          "description": "A human-readable description of what the function does."
+        },
+        "parameters": {
+          "type": "object",
+          "description": "A JSON Schema describing the expected arguments (args) for this function.",
+          "$ref": "https://json-schema.org/draft/2020-12/schema"
+        },
+        "returnType": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "description": "The type of value this function returns."
+        }
+      },
+      "required": ["name", "parameters", "returnType"]
+    },
+    "FunctionCatalog": {
+      "type": "object",
+      "description": "A collection of function definitions.",
+      "properties": {
+        "catalogId": {
+          "type": "string",
+          "description": "Unique identifier for this catalog."
+        },
+        "functions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FunctionDefinition" }
+        }
+      },
+      "required": ["catalogId", "functions"]
+    }
+  }
+}

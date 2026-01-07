@@ -19,7 +19,8 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
 2. Create an environment file with your API key:
 
    ```bash
-   echo "GEMINI_API_KEY=your_api_key_here" > .env
+   cp .env.example .env
+   # Edit .env with your actual API key (do not commit .env)
    ```
 
 3. Run the agent server:

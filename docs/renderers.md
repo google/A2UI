@@ -30,39 +30,13 @@ A2UI JSON → Renderer → Native Components → Your App
 3. **Render** using platform-native components
 4. **Style** according to your app's theme
 
-## Quick Start
+## Using a Renderer
 
-**Web Components (Lit):**
+Get started integrating A2UI into your application by following the setup guide for your chosen renderer:
 
-```bash
-npm install @a2ui/lit
-```
-
-TODO: Add a quickstart guide
-
-**Angular:**
-
-```bash
-npm install @a2ui/angular
-```
-
-TODO: Add a quickstart guide
-
-**Flutter:**
-
-```bash
-flutter pub add flutter_genui
-```
-
-TODO: Add a quickstart guide
-
-## Adding custom components to a renderer
-
-TODO: Add a guide
-
-## Theming or styling a renderer
-
-TODO: Add a guide
+- **[Lit (Web Components)](guides/client-setup.md#web-components-lit)**
+- **[Angular](guides/client-setup.md#angular)**
+- **[Flutter (GenUI SDK)](guides/client-setup.md#flutter-genui-sdk)**
 
 ## Building a Renderer
 
