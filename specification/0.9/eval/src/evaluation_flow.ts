@@ -88,6 +88,8 @@ Instructions:
 6. If the output is correct and satisfies the request, return "pass": true.
 7. If there are missing components, incorrect values, or structural issues that affect the user experience, return "pass": false and provide a detailed "reason".
 8. In the "reason", explicitly quote the part of the JSON that is incorrect if possible.
+9. The UI protocol strictly requires a flat list of components where children are referenced by their string ID. It explicitly FORBIDS inlining child components.
+10. If the generated output uses string IDs for 'child' or 'children' properties, this is CORRECT. Do NOT report this as an issue.
 
 - You can be lenient in your evaluation for URLs, as the generated output may use a placeholder URL for images and icons.
 - If label text is similar but not exact, you can still pass the test as long as the meaning is the same. (e.g. "Cancel" vs "Cancel Order")
