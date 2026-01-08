@@ -339,6 +339,56 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 }
 ```
 
+### String Interpolation
+
+A2UI supports embedding dynamic expressions directly within string properties (any property defined as a `DynamicString` in the catalog). This allowing for mixing static text with data model values and function results.
+
+#### Syntax
+
+Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
+
+#### Data Model Binding
+
+Values from the data model can be interpolated using their JSON Pointer path.
+
+-   `${/user/profile/name}`: Absolute path.
+-   `${firstName}`: Relative path (resolved against the current collection scope).
+
+**Example:**
+
+```json
+{
+  "id": "user_welcome",
+  "component": "Text",
+  "text": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
+}
+```
+
+#### Client-Side Functions
+
+Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
+
+-   `${now()}`: A function with no arguments.
+-   `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
+
+Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
+
+#### Nested Interpolation
+
+Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
+
+-   **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
+-   **Nested Functions**: `${upper(${now()})}`
+
+#### Type Conversion
+
+When a non-string value is interpolated, the client converts it to a string:
+
+-   **Numbers/Booleans**: Standard string representation.
+-   **Null/Undefined**: An empty string `""`.
+-   **Objects/Arrays**: Stringified as JSON to ensure consistency across different client implementations.
+
+
 ### Two-Way Binding & Input Components
 
 Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `ChoicePicker`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
