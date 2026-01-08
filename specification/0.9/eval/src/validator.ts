@@ -279,10 +279,29 @@ export class Validator {
 
   private validateUpdateDataModel(data: any, errors: string[]) {
     // Schema validation handles types and basic structure.
-    // 'op' is removed in v0.9, so we don't need to validate it or its relationship with 'value'.
-    // We strictly rely on the schema for this message type now.
-    // Check if 'value' is present. If it is NOT present, it implies a deletion (if path is present).
-    // If path is missing and value is missing, it deletes the entire root (valid but rare).
+    if (!data.nodes || typeof data.nodes !== "object") {
+      errors.push("updateDataModel must have a 'nodes' object.");
+      return;
+    }
+
+    for (const key of Object.keys(data.nodes)) {
+      // Validate node IDs
+      if (key.startsWith("*")) {
+        errors.push(
+          `Node ID '${key}' must not start with '*'. Pointers are values, not keys.`
+        );
+      }
+      // Deletions start with '!', value must be null
+      if (key.startsWith("!")) {
+        if (data.nodes[key] !== null) {
+          errors.push(
+            `Deletion node '${key}' must have a null value, but got: ${JSON.stringify(
+              data.nodes[key]
+            )}`
+          );
+        }
+      }
+    }
   }
 
   private validateComponent(

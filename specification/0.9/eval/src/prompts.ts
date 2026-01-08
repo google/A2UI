@@ -53,19 +53,20 @@ The dog generator is another card which is a form that generates a fictional dog
     name: "loginForm",
     description:
       'A simple login form with username, password, a "remember me" checkbox, and a submit button.',
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a login form. It should have a "Login" text (variant 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a login form. It should have a "Login" text (variant 'h1'), two text fields for username and password (bound to node 'login' key 'username' and node 'login' key 'password'), a checkbox for "Remember Me" (bound to node 'login' key 'rememberMe'), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
   },
   {
     name: "productGallery",
     description: "A gallery of products using a list with a template.",
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a context with the product ID, for example, 'productId': 'static-id-123' (use this exact literal string). You should create a template component and then a list that uses it.`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model, bound to node 'root' key 'products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (bound to key 'imageUrl'), a Text component for the product name (bound to key 'name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a context with the product ID, for example, 'productId': 'static-id-123' (use this exact literal string). You should create a template component and then a list that uses it.`,
   },
   {
     name: "productGalleryData",
     description:
       "An updateDataModel message to populate the product gallery data.",
-    promptText: `Generate a 'createSurface' message with surfaceId 'main', followed by an updateDataModel message to populate the data model for the product gallery. The update should target the path '/products' and include at least two products. Each product in the map should have keys 'id', 'name', and 'imageUrl'. For example:
+    promptText: `Generate a 'createSurface' message with surfaceId 'main', followed by an updateDataModel message to populate the data model for the product gallery. The update should provide a 'nodes' map. The 'root' node should have a 'products' key containing a list of pointers to product nodes (e.g. ["*product1", "*product2"]). Then define the product nodes ('product1', 'product2') with keys 'id', 'name', and 'imageUrl'. For example:
     {
+      "root": { "products": ["*product1"] },
       "product1": {
         "id": "product1",
         "name": "Awesome Gadget",
@@ -81,7 +82,7 @@ The dog generator is another card which is a form that generates a fictional dog
   {
     name: "updateDataModel",
     description: "An updateDataModel message to update user data.",
-    promptText: `Generate a 'createSurface' message with surfaceId 'main', followed by an updateDataModel message. This is used to update the client's data model. The scenario is that a user has just logged in, and we need to populate their profile information. Create a single data model update message to set '/user/name' to "John Doe" and '/user/email' to "john.doe@example.com".`,
+    promptText: `Generate a 'createSurface' message with surfaceId 'main', followed by an updateDataModel message. This is used to update the client's data model. The scenario is that a user has just logged in, and we need to populate their profile information. Create a single data model update message with a 'nodes' map. Define a 'user' node with keys 'name' set to "John Doe" and 'email' set to "john.doe@example.com". Ensure the 'root' node has a reference to this user node if necessary, or just treat 'user' as a known node ID.`,
   },
   {
     name: "animalKingdomExplorer",
@@ -325,29 +326,27 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "nestedDataBinding",
     description: "A project dashboard with deeply nested data binding.",
-    promptText: `Generate a stream of JSON messages for a Project Management Dashboard.
-    The output must consist of exactly three JSON objects, one after the other.
-
-    Generate a createSurface message with surfaceId 'main'.
+    promptText: `Generate a createSurface message with surfaceId 'main'.
     Generate an updateComponents message with surfaceId 'main'.
     It should have a 'Text' (variant 'h1') "Project Dashboard".
-    Then a 'List' of projects bound to '/projects'.
-    Inside the list template, each item should be a 'Card' containing:
-    - A 'Text' (variant 'h2') bound to the project 'title'.
-    - A 'List' of tasks bound to the 'tasks' property of the project.
+    Then a 'List' of projects. The list should bind to node 'root' key 'projects'.
+    Inside the list template, using 'ChildList', each item should be a 'Card' containing:
+    - A 'Text' (variant 'h2') bound to key 'title' (omit 'node' to bind to current project).
+    - A 'List' of tasks bound to key 'tasks' (omit 'node' to bind to current project).
     Inside the tasks list template, each item should be a 'Column' containing:
-    - A 'Text' bound to the task 'description'.
+    - A 'Text' bound to key 'description'.
     - A 'Row' for the assignee, containing:
-      - A 'Text' bound to 'assignee/name'.
-      - A 'Text' bound to 'assignee/role'.
-    - A 'List' of subtasks bound to 'subtasks'.
-    Inside the subtasks list template, each item should be a 'Text' bound to 'title'.
+      - A 'Text' bound to key 'assigneeName' (flattened on task node).
+      - A 'Text' bound to key 'assigneeRole' (flattened on task node).
+    - A 'List' of subtasks bound to key 'subtasks'.
+    Inside the subtasks list template, each item should be a 'Text' bound to key 'title'.
 
     Then generate an 'updateDataModel' message.
-    Populate this dashboard with sample data:
-    - At least one project.
-    - The project should have a title, and a list of tasks.
-    - The task should have a description, an assignee object (with name and role), and a list of subtasks.`,
+    Populate this dashboard with a 'nodes' map containing:
+    - A 'root' node with a 'projects' list of pointers (e.g. ["*p1"]).
+    - Project nodes (e.g. "p1") with 'title' and 'tasks' (list of pointers).
+    - Task nodes with 'description', 'assigneeName', 'assigneeRole', and 'subtasks' (list of pointers).
+    - Subtask nodes with 'title'.`,
   },
 
   {

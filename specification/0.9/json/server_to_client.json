@@ -68,22 +68,19 @@
       "properties": {
         "updateDataModel": {
           "type": "object",
-          "description": "Updates the data model for an existing surface. This message can be sent multiple times to update the data model. The createSurface message MUST have been previously sent with the 'catalogId' that is in this message.",
+          "description": "Updates the data model for an existing surface. This message can be sent multiple times to update the data model.",
           "properties": {
             "surfaceId": {
               "type": "string",
               "description": "The unique identifier for the UI surface this data model update applies to."
             },
-            "path": {
-              "type": "string",
-              "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', refers to the entire data model."
-            },
-            "value": {
-              "description": "The data to be updated in the data model. If present, the value at 'path' is replaced (or created). If omitted, the key at 'path' is removed.",
+            "nodes": {
+              "type": "object",
+              "description": "A map where keys are unique Node IDs and values are the node content. Top-level primitive values (strings, numbers, booleans, null) are always treated as literals. Lists and Maps can contain 'pointers' to other nodes. A pointer is a node ID prefixed with '*' (e.g. '*user_profile'). To delete a previously defined node, prefix its key with '!' and set the value to null. IMPORTANT: If a literal string inside a nested list or map starts with '*', it MUST be extracted to a top-level node and referenced via a pointer to avoid being interpreted as a pointer.",
               "additionalProperties": true
             }
           },
-          "required": ["surfaceId"],
+          "required": ["surfaceId", "nodes"],
           "additionalProperties": false
         }
       },

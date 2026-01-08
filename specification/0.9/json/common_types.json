@@ -4,6 +4,21 @@
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
   "$defs": {
+    "NodeBinding": {
+      "type": "object",
+      "description": "Binds a property to a value in the data model.",
+      "properties": {
+        "node": {
+          "type": "string",
+          "description": "The ID of the node to bind to. If omitted, binds to the current data context (e.g. the current item in a list)."
+        },
+        "key": {
+          "type": "string",
+          "description": "The property key to access on the target node. Required if the target is a Map/Object. Omit if the target is a primitive or if you want the object itself."
+        }
+      },
+      "additionalProperties": false
+    },
     "FunctionCall": {
       "type": "object",
       "description": "Invokes a named function on the client.",
@@ -29,15 +44,15 @@
       "required": ["call"]
     },
     "DynamicString": {
-      "description": "Represents a value that can be either a literal string, a path to a string in the data model, or a function call returning a string.",
+      "description": "Represents a value that can be either a literal string, a binding to a string in the data model, or a function call returning a string.",
       "oneOf": [
         { "type": "string" },
         {
           "type": "object",
           "properties": {
-            "path": { "type": "string" }
+            "binding": { "$ref": "#/$defs/NodeBinding" }
           },
-          "required": ["path"],
+          "required": ["binding"],
           "additionalProperties": false
         },
         {
@@ -54,15 +69,15 @@
       ]
     },
     "DynamicNumber": {
-      "description": "Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.",
+      "description": "Represents a value that can be either a literal number, a binding to a number in the data model, or a function call returning a number.",
       "oneOf": [
         { "type": "number" },
         {
           "type": "object",
           "properties": {
-            "path": { "type": "string" }
+            "binding": { "$ref": "#/$defs/NodeBinding" }
           },
-          "required": ["path"],
+          "required": ["binding"],
           "additionalProperties": false
         },
         {
@@ -79,15 +94,15 @@
       ]
     },
     "DynamicBoolean": {
-      "description": "Represents a value that can be either a literal boolean, a path to a boolean in the data model, or a function call returning a boolean.",
+      "description": "Represents a value that can be either a literal boolean, a binding to a boolean in the data model, or a function call returning a boolean.",
       "oneOf": [
         { "type": "boolean" },
         {
           "type": "object",
           "properties": {
-            "path": { "type": "string" }
+            "binding": { "$ref": "#/$defs/NodeBinding" }
           },
-          "required": ["path"],
+          "required": ["binding"],
           "additionalProperties": false
         },
         {
@@ -103,7 +118,7 @@
       ]
     },
     "DynamicStringList": {
-      "description": "Represents a value that can be either a literal array of strings, a path to a string array in the data model, or a function call returning a string array.",
+      "description": "Represents a value that can be either a literal array of strings, a binding to a string array in the data model, or a function call returning a string array.",
       "oneOf": [
         {
           "type": "array",
@@ -112,9 +127,9 @@
         {
           "type": "object",
           "properties": {
-            "path": { "type": "string" }
+            "binding": { "$ref": "#/$defs/NodeBinding" }
           },
-          "required": ["path"],
+          "required": ["binding"],
           "additionalProperties": false
         },
         {
@@ -157,16 +172,15 @@
       }
     },
     "DynamicValue": {
-      "description": "A value that can be a literal, a path, or a function call returning any type.",
+      "description": "A value that can be a literal, a binding, or a function call returning any type.",
       "oneOf": [
         { "type": "string" },
         { "type": "number" },
         { "type": "boolean" },
-
         {
           "type": "object",
-          "properties": { "path": { "type": "string" } },
-          "required": ["path"],
+          "properties": { "binding": { "$ref": "#/$defs/NodeBinding" } },
+          "required": ["binding"],
           "additionalProperties": false
         },
         { "$ref": "#/$defs/FunctionCall" }
@@ -186,12 +200,12 @@
             "componentId": {
               "$ref": "#/$defs/id"
             },
-            "path": {
-              "type": "string",
-              "description": "The path to the list of component property objects in the data model."
+            "binding": {
+              "$ref": "#/$defs/NodeBinding",
+              "description": "The binding to the list of data nodes in the Hybrid Adjacency Map."
             }
           },
-          "required": ["componentId", "path"],
+          "required": ["componentId", "binding"],
           "additionalProperties": false
         }
       ]

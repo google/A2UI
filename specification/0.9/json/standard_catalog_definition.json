@@ -181,9 +181,11 @@
                 {
                   "type": "object",
                   "properties": {
-                    "path": { "type": "string" }
+                    "binding": {
+                      "$ref": "common_types.json#/$defs/NodeBinding"
+                    }
                   },
-                  "required": ["path"],
+                  "required": ["binding"],
                   "additionalProperties": false
                 }
               ]
@@ -452,7 +454,7 @@
                 "name": { "type": "string" },
                 "context": {
                   "type": "object",
-                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
+                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or bindings. Use literal values unless the value must be dynamically bound to the data model. Do NOT use bindings for static IDs.",
                   "additionalProperties": {
                     "$ref": "common_types.json#/$defs/DynamicValue"
                   }
