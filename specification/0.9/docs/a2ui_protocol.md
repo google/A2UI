@@ -34,7 +34,7 @@ Version 0.9 of the A2UI protocol represents a philosophical shift from previous 
 This "prompt-first" approach offers several advantages:
 
 1.  **Richer Schema:** The protocol is no longer limited by the constraints of structured output formats. This allows for more readable, complex, and expressive component catalogs.
-2.  **Modularity:** The schema is now refactored into separate, more manageable components (e.g., [`common_types.json`], [`standard_catalog_definition.json`], [`server_to_client.json`]), improving maintainability and modularity.
+2.  **Modularity:** The schema is now refactored into separate, more manageable components (e.g., [`common_types.json`], [`standard_catalog.json`], [`server_to_client.json`]), improving maintainability and modularity.
 
 The main disadvantage of this approach is that it requires more complex post-generation validation, as the LLM is not strictly constrained by the schema. This requires robust error handling and correction, so the system can identify discrepancies and attempt to fix them before rendering, or request a retry or correction from the LLM.
 
@@ -97,7 +97,7 @@ The [`server_to_client.json`] schema is the top-level entry point. Every line st
 
 ### The Standard Catalog
 
-The [`standard_catalog_definition.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`). By separating this from the envelope, developers can easily swap in custom catalogs (e.g., `material_catalog.json` or `cupertino_catalog.json`) without rewriting the core protocol parser.
+The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`) and functions (e.g., `required`, `email`). By separating this from the envelope, developers can easily swap in custom catalogs (e.g., `material_catalog.json` or `cupertino_catalog.json`) without rewriting the core protocol parser.
 
 Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the standard catalog. It should have the same form as the standard catalog, and use common elements in the [`common_types.json`] schema.
 
@@ -112,7 +112,7 @@ This message signals the client to create a new surface and begin rendering it. 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
-- `catalogId` (string, required): A string that uniquely identifies the component catalog used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+- `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
 
 **Example:**
 
@@ -120,7 +120,7 @@ This message signals the client to create a new surface and begin rendering it. 
 {
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json"
+    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog.json"
   }
 }
 ```
@@ -209,9 +209,9 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json"}}
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","value":{"path":"/contact/notes"},"variant":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
-{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
+{"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog.json"}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","message":"Email is required."},{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","primary":true,"action":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}]}}
+{"updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true}}}
 ```
 
 ## Component Model
@@ -231,7 +231,7 @@ This structure is designed to be both flexible and strictly validated.
 
 ### The Component Catalog
 
-The set of available UI components and their properties is defined in a **Component Catalog**. The standard catalog is defined in [`standard_catalog_definition.json`]. This allows for different clients to support different sets of components, including custom ones. The server must generate `updateComponents` messages that conform to the component catalog understood by the client.
+The set of available UI components and functions is defined in a **Catalog**. The standard catalog is defined in [`standard_catalog.json`]. This allows for different clients to support different sets of components and functions, including custom ones. The server must generate messages that conform to the catalog understood by the client.
 
 ### UI Composition: The Adjacency List Model
 
@@ -437,7 +437,7 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
 
 ## Standard Component Catalog
 
-The [`standard_catalog_definition.json`] provides the baseline set of components.
+The [`standard_catalog.json`] provides the baseline set of components and functions.
 
 | Component         | Description                                                                            |
 | :---------------- | :------------------------------------------------------------------------------------- |
@@ -514,24 +514,25 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
-### `capabilities`
+### Client Capabilities
 
-This message is sent by the client upon connection to inform the server of its capabilities, including supported component catalogs and validation catalogs.
+Client capabilities are sent by the client to inform the server of its capabilities, including supported catalogs (components and functions). In A2UI v0.9, these are sent as part of the **A2A metadata** envelope in every message, rather than as a first-class A2UI message. This ensures the server always has the client's latest capabilities without needing a separate handshake.
+
+The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_capabilities_schema.json`] schema.
 
 **Properties:**
 
-- `supportedCatalogIds` (array of strings, required): URIs of supported component catalogs.
-- `supportedFunctionCatalogIds`: A list of URIs for the function catalogs supported by the client.
-- `inlineCatalogs`: An array of inline component catalog definitions provided directly by the client (useful for custom or ad-hoc components).
-- `inlineFunctionCatalogs`: An array of function catalog definitions provided directly by the client (useful for custom or ad-hoc functions).
+- `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
+- `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
 
 ### `error`
 
 This message is used to report a client-side error to the server.
 
-[`standard_function_catalog.json`]: ../json/standard_function_catalog.json
+[`standard_catalog.json`]: ../json/standard_catalog.json
 [`common_types.json`]: ../json/common_types.json
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
+[`a2ui_client_capabilities_schema.json`]: ../json/a2ui_client_capabilities_schema.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901

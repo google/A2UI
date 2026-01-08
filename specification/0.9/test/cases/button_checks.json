@@ -65,7 +65,7 @@
       }
     },
     {
-      "description": "Button with invalid check structure (missing returnType)",
+      "description": "Button with invalid check structure (invalid returnType)",
       "valid": false,
       "data": {
         "updateComponents": {
@@ -79,7 +79,8 @@
               "checks": [
                 {
                   "call": "required",
-                  "args": { "value": "foo" }
+                  "args": { "value": "foo" },
+                  "returnType": "not_a_valid_type"
                 }
               ]
             },
@@ -88,7 +89,7 @@
         }
       }
     },
-     {
+    {
       "description": "Button with invalid nested structure (extra property)",
       "valid": false,
       "data": {

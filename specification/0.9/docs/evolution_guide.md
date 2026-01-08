@@ -20,6 +20,7 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 | **Data Model Update** | Array of Key-Value Pairs               | Standard JSON Object                                 |
 | **Data Binding**      | `dataBinding` / `literalString`        | `path` / Native JSON types                           |
 | **Button Context**    | Array of Key-Value pairs               | Standard JSON Object                                 |
+| **Catalog**           | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`) |
 | **Auxiliary Rules**   | N/A                                    | `standard_catalog_rules.txt`                         |
 | **Validation**        | Basic Schema                           | Strict `ValidationFailed` feedback loop              |
 
@@ -35,10 +36,11 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 **v0.9:**
 
 - **Modularization**: The schema is strictly split into:
-  - `common_types.json`: Reusable primitives (IDs, paths, weights).
+  - `common_types.json`: Reusable primitives (IDs, paths, weights) and logic/expression types.
   - `server_to_client.json`: The "envelope" defining the message types.
-  - `standard_catalog_definition.json`: The specific UI components.
-- **Benefit**: This allows developers to swap out the `standard_catalog_definition.json` for a `custom_catalog.json` without touching the core protocol envelope.
+  - `standard_catalog.json`: The unified catalog of UI components and functions.
+- **Benefit**: This allows developers to swap out the `standard_catalog.json` for a `custom_catalog.json` without touching the core protocol envelope.
+- **Unification**: Components and functions are now part of the same catalog object, simplifying capability negotiation and inline definitions.
 
 ### 2.2. Strict Message Typing
 
@@ -77,7 +79,7 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 - **Purpose**: `createSurface` signals the client to create a new surface and prepare for rendering.
 - **Style Information Removed**: `createSurface` does **NOT** contain style information. Theming is now handled via the client styles, decoupling it from the message stream.
 - **Root Rule**: The rule is: "There must be exactly one component with the ID `root`." The "root" attribute that `beginRendering` had has been removed. The client is expected to render as soon as it has a valid tree with a root component.
-- **New Requirement**: `createSurface` now requires a **`catalogId`** (URI) to explicitly state which component set is being used.
+- **New Requirement**: `createSurface` now requires a **`catalogId`** (URI) to explicitly state which unified catalog (components and functions) is being used.
 
 **Example:**
 
@@ -101,7 +103,7 @@ This document serves as a comprehensive guide to the changes between A2UI versio
 {
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json"
+    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog.json"
   }
 }
 ```
@@ -293,5 +295,4 @@ For developers migrating from earlier versions, here is a quick reference of pro
 | **TextField**      | `text`                 | `value`        |
 | **Many**           | `usageHint`            | `variant`      |
 | **Client Message** | `userAction`           | `action`       |
-| **Client Message** | `clientUiCapabilities` | `capabilities` |
 | **Common Type**    | `childrenProperty`     | `ChildList`    |

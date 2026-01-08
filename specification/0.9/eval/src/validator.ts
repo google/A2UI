@@ -254,9 +254,9 @@ export class Validator {
       if (this.ajv && c.component) {
         const componentType = c.component;
         const schemaUri =
-          "https://a2ui.dev/specification/0.9/standard_catalog_definition.json";
+          "https://a2ui.dev/specification/0.9/standard_catalog.json";
 
-        const defRef = `${schemaUri}#/$defs/${componentType}`;
+        const defRef = `${schemaUri}#/components/${componentType}`;
 
         const valid = this.ajv.validate(defRef, c);
         if (!valid) {
