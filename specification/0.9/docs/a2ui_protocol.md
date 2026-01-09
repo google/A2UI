@@ -1,5 +1,6 @@
 <!-- markdownlint-disable MD041 -->
 <!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD034 -->
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
     <img src="../../../docs/assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
@@ -37,6 +38,8 @@ This "prompt-first" approach offers several advantages:
 2.  **Modularity:** The schema is now refactored into separate, more manageable components (e.g., [`common_types.json`], [`standard_catalog.json`], [`server_to_client.json`]), improving maintainability and modularity.
 
 The main disadvantage of this approach is that it requires more complex post-generation validation, as the LLM is not strictly constrained by the schema. This requires robust error handling and correction, so the system can identify discrepancies and attempt to fix them before rendering, or request a retry or correction from the LLM.
+
+See [the evolution guide](evolution_guide.md) for a detailed explanation of the differences between v0.8 and v0.9.
 
 ## Protocol Overview & Data Flow
 
@@ -281,8 +284,6 @@ By default, all components operate in the **Root Scope**.
 - The Root Scope corresponds to the top-level object of the `value` provided in `updateDataModel`.
 - Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
 
-
-
 #### Collection Scopes (Relative Paths)
 
 When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `ChildList`, it creates a new **Child Scope** for each item in the bound array.
@@ -339,6 +340,55 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 }
 ```
 
+### String Interpolation
+
+A2UI supports embedding dynamic expressions directly within string properties (any property defined as a `DynamicString` in the catalog). This allowing for mixing static text with data model values and function results.
+
+#### Syntax
+
+Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
+
+#### Data Model Binding
+
+Values from the data model can be interpolated using their JSON Pointer path.
+
+- `${/user/profile/name}`: Absolute path.
+- `${firstName}`: Relative path (resolved against the current collection scope).
+
+**Example:**
+
+```json
+{
+  "id": "user_welcome",
+  "component": "Text",
+  "text": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
+}
+```
+
+#### Client-Side Functions
+
+Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
+
+- `${now()}`: A function with no arguments.
+- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
+
+Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
+
+#### Nested Interpolation
+
+Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
+
+- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
+- **Nested Functions**: `${upper(${now()})}`
+
+#### Type Conversion
+
+When a non-string value is interpolated, the client converts it to a string:
+
+- **Numbers/Booleans**: Standard string representation.
+- **Null/Undefined**: An empty string `""`.
+- **Objects/Arrays**: Stringified as JSON to ensure consistency across different client implementations.
+
 ### Two-Way Binding & Input Components
 
 Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `ChoicePicker`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
@@ -381,7 +431,6 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `action` payload.
 
-
 ## Client-Side Logic & Validation
 
 A2UI v0.9 generalizes client-side logic into **Functions**. These can be used for validation, data transformation, and dynamic property binding.
@@ -421,11 +470,20 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
   "checks": [
     {
       "and": [
-        { "call": "required", "args": { "value": { "path": "/formData/terms" } } },
+        {
+          "call": "required",
+          "args": { "value": { "path": "/formData/terms" } }
+        },
         {
           "or": [
-            { "call": "required", "args": { "value": { "path": "/formData/email" } } },
-            { "call": "required", "args": { "value": { "path": "/formData/phone" } } }
+            {
+              "call": "required",
+              "args": { "value": { "path": "/formData/email" } }
+            },
+            {
+              "call": "required",
+              "args": { "value": { "path": "/formData/phone" } }
+            }
           ]
         }
       ],
