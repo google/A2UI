@@ -29,6 +29,7 @@ import { analysisFlow } from "./analysis_flow";
 
 const schemaFiles = [
   "../../json/common_types.json",
+  "../../json/expression_types.json",
   "../../json/standard_catalog_definition.json",
   "../../json/server_to_client.json",
 ];

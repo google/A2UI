@@ -174,7 +174,7 @@ plugins:
   - search
   - macros
   # - include-markdown
-  # - mermaid2
+  - mermaid2
   # - llmstxt:
   #     full_output: llms-full.txt
   #     sections:

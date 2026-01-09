@@ -2,6 +2,20 @@
 
 This is the Python implementation of the a2ui extension.
 
+## Running Tests
+
+1. Navigate to the a2ui_extension dir:
+
+   ```bash
+   cd a2a_agents/python/a2ui_extension
+   ```
+
+2. Run the tests
+
+   ```bash
+   uv run --with pytest pytest tests/test_extension.py
+   ```
+
 ## Disclaimer
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.

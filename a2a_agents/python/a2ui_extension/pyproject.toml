@@ -9,3 +9,7 @@ dependencies = ["a2a-sdk>=0.3.0"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
