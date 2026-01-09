@@ -123,3 +123,20 @@ def try_activate_a2ui_extension(context: RequestContext) -> bool:
         context.add_activated_extension(A2UI_EXTENSION_URI)
         return True
     return False
+
+
+def wrap_as_json_array(a2ui_schema: dict[str, Any]) -> dict[str, Any]:
+    """Wraps the A2UI schema in an array object to support multiple parts.
+
+    Args:
+        a2ui_schema: The A2UI schema to wrap.
+
+    Returns:
+        The wrapped A2UI schema object.
+    
+    Raises:
+        ValueError: If the A2UI schema is empty.
+    """
+    if not a2ui_schema:
+        raise ValueError("A2UI schema is empty")
+    return {"type": "array", "items": a2ui_schema}
