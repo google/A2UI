@@ -1,0 +1,70 @@
+LEARNER PROFILE: MARIA
+=======================
+
+DEMOGRAPHICS
+- Name: Maria
+- Age: 20
+- Education: Pre-med student at Cymbal University
+- Goal: MCAT preparation, medical school admission
+
+LEARNING CONTEXT
+- Currently studying for the MCAT
+- Often studies while at the gym (audio learning preferred during workouts)
+- Visual-kinesthetic learner who benefits from real-world analogies
+- Athletic background - responds well to sports/fitness metaphors
+
+ACADEMIC STRENGTHS
+- AP Biology: 92% proficiency
+  - Strong understanding of cellular respiration
+  - Solid grasp of ATP's role as "energy currency"
+  - Understands metabolic pathways well
+
+ACADEMIC GAPS
+- Chemistry (Bond Energy): 65% proficiency
+  - Struggles with thermodynamic concepts
+  - Difficulty connecting chemistry to biology knowledge
+  - Needs help bridging disciplines
+
+THE MISCONCEPTION
+================
+
+What Maria learned (correctly):
+- "ATP is the energy currency of the cell"
+- "When ATP is hydrolyzed to ADP, energy is released"
+- "This energy powers cellular work like muscle contraction"
+
+How Maria interprets it (incorrectly):
+- "Energy must be STORED IN the phosphate bonds of ATP"
+- "Breaking the bond releases the stored energy, like a battery releasing charge"
+- "The bond itself contains energy that gets released"
+
+Why this matters:
+- This misconception will cause errors on MCAT chemistry questions
+- It prevents true understanding of thermodynamics
+- It creates confusion when learning about other exergonic reactions
+
+THE CORRECT UNDERSTANDING
+=========================
+
+Breaking ANY chemical bond requires energy input (bond dissociation energy).
+Energy is never "stored in" a bond.
+
+ATP hydrolysis releases energy because:
+1. The PRODUCTS (ADP + inorganic phosphate) are MORE STABLE than ATP
+2. Systems naturally move toward lower energy (more stable) states
+3. The energy difference between reactants and products is released as usable energy
+
+Think of it as: ATP is in a "strained" high-energy state. ADP + Pi is a "relaxed" low-energy state. The system releases energy when moving from strained to relaxed - not because the strain "stored" energy, but because relaxation is energetically favorable.
+
+LEARNING OBJECTIVES FOR THIS PODCAST
+====================================
+
+After listening, Maria should be able to:
+
+1. Explain why "energy stored in bonds" is misleading terminology
+2. State that breaking bonds requires energy input, not release
+3. Describe ATP hydrolysis in terms of product stability (not bond energy storage)
+4. Use Gibbs Free Energy (ΔG) to explain spontaneous reactions
+5. Apply the compressed spring analogy instead of the battery analogy
+6. Connect her biology knowledge to chemistry thermodynamics
+7. Correctly answer MCAT questions about reaction energetics
