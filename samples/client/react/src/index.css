@@ -1,0 +1,42 @@
+/**
+ * A2UI React Demo - Global Styles
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  color: #212121;
+  background-color: #ffffff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+/* Reset default button styles for A2UI */
+button {
+  font-family: inherit;
+}
+
+/* Reset default input styles */
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
