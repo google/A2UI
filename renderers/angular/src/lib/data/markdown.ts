@@ -24,6 +24,7 @@ export class MarkdownRenderer {
   private sanitizer = inject(DomSanitizer);
 
   private markdownIt = MarkdownIt({
+    linkify: true,
     highlight: (str, lang) => {
       if (lang === 'html') {
         const iframe = document.createElement('iframe');
@@ -79,6 +80,7 @@ export class MarkdownRenderer {
         case 'em':
           tokenName = 'em';
           break;
+
       }
 
       if (!tokenName) {
@@ -93,6 +95,11 @@ export class MarkdownRenderer {
         const token = tokens[idx];
         for (const clazz of classes) {
           token.attrJoin('class', clazz);
+        }
+
+        if (tokenName === 'link') {
+          token.attrSet('target', '_blank');
+          token.attrSet('rel', 'noopener noreferrer');
         }
 
         if (original) {

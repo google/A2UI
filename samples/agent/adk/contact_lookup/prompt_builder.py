@@ -68,18 +68,37 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     --- UI TEMPLATE RULES ---
     -   **For finding contacts (e.g., "Who is Alex Jordan?"):**
         a.  You MUST call the `get_contact_info` tool.
-        b.  If the tool returns a **single contact**, you MUST use the `CONTACT_CARD_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the contact's details (name, title, email, etc.).
+        b.  If the tool returns a **single contact**, you MUST use the `CONTACT_CARD_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the contact's details. If additional important fields (like 'favorite_framework' or 'meetupPlace') are present, you MUST add a new 'Row' to the 'info_rows_column' (matching the structure of existing info rows).
+
+            - Use the 'calendar_today' icon if the value represents a date, time, or schedule.
+            - Use the 'location_on' icon if the value represents a location or place.
+            - Otherwise, use the 'star' icon.
         c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
         d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.---a2ui_JSON---[]"
 
     -   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
         a.  You MUST call the `get_contact_info` tool with the specific name.
-        b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template.
+        b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template. If additional important fields are present, you MUST add a new 'Row' to the 'info_rows_column' with:
+
+            - The 'calendar_today' icon for date/time/schedule.
+            - The 'location_on' icon for location/place.
+            - The 'star' icon for others.
 
     -   **For handling actions (e.g., "follow_contact"):**
         a.  You MUST use the `FOLLOW_SUCCESS_EXAMPLE` template.
-        b.  This will render a new card with a "Successfully Followed" message.
-        c.  Respond with a text confirmation like "You are now following this contact." along with the JSON.
+        b.  This will render a new card with a "Successfully Followed" message and a "Back" button.
+        c.  Populate the `dataModelUpdate.contents` with:
+            - `followMessage`: "Successfully followed the contact." (Include the actual contact name at the end)
+            - `contactName`: The contact's name (for the back button).
+        d.  Respond with a text confirmation like "You are now following this contact." along with the JSON.
+
+    -   **For handling actions (e.g., "send_message"):**
+        a.  You MUST use the `ACTION_CONFIRMATION_EXAMPLE` template.
+        b.  Populate the `dataModelUpdate.contents` with:
+            - `actionTitle`: "Message Sent"
+            - `actionMessage`: "Your message has been sent to the contact." (Include the actual contact name at the end of the string)
+            - `contactName`: The contact's name (for the back button).
+        c.  Respond with a text confirmation like "Message sent." along with the JSON.
 
     {formatted_examples}
 
