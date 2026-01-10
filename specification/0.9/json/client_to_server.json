@@ -88,7 +88,36 @@
           "additionalProperties": true
         }
       ]
+    },
+    "updateDataModel": {
+      "type": "object",
+      "description": "Updates the server's data model from the client.",
+      "properties": {
+        "surfaceId": {
+          "type": "string",
+          "description": "The id of the surface where the data update originated."
+        },
+        "path": {
+          "type": "string",
+          "description": "The path to the data being updated (e.g. '/user/name')."
+        },
+        "value": {
+          "description": "The new value for the data at the specified path.",
+          "type": ["object", "array", "string", "number", "boolean", "null"]
+        }
+      },
+      "required": ["surfaceId", "path"]
     }
   },
-  "oneOf": [{ "required": ["action"] }, { "required": ["error"] }]
+  "oneOf": [
+    {
+      "required": ["action"]
+    },
+    {
+      "required": ["error"]
+    },
+    {
+      "required": ["updateDataModel"]
+    }
+  ]
 }
