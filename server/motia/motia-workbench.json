@@ -1,0 +1,72 @@
+[
+  {
+    "id": "a2ui-protocol",
+    "config": {
+      "steps/a2ui/user-action.step.ts": {
+        "x": -17,
+        "y": 146
+      },
+      "steps/a2ui/update-data-model.step.ts": {
+        "x": -450,
+        "y": 542
+      },
+      "steps/a2ui/update-components.step.ts": {
+        "x": 45,
+        "y": 779
+      },
+      "steps/a2ui/process-action.step.ts": {
+        "x": 507,
+        "y": 379,
+        "sourceHandlePosition": "bottom"
+      },
+      "steps/a2ui/list-surfaces.step.ts": {
+        "x": -4,
+        "y": 547
+      },
+      "steps/a2ui/get-surface.step.ts": {
+        "x": 72,
+        "y": 1066
+      },
+      "steps/a2ui/generate-ui.step.ts": {
+        "x": 507,
+        "y": 767,
+        "sourceHandlePosition": "bottom",
+        "targetHandlePosition": "top"
+      },
+      "steps/a2ui/flow-start.step.ts": {
+        "x": -419,
+        "y": 147
+      },
+      "steps/a2ui/delete-surface.step.ts": {
+        "x": 375,
+        "y": 1371
+      },
+      "steps/a2ui/create-surface.step.ts": {
+        "x": -948,
+        "y": 138,
+        "sourceHandlePosition": "bottom"
+      },
+      "steps/a2ui/apply-generated-ui.step.ts": {
+        "x": 798,
+        "y": 1152
+      }
+    }
+  },
+  {
+    "id": "demo-agent",
+    "config": {
+      "steps/demo/restaurant-agent.step.ts": {
+        "x": -16,
+        "y": -3
+      },
+      "steps/demo/gemini-ui-generator.step.ts": {
+        "x": 0,
+        "y": 223
+      },
+      "steps/.motia/compiled/demo/gemini-ui-generator.step.js": {
+        "x": 0,
+        "y": 446
+      }
+    }
+  }
+]
