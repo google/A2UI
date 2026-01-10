@@ -30,9 +30,10 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "mkdir -p src/0.8/schemas && cp ../../specification/0.8/json/*.json src/0.8/schemas",
+      "command": "node scripts/copy-spec.js",
       "files": [
-        "../../specification/0.8/json/*.json"
+        "../../specification/0.8/json/*.json",
+        "scripts/copy-spec.js"
       ],
       "output": [
         "src/0.8/schemas/*.json"
