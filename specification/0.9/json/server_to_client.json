@@ -8,7 +8,8 @@
     { "$ref": "#/$defs/CreateSurfaceMessage" },
     { "$ref": "#/$defs/UpdateComponentsMessage" },
     { "$ref": "#/$defs/UpdateDataModelMessage" },
-    { "$ref": "#/$defs/DeleteSurfaceMessage" }
+    { "$ref": "#/$defs/DeleteSurfaceMessage" },
+    { "$ref": "#/$defs/ConfigureDataUpdatesMessage" }
   ],
   "$defs": {
     "CreateSurfaceMessage": {
@@ -115,6 +116,51 @@
         }
       },
       "required": ["deleteSurface"],
+      "additionalProperties": false
+    },
+    "ConfigureDataUpdatesMessage": {
+      "type": "object",
+      "properties": {
+        "configureDataUpdates": {
+          "type": "object",
+          "description": "Configures how and when the client sends data model updates to the server for specific paths.",
+          "properties": {
+            "surfaceId": {
+              "type": "string",
+              "description": "The unique identifier for the UI surface to be configured."
+            },
+            "configurations": {
+              "type": "array",
+              "description": "A list of configuration rules for data paths.",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "The data path to configure. This applies to this path and all descendants unless overridden by a more specific path."
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": ["onAction", "onTimeout", "immediate"],
+                    "description": "The update mode. 'onAction' sends updates with the next user action. 'onTimeout' sends updates after a quiet period or interval. 'immediate' sends updates as soon as they change."
+                  },
+                  "timeoutMs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Required if mode is 'onTimeout'. The duration in milliseconds to wait before sending updates."
+                  }
+                },
+                "required": ["path", "mode"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["surfaceId", "configurations"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["configureDataUpdates"],
       "additionalProperties": false
     }
   }

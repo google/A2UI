@@ -27,6 +27,7 @@ Communication occurs via a stream of JSON objects. The client parses each object
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
+- `configureDataUpdates`: Configures how and when the client sends data model updates to the server.
 
 ## Changes from previous versions
 
@@ -106,7 +107,7 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 ## Envelope Message Structure
 
-The envelope defines four primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
+The envelope defines five primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface` or `configureDataUpdates`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
 
 ### `createSurface`
 
@@ -203,6 +204,43 @@ This message instructs the client to remove a surface and all its associated com
 {
   "deleteSurface": {
     "surfaceId": "user_profile_card"
+  }
+}
+```
+
+### `configureDataUpdates`
+
+This message configures how and when the client sends data model updates to the server. It allows restricting updates to specific paths and setting update modes (e.g., immediate, on timeout, or only on user action).
+
+**Properties:**
+
+- `surfaceId` (string, required): The unique identifier for the UI surface to be configured.
+- `configurations` (array, required): A list of configuration rules.
+  - `path` (string, required): The data path to configure.
+  - `mode` (string, required): One of `onAction`, `onTimeout`, or `immediate`.
+  - `timeoutMs` (integer, optional): Required if `mode` is `onTimeout`.
+
+**Nested Path Precedence:**
+
+If multiple configurations apply to the same data (e.g., one for `/user` and one for `/user/name`), the **most specific path** (the longest matching path) takes precedence. For example, if `/user` is set to `onAction` and `/user/name` is set to `immediate`, changes to `/user/name` will be sent immediately, while changes to `/user/bio` will wait for a user action.
+
+**Example:**
+
+```json
+{
+  "configureDataUpdates": {
+    "surfaceId": "user_profile_card",
+    "configurations": [
+      {
+        "path": "/user/name",
+        "mode": "immediate"
+      },
+      {
+        "path": "/user/bio",
+        "mode": "onTimeout",
+        "timeoutMs": 500
+      }
+    ]
   }
 }
 ```
@@ -582,6 +620,16 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
+
+### `updateDataModel`
+
+This message is sent by the client to update the server's data model. This typically happens when `configureDataUpdates` has enabled `immediate` or `onTimeout` modes for specific paths.
+
+**Properties:**
+
+- `surfaceId` (string, required): The ID of the surface.
+- `path` (string, required): The path to the data being updated.
+- `value` (any): The new value.
 
 ### `error`
 
