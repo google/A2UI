@@ -51,7 +51,7 @@ export function appendToAll(
     for (const key of Object.keys(clazz)) {
       const prefix = key.split("-").with(-1, "").join("-");
 
-      // Now we have the prefix step through all iteme in the target, and
+      // Now we have the prefix step through all items in the target, and
       // replace the value in the array when we find it.
       for (const [tagName, classesToAdd] of Object.entries(updatedTarget)) {
         if (exclusions.includes(tagName)) {
