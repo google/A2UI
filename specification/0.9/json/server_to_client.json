@@ -52,7 +52,7 @@
               "description": "A list containing all UI components for the surface.",
               "minItems": 1,
               "items": {
-                "$ref": "standard_catalog_definition.json#/$defs/anyComponent"
+                "$ref": "standard_catalog.json#/$defs/anyComponent"
               }
             }
           },
@@ -80,6 +80,14 @@
             },
             "value": {
               "description": "The data to be updated in the data model. If present, the value at 'path' is replaced (or created). If omitted, the key at 'path' is removed.",
+              "type": [
+                "object",
+                "array",
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ],
               "additionalProperties": true
             }
           },

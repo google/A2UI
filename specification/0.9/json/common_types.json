@@ -4,6 +4,199 @@
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
   "$defs": {
+    "id": {
+      "type": "string",
+      "description": "The unique identifier for this component."
+    },
+    "ComponentCommon": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "weight": {
+          "type": "number",
+          "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property."
+        }
+      },
+      "required": ["id"]
+    },
+    "ChildList": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A static list of child component IDs."
+        },
+        {
+          "type": "object",
+          "description": "A template for generating a dynamic list of children from a data model list. The `componentId` is the component to use as a template.",
+          "properties": {
+            "componentId": {
+              "$ref": "#/$defs/id"
+            },
+            "path": {
+              "type": "string",
+              "description": "The path to the list of component property objects in the data model."
+            }
+          },
+          "required": ["componentId", "path"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DynamicValue": {
+      "description": "A value that can be a literal, a path, or a function call returning any type.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": ["path"],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/FunctionCall"
+        }
+      ]
+    },
+    "DynamicString": {
+      "description": "Represents a string that can contain interpolated expressions in the `${expression}` format. Supported expression types include: 1) JSON Pointer paths to the data model (e.g., `${/absolute/path}` or `${relative/path}`), and 2) client-side function calls (e.g., `${now()}`). Function arguments must be literals (quoted strings, numbers, booleans) or nested expressions (e.g., `${formatDate(${/currentDate}, 'MM-dd')}`). To include a literal `${` sequence, escape it as `\\${`.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": ["path"],
+          "additionalProperties": false
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "string"
+                }
+              },
+              "required": ["returnType"]
+            }
+          ]
+        }
+      ]
+    },
+    "DynamicNumber": {
+      "description": "Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.",
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": ["path"],
+          "additionalProperties": false
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "number"
+                }
+              },
+              "required": ["returnType"]
+            }
+          ]
+        }
+      ]
+    },
+    "DynamicBoolean": {
+      "description": "A boolean value that can be a literal, a path, or a logic expression (including function calls returning boolean).",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": ["path"],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/LogicExpression"
+        }
+      ]
+    },
+    "DynamicStringList": {
+      "description": "Represents a value that can be either a literal array of strings, a path to a string array in the data model, or a function call returning a string array.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": ["path"],
+          "additionalProperties": false
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "array"
+                }
+              },
+              "required": ["returnType"]
+            }
+          ]
+        }
+      ]
+    },
     "FunctionCall": {
       "type": "object",
       "description": "Invokes a named function on the client.",
@@ -28,122 +221,93 @@
       },
       "required": ["call"]
     },
-    "DynamicString": {
-      "description": "Represents a value that can be either a literal string, a path to a string in the data model, or a function call returning a string.",
+    "LogicExpression": {
+      "type": "object",
+      "description": "A boolean expression used for conditional state (e.g. 'enabled').",
       "oneOf": [
-        { "type": "string" },
         {
-          "type": "object",
           "properties": {
-            "path": { "type": "string" }
-          },
-          "required": ["path"],
-          "additionalProperties": false
-        },
-        {
-          "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
-            {
-              "properties": {
-                "returnType": { "const": "string" }
+            "and": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LogicExpression"
               },
-              "required": ["returnType"]
+              "minItems": 1
             }
-          ]
-        }
-      ]
-    },
-    "DynamicNumber": {
-      "description": "Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.",
-      "oneOf": [
-        { "type": "number" },
-        {
-          "type": "object",
-          "properties": {
-            "path": { "type": "string" }
           },
-          "required": ["path"],
-          "additionalProperties": false
+          "required": ["and"]
         },
         {
-          "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
-            {
-              "properties": {
-                "returnType": { "const": "number" }
+          "properties": {
+            "or": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LogicExpression"
               },
-              "required": ["returnType"]
+              "minItems": 1
             }
-          ]
-        }
-      ]
-    },
-    "DynamicBoolean": {
-      "description": "Represents a value that can be either a literal boolean, a path to a boolean in the data model, or a function call returning a boolean.",
-      "oneOf": [
-        { "type": "boolean" },
-        {
-          "type": "object",
-          "properties": {
-            "path": { "type": "string" }
           },
-          "required": ["path"],
-          "additionalProperties": false
+          "required": ["or"]
+        },
+        {
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/LogicExpression"
+            }
+          },
+          "required": ["not"]
         },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
             {
               "properties": {
-                "returnType": { "const": "boolean" }
+                "returnType": {
+                  "const": "boolean"
+                }
               }
             }
           ]
+        },
+        {
+          "properties": {
+            "true": {
+              "const": true
+            }
+          },
+          "required": ["true"]
+        },
+        {
+          "properties": {
+            "false": {
+              "const": false
+            }
+          },
+          "required": ["false"]
         }
       ]
     },
-    "DynamicStringList": {
-      "description": "Represents a value that can be either a literal array of strings, a path to a string array in the data model, or a function call returning a string array.",
-      "oneOf": [
+    "CheckRule": {
+      "type": "object",
+      "description": "A single validaton rule applied to an input component.",
+      "unevaluatedProperties": false,
+      "allOf": [
         {
-          "type": "array",
-          "items": { "type": "string" }
+          "$ref": "#/$defs/LogicExpression"
         },
         {
           "type": "object",
           "properties": {
-            "path": { "type": "string" }
-          },
-          "required": ["path"],
-          "additionalProperties": false
-        },
-        {
-          "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
-            {
-              "properties": {
-                "returnType": { "const": "array" }
-              },
-              "required": ["returnType"]
+            "message": {
+              "type": "string",
+              "description": "The error message to display if the check fails."
             }
-          ]
+          },
+          "required": ["message"]
         }
       ]
-    },
-    "id": {
-      "type": "string",
-      "description": "The unique identifier for this component."
-    },
-    "ComponentCommon": {
-      "type": "object",
-      "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "weight": {
-          "type": "number",
-          "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property."
-        }
-      },
-      "required": ["id"]
     },
     "Checkable": {
       "description": "Properties for components that support client-side checks.",
@@ -152,49 +316,11 @@
         "checks": {
           "type": "array",
           "description": "A list of checks to perform. These are function calls that must return a boolean indicating validity.",
-          "items": { "$ref": "expression_types.json#/$defs/CheckRule" }
+          "items": {
+            "$ref": "#/$defs/CheckRule"
+          }
         }
       }
-    },
-    "DynamicValue": {
-      "description": "A value that can be a literal, a path, or a function call returning any type.",
-      "oneOf": [
-        { "type": "string" },
-        { "type": "number" },
-        { "type": "boolean" },
-
-        {
-          "type": "object",
-          "properties": { "path": { "type": "string" } },
-          "required": ["path"],
-          "additionalProperties": false
-        },
-        { "$ref": "#/$defs/FunctionCall" }
-      ]
-    },
-    "ChildList": {
-      "oneOf": [
-        {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "A static list of child component IDs."
-        },
-        {
-          "type": "object",
-          "description": "A template for generating a dynamic list of children from a data model list. The `componentId` is the component to use as a template.",
-          "properties": {
-            "componentId": {
-              "$ref": "#/$defs/id"
-            },
-            "path": {
-              "type": "string",
-              "description": "The path to the list of component property objects in the data model."
-            }
-          },
-          "required": ["componentId", "path"],
-          "additionalProperties": false
-        }
-      ]
     }
   }
 }

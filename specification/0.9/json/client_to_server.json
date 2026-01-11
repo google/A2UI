@@ -60,10 +60,11 @@
             },
             "message": {
               "type": "string",
-              "description": "A short one-sentence description of why validation failed."
+              "description": "A short one or two sentence description of why validation failed."
             }
           },
-          "required": ["code", "path", "message", "surfaceId"]
+          "required": ["code", "path", "message", "surfaceId"],
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -76,7 +77,7 @@
             },
             "message": {
               "type": "string",
-              "description": "A short one-sentence description of why the error occurred."
+              "description": "A short one or two sentence description of why the error occurred."
             },
             "surfaceId": {
               "type": "string",
@@ -87,43 +88,7 @@
           "additionalProperties": true
         }
       ]
-    },
-    "capabilities": {
-      "$ref": "#/definitions/capabilities"
     }
   },
-  "oneOf": [
-    { "required": ["action"] },
-    { "required": ["capabilities"] },
-    { "required": ["error"] }
-  ],
-  "definitions": {
-    "capabilities": {
-      "type": "object",
-      "description": "Describes the client's UI rendering capabilities.",
-      "properties": {
-        "supportedCatalogIds": {
-          "type": "array",
-          "description": "The URI of each of the component catalogs that is supported by the client.",
-          "items": { "type": "string" }
-        },
-        "inlineCatalogs": {
-          "type": "array",
-          "description": "An array of inline catalog definitions.",
-          "items": { "type": "object" }
-        },
-        "supportedFunctionCatalogIds": {
-          "type": "array",
-          "description": "A list of function catalog URIs supported by the client.",
-          "items": { "type": "string" }
-        },
-        "inlineFunctionCatalogs": {
-          "type": "array",
-          "description": "A list of function catalogs defined inline by the client.",
-          "items": { "$ref": "expression_types.json#/$defs/FunctionCatalog" }
-        }
-      },
-      "required": ["supportedCatalogIds"]
-    }
-  }
+  "oneOf": [{ "required": ["action"] }, { "required": ["error"] }]
 }

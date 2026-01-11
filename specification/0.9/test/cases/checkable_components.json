@@ -12,7 +12,7 @@
               "id": "tf1",
               "component": "TextField",
               "label": "Email",
-              "text": { "path": "/formData/email" },
+              "value": { "path": "/formData/email" },
               "checks": [
                 {
                   "call": "required",
@@ -43,7 +43,7 @@
               "id": "cp1",
               "component": "ChoicePicker",
               "label": "Interests",
-              "usageHint": "multipleSelection",
+              "variant": "multipleSelection",
               "options": [
                 { "label": "Code", "value": "code" },
                 { "label": "Design", "value": "design" }
@@ -73,24 +73,24 @@
           "surfaceId": "test_surface",
           "components": [
             {
-               "id": "sl1",
-               "component": "Slider",
-               "label": "Rating",
-               "min": 1,
-               "max": 5,
-               "value": { "path": "/formData/rating" },
-               "checks": [
-                 {
-                   "call": "numeric",
-                   "args": {
-                     "value": { "path": "/formData/rating" },
-                     "min": 3
-                   },
-                   "returnType": "boolean",
-                   "message": "Rating must be > 3"
-                 }
-               ]
-             }
+              "id": "sl1",
+              "component": "Slider",
+              "label": "Rating",
+              "min": 1,
+              "max": 5,
+              "value": { "path": "/formData/rating" },
+              "checks": [
+                {
+                  "call": "numeric",
+                  "args": {
+                    "value": { "path": "/formData/rating" },
+                    "min": 3
+                  },
+                  "returnType": "boolean",
+                  "message": "Rating must be > 3"
+                }
+              ]
+            }
           ]
         }
       }
