@@ -372,7 +372,6 @@ export class Root extends SignalWatcher(LitElement) {
         }
 
         case "MultipleChoice": {
-          // TODO: maxAllowedSelections and selections.
           const node = component as NodeOfType<"MultipleChoice">;
           return html`<a2ui-multiplechoice
             id=${node.id}
