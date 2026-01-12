@@ -25,7 +25,7 @@ import {
 } from "@a2a-js/sdk";
 import { v4 as uuidv4 } from "uuid";
 
-const A2AUI_MIME_TYPE = "application/json+a2aui";
+const A2UI_MIME_TYPE = "application/json+a2ui";
 
 const fetchWithCustomHeader: typeof fetch = async (url, init) => {
   const headers = new Headers(init?.headers);
@@ -92,7 +92,7 @@ export const plugin = (): Plugin => {
                       {
                         kind: "data",
                         data: clientEvent,
-                        metadata: { 'mimeType': A2AUI_MIME_TYPE },
+                        metadata: { 'mimeType': A2UI_MIME_TYPE },
                       } as Part,
                     ],
                     kind: "message",

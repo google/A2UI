@@ -5,7 +5,7 @@
   "minProperties": 1,
   "maxProperties": 1,
   "properties": {
-    "userAction": {
+    "action": {
       "type": "object",
       "description": "Reports a user-initiated action from a component.",
       "properties": {
@@ -60,10 +60,11 @@
             },
             "message": {
               "type": "string",
-              "description": "A short one-sentence description of why validation failed."
+              "description": "A short one or two sentence description of why validation failed."
             }
           },
-          "required": ["code", "path", "message", "surfaceId"]
+          "required": ["code", "path", "message", "surfaceId"],
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -76,7 +77,7 @@
             },
             "message": {
               "type": "string",
-              "description": "A short one-sentence description of why the error occurred."
+              "description": "A short one or two sentence description of why the error occurred."
             },
             "surfaceId": {
               "type": "string",
@@ -89,9 +90,5 @@
       ]
     }
   },
-  "oneOf": [
-    { "required": ["userAction"] },
-    { "required": ["clientUiCapabilities"] },
-    { "required": ["error"] }
-  ]
+  "oneOf": [{ "required": ["action"] }, { "required": ["error"] }]
 }

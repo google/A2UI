@@ -12,6 +12,7 @@
   ],
   "$defs": {
     "CreateSurfaceMessage": {
+      "type": "object",
       "properties": {
         "createSurface": {
           "type": "object",
@@ -35,6 +36,7 @@
       "additionalProperties": false
     },
     "UpdateComponentsMessage": {
+      "type": "object",
       "properties": {
         "updateComponents": {
           "type": "object",
@@ -50,7 +52,7 @@
               "description": "A list containing all UI components for the surface.",
               "minItems": 1,
               "items": {
-                "$ref": "standard_catalog_definition.json#/$defs/anyComponent"
+                "$ref": "standard_catalog.json#/$defs/anyComponent"
               }
             }
           },
@@ -62,6 +64,7 @@
       "additionalProperties": false
     },
     "UpdateDataModelMessage": {
+      "type": "object",
       "properties": {
         "updateDataModel": {
           "type": "object",
@@ -75,13 +78,16 @@
               "type": "string",
               "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', refers to the entire data model."
             },
-            "op": {
-              "type": "string",
-              "description": "The operation to perform on the data model. Defaults to 'replace' if omitted.",
-              "enum": ["add", "replace", "remove"]
-            },
             "value": {
-              "description": "The data to be updated in the data model. Required for 'add' and 'replace' operations. Not allowed for 'remove' operation.",
+              "description": "The data to be updated in the data model. If present, the value at 'path' is replaced (or created). If omitted, the key at 'path' is removed.",
+              "type": [
+                "object",
+                "array",
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ],
               "additionalProperties": true
             }
           },
@@ -93,6 +99,7 @@
       "additionalProperties": false
     },
     "DeleteSurfaceMessage": {
+      "type": "object",
       "properties": {
         "deleteSurface": {
           "type": "object",

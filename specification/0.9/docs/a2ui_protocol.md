@@ -1,5 +1,6 @@
 <!-- markdownlint-disable MD041 -->
 <!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD034 -->
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
     <img src="../../../docs/assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
@@ -34,9 +35,11 @@ Version 0.9 of the A2UI protocol represents a philosophical shift from previous 
 This "prompt-first" approach offers several advantages:
 
 1.  **Richer Schema:** The protocol is no longer limited by the constraints of structured output formats. This allows for more readable, complex, and expressive component catalogs.
-2.  **Modularity:** The schema is now refactored into separate, more manageable components (e.g., [`common_types.json`], [`standard_catalog_definition.json`], [`server_to_client.json`]), improving maintainability and modularity.
+2.  **Modularity:** The schema is now refactored into separate, more manageable components (e.g., [`common_types.json`], [`standard_catalog.json`], [`server_to_client.json`]), improving maintainability and modularity.
 
 The main disadvantage of this approach is that it requires more complex post-generation validation, as the LLM is not strictly constrained by the schema. This requires robust error handling and correction, so the system can identify discrepancies and attempt to fix them before rendering, or request a retry or correction from the LLM.
+
+See [the evolution guide](evolution_guide.md) for a detailed explanation of the differences between v0.8 and v0.9.
 
 ## Protocol Overview & Data Flow
 
@@ -82,8 +85,8 @@ A2UI v0.9 is defined by three interacting JSON schemas.
 
 The [`common_types.json`] schema defines reusable primitives used throughout the protocol.
 
-- **`stringOrPath` / `numberOrPath` / `booleanOrPath` / `stringArrayOrPath`**: The core of the data binding system. Any property that can be bound to data is defined as an object that accepts either a literal value OR a `path` string ([JSON Pointer]).
-- **`childrenProperty`**: Defines how containers hold children. It supports:
+- **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `FunctionCall` (function call).
+- **`ChildList`**: Defines how containers hold children. It supports:
 
   - `array`: A static array of string component IDs.
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
@@ -97,7 +100,7 @@ The [`server_to_client.json`] schema is the top-level entry point. Every line st
 
 ### The Standard Catalog
 
-The [`standard_catalog_definition.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`). By separating this from the envelope, developers can easily swap in custom catalogs (e.g., `material_catalog.json` or `cupertino_catalog.json`) without rewriting the core protocol parser.
+The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`) and functions (e.g., `required`, `email`). By separating this from the envelope, developers can easily swap in custom catalogs (e.g., `material_catalog.json` or `cupertino_catalog.json`) without rewriting the core protocol parser.
 
 Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the standard catalog. It should have the same form as the standard catalog, and use common elements in the [`common_types.json`] schema.
 
@@ -112,7 +115,7 @@ This message signals the client to create a new surface and begin rendering it. 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
-- `catalogId` (string, required): A string that uniquely identifies the component catalog used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+- `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
 
 **Example:**
 
@@ -120,7 +123,7 @@ This message signals the client to create a new surface and begin rendering it. 
 {
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog_definition.json"
+    "catalogId": "https://a2ui.dev/specification/0.9/standard_catalog.json"
   }
 }
 ```
@@ -169,8 +172,7 @@ This message is used to send or update the data that populates the UI components
 
 - `surfaceId` (string, required): The unique identifier for the UI surface this data model update applies to.
 - `path` (string, optional): A JSON Pointer to a specific location within the data model (e.g., `/user/name`). If omitted or set to `/`, the entire data model for the surface will be replaced.
-- `op` (string, optional): The operation to perform on the data model. Must be 'add', 'replace' or 'remove'. If omitted, defaults to 'replace'.
-- `value` (object): The data to be updated in the data model. This can be any valid JSON object. Required if `op` is 'add' or 'replace'. Not allowed if `op` is 'remove'.
+- `value` (object): The data to be updated in the data model. If present, the value at `path` is updated/created. If this field is omitted, the data at `path` is **removed**.
 
 **Example:**
 
@@ -179,7 +181,6 @@ This message is used to send or update the data that populates the UI components
   "updateDataModel": {
     "surfaceId": "user_profile_card",
     "path": "/user",
-    "op": "replace",
     "value": {
       "name": "Jane Doe",
       "title": "Software Engineer"
@@ -211,9 +212,9 @@ This message instructs the client to remove a surface and all its associated com
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
 
 ```jsonl
-{"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog_definition.json"}}
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Column","children":["first_name_label","first_name_field","last_name_label","last_name_field","email_label","email_field","phone_label","phone_field","notes_label","notes_field","submit_button"]},{"id":"first_name_label","component":"Text","text":"First Name"},{"id":"first_name_field","component":"TextField","label":"First Name","text":{"path":"/contact/firstName"},"usageHint":"shortText"},{"id":"last_name_label","component":"Text","text":"Last Name"},{"id":"last_name_field","component":"TextField","label":"Last Name","text":{"path":"/contact/lastName"},"usageHint":"shortText"},{"id":"email_label","component":"Text","text":"Email"},{"id":"email_field","component":"TextField","label":"Email","text":{"path":"/contact/email"},"usageHint":"shortText"},{"id":"phone_label","component":"Text","text":"Phone"},{"id":"phone_field","component":"TextField","label":"Phone","text":{"path":"/contact/phone"},"usageHint":"shortText"},{"id":"notes_label","component":"Text","text":"Notes"},{"id":"notes_field","component":"TextField","label":"Notes","text":{"path":"/contact/notes"},"usageHint":"longText"},{"id":"submit_button_label","component":"Text","text":"Submit"},{"id":"submit_button","component":"Button","child":"submit_button_label","action":{"name":"submitContactForm"}}]}}
-{"updateDataModel": {"surfaceId": "contact_form_1", "path": "/contact", "op": "replace", "value": {"firstName": "John", "lastName": "Doe", "email": "john.doe@example.com"}}}
+{"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog.json"}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","message":"Email is required."},{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","primary":true,"action":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}]}}
+{"updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true}}}
 ```
 
 ## Component Model
@@ -233,7 +234,7 @@ This structure is designed to be both flexible and strictly validated.
 
 ### The Component Catalog
 
-The set of available UI components and their properties is defined in a **Component Catalog**. The standard catalog is defined in [`standard_catalog_definition.json`]. This allows for different clients to support different sets of components, including custom ones. The server must generate `updateComponents` messages that conform to the component catalog understood by the client.
+The set of available UI components and functions is defined in a **Catalog**. The standard catalog is defined in [`standard_catalog.json`]. This allows for different clients to support different sets of components and functions, including custom ones. The server must generate messages that conform to the catalog understood by the client.
 
 ### UI Composition: The Adjacency List Model
 
@@ -285,7 +286,7 @@ By default, all components operate in the **Root Scope**.
 
 #### Collection Scopes (Relative Paths)
 
-When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `childrenProperty`, it creates a new **Child Scope** for each item in the bound array.
+When a container component (such as `Column`, `Row`, or `List`) utilizes the **Template** feature of `ChildList`, it creates a new **Child Scope** for each item in the bound array.
 
 - **Template Definition:** When a container binds its children to a path (e.g., `path: "/users"`), the client iterates over the array found at that location.
 - **Scope Instantiation:** For every item in the array, the client instantiates the template component.
@@ -339,9 +340,58 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 }
 ```
 
+### String Interpolation
+
+A2UI supports embedding dynamic expressions directly within string properties (any property defined as a `DynamicString` in the catalog). This allowing for mixing static text with data model values and function results.
+
+#### Syntax
+
+Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
+
+#### Data Model Binding
+
+Values from the data model can be interpolated using their JSON Pointer path.
+
+- `${/user/profile/name}`: Absolute path.
+- `${firstName}`: Relative path (resolved against the current collection scope).
+
+**Example:**
+
+```json
+{
+  "id": "user_welcome",
+  "component": "Text",
+  "text": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
+}
+```
+
+#### Client-Side Functions
+
+Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
+
+- `${now()}`: A function with no arguments.
+- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
+
+Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
+
+#### Nested Interpolation
+
+Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
+
+- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
+- **Nested Functions**: `${upper(${now()})}`
+
+#### Type Conversion
+
+When a non-string value is interpolated, the client converts it to a string:
+
+- **Numbers/Booleans**: Standard string representation.
+- **Null/Undefined**: An empty string `""`.
+- **Objects/Arrays**: Stringified as JSON to ensure consistency across different client implementations.
+
 ### Two-Way Binding & Input Components
 
-Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `MultipleChoice`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
+Interactive components that accept user input (`TextField`, `CheckBox`, `Slider`, `ChoicePicker`, `DateTimeInput`) establish a **Two-Way Binding** with the Data Model.
 
 #### The Read/Write Contract
 
@@ -362,7 +412,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 - User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
 - The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
-- When a `userAction` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
+- When a `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
 
 #### Example: Form Submission Pattern
 
@@ -379,11 +429,73 @@ It is critical to note that Two-Way Binding is **local to the client**.
     }
     ```
 
-4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `userAction` payload.
+4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `action` payload.
+
+## Client-Side Logic & Validation
+
+A2UI v0.9 generalizes client-side logic into **Functions**. These can be used for validation, data transformation, and dynamic property binding.
+
+### Registered Functions
+
+The client registers a set of named **Functions** (e.g., `required`, `regex`, `email`, `add`, `concat`) in a `FunctionCatalog`. The server references these functions by name. This avoids sending executable code.
+
+Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message that can be displayed when the component is rendered. Note that for validation checks, the function must return a boolean.
+
+```json
+"checks": [
+  {
+    "call": "required",
+    "args": { "value": { "path": "/formData/zip" } },
+    "message": "Zip code is required"
+  },
+  {
+    "call": "regex",
+    "args": {
+      "value": { "path": "/formData/zip" },
+      "pattern": "^[0-9]{5}$"
+    },
+    "message": "Must be a 5-digit zip code"
+  }
+]
+```
+
+### Example: Button Validation
+
+Buttons can also define `checks`. If any check fails, the button is automatically disabled. This allows the button's state to depend on the validity of data in the model.
+
+```json
+{
+  "component": "Button",
+  "text": "Submit",
+  "checks": [
+    {
+      "and": [
+        {
+          "call": "required",
+          "args": { "value": { "path": "/formData/terms" } }
+        },
+        {
+          "or": [
+            {
+              "call": "required",
+              "args": { "value": { "path": "/formData/email" } }
+            },
+            {
+              "call": "required",
+              "args": { "value": { "path": "/formData/phone" } }
+            }
+          ]
+        }
+      ],
+      "message": "You must accept terms AND provide either email or phone"
+    }
+  ]
+}
+```
 
 ## Standard Component Catalog
 
-The [`standard_catalog_definition.json`] provides the baseline set of components.
+The [`standard_catalog.json`] provides the baseline set of components and functions.
 
 | Component         | Description                                                                            |
 | :---------------- | :------------------------------------------------------------------------------------- |
@@ -448,7 +560,7 @@ If validation fails, the client (or the system acting on behalf of the client) s
 
 The protocol also defines messages that the client can send to the server, which are defined in the [`client_to_server.json`] schema. These are used for handling user interactions and reporting client-side information.
 
-### `userAction`
+### `action`
 
 This message is sent when the user interacts with a component that has an `action` defined, such as a `Button`.
 
@@ -460,13 +572,25 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
+### Client Capabilities
+
+Client capabilities are sent by the client to inform the server of its capabilities, including supported catalogs (components and functions). In A2UI v0.9, these are sent as part of the **A2A metadata** envelope in every message, rather than as a first-class A2UI message. This ensures the server always has the client's latest capabilities without needing a separate handshake.
+
+The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_capabilities_schema.json`] schema.
+
+**Properties:**
+
+- `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
+- `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
+
 ### `error`
 
 This message is used to report a client-side error to the server.
 
-[`standard_catalog_definition.json`]: ../json/standard_catalog_definition.json
+[`standard_catalog.json`]: ../json/standard_catalog.json
 [`common_types.json`]: ../json/common_types.json
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
+[`a2ui_client_capabilities_schema.json`]: ../json/a2ui_client_capabilities_schema.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901
