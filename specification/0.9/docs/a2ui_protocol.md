@@ -27,7 +27,7 @@ Communication occurs via a stream of JSON objects. The client parses each object
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
-- `configureDataUpdates`: Configures how and when the client sends data model updates to the server.
+- `watchDataModel`: Configures how and when the client sends data model updates to the server.
 
 ## Changes from previous versions
 
@@ -107,7 +107,7 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 ## Envelope Message Structure
 
-The envelope defines five primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface` or `configureDataUpdates`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
+The envelope defines five primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface` or `watchDataModel`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
 
 ### `createSurface`
 
@@ -208,7 +208,7 @@ This message instructs the client to remove a surface and all its associated com
 }
 ```
 
-### `configureDataUpdates`
+### `watchDataModel`
 
 This message configures how and when the client sends data model updates to the server. It allows restricting updates to specific paths and setting update modes (e.g., immediate, on timeout, or only on user action).
 
@@ -217,28 +217,28 @@ This message configures how and when the client sends data model updates to the 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be configured.
 - `configurations` (array, required): A list of configuration rules.
   - `path` (string, required): The data path to configure.
-  - `mode` (string, required): One of `onAction`, `onTimeout`, or `immediate`.
-  - `timeoutMs` (integer, optional): Required if `mode` is `onTimeout`.
+  - `mode` (string, required): One of `onAction` or `onTimeout`.
+  - `timeoutMs` (integer, optional): Required if `mode` is `onTimeout`. Set to 0 for immediate updates.
 
 **Nested Path Precedence:**
 
-If multiple configurations apply to the same data (e.g., one for `/user` and one for `/user/name`), the **most specific path** (the longest matching path) takes precedence. For example, if `/user` is set to `onAction` and `/user/name` is set to `immediate`, changes to `/user/name` will be sent immediately, while changes to `/user/bio` will wait for a user action.
+If multiple configurations apply to the same data (e.g., one for `/` and one for `/user/name`), the **most specific path** (the longest matching path) takes precedence. For example, if `/` is set to `onAction` and `/user/name` is set to `onTimeout` (with 0ms), changes to `/user/name` will be sent immediately, while changes to `/user/bio` will wait for a user action.
 
 **Example:**
 
 ```json
 {
-  "configureDataUpdates": {
+  "watchDataModel": {
     "surfaceId": "user_profile_card",
     "configurations": [
       {
-        "path": "/user/name",
-        "mode": "immediate"
+        "path": "/",
+        "mode": "onAction"
       },
       {
-        "path": "/user/bio",
+        "path": "/user/name",
         "mode": "onTimeout",
-        "timeoutMs": 500
+        "timeoutMs": 0
       }
     ]
   }
@@ -621,9 +621,9 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
 
-### `updateDataModel`
+### `dataModelChanged`
 
-This message is sent by the client to update the server's data model. This typically happens when `configureDataUpdates` has enabled `immediate` or `onTimeout` modes for specific paths.
+This message is sent by the client to update the server's data model. This typically happens when `watchDataModel` has enabled `onTimeout` mode for specific paths, or when a user action has triggered an update for a path set to `onAction` mode.
 
 **Properties:**
 

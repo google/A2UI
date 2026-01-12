@@ -89,7 +89,7 @@
         }
       ]
     },
-    "updateDataModel": {
+    "dataModelChanged": {
       "type": "object",
       "description": "Updates the server's data model from the client.",
       "properties": {
@@ -117,7 +117,7 @@
       "required": ["error"]
     },
     {
-      "required": ["updateDataModel"]
+      "required": ["dataModelChanged"]
     }
   ]
 }

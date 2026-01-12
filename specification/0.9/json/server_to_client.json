@@ -9,7 +9,7 @@
     { "$ref": "#/$defs/UpdateComponentsMessage" },
     { "$ref": "#/$defs/UpdateDataModelMessage" },
     { "$ref": "#/$defs/DeleteSurfaceMessage" },
-    { "$ref": "#/$defs/ConfigureDataUpdatesMessage" }
+    { "$ref": "#/$defs/WatchDataModelMessage" }
   ],
   "$defs": {
     "CreateSurfaceMessage": {
@@ -118,10 +118,10 @@
       "required": ["deleteSurface"],
       "additionalProperties": false
     },
-    "ConfigureDataUpdatesMessage": {
+    "WatchDataModelMessage": {
       "type": "object",
       "properties": {
-        "configureDataUpdates": {
+        "watchDataModel": {
           "type": "object",
           "description": "Configures how and when the client sends data model updates to the server for specific paths.",
           "properties": {
@@ -142,13 +142,13 @@
                   },
                   "mode": {
                     "type": "string",
-                    "enum": ["onAction", "onTimeout", "immediate"],
-                    "description": "The update mode. 'onAction' sends updates with the next user action. 'onTimeout' sends updates after a quiet period or interval. 'immediate' sends updates as soon as they change."
+                    "enum": ["onAction", "onTimeout"],
+                    "description": "The update mode. 'onAction' sends updates with the next user action. 'onTimeout' sends updates after a quiet period or interval."
                   },
                   "timeoutMs": {
                     "type": "integer",
                     "minimum": 0,
-                    "description": "Required if mode is 'onTimeout'. The duration in milliseconds to wait before sending updates."
+                    "description": "Required if mode is 'onTimeout'. The duration in milliseconds to wait before sending updates. Set to 0 for immediate updates."
                   }
                 },
                 "required": ["path", "mode"],
@@ -160,7 +160,7 @@
           "additionalProperties": false
         }
       },
-      "required": ["configureDataUpdates"],
+      "required": ["watchDataModel"],
       "additionalProperties": false
     }
   }
