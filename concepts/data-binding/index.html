@@ -1920,8 +1920,10 @@
 <p>Components bound to data paths automatically update when the data changes:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;status&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/order/status&quot;</span><span class="p">}}}}</span>
 </span></code></pre></div>
-<p><strong>Initial:</strong> <code>/order/status</code> = "Processing..." → displays "Processing..."
-<strong>Update:</strong> Send <code>dataModelUpdate</code> with <code>status: "Shipped"</code> → displays "Shipped"</p>
+<ul>
+<li><strong>Initial:</strong> <code>/order/status</code> = "Processing..." → displays "Processing..."</li>
+<li><strong>Update:</strong> Send <code>dataModelUpdate</code> with <code>status: "Shipped"</code> → displays "Shipped"</li>
+</ul>
 <p>No component updates needed—just data updates.</p>
 <h2 id="dynamic-lists">Dynamic Lists<a class="headerlink" href="#dynamic-lists" title="Permanent link">&para;</a></h2>
 <p>Use templates to render arrays:</p>
@@ -1942,8 +1944,10 @@
 <p>Inside a template, paths are scoped to the array item:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;product-name&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/name&quot;</span><span class="p">}}}}</span>
 </span></code></pre></div>
-<p>For <code>/products/0</code>, <code>/name</code> resolves to <code>/products/0/name</code> → "Widget"
-For <code>/products/1</code>, <code>/name</code> resolves to <code>/products/1/name</code> → "Gadget"</p>
+<ul>
+<li>For <code>/products/0</code>, <code>/name</code> resolves to <code>/products/0/name</code> → "Widget"</li>
+<li>For <code>/products/1</code>, <code>/name</code> resolves to <code>/products/1/name</code> → "Gadget"</li>
+</ul>
 <p>Adding/removing items automatically updates the rendered components.</p>
 <h2 id="input-bindings">Input Bindings<a class="headerlink" href="#input-bindings" title="Permanent link">&para;</a></h2>
 <p>Interactive components update the data model bidirectionally:</p>

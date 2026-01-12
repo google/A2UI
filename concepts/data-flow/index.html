@@ -1833,7 +1833,8 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>{&quot;dataModelUpdate&quot;:{&quot;surfaceId&quot;:&quot;main&quot;,&quot;contents&quot;:[{&quot;key&quot;:&quot;user&quot;,&quot;valueMap&quot;:[{&quot;key&quot;:&quot;name&quot;,&quot;valueString&quot;:&quot;Alice&quot;}]}]}}
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>{&quot;beginRendering&quot;:{&quot;surfaceId&quot;:&quot;main&quot;,&quot;root&quot;:&quot;root-component&quot;}}
 </span></code></pre></div>
-<p><strong>Why this format?</strong> A sequence of self-contained JSON objects is streaming-friendly, easy for LLMs to generate incrementally, and resilient to errors.</p>
+<p><strong>Why this format?</strong></p>
+<p>A sequence of self-contained JSON objects is streaming-friendly, easy for LLMs to generate incrementally, and resilient to errors.</p>
 <h2 id="lifecycle-example-restaurant-booking">Lifecycle Example: Restaurant Booking<a class="headerlink" href="#lifecycle-example-restaurant-booking" title="Permanent link">&para;</a></h2>
 <p><strong>User:</strong> "Book a table for 2 tomorrow at 7pm"</p>
 <p><strong>1. Agent defines UI structure:</strong></p>
@@ -1869,12 +1870,16 @@
 <p>Instead of waiting for the entire response to be generated before showing anything to the user, chunks of the response can be streamed to the client as they are generated and progressively rendered.</p>
 <p>Users see UI building in real-time instead of staring at a spinner.</p>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
-<p><strong>Malformed messages:</strong> Skip and continue, or send error back to agent for correction
-<strong>Network interruptions:</strong> Display error state, reconnect, agent resends or resumes</p>
+<ul>
+<li><strong>Malformed messages:</strong> Skip and continue, or send error back to agent for correction</li>
+<li><strong>Network interruptions:</strong> Display error state, reconnect, agent resends or resumes</li>
+</ul>
 <h2 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h2>
-<p><strong>Batching:</strong> Buffer updates for 16ms, batch render together
-<strong>Diffing:</strong> Compare old/new components, update only changed properties
-<strong>Granular updates:</strong> Update <code>/user/name</code> not entire <code>/</code> model</p>
+<ul>
+<li><strong>Batching:</strong> Buffer updates for 16ms, batch render together</li>
+<li><strong>Diffing:</strong> Compare old/new components, update only changed properties</li>
+<li><strong>Granular updates:</strong> Update <code>/user/name</code> not entire <code>/</code> model</li>
+</ul>
 
 
 

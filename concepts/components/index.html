@@ -1888,15 +1888,19 @@
 <h1 id="components-structure">Components &amp; Structure<a class="headerlink" href="#components-structure" title="Permanent link">&para;</a></h1>
 <p>A2UI uses an <strong>adjacency list model</strong> for component hierarchies. Instead of nested JSON trees, components are a flat list with ID references.</p>
 <h2 id="why-flat-lists">Why Flat Lists?<a class="headerlink" href="#why-flat-lists" title="Permanent link">&para;</a></h2>
-<p><strong>Traditional nested approach:</strong>
-- LLM must generate perfect nesting in one pass
-- Hard to update deeply nested components
-- Difficult to stream incrementally</p>
-<p><strong>A2UI adjacency list:</strong>
-- ✅ Flat structure, easy for LLMs to generate
-- ✅ Send components incrementally
-- ✅ Update any component by ID
-- ✅ Clear separation of structure and data</p>
+<p><strong>Traditional nested approach:</strong></p>
+<ul>
+<li>LLM must generate perfect nesting in one pass</li>
+<li>Hard to update deeply nested components</li>
+<li>Difficult to stream incrementally</li>
+</ul>
+<p><strong>A2UI adjacency list:</strong></p>
+<ul>
+<li>✅ Flat structure, easy for LLMs to generate</li>
+<li>✅ Send components incrementally</li>
+<li>✅ Update any component by ID</li>
+<li>✅ Clear separation of structure and data</li>
+</ul>
 <h2 id="the-adjacency-list-model">The Adjacency List Model<a class="headerlink" href="#the-adjacency-list-model" title="Permanent link">&para;</a></h2>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;surfaceUpdate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1916,7 +1920,7 @@
 <h2 id="component-basics">Component Basics<a class="headerlink" href="#component-basics" title="Permanent link">&para;</a></h2>
 <p>Every component has:</p>
 <ol>
-<li><strong>ID</strong>: Unique identifier (<code>"welcome-message"</code>)</li>
+<li><strong>ID</strong>: Unique identifier (<code>"welcome"</code>)</li>
 <li><strong>Type</strong>: Component type (<code>Text</code>, <code>Button</code>, <code>Card</code>)</li>
 <li><strong>Properties</strong>: Configuration specific to that type</li>
 </ol>
@@ -1941,8 +1945,10 @@
 <p>For each item in <code>/items</code>, render the <code>item-template</code>. See <a href="../data-binding/">Data Binding</a> for details.</p>
 <h2 id="hydrating-with-values">Hydrating with Values<a class="headerlink" href="#hydrating-with-values" title="Permanent link">&para;</a></h2>
 <p>Components get their values two ways:</p>
-<p><strong>Literal</strong> - Fixed value: <code>{"text": {"literalString": "Welcome"}}</code>
-<strong>Data-bound</strong> - From data model: <code>{"text": {"path": "/user/name"}}</code></p>
+<ul>
+<li><strong>Literal</strong> - Fixed value: <code>{"text": {"literalString": "Welcome"}}</code></li>
+<li><strong>Data-bound</strong> - From data model: <code>{"text": {"path": "/user/name"}}</code></li>
+</ul>
 <p>LLMs can generate components with literal values or bind them to data paths for dynamic content.</p>
 <h2 id="composing-surfaces">Composing Surfaces<a class="headerlink" href="#composing-surfaces" title="Permanent link">&para;</a></h2>
 <p>Components compose into <strong>surfaces</strong> (widgets):</p>
@@ -1954,9 +1960,11 @@
 </ol>
 <p>A surface is a complete, cohesive UI (form, dashboard, chat, etc.).</p>
 <h2 id="incremental-updates">Incremental Updates<a class="headerlink" href="#incremental-updates" title="Permanent link">&para;</a></h2>
-<p><strong>Add</strong> - Send new <code>surfaceUpdate</code> with new component IDs
-<strong>Update</strong> - Send <code>surfaceUpdate</code> with existing ID and new properties
-<strong>Remove</strong> - Update parent's <code>children</code> list to exclude removed IDs</p>
+<ul>
+<li><strong>Add</strong> - Send new <code>surfaceUpdate</code> with new component IDs</li>
+<li><strong>Update</strong> - Send <code>surfaceUpdate</code> with existing ID and new properties</li>
+<li><strong>Remove</strong> - Update parent's <code>children</code> list to exclude removed IDs</li>
+</ul>
 <p>The flat structure makes all updates simple ID-based operations.</p>
 <h2 id="custom-components">Custom Components<a class="headerlink" href="#custom-components" title="Permanent link">&para;</a></h2>
 <p>Beyond the standard catalog, clients can define custom components for domain-specific needs:</p>
