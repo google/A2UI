@@ -18,8 +18,9 @@ Before you begin, make sure you have:
 - **Node.js** (v18 or later) - [Download here](https://nodejs.org/)
 - **A Gemini API key** - [Get one free from Google AI Studio](https://aistudio.google.com/apikey)
 
-!!! warning "Security Notice"
-    This demo runs an A2A agent that uses Gemini to generate A2UI responses. The agent has access to your API key and will make requests to Google's Gemini API. Always review agent code before running it in production environments.
+> ⚠️ **Security Notice**
+>
+> This demo runs an A2A agent that uses Gemini to generate A2UI responses. The agent has access to your API key and will make requests to Google's Gemini API. Always review agent code before running it in production environments.
 
 ## Step 1: Clone the Repository
 
@@ -59,8 +60,9 @@ This command will:
 4. Launch the development server
 5. Open your browser to `http://localhost:5173`
 
-!!! success "Demo Running"
-    If everything worked, you should see the web app in your browser. The agent is now ready to generate UI!
+> ✅ **Demo Running**
+>
+> If everything worked, you should see the web app in your browser. The agent is now ready to generate UI!
 
 ## Step 5: Try It Out
 
@@ -185,8 +187,9 @@ This populates the data model that components can bind to.
 
 This tells the client it has enough information to render the UI.
 
-!!! tip "It's Just JSON"
-    Notice how readable and structured this is? LLMs can generate this easily, and it's safe to transmit and render—no code execution required.
+> 💡 **It's Just JSON**
+>
+> Notice how readable and structured this is? LLMs can generate this easily, and it's safe to transmit and render—no code execution required.
 
 ## Exploring Other Demos
 

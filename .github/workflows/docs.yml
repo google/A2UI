@@ -69,6 +69,12 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
 
+      - name: Validate documentation conversion script
+        run: pip install pytest && pytest docs/scripts/test_convert_docs.py
+
+      - name: Convert Admonitions in Documentation
+        run: python docs/scripts/convert_docs.py --mode github-to-mkdocs
+
       - name: Build Documentation (PR Check)
         if: github.event_name == 'pull_request'
         run: mkdocs build
