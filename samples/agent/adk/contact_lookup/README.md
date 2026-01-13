@@ -29,6 +29,15 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
    uv run .
    ```
 
+## Using with Android Client
+
+This agent supports the Android A2UI Client sample.
+
+1.  Ensure this agent is running (serving at `http://localhost:10003`).
+2.  Open the Android project in `samples/client/android`.
+3.  Run the **Contact** sample app on an emulator.
+4.  The app will automatically connect to this agent and display the UI.
+
 
 ## Disclaimer
 
