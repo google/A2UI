@@ -626,7 +626,7 @@ Values from the data model can be interpolated using their JSON Pointer path.
   "component": "Text",
   "text": {
     "call": "string_format",
-    "args": ["Hello, ${/user/firstName}! Welcome back to ${/appName}."]
+    "args": { "value": "Hello, ${/user/firstName}! Welcome back to ${/appName}." }
   }
 }
 ```
