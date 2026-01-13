@@ -499,7 +499,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
     visited.delete(fullId);
 
-    const baseNode = {
+    const baseNode: { id: string, dataContextPath: string, weight: number | 'initial' } = {
       id: fullId,
       dataContextPath,
       weight: componentData.weight ?? "initial",

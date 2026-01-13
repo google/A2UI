@@ -16,8 +16,9 @@
 
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
-import { v0_8 } from "@a2ui/lit";
-import { DataMap, DataValue } from "./types/types";
+import { A2uiMessageProcessor } from "./data/model-processor.js";
+import * as Guards from "./data/guards.js";
+import { AnyComponentNode, DataMap, DataValue } from "./types/types.js";
 
 // Helper function to strip reactivity for clean comparisons.
 const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
@@ -30,7 +31,7 @@ const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
     return value.map(toPlainObject);
   }
   if (
-    v0_8.Data.Guards.isObject(value) &&
+    Guards.isObject(value) &&
     value.constructor.name === "SignalObject"
   ) {
     const obj: Record<string, unknown> = {};
@@ -46,10 +47,10 @@ const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
 };
 
 describe("A2uiMessageProcessor", () => {
-  let processor: v0_8.Data.A2uiMessageProcessor;
+  let processor: A2uiMessageProcessor;
 
   beforeEach(() => {
-    processor = new v0_8.Data.A2uiMessageProcessor();
+    processor = new A2uiMessageProcessor();
   });
 
   describe("Basic Initialization and State", () => {
@@ -140,7 +141,7 @@ describe("A2uiMessageProcessor", () => {
         },
       ]);
       const name = processor.getData(
-        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        { dataContextPath: "/" } as AnyComponentNode,
         "/user/name"
       );
       assert.strictEqual(name, "Alice");
@@ -159,14 +160,14 @@ describe("A2uiMessageProcessor", () => {
         },
       ]);
       const user = processor.getData(
-        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        { dataContextPath: "/" } as AnyComponentNode,
         "/user"
       );
       assert.deepStrictEqual(toPlainObject(user), { name: "Bob" });
     });
 
     it("should create nested structures when setting data", () => {
-      const component = { dataContextPath: "/" } as v0_8.Types.AnyComponentNode;
+      const component = { dataContextPath: "/" } as AnyComponentNode;
       // Note: setData is a public method that does not use the key-value format
       processor.setData(component, "/a/b/c", "value");
       const data = processor.getData(component, "/a/b/c");
@@ -227,7 +228,7 @@ describe("A2uiMessageProcessor", () => {
       ]);
 
       const info = processor.getData(
-        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        { dataContextPath: "/" } as AnyComponentNode,
         "/data/users"
       );
 
@@ -286,7 +287,7 @@ describe("A2uiMessageProcessor", () => {
       ]);
 
       let messagesData = processor.getData(
-        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        { dataContextPath: "/" } as AnyComponentNode,
         "/messages"
       );
 
@@ -315,7 +316,7 @@ describe("A2uiMessageProcessor", () => {
       ]);
 
       messagesData = processor.getData(
-        { dataContextPath: "/" } as v0_8.Types.AnyComponentNode,
+        { dataContextPath: "/" } as AnyComponentNode,
         "/messages"
       );
 
@@ -677,7 +678,7 @@ describe("A2uiMessageProcessor", () => {
 
       processor.processMessages(messages);
 
-      const component = { dataContextPath: "/" } as v0_8.Types.AnyComponentNode;
+      const component = { dataContextPath: "/" } as AnyComponentNode;
       const title = processor.getData(component, "/title", "test-surface");
       const items = processor.getData(component, "/items", "test-surface");
 
@@ -697,7 +698,7 @@ describe("A2uiMessageProcessor", () => {
         },
       ]);
 
-      const component = { dataContextPath: "/" } as v0_8.Types.AnyComponentNode;
+      const component = { dataContextPath: "/" } as AnyComponentNode;
       const badData = processor.getData(component, "/badData");
       assert.strictEqual(badData, invalidJSON);
     });
