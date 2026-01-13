@@ -121,3 +121,7 @@ To get this file back in sync, you can run the following commands:
 1. List all the files in the entire repo with `git ls-tree main --name-only -r`
 2. Read the ~50 most important files in the list, potentially in batches.
 3. Update this file.
+
+## Change descriptions
+
+If you (the agent) are generating a pull request summary, pull request description, or change description, avoid flowery or hyperbolic terms (e.g. "significantly improves", "greatly enhances", "is an incredible improvement").  Be factual and avoid marketing language: you're not selling the PR, you're describing it.

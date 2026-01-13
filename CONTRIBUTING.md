@@ -52,7 +52,7 @@ Here are some additional things to keep in mind during the process:
 
 To keep our codebase consistent and maintainable, we follow specific coding standards for Python and TypeScript.
 
-Please refer to [CODING_STYLE.md](CODING_STYLE.md) for detailed guidelines on:
+Please refer to [STYLE_GUIDE.md](STYLE_GUIDE.md) for detailed guidelines on:
 *   **Python**: specific formatting, linting, and naming conventions (Google Python Style).
 *   **TypeScript**: usage of `gts`, naming conventions, and code organization (Google TypeScript Style).
 *   **License Headers**: required copyright notices.

@@ -8,13 +8,13 @@ This style guide outlines the coding conventions for contributions to this repos
 
 Code should follow the relevant style guides, and use the correct
 auto-formatter, for each language, as described in
-[the repository contributing guide's Style section](../CODING_STYLE.md).
+[the repository contributing guide's Style section](../STYLE_GUIDE.md).
 
 ## Best Practices
 
 - Code should follow the guidance and principles described in
   [the A2UI contribution guidelines](../CONTRIBUTING.md).
-- Code should be tested.
+- If there are code changes, code should have tests.
 - PR descriptions should include the Pre-Review Checklist from
   [the PR template](https://github.com/flutter/genui/blob/main/.github/PULL_REQUEST_TEMPLATE.md),
   with all of the steps completed.
