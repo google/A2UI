@@ -62,7 +62,7 @@ sequenceDiagram
 
     Server->>+Client: 1. createSurface(surfaceId: "main")
     Server->>+Client: 2. updateComponents(surfaceId: "main", components: [...])
-    Server->>+Client: 2. updateDataModel(surfaceId: "main", op: "replace", value: {...})
+    Server->>+Client: 2. updateDataModel(surfaceId: "main", actorId: "agent-1", updates: [...], versions: {...})
     Note right of Client: 3. Client renders the UI for the "main" surface
     Client-->>-Server: (UI is displayed)
     Client-->>-Server: (UI is displayed)
@@ -172,8 +172,9 @@ This message is used to send or update the data that populates the UI components
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface this data model update applies to.
-- `path` (string, optional): A JSON Pointer to a specific location within the data model (e.g., `/user/name`). If omitted or set to `/`, the entire data model for the surface will be replaced.
-- `value` (object): The data to be updated in the data model. If present, the value at `path` is updated/created. If this field is omitted, the data at `path` is **removed**.
+- `actorId` (string, required): The ID of the actor that sent the update.
+- `updates` (array, required): A list of `DataUpdate` objects (path, value, hlc, and optional pos).
+- `versions` (object, required): A `VersionVector` map (actorId -> hlc).
 
 **Example:**
 
@@ -181,10 +182,21 @@ This message is used to send or update the data that populates the UI components
 {
   "updateDataModel": {
     "surfaceId": "user_profile_card",
-    "path": "/user",
-    "value": {
-      "name": "Jane Doe",
-      "title": "Software Engineer"
+    "actorId": "agent-1",
+    "updates": [
+      {
+        "path": "/user/name",
+        "value": "Jane Doe",
+        "hlc": "2026-01-12T16:34:29.000Z:0001:agent-1"
+      },
+      {
+        "path": "/user/title",
+        "value": "Software Engineer",
+        "hlc": "2026-01-12T16:34:29.000Z:0002:agent-1"
+      }
+    ],
+    "versions": {
+      "agent-1": "2026-01-12T16:34:29.000Z:0002:agent-1"
     }
   }
 }
@@ -252,7 +264,7 @@ The following example demonstrates a complete interaction to render a Contact Fo
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/0.9/standard_catalog.json"}}
 {"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","message":"Email is required."},{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","primary":true,"action":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}]}}
-{"updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true}}}
+{"updateDataModel":{"surfaceId":"contact_form_1","actorId":"agent-1","updates":[{"path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true},"hlc":"2026-01-12T16:34:29.000Z:0001:agent-1"}],"versions":{"agent-1":"2026-01-12T16:34:29.000Z:0001:agent-1"}}}
 ```
 
 ## Component Model
@@ -307,9 +319,9 @@ flowchart TD
 
 ```
 
-## Data Binding, Scope, and State Management
+## Data Model Representation: Binding, Scope, and Interpolation
 
-A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model). This section defines the precise mechanics of path resolution, variable scope during iteration, and the specific behaviors of two-way binding for interactive components.
+This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration, and interpolation.
 
 ### Path Resolution & Scope
 
@@ -319,7 +331,6 @@ Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a po
 
 By default, all components operate in the **Root Scope**.
 
-- The Root Scope corresponds to the top-level object of the `value` provided in `updateDataModel`.
 - Paths starting with `/` (e.g., `/user/profile/name`) are **Absolute Paths**. They always resolve from the root of the Data Model, regardless of where the component is nested in the UI tree.
 
 #### Collection Scopes (Relative Paths)
@@ -380,7 +391,7 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 
 ### String Interpolation
 
-A2UI supports embedding dynamic expressions directly within string properties (any property defined as a `DynamicString` in the catalog). This allowing for mixing static text with data model values and function results.
+A2UI supports embedding dynamic expressions directly within string properties (any property defined as a `DynamicString` in the catalog). This allows for mixing static text with data model values and function results.
 
 #### Syntax
 
@@ -468,6 +479,53 @@ It is critical to note that Two-Way Binding is **local to the client**.
     ```
 
 4.  **Send:** When clicked, the client resolves `/formData/email` (getting "jane@example.com") and sends it in the `action` payload.
+
+## Data Model Updates: Synchronization and Convergence
+
+While the sections above describe how components reference data, this section defines how the Data Model itself is **updated** and synchronized in the `dataModelChanged` (Renderer -> Agent) and `updateDataModel` (Agent -> Renderer) messages. To support reliable bidirectional data synchronization between the Renderer and the Agent, A2UI employs a Conflict-free Replicated Data Type (CRDT) approach based on a Last-Write-Wins Element-Map (LWW-Map).
+
+In this model, the Renderer remains the primary source of truth for the UI state, but both the Renderer and the Agent may issue updates. Conflicts are resolved deterministically without a central coordinator, using metadata attached to every change.
+
+> NOTE: Because these data syncing primitives and resolutions are complex, the LLM shouldn't be asked to create these directly.  Instead, it is recommended that the LLM be given a JSON representation of the data structure in its context, and instructions to mutate it with JSON patches. Code in the agent can then translate the LLM's JSON patches into the A2UI data model update equivalents. The agent can also keep track of the state of its copy of the data model.
+
+### Hybrid Logical Clocks (HLC)
+
+Every update to the data model must be timestamped with a **Hybrid Logical Clock (HLC)** string. HLCs ensure partial ordering of events and provide a tie-breaking mechanism for concurrent updates that can be sorted lexicographically.
+
+The HLC format is a string: `<ISO-8601-Timestamp>:<Counter>:<ActorID>` Example: `2024-05-20T14:30:05.123Z:0001:agent_alpha`
+
+**Comparison Rule:** HLCs are compared lexicographically. An update with a higher HLC string always supersedes an update with a lower HLC string for the same data path.
+
+### Fractional Indexing
+
+For ordered lists within the data model, A2UI uses **Fractional Indexing** (also known as Lexicographical Indexing). Instead of numeric array indices, each item is assigned a `pos` string. No actual arrays are used, since they contain mutable indexes that are difficult to maintain in a distributed system. A list is represented as a JSON object with stable IDs as keys, and a `pos` property within each object to determine the sort order. The `pos` values don't need to be contiguous, and can be any string that can be sorted lexicographically.
+
+*   **Ordering:** Items are sorted by their `pos` string value.
+*   **Insertion:** To insert between position `"a"` and `"b"`, a new string `"an"` is generated.
+*   **Conflict Resolution:** If two actors insert at the same position, the HLC of the operation determines the final state, ensuring all participants see the same order.
+
+### JSON Pointers
+
+The "path" field in the data model updates is a JSON Pointer to a value in the data model, but since data model updates can't use regular JSON arrays (they use fractional indexing instead), they don't support integers as path segments. The root of the data model is represented by "/", and replacing this path will replace the entire data model.
+
+### Tombstones
+
+To ensure deletions propagate correctly in a distributed system, A2UI uses **Tombstones**. When a value is deleted, it is not immediately removed from the synchronization log. Instead, its value in the synchronization log is unset (but leaving a record with an HLC), indicating that it is a "tombstone". A "tombstone" with a higher HLC wins over a "set" with a lower HLC.
+
+### Convergence Logic (The "Last-Write-Wins" Rule)
+
+When a participant (client or server) receives an update for a specific `path`:
+
+1.  If `incoming.hlc > local.hlc`:
+
+    *   Set `local.value` to `incoming.value` (which may be undefined if it is a tombstone).
+    *   Update `local.hlc` to `incoming.hlc`.
+2.  If `incoming.hlc == local.hlc`:
+
+    *   This should ideally only happen if the update is identical. If values differ, use a secondary tie-breaker (e.g., the higher `actorId` wins).
+3.  If `incoming.hlc < local.hlc`:
+
+    *   Ignore the update (it is stale).
 
 ## Client-Side Logic & Validation
 
@@ -610,6 +668,17 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
+### `dataModelChanged`
+
+This message is sent by the client to update the server's data model. This typically happens when `watchDataModel` has enabled `onTimeout` mode for specific paths, or when a user action has triggered an update for a path set to `onAction` mode.
+
+**Properties:**
+
+- `surfaceId` (string, required): The ID of the surface.
+- `actorId` (string, required): The ID of the actor that sent the update.
+- `updates` (array, required): A list of `DataUpdate` objects.
+- `versions` (object, required): A `VersionVector` map.
+
 ### Client Capabilities
 
 Client capabilities are sent by the client to inform the server of its capabilities, including supported catalogs (components and functions). In A2UI v0.9, these are sent as part of the **A2A metadata** envelope in every message, rather than as a first-class A2UI message. This ensures the server always has the client's latest capabilities without needing a separate handshake.
@@ -620,16 +689,6 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
-
-### `dataModelChanged`
-
-This message is sent by the client to update the server's data model. This typically happens when `watchDataModel` has enabled `onTimeout` mode for specific paths, or when a user action has triggered an update for a path set to `onAction` mode.
-
-**Properties:**
-
-- `surfaceId` (string, required): The ID of the surface.
-- `path` (string, required): The path to the data being updated.
-- `value` (any): The new value.
 
 ### `error`
 

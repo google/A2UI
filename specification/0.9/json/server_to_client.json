@@ -75,24 +75,17 @@
               "type": "string",
               "description": "The unique identifier for the UI surface this data model update applies to."
             },
-            "path": {
-              "type": "string",
-              "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', refers to the entire data model."
+            "actorId": { "type": "string" },
+            "updates": {
+              "type": "array",
+              "items": { "$ref": "common_types.json#/$defs/DataUpdate" }
             },
-            "value": {
-              "description": "The data to be updated in the data model. If present, the value at 'path' is replaced (or created). If omitted, the key at 'path' is removed.",
-              "type": [
-                "object",
-                "array",
-                "string",
-                "number",
-                "boolean",
-                "null"
-              ],
-              "additionalProperties": true
+            "versions": {
+              "description": "The version vector of the data model describing the state of the data model before the updates were applied.",
+              "$ref": "common_types.json#/$defs/VersionVector"
             }
           },
-          "required": ["surfaceId"],
+          "required": ["surfaceId", "actorId", "updates", "versions"],
           "additionalProperties": false
         }
       },
