@@ -18,6 +18,9 @@ export * as Events from "./events/events.js";
 export * as Types from "./types/types.js";
 export * as Primitives from "./types/primitives.js";
 export * as Styles from "./styles/index.js";
+export { Catalog } from "./catalog/catalog.js";
+export { type CatalogItem } from "./catalog/catalog_item.js";
+export { StandardCatalogItems } from "./standard_catalog/index.js";
 import * as Guards from "./data/guards.js";
 
 import { create as createSignalA2uiMessageProcessor } from "./data/signal-model-processor.js";

@@ -46,7 +46,7 @@ const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
 };
 
 describe("A2uiMessageProcessor", () => {
-  let processor = new v0_8.Data.A2uiMessageProcessor();
+  let processor: v0_8.Data.A2uiMessageProcessor;
 
   beforeEach(() => {
     processor = new v0_8.Data.A2uiMessageProcessor();

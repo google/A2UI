@@ -31,31 +31,14 @@ import {
   MessageProcessor,
   ValueMap,
   DataObject,
-} from "../types/types";
+} from "../types/types.js";
 import {
   isComponentArrayReference,
   isObject,
   isPath,
-  isResolvedAudioPlayer,
-  isResolvedButton,
-  isResolvedCard,
-  isResolvedCheckbox,
-  isResolvedColumn,
-  isResolvedDateTimeInput,
-  isResolvedDivider,
-  isResolvedIcon,
-  isResolvedImage,
-  isResolvedList,
-  isResolvedModal,
-  isResolvedMultipleChoice,
-  isResolvedRow,
-  isResolvedSlider,
-  isResolvedTabs,
-  isResolvedText,
-  isResolvedTextField,
-  isResolvedVideo,
-  isValueMap,
 } from "./guards.js";
+import { Catalog } from '../catalog/catalog.js';
+import { StandardCatalogItems } from '../standard_catalog/standard_catalog_items.js';
 
 /**
  * Processes and consolidates A2UIProtocolMessage objects into a structured,
@@ -69,21 +52,23 @@ export class A2uiMessageProcessor implements MessageProcessor {
   private setCtor: SetConstructor = Set;
   private objCtor: ObjectConstructor = Object;
   private surfaces: Map<SurfaceID, Surface>;
+  private readonly catalog: Catalog;
 
   constructor(
     readonly opts: {
-      mapCtor: MapConstructor;
-      arrayCtor: ArrayConstructor;
-      setCtor: SetConstructor;
-      objCtor: ObjectConstructor;
-    } = { mapCtor: Map, arrayCtor: Array, setCtor: Set, objCtor: Object }
+      mapCtor?: MapConstructor;
+      arrayCtor?: ArrayConstructor;
+      setCtor?: SetConstructor;
+      objCtor?: ObjectConstructor;
+      catalog?: Catalog;
+    } = {}
   ) {
-    this.arrayCtor = opts.arrayCtor;
-    this.mapCtor = opts.mapCtor;
-    this.setCtor = opts.setCtor;
-    this.objCtor = opts.objCtor;
-
-    this.surfaces = new opts.mapCtor();
+    this.arrayCtor = opts.arrayCtor ?? Array;
+    this.mapCtor = opts.mapCtor ?? Map;
+    this.setCtor = opts.setCtor ?? Set;
+    this.objCtor = opts.objCtor ?? Object;
+    this.surfaces = new (this.mapCtor)();
+    this.catalog = opts.catalog ?? new Catalog(StandardCatalogItems.items, 'a2ui://standard_catalog');
   }
 
   getSurfaces(): ReadonlyMap<string, Surface> {
@@ -514,205 +499,24 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
     visited.delete(fullId);
 
-    // Now that we have the resolved properties in place we can go ahead and
-    // ensure that they meet expectations in terms of types and so forth,
-    // casting them into the specific shape for usage.
     const baseNode = {
       id: fullId,
       dataContextPath,
       weight: componentData.weight ?? "initial",
     };
-    switch (componentType) {
-      case "Text":
-        if (!isResolvedText(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Text",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
 
-      case "Image":
-        if (!isResolvedImage(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Image",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
+    const catalogItem = this.catalog.get(componentType);
 
-      case "Icon":
-        if (!isResolvedIcon(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Icon",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Video":
-        if (!isResolvedVideo(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Video",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "AudioPlayer":
-        if (!isResolvedAudioPlayer(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "AudioPlayer",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Row":
-        if (!isResolvedRow(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-
-        return new this.objCtor({
-          ...baseNode,
-          type: "Row",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Column":
-        if (!isResolvedColumn(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-
-        return new this.objCtor({
-          ...baseNode,
-          type: "Column",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "List":
-        if (!isResolvedList(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "List",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Card":
-        if (!isResolvedCard(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Card",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Tabs":
-        if (!isResolvedTabs(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Tabs",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Divider":
-        if (!isResolvedDivider(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Divider",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Modal":
-        if (!isResolvedModal(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Modal",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Button":
-        if (!isResolvedButton(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Button",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "CheckBox":
-        if (!isResolvedCheckbox(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "CheckBox",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "TextField":
-        if (!isResolvedTextField(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "TextField",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "DateTimeInput":
-        if (!isResolvedDateTimeInput(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "DateTimeInput",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "MultipleChoice":
-        if (!isResolvedMultipleChoice(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "MultipleChoice",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Slider":
-        if (!isResolvedSlider(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Slider",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      default:
-        // Catch-all for other custom component types.
-        return new this.objCtor({
-          ...baseNode,
-          type: componentType,
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
+    if (catalogItem) {
+      return catalogItem.buildNode(baseNode, resolvedProperties, this.objCtor);
     }
+
+    // Fallback for unknown (custom) components.
+    return new this.objCtor({
+      ...baseNode,
+      type: componentType,
+      properties: resolvedProperties,
+    }) as AnyComponentNode;
   }
 
   /**
