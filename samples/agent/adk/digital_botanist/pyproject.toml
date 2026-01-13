@@ -26,4 +26,4 @@ build-backend = "hatchling.build"
 allow-direct-references = true
 
 [tool.uv.sources]
-a2ui = { path = "../../../../a2a_agents/python/a2ui_extension" }
+a2ui = { path = "../../../../a2a_agents/python/a2ui_extension", editable = true }
