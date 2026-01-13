@@ -249,7 +249,7 @@ If multiple configurations apply to the same data (e.g., one for `/` and one for
       },
       {
         "path": "/user/name",
-        "mode": "onChanged",
+        "mode": "onChanged"
       }
     ]
   }
@@ -388,31 +388,6 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 }
 ```
 
-### String Interpolation
-
-A2UI supports embedding dynamic expressions directly within string properties (any property defined as a `DynamicString` in the catalog). This allows for mixing static text with data model values and function results.
-
-#### Syntax
-
-Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
-
-#### Data Model Binding
-
-Values from the data model can be interpolated using their JSON Pointer path.
-
-- `${/user/profile/name}`: Absolute path.
-- `${firstName}`: Relative path (resolved against the current collection scope).
-
-**Example:**
-
-```json
-{
-  "id": "user_welcome",
-  "component": "Text",
-  "text": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
-}
-```
-
 #### Client-Side Functions
 
 Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
@@ -485,7 +460,7 @@ While the sections above describe how components reference data, this section de
 
 In this model, the Renderer remains the primary source of truth for the UI state, but both the Renderer and the Agent may issue updates. Conflicts are resolved deterministically without a central coordinator, using metadata attached to every change.
 
-> NOTE: Because these data syncing primitives and resolutions are complex, the LLM shouldn't be asked to create these directly.  Instead, it is recommended that the LLM be given a JSON representation of the data structure in its context, and instructions to mutate it with JSON patches. Code in the agent can then translate the LLM's JSON patches into the A2UI data model update equivalents. The agent can also keep track of the state of its copy of the data model.
+> NOTE: Because these data syncing primitives and resolutions are complex, the LLM shouldn't be asked to create these directly. Instead, it is recommended that the LLM be given a JSON representation of the data structure in its context, and instructions to mutate it with JSON patches. Code in the agent can then translate the LLM's JSON patches into the A2UI data model update equivalents. The agent can also keep track of the state of its copy of the data model.
 
 ### Hybrid Logical Clocks (HLC)
 
@@ -499,9 +474,9 @@ The HLC format is a string: `<ISO-8601-Timestamp>:<Counter>:<ActorID>` Example: 
 
 For ordered lists within the data model, A2UI uses **Fractional Indexing** (also known as Lexicographical Indexing). Instead of numeric array indices, each item is assigned a `pos` string. No actual arrays are used, since they contain mutable indexes that are difficult to maintain in a distributed system. A list is represented as a JSON object with stable IDs as keys, and a `pos` property within each object to determine the sort order. The `pos` values don't need to be contiguous, and can be any string that can be sorted lexicographically.
 
-*   **Ordering:** Items are sorted by their `pos` string value.
-*   **Insertion:** To insert between position `"a"` and `"b"`, a new string `"an"` is generated.
-*   **Conflict Resolution:** If two actors insert at the same position, the HLC of the operation determines the final state, ensuring all participants see the same order.
+- **Ordering:** Items are sorted by their `pos` string value.
+- **Insertion:** To insert between position `"a"` and `"b"`, a new string `"an"` is generated.
+- **Conflict Resolution:** If two actors insert at the same position, the HLC of the operation determines the final state, ensuring all participants see the same order.
 
 ### JSON Pointers
 
@@ -517,14 +492,16 @@ When a participant (client or server) receives an update for a specific `path`:
 
 1.  If `incoming.hlc > local.hlc`:
 
-    *   Set `local.value` to `incoming.value` (which may be undefined if it is a tombstone).
-    *   Update `local.hlc` to `incoming.hlc`.
+    - Set `local.value` to `incoming.value` (which may be undefined if it is a tombstone).
+    - Update `local.hlc` to `incoming.hlc`.
+
 2.  If `incoming.hlc == local.hlc`:
 
-    *   This should ideally only happen if the update is identical. If values differ, use a secondary tie-breaker (e.g., the higher `actorId` wins).
+    - This should ideally only happen if the update is identical. If values differ, use a secondary tie-breaker (e.g., the higher `actorId` wins).
+
 3.  If `incoming.hlc < local.hlc`:
 
-    *   Ignore the update (it is stale).
+    - Ignore the update (it is stale).
 
 ## Client-Side Logic & Validation
 
@@ -592,6 +569,8 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
 
 The [`standard_catalog.json`] provides the baseline set of components and functions.
 
+### Components
+
 | Component         | Description                                                                            |
 | :---------------- | :------------------------------------------------------------------------------------- |
 | **Text**          | Displays text. Supports simple Markdown.                                               |
@@ -612,6 +591,69 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **DateTimeInput** | An input for date and/or time.                                                         |
 | **ChoicePicker**  | A component for selecting one or more options.                                         |
 | **Slider**        | A slider for selecting a numeric value within a range.                                 |
+
+### Functions
+
+| Function          | Description                                                              |
+| :---------------- | :----------------------------------------------------------------------- |
+| **required**      | Checks that the value is not null, undefined, or empty.                  |
+| **regex**         | Checks that the value matches a regular expression string.               |
+| **length**        | Checks string length constraints.                                        |
+| **numeric**       | Checks numeric range constraints.                                        |
+| **email**         | Checks that the value is a valid email address.                          |
+| **string_format** | Does string interpolation of data model values and registered functions. |
+
+### **The `string_format` function**
+
+The `string_format` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
+
+#### _Syntax_
+
+Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
+
+#### _Data Model Binding_
+
+Values from the data model can be interpolated using their JSON Pointer path.
+
+- `${/user/profile/name}`: Absolute path.
+- `${firstName}`: Relative path (resolved against the current collection scope).
+
+**Example:**
+
+```json
+{
+  "id": "user_welcome",
+  "component": "Text",
+  "text": {
+    "call": "string_format",
+    "args": ["Hello, ${/user/firstName}! Welcome back to ${/appName}."]
+  }
+}
+```
+
+#### _Client-Side Functions_
+
+Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
+
+- `${now()}`: A function with no arguments.
+- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
+
+Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
+
+#### _Nested Interpolation_
+
+Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
+
+- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
+- **Nested Functions**: `${upper(${now()})}`
+
+#### _Type Conversion_
+
+When a non-string value is interpolated, the client converts it to a string:
+
+- **Numbers/Booleans**: Standard string representation.
+- **Null/Undefined**: An empty string `""`.
+- **Objects/Arrays**: Stringified as JSON to ensure consistency across different client implementations.
 
 ## Usage Pattern: The Prompt-Generate-Validate Loop
 

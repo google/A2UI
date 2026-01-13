@@ -75,7 +75,7 @@
       ]
     },
     "DynamicString": {
-      "description": "Represents a string that can contain interpolated expressions in the `${expression}` format. Supported expression types include: 1) JSON Pointer paths to the data model (e.g., `${/absolute/path}` or `${relative/path}`), and 2) client-side function calls (e.g., `${now()}`). Function arguments must be literals (quoted strings, numbers, booleans) or nested expressions (e.g., `${formatDate(${/currentDate}, 'MM-dd')}`). To include a literal `${` sequence, escape it as `\\${`.",
+      "description": "Represents a string",
       "oneOf": [
         {
           "type": "string"

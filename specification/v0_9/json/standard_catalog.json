@@ -696,6 +696,23 @@
         ],
         "unevaluatedProperties": false
       }
+    },
+    {
+      "name": "string_format",
+      "description": "Performs string interpolation of data model values and registered functions and returns the resulting string.",
+      "returnType": "string",
+      "parameters": {
+        "allOf": [
+          { "$ref": "#/$defs/valueParam" },
+          {
+            "type": "object",
+            "properties": {
+              "value": { "type": "string" }
+            }
+          }
+        ],
+        "unevaluatedProperties": false
+      }
     }
   ],
   "$defs": {
