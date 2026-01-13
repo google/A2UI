@@ -35,7 +35,7 @@ export class Validator {
       this.ajv.addSchema(schema, name);
     }
     this.validateFn = this.ajv.getSchema(
-      "https://a2ui.dev/specification/0.9/server_to_client.json"
+      "https://a2ui.dev/specification/v0_9/server_to_client.json"
     );
   }
 
@@ -67,7 +67,7 @@ export class Validator {
           // to avoid noisy "oneOf" errors.
           let validated = false;
           const schemaUri =
-            "https://a2ui.dev/specification/0.9/server_to_client.json";
+            "https://a2ui.dev/specification/v0_9/server_to_client.json";
 
           if (message.createSurface) {
             validated = this.ajv.validate(
@@ -254,7 +254,7 @@ export class Validator {
       if (this.ajv && c.component) {
         const componentType = c.component;
         const schemaUri =
-          "https://a2ui.dev/specification/0.9/standard_catalog.json";
+          "https://a2ui.dev/specification/v0_9/standard_catalog.json";
 
         const defRef = `${schemaUri}#/components/${componentType}`;
 
