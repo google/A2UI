@@ -229,12 +229,12 @@ This message configures how and when the client sends data model updates to the 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be configured.
 - `configurations` (array, required): A list of configuration rules.
   - `path` (string, required): The data path to configure.
-  - `mode` (string, required): One of `onAction` or `onTimeout`.
-  - `timeoutMs` (integer, optional): Required if `mode` is `onTimeout`. Set to 0 for immediate updates.
+  - `mode` (string, required): One of `onAction` or `onChanged`.
+  - `timeoutMs` (integer, optional): The duration in milliseconds to wait before sending updates when in `onChanged` mode. Defaults to 0 (immediate).
 
 **Nested Path Precedence:**
 
-If multiple configurations apply to the same data (e.g., one for `/` and one for `/user/name`), the **most specific path** (the longest matching path) takes precedence. For example, if `/` is set to `onAction` and `/user/name` is set to `onTimeout` (with 0ms), changes to `/user/name` will be sent immediately, while changes to `/user/bio` will wait for a user action.
+If multiple configurations apply to the same data (e.g., one for `/` and one for `/user/name`), the **most specific path** (the longest matching path) takes precedence. For example, if `/` is set to `onAction` and `/user/name` is set to `onChanged` (with 0ms), changes to `/user/name` will be sent immediately, while changes to `/user/bio` will wait for a user action.
 
 **Example:**
 
@@ -249,8 +249,7 @@ If multiple configurations apply to the same data (e.g., one for `/` and one for
       },
       {
         "path": "/user/name",
-        "mode": "onTimeout",
-        "timeoutMs": 0
+        "mode": "onChanged",
       }
     ]
   }
@@ -670,7 +669,7 @@ This message is sent when the user interacts with a component that has an `actio
 
 ### `dataModelChanged`
 
-This message is sent by the client to update the server's data model. This typically happens when `watchDataModel` has enabled `onTimeout` mode for specific paths, or when a user action has triggered an update for a path set to `onAction` mode.
+This message is sent by the client to update the server's data model. This typically happens when `watchDataModel` has enabled `onChanged` mode for specific paths, or when a user action has triggered an update for a path set to `onAction` mode.
 
 **Properties:**
 

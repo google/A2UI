@@ -135,13 +135,14 @@
                   },
                   "mode": {
                     "type": "string",
-                    "enum": ["onAction", "onTimeout"],
-                    "description": "The update mode. 'onAction' sends updates with the next user action. 'onTimeout' sends updates after a quiet period or interval."
+                    "enum": ["onAction", "onChanged"],
+                    "description": "The update mode. 'onAction' sends updates with the next user action. 'onChanged' sends updates after a quiet period."
                   },
                   "timeoutMs": {
                     "type": "integer",
                     "minimum": 0,
-                    "description": "Required if mode is 'onTimeout'. The duration in milliseconds to wait before sending updates. Set to 0 for immediate updates."
+                    "default": 0,
+                    "description": "The duration in milliseconds to wait before sending updates when in 'onChanged' mode. Defaults to 0 for immediate updates."
                   }
                 },
                 "required": ["path", "mode"],
