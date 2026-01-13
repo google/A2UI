@@ -8,10 +8,12 @@
     { "$ref": "#/$defs/CreateSurfaceMessage" },
     { "$ref": "#/$defs/UpdateComponentsMessage" },
     { "$ref": "#/$defs/UpdateDataModelMessage" },
-    { "$ref": "#/$defs/DeleteSurfaceMessage" }
+    { "$ref": "#/$defs/DeleteSurfaceMessage" },
+    { "$ref": "#/$defs/WatchDataModelMessage" }
   ],
   "$defs": {
     "CreateSurfaceMessage": {
+      "type": "object",
       "properties": {
         "createSurface": {
           "type": "object",
@@ -35,6 +37,7 @@
       "additionalProperties": false
     },
     "UpdateComponentsMessage": {
+      "type": "object",
       "properties": {
         "updateComponents": {
           "type": "object",
@@ -50,7 +53,7 @@
               "description": "A list containing all UI components for the surface.",
               "minItems": 1,
               "items": {
-                "$ref": "standard_catalog_definition.json#/$defs/anyComponent"
+                "$ref": "standard_catalog.json#/$defs/anyComponent"
               }
             }
           },
@@ -62,6 +65,7 @@
       "additionalProperties": false
     },
     "UpdateDataModelMessage": {
+      "type": "object",
       "properties": {
         "updateDataModel": {
           "type": "object",
@@ -71,21 +75,17 @@
               "type": "string",
               "description": "The unique identifier for the UI surface this data model update applies to."
             },
-            "path": {
-              "type": "string",
-              "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', refers to the entire data model."
+            "actorId": { "type": "string" },
+            "updates": {
+              "type": "array",
+              "items": { "$ref": "common_types.json#/$defs/DataUpdate" }
             },
-            "op": {
-              "type": "string",
-              "description": "The operation to perform on the data model. Defaults to 'replace' if omitted.",
-              "enum": ["add", "replace", "remove"]
-            },
-            "value": {
-              "description": "The data to be updated in the data model. Required for 'add' and 'replace' operations. Not allowed for 'remove' operation.",
-              "additionalProperties": true
+            "versions": {
+              "description": "The version vector of the data model describing the state of the data model before the updates were applied.",
+              "$ref": "common_types.json#/$defs/VersionVector"
             }
           },
-          "required": ["surfaceId"],
+          "required": ["surfaceId", "actorId", "updates", "versions"],
           "additionalProperties": false
         }
       },
@@ -93,6 +93,7 @@
       "additionalProperties": false
     },
     "DeleteSurfaceMessage": {
+      "type": "object",
       "properties": {
         "deleteSurface": {
           "type": "object",
@@ -108,6 +109,52 @@
         }
       },
       "required": ["deleteSurface"],
+      "additionalProperties": false
+    },
+    "WatchDataModelMessage": {
+      "type": "object",
+      "properties": {
+        "watchDataModel": {
+          "type": "object",
+          "description": "Configures how and when the client sends data model updates to the server for specific paths.",
+          "properties": {
+            "surfaceId": {
+              "type": "string",
+              "description": "The unique identifier for the UI surface to be configured."
+            },
+            "configurations": {
+              "type": "array",
+              "description": "A list of configuration rules for data paths.",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "The data path to configure. This applies to this path and all descendants unless overridden by a more specific path."
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": ["onAction", "onChanged"],
+                    "description": "The update mode. 'onAction' sends updates with the next user action. 'onChanged' sends updates after a quiet period."
+                  },
+                  "timeoutMs": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "The duration in milliseconds to wait before sending updates when in 'onChanged' mode. Defaults to 0 for immediate updates."
+                  }
+                },
+                "required": ["path", "mode"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["surfaceId", "configurations"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["watchDataModel"],
       "additionalProperties": false
     }
   }

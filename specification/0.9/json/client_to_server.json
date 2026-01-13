@@ -5,7 +5,7 @@
   "minProperties": 1,
   "maxProperties": 1,
   "properties": {
-    "userAction": {
+    "action": {
       "type": "object",
       "description": "Reports a user-initiated action from a component.",
       "properties": {
@@ -60,10 +60,11 @@
             },
             "message": {
               "type": "string",
-              "description": "A short one-sentence description of why validation failed."
+              "description": "A short one or two sentence description of why validation failed."
             }
           },
-          "required": ["code", "path", "message", "surfaceId"]
+          "required": ["code", "path", "message", "surfaceId"],
+          "additionalProperties": false
         },
         {
           "type": "object",
@@ -76,7 +77,7 @@
             },
             "message": {
               "type": "string",
-              "description": "A short one-sentence description of why the error occurred."
+              "description": "A short one or two sentence description of why the error occurred."
             },
             "surfaceId": {
               "type": "string",
@@ -87,11 +88,41 @@
           "additionalProperties": true
         }
       ]
+    },
+    "dataModelChanged": {
+      "type": "object",
+      "description": "Updates the server's data model from the client.",
+      "properties": {
+        "surfaceId": {
+          "type": "string",
+          "description": "The id of the surface where the data update originated."
+        },
+        "actorId": {
+          "type": "string",
+          "description": "The id of the actor that sent the update."
+        },
+        "updates": {
+          "description": "The updates to apply to the data model.",
+          "type": "array",
+          "items": { "$ref": "common_types.json#/$defs/DataUpdate" }
+        },
+        "versions": {
+          "description": "The version vector of the data model describing the state of the data model before the updates were applied, with one timestamp for each actor that has modified the data model.",
+          "$ref": "common_types.json#/$defs/VersionVector"
+        }
+      },
+      "required": ["surfaceId", "actorId", "updates", "versions"]
     }
   },
   "oneOf": [
-    { "required": ["userAction"] },
-    { "required": ["clientUiCapabilities"] },
-    { "required": ["error"] }
+    {
+      "required": ["action"]
+    },
+    {
+      "required": ["error"]
+    },
+    {
+      "required": ["dataModelChanged"]
+    }
   ]
 }
