@@ -7,10 +7,10 @@ This document serves as a guide for using the Gemini agent within the A2UI repos
 The A2UI repository is organized into several key directories:
 
 -   `specification/`: Contains the A2UI protocol specifications.
-    -   `0.8/`: The current protocol version.
+    -   `0_8/`: The current protocol version.
         -   `docs/`: Human-readable documentation.
         -   `json/`: JSON schema definitions.
-    -   `0.9/`: The next protocol version (in development).
+    -   `0_9/`: The next protocol version (in development).
         -   `docs/`: Human-readable documentation.
         -   `json/`: JSON schema definitions.
         -   `eval/`: Genkit-based evaluation framework.
@@ -37,7 +37,7 @@ The A2UI protocol is a JSONL-based, streaming UI protocol designed to be easily 
 
 The core concepts of the A2UI protocol are detailed in the main specification document. Refer to the authoritative source for the current version (0.8):
 
--   **A2UI Protocol Specification**: `@specification/0.8/docs/a2ui_protocol.md`
+-   **A2UI Protocol Specification**: `@specification/0_8/docs/a2ui_protocol.md`
 
 This document covers the design philosophy, architecture, data flow, and core concepts of the protocol.
 
@@ -45,9 +45,9 @@ This document covers the design philosophy, architecture, data flow, and core co
 
 The formal, machine-readable definitions of the protocol are maintained as JSON schemas. For version 0.8:
 
--   **Server-to-Client Schema**: `@specification/0.8/json/server_to_client.json`
--   **Client-to-Server Schema**: `@specification/0.8/json/client_to_server.json`
--   **Standard Catalog**: `@specification/0.8/json/standard_catalog_definition.json`
+-   **Server-to-Client Schema**: `@specification/0_8/json/server_to_client.json`
+-   **Client-to-Server Schema**: `@specification/0_8/json/client_to_server.json`
+-   **Standard Catalog**: `@specification/0_8/json/standard_catalog_definition.json`
 
 ## Running the Demos
 

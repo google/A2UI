@@ -1,6 +1,7 @@
 # A2UI Extension Implementation
 
-This is the Python implementation of the a2ui extension.
+a2ui_extension.py is the Python implementation of the a2ui extension.
+send_a2ui_to_client_toolset.py is an example Python implementation of using ADK toolcalls to implement A2UI.
 
 ## Running Tests
 
@@ -13,7 +14,7 @@ This is the Python implementation of the a2ui extension.
 2. Run the tests
 
    ```bash
-   uv run --with pytest pytest tests/test_extension.py
+   uv run --with pytest pytest tests/*.py
    ```
 
 ## Disclaimer

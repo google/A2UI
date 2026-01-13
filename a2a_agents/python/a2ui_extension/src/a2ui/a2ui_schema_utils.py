@@ -12,6 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-A2UI_ENABLED_STATE_KEY = "user:a2ui_enabled"
-A2UI_CATALOG_URI_STATE_KEY = "user:a2ui_catalog_uri"
-A2UI_SCHEMA_STATE_KEY = "user:a2ui_schema"
+"""Utilities for A2UI Schema manipulation."""
+
+from typing import Any
+
+
+def wrap_as_json_array(a2ui_schema: dict[str, Any]) -> dict[str, Any]:
+  """Wraps the A2UI schema in an array object to support multiple parts.
+
+  Args:
+      a2ui_schema: The A2UI schema to wrap.
+
+  Returns:
+      The wrapped A2UI schema object.
+
+  Raises:
+      ValueError: If the A2UI schema is empty.
+  """
+  if not a2ui_schema:
+    raise ValueError("A2UI schema is empty")
+  return {"type": "array", "items": a2ui_schema}
