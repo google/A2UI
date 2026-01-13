@@ -47,3 +47,15 @@ Here are some additional things to keep in mind during the process:
 
 - **Test your changes.** Before you submit a pull request, make sure that your changes work as expected.
 - **Be patient.** It may take some time for your pull request to be reviewed and merged.
+
+## Coding Style
+
+To keep our codebase consistent and maintainable, we follow specific coding standards for Python and TypeScript.
+
+Please refer to [CODING_STYLE.md](CODING_STYLE.md) for detailed guidelines on:
+*   **Python**: specific formatting, linting, and naming conventions (Google Python Style).
+*   **TypeScript**: usage of `gts`, naming conventions, and code organization (Google TypeScript Style).
+*   **License Headers**: required copyright notices.
+
+We expect all contributors to adhere to these styles.
+
