@@ -603,7 +603,7 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **email**         | Checks that the value is a valid email address.                          |
 | **string_format** | Does string interpolation of data model values and registered functions. |
 
-### **The `string_format` function**
+### The `string_format` function
 
 The `string_format` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
 
