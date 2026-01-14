@@ -283,9 +283,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
     if (segments.length === 0) {
       // Root data can either be a Map or an Object. If we receive an Object,
       // however, we will normalize it to a proper Map.
-      if (value instanceof this.mapCtor || isObject(value)) {
+      if (this.isMap(value) || isObject(value)) {
         // Normalize an Object to a Map.
-        if (!(value instanceof this.mapCtor) && isObject(value)) {
+        if (!this.isMap(value) && isObject(value)) {
           value = new this.mapCtor(Object.entries(value));
         }
 
@@ -311,7 +311,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
       const segment = segments[i];
       let target: DataValue | undefined;
 
-      if (current instanceof this.mapCtor) {
+      if (this.isMap(current)) {
         target = current.get(segment);
       } else if (Array.isArray(current) && /^\d+$/.test(segment)) {
         target = current[parseInt(segment, 10)];
@@ -323,7 +323,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
         target === null
       ) {
         target = new this.mapCtor();
-        if (current instanceof this.mapCtor) {
+        if (this.isMap(current)) {
           current.set(segment, target);
         } else if (Array.isArray(current)) {
           current[parseInt(segment, 10)] = target;
@@ -334,7 +334,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
     const finalSegment = segments[segments.length - 1];
     const storedValue = value;
-    if (current instanceof this.mapCtor) {
+    if (this.isMap(current)) {
       current.set(finalSegment, storedValue);
     } else if (Array.isArray(current) && /^\d+$/.test(finalSegment)) {
       current[parseInt(finalSegment, 10)] = storedValue;
@@ -358,6 +358,16 @@ export class A2uiMessageProcessor implements MessageProcessor {
     return "/" + segments.filter((s) => s.length > 0).join("/");
   }
 
+  private isMap(value: unknown): value is DataMap {
+    return (
+      value instanceof this.mapCtor ||
+      (isObject(value) &&
+        typeof (value as any).get === "function" &&
+        typeof (value as any).set === "function" &&
+        typeof (value as any).entries === "function")
+    );
+  }
+
   private getDataByPath(root: DataMap, path: string): DataValue | null {
     const segments = this.normalizePath(path)
       .split("/")
@@ -370,7 +380,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
       console.log(`[getDataByPath] Current:`, current, `Segment: ${segment}`);
       if (current === undefined || current === null) return null;
 
-      if (current instanceof this.mapCtor) {
+      if (this.isMap(current)) {
         current = current.get(segment) as DataMap;
       } else if (Array.isArray(current) && /^\d+$/.test(segment)) {
         current = current[parseInt(segment, 10)];
