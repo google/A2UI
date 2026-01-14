@@ -39,7 +39,22 @@ import { structuralStyles } from "./styles.js";
 @customElement("a2ui-root")
 export class Root<T extends AnyResolvedNode = AnyResolvedNode> extends SignalWatcher(LitElement) {
   @property({ attribute: false })
-  accessor node!: T;
+  set node(node: T) {
+    this.#node = node;
+    if (node) {
+      this.style.setProperty("--weight", `${node.weight}`);
+    }
+  }
+
+  get node(): T {
+    return this.#node;
+  }
+
+  #node!: T;
+
+  get id() {
+    return this.node?.id ?? "";
+  }
 
   @property({ attribute: false })
   accessor renderChild!: (child: AnyResolvedNode) => TemplateResult | null;
@@ -55,20 +70,9 @@ export class Root<T extends AnyResolvedNode = AnyResolvedNode> extends SignalWat
   @property({ attribute: false })
   accessor processor: MessageProcessor | undefined = undefined;
 
-  @property()
-  accessor dataContextPath: string = "";
-
-  @property()
-  set weight(weight: string | number) {
-    this.#weight = weight;
-    this.style.setProperty("--weight", `${weight}`);
+  get dataContextPath() {
+    return this.node?.dataContextPath ?? "";
   }
-
-  get weight() {
-    return this.#weight;
-  }
-
-  #weight: string | number = 1;
 
   static styles = [
     structuralStyles,

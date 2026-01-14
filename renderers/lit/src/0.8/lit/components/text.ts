@@ -76,15 +76,11 @@ export class Text extends Root<TextNode> {
           return html`(no model)`;
         }
 
-        console.log(`[TextComponent] resolving path. Node: ${this.node.id}, Context: ${this.node.dataContextPath}, Path: ${text.path}`);
-
         const value = this.processor.getData(
           this.node,
           text.path,
           this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
-
-        console.log(`[TextComponent] resolved value:`, value);
 
         if (value !== null && value !== undefined) {
           textValue = value.toString();
