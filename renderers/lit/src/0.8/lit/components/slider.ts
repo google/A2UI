@@ -114,10 +114,10 @@ export class Slider extends Root<SliderNode> {
   render() {
     const { value } = this.node.properties;
     if (value && typeof value === "object") {
-      if ("literalNumber" in value && value.literalNumber) {
+      if ("literalNumber" in value && value.literalNumber !== undefined) {
         return this.#renderField(value.literalNumber);
       } else if ("literal" in value && value.literal !== undefined) {
-        return this.#renderField(value.literal ?? 0);
+        return this.#renderField(value.literal as number);
       } else if (value && "path" in value && value.path) {
         if (!this.processor || !this.node) {
           return html`(no processor)`;

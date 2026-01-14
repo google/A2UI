@@ -105,10 +105,10 @@ export class Checkbox extends Root<CheckboxNode> {
   render() {
     const { value } = this.node.properties;
     if (value && typeof value === "object") {
-      if ("literalBoolean" in value && value.literalBoolean) {
+      if ("literalBoolean" in value && value.literalBoolean !== undefined) {
         return this.#renderField(value.literalBoolean);
       } else if ("literal" in value && value.literal !== undefined) {
-        return this.#renderField(value.literalBoolean ?? value.literal ?? false);
+        return this.#renderField(value.literal as boolean);
       } else if (value && "path" in value && value.path) {
         if (!this.processor || !this.node) {
           return html`(no model)`;

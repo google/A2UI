@@ -33,6 +33,7 @@ import {
   DataObject,
   CatalogApi,
   AnyResolvedNode,
+  ComponentArrayReference,
 } from "./types/types.js";
 import {
   isComponentArrayReference,
@@ -545,8 +546,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
     // 2. If it's a ComponentArrayReference (e.g., a `children` property),
     //    resolve the list and return an array of nodes.
     if (isComponentArrayReference(value)) {
-      if (value.explicitList) {
-        return value.explicitList.map((id) =>
+      const ref = value as ComponentArrayReference;
+      if (ref.explicitList) {
+        return ref.explicitList.map((id: string) =>
           this.buildNodeRecursive(
             id,
             surface,
@@ -557,14 +559,14 @@ export class A2uiMessageProcessor implements MessageProcessor {
         );
       }
 
-      if (value.template) {
+      if (ref.template) {
         const fullDataPath = this.resolvePath(
-          value.template.dataBinding,
+          ref.template.dataBinding,
           dataContextPath
         );
         const data = this.getDataByPath(surface.dataModel, fullDataPath);
 
-        const template = value.template;
+        const template = ref.template;
         // Handle Array data.
         if (Array.isArray(data)) {
           return data.map((_, index) => {
@@ -625,15 +627,16 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
     // 4. If it's a plain object, resolve each of its properties.
     if (isObject(value)) {
+      const obj = value as Record<string, unknown>;
       const newObj: ResolvedMap = new this.objCtor() as ResolvedMap;
-      for (const [key, propValue] of Object.entries(value)) {
+      for (const [key, propValue] of Object.entries(obj)) {
         // Special case for paths. Here we might get /item/ or ./ on the front
         // of the path which isn't what we want. In this case we check the
         // dataContextPath and if 1) it's not the default and 2) we also see the
         // path beginning with /item/ or ./we trim it.
         let propertyValue = propValue;
         if (isPath(key, propValue) && dataContextPath !== "/") {
-          propertyValue = propValue
+          propertyValue = (propValue as string)
             .replace(/^\.?\/item/, "")
             .replace(/^\.?\/text/, "")
             .replace(/^\.?\/label/, "")
