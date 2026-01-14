@@ -18,8 +18,7 @@ import { html, css, nothing, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import {
   SurfaceID,
-  Surface,
-  AnyResolvedNode,
+  Surface as SurfaceState,
 } from "../../core/types/types.js";
 import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { Root } from "./root.js";
@@ -63,7 +62,7 @@ export class Surface extends Root {
     `,
   ];
 
-  #renderLogo(surface: Surface) {
+  #renderLogo(surface: SurfaceState) {
     if (!surface.styles.logoUrl) {
       return nothing;
     }
@@ -73,7 +72,7 @@ export class Surface extends Root {
     </div>`;
   }
 
-  #renderSurface(surface: Surface): TemplateResult | typeof nothing {
+  #renderSurface(surface: SurfaceState): TemplateResult | typeof nothing {
     const styles: Record<string, string> = {};
     if (surface.styles) {
       for (const [key, value] of Object.entries(surface.styles)) {

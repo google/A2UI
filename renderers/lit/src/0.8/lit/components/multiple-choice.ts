@@ -101,7 +101,7 @@ export class MultipleChoice extends Root<MultipleChoiceNode> {
     )}>
       <label class=${classMap(
         this.theme.components.MultipleChoice.label
-      )} for="data">${"Select an item"}</div>
+      )} for="data">${"Select an item"}</label>
       <select
         name="data"
         id="data"
@@ -119,7 +119,7 @@ export class MultipleChoice extends Root<MultipleChoiceNode> {
           this.#setBoundValue([evt.target.value]);
         }}
       >
-        ${options?.map((option) => {
+        ${(options ?? []).map((option) => {
           const label = extractStringValue(
             option.label,
             this.node,
