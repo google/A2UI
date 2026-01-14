@@ -32,6 +32,10 @@ export function extractStringValue(
       return val.literal ?? "";
     } else if (val && "path" in val && val.path) {
       if (!processor || !component) {
+        console.warn("extractStringValue missing dependencies:", {
+          processor: !!processor,
+          component: !!component,
+        });
         return "(no model)";
       }
 

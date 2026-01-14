@@ -119,11 +119,18 @@ export class Surface extends Root {
 
   render() {
     if (!this.processor || !this.surfaceId) {
+      console.warn("Surface missing dependencies:", {
+        processor: !!this.processor,
+        surfaceId: this.surfaceId,
+      });
       return nothing;
     }
-    const surface = this.processor.getSurfaces().get(this.surfaceId) as SurfaceState | undefined;
+    const surface = this.processor.getSurfaces().get(this.surfaceId) as
+      | SurfaceState
+      | undefined;
 
     if (!surface) {
+      console.warn("Surface state not found for id:", this.surfaceId);
       return nothing;
     }
 

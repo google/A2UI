@@ -69,6 +69,10 @@ export class Text extends Root<TextNode> {
         textValue = text.literal;
       } else if (text && "path" in text && text.path) {
         if (!this.processor || !this.node) {
+          console.warn("Text component missing dependencies:", {
+            processor: !!this.processor,
+            node: !!this.node,
+          });
           return html`(no model)`;
         }
 

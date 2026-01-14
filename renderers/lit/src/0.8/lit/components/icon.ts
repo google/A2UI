@@ -62,6 +62,10 @@ export class Icon extends Root<IconNode> {
         return render(iconName);
       } else if (name && "path" in name && name.path) {
         if (!this.processor || !this.node) {
+          console.warn("Icon component missing dependencies:", {
+            processor: !!this.processor,
+            node: !!this.node,
+          });
           return html`(no model)`;
         }
 

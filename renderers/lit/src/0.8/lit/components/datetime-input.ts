@@ -164,6 +164,10 @@ export class DateTimeInput extends Root<DateTimeInputNode> {
         return this.#renderField(value.literal);
       } else if (value && "path" in value && value.path) {
         if (!this.processor || !this.node) {
+          console.warn("DateTimeInput component missing dependencies:", {
+            processor: !!this.processor,
+            node: !!this.node,
+          });
           return html`(no model)`;
         }
 

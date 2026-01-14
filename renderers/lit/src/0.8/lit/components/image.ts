@@ -69,6 +69,10 @@ export class Image extends Root<ImageNode> {
         return render(imageUrl);
       } else if (url && "path" in url && url.path) {
         if (!this.processor || !this.node) {
+          console.warn("Image component missing dependencies:", {
+            processor: !!this.processor,
+            node: !!this.node,
+          });
           return html`(no model)`;
         }
 
