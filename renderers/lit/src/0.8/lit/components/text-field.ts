@@ -22,7 +22,7 @@ import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { extractStringValue } from "../utils/utils.js";
 import { structuralStyles } from "./styles.js";
-import { TextFieldNode } from "../../core/types/types.js";
+import { TextFieldNode } from "../../core/standard_catalog_api/text_field.js";
 
 @customElement("a2ui-textfield")
 export class TextField extends Root<TextFieldNode> {

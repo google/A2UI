@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { ImageNode } from '../../core/types/types.js';
+import { ImageNode } from '../../core/standard_catalog_api/image.js';
 import '../components/image.js';
 
 export const litImageRenderer: ComponentRenderer<ImageNode, TemplateResult> = {

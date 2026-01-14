@@ -22,7 +22,7 @@ import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../../core.js";
-import { ImageNode } from "../../core/types/types.js";
+import { ImageNode } from "../../core/standard_catalog_api/image.js";
 
 @customElement("a2ui-image")
 export class Image extends Root<ImageNode> {

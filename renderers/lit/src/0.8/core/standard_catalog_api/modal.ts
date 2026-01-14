@@ -17,8 +17,15 @@
 import {
   ComponentApi,
   AnyResolvedNode,
-  ModalNode,
+  BaseResolvedNode,
 } from '../types/types.js';
+
+export interface ModalNode extends BaseResolvedNode<'Modal'> {
+  properties: {
+    entryPointChild: AnyResolvedNode;
+    contentChild: AnyResolvedNode;
+  }
+}
 
 export const modalApi: ComponentApi<'Modal', ModalNode> = {
   name: 'Modal',

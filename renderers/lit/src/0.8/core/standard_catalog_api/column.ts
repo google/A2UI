@@ -17,8 +17,22 @@
 import {
   ComponentApi,
   AnyResolvedNode,
-  ColumnNode,
+  BaseResolvedNode,
 } from '../types/types.js';
+
+export interface ColumnNode extends BaseResolvedNode<'Column'> {
+  properties: {
+    children: AnyResolvedNode[];
+    distribution?:
+    | "start"
+    | "center"
+    | "end"
+    | "spaceBetween"
+    | "spaceAround"
+    | "spaceEvenly";
+    alignment?: "start" | "center" | "end" | "stretch";
+  }
+}
 
 export const columnApi: ComponentApi<'Column', ColumnNode> = {
   name: 'Column',

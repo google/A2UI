@@ -16,9 +16,16 @@
 
 import {
   ComponentApi,
-  CheckboxNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue, BooleanValue } from '../types/primitives.js';
+
+export interface CheckboxNode extends BaseResolvedNode<'CheckBox'> {
+  properties: {
+    label: StringValue;
+    value: BooleanValue;
+  }
+}
 
 export const checkboxApi: ComponentApi<'CheckBox', CheckboxNode> = {
   name: 'CheckBox',

@@ -16,9 +16,17 @@
 
 import {
   ComponentApi,
-  SliderNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { NumberValue } from '../types/primitives.js';
+
+export interface SliderNode extends BaseResolvedNode<'Slider'> {
+  properties: {
+    value: NumberValue;
+    minValue?: number;
+    maxValue?: number;
+  }
+}
 
 export const sliderApi: ComponentApi<'Slider', SliderNode> = {
   name: 'Slider',

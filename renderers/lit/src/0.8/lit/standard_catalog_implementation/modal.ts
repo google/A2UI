@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { ModalNode } from '../../core/types/types.js';
+import { ModalNode } from '../../core/standard_catalog_api/modal.js';
 import '../components/modal.js';
 
 export const litModalRenderer: ComponentRenderer<ModalNode, TemplateResult> = {

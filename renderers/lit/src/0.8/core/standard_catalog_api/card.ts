@@ -17,8 +17,15 @@
 import {
   ComponentApi,
   AnyResolvedNode,
-  CardNode,
+  BaseResolvedNode,
 } from '../types/types.js';
+
+export interface CardNode extends BaseResolvedNode<'Card'> {
+  properties: {
+    child: AnyResolvedNode;
+    children: AnyResolvedNode[];
+  }
+}
 
 export const cardApi: ComponentApi<'Card', CardNode> = {
   name: 'Card',

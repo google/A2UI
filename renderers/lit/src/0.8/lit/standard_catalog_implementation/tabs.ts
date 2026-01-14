@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { TabsNode } from '../../core/types/types.js';
+import { TabsNode } from '../../core/standard_catalog_api/tabs.js';
 import '../components/tabs.js';
 
 export const litTabsRenderer: ComponentRenderer<TabsNode, TemplateResult> = {

@@ -21,7 +21,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { SliderNode } from "../../core/types/types.js";
+import { SliderNode } from "../../core/standard_catalog_api/slider.js";
 import { extractNumberValue } from "../utils/utils.js";
 
 @customElement("a2ui-slider")

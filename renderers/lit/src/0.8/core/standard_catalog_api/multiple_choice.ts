@@ -16,9 +16,23 @@
 
 import {
   ComponentApi,
-  MultipleChoiceNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue } from '../types/primitives.js';
+
+export interface MultipleChoiceNode extends BaseResolvedNode<'MultipleChoice'> {
+  properties: {
+    selections: {
+      path?: string;
+      literalArray?: string[];
+    };
+    options?: {
+      label: StringValue;
+      value: string;
+    }[];
+    maxAllowedSelections?: number;
+  }
+}
 
 export const multipleChoiceApi: ComponentApi<'MultipleChoice', MultipleChoiceNode> = {
   name: 'MultipleChoice',

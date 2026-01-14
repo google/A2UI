@@ -17,8 +17,16 @@
 import {
   ComponentApi,
   AnyResolvedNode,
-  ListNode,
+  BaseResolvedNode,
 } from '../types/types.js';
+
+export interface ListNode extends BaseResolvedNode<'List'> {
+  properties: {
+    children: AnyResolvedNode[];
+    direction?: "vertical" | "horizontal";
+    alignment?: "start" | "center" | "end" | "stretch";
+  }
+}
 
 export const listApi: ComponentApi<'List', ListNode> = {
   name: 'List',

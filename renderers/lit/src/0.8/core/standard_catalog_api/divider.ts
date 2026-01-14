@@ -16,8 +16,16 @@
 
 import {
   ComponentApi,
-  DividerNode,
+  BaseResolvedNode,
 } from '../types/types.js';
+
+export interface DividerNode extends BaseResolvedNode<'Divider'> {
+  properties: {
+    axis?: "horizontal" | "vertical";
+    color?: string;
+    thickness?: number;
+  }
+}
 
 export const dividerApi: ComponentApi<'Divider', DividerNode> = {
   name: 'Divider',

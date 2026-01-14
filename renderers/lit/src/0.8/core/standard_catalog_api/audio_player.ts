@@ -16,9 +16,19 @@
 
 import {
   ComponentApi,
-  AudioPlayerNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue } from '../types/primitives.js';
+
+export interface AudioPlayerNode extends BaseResolvedNode<'AudioPlayer'> {
+  properties: {
+    url: StringValue;
+    /**
+     * A label, title, or placeholder text.
+     */
+    description?: StringValue;
+  }
+}
 
 export const audioPlayerApi: ComponentApi<'AudioPlayer', AudioPlayerNode> = {
   name: 'AudioPlayer',

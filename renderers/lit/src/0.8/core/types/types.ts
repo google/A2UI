@@ -14,26 +14,44 @@
  limitations under the License.
  */
 
-import {
-  AudioPlayer,
-  Button,
-  Checkbox,
-  DateTimeInput,
-  Divider,
-  Icon,
-  Image,
-  MultipleChoice,
-  Text,
-  TextField,
-  Video,
-} from "./components.js";
 import { StringValue, NumberValue, BooleanValue } from "./primitives.js";
 export {
   type ClientToServerMessage as A2UIClientEventMessage,
   type ClientCapabilitiesDynamic,
   type UserAction,
 } from "./client-event.js";
-export { type Action } from "./components.js";
+
+// --- Core Action Type ---
+
+export interface Action {
+  /**
+   * A unique name identifying the action (e.g., 'submitForm').
+   */
+  name: string;
+  /**
+   * A key-value map of data bindings to be resolved when the action is triggered.
+   */
+  context?: {
+    key: string;
+    /**
+     * The dynamic value. Define EXACTLY ONE of the nested properties.
+     */
+    value: {
+      /**
+       * A data binding reference to a location in the data model (e.g., '/user/name').
+       */
+      path?: string;
+      /**
+       * A fixed, hardcoded string value.
+       */
+      literalString?: string;
+      literalNumber?: number;
+      literalBoolean?: boolean;
+    };
+  }[];
+}
+
+// --- Core Node Types ---
 
 // Base interface for any resolved component node.
 export interface BaseResolvedNode<TName extends string = string> {
@@ -43,6 +61,12 @@ export interface BaseResolvedNode<TName extends string = string> {
   dataContextPath?: string;
   slotName?: string;
 }
+
+// Union type for any possible resolved node.
+// Now strictly generic to decouple from specific components.
+export type AnyResolvedNode = BaseResolvedNode<string> & {
+  properties: Record<string, unknown>;
+};
 
 // Interface for a component's definition.
 export interface ComponentApi<
@@ -406,196 +430,13 @@ export type ResolvedMap = { [key: string]: ResolvedValue };
 /** A generic array where each item has been recursively resolved. */
 export type ResolvedArray = ResolvedValue[];
 
-
-export interface TextNode extends BaseResolvedNode<'Text'> {
-  properties: ResolvedText;
-}
-
-export interface ImageNode extends BaseResolvedNode<'Image'> {
-  properties: ResolvedImage;
-}
-
-export interface IconNode extends BaseResolvedNode<'Icon'> {
-  properties: ResolvedIcon;
-}
-
-export interface VideoNode extends BaseResolvedNode<'Video'> {
-  properties: ResolvedVideo;
-}
-
-export interface AudioPlayerNode extends BaseResolvedNode<'AudioPlayer'> {
-  properties: ResolvedAudioPlayer;
-}
-
-export interface RowNode extends BaseResolvedNode<'Row'> {
-  properties: ResolvedRow;
-}
-
-export interface ColumnNode extends BaseResolvedNode<'Column'> {
-  properties: ResolvedColumn;
-}
-
-export interface ListNode extends BaseResolvedNode<'List'> {
-  properties: ResolvedList;
-}
-
-export interface CardNode extends BaseResolvedNode<'Card'> {
-  properties: ResolvedCard;
-}
-
-export interface TabsNode extends BaseResolvedNode<'Tabs'> {
-  properties: ResolvedTabs;
-}
-
-export interface DividerNode extends BaseResolvedNode<'Divider'> {
-  properties: ResolvedDivider;
-}
-
-export interface ModalNode extends BaseResolvedNode<'Modal'> {
-  properties: ResolvedModal;
-}
-
-export interface ButtonNode extends BaseResolvedNode<'Button'> {
-  properties: ResolvedButton;
-}
-
-export interface CheckboxNode extends BaseResolvedNode<'CheckBox'> {
-  properties: ResolvedCheckbox;
-}
-
-export interface TextFieldNode extends BaseResolvedNode<'TextField'> {
-  properties: ResolvedTextField;
-}
-
-export interface DateTimeInputNode extends BaseResolvedNode<'DateTimeInput'> {
-  properties: ResolvedDateTimeInput;
-}
-
-export interface MultipleChoiceNode extends BaseResolvedNode<'MultipleChoice'> {
-  properties: ResolvedMultipleChoice;
-}
-
-export interface SliderNode extends BaseResolvedNode<'Slider'> {
-  properties: ResolvedSlider;
-}
-
 export interface CustomNode extends BaseResolvedNode {
   type: string;
   // For custom nodes, properties are just a map of string keys to any resolved value.
   properties: CustomNodeProperties;
 }
 
-/**
- * The complete discriminated union of all possible resolved component nodes.
- * A renderer would use this type for any given node in the component tree.
- */
-export type AnyResolvedNode =
-  | TextNode
-  | IconNode
-  | ImageNode
-  | VideoNode
-  | AudioPlayerNode
-  | RowNode
-  | ColumnNode
-  | ListNode
-  | CardNode
-  | TabsNode
-  | DividerNode
-  | ModalNode
-  | ButtonNode
-  | CheckboxNode
-  | TextFieldNode
-  | DateTimeInputNode
-  | MultipleChoiceNode
-  | SliderNode
-  | CustomNode;
-
 export type AnyComponentNode = AnyResolvedNode;
-
-// These components do not contain other components can reuse their
-// original interfaces.
-export type ResolvedText = Text;
-export type ResolvedIcon = Icon;
-export type ResolvedImage = Image;
-export type ResolvedVideo = Video;
-export type ResolvedAudioPlayer = AudioPlayer;
-export type ResolvedDivider = Divider;
-export interface ResolvedCheckbox {
-  label: StringValue;
-  value: BooleanValue;
-}
-export type ResolvedTextField = TextField;
-export type ResolvedDateTimeInput = DateTimeInput;
-export interface ResolvedMultipleChoice {
-  selections: {
-    path?: string;
-    literalArray?: string[];
-  };
-  options?: {
-    label: StringValue;
-    value: string;
-  }[];
-  maxAllowedSelections?: number;
-}
-export interface ResolvedSlider {
-  value: NumberValue;
-  minValue?: number;
-  maxValue?: number;
-}
-
-export interface ResolvedRow {
-  children: AnyResolvedNode[];
-  distribution?:
-  | "start"
-  | "center"
-  | "end"
-  | "spaceBetween"
-  | "spaceAround"
-  | "spaceEvenly";
-  alignment?: "start" | "center" | "end" | "stretch";
-}
-
-export interface ResolvedColumn {
-  children: AnyResolvedNode[];
-  distribution?:
-  | "start"
-  | "center"
-  | "end"
-  | "spaceBetween"
-  | "spaceAround"
-  | "spaceEvenly";
-  alignment?: "start" | "center" | "end" | "stretch";
-}
-
-export interface ResolvedButton {
-  child: AnyResolvedNode;
-  action: Button["action"];
-}
-
-export interface ResolvedList {
-  children: AnyResolvedNode[];
-  direction?: "vertical" | "horizontal";
-  alignment?: "start" | "center" | "end" | "stretch";
-}
-
-export interface ResolvedCard {
-  child: AnyResolvedNode;
-  children: AnyResolvedNode[];
-}
-
-export interface ResolvedTabItem {
-  title: StringValue;
-  child: AnyResolvedNode;
-}
-
-export interface ResolvedTabs {
-  tabItems: ResolvedTabItem[];
-}
-
-export interface ResolvedModal {
-  entryPointChild: AnyResolvedNode;
-  contentChild: AnyResolvedNode;
-}
 
 export interface CustomNodeProperties {
   [k: string]: ResolvedValue;

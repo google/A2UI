@@ -17,9 +17,16 @@
 import {
   ComponentApi,
   AnyResolvedNode,
-  ButtonNode,
+  BaseResolvedNode,
   Action,
 } from '../types/types.js';
+
+export interface ButtonNode extends BaseResolvedNode<'Button'> {
+  properties: {
+    child: AnyResolvedNode;
+    action: Action;
+  }
+}
 
 export const buttonApi: ComponentApi<'Button', ButtonNode> = {
   name: 'Button',

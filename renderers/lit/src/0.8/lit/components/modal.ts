@@ -21,7 +21,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { ref } from "lit/directives/ref.js";
-import { ModalNode } from "../../core/types/types.js";
+import { ModalNode } from "../../core/standard_catalog_api/modal.js";
 
 @customElement("a2ui-modal")
 export class Modal extends Root<ModalNode> {

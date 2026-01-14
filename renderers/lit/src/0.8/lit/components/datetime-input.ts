@@ -21,7 +21,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { DateTimeInputNode } from "../../core/types/types.js";
+import { DateTimeInputNode } from "../../core/standard_catalog_api/datetime_input.js";
 
 @customElement("a2ui-datetimeinput")
 export class DateTimeInput extends Root<DateTimeInputNode> {

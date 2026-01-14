@@ -20,7 +20,7 @@ import { Root } from "./root.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { ColumnNode } from "../../core/types/types.js";
+import { ColumnNode } from "../../core/standard_catalog_api/column.js";
 
 @customElement("a2ui-column")
 export class Column extends Root<ColumnNode> {

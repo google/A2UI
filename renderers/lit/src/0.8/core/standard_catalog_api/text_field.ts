@@ -16,9 +16,18 @@
 
 import {
   ComponentApi,
-  TextFieldNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue } from '../types/primitives.js';
+
+export interface TextFieldNode extends BaseResolvedNode<'TextField'> {
+  properties: {
+    text?: StringValue;
+    label: StringValue;
+    type?: "shortText" | "number" | "date" | "longText";
+    validationRegexp?: string;
+  }
+}
 
 export const textFieldApi: ComponentApi<'TextField', TextFieldNode> = {
   name: 'TextField',

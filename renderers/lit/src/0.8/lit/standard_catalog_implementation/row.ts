@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { RowNode } from '../../core/types/types.js';
+import { RowNode } from '../../core/standard_catalog_api/row.js';
 import '../components/row.js';
 
 export const litRowRenderer: ComponentRenderer<RowNode, TemplateResult> = {

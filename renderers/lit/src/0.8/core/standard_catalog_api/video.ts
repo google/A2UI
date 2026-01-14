@@ -16,9 +16,15 @@
 
 import {
   ComponentApi,
-  VideoNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue } from '../types/primitives.js';
+
+export interface VideoNode extends BaseResolvedNode<'Video'> {
+  properties: {
+    url: StringValue;
+  }
+}
 
 export const videoApi: ComponentApi<'Video', VideoNode> = {
   name: 'Video',

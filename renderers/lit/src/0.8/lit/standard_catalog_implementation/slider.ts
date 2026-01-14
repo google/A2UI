@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { SliderNode } from '../../core/types/types.js';
+import { SliderNode } from '../../core/standard_catalog_api/slider.js';
 import '../components/slider.js';
 
 export const litSliderRenderer: ComponentRenderer<SliderNode, TemplateResult> = {

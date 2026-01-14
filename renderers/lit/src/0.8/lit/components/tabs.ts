@@ -23,7 +23,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../../core.js";
-import { TabsNode } from "../../core/types/types.js";
+import { TabsNode } from "../../core/standard_catalog_api/tabs.js";
 
 @customElement("a2ui-tabs")
 export class Tabs extends Root<TabsNode> {

@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { CardNode } from '../../core/types/types.js';
+import { CardNode } from '../../core/standard_catalog_api/card.js';
 import '../components/card.js';
 
 export const litCardRenderer: ComponentRenderer<CardNode, TemplateResult> = {

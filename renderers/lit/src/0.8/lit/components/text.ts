@@ -23,7 +23,8 @@ import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../../core.js";
-import { TextNode, Theme } from "../../core/types/types.js";
+import { Theme } from "../../core/types/types.js";
+import { TextNode } from "../../core/standard_catalog_api/text.js";
 
 interface HintedStyles {
   h1: Record<string, string>;

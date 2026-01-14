@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { TextFieldNode } from '../../core/types/types.js';
+import { TextFieldNode } from '../../core/standard_catalog_api/text_field.js';
 import '../components/text-field.js';
 
 export const litTextFieldRenderer: ComponentRenderer<TextFieldNode, TemplateResult> = {

@@ -20,7 +20,7 @@ import { Root } from "./root.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { ListNode } from "../../core/types/types.js";
+import { ListNode } from "../../core/standard_catalog_api/list.js";
 
 @customElement("a2ui-list")
 export class List extends Root<ListNode> {

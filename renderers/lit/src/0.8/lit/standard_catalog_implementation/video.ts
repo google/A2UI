@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { VideoNode } from '../../core/types/types.js';
+import { VideoNode } from '../../core/standard_catalog_api/video.js';
 import '../components/video.js';
 
 export const litVideoRenderer: ComponentRenderer<VideoNode, TemplateResult> = {

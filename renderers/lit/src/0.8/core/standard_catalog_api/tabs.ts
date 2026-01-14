@@ -16,9 +16,21 @@
 
 import {
   ComponentApi,
-  TabsNode,
-  ResolvedTabItem,
+  AnyResolvedNode,
+  BaseResolvedNode,
 } from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
+
+export interface ResolvedTabItem {
+  title: StringValue;
+  child: AnyResolvedNode;
+}
+
+export interface TabsNode extends BaseResolvedNode<'Tabs'> {
+  properties: {
+    tabItems: ResolvedTabItem[];
+  }
+}
 
 export const tabsApi: ComponentApi<'Tabs', TabsNode> = {
   name: 'Tabs',

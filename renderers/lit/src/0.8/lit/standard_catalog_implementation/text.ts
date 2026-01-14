@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { TextNode } from '../../core/types/types.js';
+import { TextNode } from '../../core/standard_catalog_api/text.js';
 import '../components/text.js';
 
 export const litTextRenderer: ComponentRenderer<TextNode, TemplateResult> = {

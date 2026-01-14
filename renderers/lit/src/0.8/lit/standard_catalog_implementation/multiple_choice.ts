@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { MultipleChoiceNode } from '../../core/types/types.js';
+import { MultipleChoiceNode } from '../../core/standard_catalog_api/multiple_choice.js';
 import '../components/multiple-choice.js';
 
 export const litMultipleChoiceRenderer: ComponentRenderer<MultipleChoiceNode, TemplateResult> = {

@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { CheckboxNode } from '../../core/types/types.js';
+import { CheckboxNode } from '../../core/standard_catalog_api/checkbox.js';
 import '../components/checkbox.js';
 
 export const litCheckboxRenderer: ComponentRenderer<CheckboxNode, TemplateResult> = {

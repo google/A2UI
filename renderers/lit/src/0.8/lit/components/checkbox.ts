@@ -21,7 +21,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { CheckboxNode } from "../../core/types/types.js";
+import { CheckboxNode } from "../../core/standard_catalog_api/checkbox.js";
 
 @customElement("a2ui-checkbox")
 export class Checkbox extends Root<CheckboxNode> {

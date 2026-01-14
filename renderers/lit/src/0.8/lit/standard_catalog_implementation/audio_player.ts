@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { AudioPlayerNode } from '../../core/types/types.js';
+import { AudioPlayerNode } from '../../core/standard_catalog_api/audio_player.js';
 import '../components/audio.js';
 
 export const litAudioPlayerRenderer: ComponentRenderer<AudioPlayerNode, TemplateResult> = {

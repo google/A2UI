@@ -16,9 +16,18 @@
 
 import {
   ComponentApi,
-  DateTimeInputNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue } from '../types/primitives.js';
+
+export interface DateTimeInputNode extends BaseResolvedNode<'DateTimeInput'> {
+  properties: {
+    value: StringValue;
+    enableDate?: boolean;
+    enableTime?: boolean;
+    outputFormat?: string;
+  }
+}
 
 export const dateTimeInputApi: ComponentApi<'DateTimeInput', DateTimeInputNode> = {
   name: 'DateTimeInput',

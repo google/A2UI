@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { IconNode } from '../../core/types/types.js';
+import { IconNode } from '../../core/standard_catalog_api/icon.js';
 import '../components/icon.js';
 
 export const litIconRenderer: ComponentRenderer<IconNode, TemplateResult> = {

@@ -20,7 +20,7 @@ import { Root } from "./root.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { CardNode } from "../../core/types/types.js";
+import { CardNode } from "../../core/standard_catalog_api/card.js";
 
 @customElement("a2ui-card")
 export class Card extends Root<CardNode> {

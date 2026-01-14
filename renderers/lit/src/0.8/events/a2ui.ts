@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Action } from "../core/types/components.js";
+import { Action } from "../core/types/types.js";
 import { AnyComponentNode } from "../core/types/types.js";
 import { BaseEventDetail } from "./base.js";
 

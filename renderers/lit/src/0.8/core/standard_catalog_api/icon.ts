@@ -16,9 +16,15 @@
 
 import {
   ComponentApi,
-  IconNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue } from '../types/primitives.js';
+
+export interface IconNode extends BaseResolvedNode<'Icon'> {
+  properties: {
+    name: StringValue;
+  }
+}
 
 export const iconApi: ComponentApi<'Icon', IconNode> = {
   name: 'Icon',

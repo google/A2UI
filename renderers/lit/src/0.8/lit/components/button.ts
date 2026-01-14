@@ -21,7 +21,7 @@ import { StateEvent } from "../../events/events.js";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { ButtonNode } from "../../core/types/types.js";
+import { ButtonNode } from "../../core/standard_catalog_api/button.js";
 
 @customElement("a2ui-button")
 export class Button extends Root<ButtonNode> {

@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { ButtonNode } from '../../core/types/types.js';
+import { ButtonNode } from '../../core/standard_catalog_api/button.js';
 import '../components/button.js';
 
 export const litButtonRenderer: ComponentRenderer<ButtonNode, TemplateResult> = {

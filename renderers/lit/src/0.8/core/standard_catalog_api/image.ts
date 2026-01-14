@@ -16,9 +16,17 @@
 
 import {
   ComponentApi,
-  ImageNode,
+  BaseResolvedNode,
 } from '../types/types.js';
 import { StringValue } from '../types/primitives.js';
+
+export interface ImageNode extends BaseResolvedNode<'Image'> {
+  properties: {
+    url: StringValue;
+    usageHint: "icon" | "avatar" | "smallFeature" | "mediumFeature" | "largeFeature" | "header";
+    fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+  }
+}
 
 export const imageApi: ComponentApi<'Image', ImageNode> = {
   name: 'Image',

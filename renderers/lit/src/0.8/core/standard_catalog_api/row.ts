@@ -17,8 +17,22 @@
 import {
   ComponentApi,
   AnyResolvedNode,
-  RowNode,
+  BaseResolvedNode,
 } from '../types/types.js';
+
+export interface RowNode extends BaseResolvedNode<'Row'> {
+  properties: {
+    children: AnyResolvedNode[];
+    distribution?:
+    | "start"
+    | "center"
+    | "end"
+    | "spaceBetween"
+    | "spaceAround"
+    | "spaceEvenly";
+    alignment?: "start" | "center" | "end" | "stretch";
+  }
+}
 
 export const rowApi: ComponentApi<'Row', RowNode> = {
   name: 'Row',

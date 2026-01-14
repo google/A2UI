@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { DividerNode } from '../../core/types/types.js';
+import { DividerNode } from '../../core/standard_catalog_api/divider.js';
 import '../components/divider.js';
 
 export const litDividerRenderer: ComponentRenderer<DividerNode, TemplateResult> = {

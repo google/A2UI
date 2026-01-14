@@ -22,7 +22,7 @@ import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { extractStringValue } from "../utils/utils.js";
-import { MultipleChoiceNode } from "../../core/types/types.js";
+import { MultipleChoiceNode } from "../../core/standard_catalog_api/multiple_choice.js";
 
 @customElement("a2ui-multiplechoice")
 export class MultipleChoice extends Root<MultipleChoiceNode> {

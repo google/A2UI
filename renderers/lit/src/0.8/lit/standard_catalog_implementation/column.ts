@@ -16,7 +16,7 @@
 
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types/types.js';
-import { ColumnNode } from '../../core/types/types.js';
+import { ColumnNode } from '../../core/standard_catalog_api/column.js';
 import '../components/column.js';
 
 export const litColumnRenderer: ComponentRenderer<ColumnNode, TemplateResult> = {
