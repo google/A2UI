@@ -19,6 +19,13 @@ site_author: Google
 site_dir: site
 
 extra:
+  alternate:
+    - name: English
+      link: /
+      lang: en
+    - name: 简体中文
+      link: "/zh/"
+      lang: zh
   analytics:
     provider: google
     property: G-YX9TPV8DCC
@@ -171,6 +178,48 @@ markdown_extensions:
 
 # Plugins
 plugins:
+  - i18n:
+      docs_structure: folder
+      languages:
+        - locale: en
+          default: true
+          name: English
+        - locale: zh
+          name: 简体中文
+          nav_translations:
+            Home: 首页
+            Introduction & FAQ: 简介与常见问题
+            What is A2UI?: 什么是 A2UI？
+            Who is it For?: 适用人群
+            How Can I Use It?: 如何使用？
+            Where is it Used?: 应用场景
+            Agent UI Ecosystem: 智能体 UI 生态系统
+            Quickstart: 快速开始
+            A2UI Composer ⭐: A2UI 编辑器 ⭐
+            Developer Guides: 开发者指南
+            Client Setup: 客户端设置
+            Agent Development: 智能体开发
+            Custom Components: 自定义组件
+            Theming & Styling: 主题与样式
+            Core Concepts: 核心概念
+            Overview: 概览
+            Data Flow: 数据流
+            Components & Structure: 组件与结构
+            Data Binding: 数据绑定
+            Specifications: 规范
+            v0.8 (Stable): v0.8 (稳定版)
+            A2UI Specification: A2UI 规范
+            A2A Extension: A2A 扩展
+            v0.9 (Draft): v0.9 (草案)
+            Evolution Guide: 演进指南
+            Renderers (Clients): 渲染器 (客户端)
+            Transports (Message Passing): 传输 (消息传递)
+            Agents (Server-side): 智能体 (服务端)
+            Community: 社区
+            Roadmap: 路线图
+            Reference: 参考
+            Component Reference: 组件参考
+            Message Reference: 消息参考
   - search
   - macros
   # - include-markdown
