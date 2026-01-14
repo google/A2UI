@@ -23,7 +23,6 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 | **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)            |
 | **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                         |
 | **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop              |
-| **Interpolation**        | N/A (Object wrappers only)               | Native `${expression}` syntax                        |
 | **Data Synchronization** | Implicit                                 | Explicit Broadcasting (`broadcastDataModel`)         |
 
 ## 2. Architectural & Schema Changes
@@ -198,7 +197,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- **Unified**: Everything is now **`path`**.
+- **Unified**: Everything is now a **`path`**.
 - **Reason**: Reduces cognitive load for the LLM. "Path" always means "JSON Pointer to data."
 
 ### 5.2. Simplified Bound Values
@@ -223,12 +222,12 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- **Native Interpolation**: Introduced the `${expression}` syntax for all `DynamicString` properties.
-- **Unified Expression Language**: Allows embedding JSON Pointer paths (absolute and relative) and client-side function calls directly within literal strings.
+- **String Formatting**: Introduced the `string_format` function, which supports `${expression}` syntax for interpolation.
+- **Unified Expression Language**: Allows embedding JSON Pointer paths (absolute and relative) and client-side function calls directly within the format string.
 - **Nesting**: Supports recursive nesting of expressions (e.g., `${formatDate(${/timestamp}, 'yyyy-MM-dd')}`).
-- **Reason**: Improves "token efficiency" and readability for LLMs. Instead of generating complex JSON objects to combine strings and data, the model can write natural-looking template literals.
+- **Reason**: Improves readability for complex strings. Instead of generating complex nested JSON objects (like chained concatenations) to combine strings and data, the model can write natural-looking template literals within the `string_format` function.
 
-### 5.4. Data Model Broadcasting
+### 5.4. Data Synchronization
 
 **v0.8.1:**
 
@@ -237,8 +236,9 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 **v0.9:**
 
 - **Explicit Broadcasting**: `createSurface` introduced `broadcastDataModel` (boolean).
-- **Mechanical Simplicity**: When enabled, the client simply piggybacks the full data model of the surface onto every A2A message (like `action`) sent to the server.
-- **Reason**: Removes the need for complex, error-prone client-side change tracking or CRDT implementation. The server always receives the complete, latest state of the client data model with every user interaction.
+- **Single-Path Updates**: Server pushes updates via `updateDataModel` using simple `path`/`value` pairs (no CRDTs or vector clocks).
+- **Broadcasting**: When `broadcastDataModel` is true, the client includes the full data model in every A2A message metadata.
+- **Reason**: Simplifies the protocol by removing complex conflict resolution (CRDTs) while ensuring the server always has the latest state when it needs to act.
 
 ## 6. Component-Specific Changes
 
