@@ -2,7 +2,7 @@
 
 Sample application using the Chat-Canvas component orchestrating multiple A2A and A2UI Agents.
 
-This angular app connects to an Orchastrator Agent which takes user messages and delegates tasks to its subagents based on the assessed context. 
+This angular app connects to an Orchestrator Agent which takes user messages and delegates tasks to its subagents based on the assessed context. 
 
 ## Prerequisites
 
