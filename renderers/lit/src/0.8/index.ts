@@ -16,3 +16,5 @@
 
 export * from "./core.js";
 export * as UI from "./lit/components/ui.js";
+export { LitRenderer } from "./lit/lit_renderer.js";
+export { standardLitCatalogImplementation } from "./lit/standard_catalog_implementation/standard_catalog_lit.js";

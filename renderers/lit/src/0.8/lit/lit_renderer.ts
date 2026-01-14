@@ -18,10 +18,18 @@ import { TemplateResult } from 'lit';
 import {
   FrameworkRenderer,
   CatalogImplementation,
+  AnyResolvedNode,
 } from '../core/types/types.js';
 
 export class LitRenderer extends FrameworkRenderer<TemplateResult> {
   constructor(catalogImplementation: CatalogImplementation<TemplateResult>) {
     super(catalogImplementation);
+  }
+
+  override renderNode(node: AnyResolvedNode): TemplateResult | null {
+    console.log(
+      `[LitRenderer] renderNode visiting: ${node.type} (id: ${node.id})`
+    );
+    return super.renderNode(node);
   }
 }

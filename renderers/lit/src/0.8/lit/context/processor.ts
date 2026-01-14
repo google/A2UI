@@ -14,21 +14,7 @@
  limitations under the License.
  */
 
-import { html, TemplateResult } from 'lit';
-import { ComponentRenderer } from '../../core/types/types.js';
-import { TextNode } from '../../core/standard_catalog_api/text.js';
-import '../components/text.js';
+import { createContext } from "@lit/context";
+import { MessageProcessor } from "../../core/types/types.js";
 
-export const litTextRenderer: ComponentRenderer<TextNode, TemplateResult> = {
-  componentName: 'Text',
-
-  render(node, renderChild) {
-    console.log(`[litTextRenderer] render called for node: ${node.id}`);
-    return html`
-      <a2ui-text
-        .node=${node}
-        .renderChild=${renderChild}
-      ></a2ui-text>
-    `;
-  },
-};
+export const processorContext = createContext<MessageProcessor | undefined>("A2UIProcessor");

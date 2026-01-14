@@ -31,6 +31,8 @@ import {
   MessageProcessor,
 } from "../../core/types/types.js";
 import { themeContext } from "../context/theme.js";
+import { processorContext } from "../context/processor.js";
+import { surfaceIdContext } from "../context/surfaceId.js";
 import { structuralStyles } from "./styles.js";
 
 // This is the base class all the components will inherit
@@ -42,14 +44,16 @@ export class Root<T extends AnyResolvedNode = AnyResolvedNode> extends SignalWat
   @property({ attribute: false })
   accessor renderChild!: (child: AnyResolvedNode) => TemplateResult | null;
   
+  @consume({ context: surfaceIdContext })
   @property()
-  accessor surfaceId: SurfaceID | null = null;
+  accessor surfaceId: SurfaceID | undefined = undefined;
 
   @consume({ context: themeContext })
   accessor theme!: Theme;
 
+  @consume({ context: processorContext })
   @property({ attribute: false })
-  accessor processor: MessageProcessor | null = null;
+  accessor processor: MessageProcessor | undefined = undefined;
 
   @property()
   accessor dataContextPath: string = "";

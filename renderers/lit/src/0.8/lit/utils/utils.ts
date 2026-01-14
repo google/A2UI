@@ -22,8 +22,8 @@ import { type AnyComponentNode } from "../../core/types/types.js";
 export function extractStringValue(
   val: StringValue | null | undefined,
   component: AnyComponentNode | null,
-  processor: MessageProcessor | null,
-  surfaceId: string | null
+  processor: MessageProcessor | null | undefined,
+  surfaceId: string | null | undefined
 ): string {
   if (val !== null && typeof val === "object") {
     if ("literalString" in val) {
@@ -59,8 +59,8 @@ export function extractStringValue(
 export function extractNumberValue(
   val: NumberValue | null,
   component: AnyComponentNode | null,
-  processor: MessageProcessor | null,
-  surfaceId: string | null
+  processor: MessageProcessor | null | undefined,
+  surfaceId: string | null | undefined
 ): number {
   if (val !== null && typeof val === "object") {
     if ("literalNumber" in val) {

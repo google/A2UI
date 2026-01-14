@@ -267,6 +267,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   ];
 
   #processor = v0_8.Data.createSignalA2uiMessageProcessor(v0_8.standardCatalogApi);
+  #renderer = new v0_8.LitRenderer(v0_8.standardLitCatalogImplementation);
   #a2uiClient = new A2UIClient();
   #snackbar: Snackbar | undefined = undefined;
   #pendingSnackbarMessages: Array<{
@@ -500,7 +501,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
               .surfaceId=${surfaceId}
               .surface=${surface}
               .processor=${this.#processor}
-            ></a2-uisurface>`;
+              .renderer=${this.#renderer}
+            ></a2ui-surface>`;
       }
     )}
     </section>`;

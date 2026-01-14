@@ -16,6 +16,7 @@
 
 import { html, css, nothing, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { provide } from "@lit/context";
 import {
   SurfaceID,
   Surface as SurfaceState,
@@ -23,15 +24,19 @@ import {
 import { A2uiMessageProcessor } from "../../core/a2ui_message_processor.js";
 import { Root } from "./root.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { processorContext } from "../context/processor.js";
+import { surfaceIdContext } from "../context/surfaceId.js";
 import { LitRenderer } from "../lit_renderer.js";
 
 @customElement("a2ui-surface")
 export class Surface extends Root {
+  @provide({ context: surfaceIdContext })
   @property()
-  accessor surfaceId: SurfaceID | null = null;
+  accessor surfaceId: SurfaceID | undefined = undefined;
 
+  @provide({ context: processorContext })
   @property({ attribute: false })
-  accessor processor: A2uiMessageProcessor | null = null;
+  accessor processor: A2uiMessageProcessor | undefined = undefined;
 
   @property({ attribute: false })
   accessor renderer: LitRenderer | null = null;
@@ -110,7 +115,12 @@ export class Surface extends Root {
 
     const node = surface.componentTree;
 
+    console.log(`[Surface] #renderSurface. Renderer: ${!!this.renderer}, Node: ${!!node}`);
     if (!this.renderer || !node) {
+      console.warn("Surface cannot render content:", {
+        renderer: !!this.renderer,
+        node: !!node ? node.id : "null",
+      });
       return nothing;
     }
 
@@ -118,6 +128,7 @@ export class Surface extends Root {
   }
 
   render() {
+    console.log(`[Surface] render called. SurfaceID: ${this.surfaceId}, Processor: ${!!this.processor}`);
     if (!this.processor || !this.surfaceId) {
       console.warn("Surface missing dependencies:", {
         processor: !!this.processor,

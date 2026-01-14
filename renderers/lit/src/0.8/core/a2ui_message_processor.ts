@@ -241,6 +241,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
   }
 
   private setDataByPath(root: DataMap, path: string, value: DataValue): void {
+    console.log(`[setDataByPath] Path: ${path}, Value:`, value);
     // Check if the incoming value is the special key-value array format.
     if (
       Array.isArray(value) &&
@@ -282,7 +283,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
       // however, we will normalize it to a proper Map.
       if (value instanceof Map || isObject(value)) {
         // Normalize an Object to a Map.
-        if (!(value instanceof Map) && isObject(value)) {
+        if (!(value instanceof this.mapCtor) && isObject(value)) {
           value = new this.mapCtor(Object.entries(value));
         }
 
@@ -301,7 +302,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
       const segment = segments[i];
       let target: DataValue | undefined;
 
-      if (current instanceof Map) {
+      if (current instanceof this.mapCtor) {
         target = current.get(segment);
       } else if (Array.isArray(current) && /^\d+$/.test(segment)) {
         target = current[parseInt(segment, 10)];
@@ -353,11 +354,14 @@ export class A2uiMessageProcessor implements MessageProcessor {
       .split("/")
       .filter((s) => s);
 
+    console.log(`[getDataByPath] Path: ${path}, Segments:`, segments);
+
     let current: DataValue = root;
     for (const segment of segments) {
+      console.log(`[getDataByPath] Current:`, current, `Segment: ${segment}`);
       if (current === undefined || current === null) return null;
 
-      if (current instanceof Map) {
+      if (current instanceof this.mapCtor) {
         current = current.get(segment) as DataMap;
       } else if (Array.isArray(current) && /^\d+$/.test(segment)) {
         current = current[parseInt(segment, 10)];
