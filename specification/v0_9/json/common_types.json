@@ -321,26 +321,6 @@
           }
         }
       }
-    },
-    "DataUpdate": {
-      "type": "object",
-      "required": ["path"],
-      "properties": {
-        "path": {
-          "type": "string",
-          "description": "A JSON Pointer to a specific property or object. To maintain data model integrity, paths should use stable unique IDs instead of array indices (e.g., '/genus/f1/name' instead of '/genus/1/name')."
-        },
-        "value": {
-          "description": "The data value at the specified path. This must not be an array. To represent a list, the value at a path should be an object (map) where each property is a stable ID. Deletion is represented by setting this to null.",
-          "oneOf": [
-            { "type": "object", "additionalProperties": true },
-            { "type": "string" },
-            { "type": "number" },
-            { "type": "boolean" },
-            { "type": "null" }
-          ]
-        }
-      }
     }
   }
 }

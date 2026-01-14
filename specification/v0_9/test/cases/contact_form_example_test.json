@@ -110,16 +110,12 @@
       "data": {
         "updateDataModel": {
           "surfaceId": "contact_form_1",
-          "updates": [
-            {
-              "path": "/contact",
-              "value": {
-                "firstName": "John",
-                "lastName": "Doe",
-                "email": "john.doe@example.com"
-              }
-            }
-          ]
+          "path": "/contact",
+          "value": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@example.com"
+          }
         }
       }
     }

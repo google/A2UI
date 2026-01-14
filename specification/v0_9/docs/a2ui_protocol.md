@@ -435,6 +435,51 @@ The server sends `updateDataModel` messages to modify the client's data model. T
 
 The `updateDataModel` message replaces the value at the specified `path` with the new content. If `path` is omitted (or is `/`), the entire data model for the surface is replaced.
 
+**Properties:**
+
+- `surfaceId` (string, required): The ID of the surface to update.
+- `path` (string, optional): A JSON Pointer to the location in the data model to update. Defaults to `/`.
+- `value` (any, optional): The new value for the specified path. If omitted, the key at `path` is removed.
+
+**Examples:**
+
+*Update a specific field:*
+
+```json
+{
+  "updateDataModel": {
+    "surfaceId": "surface_123",
+    "path": "/user/firstName",
+    "value": "Alice"
+  }
+}
+```
+
+*Remove a field:*
+
+```json
+{
+  "updateDataModel": {
+    "surfaceId": "surface_123",
+    "path": "/user/tempData"
+  }
+}
+```
+
+*Replace the entire data model:*
+
+```json
+{
+  "updateDataModel": {
+    "surfaceId": "surface_123",
+    "value": {
+      "user": { "firstName": "Alice", "lastName": "Smith" },
+      "preferences": { "theme": "dark" }
+    }
+  }
+}
+```
+
 ### Client to Server Updates (Broadcasting)
 
 When `broadcastDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action`) sent to the server. The data model is included in the A2A message metadata using the schema in [`a2ui_data_broadcast.json`](../json/a2ui_data_broadcast.json).
