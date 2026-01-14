@@ -213,11 +213,11 @@ class FrameworkRenderer<RenderOutput> {
 
 ## 2. Codebase Structure and File Examples
 
-To make this architecture concrete, here is a proposed file structure and examples for a `Card` component.
+To make this architecture concrete, here is a proposed file structure and examples for a `Card` component. This structure separates the view-layer component (e.g., the Lit `LitElement`) from its A2UI integration logic (the `ComponentRenderer`), promoting a clear separation of concerns.
 
 ### Directory Structure
 
-The proposed structure separates framework-agnostic core logic from framework-specific implementations. This allows for maximum code reuse and clarity.
+The proposed structure separates framework-agnostic core logic from framework-specific implementations.
 
 ```
 renderers/
@@ -235,12 +235,12 @@ renderers/
             └── lit/
                 ├── lit_renderer.ts            # The FrameworkRenderer for Lit
                 ├── components/
-                │   ├── card.ts                # Lit <a2ui-card> component
-                │   └── text.ts                # Lit <a2ui-text> component
+                │   ├── card.ts                # Defines the <a2ui-card> LitElement
+                │   └── text.ts                # Defines the <a2ui-text> LitElement
                 └── standard_catalog_implementation/
-                    ├── standard_lit_catalog.ts # The CatalogImplementation for Lit
-                    ├── card.ts                 # Card ComponentRenderer for Lit
-                    └── text.ts                 # Text ComponentRenderer for Lit
+                    ├── standard_catalog_lit.ts # Assembles the final CatalogImplementation
+                    ├── card.ts                 # Defines the ComponentRenderer for Card
+                    └── text.ts                 # Defines the ComponentRenderer for Text
 ```
 
 ### Example: `Card` Component Files
@@ -284,16 +284,17 @@ export const cardApi: ComponentApi<'Card', CardResolvedNode> = {
 };
 ```
 
-#### 2. Lit Component Implementation (`lit/components/card.ts`)
+#### 2. Lit Component (`lit/components/card.ts`)
 
-This is the standard Lit web component that will be rendered to the DOM. It receives a fully resolved node.
+This is the pure, presentational web component for the card. It has no direct knowledge of the `ComponentRenderer`.
 
 ```typescript
 // lit/components/card.ts
 
-import { LitElement, html } from 'lit';
+import { LitElement, html, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { CardResolvedNode } from '../../core/standard_catalog_api/card';
+import { AnyResolvedNode } from '../../core/types';
 
 @customElement('a2ui-card')
 export class A2UICard extends LitElement {
@@ -313,9 +314,9 @@ export class A2UICard extends LitElement {
 }
 ```
 
-#### 3. Lit Renderer Implementation (`lit/standard_catalog_implementation/card.ts`)
+#### 3. Lit Renderer (`lit/standard_catalog_implementation/card.ts`)
 
-This file acts as the glue, mapping the `Card` component API to its Lit rendering logic.
+This file contains the A2UI integration logic, mapping the `Card` API to its Lit component.
 
 ```typescript
 // lit/standard_catalog_implementation/card.ts
@@ -323,6 +324,7 @@ This file acts as the glue, mapping the `Card` component API to its Lit renderin
 import { html, TemplateResult } from 'lit';
 import { ComponentRenderer } from '../../core/types';
 import { CardResolvedNode } from '../../core/standard_catalog_api/card';
+import '../components/card.js'; // Ensure the component is defined
 
 export const litCardRenderer: ComponentRenderer<CardResolvedNode, TemplateResult> = {
   componentName: 'Card',
@@ -340,9 +342,32 @@ export const litCardRenderer: ComponentRenderer<CardResolvedNode, TemplateResult
 };
 ```
 
-#### 4. Angular Implementation
+#### 4. Assembling the Catalog Implementation (`lit/standard_catalog_implementation/standard_catalog_lit.ts`)
 
-The same pattern applies to Angular.
+This file imports all the individual component renderers and assembles them into the final `CatalogImplementation` that the `LitRenderer` will use.
+
+```typescript
+// lit/standard_catalog_implementation/standard_catalog_lit.ts
+
+import { CatalogImplementation } from '../../core/types';
+import { standardCatalogApi } from '../../core/standard_catalog_api/standard_catalog';
+import { litCardRenderer } from './card';
+import { litTextRenderer } from './text';
+// ... import all other renderers
+
+export const standardLitCatalogImplementation = new CatalogImplementation(
+  standardCatalogApi,
+  [
+    litCardRenderer,
+    litTextRenderer,
+    // ... add all other renderers
+  ]
+);
+```
+
+#### 5. Angular Implementation
+
+Frameworks like Angular have different idioms. While the `ComponentRenderer` pattern still applies, the component logic is naturally separated into its own file due to Angular's module and decorator system, fitting this separated model well.
 
 ```typescript
 // in an angular-specific folder...
