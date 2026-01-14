@@ -266,7 +266,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     `,
   ];
 
-  #processor = v0_8.Data.createSignalA2uiMessageProcessor();
+  #processor = v0_8.Data.createSignalA2uiMessageProcessor(v0_8.standardCatalogApi);
   #a2uiClient = new A2UIClient();
   #snackbar: Snackbar | undefined = undefined;
   #pendingSnackbarMessages: Array<{
