@@ -24,61 +24,73 @@ from a2ui.a2ui_extension import STANDARD_CATALOG_ID
 from a2ui.a2ui_extension import get_a2ui_agent_extension
 from a2ui.a2ui_extension import try_activate_a2ui_extension
 from a2ui.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
-from agent import A2UI_CATALOG_URI_STATE_KEY
-from agent import RIZZCHARTS_CATALOG_URI
-from agent import RizzchartsAgent
-from component_catalog_builder import ComponentCatalogBuilder
+try:
+    from .agent import A2UI_CATALOG_URI_STATE_KEY  # pylint: disable=import-error
+    from .agent import RIZZCHARTS_CATALOG_URI  # pylint: disable=import-error
+    from .agent import RizzchartsAgent  # pylint: disable=import-error
+    from .component_catalog_builder import ComponentCatalogBuilder  # pylint: disable=import-error
+except ImportError:
+    from agent import A2UI_CATALOG_URI_STATE_KEY
+    from agent import RIZZCHARTS_CATALOG_URI
+    from agent import RizzchartsAgent
+    from component_catalog_builder import ComponentCatalogBuilder
 from google.adk.a2a.converters.request_converter import AgentRunRequest
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutorConfig
 from google.adk.agents.invocation_context import new_invocation_context_id
 from google.adk.agents.readonly_context import ReadonlyContext
-from google.adk.artifacts import InMemoryArtifactService
 from google.adk.events.event import Event
 from google.adk.events.event_actions import EventActions
-from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.models import LlmRequest
 from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
 
 logger = logging.getLogger(__name__)
 
 _A2UI_ENABLED_KEY = "system:a2ui_enabled"
 _A2UI_SCHEMA_KEY = "system:a2ui_schema"
 
+def get_a2ui_schema(ctx: ReadonlyContext):
+    """Retrieves the A2UI schema from the session state.
+
+    Args:
+        ctx: The ReadonlyContext for resolving the schema.
+
+    Returns:
+        The A2UI schema or None if not found.
+    """
+    return ctx.state.get(_A2UI_SCHEMA_KEY)
+
+def get_a2ui_enabled(ctx: ReadonlyContext):
+    """Checks if A2UI is enabled in the current session.
+
+    Args:
+        ctx: The ReadonlyContext for resolving enablement.
+
+    Returns:
+        True if A2UI is enabled, False otherwise.
+    """
+    return ctx.state.get(_A2UI_ENABLED_KEY, False)
 
 class RizzchartsAgentExecutor(A2aAgentExecutor):
-    """Contact AgentExecutor Example."""
+    """Executor for the Rizzcharts agent that handles A2UI session setup."""
 
-    def __init__(self, base_url: str):
-        """Initializes the RizzchartsAgentExecutor.
-
-        Args:
-            base_url: The base URL for the agent.
-        """
+    def __init__(
+        self,
+        base_url: str,
+        runner: Runner,
+        a2ui_schema_content: str,
+        standard_catalog_content: str,
+        rizzcharts_catalog_content: str,
+    ):
         self._base_url = base_url
-
-        spec_root = Path(__file__).parent / "../../../../specification/v0_8/json"
-        
         self._component_catalog_builder = ComponentCatalogBuilder(
-            a2ui_schema_path=str(spec_root.joinpath("server_to_client.json")),
-            uri_to_local_catalog_path={
-                STANDARD_CATALOG_ID: str(spec_root.joinpath("standard_catalog_definition.json")),
-                RIZZCHARTS_CATALOG_URI: "rizzcharts_catalog_definition.json",
+            a2ui_schema_content=a2ui_schema_content,
+            uri_to_local_catalog_content={
+                STANDARD_CATALOG_ID: standard_catalog_content,
+                RIZZCHARTS_CATALOG_URI: rizzcharts_catalog_content,
             },
-            default_catalog_uri=STANDARD_CATALOG_ID
+            default_catalog_uri=STANDARD_CATALOG_ID,
         )
-        agent = RizzchartsAgent(
-            a2ui_schema_provider=self.get_a2ui_schema,
-            a2ui_enabled_provider=self.get_a2ui_enabled,
-        ).build_agent()
-        runner = Runner(
-            app_name=agent.name,
-            agent=agent,
-            artifact_service=InMemoryArtifactService(),
-            session_service=InMemorySessionService(),
-            memory_service=InMemoryMemoryService(),
-        )
+
         config = A2aAgentExecutorConfig(
             gen_ai_part_converter=convert_send_a2ui_to_client_genai_part_to_a2a_part
         )
@@ -125,28 +137,6 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
                 ),
             ],
         )
-
-    def get_a2ui_schema(self, ctx: ReadonlyContext):
-        """Retrieves the A2UI schema from the session state.
-
-        Args:
-            ctx: The ReadonlyContext for resolving the schema.
-
-        Returns:
-            The A2UI schema or None if not found.
-        """
-        return ctx.state.get(_A2UI_SCHEMA_KEY)
-
-    def get_a2ui_enabled(self, ctx: ReadonlyContext):
-        """Checks if A2UI is enabled in the current session.
-
-        Args:
-            ctx: The ReadonlyContext for resolving enablement.
-
-        Returns:
-            True if A2UI is enabled, False otherwise.
-        """
-        return ctx.state.get(_A2UI_ENABLED_KEY, False)
 
     @override
     async def _prepare_session(
