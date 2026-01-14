@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A2UI Motia Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-elevated: #1a1a24;
+      --bg-input: #0f0f14;
+      --border: #2a2a3a;
+      --border-hover: #3a3a4a;
+      --text-primary: #f0f0f5;
+      --text-secondary: #8888aa;
+      --text-muted: #555566;
+      --accent: #00d4aa;
+      --accent-glow: rgba(0, 212, 170, 0.2);
+      --accent-secondary: #7c3aed;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --gradient-1: linear-gradient(135deg, #00d4aa 0%, #7c3aed 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(180deg, var(--bg-elevated) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 600;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+
+    .header .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding: 0.375rem 0.75rem;
+      background: rgba(0, 212, 170, 0.1);
+      border: 1px solid rgba(0, 212, 170, 0.3);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-glow); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 8px transparent; }
+    }
+
+    /* Main Layout */
+    .main {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 100px);
+    }
+
+    @media (max-width: 1024px) {
+      .main { grid-template-columns: 1fr; }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 0.875rem 1rem;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-body {
+      padding: 1rem;
+    }
+
+    /* Form Elements */
+    .input-group {
+      margin-bottom: 0.875rem;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.375rem;
+      font-weight: 500;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 0.625rem 0.875rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    button:hover {
+      background: var(--bg-card);
+      border-color: var(--border-hover);
+    }
+
+    button.primary {
+      background: var(--gradient-1);
+      border: none;
+      color: #000;
+      font-weight: 600;
+    }
+
+    button.primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .status-text {
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      background: var(--bg-input);
+    }
+
+    .status-text.success { color: var(--success); background: rgba(34, 197, 94, 0.1); }
+    .status-text.error { color: var(--error); background: rgba(239, 68, 68, 0.1); }
+    .status-text.loading { color: var(--accent); background: var(--accent-glow); }
+
+    /* Surface List */
+    .surface-item {
+      padding: 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .surface-item:hover {
+      border-color: var(--accent);
+      background: rgba(0, 212, 170, 0.05);
+    }
+
+    .surface-item.active {
+      border-color: var(--accent);
+      background: rgba(0, 212, 170, 0.1);
+    }
+
+    .surface-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .surface-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    /* Canvas Area */
+    .canvas {
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 212, 170, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.03) 0%, transparent 50%),
+        var(--bg-dark);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .canvas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .canvas-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .component-count {
+      background: var(--accent);
+      color: #000;
+      padding: 0.125rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* Rendered UI Container */
+    .render-container {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .render-toolbar {
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .render-toolbar .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .render-toolbar .dot.red { background: #ff5f57; }
+    .render-toolbar .dot.yellow { background: #ffbd2e; }
+    .render-toolbar .dot.green { background: #28c940; }
+
+    .render-view {
+      flex: 1;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    /* A2UI Component Rendering */
+    .a2ui-root {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .a2ui-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+    }
+
+    .a2ui-row {
+      display: flex;
+      flex-direction: row;
+      gap: 0.875rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .a2ui-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .a2ui-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      transition: all 0.2s;
+    }
+
+    .a2ui-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .a2ui-text {
+      color: var(--text-primary);
+    }
+
+    .a2ui-text.h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .a2ui-text.h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .a2ui-text.h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .a2ui-text.body {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .a2ui-text.caption {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .a2ui-image {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .a2ui-icon {
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    .a2ui-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--gradient-1);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .a2ui-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .a2ui-button.secondary {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .a2ui-textfield {
+      width: 100%;
+    }
+
+    .a2ui-textfield label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.375rem;
+    }
+
+    .a2ui-textfield input {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+
+    .a2ui-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+    }
+
+    .a2ui-checkbox input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .a2ui-checkbox span {
+      font-size: 0.875rem;
+      color: var(--text-primary);
+    }
+
+    .a2ui-slider {
+      width: 100%;
+    }
+
+    .a2ui-slider input {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .a2ui-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0.5rem 0;
+    }
+
+    /* Activity Log */
+    .log-container {
+      margin-top: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-height: 200px;
+      overflow: hidden;
+    }
+
+    .log-header {
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .log-body {
+      padding: 0.75rem;
+      max-height: 150px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+    }
+
+    .log-entry {
+      padding: 0.375rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .log-entry:last-child { border-bottom: none; }
+
+    .log-time { color: var(--text-muted); }
+    .log-msg.success { color: var(--success); }
+    .log-msg.error { color: var(--error); }
+    .log-msg.info { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>A2UI × Motia</h1>
+    <p class="subtitle">AI-Powered Dynamic UI Generation</p>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      <span>Connected to localhost:3000</span>
+    </div>
+  </header>
+
+  <main class="main">
+    <aside class="sidebar">
+      <!-- Gemini Generator -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>🤖</span> Gemini AI Generator
+        </div>
+        <div class="panel-body">
+          <div class="input-group">
+            <label class="input-label">Describe the UI you want</label>
+            <textarea id="geminiPrompt" placeholder="E.g., Create a music player with album art, track info, play/pause button, and progress bar...">Create an analytics dashboard with stat cards for Users, Revenue, Orders</textarea>
+          </div>
+          <button class="primary" onclick="generateWithGemini()" id="generateBtn">
+            <span>✨</span> Generate UI
+          </button>
+          <div id="geminiStatus" class="status-text" style="display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>⚡</span> Quick Actions
+        </div>
+        <div class="panel-body">
+          <div class="btn-row">
+            <button onclick="testRestaurantAgent()">🍽️ Restaurant</button>
+            <button onclick="testTodoApp()">✅ Todo App</button>
+            <button onclick="testEcommerce()">🛒 E-commerce</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Surfaces -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>📋</span> Surfaces
+          <button onclick="refreshSurfaces()" style="margin-left: auto; padding: 0.25rem 0.5rem; font-size: 0.7rem;">↻</button>
+        </div>
+        <div class="panel-body" id="surfacesList">
+          <div class="empty-state">No surfaces yet</div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="canvas">
+      <div class="canvas-header">
+        <div class="canvas-title">
+          <span>🎨</span> Rendered UI
+          <span class="component-count" id="componentCount">0</span>
+        </div>
+      </div>
+
+      <div class="render-container">
+        <div class="render-toolbar">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="render-view" id="renderView">
+          <div class="empty-state" style="padding: 3rem;">
+            <p style="font-size: 2rem; margin-bottom: 0.5rem;">✨</p>
+            <p>Generate a UI with Gemini or select a surface</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="log-container">
+        <div class="log-header">📝 Activity Log</div>
+        <div class="log-body" id="logArea"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const BASE_URL = 'http://localhost:3000';
+    const SESSION_ID = 'demo-' + Date.now();
+    let activeSurface = null;
+    let currentComponents = {};
+
+    function log(msg, type = 'info') {
+      const el = document.getElementById('logArea');
+      const time = new Date().toLocaleTimeString();
+      el.innerHTML = `<div class="log-entry"><span class="log-time">${time}</span><span class="log-msg ${type}">${msg}</span></div>` + el.innerHTML;
+    }
+
+    async function generateWithGemini() {
+      const prompt = document.getElementById('geminiPrompt').value.trim();
+      const btn = document.getElementById('generateBtn');
+      const status = document.getElementById('geminiStatus');
+      
+      if (!prompt) {
+        log('Please enter a prompt', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Generating...';
+      status.style.display = 'block';
+      status.className = 'status-text loading';
+      status.textContent = 'Calling Gemini API...';
+
+      try {
+        const res = await fetch(`${BASE_URL}/demo/generate-ui`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, sessionId: SESSION_ID })
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          throw new Error(data.details || data.error);
+        }
+
+        status.className = 'status-text success';
+        status.textContent = `✓ Generated ${data.componentCount} components`;
+        log(`Generated ${data.componentCount} components`, 'success');
+
+        await selectSurface(data.surfaceId);
+        refreshSurfaces();
+      } catch (e) {
+        status.className = 'status-text error';
+        status.textContent = `✗ ${e.message}`;
+        log(`Error: ${e.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✨</span> Generate UI';
+      }
+    }
+
+    async function testRestaurantAgent() {
+      log('Running restaurant demo...', 'info');
+      try {
+        const res = await fetch(`${BASE_URL}/demo/restaurant-agent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: 'Italian restaurants in NYC', sessionId: SESSION_ID })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        log(data.message, 'success');
+        await selectSurface(data.surfaceId);
+        refreshSurfaces();
+      } catch (e) {
+        log(`Error: ${e.message}`, 'error');
+      }
+    }
+
+    async function testTodoApp() {
+      document.getElementById('geminiPrompt').value = 'Create a todo list app with task input, add button, 3 sample tasks with checkboxes, and a progress bar';
+      generateWithGemini();
+    }
+
+    async function testEcommerce() {
+      document.getElementById('geminiPrompt').value = 'Create a product page with hero image, product name, price, star rating, size selector buttons (S, M, L, XL), add to cart button, and description';
+      generateWithGemini();
+    }
+
+    async function refreshSurfaces() {
+      try {
+        const res = await fetch(`${BASE_URL}/a2ui/surfaces?sessionId=${SESSION_ID}`);
+        const data = await res.json();
+        renderSurfacesList(data.surfaces || []);
+      } catch (e) {
+        log(`Error: ${e.message}`, 'error');
+      }
+    }
+
+    function renderSurfacesList(surfaces) {
+      const el = document.getElementById('surfacesList');
+      if (!surfaces.length) {
+        el.innerHTML = '<div class="empty-state">No surfaces yet</div>';
+        return;
+      }
+      el.innerHTML = surfaces.map(s => `
+        <div class="surface-item ${activeSurface === s.surfaceId ? 'active' : ''}" onclick="selectSurface('${s.surfaceId}')">
+          <div class="surface-id">${s.surfaceId}</div>
+          <div class="surface-meta">${s.componentCount} components</div>
+        </div>
+      `).join('');
+    }
+
+    async function selectSurface(surfaceId) {
+      activeSurface = surfaceId;
+      try {
+        const res = await fetch(`${BASE_URL}/a2ui/surfaces/${surfaceId}?sessionId=${SESSION_ID}`);
+        const data = await res.json();
+        currentComponents = data.components || {};
+        document.getElementById('componentCount').textContent = Object.keys(currentComponents).length;
+        renderUI();
+        refreshSurfaces();
+      } catch (e) {
+        log(`Error: ${e.message}`, 'error');
+      }
+    }
+
+    function renderUI() {
+      const view = document.getElementById('renderView');
+      const comps = currentComponents;
+      
+      if (!Object.keys(comps).length) {
+        view.innerHTML = '<div class="empty-state"><p>No components</p></div>';
+        return;
+      }
+
+      // Find root component
+      const root = comps['root'] || Object.values(comps).find(c => c.component === 'Column' && c.children);
+      if (!root) {
+        view.innerHTML = '<div class="empty-state"><p>No root component found</p></div>';
+        return;
+      }
+
+      view.innerHTML = `<div class="a2ui-root">${renderComponent(root, comps)}</div>`;
+    }
+
+    function renderComponent(comp, all) {
+      if (!comp) return '';
+      
+      const type = comp.component;
+      const id = comp.id;
+
+      switch (type) {
+        case 'Column':
+          const colChildren = (comp.children || []).map(cid => renderComponent(all[cid], all)).join('');
+          return `<div class="a2ui-column">${colChildren}</div>`;
+
+        case 'Row':
+          const rowChildren = (comp.children || []).map(cid => renderComponent(all[cid], all)).join('');
+          return `<div class="a2ui-row">${rowChildren}</div>`;
+
+        case 'List':
+          const listChildren = (comp.children || []).map(cid => renderComponent(all[cid], all)).join('');
+          return `<div class="a2ui-list">${listChildren}</div>`;
+
+        case 'Card':
+          const cardChild = comp.child ? renderComponent(all[comp.child], all) : '';
+          return `<div class="a2ui-card">${cardChild}</div>`;
+
+        case 'Text':
+          const hint = comp.usageHint || 'body';
+          const text = typeof comp.text === 'string' ? comp.text : (comp.text?.path || '');
+          return `<div class="a2ui-text ${hint}">${escapeHtml(text)}</div>`;
+
+        case 'Image':
+          const url = typeof comp.url === 'string' ? comp.url : '';
+          return url ? `<img class="a2ui-image" src="${escapeHtml(url)}" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
+
+        case 'Icon':
+          const iconName = typeof comp.name === 'string' ? comp.name : '';
+          return `<span class="material-icons a2ui-icon">${escapeHtml(iconName)}</span>`;
+
+        case 'Button':
+          const btnLabel = comp.child && all[comp.child] ? (all[comp.child].text || 'Button') : 'Button';
+          const label = typeof btnLabel === 'string' ? btnLabel : 'Button';
+          return `<button class="a2ui-button" onclick="handleAction('${escapeHtml(comp.action?.name || 'click')}')">${escapeHtml(label)}</button>`;
+
+        case 'TextField':
+          const tfLabel = typeof comp.label === 'string' ? comp.label : '';
+          return `<div class="a2ui-textfield"><label>${escapeHtml(tfLabel)}</label><input type="text" placeholder="${escapeHtml(tfLabel)}"></div>`;
+
+        case 'CheckBox':
+          const cbLabel = typeof comp.label === 'string' ? comp.label : '';
+          const checked = comp.value === true ? 'checked' : '';
+          return `<label class="a2ui-checkbox"><input type="checkbox" ${checked}><span>${escapeHtml(cbLabel)}</span></label>`;
+
+        case 'Slider':
+          const val = typeof comp.value === 'number' ? comp.value : 50;
+          return `<div class="a2ui-slider"><input type="range" value="${val}" min="0" max="100"></div>`;
+
+        case 'Divider':
+          return '<div class="a2ui-divider"></div>';
+
+        default:
+          return `<div class="a2ui-text caption">[${type}]</div>`;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function handleAction(name) {
+      log(`Action triggered: ${name}`, 'info');
+    }
+
+    // Init
+    log('Demo client ready', 'success');
+    refreshSurfaces();
+  </script>
+</body>
+</html>
