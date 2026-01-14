@@ -3,7 +3,7 @@
 This document outlines a TypeScript-based type system for A2UI web renderers. The primary goal is to create a decoupled, extensible, and type-safe architecture that separates the core A2UI message processing logic from the framework-specific rendering implementations (e.g., Lit, Angular, React).
 
 This design enables an ecosystem where:
-- A central, framework-agnostic `A2uiWebRenderer` handles all protocol logic.
+- A central, framework-agnostic `A2uiMessageProcessor` handles all protocol logic.
 - Framework-specific renderers (`@a2ui/angular`, `@a2ui/lit`) consume the output of the core renderer.
 - Component libraries (e.g., `@a2ui/material-catalog`) can provide framework-agnostic API definitions and framework-specific rendering implementations.
 
@@ -11,7 +11,7 @@ This design enables an ecosystem where:
 
 The system is built around a few key interfaces that clearly define the responsibilities of each part of the architecture.
 
-### `A2uiWebRenderer`
+### `A2uiMessageProcessor`
 
 The central, framework-agnostic engine. Its role is to process raw A2UI messages, manage the state of each UI surface (data models, component definitions), and resolve the incoming data into a structured, typed, and fully-resolved node tree. It has no knowledge of how these nodes will be rendered.
 
@@ -26,7 +26,7 @@ interface SurfaceState {
 }
 
 // The core, framework-agnostic processor.
-interface A2uiWebRenderer {
+interface A2uiMessageProcessor {
   /**
    * Processes an array of raw A2UI messages from the server.
    * This updates the internal state and triggers changes in the resolved node trees.
@@ -88,7 +88,7 @@ interface ComponentApi<
    * properties required by the final resolved node. This logic is specific
    * to each component.
    * @param unresolvedProperties The raw properties from the message.
-   * @param resolver A callback provided by the A2uiWebRenderer to recursively
+   * @param resolver A callback provided by the A2uiMessageProcessor to recursively
    *        resolve values (e.g., data bindings, child component IDs).
    * @returns The resolved properties for the node.
    */
@@ -194,7 +194,7 @@ class FrameworkRenderer<RenderOutput> {
   }
 
   /**
-   * Renders a resolved node from the A2uiWebRenderer into the final output.
+   * Renders a resolved node from the A2uiMessageProcessor into the final output.
    * This is the entry point for rendering a component tree.
    */
   public renderNode(node: AnyResolvedNode): RenderOutput | null {
@@ -211,28 +211,192 @@ class FrameworkRenderer<RenderOutput> {
 }
 ```
 
-## 2. Workflow and Data Flow
+## 2. Codebase Structure and File Examples
+
+To make this architecture concrete, here is a proposed file structure and examples for a `Card` component.
+
+### Directory Structure
+
+The proposed structure separates framework-agnostic core logic from framework-specific implementations. This allows for maximum code reuse and clarity.
+
+```
+renderers/
+└── lit/
+    └── src/
+        └── 0.8/
+            ├── core/
+            │   ├── a2ui_message_processor.ts  # Core processor logic
+            │   ├── types.ts                   # Core type definitions
+            │   └── standard_catalog_api/
+            │       ├── standard_catalog.ts    # The main CatalogApi instance
+            │       ├── card.ts                # Card ComponentApi definition
+            │       └── text.ts                # Text ComponentApi definition
+            │
+            └── lit/
+                ├── lit_renderer.ts            # The FrameworkRenderer for Lit
+                ├── components/
+                │   ├── card.ts                # Lit <a2ui-card> component
+                │   └── text.ts                # Lit <a2ui-text> component
+                └── standard_catalog_implementation/
+                    ├── standard_lit_catalog.ts # The CatalogImplementation for Lit
+                    ├── card.ts                 # Card ComponentRenderer for Lit
+                    └── text.ts                 # Text ComponentRenderer for Lit
+```
+
+### Example: `Card` Component Files
+
+#### 1. Core API Definition (`core/standard_catalog_api/card.ts`)
+
+This file is framework-agnostic. It defines the `Card`'s data structure and its property resolution logic.
+
+```typescript
+// core/standard_catalog_api/card.ts
+
+import {
+  ComponentApi,
+  BaseResolvedNode,
+  AnyResolvedNode,
+} from '../types';
+
+// 1. Define the final, resolved shape of the Card node.
+export interface CardResolvedNode extends BaseResolvedNode<'Card'> {
+  properties: {
+    child: AnyResolvedNode;
+  };
+}
+
+// 2. Implement the ComponentApi for 'Card'.
+export const cardApi: ComponentApi<'Card', CardResolvedNode> = {
+  name: 'Card',
+
+  resolveProperties(unresolved, resolver) {
+    if (!unresolved || typeof unresolved.child !== 'string') {
+      throw new Error('Invalid properties for Card: missing child ID.');
+    }
+    // Use the resolver provided by A2uiMessageProcessor to turn the child ID
+    // into a fully resolved node.
+    const resolvedChild = resolver(unresolved.child) as AnyResolvedNode;
+
+    return {
+      child: resolvedChild,
+    };
+  },
+};
+```
+
+#### 2. Lit Component Implementation (`lit/components/card.ts`)
+
+This is the standard Lit web component that will be rendered to the DOM. It receives a fully resolved node.
+
+```typescript
+// lit/components/card.ts
+
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { CardResolvedNode } from '../../core/standard_catalog_api/card';
+
+@customElement('a2ui-card')
+export class A2UICard extends LitElement {
+  @property({ attribute: false })
+  node!: CardResolvedNode;
+
+  @property({ attribute: false })
+  renderChild!: (child: AnyResolvedNode) => TemplateResult | null;
+
+  render() {
+    return html`
+      <div class="card" id=${this.node.id}>
+        <slot>${this.renderChild(this.node.properties.child)}</slot>
+      </div>
+    `;
+  }
+}
+```
+
+#### 3. Lit Renderer Implementation (`lit/standard_catalog_implementation/card.ts`)
+
+This file acts as the glue, mapping the `Card` component API to its Lit rendering logic.
+
+```typescript
+// lit/standard_catalog_implementation/card.ts
+
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types';
+import { CardResolvedNode } from '../../core/standard_catalog_api/card';
+
+export const litCardRenderer: ComponentRenderer<CardResolvedNode, TemplateResult> = {
+  componentName: 'Card',
+
+  render(node, renderChild) {
+    // The renderer is responsible for creating the Lit component (`<a2ui-card>`)
+    // and passing it the resolved node and the `renderChild` callback.
+    return html`
+      <a2ui-card
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-card>
+    `;
+  },
+};
+```
+
+#### 4. Angular Implementation
+
+The same pattern applies to Angular.
+
+```typescript
+// in an angular-specific folder...
+
+// 1. The Angular Component (`card.component.ts`)
+@Component({
+  selector: 'a2ui-card',
+  template: `<div class="card" [id]="node.id">
+    <ng-container
+      *ngComponentOutlet="renderChild(node.properties.child)"
+    ></ng-container>
+  </div>`,
+})
+export class CardComponent {
+  @Input() node!: CardResolvedNode;
+  @Input() renderChild!: (child: AnyResolvedNode) => Type<any> | null;
+}
+
+// 2. The Angular Renderer (`angular-card-renderer.ts`)
+export const angularCardRenderer: ComponentRenderer<CardResolvedNode, Type<any>> = {
+  componentName: 'Card',
+  render(node, renderChild) {
+    // In Angular, the "render output" can be the Component Type itself.
+    // The FrameworkRenderer would then use a dynamic outlet to render it.
+    // We would need a way to pass the inputs (`node` and `renderChild`) dynamically.
+    // For simplicity, this example assumes the FrameworkRenderer handles that.
+    return CardComponent;
+  },
+};
+```
+
+
+## 3. Workflow and Data Flow
 
 1.  **Initialization**:
     *   An application creates an instance of a `CatalogApi` (e.g., `StandardCatalogApi`).
-    *   It creates an instance of the central `A2uiWebRenderer`, passing it the `catalogApi`.
+    *   It creates an instance of the central `A2uiMessageProcessor`, passing it the `catalogApi`.
     *   It creates a framework-specific `CatalogImplementation` (e.g., `StandardLitCatalogImplementation`), passing it the same `catalogApi` and a list of `ComponentRenderer`s for Lit.
     *   It creates a `FrameworkRenderer` (e.g., `LitRenderer`), passing it the `catalogImplementation`.
 
 2.  **Message Processing**:
-    *   Raw A2UI messages are fed into `a2uiWebRenderer.processMessages()`.
-    *   The `A2uiWebRenderer` processes the messages, updating its internal data models.
+    *   Raw A2UI messages are fed into `a2uiMessageProcessor.processMessages()`.
+    *   The `A2uiMessageProcessor` processes the messages, updating its internal data models.
     *   When building the component tree, it uses the `ComponentApi` from the `CatalogApi` to correctly `resolveProperties` for each node.
     *   This updates the `componentTree` signal for the relevant surface.
 
 3.  **Rendering**:
-    *   A top-level UI component (e.g., a Lit `<a2ui-surface>` or an Angular `<a2ui-surface>`) listens to the `componentTree` signal from the `A2uiWebRenderer`.
+    *   A top-level UI component (e.g., a Lit `<a2ui-surface>` or an Angular `<a2ui-surface>`) listens to the `componentTree` signal from the `A2uiMessageProcessor`.
     *   When the signal changes, it passes the new resolved node tree to the `frameworkRenderer.renderNode()`.
     *   The `FrameworkRenderer` recursively walks the tree, using the `CatalogImplementation` to find the right `ComponentRenderer` for each node, until the entire tree is converted into the framework's renderable format.
 
 ![Data Flow Diagram](https://i.imgur.com/your-diagram-image.png)
 
-## 3. Satisfying Use Cases
+## 4. Satisfying Use Cases
 
 #### Developer of a `CatalogApi`
 The developer creates a new class `MyCatalogApi extends CatalogApi`, passing an array of `ComponentApi` instances to the constructor. This is a clean, framework-agnostic definition of a component library.
@@ -257,17 +421,17 @@ An Angular developer, for example, would implement `ComponentRenderer<CardResolv
 -   The method returns an Angular component, fulfilling the contract.
 
 #### Developer of a renderer for a new rendering framework (e.g., React)
-1.  **Reuse `A2uiWebRenderer`**: No changes are needed here. The developer's React application would include `@a2ui/web-renderer` as a dependency.
+1.  **Reuse `A2uiMessageProcessor`**: No changes are needed here. The developer's React application would include `@a2ui/web-renderer` as a dependency.
 2.  **Create React `FrameworkRenderer`**: A `ReactRenderer` class would be created. Its `renderNode` method would return `JSX.Element`.
 3.  **Create React `CatalogImplementation`**: The developer would create `ComponentRenderer` implementations for React (e.g., `ReactCardRenderer`). These would be collected into a `CatalogImplementation<JSX.Element>`.
-4.  **Create React Surface Component**: A top-level `<A2UISurface>` React component would be created. It would hold the `A2uiWebRenderer` and `ReactRenderer` instances and use a hook (e.g., `useEffect` or a signal-based hook) to listen for changes to the `componentTree` signal and trigger re-renders.
+4.  **Create React Surface Component**: A top-level `<A2UISurface>` React component would be created. It would hold the `A2uiMessageProcessor` and `ReactRenderer` instances and use a hook (e.g., `useEffect` or a signal-based hook) to listen for changes to the `componentTree` signal and trigger re-renders.
 
-## 4. Implementation in Existing and New Frameworks
+## 5. Implementation in Existing and New Frameworks
 
 ### Refactoring the Lit Renderer
 
 The current Lit renderer (`@renderers/lit/src/0.8/ui/root.ts`) has a large `renderComponentTree` method with a `switch` statement. This would be replaced:
-1.  The `A2uiMessageProcessor` would evolve into the `A2uiWebRenderer`. Its `buildNodeRecursive` logic would be adapted to use the new `ComponentApi.resolveProperties` pattern.
+1.  The existing `A2uiMessageProcessor` would be updated to use the new `ComponentApi.resolveProperties` pattern during its `buildNodeRecursive` logic.
 2.  A new `LitRenderer` class (`FrameworkRenderer<TemplateResult>`) would be created.
 3.  Each Lit component (`a2ui-text`, `a2ui-card`, etc.) would be wrapped in a `ComponentRenderer` implementation. For example, `LitTextRenderer`'s `render` method would return `html`<a2ui-text .node=${node}></a2ui-text>``.
 4.  The `Root` element's `renderComponentTree` method would be removed. Instead, the top-level `<a2ui-surface>` component would use the `LitRenderer` to render its tree.
@@ -275,7 +439,7 @@ The current Lit renderer (`@renderers/lit/src/0.8/ui/root.ts`) has a large `rend
 ### Adapting the Angular Renderer
 
 The Angular renderer is already close to this design.
-1.  The `MessageProcessor` becomes the `A2uiWebRenderer`.
+1.  The current `MessageProcessor` would be updated to align with the new framework-agnostic `A2uiMessageProcessor` design.
 2.  The `Catalog` (`@renderers/angular/src/lib/rendering/catalog.ts`) concept maps directly to the `CatalogImplementation`. The existing `DEFAULT_CATALOG` would be used to create `new CatalogImplementation(standardCatalogApi, defaultRenderers)`.
 3.  The `Renderer` directive (`renderer.ts`) is the `FrameworkRenderer`. Its logic for dynamically creating components remains the same.
 4.  The `DynamicComponent` base class remains, providing the bridge between the A2UI world and Angular's DI and component model.
@@ -285,13 +449,13 @@ The Angular renderer is already close to this design.
 ```typescript
 // --- ReactRenderer.tsx (The top-level surface component) ---
 import { useSignalEffect } from '@preact/signals-react';
-import { a2uiWebRenderer, reactRenderer } from './config'; // Assume these are configured
+import { a2uiMessageProcessor, reactRenderer } from './config'; // Assume these are configured
 
 export function A2UISurface({ surfaceId }: { surfaceId: string }) {
   const [node, setNode] = useState<AnyResolvedNode | null>(null);
 
   useSignalEffect(() => {
-    const surface = a2uiWebRenderer.getSurfaces().get(surfaceId);
+    const surface = a2uiMessageProcessor.getSurfaces().get(surfaceId);
     setNode(surface?.componentTree.value ?? null);
   });
 
