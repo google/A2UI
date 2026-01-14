@@ -14,5 +14,7 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { createContext } from "@lit/context";
+import { type Theme } from "../../core/types/types.js";
+
+export const themeContext = createContext<Theme | undefined>("A2UITheme");

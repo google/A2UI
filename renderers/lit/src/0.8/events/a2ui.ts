@@ -14,8 +14,8 @@
  limitations under the License.
  */
 
-import { Action } from "../types/components.js";
-import { AnyComponentNode } from "../types/types.js";
+import { Action } from "../core/types/components.js";
+import { AnyComponentNode } from "../core/types/types.js";
 import { BaseEventDetail } from "./base.js";
 
 type Namespace = "a2ui";

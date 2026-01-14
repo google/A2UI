@@ -14,5 +14,25 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import {
+  ComponentApi,
+  AudioPlayerNode,
+} from '../types/types';
+import { StringValue } from '../types/primitives';
+
+export const audioPlayerApi: ComponentApi<'AudioPlayer', AudioPlayerNode> = {
+  name: 'AudioPlayer',
+
+  resolveProperties(unresolved) {
+    if (!unresolved || typeof unresolved.url !== 'object') {
+      throw new Error('Invalid properties for AudioPlayer: missing url.');
+    }
+
+    return {
+      properties: {
+        url: unresolved.url as StringValue,
+        description: unresolved.description as StringValue,
+      }
+    };
+  },
+};

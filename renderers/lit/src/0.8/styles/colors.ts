@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { PaletteKey, PaletteKeyVals, shades } from "../types/colors.js";
+import { PaletteKey, PaletteKeyVals, shades } from "../core/types/colors.js";
 import { toProp } from "./utils.js";
 
 const color = <C extends PaletteKeyVals>(src: PaletteKey<C>) =>

@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { AudioPlayerNode } from '../../core/types/types.js';
+import '../components/audio.js';
+
+export const litAudioPlayerRenderer: ComponentRenderer<AudioPlayerNode, TemplateResult> = {
+  componentName: 'AudioPlayer',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-audioplayer
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-audioplayer>
+    `;
+  },
+};

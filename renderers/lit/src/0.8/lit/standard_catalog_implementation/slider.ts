@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { SliderNode } from '../../core/types/types.js';
+import '../components/slider.js';
+
+export const litSliderRenderer: ComponentRenderer<SliderNode, TemplateResult> = {
+  componentName: 'Slider',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-slider
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-slider>
+    `;
+  },
+};

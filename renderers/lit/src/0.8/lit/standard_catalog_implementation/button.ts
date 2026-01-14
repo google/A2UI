@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { ButtonNode } from '../../core/types/types.js';
+import '../components/button.js';
+
+export const litButtonRenderer: ComponentRenderer<ButtonNode, TemplateResult> = {
+  componentName: 'Button',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-button
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-button>
+    `;
+  },
+};

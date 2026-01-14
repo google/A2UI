@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { TabsNode } from '../../core/types/types.js';
+import '../components/tabs.js';
+
+export const litTabsRenderer: ComponentRenderer<TabsNode, TemplateResult> = {
+  componentName: 'Tabs',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-tabs
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-tabs>
+    `;
+  },
+};

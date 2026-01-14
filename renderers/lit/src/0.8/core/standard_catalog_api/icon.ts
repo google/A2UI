@@ -14,5 +14,24 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import {
+  ComponentApi,
+  IconNode,
+} from '../types/types';
+import { StringValue } from '../types/primitives';
+
+export const iconApi: ComponentApi<'Icon', IconNode> = {
+  name: 'Icon',
+
+  resolveProperties(unresolved) {
+    if (!unresolved || typeof unresolved.name !== 'object') {
+      throw new Error('Invalid properties for Icon: missing name.');
+    }
+
+    return {
+      properties: {
+        name: unresolved.name as StringValue,
+      }
+    };
+  },
+};

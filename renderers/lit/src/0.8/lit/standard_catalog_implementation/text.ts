@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { TextNode } from '../../core/types/types.js';
+import '../components/text.js';
+
+export const litTextRenderer: ComponentRenderer<TextNode, TemplateResult> = {
+  componentName: 'Text',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-text
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-text>
+    `;
+  },
+};

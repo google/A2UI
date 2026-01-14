@@ -14,5 +14,24 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import {
+  ComponentApi,
+  VideoNode,
+} from '../types/types';
+import { StringValue } from '../types/primitives';
+
+export const videoApi: ComponentApi<'Video', VideoNode> = {
+  name: 'Video',
+
+  resolveProperties(unresolved) {
+    if (!unresolved || typeof unresolved.url !== 'object') {
+      throw new Error('Invalid properties for Video: missing url.');
+    }
+
+    return {
+      properties: {
+        url: unresolved.url as StringValue,
+      }
+    };
+  },
+};

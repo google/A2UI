@@ -14,5 +14,14 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { TemplateResult } from 'lit';
+import {
+  FrameworkRenderer,
+  CatalogImplementation,
+} from '../core/types/types';
+
+export class LitRenderer extends FrameworkRenderer<TemplateResult> {
+  constructor(catalogImplementation: CatalogImplementation<TemplateResult>) {
+    super(catalogImplementation);
+  }
+}

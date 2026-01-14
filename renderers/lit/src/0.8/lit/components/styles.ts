@@ -14,5 +14,7 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { unsafeCSS } from "lit";
+import { structuralStyles as unsafeStructuralStyles } from "../../styles/index.js";
+
+export const structuralStyles = unsafeCSS(unsafeStructuralStyles);

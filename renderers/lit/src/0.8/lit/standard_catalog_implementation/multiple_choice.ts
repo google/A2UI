@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { MultipleChoiceNode } from '../../core/types/types.js';
+import '../components/multiple-choice.js';
+
+export const litMultipleChoiceRenderer: ComponentRenderer<MultipleChoiceNode, TemplateResult> = {
+  componentName: 'MultipleChoice',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-multiplechoice
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-multiplechoice>
+    `;
+  },
+};

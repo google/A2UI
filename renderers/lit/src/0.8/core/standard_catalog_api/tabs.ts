@@ -14,5 +14,24 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import {
+  ComponentApi,
+  TabsNode,
+  ResolvedTabItem,
+} from '../types/types';
+
+export const tabsApi: ComponentApi<'Tabs', TabsNode> = {
+  name: 'Tabs',
+
+  resolveProperties(unresolved, resolver) {
+    if (!unresolved || !Array.isArray(unresolved.tabItems)) {
+      throw new Error('Invalid properties for Tabs: missing tabItems.');
+    }
+    
+    return {
+      properties: {
+        tabItems: resolver(unresolved.tabItems) as ResolvedTabItem[],
+      }
+    };
+  },
+};

@@ -14,5 +14,21 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import {
+  ComponentApi,
+  DividerNode,
+} from '../types/types';
+
+export const dividerApi: ComponentApi<'Divider', DividerNode> = {
+  name: 'Divider',
+
+  resolveProperties(unresolved) {
+    return {
+      properties: {
+        axis: unresolved.axis as DividerNode['properties']['axis'],
+        color: unresolved.color as DividerNode['properties']['color'],
+        thickness: unresolved.thickness as DividerNode['properties']['thickness'],
+      }
+    };
+  },
+};

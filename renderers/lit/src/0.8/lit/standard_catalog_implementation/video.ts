@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { VideoNode } from '../../core/types/types.js';
+import '../components/video.js';
+
+export const litVideoRenderer: ComponentRenderer<VideoNode, TemplateResult> = {
+  componentName: 'Video',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-video
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-video>
+    `;
+  },
+};

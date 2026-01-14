@@ -14,5 +14,26 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import {
+  ComponentApi,
+  AnyResolvedNode,
+  ButtonNode,
+  Action,
+} from '../types/types';
+
+export const buttonApi: ComponentApi<'Button', ButtonNode> = {
+  name: 'Button',
+
+  resolveProperties(unresolved, resolver) {
+    if (!unresolved || typeof unresolved.child !== 'string' || !unresolved.action) {
+      throw new Error('Invalid properties for Button: missing child or action.');
+    }
+    
+    return {
+      properties: {
+        child: resolver(unresolved.child) as AnyResolvedNode,
+        action: unresolved.action as Action,
+      }
+    };
+  },
+};

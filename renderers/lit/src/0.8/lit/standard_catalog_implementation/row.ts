@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { RowNode } from '../../core/types/types.js';
+import '../components/row.js';
+
+export const litRowRenderer: ComponentRenderer<RowNode, TemplateResult> = {
+  componentName: 'Row',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-row
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-row>
+    `;
+  },
+};

@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { TextFieldNode } from '../../core/types/types.js';
+import '../components/text-field.js';
+
+export const litTextFieldRenderer: ComponentRenderer<TextFieldNode, TemplateResult> = {
+  componentName: 'TextField',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-textfield
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-textfield>
+    `;
+  },
+};

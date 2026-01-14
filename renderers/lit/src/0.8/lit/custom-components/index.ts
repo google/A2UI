@@ -14,5 +14,9 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { ComponentRegistry } from '../components/component-registry.js';
+
+export function registerCustomComponents() {
+  // No default custom components in the core library.
+  // Applications should register their own components.
+}

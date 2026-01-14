@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { ModalNode } from '../../core/types/types.js';
+import '../components/modal.js';
+
+export const litModalRenderer: ComponentRenderer<ModalNode, TemplateResult> = {
+  componentName: 'Modal',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-modal
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-modal>
+    `;
+  },
+};

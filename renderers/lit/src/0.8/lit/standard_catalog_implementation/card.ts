@@ -14,5 +14,20 @@
  limitations under the License.
  */
 
-export * from "./core.js";
-export * as UI from "./lit/components/ui.js";
+import { html, TemplateResult } from 'lit';
+import { ComponentRenderer } from '../../core/types/types';
+import { CardNode } from '../../core/types/types.js';
+import '../components/card.js';
+
+export const litCardRenderer: ComponentRenderer<CardNode, TemplateResult> = {
+  componentName: 'Card',
+
+  render(node, renderChild) {
+    return html`
+      <a2ui-card
+        .node=${node}
+        .renderChild=${renderChild}
+      ></a2ui-card>
+    `;
+  },
+};
