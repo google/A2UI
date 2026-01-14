@@ -17,21 +17,21 @@
 import {
   ComponentApi,
   CheckboxNode,
-} from '../types/types';
-import { StringValue, BooleanValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue, BooleanValue } from '../types/primitives.js';
 
 export const checkboxApi: ComponentApi<'CheckBox', CheckboxNode> = {
   name: 'CheckBox',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.label !== 'object' || typeof unresolved.value !== 'object') {
       throw new Error('Invalid properties for CheckBox: missing label or value.');
     }
 
     return {
       properties: {
-        label: unresolved.label as StringValue,
-        value: unresolved.value as BooleanValue,
+        label: resolver(unresolved.label) as StringValue,
+        value: resolver(unresolved.value) as BooleanValue,
       }
     };
   },

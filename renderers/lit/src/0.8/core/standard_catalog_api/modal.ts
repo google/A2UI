@@ -18,7 +18,7 @@ import {
   ComponentApi,
   AnyResolvedNode,
   ModalNode,
-} from '../types/types';
+} from '../types/types.js';
 
 export const modalApi: ComponentApi<'Modal', ModalNode> = {
   name: 'Modal',

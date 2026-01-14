@@ -17,20 +17,20 @@
 import {
   ComponentApi,
   VideoNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const videoApi: ComponentApi<'Video', VideoNode> = {
   name: 'Video',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.url !== 'object') {
       throw new Error('Invalid properties for Video: missing url.');
     }
 
     return {
       properties: {
-        url: unresolved.url as StringValue,
+        url: resolver(unresolved.url) as StringValue,
       }
     };
   },

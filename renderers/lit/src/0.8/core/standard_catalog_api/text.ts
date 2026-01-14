@@ -16,20 +16,20 @@
 import {
   ComponentApi,
   TextNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const textApi: ComponentApi<'Text', TextNode> = {
   name: 'Text',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.text !== 'object') {
       throw new Error('Invalid properties for Text: missing text.');
     }
 
     return {
       properties: {
-        text: unresolved.text as StringValue,
+        text: resolver(unresolved.text) as StringValue,
         usageHint: unresolved.usageHint as TextNode['properties']['usageHint'],
       }
     };

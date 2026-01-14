@@ -17,21 +17,21 @@
 import {
   ComponentApi,
   TextFieldNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const textFieldApi: ComponentApi<'TextField', TextFieldNode> = {
   name: 'TextField',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.label !== 'object') {
       throw new Error('Invalid properties for TextField: missing label.');
     }
 
     return {
       properties: {
-        label: unresolved.label as StringValue,
-        text: unresolved.text as StringValue,
+        label: resolver(unresolved.label) as StringValue,
+        text: resolver(unresolved.text) as StringValue,
         type: unresolved.type as TextFieldNode['properties']['type'],
         validationRegexp: unresolved.validationRegexp as string,
       }

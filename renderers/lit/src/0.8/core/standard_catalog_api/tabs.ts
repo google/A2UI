@@ -18,7 +18,7 @@ import {
   ComponentApi,
   TabsNode,
   ResolvedTabItem,
-} from '../types/types';
+} from '../types/types.js';
 
 export const tabsApi: ComponentApi<'Tabs', TabsNode> = {
   name: 'Tabs',

@@ -18,7 +18,7 @@ import { TemplateResult } from 'lit';
 import {
   FrameworkRenderer,
   CatalogImplementation,
-} from '../core/types/types';
+} from '../core/types/types.js';
 
 export class LitRenderer extends FrameworkRenderer<TemplateResult> {
   constructor(catalogImplementation: CatalogImplementation<TemplateResult>) {

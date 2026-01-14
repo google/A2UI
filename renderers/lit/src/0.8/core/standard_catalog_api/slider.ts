@@ -17,20 +17,20 @@
 import {
   ComponentApi,
   SliderNode,
-} from '../types/types';
-import { NumberValue } from '../types/primitives';
+} from '../types/types.js';
+import { NumberValue } from '../types/primitives.js';
 
 export const sliderApi: ComponentApi<'Slider', SliderNode> = {
   name: 'Slider',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.value !== 'object') {
       throw new Error('Invalid properties for Slider: missing value.');
     }
 
     return {
       properties: {
-        value: unresolved.value as NumberValue,
+        value: resolver(unresolved.value) as NumberValue,
         minValue: unresolved.minValue as number,
         maxValue: unresolved.maxValue as number,
       }

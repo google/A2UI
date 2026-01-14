@@ -15,7 +15,7 @@
  */
 
 import { html, TemplateResult } from 'lit';
-import { ComponentRenderer } from '../../core/types/types';
+import { ComponentRenderer } from '../../core/types/types.js';
 import { ButtonNode } from '../../core/types/types.js';
 import '../components/button.js';
 

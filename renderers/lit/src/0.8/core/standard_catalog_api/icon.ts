@@ -17,20 +17,20 @@
 import {
   ComponentApi,
   IconNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const iconApi: ComponentApi<'Icon', IconNode> = {
   name: 'Icon',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.name !== 'object') {
       throw new Error('Invalid properties for Icon: missing name.');
     }
 
     return {
       properties: {
-        name: unresolved.name as StringValue,
+        name: resolver(unresolved.name) as StringValue,
       }
     };
   },

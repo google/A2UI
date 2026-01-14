@@ -17,21 +17,24 @@
 import {
   ComponentApi,
   MultipleChoiceNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const multipleChoiceApi: ComponentApi<'MultipleChoice', MultipleChoiceNode> = {
   name: 'MultipleChoice',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.selections !== 'object' || !Array.isArray(unresolved.options)) {
       throw new Error('Invalid properties for MultipleChoice: missing selections or options.');
     }
 
     return {
       properties: {
-        selections: unresolved.selections as { path?: string; literalArray?: string[] },
-        options: unresolved.options as { label: StringValue, value: string }[],
+        selections: resolver(unresolved.selections) as { path?: string; literalArray?: string[] },
+        options: (unresolved.options as { label: StringValue, value: string }[]).map(option => ({
+          label: resolver(option.label) as StringValue,
+          value: option.value,
+        })),
         maxAllowedSelections: unresolved.maxAllowedSelections as number,
       }
     };

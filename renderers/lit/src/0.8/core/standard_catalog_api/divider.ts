@@ -17,12 +17,12 @@
 import {
   ComponentApi,
   DividerNode,
-} from '../types/types';
+} from '../types/types.js';
 
 export const dividerApi: ComponentApi<'Divider', DividerNode> = {
   name: 'Divider',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, _resolver) {
     return {
       properties: {
         axis: unresolved.axis as DividerNode['properties']['axis'],

@@ -14,26 +14,26 @@
  limitations under the License.
  */
 
-import { CatalogImplementation } from '../../core/types/types';
+import { CatalogImplementation } from '../../core/types/types.js';
 import { standardCatalogApi } from '../../core/standard_catalog_api/standard_catalog.js';
-import { litAudioPlayerRenderer } from './audio_player';
-import { litButtonRenderer } from './button';
-import { litCardRenderer } from './card';
-import { litCheckboxRenderer } from './checkbox';
-import { litColumnRenderer } from './column';
-import { litDateTimeInputRenderer } from './datetime_input';
-import { litDividerRenderer } from './divider';
-import { litIconRenderer } from './icon';
-import { litImageRenderer } from './image';
-import { litListRenderer } from './list';
-import { litModalRenderer } from './modal';
-import { litMultipleChoiceRenderer } from './multiple_choice';
-import { litRowRenderer } from './row';
-import { litSliderRenderer } from './slider';
-import { litTabsRenderer } from './tabs';
-import { litTextFieldRenderer } from './text_field';
-import { litTextRenderer } from './text';
-import { litVideoRenderer } from './video';
+import { litAudioPlayerRenderer } from './audio_player.js';
+import { litButtonRenderer } from './button.js';
+import { litCardRenderer } from './card.js';
+import { litCheckboxRenderer } from './checkbox.js';
+import { litColumnRenderer } from './column.js';
+import { litDateTimeInputRenderer } from './datetime_input.js';
+import { litDividerRenderer } from './divider.js';
+import { litIconRenderer } from './icon.js';
+import { litImageRenderer } from './image.js';
+import { litListRenderer } from './list.js';
+import { litModalRenderer } from './modal.js';
+import { litMultipleChoiceRenderer } from './multiple_choice.js';
+import { litRowRenderer } from './row.js';
+import { litSliderRenderer } from './slider.js';
+import { litTabsRenderer } from './tabs.js';
+import { litTextFieldRenderer } from './text_field.js';
+import { litTextRenderer } from './text.js';
+import { litVideoRenderer } from './video.js';
 
 export const standardLitCatalogImplementation = new CatalogImplementation(
   standardCatalogApi,

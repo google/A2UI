@@ -17,21 +17,21 @@
 import {
   ComponentApi,
   AudioPlayerNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const audioPlayerApi: ComponentApi<'AudioPlayer', AudioPlayerNode> = {
   name: 'AudioPlayer',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.url !== 'object') {
       throw new Error('Invalid properties for AudioPlayer: missing url.');
     }
 
     return {
       properties: {
-        url: unresolved.url as StringValue,
-        description: unresolved.description as StringValue,
+        url: resolver(unresolved.url) as StringValue,
+        description: resolver(unresolved.description) as StringValue,
       }
     };
   },

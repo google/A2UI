@@ -17,20 +17,20 @@
 import {
   ComponentApi,
   DateTimeInputNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const dateTimeInputApi: ComponentApi<'DateTimeInput', DateTimeInputNode> = {
   name: 'DateTimeInput',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.value !== 'object') {
       throw new Error('Invalid properties for DateTimeInput: missing value.');
     }
 
     return {
       properties: {
-        value: unresolved.value as StringValue,
+        value: resolver(unresolved.value) as StringValue,
         enableDate: unresolved.enableDate as boolean,
         enableTime: unresolved.enableTime as boolean,
         outputFormat: unresolved.outputFormat as string,

@@ -18,7 +18,7 @@ import {
   ComponentApi,
   AnyResolvedNode,
   ListNode,
-} from '../types/types';
+} from '../types/types.js';
 
 export const listApi: ComponentApi<'List', ListNode> = {
   name: 'List',

@@ -19,7 +19,7 @@ import {
   AnyResolvedNode,
   ButtonNode,
   Action,
-} from '../types/types';
+} from '../types/types.js';
 
 export const buttonApi: ComponentApi<'Button', ButtonNode> = {
   name: 'Button',

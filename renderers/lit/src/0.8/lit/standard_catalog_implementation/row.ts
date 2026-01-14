@@ -15,7 +15,7 @@
  */
 
 import { html, TemplateResult } from 'lit';
-import { ComponentRenderer } from '../../core/types/types';
+import { ComponentRenderer } from '../../core/types/types.js';
 import { RowNode } from '../../core/types/types.js';
 import '../components/row.js';
 

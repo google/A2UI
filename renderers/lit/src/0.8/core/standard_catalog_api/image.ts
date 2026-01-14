@@ -17,20 +17,20 @@
 import {
   ComponentApi,
   ImageNode,
-} from '../types/types';
-import { StringValue } from '../types/primitives';
+} from '../types/types.js';
+import { StringValue } from '../types/primitives.js';
 
 export const imageApi: ComponentApi<'Image', ImageNode> = {
   name: 'Image',
 
-  resolveProperties(unresolved) {
+  resolveProperties(unresolved, resolver) {
     if (!unresolved || typeof unresolved.url !== 'object') {
       throw new Error('Invalid properties for Image: missing url.');
     }
 
     return {
       properties: {
-        url: unresolved.url as StringValue,
+        url: resolver(unresolved.url) as StringValue,
         usageHint: unresolved.usageHint as ImageNode['properties']['usageHint'],
         fit: unresolved.fit as ImageNode['properties']['fit'],
       }

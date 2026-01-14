@@ -18,7 +18,7 @@ import {
   ComponentApi,
   AnyResolvedNode,
   ColumnNode,
-} from '../types/types';
+} from '../types/types.js';
 
 export const columnApi: ComponentApi<'Column', ColumnNode> = {
   name: 'Column',

@@ -18,7 +18,7 @@ import {
   ComponentApi,
   AnyResolvedNode,
   CardNode,
-} from '../types/types';
+} from '../types/types.js';
 
 export const cardApi: ComponentApi<'Card', CardNode> = {
   name: 'Card',

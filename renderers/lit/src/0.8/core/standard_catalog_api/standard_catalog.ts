@@ -14,25 +14,25 @@
  limitations under the License.
  */
 
-import { CatalogApi } from '../types/types';
-import { audioPlayerApi } from './audio_player';
-import { buttonApi } from './button';
-import { cardApi } from './card';
-import { checkboxApi } from './checkbox';
-import { columnApi } from './column';
-import { dateTimeInputApi } from './datetime_input';
-import { dividerApi } from './divider';
-import { iconApi } from './icon';
-import { imageApi } from './image';
-import { listApi } from './list';
-import { modalApi } from './modal';
-import { multipleChoiceApi } from './multiple_choice';
-import { rowApi } from './row';
-import { sliderApi } from './slider';
-import { tabsApi } from './tabs';
-import { textFieldApi } from './text_field';
-import { textApi } from './text';
-import { videoApi } from './video';
+import { CatalogApi } from '../types/types.js';
+import { audioPlayerApi } from './audio_player.js';
+import { buttonApi } from './button.js';
+import { cardApi } from './card.js';
+import { checkboxApi } from './checkbox.js';
+import { columnApi } from './column.js';
+import { dateTimeInputApi } from './datetime_input.js';
+import { dividerApi } from './divider.js';
+import { iconApi } from './icon.js';
+import { imageApi } from './image.js';
+import { listApi } from './list.js';
+import { modalApi } from './modal.js';
+import { multipleChoiceApi } from './multiple_choice.js';
+import { rowApi } from './row.js';
+import { sliderApi } from './slider.js';
+import { tabsApi } from './tabs.js';
+import { textFieldApi } from './text_field.js';
+import { textApi } from './text.js';
+import { videoApi } from './video.js';
 
 export const standardCatalogApi = new CatalogApi([
   audioPlayerApi,

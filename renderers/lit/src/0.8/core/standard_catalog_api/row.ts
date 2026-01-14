@@ -18,7 +18,7 @@ import {
   ComponentApi,
   AnyResolvedNode,
   RowNode,
-} from '../types/types';
+} from '../types/types.js';
 
 export const rowApi: ComponentApi<'Row', RowNode> = {
   name: 'Row',
