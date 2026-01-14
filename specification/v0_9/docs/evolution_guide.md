@@ -11,19 +11,20 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 
 ### Summary Table
 
-| Feature               | v0.8.1                                 | v0.9                                                 |
-| :-------------------- | :------------------------------------- | :--------------------------------------------------- |
-| **Philosophy**        | Structured Output / Function Calling   | Prompt-First / In-Context Schema                     |
-| **Message Types**     | `beginRendering`, `surfaceUpdate`, ... | `createSurface`, `updateComponents`, ...             |
-| **Surface Creation**  | Explicit `beginRendering`              | Explicit `createSurface`                             |
-| **Component Type**    | Key-based wrapper (`{"Text": ...}`)    | Property-based discriminator (`"component": "Text"`) |
-| **Data Model Update** | Array of Key-Value Pairs               | Standard JSON Object                                 |
-| **Data Binding**      | `dataBinding` / `literalString`        | `path` / Native JSON types                           |
-| **Button Context**    | Array of Key-Value pairs               | Standard JSON Object                                 |
-| **Catalog**           | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`) |
-| **Auxiliary Rules**   | N/A                                    | `standard_catalog_rules.txt`                         |
-| **Validation**        | Basic Schema                           | Strict `ValidationFailed` feedback loop              |
-| **Interpolation**     | N/A (Object wrappers only)             | Native `${expression}` syntax                        |
+| Feature                  | v0.8.1                                   | v0.9                                                 |
+| :----------------------- | :--------------------------------------- | :--------------------------------------------------- |
+| **Philosophy**           | Structured Output / Function Calling     | Prompt-First / In-Context Schema                     |
+| **Message Types**        | `beginRendering`, `surfaceUpdate`, ...   | `createSurface`, `updateComponents`, ...             |
+| **Surface Creation**     | Explicit `beginRendering`                | Explicit `createSurface`                             |
+| **Component Type**       | Key-based wrapper (`{"Text": ...}`)      | Property-based discriminator (`"component": "Text"`) |
+| **Data Model Update**    | Array of Key-Value Pairs                 | Standard JSON Object                                 |
+| **Data Binding**         | `dataBinding` / `literalString`          | `path` / Native JSON types                           |
+| **Button Context**       | Array of Key-Value pairs                 | Standard JSON Object                                 |
+| **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)            |
+| **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                         |
+| **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop              |
+| **Interpolation**        | N/A (Object wrappers only)               | Native `${expression}` syntax                        |
+| **Data Synchronization** | Implicit                                 | Explicit Broadcasting (`broadcastDataModel`)         |
 
 ## 2. Architectural & Schema Changes
 
@@ -227,6 +228,18 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 - **Nesting**: Supports recursive nesting of expressions (e.g., `${formatDate(${/timestamp}, 'yyyy-MM-dd')}`).
 - **Reason**: Improves "token efficiency" and readability for LLMs. Instead of generating complex JSON objects to combine strings and data, the model can write natural-looking template literals.
 
+### 5.4. Data Model Broadcasting
+
+**v0.8.1:**
+
+- Data synchronization was implicit and relied on ad-hoc mechanisms.
+
+**v0.9:**
+
+- **Explicit Broadcasting**: `createSurface` introduced `broadcastDataModel` (boolean).
+- **Mechanical Simplicity**: When enabled, the client simply piggybacks the full data model of the surface onto every A2A message (like `action`) sent to the server.
+- **Reason**: Removes the need for complex, error-prone client-side change tracking or CRDT implementation. The server always receives the complete, latest state of the client data model with every user interaction.
+
 ## 6. Component-Specific Changes
 
 ### 6.1. Button Context
@@ -302,14 +315,14 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 For developers migrating from earlier versions, here is a quick reference of property renaming:
 
-| Component          | Old Name               | New Name       |
-| :----------------- | :--------------------- | :------------- |
-| **Row / Column**   | `distribution`         | `justify`      |
-| **Row / Column**   | `alignment`            | `align`        |
-| **Modal**          | `entryPointChild`      | `trigger`      |
-| **Modal**          | `contentChild`         | `content`      |
-| **Tabs**           | `tabItems`             | `tabs`         |
-| **TextField**      | `text`                 | `value`        |
-| **Many**           | `usageHint`            | `variant`      |
-| **Client Message** | `userAction`           | `action`       |
-| **Common Type**    | `childrenProperty`     | `ChildList`    |
+| Component          | Old Name           | New Name    |
+| :----------------- | :----------------- | :---------- |
+| **Row / Column**   | `distribution`     | `justify`   |
+| **Row / Column**   | `alignment`        | `align`     |
+| **Modal**          | `entryPointChild`  | `trigger`   |
+| **Modal**          | `contentChild`     | `content`   |
+| **Tabs**           | `tabItems`         | `tabs`      |
+| **TextField**      | `text`             | `value`     |
+| **Many**           | `usageHint`        | `variant`   |
+| **Client Message** | `userAction`       | `action`    |
+| **Common Type**    | `childrenProperty` | `ChildList` |
