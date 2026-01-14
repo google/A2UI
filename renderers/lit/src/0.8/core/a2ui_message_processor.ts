@@ -77,10 +77,12 @@ export class A2uiMessageProcessor implements MessageProcessor {
   }
 
   clearSurfaces() {
+    console.log(`[A2uiMessageProcessor] Clearing all surfaces`);
     this.surfaces.clear();
   }
 
   processMessages(messages: ServerToClientMessage[]): void {
+    console.log(`[A2uiMessageProcessor] Processing ${messages.length} messages`);
     for (const message of messages) {
       if (message.beginRendering) {
         this.handleBeginRendering(
@@ -281,14 +283,21 @@ export class A2uiMessageProcessor implements MessageProcessor {
     if (segments.length === 0) {
       // Root data can either be a Map or an Object. If we receive an Object,
       // however, we will normalize it to a proper Map.
-      if (value instanceof Map || isObject(value)) {
+      if (value instanceof this.mapCtor || isObject(value)) {
         // Normalize an Object to a Map.
         if (!(value instanceof this.mapCtor) && isObject(value)) {
           value = new this.mapCtor(Object.entries(value));
         }
 
+        console.log(`[setDataByPath] Replacing root. Source map:`, value);
+        if (value instanceof Map) {
+             console.log(`[setDataByPath] Source map size:`, value.size);
+             console.log(`[setDataByPath] Source map entries:`, Array.from(value.entries()));
+        }
+
         root.clear();
         for (const [key, v] of value.entries()) {
+          console.log(`[setDataByPath] Setting root key: ${key}, value:`, v);
           root.set(key, v);
         }
       } else {
@@ -378,6 +387,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
   private getOrCreateSurface(surfaceId: string): Surface {
     let surface: Surface | undefined = this.surfaces.get(surfaceId);
     if (!surface) {
+      console.log(`[A2uiMessageProcessor] Creating NEW surface: ${surfaceId}`);
       surface = new this.objCtor({
         rootComponentId: null,
         componentTree: null,
@@ -387,6 +397,8 @@ export class A2uiMessageProcessor implements MessageProcessor {
       }) as Surface;
 
       this.surfaces.set(surfaceId, surface);
+    } else {
+      console.log(`[A2uiMessageProcessor] Retrieving EXISTING surface: ${surfaceId}`);
     }
 
     return surface;
@@ -396,6 +408,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
     message: BeginRenderingMessage,
     surfaceId: SurfaceID
   ): void {
+    console.log(`[A2uiMessageProcessor] handleBeginRendering. SurfaceID: ${surfaceId}, Root: ${message.root}`);
     const surface = this.getOrCreateSurface(surfaceId);
     surface.rootComponentId = message.root;
     surface.styles = message.styles ?? {};
