@@ -88,30 +88,6 @@
           "additionalProperties": true
         }
       ]
-    },
-    "dataModelChanged": {
-      "type": "object",
-      "description": "Updates the server's data model from the client.",
-      "properties": {
-        "surfaceId": {
-          "type": "string",
-          "description": "The id of the surface where the data update originated."
-        },
-        "actorId": {
-          "type": "string",
-          "description": "The id of the actor that sent the update."
-        },
-        "updates": {
-          "description": "The updates to apply to the data model.",
-          "type": "array",
-          "items": { "$ref": "common_types.json#/$defs/DataUpdate" }
-        },
-        "versions": {
-          "description": "The version vector of the data model describing the state of the data model before the updates were applied, with one timestamp for each actor that has modified the data model.",
-          "$ref": "common_types.json#/$defs/VersionVector"
-        }
-      },
-      "required": ["surfaceId", "actorId", "updates", "versions"]
     }
   },
   "oneOf": [
@@ -120,9 +96,6 @@
     },
     {
       "required": ["error"]
-    },
-    {
-      "required": ["dataModelChanged"]
     }
   ]
 }

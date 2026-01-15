@@ -1,17 +1,7 @@
 {
   "schema": "client_to_server.json",
   "tests": [
-    {
-      "description": "Valid dataModelChanged message",
-      "valid": true,
-      "data": {
-        "dataModelChanged": {
-          "surfaceId": "main",
-          "path": "/user/name",
-          "value": "Alice"
-        }
-      }
-    },
+
     {
       "description": "Valid action message",
       "valid": true,
