@@ -123,7 +123,11 @@ def try_activate_a2ui_extension(context: RequestContext) -> bool:
   Returns:
       True if activated, False otherwise.
   """
-  if A2UI_EXTENSION_URI in context.requested_extensions:
+  if A2UI_EXTENSION_URI in context.requested_extensions or (
+      context.message
+      and context.message.extensions
+      and A2UI_EXTENSION_URI in context.message.extensions
+  ):
     context.add_activated_extension(A2UI_EXTENSION_URI)
     return True
   return False

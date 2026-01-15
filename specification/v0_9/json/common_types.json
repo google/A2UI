@@ -321,40 +321,6 @@
           }
         }
       }
-    },
-    "HlcString": {
-      "type": "string",
-      "description": "A Hybrid Logical Clock string (ISO8601:Counter:ActorID)"
-    },
-    "DataUpdate": {
-      "type": "object",
-      "required": ["path", "hlc"],
-      "properties": {
-        "path": {
-          "type": "string",
-          "description": "A JSON Pointer to a specific property or object. To maintain data model integrity, paths should use stable unique IDs instead of array indices (e.g., '/genus/f1/name' instead of '/genus/1/name')."
-        },
-        "value": {
-          "description": "The data value at the specified path. This must not be an array. To represent a list, the value at a path should be an object (map) where each property is a stable ID. Deletion is represented by setting this to null (tombstone).",
-          "oneOf": [
-            { "type": "object", "additionalProperties": true },
-            { "type": "string" },
-            { "type": "number" },
-            { "type": "boolean" },
-            { "type": "null" }
-          ]
-        },
-        "hlc": { "$ref": "#/$defs/HlcString" },
-        "pos": {
-          "type": "string",
-          "description": "The fractional index position of the object identified by the path. If the path points to a property within an object (e.g., '/genus/f1/name'), pos is usually omitted. If the path points to the object itself (e.g., '/genus/f1'), pos determines its order relative to other sibling IDs."
-        }
-      }
-    },
-    "VersionVector": {
-      "type": "object",
-      "additionalProperties": { "$ref": "#/$defs/HlcString" },
-      "description": "A map where each key is a unique Actor ID and the value is the highest HLC observed from that actor."
     }
   }
 }
