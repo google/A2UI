@@ -37,7 +37,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 **v0.9:**
 
 - **Modularization**: The schema is strictly split into:
-  - `common_types.json`: Reusable primitives (IDs, paths, weights) and logic/expression types.
+  - `common_types.json`: Reusable primitives (IDs, paths) and logic/expression types.
   - `server_to_client.json`: The "envelope" defining the message types.
   - `standard_catalog.json`: The unified catalog of UI components and functions.
 - **Benefit**: This allows developers to swap out the `standard_catalog.json` for a `custom_catalog.json` without touching the core protocol envelope.

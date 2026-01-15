@@ -13,10 +13,6 @@
       "properties": {
         "id": {
           "$ref": "#/$defs/id"
-        },
-        "weight": {
-          "type": "number",
-          "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property."
         }
       },
       "required": ["id"]

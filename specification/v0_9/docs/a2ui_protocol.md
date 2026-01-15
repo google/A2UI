@@ -93,7 +93,6 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
 - **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
-- **`weight`**: The relative weight of a component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column. Defined here so that all weights are consistent and can be used for data binding.
 
 ### Server to Client Message Structure: The Envelope
 

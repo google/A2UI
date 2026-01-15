@@ -9,6 +9,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -32,6 +33,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -67,6 +69,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -158,6 +161,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -176,6 +180,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -198,6 +203,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "description": "A layout component that arranges its children horizontally. To create a grid layout, nest Columns within this Row.",
@@ -235,6 +241,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "description": "A layout component that arranges its children vertically. To create a grid layout, nest Rows within this Column.",
@@ -272,6 +279,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -300,6 +308,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -318,6 +327,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -351,6 +361,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -373,6 +384,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         {
           "type": "object",
           "properties": {
@@ -393,6 +405,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
@@ -432,6 +445,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
@@ -460,6 +474,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
@@ -483,6 +498,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
@@ -531,6 +547,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
@@ -562,6 +579,7 @@
       "type": "object",
       "allOf": [
         { "$ref": "common_types.json#/$defs/ComponentCommon" },
+        { "$ref": "#/$defs/CatalogComponentCommon" },
         { "$ref": "common_types.json#/$defs/Checkable" },
         {
           "type": "object",
@@ -716,6 +734,15 @@
     }
   ],
   "$defs": {
+    "CatalogComponentCommon": {
+      "type": "object",
+      "properties": {
+         "weight": {
+          "type": "number",
+          "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property."
+        }
+      }
+    },
     "anyComponent": {
       "oneOf": [
         { "$ref": "#/components/Text" },
