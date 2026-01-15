@@ -6,17 +6,28 @@ This document serves as a guide for using the Gemini agent within the A2UI repos
 
 The A2UI repository is organized into several key directories:
 
--   `specification/0.8/docs/`: Contains the primary human-readable documentation for the A2UI protocol.
-    -   `a2ui_protocol.md`: The foundational specification document. This is the best place to start to understand the protocol's fundamental goals.
--   `specification/0.8/json/`: Contains the formal JSON schema definitions for the protocol.
-    -   `server_to_client.json`: Defines the schema for messages sent from the server to the client.
-    -   `client_to_server.json`: Defines the schema for event messages sent from the client to the server.
--   `a2a_agents/python/`: Contains Python code relating to server-side integration of A2UI
-    -   `a2ui_extension/`: Python implementation of the A2UI A2A extension.
-    -   `adk/samples/`: Contains demo applications that showcase the A2UI protocol in action using the ADK framework.
--   `web/`: Contains the web-based client implementations (using Lit and Vite) for the samples, including a shared library (`renderers/lit`).
--   `angular/`: Contains an alternative web-based client implementation using Angular.
--   `eval/`: Contains a Genkit-based framework for evaluating LLM performance in generating A2UI responses.
+-   `specification/`: Contains the A2UI protocol specifications.
+    -   `0_8/`: The current protocol version.
+        -   `docs/`: Human-readable documentation.
+        -   `json/`: JSON schema definitions.
+    -   `0_9/`: The next protocol version (in development).
+        -   `docs/`: Human-readable documentation.
+        -   `json/`: JSON schema definitions.
+        -   `eval/`: Genkit-based evaluation framework.
+-   `samples/`: Contains sample implementations.
+    -   `agent/adk/`: Python-based ADK agent samples (e.g., `contact_lookup`, `restaurant_finder`, `rizzcharts`, `orchestrator`).
+    -   `client/`: Web client implementations.
+        -   `lit/`: Clients using Lit and Vite (e.g., `contact`, `shell`).
+        -   `angular/`: Clients using Angular.
+    -   `mcp/`: MCP server samples (e.g., `flight_booking`).
+-   `a2a_agents/`: Contains source code for A2A extension integrations.
+    -   `python/a2ui_extension/`: Python implementation of the A2UI A2A extension.
+    -   `java/`: Java implementation of the A2UI A2A extension.
+-   `renderers/`: Contains renderer libraries.
+    -   `lit/`: The shared Lit renderer library used by the Lit clients.
+-   `tools/`: Helper tools for development.
+    -   `editor/`: A web-based editor for generating and visualizing A2UI.
+    -   `inspector/`: A web-based inspector for A2UI responses.
 
 ## A2UI Specification Overview
 
@@ -24,67 +35,85 @@ The A2UI protocol is a JSONL-based, streaming UI protocol designed to be easily 
 
 ### Core Concepts
 
-The core concepts of the A2UI protocol are detailed in the main specification document. Rather than duplicating the content here, you should refer to the authoritative source:
+The core concepts of the A2UI protocol are detailed in the main specification document. Refer to the authoritative source for the current version (0.8):
 
--   **A2UI Protocol Specification**: `@docs/a2ui_protocol.md`
+-   **A2UI Protocol Specification**: `@specification/0_8/docs/a2ui_protocol.md`
 
 This document covers the design philosophy, architecture, data flow, and core concepts of the protocol.
 
 ### Schemas
 
-The formal, machine-readable definitions of the protocol are maintained as JSON schemas:
+The formal, machine-readable definitions of the protocol are maintained as JSON schemas. For version 0.8:
 
--   **Server-to-Client Schema**: `@specification/0.8/json/server_to_client.json`
--   **Server-to-Client Schema, with standard catalog**: `@specification/0.8/json/server_to_client_with_standard_catalog.json`
--   **Client-to-Server Schema**: `@specification/0.8/json/client_to_server.json`
+-   **Server-to-Client Schema**: `@specification/0_8/json/server_to_client.json`
+-   **Client-to-Server Schema**: `@specification/0_8/json/client_to_server.json`
+-   **Standard Catalog**: `@specification/0_8/json/standard_catalog_definition.json`
 
 ## Running the Demos
 
-There are three demos available in the `a2a_samples/` directory. Each demo has a corresponding web client in the `web/` and `angular/` directories. To run a demo, you will need to start both the server and the client.
+The demos are located in the `samples/` directory. Typically, you will need to run both a server (agent) and a client.
 
-### Running a Demo Server
+### Running a Demo Server (Python ADK)
 
-To run a demo server, navigate to the demo's directory and run the `__main__.py` script. For example, to run the contact lookup demo:
+Navigate to the agent's directory within `samples/agent/adk/` and use `uv` to run it. For example, to run the contact lookup demo:
 
 ```bash
-cd a2a_samples/a2ui_contact_lookup
-python -m __main__
+cd samples/agent/adk/contact_lookup
+uv run .
 ```
+
+Ensure you have your environment variables set up (create a `.env` file if necessary, often based on `.env.example`).
 
 ### Running a Demo Client (Lit)
 
-To run a demo client, navigate to the corresponding client directory in `web/` and start the development server. For example, to run the contact lookup client:
+The Lit clients are located in `samples/client/lit/`.
 
-```bash
-cd web/contact
-npm install
-npm run dev
-```
+1.  **Build the Renderer**:
+    First, ensure the shared renderer is built:
+    ```bash
+    cd renderers/lit
+    npm install
+    npm run build
+    ```
+
+2.  **Run the Client**:
+    Navigate to the specific client sample (e.g., `contact` or `shell`) and start the dev server:
+    ```bash
+    cd samples/client/lit/contact
+    npm install
+    npm run dev
+    ```
 
 ### Running a Demo Client (Angular)
 
-To run a demo client, navigate to the `angular/` directory and start the development server with the project name. For example, to run the contact lookup client:
+The Angular clients are located in `samples/client/angular/`.
 
 ```bash
-cd angular
+cd samples/client/angular
 npm install
-npm start -- contact
+npm start -- contact  # Replace 'contact' with the desired project name (e.g., restaurant, gallery, rizzcharts)
 ```
+
+### Running Tools
+
+-   **Editor**: Located in `tools/editor`. Run with `npm install && npm run dev`.
+    -   Requires a Gemini API key in `.env` (`GEMINI_API_KEY=<key>`).
+-   **Inspector**: Located in `tools/inspector`. Run with `npm install && npm run dev`.
 
 ## Renderers
 
 There are three renderers available for A2UI:
 
 -   **Web (Lit)**: Located in `renderers/lit`, this is the primary web renderer used by the demos in `web/`.
--   **Angular**: Located in `angular/projects/lib`, this is an alternative web renderer for Angular applications.
+-   **Angular**: Located in `renderers/angular`, this is an alternative web renderer for Angular applications.
 -   **Flutter**: The Flutter renderer is in a separate repository: [https://github.com/flutter/genui](https://github.com/flutter/genui). There is a placeholder renderer folder with a README.md file at `renderers/flutter`.
 
 ## Keeping This Guide Updated
 
 This document is intended to be a living guide for the repository. As the repository evolves, it's important to keep this file up-to-date. When making changes to the repository, please consider the following:
 
--   **New Demos or Clients**: If you add a new demo or client, add it to the "Running the Demos" section.
--   **Specification Changes**: If you make significant changes to the A2UI protocol, ensure that the "A2UI Specification Overview" section is updated to reflect the changes, and that any linked documents are also updated.
+-   **New Demos or Clients**: If you add a new demo or client in `samples/`, add it to the "Running the Demos" section.
+-   **Specification Changes**: If you make significant changes to the A2UI protocol, ensure that the "A2UI Specification Overview" section is updated.
 -   **Repository Structure Changes**: If you change the directory structure of the repository, update the "Repository Structure" section.
 
 To get this file back in sync, you can run the following commands:
@@ -92,3 +121,7 @@ To get this file back in sync, you can run the following commands:
 1. List all the files in the entire repo with `git ls-tree main --name-only -r`
 2. Read the ~50 most important files in the list, potentially in batches.
 3. Update this file.
+
+## Change descriptions
+
+If you (the agent) are generating a pull request summary, pull request description, or change description, avoid flowery or hyperbolic terms (e.g. "significantly improves", "greatly enhances", "is an incredible improvement").  Be factual and avoid marketing language: you're not selling the PR, you're describing it.

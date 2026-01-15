@@ -71,8 +71,6 @@ You can use any transport that sends JSON:
 // TODO: Add an example
 ```
 
-```
-
 ## Next Steps
 
 - **[A2A Protocol Docs](https://a2a-protocol.org)**: Learn about A2A
