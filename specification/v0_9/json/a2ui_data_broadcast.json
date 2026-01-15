@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.dev/specification/v0_9/a2ui_data_broadcast.json",
+  "title": "A2UI Data Broadcast Schema",
+  "description": "Schema for broadcasting A2UI surface data models in A2A message metadata. This object should be placed in the `a2uiDataBroadcast` field of the metadata.",
+  "type": "object",
+  "properties": {
+    "surfaces": {
+      "type": "object",
+      "description": "A map of surface IDs to their current data models.",
+      "additionalProperties": {
+        "type": "object",
+        "description": "The current data model for the surface, as a standard JSON object."
+      }
+    }
+  },
+  "required": ["surfaces"],
+  "additionalProperties": false
+}

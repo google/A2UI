@@ -27,7 +27,6 @@ Communication occurs via a stream of JSON objects. The client parses each object
 - `updateComponents`: Provides a list of component definitions to be added to or updated in a specific surface.
 - `updateDataModel`: Provides new data to be inserted into or to replace a surface's data model.
 - `deleteSurface`: Explicitly removes a surface and its contents from the UI.
-- `watchDataModel`: Configures how and when the client sends data model updates to the server.
 
 ## Changes from previous versions
 
@@ -62,9 +61,9 @@ sequenceDiagram
 
     Server->>+Client: 1. createSurface(surfaceId: "main")
     Server->>+Client: 2. updateComponents(surfaceId: "main", components: [...])
-    Server->>+Client: 2. updateDataModel(surfaceId: "main", actorId: "agent-1", updates: [...], versions: {...})
-    Note right of Client: 3. Client renders the UI for the "main" surface
-    Client-->>-Server: (UI is displayed)
+    Server->>+Client: 3. updateDataModel(surfaceId: "main", path: "/user", value: "Alice")
+    User->>+Client: Interact with UI (e.g. click button)
+    Client->>+Server: action(name: "submit", context: {...})
     Client-->>-Server: (UI is displayed)
 
     Note over Client, Server: Time passes, user interacts, or new data arrives...
@@ -93,7 +92,6 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
 - **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
-- **`weight`**: The relative weight of a component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column. Defined here so that all weights are consistent and can be used for data binding.
 
 ### Server to Client Message Structure: The Envelope
 
@@ -107,7 +105,7 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 ## Envelope Message Structure
 
-The envelope defines five primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface` or `watchDataModel`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
+The envelope defines four primary message types, and every message streamed by the server must be a JSON object containing exactly one of the following keys: `createSurface`, `updateComponents`, `updateDataModel`, or `deleteSurface`. The key indicates the type of message, and these are the messages that make up each message in the protocol stream.
 
 ### `createSurface`
 
@@ -117,6 +115,7 @@ This message signals the client to create a new surface and begin rendering it. 
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
 - `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+- `broadcastDataModel` (boolean, optional): If true, the client will append the full data model of this surface to the metadata of every A2A message (like 'action') sent to the server. Defaults to false.
 
 **Example:**
 
@@ -167,14 +166,13 @@ This message provides a list of UI components to be added to or updated within a
 
 ### `updateDataModel`
 
-This message is used to send or update the data that populates the UI components. It allows the server to change the UI's content without resending the entire component structure. This message may only be sent to a surface that has already been created.
+This message is used to send or update the data that populates the UI components. It allows the server to change the UI's content without resending the entire component structure. The `updateDataModel` message replaces the value at the specified `path` with the new content. If `path` is omitted (or is `/`), the entire data model for the surface is replaced.
 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface this data model update applies to.
-- `actorId` (string, required): The ID of the actor that sent the update.
-- `updates` (array, required): A list of `DataUpdate` objects (path, value, hlc, and optional pos).
-- `versions` (object, required): A `VersionVector` map (actorId -> hlc).
+- `path` (string, optional): A JSON Pointer to the location in the data model to update. Defaults to `/`.
+- `value` (any, optional): The new value for the specified path. If omitted, the key at `path` is removed.
 
 **Example:**
 
@@ -182,22 +180,8 @@ This message is used to send or update the data that populates the UI components
 {
   "updateDataModel": {
     "surfaceId": "user_profile_card",
-    "actorId": "agent-1",
-    "updates": [
-      {
-        "path": "/user/name",
-        "value": "Jane Doe",
-        "hlc": "2026-01-12T16:34:29.000Z:0001:agent-1"
-      },
-      {
-        "path": "/user/title",
-        "value": "Software Engineer",
-        "hlc": "2026-01-12T16:34:29.000Z:0002:agent-1"
-      }
-    ],
-    "versions": {
-      "agent-1": "2026-01-12T16:34:29.000Z:0002:agent-1"
-    }
+    "path": "/user/name",
+    "value": "Jane Doe"
   }
 }
 ```
@@ -220,42 +204,6 @@ This message instructs the client to remove a surface and all its associated com
 }
 ```
 
-### `watchDataModel`
-
-This message configures how and when the client sends data model updates to the server. It allows restricting updates to specific paths and setting update modes (e.g., immediate, on timeout, or only on user action).
-
-**Properties:**
-
-- `surfaceId` (string, required): The unique identifier for the UI surface to be configured.
-- `configurations` (array, required): A list of configuration rules.
-  - `path` (string, required): The data path to configure.
-  - `mode` (string, required): One of `onAction` or `onChanged`.
-  - `timeoutMs` (integer, optional): The duration in milliseconds to wait before sending updates when in `onChanged` mode. Defaults to 0 (immediate).
-
-**Nested Path Precedence:**
-
-If multiple configurations apply to the same data (e.g., one for `/` and one for `/user/name`), the **most specific path** (the longest matching path) takes precedence. For example, if `/` is set to `onAction` and `/user/name` is set to `onChanged` (with 0ms), changes to `/user/name` will be sent immediately, while changes to `/user/bio` will wait for a user action.
-
-**Example:**
-
-```json
-{
-  "watchDataModel": {
-    "surfaceId": "user_profile_card",
-    "configurations": [
-      {
-        "path": "/",
-        "mode": "onAction"
-      },
-      {
-        "path": "/user/name",
-        "mode": "onChanged"
-      }
-    ]
-  }
-}
-```
-
 ## Example Stream
 
 The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.
@@ -263,7 +211,8 @@ The following example demonstrates a complete interaction to render a Contact Fo
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/v0_9/standard_catalog.json"}}
 {"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","message":"Email is required."},{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","primary":true,"action":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}]}}
-{"updateDataModel":{"surfaceId":"contact_form_1","actorId":"agent-1","updates":[{"path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true},"hlc":"2026-01-12T16:34:29.000Z:0001:agent-1"}],"versions":{"agent-1":"2026-01-12T16:34:29.000Z:0001:agent-1"}}}
+{"updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe"}}}
+{"deleteSurface":{"surfaceId":"contact_form_1"}}
 ```
 
 ## Component Model
@@ -275,7 +224,6 @@ A2UI's component model is designed for flexibility, separating the protocol's st
 Each object in the `components` array of a `updateComponents` message defines a single UI component. It has the following structure:
 
 - `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
-- `weight` (number, optional): The relative weight of this component within a `Row` or `Column`, corresponding to the CSS `flex-grow` property.
 - `component` (string, required): Specifies the component's type (e.g., `"Text"`).
 - **Component Properties**: Other properties relevant to the specific component type (e.g., `text`, `url`, `children`) are included directly in the component object.
 
@@ -458,52 +406,72 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 ## Data Model Updates: Synchronization and Convergence
 
-While the sections above describe how components reference data, this section defines how the Data Model itself is **updated** and synchronized in the `dataModelChanged` (Renderer -> Agent) and `updateDataModel` (Agent -> Renderer) messages. To support reliable bidirectional data synchronization between the Renderer and the Agent, A2UI employs a Conflict-free Replicated Data Type (CRDT) approach based on a Last-Write-Wins Element-Map (LWW-Map).
+While the sections above describe how components reference data, this section defines how the Data Model itself is **updated** and synchronized.
 
-In this model, the Renderer remains the primary source of truth for the UI state, but both the Renderer and the Agent may issue updates. Conflicts are resolved deterministically without a central coordinator, using metadata attached to every change.
+To support reliable data synchronization between the Renderer and the Agent, the A2UI protocol uses a simple broadcasting mechanism controlled by the `broadcastDataModel` property in the `createSurface` message.
 
-> NOTE: Because these data syncing primitives and resolutions are complex, the LLM shouldn't be asked to create these directly. Instead, it is recommended that the LLM be given a JSON representation of the data structure in its context, and instructions to mutate it with JSON patches. Code in the agent can then translate the LLM's JSON patches into the A2UI data model update equivalents. The agent can also keep track of the state of its copy of the data model.
+### Server to Client Updates
 
-### Hybrid Logical Clocks (HLC)
+The server sends `updateDataModel` messages to modify the client's data model. These updates follow strict upsert semantics:
 
-Every update to the data model must be timestamped with a **Hybrid Logical Clock (HLC)** string. HLCs ensure partial ordering of events and provide a tie-breaking mechanism for concurrent updates that can be sorted lexicographically.
+- If the path exists, the value is updated.
+- If the path does not exist, the value is created.
+- If the value is `null`, the key at that path is removed.
 
-The HLC format is a string: `<ISO-8601-Timestamp>:<Counter>:<ActorID>` Example: `2024-05-20T14:30:05.123Z:0001:agent_alpha`
+The `updateDataModel` message replaces the value at the specified `path` with the new content. If `path` is omitted (or is `/`), the entire data model for the surface is replaced.
 
-**Comparison Rule:** HLCs are compared lexicographically. An update with a higher HLC string always supersedes an update with a lower HLC string for the same data path.
+**Properties:**
 
-### Fractional Indexing
+- `surfaceId` (string, required): The ID of the surface to update.
+- `path` (string, optional): A JSON Pointer to the location in the data model to update. Defaults to `/`.
+- `value` (any, optional): The new value for the specified path. If omitted, the key at `path` is removed.
 
-For ordered lists within the data model, A2UI uses **Fractional Indexing** (also known as Lexicographical Indexing). Instead of numeric array indices, each item is assigned a `pos` string. No actual arrays are used, since they contain mutable indexes that are difficult to maintain in a distributed system. A list is represented as a JSON object with stable IDs as keys, and a `pos` property within each object to determine the sort order. The `pos` values don't need to be contiguous, and can be any string that can be sorted lexicographically.
+**Examples:**
 
-- **Ordering:** Items are sorted by their `pos` string value.
-- **Insertion:** To insert between position `"a"` and `"b"`, a new string `"an"` is generated.
-- **Conflict Resolution:** If two actors insert at the same position, the HLC of the operation determines the final state, ensuring all participants see the same order.
+_Update a specific field:_
 
-### JSON Pointers
+```json
+{
+  "updateDataModel": {
+    "surfaceId": "surface_123",
+    "path": "/user/firstName",
+    "value": "Alice"
+  }
+}
+```
 
-The "path" field in the data model updates is a JSON Pointer to a value in the data model, but since data model updates can't use regular JSON arrays (they use fractional indexing instead), they don't support integers as path segments. The root of the data model is represented by "/", and replacing this path will replace the entire data model.
+_Remove a field:_
 
-### Tombstones
+```json
+{
+  "updateDataModel": {
+    "surfaceId": "surface_123",
+    "path": "/user/tempData"
+  }
+}
+```
 
-To ensure deletions propagate correctly in a distributed system, A2UI uses **Tombstones**. When a value is deleted, it is not immediately removed from the synchronization log. Instead, its value in the synchronization log is unset (but leaving a record with an HLC), indicating that it is a "tombstone". A "tombstone" with a higher HLC wins over a "set" with a lower HLC.
+_Replace the entire data model:_
 
-### Convergence Logic (The "Last-Write-Wins" Rule)
+```json
+{
+  "updateDataModel": {
+    "surfaceId": "surface_123",
+    "value": {
+      "user": { "firstName": "Alice", "lastName": "Smith" },
+      "preferences": { "theme": "dark" }
+    }
+  }
+}
+```
 
-When a participant (client or server) receives an update for a specific `path`:
+### Client to Server Updates (Broadcasting)
 
-1.  If `incoming.hlc > local.hlc`:
+When `broadcastDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action`) sent to the server. The data model is included in the A2A message metadata using the schema in [`a2ui_data_broadcast.json`](../json/a2ui_data_broadcast.json).
 
-    - Set `local.value` to `incoming.value` (which may be undefined if it is a tombstone).
-    - Update `local.hlc` to `incoming.hlc`.
-
-2.  If `incoming.hlc == local.hlc`:
-
-    - This should ideally only happen if the update is identical. If values differ, use a secondary tie-breaker (e.g., the higher `actorId` wins).
-
-3.  If `incoming.hlc < local.hlc`:
-
-    - Ignore the update (it is stale).
+- **Trigger:** Data is sent only when an A2A message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
+- **Payload:** The data model is included in the A2A message metadata, tagged by its `surfaceId`.
+- **Convergence:** The server treats the received data model as the current state of the client at the time of the action.
 
 ## Client-Side Logic & Validation
 
@@ -628,7 +596,9 @@ Values from the data model can be interpolated using their JSON Pointer path.
   "component": "Text",
   "text": {
     "call": "string_format",
-    "args": { "value": "Hello, ${/user/firstName}! Welcome back to ${/appName}." }
+    "args": {
+      "value": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
+    }
   }
 }
 ```
@@ -711,27 +681,26 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
-### `dataModelChanged`
+### Client Capabilities & Metadata
 
-This message is sent by the client to update the server's data model. This typically happens when `watchDataModel` has enabled `onChanged` mode for specific paths, or when a user action has triggered an update for a path set to `onAction` mode.
+In A2UI v0.9, client capabilities and other metadata are sent as part of the **A2A metadata** envelope in every message, rather than as first-class A2UI messages.
 
-**Properties:**
+#### Client Capabilities
 
-- `surfaceId` (string, required): The ID of the surface.
-- `actorId` (string, required): The ID of the actor that sent the update.
-- `updates` (array, required): A list of `DataUpdate` objects.
-- `versions` (object, required): A `VersionVector` map.
-
-### Client Capabilities
-
-Client capabilities are sent by the client to inform the server of its capabilities, including supported catalogs (components and functions). In A2UI v0.9, these are sent as part of the **A2A metadata** envelope in every message, rather than as a first-class A2UI message. This ensures the server always has the client's latest capabilities without needing a separate handshake.
-
-The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_capabilities_schema.json`] schema.
+The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_capabilities.json`] schema.
 
 **Properties:**
 
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
+
+#### Data Model Broadcast
+
+When `broadcastDataModel` is enabled for a surface, the client includes the `a2uiDataBroadcast` object in the metadata, following the [`a2ui_data_broadcast.json`] schema.
+
+**Properties:**
+
+- `surfaces` (object, required): A map of surface IDs to their current data models.
 
 ### `error`
 
@@ -741,6 +710,7 @@ This message is used to report a client-side error to the server.
 [`common_types.json`]: ../json/common_types.json
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
-[`a2ui_client_capabilities_schema.json`]: ../json/a2ui_client_capabilities_schema.json
+[`a2ui_client_capabilities.json`]: ../json/a2ui_client_capabilities.json
+[`a2ui_data_broadcast.json`]: ../json/a2ui_data_broadcast.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901
