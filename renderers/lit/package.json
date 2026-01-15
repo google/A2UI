@@ -30,9 +30,9 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "mkdir -p src/0.8/schemas && cp ../../specification/0.8/json/*.json src/0.8/schemas",
+      "command": "mkdir -p src/0.8/schemas && cp ../../specification/v0_8/json/*.json src/0.8/schemas",
       "files": [
-        "../../specification/0.8/json/*.json"
+        "../../specification/v0_8/json/*.json"
       ],
       "output": [
         "src/0.8/schemas/*.json"
