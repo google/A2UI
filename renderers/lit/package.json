@@ -32,7 +32,7 @@
     "copy-spec": {
       "command": "node copy-spec.js",
       "files": [
-        "../../specification/0.8/json/*.json"
+        "../../specification/v0_8/json/*.json"
       ],
       "output": [
         "src/0.8/schemas/*.json"
