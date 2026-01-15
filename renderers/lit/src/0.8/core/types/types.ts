@@ -151,7 +151,7 @@ export class CatalogImplementation<RenderOutput> {
 }
 
 export class FrameworkRenderer<RenderOutput> {
-  private readonly catalogImplementation: CatalogImplementation<RenderOutput>;
+  protected readonly catalogImplementation: CatalogImplementation<RenderOutput>;
 
   constructor(catalogImplementation: CatalogImplementation<RenderOutput>) {
     this.catalogImplementation = catalogImplementation;

@@ -14,12 +14,14 @@
  limitations under the License.
  */
 
-import { TemplateResult } from 'lit';
+import { html, TemplateResult } from 'lit';
+import { unsafeStatic } from 'lit/static-html.js';
 import {
   FrameworkRenderer,
   CatalogImplementation,
   AnyResolvedNode,
 } from '../core/types/types.js';
+import { componentRegistry } from './components/component-registry.js';
 
 export class LitRenderer extends FrameworkRenderer<TemplateResult> {
   constructor(catalogImplementation: CatalogImplementation<TemplateResult>) {
@@ -30,6 +32,25 @@ export class LitRenderer extends FrameworkRenderer<TemplateResult> {
     console.log(
       `[LitRenderer] renderNode visiting: ${node.type} (id: ${node.id})`
     );
+
+    // 1. Check componentRegistry for overrides or custom components
+    const constructor = componentRegistry.get(node.type);
+    if (constructor) {
+      const tagName = customElements.getName(constructor);
+      if (tagName) {
+        return html`<${unsafeStatic(tagName)}
+          .node=${node}
+          .renderChild=${this.renderNode.bind(this)}
+        ></${unsafeStatic(tagName)}>`;
+      }
+    }
+
+    // 2. Fallback to catalog
+    const renderer = this.catalogImplementation.getRenderer(node.type);
+    if (renderer) {
+      return renderer.render(node, this.renderNode.bind(this));
+    }
+
     return super.renderNode(node);
   }
 }

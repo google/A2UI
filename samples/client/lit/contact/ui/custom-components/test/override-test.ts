@@ -14,9 +14,9 @@
  limitations under the License.
  */
 
-import { componentRegistry, Root } from "@a2ui/lit/ui";
-import { html, css } from "lit";
-import { property } from "lit/decorators.js";
+import { componentRegistry } from "@a2ui/lit/ui";
+import { render } from "lit";
+import { v0_8 } from "@a2ui/lit";
 // 1. Define the override
 import { PremiumTextField } from "../premium-text-field.js";
 
@@ -27,20 +27,20 @@ console.log("Registered PremiumTextField override");
 // 3. Render a standard TextField component node
 const container = document.getElementById("app");
 if (container) {
-  const root = document.createElement("a2ui-root") as Root;
+  const renderer = new v0_8.LitRenderer(v0_8.standardLitCatalogImplementation);
 
   const textFieldComponent = {
     type: "TextField",
     id: "tf-1",
+    weight: "initial" as const,
     properties: {
-      label: "Enter your name",
-      text: "John Doe",
+      label: { literalString: "Enter your name" },
+      text: { literalString: "John Doe" },
     },
   };
 
-  // Root renders its *children*, so we must pass the component as a child.
-  root.childComponents = [textFieldComponent];
-
-  root.enableCustomElements = true; // Enable the feature
-  container.appendChild(root);
+  const result = renderer.renderNode(textFieldComponent as any);
+  if (result) {
+    render(result, container);
+  }
 }
