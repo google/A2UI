@@ -41,6 +41,12 @@ There are many organizations and individuals contributing to A2UI's development.
 
 If you have made signiciant contributions to A2UI, please submit your name to this list.
 
+## Translations
+
+Community-provided translations of the A2UI documentation.
+
+- 🇰🇷 [Korean (한국어) Documentation](https://a2ui-labs.github.io/docs-ko/)
+
 ## Code of Conduct
 
 We are committed to providing a welcoming and inclusive environment for everyone. All participants are expected to:
