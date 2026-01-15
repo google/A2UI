@@ -224,7 +224,6 @@ A2UI's component model is designed for flexibility, separating the protocol's st
 Each object in the `components` array of a `updateComponents` message defines a single UI component. It has the following structure:
 
 - `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
-- `weight` (number, optional): The relative weight of this component within a `Row` or `Column`, corresponding to the CSS `flex-grow` property.
 - `component` (string, required): Specifies the component's type (e.g., `"Text"`).
 - **Component Properties**: Other properties relevant to the specific component type (e.g., `text`, `url`, `children`) are included directly in the component object.
 
