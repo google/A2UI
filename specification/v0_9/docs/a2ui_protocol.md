@@ -49,8 +49,8 @@ The A2UI protocol uses a unidirectional stream of JSON messages from the server 
 Here is an example sequence of events (which don't have to be in exactly this order):
 
 1.  **Create Surface:** The server sends a `createSurface` message to initialize the surface.
-2.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
-3.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
+2.  **Update Surface:** Once a surface has been created, the server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
+3.  **Update Data Model:** Once a surface has been created, the server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
 4.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
 5.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
 6.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
@@ -97,7 +97,7 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
 
 ### Server to Client Message Structure: The Envelope
 
-The [`server_to_client.json`] schema is the top-level entry point. Every line streamed by the server must validate against this schema. It handles the message dispatching.
+The [`server_to_client.json`] schema is the top-level entry point. Every message streamed by the server must validate against this schema. It handles the message dispatching.
 
 ### The Standard Catalog
 
@@ -111,7 +111,7 @@ The envelope defines five primary message types, and every message streamed by t
 
 ### `createSurface`
 
-This message signals the client to create a new surface and begin rendering it. This message MUST be sent before the first `updateComponents` message that references this `surfaceId`. One of the components in one of the components lists MUST have an `id` of `root` to serve as the root of the component tree.
+This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. One of the components in one of the components lists MUST have an `id` of `root` to serve as the root of the component tree.
 
 **Properties:**
 
@@ -131,7 +131,7 @@ This message signals the client to create a new surface and begin rendering it. 
 
 ### `updateComponents`
 
-This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may not be sent until after a `createSurface` message that references this `surfaceId` has been sent.
+This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may only be sent to a surface that has already been created.
 
 **Properties:**
 
@@ -167,7 +167,7 @@ This message provides a list of UI components to be added to or updated within a
 
 ### `updateDataModel`
 
-This message is used to send or update the data that populates the UI components. It allows the server to change the UI's content without resending the entire component structure.
+This message is used to send or update the data that populates the UI components. It allows the server to change the UI's content without resending the entire component structure. This message may only be sent to a surface that has already been created.
 
 **Properties:**
 
