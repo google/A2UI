@@ -57,7 +57,7 @@ export class Checkbox extends Root {
     `,
   ];
 
-  #setBoundValue(value: string) {
+  #setBoundValue(value: boolean) {
     if (!this.value || !this.processor) {
       return;
     }
@@ -93,11 +93,11 @@ export class Checkbox extends Root {
             return;
           }
 
-          this.#setBoundValue(evt.target.value);
+          this.#setBoundValue(evt.target.checked);
         }}
         id="data"
         type="checkbox"
-        .value=${value}
+        .checked=${value}
       />
       <label class=${classMap(this.theme.components.CheckBox.label)} for="data"
         >${this.label?.literalString}</label
