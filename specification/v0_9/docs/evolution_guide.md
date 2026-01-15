@@ -236,9 +236,8 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 **v0.9:**
 
 - **Explicit Broadcasting**: `createSurface` introduced `broadcastDataModel` (boolean).
-- **Single-Path Updates**: Server pushes updates via `updateDataModel` using simple `path`/`value` pairs (no CRDTs or vector clocks).
+- **Single-Path Updates**: Server pushes updates via `updateDataModel` using simple `path`/`value` pairs.
 - **Broadcasting**: When `broadcastDataModel` is true, the client includes the full data model in every A2A message metadata.
-- **Reason**: Simplifies the protocol by removing complex conflict resolution (CRDTs) while ensuring the server always has the latest state when it needs to act.
 
 ## 6. Component-Specific Changes
 

@@ -471,7 +471,7 @@ When `broadcastDataModel` is set to `true` for a surface, the client automatical
 
 - **Trigger:** Data is sent only when an A2A message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
 - **Payload:** The data model is included in the A2A message metadata, tagged by its `surfaceId`.
-- **Convergence:** The server treats the received data model as the current state of the client at the time of the action. This eliminates the need for complex conflict resolution (CRDTs) or change tracking on the client.
+- **Convergence:** The server treats the received data model as the current state of the client at the time of the action.
 
 ## Client-Side Logic & Validation
 

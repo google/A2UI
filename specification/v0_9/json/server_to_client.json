@@ -83,14 +83,6 @@
             },
             "value": {
               "description": "The data to be updated in the data model. If present, the value at 'path' is replaced (or created). If omitted, the key at 'path' is removed.",
-              "type": [
-                "object",
-                "array",
-                "string",
-                "number",
-                "boolean",
-                "null"
-              ],
               "additionalProperties": true
             }
           },
