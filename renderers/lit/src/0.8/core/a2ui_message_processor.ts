@@ -119,7 +119,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
     relativePath: string,
     surfaceId = A2uiMessageProcessor.DEFAULT_SURFACE_ID
   ): DataValue | null {
-    const surface = this.getOrCreateSurface(surfaceId);
+    const surface = this.surfaces.get(surfaceId);
     if (!surface) return null;
 
     let finalPath: string;
@@ -147,7 +147,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
       return;
     }
 
-    const surface = this.getOrCreateSurface(surfaceId);
+    const surface = this.surfaces.get(surfaceId);
     if (!surface) return;
 
     let finalPath: string;
