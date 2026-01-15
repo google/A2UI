@@ -66,9 +66,9 @@
             "$ref": "#/$defs/FunctionDefinition"
           }
         },
-        "styles": {
-          "title": "A2UI Styles",
-          "description": "A schema that defines a catalog of A2UI styles. Each key is a style name, and each value is the JSON schema for that style's properties.",
+        "theme": {
+          "title": "A2UI Theme",
+          "description": "A schema that defines a catalog of A2UI theme properties. Each key is a theme property name (e.g. 'primaryColor'), and each value is the JSON schema for that property.",
           "type": "object",
           "additionalProperties": {
             "$ref": "https://json-schema.org/draft/2020-12/schema"

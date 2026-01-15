@@ -115,6 +115,7 @@ This message signals the client to create a new surface and begin rendering it. 
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
 - `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+- `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
 - `broadcastDataModel` (boolean, optional): If true, the client will append the full data model of this surface to the metadata of every A2A message (like 'action') sent to the server. Defaults to false.
 
 **Example:**
@@ -123,7 +124,10 @@ This message signals the client to create a new surface and begin rendering it. 
 {
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json"
+    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+    "theme": {
+      "primaryColor": "#00BFFF"
+    }
   }
 }
 ```
