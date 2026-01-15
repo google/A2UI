@@ -1,0 +1,42 @@
+{
+  "name": "@a2ui/vue2",
+  "version": "0.8.0",
+  "description": "A2UI Vue 2 Renderer - Render A2UI components using Vue 2.6 with Options API",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@a2ui/lit": "file:../lit",
+    "markdown-it": "^14.1.0"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.0 || ^2.7.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@vitejs/plugin-vue2": "^2.3.1",
+    "typescript": "~5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0",
+    "vue": "^2.7.16",
+    "vue-template-compiler": "^2.7.16"
+  },
+  "sideEffects": false
+}
