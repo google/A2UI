@@ -8,6 +8,8 @@ A web-based playground for building and testing AI agents that respond with A2UI
 
 - **Chat Interface**: Conversational UI to interact with AI agents
 - **Live Preview**: Real-time A2UI rendering as the agent responds
+- **Skills System**: Switch between different design personas/instructions
+- **Template Gallery**: Start from predefined templates (Landing, Dashboard, etc.)
 - **JSON Inspector**: View raw A2UI JSONL messages for debugging
 - **Theme Support**: Toggle between light and dark themes
 - **Gemini Integration**: Powered by Google's Gemini API

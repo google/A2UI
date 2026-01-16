@@ -51,37 +51,50 @@ export interface ServerToClientMessage {
     deleteSurface?: DeleteSurface;
 }
 
-// Default system prompt for A2UI generation - more explicit about JSON format
-const DEFAULT_SYSTEM_PROMPT = `You are an AI that generates A2UI protocol responses. Each response is JSONL (JSON Lines format).
+// Mixed content response: text explanation + A2UI messages
+export interface MixedContentResponse {
+    text: string;
+    a2uiMessages: ServerToClientMessage[];
+}
 
-CRITICAL: Each line must be VALID, PARSEABLE JSON. Check your brackets carefully!
+// Advanced A2UI Web Designer Prompt with Mixed Content Support
+const DEFAULT_SYSTEM_PROMPT = `You are an expert UI designer and full-stack developer specializing in A2UI (Agent-to-UI).
+Your goal is to build BEAUTIFUL, MODERN, and RESPONSIVE websites based on user requests.
 
-Response structure - EACH LINE is a separate JSON object:
-1. Define components using surfaceUpdate
-2. Provide data using dataModelUpdate
-3. End with beginRendering
+RESPONSE FORMAT:
+1.  **First**, provide a brief 1-3 sentence explanation of what you're building (plain text).
+2.  **Then**, on separate lines, output the A2UI JSONL.
+3.  The explanation should be conversational and helpful.
 
-SIMPLE EXAMPLE (each line is one JSON object):
-{"surfaceUpdate":{"components":[{"id":"root","component":{"Column":{"children":{"explicitList":["heading","text"]}}}}]}}
-{"surfaceUpdate":{"components":[{"id":"heading","component":{"Heading":{"text":{"literalString":"Welcome"}}}}]}}
-{"surfaceUpdate":{"components":[{"id":"text","component":{"Text":{"text":{"literalString":"This is a demo"}}}}]}}
-{"dataModelUpdate":{"contents":[]}}
+EXAMPLE RESPONSE:
+I'll create a modern hero section with a bold headline, supporting text, and call-to-action buttons.
+
+{"surfaceUpdate":{"components":[{"id":"root","component":{"Column":{"children":{"explicitList":["hero_title","hero_desc"]}}}}]}}
+{"surfaceUpdate":{"components":[{"id":"hero_title","component":{"Heading":{"text":{"literalString":"Welcome"},"usageHint":"h1"}}}]}}
 {"beginRendering":{"root":"root"}}
 
-CARD WITH CONTENT EXAMPLE:
-{"surfaceUpdate":{"components":[{"id":"root","component":{"Column":{"children":{"explicitList":["card1"]}}}}]}}
-{"surfaceUpdate":{"components":[{"id":"card1","component":{"Card":{"child":"cardContent"}}}]}}
-{"surfaceUpdate":{"components":[{"id":"cardContent","component":{"Column":{"children":{"explicitList":["title","desc"]}}}}]}}
-{"surfaceUpdate":{"components":[{"id":"title","component":{"Heading":{"text":{"literalString":"Card Title"}}}}]}}
-{"surfaceUpdate":{"components":[{"id":"desc","component":{"Text":{"text":{"literalString":"Card description"}}}}]}}
-{"dataModelUpdate":{"contents":[]}}
-{"beginRendering":{"root":"root"}}
+CORE PRINCIPLES:
+1.  **Visual Hierarchy**: Use H1 for main titles, H2/H3 for sections. Use whitespace effectively.
+2.  **Modern Layouts**:
+    *   **Hero Section**: Centered high-impact Heading + Subtext + Call-to-Action Buttons.
+    *   **Card Grids**: Use Rows of Columns containing Cards for features/products.
+    *   **Navigation**: Top Row with Logo (Heading) and Links (Buttons).
+    *   **Footer**: Bottom Column with copyright and secondary links.
+3.  **Components**:
+    *   Use **Card** for distinct content blocks.
+    *   Use **Column** and **Row** for layout. Use "distribution" (spaceBetween, center) effectively.
+    *   Use **Image** for visual appeal. For placeholders, use "https://placehold.co/600x400?text=Description".
+    *   Use **Button** for actions.
 
-Use components: Text, Heading, Image, Button, Card, Row, Column. Each child reference is a string ID.
-For Image: use "url":{"literalString":"https://..."} 
-For text: use "text":{"literalString":"..."}
+FORMAT RULES:
+*   Output **JSONL** (JSON Lines). Each line must be a valid JSON object.
+*   **DO NOT** include markdown code blocks (no \`\`\`json).
+*   **Sequence**:
+    1.  Send \`surfaceUpdate\` messages to define all components.
+    2.  Send \`beginRendering\` message to show the root component.
+*   **IDs**: Use descriptive IDs (e.g., "hero_section", "nav_bar", "feature_1").
 
-DO NOT include markdown code blocks. ONLY output JSONL lines.`;
+When the user asks for a website, think about the structure first, explain briefly, then stream the components.`;
 
 declare const process: { env: { GEMINI_API_KEY?: string } };
 
@@ -137,7 +150,13 @@ function tryRepairJson(line: string): string {
 export class A2UIClient {
     private genai: GoogleGenAI;
     private systemPrompt: string;
-    private conversationHistory: { role: string; parts: { text: string }[] }[] = [];
+    private conversationHistory: {
+        role: string;
+        parts: {
+            text?: string;
+            inlineData?: { mimeType: string; data: string };
+        }[];
+    }[] = [];
 
     constructor(
         apiKey: string = process.env.GEMINI_API_KEY || "",
@@ -148,6 +167,16 @@ export class A2UIClient {
         }
         this.genai = new GoogleGenAI({ apiKey });
         this.systemPrompt = systemPrompt;
+    }
+
+    /**
+     * Set a skill by applying its system prompt addendum
+     * @param skillAddendum Additional instructions from the skill
+     */
+    setSkill(skillAddendum: string): void {
+        this.systemPrompt = DEFAULT_SYSTEM_PROMPT + (skillAddendum ? '\n\n' + skillAddendum : '');
+        this.clearHistory(); // Clear history when skill changes
+        console.log("Skill applied. System prompt updated.");
     }
 
     /**
@@ -173,15 +202,45 @@ export class A2UIClient {
 
     /**
      * Send a message and get A2UI response
+     * @param message User text message
+     * @param images Optional array of base64 image strings (clean base64, no data URI prefix)
      */
-    async send(message: string | object): Promise<ServerToClientMessage[]> {
-        const userMessage =
-            typeof message === "string" ? message : JSON.stringify(message);
+    async send(message: string, images: string[] = []): Promise<ServerToClientMessage[]> {
+        // Construct the parts array
+        const parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] = [
+            { text: message }
+        ];
+
+        // Add images if present
+        for (const base64Image of images) {
+            // Assume JPEG for simplicity if stripped, or we extract from data URI
+            // Here we assume the frontend passes raw base64 data and we default to image/jpeg 
+            // OR the frontend passes data URI and we parse it. 
+            // Let's assume frontend passes data URI for convenience and we parse it here.
+
+            let mimeType = "image/jpeg";
+            let data = base64Image;
+
+            if (base64Image.includes(";base64,")) {
+                const matches = base64Image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    mimeType = matches[1];
+                    data = matches[2];
+                }
+            }
+
+            parts.push({
+                inlineData: {
+                    mimeType,
+                    data
+                }
+            });
+        }
 
         // Add user message to history
         this.conversationHistory.push({
             role: "user",
-            parts: [{ text: userMessage }],
+            parts: parts,
         });
 
         try {
@@ -190,7 +249,7 @@ export class A2UIClient {
                 contents: this.conversationHistory,
                 config: {
                     systemInstruction: this.systemPrompt,
-                    temperature: 0.5, // Lower temperature for more consistent JSON
+                    temperature: 0.5,
                 },
             });
 
@@ -202,7 +261,6 @@ export class A2UIClient {
                 parts: [{ text: responseText }],
             });
 
-            // Parse JSONL response into A2UI messages
             return this.parseA2UIResponse(responseText);
         } catch (error) {
             console.error("Error generating A2UI response:", error);
@@ -301,5 +359,149 @@ export class A2UIClient {
         }
 
         return messages;
+    }
+
+    /**
+     * Parse a response and extract both text explanation and A2UI messages
+     */
+    private parseMixedResponse(responseText: string): MixedContentResponse {
+        console.log("=== parseMixedResponse input ===", responseText);
+
+        // Remove markdown code blocks if present
+        let cleanedText = responseText
+            .replace(/```json\s*/gi, '')
+            .replace(/```jsonl\s*/gi, '')
+            .replace(/```\s*/g, '');
+
+        // Split by newlines
+        const lines = cleanedText
+            .split("\n")
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0);
+
+        const textLines: string[] = [];
+        const a2uiMessages: ServerToClientMessage[] = [];
+
+        for (const line of lines) {
+            // Find JSON objects anywhere in the line
+            const jsonStart = line.indexOf('{');
+
+            if (jsonStart !== -1) {
+                // Extract text before the JSON
+                const textBefore = line.substring(0, jsonStart).trim();
+                if (textBefore) {
+                    textLines.push(textBefore);
+                }
+
+                // Extract the potential JSON part
+                let jsonPart = line.substring(jsonStart);
+                let parsed: unknown = null;
+
+                try {
+                    parsed = JSON.parse(jsonPart);
+                } catch {
+                    jsonPart = tryRepairJson(jsonPart);
+                    try {
+                        parsed = JSON.parse(jsonPart);
+                        console.log("Repaired JSON successfully:", jsonPart.substring(0, 50) + "...");
+                    } catch (e) {
+                        // JSON-looking line that fails parsing - DON'T add to textLines
+                        // This is most likely malformed A2UI that we should skip
+                        console.warn("Failed to parse JSON line, skipping from text:", line.substring(0, 60) + "...");
+                        continue;
+                    }
+                }
+
+                // Validate it's a valid A2UI message
+                if (
+                    parsed &&
+                    typeof parsed === "object" &&
+                    (("surfaceUpdate" in parsed) ||
+                        ("dataModelUpdate" in parsed) ||
+                        ("beginRendering" in parsed) ||
+                        ("deleteSurface" in parsed))
+                ) {
+                    a2uiMessages.push(parsed as ServerToClientMessage);
+                    console.log("Parsed A2UI message:", (parsed as any).surfaceUpdate ? "surfaceUpdate" : (parsed as any).beginRendering ? "beginRendering" : "other");
+                }
+                // Don't add to textLines if it looked like JSON
+            } else {
+                // No JSON in this line, treat as text explanation
+                textLines.push(line);
+            }
+        }
+
+        const result = {
+            text: textLines.join('\n').trim(),
+            a2uiMessages
+        };
+
+        console.log("=== parseMixedResponse output ===", {
+            text: result.text,
+            a2uiMessagesCount: a2uiMessages.length
+        });
+
+        return result;
+    }
+
+    /**
+     * Send a message and get mixed content response (text + A2UI)
+     */
+    async sendMixed(message: string, images: string[] = []): Promise<MixedContentResponse> {
+        // Construct the parts array
+        const parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] = [
+            { text: message }
+        ];
+
+        // Add images if present
+        for (const base64Image of images) {
+            let mimeType = "image/jpeg";
+            let data = base64Image;
+
+            if (base64Image.includes(";base64,")) {
+                const matches = base64Image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+                if (matches && matches.length === 3) {
+                    mimeType = matches[1];
+                    data = matches[2];
+                }
+            }
+
+            parts.push({
+                inlineData: {
+                    mimeType,
+                    data
+                }
+            });
+        }
+
+        // Add user message to history
+        this.conversationHistory.push({
+            role: "user",
+            parts: parts,
+        });
+
+        try {
+            const response = await this.genai.models.generateContent({
+                model: "gemini-2.0-flash-exp",
+                contents: this.conversationHistory,
+                config: {
+                    systemInstruction: this.systemPrompt,
+                    temperature: 0.5,
+                },
+            });
+
+            const responseText = response.text || "";
+
+            // Add assistant response to history
+            this.conversationHistory.push({
+                role: "model",
+                parts: [{ text: responseText }],
+            });
+
+            return this.parseMixedResponse(responseText);
+        } catch (error) {
+            console.error("Error generating A2UI response:", error);
+            throw error;
+        }
     }
 }
