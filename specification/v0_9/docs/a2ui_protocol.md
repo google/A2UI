@@ -270,9 +270,9 @@ flowchart TD
 
 ```
 
-## Data Model Representation: Binding, Scope, and Interpolation
+## Data Model Representation: Binding and Scope
 
-This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration, and interpolation.
+This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration.
 
 ### Path Resolution & Scope
 
@@ -341,22 +341,6 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
   // "/company" is Absolute. Resolves to "Acme Corp" globally.
 }
 ```
-
-#### Client-Side Functions
-
-Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
-
-- `${now()}`: A function with no arguments.
-- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
-
-Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
-
-#### Nested Interpolation
-
-Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
-
-- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
-- **Nested Functions**: `${upper(${now()})}`
 
 #### Type Conversion
 
@@ -568,6 +552,8 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 
 ### Functions
 
+#### Validation Functions
+
 | Function          | Description                                                              |
 | :---------------- | :----------------------------------------------------------------------- |
 | **required**      | Checks that the value is not null, undefined, or empty.                  |
@@ -575,53 +561,37 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **length**        | Checks string length constraints.                                        |
 | **numeric**       | Checks numeric range constraints.                                        |
 | **email**         | Checks that the value is a valid email address.                          |
-| **string_format** | Does string interpolation of data model values and registered functions. |
 
-### The `string_format` function
+#### String Formatting Functions
 
-The `string_format` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
-
-#### _Syntax_
-
-Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
-
-#### _Data Model Binding_
-
-Values from the data model can be interpolated using their JSON Pointer path.
-
-- `${/user/profile/name}`: Absolute path.
-- `${firstName}`: Relative path (resolved against the current collection scope).
+| Function          | Description                                                                         |
+| :---------------- | :---------------------------------------------------------------------------------- |
+| **formatString**  | Performs string interpolation on a template string using named arguments. Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`. |
+| **formatNumber**  | Formats a number with the specified grouping and decimal precision.                 |
+| **formatCurrency**| Formats a number as a currency string.                                              |
+| **formatDate**    | Formats a timestamp into a string using a pattern.                                  |
+| **pluralize**     | Returns the singular string if the count is 1, otherwise returns the plural string. |
 
 **Example:**
 
 ```json
 {
-  "id": "user_welcome",
+  "id": "receipt",
   "component": "Text",
   "text": {
-    "call": "string_format",
+    "call": "formatString",
     "args": {
-      "value": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
+      "template": "Bought ${quantity} ${item} on ${date} for ${price}.",
+      "args": {
+        "quantity": { "call": "formatNumber", "args": { "value": { "path": "/transaction/count" }, "decimals": 0 } },
+        "item": { "call": "pluralize", "args": { "value": { "path": "/transaction/count" }, "singular": "apple", "plural": "apples" } },
+        "date": { "call": "formatDate", "args": { "value": { "path": "/transaction/timestamp" }, "pattern": "MMM d, yyyy" } },
+        "price": { "call": "formatCurrency", "args": { "value": { "path": "/transaction/amount" }, "currencyCode": "USD" } }
+      }
     }
   }
 }
 ```
-
-#### _Client-Side Functions_
-
-Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
-
-- `${now()}`: A function with no arguments.
-- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
-
-Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
-
-#### _Nested Interpolation_
-
-Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
-
-- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
-- **Nested Functions**: `${upper(${now()})}`
 
 #### _Type Conversion_
 
