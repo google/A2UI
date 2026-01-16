@@ -116,7 +116,7 @@ This message signals the client to create a new surface and begin rendering it. 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
 - `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
 - `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
-- `syncDataModel` (boolean, optional): If true, the client will append the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
+- `attachDataModelToRequests` (boolean, optional): If true, the client will attach the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
 
 **Example:**
 
@@ -128,7 +128,7 @@ This message signals the client to create a new surface and begin rendering it. 
     "theme": {
       "primaryColor": "#00BFFF"
     },
-    "syncDataModel": true
+    "attachDataModelToRequests": true
   }
 }
 ```
@@ -413,7 +413,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 While the sections above describe how components reference data, this section defines how the Data Model itself is **updated** and synchronized.
 
-To support reliable data synchronization between the Renderer and the Agent that created the surface, the A2UI protocol uses a simple synchronization mechanism controlled by the `syncDataModel` property in the `createSurface` message.
+To support reliable data synchronization between the Renderer and the Agent that created the surface, the A2UI protocol uses a simple synchronization mechanism controlled by the `attachDataModelToRequests` property in the `createSurface` message.
 
 ### Server to Client Updates
 
@@ -472,7 +472,7 @@ _Replace the entire data model:_
 
 ### Client to Server Updates (State Synchronization)
 
-When `syncDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action` or user query) sent to the server that created the surface. The data model is included in the A2A message metadata using the schema in [`a2ui_data_sync.json`](../json/a2ui_data_sync.json).
+When `attachDataModelToRequests` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action` or user query) sent to the server that created the surface. The data model is included in the A2A message metadata using the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
 
 - **Targeted Delivery**: The data model is sent exclusively to the server that created the surface. Data cannot leak to other agents or servers. 
 - **Trigger:** Data is sent only when an A2A message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
@@ -700,9 +700,9 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
 
-#### Client Data Model Sync
+#### Client Data Model
 
-When `syncDataModel` is enabled for a surface, the client includes the `a2uiDataSync` object in the metadata, following the [`a2ui_data_sync.json`] schema.
+When `attachDataModelToRequests` is enabled for a surface, the client includes the `a2uiClientDataModel` object in the metadata, following the [`a2ui_client_data_model.json`] schema.
 
 **Properties:**
 
@@ -717,6 +717,6 @@ This message is used to report a client-side error to the server.
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
 [`a2ui_client_capabilities.json`]: ../json/a2ui_client_capabilities.json
-[`a2ui_data_sync.json`]: ../json/a2ui_data_sync.json
+[`a2ui_client_data_model.json`]: ../json/a2ui_client_data_model.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901
