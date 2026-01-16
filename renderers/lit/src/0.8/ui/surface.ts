@@ -32,6 +32,9 @@ export class Surface extends Root {
   @property()
   accessor processor: A2uiMessageProcessor | null = null;
 
+  @property({ type: Boolean })
+  accessor enableCustomElements = false;
+
   static styles = [
     css`
       :host {
@@ -118,6 +121,7 @@ export class Surface extends Root {
       style=${styleMap(styles)}
       .surfaceId=${this.surfaceId}
       .processor=${this.processor}
+      .enableCustomElements=${this.enableCustomElements}
       .childComponents=${this.surface?.componentTree
         ? [this.surface.componentTree]
         : null}
