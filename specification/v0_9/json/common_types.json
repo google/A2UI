@@ -211,7 +211,7 @@
         "returnType": {
           "type": "string",
           "description": "The expected return type of the function call.",
-          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "enum": ["string", "number", "boolean", "array", "object", "any", "void"],
           "default": "boolean"
         }
       },

@@ -597,9 +597,13 @@
               "type": "boolean",
               "description": "If true, allows the user to select a time."
             },
-            "outputFormat": {
+            "min": {
               "type": "string",
-              "description": "The desired format for the output string after a date or time is selected."
+              "description": "The minimum allowed date/time in ISO 8601 format."
+            },
+            "max": {
+              "type": "string",
+              "description": "The maximum allowed date/time in ISO 8601 format."
             },
             "label": {
               "$ref": "common_types.json#/$defs/DynamicString",
@@ -727,6 +731,26 @@
             "properties": {
               "value": { "type": "string" }
             }
+          }
+        ],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "openUrl",
+      "description": "Opens the specified URL in the system's default browser or handler. This function has no return value.",
+      "returnType": "void",
+      "parameters": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "The URL to open."
+              }
+            },
+            "required": ["url"]
           }
         ],
         "unevaluatedProperties": false
