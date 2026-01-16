@@ -578,6 +578,22 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **string_format** | Does string interpolation of data model values and registered functions. |
 | **openUrl**       | Opens a URL in a browser.                                                |
 
+### Theme
+
+The standard catalog defines the following theme properties that can be set in the `createSurface` message:
+
+| Property           | Type   | Description                                                                                               |
+| :----------------- | :----- | :-------------------------------------------------------------------------------------------------------- |
+| **primaryColor**   | String | The primary UI color as a hexadecimal code (e.g., '#00BFFF').                                             |
+| **iconUrl**        | URI    | A URL for an image (e.g., logo or avatar) that identifies the agent or tool associated with the surface.  |
+| **agentDisplayName**| String | Text to be displayed next to the surface to identify the agent or tool that created it (e.g. "Weather Bot").|
+
+#### Identity and Attribution
+
+The `iconUrl` and `agentDisplayName` fields are used to provide attribution to the user, identifying which sub-agent or tool is responsible for a particular UI surface.
+
+In multi-agent systems or orchestrators, the orchestrator is responsible for setting or validating these fields. This ensures that the identity displayed to the user matches the actual agent server being contacted, preventing malicious agents from impersonating trusted services. For example, an orchestrator might overwrite these fields with the verified identity of the sub-agent before forwarding the `createSurface` message to the client.
+
 ### The `string_format` function
 
 The `string_format` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
