@@ -16,8 +16,8 @@
 
 import { Root } from '@a2ui/lit/ui';
 import { v0_8 } from '@a2ui/lit';
-import { html, css, TemplateResult } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
 // Use aliases for convenience
@@ -31,9 +31,6 @@ export interface OrgChartNode {
 
 @customElement('org-chart')
 export class OrgChart extends Root {
-  @property({ type: Array }) accessor chain: OrgChartNode[] = [];
-  @property({ type: Object }) accessor action: Action | null = null;
-
   static styles = [
     ...Root.styles,
     css`
@@ -103,14 +100,15 @@ export class OrgChart extends Root {
   `];
 
   render() {
-    if (!this.chain || this.chain.length === 0) {
+    const chain = (this.node.properties.chain as OrgChartNode[]) || [];
+    if (chain.length === 0) {
       return html`<div class="empty">No hierarchy data</div>`;
     }
 
     return html`
       <div class="container">
-        ${map(this.chain, (node, index) => {
-      const isLast = index === this.chain.length - 1;
+        ${map(chain, (node, index) => {
+      const isLast = index === chain.length - 1;
       return html`
             <button 
               class="node ${isLast ? 'current' : ''}"
@@ -128,11 +126,12 @@ export class OrgChart extends Root {
   }
 
   private handleNodeClick(node: OrgChartNode) {
-    if (!this.action) return;
+    const action = this.node.properties.action as Action;
+    if (!action) return;
 
     // Create a new action with the node's context merged in
     const newContext = [
-      ...(this.action.context || []),
+      ...(action.context || []),
       {
         key: 'clickedNodeTitle',
         value: { literalString: node.title }
@@ -144,7 +143,7 @@ export class OrgChart extends Root {
     ];
 
     const actionWithContext: Action = {
-      ...this.action,
+      ...action,
       context: newContext as Action['context']
     };
 
@@ -153,7 +152,7 @@ export class OrgChart extends Root {
       action: actionWithContext,
       dataContextPath: this.dataContextPath,
       sourceComponentId: this.id,
-      sourceComponent: this.component,
+      sourceComponent: this.node,
     });
     this.dispatchEvent(evt);
   }

@@ -16,12 +16,11 @@
 
 import { Root } from '@a2ui/lit/ui';
 import { html, css } from 'lit';
-import { property } from 'lit/decorators.js';
+import { v0_8 } from '@a2ui/lit';
+
+const { extractStringValue } = v0_8.UI.Utils;
 
 export class PremiumTextField extends Root {
-  @property() accessor label = '';
-  @property() accessor text = '';
-
   static styles = [
     ...Root.styles,
     css`
@@ -86,10 +85,23 @@ export class PremiumTextField extends Root {
   ];
 
   render() {
+    const label = extractStringValue(
+      this.node.properties.label as any,
+      this.node,
+      this.processor,
+      this.surfaceId
+    );
+    const text = extractStringValue(
+      this.node.properties.text as any,
+      this.node,
+      this.processor,
+      this.surfaceId
+    );
+
     return html`
-      <label>${this.label}</label>
+      <label>${label}</label>
       <div class="input-container">
-        <input type="text" .value="${this.text}" placeholder="Type here...">
+        <input type="text" .value="${text}" placeholder="Type here...">
       </div>
       <div class="hint">
         <span class="badge">Custom</span>

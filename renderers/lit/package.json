@@ -14,8 +14,8 @@
       "default": "./dist/src/0.8/core.js"
     },
     "./ui": {
-      "types": "./dist/src/0.8/ui/ui.d.ts",
-      "default": "./dist/src/0.8/ui/ui.js"
+      "types": "./dist/src/0.8/lit/components/ui.d.ts",
+      "default": "./dist/src/0.8/lit/components/ui.js"
     }
   },
   "type": "module",

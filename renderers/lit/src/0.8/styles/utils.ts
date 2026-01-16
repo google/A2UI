@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { ColorPalettes } from "../types/colors.js";
+import { ColorPalettes } from "../core/types/colors.js";
 
 export function merge(...classes: Array<Record<string, boolean>>) {
   const styles: Record<string, boolean> = {};

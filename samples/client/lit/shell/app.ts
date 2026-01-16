@@ -266,7 +266,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
     `,
   ];
 
-  #processor = v0_8.Data.createSignalA2uiMessageProcessor();
+  #processor = v0_8.Data.createSignalA2uiMessageProcessor(v0_8.standardCatalogApi);
+  #renderer = new v0_8.LitRenderer(v0_8.standardLitCatalogImplementation);
   #a2uiClient = new A2UIClient();
   #snackbar: Snackbar | undefined = undefined;
   #pendingSnackbarMessages: Array<{
@@ -464,11 +465,11 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
             if (evt.detail.action.context) {
               const srcContext = evt.detail.action.context;
               for (const item of srcContext) {
-                if (item.value.literalBoolean) {
+                if (item.value.literalBoolean !== undefined) {
                   context[item.key] = item.value.literalBoolean;
-                } else if (item.value.literalNumber) {
+                } else if (item.value.literalNumber !== undefined) {
                   context[item.key] = item.value.literalNumber;
-                } else if (item.value.literalString) {
+                } else if (item.value.literalString !== undefined) {
                   context[item.key] = item.value.literalString;
                 } else if (item.value.path) {
                   const path = this.#processor.resolvePath(
@@ -480,7 +481,14 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
                     path,
                     surfaceId
                   );
-                  context[item.key] = value;
+                  if (value !== undefined && value !== null) {
+                    context[item.key] = value;
+                  } else {
+                    console.warn(`[App] Context path ${path} resolved to null/undefined`);
+                    // Ensure we send null if that's what we got, or strict behavior?
+                    // Spec says value is DataValue, which includes null.
+                    context[item.key] = null; 
+                  }
                 }
               }
             }
@@ -500,7 +508,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
               .surfaceId=${surfaceId}
               .surface=${surface}
               .processor=${this.#processor}
-            ></a2-uisurface>`;
+              .renderer=${this.#renderer}
+            ></a2ui-surface>`;
       }
     )}
     </section>`;

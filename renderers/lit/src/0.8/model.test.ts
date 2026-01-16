@@ -17,7 +17,8 @@
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
 import { v0_8 } from "@a2ui/lit";
-import { DataMap, DataValue } from "./types/types";
+import { DataMap, DataValue } from "./core/types/types";
+import { standardCatalogApi } from "./core/standard_catalog_api/standard_catalog.js";
 
 // Helper function to strip reactivity for clean comparisons.
 const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
@@ -46,10 +47,10 @@ const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
 };
 
 describe("A2uiMessageProcessor", () => {
-  let processor = new v0_8.Data.A2uiMessageProcessor();
+  let processor = new v0_8.Data.A2uiMessageProcessor({ catalog: standardCatalogApi });
 
   beforeEach(() => {
-    processor = new v0_8.Data.A2uiMessageProcessor();
+    processor = new v0_8.Data.A2uiMessageProcessor({ catalog: standardCatalogApi });
   });
 
   describe("Basic Initialization and State", () => {
