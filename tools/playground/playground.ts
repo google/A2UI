@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { LitElement, html, css, nothing } from "lit";
+import { LitElement, html, css, nothing, svg } from 'lit';
 import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 import { classMap } from "lit/directives/class-map.js";
@@ -28,6 +28,7 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   a2uiMessages?: ServerToClientMessage[];
+  attachments?: string[];
 }
 
 type ViewMode = 'chat' | 'create';
@@ -47,6 +48,9 @@ export class A2UIPlayground extends LitElement {
   @state() private accessor isListening = false;
   @state() private accessor selectedSkillId: string = 'default';
   @state() private accessor showSkillDropdown = false;
+
+  // Store for uploaded images: ID -> Base64
+  private uploadedImages: Map<string, string> = new Map();
 
   // View and Template state
   @state() private accessor currentView: ViewMode = 'chat';
@@ -769,8 +773,9 @@ export class A2UIPlayground extends LitElement {
     const userMessage: ChatMessage = {
       id: crypto.randomUUID(),
       role: "user",
-      content: this.currentInput.trim() || (this.attachments.length > 0 ? "[Attached Images]" : ""),
+      content: this.currentInput.trim(),
       timestamp: new Date(),
+      attachments: this.attachments.length > 0 ? [...this.attachments] : undefined
     };
 
     this.messages = [...this.messages, userMessage];
@@ -785,6 +790,24 @@ export class A2UIPlayground extends LitElement {
     }
 
     const images = [...this.attachments];
+    let imageInstructions = "";
+
+    if (images.length > 0) {
+      // Register images with IDs
+      const newImageIds: string[] = [];
+      images.forEach((base64, index) => {
+        const id = `uploaded_image_${Date.now()}_${index}`;
+        this.uploadedImages.set(id, base64);
+        newImageIds.push(id);
+      });
+
+      imageInstructions = `\n\nThe user has uploaded ${images.length} image(s). You can reference them in your A2UI 'Image' components using these EXACT urls:\n${newImageIds.map(id => `- "${id}"`).join('\n')}\nExample: { "Image": { "url": { "literalString": "${newImageIds[0]}" } } }`;
+    }
+
+    // Append instructions to prompt
+    if (imageInstructions) {
+      prompt += imageInstructions;
+    }
 
     this.currentInput = "";
     this.attachments = []; // Clear attachments after sending
@@ -1001,6 +1024,24 @@ export class A2UIPlayground extends LitElement {
     }
   }
 
+  // Handle paste events for images
+  private handlePaste = async (e: ClipboardEvent): Promise<void> => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.indexOf('image') !== -1) {
+        const blob = item.getAsFile();
+        if (blob) {
+          e.preventDefault(); // Prevent default paste behavior for images
+          const base64 = await this.readFileAsBase64(blob);
+          this.attachments = [...this.attachments, base64];
+        }
+      }
+    }
+  }
+
   private readFileAsBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1084,8 +1125,13 @@ export class A2UIPlayground extends LitElement {
         return html`<button class="a2ui-button a2ui-component">${btnLabel}</button>`;
       case "Image":
         let url = props.url?.literalString || props.src || "";
-        // Fallback for common AI hallucinations or invalid URLs
-        if (!url || url.includes('example_image') || url.includes('githubusercontent')) {
+
+        // Check if it's an uploaded image ID
+        if (this.uploadedImages.has(url)) {
+          url = this.uploadedImages.get(url) || "";
+        }
+        // Fallback for common AI hallucinations or invalid URLs (only if not an uploaded image)
+        else if (!url || url.includes('example_image') || url.includes('githubusercontent')) {
           url = "https://placehold.co/600x400?text=Image";
         }
         return html`<img class="a2ui-image a2ui-component" src="${url}" alt="Image" onError="this.src='https://placehold.co/600x400?text=Error'"/>`;
@@ -1109,6 +1155,72 @@ export class A2UIPlayground extends LitElement {
         `;
       case "Divider":
         return html`<hr class="a2ui-divider a2ui-component" style="border: none; border-top: 1px solid #e0e0e0; margin: 16px 0;">`;
+      case "Canvas":
+        const width = props.width || 400;
+        const height = props.height || 400;
+        return html`
+          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" 
+               style="border: 1px solid #e0e0e0; background: white; margin: 10px 0;">
+             ${this.renderChildren(props.children, components)}
+          </svg>
+        `;
+      case "Rectangle":
+        return svg`<rect 
+           x="${props.x || 0}" y="${props.y || 0}" 
+           width="${props.width || 100}" height="${props.height || 100}" 
+           rx="${props.rx || 0}"
+           fill="${props.fill || 'black'}" 
+           stroke="${props.stroke || 'none'}" 
+           stroke-width="${props.strokeWidth || 1}" />`;
+      case "Circle":
+        return svg`<circle 
+           cx="${props.cx || 0}" cy="${props.cy || 0}" 
+           r="${props.r || 50}" 
+           fill="${props.fill || 'black'}" 
+           stroke="${props.stroke || 'none'}" 
+           stroke-width="${props.strokeWidth || 1}" />`;
+      case "Line":
+        return svg`<line 
+           x1="${props.x1 || 0}" y1="${props.y1 || 0}" 
+           x2="${props.x2 || 100}" y2="${props.y2 || 100}" 
+           stroke="${props.stroke || 'black'}" 
+           stroke-width="${props.strokeWidth || 1}" />`;
+      case "Path":
+        return svg`<path 
+           d="${props.d || ''}" 
+           fill="${props.fill || 'none'}" 
+           stroke="${props.stroke || 'black'}" 
+           stroke-width="${props.strokeWidth || 1}" />`;
+      case "Text":
+        // Distinguish between UI Text and SVG Text based on parent context? 
+        // Or if it has 'x'/'y' props it's likely SVG.
+        // But 'Text' is already handled above. 
+        // We probably need to check if we are inside a Canvas context, OR check for SVG-specific props.
+        // However, the component name key is "Text".
+        // The previous "Text" case logic:
+        /*
+          case "Text":
+          case "Paragraph": // Alias for Text
+            const text = props.text?.literalString || props.text?.path || props.content || "";
+            return html`<p class="a2ui-text a2ui-component">${text}</p>`;
+        */
+        // If we have x/y, treat as SVG text.
+        if (props.x !== undefined || props.y !== undefined) {
+          const svgText = props.text?.literalString || props.text || "";
+          return svg`<text 
+               x="${props.x || 0}" y="${props.y || 0}" 
+               fill="${props.fill || 'black'}" 
+               font-size="${props.fontSize || 14}"
+               font-family="${props.fontFamily || 'Arial'}">${svgText}</text>`;
+        }
+        // Fallthrough to standard text rendering (existing logic will handle it if I don't return here)
+        const textContent = props.text?.literalString || props.text?.path || props.content || "";
+        return html`<p class="a2ui-text a2ui-component">${textContent}</p>`;
+
+      case "Paragraph": // Explicit Paragraph always standard text
+        const pText = props.text?.literalString || props.text?.path || props.content || "";
+        return html`<p class="a2ui-text a2ui-component">${pText}</p>`;
+
       default:
         return html`<div class="a2ui-component" style="color:red">[Unknown: ${type}]</div>`;
     }
@@ -1236,8 +1348,14 @@ export class A2UIPlayground extends LitElement {
                           <span class="g-icon" style="font-size: 48px; opacity: 0.5;">web</span>
                           <p>Describe a website to build.</p>
                       </div>
+                      </div>
                    ` : repeat(this.messages, m => m.id, m => html`
                       <div class="message ${m.role}">
+                        ${m.attachments && m.attachments.length > 0 ? html`
+                           <div class="message-attachments">
+                              ${m.attachments.map(src => html`<img src="${src}" class="chat-attachment-thumb" style="max-width: 200px; max-height: 200px; margin-bottom: 8px; border-radius: 8px;">`)}
+                           </div>
+                        ` : nothing}
                         <p style="margin: 0 0 8px 0;">${m.content}</p>
                         ${m.role === 'assistant' && m.a2uiMessages && m.a2uiMessages.length > 0
         ? html`
@@ -1270,6 +1388,7 @@ export class A2UIPlayground extends LitElement {
                       .value=${this.currentInput}
                       @input=${(e: any) => this.currentInput = e.target.value}
                       @keydown=${this.handleKeyDown}
+                      @paste=${this.handlePaste}
                       ?disabled=${this.isLoading}
                     ></textarea>
                     <div class="input-actions">

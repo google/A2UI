@@ -83,7 +83,9 @@ CORE PRINCIPLES:
 3.  **Components**:
     *   Use **Card** for distinct content blocks.
     *   Use **Column** and **Row** for layout. Use "distribution" (spaceBetween, center) effectively.
-    *   Use **Image** for visual appeal. For placeholders, use "https://placehold.co/600x400?text=Description".
+    *   Use **Image** for visual appeal.
+        *   For specific items (e.g., "flower", "pizza"), use: "https://loremflickr.com/600/400/keyword".
+        *   For generic placeholders, use: "https://placehold.co/600x400?text=Description".
     *   Use **Button** for actions.
 
 FORMAT RULES:

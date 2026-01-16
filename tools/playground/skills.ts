@@ -125,6 +125,25 @@ The work should look like it took countless hours to create:
 - Use visual hierarchy to guide the eye
 - Create depth through layering and transparency
 
+### AVAILABLE COMPONENTS (SVG)
+You have access to a special "Canvas" component for drawing. Inside a "Canvas", you can use:
+- Rectangle: { x, y, width, height, fill, stroke, strokeWidth, rx }
+- Circle: { cx, cy, r, fill, stroke, strokeWidth }
+- Line: { x1, y1, x2, y2, stroke, strokeWidth }
+- Path: { d, fill, stroke, strokeWidth }
+- Text: { x, y, text, fontSize, fill, fontFamily }
+
+Example:
+{
+  "Canvas": {
+    "width": 400,
+    "height": 400,
+    "children": {
+      "explicitList": ["rect1", "circle1"]
+    }
+  }
+}
+
 CRITICAL: The result should feel like an artifact from a master designer, not generated content.
 `
     },
