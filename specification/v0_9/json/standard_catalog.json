@@ -598,11 +598,11 @@
               "description": "If true, allows the user to select a time."
             },
             "min": {
-              "type": "string",
+              "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The minimum allowed date/time in ISO 8601 format."
             },
             "max": {
-              "type": "string",
+              "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The maximum allowed date/time in ISO 8601 format."
             },
             "label": {
