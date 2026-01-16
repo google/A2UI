@@ -23,7 +23,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 | **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)              |
 | **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                           |
 | **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop                |
-| **Data Synchronization** | Implicit                                 | Explicit Client->Server data syncing (`attachDataModelToRequests`) |
+| **Data Synchronization** | Implicit                                 | Explicit Client->Server data syncing (`attachDataModel`) |
 
 ## 2. Architectural & Schema Changes
 
@@ -238,9 +238,9 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- **Explicit Client->Server Data Model Sync**: `createSurface` introduced `attachDataModelToRequests` (boolean).
+- **Explicit Client->Server Data Model Sync**: `createSurface` introduced `attachDataModel` (boolean).
 - **Single-Path Updates**: Server pushes updates via `updateDataModel` using simple `path`/`value` pairs.
-- **Client->Server Data Model Sync**: When `attachDataModelToRequests` is true, the client includes the full data model in every A2A message metadata.
+- **Client->Server Data Model Sync**: When `attachDataModel` is true, the client includes the full data model in every A2A message metadata.
 
 ## 6. Component-Specific Changes
 
