@@ -700,7 +700,7 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
 
-#### ClientData Model Sync
+#### Client Data Model Sync
 
 When `syncDataModel` is enabled for a surface, the client includes the `a2uiDataSync` object in the metadata, following the [`a2ui_data_sync.json`] schema.
 
