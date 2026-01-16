@@ -2,23 +2,6 @@
   "schema": "server_to_client.json",
   "tests": [
     {
-      "description": "Text with valid variant 'link'",
-      "valid": true,
-      "data": {
-        "updateComponents": {
-          "surfaceId": "test_surface",
-          "components": [
-            {
-              "id": "text_link",
-              "component": "Text",
-              "text": "Click me",
-              "variant": "link"
-            }
-          ]
-        }
-      }
-    },
-    {
       "description": "Text with valid variant 'h1'",
       "valid": true,
       "data": {

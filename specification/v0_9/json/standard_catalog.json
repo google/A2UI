@@ -21,7 +21,7 @@
             "variant": {
               "type": "string",
               "description": "A hint for the base text style.",
-              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body", "link"]
+              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
             }
           },
           "required": ["component", "text"]
