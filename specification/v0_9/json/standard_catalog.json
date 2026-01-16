@@ -738,7 +738,7 @@
     },
     {
       "name": "openUrl",
-      "description": "Opens the specified URL in the system's default browser or handler. This function has no return value.",
+      "description": "Opens the specified URL in a browser or handler. This function has no return value.",
       "returnType": "void",
       "parameters": {
         "allOf": [

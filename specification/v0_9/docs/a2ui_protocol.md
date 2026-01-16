@@ -576,7 +576,7 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **numeric**       | Checks numeric range constraints.                                        |
 | **email**         | Checks that the value is a valid email address.                          |
 | **string_format** | Does string interpolation of data model values and registered functions. |
-| **openUrl**       | Opens a URL in the system's default browser.                             |
+| **openUrl**       | Opens a URL in a browser.                                                |
 
 ### The `string_format` function
 
