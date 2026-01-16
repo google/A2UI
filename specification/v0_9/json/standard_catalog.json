@@ -21,7 +21,7 @@
             "variant": {
               "type": "string",
               "description": "A hint for the base text style.",
-              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
+              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body", "link"]
             }
           },
           "required": ["component", "text"]
@@ -415,9 +415,10 @@
               "type": "string",
               "description": "The ID of the child component. Use a 'Text' component for a labeled button. Only use an 'Icon' if the requirements explicitly ask for an icon-only button. Do NOT define the child component inline."
             },
-            "primary": {
-              "type": "boolean",
-              "description": "Indicates if this button should be styled as the primary action."
+            "variant": {
+              "type": "string",
+              "description": "A hint for the button style. 'borderless' means the button adds no visual details, but just makes the content trigger an action.",
+              "enum": ["primary", "borderless"]
             },
             "action": {
               "type": "object",
