@@ -14,6 +14,6 @@
       }
     }
   },
-  "required": [ "surfaces" ],
+  "required": ["surfaces"],
   "additionalProperties": false
 }
