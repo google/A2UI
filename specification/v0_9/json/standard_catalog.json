@@ -733,6 +733,13 @@
       }
     }
   ],
+  "theme": {
+    "primaryColor": {
+      "type": "string",
+      "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    }
+  },
   "$defs": {
     "CatalogComponentCommon": {
       "type": "object",

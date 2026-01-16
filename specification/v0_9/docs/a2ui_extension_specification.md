@@ -69,9 +69,19 @@ To identify a `DataPart` as containing A2UI data, it must have the following met
 
 - `mimeType`: `application/json+a2ui`
 
-The `data` field of the `DataPart` contains the A2UI JSON message (e.g., `updateComponents`, `action`).
+The `data` field of the `DataPart` contains a **single** A2UI JSON message (e.g., `createSurface`, `updateComponents`, `action`). It MUST NOT be an array of messages.
 
-Example A2UI DataPart:
+### Atomicity and Multiple Messages
+
+To send multiple A2UI messages that should be processed atomically (e.g., creating a surface and immediately populating it), the sender MUST include multiple `DataPart`s within a single A2A `Message`.
+
+Receivers (both Clients and Agents) MUST process all A2UI `DataPart`s within a single A2A `Message` sequentially and atomically. For a renderer, this means the UI should not be repainted until all parts in the message have been applied.
+
+### Server-to-Client Messages
+
+When an agent sends a message to a client (or another agent acting as a client/renderer), the `data` payload must validate against the **Server-to-Client Message Schema**.
+
+Example `createSurface` DataPart:
 
 ```json
 {
@@ -79,6 +89,32 @@ Example A2UI DataPart:
     "createSurface": {
       "surfaceId": "user_profile_surface",
       "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json"
+    }
+  },
+  "kind": "data",
+  "metadata": {
+    "mimeType": "application/json+a2ui"
+  }
+}
+```
+
+### Client-to-Server Events
+
+When a client (or an agent forwarding an event) sends a message to an agent, it also uses a `DataPart` with the same `application/json+a2ui` MIME type. However, the `data` payload must validate against the **Client-to-Server Event Schema**.
+
+Example `action` DataPart:
+
+```json
+{
+  "data": {
+    "action": {
+      "name": "submit_form",
+      "surfaceId": "contact_form_1",
+      "sourceComponentId": "submit_button",
+      "timestamp": "2026-01-15T12:00:00Z",
+      "context": {
+        "email": "user@example.com"
+      }
     }
   },
   "kind": "data",

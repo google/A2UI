@@ -78,7 +78,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 
 - **Replacement**: `beginRendering` is **REPLACED** by `createSurface`.
 - **Purpose**: `createSurface` signals the client to create a new surface and prepare for rendering.
-- **Style Information Removed**: `createSurface` does **NOT** contain style information. Theming is now handled via the client styles, decoupling it from the message stream.
+- **Theme Information**: `createSurface` includes a `theme` property to specify theme parameters (like `primaryColor`). This replaces the `styles` property in v0.8.
 - **Root Rule**: The rule is: "There must be exactly one component with the ID `root`." The "root" attribute that `beginRendering` had has been removed. The client is expected to render as soon as it has a valid tree with a root component.
 - **New Requirement**: `createSurface` now requires a **`catalogId`** (URI) to explicitly state which unified catalog (components and functions) is being used.
 
@@ -104,7 +104,10 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 {
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json"
+    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+    "theme": {
+      "primaryColor": "#007bff"
+    }
   }
 }
 ```

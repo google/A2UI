@@ -48,8 +48,8 @@ The A2UI protocol uses a unidirectional stream of JSON messages from the server 
 Here is an example sequence of events (which don't have to be in exactly this order):
 
 1.  **Create Surface:** The server sends a `createSurface` message to initialize the surface.
-2.  **Update Surface:** The server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
-3.  **Update Data Model:** The server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
+2.  **Update Surface:** Once a surface has been created, the server sends one or more `updateComponents` messages containing the definitions for all the components that will be part of the surface.
+3.  **Update Data Model:** Once a surface has been created, the server can send `updateDataModel` messages at any time to populate or change the data that the UI components will display.
 4.  **Render:** The client renders the UI for the surface, using the component definitions to build the structure and the data model to populate the content.
 5.  **Dynamic Updates:** As the user interacts with the application or as new information becomes available, the server can send additional `updateComponents` and `updateDataModel` messages to dynamically change the UI.
 6.  **Delete Surface:** When a UI region is no longer needed, the server sends a `deleteSurface` message to remove it.
@@ -95,7 +95,7 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
 
 ### Server to Client Message Structure: The Envelope
 
-The [`server_to_client.json`] schema is the top-level entry point. Every line streamed by the server must validate against this schema. It handles the message dispatching.
+The [`server_to_client.json`] schema is the top-level entry point. Every message streamed by the server must validate against this schema. It handles the message dispatching.
 
 ### The Standard Catalog
 
@@ -109,12 +109,13 @@ The envelope defines four primary message types, and every message streamed by t
 
 ### `createSurface`
 
-This message signals the client to create a new surface and begin rendering it. This message MUST be sent before the first `updateComponents` message that references this `surfaceId`. One of the components in one of the components lists MUST have an `id` of `root` to serve as the root of the component tree.
+This message signals the client to create a new surface and begin rendering it. A surface must be created before any `updateComponents` or `updateDataModel` messages can be sent to it. While typically achieved by the agent sending a `createSurface` message, an agent may skip this if it knows the surface has already been created (e.g., by another agent). Once a surface is created, its `surfaceId` and `catalogId` are fixed; to reconfigure them, the surface must be deleted and recreated. One of the components in one of the component lists MUST have an `id` of `root` to serve as the root of the component tree.
 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
 - `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+- `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
 - `broadcastDataModel` (boolean, optional): If true, the client will append the full data model of this surface to the metadata of every A2A message (like 'action') sent to the server. Defaults to false.
 
 **Example:**
@@ -123,14 +124,17 @@ This message signals the client to create a new surface and begin rendering it. 
 {
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json"
+    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+    "theme": {
+      "primaryColor": "#00BFFF"
+    }
   }
 }
 ```
 
 ### `updateComponents`
 
-This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may not be sent until after a `createSurface` message that references this `surfaceId` has been sent.
+This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may only be sent to a surface that has already been created. Note that components may reference children or data bindings that do not yet exist; clients should handle this gracefully by rendering placeholders (progressive rendering).
 
 **Properties:**
 
@@ -239,7 +243,7 @@ The A2UI protocol defines the UI as a flat list of components. The tree structur
 
 Container components (like `Row`, `Column`, `List`, and `Card`) have properties that reference the `id` of their child component(s). The client is responsible for storing all components in a map (e.g., `Map<String, Component>`) and recreating the tree structure at render time.
 
-This model allows the server to send component definitions in any order, as long as all necessary components are present before rendering is triggered.
+This model allows the server to send component definitions in any order. Rendering can begin as soon as the `root` component is defined, with the client filling in or updating the rest of the tree progressively as additional definitions arrive.
 
 There must be exactly one component with the ID `root` in the component tree, acting as the root of the component tree. Until that component is defined, other component updates will have no visible effect, and they will be buffered until a root component is defined. Once a root component is defined, the client is responsible for rendering the tree in the best way possible based on the available data, skipping invalid references.
 
@@ -273,6 +277,8 @@ This section describes how UI components **represent** and reference data from t
 ### Path Resolution & Scope
 
 Data bindings in A2UI are defined using **JSON Pointers** ([RFC 6901]). How a pointer is resolved depends on the current **Evaluation Scope**.
+
+> **Note on Progressive Rendering:** During the initial streaming phase, data paths may resolve to `undefined` if the `updateDataModel` message containing that data has not yet arrived. Renderers should handle `undefined` values gracefully (e.g., by treating them as empty strings or showing a loading indicator) to support progressive rendering.
 
 #### The Root Scope
 
@@ -477,7 +483,7 @@ A2UI v0.9 generalizes client-side logic into **Functions**. These can be used fo
 
 ### Registered Functions
 
-The client registers a set of named **Functions** (e.g., `required`, `regex`, `email`, `add`, `concat`) in a `FunctionCatalog`. The server references these functions by name. This avoids sending executable code.
+The client supports a set of named **Functions** (e.g., `required`, `regex`, `email`, `add`, `concat`) which are defined in the JSON schema (e.g. `standard_catalog.json`) alongside the component definitions. The server references these functions by name in `FunctionCall` objects. This avoids sending executable code.
 
 Input components (like `TextField`, `CheckBox`) can define a list of checks. Each failure produces a specific error message that can be displayed when the component is rendered. Note that for validation checks, the function must return a boolean.
 
