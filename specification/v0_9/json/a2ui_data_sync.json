@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.dev/specification/v0_9/a2ui_data_broadcast.json",
-  "title": "A2UI Data Broadcast Schema",
-  "description": "Schema for broadcasting A2UI surface data models in A2A message metadata. This object should be placed in the `a2uiDataBroadcast` field of the metadata.",
+  "$id": "https://a2ui.dev/specification/v0_9/a2ui_data_sync.json",
+  "title": "A2UI Client to Server Data Sync Schema",
+  "description": "Schema for synchronizing A2UI surface data models in A2A message metadata. This object should be placed in the `a2uiDataSync` field of the metadata.",
   "type": "object",
   "properties": {
     "surfaces": {
@@ -14,6 +14,6 @@
       }
     }
   },
-  "required": ["surfaces"],
+  "required": [ "surfaces" ],
   "additionalProperties": false
 }
