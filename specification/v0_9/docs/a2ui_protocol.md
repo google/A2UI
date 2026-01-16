@@ -470,7 +470,7 @@ _Replace the entire data model:_
 }
 ```
 
-### Client to Server Updates (State Synchronization)
+### Client to Server Updates
 
 When `attachDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action` or user query) sent to the server that created the surface. The data model is included in the A2A message metadata using the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
 
