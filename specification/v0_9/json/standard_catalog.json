@@ -747,6 +747,7 @@
             "properties": {
               "url": {
                 "type": "string",
+                "format": "uri",
                 "description": "The URL to open."
               }
             },
