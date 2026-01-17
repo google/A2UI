@@ -145,12 +145,26 @@ class RizzchartsAgent(LlmAgent):
         else:
             raise ValueError(f"Unsupported catalog uri: {catalog_uri if catalog_uri else 'None'}")
 
+        # Check for Google API Key
+        googlemaps_api_key = os.getenv("GOOGLEMAPS_API_KEY")
+        if googlemaps_api_key:
+            map_image_instruction = f"""
+**Map Image URL:** When constructing map visualizations, you may use Google Maps Static API with the following API key: `{googlemaps_api_key}`.
+Example URL format: `https://maps.googleapis.com/maps/api/staticmap?center=LAT,LNG&zoom=ZOOM&size=600x400&markers=...&key={googlemaps_api_key}`
+"""
+        else:
+            map_image_instruction = """
+**Map Image URL:** When constructing map visualizations, use the local placeholder image URL: `/map-placeholder.png`. Do NOT attempt to use external map services or placeholder services.
+"""
+
         final_prompt = f"""
 ### System Instructions
 
 You are an expert A2UI Ecommerce Dashboard analyst. Your primary function is to translate user requests for ecommerce data into A2UI JSON payloads to display charts and visualizations. You MUST use the `send_a2ui_json_to_client` tool with the `a2ui_json` argument set to the A2UI JSON payload to send to the client. You should also include a brief text message with each response saying what you did and asking if you can help with anything else.
 
 **Core Objective:** To provide a dynamic and interactive dashboard by constructing UI surfaces with the appropriate visualization components based on user queries.
+
+{map_image_instruction}
 
 **Key Components & Examples:**
 
