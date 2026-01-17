@@ -21,6 +21,8 @@ import { classMap } from "lit/directives/class-map.js";
 import { A2UIClient, ServerToClientMessage, MixedContentResponse } from "./client.js";
 import { Skill, getAllSkills, getSkillById, getDefaultSkill } from "./skills.js";
 import { Template, TemplateCategory, CATEGORIES, getAllTemplates, getTemplatesByCategory, getTemplateById } from "./templates.js";
+import { Agent, getAgentRegistry, AgentRegistry } from "./agents.js";
+import { exportAsWebApp, ExportPlatform } from "./exporter.js";
 
 interface ChatMessage {
   id: string;
@@ -31,7 +33,7 @@ interface ChatMessage {
   attachments?: string[];
 }
 
-type ViewMode = 'chat' | 'create';
+type ViewMode = 'chat' | 'create' | 'labs';
 
 @customElement("a2ui-playground")
 export class A2UIPlayground extends LitElement {
@@ -40,7 +42,8 @@ export class A2UIPlayground extends LitElement {
   @state() private accessor error: string | null = null;
   @state() private accessor currentInput = "";
   @state() private accessor activeTab: "preview" | "code" = "preview";
-  @state() private accessor isMobileView = false;
+  @state() private accessor deviceMode: 'current' | 'mobile' | 'tablet' = 'current';
+  @state() private accessor showDeviceDropdown = false;
   @state() private accessor lastA2UIMessages: ServerToClientMessage[] = [];
 
   // New state for features
@@ -54,7 +57,16 @@ export class A2UIPlayground extends LitElement {
 
   // View and Template state
   @state() private accessor currentView: ViewMode = 'chat';
+
+  // Labs state
+  @state() private accessor showAddAgentModal = false;
+  private agentRegistry: AgentRegistry = getAgentRegistry();
   @state() private accessor selectedCategory: TemplateCategory = 'all';
+
+  // Export state
+  @state() private accessor showExportModal = false;
+  @state() private accessor exportAppName = 'My App';
+  @state() private accessor selectedExportPlatform: ExportPlatform = 'web';
 
   // Skills registry
   private skills: Skill[] = getAllSkills();
@@ -371,6 +383,471 @@ export class A2UIPlayground extends LitElement {
       color: var(--text-sub);
       margin: 0;
       line-height: 1.4;
+    }
+
+    /* Labs View Styles */
+    .labs-view {
+      display: flex;
+      flex-direction: column;
+      padding: 40px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .labs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .labs-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .add-agent-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-agent-btn:hover {
+      background: var(--primary-dark, #1a73e8);
+    }
+
+    .agent-section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-main);
+      margin: 0 0 16px 0;
+    }
+
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .agent-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .agent-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border-color: var(--primary);
+    }
+
+    .agent-icon {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 16px;
+      margin-bottom: 12px;
+    }
+
+    .agent-icon .g-icon {
+      color: white;
+      font-size: 32px;
+    }
+
+    .agent-icon.custom {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+
+    .agent-info {
+      text-align: center;
+    }
+
+    .agent-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 0 0 4px 0;
+    }
+
+    .agent-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .agent-menu {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .agent-card:hover .agent-menu {
+      opacity: 1;
+    }
+
+    .agent-menu:hover {
+      background: rgba(0,0,0,0.1);
+    }
+
+    .empty-agents {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      text-align: center;
+      color: var(--text-sub);
+    }
+
+    .add-first-btn {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-first-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: var(--bg-panel);
+      border-radius: 16px;
+      width: 500px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+    }
+
+    .close-btn:hover {
+      background: rgba(0,0,0,0.1);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-main);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-secondary:hover {
+      background: #f1f3f4;
+    }
+
+    .btn-primary {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark, #1a73e8);
+    }
+
+    /* Export Button and Modal */
+    .export-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .export-btn:hover:not(:disabled) {
+      background: var(--primary-dark, #1557b0);
+    }
+
+    .export-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .export-btn .g-icon {
+      font-size: 18px;
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 24px;
+      background: var(--border-color);
+      margin: 0 8px;
+    }
+
+    .export-modal {
+      width: 600px;
+    }
+
+    .platform-options {
+      display: flex;
+      gap: 12px;
+    }
+
+    .platform-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 16px;
+      background: var(--bg-panel);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .platform-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+    }
+
+    .platform-btn.active {
+      border-color: var(--primary);
+      background: #e8f0fe;
+    }
+
+    .platform-btn.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .platform-btn .g-icon {
+      font-size: 32px;
+      color: var(--primary);
+    }
+
+    .platform-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .platform-desc {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .export-preview {
+      margin-top: 16px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .export-preview .preview-label {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+
+    .mini-preview {
+      max-height: 150px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: white;
+      padding: 12px;
+      font-size: 0.6em;
+      transform-origin: top left;
+    }
+
+    /* Device Selector Dropdown (Google AI Studio style) */
+    .device-selector {
+      position: relative;
+    }
+
+    .device-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .device-btn:hover {
+      background: var(--bg-hover);
+    }
+
+    .device-btn .g-icon {
+      font-size: 18px;
+      color: var(--primary);
+    }
+
+    .device-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      min-width: 180px;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .device-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.15s;
+    }
+
+    .device-option:hover {
+      background: var(--bg-hover);
+    }
+
+    .device-option.active {
+      background: #e8f0fe;
+      color: var(--primary);
+    }
+
+    .device-option .g-icon {
+      font-size: 20px;
+      color: var(--text-sub);
+    }
+
+    .device-option.active .g-icon {
+      color: var(--primary);
     }
 
     /* Main Layout - 2 Panes */
@@ -884,6 +1361,152 @@ export class A2UIPlayground extends LitElement {
     this.currentView = 'chat';
   }
 
+  private switchToLabsView(): void {
+    this.currentView = 'labs';
+  }
+
+  // --- Device Selector Methods ---
+  private getDeviceIcon(): string {
+    switch (this.deviceMode) {
+      case 'mobile': return 'smartphone';
+      case 'tablet': return 'tablet';
+      default: return 'desktop_windows';
+    }
+  }
+
+  private selectDevice(mode: 'current' | 'mobile' | 'tablet'): void {
+    this.deviceMode = mode;
+    this.showDeviceDropdown = false;
+  }
+
+  private getPreviewWidth(): string {
+    switch (this.deviceMode) {
+      case 'mobile': return '375px';
+      case 'tablet': return '768px';
+      default: return '100%';
+    }
+  }
+
+  private selectAgent(agent: Agent): void {
+    // Set as active agent
+    this.agentRegistry.setActiveAgent(agent.id);
+
+    // Apply agent's system prompt if it's Gemini-based
+    if (agent.config.gemini && this.client) {
+      this.client.setSkill(agent.config.gemini.systemPrompt);
+    }
+
+    // If agent has templates, show template gallery first
+    if (agent.templates && agent.templates.length > 0) {
+      this.selectedCategory = 'all';
+      this.currentView = 'create';
+      return;
+    }
+
+    // For other agents, go directly to chat
+    this.messages = [{
+      id: crypto.randomUUID(),
+      role: 'assistant',
+      content: `You're now chatting with **${agent.name}**. ${agent.description}`,
+      timestamp: new Date()
+    }];
+    this.lastA2UIMessages = [];
+    this.currentView = 'chat';
+  }
+
+  private openAddAgentModal(): void {
+    this.showAddAgentModal = true;
+  }
+
+  private closeAddAgentModal(): void {
+    this.showAddAgentModal = false;
+  }
+
+  // --- Export Modal Methods ---
+  private openExportModal(): void {
+    this.showExportModal = true;
+    this.exportAppName = 'My App';
+  }
+
+  private closeExportModal(): void {
+    this.showExportModal = false;
+  }
+
+  private handleExport(): void {
+    if (this.lastA2UIMessages.length === 0) {
+      alert('No design to export. Create something first!');
+      return;
+    }
+
+    exportAsWebApp({
+      appName: this.exportAppName,
+      platform: this.selectedExportPlatform,
+      a2uiMessages: this.lastA2UIMessages
+    });
+
+    this.closeExportModal();
+  }
+
+  private renderExportModal() {
+    return html`
+      <div class="modal-overlay" @click=${this.closeExportModal}>
+        <div class="modal-content export-modal" @click=${(e: Event) => e.stopPropagation()}>
+          <div class="modal-header">
+            <h2>Export Your App</h2>
+            <button class="close-btn" @click=${this.closeExportModal}>
+              <span class="g-icon">close</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>App Name</label>
+              <input type="text" 
+                     .value=${this.exportAppName}
+                     @input=${(e: any) => this.exportAppName = e.target.value}
+                     placeholder="My Landing Page">
+            </div>
+            
+            <div class="form-group">
+              <label>Choose Platform</label>
+              <div class="platform-options">
+                <button class="platform-btn ${classMap({ active: this.selectedExportPlatform === 'web' })}"
+                        @click=${() => this.selectedExportPlatform = 'web'}>
+                  <span class="g-icon">language</span>
+                  <span class="platform-name">Web</span>
+                  <span class="platform-desc">HTML file</span>
+                </button>
+                <button class="platform-btn disabled" disabled title="Coming soon">
+                  <span class="g-icon">desktop_windows</span>
+                  <span class="platform-name">Windows</span>
+                  <span class="platform-desc">Coming soon</span>
+                </button>
+                <button class="platform-btn disabled" disabled title="Coming soon">
+                  <span class="g-icon">phone_android</span>
+                  <span class="platform-name">Android</span>
+                  <span class="platform-desc">Coming soon</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="export-preview">
+              <div class="preview-label">Preview of your app:</div>
+              <div class="mini-preview">
+                ${this.renderInlineA2UI(this.lastA2UIMessages)}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary" @click=${this.closeExportModal}>Cancel</button>
+            <button class="btn-primary" @click=${this.handleExport}>
+              <span class="g-icon">download</span>
+              Download
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   private setCategory(category: TemplateCategory): void {
     this.selectedCategory = category;
   }
@@ -906,14 +1529,31 @@ export class A2UIPlayground extends LitElement {
   }
 
   private renderGalleryView() {
-    const templates = getTemplatesByCategory(this.selectedCategory);
+    // Get templates from active agent, or fall back to global templates
+    const activeAgent = this.agentRegistry.getActiveAgent();
+    const agentTemplates = activeAgent?.templates || getTemplatesByCategory('all');
+
+    // Filter by selected category
+    const templates = this.selectedCategory === 'all'
+      ? agentTemplates
+      : agentTemplates.filter(t => t.category === this.selectedCategory);
+
+    // Build dynamic categories from agent's templates
+    const uniqueCategories = new Set(agentTemplates.map(t => t.category));
+    const agentCategories = [
+      { id: 'all' as const, name: 'All' },
+      ...Array.from(uniqueCategories).map(cat => {
+        const catInfo = CATEGORIES.find(c => c.id === cat);
+        return catInfo || { id: cat as any, name: cat.charAt(0).toUpperCase() + cat.slice(1) };
+      })
+    ];
 
     return html`
       <div class="gallery-view">
         <div class="gallery-header">
           <h1 class="gallery-title">What do you want to create?</h1>
           <div class="category-pills">
-            ${CATEGORIES.map(cat => html`
+            ${agentCategories.map(cat => html`
               <button 
                 class="category-pill ${classMap({ active: cat.id === this.selectedCategory })}"
                 @click=${() => this.setCategory(cat.id)}
@@ -939,6 +1579,140 @@ export class A2UIPlayground extends LitElement {
         </div>
       </div>
     `;
+  }
+
+  private renderLabsView() {
+    const builtinAgents = this.agentRegistry.getBuiltinAgents();
+    const customAgents = this.agentRegistry.getCustomAgents();
+
+    return html`
+      <div class="labs-view">
+        <div class="labs-header">
+          <h1 class="labs-title">Labs</h1>
+          <button class="add-agent-btn" @click=${this.openAddAgentModal}>
+            <span class="g-icon">add</span>
+            Add Agent
+          </button>
+        </div>
+
+        <section class="agent-section">
+          <h2 class="section-title">Try an Agent</h2>
+          <div class="agent-grid">
+            ${builtinAgents.map(agent => html`
+              <div class="agent-card" @click=${() => this.selectAgent(agent)}>
+                <div class="agent-icon">
+                  <span class="g-icon">${agent.icon}</span>
+                </div>
+                <div class="agent-info">
+                  <h3 class="agent-name">${agent.name}</h3>
+                  <p class="agent-desc">${agent.description}</p>
+                </div>
+              </div>
+            `)}
+          </div>
+        </section>
+
+        ${customAgents.length > 0 ? html`
+          <section class="agent-section">
+            <h2 class="section-title">Your Agents</h2>
+            <div class="agent-grid">
+              ${customAgents.map(agent => html`
+                <div class="agent-card" @click=${() => this.selectAgent(agent)}>
+                  <div class="agent-icon custom">
+                    <span class="g-icon">${agent.icon || 'smart_toy'}</span>
+                  </div>
+                  <div class="agent-info">
+                    <h3 class="agent-name">${agent.name}</h3>
+                    <p class="agent-desc">${agent.description}</p>
+                  </div>
+                  <button class="agent-menu" @click=${(e: Event) => { e.stopPropagation(); /* TODO: menu */ }}>
+                    <span class="g-icon">more_horiz</span>
+                  </button>
+                </div>
+              `)}
+            </div>
+          </section>
+        ` : html`
+          <section class="agent-section empty-state">
+            <div class="empty-agents">
+              <span class="g-icon" style="font-size: 48px; opacity: 0.5;">science</span>
+              <p>No custom agents yet</p>
+              <button class="add-first-btn" @click=${this.openAddAgentModal}>
+                Create your first agent
+              </button>
+            </div>
+          </section>
+        `}
+
+        ${this.showAddAgentModal ? this.renderAddAgentModal() : nothing}
+      </div>
+    `;
+  }
+
+  private renderAddAgentModal() {
+    return html`
+      <div class="modal-overlay" @click=${this.closeAddAgentModal}>
+        <div class="modal-content" @click=${(e: Event) => e.stopPropagation()}>
+          <div class="modal-header">
+            <h2>Add New Agent</h2>
+            <button class="close-btn" @click=${this.closeAddAgentModal}>
+              <span class="g-icon">close</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Agent Name</label>
+              <input type="text" id="agent-name" placeholder="My AI Agent">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <input type="text" id="agent-desc" placeholder="What does this agent do?">
+            </div>
+            <div class="form-group">
+              <label>Icon (Material Icon name)</label>
+              <input type="text" id="agent-icon" placeholder="smart_toy" value="smart_toy">
+            </div>
+            <div class="form-group">
+              <label>System Prompt</label>
+              <textarea id="agent-prompt" rows="6" placeholder="Enter the system prompt for your agent..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-secondary" @click=${this.closeAddAgentModal}>Cancel</button>
+            <button class="btn-primary" @click=${this.handleAddAgent}>Create Agent</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private handleAddAgent(): void {
+    const nameInput = this.shadowRoot?.querySelector('#agent-name') as HTMLInputElement;
+    const descInput = this.shadowRoot?.querySelector('#agent-desc') as HTMLInputElement;
+    const iconInput = this.shadowRoot?.querySelector('#agent-icon') as HTMLInputElement;
+    const promptInput = this.shadowRoot?.querySelector('#agent-prompt') as HTMLTextAreaElement;
+
+    if (!nameInput?.value.trim()) {
+      alert('Please enter an agent name');
+      return;
+    }
+
+    const newAgent = this.agentRegistry.addAgent({
+      name: nameInput.value.trim(),
+      description: descInput?.value.trim() || '',
+      icon: iconInput?.value.trim() || 'smart_toy',
+      type: 'custom',
+      config: {
+        gemini: {
+          model: 'gemini-2.0-flash',
+          systemPrompt: promptInput?.value.trim() || '',
+          temperature: 0.7
+        }
+      }
+    });
+
+    this.closeAddAgentModal();
+    this.requestUpdate(); // Refresh the view
   }
 
   // --- Voice Input Logic ---
@@ -1281,10 +2055,10 @@ export class A2UIPlayground extends LitElement {
               <span class="g-icon">book</span>
            </div>
            
-           <div class="nav-item ${classMap({ active: this.currentView === 'create' })}" 
-                title="Create" 
-                @click=${this.switchToCreateView}>
-              <span class="g-icon ${this.currentView === 'create' ? 'filled' : ''}">edit_square</span>
+           <div class="nav-item ${classMap({ active: this.currentView === 'labs' })}" 
+                title="Labs" 
+                @click=${this.switchToLabsView}>
+              <span class="g-icon ${this.currentView === 'labs' ? 'filled' : ''}">science</span>
            </div>
            
            <div class="nav-item" title="Apps">
@@ -1334,7 +2108,8 @@ export class A2UIPlayground extends LitElement {
               </div>
             </header>
 
-            ${this.currentView === 'create' ? this.renderGalleryView() : html`
+            ${this.currentView === 'create' ? this.renderGalleryView() :
+        this.currentView === 'labs' ? this.renderLabsView() : html`
             <main>
               <!-- LEFT PANE: Chat -->
               <div class="pane-left">
@@ -1358,7 +2133,7 @@ export class A2UIPlayground extends LitElement {
                         ` : nothing}
                         <p style="margin: 0 0 8px 0;">${m.content}</p>
                         ${m.role === 'assistant' && m.a2uiMessages && m.a2uiMessages.length > 0
-        ? html`
+            ? html`
                             <div class="inline-preview" @click=${() => this.activeTab = 'preview'}>
                                <div class="preview-thumb">
                                   ${this.renderInlineA2UI(m.a2uiMessages)}
@@ -1422,11 +2197,35 @@ export class A2UIPlayground extends LitElement {
                   </div>
                   
                   <div class="device-toggles" ?hidden=${this.activeTab !== 'preview'}>
-                     <button class="icon-btn ${classMap({ active: !this.isMobileView })}" @click=${() => this.isMobileView = false} title="Desktop">
-                       <span class="g-icon">desktop_windows</span>
-                     </button>
-                     <button class="icon-btn ${classMap({ active: this.isMobileView })}" @click=${() => this.isMobileView = true} title="Mobile">
-                       <span class="g-icon">smartphone</span>
+                     <div class="device-selector">
+                        <button class="device-btn" @click=${() => this.showDeviceDropdown = !this.showDeviceDropdown}>
+                          <span class="g-icon">${this.getDeviceIcon()}</span>
+                          Device
+                        </button>
+                        ${this.showDeviceDropdown ? html`
+                          <div class="device-dropdown">
+                            <div class="device-option ${classMap({ active: this.deviceMode === 'current' })}"
+                                 @click=${() => this.selectDevice('current')}>
+                              <span class="g-icon">desktop_windows</span>
+                              Current screen size
+                            </div>
+                            <div class="device-option ${classMap({ active: this.deviceMode === 'mobile' })}"
+                                 @click=${() => this.selectDevice('mobile')}>
+                              <span class="g-icon">smartphone</span>
+                              Mobile
+                            </div>
+                            <div class="device-option ${classMap({ active: this.deviceMode === 'tablet' })}"
+                                 @click=${() => this.selectDevice('tablet')}>
+                              <span class="g-icon">tablet</span>
+                              Tablet
+                            </div>
+                          </div>
+                        ` : nothing}
+                     </div>
+                     <div class="divider-v"></div>
+                     <button class="export-btn" @click=${this.openExportModal} title="Export" ?disabled=${this.lastA2UIMessages.length === 0}>
+                       <span class="g-icon">download</span>
+                       Export
                      </button>
                   </div>
                 </div>
@@ -1438,6 +2237,8 @@ export class A2UIPlayground extends LitElement {
             </main>
             `}
         </div>
+
+        ${this.showExportModal ? this.renderExportModal() : nothing}
       </div>
     `;
   }
