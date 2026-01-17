@@ -37,7 +37,7 @@
         },
         "returnType": {
           "type": "string",
-          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "enum": ["string", "number", "boolean", "array", "object", "any", "void"],
           "description": "The type of value this function returns."
         }
       },

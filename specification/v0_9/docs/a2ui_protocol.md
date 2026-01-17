@@ -271,6 +271,53 @@ flowchart TD
 
 ```
 
+### Defining Actions
+
+Interactive components (like `Button`) use an `action` property to define what happens when the user interacts with them. Actions can either trigger an event sent to the server or execute a local client-side function.
+
+#### Server Actions
+
+To send an event to the server, the `action` property is defined as an object with a `name` and an optional `context`.
+
+```json
+{
+  "component": "Button",
+  "text": "Submit",
+  "action": {
+    "name": "submit_form",
+    "context": {
+      "itemId": "123"
+    }
+  }
+}
+```
+
+#### Local Actions
+
+To execute a local function, the `action` property can be defined as a string containing a function call expression, or as an object with a `function` property.
+
+**String Shorthand:**
+
+```json
+{
+  "component": "Button",
+  "text": "Open Link",
+  "action": "openUrl(${/url})"
+}
+```
+
+**Object Definition:**
+
+```json
+{
+  "component": "Button",
+  "text": "Open Link",
+  "action": {
+    "function": "openUrl(${/url})"
+  }
+}
+```
+
 ## Data Model Representation: Binding, Scope, and Interpolation
 
 This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration, and interpolation.
@@ -578,6 +625,7 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **numeric**       | Checks numeric range constraints.                                        |
 | **email**         | Checks that the value is a valid email address.                          |
 | **string_format** | Does string interpolation of data model values and registered functions. |
+| **openUrl**       | Opens a URL in a browser.                                                |
 
 ### The `string_format` function
 
