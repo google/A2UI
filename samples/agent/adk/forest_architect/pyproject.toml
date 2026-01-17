@@ -1,0 +1,29 @@
+[project]
+name = "a2ui-forest-architect-sample"
+version = "0.1.0"
+description = "A2UI Forest Architect - Micro-forest configuration tool using Miyawaki method"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "a2a-sdk>=0.3.0",
+    "click>=8.1.8",
+    "google-adk>=1.8.0",
+    "google-genai>=1.27.0",
+    "python-dotenv>=1.1.0",
+    "litellm",
+    "jsonschema>=4.0.0",
+    "a2ui",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.uv.sources]
+a2ui = { path = "../../../../a2a_agents/python/a2ui_extension" }

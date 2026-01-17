@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Calathea",
+    "common_name": "Calathea lutea",
+    "category": "Calathea Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/calathea_varieties/calathea_lutea.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Calathea",
+    "common_name": "Syzgium Jambos",
+    "category": "Calathea Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/calathea_varieties/syzgium_jambos.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Calathea",
+    "common_name": "Calathea crotalifera",
+    "category": "Calathea Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/calathea_varieties/calathea_crotalifera.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Calathea",
+    "common_name": "wheat calathea",
+    "category": "Calathea Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/calathea_varieties/wheat_calathea.png"
+  }
+]

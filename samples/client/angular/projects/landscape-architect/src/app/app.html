@@ -1,0 +1,137 @@
+<!--
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!-- Welcome Screen -->
+@if (currentScreen() === 'welcome') {
+<div class="welcome-screen">
+    <div class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="brand">
+            <span class="brand-icon">🌿</span>
+            <span class="brand-name">Verdure</span>
+        </div>
+        <div class="hero-content">
+            <h1>Envision Your Dream Landscape</h1>
+            <p>Bring your perfect outdoor space to life with our suite of AI design agents.</p>
+        </div>
+    </div>
+
+    <div class="welcome-actions">
+        <button class="primary-btn" (click)="startNewProject()">
+            Start New Project
+        </button>
+        <button class="secondary-btn" (click)="exploreIdeas()">
+            Explore Ideas
+        </button>
+        <a class="link-btn" href="#">I'm a Homeowner</a>
+    </div>
+</div>
+}
+
+<!-- Upload Screen -->
+@if (currentScreen() === 'upload') {
+<div class="upload-screen">
+    <header class="screen-header">
+        <button class="back-btn" (click)="handleBack()">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <h2>Visualize Your Garden</h2>
+    </header>
+
+    <div class="upload-hero">
+        <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&h=400&fit=crop" alt="Garden path"
+            class="hero-image" />
+    </div>
+
+    <div class="upload-content">
+        <h3>Let's Start Your Transformation</h3>
+        <p>Upload a photo of your front or back yard, and our designers will use it to create a custom vision. Get ready
+            to see the potential.</p>
+
+        <input type="file" #fileInput accept="image/*" (change)="handleFileUpload($event)" style="display: none;" />
+
+        <div class="upload-options">
+            <button class="upload-option" (click)="triggerFileUpload()">
+                <div class="option-icon">
+                    <span class="material-symbols-outlined">photo_library</span>
+                </div>
+                <div class="option-text">
+                    <strong>Choose from Library</strong>
+                    <span>Select an existing photo from your gallery.</span>
+                </div>
+            </button>
+
+            <button class="upload-option" (click)="triggerFileUpload()">
+                <div class="option-icon">
+                    <span class="material-symbols-outlined">photo_camera</span>
+                </div>
+                <div class="option-text">
+                    <strong>Take a Photo</strong>
+                    <span>Show us your space.</span>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Loading Screen -->
+@if (currentScreen() === 'loading') {
+<div class="loading-screen">
+    <div class="loading-content">
+        <div class="spinner"></div>
+        <p class="loading-text">{{ loadingMessage() }}</p>
+    </div>
+</div>
+}
+
+<!-- Results Screen (A2UI Surfaces) -->
+@if (currentScreen() === 'results') {
+<div class="results-screen">
+    <header class="screen-header">
+        <button class="back-btn" (click)="handleBack()">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <h2>Your Custom Designs</h2>
+    </header>
+
+    @if (uploadedImage()) {
+    <div class="uploaded-preview">
+        <img [src]="uploadedImage()" alt="Your space" />
+    </div>
+    }
+
+    <div class="surfaces-container">
+        @let surfaces = processor.getSurfaces();
+
+        @if (surfaces.size === 0) {
+        <div class="no-results">
+            <span class="material-symbols-outlined">hourglass_empty</span>
+            <p>Waiting for design recommendations...</p>
+        </div>
+        } @else {
+        @for (entry of surfaces; track $index) {
+        <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]" />
+        }
+        }
+    </div>
+
+    <button class="reset-btn" (click)="handleReset()">
+        <span class="material-symbols-outlined">refresh</span>
+        Start Over
+    </button>
+</div>
+}

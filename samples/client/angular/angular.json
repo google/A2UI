@@ -42,7 +42,9 @@
                 "input": "projects/restaurant/public"
               }
             ],
-            "styles": ["projects/restaurant/src/styles.css"],
+            "styles": [
+              "projects/restaurant/src/styles.css"
+            ],
             "server": "projects/restaurant/src/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -98,7 +100,9 @@
                 "input": "projects/restaurant/public"
               }
             ],
-            "styles": ["projects/restaurant/src/styles.css"]
+            "styles": [
+              "projects/restaurant/src/styles.css"
+            ]
           }
         }
       }
@@ -271,9 +275,177 @@
         }
       }
     },
+    "botanist": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/botanist",
+      "sourceRoot": "projects/botanist/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/botanist/src/main.ts",
+            "tsConfig": "projects/botanist/tsconfig.app.json",
+            "preserveSymlinks": true,
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/botanist/public"
+              }
+            ],
+            "styles": [
+              "projects/botanist/src/styles.css"
+            ],
+            "server": "projects/botanist/src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "projects/botanist/src/server.ts"
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "botanist:build:production"
+            },
+            "development": {
+              "buildTarget": "botanist:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/botanist/tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/botanist/public"
+              }
+            ],
+            "styles": [
+              "projects/botanist/src/styles.css"
+            ]
+          }
+        }
+      }
+    },
+    "forest-architect": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/forest-architect",
+      "sourceRoot": "projects/forest-architect/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/forest-architect/src/main.ts",
+            "tsConfig": "projects/forest-architect/tsconfig.app.json",
+            "preserveSymlinks": true,
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/forest-architect/public"
+              }
+            ],
+            "styles": [
+              "projects/forest-architect/src/styles.css"
+            ],
+            "server": "projects/forest-architect/src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "projects/forest-architect/src/server.ts"
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "forest-architect:build:production"
+            },
+            "development": {
+              "buildTarget": "forest-architect:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/forest-architect/tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/forest-architect/public"
+              }
+            ],
+            "styles": [
+              "projects/forest-architect/src/styles.css"
+            ]
+          }
+        }
+      }
+    },
     "gallery": {
       "projectType": "application",
-      "schematics": { },
+      "schematics": {},
       "root": "projects/gallery",
       "sourceRoot": "projects/gallery/src",
       "prefix": "app",
@@ -371,7 +543,10 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "projects/a2a-chat-canvas/tsconfig.spec.json",
             "assets": [
               {
@@ -491,6 +666,90 @@
             ],
             "styles": [
               "projects/orchestrator/src/styles.scss"
+            ]
+          }
+        }
+      }
+    },
+    "landscape-architect": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/landscape-architect",
+      "sourceRoot": "projects/landscape-architect/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/landscape-architect/src/main.ts",
+            "tsConfig": "projects/landscape-architect/tsconfig.app.json",
+            "preserveSymlinks": true,
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/landscape-architect/public"
+              }
+            ],
+            "styles": [
+              "projects/landscape-architect/src/styles.css"
+            ],
+            "server": "projects/landscape-architect/src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "projects/landscape-architect/src/server.ts"
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "landscape-architect:build:production"
+            },
+            "development": {
+              "buildTarget": "landscape-architect:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular/build:extract-i18n"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/landscape-architect/tsconfig.spec.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/landscape-architect/public"
+              }
+            ],
+            "styles": [
+              "projects/landscape-architect/src/styles.css"
             ]
           }
         }

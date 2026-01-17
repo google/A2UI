@@ -1,0 +1,370 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Areca Catechu",
+    "common_name": "Betel-nut Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/betel-nut_palm.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Bismarkia Noblis",
+    "common_name": "Bismarck Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/bismarck_palm.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Caryota Mitis",
+    "common_name": "Fishtail Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/fishtail_palm.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Caryota Urens",
+    "common_name": "Solitary fishtail palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/solitary_fishtail_palm.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Chamaedorea Elegans",
+    "common_name": "Parlor palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/parlor_palm.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Chamaedorea Metallica",
+    "common_name": "Metal Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/metal_palm.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Chamaedorea Microspadix",
+    "common_name": "Hardy Bamboo Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/hardy_bamboo_palm.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Chamaerops Humilis",
+    "common_name": "Mediterranean fan palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/mediterranean_fan_palm.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Chrysalidocarpus Lutescens",
+    "common_name": "Yellow Cane Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/yellow_cane_palm.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Cycas Circinalis",
+    "common_name": "The queen sago",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/the_queen_sago.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Zamia floridana",
+    "common_name": "Coontie",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/coontie.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Zamia pumila",
+    "common_name": "ZZ plant",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/zz_plant.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Cycas Revoluta",
+    "common_name": "King Sago Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/king_sago_palm.png"
+  },
+  {
+    "id": 14,
+    "scientific_name": "Cycas Rumphii",
+    "common_name": "Ceylon Sago Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/ceylon_sago_palm.png"
+  },
+  {
+    "id": 15,
+    "scientific_name": "Cyrtostachys Renda",
+    "common_name": "Sealing-wax Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/sealing-wax_palm.png"
+  },
+  {
+    "id": 16,
+    "scientific_name": "Dictyospermum Album",
+    "common_name": "Princess Palm",
+    "category": "Palm Varieties",
+    "page": 46,
+    "image": "/heartyculture_catalogue/palm_varieties/princess_palm.png"
+  },
+  {
+    "id": 17,
+    "scientific_name": "Dictyosperma Album Rubrum",
+    "common_name": "Hurricane Palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/hurricane_palm.png"
+  },
+  {
+    "id": 18,
+    "scientific_name": "Dioon Edule",
+    "common_name": "Chestnut dioon",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/chestnut_dioon.png"
+  },
+  {
+    "id": 19,
+    "scientific_name": "Dioon Spinulosum",
+    "common_name": "Giant Dioon",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/giant_dioon.png"
+  },
+  {
+    "id": 20,
+    "scientific_name": "Dypsis Madagascariensis",
+    "common_name": "Lucuba Palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/lucuba_palm.png"
+  },
+  {
+    "id": 21,
+    "scientific_name": "Elaeis Guineensis",
+    "common_name": "Oil Palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/oil_palm.png"
+  },
+  {
+    "id": 22,
+    "scientific_name": "Heterospathe elata",
+    "common_name": "Sagisi palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/sagisi_palm.png"
+  },
+  {
+    "id": 23,
+    "scientific_name": "Howea Forsteriana",
+    "common_name": "Kentia palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/kentia_palm.png"
+  },
+  {
+    "id": 24,
+    "scientific_name": "Hyophorbe Lagenicaulli",
+    "common_name": "Bottle Palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/bottle_palm.png"
+  },
+  {
+    "id": 25,
+    "scientific_name": "Hyophorbe Verschaffeltii",
+    "common_name": "Spindle Palm.",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/spindle_palm.png"
+  },
+  {
+    "id": 26,
+    "scientific_name": "Latania Lontaroides",
+    "common_name": "Red Palm Tree",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/red_palm_tree.png"
+  },
+  {
+    "id": 27,
+    "scientific_name": "Licuala Grandis",
+    "common_name": "Ruffled fan palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/ruffled_fan_palm.png"
+  },
+  {
+    "id": 28,
+    "scientific_name": "Licuala Spinosa",
+    "common_name": "Mangrove fan palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/mangrove_fan_palm.png"
+  },
+  {
+    "id": 29,
+    "scientific_name": "Livistona chinensis",
+    "common_name": "Chinese Fan Palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/chinese_fan_palm.png"
+  },
+  {
+    "id": 30,
+    "scientific_name": "Livistona Rotundifolia",
+    "common_name": "Footstool Palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/footstool_palm.png"
+  },
+  {
+    "id": 31,
+    "scientific_name": "Neodypsis Decaryi",
+    "common_name": "Triangle palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/triangle_palm.png"
+  },
+  {
+    "id": 32,
+    "scientific_name": "Phoenix Roubelini",
+    "common_name": "Miniature Date Palm",
+    "category": "Palm Varieties",
+    "page": 47,
+    "image": "/heartyculture_catalogue/palm_varieties/miniature_date_palm.png"
+  },
+  {
+    "id": 33,
+    "scientific_name": "Pritchardia Pacifica",
+    "common_name": "Fiji Fan Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/fiji_fan_palm.png"
+  },
+  {
+    "id": 34,
+    "scientific_name": "Ptychosperma Elegans",
+    "common_name": "Solitaire palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/solitaire_palm.png"
+  },
+  {
+    "id": 35,
+    "scientific_name": "Ravenea Rivularis",
+    "common_name": "Majestic Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/majestic_palm.png"
+  },
+  {
+    "id": 36,
+    "scientific_name": "Rhapis Excelsa",
+    "common_name": "Bamboo Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/bamboo_palm.png"
+  },
+  {
+    "id": 37,
+    "scientific_name": "Sabal Riverside",
+    "common_name": "Riverside Palmetto",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/riverside_palmetto.png"
+  },
+  {
+    "id": 38,
+    "scientific_name": "Sabal Texana",
+    "common_name": "Texas Sabal Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/texas_sabal_palm.png"
+  },
+  {
+    "id": 39,
+    "scientific_name": "Syagrus Romanzoffiana",
+    "common_name": "Queen palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/queen_palm.png"
+  },
+  {
+    "id": 40,
+    "scientific_name": "Thrinax radiata",
+    "common_name": "Florida thatch palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/florida_thatch_palm.png"
+  },
+  {
+    "id": 41,
+    "scientific_name": "Trachycarpus Fortunei",
+    "common_name": "windmill palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/windmill_palm.png"
+  },
+  {
+    "id": 42,
+    "scientific_name": "Veitchia Merrillii",
+    "common_name": "Manila Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/manila_palm.png"
+  },
+  {
+    "id": 43,
+    "scientific_name": "Washingtonia Filifera",
+    "common_name": "Jasmine",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/jasmine.png"
+  },
+  {
+    "id": 44,
+    "scientific_name": "Ptychosperma Macarthurii",
+    "common_name": "MacArthur Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/macarthur_palm.png"
+  },
+  {
+    "id": 45,
+    "scientific_name": "Roystonea Regia",
+    "common_name": "Florida Royal Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/florida_royal_palm.png"
+  },
+  {
+    "id": 46,
+    "scientific_name": "Wodyetia Bifurcata",
+    "common_name": "Foxtail Palm",
+    "category": "Palm Varieties",
+    "page": 48,
+    "image": "/heartyculture_catalogue/palm_varieties/foxtail_palm.png"
+  }
+]

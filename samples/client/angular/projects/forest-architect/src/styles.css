@@ -1,0 +1,169 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+/* Forest Architect - Global Styles */
+/* Green forest theme color palette */
+
+:root {
+    /* Primary - Deep Forest Green */
+    --p-5: #071207;
+    --p-10: #0d230d;
+    --p-15: #132d13;
+    --p-20: #1b3d1b;
+    --p-25: #234f23;
+    --p-30: #2e7d32;
+    --p-35: #348d38;
+    --p-40: #43a047;
+    --p-45: #52b056;
+    --p-50: #66bb6a;
+    --p-55: #78c47c;
+    --p-60: #81c784;
+    --p-65: #93d097;
+    --p-70: #a5d6a7;
+    --p-75: #b7ddb9;
+    --p-80: #c8e6c9;
+    --p-85: #d7edd8;
+    --p-90: #e3f2e4;
+    --p-92: #ebf6ec;
+    --p-95: #f1f9f2;
+    --p-98: #f8fcf8;
+    --p-99: #fcfefc;
+    --p-100: #ffffff;
+
+    /* Neutral */
+    --n-0: #000000;
+    --n-5: #0d0d0d;
+    --n-10: #1a1a1a;
+    --n-15: #262626;
+    --n-20: #333333;
+    --n-25: #3f3f3f;
+    --n-30: #4c4c4c;
+    --n-35: #585858;
+    --n-40: #656565;
+    --n-45: #717171;
+    --n-50: #7e7e7e;
+    --n-55: #8a8a8a;
+    --n-60: #979797;
+    --n-65: #a3a3a3;
+    --n-70: #b0b0b0;
+    --n-75: #bcbcbc;
+    --n-80: #c9c9c9;
+    --n-85: #d5d5d5;
+    --n-90: #e2e2e2;
+    --n-92: #e9e9e9;
+    --n-95: #f2f2f2;
+    --n-98: #fafafa;
+    --n-99: #fcfcfc;
+    --n-100: #ffffff;
+
+    /* Accent - Earth Brown */
+    --a-30: #795548;
+    --a-40: #8d6e63;
+    --a-50: #a1887f;
+
+    /* Semantic */
+    --success: #4caf50;
+    --warning: #ff9800;
+    --error: #f44336;
+    --info: #2196f3;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--n-20);
+    background: linear-gradient(135deg, var(--p-98) 0%, var(--p-95) 100%);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--p-25);
+}
+
+p {
+    margin: 0 0 1rem;
+}
+
+a {
+    color: var(--p-40);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    font-family: inherit;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: 2px solid var(--p-50);
+    outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+    background: var(--p-80);
+    color: var(--p-10);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--p-95);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--p-70);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--p-60);
+}

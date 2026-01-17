@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Lemna minor",
+    "common_name": "Duck Weed",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/duck_weed.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Salvinia natans",
+    "common_name": "Floating fern",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/floating_fern.jpeg"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Cyperus papyrus",
+    "common_name": "Egyptian Papyrus",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/egyptian_papyrus.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Cyperus Alternifolius",
+    "common_name": "Umbrella Palm",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/umbrella_palm.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Hydrocleys nymphoides",
+    "common_name": "Water-poppy",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/water-poppy.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Echinodorus Palaefolius",
+    "common_name": "Water Jasmine",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/water_jasmine.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Acorus calamus",
+    "common_name": "Sweet flag",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/sweet_flag.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Ludwigia sedioides",
+    "common_name": "Water mosaic",
+    "category": "Aquatic Plants",
+    "image": "/heartyculture_catalogue/aquatic_plants/water_mosaic.png"
+  }
+]

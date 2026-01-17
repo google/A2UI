@@ -42,8 +42,10 @@ class MissingAPIKeyError(Exception):
 @click.option("--port", default=10003)
 def main(host, port):
     try:
-        # Check for API key only if Vertex AI is not configured
-        if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
+        # Check for API key only if Vertex AI is not configured and not using Ollama
+        litellm_model = os.getenv("LITELLM_MODEL", "")
+        using_ollama = litellm_model.startswith("ollama/")
+        if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE" and not using_ollama:
             if not os.getenv("GEMINI_API_KEY"):
                 raise MissingAPIKeyError(
                     "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI is not TRUE."
@@ -58,7 +60,10 @@ def main(host, port):
             name="Find Contact Tool",
             description="Helps find contact information for colleagues (e.g., email, location, team).",
             tags=["contact", "directory", "people", "finder"],
-            examples=["Who is David Chen in marketing?", "Find Sarah Lee from engineering"],
+            examples=[
+                "Who is David Chen in marketing?",
+                "Find Sarah Lee from engineering",
+            ],
         )
 
         base_url = f"http://{host}:{port}"

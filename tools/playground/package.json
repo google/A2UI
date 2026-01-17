@@ -1,0 +1,41 @@
+{
+    "name": "@a2ui/playground",
+    "private": true,
+    "version": "0.8.1",
+    "description": "A2UI Agent Playground - Build and test AI agents that respond with UI",
+    "main": "./dist/playground.js",
+    "types": "./dist/playground.d.ts",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "repository": {
+        "directory": "tools/playground",
+        "type": "git",
+        "url": "git+https://github.com/google/A2UI.git"
+    },
+    "keywords": [
+        "a2ui",
+        "playground",
+        "gemini",
+        "ai",
+        "ui"
+    ],
+    "author": "Google",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/google/A2UI/issues"
+    },
+    "homepage": "https://github.com/google/A2UI/tree/main/tools/playground#readme",
+    "devDependencies": {
+        "dotenv": "^17.2.3",
+        "typescript": "^5.8.3",
+        "vite": "^7.1.11"
+    },
+    "dependencies": {
+        "@google/genai": "^1.22.0",
+        "lit": "^3.3.1"
+    }
+}

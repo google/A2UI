@@ -15,7 +15,7 @@
  */
 
 import { html, css, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StringValue } from "../types/primitives.js";
 import { classMap } from "lit/directives/class-map.js";
@@ -35,6 +35,10 @@ export class Image extends Root {
 
   @property()
   accessor fit: "contain" | "cover" | "fill" | "none" | "scale-down" | null = null;
+
+  // Track if image failed to load
+  @state()
+  accessor _hasError = false;
 
   static styles = [
     structuralStyles,
@@ -56,16 +60,48 @@ export class Image extends Root {
         height: 100%;
         object-fit: var(--object-fit, fill);
       }
+
+      .image-fallback {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        min-height: 120px;
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      }
+
+      .image-fallback .plant-icon {
+        font-size: 48px;
+        color: #81c784;
+      }
     `,
   ];
 
+  #handleImageError() {
+    this._hasError = true;
+  }
+
+  #renderFallback() {
+    return html`
+      <div class="image-fallback">
+        <span class="plant-icon">🌱</span>
+      </div>
+    `;
+  }
+
   #renderImage() {
     if (!this.url) {
-      return nothing;
+      return this.#renderFallback();
+    }
+
+    // Show fallback if there was an error
+    if (this._hasError) {
+      return this.#renderFallback();
     }
 
     const render = (url: string) => {
-      return html`<img src=${url} />`;
+      return html`<img src=${url} @error=${this.#handleImageError} />`;
     };
 
     if (this.url && typeof this.url === "object") {
@@ -77,7 +113,7 @@ export class Image extends Root {
         return render(imageUrl);
       } else if (this.url && "path" in this.url && this.url.path) {
         if (!this.processor || !this.component) {
-          return html`(no model)`;
+          return this.#renderFallback();
         }
 
         const imageUrl = this.processor.getData(
@@ -86,17 +122,17 @@ export class Image extends Root {
           this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
         if (!imageUrl) {
-          return html`Invalid image URL`;
+          return this.#renderFallback();
         }
 
         if (typeof imageUrl !== "string") {
-          return html`Invalid image URL`;
+          return this.#renderFallback();
         }
         return render(imageUrl);
       }
     }
 
-    return html`(empty)`;
+    return this.#renderFallback();
   }
 
   render() {
@@ -108,9 +144,9 @@ export class Image extends Root {
     return html`<section
       class=${classMap(classes)}
       style=${styleMap({
-        ...(this.theme.additionalStyles?.Image ?? {}),
-        "--object-fit": this.fit ?? "fill",
-      })}
+      ...(this.theme.additionalStyles?.Image ?? {}),
+      "--object-fit": this.fit ?? "fill",
+    })}
     >
       ${this.#renderImage()}
     </section>`;

@@ -1,0 +1,18 @@
+[project]
+name = "landscape-architect"
+version = "0.1.0"
+description = "Landscape Architect Agent - AI-powered landscape design with photo analysis"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "google-adk>=0.5.0",
+    "google-genai>=1.0.0",
+    "litellm>=1.0.0",
+    "uvicorn>=0.34.1",
+    "python-dotenv>=1.0.0",
+    "jsonschema>=4.23.0",
+    "a2a-sdk>=0.2.6",
+]
+
+[tool.uv]
+package = false

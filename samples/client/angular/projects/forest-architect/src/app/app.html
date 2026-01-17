@@ -1,0 +1,107 @@
+<!--
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ -->
+
+<main>
+    <div class="header">
+        <span class="logo">🌳</span>
+        <div class="header-text">
+            <h1>Forest Architect</h1>
+            <p class="subtitle">Design micro-forests with the Miyawaki method</p>
+        </div>
+    </div>
+
+    @if (client.isLoading()) {
+    <div class="loading-indicator">
+        <span class="material-symbols-outlined spin">progress_activity</span>
+        <span>Calculating forest metrics...</span>
+    </div>
+    } @else if (!hasData()) {
+    <div class="config-section">
+        <div class="config-card">
+            <h3>🎯 Configure Your Forest</h3>
+
+            <div class="input-group">
+                <label for="budget">Budget: {{ formatBudget(budget()) }}</label>
+                <input type="range" id="budget" [ngModel]="budget()" (ngModelChange)="budget.set($event)" min="100000"
+                    max="5000000" step="50000" class="slider" />
+                <div class="range-labels">
+                    <span>₹1 Lakh</span>
+                    <span>₹50 Lakhs</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="area">Plantation Area (sq ft)</label>
+                <input type="number" id="area" [ngModel]="area()" (ngModelChange)="area.set($event)" min="1000"
+                    max="1000000" class="text-input" />
+            </div>
+
+            <button class="primary-button" (click)="designForest()">
+                <span class="material-symbols-outlined">park</span>
+                Design My Forest
+            </button>
+        </div>
+
+        <div class="quick-actions">
+            <h3>🚀 Quick Actions</h3>
+            <div class="action-buttons">
+                <button class="action-button"
+                    (click)="quickAction('What species do you recommend for a corporate campus?')">
+                    <span class="material-symbols-outlined">eco</span>
+                    Species Guide
+                </button>
+                <button class="action-button" (click)="quickAction('Tell me about the Miyawaki method')">
+                    <span class="material-symbols-outlined">info</span>
+                    About Miyawaki
+                </button>
+                <button class="action-button" (click)="quickAction('What are the benefits of native forests?')">
+                    <span class="material-symbols-outlined">nature</span>
+                    Forest Benefits
+                </button>
+                <button class="action-button" (click)="quickAction('Generate a CSR proposal template')">
+                    <span class="material-symbols-outlined">description</span>
+                    CSR Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <form (submit)="handleSubmit($event)" class="search-form">
+        <input type="text" name="body" placeholder="Ask about forest design, species, or proposals..."
+            autocomplete="off" />
+        <button type="submit" [disabled]="client.isLoading()">
+            <span class="material-symbols-outlined">send</span>
+        </button>
+    </form>
+    } @else {
+    <button class="back-button" (click)="handleReset()">
+        <span class="material-symbols-outlined">arrow_back</span>
+        New Design
+    </button>
+
+    <div class="surfaces-container">
+        @let surfaces = processor.getSurfaces();
+
+        @for (entry of surfaces; track $index) {
+        <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]" />
+        }
+    </div>
+    }
+
+    <footer class="forests-banner">
+        <span>🌿</span> Forests by Heartfulness — 30 Million Trees by 2030
+    </footer>
+</main>

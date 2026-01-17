@@ -1,0 +1,81 @@
+<!--
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<header class="header">
+  <span class="logo">🌱</span>
+  <div>
+    <h1>Digital Botanist</h1>
+    <p class="subtitle">Your AI plant expert from Heartyculture</p>
+  </div>
+</header>
+
+@if (client.isLoading()) {
+  <div class="pending">
+    <span class="g-icon filled-heavy rotate">progress_activity</span>
+    <span>Searching the plant database...</span>
+  </div>
+} @else if (!hasData()) {
+  <section class="search-section">
+    <form (submit)="handleSubmit($event)">
+      <div class="search-row">
+        <input
+          required
+          [value]="searchQuery()"
+          autocomplete="off"
+          id="body"
+          name="body"
+          type="text"
+          placeholder="Ask me about plants... e.g., 'Air purifying plants for my bedroom'"
+          [disabled]="client.isLoading()"
+        />
+        <button type="submit" [disabled]="client.isLoading()">
+          <span class="g-icon filled-heavy">search</span>
+          Search
+        </button>
+      </div>
+      <div class="quick-actions">
+        <button type="button" (click)="quickSearch('Show me flowering shrubs')">
+          <span class="g-icon">local_florist</span>
+          Flowering Shrubs
+        </button>
+        <button type="button" (click)="quickSearch('What palm varieties do you have?')">
+          <span class="g-icon">park</span>
+          Palm Varieties
+        </button>
+        <button type="button" (click)="quickSearch('Show plant categories')">
+          <span class="g-icon">folder</span>
+          Browse Categories
+        </button>
+        <button type="button" (click)="quickSearch('Plants that attract birds')">
+          <span class="g-icon">yard</span>
+          Bird-Friendly
+        </button>
+      </div>
+    </form>
+  </section>
+} @else {
+  <button class="back-button" (click)="handleReset()">
+    <span class="g-icon">arrow_back</span>
+    New Search
+  </button>
+  <div class="surfaces">
+    @let surfaces = processor.getSurfaces();
+
+    @for (entry of surfaces; track $index) {
+      <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
+    }
+  </div>
+}

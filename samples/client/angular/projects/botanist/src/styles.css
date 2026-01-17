@@ -1,0 +1,178 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+:root {
+    /* Neutral colors */
+    --n-100: #ffffff;
+    --n-99: #fcfcfc;
+    --n-98: #f9f9f9;
+    --n-95: #f1f1f1;
+    --n-90: #e2e2e2;
+    --n-80: #c6c6c6;
+    --n-70: #ababab;
+    --n-60: #919191;
+    --n-50: #777777;
+    --n-40: #5e5e5e;
+    --n-35: #525252;
+    --n-30: #474747;
+    --n-25: #3b3b3b;
+    --n-20: #303030;
+    --n-15: #262626;
+    --n-10: #1b1b1b;
+    --n-5: #111111;
+    --n-0: #000000;
+
+    /* Primary - Green palette for botanist theme */
+    --p-100: #ffffff;
+    --p-99: #f7ffeb;
+    --p-98: #efffde;
+    --p-95: #c8f7b0;
+    --p-90: #a5d68e;
+    --p-80: #81b56d;
+    --p-70: #6b9f57;
+    --p-60: #558b2f;
+    --p-50: #4a7c28;
+    --p-40: #3e6d22;
+    --p-35: #356019;
+    --p-30: #2e7d32;
+    --p-25: #1b5e20;
+    --p-20: #165518;
+    --p-15: #104d10;
+    --p-10: #0a4408;
+    --p-5: #053b00;
+    --p-0: #000000;
+
+    /* Secondary - Earthy tones */
+    --s-100: #ffffff;
+    --s-99: #fffbff;
+    --s-98: #fcf8f4;
+    --s-95: #f2efe8;
+    --s-90: #e2dfd5;
+    --s-80: #c6c4b8;
+    --s-70: #aaa99b;
+    --s-60: #8f8e7f;
+    --s-50: #757465;
+    --s-40: #5d5c4c;
+    --s-35: #515140;
+    --s-30: #454534;
+    --s-25: #3a3a29;
+    --s-20: #2e2f1e;
+    --s-15: #242414;
+    --s-10: #1a1a0a;
+    --s-5: #0f0f00;
+    --s-0: #000000;
+
+    /* Tertiary - Floral accent */
+    --t-100: #ffffff;
+    --t-99: #fffbff;
+    --t-98: #fff8f4;
+    --t-95: #ffece4;
+    --t-90: #ffd8cc;
+    --t-80: #e9b9a8;
+    --t-70: #cc9e85;
+    --t-60: #af8464;
+    --t-50: #946b4a;
+    --t-40: #795332;
+    --t-35: #6c4728;
+    --t-30: #5f3c1e;
+    --t-25: #523115;
+    --t-20: #46260c;
+    --t-15: #3a1b04;
+    --t-10: #2e1100;
+    --t-5: #220700;
+    --t-0: #000000;
+
+    /* Neutral variant */
+    --nv-100: #ffffff;
+    --nv-99: #fffbff;
+    --nv-98: #f8f8f4;
+    --nv-95: #f2efe8;
+    --nv-90: #e4e1d8;
+    --nv-80: #c8c5bc;
+    --nv-70: #acaaa0;
+    --nv-60: #918f86;
+    --nv-50: #77766c;
+    --nv-40: #5e5d52;
+    --nv-35: #525146;
+    --nv-30: #46463a;
+    --nv-25: #3b3b2e;
+    --nv-20: #303024;
+    --nv-15: #25251a;
+    --nv-10: #1b1b10;
+    --nv-5: #101008;
+    --nv-0: #000000;
+
+    /* Error colors */
+    --e-100: #ffffff;
+    --e-99: #fffbff;
+    --e-98: #fff8f7;
+    --e-95: #ffedea;
+    --e-90: #ffdad6;
+    --e-80: #ffb4ab;
+    --e-70: #ff897d;
+    --e-60: #ff5449;
+    --e-50: #de3730;
+    --e-40: #ba1a1a;
+    --e-35: #a80710;
+    --e-30: #93000a;
+    --e-25: #7e0007;
+    --e-20: #690005;
+    --e-15: #540003;
+    --e-10: #410002;
+    --e-5: #2d0001;
+    --e-0: #000000;
+
+    --primary: #2e7d32;
+    --text-color: #1b5e20;
+    --background-light: #f7fff2;
+    --background-dark: #101922;
+    --border-color: oklch(from var(--background-light) l c h / calc(alpha * 0.15));
+    --elevated-background-light: oklch(from var(--background-light) l c h / calc(alpha * 0.05));
+    --bb-grid-size: 4px;
+    --bb-grid-size-2: calc(var(--bb-grid-size) * 2);
+    --bb-grid-size-3: calc(var(--bb-grid-size) * 3);
+    --bb-grid-size-4: calc(var(--bb-grid-size) * 4);
+    --bb-grid-size-5: calc(var(--bb-grid-size) * 5);
+    --bb-grid-size-6: calc(var(--bb-grid-size) * 6);
+    --bb-grid-size-7: calc(var(--bb-grid-size) * 7);
+    --bb-grid-size-8: calc(var(--bb-grid-size) * 8);
+    --bb-grid-size-9: calc(var(--bb-grid-size) * 9);
+    --bb-grid-size-10: calc(var(--bb-grid-size) * 10);
+    --bb-grid-size-11: calc(var(--bb-grid-size) * 11);
+    --bb-grid-size-12: calc(var(--bb-grid-size) * 12);
+    --bb-grid-size-13: calc(var(--bb-grid-size) * 13);
+    --bb-grid-size-14: calc(var(--bb-grid-size) * 14);
+    --bb-grid-size-15: calc(var(--bb-grid-size) * 15);
+    --bb-grid-size-16: calc(var(--bb-grid-size) * 16);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    --font-family: 'Google Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-family-flex: 'Google Sans Flex', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-family-mono: 'Google Sans Code', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+    background: var(--background-light);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    width: 100svw;
+    height: 100svh;
+}

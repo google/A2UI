@@ -1,0 +1,27 @@
+﻿python : Traceback (most recent call last):
+At line:1 char:1
++ python extract_philodendron.py 2>&1 | Out-File -Encoding 
+utf8 debug_o ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most r 
+   ecent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\rampr\Desktop\Explore\reflex\heartyculturenurs
+ery\extract_philodendron.py", line 273, in <module>
+    extract_philodendron()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\rampr\Desktop\Explore\reflex\heartyculturenurs
+ery\extract_philodendron.py", line 51, in extract_philodendron
+    print(f"\n\U0001f4c4 Page {PHILODENDRON_PAGE + 1}: 
+Philodendron Varieties")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^
+  File "C:\Python314\Lib\encodings\cp1252.py", line 19, in 
+encode
+    return 
+codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           
+~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character 
+'\U0001f4c4' in position 2: character maps to <undefined>

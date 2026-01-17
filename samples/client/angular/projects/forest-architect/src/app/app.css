@@ -1,0 +1,339 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+:host {
+    display: block;
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 100%;
+    padding: 0 16px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 80px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 32px 0 16px;
+    border-bottom: 2px solid var(--p-90);
+}
+
+.logo {
+    font-size: 56px;
+    filter: drop-shadow(0 2px 4px rgba(46, 125, 50, 0.3));
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--p-25);
+    background: linear-gradient(135deg, var(--p-30) 0%, var(--p-40) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header-text .subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: var(--p-50);
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--p-80);
+    border-radius: 8px;
+    color: var(--p-40);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    width: fit-content;
+}
+
+.back-button:hover {
+    background: var(--p-95);
+    border-color: var(--p-60);
+}
+
+.config-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .config-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+.config-card {
+    background: linear-gradient(145deg, var(--p-98) 0%, var(--p-95) 100%);
+    border: 1px solid var(--p-90);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.config-card h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--p-30);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--p-40);
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--p-90) 0%, var(--p-70) 100%);
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--p-40);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.4);
+    transition: transform 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--p-60);
+}
+
+.text-input {
+    padding: 12px 16px;
+    border: 1px solid var(--p-80);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background: white;
+    transition: border-color 0.2s ease;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: var(--p-40);
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.primary-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--p-40) 0%, var(--p-30) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+}
+
+.quick-actions {
+    background: white;
+    border: 1px solid var(--p-90);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.quick-actions h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--p-30);
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--p-98);
+    border: 1px solid var(--p-85);
+    border-radius: 10px;
+    color: var(--p-40);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    background: var(--p-95);
+    border-color: var(--p-70);
+    transform: translateY(-1px);
+}
+
+.action-button .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--p-50);
+}
+
+.search-form {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: white;
+    border: 1px solid var(--p-90);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-form input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--p-85);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.search-form input:focus {
+    outline: none;
+    border-color: var(--p-50);
+}
+
+.search-form button {
+    padding: 12px 20px;
+    background: var(--p-40);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-form button:hover:not(:disabled) {
+    background: var(--p-30);
+}
+
+.search-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    color: var(--p-50);
+    font-size: 15px;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.surfaces-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.forests-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--p-30) 0%, var(--p-20) 100%);
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.material-symbols-outlined {
+    font-family: 'Google Symbols';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+}

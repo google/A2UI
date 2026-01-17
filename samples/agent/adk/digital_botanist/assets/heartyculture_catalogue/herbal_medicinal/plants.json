@@ -1,0 +1,370 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Abrus Precatorius",
+    "common_name": "Rosary pea",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/rosary_pea.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Argyreia Nervosa",
+    "common_name": "Elephant creeper",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/elephant_creeper.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Asparagus Racemosus",
+    "common_name": "Shatavari",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/shatavari.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Basella Alba",
+    "common_name": "MalabarSpinach",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/malabarspinach.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Basella Rubha",
+    "common_name": "Climbing Spinach",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/climbing_spinach.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Cissus quadrangularis",
+    "common_name": "Perandai",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/perandai.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Clitoria Ternatea",
+    "common_name": "Sangupushpam",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/sangupushpam.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Gymnema Sylvestre",
+    "common_name": "Gudmar",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/gudmar.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Ipomea Quamoclit",
+    "common_name": "Cypress vine",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/cypress_vine.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Piper Betal",
+    "common_name": "Pan",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/pan.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Piper Longam",
+    "common_name": "Pipli",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/pipli.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Piper Nigrum",
+    "common_name": "Black Pepper",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/black_pepper.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Aloe Barbadensis Miller",
+    "common_name": "Aloe Vera",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/aloe_vera.png"
+  },
+  {
+    "id": 14,
+    "scientific_name": "Apium Graveolens",
+    "common_name": "Celery",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/celery.png"
+  },
+  {
+    "id": 15,
+    "scientific_name": "Artemisia Pallens",
+    "common_name": "Davana",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/davana.png"
+  },
+  {
+    "id": 16,
+    "scientific_name": "Centella Asiatica",
+    "common_name": "Gotu Kala",
+    "category": "Herbal & Medicinal",
+    "page": 49,
+    "image": "/heartyculture_catalogue/herbal_medicinal/gotu_kala.png"
+  },
+  {
+    "id": 17,
+    "scientific_name": "Hemigraphis Colorata",
+    "common_name": "Incher Plant",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/incher_plant.png"
+  },
+  {
+    "id": 18,
+    "scientific_name": "Acorus Calamus",
+    "common_name": "Sweet Flag",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/sweet_flag.png"
+  },
+  {
+    "id": 19,
+    "scientific_name": "Origanum Majorana",
+    "common_name": "Marva",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/marva.png"
+  },
+  {
+    "id": 20,
+    "scientific_name": "Coelus Amboinicus",
+    "common_name": "Mexican Mint",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/mexican_mint.png"
+  },
+  {
+    "id": 21,
+    "scientific_name": "Mentha",
+    "common_name": "Mint",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/mint.png"
+  },
+  {
+    "id": 22,
+    "scientific_name": "Mentha x Piperita",
+    "common_name": "Pepper Mint",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/pepper_mint.png"
+  },
+  {
+    "id": 23,
+    "scientific_name": "Acmella Oleracea",
+    "common_name": "Toothache Plant",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/toothache_plant.png"
+  },
+  {
+    "id": 24,
+    "scientific_name": "Bocopa Monnieri",
+    "common_name": "Neer Birahmi",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/neer_birahmi.png"
+  },
+  {
+    "id": 25,
+    "scientific_name": "Justica Adathoda",
+    "common_name": "Aadathoda",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/aadathoda.png"
+  },
+  {
+    "id": 26,
+    "scientific_name": "Sauropus Androgynus",
+    "common_name": "Chakramuni",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/chakramuni.png"
+  },
+  {
+    "id": 27,
+    "scientific_name": "Cleodentron Inermi",
+    "common_name": "Glory Bower",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/glory_bower.png"
+  },
+  {
+    "id": 28,
+    "scientific_name": "Citronella species",
+    "common_name": "Cymbopogon Nardus",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/cymbopogon_nardus.png"
+  },
+  {
+    "id": 29,
+    "scientific_name": "Alpinia Gulanga",
+    "common_name": "Greater Galangal",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/greater_galangal.png"
+  },
+  {
+    "id": 30,
+    "scientific_name": "Costus Igneus",
+    "common_name": "Insulin",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/insulin.png"
+  },
+  {
+    "id": 31,
+    "scientific_name": "Cymbopogon Citratus",
+    "common_name": "Lemon Grass",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/lemon_grass.png"
+  },
+  {
+    "id": 32,
+    "scientific_name": "Solanum Nigrum",
+    "common_name": "Manathakali",
+    "category": "Herbal & Medicinal",
+    "page": 50,
+    "image": "/heartyculture_catalogue/herbal_medicinal/manathakali.png"
+  },
+  {
+    "id": 33,
+    "scientific_name": "Oscimum Scantum",
+    "common_name": "Holy Basil",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/holy_basil.png"
+  },
+  {
+    "id": 34,
+    "scientific_name": "Orthosiphon Aristatus",
+    "common_name": "Cat Whiskers",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/cat_whiskers.png"
+  },
+  {
+    "id": 35,
+    "scientific_name": "Kalanchoe Pinnata",
+    "common_name": "Ratnakali",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/ratnakali.png"
+  },
+  {
+    "id": 36,
+    "scientific_name": "Calotropis Procera",
+    "common_name": "Roostertree",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/roostertree.png"
+  },
+  {
+    "id": 37,
+    "scientific_name": "Salvia Rosmarinus",
+    "common_name": "Rosemary",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/rosemary.png"
+  },
+  {
+    "id": 38,
+    "scientific_name": "Clitoria Ternatea",
+    "common_name": "Sangupushpam",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/sangupushpam_1.png"
+  },
+  {
+    "id": 39,
+    "scientific_name": "Andrographis Paniculata",
+    "common_name": "Green Chiretta",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/green_chiretta.png"
+  },
+  {
+    "id": 40,
+    "scientific_name": "Stevia Rebaudiana",
+    "common_name": "Stevia",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/stevia.png"
+  },
+  {
+    "id": 41,
+    "scientific_name": "Calotropis Gigantea",
+    "common_name": "Giant Milkweed",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/giant_milkweed.png"
+  },
+  {
+    "id": 42,
+    "scientific_name": "Caesalpinia Sappan",
+    "common_name": "Sappan Wood",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/sappan_wood.png"
+  },
+  {
+    "id": 43,
+    "scientific_name": "Taespesia Populnea",
+    "common_name": "Indica Tulip Tree",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/indica_tulip_tree.png"
+  },
+  {
+    "id": 44,
+    "scientific_name": "Tamarindus indica",
+    "common_name": "Tamarind Tree",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/tamarind_tree.png"
+  },
+  {
+    "id": 45,
+    "scientific_name": "Termenale Arjuna",
+    "common_name": "Arjuna Tree",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/arjuna_tree.png"
+  },
+  {
+    "id": 46,
+    "scientific_name": "Terminalia Chebula",
+    "common_name": "Hirada",
+    "category": "Herbal & Medicinal",
+    "page": 51,
+    "image": "/heartyculture_catalogue/herbal_medicinal/hirada.png"
+  }
+]

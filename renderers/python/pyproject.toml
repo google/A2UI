@@ -1,0 +1,18 @@
+[project]
+name = "a2ui"
+version = "0.8.0"
+description = "Python renderer for A2UI (Agent to UI) protocol"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+reflex = ["reflex>=0.6.0"]
+dev = ["pytest>=7.0.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/a2ui"]

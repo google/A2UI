@@ -1,0 +1,130 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Santalum album",
+    "common_name": "Sandal wood",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/sandal_wood.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Pterocarpus santalinus",
+    "common_name": "Red Sandal Wood",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/red_sandal_wood.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Swietenia macrophylla",
+    "common_name": "Mahogany",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/mahogany.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Dalbergia latifolia",
+    "common_name": "Indian rosewood",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/indian_rosewood.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Tectona grandis",
+    "common_name": "Teak",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/teak.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Casuarina equisetifolia",
+    "common_name": "She-oak",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/she-oak.png"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Aquilaria malaccensis",
+    "common_name": "Agarwood",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/agarwood.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Bambusa tulda",
+    "common_name": "Bengal bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/bengal_bamboo.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Bambusa vulgaris",
+    "common_name": "Golden Bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/golden_bamboo.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Bambusa polymorpha",
+    "common_name": "Burmese Bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/burmese_bamboo.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Bambusa nutans",
+    "common_name": "Nodding Bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/nodding_bamboo.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Dendrocalamus strictus",
+    "common_name": "Male bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/male_bamboo.png"
+  },
+  {
+    "id": 13,
+    "scientific_name": "Dendrocalamus hamiltonii",
+    "common_name": "Tufted bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/tufted_bamboo.png"
+  },
+  {
+    "id": 14,
+    "scientific_name": "Bambusa bambos",
+    "common_name": "Giant thorny bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/giant_thorny_bamboo.png"
+  },
+  {
+    "id": 15,
+    "scientific_name": "Balcooa Bamboo",
+    "common_name": "Female Bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/female_bamboo.png"
+  },
+  {
+    "id": 16,
+    "scientific_name": "Dendrocalamus brandisii",
+    "common_name": "Clumping bamboo",
+    "category": "Commercial Timber Plants",
+    "page": 65,
+    "image": "/heartyculture_catalogue/commercial_timber/clumping_bamboo.png"
+  }
+]

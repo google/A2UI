@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A2UI Playground - Build and test AI agents that respond with UI" />
+    <title>A2UI Playground</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-family: "Inter", system-ui, sans-serif;
+        --bb-grid-size: 4px;
+        --bb-grid-size-2: 8px;
+        --bb-grid-size-3: 12px;
+        --bb-grid-size-4: 16px;
+        --bb-grid-size-5: 20px;
+        --bb-grid-size-6: 24px;
+        --bb-grid-size-8: 32px;
+        
+        /* Primary colors */
+        --p-10: #21005D;
+        --p-20: #381E72;
+        --p-30: #4F378B;
+        --p-40: #6750A4;
+        --p-50: #7F67BE;
+        --p-60: #9A82DB;
+        --p-70: #B69DF8;
+        --p-80: #D0BCFF;
+        --p-90: #EADDFF;
+        --p-95: #F6EDFF;
+        --p-99: #FFFBFE;
+        
+        /* Neutral colors */
+        --n-0: #000000;
+        --n-10: #1D1B20;
+        --n-20: #322F35;
+        --n-30: #48464C;
+        --n-40: #605D64;
+        --n-50: #79767D;
+        --n-60: #938F96;
+        --n-70: #AEA9B1;
+        --n-80: #CAC5CD;
+        --n-90: #E6E0E9;
+        --n-95: #F5EFF7;
+        --n-99: #FFFBFE;
+        --n-100: #FFFFFF;
+        
+        /* Error colors */
+        --e-40: #B3261E;
+        --e-80: #F2B8B5;
+        --e-95: #FCEEEE;
+        
+        /* Surface colors */
+        --surface: light-dark(var(--n-99), var(--n-10));
+        --surface-container: light-dark(var(--n-95), var(--n-20));
+        --on-surface: light-dark(var(--n-10), var(--n-90));
+        --on-surface-variant: light-dark(var(--n-30), var(--n-80));
+        --outline: light-dark(var(--n-50), var(--n-60));
+        --outline-variant: light-dark(var(--n-80), var(--n-30));
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html, body {
+        height: 100%;
+        width: 100%;
+        font-family: var(--font-family);
+        background: var(--surface);
+        color: var(--on-surface);
+        color-scheme: light dark;
+      }
+
+      body.light {
+        color-scheme: light;
+      }
+
+      body.dark {
+        color-scheme: dark;
+      }
+
+      .g-icon {
+        font-family: "Material Symbols Outlined";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        font-feature-settings: "liga";
+      }
+
+      .g-icon.filled-heavy {
+        font-variation-settings: "FILL" 1, "wght" 500;
+      }
+    </style>
+  </head>
+  <body>
+    <a2ui-playground></a2ui-playground>
+    <script type="module" src="./playground.ts"></script>
+  </body>
+</html>

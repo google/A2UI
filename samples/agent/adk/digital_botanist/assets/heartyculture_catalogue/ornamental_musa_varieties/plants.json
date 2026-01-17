@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Musa",
+    "common_name": "Musa standard lavender Musa coccinea 'Okinawa Beauty'",
+    "category": "Ornamental Musa Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/ornamental_musa_varieties/musa_standard_lavender_musa_coccinea_okinawa_beaut.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Musa",
+    "common_name": "Musa siamensis",
+    "category": "Ornamental Musa Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/ornamental_musa_varieties/musa_siamensis.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Musa",
+    "common_name": "Musa coccinea",
+    "category": "Ornamental Musa Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/ornamental_musa_varieties/musa_coccinea.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Musa",
+    "common_name": "Pineapple Varieties",
+    "category": "Ornamental Musa Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/ornamental_musa_varieties/pineapple_varieties.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Musa",
+    "common_name": "Musa ornata bronze",
+    "category": "Ornamental Musa Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/ornamental_musa_varieties/musa_ornata_bronze.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Musa",
+    "common_name": "Musa velutina",
+    "category": "Ornamental Musa Varieties",
+    "page": 45,
+    "image": "/heartyculture_catalogue/ornamental_musa_varieties/musa_velutina.jpeg"
+  }
+]

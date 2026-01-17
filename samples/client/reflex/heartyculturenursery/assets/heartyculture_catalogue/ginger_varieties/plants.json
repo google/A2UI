@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "scientific_name": "Zingiber",
+    "common_name": "Torch ginger white",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/torch_ginger_white.png"
+  },
+  {
+    "id": 2,
+    "scientific_name": "Zingiber",
+    "common_name": "Torch phuket pink",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/torch_phuket_pink.png"
+  },
+  {
+    "id": 3,
+    "scientific_name": "Zingiber",
+    "common_name": "Torch malay red",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/torch_malay_red.png"
+  },
+  {
+    "id": 4,
+    "scientific_name": "Zingiber",
+    "common_name": "Beehive ginger plant",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/beehive_ginger_plant.png"
+  },
+  {
+    "id": 5,
+    "scientific_name": "Zingiber",
+    "common_name": "Beehive early yellow",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/beehive_early_yellow.png"
+  },
+  {
+    "id": 6,
+    "scientific_name": "Zingiber",
+    "common_name": "Beehive pink maracas",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/beehive_pink_maracas.jpeg"
+  },
+  {
+    "id": 7,
+    "scientific_name": "Zingiber",
+    "common_name": "Shampor ginger",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/shampor_ginger.png"
+  },
+  {
+    "id": 8,
+    "scientific_name": "Zingiber",
+    "common_name": "Shampor ginger yellow",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/shampor_ginger_yellow.png"
+  },
+  {
+    "id": 9,
+    "scientific_name": "Zingiber",
+    "common_name": "Z.Ottensis",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/zottensis.png"
+  },
+  {
+    "id": 10,
+    "scientific_name": "Zingiber",
+    "common_name": "Alpinia 'Jungle King'",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/alpinia_jungle_king.png"
+  },
+  {
+    "id": 11,
+    "scientific_name": "Zingiber",
+    "common_name": "Alpinia purpurata white",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/alpinia_purpurata_white.png"
+  },
+  {
+    "id": 12,
+    "scientific_name": "Zingiber",
+    "common_name": "Wax ginger red",
+    "category": "Ginger Varieties",
+    "page": 44,
+    "image": "/heartyculture_catalogue/ginger_varieties/wax_ginger_red.png"
+  }
+]

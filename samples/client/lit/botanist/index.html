@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌱 Digital Botanist - Green Kanha</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle,add,air,arrow_back,arrow_drop_down,arrow_forward,attach_file,calendar_today,camera,check,check_circle,close,eco,favorite,favorite_off,filter_list,folder,help,home,info,local_florist,location_on,menu,more_horiz,more_vert,park,photo,progress_activity,search,send,share,shopping_cart,star,star_half,star_off,visibility,water_drop,yard"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        /* Botanical Green Theme */
+        --primary: #2E7D32;
+        --primary-light: #60ad5e;
+        --primary-dark: #005005;
+        --secondary: #81C784;
+        --accent: #FFB74D;
+        --background: #F1F8E9;
+        --surface: #FFFFFF;
+        --text-primary: #1B5E20;
+        --text-secondary: #558B2F;
+        --text-on-primary: #FFFFFF;
+        --border-color: rgba(46, 125, 50, 0.2);
+        --card-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+
+        /* Neutral colors */
+        --n-100: #ffffff;
+        --n-95: #f1f8e9;
+        --n-90: #c8e6c9;
+        --n-80: #a5d6a7;
+        --n-70: #81c784;
+        --n-60: #66bb6a;
+        --n-50: #4caf50;
+        --n-40: #43a047;
+        --n-35: #388e3c;
+        --n-30: #2e7d32;
+        --n-25: #256025;
+        --n-20: #1b5e20;
+        --n-15: #145214;
+        --n-10: #0d3d0d;
+        --n-5: #062906;
+        --n-0: #000000;
+
+        /* Primary palette - Green */
+        --p-100: #ffffff;
+        --p-95: #e8f5e9;
+        --p-90: #c8e6c9;
+        --p-80: #a5d6a7;
+        --p-70: #81c784;
+        --p-60: #66bb6a;
+        --p-50: #4caf50;
+        --p-40: #43a047;
+        --p-35: #388e3c;
+        --p-30: #2e7d32;
+        --p-25: #256025;
+        --p-20: #1b5e20;
+        --p-15: #145214;
+        --p-10: #0d3d0d;
+        --p-5: #062906;
+        --p-0: #000000;
+
+        /* Error colors */
+        --e-100: #ffffff;
+        --e-90: #ffdad6;
+        --e-80: #ffb4ab;
+        --e-60: #ff5449;
+        --e-40: #ba1a1a;
+        --e-30: #93000a;
+
+        --bb-grid-size: 4px;
+        --bb-grid-size-2: calc(var(--bb-grid-size) * 2);
+        --bb-grid-size-3: calc(var(--bb-grid-size) * 3);
+        --bb-grid-size-4: calc(var(--bb-grid-size) * 4);
+        --bb-grid-size-5: calc(var(--bb-grid-size) * 5);
+        --bb-grid-size-6: calc(var(--bb-grid-size) * 6);
+        --bb-grid-size-8: calc(var(--bb-grid-size) * 8);
+        --bb-grid-size-10: calc(var(--bb-grid-size) * 10);
+        --bb-grid-size-12: calc(var(--bb-grid-size) * 12);
+        --bb-grid-size-16: calc(var(--bb-grid-size) * 16);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        --font-family: "Nunito", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --font-family-flex: "Nunito", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --font-family-mono: monospace;
+
+        background: var(--background);
+        font-family: var(--font-family);
+        margin: 0;
+        padding: 0;
+        width: 100svw;
+        height: 100svh;
+        color: var(--text-primary);
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--n-95);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+      }
+    </style>
+  </head>
+  <body>
+    <a2ui-botanist></a2ui-botanist>
+    <script src="./botanist.ts" type="module"></script>
+  </body>
+</html>

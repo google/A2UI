@@ -1,0 +1,266 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+:host {
+  display: block;
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: 100%;
+  padding: 0 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 0 16px;
+  border-bottom: 1px solid var(--p-90);
+  margin-bottom: 16px;
+
+  & .logo {
+    font-size: 48px;
+  }
+
+  & h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--p-30);
+  }
+
+  & .subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--p-40);
+  }
+}
+
+.search-section {
+  animation: fadeIn 0.5s cubic-bezier(0, 0, 0.3, 1) 0.2s backwards;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  padding: 16px 0;
+
+  & .search-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    & > input {
+      flex: 1;
+      border-radius: 28px;
+      padding: 14px 24px;
+      border: 2px solid var(--p-70);
+      font-size: 16px;
+      font-family: inherit;
+      background: white;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--p-40);
+        box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15);
+      }
+
+      &::placeholder {
+        color: var(--p-50);
+      }
+    }
+
+    & > button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--p-30);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 28px;
+      font-weight: 600;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+
+      &:hover:not([disabled]) {
+        background: var(--p-25);
+      }
+
+      &:active:not([disabled]) {
+        transform: scale(0.98);
+      }
+
+      &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  & .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    & button {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--p-60);
+      background: white;
+      color: var(--p-30);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &:hover {
+        background: var(--p-95);
+        border-color: var(--p-40);
+      }
+
+      & .g-icon {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+.surfaces {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--bb-grid-size-3) 0;
+  animation: fadeIn 0.5s cubic-bezier(0, 0, 0.3, 1) 0.1s backwards;
+
+  & a2ui-surface {
+    align-items: center;
+  }
+}
+
+.rotate {
+  animation: rotate 1s linear infinite;
+}
+
+.pending {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  animation: fadeIn 0.3s ease-out;
+  color: var(--p-40);
+
+  & .g-icon {
+    font-size: 32px;
+    color: var(--p-50);
+  }
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  border-radius: 20px;
+  border: 1px solid var(--p-60);
+  background: white;
+  color: var(--p-30);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--p-95);
+  }
+}
+
+.g-icon {
+  font-family: "Google Symbols";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  width: 1em;
+  height: 1em;
+  user-select: none;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+
+  &.filled-heavy {
+    font-variation-settings: "FILL" 1, "wght" 700, "GRAD" 0, "opsz" 48, "ROND" 100;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* A2UI Card Styling */
+a2ui-card {
+  display: block;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+a2ui-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.2);
+}
+
+/* A2UI List styling */
+a2ui-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
