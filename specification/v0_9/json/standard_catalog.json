@@ -420,20 +420,7 @@
               "description": "Indicates if this button should be styled as the primary action."
             },
             "action": {
-              "type": "object",
-              "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
-              "properties": {
-                "name": { "type": "string" },
-                "context": {
-                  "type": "object",
-                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
-                  "additionalProperties": {
-                    "$ref": "common_types.json#/$defs/DynamicValue"
-                  }
-                }
-              },
-              "required": ["name"],
-              "additionalProperties": false
+              "$ref": "common_types.json#/$defs/Action"
             }
           },
           "required": ["component", "child", "action"]
