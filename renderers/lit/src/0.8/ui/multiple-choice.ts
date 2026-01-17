@@ -109,7 +109,7 @@ export class MultipleChoice extends Root {
     )}>
       <label class=${classMap(
         this.theme.components.MultipleChoice.label
-      )} for="data">${this.description ?? "Select an item"}</div>
+      )} for="data">${this.description ?? "Select an item"}</label>
       <select
         name="data"
         id="data"
