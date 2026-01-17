@@ -1,0 +1,31 @@
+{
+  "name": "@a2ui/vite-plugin-a2a",
+  "version": "0.8.1",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b --pretty",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@a2a-js/sdk": "^0.3.4",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.19",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.3.0"
+  },
+  "peerDependencies": {
+    "vite": "^7.0.0"
+  }
+}
