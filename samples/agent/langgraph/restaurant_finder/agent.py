@@ -38,30 +38,36 @@ from tools import get_restaurants
 logger = logging.getLogger(__name__)
 
 # --- Setup Tools ---
-class MockToolContext:
+class ToolContext:
+    """Simple context object to pass base_url to tools."""
     def __init__(self, base_url):
         self.state = {"base_url": base_url}
 
 @tool
-def search_restaurants(cuisine: str = None, location: str = None, count: int = 5):
+def search_restaurants(
+    cuisine: str = None, 
+    location: str = None, 
+    count: int = 5,
+    config: RunnableConfig = None
+):
     """
     Find restaurants based on cuisine and location.
     Args:
         cuisine: Type of food (e.g. Italian, Chinese).
         location: City or area.
         count: Number of results.
+        config: RunnableConfig containing base_url in configurable dict.
     """
-    # Create a simple mock context that mimics what the tool expects
-    # In a real app we might want to pass the real context if we had one
-    # For now, we hardcode localhost or inject from somewhere if needed, 
-    # but the tool just uses it for replacing URL in data.
-    # We can try to get base_url from environment or defaults.
-    base_url = "http://localhost:10002" 
-    # Ideally should come from config, but inside a tool we don't have easy access to state unless we bind it.
-    # We can rely on default logic inside tool or pass valid one.
+    # Extract base_url from RunnableConfig
+    base_url = config["configurable"]["base_url"]
     
-    ctx = MockToolContext(base_url)
-    return get_restaurants(cuisine=cuisine or "", location=location or "", tool_context=ctx, count=count)
+    ctx = ToolContext(base_url)
+    return get_restaurants(
+        cuisine=cuisine or "", 
+        location=location or "", 
+        tool_context=ctx, 
+        count=count
+    )
 
 
 AGENT_INSTRUCTION = """
@@ -242,7 +248,12 @@ class RestaurantAgent:
             "error_message": ""
         }
         
-        config = {"configurable": {"thread_id": session_id}}
+        config = {
+            "configurable": {
+                "thread_id": session_id,
+                "base_url": self.base_url
+            }
+        }
         
         # We need to yield similar events to ADK: 
         # {"is_task_complete": False, "updates": ...} or {"is_task_complete": True, "content": ...}
