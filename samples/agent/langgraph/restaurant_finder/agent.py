@@ -186,6 +186,10 @@ def should_continue(state: AgentState):
     # If validation failed and we have retries left
     if state.get("error_message") and state["attempts"] < 3:
         return "call_model"
+
+    # Safety: If content is empty (and no tool calls), retry
+    if isinstance(last_message, AIMessage) and not str(last_message.content).strip() and state["attempts"] < 3:
+        return "call_model"
         
     return END
 
