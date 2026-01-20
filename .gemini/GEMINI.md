@@ -25,6 +25,7 @@ The A2UI repository is organized into several key directories:
     -   `java/`: Java implementation of the A2UI agent library.
 -   `renderers/`: Contains renderer libraries.
     -   `lit/`: The shared Lit renderer library used by the Lit clients.
+    -   `web_core/`: The shared core library used by Lit and Angular renderers.
 -   `tools/`: Helper tools for development.
     -   `editor/`: A web-based editor for generating and visualizing A2UI.
     -   `inspector/`: A web-based inspector for A2UI responses.
@@ -69,9 +70,13 @@ Ensure you have your environment variables set up (create a `.env` file if neces
 The Lit clients are located in `samples/client/lit/`.
 
 1.  **Build the Renderer**:
-    First, ensure the shared renderer is built:
+    First, ensure the shared renderers are built:
     ```bash
-    cd renderers/lit
+    cd renderers/web_core
+    npm install
+    npm run build
+
+    cd ../lit
     npm install
     npm run build
     ```
@@ -88,6 +93,18 @@ The Lit clients are located in `samples/client/lit/`.
 
 The Angular clients are located in `samples/client/angular/`.
 
+First, ensure the shared renderers are built (if not already done):
+```bash
+cd renderers/web_core
+npm install
+npm run build
+
+cd ../lit
+npm install
+npm run build
+```
+
+Then run the Angular client:
 ```bash
 cd samples/client/angular
 npm install

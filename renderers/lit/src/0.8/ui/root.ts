@@ -28,12 +28,15 @@ import {
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { effect } from "signal-utils/subtle/microtask-effect";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
-import { StringValue } from "../types/primitives.js";
-import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
+import { A2uiMessageProcessor, Primitives, Types } from "@a2ui/web_core";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
 import { componentRegistry } from "./component-registry.js";
+
+type AnyComponentNode = Types.AnyComponentNode;
+type SurfaceID = Types.SurfaceID;
+type Theme = Types.Theme;
+type StringValue = Primitives.StringValue;
 
 type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
   AnyComponentNode,
@@ -44,7 +47,7 @@ type NodeOfType<T extends AnyComponentNode["type"]> = Extract<
 @customElement("a2ui-root")
 export class Root extends SignalWatcher(LitElement) {
   @property()
-  accessor surfaceId: SurfaceID | null = null;
+  accessor surfaceId: Types.SurfaceID | null = null;
 
   @property()
   accessor component: AnyComponentNode | null = null;
@@ -53,7 +56,7 @@ export class Root extends SignalWatcher(LitElement) {
   accessor theme!: Theme;
 
   @property({ attribute: false })
-  accessor childComponents: AnyComponentNode[] | null = null;
+  accessor childComponents: Types.AnyComponentNode[] | null = null;
 
   @property({ attribute: false })
   accessor processor: A2uiMessageProcessor | null = null;

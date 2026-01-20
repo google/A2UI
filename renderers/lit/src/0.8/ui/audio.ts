@@ -17,16 +17,15 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { Primitives, A2uiMessageProcessor } from "@a2ui/web_core";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-audioplayer")
 export class Audio extends Root {
   @property()
-  accessor url: StringValue | null = null;
+  accessor url: Primitives.StringValue | null = null;
 
   static styles = [
     structuralStyles,

@@ -16,7 +16,7 @@
 
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Surface } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/lit/0.8';
+import { Types } from '@a2ui/web_core';
 
 @Component({
   selector: 'app-library',
@@ -26,11 +26,11 @@ import * as v0_8 from '@a2ui/lit/0.8';
 })
 export class LibraryComponent {
   @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
-  selectedBlock: { name: string; surface: v0_8.Types.Surface } | null = null;
+  selectedBlock: { name: string; surface: Types.Surface } | null = null;
   activeSection = '';
   showJsonId: string | null = null;
 
-  openDialog(block: { name: string; surface: v0_8.Types.Surface }) {
+  openDialog(block: { name: string; surface: Types.Surface }) {
     this.selectedBlock = block;
     this.dialog.nativeElement.showModal();
   }
@@ -79,7 +79,7 @@ export class LibraryComponent {
     this.showJsonId = this.showJsonId === name ? null : name;
   }
 
-  getJson(surface: v0_8.Types.Surface): string {
+  getJson(surface: Types.Surface): string {
     return JSON.stringify(
       surface,
       (key, value) => {
@@ -557,7 +557,7 @@ export class LibraryComponent {
     },
   ];
 
-  private createSingleComponentSurface(type: string, properties: any): v0_8.Types.Surface {
+  private createSingleComponentSurface(type: string, properties: any): Types.Surface {
     const rootId = 'root';
 
     return {

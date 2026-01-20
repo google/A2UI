@@ -14,15 +14,14 @@
  limitations under the License.
  */
 
-import { Action } from "../types/components.js";
-import { AnyComponentNode } from "../types/types.js";
+import { Types } from "@a2ui/web_core";
 import { BaseEventDetail } from "./base.js";
 
 type Namespace = "a2ui";
 
 export interface A2UIAction extends BaseEventDetail<`${Namespace}.action`> {
-  readonly action: Action;
+  readonly action: Types.Action;
   readonly dataContextPath: string;
   readonly sourceComponentId: string;
-  readonly sourceComponent: AnyComponentNode | null;
+  readonly sourceComponent: Types.AnyComponentNode | null;
 }

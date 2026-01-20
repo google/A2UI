@@ -15,6 +15,6 @@
  */
 
 import { unsafeCSS } from "lit";
-import { structuralStyles as unsafeStructuralStyles } from "../styles/index.js";
+import { Styles } from "@a2ui/web_core";
 
-export const structuralStyles = unsafeCSS(unsafeStructuralStyles);
+export const structuralStyles = unsafeCSS(Styles.structuralStyles);

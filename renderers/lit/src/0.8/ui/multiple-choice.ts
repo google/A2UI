@@ -17,8 +17,7 @@
 import { html, css, PropertyValues, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
+import { Primitives, A2uiMessageProcessor } from "@a2ui/web_core";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
@@ -30,10 +29,10 @@ export class MultipleChoice extends Root {
   accessor description: string | null = null;
 
   @property()
-  accessor options: { label: StringValue; value: string }[] = [];
+  accessor options: { label: Primitives.StringValue; value: string }[] = [];
 
   @property()
-  accessor selections: StringValue | string[] = [];
+  accessor selections: Primitives.StringValue | string[] = [];
 
   static styles = [
     structuralStyles,

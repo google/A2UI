@@ -17,7 +17,7 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import { Styles, Types } from '@a2ui/lit/0.8';
+import { Styles, Types } from '@a2ui/web_core';
 
 @Component({
   selector: 'a2ui-tabs',

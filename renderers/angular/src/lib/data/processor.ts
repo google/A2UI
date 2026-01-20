@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Data, Types } from '@a2ui/lit/0.8';
+import { A2uiMessageProcessor, Types } from '@a2ui/web_core';
 import { Injectable } from '@angular/core';
 import { firstValueFrom, Subject } from 'rxjs';
 
@@ -24,7 +24,10 @@ export interface DispatchedEvent {
 }
 
 @Injectable({ providedIn: 'root' })
-export class MessageProcessor extends Data.A2uiMessageProcessor {
+export class MessageProcessor extends A2uiMessageProcessor {
+  constructor() {
+    super();
+  }
   readonly events = new Subject<DispatchedEvent>();
 
   override setData(

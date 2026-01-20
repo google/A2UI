@@ -15,7 +15,7 @@
  */
 
 import { inputBinding } from '@angular/core';
-import { Types } from '@a2ui/lit/0.8';
+import { Types } from '@a2ui/web_core';
 import { Catalog } from '../rendering/catalog';
 import { Row } from './row';
 import { Column } from './column';

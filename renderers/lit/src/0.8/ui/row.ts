@@ -18,17 +18,17 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { classMap } from "lit/directives/class-map.js";
-import { ResolvedRow } from "../types/types";
+import { Types } from "@a2ui/web_core";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-row")
 export class Row extends Root {
   @property({ reflect: true, type: String })
-  accessor alignment: ResolvedRow["alignment"] = "stretch";
+  accessor alignment: Types.ResolvedRow["alignment"] = "stretch";
 
   @property({ reflect: true, type: String })
-  accessor distribution: ResolvedRow["distribution"] = "start";
+  accessor distribution: Types.ResolvedRow["distribution"] = "start";
 
   static styles = [
     structuralStyles,

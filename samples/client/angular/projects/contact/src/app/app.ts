@@ -15,7 +15,7 @@
  */
 
 import { MessageProcessor, Surface } from '@a2ui/angular';
-import { Types } from '@a2ui/lit/0.8';
+import { Types } from '@a2ui/web_core';
 import { Component, inject, signal } from '@angular/core';
 import { Client } from './client';
 

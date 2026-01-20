@@ -18,17 +18,17 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { classMap } from "lit/directives/class-map.js";
-import { ResolvedColumn } from "../types/types";
+import { Types } from "@a2ui/web_core";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-column")
 export class Column extends Root {
   @property({ reflect: true, type: String })
-  accessor alignment: ResolvedColumn["alignment"] = "stretch";
+  accessor alignment: Types.ResolvedColumn["alignment"] = "stretch";
 
   @property({ reflect: true, type: String })
-  accessor distribution: ResolvedColumn["distribution"] = "start";
+  accessor distribution: Types.ResolvedColumn["distribution"] = "start";
 
   static styles = [
     structuralStyles,

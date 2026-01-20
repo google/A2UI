@@ -16,18 +16,17 @@
 
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { SurfaceID, Surface as SurfaceState } from "../types/types";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
+import { Types, A2uiMessageProcessor } from "@a2ui/web_core";
 import { Root } from "./root.js";
 import { styleMap } from "lit/directives/style-map.js";
 
 @customElement("a2ui-surface")
 export class Surface extends Root {
   @property()
-  accessor surfaceId: SurfaceID | null = null;
+  accessor surfaceId: Types.SurfaceID | null = null;
 
   @property()
-  accessor surface: SurfaceState | null = null;
+  accessor surface: Types.Surface | null = null;
 
   @property()
   accessor processor: A2uiMessageProcessor | null = null;

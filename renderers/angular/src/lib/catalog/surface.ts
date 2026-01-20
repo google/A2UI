@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import { Types } from '@a2ui/lit/0.8';
+import { Types } from '@a2ui/web_core';
 import { Renderer } from '../rendering/renderer';
 
 @Component({

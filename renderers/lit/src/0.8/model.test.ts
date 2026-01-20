@@ -17,7 +17,7 @@
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
 import { v0_8 } from "@a2ui/lit";
-import { DataMap, DataValue } from "./types/types";
+import { Types } from "@a2ui/web_core";
 
 // Helper function to strip reactivity for clean comparisons.
 const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
@@ -292,8 +292,8 @@ describe("A2uiMessageProcessor", () => {
 
       // Check that it's a Map and has the first item.
       assertIsDataMap(messagesData);
-      assert.strictEqual(messagesData.size, 1);
-      assert.strictEqual(messagesData.get(key1), message1);
+      assert.strictEqual((messagesData as Types.DataMap).size, 1);
+      assert.strictEqual((messagesData as Types.DataMap).get(key1), message1);
 
       const key2 = "1700000000002";
       const message2 = "World";
@@ -321,14 +321,14 @@ describe("A2uiMessageProcessor", () => {
 
       // 4. Check that the Map was additively updated and now has both items.
       assertIsDataMap(messagesData);
-      assert.strictEqual(messagesData.size, 2, "Map should have 2 items total");
+      assert.strictEqual((messagesData as Types.DataMap).size, 2, "Map should have 2 items total");
       assert.strictEqual(
-        (messagesData as DataMap).get(key1),
+        (messagesData as Types.DataMap).get(key1),
         message1,
         "First item correct"
       );
       assert.strictEqual(
-        messagesData.get(key2),
+        (messagesData as Types.DataMap).get(key2),
         message2,
         "Second item correct"
       );
@@ -1332,6 +1332,6 @@ describe("A2uiMessageProcessor", () => {
   });
 });
 
-function assertIsDataMap(obj: DataValue): asserts obj is DataMap {
+function assertIsDataMap(obj: Types.DataValue): asserts obj is Types.DataMap {
   assert.ok(obj instanceof Map, `Data should be a DataMap`);
 }

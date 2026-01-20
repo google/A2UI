@@ -17,21 +17,19 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { Primitives, Types, A2uiMessageProcessor } from "@a2ui/web_core";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
-import { ResolvedImage } from "../types/types.js";
 import { Styles } from "../index.js";
 
 @customElement("a2ui-image")
 export class Image extends Root {
   @property()
-  accessor url: StringValue | null = null;
+  accessor url: Primitives.StringValue | null = null;
 
   @property()
-  accessor usageHint: ResolvedImage["usageHint"] | null = null;
+  accessor usageHint: Types.ResolvedImage["usageHint"] | null = null;
 
   @property()
   accessor fit: "contain" | "cover" | "fill" | "none" | "scale-down" | null = null;

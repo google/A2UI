@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Types, Primitives } from '@a2ui/lit/0.8';
+import { Types, Primitives } from '@a2ui/web_core';
 import { Directive, inject, input } from '@angular/core';
 import { MessageProcessor } from '../data';
 import { Theme } from './theming';

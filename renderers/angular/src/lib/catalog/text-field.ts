@@ -15,7 +15,7 @@
  */
 
 import { computed, Component, input } from '@angular/core';
-import { Primitives, Types } from '@a2ui/lit/0.8';
+import { Primitives, Types } from '@a2ui/web_core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
