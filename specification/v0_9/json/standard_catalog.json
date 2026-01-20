@@ -417,7 +417,7 @@
             },
             "variant": {
               "type": "string",
-              "description": "A hint for the button style. 'borderless' means the button adds no visual details, but just makes the content trigger an action.",
+              "description": "A hint for the button style. If omitted, a default button style is used. 'primary' indicates this is the main call-to-action button. 'borderless' means the button has no visual border or background, making its child content appear like a clickable link.",
               "enum": ["primary", "borderless"]
             },
             "action": {
