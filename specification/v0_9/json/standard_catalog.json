@@ -585,11 +585,55 @@
               "description": "If true, allows the user to select a time."
             },
             "min": {
-              "$ref": "common_types.json#/$defs/DynamicString",
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "oneOf": [
+                      {
+                        "format": "date"
+                      },
+                      {
+                        "format": "time"
+                      },
+                      {
+                        "format": "date-time"
+                      }
+                    ]
+                  }
+                }
+              ],
               "description": "The minimum allowed date/time in ISO 8601 format."
             },
             "max": {
-              "$ref": "common_types.json#/$defs/DynamicString",
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "oneOf": [
+                      {
+                        "format": "date"
+                      },
+                      {
+                        "format": "time"
+                      },
+                      {
+                        "format": "date-time"
+                      }
+                    ]
+                  }
+                }
+              ],
               "description": "The maximum allowed date/time in ISO 8601 format."
             },
             "label": {
