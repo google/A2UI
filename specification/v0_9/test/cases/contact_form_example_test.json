@@ -98,6 +98,7 @@
               "id": "submit_button",
               "component": "Button",
               "child": "submit_button_label",
+              "variant": "primary",
               "action": { "name": "submitContactForm" }
             }
           ]
