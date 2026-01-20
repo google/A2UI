@@ -214,7 +214,7 @@ The following example demonstrates a complete interaction to render a Contact Fo
 
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/v0_9/standard_catalog.json"}}
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","message":"Email is required."},{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","primary":true,"action":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}]}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","message":"Email is required."},{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","primary":true,"action":{"serverEvent":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}}]}}
 {"updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe"}}}
 {"deleteSurface":{"surfaceId":"contact_form_1"}}
 ```
@@ -276,16 +276,18 @@ Interactive components (like `Button`) use an `action` property to define what h
 
 #### Server Actions
 
-To send an event to the server, the `action` property is defined as an object with a `name` and an optional `context`.
+To send an event to the server, use the `serverEvent` property within the `action` object. It requires a `name` and an optional `context`.
 
 ```json
 {
   "component": "Button",
   "text": "Submit",
   "action": {
-    "name": "submit_form",
-    "context": {
-      "itemId": "123"
+    "serverEvent": {
+      "name": "submit_form",
+      "context": {
+        "itemId": "123"
+      }
     }
   }
 }
@@ -293,26 +295,19 @@ To send an event to the server, the `action` property is defined as an object wi
 
 #### Local Actions
 
-To execute a local function, the `action` property can be defined as a string containing a function call expression, or as an object with a `function` property.
-
-**String Shorthand:**
-
-```json
-{
-  "component": "Button",
-  "text": "Open Link",
-  "action": "openUrl(${/url})"
-}
-```
-
-**Object Definition:**
+To execute a local function, use the `functionCall` property within the `action` object. This property references a standard `FunctionCall` object.
 
 ```json
 {
   "component": "Button",
   "text": "Open Link",
   "action": {
-    "function": "openUrl(${/url})"
+    "functionCall": {
+      "call": "openUrl",
+      "args": {
+        "url": "${/url}"
+      }
+    }
   }
 }
 ```
@@ -446,9 +441,11 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
     ```json
     "action": {
-      "name": "submit_form",
-      "context": {
-        "email": { "path": "/formData/email" }
+      "serverEvent": {
+        "name": "submit_form",
+        "context": {
+          "email": { "path": "/formData/email" }
+        }
       }
     }
     ```
