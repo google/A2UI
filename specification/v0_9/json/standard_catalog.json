@@ -415,9 +415,10 @@
               "type": "string",
               "description": "The ID of the child component. Use a 'Text' component for a labeled button. Only use an 'Icon' if the requirements explicitly ask for an icon-only button. Do NOT define the child component inline."
             },
-            "primary": {
-              "type": "boolean",
-              "description": "Indicates if this button should be styled as the primary action."
+            "variant": {
+              "type": "string",
+              "description": "A hint for the button style. If omitted, a default button style is used. 'primary' indicates this is the main call-to-action button. 'borderless' means the button has no visual border or background, making its child content appear like a clickable link.",
+              "enum": ["primary", "borderless"]
             },
             "action": {
               "type": "object",
