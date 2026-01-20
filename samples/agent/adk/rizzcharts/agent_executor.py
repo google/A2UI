@@ -18,12 +18,12 @@ from typing import override
 
 from a2a.server.agent_execution import RequestContext
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension, AgentSkill
-from a2ui.a2ui_extension import A2UI_CLIENT_CAPABILITIES_KEY
-from a2ui.a2ui_extension import A2UI_EXTENSION_URI
-from a2ui.a2ui_extension import STANDARD_CATALOG_ID
-from a2ui.a2ui_extension import get_a2ui_agent_extension
-from a2ui.a2ui_extension import try_activate_a2ui_extension
-from a2ui.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
+from a2ui.extension.a2ui_extension import A2UI_CLIENT_CAPABILITIES_KEY
+from a2ui.extension.a2ui_extension import A2UI_EXTENSION_URI
+from a2ui.extension.a2ui_extension import STANDARD_CATALOG_ID
+from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
+from a2ui.extension.a2ui_extension import try_activate_a2ui_extension
+from a2ui.extension.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
 try:
     from .agent import A2UI_CATALOG_URI_STATE_KEY  # pylint: disable=import-error
     from .agent import RIZZCHARTS_CATALOG_URI  # pylint: disable=import-error

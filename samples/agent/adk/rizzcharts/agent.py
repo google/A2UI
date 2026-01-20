@@ -18,9 +18,9 @@ from pathlib import Path
 import pkgutil
 from typing import Any, ClassVar
 
-from a2ui.a2ui_extension import STANDARD_CATALOG_ID
-from a2ui.a2ui_schema_utils import wrap_as_json_array
-from a2ui.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEnabledProvider, A2uiSchemaProvider
+from a2ui.extension.a2ui_extension import STANDARD_CATALOG_ID
+from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
+from a2ui.extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEnabledProvider, A2uiSchemaProvider
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners.built_in_planner import BuiltInPlanner

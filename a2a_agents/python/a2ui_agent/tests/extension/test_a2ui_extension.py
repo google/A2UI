@@ -15,8 +15,8 @@
 
 from a2a.server.agent_execution import RequestContext
 from a2a.types import DataPart, TextPart, Part
-from a2ui import a2ui_extension
-from a2ui.a2ui_extension import AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY, AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY
+from a2ui.extension import a2ui_extension
+from a2ui.extension.a2ui_extension import AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY, AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY
 from unittest.mock import MagicMock
 
 

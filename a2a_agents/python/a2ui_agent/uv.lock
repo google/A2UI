@@ -25,7 +25,7 @@ wheels = [
 ]
 
 [[package]]
-name = "a2ui"
+name = "a2ui-agent"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

@@ -18,10 +18,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from a2a import types as a2a_types
-from a2ui.a2ui_extension import create_a2ui_part
+from a2ui.extension.a2ui_extension import create_a2ui_part
 
-from a2ui.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
-from a2ui.send_a2ui_to_client_toolset import SendA2uiToClientToolset
+from a2ui.extension.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
+from a2ui.extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types as genai_types

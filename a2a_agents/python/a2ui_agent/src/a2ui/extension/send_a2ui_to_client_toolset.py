@@ -85,8 +85,8 @@ from typing import Any, Awaitable, Callable, Optional, TypeAlias, Union
 import jsonschema
 
 from a2a import types as a2a_types
-from a2ui.a2ui_extension import create_a2ui_part
-from a2ui.a2ui_schema_utils import wrap_as_json_array
+from a2ui.extension.a2ui_extension import create_a2ui_part
+from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
 from google.adk.a2a.converters import part_converter
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.models import LlmRequest

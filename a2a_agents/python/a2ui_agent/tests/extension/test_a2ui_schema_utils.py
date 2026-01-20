@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import pytest
-from a2ui.a2ui_schema_utils import wrap_as_json_array
+from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
 
 
 def test_wrap_as_json_array():

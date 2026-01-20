@@ -1,20 +1,27 @@
-# A2UI Extension Implementation
+# A2UI Agent Implementation
 
-a2ui_extension.py is the Python implementation of the a2ui extension.
-send_a2ui_to_client_toolset.py is an example Python implementation of using ADK toolcalls to implement A2UI.
+The `a2a_agents/python/a2ui_agent/` is the Python implementation of the a2ui agent library.
+
+### Extension Components (`src/a2ui/extension`)
+
+The `src/a2ui/extension` directory contains the core logic for the A2UI agent extension:
+
+*   **`a2ui_extension.py`**: Core utilities for extension management and A2UI part handling.
+*   **`a2ui_schema_utils.py`**: Schema manipulation helpers.
+*   **`send_a2ui_to_client_toolset.py`**: An example implementation of using ADK toolcalls to implement A2UI.
 
 ## Running Tests
 
-1. Navigate to the a2ui_extension dir:
+1. Navigate to the a2ui_agent dir:
 
    ```bash
-   cd a2a_agents/python/a2ui_extension
+   cd a2a_agents/python/a2ui_agent
    ```
 
 2. Run the tests
 
    ```bash
-   uv run --with pytest pytest tests/*.py
+   uv run --with pytest pytest tests/
    ```
 
 ## Disclaimer

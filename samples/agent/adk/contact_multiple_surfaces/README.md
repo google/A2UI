@@ -13,7 +13,7 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
 1. Navigate to the samples directory:
 
     ```bash
-    cd a2a_samples/a2ui_contact_lookup
+    cd samples/agent/adk/contact_multiple_surfaces
     ```
 
 2. Create an environment file with your API key:
