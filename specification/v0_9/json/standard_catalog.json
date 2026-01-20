@@ -736,7 +736,7 @@
   "theme": {
     "primaryColor": {
       "type": "string",
-      "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
+      "description": "The primary brand color used for highlights (e.g., primary buttons, active borders). Renderers may generate variants of this color for different contexts. Format: Hexadecimal code (e.g., '#00BFFF').",
       "pattern": "^#[0-9a-fA-F]{6}$"
     },
     "iconUrl": {

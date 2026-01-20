@@ -583,7 +583,7 @@ The standard catalog defines the following theme properties that can be set in t
 
 | Property           | Type   | Description                                                                                               |
 | :----------------- | :----- | :-------------------------------------------------------------------------------------------------------- |
-| **primaryColor**   | String | The primary UI color as a hexadecimal code (e.g., '#00BFFF').                                             |
+| **primaryColor**   | String | The primary brand color used for highlights throughout the UI (e.g., primary buttons, active borders). The renderer may generate variants, such as lighter shades, as needed. Format: Hexadecimal code (e.g., '#00BFFF'). |
 | **iconUrl**        | URI    | A URL for an image (e.g., logo or avatar) that identifies the agent or tool associated with the surface.  |
 | **agentDisplayName**| String | Text to be displayed next to the surface to identify the agent or tool that created it (e.g. "Weather Bot").|
 
