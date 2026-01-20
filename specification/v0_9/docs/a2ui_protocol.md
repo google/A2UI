@@ -3,7 +3,7 @@
 <!-- markdownlint-disable MD034 -->
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
-    <img src="../../../docs/assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
+    <img src="../../../assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
     <h1>A2UI (Agent to UI) Protocol v0.9</h1>
   </div>
 </div>
@@ -116,7 +116,7 @@ This message signals the client to create a new surface and begin rendering it. 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
 - `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
 - `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
-- `broadcastDataModel` (boolean, optional): If true, the client will append the full data model of this surface to the metadata of every A2A message (like 'action') sent to the server. Defaults to false.
+- `attachDataModel` (boolean, optional): If true, the client will attach the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
 
 **Example:**
 
@@ -127,7 +127,8 @@ This message signals the client to create a new surface and begin rendering it. 
     "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
     "theme": {
       "primaryColor": "#00BFFF"
-    }
+    },
+    "attachDataModel": true
   }
 }
 ```
@@ -412,7 +413,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 While the sections above describe how components reference data, this section defines how the Data Model itself is **updated** and synchronized.
 
-To support reliable data synchronization between the Renderer and the Agent, the A2UI protocol uses a simple broadcasting mechanism controlled by the `broadcastDataModel` property in the `createSurface` message.
+To support reliable data synchronization between the Renderer and the Agent that created the surface, the A2UI protocol uses a simple synchronization mechanism controlled by the `attachDataModel` property in the `createSurface` message.
 
 ### Server to Client Updates
 
@@ -469,10 +470,11 @@ _Replace the entire data model:_
 }
 ```
 
-### Client to Server Updates (Broadcasting)
+### Client to Server Updates
 
-When `broadcastDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action`) sent to the server. The data model is included in the A2A message metadata using the schema in [`a2ui_data_broadcast.json`](../json/a2ui_data_broadcast.json).
+When `attachDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action` or user query) sent to the server that created the surface. The data model is included in the A2A message metadata using the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
 
+- **Targeted Delivery**: The data model is sent exclusively to the server that created the surface. Data cannot leak to other agents or servers. 
 - **Trigger:** Data is sent only when an A2A message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
 - **Payload:** The data model is included in the A2A message metadata, tagged by its `surfaceId`.
 - **Convergence:** The server treats the received data model as the current state of the client at the time of the action.
@@ -576,6 +578,22 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **numeric**       | Checks numeric range constraints.                                        |
 | **email**         | Checks that the value is a valid email address.                          |
 | **string_format** | Does string interpolation of data model values and registered functions. |
+
+### Theme
+
+The standard catalog defines the following theme properties that can be set in the `createSurface` message:
+
+| Property           | Type   | Description                                                                                               |
+| :----------------- | :----- | :-------------------------------------------------------------------------------------------------------- |
+| **primaryColor**   | String | The primary brand color used for highlights throughout the UI (e.g., primary buttons, active borders). The renderer may generate variants, such as lighter shades, as needed. Format: Hexadecimal code (e.g., '#00BFFF'). |
+| **iconUrl**        | URI    | A URL for an image (e.g., logo or avatar) that identifies the agent or tool associated with the surface.  |
+| **agentDisplayName**| String | Text to be displayed next to the surface to identify the agent or tool that created it (e.g. "Weather Bot").|
+
+#### Identity and Attribution
+
+The `iconUrl` and `agentDisplayName` fields are used to provide attribution to the user, identifying which sub-agent or tool is responsible for a particular UI surface.
+
+In multi-agent systems or orchestrators, the orchestrator is responsible for setting or validating these fields. This ensures that the identity displayed to the user matches the actual agent server being contacted, preventing malicious agents from impersonating trusted services. For example, an orchestrator might overwrite these fields with the verified identity of the sub-agent before forwarding the `createSurface` message to the client.
 
 ### The `string_format` function
 
@@ -698,9 +716,9 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
 
-#### Data Model Broadcast
+#### Client Data Model
 
-When `broadcastDataModel` is enabled for a surface, the client includes the `a2uiDataBroadcast` object in the metadata, following the [`a2ui_data_broadcast.json`] schema.
+When `attachDataModel` is enabled for a surface, the client includes the `a2uiClientDataModel` object in the metadata, following the [`a2ui_client_data_model.json`] schema.
 
 **Properties:**
 
@@ -715,6 +733,6 @@ This message is used to report a client-side error to the server.
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
 [`a2ui_client_capabilities.json`]: ../json/a2ui_client_capabilities.json
-[`a2ui_data_broadcast.json`]: ../json/a2ui_data_broadcast.json
+[`a2ui_client_data_model.json`]: ../json/a2ui_client_data_model.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901
