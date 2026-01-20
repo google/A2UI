@@ -18,19 +18,19 @@
                   "and": [
                     {
                       "call": "required",
-                      "args": { "value": { "path": "/formData/terms" } },
+                      "args": [{ "path": "/formData/terms" }],
                       "returnType": "boolean"
                     },
                     {
                       "or": [
                         {
                           "call": "required",
-                          "args": { "value": { "path": "/formData/email" } },
+                          "args": [{ "path": "/formData/email" }],
                           "returnType": "boolean"
                         },
                         {
                           "call": "required",
-                          "args": { "value": { "path": "/formData/phone" } },
+                          "args": [{ "path": "/formData/phone" }],
                           "returnType": "boolean"
                         }
                       ]
@@ -79,7 +79,7 @@
               "checks": [
                 {
                   "call": "required",
-                  "args": { "value": "foo" },
+                  "args": ["foo"],
                   "returnType": "not_a_valid_type"
                 }
               ]

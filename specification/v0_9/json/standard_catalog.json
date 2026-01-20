@@ -619,8 +619,9 @@
       "description": "Checks that the value is not null, undefined, or empty.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [{ "$ref": "#/$defs/valueParam" }],
-        "unevaluatedProperties": false
+        "type": "array",
+        "items": [{ "$ref": "common_types.json#/$defs/DynamicValue" }],
+        "minItems": 1
       }
     },
     {
@@ -628,21 +629,15 @@
       "description": "Checks that the value matches a regular expression string.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
+        "type": "array",
+        "items": [
+          { "$ref": "common_types.json#/$defs/DynamicValue" },
           {
-            "type": "object",
-            "properties": {
-              "value": { "type": "string" },
-              "pattern": {
-                "type": "string",
-                "description": "The regex pattern to match against."
-              }
-            },
-            "required": ["pattern"]
+            "type": "string",
+            "description": "The regex pattern to match against."
           }
         ],
-        "unevaluatedProperties": false
+        "minItems": 2
       }
     },
     {
@@ -650,12 +645,12 @@
       "description": "Checks string length constraints.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
+        "type": "array",
+        "items": [
+          { "$ref": "common_types.json#/$defs/DynamicValue" },
           {
             "type": "object",
             "properties": {
-              "value": { "type": "string" },
               "min": {
                 "type": "integer",
                 "minimum": 0,
@@ -670,7 +665,7 @@
             "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
           }
         ],
-        "unevaluatedProperties": false
+        "minItems": 2
       }
     },
     {
@@ -678,12 +673,12 @@
       "description": "Checks numeric range constraints.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
+        "type": "array",
+        "items": [
+          { "$ref": "common_types.json#/$defs/DynamicValue" },
           {
             "type": "object",
             "properties": {
-              "value": { "type": "number" },
               "min": {
                 "type": "number",
                 "description": "The minimum allowed value."
@@ -696,7 +691,7 @@
             "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
           }
         ],
-        "unevaluatedProperties": false
+        "minItems": 2
       }
     },
     {
@@ -704,16 +699,9 @@
       "description": "Checks that the value is a valid email address.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
-          {
-            "type": "object",
-            "properties": {
-              "value": { "type": "string" }
-            }
-          }
-        ],
-        "unevaluatedProperties": false
+        "type": "array",
+        "items": [{ "$ref": "common_types.json#/$defs/DynamicValue" }],
+        "minItems": 1
       }
     },
     {
@@ -721,16 +709,10 @@
       "description": "Performs string interpolation of data model values and other functions in the catalog functions list and returns the resulting string. The value string can contain interpolated expressions in the `${expression}` format. Supported expression types include: JSON Pointer paths to the data model (e.g., `${/absolute/path}` or `${relative/path}`), and client-side function calls (e.g., `${now()}`). Function arguments must be literals (quoted strings, numbers, booleans) or nested expressions (e.g., `${formatDate(${/currentDate}, 'MM-dd')}`). To include a literal `${` sequence, escape it as `\\${`.",
       "returnType": "string",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
-          {
-            "type": "object",
-            "properties": {
-              "value": { "type": "string" }
-            }
-          }
-        ],
-        "unevaluatedProperties": false
+        "type": "array",
+        "items": [{ "description": "The format string.", "type": "string" }],
+        "additionalItems": { "$ref": "common_types.json#/$defs/DynamicValue" },
+        "minItems": 1
       }
     }
   ],
@@ -754,7 +736,7 @@
     "CatalogComponentCommon": {
       "type": "object",
       "properties": {
-         "weight": {
+        "weight": {
           "type": "number",
           "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
         }
@@ -784,15 +766,6 @@
       "discriminator": {
         "propertyName": "component"
       }
-    },
-    "valueParam": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "description": "The value to check."
-        }
-      },
-      "required": ["value"]
     }
   }
 }
