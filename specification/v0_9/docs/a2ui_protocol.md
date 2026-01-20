@@ -559,7 +559,7 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **Tabs**          | A set of tabs, each with a title and child component.                                  |
 | **Divider**       | A horizontal or vertical dividing line.                                                |
 | **Modal**         | A dialog that appears over the main content triggered by a button in the main content. |
-| **Button**        | A clickable button that dispatches an action.                                          |
+| **Button**        | A clickable button that dispatches an action. Supports 'primary' and 'borderless' variants. |
 | **CheckBox**      | A checkbox with a label and a boolean value.                                           |
 | **TextField**     | A field for user text input.                                                           |
 | **DateTimeInput** | An input for date and/or time.                                                         |
