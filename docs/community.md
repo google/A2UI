@@ -9,7 +9,7 @@ A2UI is an open-source project licensed under Apache 2.0. We welcome contributio
 ## Community Showcase
 
 !!! info "Coming soon..."
-    We are considering how best to showcase community projects, examples, themes, renderers, custom components, and more.  A 4 minute (or less) demo video and code sample linked in Github discussions is a great way to show off your work.
+    We are considering how best to showcase community projects, examples, themes, renderers, custom components, and more.  A 4 minute (or less) demo video and code sample linked in GitHub discussions is a great way to show off your work.
 
 ## Project Partners
 
@@ -39,7 +39,7 @@ Google's [A2A team](https://a2a-protocol.org/) have been core contributors to A2
 
 There are many organizations and individuals contributing to A2UI's development.
 
-If you have made signiciant contributions to A2UI, please submit your name to this list.
+If you have made significant contributions to A2UI, please submit your name to this list.
 
 ## Code of Conduct
 
