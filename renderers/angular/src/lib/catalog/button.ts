@@ -15,7 +15,7 @@
  */
 
 import { Component, input } from '@angular/core';
-import { Types } from '@a2ui/web-lib/0.8';
+import { Types } from '@a2ui/lit/0.8';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 
@@ -40,7 +40,6 @@ import { Renderer } from '../rendering/renderer';
       display: block;
       flex: var(--weight);
       min-height: 0;
-      overflow: auto;
     }
   `,
 })

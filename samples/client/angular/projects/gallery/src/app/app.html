@@ -12,23 +12,28 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- -->
+-->
 
-<div class="app-container">
-  <div class="main-sidebar">
-    <h1 class="app-title">A2UI Gallery</h1>
-    <div class="nav-buttons">
-      <div class="nav-btn" [class.active]="currentView === 'library'" (click)="setView('library')">
-        <span>📚</span> Library
-      </div>
-      <div class="nav-btn" [class.active]="currentView === 'gallery'" (click)="setView('gallery')">
-        <span>🎨</span> Gallery
-      </div>
-    </div>
+<header class="home-page-header">
+  <p>A2UI Gallery</p>
+  <nav class="app-nav">
+    <ul>
+      <li><a (click)="setView('library')">Library</a></li>
+      <li><a (click)="setView('gallery')">Gallery</a></li>
+      <li><a href="https://github.com/google/A2UI">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+<section>
+  <div class="hero-message">
+    <h1>A2UI Component Gallery</h1>
+    <p>Building blocks and examples for Agent Driven UIs</p>
   </div>
-
-  <div class="content-area">
-    <app-library *ngIf="currentView === 'library'"></app-library>
-    <app-gallery *ngIf="currentView === 'gallery'"></app-gallery>
-  </div>
-</div>
+  <section>
+    @if(currentView() === 'gallery') {
+      <app-gallery />
+    } @else {
+      <app-library />
+    }
+  </section>
+</section>

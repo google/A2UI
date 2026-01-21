@@ -12,16 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Web (Lit) build and test
+name: Lit renderer build and test
 
 on:
   push:
     branches: [ main ]
-    paths-ignore:
-      - 'samples/agent/adk/**'
+    paths:
+      - 'renderers/lit/**'
+      - '.github/workflows/web_build_and_test.yml'
   pull_request:
-    paths-ignore:
-      - 'samples/agent/adk/**'
+    paths:
+      - 'renderers/lit/**'
+      - '.github/workflows/web_build_and_test.yml'
 
 jobs:
   build-and-test:
@@ -39,14 +41,10 @@ jobs:
         working-directory: ./renderers/lit
         run: npm i
 
-      - name: Install all workspaces' dependencies
-        working-directory: ./web
-        run: npm i
+      - name: Build Lit renderer
+        working-directory: ./renderers/lit
+        run: npm run build
 
-      - name: Build all workspaces
-        working-directory: ./web
-        run: npm run build --workspaces
-
-      - name: Run all tests
-        working-directory: ./web
-        run: npm run test --workspace=@a2ui/web-lib
+      - name: Run Lit renderer tests
+        working-directory: ./renderers/lit
+        run: npm test

@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { componentRegistry } from "@a2ui/web-lib/ui";
+import { componentRegistry } from "@a2ui/lit/ui";
 import { OrgChart } from "./org-chart.js";
 import { WebFrame } from "./web-frame.js";
 import { PremiumTextField } from "./premium-text-field.js";

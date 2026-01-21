@@ -14,8 +14,8 @@
  limitations under the License.
  */
 
-import { Root } from '@a2ui/web-lib/ui';
-import { v0_8 } from '@a2ui/web-lib';
+import { Root } from '@a2ui/lit/ui';
+import { v0_8 } from '@a2ui/lit';
 import { html, css, TemplateResult } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';

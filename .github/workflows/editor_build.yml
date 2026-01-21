@@ -16,12 +16,15 @@ name: Editor build
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore:
-      - 'samples/agent/adk/**'
+    paths:
+      - 'tools/editor/**'
+      - 'renderers/lit/**'
+      - '.github/workflows/editor_build.yml'
   pull_request:
-    paths-ignore:
-      - 'samples/agent/adk/**'
+    paths:
+      - 'tools/editor/**'
+      - 'renderers/lit/**'
+      - '.github/workflows/editor_build.yml'
 
 jobs:
   build:
@@ -44,9 +47,9 @@ jobs:
         run: npm run build
 
       - name: Install editor deps
-        working-directory: ./editor
+        working-directory: ./tools/editor
         run: npm install
 
       - name: Build editor
-        working-directory: ./editor
+        working-directory: ./tools/editor
         run: npm run build

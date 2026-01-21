@@ -603,7 +603,7 @@ A2UI_SCHEMA = r'''
                     "properties": {
                       "value": {
                         "type": "object",
-                        "description": "The selected date and/or time value. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob').",
+                        "description": "The selected date and/or time value in ISO 8601 format. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob').",
                         "properties": {
                           "literalString": {
                             "type": "string"
@@ -620,10 +620,6 @@ A2UI_SCHEMA = r'''
                       "enableTime": {
                         "type": "boolean",
                         "description": "If true, allows the user to select a time."
-                      },
-                      "outputFormat": {
-                        "type": "string",
-                        "description": "The desired format for the output string after a date or time is selected."
                       }
                     },
                     "required": ["value"]

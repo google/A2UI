@@ -1,8 +1,7 @@
 {
-  "name": "@a2ui/web-lib",
-  "private": true,
-  "version": "0.1.0",
-  "description": "A2UI Web Library",
+  "name": "@a2ui/lit",
+  "version": "0.8.1",
+  "description": "A2UI Lit Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -31,9 +30,9 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "mkdir -p src/0.8/schemas && cp ../../specification/0.8/json/*.json src/0.8/schemas",
+      "command": "mkdir -p src/0.8/schemas && cp ../../specification/v0_8/json/*.json src/0.8/schemas",
       "files": [
-        "../../specification/0.8/json/*.json"
+        "../../specification/v0_8/json/*.json"
       ],
       "output": [
         "src/0.8/schemas/*.json"
@@ -95,6 +94,7 @@
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.10.1",
+    "google-artifactregistry-auth": "^3.5.0",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
