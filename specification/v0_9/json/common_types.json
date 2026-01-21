@@ -325,7 +325,7 @@
           "type": "object",
           "description": "Triggers a server-side event.",
           "properties": {
-            "serverEvent": {
+            "event": {
               "type": "object",
               "description": "The event to dispatch to the server.",
               "properties": {
@@ -345,7 +345,7 @@
               "additionalProperties": false
             }
           },
-          "required": ["serverEvent"],
+          "required": ["event"],
           "additionalProperties": false
         },
         {
