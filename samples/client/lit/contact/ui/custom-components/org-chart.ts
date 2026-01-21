@@ -103,15 +103,55 @@ export class OrgChart extends Root {
   `];
 
   render() {
-    if (!this.chain || this.chain.length === 0) {
+    let chainData: OrgChartNode[] | null = null;
+    let unresolvedChain: any = this.chain;
+
+    // Resolve "chain" if it is a path object
+    const chainAsAny = this.chain as any;
+    if (chainAsAny && typeof chainAsAny === 'object' && 'path' in chainAsAny && chainAsAny.path) {
+      if (this.processor) {
+        const resolved = this.processor.getData(this.component, chainAsAny.path, this.surfaceId ?? 'default');
+        if (resolved) {
+          unresolvedChain = resolved;
+        }
+      }
+    }
+
+    if (Array.isArray(unresolvedChain)) {
+      chainData = unresolvedChain as OrgChartNode[];
+    } else if (unresolvedChain instanceof Map) {
+      // Handle Map (values are the nodes)
+      const entries = Array.from((unresolvedChain as Map<string, OrgChartNode>).entries());
+      entries.sort((a, b) => parseInt(a[0], 10) - parseInt(b[0], 10));
+      chainData = entries.map(entry => entry[1]);
+    } else if (typeof unresolvedChain === 'object' && unresolvedChain !== null) {
+      chainData = Object.values(unresolvedChain);
+    }
+
+    // Normalize items: model processor converts nested objects to Maps, so we must convert them back
+    chainData = (chainData || []).map(node => {
+      // Helper to safely get property regardless of type
+      const getVal = (k: string) => {
+        if (node instanceof Map) return node.get(k);
+        return (node as any)?.[k];
+      };
+
+      return {
+        title: getVal('title') ?? '',
+        name: getVal('name') ?? '',
+      };
+    });
+
+    if (!chainData || chainData.length === 0) {
       return html`<div class="empty">No hierarchy data</div>`;
     }
 
     return html`
       <div class="container">
-        ${map(this.chain, (node, index) => {
-      const isLast = index === this.chain.length - 1;
-      return html`
+        ${map(chainData, (node, index) => {
+          // Use chainData.length, not this.chain.length
+          const isLast = index === (chainData?.length ?? 0) - 1;
+          return html`
             <button 
               class="node ${isLast ? 'current' : ''}"
               @click=${() => this.handleNodeClick(node)}
@@ -122,7 +162,7 @@ export class OrgChart extends Root {
             </button>
             ${!isLast ? html`<div class="arrow">↓</div>` : ''}
           `;
-    })}
+        })}
       </div>
     `;
   }
