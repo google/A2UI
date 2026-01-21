@@ -38,9 +38,30 @@
           "type": "object",
           "description": "Explicit accessibility states.",
           "properties": {
-            "disabled": { "$ref": "#/$defs/DynamicBoolean" },
-            "selected": { "$ref": "#/$defs/DynamicBoolean" },
-            "expanded": { "$ref": "#/$defs/DynamicBoolean" }
+            "disabled": {
+              "$ref": "#/$defs/DynamicBoolean",
+              "description": "If true, the element is perceptible but not interactive. Maps to aria-disabled."
+            },
+            "selected": {
+              "$ref": "#/$defs/DynamicBoolean",
+              "description": "Indicates the element is the chosen item in a set (e.g., tabs). Maps to aria-selected."
+            },
+            "expanded": {
+              "$ref": "#/$defs/DynamicBoolean",
+              "description": "Indicates the element controls a region that is currently open. Maps to aria-expanded."
+            },
+            "checked": {
+              "$ref": "#/$defs/DynamicBoolean",
+              "description": "Indicates the 'on' state for toggle buttons or custom checkboxes. Maps to aria-checked or aria-pressed."
+            },
+            "busy": {
+              "$ref": "#/$defs/DynamicBoolean",
+              "description": "Indicates the element is updating and should be ignored temporarily. Maps to aria-busy."
+            },
+            "invalid": {
+              "$ref": "#/$defs/DynamicBoolean",
+              "description": "Indicates the user input is invalid or erroneous. Maps to aria-invalid."
+            }
           }
         }
       }
