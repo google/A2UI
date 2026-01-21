@@ -1,6 +1,6 @@
 # A2UI Protocol Evolution Guide: v0.8.1 to v0.9
 
-This document serves as a comprehensive guide to the changes between A2UI version 0.8 and version 0.9. It details the shifts in philosophy, architecture, and implementation, providing a reference for stakeholders and developers migrating between versions.
+This document serves as a comprehensive guide to the changes between A2UI version 0.8.1 and version 0.9. It details the shifts in philosophy, architecture, and implementation, providing a reference for stakeholders and developers migrating between versions.
 
 ## 1. Executive Summary
 

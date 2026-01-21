@@ -77,6 +77,29 @@ sequenceDiagram
     Client-->>-Server: (UI is gone)
 ```
 
+## Transport Decoupling
+
+The A2UI protocol is designed to be transport-agnostic. It defines the JSON message structure and the semantic contract between the server (Agent) and the client (Renderer), but it does not mandate a specific transport layer.
+
+This strict separation of concerns allows A2UI to be carried over any reliable transport mechanism, including:
+
+- **[A2A (Agent-to-Agent)**](https://a2a-protocol.org/latest/)**: Using native agent protocol streams.
+- **[AG-UI](https://docs.ag-ui.com/introduction)**: Agent–User Interaction protocol.
+- **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/docs/getting-started/intro)**: Delivered as tool outputs or resource subscriptions.
+- **[SSE](https://en.wikipedia.org/wiki/Server-sent_events) with [JSON RPC](https://www.jsonrpc.org/)**: Standard server-sent events for web integrations that support streaming, and JSON RPC for client-server communication.
+- **[WebSockets](https://en.wikipedia.org/wiki/WebSocket)**: For bidirectional, real-time sessions.
+- **Framework-specific**: Other custom transport layers.
+
+### The Transport Contract
+
+To support A2UI, a transport layer must fulfill the following contract:
+
+1.  **Reliable Delivery**: Messages must be delivered in the order they were generated.
+2.  **Message Framing**: The transport must clearly delimit individual JSON envelope messages (e.g., using newlines in JSONL, WebSocket frames, or SSE events).
+3.  **Bidirectional Capability (Optional)**: While the rendering stream is unidirectional (Server -> Client), interactive applications require a return channel for `action` messages (Client -> Server).
+
+This decoupling ensures that the protocol can be easily expanded to new environments without modifying the core specification.
+
 ## The Protocol Schemas
 
 A2UI v0.9 is defined by three interacting JSON schemas.
@@ -114,7 +137,7 @@ This message signals the client to create a new surface and begin rendering it. 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
-- `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+- `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`). If it is a URL, the URL does not need to have any deployed resources, it is simply a unique identifier.
 - `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
 - `attachDataModel` (boolean, optional): If true, the client will attach the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
 
@@ -226,7 +249,7 @@ A2UI's component model is designed for flexibility, separating the protocol's st
 
 ### The Component Object
 
-Each object in the `components` array of a `updateComponents` message defines a single UI component. It has the following structure:
+Each object in the `components` array of an `updateComponents` message defines a single UI component. It has the following structure:
 
 - `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
 - `component` (string, required): Specifies the component's type (e.g., `"Text"`).
@@ -236,7 +259,7 @@ This structure is designed to be both flexible and strictly validated.
 
 ### The Component Catalog
 
-The set of available UI components and functions is defined in a **Catalog**. The standard catalog is defined in [`standard_catalog.json`]. This allows for different clients to support different sets of components and functions, including custom ones. The server must generate messages that conform to the catalog understood by the client.
+The set of available UI components and functions is defined in a **Catalog**. The standard catalog is defined in [`standard_catalog.json`]. This allows for different clients to support different sets of components and functions, including custom ones. Advanced use cases may want to define their own custom catalogs to support custom front end design systems or renderers. The server must generate messages that conform to the catalog understood by the client.
 
 ### UI Composition: The Adjacency List Model
 
@@ -416,7 +439,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 - User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
 - The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
-- When a `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
+- When an `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
 
 #### Example: Form Submission Pattern
 
