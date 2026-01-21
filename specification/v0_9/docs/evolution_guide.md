@@ -229,7 +229,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 - **String Formatting**: Introduced the `string_format` function, which supports `${expression}` syntax for interpolation.
 - **Unified Expression Language**: Allows embedding JSON Pointer paths (absolute and relative) and client-side function calls directly within the format string.
 - **Nesting**: Supports recursive nesting of expressions (e.g., `${formatDate(${/timestamp}, 'yyyy-MM-dd')}`).
-- **Restriction**: Note that string interpolation `${...}` is **ONLY** supported within the `string_format` function. It is not supported in other string properties to strictly separate data binding definitions from static content.
+- **Restriction**: String interpolation `${...}` is **ONLY** supported within the `string_format` function and in other client functions that may explicitly implement their own string interpolation syntax. It is not supported in general for string properties, in order to strictly separate data binding definitions from static content.
 - **Reason**: Improves readability for complex strings. Instead of generating complex nested JSON objects (like chained concatenations) to combine strings and data, the model can write natural-looking template literals within the `string_format` function.
 
 ### 5.4. Data Synchronization
