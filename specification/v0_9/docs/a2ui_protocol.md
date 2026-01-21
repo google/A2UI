@@ -88,10 +88,10 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
 - **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `FunctionCall` (function call).
 - **`ChildList`**: Defines how containers hold children. It supports:
 
-  - `array`: A static array of string component IDs.
+  - `array`: A static array of `ComponentId` component references.
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
-- **`ChildId`**: A reference to the unique ID of another component within the same surface.
+- **`ComponentId`**: A reference to the unique ID of another component within the same surface.
 
 ### Server to Client Message Structure: The Envelope
 
@@ -107,8 +107,8 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), custom catalogs MUST adhere to the following strict typing rules:
 
-1.  **Single Child References:** Any property that holds the ID of another component MUST use the `ChildId` type defined in `common_types.json`.
-    *   Use: `"$ref": "common_types.json#/$defs/ChildId"`
+1.  **Single Child References:** Any property that holds the ID of another component MUST use the `ComponentId` type defined in `common_types.json`.
+    *   Use: `"$ref": "common_types.json#/$defs/ComponentId"`
     *   Do NOT use: `"type": "string"`
 
 2.  **List References:** Any property that holds a list of children or a template MUST use the `ChildList` type.
@@ -241,7 +241,7 @@ A2UI's component model is designed for flexibility, separating the protocol's st
 
 Each object in the `components` array of a `updateComponents` message defines a single UI component. It has the following structure:
 
-- `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
+- `id` (`ComponentId`, required): A unique string that identifies this specific component instance. This is used for parent-child references.
 - `component` (string, required): Specifies the component's type (e.g., `"Text"`).
 - **Component Properties**: Other properties relevant to the specific component type (e.g., `text`, `url`, `children`) are included directly in the component object.
 
@@ -560,26 +560,26 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 
 ### Components
 
-| Component         | Description                                                                            |
-| :---------------- | :------------------------------------------------------------------------------------- |
-| **Text**          | Displays text. Supports simple Markdown.                                               |
-| **Image**         | Displays an image from a URL.                                                          |
-| **Icon**          | Displays a system-provided icon from a predefined list.                                |
-| **Video**         | Displays a video from a URL.                                                           |
-| **AudioPlayer**   | A player for audio content from a URL.                                                 |
-| **Row**           | A horizontal layout container.                                                         |
-| **Column**        | A vertical layout container.                                                           |
-| **List**          | A scrollable list of components.                                                       |
-| **Card**          | A container with card-like styling.                                                    |
-| **Tabs**          | A set of tabs, each with a title and child component.                                  |
-| **Divider**       | A horizontal or vertical dividing line.                                                |
-| **Modal**         | A dialog that appears over the main content triggered by a button in the main content. |
+| Component         | Description                                                                                 |
+| :---------------- | :------------------------------------------------------------------------------------------ |
+| **Text**          | Displays text. Supports simple Markdown.                                                    |
+| **Image**         | Displays an image from a URL.                                                               |
+| **Icon**          | Displays a system-provided icon from a predefined list.                                     |
+| **Video**         | Displays a video from a URL.                                                                |
+| **AudioPlayer**   | A player for audio content from a URL.                                                      |
+| **Row**           | A horizontal layout container.                                                              |
+| **Column**        | A vertical layout container.                                                                |
+| **List**          | A scrollable list of components.                                                            |
+| **Card**          | A container with card-like styling.                                                         |
+| **Tabs**          | A set of tabs, each with a title and child component.                                       |
+| **Divider**       | A horizontal or vertical dividing line.                                                     |
+| **Modal**         | A dialog that appears over the main content triggered by a button in the main content.      |
 | **Button**        | A clickable button that dispatches an action. Supports 'primary' and 'borderless' variants. |
-| **CheckBox**      | A checkbox with a label and a boolean value.                                           |
-| **TextField**     | A field for user text input.                                                           |
-| **DateTimeInput** | An input for date and/or time.                                                         |
-| **ChoicePicker**  | A component for selecting one or more options.                                         |
-| **Slider**        | A slider for selecting a numeric value within a range.                                 |
+| **CheckBox**      | A checkbox with a label and a boolean value.                                                |
+| **TextField**     | A field for user text input.                                                                |
+| **DateTimeInput** | An input for date and/or time.                                                              |
+| **ChoicePicker**  | A component for selecting one or more options.                                              |
+| **Slider**        | A slider for selecting a numeric value within a range.                                      |
 
 ### Functions
 
@@ -596,11 +596,11 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 
 The standard catalog defines the following theme properties that can be set in the `createSurface` message:
 
-| Property           | Type   | Description                                                                                               |
-| :----------------- | :----- | :-------------------------------------------------------------------------------------------------------- |
-| **primaryColor**   | String | The primary brand color used for highlights throughout the UI (e.g., primary buttons, active borders). The renderer may generate variants, such as lighter shades, as needed. Format: Hexadecimal code (e.g., '#00BFFF'). |
-| **iconUrl**        | URI    | A URL for an image (e.g., logo or avatar) that identifies the agent or tool associated with the surface.  |
-| **agentDisplayName**| String | Text to be displayed next to the surface to identify the agent or tool that created it (e.g. "Weather Bot").|
+| Property             | Type   | Description                                                                                                                                                                                                               |
+| :------------------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **primaryColor**     | String | The primary brand color used for highlights throughout the UI (e.g., primary buttons, active borders). The renderer may generate variants, such as lighter shades, as needed. Format: Hexadecimal code (e.g., '#00BFFF'). |
+| **iconUrl**          | URI    | A URL for an image (e.g., logo or avatar) that identifies the agent or tool associated with the surface.                                                                                                                  |
+| **agentDisplayName** | String | Text to be displayed next to the surface to identify the agent or tool that created it (e.g. "Weather Bot").                                                                                                              |
 
 #### Identity and Attribution
 
