@@ -17,8 +17,9 @@
 import { html, css, PropertyValues, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
-import { Root } from "@a2ui/web-lib/ui";
-import { Events, Types } from "@a2ui/web-lib/0.8";
+import { Root } from "@a2ui/lit/ui";
+import { v0_8 } from "@a2ui/lit";
+
 
 interface WebFrameConfig {
   [key: string]: unknown;
@@ -193,7 +194,7 @@ export class WebFrame extends Root {
   };
 
   #dispatchAgentAction(actionName: string, params: any) {
-    const context: Types.Action["context"] = [];
+    const context: v0_8.Types.Action["context"] = [];
     if (params && typeof params === 'object') {
       for (const [key, value] of Object.entries(params)) {
         if (typeof value === "string") {
@@ -206,20 +207,20 @@ export class WebFrame extends Root {
       }
     }
 
-    const action: Types.Action = {
+    const action: v0_8.Types.Action = {
       name: actionName,
       context,
     };
 
-    const eventPayload: Events.StateEventDetailMap["a2ui.action"] = {
+    const eventPayload: v0_8.Events.StateEventDetailMap["a2ui.action"] = {
       eventType: "a2ui.action",
       action,
       sourceComponentId: this.id,
       dataContextPath: this.dataContextPath,
-      sourceComponent: this.component as Types.AnyComponentNode,
+      sourceComponent: this.component as v0_8.Types.AnyComponentNode,
     };
 
-    this.dispatchEvent(new Events.StateEvent(eventPayload));
+    this.dispatchEvent(new v0_8.Events.StateEvent(eventPayload));
   }
 
   // --- Zoom Controls (External) ---

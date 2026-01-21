@@ -30,7 +30,7 @@ type A2AServerPayload =
   | Array<A2DataPayload | A2TextPayload>
   | { error: string };
 
-import { componentRegistry } from "@a2ui/web-lib/ui";
+import { componentRegistry } from "@a2ui/lit/ui";
 
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
