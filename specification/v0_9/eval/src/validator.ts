@@ -297,6 +297,12 @@ export class Validator {
     }
 
     const componentType = component.component;
+    
+    // Handle deletion (tombstone)
+    if (componentType === null) {
+      return;
+    }
+
     if (!componentType || typeof componentType !== "string") {
       errors.push(`Component '${id}' is missing 'component' property.`);
       return;

@@ -60,7 +60,26 @@
               "description": "A list containing all UI components for the surface.",
               "minItems": 1,
               "items": {
-                "$ref": "standard_catalog.json#/$defs/anyComponent"
+                "oneOf": [
+                  {
+                    "$ref": "standard_catalog.json#/$defs/anyComponent"
+                  },
+                  {
+                    "type": "object",
+                    "description": "A tombstone to remove a component.",
+                    "properties": {
+                      "id": {
+                        "$ref": "common_types.json#/$defs/ComponentId"
+                      },
+                      "component": {
+                        "const": null,
+                        "description": "Set to null to delete this component."
+                      }
+                    },
+                    "required": ["id", "component"],
+                    "additionalProperties": false
+                  }
+                ]
               }
             }
           },

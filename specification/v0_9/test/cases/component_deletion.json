@@ -1,0 +1,70 @@
+{
+  "schema": "server_to_client.json",
+  "tests": [
+    {
+      "description": "UpdateComponents with component deletion (tombstone)",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "item_to_delete",
+              "component": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "UpdateComponents mixing update and deletion",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "new_item",
+              "component": "Text",
+              "text": "Hello"
+            },
+            {
+              "id": "old_item",
+              "component": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Deletion with extra properties (should be invalid)",
+      "valid": false,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "item_to_delete",
+              "component": null,
+              "text": "Should not be here"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Deletion missing ID (should be invalid)",
+      "valid": false,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "component": null
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
