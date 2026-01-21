@@ -69,6 +69,7 @@
               "checks": [
                 {
                   "call": "email",
+                  "args": [{ "path": "/contact/email" }],
                   "message": "Please enter a valid email address."
                 }
               ]
@@ -98,7 +99,8 @@
               "id": "submit_button",
               "component": "Button",
               "child": "submit_button_label",
-              "action": { "name": "submitContactForm" }
+              "variant": "primary",
+              "action": { "event": { "name": "submitContactForm" } }
             }
           ]
         }

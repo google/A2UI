@@ -11,18 +11,19 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 
 ### Summary Table
 
-| Feature                  | v0.8.1                                   | v0.9                                                   |
-| :----------------------- | :--------------------------------------- | :------------------------------------------------------|
-| **Philosophy**           | Structured Output / Function Calling     | Prompt-First / In-Context Schema                       |
-| **Message Types**        | `beginRendering`, `surfaceUpdate`, ...   | `createSurface`, `updateComponents`, ...               |
-| **Surface Creation**     | Explicit `beginRendering`                | Explicit `createSurface`                               |
-| **Component Type**       | Key-based wrapper (`{"Text": ...}`)      | Property-based discriminator (`"component": "Text"`)  |
-| **Data Model Update**    | Array of Key-Value Pairs                 | Standard JSON Object                                   |
-| **Data Binding**         | `dataBinding` / `literalString`          | `path` / Native JSON types                             |
-| **Button Context**       | Array of Key-Value pairs                 | Standard JSON Object                                   |
-| **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)              |
-| **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                           |
-| **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop                |
+| Feature                  | v0.8.1                                   | v0.9                                                 |
+| :----------------------- | :--------------------------------------- | :--------------------------------------------------- |
+| **Philosophy**           | Structured Output / Function Calling     | Prompt-First / In-Context Schema                     |
+| **Message Types**        | `beginRendering`, `surfaceUpdate`, ...   | `createSurface`, `updateComponents`, ...             |
+| **Surface Creation**     | Explicit `beginRendering`                | Explicit `createSurface`                             |
+| **Component Type**       | Key-based wrapper (`{"Text": ...}`)      | Property-based discriminator (`"component": "Text"`) |
+| **Data Model Update**    | Array of Key-Value Pairs                 | Standard JSON Object                                 |
+| **Data Binding**         | `dataBinding` / `literalString`          | `path` / Native JSON types                           |
+| **Button Context**       | Array of Key-Value pairs                 | Standard JSON Object                                 |
+| **Button Variant**       | Boolean (`primary: true`)                | Enum (`variant: "primary"`)                          |
+| **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)            |
+| **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                         |
+| **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop              |
 | **Data Synchronization** | Implicit                                 | Explicit Client->Server data syncing (`attachDataModel`) |
 
 ## 2. Architectural & Schema Changes
@@ -225,10 +226,11 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- **String Formatting**: Introduced the `string_format` function, which supports `${expression}` syntax for interpolation.
+- **String Formatting**: Introduced the `formatString` function, which supports `${expression}` syntax for interpolation.
 - **Unified Expression Language**: Allows embedding JSON Pointer paths (absolute and relative) and client-side function calls directly within the format string.
 - **Nesting**: Supports recursive nesting of expressions (e.g., `${formatDate(${/timestamp}, 'yyyy-MM-dd')}`).
-- **Reason**: Improves readability for complex strings. Instead of generating complex nested JSON objects (like chained concatenations) to combine strings and data, the model can write natural-looking template literals within the `string_format` function.
+- **Restriction**: String interpolation `${...}` is **ONLY** supported within the `formatString` function. It is not supported in general for string properties, in order to strictly separate data binding definitions from static content.
+- **Reason**: Improves readability for complex strings. Instead of generating complex nested JSON objects (like chained concatenations) to combine strings and data, the model can write natural-looking template literals within the `formatString` function.
 
 ### 5.4. Data Synchronization
 
@@ -256,7 +258,19 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 - **Standard Map**: `context: { "id": "123" }`
 - **Reason**: Token efficiency. LLMs understand JSON objects as maps natively.
 
-### 6.2. TextField
+### 6.2. Button Variant
+
+**v0.8.1:**
+
+- **Boolean**: `primary: true` or `primary: false`.
+- **Limited**: Only two styles were explicitly supported.
+
+**v0.9:**
+
+- **Enum**: `variant: "primary"` or `variant: "borderless"`.
+- **Reason**: More flexible and consistent with other components (like `Text` and `Image`) that use `variant` for styling hints. 'borderless' provides a standard way to represent clickable text or icons without a button-like frame.
+
+### 6.3. TextField
 
 **v0.8.1:**
 
@@ -269,7 +283,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 - Validation: **`checks`** (generic list of function calls).
 - **Reason**: Consistency with `Text` and `Image` components which already used `variant`. Validation is now more flexible and reusable. Also, `text` was renamed to **`value`** to match other input components.
 
-### 6.3. ChoicePicker (vs MultipleChoice)
+### 6.4. ChoicePicker (vs MultipleChoice)
 
 **v0.8.1:**
 
@@ -282,7 +296,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 - Properties: **`value`** (array), **`variant`** (enum: `multipleSelection`, `mutuallyExclusive`). The `maxAllowedSelections` property was removed.
 - **Reason**: `ChoicePicker` is a more generic name that covers both radio buttons (mutually exclusive) and checkboxes (multiple selection). The `variant` controls the behavior, simplifying the component surface area.
 
-### 6.4. Slider
+### 6.5. Slider
 
 **v0.8.1:**
 
