@@ -19,7 +19,7 @@ A Specification for a JSON-Based, Streaming UI Protocol
 
 ## Introduction
 
-The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from an A2A server. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
+The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from a server (Agent). Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
 
 Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
 
@@ -81,24 +81,39 @@ sequenceDiagram
 
 The A2UI protocol is designed to be transport-agnostic. It defines the JSON message structure and the semantic contract between the server (Agent) and the client (Renderer), but it does not mandate a specific transport layer.
 
-This strict separation of concerns allows A2UI to be carried over any reliable transport mechanism, including:
-
-- **[A2A (Agent-to-Agent)**](https://a2a-protocol.org/latest/)**: Using native agent protocol streams.
-- **[AG-UI](https://docs.ag-ui.com/introduction)**: Agent–User Interaction protocol.
-- **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/docs/getting-started/intro)**: Delivered as tool outputs or resource subscriptions.
-- **[SSE](https://en.wikipedia.org/wiki/Server-sent_events) with [JSON RPC](https://www.jsonrpc.org/)**: Standard server-sent events for web integrations that support streaming, and JSON RPC for client-server communication.
-- **[WebSockets](https://en.wikipedia.org/wiki/WebSocket)**: For bidirectional, real-time sessions.
-- **Framework-specific**: Other custom transport layers.
-
 ### The Transport Contract
 
 To support A2UI, a transport layer must fulfill the following contract:
 
-1.  **Reliable Delivery**: Messages must be delivered in the order they were generated.
+1.  **Reliable Delivery**: Messages must be delivered in the order they were generated. A2UI relies on stateful updates (e.g., creating a surface before updating it), so out-of-order delivery can corrupt the UI state.
 2.  **Message Framing**: The transport must clearly delimit individual JSON envelope messages (e.g., using newlines in JSONL, WebSocket frames, or SSE events).
-3.  **Bidirectional Capability (Optional)**: While the rendering stream is unidirectional (Server -> Client), interactive applications require a return channel for `action` messages (Client -> Server).
+3.  **Metadata Support**: The transport must provide a mechanism to associate metadata with messages. This is critical for:
+    *   **Data Model Synchronization**: The `attachDataModel` feature requires the client to send the current data model state as metadata alongside user actions.
+    *   **Capabilities Exchange**: Client capabilities (supported catalogs, custom components) are exchanged via metadata.
+4.  **Bidirectional Capability (Optional)**: While the rendering stream is unidirectional (Server -> Client), interactive applications require a return channel for `action` messages (Client -> Server).
 
-This decoupling ensures that the protocol can be easily expanded to new environments without modifying the core specification.
+### Transport Bindings
+
+While A2UI is agnostic, it is most commonly used with the following transports.
+
+#### A2A (Agent-to-Agent) Binding
+
+[A2A (Agent-to-Agent)](https://a2a-protocol.org/latest/) is the primary transport for A2UI in agentic systems.
+
+*   **Message Mapping**: Each A2UI envelope (e.g., `updateComponents`) corresponds to the payload of a single A2A message Part.
+*   **Metadata**:
+    *   **Data Model**: When `attachDataModel` is active, the client's `a2uiClientDataModel` object is placed in the `metadata` field of the A2A message.
+    *   **Capabilities**: The `a2uiClientCapabilities` object is placed in the `metadata` field of the initial A2A message (or `hello` message) sent from the client to the server.
+*   **Context**: A2UI sessions typically map to A2A `contextId`. All messages for a set of related surfaces should share the same `contextId`.
+
+#### Other Transports
+
+A2UI can also be carried over:
+
+- **[AG-UI](https://docs.ag-ui.com/introduction)**: Agent–User Interaction protocol.
+- **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/docs/getting-started/intro)**: Delivered as tool outputs or resource subscriptions.
+- **[SSE](https://en.wikipedia.org/wiki/Server-sent_events) with [JSON RPC](https://www.jsonrpc.org/)**: Standard server-sent events for web integrations that support streaming, and JSON RPC for client-server communication.
+- **[WebSockets](https://en.wikipedia.org/wiki/WebSocket)**: For bidirectional, real-time sessions.
 
 ## The Protocol Schemas
 
@@ -152,7 +167,7 @@ This message signals the client to create a new surface and begin rendering it. 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
 - `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`). If it is a URL, the URL does not need to have any deployed resources, it is simply a unique identifier.
 - `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
-- `attachDataModel` (boolean, optional): If true, the client will attach the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
+- `attachDataModel` (boolean, optional): If true, the client will attach the full data model of this surface to the metadata of every message sent to the server (via the Transport's metadata mechanism). This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
 
 **Example:**
 
@@ -536,12 +551,12 @@ _Replace the entire data model:_
 
 ### Client to Server Updates
 
-When `attachDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action` or user query) sent to the server that created the surface. The data model is included in the A2A message metadata using the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
+When `attachDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every message (such as `action` or user query) sent to the server that created the surface. The data model is included using the transport's metadata facility (e.g., the `metadata` field in A2A or a header in HTTP). The payload follows the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
 
 - **Targeted Delivery**: The data model is sent exclusively to the server that created the surface. Data cannot leak to other agents or servers.
-- **Trigger:** Data is sent only when an A2A message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
-- **Payload:** The data model is included in the A2A message metadata, tagged by its `surfaceId`.
-- **Convergence:** The server treats the received data model as the current state of the client at the time of the action.
+- **Trigger**: Data is sent only when a client-to-server message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
+- **Payload**: The data model is included in the transport metadata, tagged by its `surfaceId`.
+- **Convergence**: The server treats the received data model as the current state of the client at the time of the action.
 
 ## Client-Side Logic & Validation
 
@@ -770,7 +785,7 @@ This message is sent when the user interacts with a component that has an `actio
 
 ### Client Capabilities & Metadata
 
-In A2UI v0.9, client capabilities and other metadata are sent as part of the **A2A metadata** envelope in every message, rather than as first-class A2UI messages.
+In A2UI v0.9, client capabilities and other metadata are sent as part of the **Transport metadata** (e.g., A2A metadata) envelope in every message, rather than as first-class A2UI messages.
 
 #### Client Capabilities
 
