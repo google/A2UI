@@ -765,7 +765,7 @@
         "type": "array",
         "items": [
           {
-            "$ref": "common_types.json#/$defs/DynamicDate",
+            "$ref": "common_types.json#/$defs/DynamicValue",
             "description": "The date to format."
           },
           {
