@@ -42,6 +42,10 @@
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The URL of the image to display."
             },
+            "altText": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "A text description of the image. Required unless accessibility.hidden is true."
+            },
             "fit": {
               "type": "string",
               "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
@@ -74,6 +78,10 @@
           "type": "object",
           "properties": {
             "component": { "const": "Icon" },
+            "altText": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "A text description of the icon. Required unless accessibility.hidden is true."
+            },
             "name": {
               "description": "The name of the icon to display.",
               "oneOf": [
