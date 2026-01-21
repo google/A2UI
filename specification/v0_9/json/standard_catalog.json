@@ -859,6 +859,9 @@
         ],
         "minItems": 2,
         "maxItems": 2
+      }
+    },
+    {
       "name": "openUrl",
       "description": "Opens the specified URL in a browser or handler. This function has no return value.",
       "returnType": "void",

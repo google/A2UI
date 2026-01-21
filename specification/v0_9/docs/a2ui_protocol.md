@@ -605,8 +605,7 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **length**        | Checks string length constraints.                                        |
 | **numeric**       | Checks numeric range constraints.                                        |
 | **email**         | Checks that the value is a valid email address.                          |
-| **formatString** | Does string interpolation of data model values and registered functions. |
-| **string_format** | Does string interpolation of data model values and registered functions. |
+| **formatString**  | Does string interpolation of data model values and registered functions. |
 | **openUrl**       | Opens a URL in a browser.                                                |
 
 ### Theme
@@ -629,11 +628,11 @@ In multi-agent systems or orchestrators, the orchestrator is responsible for set
 
 The `formatString` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
 
-#### `string_format` Syntax
+#### `formatString` Syntax
 
 Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
 
-#### `string_format` Data Model Binding
+#### `formatString` Data Model Binding
 
 Values from the data model can be interpolated using their JSON Pointer path.
 
@@ -655,7 +654,7 @@ Values from the data model can be interpolated using their JSON Pointer path.
 }
 ```
 
-#### `string_format` Client-Side Functions
+#### `formatString` Client-Side Functions
 
 Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
 
@@ -664,14 +663,14 @@ Results of client-side functions can be interpolated. Function calls are identif
 
 Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
 
-#### `string_format` Nested Interpolation
+#### `formatString` Nested Interpolation
 
 Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
 
 - **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
 - **Nested Functions**: `${upper(${now()})}`
 
-#### `string_format` Type Conversion
+#### `formatString` Type Conversion
 
 When a non-string value is interpolated, the client converts it to a string:
 
