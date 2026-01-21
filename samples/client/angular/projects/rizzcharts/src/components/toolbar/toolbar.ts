@@ -37,7 +37,7 @@ export class Toolbar {
 
   catalogs = [
     {
-      value: 'https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json',
+      value: 'https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json',
       viewValue: 'Standard'
     },
     {
