@@ -3,7 +3,7 @@
 <!-- markdownlint-disable MD034 -->
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
-    <img src="../../../docs/assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
+    <img src="../../../assets/A2UI_dark.svg" alt="A2UI Protocol Logo" width="100">
     <h1>A2UI (Agent to UI) Protocol v0.9</h1>
   </div>
 </div>
@@ -116,7 +116,7 @@ This message signals the client to create a new surface and begin rendering it. 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
 - `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
 - `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
-- `broadcastDataModel` (boolean, optional): If true, the client will append the full data model of this surface to the metadata of every A2A message (like 'action') sent to the server. Defaults to false.
+- `attachDataModel` (boolean, optional): If true, the client will attach the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
 
 **Example:**
 
@@ -127,7 +127,8 @@ This message signals the client to create a new surface and begin rendering it. 
     "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
     "theme": {
       "primaryColor": "#00BFFF"
-    }
+    },
+    "attachDataModel": true
   }
 }
 ```
@@ -214,8 +215,8 @@ The following example demonstrates a complete interaction to render a Contact Fo
 
 ```jsonl
 {"createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.dev/specification/v0_9/standard_catalog.json"}}
-{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","message":"Email is required."},{"call":"email","message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","primary":true,"action":{"event":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}}]}}
-{"updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe"}}}
+{"updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","args":[{"path":"/contact/email"}],"message":"Email is required."},{"call":"email","args":[{"path":"/contact/email"}],"message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":[{"path":"/contact/phone"}, "^\\d{10}$"],"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","variant":"primary","action":{"event":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"now","returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}}]}}
+{"updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true}}}
 {"deleteSurface":{"surfaceId":"contact_form_1"}}
 ```
 
@@ -312,9 +313,9 @@ To execute a local function, use the `functionCall` property within the `action`
 }
 ```
 
-## Data Model Representation: Binding, Scope, and Interpolation
+## Data Model Representation: Binding, Scope
 
-This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration, and interpolation.
+This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration.
 
 ### Path Resolution & Scope
 
@@ -384,22 +385,6 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 }
 ```
 
-#### Client-Side Functions
-
-Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
-
-- `${now()}`: A function with no arguments.
-- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
-
-Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
-
-#### Nested Interpolation
-
-Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
-
-- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
-- **Nested Functions**: `${upper(${now()})}`
-
 #### Type Conversion
 
 When a non-string value is interpolated, the client converts it to a string:
@@ -456,7 +441,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 While the sections above describe how components reference data, this section defines how the Data Model itself is **updated** and synchronized.
 
-To support reliable data synchronization between the Renderer and the Agent, the A2UI protocol uses a simple broadcasting mechanism controlled by the `broadcastDataModel` property in the `createSurface` message.
+To support reliable data synchronization between the Renderer and the Agent that created the surface, the A2UI protocol uses a simple synchronization mechanism controlled by the `attachDataModel` property in the `createSurface` message.
 
 ### Server to Client Updates
 
@@ -513,10 +498,11 @@ _Replace the entire data model:_
 }
 ```
 
-### Client to Server Updates (Broadcasting)
+### Client to Server Updates
 
-When `broadcastDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action`) sent to the server. The data model is included in the A2A message metadata using the schema in [`a2ui_data_broadcast.json`](../json/a2ui_data_broadcast.json).
+When `attachDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action` or user query) sent to the server that created the surface. The data model is included in the A2A message metadata using the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
 
+- **Targeted Delivery**: The data model is sent exclusively to the server that created the surface. Data cannot leak to other agents or servers.
 - **Trigger:** Data is sent only when an A2A message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
 - **Payload:** The data model is included in the A2A message metadata, tagged by its `surfaceId`.
 - **Convergence:** The server treats the received data model as the current state of the client at the time of the action.
@@ -535,15 +521,15 @@ Input components (like `TextField`, `CheckBox`) can define a list of checks. Eac
 "checks": [
   {
     "call": "required",
-    "args": { "value": { "path": "/formData/zip" } },
+    "args": [{ "path": "/formData/zip" }],
     "message": "Zip code is required"
   },
   {
     "call": "regex",
-    "args": {
-      "value": { "path": "/formData/zip" },
-      "pattern": "^[0-9]{5}$"
-    },
+    "args": [
+      { "path": "/formData/zip" },
+      "^[0-9]{5}$"
+    ],
     "message": "Must be a 5-digit zip code"
   }
 ]
@@ -562,17 +548,17 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
       "and": [
         {
           "call": "required",
-          "args": { "value": { "path": "/formData/terms" } }
+          "args": [{ "path": "/formData/terms" }]
         },
         {
           "or": [
             {
               "call": "required",
-              "args": { "value": { "path": "/formData/email" } }
+              "args": [{ "path": "/formData/email" }]
             },
             {
               "call": "required",
-              "args": { "value": { "path": "/formData/phone" } }
+              "args": [{ "path": "/formData/phone" }]
             }
           ]
         }
@@ -589,26 +575,26 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 
 ### Components
 
-| Component         | Description                                                                            |
-| :---------------- | :------------------------------------------------------------------------------------- |
-| **Text**          | Displays text. Supports simple Markdown.                                               |
-| **Image**         | Displays an image from a URL.                                                          |
-| **Icon**          | Displays a system-provided icon from a predefined list.                                |
-| **Video**         | Displays a video from a URL.                                                           |
-| **AudioPlayer**   | A player for audio content from a URL.                                                 |
-| **Row**           | A horizontal layout container.                                                         |
-| **Column**        | A vertical layout container.                                                           |
-| **List**          | A scrollable list of components.                                                       |
-| **Card**          | A container with card-like styling.                                                    |
-| **Tabs**          | A set of tabs, each with a title and child component.                                  |
-| **Divider**       | A horizontal or vertical dividing line.                                                |
-| **Modal**         | A dialog that appears over the main content triggered by a button in the main content. |
-| **Button**        | A clickable button that dispatches an action.                                          |
-| **CheckBox**      | A checkbox with a label and a boolean value.                                           |
-| **TextField**     | A field for user text input.                                                           |
-| **DateTimeInput** | An input for date and/or time.                                                         |
-| **ChoicePicker**  | A component for selecting one or more options.                                         |
-| **Slider**        | A slider for selecting a numeric value within a range.                                 |
+| Component         | Description                                                                                 |
+| :---------------- | :------------------------------------------------------------------------------------------ |
+| **Text**          | Displays text. Supports simple Markdown.                                                    |
+| **Image**         | Displays an image from a URL.                                                               |
+| **Icon**          | Displays a system-provided icon from a predefined list.                                     |
+| **Video**         | Displays a video from a URL.                                                                |
+| **AudioPlayer**   | A player for audio content from a URL.                                                      |
+| **Row**           | A horizontal layout container.                                                              |
+| **Column**        | A vertical layout container.                                                                |
+| **List**          | A scrollable list of components.                                                            |
+| **Card**          | A container with card-like styling.                                                         |
+| **Tabs**          | A set of tabs, each with a title and child component.                                       |
+| **Divider**       | A horizontal or vertical dividing line.                                                     |
+| **Modal**         | A dialog that appears over the main content triggered by a button in the main content.      |
+| **Button**        | A clickable button that dispatches an action. Supports 'primary' and 'borderless' variants. |
+| **CheckBox**      | A checkbox with a label and a boolean value.                                                |
+| **TextField**     | A field for user text input.                                                                |
+| **DateTimeInput** | An input for date and/or time.                                                              |
+| **ChoicePicker**  | A component for selecting one or more options.                                              |
+| **Slider**        | A slider for selecting a numeric value within a range.                                      |
 
 ### Functions
 
@@ -622,15 +608,31 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **string_format** | Does string interpolation of data model values and registered functions. |
 | **openUrl**       | Opens a URL in a browser.                                                |
 
+### Theme
+
+The standard catalog defines the following theme properties that can be set in the `createSurface` message:
+
+| Property             | Type   | Description                                                                                                                                                                                                               |
+| :------------------- | :----- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **primaryColor**     | String | The primary brand color used for highlights throughout the UI (e.g., primary buttons, active borders). The renderer may generate variants, such as lighter shades, as needed. Format: Hexadecimal code (e.g., '#00BFFF'). |
+| **iconUrl**          | URI    | A URL for an image (e.g., logo or avatar) that identifies the agent or tool associated with the surface.                                                                                                                  |
+| **agentDisplayName** | String | Text to be displayed next to the surface to identify the agent or tool that created it (e.g. "Weather Bot").                                                                                                              |
+
+#### Identity and Attribution
+
+The `iconUrl` and `agentDisplayName` fields are used to provide attribution to the user, identifying which sub-agent or tool is responsible for a particular UI surface.
+
+In multi-agent systems or orchestrators, the orchestrator is responsible for setting or validating these fields. This ensures that the identity displayed to the user matches the actual agent server being contacted, preventing malicious agents from impersonating trusted services. For example, an orchestrator might overwrite these fields with the verified identity of the sub-agent before forwarding the `createSurface` message to the client.
+
 ### The `string_format` function
 
 The `string_format` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
 
-#### _Syntax_
+#### `string_format` Syntax
 
 Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
 
-#### _Data Model Binding_
+#### `string_format` Data Model Binding
 
 Values from the data model can be interpolated using their JSON Pointer path.
 
@@ -645,14 +647,14 @@ Values from the data model can be interpolated using their JSON Pointer path.
   "component": "Text",
   "text": {
     "call": "string_format",
-    "args": {
-      "value": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
-    }
+    "args": [
+      "Hello, ${/user/firstName}! Welcome back to ${/appName}."
+    ]
   }
 }
 ```
 
-#### _Client-Side Functions_
+#### `string_format` Client-Side Functions
 
 Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
 
@@ -661,14 +663,14 @@ Results of client-side functions can be interpolated. Function calls are identif
 
 Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
 
-#### _Nested Interpolation_
+#### `string_format` Nested Interpolation
 
 Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
 
 - **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
 - **Nested Functions**: `${upper(${now()})}`
 
-#### _Type Conversion_
+#### `string_format` Type Conversion
 
 When a non-string value is interpolated, the client converts it to a string:
 
@@ -743,9 +745,9 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 - `supportedCatalogIds` (array of strings, required): URIs of supported catalogs.
 - `inlineCatalogs`: An array of inline catalog definitions provided directly by the client (useful for custom or ad-hoc components and functions).
 
-#### Data Model Broadcast
+#### Client Data Model
 
-When `broadcastDataModel` is enabled for a surface, the client includes the `a2uiDataBroadcast` object in the metadata, following the [`a2ui_data_broadcast.json`] schema.
+When `attachDataModel` is enabled for a surface, the client includes the `a2uiClientDataModel` object in the metadata, following the [`a2ui_client_data_model.json`] schema.
 
 **Properties:**
 
@@ -760,6 +762,6 @@ This message is used to report a client-side error to the server.
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
 [`a2ui_client_capabilities.json`]: ../json/a2ui_client_capabilities.json
-[`a2ui_data_broadcast.json`]: ../json/a2ui_data_broadcast.json
+[`a2ui_client_data_model.json`]: ../json/a2ui_client_data_model.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901

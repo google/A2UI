@@ -18,19 +18,19 @@
                   "and": [
                     {
                       "call": "required",
-                      "args": { "value": { "path": "/formData/terms" } },
+                      "args": [{ "path": "/formData/terms" }],
                       "returnType": "boolean"
                     },
                     {
                       "or": [
                         {
                           "call": "required",
-                          "args": { "value": { "path": "/formData/email" } },
+                          "args": [{ "path": "/formData/email" }],
                           "returnType": "boolean"
                         },
                         {
                           "call": "required",
-                          "args": { "value": { "path": "/formData/phone" } },
+                          "args": [{ "path": "/formData/phone" }],
                           "returnType": "boolean"
                         }
                       ]
@@ -79,7 +79,7 @@
               "checks": [
                 {
                   "call": "required",
-                  "args": { "value": "foo" },
+                  "args": ["foo"],
                   "returnType": "not_a_valid_type"
                 }
               ]
@@ -110,6 +110,63 @@
               ]
             },
             { "id": "txt4", "component": "Text", "text": "Submit" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Button with variant 'primary'",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "btn_primary",
+              "component": "Button",
+              "child": "txt_primary",
+              "action": { "name": "submit" },
+              "variant": "primary"
+            },
+            { "id": "txt_primary", "component": "Text", "text": "Submit" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Button with variant 'borderless'",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "btn_borderless",
+              "component": "Button",
+              "child": "txt_borderless",
+              "action": { "name": "cancel" },
+              "variant": "borderless"
+            },
+            { "id": "txt_borderless", "component": "Text", "text": "Cancel" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Button with deprecated 'primary' property (should fail)",
+      "valid": false,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "btn_dep",
+              "component": "Button",
+              "child": "txt_dep",
+              "action": { "name": "submit" },
+              "primary": true
+            },
+            { "id": "txt_dep", "component": "Text", "text": "Submit" }
           ]
         }
       }

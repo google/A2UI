@@ -16,13 +16,13 @@
               "checks": [
                 {
                   "call": "required",
-                  "args": { "value": { "path": "/formData/email" } },
+                  "args": [{ "path": "/formData/email" }],
                   "returnType": "boolean",
                   "message": "Email is required"
                 },
                 {
                   "call": "email",
-                  "args": { "value": { "path": "/formData/email" } },
+                  "args": [{ "path": "/formData/email" }],
                   "returnType": "boolean",
                   "message": "Must be valid email"
                 }
@@ -52,10 +52,7 @@
               "checks": [
                 {
                   "call": "length",
-                  "args": {
-                    "value": { "path": "/formData/interests" },
-                    "min": 1
-                  },
+                  "args": [{ "path": "/formData/interests" }, { "min": 1 }],
                   "returnType": "boolean",
                   "message": "Select at least one"
                 }
@@ -82,10 +79,7 @@
               "checks": [
                 {
                   "call": "numeric",
-                  "args": {
-                    "value": { "path": "/formData/rating" },
-                    "min": 3
-                  },
+                  "args": [{ "path": "/formData/rating" }, { "min": 3 }],
                   "returnType": "boolean",
                   "message": "Rating must be > 3"
                 }
@@ -110,7 +104,7 @@
               "checks": [
                 {
                   "call": "required",
-                  "args": { "value": { "path": "/formData/agreed" } },
+                  "args": [{ "path": "/formData/agreed" }],
                   "returnType": "boolean",
                   "message": "Must agree"
                 }
@@ -135,7 +129,7 @@
               "checks": [
                 {
                   "call": "required",
-                  "args": { "value": { "path": "/formData/date" } },
+                  "args": [{ "path": "/formData/date" }],
                   "returnType": "boolean",
                   "message": "Date required"
                 }
