@@ -752,7 +752,7 @@
           },
           "currencyCode": {
             "$ref": "common_types.json#/$defs/DynamicString",
-            "description": "Optional. The ISO 4217 currency code (e.g., 'USD', 'EUR'). If omitted, uses the device's default currency."
+            "description": "The ISO 4217 currency code (e.g., 'USD', 'EUR')."
           }
         }
       }
