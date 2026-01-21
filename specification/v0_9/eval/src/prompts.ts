@@ -53,12 +53,12 @@ The dog generator is another card which is a form that generates a fictional dog
     name: "loginForm",
     description:
       'A simple login form with username, password, a "remember me" checkbox, and a submit button.',
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a login form. It should have a "Login" text (variant 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the serverContext.`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a login form. It should have a "Login" text (variant 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
   },
   {
     name: "productGallery",
     description: "A gallery of products using a list with a template.",
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should have a serverActionName 'addToCart' and include a serverContext with the product ID, for example, 'productId': 'static-id-123' (use this exact literal string). You should create a template component and then a list that uses it.`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a context with the product ID, for example, 'productId': 'static-id-123' (use this exact literal string). You should create a template component and then a list that uses it.`,
   },
   {
     name: "productGalleryData",

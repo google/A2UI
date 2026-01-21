@@ -98,7 +98,7 @@
               "id": "submit_button",
               "component": "Button",
               "child": "submit_button_label",
-              "action": { "serverActionName": "submitContactForm" }
+              "action": { "name": "submitContactForm" }
             }
           ]
         }
