@@ -86,9 +86,9 @@ class ContactAgentExecutor(AgentExecutor):
                         query = part.root.data["request"]
                         
                         # Check for inline catalog
-                        if "metadata" in part.root.data and "inlineCatalog" in part.root.data["metadata"]:
-                             logger.info(f"  Part {i}: Found 'inlineCatalog' in DataPart.")
-                             inline_catalog = part.root.data["metadata"]["inlineCatalog"]
+                        if "metadata" in part.root.data and "inlineCatalogs" in part.root.data["metadata"]:
+                             logger.info(f"  Part {i}: Found 'inlineCatalogs' in DataPart.")
+                             inline_catalog = part.root.data["metadata"]["inlineCatalogs"]
                              catalog_json = json.dumps(inline_catalog)
                              # Append to query so the agent sees it (simple injection)
                              query += f"\n\n[SYSTEM: The client supports the following custom components: {catalog_json}]"
