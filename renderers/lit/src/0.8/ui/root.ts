@@ -419,7 +419,7 @@ export class Root extends SignalWatcher(LitElement) {
             .dataContextPath=${node.dataContextPath}
             .label=${node.properties.label}
             .text=${node.properties.text}
-            .type=${node.properties.type}
+            .textFieldType=${node.properties.type}
             .validationRegexp=${node.properties.validationRegexp}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-textfield>`;
