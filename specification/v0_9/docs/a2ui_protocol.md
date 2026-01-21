@@ -271,9 +271,9 @@ flowchart TD
 
 ```
 
-## Data Model Representation: Binding, Scope, and Interpolation
+## Data Model Representation: Binding, Scope
 
-This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration, and interpolation.
+This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration.
 
 ### Path Resolution & Scope
 
@@ -342,22 +342,6 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
   // "/company" is Absolute. Resolves to "Acme Corp" globally.
 }
 ```
-
-#### Client-Side Functions
-
-Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
-
-- `${now()}`: A function with no arguments.
-- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
-
-Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
-
-#### Nested Interpolation
-
-Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
-
-- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
-- **Nested Functions**: `${upper(${now()})}`
 
 #### Type Conversion
 
@@ -599,11 +583,11 @@ In multi-agent systems or orchestrators, the orchestrator is responsible for set
 
 The `string_format` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
 
-#### _Syntax_
+#### `string_format` Syntax
 
 Interpolated expressions are enclosed in `${...}`. To include a literal `${` in a string, it must be escaped as `\${`.
 
-#### _Data Model Binding_
+#### `string_format` Data Model Binding
 
 Values from the data model can be interpolated using their JSON Pointer path.
 
@@ -625,7 +609,7 @@ Values from the data model can be interpolated using their JSON Pointer path.
 }
 ```
 
-#### _Client-Side Functions_
+#### `string_format` Client-Side Functions
 
 Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
 
@@ -634,14 +618,14 @@ Results of client-side functions can be interpolated. Function calls are identif
 
 Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
 
-#### _Nested Interpolation_
+#### `string_format` Nested Interpolation
 
 Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
 
 - **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
 - **Nested Functions**: `${upper(${now()})}`
 
-#### _Type Conversion_
+#### `string_format` Type Conversion
 
 When a non-string value is interpolated, the client converts it to a string:
 
