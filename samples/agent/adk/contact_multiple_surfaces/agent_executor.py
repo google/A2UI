@@ -43,10 +43,8 @@ class ContactAgentExecutor(AgentExecutor):
     """Contact AgentExecutor Example."""
 
     def __init__(self, base_url: str):
-        # Instantiate two agents: one for UI and one for text-only.
-        # The appropriate one will be chosen at execution time.
+        # Instantiate the UI agent.
         self.ui_agent = ContactAgent(base_url=base_url, use_ui=True)
-        self.text_agent = ContactAgent(base_url=base_url, use_ui=False)
 
     async def execute(
         self,
@@ -69,10 +67,10 @@ class ContactAgentExecutor(AgentExecutor):
                 "--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---"
             )
         else:
-            agent = self.text_agent
-            logger.info(
-                "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
-            )
+            # Enforce A2UI extension as per review comment
+            error_msg = "A2UI extension is NOT active. This agent requires A2UI to function."
+            logger.error(f"--- AGENT_EXECUTOR: {error_msg} ---")
+            raise ServerError(error=UnsupportedOperationError(error_msg))
 
         if context.message and context.message.parts:
             logger.info(

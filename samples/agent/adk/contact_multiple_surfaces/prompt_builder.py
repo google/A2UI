@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui_examples import CONTACT_UI_EXAMPLES
 from a2ui_schema import A2UI_SCHEMA
 
 # This is the agent's master instruction, separate from the UI prompt formatting.
@@ -113,7 +112,8 @@ def get_text_prompt() -> str:
 if __name__ == "__main__":
     # Example of how to use the prompt builder
     my_base_url = "http://localhost:8000"
-    contact_prompt = get_ui_prompt(my_base_url, CONTACT_UI_EXAMPLES)
+    from a2ui_examples import load_examples
+    contact_prompt = get_ui_prompt(my_base_url, load_examples(my_base_url))
     print(contact_prompt)
     with open("generated_prompt.txt", "w") as f:
         f.write(contact_prompt)

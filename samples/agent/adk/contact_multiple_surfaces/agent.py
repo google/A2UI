@@ -19,7 +19,7 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 import jsonschema
-from a2ui_examples import CONTACT_UI_EXAMPLES
+from a2ui_examples import load_examples, load_floor_plan_example
 
 # Corrected imports from our new/refactored files
 from a2ui_schema import A2UI_SCHEMA
@@ -58,14 +58,9 @@ class ContactAgent:
             memory_service=InMemoryMemoryService(),
         )
 
-        # --- MODIFICATION: Wrap the schema ---
-        # Load the A2UI_SCHEMA string into a Python object for validation
+        # Load A2UI_SCHEMA and wrap it in an array validator for list responses
         try:
-            # First, load the schema for a *single message*
             single_message_schema = json.loads(A2UI_SCHEMA)
-
-            # The prompt instructs the LLM to return a *list* of messages.
-            # Therefore, our validation schema must be an *array* of the single message schema.
             self.a2ui_schema_object = {"type": "array", "items": single_message_schema}
             logger.info(
                 "A2UI_SCHEMA successfully loaded and wrapped in an array validator."
@@ -83,7 +78,8 @@ class ContactAgent:
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
         if use_ui:
-            instruction = get_ui_prompt(self.base_url, CONTACT_UI_EXAMPLES)
+            examples = load_examples(self.base_url)
+            instruction = get_ui_prompt(self.base_url, examples)
         else:
             # The text prompt function also returns a complete prompt.
             instruction = get_text_prompt()
@@ -148,17 +144,27 @@ class ContactAgent:
 
             if query.startswith("ACTION:") and "send_message" in query:
                  logger.info("--- ContactAgent.stream: Detected send_message ACTION ---")
-                 # Extract the ACTION_CONFIRMATION_EXAMPLE from the big string
-                 start_marker = "---BEGIN ACTION_CONFIRMATION_EXAMPLE---"
-                 end_marker = "---END ACTION_CONFIRMATION_EXAMPLE---"
                  
-                 json_content = ""
-                 if start_marker in CONTACT_UI_EXAMPLES and end_marker in CONTACT_UI_EXAMPLES:
-                     # Split and take the part between markers
-                     between = CONTACT_UI_EXAMPLES.split(start_marker)[1].split(end_marker)[0]
-                     # Split and take the part between markers
-                     between = CONTACT_UI_EXAMPLES.split(start_marker)[1].split(end_marker)[0]
-                     json_content = between.strip()
+                 # Load the action confirmation example dynamically
+                 try:
+                     from a2ui_examples import load_examples
+                     # We might want to expose a specific loader for this, or just read the file here.
+                     # Since we moved logic to a2ui_examples check if we can import the file constant or just read.
+                     # Actually, a2ui_examples has EXAMPLE_FILES, let's just re-read using pathlib for simplicity or add a helper.
+                     # But wait, load_examples returns the formatted string, including delimiters.
+                     # Let's use the helper we added in a2ui_examples if possible, or just read the file.
+                     # I didn't add a specific helper for action confirmation in a2ui_examples, but I can read the file.
+                     pass 
+                 except ImportError:
+                     pass
+
+                 # Re-implement logic to read from file
+                 from pathlib import Path
+                 examples_dir = Path(__file__).parent / "examples"
+                 action_file = examples_dir / "action_confirmation.json"
+                 
+                 if action_file.exists():
+                     json_content = action_file.read_text(encoding="utf-8").strip()
                      
                      # Extract contact name from query if present
                      contact_name = "Unknown"
@@ -190,10 +196,9 @@ class ContactAgent:
 
             if query.startswith("ACTION:") and "view_location" in query:
                  logger.info("--- ContactAgent.stream: Detected view_location ACTION ---")
-                 from a2ui_examples import FLOOR_PLAN_EXAMPLE
                  
                  # Use the predefined example floor plan
-                 json_content = FLOOR_PLAN_EXAMPLE.strip()
+                 json_content = load_floor_plan_example().strip()
                  start_idx = json_content.find("[")
                  end_idx = json_content.rfind("]")
                  if start_idx != -1 and end_idx != -1:
@@ -282,12 +287,8 @@ class ContactAgent:
                         if not json_string_cleaned:
                             raise ValueError("Cleaned JSON string is empty.")
 
-                        # --- New Validation Steps ---
-                        # 1. Check if it's parsable JSON
+                        # Validate parsed JSON against A2UI_SCHEMA
                         parsed_json_data = json.loads(json_string_cleaned)
-
-                        # 2. Check if it validates against the A2UI_SCHEMA
-                        # This will raise jsonschema.exceptions.ValidationError if it fails
                         logger.info(
                             "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
                         )
