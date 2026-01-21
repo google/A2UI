@@ -96,9 +96,10 @@ To support A2UI, a transport layer must fulfill the following contract:
 
 While A2UI is agnostic, it is most commonly used with the following transports.
 
-#### A2A (Agent-to-Agent) Binding
+#### A2A (Agent2Agent) Binding
 
-[A2A (Agent-to-Agent)](https://a2a-protocol.org/latest/) is the primary transport for A2UI in agentic systems.
+[A2A (Agent-to-Agent)](https://a2a-protocol.org/latest/) is an excellent transport option for A2UI in agentic systems, extending A2A with additional payloads.
+A2A is uniquely capable of handling remote agent communication, and can also provide a secure and effecient transport between an agentic backend and front end application.
 
 *   **Message Mapping**: Each A2UI envelope (e.g., `updateComponents`) corresponds to the payload of a single A2A message Part.
 *   **Metadata**:
@@ -106,14 +107,19 @@ While A2UI is agnostic, it is most commonly used with the following transports.
     *   **Capabilities**: The `a2uiClientCapabilities` object is placed in the `metadata` field of the initial A2A message (or `hello` message) sent from the client to the server.
 *   **Context**: A2UI sessions typically map to A2A `contextId`. All messages for a set of related surfaces should share the same `contextId`.
 
+#### AG UI (Agent to User Interface) Binding
+
+**[AG-UI](https://docs.ag-ui.com/introduction)** is also an excellent transport option for A2UI Agent–User Interaction protocol.
+AG UI provides convenient integrations into many agent frameworks and frontends.  AG UI provides low latency and shared state message passing between front ends and agentic backends.
+
 #### Other Transports
 
 A2UI can also be carried over:
 
-- **[AG-UI](https://docs.ag-ui.com/introduction)**: Agent–User Interaction protocol.
 - **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/docs/getting-started/intro)**: Delivered as tool outputs or resource subscriptions.
 - **[SSE](https://en.wikipedia.org/wiki/Server-sent_events) with [JSON RPC](https://www.jsonrpc.org/)**: Standard server-sent events for web integrations that support streaming, and JSON RPC for client-server communication.
 - **[WebSockets](https://en.wikipedia.org/wiki/WebSocket)**: For bidirectional, real-time sessions.
+  **[REST](https://cloud.google.com/discover/what-is-rest-api?hl=en)**: For simple use case, REST APIs will work but lack streaming capabilities.
 
 ## The Protocol Schemas
 
