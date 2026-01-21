@@ -253,8 +253,8 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- **Standard Map**: `serverContext: { "id": "123" }`
-- **Reason**: Token efficiency. LLMs understand JSON objects as maps natively. Note that `context` was renamed to `serverContext` to avoid ambiguity with local contexts.
+- **Standard Map**: `context: { "id": "123" }`
+- **Reason**: Token efficiency. LLMs understand JSON objects as maps natively.
 
 ### 6.2. TextField
 
@@ -327,6 +327,4 @@ For developers migrating from earlier versions, here is a quick reference of pro
 | **TextField**      | `text`             | `value`     |
 | **Many**           | `usageHint`        | `variant`   |
 | **Client Message** | `userAction`       | `action`    |
-| **Action**         | `name`             | `serverActionName` |
-| **Action**         | `context`          | `serverContext` |
 | **Common Type**    | `childrenProperty` | `ChildList` |
