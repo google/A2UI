@@ -4,15 +4,15 @@
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
   "$defs": {
-    "id": {
+    "ComponentId": {
       "type": "string",
-      "description": "The unique identifier for this component."
+      "description": "The unique identifier for a component, used for both definitions and references within the same surface."
     },
     "ComponentCommon": {
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/$defs/id"
+          "$ref": "#/$defs/ComponentId"
         }
       },
       "required": ["id"]
@@ -22,7 +22,7 @@
         {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/ComponentId"
           },
           "description": "A static list of child component IDs."
         },
@@ -31,7 +31,7 @@
           "description": "A template for generating a dynamic list of children from a data model list. The `componentId` is the component to use as a template.",
           "properties": {
             "componentId": {
-              "$ref": "#/$defs/id"
+              "$ref": "#/$defs/ComponentId"
             },
             "path": {
               "type": "string",
