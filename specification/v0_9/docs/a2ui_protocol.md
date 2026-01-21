@@ -111,10 +111,10 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
 - **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `FunctionCall` (function call).
 - **`ChildList`**: Defines how containers hold children. It supports:
 
-  - `array`: A static array of string component IDs.
+  - `array`: A static array of `ComponentId` component references.
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
-- **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
+- **`ComponentId`**: A reference to the unique ID of another component within the same surface.
 
 ### Server to Client Message Structure: The Envelope
 
@@ -125,6 +125,19 @@ The [`server_to_client.json`] schema is the top-level entry point. Every message
 The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`) and functions (e.g., `required`, `email`). By separating this from the envelope, developers can easily swap in custom catalogs (e.g., `material_catalog.json` or `cupertino_catalog.json`) without rewriting the core protocol parser.
 
 Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the standard catalog. It should have the same form as the standard catalog, and use common elements in the [`common_types.json`] schema.
+
+### Validator Compliance & Custom Catalogs
+
+To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), custom catalogs MUST adhere to the following strict typing rules:
+
+1.  **Single Child References:** Any property that holds the ID of another component MUST use the `ComponentId` type defined in `common_types.json`.
+    *   Use: `"$ref": "common_types.json#/$defs/ComponentId"`
+    *   Do NOT use: `"type": "string"`
+
+2.  **List References:** Any property that holds a list of children or a template MUST use the `ChildList` type.
+    *   Use: `"$ref": "common_types.json#/$defs/ChildList"`
+
+Validators determine which fields represent structural links by looking for these specific schema references. If you use a raw string type for an ID, the validator will treat it as static text (like a URL or label) and will not check if the target component exists.
 
 ## Envelope Message Structure
 
@@ -251,7 +264,7 @@ A2UI's component model is designed for flexibility, separating the protocol's st
 
 Each object in the `components` array of an `updateComponents` message defines a single UI component. It has the following structure:
 
-- `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
+- `id` (`ComponentId`, required): A unique string that identifies this specific component instance. This is used for parent-child references.
 - `component` (string, required): Specifies the component's type (e.g., `"Text"`).
 - **Component Properties**: Other properties relevant to the specific component type (e.g., `text`, `url`, `children`) are included directly in the component object.
 
