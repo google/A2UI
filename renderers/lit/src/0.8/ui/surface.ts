@@ -68,6 +68,10 @@ export class Surface extends Root {
     </div>`;
   }
 
+  @property()
+  accessor enableCustomElements = false;
+
+
   #renderSurface() {
     const styles: Record<string, string> = {};
     if (this.surface?.styles) {
