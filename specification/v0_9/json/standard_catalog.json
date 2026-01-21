@@ -421,20 +421,7 @@
               "enum": ["primary", "borderless"]
             },
             "action": {
-              "type": "object",
-              "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
-              "properties": {
-                "name": { "type": "string" },
-                "context": {
-                  "type": "object",
-                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
-                  "additionalProperties": {
-                    "$ref": "common_types.json#/$defs/DynamicValue"
-                  }
-                }
-              },
-              "required": ["name"],
-              "additionalProperties": false
+              "$ref": "common_types.json#/$defs/Action"
             }
           },
           "required": ["component", "child", "action"]
@@ -598,9 +585,57 @@
               "type": "boolean",
               "description": "If true, allows the user to select a time."
             },
-            "outputFormat": {
-              "type": "string",
-              "description": "The desired format for the output string after a date or time is selected."
+            "min": {
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "oneOf": [
+                      {
+                        "format": "date"
+                      },
+                      {
+                        "format": "time"
+                      },
+                      {
+                        "format": "date-time"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "description": "The minimum allowed date/time in ISO 8601 format."
+            },
+            "max": {
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "oneOf": [
+                      {
+                        "format": "date"
+                      },
+                      {
+                        "format": "time"
+                      },
+                      {
+                        "format": "date-time"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "description": "The maximum allowed date/time in ISO 8601 format."
             },
             "label": {
               "$ref": "common_types.json#/$defs/DynamicString",
@@ -824,6 +859,24 @@
         ],
         "minItems": 2,
         "maxItems": 2
+      "name": "openUrl",
+      "description": "Opens the specified URL in a browser or handler. This function has no return value.",
+      "returnType": "void",
+      "parameters": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URL to open."
+              }
+            },
+            "required": ["url"]
+          }
+        ],
+        "unevaluatedProperties": false
       }
     }
   ],

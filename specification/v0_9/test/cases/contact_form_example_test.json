@@ -100,7 +100,7 @@
               "component": "Button",
               "child": "submit_button_label",
               "variant": "primary",
-              "action": { "name": "submitContactForm" }
+              "action": { "event": { "name": "submitContactForm" } }
             }
           ]
         }

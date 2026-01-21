@@ -147,7 +147,7 @@
         "returnType": {
           "type": "string",
           "description": "The expected return type of the function call.",
-          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "enum": ["string", "number", "boolean", "array", "object", "any", "void"],
           "default": "boolean"
         }
       },
@@ -253,6 +253,49 @@
           }
         }
       }
+    },
+    "Action": {
+      "description": "Defines an interaction handler that can either trigger a server-side event or execute a local client-side function.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Triggers a server-side event.",
+          "properties": {
+            "event": {
+              "type": "object",
+              "description": "The event to dispatch to the server.",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the action to be dispatched to the server."
+                },
+                "context": {
+                  "type": "object",
+                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
+                  "additionalProperties": {
+                    "$ref": "#/$defs/DynamicValue"
+                  }
+                }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["event"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Executes a local client-side function.",
+          "properties": {
+            "functionCall": {
+              "$ref": "#/$defs/FunctionCall"
+            }
+          },
+          "required": ["functionCall"],
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }
