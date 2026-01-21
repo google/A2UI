@@ -577,7 +577,7 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **length**        | Checks string length constraints.                                        |
 | **numeric**       | Checks numeric range constraints.                                        |
 | **email**         | Checks that the value is a valid email address.                          |
-| **string_format** | Does string interpolation of data model values and registered functions. |
+| **formatString** | Does string interpolation of data model values and registered functions. |
 
 ### Theme
 
@@ -595,9 +595,9 @@ The `iconUrl` and `agentDisplayName` fields are used to provide attribution to t
 
 In multi-agent systems or orchestrators, the orchestrator is responsible for setting or validating these fields. This ensures that the identity displayed to the user matches the actual agent server being contacted, preventing malicious agents from impersonating trusted services. For example, an orchestrator might overwrite these fields with the verified identity of the sub-agent before forwarding the `createSurface` message to the client.
 
-### The `string_format` function
+### The `formatString` function
 
-The `string_format` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
+The `formatString` function supports embedding dynamic expressions directly within string properties. This allows for mixing static text with data model values and function results.
 
 #### _Syntax_
 
@@ -617,7 +617,7 @@ Values from the data model can be interpolated using their JSON Pointer path.
   "id": "user_welcome",
   "component": "Text",
   "text": {
-    "call": "string_format",
+    "call": "formatString",
     "args": [
       "Hello, ${/user/firstName}! Welcome back to ${/appName}."
     ]
