@@ -52,7 +52,7 @@ const createOrGetClient = async () => {
   if (!client) {
     // Create a client pointing to the agent's Agent Card URL.
     client = await A2AClient.fromCardUrl(
-      "http://localhost:10002/.well-known/agent-card.json",
+      "http://localhost:10003/.well-known/agent-card.json",
       { fetchImpl: fetchWithCustomHeader }
     );
   }
