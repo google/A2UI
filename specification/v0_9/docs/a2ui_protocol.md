@@ -91,7 +91,7 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
   - `array`: A static array of string component IDs.
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
-- **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
+- **`ChildId`**: A reference to the unique ID of another component within the same surface.
 
 ### Server to Client Message Structure: The Envelope
 
@@ -107,8 +107,8 @@ Custom catalogs can be used to define additional UI components or modify the beh
 
 To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), custom catalogs MUST adhere to the following strict typing rules:
 
-1.  **Single Child References:** Any property that holds the ID of another component MUST use the `ComponentIdRef` type defined in `common_types.json`.
-    *   Use: `"$ref": "common_types.json#/$defs/ComponentIdRef"`
+1.  **Single Child References:** Any property that holds the ID of another component MUST use the `ChildId` type defined in `common_types.json`.
+    *   Use: `"$ref": "common_types.json#/$defs/ChildId"`
     *   Do NOT use: `"type": "string"`
 
 2.  **List References:** Any property that holds a list of children or a template MUST use the `ChildList` type.
