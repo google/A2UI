@@ -201,6 +201,55 @@ export class Validator {
         "Missing root component: At least one 'updateComponents' message must contain a component with id: 'root'."
       );
     }
+
+    this.validateFunctionCalls(messages, errors);
+  }
+
+  private validateFunctionCalls(root: any, errors: string[]) {
+    if (!root || typeof root !== "object") return;
+
+    if (Array.isArray(root)) {
+      for (const item of root) {
+        this.validateFunctionCalls(item, errors);
+      }
+      return;
+    }
+
+    // Check if it's a FunctionCall
+    if (
+      root.call &&
+      typeof root.call === "string" &&
+      (Object.keys(root).length === 2 || Object.keys(root).length === 3)
+    ) {
+      const functionName = root.call;
+      // List of standard functions. For now, we utilize "dummy" validation that always succeeds.
+      const standardFunctions = [
+        "required",
+        "regex",
+        "length",
+        "numeric",
+        "email",
+        "formatString",
+        "formatNumber",
+        "formatCurrency",
+        "formatDate",
+        "pluralize",
+        "openUrl"
+      ];
+
+      if (standardFunctions.includes(functionName)) {
+        // Dummy validation: Always succeed for standard functions.
+        return;
+      }
+
+      // If we wanted to validate unknown functions, we'd do it here.
+      // For now, we just proceed.
+    }
+
+    // Recurse into properties
+    for (const key in root) {
+      this.validateFunctionCalls(root[key], errors);
+    }
   }
 
   // ... Copied helper functions ...
