@@ -31,14 +31,6 @@ if (litPkg.dependencies && litPkg.dependencies['@a2ui/web_core']) {
 }
 
 // 4. Adjust Paths for Dist
-// The built files are in dist/src/, but when we publish dist/, they become src/
-function adjustPath(p) {
-  if (p && p.startsWith('./dist/')) {
-    return './' + p.substring(7); // Remove ./dist/
-  }
-  return p;
-}
-
 litPkg.main = adjustPath(litPkg.main);
 litPkg.types = adjustPath(litPkg.types);
 
@@ -59,12 +51,21 @@ if (litPkg.exports) {
 // 5. Write to dist/package.json
 writeFileSync(join(distDir, 'package.json'), JSON.stringify(litPkg, null, 2));
 
-// 6. Copy README and LICENSE if they exist
+// 6. Copy README and LICENSE
 ['README.md', 'LICENSE'].forEach(file => {
   const src = join(dirname, file);
-  if (existsSync(src)) {
-    copyFileSync(src, join(distDir, file));
+  if (!existsSync(src)) {
+    throw new Error(`Missing required file for publishing: ${file}`);
   }
+  copyFileSync(src, join(distDir, file));
 });
 
 console.log(`Prepared dist/package.json with @a2ui/web_core@${coreVersion}`);
+
+// Utility function to adjustthe paths of the built files (dist/src/*) to (src/*)
+function adjustPath(p) {
+  if (p && p.startsWith('./dist/')) {
+    return './' + p.substring(7); // Remove ./dist/
+  }
+  return p;
+}
