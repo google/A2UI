@@ -118,13 +118,13 @@ export class Splitter extends LitElement {
     this.#setAndStore();
   });
 
-  connectedCallback(): void {
+  override connectedCallback(): void {
     super.connectedCallback();
 
     this.#resizeObserver.observe(this);
   }
 
-  disconnectedCallback(): void {
+  override disconnectedCallback(): void {
     super.disconnectedCallback();
 
     this.#resizeObserver.disconnect();
@@ -238,7 +238,7 @@ export class Splitter extends LitElement {
     return value;
   }
 
-  firstUpdated() {
+  override firstUpdated() {
     if (!this.name) {
       console.warn("Splitter has no name; it won't have any values stored.");
       return;
@@ -337,7 +337,7 @@ export class Splitter extends LitElement {
     }
   }
 
-  protected willUpdate(
+  protected override willUpdate(
     changedProperties:
       | PropertyValueMap<{ direction: Direction }>
       | Map<PropertyKey, unknown>
@@ -349,7 +349,7 @@ export class Splitter extends LitElement {
     this.#updateStyles();
   }
 
-  render() {
+  override render() {
     return html`${this.split.map((_, idx) => {
       const handle =
         idx < this.split.length - 1
