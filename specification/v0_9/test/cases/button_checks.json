@@ -125,7 +125,7 @@
               "id": "btn_primary",
               "component": "Button",
               "child": "txt_primary",
-              "action": { "name": "submit" },
+              "action": { "event": { "name": "submit" } },
               "variant": "primary"
             },
             { "id": "txt_primary", "component": "Text", "text": "Submit" }
@@ -144,7 +144,7 @@
               "id": "btn_borderless",
               "component": "Button",
               "child": "txt_borderless",
-              "action": { "name": "cancel" },
+              "action": { "event": { "name": "cancel" } },
               "variant": "borderless"
             },
             { "id": "txt_borderless", "component": "Text", "text": "Cancel" }
@@ -163,7 +163,7 @@
               "id": "btn_dep",
               "component": "Button",
               "child": "txt_dep",
-              "action": { "name": "submit" },
+              "action": { "event": { "name": "submit" } },
               "primary": true
             },
             { "id": "txt_dep", "component": "Text", "text": "Submit" }
