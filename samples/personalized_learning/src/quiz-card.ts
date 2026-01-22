@@ -269,7 +269,7 @@ export class QuizCard extends LitElement {
     return selected?.isCorrect ?? false;
   }
 
-  render() {
+  override render() {
     const questionText = this.resolveStringValue(this.question);
     const categoryText = this.resolveStringValue(this.category);
     const explanationText = this.resolveStringValue(this.explanation);
