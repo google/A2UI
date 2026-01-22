@@ -1,0 +1,87 @@
+{
+  "name": "@a2ui/core",
+  "version": "0.8.0",
+  "description": "A2UI Core - Framework-agnostic message processor and types",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./processor": {
+      "types": "./dist/processor/index.d.ts",
+      "default": "./dist/processor/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
+    },
+    "./guards": {
+      "types": "./dist/guards/index.d.ts",
+      "default": "./dist/guards/index.js"
+    },
+    "./events": {
+      "types": "./dist/events/index.d.ts",
+      "default": "./dist/events/index.js"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "test": "wireit"
+  },
+  "wireit": {
+    "test": {
+      "command": "node --test --enable-source-maps --test-reporter spec dist/*.test.js",
+      "dependencies": [
+        "build"
+      ]
+    },
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc -b --pretty",
+      "env": {
+        "FORCE_COLOR": "1"
+      },
+      "files": [
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/"
+      ],
+      "clean": "if-file-deleted"
+    }
+  },
+  "repository": {
+    "directory": "renderers/core",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "a2ui",
+    "ui",
+    "framework-agnostic"
+  ],
+  "author": "Google",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "homepage": "https://github.com/google/A2UI/tree/main/renderers/core#readme",
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "typescript": "5.8.3",
+    "wireit": "0.15.0-pre.2"
+  }
+}

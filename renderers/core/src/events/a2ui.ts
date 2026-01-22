@@ -14,18 +14,15 @@
  limitations under the License.
  */
 
-import { A2uiMessageProcessor } from "@a2ui/core";
+import { Action } from "../types/components.js";
+import { AnyComponentNode } from "../types/types.js";
+import { BaseEventDetail } from "./base.js";
 
-import { SignalArray } from "signal-utils/array";
-import { SignalMap } from "signal-utils/map";
-import { SignalObject } from "signal-utils/object";
-import { SignalSet } from "signal-utils/set";
+type Namespace = "a2ui";
 
-export function create() {
-  return new A2uiMessageProcessor({
-    arrayCtor: SignalArray as unknown as ArrayConstructor,
-    mapCtor: SignalMap as unknown as MapConstructor,
-    objCtor: SignalObject as unknown as ObjectConstructor,
-    setCtor: SignalSet as unknown as SetConstructor,
-  });
+export interface A2UIAction extends BaseEventDetail<`${Namespace}.action`> {
+  readonly action: Action;
+  readonly dataContextPath: string;
+  readonly sourceComponentId: string;
+  readonly sourceComponent: AnyComponentNode | null;
 }

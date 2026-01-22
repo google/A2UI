@@ -1,0 +1,52 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+export * as Types from "./types/index.js";
+export * as Primitives from "./types/primitives.js";
+export * as Events from "./events/index.js";
+export * as Guards from "./guards/index.js";
+
+export { A2uiMessageProcessor } from "./processor/index.js";
+
+export {
+  type MessageProcessor,
+  type ServerToClientMessage,
+  type Surface,
+  type SurfaceID,
+  type AnyComponentNode,
+  type DataValue,
+  type DataMap,
+  type DataArray,
+  type DataObject,
+  type Theme,
+  type UserAction,
+} from "./types/types.js";
+
+export {
+  type StringValue,
+  type NumberValue,
+  type BooleanValue,
+} from "./types/primitives.js";
+
+export { type Action } from "./types/components.js";
+
+export {
+  type ClientToServerMessage,
+  type ClientCapabilities,
+  type ClientCapabilitiesDynamic,
+  type ClientCapabilitiesUri,
+  type ClientError,
+} from "./types/client-event.js";

@@ -15,13 +15,11 @@
  */
 
 export * as Events from "./events/events.js";
-export * as Types from "./types/types.js";
-export * as Primitives from "./types/primitives.js";
+export { Types, Primitives, Guards, A2uiMessageProcessor } from "@a2ui/core";
 export * as Styles from "./styles/index.js";
-import * as Guards from "./data/guards.js";
 
+import { Guards, A2uiMessageProcessor } from "@a2ui/core";
 import { create as createSignalA2uiMessageProcessor } from "./data/signal-model-processor.js";
-import { A2uiMessageProcessor } from "./data/model-processor.js";
 import A2UIClientEventMessage from "./schemas/server_to_client_with_standard_catalog.json" with { type: "json" };
 
 export const Data = {

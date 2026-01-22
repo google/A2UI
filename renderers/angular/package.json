@@ -5,6 +5,7 @@
     "build": "ng build && node postprocess-build.mjs"
   },
   "dependencies": {
+    "@a2ui/core": "file:../core",
     "@a2ui/lit": "file:../lit",
     "markdown-it": "^14.1.0",
     "tslib": "^2.3.0"
