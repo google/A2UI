@@ -10,29 +10,15 @@
     },
     "AccessibilityAttributes": {
       "type": "object",
-      "description": "Overrides for accessibility behavior.",
+      "description": "Attributes to enhance accessibility when using assistive technologies like screen readers.",
       "properties": {
         "label": {
           "$ref": "#/$defs/DynamicString",
-          "description": "Overrides the content description. Use this to describe icons or provide extra context for buttons."
+          "description": "A short string, typically 1 to 3 words, used by assistive technologies to convey the purpose or intent of an element. For example, an input field might have an accessible label of 'User ID' or a button might be labeled 'Submit'."
         },
         "description": {
           "$ref": "#/$defs/DynamicString",
-          "description": "Describes the result of performing an action on the element (e.g., 'Double tap to submit')."
-        },
-        "role": {
-          "type": "string",
-          "description": "Explicitly sets the semantic role of the element.",
-          "enum": [ "button", "header", "link", "image", "adjustable", "summary", "none" ]
-        },
-        "hidden": {
-          "$ref": "#/$defs/DynamicBoolean",
-          "description": "If true, the element and its children are hidden from accessibility services."
-        },
-        "liveRegion": {
-          "type": "string",
-          "description": "Indicates that updates to this element should be announced automatically.",
-          "enum": [ "polite", "assertive", "off" ]
+          "description": "Additional information provided by assistive technologies about an element such as instructions, format requirements, or result of an action. For example, a mute button might have a label of 'Mute' and a description of 'Silences notifications about this conversation'."
         }
       }
     },
