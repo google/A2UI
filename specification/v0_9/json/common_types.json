@@ -16,7 +16,7 @@
           "$ref": "#/$defs/DynamicString",
           "description": "Overrides the content description. Use this to describe icons or provide extra context for buttons."
         },
-        "hint": {
+        "description": {
           "$ref": "#/$defs/DynamicString",
           "description": "Describes the result of performing an action on the element (e.g., 'Double tap to submit')."
         },
