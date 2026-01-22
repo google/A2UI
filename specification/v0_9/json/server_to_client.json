@@ -33,7 +33,7 @@
             },
             "sendDataModel": {
               "type": "boolean",
-              "description": "If true, the client will attach the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. Defaults to false."
+              "description": "If true, the client will send the full data model of this surface in the metadata of every A2A message sent to the server that created the surface. Defaults to false."
             }
           },
           "required": ["surfaceId", "catalogId"],
