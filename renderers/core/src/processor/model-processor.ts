@@ -57,6 +57,29 @@ import {
   isValueMap,
 } from "../guards/guards.js";
 
+type ComponentTypeGuard = (props: unknown) => boolean;
+
+const COMPONENT_TYPE_GUARDS: Record<string, ComponentTypeGuard> = {
+  Text: isResolvedText,
+  Image: isResolvedImage,
+  Icon: isResolvedIcon,
+  Video: isResolvedVideo,
+  AudioPlayer: isResolvedAudioPlayer,
+  Row: isResolvedRow,
+  Column: isResolvedColumn,
+  List: isResolvedList,
+  Card: isResolvedCard,
+  Tabs: isResolvedTabs,
+  Divider: isResolvedDivider,
+  Modal: isResolvedModal,
+  Button: isResolvedButton,
+  CheckBox: isResolvedCheckbox,
+  TextField: isResolvedTextField,
+  DateTimeInput: isResolvedDateTimeInput,
+  MultipleChoice: isResolvedMultipleChoice,
+  Slider: isResolvedSlider,
+};
+
 export class A2uiMessageProcessor implements MessageProcessor {
   static readonly DEFAULT_SURFACE_ID = "@default";
 
@@ -451,196 +474,16 @@ export class A2uiMessageProcessor implements MessageProcessor {
       dataContextPath,
       weight: componentData.weight ?? "initial",
     };
-    switch (componentType) {
-      case "Text":
-        if (!isResolvedText(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Text",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Image":
-        if (!isResolvedImage(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Image",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Icon":
-        if (!isResolvedIcon(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Icon",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Video":
-        if (!isResolvedVideo(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Video",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "AudioPlayer":
-        if (!isResolvedAudioPlayer(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "AudioPlayer",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Row":
-        if (!isResolvedRow(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-
-        return new this.objCtor({
-          ...baseNode,
-          type: "Row",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Column":
-        if (!isResolvedColumn(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-
-        return new this.objCtor({
-          ...baseNode,
-          type: "Column",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "List":
-        if (!isResolvedList(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "List",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Card":
-        if (!isResolvedCard(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Card",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Tabs":
-        if (!isResolvedTabs(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Tabs",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Divider":
-        if (!isResolvedDivider(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Divider",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Modal":
-        if (!isResolvedModal(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Modal",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Button":
-        if (!isResolvedButton(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Button",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "CheckBox":
-        if (!isResolvedCheckbox(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "CheckBox",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "TextField":
-        if (!isResolvedTextField(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "TextField",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "DateTimeInput":
-        if (!isResolvedDateTimeInput(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "DateTimeInput",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "MultipleChoice":
-        if (!isResolvedMultipleChoice(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "MultipleChoice",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      case "Slider":
-        if (!isResolvedSlider(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
-        }
-        return new this.objCtor({
-          ...baseNode,
-          type: "Slider",
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
-
-      default:
-        return new this.objCtor({
-          ...baseNode,
-          type: componentType,
-          properties: resolvedProperties,
-        }) as AnyComponentNode;
+    const guard = COMPONENT_TYPE_GUARDS[componentType];
+    if (guard && !guard(resolvedProperties)) {
+      throw new Error(`Invalid data; expected ${componentType}`);
     }
+
+    return new this.objCtor({
+      ...baseNode,
+      type: componentType,
+      properties: resolvedProperties,
+    }) as AnyComponentNode;
   }
 
   private resolvePropertyValue(
@@ -739,10 +582,8 @@ export class A2uiMessageProcessor implements MessageProcessor {
         let propertyValue = propValue;
         if (isPath(key, propValue) && dataContextPath !== "/") {
           propertyValue = propValue
-            .replace(/^\.?\/item/, "")
-            .replace(/^\.?\/text/, "")
-            .replace(/^\.?\/label/, "")
-            .replace(/^\.?\//, "");
+            .replace(/^\.?\//, "")
+            .replace(/^(?:item|text|label)\//, "");
           newObj[key] = propertyValue as ResolvedValue;
           continue;
         }

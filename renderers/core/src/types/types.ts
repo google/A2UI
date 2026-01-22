@@ -447,10 +447,9 @@ export interface ResolvedList {
   alignment?: "start" | "center" | "end" | "stretch";
 }
 
-export interface ResolvedCard {
-  child: AnyComponentNode;
-  children: AnyComponentNode[];
-}
+export type ResolvedCard =
+  | { child: AnyComponentNode; children?: never }
+  | { children: AnyComponentNode[]; child?: never };
 
 export interface ResolvedTabItem {
   title: StringValue;

@@ -20,33 +20,3 @@ export * as Events from "./events/index.js";
 export * as Guards from "./guards/index.js";
 
 export { A2uiMessageProcessor } from "./processor/index.js";
-
-export {
-  type MessageProcessor,
-  type ServerToClientMessage,
-  type Surface,
-  type SurfaceID,
-  type AnyComponentNode,
-  type DataValue,
-  type DataMap,
-  type DataArray,
-  type DataObject,
-  type Theme,
-  type UserAction,
-} from "./types/types.js";
-
-export {
-  type StringValue,
-  type NumberValue,
-  type BooleanValue,
-} from "./types/primitives.js";
-
-export { type Action } from "./types/components.js";
-
-export {
-  type ClientToServerMessage,
-  type ClientCapabilities,
-  type ClientCapabilitiesDynamic,
-  type ClientCapabilitiesUri,
-  type ClientError,
-} from "./types/client-event.js";
