@@ -16,7 +16,7 @@
 
 import { Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Primitives } from '@a2ui/web_core';
+import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-icon',

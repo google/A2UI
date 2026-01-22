@@ -16,7 +16,8 @@
 
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { Types, A2uiMessageProcessor } from "@a2ui/web_core";
+import * as Types from "@a2ui/web_core/types/types";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import { Root } from "./root.js";
 import { styleMap } from "lit/directives/style-map.js";
 

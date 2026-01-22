@@ -8,6 +8,18 @@
     ".": {
       "types": "./dist/src/v0_8/index.d.ts",
       "default": "./dist/src/v0_8/index.js"
+    },
+    "./types/*": {
+      "types": "./dist/src/v0_8/types/*.d.ts",
+      "default": "./dist/src/v0_8/types/*.js"
+    },
+    "./data/*": {
+      "types": "./dist/src/v0_8/data/*.d.ts",
+      "default": "./dist/src/v0_8/data/*.js"
+    },
+    "./styles/*": {
+      "types": "./dist/src/v0_8/styles/*.d.ts",
+      "default": "./dist/src/v0_8/styles/*.js"
     }
   },
   "type": "module",

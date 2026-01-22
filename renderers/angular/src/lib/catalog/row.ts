@@ -17,7 +17,7 @@
 import { Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import { Types } from '@a2ui/web_core';
+import * as Types from '@a2ui/web_core/types/types';
 
 @Component({
   selector: 'a2ui-row',

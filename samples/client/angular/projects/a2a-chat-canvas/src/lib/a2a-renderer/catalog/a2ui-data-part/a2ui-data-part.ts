@@ -20,7 +20,7 @@ import { ChatService } from '@a2a_chat_canvas/services/chat-service';
 import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
 import { isA2aDataPart } from '@a2a_chat_canvas/utils/type-guards';
 import { Surface } from '@a2ui/angular';
-import { Types } from '@a2ui/web_core';
+import * as Types from '@a2ui/web_core/types/types';
 import { Component, computed, inject, input } from '@angular/core';
 
 /**

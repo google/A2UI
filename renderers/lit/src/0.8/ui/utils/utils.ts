@@ -14,7 +14,9 @@
  limitations under the License.
  */
 
-import { A2uiMessageProcessor, Primitives, Types } from "@a2ui/web_core";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import * as Primitives from "@a2ui/web_core/types/primitives";
+import * as Types from "@a2ui/web_core/types/types";
 
 export function extractStringValue(
   val: Primitives.StringValue | null,

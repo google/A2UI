@@ -16,7 +16,7 @@
 
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Surface } from '@a2ui/angular';
-import { Types } from '@a2ui/web_core';
+import * as Types from '@a2ui/web_core/types/types';
 
 @Component({
   selector: 'app-library',

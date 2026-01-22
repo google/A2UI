@@ -14,7 +14,8 @@
  limitations under the License.
  */
 
-import { A2uiMessageProcessor, Types } from '@a2ui/web_core';
+import { A2uiMessageProcessor } from '@a2ui/web_core/data/model-processor';
+import * as Types from '@a2ui/web_core/types/types';
 import { Injectable } from '@angular/core';
 import { firstValueFrom, Subject } from 'rxjs';
 

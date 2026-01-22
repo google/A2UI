@@ -15,7 +15,7 @@
  */
 
 import { Part } from '@a2a-js/sdk';
-import { Types } from '@a2ui/web_core';
+import * as Types from '@a2ui/web_core/types/types';
 import { isA2aDataPart } from './type-guards';
 
 /**

@@ -15,7 +15,8 @@
  */
 
 import { computed, Component, input } from '@angular/core';
-import { Primitives, Types } from '@a2ui/web_core';
+import * as Primitives from '@a2ui/web_core/types/primitives';
+import * as Types from '@a2ui/web_core/types/types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({

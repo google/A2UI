@@ -15,7 +15,8 @@
  */
 
 import { DynamicComponent } from '@a2ui/angular';
-import { Types, Primitives } from '@a2ui/web_core';
+import * as Primitives from '@a2ui/web_core/types/primitives';
+import * as Types from '@a2ui/web_core/types/types';
 import { Component, computed, input, Signal, signal, ViewChild } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

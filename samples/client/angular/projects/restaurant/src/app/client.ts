@@ -15,7 +15,7 @@
  */
 
 import { A2AServerPayload, MessageProcessor } from '@a2ui/angular';
-import { Types } from '@a2ui/web_core';
+import * as Types from '@a2ui/web_core/types/types';
 import { inject, Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
