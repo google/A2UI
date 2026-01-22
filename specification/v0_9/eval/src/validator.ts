@@ -25,6 +25,7 @@ import { logger } from "./logger";
 export class Validator {
   private ajv: Ajv;
   private validateFn: any;
+  private standardFunctions = new Set<string>();
 
   constructor(
     private schemas: Record<string, any>,
@@ -37,6 +38,23 @@ export class Validator {
     this.validateFn = this.ajv.getSchema(
       "https://a2ui.dev/specification/v0_9/server_to_client.json"
     );
+
+    // Populate standard functions from the catalog schema
+    // Note: schemas are keyed by filename in index.ts
+    const catalogSchema = schemas["standard_catalog.json"];
+    if (catalogSchema && Array.isArray(catalogSchema.functions)) {
+      for (const func of catalogSchema.functions) {
+        if (func.name && typeof func.name === "string") {
+          this.standardFunctions.add(func.name);
+        }
+      }
+    }
+
+    if (this.standardFunctions.size === 0) {
+      logger.warn(
+        "No standard functions loaded from schema 'standard_catalog.json'. Function validation will fail open."
+      );
+    }
   }
 
   async run(results: GeneratedResult[]): Promise<ValidatedResult[]> {
@@ -222,22 +240,8 @@ export class Validator {
       (Object.keys(root).length === 2 || Object.keys(root).length === 3)
     ) {
       const functionName = root.call;
-      // List of standard functions. For now, we utilize "dummy" validation that always succeeds.
-      const standardFunctions = [
-        "required",
-        "regex",
-        "length",
-        "numeric",
-        "email",
-        "formatString",
-        "formatNumber",
-        "formatCurrency",
-        "formatDate",
-        "pluralize",
-        "openUrl"
-      ];
 
-      if (standardFunctions.includes(functionName)) {
+      if (this.standardFunctions.has(functionName)) {
         // Dummy validation: Always succeed for standard functions.
         return;
       }
