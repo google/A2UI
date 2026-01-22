@@ -24,6 +24,14 @@ The `src/a2ui/extension` directory contains the core logic for the A2UI agent ex
    uv run --with pytest pytest tests/
    ```
 
+## Building the SDK
+
+To build the SDK, run the following command from the `a2a_agents/python/a2ui_agent` directory:
+
+```bash
+uv build .
+```
+
 ## Disclaimer
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.
