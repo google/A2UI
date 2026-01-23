@@ -6,13 +6,6 @@ readme = "README.md"
 requires-python = ">=3.10"
 keywords = ["mcp", "llm", "automation", "a2ui", "agent"]
 license = { text = "MIT" }
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-]
 dependencies = ["anyio>=4.5", "click>=8.2.0", "httpx>=0.27", "mcp", "a2ui-agent"]
 
 [project.scripts]
@@ -24,6 +17,11 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
+
 
 [tool.pyright]
 include = ["."]
