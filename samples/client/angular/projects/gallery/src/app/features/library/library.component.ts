@@ -292,7 +292,7 @@ export class LibraryComponent {
           { value: 'opt2', label: { literalString: 'Option 2' } },
           { value: 'opt3', label: { literalString: 'Option 3' } },
         ],
-        selections: { literalString: 'opt1' },
+        selections: { literalArray: ['opt1'] },
       }),
     },
     {
@@ -526,7 +526,7 @@ export class LibraryComponent {
               { value: 'opt2', label: { literalString: 'Option 2' } },
               { value: 'opt3', label: { literalString: 'Option 3' } },
             ],
-            selections: { literalString: 'opt1' },
+            selections: { literalArray: ['opt1'] },
           }),
         },
         {

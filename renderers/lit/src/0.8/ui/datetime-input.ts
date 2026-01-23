@@ -134,7 +134,7 @@ export class DateTimeInput extends Root {
     }
 
     const year = this.#padNumber(date.getFullYear());
-    const month = this.#padNumber(date.getMonth());
+    const month = this.#padNumber(date.getMonth() + 1);
     const day = this.#padNumber(date.getDate());
     const hours = this.#padNumber(date.getHours());
     const minutes = this.#padNumber(date.getMinutes());
