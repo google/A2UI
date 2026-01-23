@@ -39,9 +39,7 @@ TEST_A2UI_SCHEMA = {
 
 @pytest.mark.asyncio
 async def test_toolset_init_bool():
-  toolset = SendA2uiToClientToolset(
-      a2ui_enabled=True, a2ui_schema=TEST_A2UI_SCHEMA
-  )
+  toolset = SendA2uiToClientToolset(a2ui_enabled=True, a2ui_schema=TEST_A2UI_SCHEMA)
   ctx = MagicMock(spec=ReadonlyContext)
   assert await toolset._resolve_a2ui_enabled(ctx) == True
 
@@ -54,9 +52,7 @@ async def test_toolset_init_bool():
 async def test_toolset_init_callable():
   enabled_mock = MagicMock(return_value=True)
   schema_mock = MagicMock(return_value=TEST_A2UI_SCHEMA)
-  toolset = SendA2uiToClientToolset(
-      a2ui_enabled=enabled_mock, a2ui_schema=schema_mock
-  )
+  toolset = SendA2uiToClientToolset(a2ui_enabled=enabled_mock, a2ui_schema=schema_mock)
   ctx = MagicMock(spec=ReadonlyContext)
   assert await toolset._resolve_a2ui_enabled(ctx) == True
 
@@ -88,9 +84,7 @@ async def test_toolset_init_async_callable():
 
 @pytest.mark.asyncio
 async def test_toolset_get_tools_enabled():
-  toolset = SendA2uiToClientToolset(
-      a2ui_enabled=True, a2ui_schema=TEST_A2UI_SCHEMA
-  )
+  toolset = SendA2uiToClientToolset(a2ui_enabled=True, a2ui_schema=TEST_A2UI_SCHEMA)
   tools = await toolset.get_tools(MagicMock(spec=ReadonlyContext))
   assert len(tools) == 1
   assert isinstance(tools[0], SendA2uiToClientToolset._SendA2uiJsonToClientTool)
@@ -98,9 +92,7 @@ async def test_toolset_get_tools_enabled():
 
 @pytest.mark.asyncio
 async def test_toolset_get_tools_disabled():
-  toolset = SendA2uiToClientToolset(
-      a2ui_enabled=False, a2ui_schema=TEST_A2UI_SCHEMA
-  )
+  toolset = SendA2uiToClientToolset(a2ui_enabled=False, a2ui_schema=TEST_A2UI_SCHEMA)
   tools = await toolset.get_tools(MagicMock(spec=ReadonlyContext))
   assert len(tools) == 0
 
@@ -113,9 +105,7 @@ async def test_toolset_get_tools_disabled():
 
 def test_send_tool_init():
   tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
-  assert (
-      tool.name == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
-  )
+  assert tool.name == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
   assert tool._a2ui_schema == TEST_A2UI_SCHEMA
 
 
@@ -123,10 +113,7 @@ def test_send_tool_get_declaration():
   tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
   declaration = tool._get_declaration()
   assert declaration is not None
-  assert (
-      declaration.name
-      == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
-  )
+  assert declaration.name == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
   assert (
       SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME
       in declaration.parameters.properties
@@ -182,8 +169,8 @@ async def test_send_tool_run_async_valid():
 
   valid_a2ui = [{"type": "Text", "text": "Hello"}]
   args = {
-      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: (
-          json.dumps(valid_a2ui)
+      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: json.dumps(
+          valid_a2ui
       )
   }
 
@@ -205,8 +192,8 @@ async def test_send_tool_run_async_valid_list():
 
   valid_a2ui = [{"type": "Text", "text": "Hello"}]
   args = {
-      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: (
-          json.dumps(valid_a2ui)
+      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: json.dumps(
+          valid_a2ui
       )
   }
 
@@ -234,9 +221,7 @@ async def test_send_tool_run_async_missing_arg():
 async def test_send_tool_run_async_invalid_json():
   tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
   args = {
-      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: (
-          "{invalid"
-      )
+      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: "{invalid"
   }
   result = await tool.run_async(args=args, tool_context=MagicMock())
   assert "error" in result
@@ -248,8 +233,8 @@ async def test_send_tool_run_async_schema_validation_fail():
   tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
   invalid_a2ui = [{"type": "Text"}]  # Missing 'text'
   args = {
-      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: (
-          json.dumps(invalid_a2ui)
+      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: json.dumps(
+          invalid_a2ui
       )
   }
   result = await tool.run_async(args=args, tool_context=MagicMock())
@@ -307,9 +292,7 @@ def test_converter_convert_function_call_returns_empty():
   function_call = genai_types.FunctionCall(
       name=SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME,
       args={
-          SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: (
-              "..."
-          )
+          SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: "..."
       },
   )
   part = genai_types.Part(function_call=function_call)
@@ -337,9 +320,7 @@ def test_converter_convert_empty_result_response():
   assert len(a2a_parts) == 0
 
 
-@patch(
-    "google.adk.a2a.converters.part_converter.convert_genai_part_to_a2a_part"
-)
+@patch("google.adk.a2a.converters.part_converter.convert_genai_part_to_a2a_part")
 def test_converter_convert_non_a2ui_function_call(mock_convert):
   function_call = genai_types.FunctionCall(name="other_tool", args={})
   part = genai_types.Part(function_call=function_call)
@@ -352,9 +333,7 @@ def test_converter_convert_non_a2ui_function_call(mock_convert):
   mock_convert.assert_called_once_with(part)
 
 
-@patch(
-    "google.adk.a2a.converters.part_converter.convert_genai_part_to_a2a_part"
-)
+@patch("google.adk.a2a.converters.part_converter.convert_genai_part_to_a2a_part")
 def test_converter_convert_other_part(mock_convert):
   part = genai_types.Part(text="Hello")
   mock_a2a_part = a2a_types.Part(root=a2a_types.TextPart(text="Hello"))

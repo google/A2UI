@@ -42,6 +42,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install uv
 
+      - name: Check Formatting
+        working-directory: a2a_agents/python/a2ui_agent
+        run: uv run pyink --check .
+
       - name: Build the python SDK
         working-directory: a2a_agents/python/a2ui_agent
         run: uv build .

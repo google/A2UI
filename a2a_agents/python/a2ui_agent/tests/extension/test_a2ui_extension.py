@@ -21,9 +21,7 @@ from unittest.mock import MagicMock
 
 
 def test_a2ui_part_serialization():
-  a2ui_data = {
-      "beginRendering": {"surfaceId": "test-surface", "root": "root-column"}
-  }
+  a2ui_data = {"beginRendering": {"surfaceId": "test-surface", "root": "root-column"}}
 
   part = a2ui_extension.create_a2ui_part(a2ui_data)
 
@@ -41,9 +39,7 @@ def test_non_a2ui_data_part():
           metadata={"mimeType": "application/json"},  # Not A2UI
       )
   )
-  assert not a2ui_extension.is_a2ui_part(
-      part
-  ), "Should not be identified as A2UI part"
+  assert not a2ui_extension.is_a2ui_part(part), "Should not be identified as A2UI part"
   assert (
       a2ui_extension.get_a2ui_datapart(part) is None
   ), "Should not return A2UI DataPart"
@@ -53,9 +49,7 @@ def test_non_a2ui_part():
   text_part = TextPart(text="this is some text")
   part = Part(root=text_part)
 
-  assert not a2ui_extension.is_a2ui_part(
-      part
-  ), "Should not be identified as A2UI part"
+  assert not a2ui_extension.is_a2ui_part(part), "Should not be identified as A2UI part"
   assert (
       a2ui_extension.get_a2ui_datapart(part) is None
   ), "Should not return A2UI DataPart"
