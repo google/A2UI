@@ -1,6 +1,6 @@
 # A2UI Protocol Evolution Guide: v0.8.1 to v0.9
 
-This document serves as a comprehensive guide to the changes between A2UI version 0.8 and version 0.9. It details the shifts in philosophy, architecture, and implementation, providing a reference for stakeholders and developers migrating between versions.
+This document serves as a comprehensive guide to the changes between A2UI version 0.8.1 and version 0.9. It details the shifts in philosophy, architecture, and implementation, providing a reference for stakeholders and developers migrating between versions.
 
 ## 1. Executive Summary
 
@@ -11,20 +11,20 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 
 ### Summary Table
 
-| Feature                  | v0.8.1                                   | v0.9                                                 |
-| :----------------------- | :--------------------------------------- | :--------------------------------------------------- |
-| **Philosophy**           | Structured Output / Function Calling     | Prompt-First / In-Context Schema                     |
-| **Message Types**        | `beginRendering`, `surfaceUpdate`, ...   | `createSurface`, `updateComponents`, ...             |
-| **Surface Creation**     | Explicit `beginRendering`                | Explicit `createSurface`                             |
-| **Component Type**       | Key-based wrapper (`{"Text": ...}`)      | Property-based discriminator (`"component": "Text"`) |
-| **Data Model Update**    | Array of Key-Value Pairs                 | Standard JSON Object                                 |
-| **Data Binding**         | `dataBinding` / `literalString`          | `path` / Native JSON types                           |
-| **Button Context**       | Array of Key-Value pairs                 | Standard JSON Object                                 |
-| **Button Variant**       | Boolean (`primary: true`)                | Enum (`variant: "primary"`)                          |
-| **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)            |
-| **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                         |
-| **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop              |
-| **Data Synchronization** | Implicit                                 | Explicit Client->Server data syncing (`attachDataModel`) |
+| Feature                  | v0.8.1                                   | v0.9                                                     |
+| :----------------------- | :--------------------------------------- | :------------------------------------------------------- |
+| **Philosophy**           | Structured Output / Function Calling     | Prompt-First / In-Context Schema                         |
+| **Message Types**        | `beginRendering`, `surfaceUpdate`, ...   | `createSurface`, `updateComponents`, ...                 |
+| **Surface Creation**     | Explicit `beginRendering`                | Explicit `createSurface`                                 |
+| **Component Type**       | Key-based wrapper (`{"Text": ...}`)      | Property-based discriminator (`"component": "Text"`)     |
+| **Data Model Update**    | Array of Key-Value Pairs                 | Standard JSON Object                                     |
+| **Data Binding**         | `dataBinding` / `literalString`          | `path` / Native JSON types                               |
+| **Button Context**       | Array of Key-Value pairs                 | Standard JSON Object                                     |
+| **Button Variant**       | Boolean (`primary: true`)                | Enum (`variant: "primary"`)                              |
+| **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)                |
+| **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                             |
+| **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop                  |
+| **Data Synchronization** | Implicit                                 | Explicit Client->Server data syncing (`sendDataModel`) |
 
 ## 2. Architectural & Schema Changes
 
@@ -80,7 +80,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 - **Replacement**: `beginRendering` is **REPLACED** by `createSurface`.
 - **Purpose**: `createSurface` signals the client to create a new surface and prepare for rendering.
 - **Theme Information**: `createSurface` includes a `theme` property to specify theme parameters (like `primaryColor`). This replaces the `styles` property in v0.8.
-- **Root Rule**: The rule is: "There must be exactly one component with the ID `root`." The "root" attribute that `beginRendering` had has been removed. The client is expected to render as soon as it has a valid tree with a root component.
+- **Root Rule**: The rule is: "There must be exactly one component with the `ComponentId` 'root'." The "root" attribute that `beginRendering` had has been removed. The client is expected to render as soon as it has a valid tree with a root component.
 - **New Requirement**: `createSurface` now requires a **`catalogId`** (URI) to explicitly state which unified catalog (components and functions) is being used.
 
 **Example:**
@@ -240,9 +240,9 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 **v0.9:**
 
-- **Explicit Client->Server Data Model Sync**: `createSurface` introduced `attachDataModel` (boolean).
+- **Explicit Client->Server Data Model Sync**: `createSurface` introduced `sendDataModel` (boolean).
 - **Single-Path Updates**: Server pushes updates via `updateDataModel` using simple `path`/`value` pairs.
-- **Client->Server Data Model Sync**: When `attachDataModel` is true, the client includes the full data model in every A2A message metadata.
+- **Client->Server Data Model Sync**: When `sendDataModel` is true, the client includes the full data model in every A2A message metadata.
 
 ## 6. Component-Specific Changes
 

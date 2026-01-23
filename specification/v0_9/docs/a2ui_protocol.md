@@ -19,7 +19,7 @@ A Specification for a JSON-Based, Streaming UI Protocol
 
 ## Introduction
 
-The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from an A2A server. Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
+The A2UI Protocol is designed for dynamically rendering user interfaces from a stream of JSON objects sent from a server (Agent). Its core philosophy emphasizes a clean separation of UI structure and application data, enabling progressive rendering as the client processes each message.
 
 Communication occurs via a stream of JSON objects. The client parses each object as a distinct message and incrementally builds or updates the UI. The server-to-client protocol defines four message types:
 
@@ -77,6 +77,50 @@ sequenceDiagram
     Client-->>-Server: (UI is gone)
 ```
 
+## Transport Decoupling
+
+The A2UI protocol is designed to be transport-agnostic. It defines the JSON message structure and the semantic contract between the server (Agent) and the client (Renderer), but it does not mandate a specific transport layer.
+
+### The Transport Contract
+
+To support A2UI, a transport layer must fulfill the following contract:
+
+1.  **Reliable Delivery**: Messages must be delivered in the order they were generated. A2UI relies on stateful updates (e.g., creating a surface before updating it), so out-of-order delivery can corrupt the UI state.
+2.  **Message Framing**: The transport must clearly delimit individual JSON envelope messages (e.g., using newlines in JSONL, WebSocket frames, or SSE events).
+3.  **Metadata Support**: The transport must provide a mechanism to associate metadata with messages. This is critical for:
+    *   **Data Model Synchronization**: The `sendDataModel` feature requires the client to send the current data model state as metadata alongside user actions.
+    *   **Capabilities Exchange**: Client capabilities (supported catalogs, custom components) are exchanged via metadata.
+4.  **Bidirectional Capability (Optional)**: While the rendering stream is unidirectional (Server -> Client), interactive applications require a return channel for `action` messages (Client -> Server).
+
+### Transport Bindings
+
+While A2UI is agnostic, it is most commonly used with the following transports.
+
+#### A2A (Agent2Agent) Binding
+
+[A2A (Agent-to-Agent)](https://a2a-protocol.org/latest/) is an excellent transport option for A2UI in agentic systems, extending A2A with additional payloads.
+A2A is uniquely capable of handling remote agent communication, and can also provide a secure and effecient transport between an agentic backend and front end application.
+
+*   **Message Mapping**: Each A2UI envelope (e.g., `updateComponents`) corresponds to the payload of a single A2A message Part.
+*   **Metadata**:
+    *   **Data Model**: When `sendDataModel` is active, the client's `a2uiClientDataModel` object is placed in the `metadata` field of the A2A message.
+    *   **Capabilities**: The `a2uiClientCapabilities` object is placed in the `metadata` field of every A2A message sent from the client to the server.
+*   **Context**: A2UI sessions typically map to A2A `contextId`. All messages for a set of related surfaces should share the same `contextId`.
+
+#### AG UI (Agent to User Interface) Binding
+
+**[AG-UI](https://docs.ag-ui.com/introduction)** is also an excellent transport option for A2UI Agent–User Interaction protocol.
+AG UI provides convenient integrations into many agent frameworks and frontends.  AG UI provides low latency and shared state message passing between front ends and agentic backends.
+
+#### Other Transports
+
+A2UI can also be carried over:
+
+- **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/docs/getting-started/intro)**: Delivered as tool outputs or resource subscriptions.
+- **[SSE](https://en.wikipedia.org/wiki/Server-sent_events) with [JSON RPC](https://www.jsonrpc.org/)**: Standard server-sent events for web integrations that support streaming, and JSON RPC for client-server communication.
+- **[WebSockets](https://en.wikipedia.org/wiki/WebSocket)**: For bidirectional, real-time sessions.
+  **[REST](https://cloud.google.com/discover/what-is-rest-api?hl=en)**: For simple use case, REST APIs will work but lack streaming capabilities.
+
 ## The Protocol Schemas
 
 A2UI v0.9 is defined by three interacting JSON schemas.
@@ -88,10 +132,10 @@ The [`common_types.json`] schema defines reusable primitives used throughout the
 - **`DynamicString` / `DynamicNumber` / `DynamicBoolean` / `DynamicStringList`**: The core of the data binding system. Any property that can be bound to data is defined as a `Dynamic*` type. It accepts either a literal value, a `path` string ([JSON Pointer]), or a `FunctionCall` (function call).
 - **`ChildList`**: Defines how containers hold children. It supports:
 
-  - `array`: A static array of string component IDs.
+  - `array`: A static array of `ComponentId` component references.
   - `object`: A template for generating children from a data binding list (requires a template `componentId` and a data binding `path`).
 
-- **`id`**: The unique identifier for a component. Defined here so that all IDs are consistent and can be used for data binding.
+- **`ComponentId`**: A reference to the unique ID of another component within the same surface.
 
 ### Server to Client Message Structure: The Envelope
 
@@ -102,6 +146,19 @@ The [`server_to_client.json`] schema is the top-level entry point. Every message
 The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`) and functions (e.g., `required`, `email`). By separating this from the envelope, developers can easily swap in custom catalogs (e.g., `material_catalog.json` or `cupertino_catalog.json`) without rewriting the core protocol parser.
 
 Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the standard catalog. It should have the same form as the standard catalog, and use common elements in the [`common_types.json`] schema.
+
+### Validator Compliance & Custom Catalogs
+
+To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), custom catalogs MUST adhere to the following strict typing rules:
+
+1.  **Single Child References:** Any property that holds the ID of another component MUST use the `ComponentId` type defined in `common_types.json`.
+    *   Use: `"$ref": "common_types.json#/$defs/ComponentId"`
+    *   Do NOT use: `"type": "string"`
+
+2.  **List References:** Any property that holds a list of children or a template MUST use the `ChildList` type.
+    *   Use: `"$ref": "common_types.json#/$defs/ChildList"`
+
+Validators determine which fields represent structural links by looking for these specific schema references. If you use a raw string type for an ID, the validator will treat it as static text (like a URL or label) and will not check if the target component exists.
 
 ## Envelope Message Structure
 
@@ -114,9 +171,9 @@ This message signals the client to create a new surface and begin rendering it. 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be rendered.
-- `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`).
+- `catalogId` (string, required): A string that uniquely identifies the catalog (components and functions) used for this surface. It is recommended to prefix this with an internet domain that you own, to avoid conflicts (e.g., `https://mycompany.com/1.0/somecatalog`). If it is a URL, the URL does not need to have any deployed resources, it is simply a unique identifier.
 - `theme` (object, optional): A JSON object containing theme parameters (e.g., `primaryColor`) defined in the catalog's theme schema.
-- `attachDataModel` (boolean, optional): If true, the client will attach the full data model of this surface to the metadata of every A2A message sent to the server that created the surface. This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
+- `sendDataModel` (boolean, optional): If true, the client will send the full data model of this surface in the metadata of every message sent to the server (via the Transport's metadata mechanism). This ensures the surface owner receives the full current state of the UI alongside the user's action or query. Defaults to false.
 
 **Example:**
 
@@ -128,7 +185,7 @@ This message signals the client to create a new surface and begin rendering it. 
     "theme": {
       "primaryColor": "#00BFFF"
     },
-    "attachDataModel": true
+    "sendDataModel": true
   }
 }
 ```
@@ -226,9 +283,9 @@ A2UI's component model is designed for flexibility, separating the protocol's st
 
 ### The Component Object
 
-Each object in the `components` array of a `updateComponents` message defines a single UI component. It has the following structure:
+Each object in the `components` array of an `updateComponents` message defines a single UI component. It has the following structure:
 
-- `id` (string, required): A unique string that identifies this specific component instance. This is used for parent-child references.
+- `id` (`ComponentId`, required): A unique string that identifies this specific component instance. This is used for parent-child references.
 - `component` (string, required): Specifies the component's type (e.g., `"Text"`).
 - **Component Properties**: Other properties relevant to the specific component type (e.g., `text`, `url`, `children`) are included directly in the component object.
 
@@ -236,7 +293,7 @@ This structure is designed to be both flexible and strictly validated.
 
 ### The Component Catalog
 
-The set of available UI components and functions is defined in a **Catalog**. The standard catalog is defined in [`standard_catalog.json`]. This allows for different clients to support different sets of components and functions, including custom ones. The server must generate messages that conform to the catalog understood by the client.
+The set of available UI components and functions is defined in a **Catalog**. The standard catalog is defined in [`standard_catalog.json`]. This allows for different clients to support different sets of components and functions, including custom ones. Advanced use cases may want to define their own custom catalogs to support custom front end design systems or renderers. The server must generate messages that conform to the catalog understood by the client.
 
 ### UI Composition: The Adjacency List Model
 
@@ -416,7 +473,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 - User inputs (keystrokes, toggles) do **not** automatically trigger network requests to the server.
 - The updated state is sent to the server only when a specific **User Action** is triggered (e.g., a `Button` click).
-- When a `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
+- When an `action` is dispatched, the `context` property of the action can reference the modified data paths to send the user's input back to the server.
 
 #### Example: Form Submission Pattern
 
@@ -441,7 +498,7 @@ It is critical to note that Two-Way Binding is **local to the client**.
 
 While the sections above describe how components reference data, this section defines how the Data Model itself is **updated** and synchronized.
 
-To support reliable data synchronization between the Renderer and the Agent that created the surface, the A2UI protocol uses a simple synchronization mechanism controlled by the `attachDataModel` property in the `createSurface` message.
+To support reliable data synchronization between the Renderer and the Agent that created the surface, the A2UI protocol uses a simple synchronization mechanism controlled by the `sendDataModel` property in the `createSurface` message.
 
 ### Server to Client Updates
 
@@ -500,12 +557,12 @@ _Replace the entire data model:_
 
 ### Client to Server Updates
 
-When `attachDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every A2A message (such as `action` or user query) sent to the server that created the surface. The data model is included in the A2A message metadata using the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
+When `sendDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every message (such as `action` or user query) sent to the server that created the surface. The data model is included using the transport's metadata facility (e.g., the `metadata` field in A2A or a header in HTTP). The payload follows the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
 
 - **Targeted Delivery**: The data model is sent exclusively to the server that created the surface. Data cannot leak to other agents or servers.
-- **Trigger:** Data is sent only when an A2A message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
-- **Payload:** The data model is included in the A2A message metadata, tagged by its `surfaceId`.
-- **Convergence:** The server treats the received data model as the current state of the client at the time of the action.
+- **Trigger**: Data is sent only when a client-to-server message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
+- **Payload**: The data model is included in the transport metadata, tagged by its `surfaceId`.
+- **Convergence**: The server treats the received data model as the current state of the client at the time of the action.
 
 ## Client-Side Logic & Validation
 
@@ -734,7 +791,7 @@ This message is sent when the user interacts with a component that has an `actio
 
 ### Client Capabilities & Metadata
 
-In A2UI v0.9, client capabilities and other metadata are sent as part of the **A2A metadata** envelope in every message, rather than as first-class A2UI messages.
+In A2UI v0.9, client capabilities and other metadata are sent as part of the **Transport metadata** (e.g., A2A metadata) envelope in every message, rather than as first-class A2UI messages.
 
 #### Client Capabilities
 
@@ -747,7 +804,7 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 
 #### Client Data Model
 
-When `attachDataModel` is enabled for a surface, the client includes the `a2uiClientDataModel` object in the metadata, following the [`a2ui_client_data_model.json`] schema.
+When `sendDataModel` is enabled for a surface, the client includes the `a2uiClientDataModel` object in the metadata, following the [`a2ui_client_data_model.json`] schema.
 
 **Properties:**
 

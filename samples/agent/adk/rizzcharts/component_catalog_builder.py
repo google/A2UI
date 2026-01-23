@@ -15,7 +15,7 @@
 import json
 import logging
 from typing import Any, List, Optional
-from a2ui.a2ui_extension import INLINE_CATALOGS_KEY, SUPPORTED_CATALOG_IDS_KEY
+from a2ui.extension.a2ui_extension import INLINE_CATALOGS_KEY, SUPPORTED_CATALOG_IDS_KEY
 try:
     from .agent import RIZZCHARTS_CATALOG_URI, STANDARD_CATALOG_ID
 except ImportError:
