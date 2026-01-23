@@ -41,6 +41,15 @@ def load_a2ui_schema() -> dict[str, Any]:
 
     return wrap_as_json_array(server_to_client_json)
 
+def load_a2ui_client_to_server_schema() -> dict[str, Any]:
+    current_dir = pathlib.Path(__file__).resolve().parent
+    spec_root = current_dir / "../../../../specification/v0_8/json"
+
+    client_to_server_content = (spec_root / "client_to_server.json").read_text()
+    client_to_server_json = json.loads(client_to_server_content)
+    
+    return client_to_server_json
+
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
 @click.option(
@@ -59,12 +68,21 @@ def main(port: int, transport: str) -> int:
     )
     print(f"Loaded Recipe A2UI JSON: {recipe_a2ui_json}")
 
+    a2ui_client_to_server_schema = load_a2ui_client_to_server_schema()
+    print(f"Loaded A2UI client to server schema: {a2ui_client_to_server_schema}")
+
     app = Server("a2ui-over-mcp-demo")
     
     @app.call_tool()
     async def handle_call_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-        if name=="get_recipe_ui":
+        if name=="get_recipe_a2ui":
             return {"events": recipe_a2ui_json}
+        
+        if name=="send_a2ui_user_action":
+            return {"response": f"Received A2UI user action", "args": arguments}
+        
+        if name=="send_a2ui_error":
+            return {"response": f"Received A2UI error", "args": arguments}
         
         raise ValueError(f"Unknown tool: {name}")        
 
@@ -72,8 +90,8 @@ def main(port: int, transport: str) -> int:
     async def list_tools() -> list[types.Tool]:     
         return [
             types.Tool(
-                name="get_recipe_ui",
-                title="Get Recipe UI ",
+                name="get_recipe_a2ui",
+                title="Get Recipe A2UI",
                 description="Returns the A2UI JSON to show a recipe",
                 inputSchema={
                     "type": "object",
@@ -87,6 +105,18 @@ def main(port: int, transport: str) -> int:
                     "required": ["events"],
                     "additionalProperties": False
                 }
+            ),
+            types.Tool(
+                name="send_a2ui_user_action",
+                title="Send A2UI User Action",
+                description="Sends an A2UI user action",
+                inputSchema=a2ui_client_to_server_schema["properties"]["userAction"],
+            ),
+            types.Tool(
+                name="send_a2ui_error",
+                title="Send A2UI Error",
+                description="Sends an A2UI error",
+                inputSchema=a2ui_client_to_server_schema["properties"]["error"],
             )
         ]
 
