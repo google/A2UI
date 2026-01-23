@@ -39,7 +39,7 @@ def load_a2ui_schema() -> dict[str, Any]:
     
     server_to_client_json["properties"]["surfaceUpdate"]["properties"]["components"]["items"]["properties"]["component"]["properties"] = standard_catalog_json
 
-    return wrap_as_json_array(server_to_client_json)   
+    return wrap_as_json_array(server_to_client_json)
 
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
