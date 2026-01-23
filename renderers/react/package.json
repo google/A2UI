@@ -1,0 +1,82 @@
+{
+  "name": "@a2ui/react",
+  "version": "0.8.0",
+  "description": "React renderer for A2UI (Agent-to-User Interface)",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./styles": {
+      "import": {
+        "types": "./dist/styles/index.d.ts",
+        "default": "./dist/styles/index.js"
+      },
+      "require": {
+        "types": "./dist/styles/index.d.cts",
+        "default": "./dist/styles/index.cjs"
+      }
+    },
+    "./styles/structural.css": "./dist/structural.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup && cp src/styles/index.d.ts dist/styles/index.d.ts && cp src/styles/index.d.ts dist/styles/index.d.cts",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@a2ui/lit": "workspace:*",
+    "clsx": "^2.1.0",
+    "markdown-it": "^14.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.0.0",
+    "@types/markdown-it": "^14.1.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "clsx": "^2.1.0",
+    "jsdom": "^25.0.0",
+    "markdown-it": "^14.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  },
+  "keywords": [
+    "a2ui",
+    "react",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/google/A2UI.git",
+    "directory": "renderers/react"
+  }
+}
