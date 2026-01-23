@@ -7,7 +7,7 @@ A demo of A2UI running over MCP, exposing a tool that returns a recipe UI.
 1. Start the server using either stdio (default) or SSE transport:
 
 ```bash
-# Using SEE transport (default) on port 8000
+# Using SSE transport (default) on port 8000
 uv run .
 ```
 
