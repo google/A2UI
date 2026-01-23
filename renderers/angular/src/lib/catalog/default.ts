@@ -116,7 +116,8 @@ export const DEFAULT_CATALOG: Catalog = {
       const properties = (node as Types.MultipleChoiceNode).properties;
       return [
         inputBinding('options', () => properties.options || []),
-        inputBinding('value', () => properties.selections),
+        inputBinding('selections', () => properties.selections),
+        inputBinding('maxAllowedSelections', () => properties.maxAllowedSelections ?? null),
         inputBinding('description', () => 'Select an item'), // TODO: this should be defined in the properties
       ];
     },
