@@ -103,6 +103,7 @@
     "@lit/context": "^1.1.4",
     "lit": "^3.3.1",
     "markdown-it": "^14.1.0",
-    "signal-utils": "^0.21.1"
+    "signal-utils": "^0.21.1",
+    "@a2ui/web_core": "file:../web_core"
   }
 }
