@@ -32,7 +32,7 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "npx mkdirp src/v0_8/schemas && npx cpy \"../../specification/v0_8/json/*.json\" src/v0_8/schemas",
+      "command": "mkdirp src/v0_8/schemas && cpy \"../../specification/v0_8/json/*.json\" src/v0_8/schemas",
       "files": [
         "../../specification/v0_8/json/*.json"
       ],
