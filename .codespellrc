@@ -3,4 +3,4 @@
 skip = .git*,*.svg,package-lock.json,*-lock.yaml,*.lock,*.css,.codespellrc,.cache,.npm
 check-hidden = true
 ignore-regex = ^\s*"image/\S+": ".*
-# ignore-words-list =
+ignore-words-list = ser,cyclin
