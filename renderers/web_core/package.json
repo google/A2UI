@@ -32,7 +32,7 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "mkdir -p src/v0_8/schemas && cp ../../specification/v0_8/json/*.json src/v0_8/schemas",
+      "command": "npx mkdirp src/v0_8/schemas && npx cpy \"../../specification/v0_8/json/*.json\" src/v0_8/schemas",
       "files": [
         "../../specification/v0_8/json/*.json"
       ],
@@ -65,6 +65,8 @@
   "author": "Google",
   "license": "Apache-2.0",
   "devDependencies": {
+    "cpy-cli": "^6.0.0",
+    "mkdirp": "^3.0.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   }
