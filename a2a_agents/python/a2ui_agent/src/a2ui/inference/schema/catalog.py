@@ -16,11 +16,14 @@ import copy
 import json
 import logging
 import os
-from dataclasses import dataclass, replace
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass, field, replace
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from .constants import CATALOG_COMPONENTS_KEY, CATALOG_ID_KEY
 from referencing import Registry, Resource
+
+if TYPE_CHECKING:
+  from .validator import A2uiValidator
 
 
 @dataclass
@@ -55,6 +58,12 @@ class A2uiCatalog:
     if CATALOG_ID_KEY not in self.catalog_schema:
       raise ValueError(f"Catalog '{self.name}' missing catalogId")
     return self.catalog_schema[CATALOG_ID_KEY]
+
+  @property
+  def validator(self) -> "A2uiValidator":
+    from .validator import A2uiValidator
+
+    return A2uiValidator(self)
 
   def with_pruned_components(self, allowed_components: List[str]) -> "A2uiCatalog":
     """Returns a new catalog with only allowed components.
@@ -123,7 +132,7 @@ class A2uiCatalog:
 
     return "\n\n".join(all_schemas)
 
-  def load_examples(self, path: Optional[str]) -> str:
+  def load_examples(self, path: Optional[str], validate: bool = False) -> str:
     """Loads and validates examples from a directory."""
     if not path or not os.path.isdir(path):
       if path:
@@ -138,6 +147,8 @@ class A2uiCatalog:
         try:
           with open(full_path, "r", encoding="utf-8") as f:
             content = f.read()
+            if validate and not self._validate_example(full_path, basename, content):
+              continue
             merged_examples.append(
                 f"---BEGIN {basename}---\n{content}\n---END {basename}---"
             )
@@ -253,3 +264,12 @@ class A2uiCatalog:
           target["oneOf"] = new_one_of
 
     return result
+
+  def _validate_example(self, full_path: str, basename: str, content: str) -> bool:
+    try:
+      json_data = json.loads(content)
+      self.validator.validate(json_data)
+    except Exception as e:
+      logging.warning(f"Failed to validate example {full_path}: {e}")
+      return False
+    return True

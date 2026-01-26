@@ -218,7 +218,7 @@ def test_generate_system_prompt_with_examples(mock_importlib_resources):
         return_value="---BEGIN example1---\n{}\n---END example1---",
     ):
       prompt = manager.generate_system_prompt("Role description", include_examples=True)
-      assert "### Examples:" in prompt
+      assert "### Examples" in prompt
       assert "example1" in prompt
 
   # Test without examples

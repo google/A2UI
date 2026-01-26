@@ -20,6 +20,7 @@ COMMON_TYPES_SCHEMA_KEY = "common_types"
 CATALOG_SCHEMA_KEY = "catalog"
 CATALOG_COMPONENTS_KEY = "components"
 CATALOG_ID_KEY = "catalogId"
+CATALOG_STYLES_KEY = "styles"
 
 BASE_SCHEMA_URL = "https://a2ui.org/"
 BASIC_CATALOG_NAME = "basic"

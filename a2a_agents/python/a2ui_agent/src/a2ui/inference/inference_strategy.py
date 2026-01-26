@@ -28,6 +28,7 @@ class InferenceStrategy(ABC):
       allowed_components: List[str] = [],
       include_schema: bool = False,
       include_examples: bool = False,
+      validate_examples: bool = False,
   ) -> str:
     """
     Generates a system prompt for all LLM requests.
@@ -40,6 +41,7 @@ class InferenceStrategy(ABC):
       allowed_components: List of allowed components.
       include_schema: Whether to include the schema.
       include_examples: Whether to include examples.
+      validate_examples: Whether to validate examples.
 
     Returns:
       The system prompt.

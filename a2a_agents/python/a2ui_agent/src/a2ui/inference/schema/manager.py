@@ -283,10 +283,12 @@ class A2uiSchemaManager(InferenceStrategy):
     pruned_catalog = catalog.with_pruned_components(allowed_components)
     return pruned_catalog
 
-  def load_examples(self, catalog: A2uiCatalog) -> str:
+  def load_examples(self, catalog: A2uiCatalog, validate: bool = False) -> str:
     """Loads examples for a catalog."""
     if catalog.catalog_id in self._catalog_example_paths:
-      return catalog.load_examples(self._catalog_example_paths[catalog.catalog_id])
+      return catalog.load_examples(
+          self._catalog_example_paths[catalog.catalog_id], validate=validate
+      )
     return ""
 
   def generate_system_prompt(
@@ -298,6 +300,7 @@ class A2uiSchemaManager(InferenceStrategy):
       allowed_components: List[str] = [],
       include_schema: bool = False,
       include_examples: bool = False,
+      validate_examples: bool = False,
   ) -> str:
     """Assembles the final system instruction for the LLM."""
     parts = [role_description]
@@ -314,7 +317,7 @@ class A2uiSchemaManager(InferenceStrategy):
       parts.append(final_catalog.render_as_llm_instructions())
 
     if include_examples:
-      examples_str = self.load_examples(final_catalog)
+      examples_str = self.load_examples(final_catalog, validate=validate_examples)
       if examples_str:
         parts.append(f"### Examples:\n{examples_str}")
 
