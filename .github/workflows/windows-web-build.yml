@@ -8,12 +8,6 @@ jobs:
   build-windows:
     runs-on: windows-latest
 
-    strategy:
-      matrix:
-        package:
-          - renderers/web_core
-          - renderers/lit
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -23,10 +17,16 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
-        working-directory: ${{ matrix.package }}
+      # Install root dependencies once if repo uses workspaces
+      - name: Install root dependencies
         run: npm install
 
-      - name: Run build
-        working-directory: ${{ matrix.package }}
+      # Build web_core first
+      - name: Build web_core
+        working-directory: renderers/web_core
+        run: npm run build
+
+      # Then build lit
+      - name: Build lit
+        working-directory: renderers/lit
         run: npm run build
