@@ -20,7 +20,7 @@ jobs:
       # Install root dependencies once if repo uses workspaces
       - name: Install root dependencies
         run: npm install
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/A2UI
 
       - name: Build web_core
         working-directory: renderers/web_core
