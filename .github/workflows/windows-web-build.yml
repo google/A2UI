@@ -20,13 +20,12 @@ jobs:
       # Install root dependencies once if repo uses workspaces
       - name: Install root dependencies
         run: npm install
+        working-directory: ${{ github.workspace }}
 
-      # Build web_core first
       - name: Build web_core
         working-directory: renderers/web_core
         run: npm run build
 
-      # Then build lit
       - name: Build lit
         working-directory: renderers/lit
         run: npm run build
