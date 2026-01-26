@@ -5,7 +5,7 @@ on:
   push:
 
 jobs:
-  build-windows:
+  windows-build:
     runs-on: windows-latest
 
     steps:
@@ -17,14 +17,19 @@ jobs:
         with:
           node-version: 18
 
-      # Install root dependencies once if repo uses workspaces
-      - name: Install root dependencies
+      # --- Build web_core first ---
+      - name: Install web_core deps
+        working-directory: renderers/web_core
         run: npm install
-        working-directory: ${{ github.workspace }}/A2UI
 
       - name: Build web_core
         working-directory: renderers/web_core
         run: npm run build
+
+      # --- Then build lit ---
+      - name: Install lit deps
+        working-directory: renderers/lit
+        run: npm install
 
       - name: Build lit
         working-directory: renderers/lit
