@@ -12,7 +12,7 @@ A Specification for a JSONL-Based, Streaming UI Protocol
 Created: Sep 19, 2025
 Updated: Nov 12, 2025
 
-## Design Requirements
+## Design requirements
 
 The A2UI (Agent to UI) protocol should be a system where an LLM can stream a platform-agnostic, abstract UI definition to a client, which then renders it progressively using a native widget set. Every major design choice is traced back to the core challenges of LLM generation, perceived performance, and platform independence.
 
@@ -71,11 +71,11 @@ Client-to-server communication for user interactions is handled separately via a
 - `error`: Reports a client-side error.
   This keeps the primary data stream unidirectional.
 
-## Section 1: Foundational Architecture and Data Flow
+## Section 1: Foundational architecture and data flow
 
 This document specifies the architecture and data formats for the A2UI protocol. The design is guided by principles of strict separation of concerns, versioning, and progressive rendering.
 
-### 1.1. Core Philosophy: Decoupling and Contracts
+### 1.1. Core philosophy: decoupling and contracts
 
 The central philosophy of A2UI is the decoupling of three key elements:
 
@@ -83,7 +83,7 @@ The central philosophy of A2UI is the decoupling of three key elements:
 2.  **The Data Model (The State):** A server-provided JSON object containing the dynamic values that populate the UI, such as text, booleans, or lists. This is managed via `dataModelUpdate` messages.
 3.  **The Widget Registry (The "Catalog"):** A client-defined mapping of component types (e.g., "Row", "Text") to concrete, native widget implementations. This registry is **part of the client application**, not the protocol stream. The server must generate components that the target client's registry understands.
 
-### 1.2. The JSONL Stream: The Unit of Communication
+### 1.2. The JSONL stream: The unit of communication
 
 All UI descriptions are transmitted from the server to the client as a stream of JSON objects, formatted as JSON Lines (JSONL). Each line is a separate, compact JSON object representing a single message. This allows the client to parse and process each part of the UI definition as it arrives, enabling progressive rendering.
 

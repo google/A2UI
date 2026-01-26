@@ -30,7 +30,7 @@ component library (Flutter, Angular, Lit, etc.).
 This approach ensures that agent-generated UIs are
 **safe like data, but expressive like code**.
 
-## High-Level philosophy
+## High-level philosophy
 
 A2UI was designed to address the specific challenges of interoperable,
 cross-platform, generative or template-based UI responses from agents.
