@@ -17,9 +17,10 @@ import json
 import logging
 import os
 import importlib.resources
-from typing import List, Dict, Any
-from .loader import A2uiSchemaLoader, PackageLoader, FileSystemLoader
+from typing import List, Dict, Any, Tuple, Set
 from ..inference_strategy import InferenceStrategy
+from .loader import A2uiSchemaLoader, PackageLoader, FileSystemLoader
+from a2ui.core.validator import A2uiValidator
 
 # Helper constants for schema management shared by build hook and runtime
 
@@ -30,6 +31,7 @@ SERVER_TO_CLIENT_SCHEMA_KEY = "server_to_client"
 COMMON_TYPES_SCHEMA_KEY = "common_types"
 CATALOG_SCHEMA_KEY = "catalog"
 CATALOG_COMPONENTS_KEY = "components"
+CATALOG_STYLES_KEY = "styles"
 
 SPEC_VERSION_MAP = {
     "0.8": {
@@ -55,6 +57,16 @@ class A2uiSchemaManager(InferenceStrategy):
     self.catalog_schema = None
     self.common_types_schema = None
     self._load_schemas(version, custom_catalog_path)
+    self._bundled_schema = self.bundle_schemas()
+    self._validator = A2uiValidator(self._bundled_schema)
+
+  @property
+  def bundled_schema(self):
+    return self._bundled_schema
+
+  @property
+  def validator(self):
+    return self._validator
 
   def _load_schemas(self, version: str, custom_catalog_path: str = None):
     """
@@ -219,6 +231,173 @@ class A2uiSchemaManager(InferenceStrategy):
     parts.append("---END A2UI JSON SCHEMA---")
 
     return "\n\n".join(parts)
+
+  def bundle_schemas(self) -> Dict[str, Any]:
+    """
+    Bundles the loaded schemas into a single self-contained schema.
+    Returns:
+        A dictionary representing the bundled schema.
+    """
+    bundled = []
+    if self.version == "0.8":
+      bundled = self._bundle_0_8(
+          self.server_to_client_schema,
+          self.catalog_schema,
+          self.common_types_schema,
+      )
+    else:
+      # Default to 0.9+ behavior (using $defs)
+      bundled = self._bundle_0_9(
+          self.server_to_client_schema,
+          self.catalog_schema,
+          self.common_types_schema,
+      )
+    # LLM is instructed to generate a list of messages, so we wrap the bundled schema in an array.
+    return {
+        "type": "array",
+        "items": bundled,
+    }
+
+  def _inject_additional_properties(
+      self,
+      schema: Dict[str, Any],
+      source_properties: Dict[str, Any],
+      mapping: Dict[str, str] = None,
+  ) -> Tuple[Dict[str, Any], Set[str]]:
+    """
+    Recursively injects properties from source_properties into nodes with additionalProperties=True.
+    Args:
+        schema: The target schema to traverse and patch.
+        source_properties: A dictionary of top-level property groups (e.g., "components", "styles") from the source schema.
+    Returns:
+        A tuple containing:
+        - The patched schema.
+        - A set of keys from source_properties that were injected.
+    """
+    injected_keys = set()
+
+    def recursive_inject(obj):
+      if isinstance(obj, dict):
+        new_obj = {}
+        for k, v in obj.items():
+          if isinstance(v, dict) and v.get("additionalProperties") is True:
+            if k in source_properties:
+              injected_keys.add(k)
+              new_node = dict(v)
+              new_node["additionalProperties"] = False
+              new_node["properties"] = {
+                  **new_node.get("properties", {}),
+                  **source_properties[k],
+              }
+              new_obj[k] = new_node
+            else:  # No matching source group, keep as is but recurse children
+              new_obj[k] = recursive_inject(v)
+          else:  # Not a node with additionalProperties, recurse children
+            new_obj[k] = recursive_inject(v)
+        return new_obj
+      elif isinstance(obj, list):
+        return [recursive_inject(i) for i in obj]
+      return obj
+
+    return recursive_inject(schema), injected_keys
+
+  def _bundle_0_9(
+      self,
+      server_to_client: Dict[str, Any],
+      catalog: Dict[str, Any],
+      common: Dict[str, Any] = None,
+  ) -> Dict[str, Any]:
+    if not server_to_client:
+      return {}
+
+    bundled = copy.deepcopy(server_to_client)
+
+    # Collect source properties and merge schemas
+    source_properties = {}
+    schemas_to_merge = []
+    # merged in order so catalog overrides common.
+    if common:
+      schemas_to_merge.append(common)
+    if catalog:
+      schemas_to_merge.append(catalog)
+
+    if "$defs" not in bundled:
+      bundled["$defs"] = {}
+
+    for schema in schemas_to_merge:
+      source_properties.update(schema)
+
+      # Merge $defs
+      if "$defs" in schema:
+        bundled["$defs"].update(schema["$defs"])
+
+      # Merge other top-level properties
+      for k, v in schema.items():
+        if k not in ["$schema", "title", "$id", "description", "$defs"]:
+          bundled[k] = v
+
+    bundled["$id"] = "https://a2ui.dev/specification/0.9/server_to_client_bundled.json"
+    bundled["title"] = "Bundled A2UI Message Schema"
+    bundled["description"] = (
+        "A self-contained bundled schema including server messages, catalog components,"
+        " and common types."
+    )
+
+    bundled, injected_keys = self._inject_additional_properties(
+        bundled, source_properties
+    )
+
+    # Cleanup injected keys from bundled root to avoid duplication
+    for k in injected_keys:
+      if k in bundled:
+        del bundled[k]
+
+    # Recursively strip external file references
+    def rewrite_refs(obj):
+      if isinstance(obj, dict):
+        new_obj = {}
+        for k, v in obj.items():
+          if k == "$ref" and isinstance(v, str):
+            if ".json" in v:
+              ref_parts = v.split(".json")
+              fragment = ref_parts[-1]
+              if not fragment:
+                fragment = "#"
+              new_obj[k] = fragment
+            else:
+              new_obj[k] = v
+          else:
+            new_obj[k] = rewrite_refs(v)
+        return new_obj
+      elif isinstance(obj, list):
+        return [rewrite_refs(i) for i in obj]
+      return obj
+
+    return rewrite_refs(bundled)
+
+  def _bundle_0_8(
+      self,
+      server_to_client: Dict[str, Any],
+      catalog: Dict[str, Any],
+      common: Dict[str, Any] = None,
+  ) -> Dict[str, Any]:
+    if not server_to_client:
+      return {}
+
+    bundled = copy.deepcopy(server_to_client)
+
+    # Prepare catalog components and styles for injection
+    source_properties = {}
+    if catalog:
+      if CATALOG_COMPONENTS_KEY in catalog:
+        # Special mapping for v0.8: "components" -> "component"
+        source_properties["component"] = catalog[CATALOG_COMPONENTS_KEY]
+      if CATALOG_STYLES_KEY in catalog:
+        source_properties[CATALOG_STYLES_KEY] = catalog[CATALOG_STYLES_KEY]
+
+    bundled, _ = self._inject_additional_properties(bundled, source_properties)
+
+    return bundled
 
 
 def find_repo_root(start_path: str) -> str | None:
