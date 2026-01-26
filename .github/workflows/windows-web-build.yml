@@ -1,0 +1,32 @@
+name: Windows Build
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        package:
+          - renderers/web_core
+          - renderers/lit
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.package }}
+        run: npm install
+
+      - name: Run build
+        working-directory: ${{ matrix.package }}
+        run: npm run build
