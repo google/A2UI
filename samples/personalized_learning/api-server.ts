@@ -21,9 +21,35 @@ import { execSync } from "child_process";
 import { writeFileSync, readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { config } from "dotenv";
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 
 // Load environment variables
 config();
+
+// =============================================================================
+// FIREBASE ADMIN - Server-side authentication
+// =============================================================================
+initializeApp({ credential: applicationDefault() });
+
+async function authenticateRequest(req: any, res: any): Promise<boolean> {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    res.writeHead(401, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Missing or malformed Authorization header" }));
+    return false;
+  }
+  try {
+    const token = authHeader.split("Bearer ")[1];
+    await getAuth().verifyIdToken(token);
+    return true;
+  } catch (err: any) {
+    console.error("[API Server] Auth failed:", err.message);
+    res.writeHead(403, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Invalid or expired token" }));
+    return false;
+  }
+}
 
 // =============================================================================
 // MESSAGE LOG - Captures all request/response traffic for demo purposes
@@ -761,7 +787,7 @@ async function main() {
     // CORS headers
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
     if (req.method === "OPTIONS") {
       res.writeHead(204);
@@ -793,6 +819,7 @@ async function main() {
 
     // A2A Agent Engine endpoint
     if (req.url === "/a2ui-agent/a2a/query" && req.method === "POST") {
+      if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
         console.log("[API Server] ========================================");
@@ -857,6 +884,7 @@ async function main() {
 
     // Chat endpoint
     if (req.url === "/api/chat" && req.method === "POST") {
+      if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
         console.log("[API Server] Chat request received");
@@ -889,6 +917,7 @@ async function main() {
 
     // Combined chat endpoint - performs intent detection AND response in one LLM call
     if (req.url === "/api/chat-with-intent" && req.method === "POST") {
+      if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
         console.log("[API Server] ========================================");
