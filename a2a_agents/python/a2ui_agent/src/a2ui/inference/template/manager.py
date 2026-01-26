@@ -27,6 +27,7 @@ class A2uiTemplateManager(InferenceStrategy):
       allowed_components: List[str] = [],
       include_schema: bool = False,
       include_examples: bool = False,
+      validate_examples: bool = False,
   ) -> str:
     # TODO: Implementation logic for Template Manager
     raise NotImplementedError("This method is not yet implemented.")

@@ -49,8 +49,12 @@ def test_catalog_id_missing_raises_error():
 def test_load_examples(tmp_path):
   example_dir = tmp_path / "examples"
   example_dir.mkdir()
-  (example_dir / "example1.json").write_text('{"foo": "bar"}')
-  (example_dir / "example2.json").write_text('{"baz": "qux"}')
+  (example_dir / "example1.json").write_text(
+      '[{"beginRendering": {"surfaceId": "id"}}]'
+  )
+  (example_dir / "example2.json").write_text(
+      '[{"beginRendering": {"surfaceId": "id"}}]'
+  )
   (example_dir / "ignored.txt").write_text("should not be loaded")
 
   catalog = A2uiCatalog(
@@ -63,9 +67,9 @@ def test_load_examples(tmp_path):
 
   examples_str = catalog.load_examples(str(example_dir))
   assert "---BEGIN example1---" in examples_str
-  assert '{"foo": "bar"}' in examples_str
+  assert '[{"beginRendering": {"surfaceId": "id"}}]' in examples_str
   assert "---BEGIN example2---" in examples_str
-  assert '{"baz": "qux"}' in examples_str
+  assert '[{"beginRendering": {"surfaceId": "id"}}]' in examples_str
   assert "ignored" not in examples_str
 
 
