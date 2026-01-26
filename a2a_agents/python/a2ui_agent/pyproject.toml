@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "jsonschema"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
