@@ -53,6 +53,7 @@
     },
     "build": {
       "dependencies": [
+        "../web_core:build",
         "build:tsc"
       ]
     },
