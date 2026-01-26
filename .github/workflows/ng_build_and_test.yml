@@ -35,6 +35,14 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install web_core dependencies
+        working-directory: ./renderers/web_core
+        run: npm i
+
+      - name: Build web_core
+        working-directory: ./renderers/web_core
+        run: npm run build
+
       - name: Install web lib deps
         working-directory: ./renderers/lit
         run: npm i

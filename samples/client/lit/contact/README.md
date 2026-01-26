@@ -10,12 +10,13 @@ This is a UI to generate and visualize A2UI responses.
 
 This sample depends on the Lit renderer. Before running this sample, you need to build the renderer.
 
-1. **Build the renderer:**
-   ```bash
-   cd ../../../renderers/lit
+   cd ../../../renderers/web_core
    npm install
    npm run build
-   ```
+   cd ../lit
+   npm install
+   npm run build
+   
 
 2. **Run this sample:**
    ```bash

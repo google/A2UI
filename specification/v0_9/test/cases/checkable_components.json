@@ -138,6 +138,189 @@
           ]
         }
       }
+    },
+    {
+      "description": "TextField with regex validation",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "tf_regex",
+              "component": "TextField",
+              "label": "Phone",
+              "value": { "path": "/formData/phone" },
+              "checks": [
+                {
+                  "call": "regex",
+                  "args": [{ "path": "/formData/phone" }, "^\\d{10}$"],
+                  "message": "Must be 10 digits"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "TextField with min/max length validation",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "tf_len",
+              "component": "TextField",
+              "label": "Password",
+              "value": { "path": "/formData/pw" },
+              "checks": [
+                {
+                  "call": "length",
+                  "args": [{ "path": "/formData/pw" }, { "min": 8, "max": 64 }],
+                  "message": "Password must be 8-64 characters"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Slider with min/max numeric validation",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "sl_num",
+              "component": "Slider",
+              "label": "Score",
+              "min": 0,
+              "max": 100,
+              "value": { "path": "/formData/score" },
+              "checks": [
+                {
+                  "call": "numeric",
+                  "args": [{ "path": "/formData/score" }, { "min": 0, "max": 100 }],
+                  "message": "Score must be between 0 and 100"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "TextField with complex logic checks (AND/OR/NOT)",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "tf_complex",
+              "component": "TextField",
+              "label": "Secret Code",
+              "value": { "path": "/formData/code" },
+              "checks": [
+                {
+                  "and": [
+                    { "call": "required", "args": [{ "path": "/formData/code" }] },
+                    {
+                      "or": [
+                        { "call": "regex", "args": [{ "path": "/formData/code" }, "^[A-Z]"] },
+                        { "not": { "call": "regex", "args": [{ "path": "/formData/code" }, "^[0-9]"] } }
+                      ]
+                    }
+                  ],
+                  "message": "Code must start with letter or not start with number"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "TextField with invalid check (missing message)",
+      "valid": false,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "tf_invalid",
+              "component": "TextField",
+              "label": "Email",
+              "value": { "path": "/formData/email" },
+              "checks": [
+                {
+                  "call": "email",
+                  "args": [{ "path": "/formData/email" }]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "TextField with invalid function returnType in check",
+      "valid": false,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "tf_wrong_type",
+              "component": "TextField",
+              "label": "Name",
+              "value": { "path": "/formData/name" },
+              "checks": [
+                {
+                  "call": "formatString",
+                  "args": ["Hello ${/formData/name}"],
+                  "returnType": "string",
+                  "message": "This should fail because returnType is string, not boolean"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "ChoicePicker with length validation (exactly 2)",
+      "valid": true,
+      "data": {
+        "updateComponents": {
+          "surfaceId": "test_1",
+          "components": [
+            {
+              "id": "cp_len",
+              "component": "ChoicePicker",
+              "label": "Interests",
+              "variant": "multipleSelection",
+              "options": [
+                { "label": "A", "value": "a" },
+                { "label": "B", "value": "b" },
+                { "label": "C", "value": "c" }
+              ],
+              "value": { "path": "/formData/interests" },
+              "checks": [
+                {
+                  "call": "length",
+                  "args": [{ "path": "/formData/interests" }, { "min": 2, "max": 2 }],
+                  "message": "Select exactly 2 interests"
+                }
+              ]
+            }
+          ]
+        }
+      }
     }
   ]
 }

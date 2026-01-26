@@ -17,19 +17,19 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue, BooleanValue } from "../types/primitives";
+import * as Primitives from "@a2ui/web_core/types/primitives";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-checkbox")
 export class Checkbox extends Root {
   @property()
-  accessor value: BooleanValue | null = null;
+  accessor value: Primitives.BooleanValue | null = null;
 
   @property()
-  accessor label: StringValue | null = null;
+  accessor label: Primitives.StringValue | null = null;
 
   static styles = [
     structuralStyles,

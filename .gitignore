@@ -5,6 +5,7 @@ dist
 .env
 .idx
 .vscode
+.idea
 __pycache__
 *.pyc
 .angular
