@@ -94,7 +94,7 @@
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.10.1",
-    "cpy-cli": "^6.0.0",
+    "cpy-cli": "^5.0.0",
     "google-artifactregistry-auth": "^3.5.0",
     "mkdirp": "^3.0.1",
     "typescript": "^5.8.3",
