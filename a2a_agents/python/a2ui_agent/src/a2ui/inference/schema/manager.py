@@ -36,7 +36,8 @@ from .constants import (
     find_repo_root,
 )
 from .catalog import CustomCatalogConfig, A2uiCatalog
-from ...extension.a2ui_extension import INLINE_CATALOGS_KEY, SUPPORTED_CATALOG_IDS_KEY
+from ...extension.a2ui_extension import INLINE_CATALOGS_KEY, SUPPORTED_CATALOG_IDS_KEY, get_a2ui_agent_extension
+from a2a.types import AgentExtension
 
 
 def _load_basic_component(version: str, spec_name: str) -> Dict:
@@ -322,3 +323,7 @@ class A2uiSchemaManager(InferenceStrategy):
         parts.append(f"### Examples:\n{examples_str}")
 
     return "\n\n".join(parts)
+
+  def get_agent_extension(self) -> AgentExtension:
+    catalog_ids = self._supported_catalogs.keys()
+    return get_a2ui_agent_extension(supported_catalog_ids=list(catalog_ids))

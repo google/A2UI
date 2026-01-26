@@ -41,11 +41,11 @@ logger = logging.getLogger(__name__)
 class ContactAgentExecutor(AgentExecutor):
   """Contact AgentExecutor Example."""
 
-  def __init__(self, base_url: str):
+  def __init__(self, ui_agent: ContactAgent, text_agent: ContactAgent):
     # Instantiate two agents: one for UI and one for text-only.
     # The appropriate one will be chosen at execution time.
-    self.ui_agent = ContactAgent(base_url=base_url, use_ui=True)
-    self.text_agent = ContactAgent(base_url=base_url, use_ui=False)
+    self.ui_agent = ui_agent
+    self.text_agent = text_agent
 
   async def execute(
       self,
