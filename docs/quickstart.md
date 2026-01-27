@@ -249,7 +249,7 @@ python3 --version
 # The demo should auto-install dependencies via the npm script
 # If not, manually install them:
 cd ../../agent/adk/restaurant_finder
-pip install -r requirements.txt
+pip install .
 ```
 
 ### Still Having Issues?

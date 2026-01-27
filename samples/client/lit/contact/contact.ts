@@ -47,6 +47,10 @@ registerContactComponents();
 
 @customElement("a2ui-contact")
 export class A2UIContactFinder extends SignalWatcher(LitElement) {
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
   @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
 
@@ -55,6 +59,9 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
   @state()
   accessor #error: string | null = null;
+
+  @state()
+  accessor renderVersion = 0;
 
   @state()
   accessor #lastMessages: v0_8.Types.ServerToClientMessage[] = [];
@@ -71,13 +78,16 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
       #surfaces {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        gap: 16px;
         width: 100%;
         padding: var(--bb-grid-size-3) 0;
         animation: fadeIn 1s cubic-bezier(0, 0, 0.3, 1) 0.3s backwards;
+        align-items: flex-start;
 
         & a2ui-surface {
-          align-items: center;
+          width: 100%;
+          flex: 1;
         }
       }
 
@@ -125,7 +135,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
       }
 
       .rotate {
-        animation: rotate 1s linear infinite;
+        animation: spin 1s linear infinite;
       }
 
       .pending {
@@ -159,13 +169,30 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
         }
       }
 
-      @keyframes rotate {
-        from {
-          rotate: 0deg;
-        }
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        border-left-color: var(--p-60);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
 
+      @keyframes spin {
         to {
-          rotate: 360deg;
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.6;
         }
       }
     `,
@@ -207,7 +234,9 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
         if (!body) {
           return;
         }
-        const message = body as v0_8.Types.A2UIClientEventMessage;
+      const message: v0_8.Types.A2UIClientEventMessage = {
+        request: body,
+      };
         await this.#sendAndProcessMessage(message);
       }}
     >
@@ -232,31 +261,60 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
   }
 
   #maybeRenderData() {
-    if (this.#requesting) {
+    if (this.#requesting && this.#processor.getSurfaces().size === 0) {
       return html` <div class="pending">
-        <span class="g-icon filled-heavy rotate">progress_activity</span>
-        Awaiting an answer...
+        <div class="spinner"></div>
+        <div class="loading-text">Awaiting an answer...</div>
       </div>`;
     }
 
-    const surfaces = this.#processor.getSurfaces();
-    if (surfaces.size === 0) {
+    const surfacesMap = this.#processor.getSurfaces();
+    const surfaces = Array.from(surfacesMap.entries()).sort(([a], [b]) => {
+      // "org-chart-view" comes first (left), "contact-card" second (right)
+      if (a === 'org-chart-view') return -1;
+      if (b === 'org-chart-view') return 1;
+      return a.localeCompare(b);
+    });
+
+
+    if (surfaces.length === 0) {
       return nothing;
     }
 
     return html`<section id="surfaces">
       ${repeat(
-      this.#processor.getSurfaces(),
-      ([surfaceId]) => surfaceId,
-      ([surfaceId, surface]) => {
-        return html`<a2ui-surface
-              @a2uiaction=${async (
-          evt: v0_8.Events.StateEvent<"a2ui.action">
-        ) => {
-            const [target] = evt.composedPath();
-            if (!(target instanceof HTMLElement)) {
-              return;
-            }
+        surfaces,
+        ([surfaceId]) => surfaceId,
+        ([surfaceId, surface]) => {
+          return html`
+            <div style="position: relative; height: 100%; display: flex; flex-direction: column;">
+              ${this.#requesting && surfaceId === 'contact-card' ? html`
+                <div style="
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  background: rgba(255, 255, 255, 0.7);
+                  z-index: 10;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  backdrop-filter: blur(2px);
+                  border-radius: 8px;
+                ">
+                  <span class="g-icon filled-heavy rotate" style="font-size: 32px; color: var(--p-40);">progress_activity</span>
+                </div>
+              ` : nothing}
+                <a2ui-surface
+                  .surface=${{ ...surface }}
+                  @a2uiaction=${async (
+            evt: v0_8.Events.StateEvent<"a2ui.action">
+          ) => {
+              const [target] = evt.composedPath();
+              if (!(target instanceof HTMLElement)) {
+                return;
+              }
 
             const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] =
               {};
@@ -294,23 +352,35 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
               },
             };
 
-            await this.#sendAndProcessMessage(message);
-          }}
-              .surfaceId=${surfaceId}
-              .surface=${surface}
-              .processor=${this.#processor}
-            ></a2-uisurface>`;
-      }
-    )}
+
+
+              await this.#sendAndProcessMessage(message);
+            }}
+                .surfaceId=${surfaceId}
+
+                .processor=${this.#processor}
+                .enableCustomElements=${true}
+              ></a2ui-surface>
+            </div>`;
+        }
+      )}
     </section>`;
   }
 
-  async #sendAndProcessMessage(request) {
+  async #sendAndProcessMessage(request: v0_8.Types.A2UIClientEventMessage) {
+    this.#requesting = true;
     const messages = await this.#sendMessage(request);
 
     this.#lastMessages = messages;
-    this.#processor.clearSurfaces();
+
+    // this.#processor.clearSurfaces(); // Removed to allow partial updates
     this.#processor.processMessages(messages);
+    this.renderVersion++; // Force re-render of surfaces
+
+    const cardSurface = this.#processor.getSurfaces().get('contact-card');
+    if (cardSurface) {
+      // Deeply log the data model for the card
+    }
   }
 
   async #sendMessage(
@@ -318,8 +388,8 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
     try {
       this.#requesting = true;
-      const response = this.#a2uiClient.send(message);
-      await response;
+      const response = await this.#a2uiClient.send(message);
+
       this.#requesting = false;
 
       return response;

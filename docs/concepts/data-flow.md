@@ -22,7 +22,9 @@ A2UI defines a sequence of JSON messages that describe the UI. When streamed, th
 {"beginRendering":{"surfaceId":"main","root":"root-component"}}
 ```
 
-**Why this format?** A sequence of self-contained JSON objects is streaming-friendly, easy for LLMs to generate incrementally, and resilient to errors.
+**Why this format?**
+
+A sequence of self-contained JSON objects is streaming-friendly, easy for LLMs to generate incrementally, and resilient to errors.
 
 ## Lifecycle Example: Restaurant Booking
 
@@ -80,11 +82,11 @@ Users see UI building in real-time instead of staring at a spinner.
 
 ## Error Handling
 
-**Malformed messages:** Skip and continue, or send error back to agent for correction
-**Network interruptions:** Display error state, reconnect, agent resends or resumes
+- **Malformed messages:** Skip and continue, or send error back to agent for correction
+- **Network interruptions:** Display error state, reconnect, agent resends or resumes
 
 ## Performance
 
-**Batching:** Buffer updates for 16ms, batch render together
-**Diffing:** Compare old/new components, update only changed properties
-**Granular updates:** Update `/user/name` not entire `/` model
+- **Batching:** Buffer updates for 16ms, batch render together
+- **Diffing:** Compare old/new components, update only changed properties
+- **Granular updates:** Update `/user/name` not entire `/` model
