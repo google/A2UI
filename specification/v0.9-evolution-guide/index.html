@@ -1658,7 +1658,7 @@
 - <a href="../v0.9-a2ui/">A2UI Protocol v0.9</a> (Draft - what you're migrating to)</p>
 <hr />
 <h1 id="a2ui-protocol-evolution-guide-v081-to-v09">A2UI Protocol Evolution Guide: v0.8.1 to v0.9<a class="headerlink" href="#a2ui-protocol-evolution-guide-v081-to-v09" title="Permanent link">&para;</a></h1>
-<p>This document serves as a comprehensive guide to the changes between A2UI version 0.8 and version 0.9. It details the shifts in philosophy, architecture, and implementation, providing a reference for stakeholders and developers migrating between versions.</p>
+<p>This document serves as a comprehensive guide to the changes between A2UI version 0.8.1 and version 0.9. It details the shifts in philosophy, architecture, and implementation, providing a reference for stakeholders and developers migrating between versions.</p>
 <h2 id="1-executive-summary">1. Executive Summary<a class="headerlink" href="#1-executive-summary" title="Permanent link">&para;</a></h2>
 <p>Version 0.9 represents a fundamental philosophical shift from "Structured Output First" to "Prompt First."</p>
 <ul>
@@ -1711,6 +1711,11 @@
 <td style="text-align: left;">Standard JSON Object</td>
 </tr>
 <tr>
+<td style="text-align: left;"><strong>Button Variant</strong></td>
+<td style="text-align: left;">Boolean (<code>primary: true</code>)</td>
+<td style="text-align: left;">Enum (<code>variant: "primary"</code>)</td>
+</tr>
+<tr>
 <td style="text-align: left;"><strong>Catalog</strong></td>
 <td style="text-align: left;">Separate component and function catalogs</td>
 <td style="text-align: left;">Unified Catalog (<code>standard_catalog.json</code>)</td>
@@ -1726,9 +1731,9 @@
 <td style="text-align: left;">Strict <code>ValidationFailed</code> feedback loop</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Interpolation</strong></td>
-<td style="text-align: left;">N/A (Object wrappers only)</td>
-<td style="text-align: left;">Native <code>${expression}</code> syntax</td>
+<td style="text-align: left;"><strong>Data Synchronization</strong></td>
+<td style="text-align: left;">Implicit</td>
+<td style="text-align: left;">Explicit Client-&gt;Server data syncing (<code>sendDataModel</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -1737,12 +1742,12 @@
 <p><strong>v0.8.1:</strong></p>
 <ul>
 <li>Monolithic tendencies. <code>server_to_client.json</code> often contained deep definitions or relied on complex <code>oneOf</code> structures that were hard to decompose.</li>
-<li><code>standard_catalog_definition.json</code> existed but was often implicitly coupled.</li>
+<li><code>standard_catalog_definition.json</code> existed but was often implicitly coupled.ß</li>
 </ul>
 <p><strong>v0.9:</strong></p>
 <ul>
 <li><strong>Modularization</strong>: The schema is strictly split into:</li>
-<li><code>common_types.json</code>: Reusable primitives (IDs, paths, weights) and logic/expression types.</li>
+<li><code>common_types.json</code>: Reusable primitives (IDs, paths) and logic/expression types.</li>
 <li><code>server_to_client.json</code>: The "envelope" defining the message types.</li>
 <li><code>standard_catalog.json</code>: The unified catalog of UI components and functions.</li>
 <li><strong>Benefit</strong>: This allows developers to swap out the <code>standard_catalog.json</code> for a <code>custom_catalog.json</code> without touching the core protocol envelope.</li>
@@ -1779,8 +1784,8 @@
 <ul>
 <li><strong>Replacement</strong>: <code>beginRendering</code> is <strong>REPLACED</strong> by <code>createSurface</code>.</li>
 <li><strong>Purpose</strong>: <code>createSurface</code> signals the client to create a new surface and prepare for rendering.</li>
-<li><strong>Style Information Removed</strong>: <code>createSurface</code> does <strong>NOT</strong> contain style information. Theming is now handled via the client styles, decoupling it from the message stream.</li>
-<li><strong>Root Rule</strong>: The rule is: "There must be exactly one component with the ID <code>root</code>." The "root" attribute that <code>beginRendering</code> had has been removed. The client is expected to render as soon as it has a valid tree with a root component.</li>
+<li><strong>Theme Information</strong>: <code>createSurface</code> includes a <code>theme</code> property to specify theme parameters (like <code>primaryColor</code>). This replaces the <code>styles</code> property in v0.8.</li>
+<li><strong>Root Rule</strong>: The rule is: "There must be exactly one component with the <code>ComponentId</code> 'root'." The "root" attribute that <code>beginRendering</code> had has been removed. The client is expected to render as soon as it has a valid tree with a root component.</li>
 <li><strong>New Requirement</strong>: <code>createSurface</code> now requires a <strong><code>catalogId</code></strong> (URI) to explicitly state which unified catalog (components and functions) is being used.</li>
 </ul>
 <p><strong>Example:</strong></p>
@@ -1799,9 +1804,12 @@
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;createSurface&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_profile_card&quot;</span><span class="p">,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;catalogId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://a2ui.dev/specification/v0_9/standard_catalog.json&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">&quot;catalogId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://a2ui.dev/specification/v0_9/standard_catalog.json&quot;</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">&quot;theme&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">&quot;primaryColor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#007bff&quot;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">}</span>
 </span></code></pre></div>
 <h2 id="4-message-structure-comparison">4. Message Structure Comparison<a class="headerlink" href="#4-message-structure-comparison" title="Permanent link">&para;</a></h2>
 <h3 id="41-component-updates">4.1. Component Updates<a class="headerlink" href="#41-component-updates" title="Permanent link">&para;</a></h3>
@@ -1878,7 +1886,7 @@
 </ul>
 <p><strong>v0.9:</strong></p>
 <ul>
-<li><strong>Unified</strong>: Everything is now <strong><code>path</code></strong>.</li>
+<li><strong>Unified</strong>: Everything is now a <strong><code>path</code></strong>.</li>
 <li><strong>Reason</strong>: Reduces cognitive load for the LLM. "Path" always means "JSON Pointer to data."</li>
 </ul>
 <h3 id="52-simplified-bound-values">5.2. Simplified Bound Values<a class="headerlink" href="#52-simplified-bound-values" title="Permanent link">&para;</a></h3>
@@ -1901,10 +1909,22 @@
 </ul>
 <p><strong>v0.9:</strong></p>
 <ul>
-<li><strong>Native Interpolation</strong>: Introduced the <code>${expression}</code> syntax for all <code>DynamicString</code> properties.</li>
-<li><strong>Unified Expression Language</strong>: Allows embedding JSON Pointer paths (absolute and relative) and client-side function calls directly within literal strings.</li>
+<li><strong>String Formatting</strong>: Introduced the <code>formatString</code> function, which supports <code>${expression}</code> syntax for interpolation.</li>
+<li><strong>Unified Expression Language</strong>: Allows embedding JSON Pointer paths (absolute and relative) and client-side function calls directly within the format string.</li>
 <li><strong>Nesting</strong>: Supports recursive nesting of expressions (e.g., <code>${formatDate(${/timestamp}, 'yyyy-MM-dd')}</code>).</li>
-<li><strong>Reason</strong>: Improves "token efficiency" and readability for LLMs. Instead of generating complex JSON objects to combine strings and data, the model can write natural-looking template literals.</li>
+<li><strong>Restriction</strong>: String interpolation <code>${...}</code> is <strong>ONLY</strong> supported within the <code>formatString</code> function. It is not supported in general for string properties, in order to strictly separate data binding definitions from static content.</li>
+<li><strong>Reason</strong>: Improves readability for complex strings. Instead of generating complex nested JSON objects (like chained concatenations) to combine strings and data, the model can write natural-looking template literals within the <code>formatString</code> function.</li>
+</ul>
+<h3 id="54-data-synchronization">5.4. Data Synchronization<a class="headerlink" href="#54-data-synchronization" title="Permanent link">&para;</a></h3>
+<p><strong>v0.8.1:</strong></p>
+<ul>
+<li>Data synchronization was implicit and relied on ad-hoc mechanisms.</li>
+</ul>
+<p><strong>v0.9:</strong></p>
+<ul>
+<li><strong>Explicit Client-&gt;Server Data Model Sync</strong>: <code>createSurface</code> introduced <code>sendDataModel</code> (boolean).</li>
+<li><strong>Single-Path Updates</strong>: Server pushes updates via <code>updateDataModel</code> using simple <code>path</code>/<code>value</code> pairs.</li>
+<li><strong>Client-&gt;Server Data Model Sync</strong>: When <code>sendDataModel</code> is true, the client includes the full data model in every A2A message metadata.</li>
 </ul>
 <h2 id="6-component-specific-changes">6. Component-Specific Changes<a class="headerlink" href="#6-component-specific-changes" title="Permanent link">&para;</a></h2>
 <h3 id="61-button-context">6.1. Button Context<a class="headerlink" href="#61-button-context" title="Permanent link">&para;</a></h3>
@@ -1918,7 +1938,18 @@
 <li><strong>Standard Map</strong>: <code>context: { "id": "123" }</code></li>
 <li><strong>Reason</strong>: Token efficiency. LLMs understand JSON objects as maps natively.</li>
 </ul>
-<h3 id="62-textfield">6.2. TextField<a class="headerlink" href="#62-textfield" title="Permanent link">&para;</a></h3>
+<h3 id="62-button-variant">6.2. Button Variant<a class="headerlink" href="#62-button-variant" title="Permanent link">&para;</a></h3>
+<p><strong>v0.8.1:</strong></p>
+<ul>
+<li><strong>Boolean</strong>: <code>primary: true</code> or <code>primary: false</code>.</li>
+<li><strong>Limited</strong>: Only two styles were explicitly supported.</li>
+</ul>
+<p><strong>v0.9:</strong></p>
+<ul>
+<li><strong>Enum</strong>: <code>variant: "primary"</code> or <code>variant: "borderless"</code>.</li>
+<li><strong>Reason</strong>: More flexible and consistent with other components (like <code>Text</code> and <code>Image</code>) that use <code>variant</code> for styling hints. 'borderless' provides a standard way to represent clickable text or icons without a button-like frame.</li>
+</ul>
+<h3 id="63-textfield">6.3. TextField<a class="headerlink" href="#63-textfield" title="Permanent link">&para;</a></h3>
 <p><strong>v0.8.1:</strong></p>
 <ul>
 <li>Property: <code>textFieldType</code> (e.g., "email", "password").</li>
@@ -1930,7 +1961,7 @@
 <li>Validation: <strong><code>checks</code></strong> (generic list of function calls).</li>
 <li><strong>Reason</strong>: Consistency with <code>Text</code> and <code>Image</code> components which already used <code>variant</code>. Validation is now more flexible and reusable. Also, <code>text</code> was renamed to <strong><code>value</code></strong> to match other input components.</li>
 </ul>
-<h3 id="63-choicepicker-vs-multiplechoice">6.3. ChoicePicker (vs MultipleChoice)<a class="headerlink" href="#63-choicepicker-vs-multiplechoice" title="Permanent link">&para;</a></h3>
+<h3 id="64-choicepicker-vs-multiplechoice">6.4. ChoicePicker (vs MultipleChoice)<a class="headerlink" href="#64-choicepicker-vs-multiplechoice" title="Permanent link">&para;</a></h3>
 <p><strong>v0.8.1:</strong></p>
 <ul>
 <li>Component: <strong><code>MultipleChoice</code></strong>.</li>
@@ -1942,7 +1973,7 @@
 <li>Properties: <strong><code>value</code></strong> (array), <strong><code>variant</code></strong> (enum: <code>multipleSelection</code>, <code>mutuallyExclusive</code>). The <code>maxAllowedSelections</code> property was removed.</li>
 <li><strong>Reason</strong>: <code>ChoicePicker</code> is a more generic name that covers both radio buttons (mutually exclusive) and checkboxes (multiple selection). The <code>variant</code> controls the behavior, simplifying the component surface area.</li>
 </ul>
-<h3 id="64-slider">6.4. Slider<a class="headerlink" href="#64-slider" title="Permanent link">&para;</a></h3>
+<h3 id="65-slider">6.5. Slider<a class="headerlink" href="#65-slider" title="Permanent link">&para;</a></h3>
 <p><strong>v0.8.1:</strong></p>
 <ul>
 <li>Properties: <code>minValue</code>, <code>maxValue</code>.</li>

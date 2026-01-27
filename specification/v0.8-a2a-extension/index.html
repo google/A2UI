@@ -1661,13 +1661,13 @@
 - <a href="../v0.8-a2ui/">A2UI Protocol v0.8</a> (Stable)
 - <a href="https://a2a-protocol.org">A2A Protocol Documentation</a></p>
 <hr />
-<h1 id="a2ui-agent-to-agent-ui-extension-spec">A2UI (Agent-to-Agent UI) Extension Spec<a class="headerlink" href="#a2ui-agent-to-agent-ui-extension-spec" title="Permanent link">&para;</a></h1>
+<h1 id="a2ui-agent-to-agent-ui-extension-spec">A2UI (Agent-to-Agent UI) Extension spec<a class="headerlink" href="#a2ui-agent-to-agent-ui-extension-spec" title="Permanent link">&para;</a></h1>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>This extension implements the A2UI (Agent-to-Agent UI) spec, a format for agents to send streaming, interactive user interfaces to clients.</p>
 <h2 id="extension-uri">Extension URI<a class="headerlink" href="#extension-uri" title="Permanent link">&para;</a></h2>
 <p>The URI of this extension is https://a2ui.org/a2a-extension/a2ui/v0.8</p>
 <p>This is the only URI accepted for this extension.</p>
-<h2 id="core-concepts">Core Concepts<a class="headerlink" href="#core-concepts" title="Permanent link">&para;</a></h2>
+<h2 id="core-concepts">Core concepts<a class="headerlink" href="#core-concepts" title="Permanent link">&para;</a></h2>
 <p>The A2UI extension is built on the following main concepts:</p>
 <p>Surfaces: A "Surface" is a distinct, controllable region of the client's UI. The spec uses a surfaceId to direct updates to specific surfaces (e.g., a main content area, a side panel, or a new chat bubble). This allows a single agent stream to manage multiple UI areas independently.</p>
 <p>Catalog Definition Document: The a2ui extension is component-agnostic. All UI components (e.g., Text, Row, Button) and their stylings are defined in a separate Catalog Definition Schema. This allows clients and servers to negotiate which catalog to use.</p>
@@ -1692,17 +1692,17 @@
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="parameter-definitions">Parameter Definitions<a class="headerlink" href="#parameter-definitions" title="Permanent link">&para;</a></h3>
+<h3 id="parameter-definitions">Parameter definitions<a class="headerlink" href="#parameter-definitions" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>params.supportedCatalogIds</code>: (OPTIONAL) An array of strings, where each string is a URI pointing to a component Catalog Definition Schema that the agent can generate.</li>
 <li><code>params.acceptsInlineCatalogs</code>: (OPTIONAL) A boolean indicating if the agent can accept an <code>inlineCatalogs</code> array in the client's <code>a2uiClientCapabilities</code>. If omitted, this defaults to <code>false</code>.</li>
 </ul>
-<h2 id="extension-activation">Extension Activation<a class="headerlink" href="#extension-activation" title="Permanent link">&para;</a></h2>
+<h2 id="extension-activation">Extension activation<a class="headerlink" href="#extension-activation" title="Permanent link">&para;</a></h2>
 <p>Clients indicate their desire to use the A2UI extension by specifying it via the transport-defined A2A extension activation mechanism.</p>
 <p>For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.</p>
 <p>For gRPC, this is indicated via the X-A2A-Extensions metadata value.</p>
 <p>Activating this extension implies that the server can send A2UI-specific messages (like surfaceUpdate) and the client is expected to send A2UI-specific events (like userAction).</p>
-<h2 id="data-encoding">Data Encoding<a class="headerlink" href="#data-encoding" title="Permanent link">&para;</a></h2>
+<h2 id="data-encoding">Data encoding<a class="headerlink" href="#data-encoding" title="Permanent link">&para;</a></h2>
 <p>A2UI messages are encoded as an A2A <code>DataPart</code>.</p>
 <p>To identify a <code>DataPart</code> as containing A2UI data, it must have the following metadata:</p>
 <ul>
