@@ -167,7 +167,7 @@ A2UI's component model is designed for flexibility, separating the protocol from
 
 A **Catalog** defines the contract between the server and the client for the UI that can be rendered. It contains a list of supported component types (e.g., `Row`, `Text`), their properties, and available styles. A catalog is defined by a **Catalog Definition Document**.
 
-There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `a2ui.org:standard_catalog_0_8_0`.
+There is a **Standard Catalog** associated with each version of the A2UI protocol. For v0.8, its identifier is `https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json`.
 
 Catalog IDs are simple string identifiers. While they can be anything, it is conventional to use a URI within a domain that you own, to simplify debugging, avoid confusion, and avoid name collisions. Furthermore, if any changes are made to a catalog that could break compatibility between an agent and renderer, a new `catalogId` **must** be assigned. This ensures clear versioning and prevents unexpected behavior if an agent has changes but the client does not, or vice versa.
 

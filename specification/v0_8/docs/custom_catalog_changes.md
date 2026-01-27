@@ -45,7 +45,7 @@ Your responsibilities are to accurately declare your capabilities and render sur
 
 1.  **Declare capabilities on every request**: For every A2A message your application sends, your library must inject the `a2uiClientCapabilities` object into the top-level `metadata` field.
 
-2.  **Populate `supportedCatalogIds`**: In the capabilities object, populate this array with the string identifiers of all pre-compiled catalogs your renderer supports. If your renderer supports the standard catalog for v0.8, you **should** include its ID: `a2ui.org:standard_catalog_0_8_0`.
+2.  **Populate `supportedCatalogIds`**: In the capabilities object, populate this array with the string identifiers of all pre-compiled catalogs your renderer supports. If your renderer supports the standard catalog for v0.8, you **should** include its ID: `https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json`.
 
 3.  **Provide `inlineCatalogs` (optional)**: If your renderer supports dynamically generating or defining catalogs at runtime, include their full, valid Catalog Definition Documents in the `inlineCatalogs` array.
 
