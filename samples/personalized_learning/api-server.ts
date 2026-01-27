@@ -32,6 +32,23 @@ config();
 // =============================================================================
 initializeApp({ credential: applicationDefault() });
 
+// Access control - reads from environment variables (shared with src/firebase-auth.ts)
+// Uses VITE_ prefix so the same .env works for both client and server
+const ALLOWED_DOMAIN = process.env.VITE_ALLOWED_DOMAIN ?? "google.com";
+const ALLOWED_EMAILS: string[] = (process.env.VITE_ALLOWED_EMAILS ?? "")
+  .split(",")
+  .map((e: string) => e.trim().toLowerCase())
+  .filter((e: string) => e.length > 0);
+
+function isAllowedEmail(email: string | undefined): boolean {
+  if (!email) return false;
+  const emailLower = email.toLowerCase();
+  if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.includes(emailLower)) return true;
+  if (ALLOWED_DOMAIN && emailLower.endsWith(`@${ALLOWED_DOMAIN}`)) return true;
+  if (!ALLOWED_DOMAIN && ALLOWED_EMAILS.length === 0) return true; // No restrictions
+  return false;
+}
+
 async function authenticateRequest(req: any, res: any): Promise<boolean> {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
@@ -41,7 +58,13 @@ async function authenticateRequest(req: any, res: any): Promise<boolean> {
   }
   try {
     const token = authHeader.split("Bearer ")[1];
-    await getAuth().verifyIdToken(token);
+    const decoded = await getAuth().verifyIdToken(token);
+    if (!isAllowedEmail(decoded.email)) {
+      console.error("[API Server] Access denied for:", decoded.email);
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Email not authorized" }));
+      return false;
+    }
     return true;
   } catch (err: any) {
     console.error("[API Server] Auth failed:", err.message);

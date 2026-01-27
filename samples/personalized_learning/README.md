@@ -4,7 +4,9 @@ A full-stack sample demonstrating A2UI's capabilities for AI-powered educational
 
 **Contributed by Google Public Sector's Rapid Innovation Team.**
 
-![Personalized Learning Demo](assets/hero.jpg)
+[![Watch the demo](https://img.youtube.com/vi/fgkiwyHj9g8/maxresdefault.jpg)](https://www.youtube.com/watch?v=fgkiwyHj9g8)
+
+_This video demonstrates two use cases: personalized learning, which is the focus of this sample, plus a workforce development application built on the same A2UI framework—included to show how these patterns adapt to other domains._
 
 ---
 
@@ -21,7 +23,7 @@ Key concepts demonstrated:
 - **A2A Protocol** — Frontend-to-agent communication via Agent-to-Agent protocol
 - **Dynamic Context** — Learner profiles loaded from GCS at runtime (no redeployment needed)
 - **Content Retrieval** — LLM-powered topic matching across 167 OpenStax Biology chapters
-- **Server-side Auth** — API endpoints verify Firebase ID tokens to protect GCP resources
+- **Server-side Auth** — API endpoints verify Firebase ID tokens and enforce domain/email allowlists
 
 ---
 
@@ -112,6 +114,19 @@ python deploy_hosting.py --project YOUR_PROJECT_ID
 ```
 
 See Step 7 in [Quickstart.ipynb](Quickstart.ipynb) for Firebase setup details.
+
+---
+
+## Access Control
+
+Both client and server enforce access restrictions via environment variables in `.env`:
+
+```bash
+VITE_ALLOWED_DOMAIN=google.com                          # Restrict to a domain
+VITE_ALLOWED_EMAILS=alice@example.com,bob@partner.org   # Or whitelist specific emails
+```
+
+See the Access Control section in [Quickstart.ipynb](Quickstart.ipynb) for details.
 
 ---
 

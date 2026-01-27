@@ -57,17 +57,14 @@ provider.setCustomParameters({
 // ACCESS CONTROL CONFIGURATION
 // ============================================================================
 
-// Allowed email domain (e.g., "google.com", "yourcompany.com")
-// Set to empty string "" to disable domain-based access and use only the whitelist
-const ALLOWED_DOMAIN = "google.com";
-
-// Whitelist of specific email addresses that are always allowed,
-// regardless of domain. Add emails here to grant access to external collaborators.
-// Example: ["alice@example.com", "bob@partner.org", "charlie@university.edu"]
-const ALLOWED_EMAILS: string[] = [
-  // "collaborator@example.com",
-  // "reviewer@partner.org",
-];
+// Access control config - reads from environment variables (set in .env)
+// VITE_ALLOWED_DOMAIN: e.g., "google.com" or "" to disable domain check
+// VITE_ALLOWED_EMAILS: comma-separated list, e.g., "alice@example.com,bob@partner.org"
+const ALLOWED_DOMAIN = import.meta.env.VITE_ALLOWED_DOMAIN ?? "google.com";
+const ALLOWED_EMAILS: string[] = (import.meta.env.VITE_ALLOWED_EMAILS ?? "")
+  .split(",")
+  .map((e: string) => e.trim().toLowerCase())
+  .filter((e: string) => e.length > 0);
 
 // ============================================================================
 
@@ -76,14 +73,20 @@ const ALLOWED_EMAILS: string[] = [
  */
 function isAllowedEmail(email: string | null): boolean {
   if (!email) return false;
+  const emailLower = email.toLowerCase();
 
   // Check whitelist first
-  if (ALLOWED_EMAILS.includes(email.toLowerCase())) {
+  if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.includes(emailLower)) {
     return true;
   }
 
   // Check domain if configured
-  if (ALLOWED_DOMAIN && email.endsWith(`@${ALLOWED_DOMAIN}`)) {
+  if (ALLOWED_DOMAIN && emailLower.endsWith(`@${ALLOWED_DOMAIN}`)) {
+    return true;
+  }
+
+  // No restrictions configured = allow all
+  if (!ALLOWED_DOMAIN && ALLOWED_EMAILS.length === 0) {
     return true;
   }
 
