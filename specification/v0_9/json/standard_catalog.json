@@ -913,7 +913,8 @@
               ],
               "additionalProperties": false
             }
-          ]
+          ],
+          "items": false
         }
       },
       "required": ["call", "args"]
@@ -1028,7 +1029,7 @@
         "propertyName": "component"
       }
     },
-    "StandardFunctions": {
+    "Functions": {
       "oneOf": [
         { "$ref": "#/functions/required" },
         { "$ref": "#/functions/regex" },

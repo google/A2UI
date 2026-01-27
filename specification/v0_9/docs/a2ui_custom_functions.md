@@ -63,22 +63,13 @@ Use the `functions` property to define a map of function schemas, and a group in
       },
       "required": ["call"]
     }
-  },
-  "$defs": {
-    "CustomFunctions": {
-      "oneOf": [
-        { "$ref": "#/functions/trim" },
-        { "$ref": "#/functions/getScreenResolution" }
-      ]
-    }
   }
 }
 ```
 
 ## 2. Combine with the Standard Schema
 
-To use this custom catalog in your application, you must define an "Application
-Schema" that extends the base A2UI schema. You do this by overriding the
+To use this custom catalog in your application, you must override the
 `FunctionCall` definition to include your new function definitions.
 
 Because `common_types.json` defines `FunctionCall` as a choice (`oneOf`), you
@@ -87,8 +78,8 @@ function groups.
 
 ```json
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.com/schemas/my_app_schema.json",
+  // Add to the same file as created above...
+  
   // Import definitions from the standard schema
   "$defs": {
     "FunctionCall": {
@@ -96,20 +87,14 @@ function groups.
       "oneOf": [
         // 1. Allow all standard functions
         {
-          "$ref": "https://a2ui.dev/specification/v0_9/standard_catalog.json#/$defs/StandardFunctions"
+          "$ref": "https://a2ui.dev/specification/v0_9/standard_catalog.json#/$defs/Functions"
         },
         // 2. Allow the custom functions
-        {
-          "$ref": "https://example.com/schemas/custom_catalog.json#/$defs/CustomFunctions"
-        }
-
-        // 3. (Optional) Allow fallback for other functions if strict validation isn't desired
-        // { "$ref": "https://a2ui.dev/specification/v0_9/standard_catalog.json#/$defs/GenericFunction" }
+        { "$ref": "#/functions/trim" },
+        { "$ref": "#/functions/getScreenResolution" }
       ]
     }
   }
-
-  // ... verify the rest of your message structure here ...
 }
 ```
 
@@ -120,7 +105,7 @@ When a `FunctionCall` is validated against this combined schema:
 1. **Discriminator Lookup:** The validator looks at the `call` property of the
    object.
 2. **Schema Matching:**
-    * If `call` is "length", it matches `StandardFunctions` -> `length`
+    * If `call` is "length", it matches `Functions` -> `length`
       and validates the arguments against the length rules.
     * If `call` is "trim", it matches `CustomFunctions` -> `trim` and
       validates against your custom rules.

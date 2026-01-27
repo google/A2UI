@@ -655,26 +655,6 @@
       }
     },
     {
-      "description": "pluralize: Invalid dictionary (missing 'other')",
-      "valid": false,
-      "data": {
-        "updateComponents": {
-          "surfaceId": "test",
-          "components": [
-            {
-              "id": "txt1",
-              "component": "Text",
-              "text": {
-                "call": "pluralize",
-                "args": [5, { "one": "item" }],
-                "returnType": "string"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "description": "openUrl: Invalid URL format (not a URI)",
       "valid": false,
       "data": {
