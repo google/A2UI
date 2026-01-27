@@ -91,7 +91,7 @@ Display icons using Material Icons or custom icon sets.
   "id": "check-icon",
   "component": {
     "Icon": {
-      "name": {"literalString": "check_circle"}
+      "name": {"literalString": "check"}
     }
   }
 }
@@ -169,7 +169,7 @@ Boolean toggle.
 {
   "id": "terms-checkbox",
   "component": {
-    "Checkbox": {
+    "CheckBox": {
       "label": {"literalString": "I agree to the terms"},
       "value": {"path": "/form/agreedToTerms"}
     }
