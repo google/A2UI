@@ -34,77 +34,83 @@ logger = logging.getLogger(__name__)
 
 
 class MissingAPIKeyError(Exception):
-    """Exception for missing API key."""
+  """Exception for missing API key."""
 
 
 @click.command()
 @click.option("--host", default="localhost")
 @click.option("--port", default=10003)
 def main(host, port):
-    try:
-        # Check for API key only if Vertex AI is not configured
-        if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
-            if not os.getenv("GEMINI_API_KEY"):
-                raise MissingAPIKeyError(
-                    "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI is not TRUE."
-                )
-
-        capabilities = AgentCapabilities(
-            streaming=True,
-            extensions=[get_a2ui_agent_extension()],
-        )
-        skill = AgentSkill(
-            id="find_contact",
-            name="Find Contact Tool",
-            description="Helps find contact information for colleagues (e.g., email, location, team).",
-            tags=["contact", "directory", "people", "finder"],
-            examples=["Who is David Chen in marketing?", "Find Sarah Lee from engineering"],
+  try:
+    # Check for API key only if Vertex AI is not configured
+    if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
+      if not os.getenv("GEMINI_API_KEY"):
+        raise MissingAPIKeyError(
+            "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI"
+            " is not TRUE."
         )
 
-        base_url = f"http://{host}:{port}"
+    capabilities = AgentCapabilities(
+        streaming=True,
+        extensions=[get_a2ui_agent_extension()],
+    )
+    skill = AgentSkill(
+        id="find_contact",
+        name="Find Contact Tool",
+        description=(
+            "Helps find contact information for colleagues (e.g., email, location,"
+            " team)."
+        ),
+        tags=["contact", "directory", "people", "finder"],
+        examples=["Who is David Chen in marketing?", "Find Sarah Lee from engineering"],
+    )
 
-        agent_card = AgentCard(
-            name="Contact Lookup Agent",
-            description="This agent helps find contact info for people in your organization.",
-            url=base_url,  # <-- Use base_url here
-            version="1.0.0",
-            default_input_modes=ContactAgent.SUPPORTED_CONTENT_TYPES,
-            default_output_modes=ContactAgent.SUPPORTED_CONTENT_TYPES,
-            capabilities=capabilities,
-            skills=[skill],
-        )
+    base_url = f"http://{host}:{port}"
 
-        agent_executor = ContactAgentExecutor(base_url=base_url)
+    agent_card = AgentCard(
+        name="Contact Lookup Agent",
+        description=(
+            "This agent helps find contact info for people in your organization."
+        ),
+        url=base_url,  # <-- Use base_url here
+        version="1.0.0",
+        default_input_modes=ContactAgent.SUPPORTED_CONTENT_TYPES,
+        default_output_modes=ContactAgent.SUPPORTED_CONTENT_TYPES,
+        capabilities=capabilities,
+        skills=[skill],
+    )
 
-        request_handler = DefaultRequestHandler(
-            agent_executor=agent_executor,
-            task_store=InMemoryTaskStore(),
-        )
-        server = A2AStarletteApplication(
-            agent_card=agent_card, http_handler=request_handler
-        )
-        import uvicorn
+    agent_executor = ContactAgentExecutor(base_url=base_url)
 
-        app = server.build()
+    request_handler = DefaultRequestHandler(
+        agent_executor=agent_executor,
+        task_store=InMemoryTaskStore(),
+    )
+    server = A2AStarletteApplication(
+        agent_card=agent_card, http_handler=request_handler
+    )
+    import uvicorn
 
-        app.add_middleware(
-            CORSMiddleware,
-            allow_origin_regex=r"http://localhost:\d+",
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
+    app = server.build()
 
-        app.mount("/static", StaticFiles(directory="images"), name="static")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=r"http://localhost:\d+",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-        uvicorn.run(app, host=host, port=port)
-    except MissingAPIKeyError as e:
-        logger.error(f"Error: {e}")
-        exit(1)
-    except Exception as e:
-        logger.error(f"An error occurred during server startup: {e}")
-        exit(1)
+    app.mount("/static", StaticFiles(directory="images"), name="static")
+
+    uvicorn.run(app, host=host, port=port)
+  except MissingAPIKeyError as e:
+    logger.error(f"Error: {e}")
+    exit(1)
+  except Exception as e:
+    logger.error(f"An error occurred during server startup: {e}")
+    exit(1)
 
 
 if __name__ == "__main__":
-    main()
+  main()
