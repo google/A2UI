@@ -272,7 +272,7 @@ In order to do the substitution, based on the standard `server_to_client_schema`
 
 ```py
 component_properties = custom_catalog_definition["components"]
-style_properties = custom_catalog_definition["components"]
+style_properties = custom_catalog_definition["styles"]
 resolved_schema = copy.deepcopy(server_to_client_schema)
 
 resolved_schema["properties"]["surfaceUpdate"]["properties"]["components"]["items"]["properties"]["component"]["properties"] = component_properties
