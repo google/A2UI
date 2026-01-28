@@ -17,7 +17,7 @@ import json
 import logging
 import os
 import importlib.resources
-from typing import List, Dict, Any, Tuple, Set
+from typing import List, Dict, Any, Tuple, Set, Callable
 from ..inference_strategy import InferenceStrategy
 from .loader import A2uiSchemaLoader, PackageLoader, FileSystemLoader
 from a2ui.core.validator import A2uiValidator
@@ -51,11 +51,17 @@ SPECIFICATION_DIR = "specification"
 class A2uiSchemaManager(InferenceStrategy):
   """Manages A2UI schema pruning and prompt injection."""
 
-  def __init__(self, version: str, custom_catalog_path: str = None):
+  def __init__(
+      self,
+      version: str,
+      custom_catalog_path: str = None,
+      schema_modifiers: List[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
+  ):
     self.version = version
     self.server_to_client_schema = None
     self.catalog_schema = None
     self.common_types_schema = None
+    self.schema_modifiers = schema_modifiers or []
     self._load_schemas(version, custom_catalog_path)
     self._bundled_schema = self.bundle_schemas()
     self._validator = A2uiValidator(self._bundled_schema)
@@ -96,6 +102,19 @@ class A2uiSchemaManager(InferenceStrategy):
           f"Unknown A2UI specification version: {version}. Supported:"
           f" {list(SPEC_VERSION_MAP.keys())}"
       )
+
+    # Apply modifiers
+    if self.server_to_client_schema:
+      self.server_to_client_schema = self._apply_modifiers(self.server_to_client_schema)
+    if self.catalog_schema:
+      self.catalog_schema = self._apply_modifiers(self.catalog_schema)
+    if self.common_types_schema:
+      self.common_types_schema = self._apply_modifiers(self.common_types_schema)
+
+  def _apply_modifiers(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+    for modifier in self.schema_modifiers:
+      schema = modifier(schema)
+    return schema
 
   def _load_schema(self, version: str, path: str) -> Dict:
     if not path:
@@ -255,7 +274,7 @@ class A2uiSchemaManager(InferenceStrategy):
     # LLM is instructed to generate a list of messages, so we wrap the bundled schema in an array.
     return {
         "type": "array",
-        "items": bundled,
+        "items": self._apply_modifiers(bundled),
     }
 
   def _inject_additional_properties(

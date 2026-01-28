@@ -287,3 +287,35 @@ def test_generate_system_prompt_minimal_args(mock_importlib_resources):
   assert "## Examples:" not in prompt
   assert "Just Role" in prompt
   assert "---BEGIN A2UI JSON SCHEMA---" in prompt
+
+  def test_schema_modifiers(self, mock_importlib_resources):
+    """Verifies that schema modifiers are applied correctly."""
+    mock_files = mock_importlib_resources
+    mock_traversable = MagicMock()
+    mock_files.return_value = mock_traversable
+
+    def joinpath_side_effect(path):
+      mock_file = MagicMock()
+      # Return valid JSON for all schema loads
+      mock_file.open.return_value.__enter__.return_value = io.StringIO(
+          '{"type": "object", "properties": {"original": true}}'
+      )
+      return mock_file
+
+    mock_traversable.joinpath.side_effect = joinpath_side_effect
+
+    def dummy_modifier(schema):
+      if "properties" not in schema:
+        schema["properties"] = {}
+      schema["properties"]["modified"] = True
+      return schema
+
+    manager = A2uiSchemaManager("0.8", schema_modifiers=[dummy_modifier])
+
+    assert manager.server_to_client_schema["properties"]["modified"] is True
+    assert manager.catalog_schema["properties"]["modified"] is True
+    # Bundle should also reflect changes (indirectly, as it uses deepcopy of loaded components)
+    # The bundled schema is wrapped in array {"type": "array", "items": ...}
+    bundled_item = manager.bundled_schema["items"]
+    # server_to_client_schema properties are base for 0.8 bundling
+    assert bundled_item["properties"]["modified"] is True
