@@ -41,7 +41,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
   - `common_types.json`: Reusable primitives (IDs, paths) and logic/expression types.
   - `server_to_client.json`: The "envelope" defining the message types.
   - `standard_catalog.json`: The unified catalog of UI components and functions.
-- **Benefit**: This allows developers to swap out the `standard_catalog.json` for a `custom_catalog.json` without touching the core protocol envelope.
+- **Swappable Catalogs**: `server_to_client.json` now uses a relative reference to `catalog.json` as a placeholder. This allows developers to alias `catalog.json` to `standard_catalog.json` (or any custom catalog) during validation, enabling the use of custom component sets without modifying the core envelope schema.
 - **Unification**: Components and functions are now part of the same catalog object, simplifying capability negotiation and inline definitions.
 
 ### 2.2. Strict Message Typing

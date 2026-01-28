@@ -1,4 +1,4 @@
-# A2UI (Agent-to-Agent UI) Extension Spec v0.9
+# A2UI (Agent-to-Agent UI) Extension spec v0.9
 
 ## Overview
 
@@ -10,7 +10,7 @@ The URI of this extension is https://a2ui.org/a2a-extension/a2ui/v0.9
 
 This is the only URI accepted for this extension.
 
-## Core Concepts
+## Core concepts
 
 The A2UI extension is built on the following main concepts:
 
@@ -48,11 +48,11 @@ Example AgentExtension block:
 }
 ```
 
-### Parameter Definitions
+### Parameter definitions
 - `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is a URI pointing to a Catalog Definition Schema that the agent can generate.
 - `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
-## Extension Activation
+## Extension activation
 Clients indicate their desire to use the A2UI extension by specifying it via the transport-defined A2A extension activation mechanism.
 
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.
@@ -61,7 +61,7 @@ For gRPC, this is indicated via the X-A2A-Extensions metadata value.
 
 Activating this extension implies that the server can send A2UI-specific messages (like updateComponents) and the client is expected to send A2UI-specific events (like action).
 
-## Data Encoding
+## Data encoding
 
 A2UI messages are encoded as an A2A `DataPart`.
 
@@ -71,13 +71,13 @@ To identify a `DataPart` as containing A2UI data, it must have the following met
 
 The `data` field of the `DataPart` contains a **single** A2UI JSON message (e.g., `createSurface`, `updateComponents`, `action`). It MUST NOT be an array of messages.
 
-### Atomicity and Multiple Messages
+### Atomicity and multiple messages
 
 To send multiple A2UI messages that should be processed atomically (e.g., creating a surface and immediately populating it), the sender MUST include multiple `DataPart`s within a single A2A `Message`.
 
 Receivers (both Clients and Agents) MUST process all A2UI `DataPart`s within a single A2A `Message` sequentially and atomically. For a renderer, this means the UI should not be repainted until all parts in the message have been applied.
 
-### Server-to-Client Messages
+### Server-to-client messages
 
 When an agent sends a message to a client (or another agent acting as a client/renderer), the `data` payload must validate against the **Server-to-Client Message Schema**.
 
@@ -98,7 +98,7 @@ Example `createSurface` DataPart:
 }
 ```
 
-### Client-to-Server Events
+### Client-to-server events
 
 When a client (or an agent forwarding an event) sends a message to an agent, it also uses a `DataPart` with the same `application/json+a2ui` MIME type. However, the `data` payload must validate against the **Client-to-Server Event Schema**.
 
