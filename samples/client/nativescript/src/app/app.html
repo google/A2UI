@@ -1,0 +1,53 @@
+<GridLayout rows="*" class="app-root" statusBarStyle="light">
+  <GridLayout class="app-container" rows="auto,*,auto" [class.ios]="isIOS">
+    <!-- Header -->
+    <GridLayout class="app-header" rows="auto" columns="auto, *, auto">
+      <StackLayout col="0" class="header-avatar">
+        <label class="avatar-text" text="✨"></label>
+      </StackLayout>
+
+      <StackLayout col="1" class="header-content">
+        <label class="header-title" [text]="chatService.agentName()"></label>
+        <label
+          class="header-status"
+          [class.connected]="chatService.connected()"
+          [class.demo-mode]="chatService.demoModeActive()"
+          [text]="getStatusText()"
+        >
+        </label>
+      </StackLayout>
+
+      <StackLayout col="2" class="header-actions">
+        <StackLayout
+          #menuButtonContainer
+          class="header-menu-container"
+          (loaded)="onMenuContainerLoaded()"
+        >
+          <label
+            class="header-action-btn"
+            text="⋯"
+            (tap)="onMenuTap()"
+            [marginTop]="isIOS ? 0 : -3"
+          >
+          </label>
+        </StackLayout>
+      </StackLayout>
+    </GridLayout>
+
+    <!-- Chat History -->
+    <GridLayout
+      row="1"
+      [rows]="chatService.currentSurface() ? '*,2*,auto' : '*,auto'"
+      class="pb-20"
+    >
+      <a2ui-chat-history></a2ui-chat-history>
+
+      <!-- Canvas (when surface is available) -->
+      @if (chatService.currentSurface()) {
+      <a2ui-canvas [row]="1" class="floating-canvas"> </a2ui-canvas>
+      }
+    </GridLayout>
+  </GridLayout>
+  <!-- Chat Input -->
+  <a2ui-chat-input (send)="onSendMessage($event)"> </a2ui-chat-input>
+</GridLayout>
