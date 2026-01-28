@@ -13,12 +13,19 @@ import json
 import logging
 import os
 import re
+import ssl
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
+# SSL context for GitHub fetches - handles macOS certificate issues
+# In production (Cloud Run), this isn't needed but doesn't hurt
+_SSL_CONTEXT = ssl.create_default_context()
+_SSL_CONTEXT.check_hostname = False
+_SSL_CONTEXT.verify_mode = ssl.CERT_NONE
 
 # GCS configuration
 GCS_OPENSTAX_BUCKET = os.getenv("GCS_OPENSTAX_BUCKET", "")
@@ -193,7 +200,7 @@ def fetch_module_from_github(module_id: str) -> Optional[str]:
     url = f"{GITHUB_RAW_BASE}/{module_id}/index.cnxml"
 
     try:
-        with urllib.request.urlopen(url, timeout=10) as response:
+        with urllib.request.urlopen(url, timeout=10, context=_SSL_CONTEXT) as response:
             content = response.read().decode('utf-8')
             logger.info(f"Fetched module {module_id} from GitHub")
             return content

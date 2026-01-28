@@ -181,6 +181,15 @@ def deploy_cloud_run(project_id: str, service_name: str, region: str) -> str:
             "--quiet",
         ], check=False)
 
+        # Grant Artifact Registry writer permission to compute service account
+        # Cloud Run source deployments use the compute SA to push Docker images
+        run_command([
+            "gcloud", "projects", "add-iam-policy-binding", project_id,
+            "--member", f"serviceAccount:{compute_sa}",
+            "--role", "roles/artifactregistry.writer",
+            "--quiet",
+        ], check=False)
+
         # Also grant Cloud Build service account permissions
         cloudbuild_sa = f"{project_number}@cloudbuild.gserviceaccount.com"
         run_command([

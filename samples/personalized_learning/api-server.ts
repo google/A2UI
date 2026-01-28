@@ -840,6 +840,16 @@ async function main() {
       return;
     }
 
+    // Authorization check endpoint - used by frontend to verify user is allowed
+    // This is the SINGLE SOURCE OF TRUTH for access control decisions
+    if (req.url === "/api/check-access" && req.method === "GET") {
+      if (!(await authenticateRequest(req, res))) return;
+      // If authenticateRequest passes, user is both authenticated AND authorized
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ authorized: true }));
+      return;
+    }
+
     // A2A Agent Engine endpoint
     if (req.url === "/a2ui-agent/a2a/query" && req.method === "POST") {
       if (!(await authenticateRequest(req, res))) return;

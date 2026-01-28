@@ -27,7 +27,7 @@ demo-message-log.json
 .DS_Store
 Thumbs.db
 
-# Large media assets (generate via NotebookLM - see NOTEBOOKLM_GUIDE.md)
+# Large media assets (generate via NotebookLM - see Quickstart.ipynb)
 public/assets/*.m4a
 public/assets/*.mp4
 
@@ -42,3 +42,6 @@ public/assets/*.mp4
 
 # Temporary A2UI copy for Cloud Run deployment
 a2ui-web-lib/
+
+# Tests (not part of the demo distribution)
+tests/

@@ -10,19 +10,17 @@ _This video demonstrates two use cases: personalized learning, which is the focu
 
 ---
 
-## What This Is
+## tl;dr
 
-This demo shows how agents can generate entire UI experiences—not just text responses. When a student asks for flashcards on photosynthesis, the agent matches the topic to OpenStax textbook content, generates personalized study materials, and returns A2UI JSON that the frontend renders as interactive, flippable cards.
+This sample shows how agents within a chat can use A2UI to go beyond text responses and generate dynamic UI elements. When a student asks for flashcards on photosynthesis, the agent matches the topic to OpenStax textbook content, generates personalized study materials, and returns A2UI JSON that the frontend renders as interactive, flippable cards.
 
-The same request from different students (with different learner profiles) produces different content tailored to their learning style.
+Here are the concepts we're demonstrating: 
 
-Key concepts demonstrated:
-
-- **Custom A2UI Components** — Flashcard and QuizCard extend the standard component library
+- **Custom A2UI Components** — Flashcard and QuizCard extend the standard A2UI UI component library
 - **Remote Agent** — ADK agent deployed to Vertex AI Agent Engine, decoupled from the UI
 - **A2A Protocol** — Frontend-to-agent communication via Agent-to-Agent protocol
 - **Dynamic Context** — Learner profiles loaded from GCS at runtime (no redeployment needed)
-- **Content Retrieval** — LLM-powered topic matching across 167 OpenStax Biology chapters
+- **Content Retrieval** — LLM-powered information retrieval across 167 OpenStax Biology chapters
 - **Server-side Auth** — API endpoints verify Firebase ID tokens and enforce domain/email allowlists
 
 ---
@@ -59,7 +57,7 @@ Browser → API Server → Agent Engine → OpenStax → A2UI Response
 
 **Agent Engine (Vertex AI):** ADK agent with tools for generating flashcards, quizzes, and fetching textbook content. Deployed via [deploy.py](deploy.py).
 
-**Content:** All educational material comes from [OpenStax Biology for AP Courses](https://openstax.org/details/books/biology-ap-courses), fetched from GitHub at runtime.
+**Content Pipeline:** When a user asks about "ATP hydrolysis," the agent maps the topic to relevant textbook chapters using a simple keyword matching system (we use Gemini as a fallback to help if there are no good keyword matches). The agent then fetches the actual CNXML content from [OpenStax's GitHub repo](https://github.com/openstax/osbooks-biology-bundle) and uses that source material—combined with the learner's profile—to generate grounded, personalized A2UI responses. This ensures flashcards and quizzes are rooted in peer-reviewed textbook content, not just LLM trained parameters data.
 
 ---
 
@@ -101,7 +99,7 @@ Both components are registered in [src/main.ts](src/main.ts) and rendered by the
 
 Learner profiles live in GCS at `gs://{PROJECT_ID}-learner-context/learner_context/`. The demo includes a sample student "Maria" — a pre-med student preparing for the MCAT who responds well to sports analogies and has a common misconception about ATP bond energy.
 
-To personalize for a different student, edit the files in [learner_context/](learner_context/) and upload to GCS. The agent picks up changes on the next request—no redeployment required.
+To personalize for a different student, edit the files in [learner_context/](learner_context/) and upload to GCS. The agent picks up changes on the next request—no redeployment required. 
 
 ---
 
@@ -119,19 +117,25 @@ See Step 7 in [Quickstart.ipynb](Quickstart.ipynb) for Firebase setup details.
 
 ## Access Control
 
-Both client and server enforce access restrictions via environment variables in `.env`:
+**Important:** By default, access is restricted to `@google.com` accounts. That's just because the authors of this sample... work at Google. You must configure your own domain and/or specific email addresses in `.env` to access your deployment:
 
 ```bash
-VITE_ALLOWED_DOMAIN=google.com                          # Restrict to a domain
-VITE_ALLOWED_EMAILS=alice@example.com,bob@partner.org   # Or whitelist specific emails
+# Allow your domain
+VITE_ALLOWED_DOMAIN=yourcompany.com
+
+# Or whitelist specific emails
+VITE_ALLOWED_DOMAIN=
+VITE_ALLOWED_EMAILS=you@gmail.com,collaborator@example.com
 ```
 
-See the Access Control section in [Quickstart.ipynb](Quickstart.ipynb) for details.
+The server is the single source of truth—authorization is enforced via the `/api/check-access` endpoint. See the Access Control section in [Quickstart.ipynb](Quickstart.ipynb) for details.
 
 ---
 
 ## Known Limitations
 
+- **Keyword matching**: Topic-to-chapter mapping uses a simple keyword dictionary with LLM fallback. This is intentionally naive—a production system would use embeddings or a proper search index. Content retrieval isn't the focus of this A2UI demo.
+- **Source citation accuracy**: When the agent expands a topic (e.g., "telomeres" → "telomeres, DNA, chromosome, replication, cell division"), keyword matching may cite a less relevant source. The LLM fallback only triggers when zero keywords match, not when wrong keywords match. A production system would use semantic search or LLM-based reranking to select the most relevant source.
 - **Latency**: LLM fallback for topic matching adds 2–5 seconds when keywords don't match
 - **Single topics only**: Multi-topic requests may return wrong content
 - **Audio/video**: Pre-generated files only, not dynamic

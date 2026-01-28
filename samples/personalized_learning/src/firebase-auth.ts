@@ -1,11 +1,18 @@
 /**
  * Firebase Authentication for Personalized Learning Demo
  *
- * By default, restricts access to @google.com email addresses.
- * To customize access:
- *   - Change ALLOWED_DOMAIN to your organization's domain
- *   - Add specific emails to ALLOWED_EMAILS whitelist
- *   - Or set ALLOWED_DOMAIN to "" and use only the whitelist
+ * Authentication flow:
+ *   1. User signs in with Google (Firebase Auth)
+ *   2. Client calls server /api/check-access to verify authorization
+ *   3. Server checks email against VITE_ALLOWED_DOMAIN and VITE_ALLOWED_EMAILS
+ *   4. If authorized, user proceeds; if not, signed out with error
+ *
+ * Access control is configured via environment variables (see .env.template):
+ *   - VITE_ALLOWED_DOMAIN: restrict to a domain (e.g., "yourcompany.com")
+ *   - VITE_ALLOWED_EMAILS: whitelist specific emails (comma-separated)
+ *
+ * The SERVER is the single source of truth for authorization decisions.
+ * This file only handles Firebase authentication, not authorization.
  *
  * LOCAL DEV MODE: If VITE_FIREBASE_API_KEY is not set, auth is bypassed
  * and the app runs without requiring sign-in.
@@ -47,72 +54,35 @@ if (isFirebaseConfigured) {
   console.log("[Auth] Firebase not configured - running in local dev mode (no auth required)");
 }
 
-// Google provider with domain restriction hint
+// Google provider
+// Note: The 'hd' parameter is just a UI hint to show accounts from a specific domain.
+// It does NOT enforce access - the server does that via /api/check-access.
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({
-  hd: "google.com", // Hint to show only google.com accounts (change if using different domain)
-});
-
-// ============================================================================
-// ACCESS CONTROL CONFIGURATION
-// ============================================================================
-
-// Access control config - reads from environment variables (set in .env)
-// VITE_ALLOWED_DOMAIN: e.g., "google.com" or "" to disable domain check
-// VITE_ALLOWED_EMAILS: comma-separated list, e.g., "alice@example.com,bob@partner.org"
-const ALLOWED_DOMAIN = import.meta.env.VITE_ALLOWED_DOMAIN ?? "google.com";
-const ALLOWED_EMAILS: string[] = (import.meta.env.VITE_ALLOWED_EMAILS ?? "")
-  .split(",")
-  .map((e: string) => e.trim().toLowerCase())
-  .filter((e: string) => e.length > 0);
-
-// ============================================================================
-
-/**
- * Check if user's email is allowed (by domain or whitelist)
- */
-function isAllowedEmail(email: string | null): boolean {
-  if (!email) return false;
-  const emailLower = email.toLowerCase();
-
-  // Check whitelist first
-  if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.includes(emailLower)) {
-    return true;
-  }
-
-  // Check domain if configured
-  if (ALLOWED_DOMAIN && emailLower.endsWith(`@${ALLOWED_DOMAIN}`)) {
-    return true;
-  }
-
-  // No restrictions configured = allow all
-  if (!ALLOWED_DOMAIN && ALLOWED_EMAILS.length === 0) {
-    return true;
-  }
-
-  return false;
+const hintDomain = import.meta.env.VITE_ALLOWED_DOMAIN;
+if (hintDomain) {
+  provider.setCustomParameters({ hd: hintDomain });
 }
 
+// ============================================================================
+// AUTHENTICATION FUNCTIONS
+// ============================================================================
+
 /**
- * Get current user if authenticated and from allowed domain
- * In local dev mode (no Firebase), returns null
+ * Get current Firebase user (if authenticated)
+ * Note: This only checks Firebase auth, not server authorization
  */
 export function getCurrentUser(): User | null {
   if (!auth) return null;
-  const user = auth.currentUser;
-  if (user && isAllowedEmail(user.email)) {
-    return user;
-  }
-  return null;
+  return auth.currentUser;
 }
 
 /**
  * Get ID token for API requests
- * In local dev mode, returns null (API server should allow unauthenticated requests locally)
+ * In local dev mode, returns null (API server allows unauthenticated requests locally)
  */
 export async function getIdToken(): Promise<string | null> {
   if (!auth) return null;
-  const user = getCurrentUser();
+  const user = auth.currentUser;
   if (!user) return null;
   try {
     return await user.getIdToken();
@@ -123,9 +93,30 @@ export async function getIdToken(): Promise<string | null> {
 }
 
 /**
+ * Check with server if the current user is authorized
+ * This is the ONLY place authorization is checked - the server is the source of truth.
+ * Returns true if authorized, false otherwise.
+ */
+export async function checkServerAuthorization(): Promise<boolean> {
+  const token = await getIdToken();
+  if (!token) return false;
+
+  try {
+    const response = await fetch("/api/check-access", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.ok;
+  } catch (error) {
+    console.error("[Auth] Server authorization check failed:", error);
+    return false;
+  }
+}
+
+/**
  * Sign in with Google
- * Returns user if successful and from allowed domain, null otherwise
- * In local dev mode, this should not be called (UI bypasses auth)
+ * Returns user if Firebase auth succeeds, null if cancelled
+ * IMPORTANT: Caller must then call checkServerAuthorization() to verify access
  */
 export async function signInWithGoogle(): Promise<User | null> {
   if (!auth) {
@@ -134,16 +125,8 @@ export async function signInWithGoogle(): Promise<User | null> {
   }
   try {
     const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    if (!isAllowedEmail(user.email)) {
-      console.warn(`[Auth] User ${user.email} not from ${ALLOWED_DOMAIN}`);
-      await signOut(auth);
-      throw new Error(`Access restricted to @${ALLOWED_DOMAIN} accounts`);
-    }
-
-    console.log(`[Auth] Signed in: ${user.email}`);
-    return user;
+    console.log(`[Auth] Firebase sign-in successful: ${result.user.email}`);
+    return result.user;
   } catch (error: any) {
     if (error.code === "auth/popup-closed-by-user") {
       console.log("[Auth] Sign-in cancelled by user");
@@ -164,34 +147,26 @@ export async function signOutUser(): Promise<void> {
 
 /**
  * Subscribe to auth state changes
- * Callback receives user if authenticated and from allowed domain, null otherwise
- * In local dev mode, immediately calls back with a mock "authenticated" state
+ * Callback receives user if authenticated, null otherwise
+ * Note: This only tracks Firebase auth state, not server authorization
  */
 export function onAuthChange(
   callback: (user: User | null) => void
 ): () => void {
   // Local dev mode: no Firebase, skip auth entirely
   if (!auth) {
-    // Immediately trigger callback as "authenticated" in local dev mode
-    // We pass null but main.ts will check isFirebaseConfigured to bypass auth
     setTimeout(() => callback(null), 0);
-    return () => {}; // No-op unsubscribe
+    return () => {};
   }
 
-  return onAuthStateChanged(auth, (user) => {
-    if (user && isAllowedEmail(user.email)) {
-      callback(user);
-    } else {
-      callback(null);
-    }
-  });
+  return onAuthStateChanged(auth, callback);
 }
 
 /**
- * Check if user is authenticated
- * In local dev mode, returns false (but app bypasses auth check)
+ * Check if user is authenticated with Firebase
+ * Note: This does not check server authorization
  */
 export function isAuthenticated(): boolean {
   if (!auth) return false;
-  return getCurrentUser() !== null;
+  return auth.currentUser !== null;
 }
