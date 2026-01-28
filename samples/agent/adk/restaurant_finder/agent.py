@@ -19,6 +19,7 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 import jsonschema
+from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
@@ -27,31 +28,16 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from prompt_builder import (
-    A2UI_SCHEMA,
-    RESTAURANT_UI_EXAMPLES,
     get_text_prompt,
-    get_ui_prompt,
+    ROLE_DESCRIPTION,
+    WORKFLOW_DESCRIPTION,
+    UI_DESCRIPTION,
 )
 from tools import get_restaurants
+from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 logger = logging.getLogger(__name__)
-
-AGENT_INSTRUCTION = """
-    You are a helpful restaurant finding assistant. Your goal is to help users find and book restaurants using a rich UI.
-
-    To achieve this, you MUST follow this logic:
-
-    1.  **For finding restaurants:**
-        a. You MUST call the `get_restaurants` tool. Extract the cuisine, location, and a specific number (`count`) of restaurants from the user's query (e.g., for "top 5 chinese places", count is 5).
-        b. After receiving the data, you MUST follow the instructions precisely to generate the final a2ui UI JSON, using the appropriate UI example from the `prompt_builder.py` based on the number of restaurants.
-
-    2.  **For booking a table (when you receive a query like 'USER_WANTS_TO_BOOK...'):**
-        a. You MUST use the appropriate UI example from `prompt_builder.py` to generate the UI, populating the `dataModelUpdate.contents` with the details from the user's query.
-
-    3.  **For confirming a booking (when you receive a query like 'User submitted a booking...'):**
-        a. You MUST use the appropriate UI example from `prompt_builder.py` to generate the confirmation UI, populating the `dataModelUpdate.contents` with the final booking details.
-"""
-
 
 class RestaurantAgent:
     """An agent that finds restaurants based on user criteria."""
@@ -61,6 +47,7 @@ class RestaurantAgent:
     def __init__(self, base_url: str, use_ui: bool = False):
         self.base_url = base_url
         self.use_ui = use_ui
+        self._schema_manager = A2uiSchemaManager("0.8", basic_examples_path="examples/", schema_modifiers=[remove_strict_validation]) if use_ui else None
         self._agent = self._build_agent(use_ui)
         self._user_id = "remote_agent"
         self._runner = Runner(
@@ -71,22 +58,29 @@ class RestaurantAgent:
             memory_service=InMemoryMemoryService(),
         )
 
-        # --- MODIFICATION: Wrap the schema ---
-        # Load the A2UI_SCHEMA string into a Python object for validation
-        try:
-            # First, load the schema for a *single message*
-            single_message_schema = json.loads(A2UI_SCHEMA)
+    def get_agent_card(self) -> AgentCard:
+        capabilities = AgentCapabilities(
+            streaming=True,
+            extensions=[self._schema_manager.get_agent_extension()],
+        )
+        skill = AgentSkill(
+            id="find_restaurants",
+            name="Find Restaurants Tool",
+            description="Helps find restaurants based on user criteria (e.g., cuisine, location).",
+            tags=["restaurant", "finder"],
+            examples=["Find me the top 10 chinese restaurants in the US"],
+        )
 
-            # The prompt instructs the LLM to return a *list* of messages.
-            # Therefore, our validation schema must be an *array* of the single message schema.
-            self.a2ui_schema_object = {"type": "array", "items": single_message_schema}
-            logger.info(
-                "A2UI_SCHEMA successfully loaded and wrapped in an array validator."
-            )
-        except json.JSONDecodeError as e:
-            logger.error(f"CRITICAL: Failed to parse A2UI_SCHEMA: {e}")
-            self.a2ui_schema_object = None
-        # --- END MODIFICATION ---
+        return AgentCard(
+            name="Restaurant Agent",
+            description="This agent helps find restaurants based on user criteria.",
+            url=self.base_url,
+            version="1.0.0",
+            default_input_modes=RestaurantAgent.SUPPORTED_CONTENT_TYPES,
+            default_output_modes=RestaurantAgent.SUPPORTED_CONTENT_TYPES,
+            capabilities=capabilities,
+            skills=[skill],
+        )
 
     def get_processing_message(self) -> str:
         return "Finding restaurants that match your criteria..."
@@ -95,13 +89,14 @@ class RestaurantAgent:
         """Builds the LLM agent for the restaurant agent."""
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
-        if use_ui:
-            # Construct the full prompt with UI instructions, examples, and schema
-            instruction = AGENT_INSTRUCTION + get_ui_prompt(
-                self.base_url, RESTAURANT_UI_EXAMPLES
-            )
-        else:
-            instruction = get_text_prompt()
+        instruction = self._schema_manager.generate_system_prompt(
+            role_description=ROLE_DESCRIPTION,
+            workflow_description=WORKFLOW_DESCRIPTION,
+            ui_description=UI_DESCRIPTION,
+            include_schema=True,
+            include_examples=True,
+            validate_examples=True,
+        ) if use_ui else get_text_prompt()
 
         return LlmAgent(
             model=LiteLlm(model=LITELLM_MODEL),
@@ -135,7 +130,8 @@ class RestaurantAgent:
         current_query_text = query
 
         # Ensure schema was loaded
-        if self.use_ui and self.a2ui_schema_object is None:
+        effective_catalog = self._schema_manager.get_effective_catalog()
+        if self.use_ui and not effective_catalog.catalog_schema:
             logger.error(
                 "--- RestaurantAgent.stream: A2UI_SCHEMA is not loaded. "
                 "Cannot perform UI validation. ---"
@@ -235,9 +231,7 @@ class RestaurantAgent:
                     logger.info(
                         "--- RestaurantAgent.stream: Validating against A2UI_SCHEMA... ---"
                     )
-                    jsonschema.validate(
-                        instance=parsed_json_data, schema=self.a2ui_schema_object
-                    )
+                    effective_catalog.validator.validate(parsed_json_data)
                     # --- End New Validation Steps ---
 
                     logger.info(
