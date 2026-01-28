@@ -134,6 +134,7 @@ export class DateTimeInput extends Root {
     }
 
     const year = this.#padNumber(date.getFullYear());
+    // getMonth() is 0-indexed (0=Jan), but standard date format requires 1-indexed (01=Jan).
     const month = this.#padNumber(date.getMonth() + 1);
     const day = this.#padNumber(date.getDate());
     const hours = this.#padNumber(date.getHours());
