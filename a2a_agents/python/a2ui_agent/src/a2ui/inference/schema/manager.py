@@ -37,6 +37,7 @@ from .constants import (
 )
 from .catalog import CustomCatalogConfig, A2uiCatalog
 from ...extension.a2ui_extension import INLINE_CATALOGS_KEY, SUPPORTED_CATALOG_IDS_KEY, get_a2ui_agent_extension
+from a2a.types import AgentExtension
 
 
 def _load_basic_component(version: str, spec_name: str) -> Dict:

@@ -19,8 +19,6 @@ import click
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
 from agent import ContactAgent
 from agent_executor import ContactAgentExecutor
 from dotenv import load_dotenv
@@ -49,39 +47,18 @@ def main(host, port):
                     "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI is not TRUE."
                 )
 
-        capabilities = AgentCapabilities(
-            streaming=True,
-            extensions=[get_a2ui_agent_extension()],
-        )
-        skill = AgentSkill(
-            id="find_contact",
-            name="Find Contact Tool",
-            description="Helps find contact information for colleagues (e.g., email, location, team).",
-            tags=["contact", "directory", "people", "finder"],
-            examples=["Who is David Chen in marketing?", "Find Sarah Lee from engineering"],
-        )
-
         base_url = f"http://{host}:{port}"
 
-        agent_card = AgentCard(
-            name="Contact Lookup Agent",
-            description="This agent helps find contact info for people in your organization.",
-            url=base_url,  # <-- Use base_url here
-            version="1.0.0",
-            default_input_modes=ContactAgent.SUPPORTED_CONTENT_TYPES,
-            default_output_modes=ContactAgent.SUPPORTED_CONTENT_TYPES,
-            capabilities=capabilities,
-            skills=[skill],
-        )
+        agent = ContactAgent(base_url=base_url, use_ui=True)
 
-        agent_executor = ContactAgentExecutor(base_url=base_url)
+        agent_executor = ContactAgentExecutor(agent=agent)
 
         request_handler = DefaultRequestHandler(
             agent_executor=agent_executor,
             task_store=InMemoryTaskStore(),
         )
         server = A2AStarletteApplication(
-            agent_card=agent_card, http_handler=request_handler
+            agent_card=agent.get_agent_card(), http_handler=request_handler
         )
         import uvicorn
 
