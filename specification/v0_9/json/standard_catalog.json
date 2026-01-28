@@ -648,241 +648,336 @@
       "unevaluatedProperties": false
     }
   },
-  "functions": [
-    {
-      "name": "required",
+  "functions": {
+    "required": {
+      "type": "object",
       "description": "Checks that the value is not null, undefined, or empty.",
-      "returnType": "boolean",
-      "parameters": {
-        "type": "array",
-        "items": [{ "$ref": "common_types.json#/$defs/DynamicValue" }],
-        "minItems": 1
-      }
+      "properties": {
+        "call": { "const": "required" },
+        "returnType": { "const": "boolean" },
+        "args": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            { "$ref": "common_types.json#/$defs/DynamicValue" }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "regex",
+    "regex": {
+      "type": "object",
       "description": "Checks that the value matches a regular expression string.",
-      "returnType": "boolean",
-      "parameters": {
-        "type": "array",
-        "items": [
-          { "$ref": "common_types.json#/$defs/DynamicValue" },
-          {
-            "type": "string",
-            "description": "The regex pattern to match against."
-          }
-        ],
-        "minItems": 2
-      }
+      "properties": {
+        "call": { "const": "regex" },
+        "returnType": { "const": "boolean" },
+        "args": {
+          "type": "array",
+          "minItems": 2,
+          "prefixItems": [
+            { "$ref": "common_types.json#/$defs/DynamicValue" },
+            {
+              "type": "string",
+              "description": "The regex pattern to match against."
+            }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "length",
+    "length": {
+      "type": "object",
       "description": "Checks string length constraints.",
-      "returnType": "boolean",
-      "parameters": {
-        "type": "array",
-        "items": [
-          { "$ref": "common_types.json#/$defs/DynamicValue" },
-          {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "integer",
-                "minimum": 0,
-                "description": "The minimum allowed length."
+      "properties": {
+        "call": { "const": "length" },
+        "returnType": { "const": "boolean" },
+        "args": {
+          "type": "array",
+          "minItems": 2,
+          "prefixItems": [
+            { "$ref": "common_types.json#/$defs/DynamicValue" },
+            {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "The minimum allowed length."
+                },
+                "max": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "The maximum allowed length."
+                }
               },
-              "max": {
-                "type": "integer",
-                "minimum": 0,
-                "description": "The maximum allowed length."
-              }
-            },
-            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
-          }
-        ],
-        "minItems": 2
-      }
+              "anyOf": [ { "required": [ "min" ] }, { "required": [ "max" ] } ]
+            }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "numeric",
+    "numeric": {
+      "type": "object",
       "description": "Checks numeric range constraints.",
-      "returnType": "boolean",
-      "parameters": {
-        "type": "array",
-        "items": [
-          { "$ref": "common_types.json#/$defs/DynamicValue" },
-          {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "description": "The minimum allowed value."
+      "properties": {
+        "call": { "const": "numeric" },
+        "returnType": { "const": "boolean" },
+        "args": {
+          "type": "array",
+          "minItems": 2,
+          "prefixItems": [
+            { "$ref": "common_types.json#/$defs/DynamicValue" },
+            {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "number",
+                  "description": "The minimum allowed value."
+                },
+                "max": {
+                  "type": "number",
+                  "description": "The maximum allowed value."
+                }
               },
-              "max": {
-                "type": "number",
-                "description": "The maximum allowed value."
-              }
-            },
-            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
-          }
-        ],
-        "minItems": 2
-      }
+              "anyOf": [ { "required": [ "min" ] }, { "required": [ "max" ] } ]
+            }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "email",
+    "email": {
+      "type": "object",
       "description": "Checks that the value is a valid email address.",
-      "returnType": "boolean",
-      "parameters": {
-        "type": "array",
-        "items": [{ "$ref": "common_types.json#/$defs/DynamicValue" }],
-        "minItems": 1
-      }
+      "properties": {
+        "call": { "const": "email" },
+        "returnType": { "const": "boolean" },
+        "args": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            { "$ref": "common_types.json#/$defs/DynamicValue" }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "formatString",
+    "formatString": {
+      "type": "object",
       "description": "Performs string interpolation of data model values and other functions in the catalog functions list and returns the resulting string. The value string can contain interpolated expressions in the `${expression}` format. Supported expression types include: JSON Pointer paths to the data model (e.g., `${/absolute/path}` or `${relative/path}`), and client-side function calls (e.g., `${now()}`). Function arguments must be literals (quoted strings, numbers, booleans) or nested expressions (e.g., `${formatDate(${/currentDate}, 'MM-dd')}`). To include a literal `${` sequence, escape it as `\\${`.",
-      "returnType": "string",
-      "parameters": {
-        "type": "array",
-        "items": [{ "description": "The format string.", "type": "string" }],
-        "additionalItems": { "$ref": "common_types.json#/$defs/DynamicValue" },
-        "minItems": 1
-      }
+      "properties": {
+        "call": { "const": "formatString" },
+        "returnType": { "const": "string" },
+        "args": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "description": "The format string.",
+              "type": "string"
+            }
+          ],
+          "items": { "$ref": "common_types.json#/$defs/DynamicValue" }
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "formatNumber",
+    "formatNumber": {
+      "type": "object",
       "description": "Formats a number with the specified grouping and decimal precision.",
-      "returnType": "string",
-      "parameters": {
-        "type": "array",
-        "items": [
-          {
-            "$ref": "common_types.json#/$defs/DynamicNumber",
-            "description": "The number to format."
-          },
-          {
-            "$ref": "common_types.json#/$defs/DynamicNumber",
-            "description": "Optional. The number of decimal places to show. Defaults to 0 or 2 depending on locale."
-          },
-          {
-            "$ref": "common_types.json#/$defs/DynamicBoolean",
-            "description": "Optional. If true, uses locale-specific grouping separators (e.g. '1,000'). If false, returns raw digits (e.g. '1000'). Defaults to true."
-          }
-        ],
-        "minItems": 1
-      }
+      "properties": {
+        "call": { "const": "formatNumber" },
+        "returnType": { "const": "string" },
+        "args": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "$ref": "common_types.json#/$defs/DynamicNumber",
+              "description": "The number to format."
+            },
+            {
+              "$ref": "common_types.json#/$defs/DynamicNumber",
+              "description": "Optional. The number of decimal places to show. Defaults to 0 or 2 depending on locale."
+            },
+            {
+              "$ref": "common_types.json#/$defs/DynamicBoolean",
+              "description": "Optional. If true, uses locale-specific grouping separators (e.g. '1,000'). If false, returns raw digits (e.g. '1000'). Defaults to true."
+            }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "formatCurrency",
+    "formatCurrency": {
+      "type": "object",
       "description": "Formats a number as a currency string.",
-      "returnType": "string",
-      "parameters": {
-        "type": "array",
-        "items": [
-          {
-            "$ref": "common_types.json#/$defs/DynamicNumber",
-            "description": "The monetary amount."
-          },
-          {
-            "$ref": "common_types.json#/$defs/DynamicString",
-            "description": "The ISO 4217 currency code (e.g., 'USD', 'EUR')."
-          }
-        ],
-        "minItems": 2
-      }
+      "properties": {
+        "call": { "const": "formatCurrency" },
+        "returnType": { "const": "string" },
+        "args": {
+          "type": "array",
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "$ref": "common_types.json#/$defs/DynamicNumber",
+              "description": "The monetary amount."
+            },
+            {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "The ISO 4217 currency code (e.g., 'USD', 'EUR')."
+            }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "formatDate",
+    "formatDate": {
+      "type": "object",
       "description": "Formats a timestamp into a string using a pattern.",
-      "returnType": "string",
-      "parameters": {
-        "type": "array",
-        "items": [
-          {
-            "$ref": "common_types.json#/$defs/DynamicValue",
-            "description": "The date to format."
-          },
-          {
-            "$ref": "common_types.json#/$defs/DynamicString",
-            "description": "A Unicode TR35 date pattern string.\n\nToken Reference:\n- Year: 'yy' (26), 'yyyy' (2026)\n- Month: 'M' (1), 'MM' (01), 'MMM' (Jan), 'MMMM' (January)\n- Day: 'd' (1), 'dd' (01), 'E' (Tue), 'EEEE' (Tuesday)\n- Hour (12h): 'h' (1-12), 'hh' (01-12) - requires 'a' for AM/PM\n- Hour (24h): 'H' (0-23), 'HH' (00-23) - Military Time\n- Minute: 'mm' (00-59)\n- Second: 'ss' (00-59)\n- Period: 'a' (AM/PM)\n\nExamples:\n- 'MMM dd, yyyy' -> 'Jan 16, 2026'\n- 'HH:mm' -> '14:30' (Military)\n- 'h:mm a' -> '2:30 PM'\n- 'EEEE, d MMMM' -> 'Friday, 16 January'"
-          }
-        ],
-        "minItems": 2
-      }
+      "properties": {
+        "call": { "const": "formatDate" },
+        "returnType": { "const": "string" },
+        "args": {
+          "type": "array",
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "$ref": "common_types.json#/$defs/DynamicValue",
+              "description": "The date to format."
+            },
+            {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "A Unicode TR35 date pattern string.\n\nToken Reference:\n- Year: 'yy' (26), 'yyyy' (2026)\n- Month: 'M' (1), 'MM' (01), 'MMM' (Jan), 'MMMM' (January)\n- Day: 'd' (1), 'dd' (01), 'E' (Tue), 'EEEE' (Tuesday)\n- Hour (12h): 'h' (1-12), 'hh' (01-12) - requires 'a' for AM/PM\n- Hour (24h): 'H' (0-23), 'HH' (00-23) - Military Time\n- Minute: 'mm' (00-59)\n- Second: 'ss' (00-59)\n- Period: 'a' (AM/PM)\n\nExamples:\n- 'MMM dd, yyyy' -> 'Jan 16, 2026'\n- 'HH:mm' -> '14:30' (Military)\n- 'h:mm a' -> '2:30 PM'\n- 'EEEE, d MMMM' -> 'Friday, 16 January'"
+            }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "pluralize",
+    "pluralize": {
+      "type": "object",
       "description": "Returns a localized string based on the Common Locale Data Repository (CLDR) plural category of the count (zero, one, two, few, many, other). Requires an 'other' fallback. For English, just use 'one' and 'other'.",
-      "returnType": "string",
-      "parameters": {
-        "type": "array",
-        "items": [
-          {
-            "$ref": "common_types.json#/$defs/DynamicNumber",
-            "description": "The numeric value used to determine the plural category."
-          },
-          {
-            "type": "object",
-            "description": "A map of CLDR plural categories to their corresponding strings.",
-            "properties": {
-              "zero": {
-                "$ref": "common_types.json#/$defs/DynamicString",
-                "description": "String for the 'zero' category (e.g., 0 items)."
-              },
-              "one": {
-                "$ref": "common_types.json#/$defs/DynamicString",
-                "description": "String for the 'one' category (e.g., 1 item)."
-              },
-              "two": {
-                "$ref": "common_types.json#/$defs/DynamicString",
-                "description": "String for the 'two' category (used in Arabic, Welsh, etc.)."
-              },
-              "few": {
-                "$ref": "common_types.json#/$defs/DynamicString",
-                "description": "String for the 'few' category (e.g., small groups in Slavic languages)."
-              },
-              "many": {
-                "$ref": "common_types.json#/$defs/DynamicString",
-                "description": "String for the 'many' category (e.g., large groups in various languages)."
-              },
-              "other": {
-                "$ref": "common_types.json#/$defs/DynamicString",
-                "description": "The default/fallback string (used for general plural cases)."
-              }
+      "properties": {
+        "call": { "const": "pluralize" },
+        "returnType": { "const": "string" },
+        "args": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "$ref": "common_types.json#/$defs/DynamicNumber",
+              "description": "The numeric value used to determine the plural category."
             },
-            "required": [
-              "other"
-            ],
-            "additionalProperties": false
-          }
-        ],
-        "minItems": 2,
-        "maxItems": 2
-      }
+            {
+              "type": "object",
+              "description": "A map of CLDR plural categories to their corresponding strings.",
+              "properties": {
+                "zero": {
+                  "$ref": "common_types.json#/$defs/DynamicString",
+                  "description": "String for the 'zero' category (e.g., 0 items)."
+                },
+                "one": {
+                  "$ref": "common_types.json#/$defs/DynamicString",
+                  "description": "String for the 'one' category (e.g., 1 item)."
+                },
+                "two": {
+                  "$ref": "common_types.json#/$defs/DynamicString",
+                  "description": "String for the 'two' category (used in Arabic, Welsh, etc.)."
+                },
+                "few": {
+                  "$ref": "common_types.json#/$defs/DynamicString",
+                  "description": "String for the 'few' category (e.g., small groups in Slavic languages)."
+                },
+                "many": {
+                  "$ref": "common_types.json#/$defs/DynamicString",
+                  "description": "String for the 'many' category (e.g., large groups in various languages)."
+                },
+                "other": {
+                  "$ref": "common_types.json#/$defs/DynamicString",
+                  "description": "The default/fallback string (used for general plural cases)."
+                }
+              },
+              "required": [
+                "other"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "items": false
+        }
+      },
+      "required": ["call", "args"]
     },
-    {
-      "name": "openUrl",
+    "openUrl": {
+      "type": "object",
       "description": "Opens the specified URL in a browser or handler. This function has no return value.",
-      "returnType": "void",
-      "parameters": {
-        "allOf": [
-          {
-            "type": "object",
-            "properties": {
-              "url": {
-                "type": "string",
-                "format": "uri",
-                "description": "The URL to open."
-              }
-            },
-            "required": ["url"]
+      "properties": {
+        "call": { "const": "openUrl" },
+        "returnType": { "const": "void" },
+        "args": {
+          "type": "array",
+          "items": false,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "The URL to open."
+                    }
+                  },
+                  "required": ["url"]
+                }
+              ],
+              "unevaluatedProperties": false
+            }
+          ],
+          "minItems": 1,
+          "maxItems": 1
+        }
+      },
+      "required": ["call", "args"]
+    },
+    "generic": {
+      "type": "object",
+      "description": "Matches any function call not explicitly defined in the standard catalog, allowing for extensibility.",
+      "properties": {
+        "call": {
+          "type": "string",
+          "not": {
+            "enum": [
+              "required",
+              "regex",
+              "length",
+              "numeric",
+              "email",
+              "formatString",
+              "formatNumber",
+              "formatCurrency",
+              "formatDate",
+              "pluralize",
+              "openUrl"
+            ]
           }
-        ],
-        "unevaluatedProperties": false
-      }
+        }
+      },
+      "required": ["call"]
     }
-  ],
+  },
   "theme": {
     "primaryColor": {
       "type": "string",
@@ -933,6 +1028,22 @@
       "discriminator": {
         "propertyName": "component"
       }
+    },
+    "Functions": {
+      "oneOf": [
+        { "$ref": "#/functions/required" },
+        { "$ref": "#/functions/regex" },
+        { "$ref": "#/functions/length" },
+        { "$ref": "#/functions/numeric" },
+        { "$ref": "#/functions/email" },
+        { "$ref": "#/functions/formatString" },
+        { "$ref": "#/functions/formatNumber" },
+        { "$ref": "#/functions/formatCurrency" },
+        { "$ref": "#/functions/formatDate" },
+        { "$ref": "#/functions/pluralize" },
+        { "$ref": "#/functions/openUrl" },
+        { "$ref": "#/functions/generic" }
+      ]
     }
   }
 }

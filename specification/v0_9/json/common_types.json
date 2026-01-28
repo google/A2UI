@@ -168,7 +168,10 @@
           "default": "boolean"
         }
       },
-      "required": ["call"]
+      "required": ["call"],
+      "oneOf": [
+        { "$ref": "standard_catalog.json#/$defs/Functions" }
+      ]
     },
     "LogicExpression": {
       "type": "object",
