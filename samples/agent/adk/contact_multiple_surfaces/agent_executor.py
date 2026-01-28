@@ -42,9 +42,9 @@ logger = logging.getLogger(__name__)
 class ContactAgentExecutor(AgentExecutor):
   """Contact AgentExecutor Example."""
 
-  def __init__(self, base_url: str):
+  def __init__(self, agent: ContactAgent):
     # Instantiate the UI agent.
-    self.ui_agent = ContactAgent(base_url=base_url, use_ui=True)
+    self.ui_agent = agent
 
   async def execute(
       self,
@@ -84,16 +84,22 @@ class ContactAgentExecutor(AgentExecutor):
 
             # Check for inline catalog
             if (
-                "metadata" in part.root.data
-                and "inlineCatalogs" in part.root.data["metadata"]
+                agent.schema_manager.accepts_inline_catalogs
+                and "metadata" in part.root.data
+                and "a2uiClientCapabilities" in part.root.data["metadata"]
             ):
-              logger.info(f"  Part {i}: Found 'inlineCatalogs' in DataPart.")
-              inline_catalog = part.root.data["metadata"]["inlineCatalogs"]
-              catalog_json = json.dumps(inline_catalog)
+              logger.info(f"  Part {i}: Found 'a2uiClientCapabilities' in DataPart.")
+              client_ui_capabilities = part.root.data["metadata"][
+                  "a2uiClientCapabilities"
+              ]
+              catalog = agent.schema_manager.get_effective_catalog(
+                  client_ui_capabilities=client_ui_capabilities
+              )
+              catalog_schema_str = catalog.render_as_llm_instructions()
               # Append to query so the agent sees it (simple injection)
               query += (
                   "\n\n[SYSTEM: The client supports the following custom components:"
-                  f" {catalog_json}]"
+                  f" {catalog_schema_str}]"
               )
           else:
             logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
