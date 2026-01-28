@@ -719,17 +719,10 @@ Values from the data model can be interpolated using their JSON Pointer path.
   "id": "user_welcome",
   "component": "Text",
   "text": {
-<<<<<<< HEAD
     "call": "formatString",
-    "args": [
-      "Hello, ${/user/firstName}! Welcome back to ${/appName}."
-    ]
-=======
-    "call": "string_format",
     "args": {
       "value": "Hello, ${/user/firstName}! Welcome back to ${/appName}."
     }
->>>>>>> parent of d11883f (feat(protocol)!: refactor FunctionCall args to positional array (#515))
   }
 }
 ```
@@ -739,7 +732,7 @@ Values from the data model can be interpolated using their JSON Pointer path.
 Results of client-side functions can be interpolated. Function calls are identified by the presence of parentheses `()`.
 
 - `${now()}`: A function with no arguments.
-- `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`: A function with positional arguments.
+- `${formatDate(value:${/currentDate}, format:'yyyy-MM-dd')}`: A function with named arguments.
 
 Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Nested Expressions**.
 
@@ -747,7 +740,7 @@ Arguments can be **Literals** (quoted strings, numbers, or booleans), or **Neste
 
 Expressions can be nested using additional `${...}` wrappers inside an outer expression to make bindings explicit or to chain function calls.
 
-- **Explicit Binding**: `${formatDate(${/currentDate}, 'yyyy-MM-dd')}`
+- **Explicit Binding**: `${formatDate(value:${/currentDate}, format:'yyyy-MM-dd')}`
 - **Nested Functions**: `${upper(${now()})}`
 
 #### `formatString` type conversion
