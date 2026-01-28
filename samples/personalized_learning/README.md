@@ -132,6 +132,14 @@ The server is the single source of truth—authorization is enforced via the `/a
 
 ---
 
+## Design Notes
+
+**Intent-based response routing:** This demo uses a hybrid response pattern where "general" intents return plain text while UI-specific intents (flashcards, quiz, etc.) return A2UI components. This mirrors how [gemini.google.com](https://gemini.google.com) handles rich content—users see conversational text for explanations and interactive UI for artifacts. The orchestrator in [src/chat-orchestrator.ts](src/chat-orchestrator.ts) handles this routing.
+
+**CORS in enterprise environments:** The included [api-server.ts](api-server.ts) proxies requests to Agent Engine, which sidesteps browser CORS restrictions. If deploying behind stricter policies (e.g., Domain Restricted Sharing), you may need to add token caching or adjust the proxy to handle additional auth flows.
+
+---
+
 ## Known Limitations
 
 - **Keyword matching**: Topic-to-chapter mapping uses a simple keyword dictionary with LLM fallback. This is intentionally naive—a production system would use embeddings or a proper search index. Content retrieval isn't the focus of this A2UI demo.
