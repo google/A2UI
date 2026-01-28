@@ -60,6 +60,17 @@
         }
       ]
     },
+    "DataBinding": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "A JSON Pointer path to a value in the data model."
+        }
+      },
+      "required": ["path"],
+      "additionalProperties": false
+    },
     "DynamicValue": {
       "description": "A value that can be a literal, a path, or a function call returning any type.",
       "oneOf": [
@@ -73,14 +84,7 @@
           "type": "boolean"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "$ref": "#/$defs/FunctionCall"
@@ -94,14 +98,7 @@
           "type": "string"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "allOf": [
@@ -127,14 +124,7 @@
           "type": "number"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "allOf": [
@@ -160,14 +150,7 @@
           "type": "boolean"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "$ref": "#/$defs/LogicExpression"
@@ -184,14 +167,7 @@
           }
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "allOf": [
@@ -222,13 +198,29 @@
           "type": "object",
           "description": "Arguments passed to the function.",
           "additionalProperties": {
-            "$ref": "#/$defs/DynamicValue"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DynamicValue"
+              },
+              {
+                "type": "object",
+                "description": "A literal object argument (e.g. configuration)."
+              }
+            ]
           }
         },
         "returnType": {
           "type": "string",
           "description": "The expected return type of the function call.",
-          "enum": ["string", "number", "boolean", "array", "object", "any", "void"],
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "any",
+            "void"
+          ],
           "default": "boolean"
         }
       },

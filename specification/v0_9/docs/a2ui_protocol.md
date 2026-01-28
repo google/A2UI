@@ -664,15 +664,19 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 
 ### Functions
 
-| Function         | Description                                                              |
-| :--------------- | :----------------------------------------------------------------------- |
-| **required**     | Checks that the value is not null, undefined, or empty.                  |
-| **regex**        | Checks that the value matches a regular expression string.               |
-| **length**       | Checks string length constraints.                                        |
-| **numeric**      | Checks numeric range constraints.                                        |
-| **email**        | Checks that the value is a valid email address.                          |
-| **formatString** | Does string interpolation of data model values and registered functions. |
-| **openUrl**      | Opens a URL in a browser.                                                |
+| Function           | Description                                                              |
+| :----------------- | :----------------------------------------------------------------------- |
+| **required**       | Checks that the value is not null, undefined, or empty.                  |
+| **regex**          | Checks that the value matches a regular expression string.               |
+| **length**         | Checks string length constraints.                                        |
+| **numeric**        | Checks numeric range constraints.                                        |
+| **email**          | Checks that the value is a valid email address.                          |
+| **formatString**   | Does string interpolation of data model values and registered functions. |
+| **formatNumber**   | Formats a number with grouping and precision.                            |
+| **formatCurrency** | Formats a number as a currency string.                                   |
+| **formatDate**     | Formats a date/time using a pattern.                                     |
+| **pluralize**      | Selects a localized string based on a numeric count.                     |
+| **openUrl**        | Opens a URL in a browser.                                                |
 
 ### Theme
 
