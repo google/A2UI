@@ -69,7 +69,6 @@
               "checks": [
                 {
                   "call": "email",
-                  "args": [{ "path": "/contact/email" }],
                   "message": "Please enter a valid email address."
                 }
               ]
