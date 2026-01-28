@@ -95,15 +95,15 @@ export class DateTimeInput extends Root {
         autocomplete="off"
         class=${classMap(this.theme.components.DateTimeInput.element)}
         style=${this.theme.additionalStyles?.DateTimeInput
-          ? styleMap(this.theme.additionalStyles?.DateTimeInput)
-          : nothing}
+        ? styleMap(this.theme.additionalStyles?.DateTimeInput)
+        : nothing}
         @input=${(evt: Event) => {
-          if (!(evt.target instanceof HTMLInputElement)) {
-            return;
-          }
+        if (!(evt.target instanceof HTMLInputElement)) {
+          return;
+        }
 
-          this.#setBoundValue(evt.target.value);
-        }}
+        this.#setBoundValue(evt.target.value);
+      }}
         id="data"
         name="data"
         .value=${this.#formatInputValue(value)}
@@ -134,7 +134,7 @@ export class DateTimeInput extends Root {
     }
 
     const year = this.#padNumber(date.getFullYear());
-    const month = this.#padNumber(date.getMonth());
+    const month = this.#padNumber(date.getMonth() + 1);
     const day = this.#padNumber(date.getDate());
     const hours = this.#padNumber(date.getHours());
     const minutes = this.#padNumber(date.getMinutes());
