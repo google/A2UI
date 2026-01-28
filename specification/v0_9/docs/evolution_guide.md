@@ -105,7 +105,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 {
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+    "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
     "theme": {
       "primaryColor": "#007bff"
     }

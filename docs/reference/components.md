@@ -1,6 +1,6 @@
 # Component Gallery
 
-This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json).
+This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://a2ui.org/specification/v0_8/json/standard_catalog_definition.json).
 
 ## Layout Components
 

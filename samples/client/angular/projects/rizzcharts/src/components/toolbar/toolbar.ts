@@ -27,7 +27,15 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-toolbar',
-  imports: [MatButtonModule, MatIconModule, MatToolbarModule, MatSelectModule, MatFormFieldModule, MatInputModule, FormsModule],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+  ],
   templateUrl: './toolbar.html',
   styleUrl: './toolbar.scss',
 })
@@ -37,22 +45,22 @@ export class Toolbar {
 
   catalogs = [
     {
-      value: 'https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json',
-      viewValue: 'Standard'
+      value: 'https://a2ui.org/specification/v0_8/json/standard_catalog_definition.json',
+      viewValue: 'Standard',
     },
     {
-      value: 'https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json',
-      viewValue: 'Rizzcharts Custom'
+      value:
+        'https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json',
+      viewValue: 'Rizzcharts Custom',
     },
   ];
 
   ngOnInit() {
-    this.selectedCatalogs = this.catalogs.map(c => c.value);
+    this.selectedCatalogs = this.catalogs.map((c) => c.value);
     this.updateCatalogService();
   }
 
   updateCatalogService() {
     this.catalogService.catalogUris = this.selectedCatalogs;
   }
-
 }

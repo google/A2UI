@@ -29,7 +29,7 @@ A2UI_CLIENT_CAPABILITIES_KEY = "a2uiClientCapabilities"
 SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"
 INLINE_CATALOGS_KEY = "inlineCatalogs"
 
-STANDARD_CATALOG_ID = "https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json"
+STANDARD_CATALOG_ID = "https://a2ui.org/specification/v0_8/json/standard_catalog_definition.json"
 
 
 def create_a2ui_part(a2ui_data: dict[str, Any]) -> Part:
