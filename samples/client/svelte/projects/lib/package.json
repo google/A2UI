@@ -1,0 +1,18 @@
+{
+	"name": "@a2ui-samples/lib",
+	"version": "0.0.1",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./middleware": "./src/middleware/a2a.ts",
+		"./styles/*": "./src/styles/*"
+	},
+	"dependencies": {
+		"@a2a-js/sdk": "^0.3.4",
+		"uuid": "^13.0.0"
+	},
+	"devDependencies": {
+		"@types/uuid": "^10.0.0",
+		"typescript": "^5.9.3"
+	}
+}
