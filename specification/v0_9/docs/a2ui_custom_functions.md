@@ -87,7 +87,7 @@ function groups.
       "oneOf": [
         // 1. Allow all standard functions
         {
-          "$ref": "https://a2ui.dev/specification/v0_9/standard_catalog.json#/$defs/Functions"
+          "$ref": "https://a2ui.dev/specification/v0_9/standard_catalog.json#/$defs/anyFunction"
         },
         // 2. Allow the custom functions
         { "$ref": "#/functions/trim" },

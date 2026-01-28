@@ -170,7 +170,7 @@
       },
       "required": ["call"],
       "oneOf": [
-        { "$ref": "standard_catalog.json#/$defs/Functions" }
+        { "$ref": "standard_catalog.json#/$defs/anyFunction" }
       ]
     },
     "LogicExpression": {
