@@ -1,4 +1,4 @@
-# A2UI (Agent-to-Agent UI) Extension Spec
+# A2UI (Agent-to-Agent UI) Extension spec
 
 ## Overview
 
@@ -10,7 +10,7 @@ The URI of this extension is https://a2ui.org/a2a-extension/a2ui/v0.8
 
 This is the only URI accepted for this extension.
 
-## Core Concepts
+## Core concepts
 
 The A2UI extension is built on the following main concepts:
 
@@ -49,11 +49,11 @@ Example AgentExtension block:
 }
 ```
 
-### Parameter Definitions
+### Parameter definitions
 - `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is a URI pointing to a component Catalog Definition Schema that the agent can generate.
 - `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
-## Extension Activation
+## Extension activation
 Clients indicate their desire to use the A2UI extension by specifying it via the transport-defined A2A extension activation mechanism.
 
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.
@@ -62,7 +62,7 @@ For gRPC, this is indicated via the X-A2A-Extensions metadata value.
 
 Activating this extension implies that the server can send A2UI-specific messages (like surfaceUpdate) and the client is expected to send A2UI-specific events (like userAction).
 
-## Data Encoding
+## Data encoding
 
 A2UI messages are encoded as an A2A `DataPart`.
 

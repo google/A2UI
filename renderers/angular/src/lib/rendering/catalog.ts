@@ -16,7 +16,7 @@
 
 import { Binding, InjectionToken, Type } from '@angular/core';
 import { DynamicComponent } from './dynamic-component';
-import { Types } from '@a2ui/lit/0.8';
+import * as Types from '@a2ui/web_core/types/types';
 
 export type CatalogLoader = () =>
   | Promise<Type<DynamicComponent<any>>>

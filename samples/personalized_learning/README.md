@@ -4,7 +4,7 @@ A full-stack sample demonstrating A2UI's capabilities for building AI-powered ed
 
 **Contributed by Google Public Sector's Rapid Innovation Team.**
 
-![Personalized Learning Demo](assets/hero.png)
+![Personalized Learning Demo](assets/hero.jpg)
 
 ---
 

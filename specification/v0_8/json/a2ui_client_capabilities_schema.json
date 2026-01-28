@@ -6,7 +6,7 @@
   "properties": {
     "supportedCatalogIds": {
       "type": "array",
-      "description": "The URI of each of the catalogs that is supported by the client. The standard catalog for v0.8 is 'a2ui.org:standard_catalog_0_8_0'.",
+      "description": "The URI of each of the catalogs that is supported by the client. The standard catalog for v0.8 is 'https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json'.",
       "items": {
         "type": "string"
       }

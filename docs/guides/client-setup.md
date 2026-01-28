@@ -15,9 +15,10 @@ Integrate A2UI into your application using the renderer for your platform.
 
 ## Web Components (Lit)
 
-!!! warning "Attention"
-    The Lit client library is not yet published to NPM. Check back in the
-    coming days.
+> ⚠️ **Attention**
+>
+> The Lit client library is not yet published to NPM. Check back in the
+> coming days.
 
 ```bash
 npm install @a2ui/web-lib lit @lit-labs/signals
@@ -35,9 +36,10 @@ TODO: Add verified setup example.
 
 ## Angular
 
-!!! warning "Attention"
-    The Angular client library is not yet published to NPM. Check back in the
-    coming days.
+> ⚠️ **Attention**
+>
+> The Angular client library is not yet published to NPM. Check back in the
+> coming days.
 
 ```bash
 npm install @a2ui/angular @a2ui/web-lib

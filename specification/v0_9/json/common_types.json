@@ -240,7 +240,7 @@
     },
     "CheckRule": {
       "type": "object",
-      "description": "A single validaton rule applied to an input component.",
+      "description": "A single validation rule applied to an input component.",
       "unevaluatedProperties": false,
       "allOf": [
         {

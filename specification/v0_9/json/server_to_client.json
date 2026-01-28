@@ -60,7 +60,7 @@
               "description": "A list containing all UI components for the surface.",
               "minItems": 1,
               "items": {
-                "$ref": "standard_catalog.json#/$defs/anyComponent"
+                "$ref": "catalog.json#/$defs/anyComponent"
               }
             }
           },

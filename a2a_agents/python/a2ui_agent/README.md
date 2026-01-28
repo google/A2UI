@@ -1,8 +1,8 @@
-# A2UI Agent Implementation
+# A2UI Agent implementation
 
 The `a2a_agents/python/a2ui_agent/` is the Python implementation of the a2ui agent library.
 
-### Extension Components (`src/a2ui/extension`)
+### Extension components (`src/a2ui/extension`)
 
 The `src/a2ui/extension` directory contains the core logic for the A2UI agent extension:
 
@@ -10,7 +10,7 @@ The `src/a2ui/extension` directory contains the core logic for the A2UI agent ex
 *   **`a2ui_schema_utils.py`**: Schema manipulation helpers.
 *   **`send_a2ui_to_client_toolset.py`**: An example implementation of using ADK toolcalls to implement A2UI.
 
-## Running Tests
+## Running tests
 
 1. Navigate to the a2ui_agent dir:
 

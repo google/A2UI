@@ -11,22 +11,54 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 SCHEMA_DIR = os.path.abspath(os.path.join(TEST_DIR, "../json"))
 CASES_DIR = os.path.join(TEST_DIR, "cases")
 TEMP_FILE = os.path.join(TEST_DIR, "temp_data.json")
+TEMP_CATALOG_FILE = os.path.join(TEST_DIR, "catalog.json")
 
 # Map of schema filenames to their full paths
+# Note: catalog.json is dynamically created from standard_catalog.json
 SCHEMAS = {
     "server_to_client.json": os.path.join(SCHEMA_DIR, "server_to_client.json"),
     "common_types.json": os.path.join(SCHEMA_DIR, "common_types.json"),
-    "standard_catalog.json": os.path.join(SCHEMA_DIR, "standard_catalog.json"),
+    "catalog.json": TEMP_CATALOG_FILE,
     "client_to_server.json": os.path.join(SCHEMA_DIR, "client_to_server.json"),
 }
+
+def setup_catalog_alias():
+    """
+    Creates a temporary catalog.json from standard_catalog.json
+    with the $id modified to match what server_to_client.json expects.
+    """
+    standard_catalog_path = os.path.join(SCHEMA_DIR, "standard_catalog.json")
+    if not os.path.exists(standard_catalog_path):
+        print(f"Error: standard_catalog.json not found at {standard_catalog_path}")
+        sys.exit(1)
+
+    with open(standard_catalog_path, 'r') as f:
+        try:
+            catalog = json.load(f)
+        except json.JSONDecodeError as e:
+            print(f"Error parsing standard_catalog.json: {e}")
+            sys.exit(1)
+
+    # Modify the $id to be the generic catalog reference
+    # This allows server_to_client.json to refer to "catalog.json"
+    # and have it resolve to this schema content.
+    if "$id" in catalog:
+        catalog["$id"] = catalog["$id"].replace("standard_catalog.json", "catalog.json")
+    
+    with open(TEMP_CATALOG_FILE, 'w') as f:
+        json.dump(catalog, f, indent=2)
+
+def cleanup_catalog_alias():
+    if os.path.exists(TEMP_CATALOG_FILE):
+        os.remove(TEMP_CATALOG_FILE)
 
 def validate_ajv(schema_path, data_path, all_schemas):
     """Runs ajv validate via subprocess."""
     local_ajv = os.path.join(TEST_DIR, "node_modules", ".bin", "ajv")
     if os.path.exists(local_ajv):
-        cmd = [local_ajv, "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-d", data_path]
+        cmd = [local_ajv, "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
     else:
-        cmd = ["pnpm", "dlx", "ajv-cli", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-d", data_path]
+        cmd = ["pnpm", "dlx", "ajv-cli", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
 
     # Add all other schemas as references
     for name, path in all_schemas.items():
@@ -123,29 +155,36 @@ def main():
         print(f"No cases directory found at {CASES_DIR}")
         return
 
-    test_files = glob.glob(os.path.join(CASES_DIR, "*.json"))
+    # Create the temporary catalog.json alias
+    setup_catalog_alias()
 
-    total_passed = 0
-    total_failed = 0
+    try:
+        test_files = glob.glob(os.path.join(CASES_DIR, "*.json"))
 
-    # 1. Run standard test suites
-    for test_file in sorted(test_files):
-        p, f = run_suite(test_file)
+        total_passed = 0
+        total_failed = 0
+
+        # 1. Run standard test suites
+        for test_file in sorted(test_files):
+            p, f = run_suite(test_file)
+            total_passed += p
+            total_failed += f
+
+        # 2. Run .jsonl example validation
+        example_path = os.path.join(CASES_DIR, "contact_form_example.jsonl")
+        p, f = validate_jsonl_example(example_path)
         total_passed += p
         total_failed += f
 
-    # 2. Run .jsonl example validation
-    example_path = os.path.join(CASES_DIR, "contact_form_example.jsonl")
-    p, f = validate_jsonl_example(example_path)
-    total_passed += p
-    total_failed += f
+        print("\n" + "="*30)
+        print(f"Total Passed: {total_passed}")
+        print(f"Total Failed: {total_failed}")
 
-    print("\n" + "="*30)
-    print(f"Total Passed: {total_passed}")
-    print(f"Total Failed: {total_failed}")
-
-    if os.path.exists(TEMP_FILE):
-        os.remove(TEMP_FILE)
+    finally:
+        if os.path.exists(TEMP_FILE):
+            os.remove(TEMP_FILE)
+        # Clean up the catalog alias
+        cleanup_catalog_alias()
 
     if total_failed > 0:
         sys.exit(1)

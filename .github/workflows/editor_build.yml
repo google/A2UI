@@ -19,11 +19,13 @@ on:
     paths:
       - 'tools/editor/**'
       - 'renderers/lit/**'
+      - 'renderers/web_core/**'
       - '.github/workflows/editor_build.yml'
   pull_request:
     paths:
       - 'tools/editor/**'
       - 'renderers/lit/**'
+      - 'renderers/web_core/**'
       - '.github/workflows/editor_build.yml'
 
 jobs:
@@ -37,6 +39,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Install web_core deps
+        working-directory: ./renderers/web_core
+        run: npm ci
+
+      - name: Build web_core
+        working-directory: ./renderers/web_core
+        run: npm run build
 
       - name: Install lib's deps
         working-directory: ./renderers/lit
