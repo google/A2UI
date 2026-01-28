@@ -17,7 +17,7 @@ import json
 import logging
 import os
 import importlib.resources
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Callable
 from dataclasses import dataclass, field
 from .loader import A2uiSchemaLoader, PackageLoader, FileSystemLoader
 from ..inference_strategy import InferenceStrategy
@@ -122,6 +122,7 @@ class A2uiSchemaManager(InferenceStrategy):
       custom_catalogs: Optional[List[CustomCatalogConfig]] = None,
       exclude_basic_catalog: bool = False,
       accepts_inline_catalogs: bool = False,
+      schema_modifiers: List[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
   ):
     self._version = version
     self._exclude_basic_catalog = exclude_basic_catalog
@@ -132,6 +133,7 @@ class A2uiSchemaManager(InferenceStrategy):
     self._supported_catalogs: Dict[str, A2uiCatalog] = {}
     self._catalog_example_paths: Dict[str, str] = {}
     self._basic_catalog = None
+    self._schema_modifiers = schema_modifiers
     self._load_schemas(version, custom_catalogs, basic_examples_path)
 
   @property
@@ -141,6 +143,12 @@ class A2uiSchemaManager(InferenceStrategy):
   @property
   def supported_catalogs(self) -> Dict[str, A2uiCatalog]:
     return self._supported_catalogs
+
+  def _apply_modifiers(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+    if self._schema_modifiers:
+      for modifier in self._schema_modifiers:
+        schema = modifier(schema)
+    return schema
 
   def _load_schemas(
       self,
@@ -156,13 +164,17 @@ class A2uiSchemaManager(InferenceStrategy):
       )
 
     # Load server-to-client and common types schemas
-    self._server_to_client_schema = _load_basic_component(
-        version, SERVER_TO_CLIENT_SCHEMA_KEY
+    self._server_to_client_schema = self._apply_modifiers(
+        _load_basic_component(version, SERVER_TO_CLIENT_SCHEMA_KEY)
     )
-    self._common_types_schema = _load_basic_component(version, COMMON_TYPES_SCHEMA_KEY)
+    self._common_types_schema = self._apply_modifiers(
+        _load_basic_component(version, COMMON_TYPES_SCHEMA_KEY)
+    )
 
     # Process basic catalog
-    basic_catalog_schema = _load_basic_component(version, CATALOG_SCHEMA_KEY)
+    basic_catalog_schema = self._apply_modifiers(
+        _load_basic_component(version, CATALOG_SCHEMA_KEY)
+    )
     if not basic_catalog_schema:
       basic_catalog_schema = {}
 
@@ -192,14 +204,16 @@ class A2uiSchemaManager(InferenceStrategy):
     # Process custom catalogs
     if custom_catalogs:
       for config in custom_catalogs:
-        custom_catalog_schema = _load_from_path(config.catalog_path)
+        custom_catalog_schema = self._apply_modifiers(
+            _load_from_path(config.catalog_path)
+        )
         resolved_catalog_schema = A2uiCatalog.resolve_schema(
             basic_catalog_schema, custom_catalog_schema
         )
         catalog = A2uiCatalog(
             version=version,
             name=config.name,
-            catalog_schema=resolved_catalog_schema,
+            catalog_schema=self._apply_modifiers(resolved_catalog_schema),
             s2c_schema=self._server_to_client_schema,
             common_types_schema=self._common_types_schema,
         )
