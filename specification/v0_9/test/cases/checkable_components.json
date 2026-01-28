@@ -160,7 +160,10 @@
               "checks": [
                 {
                   "call": "regex",
-                  "args": [{ "path": "/formData/phone" }, "^\\d{10}$"],
+                  "args": {
+                    "value": { "path": "/formData/phone" },
+                    "pattern": "^\\d{10}$"
+                  },
                   "message": "Must be 10 digits"
                 }
               ]
@@ -184,7 +187,11 @@
               "checks": [
                 {
                   "call": "length",
-                  "args": [{ "path": "/formData/pw" }, { "min": 8, "max": 64 }],
+                  "args": {
+                    "value": { "path": "/formData/pw" },
+                    "min": 8,
+                    "max": 64
+                  },
                   "message": "Password must be 8-64 characters"
                 }
               ]
@@ -210,7 +217,11 @@
               "checks": [
                 {
                   "call": "numeric",
-                  "args": [{ "path": "/formData/score" }, { "min": 0, "max": 100 }],
+                  "args": {
+                    "value": { "path": "/formData/score" },
+                    "min": 0,
+                    "max": 100
+                  },
                   "message": "Score must be between 0 and 100"
                 }
               ]
@@ -234,11 +245,28 @@
               "checks": [
                 {
                   "and": [
-                    { "call": "required", "args": [{ "path": "/formData/code" }] },
+                    {
+                      "call": "required",
+                      "args": { "value": { "path": "/formData/code" } }
+                    },
                     {
                       "or": [
-                        { "call": "regex", "args": [{ "path": "/formData/code" }, "^[A-Z]"] },
-                        { "not": { "call": "regex", "args": [{ "path": "/formData/code" }, "^[0-9]"] } }
+                        {
+                          "call": "regex",
+                          "args": {
+                            "value": { "path": "/formData/code" },
+                            "pattern": "^[A-Z]"
+                          }
+                        },
+                        {
+                          "not": {
+                            "call": "regex",
+                            "args": {
+                              "value": { "path": "/formData/code" },
+                              "pattern": "^[0-9]"
+                            }
+                          }
+                        }
                       ]
                     }
                   ],
@@ -265,7 +293,7 @@
               "checks": [
                 {
                   "call": "email",
-                  "args": [{ "path": "/formData/email" }]
+                  "args": { "value": { "path": "/formData/email" } }
                 }
               ]
             }
@@ -288,7 +316,7 @@
               "checks": [
                 {
                   "call": "formatString",
-                  "args": ["Hello ${/formData/name}"],
+                  "args": { "value": "Hello ${/formData/name}" },
                   "returnType": "string",
                   "message": "This should fail because returnType is string, not boolean"
                 }
@@ -319,7 +347,11 @@
               "checks": [
                 {
                   "call": "length",
-                  "args": [{ "path": "/formData/interests" }, { "min": 2, "max": 2 }],
+                  "args": {
+                    "value": { "path": "/formData/interests" },
+                    "min": 2,
+                    "max": 2
+                  },
                   "message": "Select exactly 2 interests"
                 }
               ]
