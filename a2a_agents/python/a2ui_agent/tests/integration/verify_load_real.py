@@ -16,12 +16,13 @@ import sys
 
 from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.constants import CATALOG_COMPONENTS_KEY
+from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 
 def verify():
   print('Verifying A2uiSchemaManager...')
   try:
-    manager = A2uiSchemaManager('0.8')
+    manager = A2uiSchemaManager('0.8', schema_modifiers=[remove_strict_validation])
     catalog = manager.get_effective_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
     print(f'Successfully loaded 0.8: {len(catalog_components)} components')
@@ -364,6 +365,13 @@ def verify():
                         'key': 'imageUrl',
                         'valueString': 'http://localhost:10003/static/profile2.png',
                     },
+                    {
+                        'key': 'contacts',
+                        'valueMap': [{
+                            'key': 'contact1',
+                            'valueMap': [{'key': 'name', 'valueString': 'Casey Smith'}],
+                        }],
+                    },
                 ],
             }
         },
@@ -375,7 +383,7 @@ def verify():
     sys.exit(1)
 
   try:
-    manager = A2uiSchemaManager('0.9')
+    manager = A2uiSchemaManager('0.9', schema_modifiers=[remove_strict_validation])
     catalog = manager.get_effective_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
     print(f'Successfully loaded 0.9: {len(catalog_components)} components')
@@ -389,6 +397,7 @@ def verify():
                 'catalogId': (
                     'https://a2ui.dev/specification/v0_9/standard_catalog.json'
                 ),
+                'fakeProperty': 'should be allowed',
             },
         },
         {
