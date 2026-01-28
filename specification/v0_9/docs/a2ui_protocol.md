@@ -143,7 +143,18 @@ The [`server_to_client.json`] schema is the top-level entry point. Every message
 
 ### The Standard Catalog
 
-The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`) and functions (e.g., `required`, `email`). By separating this from the envelope, developers can easily swap in custom catalogs (e.g., `material_catalog.json` or `cupertino_catalog.json`) without rewriting the core protocol parser.
+The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`) and functions (e.g., `required`, `email`).
+
+**Swappable Catalogs & Validation:**
+
+The [`server_to_client.json`] envelope schema is designed to be catalog-agnostic. It references components using a placeholder filename: `catalog.json` (specifically `$ref: "catalog.json#/$defs/anyComponent"`).
+
+To validate A2UI messages:
+
+1.  **Standard Catalog**: Map `catalog.json` to `standard_catalog.json`.
+2.  **Custom Catalog**: Map `catalog.json` to your custom catalog file (e.g., `my_custom_catalog.json`).
+
+This indirection allows the same core envelope schema to be used with any compliant component catalog without modification.
 
 Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the standard catalog. It should have the same form as the standard catalog, and use common elements in the [`common_types.json`] schema.
 
