@@ -386,8 +386,8 @@ Remove a surface and all its components and data.
 
 All messages should be validated against:
 
-- **[server_to_client.json](https://github.com/google/A2UI/blob/main/specification/0.8/json/server_to_client.json)**: Message envelope schema
-- **[standard_catalog_definition.json](https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json)**: Component schemas
+- **[server_to_client.json](https://github.com/google/A2UI/blob/main/specification/v0_8/json/server_to_client.json)**: Message envelope schema
+- **[standard_catalog_definition.json](https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json)**: Component schemas
 
 ## Further Reading
 

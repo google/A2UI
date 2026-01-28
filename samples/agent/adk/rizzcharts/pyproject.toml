@@ -12,7 +12,7 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "litellm",
     "jsonschema>=4.0.0",
-    "a2ui",
+    "a2ui-agent",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -30,4 +30,4 @@ url = "https://pypi.org/simple"
 default = true
 
 [tool.uv.sources]
-a2ui = { path = "../../../../a2a_agents/python/a2ui_extension", editable = true }
+a2ui-agent = { path = "../../../../a2a_agents/python/a2ui_agent", editable = true }

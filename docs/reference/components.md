@@ -1,6 +1,6 @@
 # Component Gallery
 
-This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://github.com/google/A2UI/blob/main/specification/0.8/json/standard_catalog_definition.json).
+This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json).
 
 ## Layout Components
 
@@ -91,7 +91,7 @@ Display icons using Material Icons or custom icon sets.
   "id": "check-icon",
   "component": {
     "Icon": {
-      "name": {"literalString": "check_circle"}
+      "name": {"literalString": "check"}
     }
   }
 }
@@ -169,7 +169,7 @@ Boolean toggle.
 {
   "id": "terms-checkbox",
   "component": {
-    "Checkbox": {
+    "CheckBox": {
       "label": {"literalString": "I agree to the terms"},
       "value": {"path": "/form/agreedToTerms"}
     }
@@ -267,6 +267,6 @@ This launches a live gallery with all components, their variations, and interact
 
 ## Further Reading
 
-- **[Standard Catalog Definition](../../specification/0.9/json/standard_catalog_definition.json)**: Complete technical specification
+- **[Standard Catalog Definition](../../specification/v0_9/json/standard_catalog_definition.json)**: Complete technical specification
 - **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand
