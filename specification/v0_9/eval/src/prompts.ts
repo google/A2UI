@@ -27,6 +27,11 @@ export const prompts: TestPrompt[] = [
     promptText: `Generate a JSON message containing a deleteSurface for the surface 'dashboard-surface-1'.`,
   },
   {
+    name: "deleteComponent",
+    description: "An updateComponents message to delete a component.",
+    promptText: `Generate an 'updateComponents' message for surfaceId 'main'. This message should delete the component with ID 'loading-spinner' and update the component with ID 'status-text' to have the text "Loaded".`,
+  },
+  {
     name: "dogBreedGenerator",
     description:
       "A prompt to generate a UI for a dog breed information and generator tool.",

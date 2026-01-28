@@ -192,12 +192,18 @@ This message signals the client to create a new surface and begin rendering it. 
 
 ### `updateComponents`
 
-This message provides a list of UI components to be added to or updated within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may only be sent to a surface that has already been created. Note that components may reference children or data bindings that do not yet exist; clients should handle this gracefully by rendering placeholders (progressive rendering).
+This message provides a list of UI components to be added, updated, or removed within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may only be sent to a surface that has already been created.
+
+**Adding or Updating Components:**
+To add or update a component, provide the full component definition object. If a component with the same `id` already exists, it will be replaced.
+
+**Deleting Components:**
+To delete a component, provide an object with the component's `id` and set the `component` property to `null`. This removes the component from the client's memory.
 
 **Properties:**
 
 - `surfaceId` (string, required): The unique identifier for the UI surface to be updated. This is typically a name with meaning (e.g. "user_profile_card"), and it has to be unique within the context of the GenUI session.
-- `components` (array, required): A list of component objects. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list.
+- `components` (array, required): A list of component objects (for updates) or tombstone objects (for deletions).
 
 **Example:**
 
@@ -217,9 +223,8 @@ This message provides a list of UI components to be added to or updated within a
         "text": "John Doe"
       },
       {
-        "id": "user_title",
-        "component": "Text",
-        "text": "Software Engineer"
+        "id": "old_component_id",
+        "component": null
       }
     ]
   }
