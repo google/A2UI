@@ -1,0 +1,3 @@
+[submodule "samples/client/react-vite-lexical"]
+	path = samples/client/react-vite-lexical
+	url = https://github.com/supagent/a2ui-lexical.git
