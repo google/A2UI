@@ -224,7 +224,10 @@
           "default": "boolean"
         }
       },
-      "required": ["call"]
+      "required": ["call"],
+      "oneOf": [
+        { "$ref": "catalog.json#/$defs/anyFunction" }
+      ]
     },
     "LogicExpression": {
       "type": "object",
