@@ -15,3 +15,9 @@ site/
 
 # Python virtual environment
 .venv/
+
+# Motia build artifacts
+server/motia/.motia/
+server/motia/steps/.motia/
+server/motia/node_modules/
+server/motia/.env
