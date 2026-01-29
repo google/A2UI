@@ -148,13 +148,13 @@ This message signals the client to create a new surface and begin rendering it. 
 
 ### `updateComponents`
 
-This message provides a list of UI components to be added, updated, or removed within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may only be sent to a surface that has already been created.
+This message provides a list of UI components to be added, updated, or removed within a specific surface. The components are provided as a flat list, and their relationships are defined by ID references in an adjacency list. This message may only be sent to a surface that has already been created. Note that components may reference children or data bindings that do not yet exist; clients should handle this gracefully by rendering placeholders (progressive rendering).
 
 **Adding or Updating Components:**
 To add or update a component, provide the full component definition object. If a component with the same `id` already exists, it will be replaced.
 
 **Deleting Components:**
-To delete a component, provide an object with the component's `id` and set the `component` property to `null`. This removes the component from the client's memory.
+To delete a component, provide an object with the component's `id` and omit the `component` property. This removes the component from the client's memory.
 
 **Properties:**
 
@@ -179,8 +179,25 @@ To delete a component, provide an object with the component's `id` and set the `
         "text": "John Doe"
       },
       {
-        "id": "old_component_id",
-        "component": null
+        "id": "user_title",
+        "component": "Text",
+        "text": "Software Engineer"
+      }
+    ]
+  }
+}
+
+{
+  "updateComponents": {
+    "surfaceId": "user_profile_card",
+    "components": [
+      {
+        "id": "root",
+        "component": "Column",
+        "children": ["user_name"]
+      },
+      {
+        "id": "user_title"
       }
     ]
   }

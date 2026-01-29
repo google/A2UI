@@ -66,17 +66,13 @@
                   },
                   {
                     "type": "object",
-                    "description": "A tombstone to remove a component.",
+                    "description": "A tombstone to remove a component. Omit the 'component' property to indicate deletion.",
                     "properties": {
                       "id": {
                         "$ref": "common_types.json#/$defs/ComponentId"
-                      },
-                      "component": {
-                        "const": null,
-                        "description": "Set to null to delete this component."
                       }
                     },
-                    "required": ["id", "component"],
+                    "required": ["id"],
                     "additionalProperties": false
                   }
                 ]

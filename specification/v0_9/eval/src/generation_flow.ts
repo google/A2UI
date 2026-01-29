@@ -56,7 +56,7 @@ Standard Instructions:
 13. Do NOT use a 'style' property. Use standard properties like 'align', 'justify', 'variant', etc.
 14. Do NOT invent properties that are not in the schema. Check the 'properties' list for each component type.
 15. Use 'checks' property for validation rules if required.
-16. To delete a component, set its 'component' property to null (e.g. { "id": "...", "component": null }).
+16. To delete a component, output an object with ONLY the 'id' property (omit the 'component' property).
 ${catalogRules ? `\nInstructions specific to this catalog:\n${catalogRules}` : ""}
 
 Schemas:

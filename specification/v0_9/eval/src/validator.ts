@@ -299,12 +299,12 @@ export class Validator {
     const componentType = component.component;
     
     // Handle deletion (tombstone)
-    if (componentType === null) {
+    if (componentType === undefined || componentType === null) {
       return;
     }
 
-    if (!componentType || typeof componentType !== "string") {
-      errors.push(`Component '${id}' is missing 'component' property.`);
+    if (typeof componentType !== "string") {
+      errors.push(`Component '${id}' has invalid 'component' property.`);
       return;
     }
 

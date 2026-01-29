@@ -9,8 +9,7 @@
           "surfaceId": "test_surface",
           "components": [
             {
-              "id": "item_to_delete",
-              "component": null
+              "id": "item_to_delete"
             }
           ]
         }
@@ -29,8 +28,7 @@
               "text": "Hello"
             },
             {
-              "id": "old_item",
-              "component": null
+              "id": "old_item"
             }
           ]
         }
@@ -45,7 +43,6 @@
           "components": [
             {
               "id": "item_to_delete",
-              "component": null,
               "text": "Should not be here"
             }
           ]
@@ -59,9 +56,7 @@
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
-            {
-              "component": null
-            }
+            {}
           ]
         }
       }
