@@ -82,7 +82,6 @@ if [ "$SKIP_PIP" = false ]; then
         "google-genai>=1.0.0" \
         "google-cloud-storage>=2.10.0" \
         "python-dotenv>=1.0.0" \
-        "litellm>=1.0.0" \
         "vertexai" 2>/dev/null
     echo "  Python dependencies installed"
 else

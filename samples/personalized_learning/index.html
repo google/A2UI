@@ -371,6 +371,8 @@
       .message-content {
         flex: 1;
         padding-top: 4px;
+        min-width: 0; /* Allow flex child to shrink below content size */
+        overflow: hidden; /* Contain children within message bounds */
       }
 
       .message-sender {
@@ -433,6 +435,14 @@
         background: var(--chat-bg);
         border-radius: 12px;
         border: 1px solid var(--border-color);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Prevent A2UI child components from shrinking */
+      .a2ui-container a2ui-surface,
+      .a2ui-container a2ui-theme-provider {
+        min-width: min-content;
       }
 
       /* Source attribution styling */
@@ -594,12 +604,19 @@
         color: var(--text-secondary);
       }
 
-      /* Flashcard Row */
+      /* Flashcard Row - prevent cards from shrinking when in horizontal scroll */
       .flashcard-row {
         display: flex;
         flex-wrap: wrap;
         gap: 16px;
         margin-top: 16px;
+      }
+
+      /* A2UI Row children should not shrink (enables horizontal scroll) */
+      .a2ui-container [data-a2ui-row] > *,
+      .a2ui-container a2ui-flashcard,
+      .a2ui-container a2ui-quizcard {
+        flex-shrink: 0;
       }
 
       /* Audio/Video Card */
