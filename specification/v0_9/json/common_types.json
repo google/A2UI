@@ -74,23 +74,43 @@
     "DynamicValue": {
       "description": "A value that can be a literal, a path, or a function call returning any type.",
       "oneOf": [
-        { "type": "string" },
-        { "type": "number" },
-        { "type": "boolean" },
-        { "$ref": "#/$defs/DataBinding" },
-        { "$ref": "#/$defs/FunctionCall" }
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "$ref": "#/$defs/FunctionCall"
+        }
       ]
     },
     "DynamicString": {
       "description": "Represents a string",
       "oneOf": [
-        { "type": "string" },
-        { "$ref": "#/$defs/DataBinding" },
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
             {
-              "properties": { "returnType": { "const": "string" } },
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "string"
+                }
+              },
               "required": ["returnType"]
             }
           ]
@@ -100,13 +120,23 @@
     "DynamicNumber": {
       "description": "Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.",
       "oneOf": [
-        { "type": "number" },
-        { "$ref": "#/$defs/DataBinding" },
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
             {
-              "properties": { "returnType": { "const": "number" } },
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "number"
+                }
+              },
               "required": ["returnType"]
             }
           ]
@@ -116,9 +146,15 @@
     "DynamicBoolean": {
       "description": "A boolean value that can be a literal, a path, or a logic expression (including function calls returning boolean).",
       "oneOf": [
-        { "type": "boolean" },
-        { "$ref": "#/$defs/DataBinding" },
-        { "$ref": "#/$defs/LogicExpression" }
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "$ref": "#/$defs/LogicExpression"
+        }
       ]
     },
     "DynamicStringList": {
@@ -126,14 +162,24 @@
       "oneOf": [
         {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        { "$ref": "#/$defs/DataBinding" },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
             {
-              "properties": { "returnType": { "const": "array" } },
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "array"
+                }
+              },
               "required": ["returnType"]
             }
           ]
@@ -149,11 +195,13 @@
           "description": "The name of the function to call."
         },
         "args": {
-          "type": "array",
+          "type": "object",
           "description": "Arguments passed to the function.",
-          "items": {
+          "additionalProperties": {
             "anyOf": [
-              { "$ref": "#/$defs/DynamicValue" },
+              {
+                "$ref": "#/$defs/DynamicValue"
+              },
               {
                 "type": "object",
                 "description": "A literal object argument (e.g. configuration)."
