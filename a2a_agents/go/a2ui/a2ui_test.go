@@ -123,6 +123,12 @@ func TestWrapAsJSONArray(t *testing.T) {
 	if wrapped["items"] == nil {
 		t.Error("Expected items field")
 	}
+
+	// Test Empty Schema
+	_, err = WrapAsJSONArray(map[string]interface{}{})
+	if err == nil {
+		t.Error("Expected error for empty schema")
+	}
 }
 
 // Test SendA2UIToClientToolset
@@ -238,6 +244,24 @@ func TestSendA2UIJsonToClientTool_Run(t *testing.T) {
 	result, _ = tool.Run(context.Background(), args, ctx)
 	if result["error"] == nil {
 		t.Error("Expected error for missing argument")
+	}
+
+	// Empty string argument
+	args = map[string]interface{}{"a2ui_json": ""}
+	result, _ = tool.Run(context.Background(), args, ctx)
+	if result["error"] == nil {
+		t.Error("Expected error for empty string argument")
+	}
+
+	// Non-string argument (Map) - should be marshaled
+	args = map[string]interface{}{"a2ui_json": map[string]interface{}{"text": "Hello"}}
+	result, _ = tool.Run(context.Background(), args, ctx)
+	if result["validated_a2ui_json"] == nil {
+		t.Error("Expected validated_a2ui_json in result for map argument")
+	}
+	list, ok = result["validated_a2ui_json"].([]interface{})
+	if !ok || len(list) != 1 {
+		t.Error("Expected wrapped list for map argument")
 	}
 }
 
