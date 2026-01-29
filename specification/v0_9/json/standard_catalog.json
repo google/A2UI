@@ -670,7 +670,8 @@
           "const": "boolean"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "regex": {
       "type": "object",
@@ -695,7 +696,8 @@
           "const": "boolean"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "length": {
       "type": "object",
@@ -727,7 +729,8 @@
           "const": "boolean"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "numeric": {
       "type": "object",
@@ -757,7 +760,8 @@
           "const": "boolean"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "email": {
       "type": "object",
@@ -778,7 +782,8 @@
           "const": "boolean"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "formatString": {
       "type": "object",
@@ -799,7 +804,8 @@
           "const": "string"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "formatNumber": {
       "type": "object",
@@ -831,7 +837,8 @@
           "const": "string"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "formatCurrency": {
       "type": "object",
@@ -867,7 +874,8 @@
           "const": "string"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "formatDate": {
       "type": "object",
@@ -895,7 +903,8 @@
           "const": "string"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "pluralize": {
       "type": "object",
@@ -943,7 +952,8 @@
           "const": "string"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "openUrl": {
       "type": "object",
@@ -972,7 +982,8 @@
           "const": "void"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     },
     "now": {
       "type": "object",
@@ -990,7 +1001,8 @@
           "const": "string"
         }
       },
-      "required": ["call", "args"]
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     }
   },
   "theme": {
