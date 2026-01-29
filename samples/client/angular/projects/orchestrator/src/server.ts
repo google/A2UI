@@ -62,7 +62,7 @@ app.post('/a2a', (req, res) => {
         metadata: {
           a2uiClientCapabilities: {
             supportedCatalogIds: [
-              'https://a2ui.org/specification/v0_8/json/standard_catalog_definition.json',
+              'https://a2ui.org/specification/v0_8/standard_catalog_definition.json',
             ],
           },
         },
