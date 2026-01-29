@@ -926,6 +926,21 @@
       "discriminator": {
         "propertyName": "component"
       }
+    },
+    "anyFunction": {
+      "oneOf": [
+        { "$ref": "#/functions/required" },
+        { "$ref": "#/functions/regex" },
+        { "$ref": "#/functions/length" },
+        { "$ref": "#/functions/numeric" },
+        { "$ref": "#/functions/email" },
+        { "$ref": "#/functions/formatString" },
+        { "$ref": "#/functions/formatNumber" },
+        { "$ref": "#/functions/formatCurrency" },
+        { "$ref": "#/functions/formatDate" },
+        { "$ref": "#/functions/pluralize" },
+        { "$ref": "#/functions/openUrl" }
+      ]
     }
   }
 }
