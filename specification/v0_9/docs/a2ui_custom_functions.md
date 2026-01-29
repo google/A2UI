@@ -12,7 +12,7 @@ This guide demonstrates how to create a `custom_catalog.json` that adds a string
 Create a JSON Schema file (e.g., `custom_catalog.json`) that defines your
 function parameters.
 
-Use the `functions` property to define a map of function schemas, and a group in `$defs` to collect them.
+Use the `functions` property to define a map of function schemas.
 
 ```json
 {
@@ -67,31 +67,33 @@ Use the `functions` property to define a map of function schemas, and a group in
 }
 ```
 
-## 2. Combine with the Standard Schema
+## 2. Make the functions available 
 
-To use this custom catalog in your application, you must override the
-`FunctionCall` definition to include your new function definitions.
-
-Because `common_types.json` defines `FunctionCall` as a choice (`oneOf`), you
-simply create a new list of choices that includes both the standard and custom
-function groups.
-
+The `FunctionCall` definition refers to a [catalog-agnostic reference](a2ui_protocol.md#the-standard-catalog).
+In your catalog, you simply need to define the `anyFunctions` reference:
 ```json
 {
-  // Add to the same file as created above...
-  
-  // Import definitions from the standard schema
   "$defs": {
-    "FunctionCall": {
-      "description": "Invokes a standard OR custom function.",
+    "anyFunction": {
       "oneOf": [
-        // 1. Allow all standard functions
-        {
-          "$ref": "https://a2ui.dev/specification/v0_9/standard_catalog.json#/$defs/anyFunction"
-        },
-        // 2. Allow the custom functions
-        { "$ref": "#/functions/trim" },
-        { "$ref": "#/functions/getScreenResolution" }
+        {"$ref": "#/functions/trim"},
+        {"$ref": "#/functions/getScreenResolution"}
+      ]
+    }
+  }
+}
+```
+
+If you want to incorporate functions defined in the [`standard_catalog.json`],
+those can be added too:
+```json
+{
+  "$defs": {
+    "anyFunction": {
+      "oneOf": [
+        {"$ref": "#/functions/trim"},
+        {"$ref": "#/functions/getScreenResolution"},
+        {"$ref": "catalog.json#/$defs/anyFunction" }
       ]
     }
   }
@@ -100,7 +102,7 @@ function groups.
 
 ## How Validation Works
 
-When a `FunctionCall` is validated against this combined schema:
+When a `FunctionCall` is validated:
 
 1. **Discriminator Lookup:** The validator looks at the `call` property of the
    object.
