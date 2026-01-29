@@ -199,6 +199,14 @@ The repository includes several other demos:
 
 See all available A2UI components:
 
+Step 1: Navigate to the Gallery Angular App:
+
+```bash
+cd samples/client/angular
+```
+
+Step 2: Run
+
 ```bash
 npm start -- gallery
 ```
