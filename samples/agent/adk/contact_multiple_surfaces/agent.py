@@ -21,8 +21,6 @@ from typing import Any
 import jsonschema
 from a2ui_examples import load_examples, load_floor_plan_example
 
-# Corrected imports from our new/refactored files
-from a2ui_schema import A2UI_SCHEMA
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
@@ -31,11 +29,14 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from prompt_builder import (
-
     get_text_prompt,
-    get_ui_prompt,
+    ROLE_DESCRIPTION,
+    WORKFLOW_DESCRIPTION,
+    UI_DESCRIPTION,
 )
 from tools import get_contact_info
+from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +49,8 @@ class ContactAgent:
     def __init__(self, base_url: str, use_ui: bool = False):
         self.base_url = base_url
         self.use_ui = use_ui
+        self._schema_manager = A2uiSchemaManager("0.8", schema_modifiers=[remove_strict_validation]) if use_ui else None
+        self._examples = load_examples(self._schema_manager.validator, self.base_url) if use_ui else None
         self._agent = self._build_agent(use_ui)
         self._user_id = "remote_agent"
         self._runner = Runner(
@@ -58,18 +61,6 @@ class ContactAgent:
             memory_service=InMemoryMemoryService(),
         )
 
-        # Load A2UI_SCHEMA and wrap it in an array validator for list responses
-        try:
-            single_message_schema = json.loads(A2UI_SCHEMA)
-            self.a2ui_schema_object = {"type": "array", "items": single_message_schema}
-            logger.info(
-                "A2UI_SCHEMA successfully loaded and wrapped in an array validator."
-            )
-        except json.JSONDecodeError as e:
-            logger.error(f"CRITICAL: Failed to parse A2UI_SCHEMA: {e}")
-            self.a2ui_schema_object = None
-        # --- END MODIFICATION ---
-
     def get_processing_message(self) -> str:
         return "Looking up contact information..."
 
@@ -77,12 +68,12 @@ class ContactAgent:
         """Builds the LLM agent for the contact agent."""
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
-        if use_ui:
-            examples = load_examples(self.base_url)
-            instruction = get_ui_prompt(self.base_url, examples)
-        else:
-            # The text prompt function also returns a complete prompt.
-            instruction = get_text_prompt()
+        instruction = self._schema_manager.generate_system_prompt(
+            role_description=ROLE_DESCRIPTION,
+            workflow_description=WORKFLOW_DESCRIPTION,
+            ui_description=UI_DESCRIPTION,
+            examples=self._examples,
+        ) if use_ui else get_text_prompt()
 
         return LlmAgent(
             model=LiteLlm(model=LITELLM_MODEL),
@@ -116,7 +107,7 @@ class ContactAgent:
         current_query_text = query
 
         # Ensure schema was loaded
-        if self.use_ui and self.a2ui_schema_object is None:
+        if self.use_ui and self._schema_manager.bundled_schema is None:
             logger.error(
                 "--- ContactAgent.stream: A2UI_SCHEMA is not loaded. "
                 "Cannot perform UI validation. ---"
@@ -292,9 +283,11 @@ class ContactAgent:
                         logger.info(
                             "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
                         )
-                        jsonschema.validate(
-                            instance=parsed_json_data, schema=self.a2ui_schema_object
-                        )
+                        if self._schema_manager.validator:
+                             self._schema_manager.validator.validate(parsed_json_data)
+                        else:
+                             # Fallback if validator failed to init but UI is on (shouldn't happen ideally)
+                             logger.warning("Validator not initialized, skipping detailed schema validation.")
                         # --- End New Validation Steps ---
 
                         logger.info(
