@@ -648,9 +648,8 @@
       "unevaluatedProperties": false
     }
   },
-  "functions": [
-    {
-      "name": "required",
+  "functions": {
+    "required": {
       "description": "Checks that the value is not null, undefined, or empty.",
       "returnType": "boolean",
       "parameters": {
@@ -664,8 +663,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "regex",
+    "regex": {
       "description": "Checks that the value matches a regular expression string.",
       "returnType": "boolean",
       "parameters": {
@@ -681,8 +679,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "length",
+    "length": {
       "description": "Checks string length constraints.",
       "returnType": "boolean",
       "parameters": {
@@ -705,8 +702,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "numeric",
+    "numeric": {
       "description": "Checks numeric range constraints.",
       "returnType": "boolean",
       "parameters": {
@@ -727,8 +723,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "email",
+    "email": {
       "description": "Checks that the value is a valid email address.",
       "returnType": "boolean",
       "parameters": {
@@ -740,8 +735,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "formatString",
+    "formatString": {
       "description": "Performs string interpolation of data model values and other functions in the catalog functions list and returns the resulting string. The value string can contain interpolated expressions in the `${expression}` format. Supported expression types include: JSON Pointer paths to the data model (e.g., `${/absolute/path}` or `${relative/path}`), and client-side function calls (e.g., `${now()}`). Function arguments must be named (e.g., `${formatDate(value:${/currentDate}, format:'MM-dd')}`). To include a literal `${` sequence, escape it as `\\${`.",
       "returnType": "string",
       "parameters": {
@@ -753,8 +747,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "formatNumber",
+    "formatNumber": {
       "description": "Formats a number with the specified grouping and decimal precision.",
       "returnType": "string",
       "parameters": {
@@ -777,8 +770,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "formatCurrency",
+    "formatCurrency": {
       "description": "Formats a number as a currency string.",
       "returnType": "string",
       "parameters": {
@@ -805,8 +797,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "formatDate",
+    "formatDate": {
       "description": "Formats a timestamp into a string using a pattern.",
       "returnType": "string",
       "parameters": {
@@ -825,8 +816,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "pluralize",
+    "pluralize": {
       "description": "Returns a localized string based on the Common Locale Data Repository (CLDR) plural category of the count (zero, one, two, few, many, other). Requires an 'other' fallback. For English, just use 'one' and 'other'.",
       "returnType": "string",
       "parameters": {
@@ -865,8 +855,7 @@
         "unevaluatedProperties": false
       }
     },
-    {
-      "name": "openUrl",
+    "openUrl": {
       "description": "Opens the specified URL in a browser or handler. This function has no return value.",
       "returnType": "void",
       "parameters": {
@@ -886,7 +875,7 @@
         "unevaluatedProperties": false
       }
     }
-  ],
+  },
   "theme": {
     "primaryColor": {
       "type": "string",
