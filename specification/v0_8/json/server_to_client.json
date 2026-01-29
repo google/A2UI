@@ -15,7 +15,7 @@
         },
         "catalogId": {
           "type": "string",
-          "description": "The identifier of the component catalog to use for this surface. If omitted, the client MUST default to the standard catalog for this A2UI version (https://github.com/google/A2UI/blob/main/specification/v0_8/json/standard_catalog_definition.json)."
+          "description": "The identifier of the component catalog to use for this surface. If omitted, the client MUST default to the standard catalog for this A2UI version (https://a2ui.org/specification/v0_8/standard_catalog_definition.json)."
         },
         "root": {
           "type": "string",
@@ -24,7 +24,7 @@
         "styles": {
           "type": "object",
           "description": "Styling information for the UI.",
-           "additionalProperties": true
+          "additionalProperties": true
         }
       },
       "required": ["root", "surfaceId"]

@@ -394,7 +394,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     description: "A button that opens an external URL.",
     promptText: `Create a 'createSurface' and 'updateComponents' message. Surface ID 'main'.
     Include a 'Button' labeled "Visit Website".
-    The button's action should be a client-side function call to 'openUrl' with the argument 'url': 'https://a2ui.dev'.`,
+    The button's action should be a client-side function call to 'openUrl' with the argument 'url': 'https://a2ui.org'.`,
   },
   {
     name: "nestedLayoutRecursive",
