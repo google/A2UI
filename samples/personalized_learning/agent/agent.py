@@ -48,8 +48,7 @@ _CONFIG_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 try:
     from .context_loader import get_combined_context, load_context_file
     from .a2ui_templates import get_system_prompt, SURFACE_ID as _IMPORTED_SURFACE_ID
-    from .openstax_content import fetch_content_for_topic, fetch_chapter_content
-    from .openstax_chapters import OPENSTAX_CHAPTERS, KEYWORD_HINTS, get_openstax_url_for_chapter
+    from .openstax_content import fetch_content_for_topic
     _HAS_EXTERNAL_MODULES = True
     _HAS_OPENSTAX = True
 except Exception as e:

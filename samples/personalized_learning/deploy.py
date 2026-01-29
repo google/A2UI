@@ -17,9 +17,16 @@ Usage:
 """
 
 import os
+import ssl
 import sys
 import argparse
 import logging
+
+try:
+    import certifi
+    _HAS_CERTIFI = True
+except ImportError:
+    _HAS_CERTIFI = False
 
 from dotenv import load_dotenv
 
@@ -89,7 +96,7 @@ def main():
             print(f"  - {engine.display_name}: {engine.resource_name}")
         return
 
-    print(f"Deploying Personalized Learning Agent...")
+    print("Deploying Personalized Learning Agent...")
     print(f"  Project: {args.project}")
     print(f"  Location: {args.location}")
     print(f"  Context bucket: gs://{context_bucket}/learner_context/")
@@ -98,14 +105,13 @@ def main():
     # =========================================================================
     # CREATE THE ADK AGENT
     # =========================================================================
-    # According to Vertex AI docs, we create an Agent, wrap it in AdkApp,
-    # and deploy the AdkApp directly. AdkApp is designed to be picklable.
+    # Create an Agent, wrap it in AdkApp, and deploy the AdkApp directly. 
+    # AdkApp is designed to be picklable.
     # =========================================================================
 
     import json
     import re
     import xml.etree.ElementTree as ET
-    from typing import Any
     from google.adk.agents import Agent
     from google.adk.tools import ToolContext
     from vertexai.agent_engines import AdkApp
@@ -780,6 +786,12 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
         content_parts = []
         sources = []
 
+        # Create SSL context once - use certifi CA bundle if available
+        if _HAS_CERTIFI:
+            ssl_ctx = ssl.create_default_context(cafile=certifi.where())
+        else:
+            ssl_ctx = ssl.create_default_context()
+
         for slug in chapter_slugs:
             module_ids = CHAPTER_TO_MODULES.get(slug, [])
             if not module_ids:
@@ -793,7 +805,7 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
             for module_id in module_ids:
                 github_url = f"https://raw.githubusercontent.com/openstax/osbooks-biology-bundle/main/modules/{module_id}/index.cnxml"
                 try:
-                    with urllib.request.urlopen(github_url, timeout=10) as response:
+                    with urllib.request.urlopen(github_url, timeout=10, context=ssl_ctx) as response:
                         cnxml = response.read().decode('utf-8')
                         text = parse_cnxml_to_text(cnxml)
                         if text:
@@ -958,7 +970,7 @@ Textbook source content:
             location=os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1"),
         )
 
-        # Fetch OpenStax content for context - REQUIRED
+        # Fetch OpenStax content for context
         openstax_data = fetch_openstax_content(topic)
         textbook_context = openstax_data.get("content", "")
         sources = openstax_data.get("sources", [])
@@ -1110,7 +1122,8 @@ Textbook source content:
             })
 
         return json.dumps({
-            "content": content[:4000],  # Limit content length
+            # Limit content length. Okay for a demo but could be improved
+            "content": content[:4000],  
             "sources": source_citations
         })
 
@@ -1165,7 +1178,7 @@ Textbook source content:
 
         return json.dumps({"format": "video", "a2ui": a2ui, "surfaceId": SURFACE_ID})
 
-    # Create the agent WITH tools
+    # Create the agent with tools
     agent = Agent(
         name="personalized_learning_agent",
         model=model_id,
@@ -1223,10 +1236,10 @@ Always use gym/sports analogies where appropriate. Be encouraging and supportive
     print(f"Context Bucket: gs://{context_bucket}/learner_context/")
     print()
     print("Next steps:")
-    print(f"  1. Copy the Resource ID above")
-    print(f"  2. Paste it into the notebook's AGENT_RESOURCE_ID variable")
+    print("  1. Copy the Resource ID above")
+    print("  2. Paste it into the notebook's AGENT_RESOURCE_ID variable")
     print(f"  3. Upload learner context files to gs://{context_bucket}/learner_context/")
-    print(f"  4. Run the remaining notebook cells to configure and start the demo")
+    print("  4. Run the remaining notebook cells to configure and start the demo")
 
 
 if __name__ == "__main__":

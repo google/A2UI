@@ -105,7 +105,6 @@ def prepare_build_context(demo_dir: Path) -> Path:
         print(f"ERROR: A2UI web-lib not found at {a2ui_source}")
         sys.exit(1)
 
-    # Remove old copy if exists
     if a2ui_dest.exists():
         print(f"  Removing old {a2ui_dest}")
         shutil.rmtree(a2ui_dest)
@@ -320,7 +319,7 @@ def configure_iap_access(
         print("\n  To grant access later, use:")
         print(f"    gcloud run services add-iam-policy-binding {service_name} \\")
         print(f"      --region={region} --member='user:EMAIL' --role='roles/run.invoker'")
-        print(f"\n  Or for a domain:")
+        print("\n  Or for a domain:")
         print(f"    gcloud run services add-iam-policy-binding {service_name} \\")
         print(f"      --region={region} --member='domain:DOMAIN' --role='roles/run.invoker'")
         return
@@ -506,20 +505,20 @@ def main():
 
     if not args.cloud_run_only:
         print(f"\n✅ Demo is live at: https://{project_id}.web.app")
-        print(f"\nAccess is controlled by Firebase Authentication.")
-        print(f"Users must sign in with a @google.com account (configurable in src/firebase-auth.ts).")
+        print("\nAccess is controlled by Firebase Authentication.")
+        print("Users must sign in with a @google.com account (configurable in src/firebase-auth.ts).")
 
     if args.cloud_run_only:
         print(f"\nCloud Run service: {args.service_name}")
         print(f"Region: {args.region}")
         if args.allow_domain or args.allow_users:
-            print(f"\nAuthentication: IAP-protected")
+            print("\nAuthentication: IAP-protected")
             if args.allow_domain:
                 print(f"  Allowed domain: {args.allow_domain}")
             if args.allow_users:
                 print(f"  Allowed users: {args.allow_users}")
         else:
-            print(f"\n⚠️  Cloud Run deployed with --no-allow-unauthenticated.")
+            print("\n⚠️  Cloud Run deployed with --no-allow-unauthenticated.")
             print(f"   Grant access with: gcloud run services add-iam-policy-binding {args.service_name} \\")
             print(f"     --region={args.region} --member='user:EMAIL' --role='roles/run.invoker'")
 

@@ -45,3 +45,6 @@ a2ui-web-lib/
 
 # Tests (not part of the demo distribution)
 tests/
+
+# Linter cache
+.ruff_cache/

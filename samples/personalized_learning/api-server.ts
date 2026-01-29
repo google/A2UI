@@ -66,8 +66,9 @@ async function authenticateRequest(req: any, res: any): Promise<boolean> {
       return false;
     }
     return true;
-  } catch (err: any) {
-    console.error("[API Server] Auth failed:", err.message);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[API Server] Auth failed:", message);
     res.writeHead(403, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Invalid or expired token" }));
     return false;
@@ -376,7 +377,7 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
         }
       }
     } catch (e) {
-      console.warn("[API Server] Failed to parse chunk:", chunk.substring(0, 100));
+      console.warn("[API Server] Failed to parse chunk:", e, chunk.substring(0, 100));
     }
   }
 

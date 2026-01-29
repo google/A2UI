@@ -35,7 +35,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5174 and try prompts like:
+Open the URL shown in your terminal (typically http://localhost:5174, but the port may vary) and try prompts like:
 - "Help me understand ATP"
 - "Quiz me on meiosis"
 - "Flashcards for photosynthesis"
@@ -148,6 +148,7 @@ The server is the single source of truth—authorization is enforced via the `/a
 - **Single topics only**: Multi-topic requests may return wrong content
 - **Audio/video**: Pre-generated files only, not dynamic
 - **Sidebar**: Placeholder UI; only the chat is functional
+- **Deployment path**: `deploy_hosting.py` assumes `renderers/lit` is at `../../renderers/lit`; update if repo structure changes
 
 ---
 
