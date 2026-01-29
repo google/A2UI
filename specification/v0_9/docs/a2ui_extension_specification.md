@@ -22,7 +22,7 @@ Schemas: The a2ui extension is defined by several primary JSON schemas:
 
 - Catalog Definition Schema: A standard format for defining a library of components and functions.
 - Server-to-Client Message List Schema: The core wire format for messages sent from the agent to the client (e.g., updateComponents, updateDataModel).
-- Client-to-Server Event List Schema: The core wire format for messages sent from the client to the agent (e.g., action).
+- Client-to-Server Message List Schema: The core wire format for messages sent from the client to the agent (e.g., action).
 - Client Capabilities Schema: The schema for the `a2uiClientCapabilities` object.
 
 Client Capabilities: The client sends its capabilities to the server in an `a2uiClientCapabilities` object. This object is included in the `metadata` field of every A2A `Message` sent from the client to the server. This object allows the client to declare which catalogs it supports.
@@ -115,7 +115,7 @@ Example DataPart:
 
 ### Client-to-server events
 
-When a client (or an agent forwarding an event) sends a message to an agent, it also uses a `DataPart` with the same `application/json+a2ui` MIME type. However, the `data` payload must validate against the **Client-to-Server Event List Schema**.
+When a client (or an agent forwarding an event) sends a message to an agent, it also uses a `DataPart` with the same `application/json+a2ui` MIME type. However, the `data` payload must validate against the **Client-to-Server Message List Schema**.
 
 Example `action` DataPart:
 
