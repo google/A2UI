@@ -215,7 +215,7 @@ export class Snackbar extends LitElement {
     });
   }
 
-  render() {
+  override render() {
     let rotate = false;
     let icon = "";
     for (let i = this.#messages.length - 1; i >= 0; i--) {
