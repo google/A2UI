@@ -636,6 +636,127 @@ This section provides the formal JSON Schema for a single server-to-client messa
 {% include "../specification/json/server_to_client_with_standard_catalog.json" %}
 ```
 
+```mermaid
+graph LR
+    Root[A2UI Message Schema]
+    
+    Root --> BR[beginRendering]
+    Root --> SU[surfaceUpdate]
+    Root --> DM[dataModelUpdat]
+    Root --> DS[deleteSurface]
+    
+    BR --> BR1[surfaceId*]
+    BR --> BR2[root*]
+    BR --> BR3[styles]
+    BR3 --> BR3A[font]
+    BR3 --> BR3B[primaryColor]
+    
+    SU --> SU1[surfaceId*]
+    SU --> SU2[components*]
+    SU2 --> COMP[component]
+    COMP --> COMP1[id*]
+    COMP --> COMP2[weight]
+    COMP --> COMP3[component*]
+    
+    COMP3 --> T[Text]
+    COMP3 --> I[Image]
+    COMP3 --> IC[Icon]
+    COMP3 --> V[Video]
+    COMP3 --> A[AudioPlayer]
+    COMP3 --> R[Row]
+    COMP3 --> C[Column]
+    COMP3 --> L[List]
+    COMP3 --> CA[Card]
+    COMP3 --> TA[Tabs]
+    COMP3 --> DI[Divider]
+    COMP3 --> M[Modal]
+    COMP3 --> B[Button]
+    COMP3 --> CB[CheckBox]
+    COMP3 --> TF[TextField]
+    COMP3 --> DTI[DateTimeInput]
+    COMP3 --> MC[MultipleChoice]
+    COMP3 --> S[Slider]
+    
+    T --> T1[text*]
+    T --> T2[usageHint]
+    
+    I --> I1[url*]
+    I --> I2[fit]
+    I --> I3[usageHint]
+    
+    IC --> IC1[name*]
+    
+    V --> V1[url*]
+    
+    A --> A1[url*]
+    A --> A2[description]
+    
+    R --> R1[children*]
+    R --> R2[distribution]
+    R --> R3[alignment]
+    
+    C --> C1[children*]
+    C --> C2[distribution]
+    C --> C3[alignment]
+    
+    L --> L1[children*]
+    L --> L2[direction]
+    L --> L3[alignment]
+    
+    CA --> CA1[child*]
+    
+    TA --> TA1[tabItems*]
+    
+    DI --> DI1[axis]
+    
+    M --> M1[entryPointChild*]
+    M --> M2[contentChild*]
+    
+    B --> B1[child*]
+    B --> B2[primary]
+    B --> B3[action*]
+    B3 --> B3A[name*]
+    B3 --> B3B[context]
+    
+    CB --> CB1[label*]
+    CB --> CB2[value*]
+    
+    TF --> TF1[label*]
+    TF --> TF2[text]
+    TF --> TF3[textFieldType]
+    TF --> TF4[validationRegexp]
+    
+    DTI --> DTI1[value*]
+    DTI --> DTI2[enableDate]
+    DTI --> DTI3[enableTime]
+    
+    MC --> MC1[selections*]
+    MC --> MC2[options*]
+    MC --> MC3[maxAllowedSelections]
+    
+    S --> S1[value*]
+    S --> S2[minValue]
+    S --> S3[maxValue]
+    
+    DM --> DM1[surfaceId*]
+    DM --> DM2[path]
+    DM --> DM3[contents*]
+    DM3 --> DM3A[key*]
+    DM3 --> DM3B[valueString]
+    DM3 --> DM3C[valueNumber]
+    DM3 --> DM3D[valueBoolean]
+    DM3 --> DM3E[valueMap]
+    
+    DS --> DS1[surfaceId*]
+    
+    style Root fill:#e1f5ff
+    style BR fill:#fff4e6
+    style SU fill:#fff4e6
+    style DM fill:#fff4e6
+    style DS fill:#fff4e6
+    style COMP3 fill:#f3e5f5
+```
+
 ## Section 8: Complete A2UI Client to Server JSON Schema
 
 This section provides the formal JSON Schema for a single client-to-server message in the A2UI protocol.
