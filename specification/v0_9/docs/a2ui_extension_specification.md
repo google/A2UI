@@ -71,11 +71,13 @@ To identify a `DataPart` as containing A2UI data, it must have the following met
 
 The `data` field of the `DataPart` contains a **list** of A2UI JSON messages (e.g., `createSurface`, `updateComponents`, `action`). It MUST be an array of messages.
 
-### Atomicity and multiple messages
+### Processing Rules
 
-To send multiple A2UI messages that should be processed atomically (e.g., creating a surface and immediately populating it), the sender MUST include multiple `DataPart`s within a single A2A `Message`.
+The `data` field contains a list of messages. This list is **NOT** a transactional unit. Receivers (both Clients and Agents) MUST process messages in the list sequentially.
 
-Receivers (both Clients and Agents) MUST process all A2UI `DataPart`s within a single A2A `Message` sequentially and atomically. For a renderer, this means the UI should not be repainted until all parts in the message have been applied.
+If a single message in the list fails to validate or apply (e.g., due to a schema violation or invalid reference), the receiver SHOULD report/log the error for that specific message and MUST continue processing the remaining messages in the list.
+
+Atomicity is guaranteed only at the **individual message** level. However, for a better user experience, a renderer SHOULD NOT repaint the UI until all messages in the list have been processed. This prevents intermediate states from flickering to the user.
 
 ### Server-to-client messages
 
