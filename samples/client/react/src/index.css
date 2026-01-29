@@ -1,0 +1,126 @@
+:root {
+  --n-100: #ffffff;
+  --n-99: #fcfcfc;
+  --n-98: #f9f9f9;
+  --n-95: #f1f1f1;
+  --n-90: #e2e2e2;
+  --n-80: #c6c6c6;
+  --n-70: #ababab;
+  --n-60: #919191;
+  --n-50: #777777;
+  --n-40: #5e5e5e;
+  --n-35: #525252;
+  --n-30: #474747;
+  --n-25: #3b3b3b;
+  --n-20: #303030;
+  --n-15: #262626;
+  --n-10: #1b1b1b;
+  --n-5: #111111;
+  --n-0: #000000;
+
+  --p-100: #ffffff;
+  --p-99: #fffbff;
+  --p-98: #fcf8ff;
+  --p-95: #f2efff;
+  --p-90: #e1e0ff;
+  --p-80: #c0c1ff;
+  --p-70: #a0a3ff;
+  --p-60: #8487ea;
+  --p-50: #6a6dcd;
+  --p-40: #5154b3;
+  --p-35: #4447a6;
+  --p-30: #383b99;
+  --p-25: #2c2e8d;
+  --p-20: #202182;
+  --p-15: #131178;
+  --p-10: #06006c;
+  --p-5: #03004d;
+  --p-0: #000000;
+
+  --bb-grid-size: 4px;
+  --bb-grid-size-2: calc(var(--bb-grid-size) * 2);
+  --bb-grid-size-3: calc(var(--bb-grid-size) * 3);
+  --bb-grid-size-4: calc(var(--bb-grid-size) * 4);
+  --bb-grid-size-5: calc(var(--bb-grid-size) * 5);
+  --bb-grid-size-6: calc(var(--bb-grid-size) * 6);
+
+  --background: radial-gradient(
+      at 0% 0%,
+      light-dark(rgba(161, 196, 253, 0.3), rgba(6, 182, 212, 0.15)) 0px,
+      transparent 50%
+    ),
+    radial-gradient(
+      at 100% 0%,
+      light-dark(rgba(255, 226, 226, 0.3), rgba(59, 130, 246, 0.15)) 0px,
+      transparent 50%
+    ),
+    radial-gradient(
+      at 100% 100%,
+      light-dark(rgba(162, 210, 255, 0.3), rgba(20, 184, 166, 0.15)) 0px,
+      transparent 50%
+    ),
+    radial-gradient(
+      at 0% 100%,
+      light-dark(rgba(255, 200, 221, 0.3), rgba(99, 102, 241, 0.15)) 0px,
+      transparent 50%
+    ),
+    linear-gradient(
+      120deg,
+      light-dark(#f0f4f8, #0f172a) 0%,
+      light-dark(#e2e8f0, #1e293b) 100%
+    );
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  --font-family: "Outfit", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: var(--background);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  width: 100svw;
+  height: 100svh;
+  overflow: auto;
+  --color-scheme: light;
+  color-scheme: var(--color-scheme);
+}
+
+body[theme-mode="light"] {
+  --color-scheme: light;
+}
+
+body[theme-mode="dark"] {
+  --color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html,
+  body {
+    --color-scheme: dark;
+  }
+}
+
+#root {
+  min-height: 100%;
+}
+
+/* Reset margins for A2UI Text component's MarkdownRender */
+/* Match Semi's selector specificity: .semi-markdownRender-component-header.semi-typography.semi-typography-h5 */
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h1,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h2,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h3,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h4,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h5,
+.a2ui-text .semi-markdownRender .semi-markdownRender-component-header.semi-typography.semi-typography-h6 {
+  margin: 0;
+  line-height: inherit;
+}
+
+.a2ui-text .semi-markdownRender .semi-typography.semi-typography-paragraph {
+  margin: 0;
+  line-height: inherit;
+}

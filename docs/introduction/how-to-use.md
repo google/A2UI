@@ -12,7 +12,7 @@ Integrate A2UI rendering into your existing app or build a new agent-powered fro
 
 - **Web:** Lit, Angular
 - **Mobile/Desktop:** Flutter GenUI SDK
-- **React:** Coming Q1 2026
+- **React:** React 
 
 **Quick setup:**
 
