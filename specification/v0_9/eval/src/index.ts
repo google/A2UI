@@ -40,6 +40,22 @@ function loadSchemas(): Record<string, any> {
     const schema = JSON.parse(schemaString);
     schemas[path.basename(file)] = schema;
   }
+
+  // Alias standard_catalog.json to catalog.json to match server_to_client.json references
+  // This mirrors the logic in run_tests.py
+  if (schemas["standard_catalog.json"]) {
+    const catalogSchema = JSON.parse(
+      JSON.stringify(schemas["standard_catalog.json"]),
+    );
+    if (catalogSchema["$id"]) {
+      catalogSchema["$id"] = catalogSchema["$id"].replace(
+        "standard_catalog.json",
+        "catalog.json",
+      );
+    }
+    schemas["catalog.json"] = catalogSchema;
+  }
+
   return schemas;
 }
 

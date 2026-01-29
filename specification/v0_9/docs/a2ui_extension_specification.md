@@ -40,7 +40,7 @@ Example AgentExtension block:
   "required": false,
   "params": {
     "supportedCatalogIds": [
-      "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+      "https://a2ui.org/specification/v0_9/standard_catalog.json",
       "https://my-company.com/a2ui/v0.9/my_custom_catalog.json"
     ],
     "acceptsInlineCatalogs": true
@@ -88,7 +88,7 @@ Example `createSurface` DataPart:
   "data": {
     "createSurface": {
       "surfaceId": "user_profile_surface",
-      "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json"
+      "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
     }
   },
   "kind": "data",
