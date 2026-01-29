@@ -16,15 +16,19 @@
               "value": { "path": "/formData/email" },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": { "path": "/formData/email" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/email" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Email is required"
                 },
                 {
-                  "call": "email",
-                  "args": { "value": { "path": "/formData/email" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "email",
+                    "args": { "value": { "path": "/formData/email" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Must be valid email"
                 }
               ]
@@ -53,12 +57,14 @@
               "value": { "path": "/formData/interests" },
               "checks": [
                 {
-                  "call": "length",
-                  "args": {
-                    "value": { "path": "/formData/interests" },
-                    "min": 1
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": { "path": "/formData/interests" },
+                      "min": 1
+                    },
+                    "returnType": "boolean"
                   },
-                  "returnType": "boolean",
                   "message": "Select at least one"
                 }
               ]
@@ -84,12 +90,14 @@
               "value": { "path": "/formData/rating" },
               "checks": [
                 {
-                  "call": "numeric",
-                  "args": {
-                    "value": { "path": "/formData/rating" },
-                    "min": 3
+                  "condition": {
+                    "call": "numeric",
+                    "args": {
+                      "value": { "path": "/formData/rating" },
+                      "min": 3
+                    },
+                    "returnType": "boolean"
                   },
-                  "returnType": "boolean",
                   "message": "Rating must be > 3"
                 }
               ]
@@ -113,9 +121,11 @@
               "value": { "path": "/formData/agreed" },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": { "path": "/formData/agreed" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/agreed" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Must agree"
                 }
               ]
@@ -139,9 +149,11 @@
               "value": { "path": "/formData/date" },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": { "path": "/formData/date" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/date" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Date required"
                 }
               ]
@@ -165,10 +177,12 @@
               "value": { "path": "/formData/phone" },
               "checks": [
                 {
-                  "call": "regex",
-                  "args": {
-                    "value": { "path": "/formData/phone" },
-                    "pattern": "^\\d{10}$"
+                  "condition": {
+                    "call": "regex",
+                    "args": {
+                      "value": { "path": "/formData/phone" },
+                      "pattern": "^\\d{10}$"
+                    }
                   },
                   "message": "Must be 10 digits"
                 }
@@ -193,11 +207,13 @@
               "value": { "path": "/formData/pw" },
               "checks": [
                 {
-                  "call": "length",
-                  "args": {
-                    "value": { "path": "/formData/pw" },
-                    "min": 8,
-                    "max": 64
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": { "path": "/formData/pw" },
+                      "min": 8,
+                      "max": 64
+                    }
                   },
                   "message": "Password must be 8-64 characters"
                 }
@@ -224,11 +240,13 @@
               "value": { "path": "/formData/score" },
               "checks": [
                 {
-                  "call": "numeric",
-                  "args": {
-                    "value": { "path": "/formData/score" },
-                    "min": 0,
-                    "max": 100
+                  "condition": {
+                    "call": "numeric",
+                    "args": {
+                      "value": { "path": "/formData/score" },
+                      "min": 0,
+                      "max": 100
+                    }
                   },
                   "message": "Score must be between 0 and 100"
                 }
@@ -253,32 +271,34 @@
               "value": { "path": "/formData/code" },
               "checks": [
                 {
-                  "and": [
-                    {
-                      "call": "required",
-                      "args": { "value": { "path": "/formData/code" } }
-                    },
-                    {
-                      "or": [
-                        {
-                          "call": "regex",
-                          "args": {
-                            "value": { "path": "/formData/code" },
-                            "pattern": "^[A-Z]"
-                          }
-                        },
-                        {
-                          "not": {
+                  "condition": {
+                    "and": [
+                      {
+                        "call": "required",
+                        "args": { "value": { "path": "/formData/code" } }
+                      },
+                      {
+                        "or": [
+                          {
                             "call": "regex",
                             "args": {
                               "value": { "path": "/formData/code" },
-                              "pattern": "^[0-9]"
+                              "pattern": "^[A-Z]"
+                            }
+                          },
+                          {
+                            "not": {
+                              "call": "regex",
+                              "args": {
+                                "value": { "path": "/formData/code" },
+                                "pattern": "^[0-9]"
+                              }
                             }
                           }
-                        }
-                      ]
-                    }
-                  ],
+                        ]
+                      }
+                    ]
+                  },
                   "message": "Code must start with letter or not start with number"
                 }
               ]
@@ -302,8 +322,10 @@
               "value": { "path": "/formData/email" },
               "checks": [
                 {
-                  "call": "email",
-                  "args": { "value": { "path": "/formData/email" } }
+                  "condition": {
+                    "call": "email",
+                    "args": { "value": { "path": "/formData/email" } }
+                  }
                 }
               ]
             }
@@ -326,9 +348,11 @@
               "value": { "path": "/formData/name" },
               "checks": [
                 {
-                  "call": "formatString",
-                  "args": { "value": "Hello ${/formData/name}" },
-                  "returnType": "string",
+                  "condition": {
+                    "call": "formatString",
+                    "args": { "value": "Hello ${/formData/name}" },
+                    "returnType": "string"
+                  },
                   "message": "This should fail because returnType is string, not boolean"
                 }
               ]
@@ -358,11 +382,13 @@
               "value": { "path": "/formData/interests" },
               "checks": [
                 {
-                  "call": "length",
-                  "args": {
-                    "value": { "path": "/formData/interests" },
-                    "min": 2,
-                    "max": 2
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": { "path": "/formData/interests" },
+                      "min": 2,
+                      "max": 2
+                    }
                   },
                   "message": "Select exactly 2 interests"
                 }

@@ -16,9 +16,11 @@
               "value": "",
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": { "path": "/val" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/val" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Required"
                 }
               ]
@@ -40,7 +42,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "required", "args": {}, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "required", "args": {} }, "message": "Msg" }]
             }
           ]
         }
@@ -59,7 +61,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "required", "args": {"value": {"path": "/val"}}, "returnType": "string", "message": "Msg" }]
+              "checks": [{ "condition": { "call": "required", "args": {"value": {"path": "/val"}}, "returnType": "string" }, "message": "Msg" }]
             }
           ]
         }
@@ -80,8 +82,10 @@
               "value": "",
               "checks": [
                 {
-                  "call": "regex",
-                  "args": { "value": { "path": "/val" }, "pattern": "^abc$" },
+                  "condition": {
+                    "call": "regex",
+                    "args": { "value": { "path": "/val" }, "pattern": "^abc$" }
+                  },
                   "message": "Match"
                 }
               ]
@@ -103,7 +107,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "regex", "args": { "value": { "path": "/val" } }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "regex", "args": { "value": { "path": "/val" } } }, "message": "Msg" }]
             }
           ]
         }
@@ -122,7 +126,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "length", "args": { "value": { "path": "/val" }, "min": 5 }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "length", "args": { "value": { "path": "/val" }, "min": 5 } }, "message": "Msg" }]
             }
           ]
         }
@@ -141,7 +145,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "length", "args": { "value": { "path": "/val" }, "max": 10 }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "length", "args": { "value": { "path": "/val" }, "max": 10 } }, "message": "Msg" }]
             }
           ]
         }
@@ -160,7 +164,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "length", "args": { "value": { "path": "/val" } }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "length", "args": { "value": { "path": "/val" } } }, "message": "Msg" }]
             }
           ]
         }
@@ -179,7 +183,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "numeric", "args": { "value": { "path": "/val" }, "min": 0, "max": 100 }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "numeric", "args": { "value": { "path": "/val" }, "min": 0, "max": 100 } }, "message": "Msg" }]
             }
           ]
         }
@@ -198,7 +202,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "email", "args": { "value": { "path": "/val" } }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "email", "args": { "value": { "path": "/val" } } }, "message": "Msg" }]
             }
           ]
         }
@@ -481,7 +485,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "length", "args": { "value": { "path": "/val" }, "min": "5" }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "length", "args": { "value": { "path": "/val" }, "min": "5" } }, "message": "Msg" }]
             }
           ]
         }
@@ -500,7 +504,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "length", "args": { "value": { "path": "/val" }, "max": -2 }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "length", "args": { "value": { "path": "/val" }, "max": -2 } }, "message": "Msg" }]
             }
           ]
         }
@@ -519,7 +523,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "numeric", "args": { "value": { "path": "/val" }, "min": "10" }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "numeric", "args": { "value": { "path": "/val" }, "min": "10" } }, "message": "Msg" }]
             }
           ]
         }
@@ -538,7 +542,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "numeric", "args": { "value": { "path": "/val" }, "max": "20" }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "numeric", "args": { "value": { "path": "/val" }, "max": "20" } }, "message": "Msg" }]
             }
           ]
         }
@@ -557,7 +561,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "regex", "args": { "value": { "path": "/val" }, "pattern": 123 }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "regex", "args": { "value": { "path": "/val" }, "pattern": 123 } }, "message": "Msg" }]
             }
           ]
         }
@@ -576,7 +580,7 @@
               "component": "TextField",
               "label": "L",
               "value": "",
-              "checks": [{ "call": "email", "args": { "value": { "path": "/val" }, "extra": "foo" }, "message": "Msg" }]
+              "checks": [{ "condition": { "call": "email", "args": { "value": { "path": "/val" }, "extra": "foo" } }, "message": "Msg" }]
             }
           ]
         }

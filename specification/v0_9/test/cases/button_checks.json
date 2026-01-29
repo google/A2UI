@@ -16,27 +16,29 @@
               "action": { "event": { "name": "submit" } },
               "checks": [
                 {
-                  "and": [
-                    {
-                      "call": "required",
-                      "args": { "value": { "path": "/formData/terms" } },
-                      "returnType": "boolean"
-                    },
-                    {
-                      "or": [
-                        {
-                          "call": "required",
-                          "args": { "value": { "path": "/formData/email" } },
-                          "returnType": "boolean"
-                        },
-                        {
-                          "call": "required",
-                          "args": { "value": { "path": "/formData/phone" } },
-                          "returnType": "boolean"
-                        }
-                      ]
-                    }
-                  ],
+                  "condition": {
+                    "and": [
+                      {
+                        "call": "required",
+                        "args": { "value": { "path": "/formData/terms" } },
+                        "returnType": "boolean"
+                      },
+                      {
+                        "or": [
+                          {
+                            "call": "required",
+                            "args": { "value": { "path": "/formData/email" } },
+                            "returnType": "boolean"
+                          },
+                          {
+                            "call": "required",
+                            "args": { "value": { "path": "/formData/phone" } },
+                            "returnType": "boolean"
+                          }
+                        ]
+                      }
+                    ]
+                  },
                   "message": "Must accept terms and provide contact info"
                 }
               ]
@@ -81,9 +83,12 @@
               "action": { "event": { "name": "submit" } },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": "foo" },
-                  "returnType": "not_a_valid_type"
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": "foo" },
+                    "returnType": "not_a_valid_type"
+                  },
+                  "message": "Msg"
                 }
               ]
             },
@@ -107,7 +112,7 @@
               "action": { "event": { "name": "submit" } },
               "checks": [
                 {
-                  "and": [],
+                  "condition": { "and": [] },
                   "message": "foo",
                   "extraProp": "not allowed"
                 }
