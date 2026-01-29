@@ -101,7 +101,7 @@ Example DataPart:
           {
             "Text": {
               "id": "root",
-              "text": "Hello!"              
+              "text": "Hello!"
             }
           }
         ]
