@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS :host Selector Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .example {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #666;
+            font-size: 18px;
+            margin-top: 0;
+        }
+
+        /* Custom element styling from outside */
+        my-card {
+            margin: 10px 0;
+            display: block;
+        }
+
+        my-card.featured {
+            border: 2px solid gold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSS :host Selector Examples</h1>
+
+        <div class="example">
+            <h2>Example 1: Basic :host</h2>
+            <p>The :host selector styles the shadow host (the custom element itself).</p>
+            <my-card></my-card>
+        </div>
+
+        <div class="example">
+            <h2>Example 2: :host with class selector</h2>
+            <p>The :host(.featured) applies styles when the host has the "featured" class.</p>
+            <my-card class="featured"></my-card>
+        </div>
+
+        <div class="example">
+            <h2>Example 3: :host-context</h2>
+            <p>The :host-context(.dark-theme) applies styles when the host is inside a dark-theme ancestor.</p>
+            <my-themed-card></my-themed-card>
+            <div class="dark-theme">
+                <my-themed-card></my-themed-card>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Example 1: Basic :host usage
+        class MyCard extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        /* :host targets the custom element itself */
+                        :host {
+                            display: block;
+                            padding: 20px;
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                        }
+
+                        /* :host on hover */
+                        :host(:hover) {
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+                            transition: all 0.3s ease;
+                        }
+
+                        /* :host with class selector */
+                        :host(.featured) {
+                            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                            border: 3px solid gold;
+                        }
+
+                        /* Styles inside the shadow DOM */
+                        h3 {
+                            margin: 0 0 10px 0;
+                            font-size: 20px;
+                        }
+
+                        p {
+                            margin: 0;
+                            opacity: 0.9;
+                        }
+                    </style>
+                    <h3>Card Component</h3>
+                    <p>This card uses :host to style the component itself.</p>
+                `;
+            }
+        }
+
+        // Example 2: :host-context usage
+        class MyThemedCard extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        :host {
+                            display: block;
+                            padding: 20px;
+                            background: white;
+                            color: #333;
+                            border-radius: 8px;
+                            margin: 10px 0;
+                            border: 1px solid #ddd;
+                        }
+
+                        /* Applies when host is inside .dark-theme ancestor */
+                        :host-context(.dark-theme) {
+                            background: #2d3748;
+                            color: #e2e8f0;
+                            border-color: #4a5568;
+                        }
+
+                        h3 {
+                            margin: 0 0 10px 0;
+                        }
+
+                        p {
+                            margin: 0;
+                        }
+                    </style>
+                    <h3>Themed Card</h3>
+                    <p>This card adapts to dark theme using :host-context()</p>
+                `;
+            }
+        }
+
+        // Register custom elements
+        customElements.define('my-card', MyCard);
+        customElements.define('my-themed-card', MyThemedCard);
+    </script>
+
+    <style>
+        /* Dark theme container */
+        .dark-theme {
+            background: #1a202c;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</body>
+</html>
