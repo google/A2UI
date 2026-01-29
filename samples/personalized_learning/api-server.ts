@@ -32,6 +32,12 @@ config();
 // =============================================================================
 initializeApp({ credential: applicationDefault() });
 
+// Local dev mode: skip auth when Firebase is not configured (matches client behavior)
+const IS_LOCAL_DEV_MODE = !process.env.VITE_FIREBASE_API_KEY;
+if (IS_LOCAL_DEV_MODE) {
+  console.warn("[API Server] ⚠️  LOCAL DEV MODE: Authentication disabled (VITE_FIREBASE_API_KEY not set)");
+}
+
 // Access control - reads from environment variables (shared with src/firebase-auth.ts)
 // Uses VITE_ prefix so the same .env works for both client and server
 const ALLOWED_DOMAIN = process.env.VITE_ALLOWED_DOMAIN ?? "google.com";
@@ -50,6 +56,11 @@ function isAllowedEmail(email: string | undefined): boolean {
 }
 
 async function authenticateRequest(req: any, res: any): Promise<boolean> {
+  // In local dev mode, skip authentication entirely
+  if (IS_LOCAL_DEV_MODE) {
+    return true;
+  }
+
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith("Bearer ")) {
     res.writeHead(401, { "Content-Type": "application/json" });
