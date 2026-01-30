@@ -89,12 +89,14 @@ Example DataPart:
 {
   "data": [
     {
+      "version": "v0.9",
       "createSurface": {
         "surfaceId": "example_surface",
         "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
       }
     },
     {
+      "version": "v0.9",
       "updateComponents": {
         "surfaceId": "example_surface",
         "components": [
@@ -125,6 +127,7 @@ Example `action` DataPart:
 {
   "data": [
     {
+      "version": "v0.9",
       "action": {
         "name": "submit_form",
         "surfaceId": "contact_form_1",
