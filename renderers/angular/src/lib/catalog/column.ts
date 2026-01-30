@@ -15,7 +15,7 @@
  */
 
 import { Component, computed, input } from '@angular/core';
-import { Types } from '@a2ui/lit/0.8';
+import * as Types from '@a2ui/web_core/types/types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 

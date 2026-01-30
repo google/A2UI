@@ -14,7 +14,8 @@
  limitations under the License.
  */
 
-import * as v0_8 from '@a2ui/lit/0.8';
+import * as Styles from '@a2ui/web_core/styles/index';
+import * as Types from '@a2ui/web_core/types/types';
 
 /** Elements */
 
@@ -159,27 +160,27 @@ const video = {
   'layout-el-cv': true,
 };
 
-const aLight = v0_8.Styles.merge(a, { 'color-c-p30': true });
-const inputLight = v0_8.Styles.merge(input, { 'color-c-n5': true });
-const textareaLight = v0_8.Styles.merge(textarea, { 'color-c-n5': true });
-const buttonLight = v0_8.Styles.merge(button, { 'color-c-n100': true });
-const h1Light = v0_8.Styles.merge(h1, { 'color-c-n5': true });
-const h2Light = v0_8.Styles.merge(h2, { 'color-c-n5': true });
-const h3Light = v0_8.Styles.merge(h3, { 'color-c-n5': true });
-const bodyLight = v0_8.Styles.merge(body, { 'color-c-n5': true });
-const pLight = v0_8.Styles.merge(p, { 'color-c-n60': true });
-const preLight = v0_8.Styles.merge(pre, { 'color-c-n35': true });
-const orderedListLight = v0_8.Styles.merge(orderedList, {
+const aLight = Styles.merge(a, { 'color-c-p30': true });
+const inputLight = Styles.merge(input, { 'color-c-n5': true });
+const textareaLight = Styles.merge(textarea, { 'color-c-n5': true });
+const buttonLight = Styles.merge(button, { 'color-c-n100': true });
+const h1Light = Styles.merge(h1, { 'color-c-n5': true });
+const h2Light = Styles.merge(h2, { 'color-c-n5': true });
+const h3Light = Styles.merge(h3, { 'color-c-n5': true });
+const bodyLight = Styles.merge(body, { 'color-c-n5': true });
+const pLight = Styles.merge(p, { 'color-c-n60': true });
+const preLight = Styles.merge(pre, { 'color-c-n35': true });
+const orderedListLight = Styles.merge(orderedList, {
   'color-c-n35': true,
 });
-const unorderedListLight = v0_8.Styles.merge(unorderedList, {
+const unorderedListLight = Styles.merge(unorderedList, {
   'color-c-n35': true,
 });
-const listItemLight = v0_8.Styles.merge(listItem, {
+const listItemLight = Styles.merge(listItem, {
   'color-c-n35': true,
 });
 
-export const theme: v0_8.Types.Theme = {
+export const theme: Types.Theme = {
   additionalStyles: {
     Card: {
       'min-width': '320px',

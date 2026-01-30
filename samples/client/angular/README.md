@@ -13,10 +13,9 @@ NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/), you will need Googl
 Here is the quickstart for the restaurant app:
 
 ```bash
-# Export your Gemini API key
-export GEMINI_API_KEY=your_gemini_api_key
-echo "export GEMINI_API_KEY=your_gemini_api_key" >> .env
-cp .env ../../agent/adk/restaurant_finder/.env
+# Set up your Gemini API key
+cp ../../agent/adk/restaurant_finder/.env.example ../../agent/adk/restaurant_finder/.env
+# Edit the .env file with your actual API key (do not commit .env)
 
 # Start the restaurant app frontend
 npm install 
@@ -31,10 +30,12 @@ Here are the instructions if you want to do each step manually.
   * [For the restaurant app](../../agent/adk/restaurant_finder/)
   * [For the contact app](../../agent/adk/contact_lookup/)
   * [For the rizzcharts app](../../agent/adk/rizzcharts/)
+  * [For the orchestrator app](../../agent/adk/orchestrator/)
 4. Run the relevant app:
   * `npm start -- restaurant`
   * `npm start -- contact`
   * `npm start -- rizzcharts`
+  * `npm start -- orchestrator`
   * `npm start -- gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
 
