@@ -26,6 +26,10 @@ interface ComponentNodeProps {
  * Looks up the component in the registry and renders it with the appropriate props.
  * Supports lazy-loaded components via React.Suspense.
  *
+ * No wrapper div is rendered - the component's root div (e.g., .a2ui-image) is the
+ * direct flex child, exactly matching Lit's structure where the :host element IS
+ * the flex item. Each component handles --weight CSS variable on its root div.
+ *
  * Memoized to prevent unnecessary re-renders when parent updates but node hasn't changed.
  */
 export const ComponentNode = memo(function ComponentNode({
@@ -48,27 +52,17 @@ export const ComponentNode = memo(function ComponentNode({
     [actualRegistry, node.type]
   );
 
-  // Memoize wrapper style to mimic Lit's :host { display: block; flex: var(--weight); }
-  // Every component needs a block wrapper for proper containment in flex layouts
-  const wrapperStyle = useMemo<React.CSSProperties>(() => {
-    const weight = node.weight;
-    return typeof weight === 'number'
-      ? { display: 'block', flex: weight }
-      : { display: 'block' };
-  }, [node.weight]);
-
   if (!Component) {
     console.warn(`[A2UI] Unknown component type: ${node.type}`);
     return <UnknownComponent type={node.type} />;
   }
 
-  // Always wrap component to mimic Lit's :host element behavior
+  // No wrapper div - component's root div is the :host equivalent
+  // Suspense doesn't add DOM elements, preserving the correct hierarchy
   return (
-    <div style={wrapperStyle}>
-      <Suspense fallback={<LoadingFallback />}>
-        <Component node={node} surfaceId={surfaceId} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<LoadingFallback />}>
+      <Component node={node} surfaceId={surfaceId} />
+    </Suspense>
   );
 });
 

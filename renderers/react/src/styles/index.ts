@@ -1,145 +1,6 @@
 import { Styles } from '@a2ui/lit/0.8';
 
 /**
- * Default color palette CSS variables.
- * These define the actual color values that the utility classes reference.
- * Scoped to .a2ui-surface to avoid affecting the rest of the page.
- */
-export const defaultPalette: string = `
-.a2ui-surface {
-  /* Neutral palette */
-  --n-100: #ffffff;
-  --n-99: #fcfcfc;
-  --n-98: #f9f9f9;
-  --n-95: #f1f1f1;
-  --n-90: #e2e2e2;
-  --n-80: #c6c6c6;
-  --n-70: #ababab;
-  --n-60: #919191;
-  --n-50: #777777;
-  --n-40: #5e5e5e;
-  --n-35: #525252;
-  --n-30: #474747;
-  --n-25: #3b3b3b;
-  --n-20: #303030;
-  --n-15: #262626;
-  --n-10: #1b1b1b;
-  --n-5: #111111;
-  --n-0: #000000;
-
-  /* Primary palette */
-  --p-100: #ffffff;
-  --p-99: #fffbff;
-  --p-98: #fcf8ff;
-  --p-95: #f2efff;
-  --p-90: #e1e0ff;
-  --p-80: #c0c1ff;
-  --p-70: #a0a3ff;
-  --p-60: #8487ea;
-  --p-50: #6a6dcd;
-  --p-40: #5154b3;
-  --p-35: #4447a6;
-  --p-30: #383b99;
-  --p-25: #2c2e8d;
-  --p-20: #202182;
-  --p-15: #131178;
-  --p-10: #06006c;
-  --p-5: #03004d;
-  --p-0: #000000;
-
-  /* Secondary palette */
-  --s-100: #ffffff;
-  --s-99: #fffbff;
-  --s-98: #fcf8ff;
-  --s-95: #f2efff;
-  --s-90: #e2e0f9;
-  --s-80: #c6c4dd;
-  --s-70: #aaa9c1;
-  --s-60: #8f8fa5;
-  --s-50: #75758b;
-  --s-40: #5d5c72;
-  --s-35: #515165;
-  --s-30: #454559;
-  --s-25: #393a4d;
-  --s-20: #2e2f42;
-  --s-15: #242437;
-  --s-10: #191a2c;
-  --s-5: #0f0f21;
-  --s-0: #000000;
-
-  /* Tertiary palette */
-  --t-100: #ffffff;
-  --t-99: #fffbff;
-  --t-98: #fff8f9;
-  --t-95: #ffecf4;
-  --t-90: #ffd8ec;
-  --t-80: #e9b9d3;
-  --t-70: #cc9eb8;
-  --t-60: #af849d;
-  --t-50: #946b83;
-  --t-40: #79526a;
-  --t-35: #6b465d;
-  --t-30: #5d3b50;
-  --t-25: #4f3044;
-  --t-20: #412538;
-  --t-15: #341a2d;
-  --t-10: #270f22;
-  --t-5: #1a0517;
-  --t-0: #000000;
-
-  /* Neutral variant palette */
-  --nv-100: #ffffff;
-  --nv-99: #fdfbff;
-  --nv-98: #faf8ff;
-  --nv-95: #f1effa;
-  --nv-90: #e3e1ec;
-  --nv-80: #c7c5d0;
-  --nv-70: #abaab4;
-  --nv-60: #919099;
-  --nv-50: #77767f;
-  --nv-40: #5e5d66;
-  --nv-35: #52525a;
-  --nv-30: #46464e;
-  --nv-25: #3b3b43;
-  --nv-20: #303038;
-  --nv-15: #26252d;
-  --nv-10: #1b1b23;
-  --nv-5: #111118;
-  --nv-0: #000000;
-
-  /* Error palette */
-  --e-100: #ffffff;
-  --e-99: #fffbff;
-  --e-98: #fff8f7;
-  --e-95: #ffedea;
-  --e-90: #ffdad6;
-  --e-80: #ffb4ab;
-  --e-70: #ff897d;
-  --e-60: #ff5449;
-  --e-50: #de3730;
-  --e-40: #ba1a1a;
-  --e-35: #a80e0e;
-  --e-30: #930006;
-  --e-25: #7e0003;
-  --e-20: #690001;
-  --e-15: #540001;
-  --e-10: #410001;
-  --e-5: #2d0001;
-  --e-0: #000000;
-
-  /* Font family - matches Lit's default-font-family for visual parity */
-  --font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-family-flex: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-family-mono: "Courier New", Courier, monospace;
-
-  /* Color scheme for light-dark() function - default to light mode */
-  --color-scheme: light;
-  color-scheme: light;
-}
-
-`;
-
-/**
  * Structural CSS styles from the Lit renderer, converted for global DOM use.
  * These styles define all the utility classes (layout-*, typography-*, color-*, etc.)
  * Converts :host selectors to .a2ui-surface for scoped use outside Shadow DOM.
@@ -150,127 +11,394 @@ export const structuralStyles: string = Styles.structuralStyles.replace(
 );
 
 /**
- * CSS overrides that must come AFTER structural styles to take precedence.
- * These fix React-specific issues and allow CSS variable customization.
- * All rules scoped to .a2ui-surface to avoid affecting the rest of the page.
+ * Component-specific styles that replicate Lit's Shadow DOM scoped CSS.
  *
- * IMPORTANT: These styles replicate the Shadow DOM scoped CSS from Lit components.
- * When Lit has `static styles = [...]` with element selectors, we need equivalent
- * rules here since React uses Light DOM where page CSS can interfere.
+ * Each Lit component has `static styles` with :host, element selectors, and ::slotted().
+ * Since React uses Light DOM, we transform these to global CSS scoped under .a2ui-surface.
+ *
+ * Transformation rules:
+ *   :host          → .a2ui-surface .a2ui-{component}
+ *   section        → .a2ui-surface .a2ui-{component} section
+ *   ::slotted(*)   → .a2ui-surface .a2ui-{component} section > *
  */
-export const styleOverrides: string = `
+export const componentSpecificStyles: string = `
 /* =========================================================================
- * Button
+ * Card (from Lit card.ts static styles)
  * ========================================================================= */
 
-/* NOTE: Previously had an override to force button text to inherit color.
- * This was removed to match Lit behavior where nested Text components
- * apply their own color classes (e.g., color-c-n10 from theme.markdown.p).
- *
- * If you want white text in buttons, use the pr-365 approach:
- * - Set theme.markdown.p to use color-c-n35 instead of color-c-n10
- * - Add additionalStyles.Button = { "--n-35": "var(--n-100)" }
- * This overrides the CSS variable only within buttons.
- */
-
-/* =========================================================================
- * Card (matches Lit card.ts Shadow DOM styles)
- * ========================================================================= */
-
-/* Allow card background to be overridden via CSS variable --a2ui-card-bg */
-.a2ui-surface .color-bgc-n100 {
-  background-color: var(--a2ui-card-bg, light-dark(var(--n-100), var(--n-0))) !important;
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-card {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
 }
 
-/* Match Lit Card's ::slotted(*) rule - direct children get full size */
-.a2ui-surface .a2ui-card > div {
+/* section { height: 100%; width: 100%; min-height: 0; overflow: auto; } */
+/* Use > to target only Card's direct section, not nested sections (e.g., TextField's section) */
+.a2ui-surface .a2ui-card > section {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* section ::slotted(*) { height: 100%; width: 100%; } */
+/* Use > section > to only target Card's slotted children, not deeply nested elements */
+.a2ui-surface .a2ui-card > section > * {
   height: 100%;
   width: 100%;
 }
 
 /* =========================================================================
- * Divider (matches Lit divider.ts Shadow DOM styles)
+ * Divider (from Lit divider.ts static styles)
  * ========================================================================= */
 
-/* Match Lit Divider's Shadow DOM hr styling */
-/* Lit has: hr { height: 1px; background: #ccc; border: none; } */
-.a2ui-surface hr {
+/* :host { display: block; min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-divider {
+  display: block;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* hr { height: 1px; background: #ccc; border: none; } */
+/* Use :where() for low specificity (0,0,1) so theme utility classes can override */
+/* Browser default margins apply (margin-block: 0.5em, margin-inline: auto) */
+:where(.a2ui-surface .a2ui-divider) hr {
   height: 1px;
   background: #ccc;
   border: none;
-  margin: 8px 0;
 }
 
 /* =========================================================================
- * Text (matches Lit text.ts Shadow DOM styles)
+ * Text (from Lit text.ts static styles)
  * ========================================================================= */
 
-/* Ensure markdown paragraph margins are reset (matches Lit structural styles) */
-.a2ui-surface section p {
-  margin: 0;
+/* :host { display: block; flex: var(--weight); } */
+.a2ui-surface .a2ui-text {
+  display: block;
+  flex: var(--weight);
 }
 
-/* Match Lit Text's h1-h5 reset - prevents browser defaults from affecting text */
-/* Lit has: h1, h2, h3, h4, h5 { line-height: inherit; font: inherit; } */
-/* Note: Do NOT reset margin here - margins are controlled by theme classes (layout-mb-*) */
-.a2ui-surface section h1,
-.a2ui-surface section h2,
-.a2ui-surface section h3,
-.a2ui-surface section h4,
-.a2ui-surface section h5 {
+/* h1, h2, h3, h4, h5 { line-height: inherit; font: inherit; } */
+/* Use :where() to match Lit's low specificity (0,0,0,1 - just element) */
+:where(.a2ui-surface .a2ui-text) h1,
+:where(.a2ui-surface .a2ui-text) h2,
+:where(.a2ui-surface .a2ui-text) h3,
+:where(.a2ui-surface .a2ui-text) h4,
+:where(.a2ui-surface .a2ui-text) h5 {
   line-height: inherit;
   font: inherit;
 }
 
-/* =========================================================================
- * TextField (matches Lit text-field.ts Shadow DOM styles)
- * ========================================================================= */
-
-/* Match Lit TextField's input styling */
-/* Lit has: input { display: block; width: 100%; } */
-.a2ui-surface section input[type="text"],
-.a2ui-surface section input[type="number"],
-.a2ui-surface section input[type="date"] {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
+/* Ensure markdown paragraph margins are reset */
+.a2ui-surface .a2ui-text p {
+  margin: 0;
 }
 
-/* Match Lit TextField's label styling */
-/* Lit has: label { display: block; margin-bottom: 4px; } */
-.a2ui-surface section > label {
+/* =========================================================================
+ * TextField (from Lit text-field.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: flex; flex: var(--weight); } */
+.a2ui-surface .a2ui-textfield {
+  display: flex;
+  flex: var(--weight);
+}
+
+/* input { display: block; width: 100%; } */
+.a2ui-surface .a2ui-textfield input {
+  display: block;
+  width: 100%;
+}
+
+/* label { display: block; margin-bottom: 4px; } */
+.a2ui-surface .a2ui-textfield label {
   display: block;
   margin-bottom: 4px;
 }
 
-/* Match Lit TextField's textarea styling */
-.a2ui-surface section textarea {
+/* textarea - same styling as input for multiline text fields */
+.a2ui-surface .a2ui-textfield textarea {
   display: block;
   width: 100%;
-  box-sizing: border-box;
 }
 
 /* =========================================================================
- * CheckBox (matches Lit checkbox.ts Shadow DOM styles)
+ * CheckBox (from Lit checkbox.ts static styles)
  * ========================================================================= */
 
-/* Match Lit CheckBox's input styling */
-/* Lit has: input { display: block; width: 100%; } */
-/* Note: checkbox input width: 100% is from Lit but may need adjustment */
-.a2ui-surface section input[type="checkbox"] {
-  box-sizing: border-box;
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-checkbox {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* input { display: block; width: 100%; } */
+.a2ui-surface .a2ui-checkbox input {
+  display: block;
+  width: 100%;
 }
 
 /* =========================================================================
- * Slider (matches Lit slider.ts Shadow DOM styles)
+ * Slider (from Lit slider.ts static styles)
  * ========================================================================= */
 
-/* Match Lit Slider's input styling */
-/* Lit has: input { display: block; width: 100%; } */
-.a2ui-surface section input[type="range"] {
+/* :host { display: block; flex: var(--weight); } */
+.a2ui-surface .a2ui-slider {
+  display: block;
+  flex: var(--weight);
+}
+
+/* input { display: block; width: 100%; } */
+.a2ui-surface .a2ui-slider input {
   display: block;
   width: 100%;
-  box-sizing: border-box;
+}
+
+/* =========================================================================
+ * Button (from Lit button.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; } */
+.a2ui-surface .a2ui-button {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+}
+
+/* =========================================================================
+ * Icon (from Lit icon.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-icon {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* =========================================================================
+ * Tabs (from Lit tabs.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); } */
+.a2ui-surface .a2ui-tabs {
+  display: block;
+  flex: var(--weight);
+}
+
+/* =========================================================================
+ * Modal (from Lit modal.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); } */
+.a2ui-surface .a2ui-modal {
+  display: block;
+  flex: var(--weight);
+}
+
+/* dialog { padding: 0; border: none; background: none; } */
+.a2ui-surface .a2ui-modal dialog {
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+/* dialog section #controls { display: flex; justify-content: end; margin-bottom: 4px; } */
+.a2ui-surface .a2ui-modal dialog section #controls {
+  display: flex;
+  justify-content: end;
+  margin-bottom: 4px;
+}
+
+/* dialog section #controls button { padding: 0; background: none; ... } */
+.a2ui-surface .a2ui-modal dialog section #controls button {
+  padding: 0;
+  background: none;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  border: none;
+}
+
+/* =========================================================================
+ * Image (from Lit image.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-image {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* img { display: block; width: 100%; height: 100%; object-fit: var(--object-fit, fill); } */
+.a2ui-surface .a2ui-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--object-fit, fill);
+}
+
+/* =========================================================================
+ * Video (from Lit video.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-video {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* video { display: block; width: 100%; } */
+.a2ui-surface .a2ui-video video {
+  display: block;
+  width: 100%;
+}
+
+/* =========================================================================
+ * AudioPlayer (from Lit audio.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-audio {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* audio { display: block; width: 100%; } */
+.a2ui-surface .a2ui-audio audio {
+  display: block;
+  width: 100%;
+}
+
+/* =========================================================================
+ * Column (from Lit column.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: flex; flex: var(--weight); } */
+.a2ui-surface .a2ui-column {
+  display: flex;
+  flex: var(--weight);
+}
+
+/* section { display: flex; flex-direction: column; min-width: 100%; height: 100%; } */
+.a2ui-surface .a2ui-column > section {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+  height: 100%;
+}
+
+/* :host([alignment="..."]) section { align-items: ...; } */
+/* Use > section to only target Column's direct section, not nested sections (e.g., CheckBox's section) */
+.a2ui-surface .a2ui-column[data-alignment="start"] > section { align-items: start; }
+.a2ui-surface .a2ui-column[data-alignment="center"] > section { align-items: center; }
+.a2ui-surface .a2ui-column[data-alignment="end"] > section { align-items: end; }
+.a2ui-surface .a2ui-column[data-alignment="stretch"] > section { align-items: stretch; }
+
+/* :host([distribution="..."]) section { justify-content: ...; } */
+.a2ui-surface .a2ui-column[data-distribution="start"] > section { justify-content: start; }
+.a2ui-surface .a2ui-column[data-distribution="center"] > section { justify-content: center; }
+.a2ui-surface .a2ui-column[data-distribution="end"] > section { justify-content: end; }
+.a2ui-surface .a2ui-column[data-distribution="spaceBetween"] > section { justify-content: space-between; }
+.a2ui-surface .a2ui-column[data-distribution="spaceAround"] > section { justify-content: space-around; }
+.a2ui-surface .a2ui-column[data-distribution="spaceEvenly"] > section { justify-content: space-evenly; }
+
+/* =========================================================================
+ * Row (from Lit row.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: flex; flex: var(--weight); } */
+.a2ui-surface .a2ui-row {
+  display: flex;
+  flex: var(--weight);
+}
+
+/* section { display: flex; flex-direction: row; width: 100%; min-height: 100%; } */
+.a2ui-surface .a2ui-row > section {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100%;
+}
+
+/* :host([alignment="..."]) section { align-items: ...; } */
+/* Use > section to only target Row's direct section, not nested sections */
+.a2ui-surface .a2ui-row[data-alignment="start"] > section { align-items: start; }
+.a2ui-surface .a2ui-row[data-alignment="center"] > section { align-items: center; }
+.a2ui-surface .a2ui-row[data-alignment="end"] > section { align-items: end; }
+.a2ui-surface .a2ui-row[data-alignment="stretch"] > section { align-items: stretch; }
+
+/* :host([distribution="..."]) section { justify-content: ...; } */
+.a2ui-surface .a2ui-row[data-distribution="start"] > section { justify-content: start; }
+.a2ui-surface .a2ui-row[data-distribution="center"] > section { justify-content: center; }
+.a2ui-surface .a2ui-row[data-distribution="end"] > section { justify-content: end; }
+.a2ui-surface .a2ui-row[data-distribution="spaceBetween"] > section { justify-content: space-between; }
+.a2ui-surface .a2ui-row[data-distribution="spaceAround"] > section { justify-content: space-around; }
+.a2ui-surface .a2ui-row[data-distribution="spaceEvenly"] > section { justify-content: space-evenly; }
+
+/* =========================================================================
+ * List (from Lit list.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-list {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* :host([direction="vertical"]) section { display: grid; } */
+.a2ui-surface .a2ui-list[data-direction="vertical"] > section {
+  display: grid;
+}
+
+/* :host([direction="horizontal"]) section { display: flex; max-width: 100%; overflow-x: scroll; ... } */
+.a2ui-surface .a2ui-list[data-direction="horizontal"] > section {
+  display: flex;
+  max-width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+/* :host([direction="horizontal"]) section > ::slotted(*) { flex: 1 0 fit-content; ... } */
+.a2ui-surface .a2ui-list[data-direction="horizontal"] > section > * {
+  flex: 1 0 fit-content;
+  max-width: min(80%, 400px);
+}
+
+/* =========================================================================
+ * DateTimeInput (from Lit datetime-input.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-datetime-input {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* input { display: block; border-radius: 8px; padding: 8px; border: 1px solid #ccc; width: 100%; } */
+/* Use :where() to match Lit's low specificity (0,0,0,1) so theme utility classes can override */
+:where(.a2ui-surface .a2ui-datetime-input) input {
+  display: block;
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
 }
 
 /* =========================================================================
@@ -285,9 +413,12 @@ export const styleOverrides: string = `
 `;
 
 /**
- * Injects A2UI styles into the document head.
- * Includes both the color palette CSS variables and the structural utility classes.
+ * Injects A2UI structural styles into the document head.
+ * Includes utility classes (layout-*, typography-*, color-*, etc.) and React-specific overrides.
  * Call this once at application startup.
+ *
+ * NOTE: CSS variables (--n-*, --p-*, etc.) must be defined by the host application on :root,
+ * just like in the Lit renderer. This allows full customization of the color palette.
  *
  * @example
  * ```tsx
@@ -311,8 +442,10 @@ export function injectStyles(): void {
 
   const styleElement = document.createElement('style');
   styleElement.id = styleId;
-  // Include palette (CSS variables), structural (utility classes), and overrides
-  styleElement.textContent = defaultPalette + '\n' + structuralStyles + '\n' + styleOverrides;
+  // Include structural (utility classes) and component-specific styles
+  // Note: CSS variables (palette) must be defined by the host application on :root,
+  // just like in the Lit renderer. This allows full customization.
+  styleElement.textContent = structuralStyles + '\n' + componentSpecificStyles;
   document.head.appendChild(styleElement);
 }
 

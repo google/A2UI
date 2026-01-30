@@ -5,25 +5,6 @@ import { useA2UIComponent } from '../../hooks/useA2UIComponent';
 import { classMapToString, stylesToObject } from '../../lib/utils';
 import { ComponentNode } from '../../core/ComponentNode';
 
-type Distribution = 'start' | 'center' | 'end' | 'spaceBetween' | 'spaceAround' | 'spaceEvenly';
-type Alignment = 'start' | 'center' | 'end' | 'stretch';
-
-const distributionMap: Record<Distribution, string> = {
-  start: 'flex-start',
-  center: 'center',
-  end: 'flex-end',
-  spaceBetween: 'space-between',
-  spaceAround: 'space-around',
-  spaceEvenly: 'space-evenly',
-};
-
-const alignmentMap: Record<Alignment, string> = {
-  start: 'flex-start',
-  center: 'center',
-  end: 'flex-end',
-  stretch: 'stretch',
-};
-
 /**
  * Column component - arranges children vertically using flexbox.
  *
@@ -33,37 +14,34 @@ export const Column = memo(function Column({ node, surfaceId }: A2UIComponentPro
   const { theme } = useA2UIComponent(node, surfaceId);
   const props = node.properties;
 
-  const distribution = props.distribution as Distribution | undefined;
-  const alignment = props.alignment as Alignment | undefined;
-
-  // Gap is controlled by theme classes (layout-g-*), not inline styles
-  const style: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    minWidth: '100%',
-    height: '100%',
-    ...(distribution && { justifyContent: distributionMap[distribution] }),
-    ...(alignment && { alignItems: alignmentMap[alignment] }),
-    ...stylesToObject(theme.additionalStyles?.Column),
-  };
+  // Match Lit's default values
+  const alignment = props.alignment ?? 'stretch';
+  const distribution = props.distribution ?? 'start';
 
   const children = Array.isArray(props.children) ? props.children : [];
 
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = node.weight !== undefined
+    ? { '--weight': node.weight } as React.CSSProperties
+    : {};
+
   return (
-    <section
-      className={classMapToString(theme.components.Column)}
-      style={style}
-    >
-      {children.map((child, index) => {
-        const childId = typeof child === 'object' && child !== null && 'id' in child
-          ? (child as Types.AnyComponentNode).id
-          : `child-${index}`;
-        const childNode = typeof child === 'object' && child !== null && 'type' in child
-          ? (child as Types.AnyComponentNode)
-          : null;
-        return <ComponentNode key={childId} node={childNode} surfaceId={surfaceId} />;
-      })}
-    </section>
+    <div className="a2ui-column" data-alignment={alignment} data-distribution={distribution} style={hostStyle}>
+      <section
+        className={classMapToString(theme.components.Column)}
+        style={stylesToObject(theme.additionalStyles?.Column)}
+      >
+        {children.map((child, index) => {
+          const childId = typeof child === 'object' && child !== null && 'id' in child
+            ? (child as Types.AnyComponentNode).id
+            : `child-${index}`;
+          const childNode = typeof child === 'object' && child !== null && 'type' in child
+            ? (child as Types.AnyComponentNode)
+            : null;
+          return <ComponentNode key={childId} node={childNode} surfaceId={surfaceId} />;
+        })}
+      </section>
+    </div>
   );
 });
 

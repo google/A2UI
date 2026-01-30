@@ -39,30 +39,30 @@ export const Video = memo(function Video({ node, surfaceId }: A2UIComponentProps
 
   const youtubeId = getYouTubeVideoId(url);
 
-  if (youtubeId) {
-    return (
-      <div
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = node.weight !== undefined
+    ? { '--weight': node.weight } as React.CSSProperties
+    : {};
+
+  return (
+    <div className="a2ui-video" style={hostStyle}>
+      <section
         className={classMapToString(theme.components.Video)}
         style={stylesToObject(theme.additionalStyles?.Video)}
       >
-        <iframe
-          src={`https://www.youtube.com/embed/${youtubeId}`}
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          style={{ border: 'none', width: '100%', aspectRatio: '16/9' }}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <video
-      src={url}
-      controls
-      className={classMapToString(theme.components.Video)}
-      style={stylesToObject(theme.additionalStyles?.Video)}
-    />
+        {youtubeId ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${youtubeId}`}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ border: 'none', width: '100%', aspectRatio: '16/9' }}
+          />
+        ) : (
+          <video src={url} controls />
+        )}
+      </section>
+    </div>
   );
 });
 
