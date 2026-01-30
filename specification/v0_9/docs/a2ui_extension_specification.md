@@ -21,8 +21,8 @@ Catalog Definition Document: The a2ui extension is catalog-agnostic. All UI comp
 Schemas: The a2ui extension is defined by several primary JSON schemas:
 
 - Catalog Definition Schema: A standard format for defining a library of components and functions.
-- Server-to-Client Message Schema: The core wire format for messages sent from the agent to the client (e.g., updateComponents, updateDataModel).
-- Client-to-Server Event Schema: The core wire format for messages sent from the client to the agent (e.g., action).
+- Server-to-Client Message List Schema: The core wire format for messages sent from the agent to the client (e.g., updateComponents, updateDataModel).
+- Client-to-Server Message List Schema: The core wire format for messages sent from the client to the agent (e.g., action).
 - Client Capabilities Schema: The schema for the `a2uiClientCapabilities` object.
 
 Client Capabilities: The client sends its capabilities to the server in an `a2uiClientCapabilities` object. This object is included in the `metadata` field of every A2A `Message` sent from the client to the server. This object allows the client to declare which catalogs it supports.
@@ -40,7 +40,7 @@ Example AgentExtension block:
   "required": false,
   "params": {
     "supportedCatalogIds": [
-      "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+      "https://a2ui.org/specification/v0_9/standard_catalog.json",
       "https://my-company.com/a2ui/v0.9/my_custom_catalog.json"
     ],
     "acceptsInlineCatalogs": true
@@ -69,28 +69,47 @@ To identify a `DataPart` as containing A2UI data, it must have the following met
 
 - `mimeType`: `application/json+a2ui`
 
-The `data` field of the `DataPart` contains a **single** A2UI JSON message (e.g., `createSurface`, `updateComponents`, `action`). It MUST NOT be an array of messages.
+The `data` field of the `DataPart` contains a **list** of A2UI JSON messages (e.g., `createSurface`, `updateComponents`, `action`). It MUST be an array of messages.
 
-### Atomicity and multiple messages
+### Processing Rules
 
-To send multiple A2UI messages that should be processed atomically (e.g., creating a surface and immediately populating it), the sender MUST include multiple `DataPart`s within a single A2A `Message`.
+The `data` field contains a list of messages. This list is **NOT** a transactional unit. Receivers (both Clients and Agents) MUST process messages in the list sequentially.
 
-Receivers (both Clients and Agents) MUST process all A2UI `DataPart`s within a single A2A `Message` sequentially and atomically. For a renderer, this means the UI should not be repainted until all parts in the message have been applied.
+If a single message in the list fails to validate or apply (e.g., due to a schema violation or invalid reference), the receiver SHOULD report/log the error for that specific message and MUST continue processing the remaining messages in the list.
+
+Atomicity is guaranteed only at the **individual message** level. However, for a better user experience, a renderer SHOULD NOT repaint the UI until all messages in the list have been processed. This prevents intermediate states from flickering to the user.
 
 ### Server-to-client messages
 
-When an agent sends a message to a client (or another agent acting as a client/renderer), the `data` payload must validate against the **Server-to-Client Message Schema**.
+When an agent sends a message to a client (or another agent acting as a client/renderer), the `data` payload must validate against the **Server-to-Client Message List Schema**.
 
-Example `createSurface` DataPart:
+Example DataPart:
 
 ```json
 {
-  "data": {
-    "createSurface": {
-      "surfaceId": "user_profile_surface",
-      "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json"
+  "data": [
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "example_surface",
+        "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "example_surface",
+        "components": [
+          {
+            "Text": {
+              "id": "root",
+              "text": "Hello!"
+            }
+          }
+        ]
+      }
     }
-  },
+  ],
   "kind": "data",
   "metadata": {
     "mimeType": "application/json+a2ui"
@@ -100,23 +119,26 @@ Example `createSurface` DataPart:
 
 ### Client-to-server events
 
-When a client (or an agent forwarding an event) sends a message to an agent, it also uses a `DataPart` with the same `application/json+a2ui` MIME type. However, the `data` payload must validate against the **Client-to-Server Event Schema**.
+When a client (or an agent forwarding an event) sends a message to an agent, it also uses a `DataPart` with the same `application/json+a2ui` MIME type. However, the `data` payload must validate against the **Client-to-Server Message List Schema**.
 
 Example `action` DataPart:
 
 ```json
 {
-  "data": {
-    "action": {
-      "name": "submit_form",
-      "surfaceId": "contact_form_1",
-      "sourceComponentId": "submit_button",
-      "timestamp": "2026-01-15T12:00:00Z",
-      "context": {
-        "email": "user@example.com"
+  "data": [
+    {
+      "version": "v0.9",
+      "action": {
+        "name": "submit_form",
+        "surfaceId": "contact_form_1",
+        "sourceComponentId": "submit_button",
+        "timestamp": "2026-01-15T12:00:00Z",
+        "context": {
+          "email": "user@example.com"
+        }
       }
     }
-  },
+  ],
   "kind": "data",
   "metadata": {
     "mimeType": "application/json+a2ui"

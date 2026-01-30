@@ -45,7 +45,7 @@ export class A2UIClient {
     const finalMessage = {
       ...message,
       metadata: {
-        inlineCatalog: catalog,
+        inlineCatalogs: [catalog],
       },
     };
 
