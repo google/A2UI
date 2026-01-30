@@ -119,7 +119,7 @@ A2UI can also be carried over:
 - **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/docs/getting-started/intro)**: Delivered as tool outputs or resource subscriptions.
 - **[SSE](https://en.wikipedia.org/wiki/Server-sent_events) with [JSON RPC](https://www.jsonrpc.org/)**: Standard server-sent events for web integrations that support streaming, and JSON RPC for client-server communication.
 - **[WebSockets](https://en.wikipedia.org/wiki/WebSocket)**: For bidirectional, real-time sessions.
-  **[REST](https://cloud.google.com/discover/what-is-rest-api?hl=en)**: For simple use case, REST APIs will work but lack streaming capabilities.
+- **[REST](https://cloud.google.com/discover/what-is-rest-api?hl=en)**: For simple use case, REST APIs will work but lack streaming capabilities.
 
 ## The protocol schemas
 
@@ -157,7 +157,7 @@ This indirection allows the same core envelope schema to be used with any compli
 
 Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the standard catalog. It should have the same form as the standard catalog, and use common elements in the [`common_types.json`] schema.
 
-### Validator compliance & custom Catalogs
+### Validator compliance & custom catalogs
 
 To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), custom catalogs MUST adhere to the following strict typing rules:
 
@@ -618,24 +618,32 @@ Buttons can also define `checks`. If any check fails, the button is automaticall
   "text": "Submit",
   "checks": [
     {
-      "and": [
-        {
-          "call": "required",
-          "args": { "value": { "path": "/formData/terms" } }
-        },
-        {
-          "or": [
+      "condition": {
+        "call": "and",
+        "args": {
+          "values": [
             {
               "call": "required",
-              "args": { "value": { "path": "/formData/email" } }
+              "args": { "value": { "path": "/formData/terms" } }
             },
             {
-              "call": "required",
-              "args": { "value": { "path": "/formData/phone" } }
+              "call": "or",
+              "args": {
+                "values": [
+                  {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/email" } }
+                  },
+                  {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/phone" } }
+                  }
+                ]
+              }
             }
           ]
         }
-      ],
+      },
       "message": "You must accept terms AND provide either email or phone"
     }
   ]
@@ -684,6 +692,10 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **formatDate**     | Formats a date/time using a pattern.                                     |
 | **pluralize**      | Selects a localized string based on a numeric count.                     |
 | **openUrl**        | Opens a URL in a browser.                                                |
+| **now**            | Returns current timestamp.                                               |
+| **and**            | Logical AND operation on a list of boolean values.                       |
+| **or**             | Logical OR operation on a list of boolean values.                        |
+| **not**            | Logical NOT operation on a boolean value.                                |
 
 ### Theme
 
