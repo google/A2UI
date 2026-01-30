@@ -664,7 +664,7 @@
             }
           },
           "required": ["value"],
-          "unevaluatedProperties": false
+          "additionalProperties": false
         },
         "returnType": {
           "const": "boolean"
@@ -963,20 +963,16 @@
           "const": "openUrl"
         },
         "args": {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "url": {
-                  "type": "string",
-                  "format": "uri",
-                  "description": "The URL to open."
-                }
-              },
-              "required": ["url"]
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "The URL to open."
             }
-          ],
-          "unevaluatedProperties": false
+          },
+          "required": ["url"],
+          "additionalProperties": false
         },
         "returnType": {
           "const": "void"
@@ -1001,7 +997,7 @@
           "const": "string"
         }
       },
-      "required": ["call", "args"],
+      "required": ["call"],
       "unevaluatedProperties": false
     },
     "and": {
