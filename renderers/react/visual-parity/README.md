@@ -221,7 +221,6 @@ Some fixtures are skipped due to known implementation differences:
 
 | Fixture | Reason |
 |---------|--------|
-| `checkboxUnchecked` | Lit bug: doesn't render when `literalBoolean=false` |
 | `multipleChoice*` | Implementation differs: React uses radio/checkboxes, Lit uses `<select>` |
 
 ## Troubleshooting
