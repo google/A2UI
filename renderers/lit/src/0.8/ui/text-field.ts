@@ -17,10 +17,10 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import * as Primitives from "@a2ui/web_core/types/primitives";
+import * as Types from "@a2ui/web_core/types/types";
 import { classMap } from "lit/directives/class-map.js";
-import { ResolvedTextField } from "../types/types";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { extractStringValue } from "./utils/utils.js";
 import { structuralStyles } from "./styles.js";
@@ -28,13 +28,13 @@ import { structuralStyles } from "./styles.js";
 @customElement("a2ui-textfield")
 export class TextField extends Root {
   @property()
-  accessor text: StringValue | null = null;
+  accessor text: Primitives.StringValue | null = null;
 
   @property()
-  accessor label: StringValue | null = null;
+  accessor label: Primitives.StringValue | null = null;
 
   @property()
-  accessor inputType: ResolvedTextField["type"] | null = null;
+  accessor inputType: Types.ResolvedTextField["type"] | null = null;
 
   static styles = [
     structuralStyles,

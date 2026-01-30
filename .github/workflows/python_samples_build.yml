@@ -20,11 +20,11 @@ on:
       - main
     paths:
       - 'samples/agent/adk/**'
-      - 'a2a_agents/python/a2ui_extension/**'
+      - 'a2a_agents/python/a2ui_agent/**'
   pull_request:
     paths:
       - 'samples/agent/adk/**'
-      - 'a2a_agents/python/a2ui_extension/**'
+      - 'a2a_agents/python/a2ui_agent/**'
 
 jobs:
   build:

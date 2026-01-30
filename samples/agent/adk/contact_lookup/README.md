@@ -1,4 +1,4 @@
-# A2UI Contact Lookup Agent Sample
+# A2UI Contact Lookup Agent sample
 
 This sample uses the Agent Development Kit (ADK) along with the A2A protocol to create a simple "Contact Lookup" agent that is hosted as an A2A server.
 
@@ -8,18 +8,19 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
 - [UV](https://docs.astral.sh/uv/)
 - Access to an LLM and API Key
 
-## Running the Sample
+## Running the sample
 
 1. Navigate to the samples directory:
 
     ```bash
-    cd a2a_samples/a2ui_contact_lookup
+    cd samples/agent/adk/contact_lookup
     ```
 
 2. Create an environment file with your API key:
 
    ```bash
-   echo "GEMINI_API_KEY=your_api_key_here" > .env
+   cp .env.example .env
+   # Edit .env with your actual API key (do not commit .env)
    ```
 
 3. Run the server:

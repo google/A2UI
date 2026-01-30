@@ -16,7 +16,9 @@
 
 import { Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Primitives, Styles, Types } from '@a2ui/lit/0.8';
+import * as Primitives from '@a2ui/web_core/types/primitives';
+import * as Styles from '@a2ui/web_core/styles/index';
+import * as Types from '@a2ui/web_core/types/types';
 import { MarkdownRenderer } from '../data/markdown';
 
 interface HintedStyles {

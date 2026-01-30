@@ -14,61 +14,134 @@
 
 import json
 import logging
-import os
 from pathlib import Path
-from typing import Any
-import jsonschema
+import pkgutil
+from typing import Any, ClassVar
 
-from google.adk.models.lite_llm import LiteLlm
+from a2ui.extension.a2ui_extension import STANDARD_CATALOG_ID
+from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
+from a2ui.extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEnabledProvider, A2uiSchemaProvider
 from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners.built_in_planner import BuiltInPlanner
 from google.genai import types
-from google.adk.agents.readonly_context import ReadonlyContext
-from tools import get_store_sales, get_sales_data
-from a2ui_toolset import A2uiToolset
-from a2ui_session_util import A2UI_ENABLED_STATE_KEY, A2UI_CATALOG_URI_STATE_KEY, A2UI_SCHEMA_STATE_KEY
-from a2ui.a2ui_extension import STANDARD_CATALOG_ID
+import jsonschema
+from pydantic import PrivateAttr
+
+try:
+    from .tools import get_sales_data, get_store_sales
+except ImportError:
+    from tools import get_sales_data, get_store_sales
 
 logger = logging.getLogger(__name__)
 
 RIZZCHARTS_CATALOG_URI = "https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json"
+A2UI_CATALOG_URI_STATE_KEY = "user:a2ui_catalog_uri"
 
-class rizzchartsAgent:
+class RizzchartsAgent(LlmAgent):
     """An agent that runs an ecommerce dashboard"""
 
-    SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
-    
-    @classmethod
-    def get_a2ui_schema(cls, readonly_context: ReadonlyContext) -> dict[str, Any]:
-        a2ui_schema = readonly_context.state.get(A2UI_SCHEMA_STATE_KEY)
-        if not a2ui_schema:
-            raise ValueError("A2UI schema is empty")
-        a2ui_schema_object = {"type": "array", "items": a2ui_schema} # Make a list since we support multiple parts in this tool call
-        return a2ui_schema_object 
+    SUPPORTED_CONTENT_TYPES: ClassVar[list[str]] = ["text", "text/plain"]
+    _a2ui_enabled_provider: A2uiEnabledProvider = PrivateAttr()
+    _a2ui_schema_provider: A2uiSchemaProvider = PrivateAttr()
 
-    @classmethod
-    def load_example(cls, path: str, a2ui_schema: dict[str, Any]) -> dict[str, Any]:
-        example_str = Path(path).read_text()
+    def __init__(
+        self,
+        model: Any,
+        a2ui_enabled_provider: A2uiEnabledProvider,
+        a2ui_schema_provider: A2uiSchemaProvider
+    ):
+        """Initializes the RizzchartsAgent.
+
+        Args:
+            model: The LLM model to use.
+            a2ui_enabled_provider: A provider to check if A2UI is enabled.
+            a2ui_schema_provider: A provider to retrieve the A2UI schema.
+        """
+        super().__init__(
+            model=model,
+            name="rizzcharts_agent",
+            description="An agent that lets sales managers request sales data.",
+            instruction=self.get_instructions,
+            tools=[get_store_sales, get_sales_data, SendA2uiToClientToolset(
+                a2ui_schema=a2ui_schema_provider,
+                a2ui_enabled=a2ui_enabled_provider,
+            )],
+            planner=BuiltInPlanner(
+                thinking_config=types.ThinkingConfig(
+                    include_thoughts=True,
+                )
+            ),
+            disallow_transfer_to_peers=True,
+        )
+
+        self._a2ui_enabled_provider = a2ui_enabled_provider
+        self._a2ui_schema_provider = a2ui_schema_provider
+
+    def get_a2ui_schema(self, ctx: ReadonlyContext) -> dict[str, Any]:
+        """Retrieves and wraps the A2UI schema from the session state.
+
+        Args:
+            ctx: The ReadonlyContext for resolving the schema.
+
+        Returns:
+            The wrapped A2UI schema.
+        """
+        a2ui_schema = self._a2ui_schema_provider(ctx)
+        return wrap_as_json_array(a2ui_schema)
+
+    def load_example(self, path: str, a2ui_schema: dict[str, Any]) -> dict[str, Any]:
+        """Loads an example JSON file and validates it against the A2UI schema.
+
+        Args:
+            path: Relative path to the example JSON file.
+            a2ui_schema: The A2UI schema to validate against.
+
+        Returns:
+            The loaded and validated JSON data.
+        """
+        data = None
+        try:
+            # Try pkgutil first (for Google3)
+            package_name = __package__ or ""
+            data = pkgutil.get_data(package_name, path)
+        except ImportError:
+            logger.info("pkgutil failed to get data, falling back to file system.")
+
+        if data:
+            example_str = data.decode("utf-8")
+        else:
+            # Fallback to direct Path relative to this file (for local dev)
+            full_path = Path(__file__).parent / path
+            example_str = full_path.read_text()
+
         example_json = json.loads(example_str)
         jsonschema.validate(
             instance=example_json, schema=a2ui_schema
         )
         return example_json
 
-    @classmethod
-    def get_instructions(cls, readonly_context: ReadonlyContext) -> str:
-        use_ui = readonly_context.state.get(A2UI_ENABLED_STATE_KEY)
+    def get_instructions(self, readonly_context: ReadonlyContext) -> str:
+        """Generates the system instructions for the agent.
+
+        Args:
+            readonly_context: The ReadonlyContext for resolving instructions.
+
+        Returns:
+            The generated system instructions.
+        """
+        use_ui = self._a2ui_enabled_provider(readonly_context)
         if not use_ui:
             raise ValueError("A2UI must be enabled to run rizzcharts agent")
 
-        a2ui_schema = cls.get_a2ui_schema(readonly_context)
+        a2ui_schema = self.get_a2ui_schema(readonly_context)
         catalog_uri = readonly_context.state.get(A2UI_CATALOG_URI_STATE_KEY)
         if catalog_uri == RIZZCHARTS_CATALOG_URI:
-            map_example = cls.load_example("examples/rizzcharts_catalog/map.json", a2ui_schema)
-            chart_example = cls.load_example("examples/rizzcharts_catalog/chart.json", a2ui_schema)
+            map_example = self.load_example("examples/rizzcharts_catalog/map.json", a2ui_schema)
+            chart_example = self.load_example("examples/rizzcharts_catalog/chart.json", a2ui_schema)
         elif catalog_uri == STANDARD_CATALOG_ID:
-            map_example = cls.load_example("examples/standard_catalog/map.json", a2ui_schema)
-            chart_example = cls.load_example("examples/standard_catalog/chart.json", a2ui_schema)
+            map_example = self.load_example("examples/standard_catalog/map.json", a2ui_schema)
+            chart_example = self.load_example("examples/standard_catalog/chart.json", a2ui_schema)
         else:
             raise ValueError(f"Unsupported catalog uri: {catalog_uri if catalog_uri else 'None'}")
 
@@ -130,23 +203,3 @@ Your task is to analyze the user's request, fetch the necessary data, select the
         logger.info(f"Generated system instructions for A2UI {'ENABLED' if use_ui else 'DISABLED'} and catalog {catalog_uri}")
 
         return final_prompt
-
-    @classmethod
-    def build_agent(cls) -> LlmAgent:
-        """Builds the LLM agent for the rizzchartsAgent agent."""
-        LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
-
-        return LlmAgent(
-            model=LiteLlm(model=LITELLM_MODEL),
-            name="rizzcharts_agent",
-            description="An agent that lets sales managers request sales data.",
-            instruction=cls.get_instructions,
-            tools=[get_store_sales, get_sales_data, A2uiToolset()],
-            planner=BuiltInPlanner(
-                thinking_config=types.ThinkingConfig(
-                    include_thoughts=True,
-                )
-            ),
-            disallow_transfer_to_peers=True,
-
-        )

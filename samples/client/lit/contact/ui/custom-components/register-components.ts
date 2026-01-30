@@ -16,11 +16,29 @@
 
 import { componentRegistry } from "@a2ui/lit/ui";
 import { OrgChart } from "./org-chart.js";
+import { WebFrame } from "./web-frame.js";
 import { PremiumTextField } from "./premium-text-field.js";
 
 export function registerContactComponents() {
   // Register OrgChart
-  componentRegistry.register("OrgChart", OrgChart, "org-chart");
+  componentRegistry.register("OrgChart", OrgChart, "org-chart", {
+    type: "object",
+    properties: {
+      chain: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            title: { type: "string" },
+            name: { type: "string" },
+          },
+          required: ["title", "name"],
+        },
+      },
+      action: { $ref: "#/definitions/Action" },
+    },
+    required: ["chain"],
+  });
 
   // Register PremiumTextField as an override for TextField
   componentRegistry.register(
@@ -28,6 +46,24 @@ export function registerContactComponents() {
     PremiumTextField,
     "premium-text-field"
   );
+
+  // Register WebFrame
+  componentRegistry.register("WebFrame", WebFrame, "a2ui-web-frame", {
+    type: "object",
+    properties: {
+      url: { type: "string" },
+      html: { type: "string" },
+      height: { type: "number" },
+      interactionMode: {
+        type: "string",
+        enum: ["readOnly", "interactive"]
+      },
+      allowedEvents: {
+        type: "array",
+        items: { type: "string" }
+      }
+    },
+  });
 
   console.log("Registered Contact App Custom Components");
 }

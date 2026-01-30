@@ -11,9 +11,9 @@
     "serve:ssr:restaurant": "node dist/restaurant/server/server.mjs",
     "serve:ssr:rizzcharts": "node dist/rizzcharts/server/server.mjs",
     "serve:ssr:contact": "node dist/contact/server/server.mjs",
-    "build:lit": "cd ../../../renderers/lit && npm i && npm run build",
+    "build:web_core": "cd ../../../renderers/web_core && npm install && npm run build",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
-    "demo:restaurant": "npm run build:lit && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\""
+    "demo:restaurant": "npm run build:web_core && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\""
   },
   "prettier": {
     "printWidth": 100,
@@ -30,7 +30,7 @@
   "private": true,
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",
-    "@a2ui/lit": "file:../../../renderers/lit",
+    "@a2ui/web_core": "file:../../../renderers/web_core",
     "@angular/cdk": "^20.2.10",
     "@angular/common": "^21.0.3",
     "@angular/compiler": "^21.0.3",
@@ -82,6 +82,6 @@
   },
   "workspaces": [
     "projects/*",
-    "../../../renderers/lit"
+    "../../../renderers/web_core"
   ]
 }

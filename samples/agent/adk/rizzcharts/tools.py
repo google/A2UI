@@ -12,19 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def get_store_sales() -> dict[str, Any]:
+def get_store_sales(region: str = "all", **kwargs: Any) -> dict[str, Any]:
     """
     Gets individual store sales
+
+    Args:
+        region: The region to get store sales for.
+        **kwargs: Additional arguments.
 
     Returns:
         A dict containing the stores with locations and their sales, and with outlier stores highlighted
     """
+    logger.info("get_store_sales called with region=%s, kwargs=%s", region, kwargs)
 
     return {
         "center": {"lat": 34, "lng": -118.2437},
@@ -49,13 +54,20 @@ def get_store_sales() -> dict[str, Any]:
     }
 
 
-def get_sales_data() -> dict[str, Any]:
+def get_sales_data(time_period: str = "year", **kwargs: Any) -> dict[str, Any]:
     """
     Gets the sales data.
+
+    Args:
+        time_period: The time period to get sales data for (e.g. 'Q1', 'year'). Defaults to 'year'.
+        **kwargs: Additional arguments.
 
     Returns:
         A dict containing the sales breakdown by product category.
     """
+    logger.info(
+        "get_sales_data called with time_period=%s, kwargs=%s", time_period, kwargs
+    )
 
     return {
         "sales_data": [

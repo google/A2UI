@@ -14,13 +14,13 @@
  limitations under the License.
  */
 
-import { A2uiMessageProcessor } from "../../data/model-processor.js";
-import { NumberValue, type StringValue } from "../../types/primitives.js";
-import { type AnyComponentNode } from "../../types/types.js";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import * as Primitives from "@a2ui/web_core/types/primitives";
+import * as Types from "@a2ui/web_core/types/types";
 
 export function extractStringValue(
-  val: StringValue | null,
-  component: AnyComponentNode | null,
+  val: Primitives.StringValue | null,
+  component: Types.AnyComponentNode | null,
   processor: A2uiMessageProcessor | null,
   surfaceId: string | null
 ): string {
@@ -52,8 +52,8 @@ export function extractStringValue(
 }
 
 export function extractNumberValue(
-  val: NumberValue | null,
-  component: AnyComponentNode | null,
+  val: Primitives.NumberValue | null,
+  component: Types.AnyComponentNode | null,
   processor: A2uiMessageProcessor | null,
   surfaceId: string | null
 ): number {

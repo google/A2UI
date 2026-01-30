@@ -64,8 +64,8 @@ Components bound to data paths automatically update when the data changes:
 {"id": "status", "component": {"Text": {"text": {"path": "/order/status"}}}}
 ```
 
-**Initial:** `/order/status` = "Processing..." → displays "Processing..."
-**Update:** Send `dataModelUpdate` with `status: "Shipped"` → displays "Shipped"
+- **Initial:** `/order/status` = "Processing..." → displays "Processing..."
+- **Update:** Send `dataModelUpdate` with `status: "Shipped"` → displays "Shipped"
 
 No component updates needed—just data updates.
 
@@ -99,8 +99,8 @@ Inside a template, paths are scoped to the array item:
 {"id": "product-name", "component": {"Text": {"text": {"path": "/name"}}}}
 ```
 
-For `/products/0`, `/name` resolves to `/products/0/name` → "Widget"
-For `/products/1`, `/name` resolves to `/products/1/name` → "Gadget"
+- For `/products/0`, `/name` resolves to `/products/0/name` → "Widget"
+- For `/products/1`, `/name` resolves to `/products/1/name` → "Gadget"
 
 Adding/removing items automatically updates the rendered components.
 

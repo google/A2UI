@@ -5,11 +5,13 @@ A2UI uses an **adjacency list model** for component hierarchies. Instead of nest
 ## Why Flat Lists?
 
 **Traditional nested approach:**
+
 - LLM must generate perfect nesting in one pass
 - Hard to update deeply nested components
 - Difficult to stream incrementally
 
 **A2UI adjacency list:**
+
 - ✅ Flat structure, easy for LLMs to generate
 - ✅ Send components incrementally
 - ✅ Update any component by ID
@@ -39,7 +41,7 @@ Components reference children by ID, not by nesting.
 
 Every component has:
 
-1. **ID**: Unique identifier (`"welcome-message"`)
+1. **ID**: Unique identifier (`"welcome"`)
 2. **Type**: Component type (`Text`, `Button`, `Card`)
 3. **Properties**: Configuration specific to that type
 
@@ -76,8 +78,8 @@ For each item in `/items`, render the `item-template`. See [Data Binding](data-b
 
 Components get their values two ways:
 
-**Literal** - Fixed value: `{"text": {"literalString": "Welcome"}}`
-**Data-bound** - From data model: `{"text": {"path": "/user/name"}}`
+- **Literal** - Fixed value: `{"text": {"literalString": "Welcome"}}`
+- **Data-bound** - From data model: `{"text": {"path": "/user/name"}}`
 
 LLMs can generate components with literal values or bind them to data paths for dynamic content.
 
@@ -94,9 +96,9 @@ A surface is a complete, cohesive UI (form, dashboard, chat, etc.).
 
 ## Incremental Updates
 
-**Add** - Send new `surfaceUpdate` with new component IDs
-**Update** - Send `surfaceUpdate` with existing ID and new properties
-**Remove** - Update parent's `children` list to exclude removed IDs
+- **Add** - Send new `surfaceUpdate` with new component IDs
+- **Update** - Send `surfaceUpdate` with existing ID and new properties
+- **Remove** - Update parent's `children` list to exclude removed IDs
 
 The flat structure makes all updates simple ID-based operations.
 
