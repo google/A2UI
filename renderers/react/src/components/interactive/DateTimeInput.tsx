@@ -52,20 +52,50 @@ export const DateTimeInput = memo(function DateTimeInput({ node, surfaceId }: A2
     inputType = 'time';
   }
 
-  // Use <section> container to match Lit renderer
+  // Get placeholder text to match Lit renderer
+  const getPlaceholderText = () => {
+    if (enableDate && enableTime) {
+      return 'Date & Time';
+    } else if (enableTime) {
+      return 'Time';
+    }
+    return 'Date';
+  };
+
+  // Structure mirrors Lit's DateTimeInput component:
+  //   <div class="a2ui-datetime-input">  ← :host equivalent
+  //     <section class="...">            ← container theme classes
+  //       <label>                        ← label
+  //       <input>                        ← input element
+  //     </section>
+  //   </div>
+
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = node.weight !== undefined
+    ? { '--weight': node.weight } as React.CSSProperties
+    : {};
+
   return (
-    <section
-      className={classMapToString(theme.components.DateTimeInput.container)}
-      style={stylesToObject(theme.additionalStyles?.DateTimeInput)}
-    >
-      <input
-        type={inputType}
-        id={id}
-        value={value}
-        onChange={handleChange}
-        className={classMapToString(theme.components.DateTimeInput.element)}
-      />
-    </section>
+    <div className="a2ui-datetime-input" style={hostStyle}>
+      <section
+        className={classMapToString(theme.components.DateTimeInput.container)}
+        style={stylesToObject(theme.additionalStyles?.DateTimeInput)}
+      >
+        <label
+          htmlFor={id}
+          className={classMapToString(theme.components.DateTimeInput.label)}
+        >
+          {getPlaceholderText()}
+        </label>
+        <input
+          type={inputType}
+          id={id}
+          value={value}
+          onChange={handleChange}
+          className={classMapToString(theme.components.DateTimeInput.element)}
+        />
+      </section>
+    </div>
   );
 });
 

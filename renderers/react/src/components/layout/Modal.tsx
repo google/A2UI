@@ -81,10 +81,16 @@ export const Modal = memo(function Modal({ node, surfaceId }: A2UIComponentProps
     </dialog>
   );
 
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = {
+    cursor: 'pointer',
+    ...(node.weight !== undefined ? { '--weight': node.weight } as React.CSSProperties : {}),
+  };
+
   return (
     <>
-      {/* Entry point (trigger) */}
-      <div onClick={openModal} style={{ cursor: 'pointer' }}>
+      {/* Entry point (trigger) - also serves as :host equivalent */}
+      <div className="a2ui-modal" onClick={openModal} style={hostStyle}>
         <ComponentNode node={props.entryPointChild} surfaceId={surfaceId} />
       </div>
 

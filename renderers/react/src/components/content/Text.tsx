@@ -26,13 +26,14 @@ function isHintedStyles(styles: unknown): styles is HintedStyles {
 /**
  * Markdown-it instance for rendering markdown text.
  * Uses synchronous import to ensure availability at first render (matches Lit renderer).
+ *
+ * Configuration matches Lit's markdown directive (uses MarkdownIt defaults):
+ * - html: false (default) - Security: disable raw HTML
+ * - linkify: false (default) - Don't auto-convert URLs/emails to links
+ * - breaks: false (default) - Don't convert \n to <br>
+ * - typographer: false (default) - Don't use smart quotes/dashes
  */
-const markdownRenderer = new MarkdownIt({
-  html: false, // Security: disable raw HTML
-  breaks: true, // Convert \n to <br>
-  linkify: true, // Auto-convert URLs to links
-  typographer: true, // Smart quotes, dashes, etc.
-});
+const markdownRenderer = new MarkdownIt();
 
 /**
  * Apply theme classes to markdown HTML elements.
@@ -65,6 +66,13 @@ function applyMarkdownTheme(html: string, markdownTheme: Types.Theme['markdown']
 
 /**
  * Text component - renders text content with markdown support.
+ *
+ * Structure mirrors Lit's Text component:
+ *   <div class="a2ui-text">      ← :host equivalent
+ *     <section class="...">      ← theme classes
+ *       <h2>...</h2>             ← rendered markdown content
+ *     </section>
+ *   </div>
  *
  * Text is parsed as markdown and rendered as HTML (matches Lit renderer behavior).
  * Supports usageHint values: h1, h2, h3, h4, h5, caption, body
@@ -144,13 +152,19 @@ export const Text = memo(function Text({ node, surfaceId }: A2UIComponentProps<T
     return null;
   }
 
-  // Always use <section> wrapper with markdown rendering (matches Lit structure)
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = node.weight !== undefined
+    ? { '--weight': node.weight } as React.CSSProperties
+    : {};
+
   return (
-    <section
-      className={classMapToString(classes)}
-      style={additionalStyles}
-      dangerouslySetInnerHTML={renderedContent}
-    />
+    <div className="a2ui-text" style={hostStyle}>
+      <section
+        className={classMapToString(classes)}
+        style={additionalStyles}
+        dangerouslySetInnerHTML={renderedContent}
+      />
+    </div>
   );
 });
 

@@ -18,13 +18,20 @@ export const AudioPlayer = memo(function AudioPlayer({ node, surfaceId }: A2UICo
     return null;
   }
 
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = node.weight !== undefined
+    ? { '--weight': node.weight } as React.CSSProperties
+    : {};
+
   return (
-    <div
-      className={classMapToString(theme.components.AudioPlayer)}
-      style={stylesToObject(theme.additionalStyles?.AudioPlayer)}
-    >
-      {description && <p className="a2ui-audio-player__description">{description}</p>}
-      <audio src={url} controls style={{ width: '100%' }} />
+    <div className="a2ui-audio" style={hostStyle}>
+      <section
+        className={classMapToString(theme.components.AudioPlayer)}
+        style={stylesToObject(theme.additionalStyles?.AudioPlayer)}
+      >
+        {description && <p>{description}</p>}
+        <audio src={url} controls />
+      </section>
     </div>
   );
 });

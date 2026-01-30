@@ -13,6 +13,8 @@ import { Row } from '../components/layout/Row';
 import { Column } from '../components/layout/Column';
 import { List } from '../components/layout/List';
 import { Card } from '../components/layout/Card';
+import { Tabs } from '../components/layout/Tabs';
+import { Modal } from '../components/layout/Modal';
 
 // Interactive components
 import { Button } from '../components/interactive/Button';
@@ -42,15 +44,9 @@ export function registerDefaultCatalog(registry: ComponentRegistry): void {
   registry.register('List', { component: List });
   registry.register('Card', { component: Card });
 
-  // Lazy-loaded layout components (larger, less common)
-  registry.register('Tabs', {
-    component: () => import('../components/layout/Tabs'),
-    lazy: true,
-  });
-  registry.register('Modal', {
-    component: () => import('../components/layout/Modal'),
-    lazy: true,
-  });
+  // Additional layout components
+  registry.register('Tabs', { component: Tabs });
+  registry.register('Modal', { component: Modal });
 
   // Interactive components
   registry.register('Button', { component: Button });

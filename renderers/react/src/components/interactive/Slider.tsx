@@ -10,7 +10,7 @@ import { classMapToString, stylesToObject } from '../../lib/utils';
  * Supports two-way data binding for the value.
  */
 export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentProps<Types.SliderNode>) {
-  const { theme, resolveNumber, setValue, getValue } = useA2UIComponent(
+  const { theme, resolveNumber, resolveString, setValue, getValue } = useA2UIComponent(
     node,
     surfaceId
   );
@@ -19,8 +19,9 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
 
   const valuePath = props.value?.path;
   const initialValue = resolveNumber(props.value) ?? 0;
+  // Match Lit's default values (minValue=0, maxValue=0)
   const minValue = props.minValue ?? 0;
-  const maxValue = props.maxValue ?? 100;
+  const maxValue = props.maxValue ?? 0;
 
   const [value, setLocalValue] = useState(initialValue);
 
@@ -50,36 +51,49 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
   // Access label from props if it exists (Lit component supports it but type doesn't define it)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const labelValue = (props as any).label;
-  const { resolveString } = useA2UIComponent(node, surfaceId);
   const label = labelValue ? resolveString(labelValue) : '';
 
-  // Use <section> container to match Lit renderer structure:
-  // <section><label>...</label><input/><span>value</span></section>
+  // Structure mirrors Lit's Slider component:
+  //   <div class="a2ui-slider">    ← :host equivalent
+  //     <section class="...">      ← internal element
+  //       <label>...</label>
+  //       <input>...</input>
+  //       <span>value</span>
+  //     </section>
+  //   </div>
+
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = node.weight !== undefined
+    ? { '--weight': node.weight } as React.CSSProperties
+    : {};
+
   return (
-    <section
-      className={classMapToString(theme.components.Slider.container)}
-      style={stylesToObject(theme.additionalStyles?.Slider)}
-    >
-      <label
-        htmlFor={id}
-        className={classMapToString(theme.components.Slider.label)}
+    <div className="a2ui-slider" style={hostStyle}>
+      <section
+        className={classMapToString(theme.components.Slider.container)}
+        style={stylesToObject(theme.additionalStyles?.Slider)}
       >
-        {label}
-      </label>
-      <input
-        type="range"
-        id={id}
-        name="data"
-        value={value}
-        min={minValue}
-        max={maxValue}
-        onChange={handleChange}
-        className={classMapToString(theme.components.Slider.element)}
-      />
-      <span className={classMapToString(theme.components.Slider.label)}>
-        {value}
-      </span>
-    </section>
+        <label
+          htmlFor={id}
+          className={classMapToString(theme.components.Slider.label)}
+        >
+          {label}
+        </label>
+        <input
+          type="range"
+          id={id}
+          name="data"
+          value={value}
+          min={minValue}
+          max={maxValue}
+          onChange={handleChange}
+          className={classMapToString(theme.components.Slider.element)}
+        />
+        <span className={classMapToString(theme.components.Slider.label)}>
+          {value}
+        </span>
+      </section>
+    </div>
   );
 });
 

@@ -83,8 +83,19 @@ export const MultipleChoice = memo(function MultipleChoice({
 
   const isRadio = maxSelections === 1;
 
-  // Use <section> container to match Lit renderer
+  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
+  const hostStyle: React.CSSProperties = node.weight !== undefined
+    ? { '--weight': node.weight } as React.CSSProperties
+    : {};
+
+  // Structure mirrors Lit's MultipleChoice component:
+  //   <div class="a2ui-multiplechoice">  ← :host equivalent
+  //     <section class="...">            ← container theme classes
+  //       ...options...
+  //     </section>
+  //   </div>
   return (
+    <div className="a2ui-multiplechoice" style={hostStyle}>
     <section
       className={classMapToString(theme.components.MultipleChoice.container)}
       style={stylesToObject(theme.additionalStyles?.MultipleChoice)}
@@ -117,6 +128,7 @@ export const MultipleChoice = memo(function MultipleChoice({
         );
       })}
     </section>
+    </div>
   );
 });
 

@@ -42,7 +42,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@a2ui/lit": "workspace:*",
+    "@a2ui/lit": "file:../lit",
     "clsx": "^2.1.0",
     "markdown-it": "^14.0.0"
   },
