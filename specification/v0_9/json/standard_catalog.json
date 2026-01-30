@@ -1003,6 +1003,89 @@
       },
       "required": ["call", "args"],
       "unevaluatedProperties": false
+    },
+    "and": {
+      "type": "object",
+      "description": "Performs a logical AND operation on a list of boolean values.",
+      "properties": {
+        "call": {
+          "const": "and"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "description": "The list of boolean values to evaluate.",
+              "items": {
+                "$ref": "common_types.json#/$defs/DynamicBoolean"
+              },
+              "minItems": 2
+            }
+          },
+          "required": ["values"],
+          "unevaluatedProperties": false
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
+    },
+    "or": {
+      "type": "object",
+      "description": "Performs a logical OR operation on a list of boolean values.",
+      "properties": {
+        "call": {
+          "const": "or"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "description": "The list of boolean values to evaluate.",
+              "items": {
+                "$ref": "common_types.json#/$defs/DynamicBoolean"
+              },
+              "minItems": 2
+            }
+          },
+          "required": ["values"],
+          "unevaluatedProperties": false
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
+    },
+    "not": {
+      "type": "object",
+      "description": "Performs a logical NOT operation on a boolean value.",
+      "properties": {
+        "call": {
+          "const": "not"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicBoolean",
+              "description": "The boolean value to negate."
+            }
+          },
+          "required": ["value"],
+          "unevaluatedProperties": false
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
     }
   },
   "theme": {
@@ -1069,7 +1152,10 @@
         { "$ref": "#/functions/formatDate" },
         { "$ref": "#/functions/pluralize" },
         { "$ref": "#/functions/openUrl" },
-        { "$ref": "#/functions/now" }
+        { "$ref": "#/functions/now" },
+        { "$ref": "#/functions/and" },
+        { "$ref": "#/functions/or" },
+        { "$ref": "#/functions/not" }
       ]
     }
   }

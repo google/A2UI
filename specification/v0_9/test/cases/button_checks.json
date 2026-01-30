@@ -17,27 +17,35 @@
               "checks": [
                 {
                   "condition": {
-                    "and": [
-                      {
-                        "call": "required",
-                        "args": { "value": { "path": "/formData/terms" } },
-                        "returnType": "boolean"
-                      },
-                      {
-                        "or": [
-                          {
-                            "call": "required",
-                            "args": { "value": { "path": "/formData/email" } },
-                            "returnType": "boolean"
+                    "call": "and",
+                    "args": {
+                      "values": [
+                        {
+                          "call": "required",
+                          "args": { "value": { "path": "/formData/terms" } },
+                          "returnType": "boolean"
+                        },
+                        {
+                          "call": "or",
+                          "args": {
+                            "values": [
+                              {
+                                "call": "required",
+                                "args": { "value": { "path": "/formData/email" } },
+                                "returnType": "boolean"
+                              },
+                              {
+                                "call": "required",
+                                "args": { "value": { "path": "/formData/phone" } },
+                                "returnType": "boolean"
+                              }
+                            ]
                           },
-                          {
-                            "call": "required",
-                            "args": { "value": { "path": "/formData/phone" } },
-                            "returnType": "boolean"
-                          }
-                        ]
-                      }
-                    ]
+                          "returnType": "boolean"
+                        }
+                      ]
+                    },
+                    "returnType": "boolean"
                   },
                   "message": "Must accept terms and provide contact info"
                 }
@@ -112,7 +120,11 @@
               "action": { "event": { "name": "submit" } },
               "checks": [
                 {
-                  "condition": { "and": [] },
+                  "condition": {
+                    "call": "and",
+                    "args": { "values": [] },
+                    "returnType": "boolean"
+                  },
                   "message": "foo",
                   "extraProp": "not allowed"
                 }

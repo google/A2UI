@@ -72,7 +72,8 @@
                 {
                   "condition": {
                     "call": "email",
-                    "args": { "value": { "path": "/contact/email" } }
+                    "args": { "value": { "path": "/contact/email" } },
+                    "returnType": "boolean"
                   },
                   "message": "Please enter a valid email address."
                 }

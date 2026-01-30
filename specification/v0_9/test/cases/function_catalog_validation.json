@@ -694,6 +694,150 @@
           ]
         }
       }
+    },
+    {
+      "description": "and: Valid call",
+      "valid": true,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "and",
+                    "args": {
+                      "values": [true, false]
+                    },
+                    "returnType": "boolean"
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "and: Invalid (single value)",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "and",
+                    "args": { "values": [true] }
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "or: Valid call",
+      "valid": true,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "or",
+                    "args": {
+                      "values": [true, false]
+                    },
+                    "returnType": "boolean"
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "or: Invalid (single value)",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "or",
+                    "args": { "values": [true] }
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "not: Valid call",
+      "valid": true,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "not",
+                    "args": {
+                      "value": true
+                    },
+                    "returnType": "boolean"
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
     }
   ]
 }
