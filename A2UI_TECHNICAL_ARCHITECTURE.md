@@ -123,7 +123,7 @@ sequenceDiagram
     participant DOM
 
     Agent->>Transport: Generate A2UI JSON
-    Note over Agent: {"surfaceUpdate": {"components": [...]}}
+    Note over Agent: surfaceUpdate message<br/>with components array
     
     Transport->>Processor: Stream JSONL Messages
     Processor->>Processor: Parse Messages
@@ -209,14 +209,14 @@ graph TD
     end
 
     subgraph "Registration"
-        REGISTRY[ComponentRegistry<br/>Type → Constructor Map]
-        REGISTER[register Function<br/>Type-safe Registration]
+        REGISTRY["ComponentRegistry<br/>Type to Constructor Map"]
+        REGISTER["register Function<br/>Type-safe Registration"]
     end
 
     subgraph "Instantiation"
-        INSTANCE[instanceOf Function<br/>Tag → Instance]
-        CTOR[Constructor Lookup<br/>customElements.get]
-        NEW[new Constructor<br/>Type-safe Creation]
+        INSTANCE["instanceOf Function<br/>Tag to Instance"]
+        CTOR["Constructor Lookup<br/>customElements.get"]
+        NEW["new Constructor<br/>Type-safe Creation"]
     end
 
     TAG_MAP -->|Maps| COMP_TYPES
@@ -242,9 +242,9 @@ graph TD
 ```mermaid
 graph TB
     subgraph "Input: JSONL Messages"
-        MSG1[{"surfaceUpdate": {...}}]
-        MSG2[{"dataModelUpdate": {...}}]
-        MSG3[{"beginRendering": {...}}]
+        MSG1["surfaceUpdate message"]
+        MSG2["dataModelUpdate message"]
+        MSG3["beginRendering message"]
     end
 
     subgraph "A2uiMessageProcessor"
@@ -255,9 +255,9 @@ graph TB
     end
 
     subgraph "Signal-based Storage"
-        COMP_MAP[Component Map<br/>id → ComponentNode]
-        DATA_STORE[Data Store<br/>SignalMap/Object]
-        SURFACE_MAP[Surface Map<br/>surfaceId → Surface]
+        COMP_MAP["Component Map<br/>id to ComponentNode"]
+        DATA_STORE["Data Store<br/>SignalMap/Object"]
+        SURFACE_MAP["Surface Map<br/>surfaceId to Surface"]
     end
 
     subgraph "Output: Reactive Model"
@@ -302,7 +302,7 @@ sequenceDiagram
     User->>Button: Clicks Button
     Button->>Button: @click Handler
     Button->>Root: Create StateEvent
-    Note over Button,Root: {<br/>  eventType: "a2ui.action",<br/>  action: {...},<br/>  dataContextPath: "/reservation",<br/>  sourceComponentId: "btn1"<br/>}
+    Note over Button,Root: eventType: a2ui.action<br/>dataContextPath: /reservation<br/>sourceComponentId: btn1
     
     Root->>EventSystem: dispatchEvent(StateEvent)
     EventSystem->>ClientApp: Event Listener Receives
