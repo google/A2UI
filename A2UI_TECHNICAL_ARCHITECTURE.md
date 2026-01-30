@@ -154,9 +154,9 @@ sequenceDiagram
 ```mermaid
 graph LR
     subgraph "Agent Updates Data"
-        AGENT_UPDATE[Agent sends<br/>dataModelUpdate]
-        PATH[/reservation/guests]
-        VALUE["2"]
+        AGENT_UPDATE["Agent sends<br/>dataModelUpdate"]
+        PATH["Path: /reservation/guests"]
+        VALUE["Value: 2"]
     end
 
     subgraph "Signal System"
