@@ -838,6 +838,188 @@
           ]
         }
       }
+    },
+    {
+      "description": "now: Valid call",
+      "valid": true,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "txt1",
+              "component": "Text",
+              "text": {
+                "call": "now",
+                "args": {},
+                "returnType": "string"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "now: Invalid args (not empty)",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "txt1",
+              "component": "Text",
+              "text": {
+                "call": "now",
+                "args": { "extra": true },
+                "returnType": "string"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "not: Invalid argument type (string)",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "not",
+                    "args": { "value": "true" },
+                    "returnType": "boolean"
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "not: Invalid returnType",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "not",
+                    "args": { "value": true },
+                    "returnType": "string"
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "required: Too many arguments",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/val" }, "extra": 1 },
+                    "returnType": "boolean"
+                  },
+                  "message": "Required"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "regex: Invalid returnType",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "regex",
+                    "args": { "value": { "path": "/val" }, "pattern": "^abc$" },
+                    "returnType": "string"
+                  },
+                  "message": "Match"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "description": "and: Invalid returnType",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "tf1",
+              "component": "TextField",
+              "label": "L",
+              "value": "",
+              "checks": [
+                {
+                  "condition": {
+                    "call": "and",
+                    "args": { "values": [true, false] },
+                    "returnType": "string"
+                  },
+                  "message": "Msg"
+                }
+              ]
+            }
+          ]
+        }
+      }
     }
   ]
 }
