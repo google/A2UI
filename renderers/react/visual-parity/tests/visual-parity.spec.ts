@@ -31,11 +31,9 @@ const MAX_DIFF_PERCENT = 1; // 1% of pixels can differ
 
 /**
  * Fixtures to skip in visual parity tests.
- * - checkboxUnchecked: Lit bug - doesn't render when literalBoolean=false
  * - multipleChoice*: Implementation differs - React uses radio/checkboxes, Lit uses <select>
  */
 const skippedFixtures: FixtureName[] = [
-  'checkboxUnchecked',
   'multipleChoiceRadio',
   'multipleChoiceCheckbox',
   'multipleChoicePreselected',
