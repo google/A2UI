@@ -1,0 +1,90 @@
+{
+  "name": "@a2ui/shell-react",
+  "private": true,
+  "version": "0.8.1",
+  "description": "A2UI React Shell",
+  "type": "module",
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "dev": "npm run serve --watch",
+    "test": "wireit",
+    "serve": "wireit",
+    "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
+    "serve:agent:contact_lookup": "cd ../../agent/adk/contact_lookup && uv run .",
+    "serve:agent:contact_multi_surface": "cd ../../agent/adk/contact_multiple_surfaces && uv run .",
+    "build:renderer": "cd ../../../renderers/react && npm install && npm run build",
+    "build:lit": "cd ../../../renderers/lit && npm i && npm run build",
+    "demo:all": "npm install && npm run build:lit && npm run build:renderer && concurrently -k -n \"REACT,REST,CONT1\" -c \"magenta,blue,green\" \"npm run serve\" \"npm run serve:agent:restaurant\" \"npm run serve:agent:contact_lookup\"",
+    "demo:restaurant": "npm install && npm run build:renderer && concurrently -k -n \"REACT,REST\" -c \"magenta,blue\" \"npm run serve\" \"npm run serve:agent:restaurant\""
+  },
+  "wireit": {
+    "serve": {
+      "command": "vite dev",
+      "dependencies": [
+        "build"
+      ],
+      "service": true
+    },
+    "test": {
+      "command": "echo 'No tests yet'",
+      "dependencies": [
+        "build"
+      ]
+    },
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc --pretty",
+      "env": {
+        "FORCE_COLOR": "1"
+      },
+      "dependencies": [
+        "../../../renderers/react:build:tsc"
+      ],
+      "files": [
+        "**/*.ts",
+        "**/*.tsx",
+        "tsconfig.json"
+      ],
+      "output": [],
+      "clean": "if-file-deleted"
+    }
+  },
+  "repository": {
+    "directory": "samples/client/react",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": "DouyinFE",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.2.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.0.0",
+    "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "@a2a-js/sdk": "^0.3.4",
+    "@a2ui/react": "file:../../../renderers/react",
+    "@douyinfe/semi-icons": "^2.75.1",
+    "@douyinfe/semi-ui": "^2.75.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

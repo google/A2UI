@@ -26,12 +26,13 @@ Key features:
 | **Web Components (Lit)** | ✅ Stable | Web | Framework-agnostic, works anywhere |
 | **Angular** | ✅ Stable | Web | Full Angular integration |
 | **Flutter (GenUI SDK)** | ✅ Stable | Multi-platform | Works on mobile, web, desktop |
-| **React** | 🚧 In Progress | Web | Coming Q1 2026 |
+| **React** | Web | ✅ Stable  | Web | Framework-agnostic, works anywhere |
 | **SwiftUI** | 📋 Planned | iOS/macOS | Planned for Q2 2026 |
 | **Jetpack Compose** | 📋 Planned | Android | Planned for Q2 2026 |
 | **Vue** | 💡 Proposed | Web | Community interest |
 | [**Svelte/Kit**](https://svelte.dev/docs/kit/introduction) | 💡 Proposed | Web | [Community interest](https://news.ycombinator.com/item?id=46287728) |
 | **ShadCN (React)** | 💡 Proposed | Web | Community interest |
+| **Semi Design (React)** |  🧑‍💻 InProgress | Web | Community interest |
 
 ### Transports
 
