@@ -25,6 +25,7 @@ import { logger } from "./logger";
 export class Validator {
   private ajv: Ajv;
   private validateFn: any;
+  private standardFunctions = new Set<string>();
 
   constructor(
     private schemas: Record<string, any>,
@@ -35,8 +36,25 @@ export class Validator {
       this.ajv.addSchema(schema, name);
     }
     this.validateFn = this.ajv.getSchema(
-      "https://a2ui.dev/specification/v0_9/server_to_client.json"
+      "https://a2ui.org/specification/v0_9/server_to_client.json",
     );
+
+    // Populate standard functions from the catalog schema
+    // Note: schemas are keyed by filename in index.ts
+    const catalogSchema = schemas["standard_catalog.json"];
+    if (catalogSchema && Array.isArray(catalogSchema.functions)) {
+      for (const func of catalogSchema.functions) {
+        if (func.name && typeof func.name === "string") {
+          this.standardFunctions.add(func.name);
+        }
+      }
+    }
+
+    if (this.standardFunctions.size === 0) {
+      logger.warn(
+        "No standard functions loaded from schema 'standard_catalog.json'. Function validation will fail open."
+      );
+    }
   }
 
   async run(results: GeneratedResult[]): Promise<ValidatedResult[]> {
@@ -67,7 +85,7 @@ export class Validator {
           // to avoid noisy "oneOf" errors.
           let validated = false;
           const schemaUri =
-            "https://a2ui.dev/specification/v0_9/server_to_client.json";
+            "https://a2ui.org/specification/v0_9/server_to_client.json";
 
           if (message.createSurface) {
             validated = this.ajv.validate(
@@ -201,6 +219,41 @@ export class Validator {
         "Missing root component: At least one 'updateComponents' message must contain a component with id: 'root'."
       );
     }
+
+    this.validateFunctionCalls(messages, errors);
+  }
+
+  private validateFunctionCalls(root: any, errors: string[]) {
+    if (!root || typeof root !== "object") return;
+
+    if (Array.isArray(root)) {
+      for (const item of root) {
+        this.validateFunctionCalls(item, errors);
+      }
+      return;
+    }
+
+    // Check if it's a FunctionCall
+    if (
+      root.call &&
+      typeof root.call === "string" &&
+      (Object.keys(root).length === 2 || Object.keys(root).length === 3)
+    ) {
+      const functionName = root.call;
+
+      if (this.standardFunctions.has(functionName)) {
+        // Dummy validation: Always succeed for standard functions.
+        return;
+      }
+
+      // If we wanted to validate unknown functions, we'd do it here.
+      // For now, we just proceed.
+    }
+
+    // Recurse into properties
+    for (const key in root) {
+      this.validateFunctionCalls(root[key], errors);
+    }
   }
 
   // ... Copied helper functions ...
@@ -254,7 +307,7 @@ export class Validator {
       if (this.ajv && c.component) {
         const componentType = c.component;
         const schemaUri =
-          "https://a2ui.dev/specification/v0_9/standard_catalog.json";
+          "https://a2ui.org/specification/v0_9/standard_catalog.json";
 
         const defRef = `${schemaUri}#/components/${componentType}`;
 

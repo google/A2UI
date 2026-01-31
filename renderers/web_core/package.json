@@ -20,6 +20,9 @@
     "./styles/*": {
       "types": "./dist/src/v0_8/styles/*.d.ts",
       "default": "./dist/src/v0_8/styles/*.js"
+    },
+    "./schemas/*": {
+      "default": "./dist/src/v0_8/schemas/*"
     }
   },
   "type": "module",

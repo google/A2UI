@@ -41,7 +41,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
   - `common_types.json`: Reusable primitives (IDs, paths) and logic/expression types.
   - `server_to_client.json`: The "envelope" defining the message types.
   - `standard_catalog.json`: The unified catalog of UI components and functions.
-- **Benefit**: This allows developers to swap out the `standard_catalog.json` for a `custom_catalog.json` without touching the core protocol envelope.
+- **Swappable Catalogs**: `server_to_client.json` now uses a relative reference to `catalog.json` as a placeholder. This allows developers to alias `catalog.json` to `standard_catalog.json` (or any custom catalog) during validation, enabling the use of custom component sets without modifying the core envelope schema.
 - **Unification**: Components and functions are now part of the same catalog object, simplifying capability negotiation and inline definitions.
 
 ### 2.2. Strict Message Typing
@@ -103,9 +103,10 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 
 ```json
 {
+  "version": "v0.9",
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+    "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
     "theme": {
       "primaryColor": "#007bff"
     }
@@ -155,6 +156,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 ```json
 {
+  "version": "v0.9",
   "updateComponents": {
     "surfaceId": "main",
     "components": [
@@ -228,7 +230,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 - **String Formatting**: Introduced the `formatString` function, which supports `${expression}` syntax for interpolation.
 - **Unified Expression Language**: Allows embedding JSON Pointer paths (absolute and relative) and client-side function calls directly within the format string.
-- **Nesting**: Supports recursive nesting of expressions (e.g., `${formatDate(${/timestamp}, 'yyyy-MM-dd')}`).
+- **Nesting**: Supports recursive nesting of expressions (e.g., `${formatDate(value: ${/timestamp}, format: 'yyyy-MM-dd')}`).
 - **Restriction**: String interpolation `${...}` is **ONLY** supported within the `formatString` function. It is not supported in general for string properties, in order to strictly separate data binding definitions from static content.
 - **Reason**: Improves readability for complex strings. Instead of generating complex nested JSON objects (like chained concatenations) to combine strings and data, the model can write natural-looking template literals within the `formatString` function.
 
