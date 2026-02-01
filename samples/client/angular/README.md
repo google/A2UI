@@ -6,7 +6,7 @@ These are sample implementations of A2UI in Angular.
 
 1. [nodejs](https://nodejs.org/en)
 
-NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custome components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
+NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custom components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
 
 ## Running
 
