@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # The A2UI schema remains constant for all A2UI responses.
-A2UI_SCHEMA = r'''
+A2UI_SCHEMA = r"""
 {
   "title": "A2UI Message Schema",
   "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
@@ -783,26 +783,26 @@ A2UI_SCHEMA = r'''
     }
   }
 }
-'''
+"""
 
 from a2ui_examples import RESTAURANT_UI_EXAMPLES
 
 
 def get_ui_prompt(base_url: str, examples: str) -> str:
-    """
-    Constructs the full prompt with UI instructions, rules, examples, and schema.
+  """
+  Constructs the full prompt with UI instructions, rules, examples, and schema.
 
-    Args:
-        base_url: The base URL for resolving static assets like logos.
-        examples: A string containing the specific UI examples for the agent's task.
+  Args:
+      base_url: The base URL for resolving static assets like logos.
+      examples: A string containing the specific UI examples for the agent's task.
 
-    Returns:
-        A formatted string to be used as the system prompt for the LLM.
-    """
-    # The f-string substitution for base_url happens here, at runtime.
-    formatted_examples = examples.format(base_url=base_url)
+  Returns:
+      A formatted string to be used as the system prompt for the LLM.
+  """
+  # The f-string substitution for base_url happens here, at runtime.
+  formatted_examples = examples.format(base_url=base_url)
 
-    return f"""
+  return f"""
     You are a helpful restaurant finding assistant. Your final output MUST be a a2ui UI JSON response.
 
     To generate the response, you MUST follow these rules:
@@ -827,10 +827,10 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
 
 
 def get_text_prompt() -> str:
-    """
-    Constructs the prompt for a text-only agent.
-    """
-    return """
+  """
+  Constructs the prompt for a text-only agent.
+  """
+  return """
     You are a helpful restaurant finding assistant. Your final output MUST be a text response.
 
     To generate the response, you MUST follow these rules:
@@ -847,18 +847,18 @@ def get_text_prompt() -> str:
 
 
 if __name__ == "__main__":
-    # Example of how to use the prompt builder
-    # In your actual application, you would call this from your main agent logic.
-    my_base_url = "http://localhost:8000"
+  # Example of how to use the prompt builder
+  # In your actual application, you would call this from your main agent logic.
+  my_base_url = "http://localhost:8000"
 
-    # You can now easily construct a prompt with the relevant examples.
-    # For a different agent (e.g., a flight booker), you would pass in
-    # different examples but use the same `get_ui_prompt` function.
-    restaurant_prompt = get_ui_prompt(my_base_url, RESTAURANT_UI_EXAMPLES)
+  # You can now easily construct a prompt with the relevant examples.
+  # For a different agent (e.g., a flight booker), you would pass in
+  # different examples but use the same `get_ui_prompt` function.
+  restaurant_prompt = get_ui_prompt(my_base_url, RESTAURANT_UI_EXAMPLES)
 
-    print(restaurant_prompt)
+  print(restaurant_prompt)
 
-    # This demonstrates how you could save the prompt to a file for inspection
-    with open("generated_prompt.txt", "w") as f:
-        f.write(restaurant_prompt)
-    print("\nGenerated prompt saved to generated_prompt.txt")
+  # This demonstrates how you could save the prompt to a file for inspection
+  with open("generated_prompt.txt", "w") as f:
+    f.write(restaurant_prompt)
+  print("\nGenerated prompt saved to generated_prompt.txt")
