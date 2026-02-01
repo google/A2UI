@@ -56,6 +56,7 @@ Standard Instructions:
 13. Do NOT use a 'style' property. Use standard properties like 'align', 'justify', 'variant', etc.
 14. Do NOT invent properties that are not in the schema. Check the 'properties' list for each component type.
 15. Use 'checks' property for validation rules if required.
+16. EVERY message object MUST include the property "version": "v0.9" at the top level.
 ${catalogRules ? `\nInstructions specific to this catalog:\n${catalogRules}` : ""}
 
 Schemas:

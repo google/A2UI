@@ -2,9 +2,12 @@
   "title": "A2UI (Agent to UI) Client-to-Server Event Schema",
   "description": "Describes a JSON payload for a client-to-server event message.",
   "type": "object",
-  "minProperties": 1,
-  "maxProperties": 1,
+  "minProperties": 2,
+  "maxProperties": 2,
   "properties": {
+    "version": {
+      "const": "v0.9"
+    },
     "action": {
       "type": "object",
       "description": "Reports a user-initiated action from a component.",
@@ -92,10 +95,10 @@
   },
   "oneOf": [
     {
-      "required": ["action"]
+      "required": ["action", "version"]
     },
     {
-      "required": ["error"]
+      "required": ["error", "version"]
     }
   ]
 }
