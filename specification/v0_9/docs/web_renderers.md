@@ -1,271 +1,431 @@
 # Web Renderer v0.9 Design Document
 
 **Status:** Draft
-**Target Version:** v0.9
-**Related Spec:** [A2UI Protocol v0.9](./a2ui_protocol.md)
+**Target Version:** 0.9
+**Authors:** Gemini Agent
 
 ## Overview
 
-This document outlines the design for the v0.9 implementation of the A2UI Web Renderers (Lit and Angular).
+This document outlines the design for the v0.9 Web Renderers (Lit and Angular) for A2UI. The primary goals of this iteration are:
 
-**Primary Goals:**
-1.  **Centralize Logic:** Move as much logic as possible (state management, data binding resolution, message processing) into the shared `@a2ui/web_core` library.
-2.  **Decouple Catalog:** The core renderer framework must not depend on the "Standard Catalog". It should be capable of rendering any catalog provided to it.
-3.  **One-Step Rendering:** Transformation from JSON data to rendered output should happen in a single pass within the framework-specific renderer, rather than decoding to an intermediate node tree.
+1.  **Centralized Logic:** Move as much state management, data processing, and validation logic as possible into the shared `@a2ui/web_core` library.
+2.  **Decoupling:** Decouple the core rendering framework from the `standard_catalog`. The framework should be a generic engine capable of rendering *any* catalog provided to it.
+3.  **One-Step Rendering:** Move from a two-step "decode to node -> render node" process to a direct "JSON -> Rendered Output" process within the framework-specific components, utilizing a generic `Catalog` interface.
+4.  **Version Coexistence:** Implement v0.9 side-by-side with v0.8 in a `/0.9` directory structure, ensuring no breaking changes for existing v0.8 consumers.
 
 ## Architecture
 
-The architecture consists of a shared core library and framework-specific renderers.
+The architecture consists of a shared core library handling state and protocol messages, and framework-specific renderers (Lit, Angular).
 
-### Core (`@a2ui/web_core`)
-The core library acts as the brain. It holds the state of the UI (Data Model) and the logic for processing the A2UI protocol stream. It defines the interfaces for `Catalog` and `Component` but does not implement specific UI widgets.
+The core introduces a `SurfaceState` object which encapsulates the state for a single surface, including its `DataModel` and the current snapshot of component definitions. The `A2uiMessageProcessor` manages these `SurfaceState` objects.
 
-### Framework Renderers (`@a2ui/lit`, `@a2ui/angular`)
-These libraries provide the implementation for the `Surface` and the concrete `Component` definitions (e.g., how to render a "Button" in Lit vs Angular). They use the Core library to drive the application state.
+### Key Class Interactions
+
+```mermaid
+classDiagram
+    class A2uiMessageProcessor {
+        +processMessages(messages)
+        +getSurfaceState(surfaceId)
+        -surfaces: Map<String, SurfaceState>
+        -catalogRegistry: Map<String, Catalog>
+    }
+
+    class SurfaceState {
+        +id: String
+        +dataModel: DataModel
+        +catalog: Catalog
+        +handleMessage(message)
+        +dispatchAction(action)
+    }
+
+    class DataModel {
+        +get(path)
+        +set(path, value)
+        +subscribe(path, callback)
+    }
+
+    class SurfaceRenderer {
+        +state: SurfaceState
+        +render()
+    }
+
+    class Catalog {
+        +getComponent(name)
+    }
+
+    class Component~T~ {
+        +render(context: ComponentContext): T
+    }
+
+    class ComponentContext {
+        +surfaceState: SurfaceState
+        +resolveDynamicValue(val)
+        +buildChild(id)
+        +dispatchEvent(event)
+    }
+
+    A2uiMessageProcessor *-- SurfaceState
+    SurfaceState *-- DataModel
+    SurfaceState --> Catalog
+    SurfaceRenderer --> SurfaceState : Input
+    SurfaceRenderer ..> Component : Instantiates via State.Catalog
+    Component ..> ComponentContext : Uses
+```
 
 ## API Design
 
-### 1. Catalog & Component
+### 1. DataModel (Core)
 
-The rendering system is driven by a `Catalog`, which is a collection of `Component` definitions.
-
-#### `Component<T>`
-A generic interface representing a UI component definition. `T` is the renderer-specific output (e.g., `TemplateResult` for Lit, or a component class/template for Angular).
+A standalone, observable data store representing the client-side state. It handles JSON Pointer path resolution and subscription management.
 
 ```typescript
-// in web_core
-export interface Component<T> {
-  readonly name: string;
+// web_core/src/v0_9/state/data-model.ts
+
+export type DataSubscriber = (value: any) => void;
+export type Unsubscribe = () => void;
+
+export class DataModel {
+  /**
+   * Updates the model at the specific path.
+   * If path is '/', replaces the entire root.
+   */
+  set(path: string, value: any): void;
 
   /**
-   * Renders the component given the current context.
+   * Retrieves data at a specific path.
+   * Returns undefined if path does not exist.
+   */
+  get(path: string): any;
+
+  /**
+   * Subscribes to changes at a specific path.
+   * The callback is invoked whenever the value at 'path' (or its ancestors/descendants) changes.
+   */
+  subscribe(path: string, callback: DataSubscriber): Unsubscribe;
+}
+```
+
+### 2. SurfaceState (Core)
+
+Holds the complete state for a single surface. This acts as the brain for a specific surface, processing messages and exposing state to the renderer.
+
+```typescript
+// web_core/src/v0_9/state/surface-state.ts
+
+export type ActionHandler = (action: UserAction) => Promise<void>;
+
+export class SurfaceState {
+  readonly id: string;
+  readonly dataModel: DataModel;
+  readonly catalog: Catalog<any>;
+  
+  constructor(
+    id: string, 
+    catalog: Catalog<any>, 
+    actionHandler: ActionHandler
+  );
+
+  /**
+   * The ID of the root component for this surface.
+   */
+  get rootComponentId(): string | null;
+
+  /**
+   * Retrieves the raw component definition (JSON) for a given ID.
+   */
+  getComponentDefinition(componentId: string): ComponentInstance | undefined;
+
+  /**
+   * Processes a single A2UI message targeted at this surface.
+   * Updates DataModel or Component definitions accordingly.
+   */
+  handleMessage(message: ServerToClientMessage): void;
+
+  /**
+   * Dispatches a user action to the registered handler.
+   */
+  dispatchAction(action: UserAction): Promise<void>;
+}
+```
+
+### 3. Catalog & Component (Core Interface)
+
+The definition of what a Component is, generic over the output type `T` (e.g., `TemplateResult` for Lit).
+
+```typescript
+// web_core/src/v0_9/catalog/types.ts
+
+/**
+ * A definition of a UI component.
+ * @template T The type of the rendered output (e.g. TemplateResult).
+ */
+export interface Component<T> {
+  /** The name of the component as it appears in the A2UI JSON (e.g., 'Button'). */
+  name: string;
+
+  /**
+   * Renders the component given the context.
    */
   render(context: ComponentContext<T>): T;
 }
+
+export interface Catalog<T> {
+  id: string;
+  /**
+   * Retrieves a component definition by name.
+   */
+  getComponent(name: string): Component<T> | undefined;
+}
 ```
 
-#### `ComponentContext<T>`
-Passed to the `render` method, providing access to data and utilities.
+### 4. ComponentContext (Core Interface)
+
+The bridge passed to every component's render method. It provides access to the raw properties, the ability to resolve dynamic values, and the ability to render children.
 
 ```typescript
-// in web_core
+// web_core/src/v0_9/rendering/component-context.ts
+
 export interface ComponentContext<T> {
   /**
-   * The raw JSON properties for this component instance.
+   * The unique ID of this component instance.
    */
-  readonly properties: Record<string, unknown>;
+  readonly id: string;
 
   /**
-   * Resolves a dynamic value (DynamicString, DynamicBoolean, etc.)
-   * to a concrete value, handling subscriptions to the data model.
+   * The raw JSON properties for this component (excluding 'id' and 'component').
    */
-  resolve<V>(value: DynamicValue<V>): V;
+  readonly properties: Record<string, any>;
 
   /**
-   * Resolves a child list (explicit or template) into rendered output.
+   * The surface state this component belongs to.
    */
-  renderChildren(children: ChildList): T[];
+  readonly surfaceState: SurfaceState;
 
   /**
-   * Dispatch an action to the server or client function.
+   * Resolves a dynamic value (literal, path, or function call).
+   * This handles creating subscriptions to the DataModel automatically if used within
+   * a reactive context (implementation specific).
    */
-  dispatchAction(action: Action): void;
-  
+  resolve<V>(value: DynamicValue<V> | V): V;
+
   /**
-   * The ID of the surface being rendered.
+   * Renders a child component by its ID.
+   * Returns null if the child does not exist.
    */
-  readonly surfaceId: string;
+  renderChild(childId: string): T | null;
+
+  /**
+   * Dispatches a user action back to the system (and server).
+   */
+  dispatchAction(action: Action): Promise<void>;
 }
 ```
 
-#### `Catalog<T>`
-A registry of components.
+### 5. A2uiMessageProcessor (Core)
+
+The central entry point. It manages the lifecycle of `SurfaceState` objects, routing incoming messages to the correct surface and multiplexing outgoing events.
 
 ```typescript
-// in web_core
-export class Catalog<T> {
-  constructor(readonly components: Map<string, Component<T>>) {}
+// web_core/src/v0_9/processing/message-processor.ts
 
-  getComponent(name: string): Component<T> | undefined {
-    return this.components.get(name);
-  }
-  
-  // APIs for extending catalogs
-  extend(other: Catalog<T>): Catalog<T>;
-}
-```
-
-### 2. Message Processing & State
-
-#### `A2uiMessageProcessor`
-The main entry point in `web_core`. It manages the state of multiple surfaces.
-
-```typescript
-// in web_core
 export class A2uiMessageProcessor {
-  private readonly surfaces = new Map<string, SurfaceState>();
-  
+  /**
+   * @param catalogs A map of available catalogs keyed by their URI.
+   * @param actionHandler A global handler for actions from all surfaces.
+   */
   constructor(
-    private readonly catalogResolver: (catalogId: string) => Catalog<any>
-  ) {}
+    private catalogs: Map<string, Catalog<any>>,
+    private actionHandler: ActionHandler
+  );
 
-  process(message: ServerToClientMessage): void {
-    // Dispatch to handleCreateSurface, handleUpdateComponents, etc.
-  }
+  /**
+   * Processes a list of server-to-client messages.
+   * For `createSurface`, it instantiates a new `SurfaceState` with the correct Catalog.
+   * For other messages, it delegates to the appropriate `SurfaceState.handleMessage`.
+   */
+  processMessages(messages: ServerToClientMessage[]): void;
 
+  /**
+   * Gets the SurfaceState for a specific surface ID.
+   */
   getSurfaceState(surfaceId: string): SurfaceState | undefined;
 }
 ```
 
-#### `SurfaceState` (Internal to Core)
-Holds the state for a single surface:
--   `dataModel`: The JSON data model.
--   `componentDefinitions`: Map of ID -> Component Instance Data (raw JSON).
--   `rootId`: ID of the root component.
+### 5. Base Classes for Standard Catalog (Core)
 
-### 3. Standard Catalog Base Implementation
-
-To reduce duplication between Lit and Angular, the `web_core` will provide abstract base classes for Standard Catalog components. These classes handle property parsing and validation.
+To reduce code duplication between Lit and Angular, we define abstract base classes for standard components in Core.
 
 ```typescript
-// in web_core/standard_catalog/base
-export abstract class BaseCardComponent<T> implements Component<T> {
-  readonly name = "Card";
+// web_core/src/v0_9/standard_catalog/base/card-base.ts
+
+import { Component, ComponentContext } from '../../catalog/types';
+
+export abstract class CardBaseComponent<T> implements Component<T> {
+  readonly name = 'Card';
 
   render(context: ComponentContext<T>): T {
-    const props = context.properties as CardProperties; // Typed raw props
-    
-    // Resolve children logic (template vs explicit) is handled by context helper
-    // but specific logic for Card can go here.
-    
-    const childId = props.child;
-    // ... validation logic ...
-
-    return this.renderResolved(context, childId);
+    const childId = context.properties['child'];
+    // Logic to validate childId could go here
+    return this.renderConcrete(context, childId);
   }
 
   /**
-   * Framework-specific implementation to actually draw the card.
+   * Framework-specific implementation.
    */
-  abstract renderResolved(context: ComponentContext<T>, childId: string): T;
+  protected abstract renderConcrete(
+    context: ComponentContext<T>, 
+    childId: string
+  ): T;
 }
 ```
 
 ## Detailed File Structure
 
-### `@a2ui/web_core`
+### Web Core (`@a2ui/web_core`)
 
-```
+```text
 src/
   v0_9/
-    index.ts (Exports public API)
+    index.ts                  # Public API exports
     types/
-      schema.ts (Generated from JSON schema)
+      messages.ts             # TS interfaces for JSON schemas
       common.ts
-    data/
-      data_model.ts
-      path_resolution.ts
+    state/
+      data-model.ts           # DataModel implementation
+      data-model.test.ts
+      surface-state.ts        # SurfaceState implementation
     processing/
-      message_processor.ts
-      surface_state.ts
+      message-processor.ts    # A2uiMessageProcessor
+      message-processor.test.ts
     catalog/
-      component.ts (Interfaces)
-      catalog.ts
-      context.ts
-    standard_catalog/ (Base implementations)
-      index.ts
-      card_base.ts
-      text_base.ts
-      ...
+      types.ts                # Component, Catalog, ComponentContext interfaces
+      catalog-registry.ts     # Helper to manage multiple catalogs
+    standard_catalog/
+      base/                   # Abstract base classes
+        text-base.ts
+        card-base.ts
+        button-base.ts
+        ...
+      functions/              # Standard function implementations (pure JS/TS)
+        logic.ts
+        formatting.ts
 ```
 
-### `@a2ui/lit`
+### Lit Renderer (`@a2ui/lit`)
 
-```
+```text
 src/
   v0_9/
-    index.ts
-    surface.ts (The <a2ui-surface> custom element)
-    lit_context.ts (Implements ComponentContext)
-    catalog/
-      lit_catalog.ts (The default catalog instance)
-    components/ (Concrete implementations)
-      card.ts
-      text.ts
-      ...
+    index.ts                  # Public exports
+    renderer/
+      lit-component-context.ts # Implementation of ComponentContext<TemplateResult>
+      lit-renderer.ts          # Orchestrates rendering a Surface
+    standard_catalog/
+      index.ts                 # Exports the catalog definition
+      components/              # Concrete implementations of standard components
+        text.ts                 # Concrete implementation extending TextBaseComponent
+        card.ts
+        ...
+    ui/
+      surface.ts              # <a2ui-surface> custom element
 ```
 
-### `@a2ui/angular`
+### Angular Renderer (`@a2ui/angular`)
 
-```
+```text
 src/
   lib/
     v0_9/
       index.ts
-      surface.component.ts
-      angular_context.ts
-      catalog/
-        angular_catalog.ts
-      components/
-        card.component.ts
-        text.component.ts
-        ...
+      renderer/
+        angular-component-context.ts
+        renderer.service.ts
+      standard_catalog/
+        index.ts               # Exports the catalog definition
+        components/            # Concrete Angular components for standard catalog
+          text.component.ts
+          card.component.ts
+          ...
+      ui/
+        surface.component.ts
 ```
+
+## Renderer Output Formats & Resolution
+
+### Lit
+*   **Output Format (`T`):** `TemplateResult` (from `lit-html`).
+*   **Dynamic Resolution:** `LitComponentContext.resolve()` uses `@lit-labs/signals` or a similar mechanism to create a signal that updates when the underlying `DataModel` path changes. The `render` method of the component will effectively be a computed signal.
+
+### Angular
+*   **Output Format (`T`):** This is trickier in Angular. The "Render" function for an Angular component in this design is actually a factory or a configuration that the `Surface` component uses to dynamically spawn `NgComponentOutlet` or `ViewContainerRef`.
+    *   *Proposed:* `T` is an object: `{ type: Type<any>, inputs: Record<string, any> }`.
+    *   The `AngularStandardCatalog` returns a mapping to actual Angular Components (`@Component`).
+    *   The `render` function in the `Component` interface calculates the inputs based on the context.
 
 ## Testing Plan
 
-### 1. Core Logic (Unit Tests)
--   **Data Model**: Test path resolution, relative/absolute paths, collection scopes.
--   **Message Processor**: Test message dispatching, surface creation/deletion, error handling.
--   **Catalog Base**: Test that base components correctly parse properties and call `renderResolved`.
-
-### 2. Renderer Integration (Component Tests)
--   **Lit**: Use `@open-wc/testing` to render individual components (e.g., `Text`) with a mock `ComponentContext` and assert on the DOM output.
--   **Angular**: Use Angular TestBed to render components with a mock context.
-
-### 3. End-to-End
--   Use the `samples/` to run full integration tests where a mock agent sends a stream of v0.9 messages and we verify the final rendered DOM.
+1.  **Core DataModel**:
+    *   Test `set`/`get` with simple values, objects, and arrays.
+    *   Test `subscribe` triggers correctly for direct updates, parent updates, and child updates.
+2.  **Core MessageProcessor**:
+    *   Test processing `createSurface`, `updateComponents`, `updateDataModel`.
+    *   Verify internal state matches the message sequence.
+3.  **Core Standard Catalog Bases**:
+    *   Unit test property parsing and validation logic independent of rendering.
+4.  **Framework Renderers**:
+    *   **Isolation**: Test individual components (e.g., Lit `Text` component) by passing a mock `ComponentContext`. Verify the output HTML/Template.
+    *   **Integration**: Test `Surface` component with a real `A2uiMessageProcessor` and a mock Catalog. Feed it JSON messages and verify the DOM structure.
 
 ## Implementation Phasing
 
-1.  **Phase 1: Core Data & Processing**
-    *   Implement `DataModel` (path resolution, updates).
-    *   Implement `A2uiMessageProcessor` skeleton (handling `createSurface`, `updateDataModel`).
-    *   *Deliverable*: Core tests passing for data updates.
+1.  **Phase 1: Core Foundation**
+    *   Implement `DataModel` with tests.
+    *   Implement `A2uiMessageProcessor` (skeleton handling messages) with tests.
+    *   Define `Component`, `Catalog`, `ComponentContext` interfaces.
 
-2.  **Phase 2: Catalog & Component Interfaces**
-    *   Define `Component`, `ComponentContext`, `Catalog` interfaces in Core.
-    *   Implement `SurfaceState` to hold component definitions (raw JSON).
-    *   Implement `updateComponents` handling in Processor.
+2.  **Phase 2: Standard Catalog Base**
+    *   Implement `StandardCatalog` base classes in Core for 2-3 components (e.g., `Text`, `Column`, `Button`).
+    *   Implement standard functions logic (string interpolation etc).
 
-3.  **Phase 3: Standard Catalog Base**
-    *   Create `BaseComponent` classes for `Text`, `Column`, `Row` in Core.
-    *   Implement logic to parse arguments and resolve bindings in the base class.
-
-4.  **Phase 4: Lit Renderer Skeleton**
+3.  **Phase 3: Lit Prototype**
     *   Implement `LitComponentContext`.
-    *   Implement `LitSurface`.
-    *   Implement `Text` and `Column` for Lit.
-    *   *Deliverable*: Hello World (render a Column with Text).
+    *   Implement `LitStandardCatalog` in the `standard_catalog` directory for the initial 2-3 components.
+    *   Implement `<a2ui-surface>` that connects the Processor to the rendering logic.
 
-5.  **Phase 5: Angular Renderer Skeleton**
-    *   Implement Angular equivalents of Phase 4.
+4.  **Phase 4: Angular Prototype**
+    *   Implement `AngularComponentContext`.
+    *   Implement `AngularStandardCatalog` in the `standard_catalog` directory and corresponding Angular Components.
+    *   Implement `<a2ui-surface>` for Angular.
 
-6.  **Phase 6: Full Standard Catalog**
-    *   Flesh out remaining components (`Button`, `Input`, `List` templates) in Core Base and Renderers.
+5.  **Phase 5: Full Standard Catalog**
+    *   Flesh out the rest of the components (Inputs, Lists, etc.) in Core and both renderers.
 
-## Open Questions
+## Open Questions & Answers
 
-1.  **Context Construction**: Should the `Surface` create the `ComponentContext`, or should the `MessageProcessor` create it?
-    *   *Proposed*: `Surface` creates it, as it holds the framework-specific rendering mechanisms (e.g., `ChangeDetectorRef` in Angular).
-2.  **Template Resolution**: How exactly does `ChildList` (templates) work with `ComponentContext`?
-    *   *Proposed*: `context.renderChildren(list)` returns an array of `T`. The Core logic handles iterating the data model and creating new Contexts with the correct scoping for each item.
-3.  **Output Format**: What is `T` for Angular?
-    *   *Proposed*: Likely `Type<any>` or a specific interface wrapper that allows dynamic component creation (e.g., `ViewContainerRef.createComponent`).
+*   **Q: Should the surface and a2uimessageprocessor both accept the catalogs?**
+    *   **A:** No. `A2uiMessageProcessor` accepts the registry of Catalogs. When `createSurface` is processed, the Processor creates a `SurfaceState` and injects the specific `Catalog` required for that surface. The `Surface` component then accepts the `SurfaceState` as input, giving it access to everything it needs (DataModel, Catalog, Event Dispatcher).
+    *   *Decision:* `A2uiMessageProcessor` holds the registry. `SurfaceState` holds the specific instance. `Surface` (Renderer) takes `SurfaceState`.
+
+*   **Q: API for resolving DynamicString?**
+    *   **A:** `ComponentContext.resolve<T>(value: DynamicValue<T>): T`. This method encapsulates checking if it's a literal, a path (calling DataModel), or a function (executing logic).
+
+*   **Q: DataModel API?**
+    *   **A:** See "API Design > DataModel". It mimics a simplified deep-observable object store.
+
+*   **Q: Renderer Output Format?**
+    *   **A:** Lit: `TemplateResult`. Angular: `{ component: Type<any>, inputs: Record<string, any> }` (Representation of a dynamic component).
+
+## Standard catalog implementation
+
+There will be a standard catalog implementation, decoupled from the core renderer in a folder like standard_catalog which has an implementation of the standard catalog.
+
+So in the framework-specific catalog renderers, the standard catalog implementation should be clearly separated from the rendering framework, in the same way as the web core codebase.
+
+The standard catalog implementation for each framework will reside in a `standard_catalog` directory within the framework's package. This directory will export the catalog definition and contain the concrete implementations of the standard components.
 
 ## References
 
-*   **v0.9 Spec**: `@specification/v0_9/docs/a2ui_protocol.md`
-*   **Existing Lit Renderer**: `@renderers/lit/src/0.8/`
-*   **Existing Angular Renderer**: `@renderers/angular/src/lib/`
-*   **Flutter Catalog Implementation**: [Flutter GenUI Catalog](https://raw.githubusercontent.com/flutter/genui/refs/heads/main/packages/genui/lib/src/model/catalog.dart)
+*   **v0.9 Spec:** `@specification/v0_9/**`
+*   **Existing Lit Renderer:** `@renderers/lit/**`
+*   **Flutter Catalog Implementation:** `genui` package (reference for catalog patterns).
