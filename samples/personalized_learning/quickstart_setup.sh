@@ -82,7 +82,6 @@ if [ "$SKIP_PIP" = false ]; then
         "google-genai>=1.0.0" \
         "google-cloud-storage>=2.10.0" \
         "python-dotenv>=1.0.0" \
-        "litellm>=1.0.0" \
         "vertexai" 2>/dev/null
     echo "  Python dependencies installed"
 else
@@ -92,6 +91,10 @@ fi
 # Step 3: Install Node.js dependencies
 if [ "$SKIP_NPM" = false ]; then
     echo -e "${YELLOW}[3/6]${NC} Installing Node.js dependencies..."
+
+    # Build A2UI core library first (lit depends on it)
+    (cd ../../renderers/web_core && npm install --registry https://registry.npmjs.org/ --silent 2>/dev/null && npm run build --silent 2>/dev/null)
+    echo "  A2UI core library built"
 
     # Build A2UI renderer
     (cd ../../renderers/lit && npm install --registry https://registry.npmjs.org/ --silent 2>/dev/null && npm run build --silent 2>/dev/null)

@@ -17,9 +17,16 @@ Usage:
 """
 
 import os
+import ssl
 import sys
 import argparse
 import logging
+
+try:
+    import certifi
+    _HAS_CERTIFI = True
+except ImportError:
+    _HAS_CERTIFI = False
 
 from dotenv import load_dotenv
 
@@ -89,7 +96,7 @@ def main():
             print(f"  - {engine.display_name}: {engine.resource_name}")
         return
 
-    print(f"Deploying Personalized Learning Agent...")
+    print("Deploying Personalized Learning Agent...")
     print(f"  Project: {args.project}")
     print(f"  Location: {args.location}")
     print(f"  Context bucket: gs://{context_bucket}/learner_context/")
@@ -98,14 +105,13 @@ def main():
     # =========================================================================
     # CREATE THE ADK AGENT
     # =========================================================================
-    # According to Vertex AI docs, we create an Agent, wrap it in AdkApp,
-    # and deploy the AdkApp directly. AdkApp is designed to be picklable.
+    # Create an Agent, wrap it in AdkApp, and deploy the AdkApp directly. 
+    # AdkApp is designed to be picklable.
     # =========================================================================
 
     import json
     import re
     import xml.etree.ElementTree as ET
-    from typing import Any
     from google.adk.agents import Agent
     from google.adk.tools import ToolContext
     from vertexai.agent_engines import AdkApp
@@ -473,9 +479,22 @@ def main():
     }
 
     # Complete keyword hints for fast matching (Tier 1)
+    # NOTE: Order matters! More specific keywords should come BEFORE generic ones
+    # because matched_slugs uses list with first-match priority
     KEYWORD_HINTS = {
-        # Energy & Metabolism
-        "atp": ["6-4-atp-adenosine-triphosphate", "6-1-energy-and-metabolism"],
+        # Energy & Metabolism - SPECIFIC terms first, then generic
+        "krebs": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
+        "citric acid": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
+        "tca cycle": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
+        "glycolysis": ["7-2-glycolysis"],
+        "electron transport": ["7-4-oxidative-phosphorylation"],
+        "oxidative phosphorylation": ["7-4-oxidative-phosphorylation"],
+        "fermentation": ["7-5-metabolism-without-oxygen"],
+        "anaerobic": ["7-5-metabolism-without-oxygen"],
+        "cellular respiration": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", "7-4-oxidative-phosphorylation"],
+        "mitochondria": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", "7-4-oxidative-phosphorylation"],
+        "mitochondrion": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", "7-4-oxidative-phosphorylation"],
+        "atp": ["6-4-atp-adenosine-triphosphate", "7-4-oxidative-phosphorylation"],
         "adenosine triphosphate": ["6-4-atp-adenosine-triphosphate"],
         "photosynthesis": ["8-1-overview-of-photosynthesis", "8-2-the-light-dependent-reaction-of-photosynthesis"],
         "plants make food": ["8-1-overview-of-photosynthesis"],
@@ -483,17 +502,6 @@ def main():
         "chlorophyll": ["8-2-the-light-dependent-reaction-of-photosynthesis"],
         "calvin cycle": ["8-3-using-light-to-make-organic-molecules"],
         "light reaction": ["8-2-the-light-dependent-reaction-of-photosynthesis"],
-        "cellular respiration": ["7-1-energy-in-living-systems", "7-4-oxidative-phosphorylation"],
-        "glycolysis": ["7-2-glycolysis"],
-        "krebs": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
-        "citric acid": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
-        "tca cycle": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle"],
-        "electron transport": ["7-4-oxidative-phosphorylation"],
-        "oxidative phosphorylation": ["7-4-oxidative-phosphorylation"],
-        "fermentation": ["7-5-metabolism-without-oxygen"],
-        "anaerobic": ["7-5-metabolism-without-oxygen"],
-        "mitochondria": ["7-4-oxidative-phosphorylation", "4-3-eukaryotic-cells"],
-        "mitochondrion": ["7-4-oxidative-phosphorylation", "4-3-eukaryotic-cells"],
         # Cell Division
         "mitosis": ["10-1-cell-division", "10-2-the-cell-cycle"],
         "meiosis": ["11-1-the-process-of-meiosis"],
@@ -745,7 +753,7 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
         import urllib.error
 
         topic_lower = topic.lower()
-        matched_slugs = set()
+        matched_slugs = []  # Use list to preserve order (first match = highest priority)
 
         # First try keyword matching (fast path)
         # Use word boundary matching to avoid false positives like "vision" in "cell division"
@@ -754,13 +762,17 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
             # This ensures "vision" doesn't match "cell division"
             pattern = r'\b' + re.escape(keyword) + r'\b'
             if re.search(pattern, topic_lower):
-                matched_slugs.update(slugs)
+                for slug in slugs:
+                    if slug not in matched_slugs:
+                        matched_slugs.append(slug)
 
         # If no keyword match, use LLM to find relevant chapters
         if not matched_slugs:
             llm_slugs = llm_match_topic_to_chapters(topic)
             if llm_slugs:
-                matched_slugs.update(llm_slugs)
+                for slug in llm_slugs:
+                    if slug not in matched_slugs:
+                        matched_slugs.append(slug)
 
         # If still no match (LLM found nothing relevant), return empty with clear message
         if not matched_slugs:
@@ -773,6 +785,12 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
         chapter_slugs = list(matched_slugs)[:2]
         content_parts = []
         sources = []
+
+        # Create SSL context once - use certifi CA bundle if available
+        if _HAS_CERTIFI:
+            ssl_ctx = ssl.create_default_context(cafile=certifi.where())
+        else:
+            ssl_ctx = ssl.create_default_context()
 
         for slug in chapter_slugs:
             module_ids = CHAPTER_TO_MODULES.get(slug, [])
@@ -787,7 +805,7 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
             for module_id in module_ids:
                 github_url = f"https://raw.githubusercontent.com/openstax/osbooks-biology-bundle/main/modules/{module_id}/index.cnxml"
                 try:
-                    with urllib.request.urlopen(github_url, timeout=10) as response:
+                    with urllib.request.urlopen(github_url, timeout=10, context=ssl_ctx) as response:
                         cnxml = response.read().decode('utf-8')
                         text = parse_cnxml_to_text(cnxml)
                         if text:
@@ -952,7 +970,7 @@ Textbook source content:
             location=os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1"),
         )
 
-        # Fetch OpenStax content for context - REQUIRED
+        # Fetch OpenStax content for context
         openstax_data = fetch_openstax_content(topic)
         textbook_context = openstax_data.get("content", "")
         sources = openstax_data.get("sources", [])
@@ -1104,7 +1122,8 @@ Textbook source content:
             })
 
         return json.dumps({
-            "content": content[:4000],  # Limit content length
+            # Limit content length. Okay for a demo but could be improved
+            "content": content[:4000],  
             "sources": source_citations
         })
 
@@ -1159,7 +1178,7 @@ Textbook source content:
 
         return json.dumps({"format": "video", "a2ui": a2ui, "surfaceId": SURFACE_ID})
 
-    # Create the agent WITH tools
+    # Create the agent with tools
     agent = Agent(
         name="personalized_learning_agent",
         model=model_id,
@@ -1217,10 +1236,10 @@ Always use gym/sports analogies where appropriate. Be encouraging and supportive
     print(f"Context Bucket: gs://{context_bucket}/learner_context/")
     print()
     print("Next steps:")
-    print(f"  1. Copy the Resource ID above")
-    print(f"  2. Paste it into the notebook's AGENT_RESOURCE_ID variable")
+    print("  1. Copy the Resource ID above")
+    print("  2. Paste it into the notebook's AGENT_RESOURCE_ID variable")
     print(f"  3. Upload learner context files to gs://{context_bucket}/learner_context/")
-    print(f"  4. Run the remaining notebook cells to configure and start the demo")
+    print("  4. Run the remaining notebook cells to configure and start the demo")
 
 
 if __name__ == "__main__":
