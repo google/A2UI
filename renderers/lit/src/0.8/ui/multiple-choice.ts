@@ -104,6 +104,15 @@ export class MultipleChoice extends Root {
   }
 
   render() {
+    const selectedValue = Array.isArray(this.selections)
+      ? this.selections[0] || ""
+      : extractStringValue(
+          this.selections,
+          this.component,
+          this.processor,
+          this.surfaceId
+        ) || "";
+
     return html`<section class=${classMap(
       this.theme.components.MultipleChoice.container
     )}>
@@ -114,6 +123,7 @@ export class MultipleChoice extends Root {
         name="data"
         id="data"
         class=${classMap(this.theme.components.MultipleChoice.element)}
+        .value=${selectedValue}
         style=${
           this.theme.additionalStyles?.MultipleChoice
             ? styleMap(this.theme.additionalStyles?.MultipleChoice)
@@ -134,7 +144,7 @@ export class MultipleChoice extends Root {
             this.processor,
             this.surfaceId
           );
-          return html`<option ${option.value}>${label}</option>`;
+          return html`<option value=${option.value}>${label}</option>`;
         })}
       </select>
     </section>`;
