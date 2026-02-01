@@ -103,6 +103,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 
 ```json
 {
+  "version": "v0.9",
   "createSurface": {
     "surfaceId": "user_profile_card",
     "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
@@ -155,6 +156,7 @@ Specifying an unknown surfaceId will cause an error. It is recommended that clie
 
 ```json
 {
+  "version": "v0.9",
   "updateComponents": {
     "surfaceId": "main",
     "components": [
