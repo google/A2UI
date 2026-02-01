@@ -159,7 +159,7 @@ All components are wrapped with `React.memo()` for performance optimization.
 |-----------|-------------|
 | `Text` | Renders text with markdown support |
 | `Image` | Displays images with various usage hints |
-| `Icon` | Renders Lucide icons |
+| `Icon` | Renders Material Symbols icons |
 | `Divider` | Horizontal or vertical divider |
 | `Video` | Video player |
 | `AudioPlayer` | Audio player |
