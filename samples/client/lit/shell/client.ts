@@ -97,14 +97,59 @@ export class A2UIClient {
     }
 
     const result = (response as SendMessageSuccessResponse).result as Task;
-    if (result.kind === "task" && result.status.message?.parts) {
-      const messages: v0_8.Types.ServerToClientMessage[] = [];
-      for (const part of result.status.message.parts) {
-        if (part.kind === 'data') {
-          messages.push(part.data as v0_8.Types.ServerToClientMessage);
+    
+    // Log the full response for debugging purposes
+    console.debug("Full Server Response Result:", JSON.stringify(result, null, 2));
+
+    if (result.kind === "task") {
+      let responseParts = result.status.message?.parts;
+
+      /**
+       * Fallback: Retrieve the most recent agent message parts from history 
+       * if 'status.message.parts' is empty (common in session resumption).
+       */
+      if (!responseParts && result.history && result.history.length > 0) {
+        for (let i = result.history.length - 1; i >= 0; i--) {
+          const msg = result.history[i];
+          if (msg.role === 'agent' && msg.parts && msg.parts.length > 0) {
+            responseParts = msg.parts;
+            console.debug("Found parts in history at index", i);
+            break;
+          }
         }
       }
-      return messages;
+
+      if (responseParts) {
+        const messages: v0_8.Types.ServerToClientMessage[] = [];
+        
+        for (const part of responseParts) {
+          console.debug("Client Received part:", JSON.stringify(part, null, 2));
+
+          if (part.kind === 'data') {
+            let data = part.data;
+
+            /**
+             * Parse string-encoded JSON data parts that some agents may return 
+             * to ensure a consistent object format for processing.
+             */
+            if (typeof data === 'string') {
+              try {
+                data = JSON.parse(data);
+                console.debug("Parsed string data:", data);
+              } catch (e) {
+                console.error("Failed to parse part.data string:", e);
+              }
+            }
+            messages.push(data as v0_8.Types.ServerToClientMessage);
+          } else if (part.kind === 'text') {
+            // Text parts are currently logged and ignored as the client expects data parts
+            console.debug("Ignored text part:", part.text);
+          }
+        }
+
+        console.debug("Final messages to process:", messages);
+        return messages;
+      }
     }
 
     return [];
