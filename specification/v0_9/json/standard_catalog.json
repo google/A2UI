@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+  "$id": "https://a2ui.org/specification/v0_9/standard_catalog.json",
   "title": "A2UI Standard Catalog",
   "description": "Unified catalog of standard A2UI components and functions.",
-  "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+  "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
   "components": {
     "Text": {
       "type": "object",
@@ -314,7 +314,7 @@
           "properties": {
             "component": { "const": "Card" },
             "child": {
-              "type": "string",
+              "$ref": "common_types.json#/$defs/ComponentId",
               "description": "The ID of the single child component to be rendered inside the card. To display multiple elements, you MUST wrap them in a layout component (like Column or Row) and pass that container's ID here. Do NOT pass multiple IDs or a non-existent ID. Do NOT define the child component inline."
             }
           },
@@ -343,7 +343,7 @@
                     "$ref": "common_types.json#/$defs/DynamicString"
                   },
                   "child": {
-                    "type": "string",
+                    "$ref": "common_types.json#/$defs/ComponentId",
                     "description": "The ID of the child component. Do NOT define the component inline."
                   }
                 },
@@ -367,11 +367,11 @@
           "properties": {
             "component": { "const": "Modal" },
             "trigger": {
-              "type": "string",
+              "$ref": "common_types.json#/$defs/ComponentId",
               "description": "The ID of the component that opens the modal when interacted with (e.g., a button). Do NOT define the component inline."
             },
             "content": {
-              "type": "string",
+              "$ref": "common_types.json#/$defs/ComponentId",
               "description": "The ID of the component to be displayed inside the modal. Do NOT define the component inline."
             }
           },
@@ -412,28 +412,16 @@
           "properties": {
             "component": { "const": "Button" },
             "child": {
-              "type": "string",
+              "$ref": "common_types.json#/$defs/ComponentId",
               "description": "The ID of the child component. Use a 'Text' component for a labeled button. Only use an 'Icon' if the requirements explicitly ask for an icon-only button. Do NOT define the child component inline."
             },
-            "primary": {
-              "type": "boolean",
-              "description": "Indicates if this button should be styled as the primary action."
+            "variant": {
+              "type": "string",
+              "description": "A hint for the button style. If omitted, a default button style is used. 'primary' indicates this is the main call-to-action button. 'borderless' means the button has no visual border or background, making its child content appear like a clickable link.",
+              "enum": ["primary", "borderless"]
             },
             "action": {
-              "type": "object",
-              "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
-              "properties": {
-                "name": { "type": "string" },
-                "context": {
-                  "type": "object",
-                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
-                  "additionalProperties": {
-                    "$ref": "common_types.json#/$defs/DynamicValue"
-                  }
-                }
-              },
-              "required": ["name"],
-              "additionalProperties": false
+              "$ref": "common_types.json#/$defs/Action"
             }
           },
           "required": ["component", "child", "action"]
@@ -597,9 +585,57 @@
               "type": "boolean",
               "description": "If true, allows the user to select a time."
             },
-            "outputFormat": {
-              "type": "string",
-              "description": "The desired format for the output string after a date or time is selected."
+            "min": {
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "oneOf": [
+                      {
+                        "format": "date"
+                      },
+                      {
+                        "format": "time"
+                      },
+                      {
+                        "format": "date-time"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "description": "The minimum allowed date/time in ISO 8601 format."
+            },
+            "max": {
+              "allOf": [
+                {
+                  "$ref": "common_types.json#/$defs/DynamicString"
+                },
+                {
+                  "if": {
+                    "type": "string"
+                  },
+                  "then": {
+                    "oneOf": [
+                      {
+                        "format": "date"
+                      },
+                      {
+                        "format": "time"
+                      },
+                      {
+                        "format": "date-time"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "description": "The maximum allowed date/time in ISO 8601 format."
             },
             "label": {
               "$ref": "common_types.json#/$defs/DynamicString",
@@ -618,7 +654,13 @@
       "description": "Checks that the value is not null, undefined, or empty.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [{ "$ref": "#/$defs/valueParam" }],
+        "type": "object",
+        "properties": {
+          "value": {
+            "description": "The value to check."
+          }
+        },
+        "required": ["value"],
         "unevaluatedProperties": false
       }
     },
@@ -627,20 +669,15 @@
       "description": "Checks that the value matches a regular expression string.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
-          {
-            "type": "object",
-            "properties": {
-              "value": { "type": "string" },
-              "pattern": {
-                "type": "string",
-                "description": "The regex pattern to match against."
-              }
-            },
-            "required": ["pattern"]
+        "type": "object",
+        "properties": {
+          "value": { "$ref": "common_types.json#/$defs/DynamicString" },
+          "pattern": {
+            "type": "string",
+            "description": "The regex pattern to match against."
           }
-        ],
+        },
+        "required": ["value", "pattern"],
         "unevaluatedProperties": false
       }
     },
@@ -649,26 +686,22 @@
       "description": "Checks string length constraints.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
-          {
-            "type": "object",
-            "properties": {
-              "value": { "type": "string" },
-              "min": {
-                "type": "integer",
-                "minimum": 0,
-                "description": "The minimum allowed length."
-              },
-              "max": {
-                "type": "integer",
-                "minimum": 0,
-                "description": "The maximum allowed length."
-              }
-            },
-            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
+        "type": "object",
+        "properties": {
+          "value": { "$ref": "common_types.json#/$defs/DynamicString" },
+          "min": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The minimum allowed length."
+          },
+          "max": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The maximum allowed length."
           }
-        ],
+        },
+        "required": ["value"],
+        "anyOf": [{ "required": ["min"] }, { "required": ["max"] }],
         "unevaluatedProperties": false
       }
     },
@@ -677,24 +710,20 @@
       "description": "Checks numeric range constraints.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
-          {
-            "type": "object",
-            "properties": {
-              "value": { "type": "number" },
-              "min": {
-                "type": "number",
-                "description": "The minimum allowed value."
-              },
-              "max": {
-                "type": "number",
-                "description": "The maximum allowed value."
-              }
-            },
-            "anyOf": [{ "required": ["min"] }, { "required": ["max"] }]
+        "type": "object",
+        "properties": {
+          "value": { "$ref": "common_types.json#/$defs/DynamicNumber" },
+          "min": {
+            "type": "number",
+            "description": "The minimum allowed value."
+          },
+          "max": {
+            "type": "number",
+            "description": "The maximum allowed value."
           }
-        ],
+        },
+        "required": ["value"],
+        "anyOf": [{ "required": ["min"] }, { "required": ["max"] }],
         "unevaluatedProperties": false
       }
     },
@@ -703,30 +732,155 @@
       "description": "Checks that the value is a valid email address.",
       "returnType": "boolean",
       "parameters": {
-        "allOf": [
-          { "$ref": "#/$defs/valueParam" },
-          {
-            "type": "object",
-            "properties": {
-              "value": { "type": "string" }
-            }
-          }
-        ],
+        "type": "object",
+        "properties": {
+          "value": { "$ref": "common_types.json#/$defs/DynamicString" }
+        },
+        "required": ["value"],
         "unevaluatedProperties": false
       }
     },
     {
-      "name": "string_format",
-      "description": "Performs string interpolation of data model values and other functions in the catalog functions list and returns the resulting string. The value string can contain interpolated expressions in the `${expression}` format. Supported expression types include: JSON Pointer paths to the data model (e.g., `${/absolute/path}` or `${relative/path}`), and client-side function calls (e.g., `${now()}`). Function arguments must be literals (quoted strings, numbers, booleans) or nested expressions (e.g., `${formatDate(${/currentDate}, 'MM-dd')}`). To include a literal `${` sequence, escape it as `\\${`.",
+      "name": "formatString",
+      "description": "Performs string interpolation of data model values and other functions in the catalog functions list and returns the resulting string. The value string can contain interpolated expressions in the `${expression}` format. Supported expression types include: JSON Pointer paths to the data model (e.g., `${/absolute/path}` or `${relative/path}`), and client-side function calls (e.g., `${now()}`). Function arguments must be named (e.g., `${formatDate(value:${/currentDate}, format:'MM-dd')}`). To include a literal `${` sequence, escape it as `\\${`.",
       "returnType": "string",
       "parameters": {
+        "type": "object",
+        "properties": {
+          "value": { "$ref": "common_types.json#/$defs/DynamicString" }
+        },
+        "required": ["value"],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "formatNumber",
+      "description": "Formats a number with the specified grouping and decimal precision.",
+      "returnType": "string",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "common_types.json#/$defs/DynamicNumber",
+            "description": "The number to format."
+          },
+          "decimals": {
+            "$ref": "common_types.json#/$defs/DynamicNumber",
+            "description": "Optional. The number of decimal places to show. Defaults to 0 or 2 depending on locale."
+          },
+          "grouping": {
+            "$ref": "common_types.json#/$defs/DynamicBoolean",
+            "description": "Optional. If true, uses locale-specific grouping separators (e.g. '1,000'). If false, returns raw digits (e.g. '1000'). Defaults to true."
+          }
+        },
+        "required": ["value"],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "formatCurrency",
+      "description": "Formats a number as a currency string.",
+      "returnType": "string",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "common_types.json#/$defs/DynamicNumber",
+            "description": "The monetary amount."
+          },
+          "currency": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "The ISO 4217 currency code (e.g., 'USD', 'EUR')."
+          },
+          "decimals": {
+            "$ref": "common_types.json#/$defs/DynamicNumber",
+            "description": "Optional. The number of decimal places to show. Defaults to 0 or 2 depending on locale."
+          },
+          "grouping": {
+            "$ref": "common_types.json#/$defs/DynamicBoolean",
+            "description": "Optional. If true, uses locale-specific grouping separators (e.g. '1,000'). If false, returns raw digits (e.g. '1000'). Defaults to true."
+          }
+        },
+        "required": ["currency", "value"],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "formatDate",
+      "description": "Formats a timestamp into a string using a pattern.",
+      "returnType": "string",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "common_types.json#/$defs/DynamicValue",
+            "description": "The date to format."
+          },
+          "format": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "A Unicode TR35 date pattern string.\n\nToken Reference:\n- Year: 'yy' (26), 'yyyy' (2026)\n- Month: 'M' (1), 'MM' (01), 'MMM' (Jan), 'MMMM' (January)\n- Day: 'd' (1), 'dd' (01), 'E' (Tue), 'EEEE' (Tuesday)\n- Hour (12h): 'h' (1-12), 'hh' (01-12) - requires 'a' for AM/PM\n- Hour (24h): 'H' (0-23), 'HH' (00-23) - Military Time\n- Minute: 'mm' (00-59)\n- Second: 'ss' (00-59)\n- Period: 'a' (AM/PM)\n\nExamples:\n- 'MMM dd, yyyy' -> 'Jan 16, 2026'\n- 'HH:mm' -> '14:30' (Military)\n- 'h:mm a' -> '2:30 PM'\n- 'EEEE, d MMMM' -> 'Friday, 16 January'"
+          }
+        },
+        "required": ["format", "value"],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "pluralize",
+      "description": "Returns a localized string based on the Common Locale Data Repository (CLDR) plural category of the count (zero, one, two, few, many, other). Requires an 'other' fallback. For English, just use 'one' and 'other'.",
+      "returnType": "string",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "common_types.json#/$defs/DynamicNumber",
+            "description": "The numeric value used to determine the plural category."
+          },
+          "zero": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "String for the 'zero' category (e.g., 0 items)."
+          },
+          "one": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "String for the 'one' category (e.g., 1 item)."
+          },
+          "two": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "String for the 'two' category (used in Arabic, Welsh, etc.)."
+          },
+          "few": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "String for the 'few' category (e.g., small groups in Slavic languages)."
+          },
+          "many": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "String for the 'many' category (e.g., large groups in various languages)."
+          },
+          "other": {
+            "$ref": "common_types.json#/$defs/DynamicString",
+            "description": "The default/fallback string (used for general plural cases)."
+          }
+        },
+        "required": ["value", "other"],
+        "unevaluatedProperties": false
+      }
+    },
+    {
+      "name": "openUrl",
+      "description": "Opens the specified URL in a browser or handler. This function has no return value.",
+      "returnType": "void",
+      "parameters": {
         "allOf": [
-          { "$ref": "#/$defs/valueParam" },
           {
             "type": "object",
             "properties": {
-              "value": { "type": "string" }
-            }
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URL to open."
+              }
+            },
+            "required": ["url"]
           }
         ],
         "unevaluatedProperties": false
@@ -736,15 +890,24 @@
   "theme": {
     "primaryColor": {
       "type": "string",
-      "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
+      "description": "The primary brand color used for highlights (e.g., primary buttons, active borders). Renderers may generate variants of this color for different contexts. Format: Hexadecimal code (e.g., '#00BFFF').",
       "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "iconUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "A URL for an image that identifies the agent or tool associated with the surface."
+    },
+    "agentDisplayName": {
+      "type": "string",
+      "description": "Text to be displayed next to the surface to identify the agent or tool that created it."
     }
   },
   "$defs": {
     "CatalogComponentCommon": {
       "type": "object",
       "properties": {
-         "weight": {
+        "weight": {
           "type": "number",
           "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
         }
@@ -774,15 +937,6 @@
       "discriminator": {
         "propertyName": "component"
       }
-    },
-    "valueParam": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "description": "The value to check."
-        }
-      },
-      "required": ["value"]
     }
   }
 }

@@ -144,11 +144,56 @@
 
         --primary: #137fec;
         --text-color: #fff;
-        --background-light: #f6f7f8;
-        --background-dark: #101922;
+        --background: light-dark(#f6f7f8, #101922);
         --border-color: oklch(
           from var(--background-light) l c h / calc(alpha * 0.15)
         );
+        --elevated-background-light: oklch(
+          from var(--background-light) l c h / calc(alpha * 0.05)
+        );
+        --bb-grid-size: 4px;
+        --bb-grid-size-2: calc(var(--bb-grid-size) * 2);
+        --bb-grid-size-3: calc(var(--bb-grid-size) * 3);
+        --bb-grid-size-4: calc(var(--bb-grid-size) * 4);
+        --bb-grid-size-5: calc(var(--bb-grid-size) * 5);
+        --bb-grid-size-6: calc(var(--bb-grid-size) * 6);
+        --bb-grid-size-7: calc(var(--bb-grid-size) * 7);
+        --bb-grid-size-8: calc(var(--bb-grid-size) * 8);
+        --bb-grid-size-9: calc(var(--bb-grid-size) * 9);
+        --bb-grid-size-10: calc(var(--bb-grid-size) * 10);
+        --bb-grid-size-11: calc(var(--bb-grid-size) * 11);
+        --bb-grid-size-12: calc(var(--bb-grid-size) * 12);
+        --bb-grid-size-13: calc(var(--bb-grid-size) * 13);
+        --bb-grid-size-14: calc(var(--bb-grid-size) * 14);
+        --bb-grid-size-15: calc(var(--bb-grid-size) * 15);
+        --bb-grid-size-16: calc(var(--bb-grid-size) * 16);
+
+        --background: radial-gradient(
+            at 0% 0%,
+            light-dark(rgba(161, 196, 253, 0.3), rgba(6, 182, 212, 0.15)) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 100% 0%,
+            light-dark(rgba(255, 226, 226, 0.3), rgba(59, 130, 246, 0.15)) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 100% 100%,
+            light-dark(rgba(162, 210, 255, 0.3), rgba(20, 184, 166, 0.15)) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 0% 100%,
+            light-dark(rgba(255, 200, 221, 0.3), rgba(99, 102, 241, 0.15)) 0px,
+            transparent 50%
+          ),
+          linear-gradient(
+            120deg,
+            light-dark(#f0f4f8, #0f172a) 0%,
+            light-dark(#e2e8f0, #1e293b) 100%
+          );
+
         --elevated-background-light: oklch(
           from var(--background-light) l c h / calc(alpha * 0.05)
         );
@@ -180,12 +225,31 @@
         --font-family-flex: "Helvetica Neue", Helvetica, Arial, sans-serif;
         --font-family-mono: monospace;
 
-        background: var(--background-light);
+        background: var(--background);
         font-family: var(--font-family);
         margin: 0;
         padding: 0;
         width: 100svw;
         height: 100svh;
+        overflow: auto;
+
+        --color-scheme: light;
+        color-scheme: var(--color-scheme);
+
+        &.light {
+          --color-scheme: light;
+        }
+
+        &.dark {
+          --color-scheme: dark;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        html,
+        body {
+          --color-scheme: dark;
+        }
       }
     </style>
   </head>

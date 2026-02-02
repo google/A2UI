@@ -1,18 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.dev/specification/v0_9/common_types.json",
+  "$id": "https://a2ui.org/specification/v0_9/common_types.json",
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
   "$defs": {
-    "id": {
+    "ComponentId": {
       "type": "string",
-      "description": "The unique identifier for this component."
+      "description": "The unique identifier for a component, used for both definitions and references within the same surface."
+    },
+    "AccessibilityAttributes": {
+      "type": "object",
+      "description": "Attributes to enhance accessibility when using assistive technologies like screen readers.",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/DynamicString",
+          "description": "A short string, typically 1 to 3 words, used by assistive technologies to convey the purpose or intent of an element. For example, an input field might have an accessible label of 'User ID' or a button might be labeled 'Submit'."
+        },
+        "description": {
+          "$ref": "#/$defs/DynamicString",
+          "description": "Additional information provided by assistive technologies about an element such as instructions, format requirements, or result of an action. For example, a mute button might have a label of 'Mute' and a description of 'Silences notifications about this conversation'."
+        }
+      }
     },
     "ComponentCommon": {
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/$defs/id"
+          "$ref": "#/$defs/ComponentId"
+        },
+        "accessibility": {
+          "$ref": "#/$defs/AccessibilityAttributes"
         }
       },
       "required": ["id"]
@@ -22,7 +39,7 @@
         {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/ComponentId"
           },
           "description": "A static list of child component IDs."
         },
@@ -31,7 +48,7 @@
           "description": "A template for generating a dynamic list of children from a data model list. The `componentId` is the component to use as a template.",
           "properties": {
             "componentId": {
-              "$ref": "#/$defs/id"
+              "$ref": "#/$defs/ComponentId"
             },
             "path": {
               "type": "string",
@@ -42,6 +59,17 @@
           "additionalProperties": false
         }
       ]
+    },
+    "DataBinding": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "A JSON Pointer path to a value in the data model."
+        }
+      },
+      "required": ["path"],
+      "additionalProperties": false
     },
     "DynamicValue": {
       "description": "A value that can be a literal, a path, or a function call returning any type.",
@@ -56,14 +84,7 @@
           "type": "boolean"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "$ref": "#/$defs/FunctionCall"
@@ -77,14 +98,7 @@
           "type": "string"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "allOf": [
@@ -110,14 +124,7 @@
           "type": "number"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "allOf": [
@@ -143,14 +150,7 @@
           "type": "boolean"
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "$ref": "#/$defs/LogicExpression"
@@ -167,14 +167,7 @@
           }
         },
         {
-          "type": "object",
-          "properties": {
-            "path": {
-              "type": "string"
-            }
-          },
-          "required": ["path"],
-          "additionalProperties": false
+          "$ref": "#/$defs/DataBinding"
         },
         {
           "allOf": [
@@ -205,13 +198,29 @@
           "type": "object",
           "description": "Arguments passed to the function.",
           "additionalProperties": {
-            "$ref": "#/$defs/DynamicValue"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DynamicValue"
+              },
+              {
+                "type": "object",
+                "description": "A literal object argument (e.g. configuration)."
+              }
+            ]
           }
         },
         "returnType": {
           "type": "string",
           "description": "The expected return type of the function call.",
-          "enum": ["string", "number", "boolean", "array", "object", "any"],
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "any",
+            "void"
+          ],
           "default": "boolean"
         }
       },
@@ -287,7 +296,7 @@
     },
     "CheckRule": {
       "type": "object",
-      "description": "A single validaton rule applied to an input component.",
+      "description": "A single validation rule applied to an input component.",
       "unevaluatedProperties": false,
       "allOf": [
         {
@@ -317,6 +326,49 @@
           }
         }
       }
+    },
+    "Action": {
+      "description": "Defines an interaction handler that can either trigger a server-side event or execute a local client-side function.",
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Triggers a server-side event.",
+          "properties": {
+            "event": {
+              "type": "object",
+              "description": "The event to dispatch to the server.",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the action to be dispatched to the server."
+                },
+                "context": {
+                  "type": "object",
+                  "description": "A JSON object containing the key-value pairs for the action context. Values can be literals or paths. Use literal values unless the value must be dynamically bound to the data model. Do NOT use paths for static IDs.",
+                  "additionalProperties": {
+                    "$ref": "#/$defs/DynamicValue"
+                  }
+                }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["event"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Executes a local client-side function.",
+          "properties": {
+            "functionCall": {
+              "$ref": "#/$defs/FunctionCall"
+            }
+          },
+          "required": ["functionCall"],
+          "additionalProperties": false
+        }
+      ]
     }
   }
 }

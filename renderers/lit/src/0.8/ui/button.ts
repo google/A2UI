@@ -19,14 +19,14 @@ import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { StateEvent } from "../events/events.js";
 import { classMap } from "lit/directives/class-map.js";
-import { Action } from "../types/components.js";
+import * as Types from "@a2ui/web_core/types/types";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-button")
 export class Button extends Root {
   @property()
-  accessor action: Action | null = null;
+  accessor action: Types.Action | null = null;
 
   static styles = [
     structuralStyles,

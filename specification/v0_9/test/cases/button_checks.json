@@ -5,6 +5,7 @@
       "description": "Button with nested valid checks",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -12,7 +13,7 @@
               "id": "btn1",
               "component": "Button",
               "child": "txt1",
-              "action": { "name": "submit" },
+              "action": { "event": { "name": "submit" } },
               "checks": [
                 {
                   "and": [
@@ -49,6 +50,7 @@
       "description": "Button with deprecated enabled property (should fail)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -56,7 +58,7 @@
               "id": "btn2",
               "component": "Button",
               "child": "txt2",
-              "action": { "name": "submit" },
+              "action": { "event": { "name": "submit" } },
               "enabled": { "path": "/some/path" }
             },
             { "id": "txt2", "component": "Text", "text": "Submit" }
@@ -68,6 +70,7 @@
       "description": "Button with invalid check structure (invalid returnType)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -75,7 +78,7 @@
               "id": "btn3",
               "component": "Button",
               "child": "txt3",
-              "action": { "name": "submit" },
+              "action": { "event": { "name": "submit" } },
               "checks": [
                 {
                   "call": "required",
@@ -93,6 +96,7 @@
       "description": "Button with invalid nested structure (extra property)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -100,7 +104,7 @@
               "id": "btn4",
               "component": "Button",
               "child": "txt4",
-              "action": { "name": "submit" },
+              "action": { "event": { "name": "submit" } },
               "checks": [
                 {
                   "and": [],
@@ -110,6 +114,66 @@
               ]
             },
             { "id": "txt4", "component": "Text", "text": "Submit" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Button with variant 'primary'",
+      "valid": true,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "btn_primary",
+              "component": "Button",
+              "child": "txt_primary",
+              "action": { "event": { "name": "submit" } },
+              "variant": "primary"
+            },
+            { "id": "txt_primary", "component": "Text", "text": "Submit" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Button with variant 'borderless'",
+      "valid": true,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "btn_borderless",
+              "component": "Button",
+              "child": "txt_borderless",
+              "action": { "event": { "name": "cancel" } },
+              "variant": "borderless"
+            },
+            { "id": "txt_borderless", "component": "Text", "text": "Cancel" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "Button with deprecated 'primary' property (should fail)",
+      "valid": false,
+      "data": {
+        "version": "v0.9",
+        "updateComponents": {
+          "surfaceId": "test_surface",
+          "components": [
+            {
+              "id": "btn_dep",
+              "component": "Button",
+              "child": "txt_dep",
+              "action": { "event": { "name": "submit" } },
+              "primary": true
+            },
+            { "id": "txt_dep", "component": "Text", "text": "Submit" }
           ]
         }
       }

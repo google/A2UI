@@ -36,7 +36,7 @@ A vertical list with:
 - Dog breed information
 - Dog generator
 
-The dog breed information is a card, which contains a title “Famous Dog breeds”, a header image, and a horizontal list of images of different dog breeds. The list information should be in the data model at /breeds.
+The dog breed information is a card, which contains a title “Famous Dog breeds”, a header image, and a horizontal list of images of different dog breeds (using a 'List' component). The list information should be in the data model at /breeds.
 
 The dog generator is another card which is a form that generates a fictional dog breed with a description
 - Title
@@ -53,12 +53,12 @@ The dog generator is another card which is a form that generates a fictional dog
     name: "loginForm",
     description:
       'A simple login form with username, password, a "remember me" checkbox, and a submit button.',
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a login form. It should have a "Login" text (variant 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button should trigger a 'login' action, passing the username, password, and rememberMe status in the dynamicContext.`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a login form. It should have a "Login" text (variant 'h1'), two text fields for username and password (bound to /login/username and /login/password), a checkbox for "Remember Me" (bound to /login/rememberMe), and a "Sign In" button. The button's action should have a 'event' property with 'name': 'login', and a 'context' containing the username, password, and rememberMe status.`,
   },
   {
     name: "productGallery",
     description: "A gallery of products using a list with a template.",
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should be 'addToCart' and include a context with the product ID, for example, 'productId': 'static-id-123' (use this exact literal string). You should create a template component and then a list that uses it.`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a product gallery. It should display a list of products from the data model at '/products'. Use a template for the list items. Each item should be a Card containing a Column. The Column should contain an Image (from '/products/item/imageUrl'), a Text component for the product name (from '/products/item/name'), and a Button labeled "Add to Cart". The button's action should have a 'event' with 'name': 'addToCart' and a 'context' with the product ID, for example, 'productId': 'static-id-123' (use this exact literal string). You should create a template component and then a list that uses it.`,
   },
   {
     name: "productGalleryData",
@@ -155,12 +155,12 @@ IMPORTANT: Do not skip any of the classes, orders, or species above. Include eve
   {
     name: "contactCard",
     description: "A UI to display contact information.",
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a contact card. It should be a 'Card' with a 'Row'. The row contains an 'Image' (as an avatar) and a 'Column'. The column contains a 'Text' for the name "Jane Doe", a 'Text' for the email "jane.doe@example.com", and a 'Text' for the phone number "(123) 456-7890". Below the main row, add a 'Button' labeled "View on Map".`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a contact card. The root component of the surface must be a 'Card'. This Card should contain a 'Row'. The row contains an 'Image' (as an avatar) and a 'Column'. The column contains a 'Text' for the name "Jane Doe", a 'Text' for the email "jane.doe@example.com", and a 'Text' for the phone number "(123) 456-7890". Below the main row, add a 'Button' labeled "View on Map" (using a child 'Text' component).`,
   },
   {
     name: "calendarEventCreator",
     description: "A form to create a new calendar event.",
-    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a calendar event creation form. It should have a 'Text' (variant 'h1') "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time" (initialize both with empty values). Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
+    promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a calendar event creation form. It should have a 'Text' (variant 'h1') "New Event". Include a 'TextField' for the "Event Title". Use a 'Row' for two 'DateTimeInput's for "Start Time" and "End Time" (initialize both with a literal empty string value: '' (do not bind to a data path)). Add a 'CheckBox' labeled "All-day event". Finally, a 'Row' with two 'Button's: "Save" and "Cancel".`,
   },
   {
     name: "checkoutPage",
@@ -210,7 +210,7 @@ Below, use a 'List' to display three days. Each item in the list should be a 'Ca
 - The first 'Card' (Day 1) should contain a 'Text' (variant 'h2') "Day 1: Arrival & Eiffel Tower", and a 'List' of activities for that day: "Check into hotel", "Lunch at a cafe", "Visit the Eiffel Tower".
 - The second 'Card' (Day 2) should contain a 'Text' (variant 'h2') "Day 2: Museums & Culture", and a 'List' of activities: "Visit the Louvre Museum", "Walk through Tuileries Garden", "See the Arc de Triomphe".
 - The third 'Card' (Day 3) should contain a 'Text' (variant 'h2') "Day 3: Art & Departure", and a 'List' of activities: "Visit Musée d'Orsay", "Explore Montmartre", "Depart from CDG".
-Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to mark as complete) and a 'Text' component with the activity description.`,
+Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to mark as complete, with an empty label '') and a 'Text' component with the activity description.`,
   },
   {
     name: "kanbanBoard",
@@ -224,7 +224,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
   {
     name: "videoCallInterface",
     description: "A video conference UI.",
-    promptText: `Create a video call interface. It should have a 'Text' (variant 'h1') "Video Call". A 'Video' component (placeholder URL). Below that, a 'Row' with three 'Button's labeled "Mute", "Camera", and "End Call".`,
+    promptText: `Create a video call interface. It should have a 'Text' (variant 'h1') "Video Call". A 'Video' component with a valid placeholder URL (e.g. 'https://example.com/video.mp4'). Below that, a 'Row' with three 'Button's, each with a child 'Text' component with the text "Mute", "Camera", and "End Call" respectively.`,
   },
   {
     name: "fileBrowser",
@@ -277,7 +277,7 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     - Row 2: "4", "5", "6", "*"
     - Row 3: "1", "2", "3", "-"
     - Row 4: "0", ".", "=", "+"
-    Each button should be a 'Button' component.`,
+    Each button should be a 'Button' component with a child 'Text' component for the label (e.g. '7', '+').`,
   },
   {
     name: "jobApplication",
@@ -347,7 +347,9 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     Populate this dashboard with sample data:
     - At least one project.
     - The project should have a title, and a list of tasks.
-    - The task should have a description, an assignee object (with name and role), and a list of subtasks.`,
+    - The task should have a description, an assignee object (with name and role), and a list of subtasks.
+
+    Ensure all referenced component IDs (like 'subtaskList') are explicitly defined in the 'components' list. The component with id 'subtaskList' must effectively exist in the output list.`,
   },
 
   {
@@ -368,5 +370,44 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     name: "flashcardApp",
     description: "A language learning flashcard.",
     promptText: `Generate a 'createSurface' message and a 'updateComponents' message with surfaceId 'main' for a flashcard app. 'Text' (h1) "Spanish Vocabulary". 'Card' (the flashcard). Inside the card, a 'Column' with 'Text' (h2) "Hola" (Front). 'Divider'. 'Text' "Hello" (Back - conceptually hidden, but rendered here). 'Row' of buttons: "Hard", "Good", "Easy".`,
+  },
+  {
+    name: "clientSideValidation",
+    description: "A text field with client-side validation requirements.",
+    promptText: `Create a 'createSurface' and 'updateComponents' message for a registration form with validation. Surface ID 'main'.
+    Include a 'TextField' for "Username" that MUST match the regex "^[a-zA-Z0-9]{3,}$". If it fails, show error "Username must be at least 3 alphanumeric characters".
+    Include a 'Button' labeled "Register".`,
+  },
+  {
+    name: "standardFunctions",
+    description: "Usage of pluralize.",
+    promptText: `Create a 'createSurface' and 'updateComponents' message for a shopping cart summary. Surface ID 'main'.
+    Display a 'Text' component.
+    The text value should be a 'pluralize' function call with returnType 'string'.
+    The pluralize call should use the count from '/cart/count' and provide these options:
+    'zero': "No items"
+    'one': "One item"
+    'other': "\${/cart/count} items"`,
+  },
+  {
+    name: "openUrlAction",
+    description: "A button that opens an external URL.",
+    promptText: `Create a 'createSurface' and 'updateComponents' message. Surface ID 'main'.
+    Include a 'Button' labeled "Visit Website".
+    The button's action should be a client-side function call to 'openUrl' with the argument 'url': 'https://a2ui.org'.`,
+  },
+  {
+    name: "nestedLayoutRecursive",
+    description: "A deeply nested layout to test component recursion.",
+    promptText: `Create a 'createSurface' and 'updateComponents' message with surfaceId 'main'.
+    Create a layout with at least 5 levels of depth:
+    Level 1: Card
+    Level 2: Column (inside Card)
+    Level 3: Row (inside Column)
+    Level 4: List (inside Row)
+    Level 5: Text (inside List items)
+
+    Use explicit, static components for this structure (no data binding for the list).
+    Level 5 Text should say "Deep content".`,
   },
 ];

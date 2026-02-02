@@ -6,8 +6,9 @@ The space for agentic UI is evolving rapidly, with excellent tools emerging to s
 
 The A2UI approach is to send JSON as a message to the client, which then uses a renderer to convert it into native UI components.  LLMs can generate the component layout on the fly or you can use a template.
 
-!!! tip ""
-    **This makes it secure like data, and expressive like code.**
+> 💡
+>
+> **This makes it secure like data, and expressive like code.**
 
 This rest of this page will help you understand A2UI in relationship to other options.
 

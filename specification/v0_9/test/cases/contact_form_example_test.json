@@ -5,9 +5,10 @@
       "description": "Contact Form Example: Create Surface",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "createSurface": {
           "surfaceId": "contact_form_1",
-          "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json"
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
         }
       }
     },
@@ -15,6 +16,7 @@
       "description": "Contact Form Example: Update Components",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "contact_form_1",
           "components": [
@@ -69,7 +71,8 @@
               "checks": [
                 {
                   "call": "email",
-                  "message": "Please enter a valid email address."
+                  "message": "Please enter a valid email address.",
+                  "args": { "value": { "path": "/contact/email" } }
                 }
               ]
             },
@@ -98,7 +101,8 @@
               "id": "submit_button",
               "component": "Button",
               "child": "submit_button_label",
-              "action": { "name": "submitContactForm" }
+              "variant": "primary",
+              "action": { "event": { "name": "submitContactForm" } }
             }
           ]
         }
@@ -108,6 +112,7 @@
       "description": "Contact Form Example: Update Data Model",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateDataModel": {
           "surfaceId": "contact_form_1",
           "path": "/contact",
