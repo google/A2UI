@@ -1,8 +1,7 @@
 # Extending A2UI with Custom Functions
 
 A2UI functions are designed to be extensible. Third-party developers can define
-their own function catalogs while preserving strict validation for the standard
-set.
+their own function catalogs.
 
 This guide demonstrates how to create a `custom_catalog.json` that adds a string
 `trim` function and a hardware query function (`getScreenResolution`).
@@ -96,7 +95,7 @@ those can be added too:
       "oneOf": [
         {"$ref": "#/functions/trim"},
         {"$ref": "#/functions/getScreenResolution"},
-        {"$ref": "catalog.json#/$defs/anyFunction" }
+        {"$ref": "standard_catalog.json#/$defs/anyFunction" }
       ]
     }
   }

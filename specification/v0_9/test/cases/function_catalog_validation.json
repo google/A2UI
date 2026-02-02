@@ -840,48 +840,6 @@
       }
     },
     {
-      "description": "now: Valid call",
-      "valid": true,
-      "data": {
-        "version": "v0.9",
-        "updateComponents": {
-          "surfaceId": "test",
-          "components": [
-            {
-              "id": "txt1",
-              "component": "Text",
-              "text": {
-                "call": "now",
-                "args": {},
-                "returnType": "string"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "description": "now: Invalid args (not empty)",
-      "valid": false,
-      "data": {
-        "version": "v0.9",
-        "updateComponents": {
-          "surfaceId": "test",
-          "components": [
-            {
-              "id": "txt1",
-              "component": "Text",
-              "text": {
-                "call": "now",
-                "args": { "extra": true },
-                "returnType": "string"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "description": "not: Invalid argument type (string)",
       "valid": false,
       "data": {

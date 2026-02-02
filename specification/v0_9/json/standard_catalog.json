@@ -981,25 +981,6 @@
       "required": ["call", "args"],
       "unevaluatedProperties": false
     },
-    "now": {
-      "type": "object",
-      "description": "Returns the current client timestamp in ISO 8601 format.",
-      "properties": {
-        "call": {
-          "const": "now"
-        },
-        "args": {
-          "type": "object",
-          "properties": {},
-          "additionalProperties": false
-        },
-        "returnType": {
-          "const": "string"
-        }
-      },
-      "required": ["call"],
-      "unevaluatedProperties": false
-    },
     "and": {
       "type": "object",
       "description": "Performs a logical AND operation on a list of boolean values.",
@@ -1148,7 +1129,6 @@
         { "$ref": "#/functions/formatDate" },
         { "$ref": "#/functions/pluralize" },
         { "$ref": "#/functions/openUrl" },
-        { "$ref": "#/functions/now" },
         { "$ref": "#/functions/and" },
         { "$ref": "#/functions/or" },
         { "$ref": "#/functions/not" }
