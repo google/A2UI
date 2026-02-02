@@ -14,6 +14,9 @@
     "CreateSurfaceMessage": {
       "type": "object",
       "properties": {
+        "version": {
+          "const": "v0.9"
+        },
         "createSurface": {
           "type": "object",
           "description": "Signals the client to create a new surface and begin rendering it. When this message is sent, the client will expect 'updateComponents' and/or 'updateDataModel' messages for the same surfaceId that define the component tree.",
@@ -40,12 +43,15 @@
           "additionalProperties": false
         }
       },
-      "required": ["createSurface"],
+      "required": ["createSurface", "version"],
       "additionalProperties": false
     },
     "UpdateComponentsMessage": {
       "type": "object",
       "properties": {
+        "version": {
+          "const": "v0.9"
+        },
         "updateComponents": {
           "type": "object",
           "description": "Updates a surface with a new set of components. This message can be sent multiple times to update the component tree of an existing surface. One of the components in one of the components lists MUST have an 'id' of 'root' to serve as the root of the component tree. The createSurface message MUST have been previously sent with the 'catalogId' that is in this message.",
@@ -68,12 +74,15 @@
           "additionalProperties": false
         }
       },
-      "required": ["updateComponents"],
+      "required": ["updateComponents", "version"],
       "additionalProperties": false
     },
     "UpdateDataModelMessage": {
       "type": "object",
       "properties": {
+        "version": {
+          "const": "v0.9"
+        },
         "updateDataModel": {
           "type": "object",
           "description": "Updates the data model for an existing surface. This message can be sent multiple times to update the data model. The createSurface message MUST have been previously sent with the 'catalogId' that is in this message.",
@@ -95,12 +104,15 @@
           "additionalProperties": false
         }
       },
-      "required": ["updateDataModel"],
+      "required": ["updateDataModel", "version"],
       "additionalProperties": false
     },
     "DeleteSurfaceMessage": {
       "type": "object",
       "properties": {
+        "version": {
+          "const": "v0.9"
+        },
         "deleteSurface": {
           "type": "object",
           "description": "Signals the client to delete the surface identified by 'surfaceId'. The createSurface message MUST have been previously sent with the 'catalogId' that is in this message.",
@@ -114,7 +126,7 @@
           "additionalProperties": false
         }
       },
-      "required": ["deleteSurface"],
+      "required": ["deleteSurface", "version"],
       "additionalProperties": false
     }
   }
