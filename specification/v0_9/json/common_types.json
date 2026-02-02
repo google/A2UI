@@ -1,18 +1,35 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.dev/specification/v0_9/common_types.json",
+  "$id": "https://a2ui.org/specification/v0_9/common_types.json",
   "title": "A2UI Common Types",
   "description": "Common type definitions used across A2UI schemas.",
   "$defs": {
-    "id": {
+    "ComponentId": {
       "type": "string",
-      "description": "The unique identifier for this component."
+      "description": "The unique identifier for a component, used for both definitions and references within the same surface."
+    },
+    "AccessibilityAttributes": {
+      "type": "object",
+      "description": "Attributes to enhance accessibility when using assistive technologies like screen readers.",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/DynamicString",
+          "description": "A short string, typically 1 to 3 words, used by assistive technologies to convey the purpose or intent of an element. For example, an input field might have an accessible label of 'User ID' or a button might be labeled 'Submit'."
+        },
+        "description": {
+          "$ref": "#/$defs/DynamicString",
+          "description": "Additional information provided by assistive technologies about an element such as instructions, format requirements, or result of an action. For example, a mute button might have a label of 'Mute' and a description of 'Silences notifications about this conversation'."
+        }
+      }
     },
     "ComponentCommon": {
       "type": "object",
       "properties": {
         "id": {
-          "$ref": "#/$defs/id"
+          "$ref": "#/$defs/ComponentId"
+        },
+        "accessibility": {
+          "$ref": "#/$defs/AccessibilityAttributes"
         }
       },
       "required": ["id"]
@@ -22,7 +39,7 @@
         {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/ComponentId"
           },
           "description": "A static list of child component IDs."
         },
@@ -31,7 +48,7 @@
           "description": "A template for generating a dynamic list of children from a data model list. The `componentId` is the component to use as a template.",
           "properties": {
             "componentId": {
-              "$ref": "#/$defs/id"
+              "$ref": "#/$defs/ComponentId"
             },
             "path": {
               "type": "string",
@@ -57,23 +74,43 @@
     "DynamicValue": {
       "description": "A value that can be a literal, a path, or a function call returning any type.",
       "oneOf": [
-        { "type": "string" },
-        { "type": "number" },
-        { "type": "boolean" },
-        { "$ref": "#/$defs/DataBinding" },
-        { "$ref": "#/$defs/FunctionCall" }
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "$ref": "#/$defs/FunctionCall"
+        }
       ]
     },
     "DynamicString": {
       "description": "Represents a string",
       "oneOf": [
-        { "type": "string" },
-        { "$ref": "#/$defs/DataBinding" },
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
             {
-              "properties": { "returnType": { "const": "string" } },
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "string"
+                }
+              },
               "required": ["returnType"]
             }
           ]
@@ -83,13 +120,23 @@
     "DynamicNumber": {
       "description": "Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.",
       "oneOf": [
-        { "type": "number" },
-        { "$ref": "#/$defs/DataBinding" },
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
             {
-              "properties": { "returnType": { "const": "number" } },
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "number"
+                }
+              },
               "required": ["returnType"]
             }
           ]
@@ -99,9 +146,15 @@
     "DynamicBoolean": {
       "description": "A boolean value that can be a literal, a path, or a logic expression (including function calls returning boolean).",
       "oneOf": [
-        { "type": "boolean" },
-        { "$ref": "#/$defs/DataBinding" },
-        { "$ref": "#/$defs/LogicExpression" }
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
+        {
+          "$ref": "#/$defs/LogicExpression"
+        }
       ]
     },
     "DynamicStringList": {
@@ -109,14 +162,24 @@
       "oneOf": [
         {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        { "$ref": "#/$defs/DataBinding" },
+        {
+          "$ref": "#/$defs/DataBinding"
+        },
         {
           "allOf": [
-            { "$ref": "#/$defs/FunctionCall" },
             {
-              "properties": { "returnType": { "const": "array" } },
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "array"
+                }
+              },
               "required": ["returnType"]
             }
           ]
@@ -132,11 +195,13 @@
           "description": "The name of the function to call."
         },
         "args": {
-          "type": "array",
+          "type": "object",
           "description": "Arguments passed to the function.",
-          "items": {
+          "additionalProperties": {
             "anyOf": [
-              { "$ref": "#/$defs/DynamicValue" },
+              {
+                "$ref": "#/$defs/DynamicValue"
+              },
               {
                 "type": "object",
                 "description": "A literal object argument (e.g. configuration)."
@@ -147,7 +212,15 @@
         "returnType": {
           "type": "string",
           "description": "The expected return type of the function call.",
-          "enum": ["string", "number", "boolean", "array", "object", "any", "void"],
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "any",
+            "void"
+          ],
           "default": "boolean"
         }
       },
@@ -223,7 +296,7 @@
     },
     "CheckRule": {
       "type": "object",
-      "description": "A single validaton rule applied to an input component.",
+      "description": "A single validation rule applied to an input component.",
       "unevaluatedProperties": false,
       "allOf": [
         {

@@ -17,13 +17,13 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Surface } from '@a2ui/angular';
-import * as v0_8 from '@a2ui/lit/0.8';
+import * as Types from '@a2ui/web_core/types/types';
 
 interface GallerySample {
   id: string;
   title: string;
   description: string;
-  surface: v0_8.Types.Surface;
+  surface: Types.Surface;
 }
 
 @Component({
@@ -209,7 +209,7 @@ export class GalleryComponent {
     this.showJsonId = this.showJsonId === id ? null : id;
   }
 
-  getJson(surface: v0_8.Types.Surface): string {
+  getJson(surface: Types.Surface): string {
     return JSON.stringify(
       surface,
       (key, value) => {
@@ -221,7 +221,7 @@ export class GalleryComponent {
     );
   }
 
-  private createSingleComponentSurface(type: string, properties: any): v0_8.Types.Surface {
+  private createSingleComponentSurface(type: string, properties: any): Types.Surface {
     const rootId = 'root';
     return {
       rootComponentId: rootId,
