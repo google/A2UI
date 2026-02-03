@@ -1,10 +1,10 @@
 # Specification v0.8.1
 
-This directory contains the specification for version 0.8.1 of A2UI, a previous version of the specification, and is no longer under active development. The currently published specification is [v0.9](../v0_9).
+This directory contains the specification for version 0.8.1 of A2UI, a previous version of the specification, and is no longer under active development.
 
 **This specification is closed.**
 
-Please do not propose changes here. If you have proposed changes or new features, please open an issue or submit a pull request to the [A2UI repository](https://github.com/gspencergoog/A2UI) for the [v0.10 specification](../v0_10).
+Please do not propose changes here. If you have proposed changes or new features, please open an issue or submit a pull request to the [A2UI repository](https://github.com/gspencergoog/A2UI) for the specification currently in development.
 
 ## v0.8.1 Documentation
 
