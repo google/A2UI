@@ -6,7 +6,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import { Data, Types } from '@a2ui/lit/0.8';
+import { Data, type Types } from '@a2ui/lit/0.8';
 import type { A2UIContextValue, A2UIActions } from './store';
 import { ThemeProvider } from '../theme/ThemeContext';
 import type { OnActionCallback } from '../types';

@@ -15,7 +15,7 @@ function getYouTubeVideoId(url: string): string | null {
     const match = url.match(pattern);
     if (match && match.length > 1) {
       // Non-null assertion is safe here since we checked match.length > 1
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+       
       return match[1]!;
     }
   }
