@@ -90,3 +90,33 @@ export function createSimpleMessages(
     createBeginRendering(id, surfaceId),
   ];
 }
+
+/**
+ * Create a dataModelUpdate message.
+ * Per A2UI spec: Updates application state independently of UI structure.
+ */
+export function createDataModelUpdate(
+  contents: Array<{ key: string; value: unknown }>,
+  surfaceId = '@default',
+  path?: string
+): Types.ServerToClientMessage {
+  return {
+    dataModelUpdate: {
+      surfaceId,
+      path,
+      contents,
+    },
+  } as Types.ServerToClientMessage;
+}
+
+/**
+ * Create a deleteSurface message.
+ * Per A2UI spec: Removes a UI surface and associated content.
+ */
+export function createDeleteSurface(surfaceId: string): Types.ServerToClientMessage {
+  return {
+    deleteSurface: {
+      surfaceId,
+    },
+  } as Types.ServerToClientMessage;
+}
