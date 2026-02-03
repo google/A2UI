@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSimpleMessages } from '../helpers';
+import { TestWrapper, TestRenderer, createSimpleMessages } from '../../utils';
 
 describe('Image Component', () => {
   describe('Basic Rendering', () => {
@@ -283,11 +283,11 @@ describe('Image Component', () => {
 
       const wrapper = container.querySelector('.a2ui-image');
       expect(wrapper?.children.length).toBe(1);
-      expect(wrapper?.children[0].tagName).toBe('SECTION');
+      expect(wrapper?.children[0]?.tagName).toBe('SECTION');
 
       const section = wrapper?.children[0];
       expect(section?.children.length).toBe(1);
-      expect(section?.children[0].tagName).toBe('IMG');
+      expect(section?.children[0]?.tagName).toBe('IMG');
     });
   });
 });

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSimpleMessages } from '../helpers';
+import { TestWrapper, TestRenderer, createSimpleMessages } from '../../utils';
 
 /**
  * TextField tests following A2UI specification.

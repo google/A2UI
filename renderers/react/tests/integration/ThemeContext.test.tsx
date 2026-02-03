@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from './helpers';
+import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../utils';
 import type { Types } from '@a2ui/lit/0.8';
-import { litTheme } from '../src/theme/litTheme';
+import { litTheme } from '../../src/theme/litTheme';
 
 /**
  * Theme Context tests - verify components respect the theme from context.
@@ -88,7 +88,23 @@ function createMockTheme(): Types.Theme {
         element: {},
       },
     },
-    elements: {},
+    elements: {
+      a: {},
+      audio: {},
+      body: {},
+      button: {},
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      iframe: {},
+      input: {},
+      p: {},
+      pre: {},
+      textarea: {},
+      video: {},
+    },
     markdown: {
       p: [],
       h1: [],

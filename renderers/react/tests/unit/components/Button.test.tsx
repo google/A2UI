@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../helpers';
+import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering, getMockCallArg } from '../../utils';
 import type { Types } from '@a2ui/lit/0.8';
 
 /**
@@ -156,12 +156,12 @@ describe('Button Component', () => {
 
       expect(mockOnAction).toHaveBeenCalledTimes(1);
       // Verify the action payload contains the correct action name
-      const callArg = mockOnAction.mock.calls[0][0];
-      expect(callArg).toHaveProperty('userAction');
-      expect(callArg.userAction).toHaveProperty('name', 'submit-form');
+      const event = getMockCallArg<Types.A2UIClientEventMessage>(mockOnAction, 0);
+      expect(event).toHaveProperty('userAction');
+      expect(event.userAction).toHaveProperty('name', 'submit-form');
       // Verify it's the specific action we defined, not some default
-      expect(callArg.userAction.name).not.toBe('default');
-      expect(callArg.userAction.name).not.toBe('click');
+      expect(event.userAction?.name).not.toBe('default');
+      expect(event.userAction?.name).not.toBe('click');
     });
 
     it('should dispatch action with correct context parameters', () => {
@@ -183,12 +183,13 @@ describe('Button Component', () => {
       fireEvent.click(screen.getByRole('button'));
 
       expect(mockOnAction).toHaveBeenCalledTimes(1);
-      const callArg = mockOnAction.mock.calls[0][0];
-      expect(callArg.userAction).toHaveProperty('name', 'delete-item');
+      const event = getMockCallArg<Types.A2UIClientEventMessage>(mockOnAction, 0);
+      expect(event.userAction).toBeDefined();
+      expect(event.userAction).toHaveProperty('name', 'delete-item');
       // Context should be passed through
-      expect(callArg.userAction).toHaveProperty('context');
+      expect(event.userAction).toHaveProperty('context');
       // Verify context is an object (not undefined or null)
-      expect(typeof callArg.userAction.context).toBe('object');
+      expect(typeof event.userAction?.context).toBe('object');
     });
 
     it('should not call onAction before click', () => {

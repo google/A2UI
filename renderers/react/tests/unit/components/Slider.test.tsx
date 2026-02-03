@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSimpleMessages } from '../helpers';
+import { TestWrapper, TestRenderer, createSimpleMessages } from '../../utils';
 
 /**
  * Slider tests following A2UI specification.
@@ -282,11 +282,11 @@ describe('Slider Component', () => {
       const section = container.querySelector('section');
       expect(section).toBeInTheDocument();
 
-      const children = Array.from(section?.children || []);
+      const children = Array.from(section?.children ?? []);
       expect(children.length).toBe(3);
-      expect(children[0].tagName).toBe('LABEL');
-      expect(children[1].tagName).toBe('INPUT');
-      expect(children[2].tagName).toBe('SPAN');
+      expect(children[0]?.tagName).toBe('LABEL');
+      expect(children[1]?.tagName).toBe('INPUT');
+      expect(children[2]?.tagName).toBe('SPAN');
     });
 
     it('should have input inside section container', () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSimpleMessages } from '../helpers';
+import { TestWrapper, TestRenderer, createSimpleMessages } from '../../utils';
 
 /**
  * CheckBox tests following A2UI specification.
@@ -243,8 +243,8 @@ describe('CheckBox Component', () => {
 
       const section = container.querySelector('section');
       const children = section?.children;
-      expect(children?.[0].tagName).toBe('INPUT');
-      expect(children?.[1].tagName).toBe('LABEL');
+      expect(children?.[0]?.tagName).toBe('INPUT');
+      expect(children?.[1]?.tagName).toBe('LABEL');
     });
   });
 });

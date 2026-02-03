@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../helpers';
+import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering, getMockCallArg } from '../../utils';
 import type { Types } from '@a2ui/lit/0.8';
 
 /**
@@ -458,7 +458,9 @@ describe('Modal Component', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Action Button' }));
 
       expect(mockOnAction).toHaveBeenCalled();
-      expect(mockOnAction.mock.calls[0][0].userAction.name).toBe('modal-action');
+      const event = getMockCallArg<Types.A2UIClientEventMessage>(mockOnAction, 0);
+      expect(event.userAction).toBeDefined();
+      expect(event.userAction?.name).toBe('modal-action');
     });
   });
 

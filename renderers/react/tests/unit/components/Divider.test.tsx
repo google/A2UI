@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSimpleMessages, createSurfaceUpdate, createBeginRendering } from '../helpers';
+import { TestWrapper, TestRenderer, createSimpleMessages, createSurfaceUpdate, createBeginRendering } from '../../utils';
 import type { Types } from '@a2ui/lit/0.8';
 
 /**
@@ -111,7 +111,7 @@ describe('Divider Component', () => {
 
       const wrapper = container.querySelector('.a2ui-divider');
       expect(wrapper?.children.length).toBe(1);
-      expect(wrapper?.children[0].tagName).toBe('HR');
+      expect(wrapper?.children[0]?.tagName).toBe('HR');
     });
   });
 

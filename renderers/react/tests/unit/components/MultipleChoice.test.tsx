@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSimpleMessages } from '../helpers';
+import { TestWrapper, TestRenderer, createSimpleMessages, getElement } from '../../utils';
 
 /**
  * MultipleChoice tests following A2UI specification.
@@ -203,17 +203,17 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const inputs = container.querySelectorAll('input[type="radio"]') as NodeListOf<HTMLInputElement>;
+      const inputs = Array.from(container.querySelectorAll('input[type="radio"]')) as HTMLInputElement[];
 
       // Select first option
-      fireEvent.click(inputs[0]);
-      expect(inputs[0].checked).toBe(true);
-      expect(inputs[1].checked).toBe(false);
+      fireEvent.click(getElement(inputs, 0));
+      expect(getElement(inputs, 0).checked).toBe(true);
+      expect(getElement(inputs, 1).checked).toBe(false);
 
       // Select second option - first should be deselected
-      fireEvent.click(inputs[1]);
-      expect(inputs[0].checked).toBe(false);
-      expect(inputs[1].checked).toBe(true);
+      fireEvent.click(getElement(inputs, 1));
+      expect(getElement(inputs, 0).checked).toBe(false);
+      expect(getElement(inputs, 1).checked).toBe(true);
     });
   });
 
@@ -277,16 +277,16 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const inputs = container.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
+      const inputs = Array.from(container.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
 
       // Select first option
-      fireEvent.click(inputs[0]);
-      expect(inputs[0].checked).toBe(true);
+      fireEvent.click(getElement(inputs, 0));
+      expect(getElement(inputs, 0).checked).toBe(true);
 
       // Select second option - first should remain selected
-      fireEvent.click(inputs[1]);
-      expect(inputs[0].checked).toBe(true);
-      expect(inputs[1].checked).toBe(true);
+      fireEvent.click(getElement(inputs, 1));
+      expect(getElement(inputs, 0).checked).toBe(true);
+      expect(getElement(inputs, 1).checked).toBe(true);
     });
 
     it('should toggle checkbox on repeated click', () => {

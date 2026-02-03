@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../helpers';
+import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../../utils';
 import type { Types } from '@a2ui/lit/0.8';
 
 /**
@@ -184,8 +184,8 @@ describe('Tabs Component', () => {
         </TestWrapper>
       );
 
-      const tabA = screen.getByRole('button', { name: 'Tab A' });
-      const tabB = screen.getByRole('button', { name: 'Tab B' });
+      const tabA = screen.getByRole('button', { name: 'Tab A' }) as HTMLButtonElement;
+      const tabB = screen.getByRole('button', { name: 'Tab B' }) as HTMLButtonElement;
 
       // Initially Tab A is selected (disabled)
       expect(tabA.disabled).not.toBe(tabB.disabled);

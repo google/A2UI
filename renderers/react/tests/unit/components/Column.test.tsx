@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../helpers';
+import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../../utils';
 import type { Types } from '@a2ui/lit/0.8';
 
 /**
@@ -243,7 +243,7 @@ describe('Column Component', () => {
 
       const wrapper = container.querySelector('.a2ui-column');
       expect(wrapper?.children.length).toBe(1);
-      expect(wrapper?.children[0].tagName).toBe('SECTION');
+      expect(wrapper?.children[0]?.tagName).toBe('SECTION');
     });
   });
 });
