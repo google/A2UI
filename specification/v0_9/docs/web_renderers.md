@@ -118,10 +118,12 @@ export class SurfaceState {
   readonly id: string;
   readonly dataModel: DataModel;
   readonly catalog: Catalog<any>;
+  readonly theme: any;
   
   constructor(
     id: string, 
     catalog: Catalog<any>, 
+    theme: any,
     actionHandler: ActionHandler
   );
 
@@ -171,10 +173,21 @@ export interface Component<T> {
 
 export interface Catalog<T> {
   id: string;
+  
+  /** 
+   * A map of available components. 
+   * This is readonly to encourage immutable extension patterns.
+   */
+  readonly components: ReadonlyMap<string, Component<T>>;
+
   /**
    * Retrieves a component definition by name.
+   * This can be a convenience wrapper around the map or handle fallback logic.
    */
   getComponent(name: string): Component<T> | undefined;
+
+  // Note: Functions will also be defined here in future iterations
+  // readonly functions: ReadonlyMap<string, FunctionDefinition>;
 }
 ```
 
@@ -279,6 +292,26 @@ export abstract class CardBaseComponent<T> implements Component<T> {
   ): T;
 }
 ```
+
+### 6. SurfaceRenderer (Framework Specific)
+
+The `SurfaceRenderer` (typically exported as `Surface`) is the top-level component that users place in their applications. It serves as the gateway between the framework's DOM and the A2UI state.
+
+```typescript
+// Interface for the component's inputs
+export interface SurfaceProps {
+  /**
+   * The complete state for this surface, obtained from A2uiMessageProcessor.
+   */
+  state: SurfaceState;
+}
+```
+
+**Responsibilities:**
+1.  **Reactivity**: It observes the `SurfaceState`. When the `rootComponentId` changes, or when component definitions are updated, it triggers a re-render.
+2.  **Theming**: It reads `SurfaceState.theme` and applies it to the surface container, typically by generating CSS Custom Properties (variables) like `--a2ui-primary-color`.
+3.  **Root Orchestration**: It identifies the component definition for 'root', instantiates the framework-specific `ComponentContext`, and calls the root component's `render()` method.
+4.  **Error Boundaries**: It provides a top-level catch for rendering errors within the surface.
 
 ## Detailed File Structure
 

@@ -64,21 +64,24 @@ import { MapComponent } from './my-map-component';
 // 1. Create the base standard catalog
 const standardCatalog = createLitStandardCatalog();
 
-// 2. Create a new catalog that extends it
+// 2. Create a new components map by cloning the standard one
+const myComponents = new Map(standardCatalog.components);
+
+// 3. Add the custom Map component
+// Assuming MapComponent handles properties: title, latitude, longitude
+myComponents.set('Map', new MapComponent());
+
+// 4. Create the new Catalog object
 const myAppCatalog: Catalog<TemplateResult> = {
   id: 'https://myapp.com/catalog',
+  components: myComponents,
   
   getComponent(name: string) {
-    // Override or Add
-    if (name === 'Map') {
-      return new MapComponent();
-    }
-    // Fallback
-    return standardCatalog.getComponent(name);
+    return this.components.get(name);
   }
 };
 
-// 3. Register this catalog with the Processor
+// 5. Register this catalog with the Processor
 processor.registerCatalog(myAppCatalog);
 ```
 
@@ -92,7 +95,33 @@ processor.registerCatalog(myAppCatalog);
 ### v0.9
 *   **Data**: Managed by `SurfaceState` -> `DataModel`.
 *   **Binding**: Components call `context.resolve(value)`.
-*   **Reactivity**: The `ComponentContext` implementation in the renderer is responsible for setting up the reactivity. For example, in Lit, `context.resolve` will automatically subscribe the current rendering context to the specific data path in the `DataModel`, ensuring precise, fine-grained updates.
+*   **Reactivity**: The `ComponentContext` implementation in the renderer is responsible for setting up the reactivity. For example, in Lit, `context.resolve` will automatically subscribe the current rendering context to the specific data path in the `Model`, ensuring precise, fine-grained updates.
+
+## 6. Surface Component API
+
+The entry point for developers using the library has been simplified.
+
+### v0.8
+Developers had to pass multiple coordinated properties to the `<a2ui-surface>` component:
+```html
+<a2ui-surface 
+  surfaceId="main" 
+  .processor=${processor}
+></a2ui-surface>
+```
+The Surface component was responsible for reaching into the global processor and finding its own data.
+
+### v0.9
+The Surface component now takes a single, self-contained state object:
+```html
+<a2ui-surface 
+  .state=${processor.getSurfaceState('main')}
+></a2ui-surface>
+```
+**Why this is better:**
+*   **Isolation**: The Surface component doesn't need to know about the global `A2uiMessageProcessor`. It only cares about the state of its specific surface.
+*   **Testability**: You can easily test a Surface by passing a mock `SurfaceState` without instantiating the entire message processing infrastructure.
+*   **Encapsulation**: Catalog negotiation and Data Model scoping are handled *before* the state reaches the renderer.
 
 ## Summary Table
 
