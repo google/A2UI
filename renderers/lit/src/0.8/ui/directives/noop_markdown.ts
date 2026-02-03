@@ -15,7 +15,10 @@
  */
 
 import { html, TemplateResult } from "lit";
-import { MarkdownRenderer } from "../utils/markdown.js";
+import {
+  directive,
+  Directive,
+} from "lit/directive.js";
 
 /**
  * "Handles" Markdown rendering by doing nothing.
@@ -23,10 +26,10 @@ import { MarkdownRenderer } from "../utils/markdown.js";
  * Configure @a2ui/lit-markdown, or your custom Markdown renderer
  * to actually parse and render Markdown in your app.
  */
-class NoopMarkdownRenderer implements MarkdownRenderer {
-  render(markdown: string) : TemplateResult {
+class NoopMarkdownRendererDirective extends Directive {
+  render(markdown: string, _tagClassMap?: Record<string, string[]>) : TemplateResult {
     return html`<pre>${markdown}</pre>`;
   }
 }
 
-export const noopMarkdown = new NoopMarkdownRenderer();
+export const noopMarkdown = directive(NoopMarkdownRendererDirective);
