@@ -20,6 +20,54 @@ import {
 
 describe('Message Processing', () => {
   describe('Basic Processing', () => {
+    it('should not render surface until beginRendering is received', () => {
+      function StagedRenderer() {
+        const { processMessages } = useA2UI();
+        const [stage, setStage] = React.useState<'initial' | 'updated' | 'rendering'>('initial');
+
+        useEffect(() => {
+          if (stage === 'initial') {
+            // Step 1: Only send surfaceUpdate (no beginRendering)
+            processMessages([
+              createSurfaceUpdate([
+                { id: 'text-1', component: { Text: { text: { literalString: 'Should not appear yet' } } } },
+              ]),
+            ]);
+            setStage('updated');
+          } else if (stage === 'updated') {
+            // Give React a chance to render, then send beginRendering
+            setTimeout(() => {
+              processMessages([createBeginRendering('text-1')]);
+              setStage('rendering');
+            }, 10);
+          }
+        }, [processMessages, stage]);
+
+        return (
+          <>
+            <A2UIRenderer surfaceId="@default" />
+            <span data-testid="stage">{stage}</span>
+          </>
+        );
+      }
+
+      render(
+        <A2UIProvider>
+          <StagedRenderer />
+        </A2UIProvider>
+      );
+
+      // After surfaceUpdate only, content should NOT be visible
+      expect(screen.getByTestId('stage')).toHaveTextContent('updated');
+      expect(screen.queryByText('Should not appear yet')).not.toBeInTheDocument();
+
+      // After beginRendering, content should be visible
+      return waitFor(() => {
+        expect(screen.getByTestId('stage')).toHaveTextContent('rendering');
+        expect(screen.getByText('Should not appear yet')).toBeInTheDocument();
+      });
+    });
+
     it('should process surfaceUpdate and beginRendering messages', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
@@ -243,6 +291,141 @@ describe('Message Processing', () => {
       await waitFor(() => {
         expect(screen.getByTestId('deleted-marker')).toBeInTheDocument();
         expect(screen.queryByText('Surface content')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should handle deleting a non-existent surface gracefully', () => {
+      function DeleteNonExistentRenderer() {
+        const { processMessages } = useA2UI();
+        const [attempted, setAttempted] = React.useState(false);
+
+        useEffect(() => {
+          // Try to delete a surface that was never created
+          processMessages([createDeleteSurface('does-not-exist')]);
+          setAttempted(true);
+        }, [processMessages]);
+
+        return <span data-testid="status">{attempted ? 'completed' : 'pending'}</span>;
+      }
+
+      // Should not throw an error
+      render(
+        <A2UIProvider>
+          <DeleteNonExistentRenderer />
+        </A2UIProvider>
+      );
+
+      expect(screen.getByTestId('status')).toHaveTextContent('completed');
+    });
+
+    it('should only delete the specified surface, leaving others intact', async () => {
+      function MultiSurfaceDeleteRenderer() {
+        const { processMessages } = useA2UI();
+        const [deleted, setDeleted] = React.useState(false);
+
+        useEffect(() => {
+          // Create two surfaces
+          processMessages([
+            createSurfaceUpdate(
+              [{ id: 'text-a', component: { Text: { text: { literalString: 'Surface A content' } } } }],
+              'surface-a'
+            ),
+            createBeginRendering('text-a', 'surface-a'),
+            createSurfaceUpdate(
+              [{ id: 'text-b', component: { Text: { text: { literalString: 'Surface B content' } } } }],
+              'surface-b'
+            ),
+            createBeginRendering('text-b', 'surface-b'),
+          ]);
+
+          setTimeout(() => {
+            // Delete only surface-a
+            processMessages([createDeleteSurface('surface-a')]);
+            setDeleted(true);
+          }, 10);
+        }, [processMessages]);
+
+        return (
+          <>
+            <A2UIRenderer surfaceId="surface-a" />
+            <A2UIRenderer surfaceId="surface-b" />
+            {deleted && <span data-testid="deleted-marker">Deleted</span>}
+          </>
+        );
+      }
+
+      render(
+        <A2UIProvider>
+          <MultiSurfaceDeleteRenderer />
+        </A2UIProvider>
+      );
+
+      // Both surfaces should be visible initially
+      expect(screen.getByText('Surface A content')).toBeInTheDocument();
+      expect(screen.getByText('Surface B content')).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('deleted-marker')).toBeInTheDocument();
+        // Surface A should be gone, Surface B should remain
+        expect(screen.queryByText('Surface A content')).not.toBeInTheDocument();
+        expect(screen.getByText('Surface B content')).toBeInTheDocument();
+      });
+    });
+
+    it('should allow re-creating a surface after deletion with the same ID', async () => {
+      function RecreateAfterDeleteRenderer() {
+        const { processMessages } = useA2UI();
+        const [stage, setStage] = React.useState<'initial' | 'deleted' | 'recreated'>('initial');
+
+        useEffect(() => {
+          if (stage === 'initial') {
+            // Create surface
+            processMessages([
+              createSurfaceUpdate(
+                [{ id: 'text-1', component: { Text: { text: { literalString: 'Original content' } } } }],
+                'recyclable-surface'
+              ),
+              createBeginRendering('text-1', 'recyclable-surface'),
+            ]);
+            setTimeout(() => setStage('deleted'), 10);
+          } else if (stage === 'deleted') {
+            // Delete surface
+            processMessages([createDeleteSurface('recyclable-surface')]);
+            setTimeout(() => setStage('recreated'), 10);
+          } else if (stage === 'recreated') {
+            // Re-create surface with same ID but different content
+            processMessages([
+              createSurfaceUpdate(
+                [{ id: 'text-2', component: { Text: { text: { literalString: 'New content after recreation' } } } }],
+                'recyclable-surface'
+              ),
+              createBeginRendering('text-2', 'recyclable-surface'),
+            ]);
+          }
+        }, [processMessages, stage]);
+
+        return (
+          <>
+            <A2UIRenderer surfaceId="recyclable-surface" />
+            <span data-testid="stage">{stage}</span>
+          </>
+        );
+      }
+
+      render(
+        <A2UIProvider>
+          <RecreateAfterDeleteRenderer />
+        </A2UIProvider>
+      );
+
+      // Initial content should be visible
+      expect(screen.getByText('Original content')).toBeInTheDocument();
+
+      // After deletion and recreation, new content should be visible
+      await waitFor(() => {
+        expect(screen.getByTestId('stage')).toHaveTextContent('recreated');
+        expect(screen.queryByText('Original content')).not.toBeInTheDocument();
+        expect(screen.getByText('New content after recreation')).toBeInTheDocument();
       });
     });
   });

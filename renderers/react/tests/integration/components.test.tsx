@@ -17,6 +17,57 @@ import {
  */
 
 describe('Component Updates', () => {
+  it('should update already-rendered surface with surfaceUpdate alone (no new beginRendering)', async () => {
+    function UpdateWithoutBeginRenderingRenderer() {
+      const { processMessages } = useA2UI();
+      const [stage, setStage] = React.useState<'initial' | 'updated'>('initial');
+
+      useEffect(() => {
+        if (stage === 'initial') {
+          // Initial render: surfaceUpdate + beginRendering
+          processMessages([
+            createSurfaceUpdate([
+              { id: 'text-1', component: { Text: { text: { literalString: 'Original text' } } } },
+            ]),
+            createBeginRendering('text-1'),
+          ]);
+          setTimeout(() => setStage('updated'), 10);
+        } else if (stage === 'updated') {
+          // Update: only surfaceUpdate, NO beginRendering
+          processMessages([
+            createSurfaceUpdate([
+              { id: 'text-1', component: { Text: { text: { literalString: 'Updated text' } } } },
+            ]),
+            // Note: no createBeginRendering here
+          ]);
+        }
+      }, [processMessages, stage]);
+
+      return (
+        <>
+          <A2UIRenderer surfaceId="@default" />
+          <span data-testid="stage">{stage}</span>
+        </>
+      );
+    }
+
+    render(
+      <A2UIProvider>
+        <UpdateWithoutBeginRenderingRenderer />
+      </A2UIProvider>
+    );
+
+    // Initial content should be visible
+    expect(screen.getByText('Original text')).toBeInTheDocument();
+
+    // After surfaceUpdate alone (no beginRendering), content should update
+    await waitFor(() => {
+      expect(screen.getByTestId('stage')).toHaveTextContent('updated');
+      expect(screen.getByText('Updated text')).toBeInTheDocument();
+      expect(screen.queryByText('Original text')).not.toBeInTheDocument();
+    });
+  });
+
   it('should update component props when new message received', () => {
     function UpdateRenderer() {
       const { processMessages } = useA2UI();
@@ -130,6 +181,175 @@ describe('Component Updates', () => {
     return waitFor(() => {
       expect(screen.getByText('First')).toBeInTheDocument();
       expect(screen.getByText('Second')).toBeInTheDocument();
+    });
+  });
+
+  it('should remove elements from a list via surfaceUpdate', async () => {
+    function RemoveElementsRenderer() {
+      const { processMessages } = useA2UI();
+      const [stage, setStage] = React.useState<'initial' | 'removed'>('initial');
+
+      useEffect(() => {
+        if (stage === 'initial') {
+          // Initial: list with 3 items
+          processMessages([
+            createSurfaceUpdate([
+              { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } } } },
+              { id: 'item-2', component: { Text: { text: { literalString: 'Item 2' } } } },
+              { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } } } },
+              { id: 'list-1', component: { List: { children: { explicitList: ['item-1', 'item-2', 'item-3'] } } } },
+            ]),
+            createBeginRendering('list-1'),
+          ]);
+          setTimeout(() => setStage('removed'), 10);
+        } else if (stage === 'removed') {
+          // Update: remove middle item (only surfaceUpdate, no beginRendering)
+          processMessages([
+            createSurfaceUpdate([
+              { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } } } },
+              { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } } } },
+              { id: 'list-1', component: { List: { children: { explicitList: ['item-1', 'item-3'] } } } },
+            ]),
+          ]);
+        }
+      }, [processMessages, stage]);
+
+      return (
+        <>
+          <A2UIRenderer surfaceId="@default" />
+          <span data-testid="stage">{stage}</span>
+        </>
+      );
+    }
+
+    render(
+      <A2UIProvider>
+        <RemoveElementsRenderer />
+      </A2UIProvider>
+    );
+
+    // All 3 items should be visible initially
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    expect(screen.getByText('Item 2')).toBeInTheDocument();
+    expect(screen.getByText('Item 3')).toBeInTheDocument();
+
+    // After removal, Item 2 should be gone
+    await waitFor(() => {
+      expect(screen.getByTestId('stage')).toHaveTextContent('removed');
+      expect(screen.getByText('Item 1')).toBeInTheDocument();
+      expect(screen.queryByText('Item 2')).not.toBeInTheDocument();
+      expect(screen.getByText('Item 3')).toBeInTheDocument();
+    });
+  });
+
+  it('should reorder elements via surfaceUpdate', async () => {
+    function ReorderElementsRenderer() {
+      const { processMessages } = useA2UI();
+      const [stage, setStage] = React.useState<'initial' | 'reordered'>('initial');
+
+      useEffect(() => {
+        if (stage === 'initial') {
+          // Initial order: A, B, C
+          processMessages([
+            createSurfaceUpdate([
+              { id: 'item-a', component: { Text: { text: { literalString: 'A' } } } },
+              { id: 'item-b', component: { Text: { text: { literalString: 'B' } } } },
+              { id: 'item-c', component: { Text: { text: { literalString: 'C' } } } },
+              { id: 'col-1', component: { Column: { children: { explicitList: ['item-a', 'item-b', 'item-c'] } } } },
+            ]),
+            createBeginRendering('col-1'),
+          ]);
+          setTimeout(() => setStage('reordered'), 10);
+        } else if (stage === 'reordered') {
+          // Reorder: C, A, B (only surfaceUpdate, no beginRendering)
+          processMessages([
+            createSurfaceUpdate([
+              { id: 'item-a', component: { Text: { text: { literalString: 'A' } } } },
+              { id: 'item-b', component: { Text: { text: { literalString: 'B' } } } },
+              { id: 'item-c', component: { Text: { text: { literalString: 'C' } } } },
+              { id: 'col-1', component: { Column: { children: { explicitList: ['item-c', 'item-a', 'item-b'] } } } },
+            ]),
+          ]);
+        }
+      }, [processMessages, stage]);
+
+      return (
+        <>
+          <A2UIRenderer surfaceId="@default" />
+          <span data-testid="stage">{stage}</span>
+        </>
+      );
+    }
+
+    const { container } = render(
+      <A2UIProvider>
+        <ReorderElementsRenderer />
+      </A2UIProvider>
+    );
+
+    // Wait for reorder to complete
+    await waitFor(() => {
+      expect(screen.getByTestId('stage')).toHaveTextContent('reordered');
+    });
+
+    // Verify new order: C, A, B
+    const textElements = container.querySelectorAll('.a2ui-text');
+    expect(textElements).toHaveLength(3);
+    expect(textElements[0]).toHaveTextContent('C');
+    expect(textElements[1]).toHaveTextContent('A');
+    expect(textElements[2]).toHaveTextContent('B');
+  });
+
+  it('should NOT empty the surface via empty surfaceUpdate alone (requires deleteSurface)', async () => {
+    // This test documents that an empty surfaceUpdate does NOT clear an already-rendered surface.
+    // To truly clear a surface, use deleteSurface message instead.
+    function EmptySurfaceRenderer() {
+      const { processMessages } = useA2UI();
+      const [stage, setStage] = React.useState<'initial' | 'attempted'>('initial');
+
+      useEffect(() => {
+        if (stage === 'initial') {
+          // Initial: surface with content
+          processMessages([
+            createSurfaceUpdate([
+              { id: 'text-1', component: { Text: { text: { literalString: 'Persistent content' } } } },
+              { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
+            ]),
+            createBeginRendering('col-1'),
+          ]);
+          setTimeout(() => setStage('attempted'), 10);
+        } else if (stage === 'attempted') {
+          // Attempt to empty via surfaceUpdate with no components
+          processMessages([
+            createSurfaceUpdate([]),
+          ]);
+        }
+      }, [processMessages, stage]);
+
+      return (
+        <>
+          <A2UIRenderer surfaceId="@default" fallback={<span data-testid="empty-fallback">Empty</span>} />
+          <span data-testid="stage">{stage}</span>
+        </>
+      );
+    }
+
+    render(
+      <A2UIProvider>
+        <EmptySurfaceRenderer />
+      </A2UIProvider>
+    );
+
+    // Content should be visible initially
+    expect(screen.getByText('Persistent content')).toBeInTheDocument();
+
+    // After empty surfaceUpdate, content should STILL be present (not cleared)
+    await waitFor(() => {
+      expect(screen.getByTestId('stage')).toHaveTextContent('attempted');
+      // Content persists - empty surfaceUpdate doesn't clear the surface
+      expect(screen.getByText('Persistent content')).toBeInTheDocument();
+      // Fallback is NOT shown because surface still has content
+      expect(screen.queryByTestId('empty-fallback')).not.toBeInTheDocument();
     });
   });
 });
