@@ -13,5 +13,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { TemplateResult } from "lit";
+import { createContext } from "@lit/context";
 
-export { noopMarkdown } from "./noop_markdown.js";
+/**
+ * The interface for the markdown renderer that can be injected into the
+ * Lit context.
+ */
+export interface MarkdownRenderer {
+  render(markdown: string) : TemplateResult;
+}
+
+/**
+ * A Lit Context to override the default (noop) markdown renderer.
+ */
+export const markdownContext = createContext<MarkdownRenderer>(
+  Symbol("a2ui-lit-markdown-renderer")
+);

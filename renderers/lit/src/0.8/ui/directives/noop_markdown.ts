@@ -14,4 +14,19 @@
  limitations under the License.
  */
 
-export { noopMarkdown } from "./noop_markdown.js";
+import { html, TemplateResult } from "lit";
+import { MarkdownRenderer } from "../utils/markdown.js";
+
+/**
+ * "Handles" Markdown rendering by doing nothing.
+ *
+ * Configure @a2ui/lit-markdown, or your custom Markdown renderer
+ * to actually parse and render Markdown in your app.
+ */
+class NoopMarkdownRenderer implements MarkdownRenderer {
+  render(markdown: string) : TemplateResult {
+    return html`<pre>${markdown}</pre>`;
+  }
+}
+
+export const noopMarkdown = new NoopMarkdownRenderer();

@@ -16,7 +16,9 @@
 
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { markdown } from "./directives/directives.js";
+import { consume } from '@lit/context';
+import { noopMarkdown } from "./directives/noop_markdown.js";
+import { markdownContext, MarkdownRenderer } from "./utils/markdown.js";
 import { Root } from "./root.js";
 import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import * as Primitives from "@a2ui/web_core/types/primitives";
@@ -43,6 +45,9 @@ export class Text extends Root {
 
   @property({ reflect: true, attribute: "usage-hint" })
   accessor usageHint: Types.ResolvedText["usageHint"] | null = null;
+
+  @consume({context: markdownContext})
+  accessor markdownRenderer: MarkdownRenderer = noopMarkdown;
 
   static styles = [
     structuralStyles,
@@ -116,10 +121,7 @@ export class Text extends Root {
         break; // Body.
     }
 
-    return html`${markdown(
-      markdownText,
-      Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
-    )}`;
+    return html`${this.markdownRenderer?.render(markdownText)}`;
   }
 
   #areHintedStyles(styles: unknown): styles is HintedStyles {
