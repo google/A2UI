@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://a2ui.org/specification/v0_9/server_to_client.json",
+  "$id": "https://a2ui.org/specification/v0_10/server_to_client.json",
   "title": "A2UI Message Schema",
   "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces.",
   "type": "object",
@@ -15,7 +15,7 @@
       "type": "object",
       "properties": {
         "version": {
-          "const": "v0.9"
+          "const": "v0.10"
         },
         "createSurface": {
           "type": "object",
@@ -50,7 +50,7 @@
       "type": "object",
       "properties": {
         "version": {
-          "const": "v0.9"
+          "const": "v0.10"
         },
         "updateComponents": {
           "type": "object",
@@ -81,7 +81,7 @@
       "type": "object",
       "properties": {
         "version": {
-          "const": "v0.9"
+          "const": "v0.10"
         },
         "updateDataModel": {
           "type": "object",
@@ -111,7 +111,7 @@
       "type": "object",
       "properties": {
         "version": {
-          "const": "v0.9"
+          "const": "v0.10"
         },
         "deleteSurface": {
           "type": "object",

@@ -1,5 +1,5 @@
 {
-  "name": "a2ui_0_9_eval_llm",
+  "name": "a2ui_0_10_eval_llm",
   "version": "1.0.0",
   "main": "lib/index.js",
   "scripts": {

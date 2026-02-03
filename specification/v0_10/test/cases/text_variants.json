@@ -5,7 +5,7 @@
       "description": "Text with valid variant 'h1'",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -23,7 +23,7 @@
       "description": "Text with invalid variant (should fail)",
       "valid": false,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [

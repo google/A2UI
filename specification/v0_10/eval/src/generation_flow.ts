@@ -41,7 +41,7 @@ export const componentGeneratorFlow = ai.defineFlow(
 The output MUST be a series of JSON objects, each enclosed in a markdown code block (or a single block with multiple objects).
 
 Standard Instructions:
-1. Generate a 'createSurface' message with surfaceId 'main' and catalogId 'https://a2ui.org/specification/v0_9/standard_catalog.json'.
+1. Generate a 'createSurface' message with surfaceId 'main' and catalogId 'https://a2ui.org/specification/v0_10/standard_catalog.json'.
 2. Generate a 'updateComponents' message with surfaceId 'main' containing the requested UI.
 3. Ensure all component children are referenced by ID (using the 'children' or 'child' property with IDs), NOT nested inline as objects.
 4. If the request involves data binding, you may also generate 'updateDataModel' messages.
@@ -56,7 +56,7 @@ Standard Instructions:
 13. Do NOT use a 'style' property. Use standard properties like 'align', 'justify', 'variant', etc.
 14. Do NOT invent properties that are not in the schema. Check the 'properties' list for each component type.
 15. Use 'checks' property for validation rules if required.
-16. EVERY message object MUST include the property "version": "v0.9" at the top level.
+16. EVERY message object MUST include the property "version": "v0.10" at the top level.
 ${catalogRules ? `\nInstructions specific to this catalog:\n${catalogRules}` : ""}
 
 Schemas:

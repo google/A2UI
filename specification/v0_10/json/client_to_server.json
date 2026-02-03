@@ -6,7 +6,7 @@
   "maxProperties": 2,
   "properties": {
     "version": {
-      "const": "v0.9"
+      "const": "v0.10"
     },
     "action": {
       "type": "object",

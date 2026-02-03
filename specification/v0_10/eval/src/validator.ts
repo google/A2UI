@@ -36,7 +36,7 @@ export class Validator {
       this.ajv.addSchema(schema, name);
     }
     this.validateFn = this.ajv.getSchema(
-      "https://a2ui.org/specification/v0_9/server_to_client.json",
+      "https://a2ui.org/specification/v0_10/server_to_client.json",
     );
 
     // Populate standard functions from the catalog schema
@@ -85,7 +85,7 @@ export class Validator {
           // to avoid noisy "oneOf" errors.
           let validated = false;
           const schemaUri =
-            "https://a2ui.org/specification/v0_9/server_to_client.json";
+            "https://a2ui.org/specification/v0_10/server_to_client.json";
 
           if (message.createSurface) {
             validated = this.ajv.validate(
@@ -307,7 +307,7 @@ export class Validator {
       if (this.ajv && c.component) {
         const componentType = c.component;
         const schemaUri =
-          "https://a2ui.org/specification/v0_9/standard_catalog.json";
+          "https://a2ui.org/specification/v0_10/standard_catalog.json";
 
         const defRef = `${schemaUri}#/components/${componentType}`;
 
@@ -332,7 +332,7 @@ export class Validator {
 
   private validateUpdateDataModel(data: any, errors: string[]) {
     // Schema validation handles types and basic structure.
-    // 'op' is removed in v0.9, so we don't need to validate it or its relationship with 'value'.
+    // 'op' is removed in v0.10, so we don't need to validate it or its relationship with 'value'.
     // We strictly rely on the schema for this message type now.
     // Check if 'value' is present. If it is NOT present, it implies a deletion (if path is present).
     // If path is missing and value is missing, it deletes the entire root (valid but rare).

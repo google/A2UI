@@ -1,6 +1,6 @@
 # Genkit Eval Framework for UI generation
 
-This is for evaluating A2UI (v0.9) against various LLMs.
+This is for evaluating A2UI (v0.10) against various LLMs.
 
 This version embeds the JSON schemas directly into the prompt and instructs the LLM to output a JSON object within a markdown code block. The framework then extracts and validates this JSON.
 

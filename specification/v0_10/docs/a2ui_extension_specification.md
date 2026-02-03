@@ -1,12 +1,12 @@
-# A2UI (Agent-to-Agent UI) Extension spec v0.9
+# A2UI (Agent-to-Agent UI) Extension spec v0.10
 
 ## Overview
 
-This extension implements the A2UI (Agent-to-Agent UI) spec v0.9, a format for agents to send streaming, interactive user interfaces to clients.
+This extension implements the A2UI (Agent-to-Agent UI) spec v0.10, a format for agents to send streaming, interactive user interfaces to clients.
 
 ## Extension URI
 
-The URI of this extension is https://a2ui.org/a2a-extension/a2ui/v0.9
+The URI of this extension is https://a2ui.org/a2a-extension/a2ui/v0.10
 
 This is the only URI accepted for this extension.
 
@@ -35,13 +35,13 @@ Example AgentExtension block:
 
 ```json
 {
-  "uri": "https://a2ui.org/a2a-extension/a2ui/v0.9",
-  "description": "Ability to render A2UI v0.9",
+  "uri": "https://a2ui.org/a2a-extension/a2ui/v0.10",
+  "description": "Ability to render A2UI v0.10",
   "required": false,
   "params": {
     "supportedCatalogIds": [
-      "https://a2ui.org/specification/v0_9/standard_catalog.json",
-      "https://my-company.com/a2ui/v0.9/my_custom_catalog.json"
+      "https://a2ui.org/specification/v0_10/standard_catalog.json",
+      "https://my-company.com/a2ui/v0_1/my_custom_catalog.json"
     ],
     "acceptsInlineCatalogs": true
   }
@@ -89,22 +89,21 @@ Example DataPart:
 {
   "data": [
     {
-      "version": "v0.9",
+      "version": "v0.10",
       "createSurface": {
         "surfaceId": "example_surface",
-        "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json"
       }
     },
     {
-      "version": "v0.9",
+      "version": "v0.10",
       "updateComponents": {
         "surfaceId": "example_surface",
         "components": [
           {
-            "Text": {
-              "id": "root",
-              "text": "Hello!"
-            }
+            "component": "Text",
+            "id": "root",
+            "text": "Hello!"
           }
         ]
       }
@@ -127,7 +126,7 @@ Example `action` DataPart:
 {
   "data": [
     {
-      "version": "v0.9",
+      "version": "v0.10",
       "action": {
         "name": "submit_form",
         "surfaceId": "contact_form_1",

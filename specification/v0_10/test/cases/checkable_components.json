@@ -5,7 +5,7 @@
       "description": "TextField with valid checks",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -41,7 +41,7 @@
       "description": "ChoicePicker with valid checks",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -77,7 +77,7 @@
       "description": "Slider with valid checks",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -110,7 +110,7 @@
       "description": "CheckBox with valid checks",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -138,7 +138,7 @@
       "description": "DateTimeInput with valid checks",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -166,7 +166,7 @@
       "description": "TextField with regex validation",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -197,7 +197,7 @@
       "description": "TextField with min/max length validation",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -229,7 +229,7 @@
       "description": "Slider with min/max numeric validation",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -263,7 +263,7 @@
       "description": "TextField with complex logic checks (AND/OR/NOT)",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -329,7 +329,7 @@
       "description": "TextField with invalid check (missing message)",
       "valid": false,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -356,7 +356,7 @@
       "description": "TextField with invalid function returnType in check",
       "valid": false,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -384,7 +384,7 @@
       "description": "ChoicePicker with length validation (exactly 2)",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [

@@ -5,7 +5,7 @@
       "description": "Button with nested valid checks",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -60,7 +60,7 @@
       "description": "Button with deprecated enabled property (should fail)",
       "valid": false,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -80,7 +80,7 @@
       "description": "Button with invalid check structure (invalid returnType)",
       "valid": false,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -109,7 +109,7 @@
       "description": "Button with invalid nested structure (extra property)",
       "valid": false,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -139,7 +139,7 @@
       "description": "Button with variant 'primary'",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -159,7 +159,7 @@
       "description": "Button with variant 'borderless'",
       "valid": true,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -179,7 +179,7 @@
       "description": "Button with deprecated 'primary' property (should fail)",
       "valid": false,
       "data": {
-        "version": "v0.9",
+        "version": "v0.10",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
