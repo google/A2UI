@@ -61,6 +61,11 @@ export class Client {
     const response = await fetch('/a2a', {
       body: JSON.stringify(message),
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      credentials: 'same-origin',
     });
 
     if (response.ok) {
