@@ -69,7 +69,7 @@ Use the `functions` property to define a map of function schemas.
 }
 ```
 
-## 2. Make the functions available 
+## 2. Make the functions available
 
 The `FunctionCall` definition refers to a [catalog-agnostic reference](a2ui_protocol.md#the-standard-catalog).
 In your catalog, you simply need to define the `anyFunction` reference:
