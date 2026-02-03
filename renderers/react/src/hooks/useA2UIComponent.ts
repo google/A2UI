@@ -1,6 +1,6 @@
 import { useCallback, useId, useMemo } from 'react';
 import type { Types, Primitives } from '@a2ui/lit/0.8';
-import { useA2UIActions } from '../core/A2UIProvider';
+import { useA2UIActions, useA2UIState } from '../core/A2UIProvider';
 import { useTheme } from '../theme/ThemeContext';
 
 /**
@@ -68,6 +68,11 @@ export function useA2UIComponent<T extends Types.AnyComponentNode>(
   const actions = useA2UIActions();
   const theme = useTheme();
   const baseId = useId();
+
+  // Subscribe to data model version - triggers re-render when data changes via setData.
+  // This ensures components with path bindings see updated values.
+  // memo() doesn't block context-triggered re-renders.
+  useA2UIState();
 
   /**
    * Resolve a StringValue to its actual string value.

@@ -271,7 +271,7 @@ function MyComponent() {
 
 ### useA2UIComponent()
 
-Internal hook for component implementations:
+Internal hook for component implementations. Automatically subscribes to state changes so components with path bindings re-render when data updates.
 
 ```tsx
 import { useA2UIComponent } from '@a2ui/react';
@@ -284,13 +284,16 @@ function CustomComponent({ node, surfaceId }) {
     resolveBoolean,
     setValue,
     getValue,
-    dispatch,
+    sendAction,
+    getUniqueId,
   } = useA2UIComponent(node, surfaceId);
 
   const text = resolveString(node.properties.text);
   // ...
 }
 ```
+
+**Path Binding Reactivity**: When a component uses `setValue()` to update the data model, all components reading from the same path via `resolveString()`, `resolveNumber()`, or `resolveBoolean()` will automatically re-render with the new value.
 
 ## Theme System
 
