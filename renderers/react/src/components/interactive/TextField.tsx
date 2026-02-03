@@ -23,7 +23,8 @@ export const TextField = memo(function TextField({ node, surfaceId }: A2UICompon
   const validationRegexp = props.validationRegexp;
 
   const [value, setLocalValue] = useState(initialValue);
-  const [isValid, setIsValid] = useState(true);
+  // Validation state tracked for potential future use (e.g., error styling)
+  const [_isValid, setIsValid] = useState(true);
 
   // Sync with external data model changes
   useEffect(() => {

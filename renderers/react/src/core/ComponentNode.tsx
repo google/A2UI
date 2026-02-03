@@ -37,24 +37,28 @@ export const ComponentNode = memo(function ComponentNode({
   surfaceId,
   registry,
 }: ComponentNodeProps) {
+  const actualRegistry = registry ?? ComponentRegistry.getInstance();
+
+  // useMemo must be called unconditionally (Rules of Hooks)
+  // We handle invalid nodes by returning null component type
+  const nodeType = node && typeof node === 'object' && 'type' in node ? node.type : null;
+
+  const Component = useMemo(
+    () => (nodeType ? actualRegistry.get(nodeType) : null),
+    [actualRegistry, nodeType]
+  );
+
   // Handle null/undefined/invalid nodes gracefully
-  if (!node || typeof node !== 'object' || !('type' in node)) {
+  if (!nodeType) {
     if (node) {
       console.warn('[A2UI] Invalid component node (not resolved?):', node);
     }
     return null;
   }
 
-  const actualRegistry = registry ?? ComponentRegistry.getInstance();
-
-  const Component = useMemo(
-    () => actualRegistry.get(node.type),
-    [actualRegistry, node.type]
-  );
-
   if (!Component) {
-    console.warn(`[A2UI] Unknown component type: ${node.type}`);
-    return <UnknownComponent type={node.type} />;
+    console.warn(`[A2UI] Unknown component type: ${nodeType}`);
+    return <UnknownComponent type={nodeType} />;
   }
 
   // No wrapper div - component's root div is the :host equivalent

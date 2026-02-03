@@ -1,7 +1,7 @@
 import { Suspense, useMemo, memo, type ReactNode } from 'react';
 import { useA2UI } from '../hooks/useA2UI';
 import { ComponentNode } from './ComponentNode';
-import { ComponentRegistry } from '../registry/ComponentRegistry';
+import { type ComponentRegistry } from '../registry/ComponentRegistry';
 import { cn } from '../lib/utils';
 
 /** Default loading fallback - memoized to prevent recreation */
