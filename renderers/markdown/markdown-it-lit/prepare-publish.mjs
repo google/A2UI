@@ -1,6 +1,8 @@
 import { readFileSync, writeFileSync, copyFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 
+// TODO: Review this script, it's copied wholesale from the lit package.
+
 // This script prepares the Lit package for publishing by:
 // 1. Copying package.json to dist/
 // 2. Updating @a2ui/web_core dependency from 'file:...' to the actual version
