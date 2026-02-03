@@ -25,7 +25,7 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
 
   const [value, setLocalValue] = useState(initialValue);
 
-  // Sync with external data model changes
+  // Sync with external data model changes (path binding)
   useEffect(() => {
     if (valuePath) {
       const externalValue = getValue(valuePath);
@@ -34,6 +34,13 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
       }
     }
   }, [valuePath, getValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync when literal value changes from props (server-driven updates via surfaceUpdate)
+  useEffect(() => {
+    if (props.value?.literalNumber !== undefined) {
+      setLocalValue(props.value.literalNumber);
+    }
+  }, [props.value?.literalNumber]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -23,7 +23,7 @@ export const CheckBox = memo(function CheckBox({ node, surfaceId }: A2UIComponen
 
   const [checked, setChecked] = useState(initialChecked);
 
-  // Sync with external data model changes
+  // Sync with external data model changes (path binding)
   useEffect(() => {
     if (valuePath) {
       const externalValue = getValue(valuePath);
@@ -32,6 +32,13 @@ export const CheckBox = memo(function CheckBox({ node, surfaceId }: A2UIComponen
       }
     }
   }, [valuePath, getValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync when literal value changes from props (server-driven updates via surfaceUpdate)
+  useEffect(() => {
+    if (props.value?.literalBoolean !== undefined) {
+      setChecked(props.value.literalBoolean);
+    }
+  }, [props.value?.literalBoolean]);
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
