@@ -661,6 +661,51 @@ export function createLitStandardCatalog(): Catalog<TemplateResult> {
 }
 ```
 
+### Creating a Custom Catalog
+
+Developers can create custom catalogs by combining the standard catalog with their own components. This is done by creating a new `Catalog` implementation that merges the standard component map with custom definitions.
+
+```typescript
+// my-app/src/custom-catalog.ts
+
+import { createLitStandardCatalog } from '@a2ui/lit';
+import { Catalog, Component } from '@a2ui/web_core/v0_9/catalog/types';
+import { html, TemplateResult } from 'lit';
+import { ComponentContext } from '@a2ui/web_core/v0_9/rendering/component-context';
+
+// 1. Define a Custom Component
+class MyCustomComponent implements Component<TemplateResult> {
+  readonly name = 'MyCustomComponent';
+
+  render(context: ComponentContext<TemplateResult>): TemplateResult {
+    const title = context.resolve<string>(context.properties['title'] ?? 'Custom');
+    return html`<div class="my-custom-widget">Special: ${title}</div>`;
+  }
+}
+
+// 2. Create the Custom Catalog
+export function createMyCustomCatalog(): Catalog<TemplateResult> {
+  // Start with the standard catalog
+  const standardCatalog = createLitStandardCatalog();
+  
+  // Create a new map seeded with standard components
+  const components = new Map<string, Component<TemplateResult>>(
+    standardCatalog.components
+  );
+
+  // Add (or override) components
+  components.set('MyCustomComponent', new MyCustomComponent());
+
+  return {
+    id: 'https://myapp.com/catalog/v1',
+    components,
+    getComponent(name: string) {
+      return this.components.get(name);
+    }
+  };
+}
+```
+
 ## Renderer Output Formats & Resolution
 
 ### Lit
