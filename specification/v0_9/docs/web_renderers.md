@@ -17,7 +17,7 @@ This document outlines the design for the v0.9 Web Renderers (Lit and Angular) f
 
 The architecture consists of a shared core library handling state and protocol messages, and framework-specific renderers (Lit, Angular).
 
-The core introduces a `SurfaceState` object which encapsulates the state for a single surface, including its `DataModel` and the current snapshot of component definitions. The `A2uiMessageProcessor` manages these `SurfaceState` objects.
+The core introduces a `SurfaceContext` object which encapsulates the state for a single surface, including its `DataModel` and the current snapshot of component definitions. The `A2uiMessageProcessor` manages these `SurfaceContext` objects.
 
 ### Architecture Overview
 
@@ -28,7 +28,7 @@ The architecture is divided into four distinct layers of responsibility, each wi
     *   **Responsibilities:** Managing state, processing messages, component traversal, and data resolution.
     *   **Key Classes:**
         *   **`A2uiMessageProcessor`**: The central controller that receives messages and manages the lifecycle of surfaces.
-        *   **`SurfaceState`**: The state container for a single surface, holding the `DataModel` and component definitions.
+        *   **`SurfaceContext`**: The state container for a single surface, holding the `DataModel` and component definitions.
         *   **`DataModel`**: An observable, hierarchical key-value store holding the application data.
         *   **`DataContext`**: A scoped view into the `DataModel` for a specific component.
         *   **`Catalog`**: A generic interface defining a registry of components.
@@ -57,12 +57,12 @@ The architecture is divided into four distinct layers of responsibility, each wi
 classDiagram
     class A2uiMessageProcessor {
         +processMessages(messages)
-        +getSurfaceState(surfaceId)
-        -surfaces: Map<String, SurfaceState>
+        +getSurfaceContext(surfaceId)
+        -surfaces: Map<String, SurfaceContext>
         -catalogRegistry: Map<String, Catalog>
     }
 
-    class SurfaceState {
+    class SurfaceContext {
         +id: String
         +dataModel: DataModel
         +catalog: Catalog
@@ -86,7 +86,7 @@ classDiagram
     }
 
     class Surface {
-        +state: SurfaceState
+        +state: SurfaceContext
         +render()
     }
 
@@ -100,17 +100,17 @@ classDiagram
     }
 
     class ComponentContext {
-        +surfaceState: SurfaceState
+        +surfaceContext: SurfaceContext
         +dataContext: DataContext
         +resolve(val)
         +renderChild(id)
         +dispatchAction(action)
     }
 
-    A2uiMessageProcessor *-- SurfaceState
-    SurfaceState *-- DataModel
-    SurfaceState --> Catalog
-    Surface --> SurfaceState : Input
+    A2uiMessageProcessor *-- SurfaceContext
+    SurfaceContext *-- DataModel
+    SurfaceContext --> Catalog
+    Surface --> SurfaceContext : Input
     Surface ..> Component : Instantiates via State.Catalog
     Component ..> ComponentContext : Uses
     ComponentContext o-- DataContext
@@ -151,7 +151,7 @@ export class DataModel {
 
 ```
 
-### 2. SurfaceState (Core)
+### 2. SurfaceContext (Core)
 
 Holds the complete state for a single surface. This acts as the brain for a specific surface, processing messages and exposing state to the renderer.
 
@@ -160,7 +160,7 @@ Holds the complete state for a single surface. This acts as the brain for a spec
 
 export type ActionHandler = (action: UserAction) => Promise<void>;
 
-export class SurfaceState {
+export class SurfaceContext {
   readonly id: string;
   readonly dataModel: DataModel;
   readonly catalog: Catalog<any>;
@@ -290,7 +290,7 @@ export class ComponentContext<T> {
     readonly id: string,
     readonly properties: Record<string, any>,
     readonly dataContext: DataContext,
-    readonly surfaceState: SurfaceState,
+    readonly surfaceContext: SurfaceContext,
     private readonly updateCallback: () => void
   ) {}
 
@@ -325,27 +325,27 @@ export class ComponentContext<T> {
 
   /**
    * Renders a child component by its ID.
-   * 1. Looks up the component definition in SurfaceState.
+   * 1. Looks up the component definition in SurfaceContext.
    * 2. Looks up the Component implementation in the Catalog.
    * 3. Creates a new nested ComponentContext, propagating the updateCallback.
    * 4. Calls `component.render(childContext)`.
    */
   renderChild(childId: string): T | null {
-    const def = this.surfaceState.getComponentDefinition(childId);
+    const def = this.surfaceContext.getComponentDefinition(childId);
     if (!def) return null;
 
-    const component = this.surfaceState.catalog.getComponent(def.type);
+    const component = this.surfaceContext.catalog.getComponent(def.type);
     if (!component) return null;
 
     // The A2uiMessageProcessor has already calculated the correct data path for this component instance
     const childPath = def.dataContextPath ?? '/';
-    const childDataContext = new DataContext(this.surfaceState.dataModel, childPath);
+    const childDataContext = new DataContext(this.surfaceContext.dataModel, childPath);
 
     const childCtx = new ComponentContext<T>(
       def.id,
       def.properties,
       childDataContext,
-      this.surfaceState,
+      this.surfaceContext,
       this.updateCallback
     );
 
@@ -353,7 +353,7 @@ export class ComponentContext<T> {
   }
 
   dispatchAction(action: Action): Promise<void> {
-    return this.surfaceState.dispatchAction(action);
+    return this.surfaceContext.dispatchAction(action);
   }
 }
 
@@ -361,7 +361,7 @@ export class ComponentContext<T> {
 
 ### 6. A2uiMessageProcessor (Core)
 
-The central entry point. It manages the lifecycle of `SurfaceState` objects, routing incoming messages to the correct surface and multiplexing outgoing events.
+The central entry point. It manages the lifecycle of `SurfaceContext` objects, routing incoming messages to the correct surface and multiplexing outgoing events.
 
 ```typescript
 // web_core/src/v0_9/processing/message-processor.ts
@@ -378,15 +378,15 @@ export class A2uiMessageProcessor {
 
   /**
    * Processes a list of server-to-client messages.
-   * For `createSurface`, it instantiates a new `SurfaceState` with the correct Catalog.
-   * For other messages, it delegates to the appropriate `SurfaceState.handleMessage`.
+   * For `createSurface`, it instantiates a new `SurfaceContext` with the correct Catalog.
+   * For other messages, it delegates to the appropriate `SurfaceContext.handleMessage`.
    */
   processMessages(messages: ServerToClientMessage[]): void;
 
   /**
-   * Gets the SurfaceState for a specific surface ID.
+   * Gets the SurfaceContext for a specific surface ID.
    */
-  getSurfaceState(surfaceId: string): SurfaceState | undefined;
+  getSurfaceContext(surfaceId: string): SurfaceContext | undefined;
 }
 
 ```
@@ -474,9 +474,9 @@ This example demonstrates how the Lit implementation of the Surface component or
 @customElement('a2ui-surface')
 export class Surface extends LitElement {
   @property({ attribute: false })
-  state?: SurfaceState;
+  state?: SurfaceContext;
 
-  // Reactivity: Subscribe to SurfaceState changes (or DataModel changes)
+  // Reactivity: Subscribe to SurfaceContext changes (or DataModel changes)
   // Since we pass 'this.requestUpdate' to the context, components will call it when data changes.
   
   render() {
@@ -516,13 +516,13 @@ export interface SurfaceProps {
   /**
    * The complete state for this surface, obtained from A2uiMessageProcessor.
    */
-  state: SurfaceState;
+  state: SurfaceContext;
 }
 ```
 
 **Responsibilities:**
-1.  **Reactivity**: It observes the `SurfaceState`. When the `rootComponentId` changes, or when component definitions are updated, it triggers a re-render.
-2.  **Theming**: It reads `SurfaceState.theme` and applies it to the surface container, typically by generating CSS Custom Properties (variables) like `--a2ui-primary-color`.
+1.  **Reactivity**: It observes the `SurfaceContext`. When the `rootComponentId` changes, or when component definitions are updated, it triggers a re-render.
+2.  **Theming**: It reads `SurfaceContext.theme` and applies it to the surface container, typically by generating CSS Custom Properties (variables) like `--a2ui-primary-color`.
 3.  **Root Orchestration**: It identifies the component definition for 'root', instantiates the framework-specific `ComponentContext`, and calls the root component's `render()` method.
 4.  **Error Boundaries**: It provides a top-level catch for rendering errors within the surface.
 
@@ -540,7 +540,7 @@ src/
     state/
       data-model.ts           # DataModel implementation
       data-model.test.ts
-      surface-state.ts        # SurfaceState implementation
+      surface-state.ts        # SurfaceContext implementation
       data-context.ts         # DataContext implementation
     processing/
       message-processor.ts    # A2uiMessageProcessor
@@ -759,8 +759,8 @@ export function createMyCustomCatalog(): Catalog<TemplateResult> {
 ## Open Questions & Answers
 
 *   **Q: Should the surface and a2uimessageprocessor both accept the catalogs?**
-    *   **A:** No. `A2uiMessageProcessor` accepts the registry of Catalogs. When `createSurface` is processed, the Processor creates a `SurfaceState` and injects the specific `Catalog` required for that surface. The `Surface` component then accepts the `SurfaceState` as input, giving it access to everything it needs (DataModel, Catalog, Event Dispatcher).
-    *   *Decision:* `A2uiMessageProcessor` holds the registry. `SurfaceState` holds the specific instance. `Surface` (Renderer) takes `SurfaceState`.
+    *   **A:** No. `A2uiMessageProcessor` accepts the registry of Catalogs. When `createSurface` is processed, the Processor creates a `SurfaceContext` and injects the specific `Catalog` required for that surface. The `Surface` component then accepts the `SurfaceContext` as input, giving it access to everything it needs (DataModel, Catalog, Event Dispatcher).
+    *   *Decision:* `A2uiMessageProcessor` holds the registry. `SurfaceContext` holds the specific instance. `Surface` (Renderer) takes `SurfaceContext`.
 
 *   **Q: API for resolving DynamicString?**
     *   **A:** `ComponentContext.resolve<T>(value: DynamicValue<T>): T`. This method encapsulates checking if it's a literal, a path (calling DataModel), or a function (executing logic).
@@ -789,7 +789,7 @@ This section outlines the architectural and structural differences between the e
     *   **Core**: Contains types and basic message processing. Logic is scattered.
     *   **Renderers**: Hold the bulk of the logic and strictly typed component nodes.
 *   **v0.9 (Proposed)**:
-    *   **Core**: Becomes the "Brain", handling State (`DataModel`, `SurfaceState`) and Base Logic (Generic `ButtonComponent`, `TextComponent`, etc. which handle protocol tasks).
+    *   **Core**: Becomes the "Brain", handling State (`DataModel`, `SurfaceContext`) and Base Logic (Generic `ButtonComponent`, `TextComponent`, etc. which handle protocol tasks).
     *   **Renderers**: Become thinner "View" layers, implementing `ComponentContext` and providing concrete renderer functions for standard components.
 
 ### 2. Component Implementation & "Node" Intermediate Representation
@@ -826,7 +826,7 @@ processor.registerCatalog(myAppCatalog);
 ### 4. Data Binding & State
 
 *   **v0.8**: Data managed as a flat map. Binding logic manual in components. Reactivity implicit.
-*   **v0.9**: Data managed by `SurfaceState` -> `DataModel`. Components use `context.resolve(value)` which automatically subscribes the rendering context to the specific data path, ensuring precise updates.
+*   **v0.9**: Data managed by `SurfaceContext` -> `DataModel`. Components use `context.resolve(value)` which automatically subscribes the rendering context to the specific data path, ensuring precise updates.
 
 ### Summary Table
 
@@ -836,7 +836,7 @@ processor.registerCatalog(myAppCatalog);
 | **Component Logic** | Duplicated in Renderers                     | Centralized in Core Generic Classes  |
 | **Registry**        | Singleton / Static Map                      | `Catalog` Interface (Instance based) |
 | **Extensibility**   | Register globally                           | Compose/Wrap Catalog objects         |
-| **State Scope**     | Global (mostly)                             | Scoped to `SurfaceState`             |
+| **State Scope**     | Global (mostly)                             | Scoped to `SurfaceContext`             |
 | **Surface Entry**   | `<surface surfaceId="..." processor="...">` | `<surface .state="...">`             |
 
 ## References
