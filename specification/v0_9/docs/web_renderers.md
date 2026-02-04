@@ -150,7 +150,46 @@ export class SurfaceState {
 }
 ```
 
-### 3. Catalog & Component (Core Interface)
+### 3. DataContext (Core)
+
+A contextual view of the main `DataModel`, used by components to resolve relative and absolute paths. It acts as a localized "window" into the state.
+
+```typescript
+// web_core/src/v0_9/state/data-context.ts
+
+export class DataContext {
+  constructor(dataModel: DataModel, path: string);
+
+  /**
+   * The absolute path this context is currently pointing to.
+   */
+  readonly path: string;
+
+  /**
+   * Subscribes to a path, resolving it against the current context.
+   * Returns a function to unsubscribe.
+   */
+  subscribe<T>(path: string, callback: (value: T) => void): Unsubscribe;
+
+  /**
+   * Gets a snapshot value, resolving the path against the current context.
+   */
+  getValue<T>(path: string): T;
+
+  /**
+   * Updates the data model, resolving the path against the current context.
+   */
+  update(path: string, value: any): void;
+
+  /**
+   * Creates a new, nested DataContext for a child component.
+   * Used by list/template components for their children.
+   */
+  nested(relativePath: string): DataContext;
+}
+```
+
+### 4. Catalog & Component (Core Interface)
 
 The definition of what a Component is, generic over the output type `T` (e.g., `TemplateResult` for Lit).
 
@@ -191,7 +230,7 @@ export interface Catalog<T> {
 }
 ```
 
-### 4. ComponentContext (Core Interface)
+### 5. ComponentContext (Core Interface)
 
 The bridge passed to every component's render method. It provides access to the raw properties, the ability to resolve dynamic values, and the ability to render children.
 
@@ -210,14 +249,18 @@ export interface ComponentContext<T> {
   readonly properties: Record<string, any>;
 
   /**
+   * The DataContext for this component, enabling scoped data access.
+   */
+  readonly dataContext: DataContext;
+
+  /**
    * The surface state this component belongs to.
    */
   readonly surfaceState: SurfaceState;
 
   /**
    * Resolves a dynamic value (literal, path, or function call).
-   * This handles creating subscriptions to the DataModel automatically if used within
-   * a reactive context (implementation specific).
+   * This uses `dataContext` to resolve paths and subscribe to changes.
    */
   resolve<V>(value: DynamicValue<V> | V): V;
 
@@ -234,7 +277,7 @@ export interface ComponentContext<T> {
 }
 ```
 
-### 5. A2uiMessageProcessor (Core)
+### 6. A2uiMessageProcessor (Core)
 
 The central entry point. It manages the lifecycle of `SurfaceState` objects, routing incoming messages to the correct surface and multiplexing outgoing events.
 
@@ -265,7 +308,7 @@ export class A2uiMessageProcessor {
 }
 ```
 
-### 5. Base Classes for Standard Catalog (Core)
+### 7. Base Classes for Standard Catalog (Core)
 
 To reduce code duplication between Lit and Angular, we define abstract base classes for standard components in Core.
 
@@ -293,7 +336,7 @@ export abstract class CardBaseComponent<T> implements Component<T> {
 }
 ```
 
-### 6. SurfaceRenderer (Framework Specific)
+### 8. SurfaceRenderer (Framework Specific)
 
 The `SurfaceRenderer` (typically exported as `Surface`) is the top-level component that users place in their applications. It serves as the gateway between the framework's DOM and the A2UI state.
 
@@ -328,6 +371,7 @@ src/
       data-model.ts           # DataModel implementation
       data-model.test.ts
       surface-state.ts        # SurfaceState implementation
+      data-context.ts         # DataContext implementation
     processing/
       message-processor.ts    # A2uiMessageProcessor
       message-processor.test.ts
