@@ -63,6 +63,72 @@ The architecture is divided into four distinct layers of responsibility:
 *   **`ComponentContext`**: The runtime object passed to a component during rendering. It provides access to properties, data resolution, and child rendering capabilities.
 *   **`Surface` (Renderer)**: The top-level UI component (e.g. `<a2ui-surface>`) that users drop into their app. It observes `SurfaceState` and orchestrates the rendering process.
 
+### Key Class Interactions
+
+```mermaid
+classDiagram
+    class A2uiMessageProcessor {
+        +processMessages(messages)
+        +getSurfaceState(surfaceId)
+        -surfaces: Map<String, SurfaceState>
+        -catalogRegistry: Map<String, Catalog>
+    }
+
+    class SurfaceState {
+        +id: String
+        +dataModel: DataModel
+        +catalog: Catalog
+        +theme: any
+        +handleMessage(message)
+        +dispatchAction(action)
+    }
+
+    class DataModel {
+        +get(path)
+        +set(path, value)
+        +subscribe(path, callback)
+    }
+
+    class DataContext {
+        +path: String
+        +subscribe(path, callback)
+        +getValue(path)
+        +update(path, value)
+        +nested(path)
+    }
+
+    class Surface {
+        +state: SurfaceState
+        +render()
+    }
+
+    class Catalog {
+        +components: Map
+        +getComponent(name)
+    }
+
+    class Component~T~ {
+        +render(context: ComponentContext): T
+    }
+
+    class ComponentContext {
+        +surfaceState: SurfaceState
+        +dataContext: DataContext
+        +resolve(val)
+        +renderChild(id)
+        +dispatchAction(action)
+    }
+
+    A2uiMessageProcessor *-- SurfaceState
+    SurfaceState *-- DataModel
+    SurfaceState --> Catalog
+    Surface --> SurfaceState : Input
+    Surface ..> Component : Instantiates via State.Catalog
+    Component ..> ComponentContext : Uses
+    ComponentContext o-- DataContext
+    DataContext --> DataModel : Wraps
+```
+
 ## API Design
 
 ### 1. DataModel (Core)
@@ -944,11 +1010,17 @@ processor.registerCatalog(myAppCatalog);
 
 ### Summary Table
 
-| Feature | v0.8 | v0.9 |
-| :--- | :--- | :--- |
-| **Parsing** | JSON -> `AnyComponentNode` (Typed) | JSON -> Raw Properties (Untyped) |
-| **Component Logic** | Duplicated in Renderers | Centralized in Core Generic Classes |
-| **Registry** | Singleton / Static Map | `Catalog` Interface (Instance based) |
-| **Extensibility** | Register globally | Compose/Wrap Catalog objects |
-| **State Scope** | Global (mostly) | Scoped to `SurfaceState` |
-| **Surface Entry** | `<surface surfaceId="..." processor="...">` | `<surface .state="...">` |
+| Feature             | v0.8                                        | v0.9                                 |
+| :------------------ | :------------------------------------------ | :----------------------------------- |
+| **Parsing**         | JSON -> `AnyComponentNode` (Typed)          | JSON -> Raw Properties (Untyped)     |
+| **Component Logic** | Duplicated in Renderers                     | Centralized in Core Generic Classes  |
+| **Registry**        | Singleton / Static Map                      | `Catalog` Interface (Instance based) |
+| **Extensibility**   | Register globally                           | Compose/Wrap Catalog objects         |
+| **State Scope**     | Global (mostly)                             | Scoped to `SurfaceState`             |
+| **Surface Entry**   | `<surface surfaceId="..." processor="...">` | `<surface .state="...">`             |
+
+## References
+
+*   **v0.9 Spec:** `@specification/v0_9/**`
+*   **Existing Lit Renderer:** `@renderers/lit/**`
+*   **Flutter Catalog Implementation:** `genui` package (reference for catalog patterns).
