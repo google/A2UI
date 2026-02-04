@@ -891,8 +891,62 @@ So in the framework-specific catalog renderers, the standard catalog implementat
 
 The standard catalog implementation for each framework will reside in a `standard_catalog` directory within the framework's package. This directory will export the catalog definition and contain the concrete implementations of the standard components.
 
-## References
+## Renderer Structure Differences: v0.8 vs v0.9
 
-*   **v0.9 Spec:** `@specification/v0_9/**`
-*   **Existing Lit Renderer:** `@renderers/lit/**`
-*   **Flutter Catalog Implementation:** `genui` package (reference for catalog patterns).
+This section outlines the architectural and structural differences between the existing v0.8 A2UI web renderers and the proposed v0.9 design.
+
+### 1. Codebase Structure & Responsibilities
+
+*   **v0.8 (Current)**:
+    *   **Core**: Contains types and basic message processing. Logic is scattered.
+    *   **Renderers**: Hold the bulk of the logic and strictly typed component nodes.
+*   **v0.9 (Proposed)**:
+    *   **Core**: Becomes the "Brain", handling State (`DataModel`, `SurfaceState`) and Base Logic (Generic `ButtonComponent`, `TextComponent`).
+    *   **Renderers**: Become thinner "View" layers, implementing `ComponentContext` and providing concrete renderers for standard components.
+
+### 2. Component Implementation & "Node" Intermediate Representation
+
+*   **v0.8**: Uses a two-step process: Decode JSON to strict `AnyComponentNode` tree -> Render. Adding a component requires updating Core types.
+*   **v0.9**: Removes the "Node" IR. Components access raw JSON properties via `ComponentContext`. Logic is driven by the component implementation itself, making the core framework extensible without type changes.
+
+### 3. Custom Components & Catalog Management
+
+*   **v0.8**: Uses a singleton registry or static maps. Hard to scope components per surface.
+*   **v0.9**: Introduces `Catalog` instances. A `Surface` is initialized with a specific `Catalog`, allowing easy scoping and composition.
+
+**Example: Adding a "Map" component by extending the standard catalog**
+
+```typescript
+import { createLitStandardCatalog } from '@a2ui/lit';
+import { MapComponent } from './my-map-component';
+
+const standardCatalog = createLitStandardCatalog();
+const components = new Map(standardCatalog.components);
+
+// Add custom component
+components.set('Map', new MapComponent());
+
+const myAppCatalog: Catalog<TemplateResult> = {
+  id: 'https://myapp.com/catalog',
+  components, 
+  getComponent(name) { return this.components.get(name); }
+};
+
+processor.registerCatalog(myAppCatalog);
+```
+
+### 4. Data Binding & State
+
+*   **v0.8**: Data managed as a flat map. Binding logic manual in components. Reactivity implicit.
+*   **v0.9**: Data managed by `SurfaceState` -> `DataModel`. Components use `context.resolve(value)` which automatically subscribes the rendering context to the specific data path, ensuring precise updates.
+
+### Summary Table
+
+| Feature | v0.8 | v0.9 |
+| :--- | :--- | :--- |
+| **Parsing** | JSON -> `AnyComponentNode` (Typed) | JSON -> Raw Properties (Untyped) |
+| **Component Logic** | Duplicated in Renderers | Centralized in Core Generic Classes |
+| **Registry** | Singleton / Static Map | `Catalog` Interface (Instance based) |
+| **Extensibility** | Register globally | Compose/Wrap Catalog objects |
+| **State Scope** | Global (mostly) | Scoped to `SurfaceState` |
+| **Surface Entry** | `<surface surfaceId="..." processor="...">` | `<surface .state="...">` |
