@@ -49,7 +49,7 @@ The architecture is divided into four distinct layers of responsibility:
     *   **Role:** The "Painter". It defines the actual pixels and DOM for the standard components.
     *   **Responsibilities:**
         *   Providing the visual implementation for standard components (e.g. `litButton`, `NgButtonComponent`).
-        *   Wiring the generic Core logic to the specific framework components.
+        *   Wiring the generic Core logic to the specific framework components via composition.
         *   Packaging these into a `Catalog` instance that can be registered with the processor.
 
 ### Major Classes Overview
@@ -373,12 +373,13 @@ export class A2uiMessageProcessor {
 
 ### 7. Standard Catalog Components (Core)
 
-To reduce code duplication between Lit and Angular, we define concrete, generic component classes in Core that handle the protocol logic and delegate rendering via a functional interface.
+To reduce code duplication between Lit and Angular, we define concrete, generic component classes in Core that handle the protocol logic and delegate rendering via a functional interface (composition).
 
 ```typescript
 // web_core/src/v0_9/standard_catalog/components/card.ts
 
-import { Component, ComponentContext } from '../../catalog/types';
+import { Component } from '../../catalog/types';
+import { ComponentContext } from '../../rendering/component-context';
 
 export interface CardRenderProps<T> {
   childContent: T | null;
@@ -491,10 +492,10 @@ src/
     rendering/
       component-context.ts    # ComponentContext implementation
     standard_catalog/
-      base/                   # Abstract base classes
-        text-base.ts
-        card-base.ts
-        button-base.ts
+      components/             # Generic component classes
+        text.ts
+        card.ts
+        button.ts
         ...
       functions/              # Standard function implementations (pure JS/TS)
         logic.ts
@@ -552,7 +553,8 @@ Location: `@a2ui/web_core/src/v0_9/standard_catalog/components/button.ts`
 This class handles property extraction, validation, and interaction logic. It is generic over `T` (the renderer output type).
 
 ```typescript
-import { Component, ComponentContext } from '../../catalog/types';
+import { Component } from '../../catalog/types';
+import { ComponentContext } from '../../rendering/component-context';
 
 // 1. The Contract: What does the UI implementation need to render this?
 export interface ButtonRenderProps<T> {
@@ -682,7 +684,7 @@ export const angularButton = new ButtonComponent<RenderableDefinition>(
 
 ### Example 2: Slider (Two-Way Binding)
 
-**1. Core Logic**
+**1. Core Logic (The Generic Component)**
 Location: `@a2ui/web_core/src/v0_9/standard_catalog/components/slider.ts`
 
 ```typescript
@@ -851,8 +853,8 @@ export function createLitStandardCatalog(): Catalog<TemplateResult> {
     *   Implement `A2uiMessageProcessor` (skeleton handling messages) with tests.
     *   Define `Component`, `Catalog`, `ComponentContext` interfaces.
 
-2.  **Phase 2: Standard Catalog Base**
-    *   Implement `StandardCatalog` base classes in Core for 2-3 components (e.g., `Text`, `Column`, `Button`).
+2.  **Phase 2: Standard Catalog Components (Core)**
+    *   Implement `StandardCatalog` generic component classes in Core for 2-3 components (e.g., `Text`, `Column`, `Button`).
     *   Implement standard functions logic (string interpolation etc).
 
 3.  **Phase 3: Lit Prototype**
@@ -887,7 +889,7 @@ export function createLitStandardCatalog(): Catalog<TemplateResult> {
 
 There will be a standard catalog implementation, decoupled from the core renderer in a folder like standard_catalog which has an implementation of the standard catalog.
 
-So in the framework-specific catalog renderers, the standard catalog implementation should be clearly separated from the rendering framework, in the same way as the web core codebase.
+So in the framework-specific catalog renderers, the standard catalog implementation should be clearly separated from the rendering framework, in the same way as the web core codebase. This is achieved by having the generic logic in Core and the framework-specific rendering functions in the renderer packages.
 
 The standard catalog implementation for each framework will reside in a `standard_catalog` directory within the framework's package. This directory will export the catalog definition and contain the concrete implementations of the standard components.
 
@@ -901,8 +903,8 @@ This section outlines the architectural and structural differences between the e
     *   **Core**: Contains types and basic message processing. Logic is scattered.
     *   **Renderers**: Hold the bulk of the logic and strictly typed component nodes.
 *   **v0.9 (Proposed)**:
-    *   **Core**: Becomes the "Brain", handling State (`DataModel`, `SurfaceState`) and Base Logic (Generic `ButtonComponent`, `TextComponent`).
-    *   **Renderers**: Become thinner "View" layers, implementing `ComponentContext` and providing concrete renderers for standard components.
+    *   **Core**: Becomes the "Brain", handling State (`DataModel`, `SurfaceState`) and Base Logic (Generic `ButtonComponent`, `TextComponent`, etc. which handle protocol tasks).
+    *   **Renderers**: Become thinner "View" layers, implementing `ComponentContext` and providing concrete renderer functions for standard components.
 
 ### 2. Component Implementation & "Node" Intermediate Representation
 
