@@ -191,8 +191,11 @@ export class MultipleChoice extends Root {
   }
 
   getCurrentSelections(): string[] {
-    if (!this.processor || !this.component || Array.isArray(this.selections)) {
-      return [];
+    if (!this.processor || !this.component) {
+      return Array.isArray(this.selections) ? this.selections : [];
+    }
+    if (Array.isArray(this.selections)) {
+      return this.selections;
     }
 
     const selectionValue = this.processor.getData(

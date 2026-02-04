@@ -22,6 +22,7 @@ import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
+import { extractStringValue } from "./utils/utils.js";
 
 @customElement("a2ui-checkbox")
 export class Checkbox extends Root {
@@ -70,6 +71,8 @@ export class Checkbox extends Root {
       return;
     }
 
+
+
     this.processor.setData(
       this.component,
       this.value.path,
@@ -100,7 +103,12 @@ export class Checkbox extends Root {
         .checked=${value}
       />
       <label class=${classMap(this.theme.components.CheckBox.label)} for="data"
-        >${this.label?.literalString}</label
+        >${extractStringValue(
+          this.label,
+          this.component,
+          this.processor,
+          this.surfaceId
+        )}</label
       >
     </section>`;
   }
@@ -113,6 +121,7 @@ export class Checkbox extends Root {
         return this.#renderField(this.value.literal);
       } else if (this.value && "path" in this.value && this.value.path) {
         if (!this.processor || !this.component) {
+
           return html`(no model)`;
         }
 
@@ -121,6 +130,8 @@ export class Checkbox extends Root {
           this.value.path,
           this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
+
+
 
         if (textValue === null) {
           return html`Invalid label`;
