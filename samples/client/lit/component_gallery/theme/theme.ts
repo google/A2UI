@@ -206,6 +206,17 @@ export const theme: v0_8.Types.Theme = {
     TextField: {
       "--p-0": "light-dark(var(--n-0), #1e293b)",
     },
+    Modal: {
+      background:
+        "linear-gradient(135deg, light-dark(rgba(255, 255, 255, 0.9), rgba(30, 41, 59, 1)), light-dark(rgba(255, 255, 255, 0.95), rgba(15, 23, 42, 1)))",
+      boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2)",
+      borderRadius: "8px",
+      padding: "16px",
+      minWidth: "300px",
+      maxWidth: "80vw",
+      display: "flex",
+      flexDirection: "column",
+    },
   },
   components: {
     AudioPlayer: {},
