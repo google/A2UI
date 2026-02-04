@@ -551,6 +551,7 @@ src/
     rendering/
       component-context.ts    # ComponentContext implementation
     standard_catalog/
+      factory.ts              # Strict catalog factory
       components/             # Generic component classes
         text.ts
         card.ts
@@ -603,27 +604,60 @@ src/
 
 ### Binding to A2UI (Catalog Registration)
 
-Each framework's `standard_catalog/index.ts` will export a factory function that instantiates the Catalog with the concrete components.
+To ensure consistency across different renderers, `@a2ui/web_core` provides a strict interface and a factory function. This enforces that every renderer implements the full set of components required by the A2UI Standard Catalog.
+
+#### 1. Core Factory Utility
+Location: `@a2ui/web_core/src/v0_9/standard_catalog/factory.ts`
 
 ```typescript
-// @a2ui/lit/src/v0_9/standard_catalog/index.ts
+import { Component, Catalog } from '../catalog/types';
 
-import { Catalog } from '@a2ui/web_core/v0_9/catalog/types';
-import { litButton } from './components/button';
+/**
+ * Strict contract for the Standard Catalog. 
+ * Add all standard components here to enforce implementation in all renderers.
+ */
+export interface StandardCatalogComponents<T> {
+  Button: Component<T>;
+  Text: Component<T>;
+  Column: Component<T>;
+  Row: Component<T>;
+  // ... other standard components
+}
 
-export function createLitStandardCatalog(): Catalog<TemplateResult> {
-  const components = new Map<string, Component<TemplateResult>>();
-  
-  components.set('Button', litButton);
-  // ...
+export function createStandardCatalog<T>(
+  components: StandardCatalogComponents<T>
+): Catalog<T> {
+  const componentMap = new Map<string, Component<T>>(
+    Object.entries(components) as [string, Component<T>][]
+  );
 
   return {
     id: 'https://a2ui.org/specification/v0_9/standard_catalog.json',
-    components, // readonly map
+    components: componentMap,
     getComponent(name: string) {
-      return components.get(name);
+      return this.components.get(name);
     }
   };
+}
+```
+
+#### 2. Framework Usage (Lit Example)
+Location: `@a2ui/lit/src/v0_9/standard_catalog/index.ts`
+
+```typescript
+import { createStandardCatalog } from '@a2ui/web_core/v0_9/standard_catalog/factory';
+import { litButton } from './components/button';
+import { litText } from './components/text';
+
+export function createLitStandardCatalog(): Catalog<TemplateResult> {
+  // TypeScript will enforce that all components defined in 
+  // StandardCatalogComponents are provided here.
+  return createStandardCatalog({
+    Button: litButton,
+    Text: litText,
+    Column: litColumn,
+    Row: litRow,
+  });
 }
 ```
 
