@@ -65,16 +65,16 @@ import { MapComponent } from './my-map-component';
 const standardCatalog = createLitStandardCatalog();
 
 // 2. Create a new components map by cloning the standard one
-const myComponents = new Map(standardCatalog.components);
+const components = new Map(standardCatalog.components);
 
 // 3. Add the custom Map component
 // Assuming MapComponent handles properties: title, latitude, longitude
-myComponents.set('Map', new MapComponent());
+components.set('Map', new MapComponent());
 
-// 4. Create the new Catalog object
+// 4. Create a new catalog that extends it
 const myAppCatalog: Catalog<TemplateResult> = {
   id: 'https://myapp.com/catalog',
-  components: myComponents,
+  components, // Use the new map
   
   getComponent(name: string) {
     return this.components.get(name);
