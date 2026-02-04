@@ -19,49 +19,37 @@ The architecture consists of a shared core library handling state and protocol m
 
 The core introduces a `SurfaceState` object which encapsulates the state for a single surface, including its `DataModel` and the current snapshot of component definitions. The `A2uiMessageProcessor` manages these `SurfaceState` objects.
 
-### Component Responsibilities
+### Architecture Overview
 
-The architecture is divided into four distinct layers of responsibility:
+The architecture is divided into four distinct layers of responsibility, each with specific classes:
 
 1.  **Web Core Rendering Framework (`@a2ui/web_core`)**:
     *   **Role:** The "Brain". It is the framework-agnostic engine that powers A2UI.
-    *   **Responsibilities:**
-        *   Managing the state of all surfaces (Data Model, Component Tree).
-        *   Processing the A2UI protocol messages.
-        *   Providing the base logic for component traversal and data resolution.
-        *   It does *not* know about DOM, HTML, or specific UI frameworks.
+    *   **Responsibilities:** Managing state, processing messages, component traversal, and data resolution.
+    *   **Key Classes:**
+        *   **`A2uiMessageProcessor`**: The central controller that receives messages and manages the lifecycle of surfaces.
+        *   **`SurfaceState`**: The state container for a single surface, holding the `DataModel` and component definitions.
+        *   **`DataModel`**: An observable, hierarchical key-value store holding the application data.
+        *   **`DataContext`**: A scoped view into the `DataModel` for a specific component.
+        *   **`Catalog`**: A generic interface defining a registry of components.
+        *   **`Component`**: A generic interface defining how to render a specific UI element given a context.
+        *   **`ComponentContext`**: The runtime object providing property resolution and tree traversal logic to components.
 
 2.  **Web Core Standard Catalog Implementation (`@a2ui/web_core/standard_catalog`)**:
     *   **Role:** The "Business Logic" of the standard components.
-    *   **Responsibilities:**
-        *   Defining the behavior of standard components (e.g., `Button`, `TextField`) in a framework-agnostic way.
-        *   Handling property parsing, validation logic (e.g. `required` checks), and interaction handling.
-        *   It exposes generic component classes (e.g. `ButtonComponent`) that accept a renderer function.
+    *   **Responsibilities:** Defining framework-agnostic behavior, property parsing, and interaction handling.
+    *   **Key Classes:** Generic component classes (e.g., `ButtonComponent`, `CardComponent`) that handle protocol logic and delegate rendering via a functional interface.
 
 3.  **Rendering Frameworks (`@a2ui/lit`, `@a2ui/angular`)**:
-    *   **Role:** The "Bridge". It connects the generic Core engine to a specific UI framework.
-    *   **Responsibilities:**
-        *   Providing the `Surface` component (the entry point).
-        *   Implementing the reactivity bridge (e.g., connecting `ComponentContext.updateCallback` to `LitElement.requestUpdate`).
-        *   It knows *how* to render generic things (via `TemplateResult` or `ComponentFactory`) but doesn't define *what* specific components exist.
+    *   **Role:** The "Bridge". Connects the generic Core engine to a specific UI framework.
+    *   **Responsibilities:** Providing the entry point component and implementing the reactivity bridge.
+    *   **Key Classes:**
+        *   **`Surface`**: The top-level UI component (e.g., `<a2ui-surface>`) that users drop into their apps.
 
 4.  **Standard Catalog Implementation (Framework Specific)**:
-    *   **Role:** The "Painter". It defines the actual pixels and DOM for the standard components.
-    *   **Responsibilities:**
-        *   Providing the visual implementation for standard components (e.g. `litButton`, `NgButtonComponent`).
-        *   Wiring the generic Core logic to the specific framework components via composition.
-        *   Packaging these into a `Catalog` instance that can be registered with the processor.
-
-### Major Classes Overview
-
-*   **`A2uiMessageProcessor`**: The central controller. It receives messages, manages lifecycle of surfaces, and routes updates.
-*   **`SurfaceState`**: The state container for a single surface. It holds the Data Model (`DataModel`) and the component definitions for that surface.
-*   **`DataModel`**: An observable, hierarchical key-value store holding the application data.
-*   **`DataContext`**: A scoped view into the `DataModel` for a specific component, allowing relative path resolution.
-*   **`Catalog`**: A registry mapping component names (strings) to `Component` implementations.
-*   **`Component`**: A generic interface defining how to render a specific UI element given a context.
-*   **`ComponentContext`**: The runtime object passed to a component during rendering. It provides access to properties, data resolution, and child rendering capabilities.
-*   **`Surface` (Renderer)**: The top-level UI component (e.g. `<a2ui-surface>`) that users drop into their app. It observes `SurfaceState` and orchestrates the rendering process.
+    *   **Role:** The "Painter". Defines the actual pixels and DOM.
+    *   **Responsibilities:** Providing visual implementations and wiring them to the generic Core logic via composition.
+    *   **Key Classes:** Framework-specific component definitions (e.g., `litButton`, `NgButtonComponent`) and the concrete `Catalog` instance.
 
 ### Key Class Interactions
 
@@ -437,39 +425,82 @@ export class A2uiMessageProcessor {
 *   **Isolation:** Mock `SurfaceState` to verify routing logic without testing state implementation details.
 ```
 
-### 7. Standard Catalog Components (Core)
+### 7. Standard Catalog Components (Core & Frameworks)
 
-To reduce code duplication between Lit and Angular, we define concrete, generic component classes in Core that handle the protocol logic and delegate rendering via a functional interface (composition).
+To reduce code duplication between Lit and Angular, we define concrete, generic component classes in Core that handle the protocol logic and delegate rendering via a functional interface (composition). This example illustrates the pattern using the **Button** component.
+
+#### A. Core Logic (Generic)
+Location: `@a2ui/web_core/src/v0_9/standard_catalog/components/button.ts`
 
 ```typescript
-// web_core/src/v0_9/standard_catalog/components/card.ts
-
 import { Component } from '../../catalog/types';
 import { ComponentContext } from '../../rendering/component-context';
 
-export interface CardRenderProps<T> {
+export interface ButtonRenderProps<T> {
   childContent: T | null;
+  variant: 'primary' | 'borderless' | 'default';
+  disabled: boolean;
+  onAction: () => void;
 }
 
-export class CardComponent<T> implements Component<T> {
-  readonly name = 'Card';
+export class ButtonComponent<T> implements Component<T> {
+  readonly name = 'Button';
 
-  constructor(private readonly renderer: (props: CardRenderProps<T>) => T) {}
+  constructor(private readonly renderer: (props: ButtonRenderProps<T>) => T) {}
 
   render(context: ComponentContext<T>): T {
-    const childId = context.properties['child'];
-    const childContent = context.renderChild(childId);
-    return this.renderer({ childContent });
+    const { properties } = context;
+    const childId = properties['child'] as string;
+    const variant = (properties['variant'] as string) || 'default';
+    const isEnabled = context.resolve<boolean>(properties['enabled'] ?? true);
+    const action = properties['action'];
+
+    const onAction = () => {
+      if (isEnabled && action) {
+        context.dispatchAction(action);
+      }
+    };
+
+    return this.renderer({
+      childContent: context.renderChild(childId),
+      variant: variant as any,
+      disabled: !isEnabled,
+      onAction
+    });
   }
 }
+```
+
+#### B. Lit Implementation
+Location: `@a2ui/lit/src/v0_9/standard_catalog/components/button.ts`
+
+```typescript
+export const litButton = new ButtonComponent<TemplateResult>(
+  (props: ButtonRenderProps<TemplateResult>) => html`
+    <button class="variant-${props.variant}" ?disabled=${props.disabled} @click=${props.onAction}>
+      ${props.childContent}
+    </button>
+  `
+);
+```
+
+#### C. Angular Implementation
+Location: `@a2ui/angular/src/lib/v0_9/standard_catalog/components/button.ts`
+
+```typescript
+export const angularButton = new ButtonComponent<RenderableDefinition>(
+  (props: ButtonRenderProps<RenderableDefinition>) => ({
+    componentType: NgButtonComponent,
+    inputs: { variant: props.variant, disabled: props.disabled, child: props.childContent },
+    outputs: { action: props.onAction }
+  })
+);
+```
 
 **Testing Strategy:**
 *   **Unit Tests:**
-    *   Instantiate the component (e.g. `ButtonComponent`) with a spy/mock renderer function.
-    *   Create a mock `ComponentContext`.
-    *   Call `render(mockContext)`.
-    *   Assert that the renderer function was called with the correctly resolved `RenderProps`. This validates the *logic* (property parsing, validation, etc.) without needing a DOM.
-```
+    *   Instantiate the generic component (e.g., `ButtonComponent`) with a spy/mock renderer function.
+    *   Assert that the renderer function is called with the correctly resolved `RenderProps`. This validates the *logic* (property parsing, validation, resolution) independently of any UI framework.
 
 ### 8. Lit Renderer Implementation Example
 
@@ -607,256 +638,6 @@ src/
         surface.component.ts
 ```
 
-## Component Implementation Detail
-
-This section illustrates how specific components are implemented using the base class pattern to share logic while delegating rendering to the specific framework. We use a **composition-based approach** where the Core component logic is a generic class that accepts a pure renderer function.
-
-### Example 1: Button (Action Handling)
-
-**1. Core Logic (The Generic Component)**
-Location: `@a2ui/web_core/src/v0_9/standard_catalog/components/button.ts`
-
-This class handles property extraction, validation, and interaction logic. It is generic over `T` (the renderer output type).
-
-```typescript
-import { Component } from '../../catalog/types';
-import { ComponentContext } from '../../rendering/component-context';
-
-// 1. The Contract: What does the UI implementation need to render this?
-export interface ButtonRenderProps<T> {
-  /** The fully resolved child content (e.g. TemplateResult or RenderDefinition) */
-  childContent: T | null;
-  /** Visual variant hint */
-  variant: 'primary' | 'borderless' | 'default';
-  /** Resolved disabled state */
-  disabled: boolean;
-  /** Callback to trigger the action */
-  onAction: () => void;
-}
-
-// 2. The Renderer Function Signature
-export type ButtonRenderer<T> = (props: ButtonRenderProps<T>) => T;
-
-// 3. The Reusable Logic Class
-export class ButtonComponent<T> implements Component<T> {
-  readonly name = 'Button';
-
-  constructor(private readonly renderer: ButtonRenderer<T>) {}
-
-  render(context: ComponentContext<T>): T {
-    const { properties } = context;
-    
-    // A. Logic: Extract & Validate Properties
-    const childId = properties['child'] as string;
-    const variant = (properties['variant'] as string) || 'default';
-    
-    // B. Logic: Resolve Data & Reactivity
-    // context.resolve() sets up subscriptions automatically
-    const isEnabled = context.resolve<boolean>(properties['enabled'] ?? true);
-    const disabled = isEnabled === false;
-
-    // C. Logic: Prepare Action Handler
-    const action = properties['action'];
-    const onAction = () => {
-      if (!disabled && action) {
-        context.dispatchAction(action);
-      }
-    };
-
-    // D. Logic: Recursion
-    // Pre-calculate/render children so the renderer function doesn't need context
-    const childContent = context.renderChild(childId);
-
-    // E. Delegate to Presentation Layer
-    return this.renderer({
-      childContent,
-      variant: variant as any,
-      disabled,
-      onAction
-    });
-  }
-}
-```
-
-**2. Lit Implementation**
-Location: `@a2ui/lit/src/v0_9/standard_catalog/index.ts` (or `components/button.ts`)
-
-The Lit implementation instantiates the Core class with a lightweight arrow function.
-
-```typescript
-import { html, TemplateResult } from 'lit';
-import { ButtonComponent, ButtonRenderProps } from '@a2ui/web_core/.../button';
-
-export const litButton = new ButtonComponent<TemplateResult>(
-  (props: ButtonRenderProps<TemplateResult>) => {
-    return html`
-      <button 
-        class="variant-${props.variant}" 
-        ?disabled=${props.disabled}
-        @click=${props.onAction}
-      >
-        ${props.childContent}
-      </button>
-    `;
-  }
-);
-```
-
-**3. Angular Implementation**
-Location: `@a2ui/angular/src/lib/v0_9/standard_catalog/components/button.ts`
-
-For Angular, we define the visual component (can be inline) and then wrap it with the A2UI adapter.
-
-```typescript
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ButtonComponent, ButtonRenderProps } from '@a2ui/web_core/.../button';
-
-// 1. The Framework Component (Visuals)
-@Component({
-  selector: 'a2ui-std-button',
-  template: `
-    <button 
-      [class]="'variant-' + variant" 
-      [disabled]="disabled" 
-      (click)="action.emit()">
-        <ng-container *a2uiOutlet="child"></ng-container>
-    </button>
-  `
-})
-export class NgButtonComponent {
-  @Input() variant: string = 'default';
-  @Input() disabled: boolean = false;
-  @Input() child: any; // RenderableDefinition
-  @Output() action = new EventEmitter<void>();
-}
-
-// 2. The A2UI Adapter (Logic)
-export const angularButton = new ButtonComponent<RenderableDefinition>(
-  (props: ButtonRenderProps<RenderableDefinition>) => {
-    return {
-      componentType: NgButtonComponent,
-      inputs: {
-        variant: props.variant,
-        disabled: props.disabled,
-        child: props.childContent 
-      },
-      outputs: {
-        action: props.onAction
-      }
-    };
-  }
-);
-```
-
-### Example 2: Slider (Two-Way Binding)
-
-**1. Core Logic (The Generic Component)**
-Location: `@a2ui/web_core/src/v0_9/standard_catalog/components/slider.ts`
-
-```typescript
-export interface SliderRenderProps {
-  value: number;
-  min: number;
-  max: number;
-  label: string;
-  // The renderer just calls this with the new number. 
-  onChange: (newValue: number) => void;
-}
-
-export class SliderComponent<T> implements Component<T> {
-  readonly name = 'Slider';
-
-  constructor(private readonly renderer: (props: SliderRenderProps) => T) {}
-
-  render(context: ComponentContext<T>): T {
-    const { properties } = context;
-
-    // Logic: Resolve State
-    const value = context.resolve<number>(properties['value'] ?? 0);
-    const min = context.resolve<number>(properties['min'] ?? 0);
-    const max = context.resolve<number>(properties['max'] ?? 100);
-    const label = context.resolve<string>(properties['label'] ?? '');
-
-    // Logic: Write State
-    const onChange = (newValue: number) => {
-      context.updateBoundValue(properties['value'], newValue);
-    };
-
-    return this.renderer({ value, min, max, label, onChange });
-  }
-}
-```
-
-**2. Lit Implementation**
-Location: `@a2ui/lit/src/v0_9/standard_catalog/components/slider.ts`
-
-```typescript
-import { html, TemplateResult } from 'lit';
-import { SliderComponent, SliderRenderProps } from '@a2ui/web_core/.../slider';
-
-export const litSlider = new SliderComponent<TemplateResult>(
-  (props: SliderRenderProps) => html`
-    <div class="slider-container">
-      <label>${props.label}</label>
-      <input 
-        type="range"
-        .value=${props.value}
-        .min=${props.min}
-        .max=${props.max}
-        @input=${(e: Event) => props.onChange((e.target as HTMLInputElement).valueAsNumber)}
-      />
-      <span>${props.value}</span>
-    </div>
-  `
-);
-```
-
-**3. Angular Implementation**
-Location: `@a2ui/angular/src/lib/v0_9/standard_catalog/components/slider.ts`
-
-```typescript
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { SliderComponent, SliderRenderProps } from '@a2ui/web_core/.../slider';
-
-// 1. The Framework Component
-@Component({
-  selector: 'a2ui-std-slider',
-  template: `
-    <div class="slider-container">
-      <label>{{ label }}</label>
-      <input type="range" [value]="value" [min]="min" [max]="max" (input)="onInput($event)" />
-      <span>{{ value }}</span>
-    </div>
-  `
-})
-export class NgSliderComponent {
-  @Input() value: number = 0;
-  @Input() min: number = 0;
-  @Input() max: number = 100;
-  @Input() label: string = '';
-  @Output() valueChange = new EventEmitter<number>();
-
-  onInput(event: Event) {
-    this.valueChange.emit((event.target as HTMLInputElement).valueAsNumber);
-  }
-}
-
-// 2. The A2UI Adapter
-export const angularSlider = new SliderComponent<RenderableDefinition>(
-  (props: SliderRenderProps) => ({
-    componentType: NgSliderComponent,
-    inputs: {
-      value: props.value,
-      min: props.min,
-      max: props.max,
-      label: props.label
-    },
-    outputs: {
-      valueChange: props.onChange
-    }
-  })
-);
-```
 
 ### Binding to A2UI (Catalog Registration)
 
@@ -867,13 +648,11 @@ Each framework's `standard_catalog/index.ts` will export a factory function that
 
 import { Catalog } from '@a2ui/web_core/v0_9/catalog/types';
 import { litButton } from './components/button';
-import { litSlider } from './components/slider';
 
 export function createLitStandardCatalog(): Catalog<TemplateResult> {
   const components = new Map<string, Component<TemplateResult>>();
   
   components.set('Button', litButton);
-  components.set('Slider', litSlider);
   // ...
 
   return {
