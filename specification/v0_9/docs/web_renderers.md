@@ -149,14 +149,6 @@ export class DataModel {
   subscribe(path: string, callback: DataSubscriber): Unsubscribe;
 }
 
-**Testing Strategy:**
-*   **Unit Tests:** Test `set` and `get` with various data types (primitives, objects, arrays, nested structures).
-*   **Subscription Tests:** Verify that subscribers are notified correctly when:
-    *   The exact path changes.
-    *   A parent path changes (replacing the subtree).
-    *   A child path changes.
-    *   Verify that unsubscribing stops notifications.
-*   **Edge Cases:** Test invalid paths, setting root to primitives vs objects.
 ```
 
 ### 2. SurfaceState (Core)
@@ -203,12 +195,6 @@ export class SurfaceState {
   dispatchAction(action: UserAction): Promise<void>;
 }
 
-**Testing Strategy:**
-*   **Unit Tests:**
-    *   Verify `handleMessage` correctly processes `updateComponents` (updating the internal component map) and `updateDataModel` (delegating to `DataModel`).
-    *   Verify `getComponentDefinition` returns the correct definition.
-    *   Verify `dispatchAction` calls the provided `actionHandler`.
-*   **Integration Tests:** Feed a sequence of messages and verify the final state of the `DataModel` and component definitions match expectations.
 ```
 
 ### 3. DataContext (Core)
@@ -249,12 +235,6 @@ export class DataContext {
   nested(relativePath: string): DataContext;
 }
 
-**Testing Strategy:**
-*   **Unit Tests:**
-    *   Test path resolution logic (absolute vs relative).
-    *   Test `nested()` correctly concatenates paths.
-    *   Test that `subscribe` and `getValue` correctly delegate to the underlying `DataModel` with the resolved path.
-*   **Mocking:** Use a mock `DataModel` to verify `DataContext` calls the correct methods with correct absolute paths.
 ```
 
 ### 4. Catalog & Component (Core Interface)
@@ -377,14 +357,6 @@ export class ComponentContext<T> {
   }
 }
 
-**Testing Strategy:**
-*   **Unit Tests:**
-    *   Test `resolve` with literals, paths, and function calls.
-    *   Verify `resolve` triggers the `updateCallback` when the subscribed data changes (mocking `DataContext`).
-    *   Test `renderChild`:
-        *   Verify it retrieves the definition and component correctly.
-        *   Verify it creates a child context with correct properties and data path.
-        *   Verify it calls the component's `render` method.
 ```
 
 ### 6. A2uiMessageProcessor (Core)
@@ -417,12 +389,6 @@ export class A2uiMessageProcessor {
   getSurfaceState(surfaceId: string): SurfaceState | undefined;
 }
 
-**Testing Strategy:**
-*   **Unit Tests:**
-    *   Verify `createSurface` message creates a new `SurfaceState` and registers it.
-    *   Verify subsequent messages (`updateComponents`, etc.) are routed to the correct `SurfaceState`.
-    *   Verify it correctly selects the `Catalog` based on the `catalogId` in `createSurface`.
-*   **Isolation:** Mock `SurfaceState` to verify routing logic without testing state implementation details.
 ```
 
 ### 7. Standard Catalog Components (Core & Frameworks)
@@ -497,10 +463,6 @@ export const angularButton = new ButtonComponent<RenderableDefinition>(
 );
 ```
 
-**Testing Strategy:**
-*   **Unit Tests:**
-    *   Instantiate the generic component (e.g., `ButtonComponent`) with a spy/mock renderer function.
-    *   Assert that the renderer function is called with the correctly resolved `RenderProps`. This validates the *logic* (property parsing, validation, resolution) independently of any UI framework.
 
 ### 8. Lit Renderer Implementation Example
 
