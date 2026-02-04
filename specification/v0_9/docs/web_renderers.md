@@ -19,58 +19,49 @@ The architecture consists of a shared core library handling state and protocol m
 
 The core introduces a `SurfaceState` object which encapsulates the state for a single surface, including its `DataModel` and the current snapshot of component definitions. The `A2uiMessageProcessor` manages these `SurfaceState` objects.
 
-### Key Class Interactions
+### Component Responsibilities
 
-```mermaid
-classDiagram
-    class A2uiMessageProcessor {
-        +processMessages(messages)
-        +getSurfaceState(surfaceId)
-        -surfaces: Map<String, SurfaceState>
-        -catalogRegistry: Map<String, Catalog>
-    }
+The architecture is divided into four distinct layers of responsibility:
 
-    class SurfaceState {
-        +id: String
-        +dataModel: DataModel
-        +catalog: Catalog
-        +handleMessage(message)
-        +dispatchAction(action)
-    }
+1.  **Web Core Rendering Framework (`@a2ui/web_core`)**:
+    *   **Role:** The "Brain". It is the framework-agnostic engine that powers A2UI.
+    *   **Responsibilities:**
+        *   Managing the state of all surfaces (Data Model, Component Tree).
+        *   Processing the A2UI protocol messages.
+        *   Providing the base logic for component traversal and data resolution.
+        *   It does *not* know about DOM, HTML, or specific UI frameworks.
 
-    class DataModel {
-        +get(path)
-        +set(path, value)
-        +subscribe(path, callback)
-    }
+2.  **Web Core Standard Catalog Implementation (`@a2ui/web_core/standard_catalog`)**:
+    *   **Role:** The "Business Logic" of the standard components.
+    *   **Responsibilities:**
+        *   Defining the behavior of standard components (e.g., `Button`, `TextField`) in a framework-agnostic way.
+        *   Handling property parsing, validation logic (e.g. `required` checks), and interaction handling.
+        *   It exposes generic component classes (e.g. `ButtonComponent`) that accept a renderer function.
 
-    class SurfaceRenderer {
-        +state: SurfaceState
-        +render()
-    }
+3.  **Rendering Frameworks (`@a2ui/lit`, `@a2ui/angular`)**:
+    *   **Role:** The "Bridge". It connects the generic Core engine to a specific UI framework.
+    *   **Responsibilities:**
+        *   Providing the `Surface` component (the entry point).
+        *   Implementing the reactivity bridge (e.g., connecting `ComponentContext.updateCallback` to `LitElement.requestUpdate`).
+        *   It knows *how* to render generic things (via `TemplateResult` or `ComponentFactory`) but doesn't define *what* specific components exist.
 
-    class Catalog {
-        +getComponent(name)
-    }
+4.  **Standard Catalog Implementation (Framework Specific)**:
+    *   **Role:** The "Painter". It defines the actual pixels and DOM for the standard components.
+    *   **Responsibilities:**
+        *   Providing the visual implementation for standard components (e.g. `litButton`, `NgButtonComponent`).
+        *   Wiring the generic Core logic to the specific framework components.
+        *   Packaging these into a `Catalog` instance that can be registered with the processor.
 
-    class Component~T~ {
-        +render(context: ComponentContext): T
-    }
+### Major Classes Overview
 
-    class ComponentContext {
-        +surfaceState: SurfaceState
-        +resolveDynamicValue(val)
-        +buildChild(id)
-        +dispatchEvent(event)
-    }
-
-    A2uiMessageProcessor *-- SurfaceState
-    SurfaceState *-- DataModel
-    SurfaceState --> Catalog
-    SurfaceRenderer --> SurfaceState : Input
-    SurfaceRenderer ..> Component : Instantiates via State.Catalog
-    Component ..> ComponentContext : Uses
-```
+*   **`A2uiMessageProcessor`**: The central controller. It receives messages, manages lifecycle of surfaces, and routes updates.
+*   **`SurfaceState`**: The state container for a single surface. It holds the Data Model (`DataModel`) and the component definitions for that surface.
+*   **`DataModel`**: An observable, hierarchical key-value store holding the application data.
+*   **`DataContext`**: A scoped view into the `DataModel` for a specific component, allowing relative path resolution.
+*   **`Catalog`**: A registry mapping component names (strings) to `Component` implementations.
+*   **`Component`**: A generic interface defining how to render a specific UI element given a context.
+*   **`ComponentContext`**: The runtime object passed to a component during rendering. It provides access to properties, data resolution, and child rendering capabilities.
+*   **`Surface` (Renderer)**: The top-level UI component (e.g. `<a2ui-surface>`) that users drop into their app. It observes `SurfaceState` and orchestrates the rendering process.
 
 ## API Design
 
@@ -103,6 +94,15 @@ export class DataModel {
    */
   subscribe(path: string, callback: DataSubscriber): Unsubscribe;
 }
+
+**Testing Strategy:**
+*   **Unit Tests:** Test `set` and `get` with various data types (primitives, objects, arrays, nested structures).
+*   **Subscription Tests:** Verify that subscribers are notified correctly when:
+    *   The exact path changes.
+    *   A parent path changes (replacing the subtree).
+    *   A child path changes.
+    *   Verify that unsubscribing stops notifications.
+*   **Edge Cases:** Test invalid paths, setting root to primitives vs objects.
 ```
 
 ### 2. SurfaceState (Core)
@@ -148,6 +148,13 @@ export class SurfaceState {
    */
   dispatchAction(action: UserAction): Promise<void>;
 }
+
+**Testing Strategy:**
+*   **Unit Tests:**
+    *   Verify `handleMessage` correctly processes `updateComponents` (updating the internal component map) and `updateDataModel` (delegating to `DataModel`).
+    *   Verify `getComponentDefinition` returns the correct definition.
+    *   Verify `dispatchAction` calls the provided `actionHandler`.
+*   **Integration Tests:** Feed a sequence of messages and verify the final state of the `DataModel` and component definitions match expectations.
 ```
 
 ### 3. DataContext (Core)
@@ -187,6 +194,13 @@ export class DataContext {
    */
   nested(relativePath: string): DataContext;
 }
+
+**Testing Strategy:**
+*   **Unit Tests:**
+    *   Test path resolution logic (absolute vs relative).
+    *   Test `nested()` correctly concatenates paths.
+    *   Test that `subscribe` and `getValue` correctly delegate to the underlying `DataModel` with the resolved path.
+*   **Mocking:** Use a mock `DataModel` to verify `DataContext` calls the correct methods with correct absolute paths.
 ```
 
 ### 4. Catalog & Component (Core Interface)
@@ -230,51 +244,93 @@ export interface Catalog<T> {
 }
 ```
 
-### 5. ComponentContext (Core Interface)
+### 5. ComponentContext (Core)
 
-The bridge passed to every component's render method. It provides access to the raw properties, the ability to resolve dynamic values, and the ability to render children.
+A generic, concrete class that implements the core logic for property resolution and tree traversal. It is initialized with a callback to trigger the specific renderer's update mechanism.
 
 ```typescript
 // web_core/src/v0_9/rendering/component-context.ts
 
-export interface ComponentContext<T> {
-  /**
-   * The unique ID of this component instance.
-   */
-  readonly id: string;
-
-  /**
-   * The raw JSON properties for this component (excluding 'id' and 'component').
-   */
-  readonly properties: Record<string, any>;
-
-  /**
-   * The DataContext for this component, enabling scoped data access.
-   */
-  readonly dataContext: DataContext;
-
-  /**
-   * The surface state this component belongs to.
-   */
-  readonly surfaceState: SurfaceState;
+export class ComponentContext<T> {
+  constructor(
+    readonly id: string,
+    readonly properties: Record<string, any>,
+    readonly dataContext: DataContext,
+    readonly surfaceState: SurfaceState,
+    private readonly updateCallback: () => void
+  ) {}
 
   /**
    * Resolves a dynamic value (literal, path, or function call).
-   * This uses `dataContext` to resolve paths and subscribe to changes.
+   * When the underlying data changes, it calls `this.updateCallback()`.
    */
-  resolve<V>(value: DynamicValue<V> | V): V;
+  resolve<V>(value: DynamicValue<V> | V): V {
+    // 1. Literal Check: If it's a primitive, return it directly.
+    if (typeof value !== 'object' || value === null) {
+      return value as V;
+    }
+
+    // 2. Path Check: If it's a data binding { path: "..." }
+    if ('path' in value) {
+      // Subscribe to changes. When data changes, trigger a re-render.
+      // Note: DataContext handles unsubscribing when it is disposed/GC'd (conceptually)
+      // or we might need a cleanup phase in ComponentContext.
+      this.dataContext.subscribe(value.path, () => this.updateCallback());
+      return this.dataContext.getValue(value.path);
+    }
+
+    // 3. Function Call: If it's { call: "...", args: ... }
+    if ('call' in value) {
+      // Execute the function logic (implementation in Core)
+      // This might involve recursive resolution of args.
+      // return executeFunction(value, this);
+    }
+
+    return value as V;
+  }
 
   /**
    * Renders a child component by its ID.
-   * Returns null if the child does not exist.
+   * 1. Looks up the component definition in SurfaceState.
+   * 2. Looks up the Component implementation in the Catalog.
+   * 3. Creates a new nested ComponentContext, propagating the updateCallback.
+   * 4. Calls `component.render(childContext)`.
    */
-  renderChild(childId: string): T | null;
+  renderChild(childId: string): T | null {
+    const def = this.surfaceState.getComponentDefinition(childId);
+    if (!def) return null;
 
-  /**
-   * Dispatches a user action back to the system (and server).
-   */
-  dispatchAction(action: Action): Promise<void>;
+    const component = this.surfaceState.catalog.getComponent(def.type);
+    if (!component) return null;
+
+    // The A2uiMessageProcessor has already calculated the correct data path for this component instance
+    const childPath = def.dataContextPath ?? '/';
+    const childDataContext = new DataContext(this.surfaceState.dataModel, childPath);
+
+    const childCtx = new ComponentContext<T>(
+      def.id,
+      def.properties,
+      childDataContext,
+      this.surfaceState,
+      this.updateCallback
+    );
+
+    return component.render(childCtx);
+  }
+
+  dispatchAction(action: Action): Promise<void> {
+    return this.surfaceState.dispatchAction(action);
+  }
 }
+
+**Testing Strategy:**
+*   **Unit Tests:**
+    *   Test `resolve` with literals, paths, and function calls.
+    *   Verify `resolve` triggers the `updateCallback` when the subscribed data changes (mocking `DataContext`).
+    *   Test `renderChild`:
+        *   Verify it retrieves the definition and component correctly.
+        *   Verify it creates a child context with correct properties and data path.
+        *   Verify it calls the component's `render` method.
 ```
 
 ### 6. A2uiMessageProcessor (Core)
@@ -306,37 +362,91 @@ export class A2uiMessageProcessor {
    */
   getSurfaceState(surfaceId: string): SurfaceState | undefined;
 }
+
+**Testing Strategy:**
+*   **Unit Tests:**
+    *   Verify `createSurface` message creates a new `SurfaceState` and registers it.
+    *   Verify subsequent messages (`updateComponents`, etc.) are routed to the correct `SurfaceState`.
+    *   Verify it correctly selects the `Catalog` based on the `catalogId` in `createSurface`.
+*   **Isolation:** Mock `SurfaceState` to verify routing logic without testing state implementation details.
 ```
 
-### 7. Base Classes for Standard Catalog (Core)
+### 7. Standard Catalog Components (Core)
 
-To reduce code duplication between Lit and Angular, we define abstract base classes for standard components in Core.
+To reduce code duplication between Lit and Angular, we define concrete, generic component classes in Core that handle the protocol logic and delegate rendering via a functional interface.
 
 ```typescript
-// web_core/src/v0_9/standard_catalog/base/card-base.ts
+// web_core/src/v0_9/standard_catalog/components/card.ts
 
 import { Component, ComponentContext } from '../../catalog/types';
 
-export abstract class CardBaseComponent<T> implements Component<T> {
+export interface CardRenderProps<T> {
+  childContent: T | null;
+}
+
+export class CardComponent<T> implements Component<T> {
   readonly name = 'Card';
+
+  constructor(private readonly renderer: (props: CardRenderProps<T>) => T) {}
 
   render(context: ComponentContext<T>): T {
     const childId = context.properties['child'];
-    // Logic to validate childId could go here
-    return this.renderConcrete(context, childId);
+    const childContent = context.renderChild(childId);
+    return this.renderer({ childContent });
   }
+}
 
-  /**
-   * Framework-specific implementation.
-   */
-  protected abstract renderConcrete(
-    context: ComponentContext<T>, 
-    childId: string
-  ): T;
+**Testing Strategy:**
+*   **Unit Tests:**
+    *   Instantiate the component (e.g. `ButtonComponent`) with a spy/mock renderer function.
+    *   Create a mock `ComponentContext`.
+    *   Call `render(mockContext)`.
+    *   Assert that the renderer function was called with the correctly resolved `RenderProps`. This validates the *logic* (property parsing, validation, etc.) without needing a DOM.
+```
+
+### 8. Lit Renderer Implementation Example
+
+This example demonstrates how the Lit implementation of the Surface component orchestrates the rendering process, including creating the `ComponentContext` with the necessary callbacks.
+
+```typescript
+// @a2ui/lit/src/v0_9/ui/surface.ts
+
+@customElement('a2ui-surface')
+export class Surface extends LitElement {
+  @property({ attribute: false })
+  state?: SurfaceState;
+
+  // Reactivity: Subscribe to SurfaceState changes (or DataModel changes)
+  // Since we pass 'this.requestUpdate' to the context, components will call it when data changes.
+  
+  render() {
+    if (!this.state || !this.state.rootComponentId) return nothing;
+
+    // 1. Get Root Definition
+    const rootId = this.state.rootComponentId;
+    const rootDef = this.state.getComponentDefinition(rootId);
+    if (!rootDef) return nothing;
+
+    // 2. Create Context
+    // We pass a bound version of requestUpdate so components can trigger re-renders.
+    const context = new ComponentContext<TemplateResult>(
+      rootId,
+      rootDef.properties,
+      new DataContext(this.state.dataModel, rootDef.dataContextPath ?? '/'),
+      this.state,
+      () => this.requestUpdate() 
+    );
+
+    // 3. Render Root
+    const component = this.state.catalog.getComponent(rootDef.type);
+    if (!component) return html`Unknown component: ${rootDef.type}`;
+
+    return component.render(context);
+  }
 }
 ```
 
-### 8. SurfaceRenderer (Framework Specific)
+### 9. SurfaceRenderer (Framework Specific)
 
 The `SurfaceRenderer` (typically exported as `Surface`) is the top-level component that users place in their applications. It serves as the gateway between the framework's DOM and the A2UI state.
 
@@ -376,8 +486,10 @@ src/
       message-processor.ts    # A2uiMessageProcessor
       message-processor.test.ts
     catalog/
-      types.ts                # Component, Catalog, ComponentContext interfaces
+      types.ts                # Component, Catalog interfaces
       catalog-registry.ts     # Helper to manage multiple catalogs
+    rendering/
+      component-context.ts    # ComponentContext implementation
     standard_catalog/
       base/                   # Abstract base classes
         text-base.ts
