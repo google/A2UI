@@ -63,9 +63,10 @@ export const ComponentNode = memo(function ComponentNode({
 
   // No wrapper div - component's root div is the :host equivalent
   // Suspense doesn't add DOM elements, preserving the correct hierarchy
+  // Type assertion is safe: we've already validated node is valid (nodeType check above)
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <Component node={node} surfaceId={surfaceId} />
+      <Component node={node as Types.AnyComponentNode} surfaceId={surfaceId} />
     </Suspense>
   );
 });
