@@ -817,6 +817,7 @@ def get_ui_prompt(base_url: str, examples: str) -> str:
     -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
     -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
     -   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
+    -   If the `get_restaurants` tool returns an empty list ([]), you MUST use the `NO_RESULTS_EXAMPLE` template.
 
     {formatted_examples}
 
