@@ -92,7 +92,13 @@ function ShellContent({ config, client, sendAndProcessRef }: ShellContentProps) 
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Types.ServerToClientMessage[]>([]);
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+      document.body.classList.add('dark');
+    }
+    return prefersDark;
+  });
 
   // Get actions from the A2UI context
   const { processMessages, clearSurfaces, getSurfaces } = useA2UIActions();
