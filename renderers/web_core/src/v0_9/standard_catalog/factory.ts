@@ -2,7 +2,9 @@
 import { Component, Catalog } from '../catalog/types.js';
 import { TextComponent } from './components/text.js';
 import { ButtonComponent } from './components/button.js';
-import { ContainerComponent } from './components/container.js';
+import { ContainerComponent } from './shared/container-component.js';
+import { RowComponent } from './components/row.js';
+import { ColumnComponent } from './components/column.js';
 import { CardComponent } from './components/card.js';
 import { ImageComponent } from './components/image.js';
 import { IconComponent } from './components/icon.js';
@@ -25,8 +27,8 @@ import { DateTimeInputComponent } from './components/date-time-input.js';
 export interface StandardCatalogComponents<T> {
   Button: ButtonComponent<T>;
   Text: TextComponent<T>;
-  Column: ContainerComponent<T>;
-  Row: ContainerComponent<T>;
+  Column: ColumnComponent<T>;
+  Row: RowComponent<T>;
   Card: CardComponent<T>;
   Image: ImageComponent<T>;
   Icon: IconComponent<T>;
