@@ -44,21 +44,13 @@ export class SurfaceContext {
       if (payload.surfaceId !== this.id) return;
 
       for (const comp of payload.components) {
-        // Each comp is a ComponentNode or similar. 
-        // JSON schema says items are "$ref": "catalog.json#/$defs/anyComponent"
-        // which has "id" and "componentProperties" (which has "type" as key).
-        // Wait, schema says "componentProperties" object with ONE key (the type).
-        // e.g. { id: 'btn1', componentProperties: { Button: { label: 'Click' } } }
+        // v0.9 Component structure: { id: string, component: string, ...properties }
+        const { id, component, ...properties } = comp;
 
-        const id = comp.id;
-        const propsObj = comp.componentProperties || {};
-        const type = Object.keys(propsObj)[0];
-
-        if (type) {
-          const properties = propsObj[type];
+        if (component) {
           this.components.set(id, {
             id,
-            type,
+            type: component,
             properties
           });
         }

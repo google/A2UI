@@ -41,8 +41,8 @@ describe('SurfaceContext', () => {
       updateComponents: {
         surfaceId: 'surface-1',
         components: [
-          { id: 'root', componentProperties: { Column: { children: [] } } },
-          { id: 'btn1', componentProperties: { Button: { label: 'Click' } } }
+          { id: 'root', component: 'Column', children: [] },
+          { id: 'btn1', component: 'Button', label: 'Click' }
         ]
       }
     });

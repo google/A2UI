@@ -40,7 +40,7 @@ describe('A2uiMessageProcessor', () => {
     processor.processMessages([{
       updateComponents: {
         surfaceId: 's1',
-        components: [{ id: 'root', componentProperties: { Box: {} } }]
+        components: [{ id: 'root', component: 'Box' }]
       }
     }]);
 
