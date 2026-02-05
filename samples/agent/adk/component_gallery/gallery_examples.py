@@ -21,7 +21,9 @@ def get_gallery_json() -> str:
             { "key": "date", "valueString": "2025-10-26" },
             { "key": "favorites", "valueMap": [
                  { "key": "0", "valueString": "A" }
-            ]}
+            ]},
+            { "key": "favoritesChips", "valueMap": [] },
+            { "key": "favoritesFilter", "valueMap": [] }
         ]
     }
 
@@ -79,7 +81,7 @@ def get_gallery_json() -> str:
         }
     })
 
-    # 5. MultipleChoice
+    # 5. MultipleChoice (Default)
     add_demo_surface("demo-multichoice", {
         "MultipleChoice": {
             "selections": { "path": "galleryData/favorites" },
@@ -87,6 +89,39 @@ def get_gallery_json() -> str:
                 { "label": { "literalString": "Apple" }, "value": "A" },
                 { "label": { "literalString": "Banana" }, "value": "B" },
                 { "label": { "literalString": "Cherry" }, "value": "C" }
+            ]
+        }
+    })
+
+    # 5b. MultipleChoice (Chips)
+    add_demo_surface("demo-multichoice-chips", {
+        "MultipleChoice": {
+            "selections": { "path": "galleryData/favoritesChips" },
+            "description": "Select tags (Chips)",
+            "type": "chips",
+            "options": [
+                { "label": { "literalString": "Work" }, "value": "work" },
+                { "label": { "literalString": "Home" }, "value": "home" },
+                { "label": { "literalString": "Urgent" }, "value": "urgent" },
+                { "label": { "literalString": "Later" }, "value": "later" }
+            ]
+        }
+    })
+
+    # 5c. MultipleChoice (Filterable)
+    add_demo_surface("demo-multichoice-filter", {
+        "MultipleChoice": {
+            "selections": { "path": "galleryData/favoritesFilter" },
+            "description": "Select countries (Filterable)",
+            "filterable": True,
+            "options": [
+                { "label": { "literalString": "United States" }, "value": "US" },
+                { "label": { "literalString": "Canada" }, "value": "CA" },
+                { "label": { "literalString": "United Kingdom" }, "value": "UK" },
+                { "label": { "literalString": "Australia" }, "value": "AU" },
+                { "label": { "literalString": "Germany" }, "value": "DE" },
+                { "label": { "literalString": "France" }, "value": "FR" },
+                { "label": { "literalString": "Japan" }, "value": "JP" }
             ]
         }
     })
@@ -319,7 +354,7 @@ def get_gallery_json() -> str:
                 {
                         "id": "response-text",
                         "component": {
-                            "Text": { "text": { "literalString": "Interact with the gallery to see responses." } }
+                            "Text": { "text": { "literalString": "Interact with the gallery to see responses. This view is updated by the agent by relaying the raw action commands it received from the client" } }
                         }
                 }
             ]

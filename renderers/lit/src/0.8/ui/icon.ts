@@ -43,7 +43,7 @@ export class Icon extends Root {
       }
 
       .g-icon {
-        font-family: 'Material Icons';
+        font-family: 'Material Symbols Outlined';
         font-weight: normal;
         font-style: normal;
         font-size: 24px;

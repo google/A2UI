@@ -196,6 +196,8 @@ export interface MultipleChoice {
     value: string;
   }[];
   maxAllowedSelections?: number;
+  type?: "checkbox" | "chips";
+  filterable?: boolean;
 }
 
 export interface Slider {

@@ -524,6 +524,18 @@
             "value": {
               "$ref": "common_types.json#/$defs/DynamicStringList",
               "description": "The list of currently selected values. This should be bound to a string array in the data model."
+            },
+            "type": {
+              "type": "string",
+              "description": "The display style of the component.",
+              "enum": [
+                "checkbox",
+                "chips"
+              ]
+            },
+            "filterable": {
+              "type": "boolean",
+              "description": "If true, displays a search input to filter the options."
             }
           },
           "required": ["component", "options", "value"]

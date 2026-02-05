@@ -24,6 +24,8 @@ const DEMO_ITEMS: DemoItem[] = [
   { id: "demo-slider", title: "Slider", description: "Select a value from a range.", actionButton: true },
   { id: "demo-date", title: "DateTimeInput", description: "Pick a date or time.", actionButton: true },
   { id: "demo-multichoice", title: "MultipleChoice", description: "Select valid options from a list.", actionButton: true },
+  { id: "demo-multichoice-chips", title: "MultipleChoice (Chips)", description: "Select options using chips.", actionButton: true },
+  { id: "demo-multichoice-filter", title: "MultipleChoice (Filterable)", description: "Search and filter options.", actionButton: true },
   { id: "demo-image", title: "Image", description: "Displays an image from a URL." },
   { id: "demo-button", title: "Button", description: "Triggers a client-side action." },
   { id: "demo-tabs", title: "Tabs", description: "Switch between different views." },
@@ -261,7 +263,9 @@ export class A2UIComponentGallery extends SignalWatcher(LitElement) {
       "demo-checkbox": "galleryData/checkbox",
       "demo-slider": "galleryData/slider",
       "demo-date": "galleryData/date",
-      "demo-multichoice": "galleryData/favorites"
+      "demo-multichoice": "galleryData/favorites",
+      "demo-multichoice-chips": "galleryData/favoritesChips",
+      "demo-multichoice-filter": "galleryData/favoritesFilter"
     };
 
     const path = pathMap[item.id];

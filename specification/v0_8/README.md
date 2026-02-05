@@ -1,4 +1,4 @@
-# Specification v0.8.1
+# Specification v0.8.2
 
 This directory contains the specification for version 0.8.1 of A2UI, a previous version of the specification, and is no longer under active development.
 
