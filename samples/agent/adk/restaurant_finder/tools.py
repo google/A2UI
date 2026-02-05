@@ -34,7 +34,7 @@ def get_restaurants(cuisine: str, location: str,  tool_context: ToolContext, cou
         try:
             script_dir = os.path.dirname(__file__)
             file_path = os.path.join(script_dir, "restaurant_data.json")
-            with open(file_path) as f:
+            with open(file_path, encoding="utf-8") as f:
                 restaurant_data_str = f.read()
                 if base_url := tool_context.state.get("base_url"):                    
                     restaurant_data_str = restaurant_data_str.replace("http://localhost:10002", base_url)
