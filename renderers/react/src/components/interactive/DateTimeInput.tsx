@@ -79,7 +79,6 @@ export const DateTimeInput = memo(function DateTimeInput({ node, surfaceId }: A2
     <div className="a2ui-datetime-input" style={hostStyle}>
       <section
         className={classMapToString(theme.components.DateTimeInput.container)}
-        style={stylesToObject(theme.additionalStyles?.DateTimeInput)}
       >
         <label
           htmlFor={id}
@@ -93,6 +92,7 @@ export const DateTimeInput = memo(function DateTimeInput({ node, surfaceId }: A2
           value={value}
           onChange={handleChange}
           className={classMapToString(theme.components.DateTimeInput.element)}
+          style={stylesToObject(theme.additionalStyles?.DateTimeInput)}
         />
       </section>
     </div>

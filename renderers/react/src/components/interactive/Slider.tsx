@@ -78,7 +78,6 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
     <div className="a2ui-slider" style={hostStyle}>
       <section
         className={classMapToString(theme.components.Slider.container)}
-        style={stylesToObject(theme.additionalStyles?.Slider)}
       >
         <label
           htmlFor={id}
@@ -95,6 +94,7 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
           max={maxValue}
           onChange={handleChange}
           className={classMapToString(theme.components.Slider.element)}
+          style={stylesToObject(theme.additionalStyles?.Slider)}
         />
         <span className={classMapToString(theme.components.Slider.label)}>
           {value}
