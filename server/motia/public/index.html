@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A2UI Demo Client</title>
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: #1a1a24;
+      --text-primary: #f0f0f5;
+      --text-secondary: #9090a0;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #10b981;
+      --border: #2a2a3a;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .search-box button {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+
+    .search-box button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status {
+      text-align: center;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .status.loading {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent);
+    }
+
+    .status.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .status.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    #surface-container {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 2rem;
+      min-height: 400px;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 300px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* A2UI Component Styles */
+    .a2ui-text { margin-bottom: 0.5rem; }
+    .a2ui-text.h1 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+    .a2ui-text.h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
+    .a2ui-text.h3 { font-size: 1.25rem; font-weight: 600; }
+    .a2ui-text.body { font-size: 1rem; color: var(--text-secondary); }
+    .a2ui-text.caption { font-size: 0.875rem; color: var(--text-secondary); }
+
+    .a2ui-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .a2ui-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .a2ui-button.primary {
+      background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+      color: white;
+    }
+
+    .a2ui-button.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .a2ui-button.secondary {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+    }
+
+    .a2ui-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .a2ui-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+
+    .a2ui-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .a2ui-column.center { align-items: center; }
+    .a2ui-column.start { align-items: flex-start; }
+    .a2ui-column.end { align-items: flex-end; }
+
+    .a2ui-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .a2ui-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .a2ui-list.horizontal {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .a2ui-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1rem 0;
+    }
+
+    /* Action log */
+    .action-log {
+      margin-top: 2rem;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 1rem;
+    }
+
+    .action-log h3 {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .action-log .log-item {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      padding: 0.5rem;
+      background: var(--bg-primary);
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      color: var(--success);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid var(--border);
+    }
+
+    .modal h2 {
+      margin-bottom: 1rem;
+    }
+
+    .modal-close {
+      margin-top: 1rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>🤖 A2UI Demo</h1>
+      <p>AI-Generated Dynamic User Interfaces</p>
+    </header>
+
+    <div class="search-box">
+      <input 
+        type="text" 
+        id="query-input" 
+        placeholder="Try: 'Find Italian restaurants in NYC'"
+        value="restaurants in NYC"
+      >
+      <button id="search-btn" onclick="searchRestaurants()">
+        🔍 Search
+      </button>
+    </div>
+
+    <div id="status" class="status" style="display: none;"></div>
+
+    <div id="surface-container">
+      <div class="empty-state">
+        <div class="icon">🍽️</div>
+        <p>Enter a search query to see AI-generated UI</p>
+      </div>
+    </div>
+
+    <div class="action-log">
+      <h3>📋 Action Log</h3>
+      <div id="action-log-items">
+        <div class="log-item">Ready to receive actions...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-container"></div>
+
+  <script>
+    // API server - update this if Motia is running on a different port
+    const API_BASE = 'http://localhost:3001';
+    const SESSION_ID = 'demo-session-' + Date.now();
+    let currentSurfaceId = null;
+    let components = {};
+
+    function showStatus(message, type) {
+      const status = document.getElementById('status');
+      status.textContent = message;
+      status.className = `status ${type}`;
+      status.style.display = 'block';
+      
+      if (type === 'success') {
+        setTimeout(() => { status.style.display = 'none'; }, 3000);
+      }
+    }
+
+    function logAction(action) {
+      const log = document.getElementById('action-log-items');
+      const item = document.createElement('div');
+      item.className = 'log-item';
+      item.textContent = `[${new Date().toLocaleTimeString()}] ${action}`;
+      log.insertBefore(item, log.firstChild);
+      
+      // Keep only last 10 items
+      while (log.children.length > 10) {
+        log.removeChild(log.lastChild);
+      }
+    }
+
+    async function searchRestaurants() {
+      const query = document.getElementById('query-input').value;
+      const btn = document.getElementById('search-btn');
+      
+      if (!query.trim()) {
+        showStatus('Please enter a search query', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Generating...';
+      showStatus('AI is generating your UI...', 'loading');
+
+      try {
+        // Call the restaurant agent
+        const response = await fetch(`${API_BASE}/demo/restaurant-agent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, sessionId: SESSION_ID }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to generate UI');
+        }
+
+        currentSurfaceId = data.surfaceId;
+        logAction(`Surface created: ${data.surfaceId}`);
+        showStatus(data.message, 'success');
+
+        // Fetch and render the surface
+        await loadSurface(data.surfaceId);
+
+      } catch (error) {
+        showStatus(`Error: ${error.message}`, 'error');
+        logAction(`Error: ${error.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔍 Search';
+      }
+    }
+
+    async function loadSurface(surfaceId) {
+      try {
+        const response = await fetch(
+          `${API_BASE}/a2ui/surfaces/${surfaceId}?sessionId=${SESSION_ID}`
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to load surface');
+        }
+
+        const surface = await response.json();
+        components = surface.components;
+        
+        renderSurface(surface);
+        logAction(`Surface loaded with ${Object.keys(components).length} components`);
+
+      } catch (error) {
+        showStatus(`Error loading surface: ${error.message}`, 'error');
+      }
+    }
+
+    function renderSurface(surface) {
+      const container = document.getElementById('surface-container');
+      
+      // Find the root component
+      const root = Object.values(surface.components).find(c => c.id === 'root');
+      
+      if (root) {
+        container.innerHTML = renderComponent(root);
+      } else {
+        container.innerHTML = '<p>No root component found</p>';
+      }
+    }
+
+    function renderComponent(comp) {
+      if (!comp) return '';
+
+      switch (comp.component) {
+        case 'Text':
+          return renderText(comp);
+        case 'Image':
+          return renderImage(comp);
+        case 'Button':
+          return renderButton(comp);
+        case 'Card':
+          return renderCard(comp);
+        case 'Column':
+          return renderColumn(comp);
+        case 'Row':
+          return renderRow(comp);
+        case 'List':
+          return renderList(comp);
+        case 'Divider':
+          return '<div class="a2ui-divider"></div>';
+        default:
+          return `<div>Unknown component: ${comp.component}</div>`;
+      }
+    }
+
+    function renderText(comp) {
+      const hint = comp.usageHint || 'body';
+      return `<div class="a2ui-text ${hint}">${escapeHtml(comp.text)}</div>`;
+    }
+
+    function renderImage(comp) {
+      return `<img class="a2ui-image" src="${escapeHtml(comp.url)}" alt="Image" loading="lazy">`;
+    }
+
+    function renderButton(comp) {
+      const isPrimary = comp.primary !== false;
+      const childComp = components[comp.child];
+      const label = childComp ? childComp.text : 'Button';
+      const actionData = JSON.stringify(comp.action || {}).replace(/"/g, '&quot;');
+      
+      return `
+        <button 
+          class="a2ui-button ${isPrimary ? 'primary' : 'secondary'}"
+          onclick='handleAction(${actionData})'
+        >
+          ${escapeHtml(label)}
+        </button>
+      `;
+    }
+
+    function renderCard(comp) {
+      const childComp = components[comp.child];
+      return `<div class="a2ui-card">${renderComponent(childComp)}</div>`;
+    }
+
+    function renderColumn(comp) {
+      const align = comp.alignment || 'start';
+      const children = (comp.children || [])
+        .map(id => components[id])
+        .map(renderComponent)
+        .join('');
+      
+      return `<div class="a2ui-column ${align}">${children}</div>`;
+    }
+
+    function renderRow(comp) {
+      const children = (comp.children || [])
+        .map(id => components[id])
+        .map(renderComponent)
+        .join('');
+      
+      return `<div class="a2ui-row">${children}</div>`;
+    }
+
+    function renderList(comp) {
+      const direction = comp.direction || 'vertical';
+      const children = (comp.children || [])
+        .map(id => components[id])
+        .map(renderComponent)
+        .join('');
+      
+      return `<div class="a2ui-list ${direction === 'horizontal' ? 'horizontal' : ''}">${children}</div>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function handleAction(action) {
+      logAction(`Action triggered: ${action.name}`);
+      
+      // Send action to server
+      try {
+        const response = await fetch(`${API_BASE}/a2ui/actions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            surfaceId: currentSurfaceId,
+            sessionId: SESSION_ID,
+            name: action.name,
+            sourceComponentId: 'button',
+            timestamp: new Date().toISOString(),
+            context: action.context || {},
+          }),
+        });
+
+        const data = await response.json();
+        logAction(`Action received by server: ${action.name}`);
+
+        // Show booking modal for demo
+        if (action.name === 'book_restaurant') {
+          showBookingModal(action.context);
+        }
+
+      } catch (error) {
+        logAction(`Action error: ${error.message}`);
+      }
+    }
+
+    function showBookingModal(context) {
+      const container = document.getElementById('modal-container');
+      container.innerHTML = `
+        <div class="modal-overlay" onclick="closeModal(event)">
+          <div class="modal" onclick="event.stopPropagation()">
+            <h2>📅 Book a Table</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              Booking at <strong>${escapeHtml(context.restaurantName || 'Restaurant')}</strong>
+            </p>
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Party Size</label>
+              <select style="width: 100%; padding: 0.75rem; border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border);">
+                <option>2 guests</option>
+                <option>4 guests</option>
+                <option>6 guests</option>
+                <option>8+ guests</option>
+              </select>
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Date & Time</label>
+              <input type="datetime-local" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border);">
+            </div>
+            <button class="a2ui-button primary" style="width: 100%;" onclick="confirmBooking('${escapeHtml(context.restaurantName)}')">
+              ✅ Confirm Booking
+            </button>
+            <button class="a2ui-button secondary modal-close" onclick="closeModal()">
+              Cancel
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function closeModal(event) {
+      if (!event || event.target.classList.contains('modal-overlay')) {
+        document.getElementById('modal-container').innerHTML = '';
+      }
+    }
+
+    function confirmBooking(restaurantName) {
+      logAction(`Booking confirmed at ${restaurantName}!`);
+      showStatus(`🎉 Booking confirmed at ${restaurantName}!`, 'success');
+      closeModal();
+    }
+
+    // Handle Enter key
+    document.getElementById('query-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchRestaurants();
+    });
+  </script>
+</body>
+</html>
+
