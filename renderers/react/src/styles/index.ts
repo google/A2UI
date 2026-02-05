@@ -107,19 +107,19 @@ export const componentSpecificStyles: string = `
 }
 
 /* input { display: block; width: 100%; } */
-.a2ui-surface .a2ui-textfield input {
+:where(.a2ui-surface .a2ui-textfield) input {
   display: block;
   width: 100%;
 }
 
 /* label { display: block; margin-bottom: 4px; } */
-.a2ui-surface .a2ui-textfield label {
+:where(.a2ui-surface .a2ui-textfield) label {
   display: block;
   margin-bottom: 4px;
 }
 
 /* textarea - same styling as input for multiline text fields */
-.a2ui-surface .a2ui-textfield textarea {
+:where(.a2ui-surface .a2ui-textfield) textarea {
   display: block;
   width: 100%;
 }
@@ -137,7 +137,7 @@ export const componentSpecificStyles: string = `
 }
 
 /* input { display: block; width: 100%; } */
-.a2ui-surface .a2ui-checkbox input {
+:where(.a2ui-surface .a2ui-checkbox) input {
   display: block;
   width: 100%;
 }
@@ -153,7 +153,7 @@ export const componentSpecificStyles: string = `
 }
 
 /* input { display: block; width: 100%; } */
-.a2ui-surface .a2ui-slider input {
+:where(.a2ui-surface .a2ui-slider) input {
   display: block;
   width: 100%;
 }
@@ -202,7 +202,7 @@ export const componentSpecificStyles: string = `
 }
 
 /* dialog { padding: 0; border: none; background: none; } */
-.a2ui-surface .a2ui-modal dialog {
+:where(.a2ui-surface .a2ui-modal) dialog {
   padding: 0;
   border: none;
   background: none;
@@ -238,7 +238,7 @@ export const componentSpecificStyles: string = `
 }
 
 /* img { display: block; width: 100%; height: 100%; object-fit: var(--object-fit, fill); } */
-.a2ui-surface .a2ui-image img {
+:where(.a2ui-surface .a2ui-image) img {
   display: block;
   width: 100%;
   height: 100%;
@@ -258,7 +258,7 @@ export const componentSpecificStyles: string = `
 }
 
 /* video { display: block; width: 100%; } */
-.a2ui-surface .a2ui-video video {
+:where(.a2ui-surface .a2ui-video) video {
   display: block;
   width: 100%;
 }
@@ -276,7 +276,7 @@ export const componentSpecificStyles: string = `
 }
 
 /* audio { display: block; width: 100%; } */
-.a2ui-surface .a2ui-audio audio {
+:where(.a2ui-surface .a2ui-audio) audio {
   display: block;
   width: 100%;
 }
