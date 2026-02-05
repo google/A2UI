@@ -16,6 +16,10 @@
     "./ui": {
       "types": "./dist/src/0.8/ui/ui.d.ts",
       "default": "./dist/src/0.8/ui/ui.js"
+    },
+    "./v0_9": {
+      "types": "./dist/src/v0_9/index.d.ts",
+      "default": "./dist/src/v0_9/index.js"
     }
   },
   "type": "module",
@@ -36,7 +40,7 @@
       "service": true
     },
     "test": {
-      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8/*.test.js",
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/0.8 dist/src/v0_9",
       "dependencies": [
         "build"
       ]
