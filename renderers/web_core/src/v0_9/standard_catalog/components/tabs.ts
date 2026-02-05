@@ -14,7 +14,7 @@ export interface TabsRenderProps<T> {
 export class TabsComponent<T> implements Component<T> {
   readonly name = 'Tabs';
 
-  constructor(private readonly renderer: (props: TabsRenderProps<T>) => T) {}
+  constructor(private readonly renderer: (props: TabsRenderProps<T>, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -30,6 +30,6 @@ export class TabsComponent<T> implements Component<T> {
       }
     }
 
-    return this.renderer({ tabs });
+    return this.renderer({ tabs }, context);
   }
 }

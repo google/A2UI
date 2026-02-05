@@ -18,7 +18,7 @@ export interface ChoicePickerRenderProps {
 export class ChoicePickerComponent<T> implements Component<T> {
   readonly name = 'ChoicePicker';
 
-  constructor(private readonly renderer: (props: ChoicePickerRenderProps) => T) {}
+  constructor(private readonly renderer: (props: ChoicePickerRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -50,6 +50,6 @@ export class ChoicePickerComponent<T> implements Component<T> {
       value,
       variant,
       onChange
-    });
+    }, context);
   }
 }

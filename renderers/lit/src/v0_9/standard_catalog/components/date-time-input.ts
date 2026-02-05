@@ -1,8 +1,10 @@
 import { html, TemplateResult } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { DateTimeInputComponent } from '@a2ui/web_core/v0_9';
 
 export const litDateTimeInput = new DateTimeInputComponent<TemplateResult>(
-    ({ label, value, min, max, enableDate, enableTime, onChange }) => {
+    ({ label, value, min, max, enableDate, enableTime, onChange }, context) => {
+        const classes = context.surfaceContext.theme.components.DateTimeInput;
         // Determine type based on flags
         let type = 'text';
         if (enableDate && enableTime) type = 'datetime-local';
@@ -10,7 +12,7 @@ export const litDateTimeInput = new DateTimeInputComponent<TemplateResult>(
         else if (enableTime) type = 'time';
 
         return html`
-            <div class="a2ui-date-time">
+            <div class=${classMap(classes)}>
                 <label>${label}</label>
                 <input 
                     type="${type}" 

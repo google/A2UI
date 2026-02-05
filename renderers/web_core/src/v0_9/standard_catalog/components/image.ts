@@ -11,7 +11,7 @@ export interface ImageRenderProps {
 export class ImageComponent<T> implements Component<T> {
   readonly name = 'Image';
 
-  constructor(private readonly renderer: (props: ImageRenderProps) => T) {}
+  constructor(private readonly renderer: (props: ImageRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -19,6 +19,6 @@ export class ImageComponent<T> implements Component<T> {
     const fit = properties['fit'] as ImageRenderProps['fit'];
     const variant = properties['variant'] as ImageRenderProps['variant'];
     
-    return this.renderer({ url, fit, variant });
+    return this.renderer({ url, fit, variant }, context);
   }
 }

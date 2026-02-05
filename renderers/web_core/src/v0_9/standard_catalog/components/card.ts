@@ -9,13 +9,13 @@ export interface CardRenderProps<T> {
 export class CardComponent<T> implements Component<T> {
   readonly name = 'Card';
 
-  constructor(private readonly renderer: (props: CardRenderProps<T>) => T) {}
+  constructor(private readonly renderer: (props: CardRenderProps<T>, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
     const childId = properties['child'];
     const child = childId ? context.renderChild(childId) : null;
 
-    return this.renderer({ child });
+    return this.renderer({ child }, context);
   }
 }

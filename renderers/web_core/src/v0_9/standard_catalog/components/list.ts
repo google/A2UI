@@ -11,7 +11,7 @@ export interface ListRenderProps<T> {
 export class ListComponent<T> implements Component<T> {
   readonly name = 'List';
 
-  constructor(private readonly renderer: (props: ListRenderProps<T>) => T) {}
+  constructor(private readonly renderer: (props: ListRenderProps<T>, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -35,6 +35,6 @@ export class ListComponent<T> implements Component<T> {
       children: renderedChildren,
       direction,
       align
-    });
+    }, context);
   }
 }

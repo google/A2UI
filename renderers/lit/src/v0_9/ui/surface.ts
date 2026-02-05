@@ -2,9 +2,12 @@
 import { LitElement, html, TemplateResult, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { SurfaceContext, DataContext, ComponentContext } from '@a2ui/web_core/v0_9';
+import { sharedStyles } from './styles.js';
 
 @customElement('a2ui-surface-v0-9')
 export class Surface extends LitElement {
+    static styles = [sharedStyles];
+
     @property({ attribute: false })
     accessor context: SurfaceContext | undefined;
 

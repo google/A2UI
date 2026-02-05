@@ -1,9 +1,12 @@
 import { html, TemplateResult } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { SliderComponent } from '@a2ui/web_core/v0_9';
 
 export const litSlider = new SliderComponent<TemplateResult>(
-    ({ label, min, max, value, onChange }) => html`
-        <div class="a2ui-slider">
+    ({ label, min, max, value, onChange }, context) => {
+        const classes = context.surfaceContext.theme.components.Slider;
+        return html`
+        <div class=${classMap(classes)}>
             <label>${label}</label>
             <input 
                 type="range" 
@@ -14,5 +17,6 @@ export const litSlider = new SliderComponent<TemplateResult>(
             />
             <span>${value}</span>
         </div>
-    `
+    `;
+    }
 );

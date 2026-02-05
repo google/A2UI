@@ -1,8 +1,10 @@
 import { html, TemplateResult } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { ChoicePickerComponent } from '@a2ui/web_core/v0_9';
 
 export const litChoicePicker = new ChoicePickerComponent<TemplateResult>(
-    ({ label, options, value, variant, onChange }) => {
+    ({ label, options, value, variant, onChange }, context) => {
+        const classes = context.surfaceContext.theme.components.ChoicePicker;
         // Simple select implementation for now
         const isMultiple = variant === 'multipleSelection';
         const handleChange = (e: Event) => {
@@ -16,7 +18,7 @@ export const litChoicePicker = new ChoicePickerComponent<TemplateResult>(
         };
 
         return html`
-            <div class="a2ui-choice-picker">
+            <div class=${classMap(classes)}>
                 <label>${label}</label>
                 <select 
                     ?multiple="${isMultiple}" 

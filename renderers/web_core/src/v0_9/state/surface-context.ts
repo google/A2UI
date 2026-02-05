@@ -1,6 +1,8 @@
 
 import { DataModel } from './data-model.js';
 import { Catalog } from '../catalog/types.js';
+import { Theme } from '../types/theme.js';
+import { defaultTheme } from '../themes/default.js';
 
 export type ActionHandler = (action: any) => Promise<void>;
 
@@ -21,7 +23,7 @@ export class SurfaceContext {
   constructor(
     readonly id: string,
     readonly catalog: Catalog<any>,
-    readonly theme: any,
+    readonly theme: any = defaultTheme,
     private readonly actionHandler: ActionHandler
   ) {
     this.dataModel = new DataModel({});

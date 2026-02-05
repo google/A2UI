@@ -9,7 +9,7 @@ export interface IconRenderProps {
 export class IconComponent<T> implements Component<T> {
   readonly name = 'Icon';
 
-  constructor(private readonly renderer: (props: IconRenderProps) => T) { }
+  constructor(private readonly renderer: (props: IconRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -22,6 +22,6 @@ export class IconComponent<T> implements Component<T> {
       name = nameProp; // Pass through object (e.g. { icon, font } or { path })
     }
 
-    return this.renderer({ name });
+    return this.renderer({ name }, context);
   }
 }

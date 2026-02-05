@@ -1,9 +1,12 @@
 import { html, TemplateResult } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { CheckBoxComponent } from '@a2ui/web_core/v0_9';
 
 export const litCheckBox = new CheckBoxComponent<TemplateResult>(
-    ({ label, value, onChange }) => html`
-        <div class="a2ui-checkbox">
+    ({ label, value, onChange }, context) => {
+        const classes = context.surfaceContext.theme.components.CheckBox;
+        return html`
+        <div class=${classMap(classes)}>
             <label>
                 <input 
                     type="checkbox" 
@@ -13,5 +16,6 @@ export const litCheckBox = new CheckBoxComponent<TemplateResult>(
                 ${label}
             </label>
         </div>
-    `
+    `;
+    }
 );

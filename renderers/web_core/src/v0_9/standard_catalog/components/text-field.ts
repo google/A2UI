@@ -12,7 +12,7 @@ export interface TextFieldRenderProps {
 export class TextFieldComponent<T> implements Component<T> {
   readonly name = 'TextField';
 
-  constructor(private readonly renderer: (props: TextFieldRenderProps) => T) {}
+  constructor(private readonly renderer: (props: TextFieldRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -48,6 +48,6 @@ export class TextFieldComponent<T> implements Component<T> {
       value,
       variant,
       onChange
-    });
+    }, context);
   }
 }

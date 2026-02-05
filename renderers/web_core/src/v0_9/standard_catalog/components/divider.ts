@@ -9,12 +9,12 @@ export interface DividerRenderProps {
 export class DividerComponent<T> implements Component<T> {
   readonly name = 'Divider';
 
-  constructor(private readonly renderer: (props: DividerRenderProps) => T) {}
+  constructor(private readonly renderer: (props: DividerRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
     const axis = (properties['axis'] as any) ?? 'horizontal';
     
-    return this.renderer({ axis });
+    return this.renderer({ axis }, context);
   }
 }

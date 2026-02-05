@@ -15,7 +15,7 @@ export interface DateTimeInputRenderProps {
 export class DateTimeInputComponent<T> implements Component<T> {
   readonly name = 'DateTimeInput';
 
-  constructor(private readonly renderer: (props: DateTimeInputRenderProps) => T) {}
+  constructor(private readonly renderer: (props: DateTimeInputRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -41,6 +41,6 @@ export class DateTimeInputComponent<T> implements Component<T> {
       enableDate,
       enableTime,
       onChange
-    });
+    }, context);
   }
 }

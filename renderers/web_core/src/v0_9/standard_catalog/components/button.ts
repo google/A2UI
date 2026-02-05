@@ -12,7 +12,7 @@ export interface ButtonRenderProps<T> {
 export class ButtonComponent<T> implements Component<T> {
   readonly name = 'Button';
 
-  constructor(private readonly renderer: (props: ButtonRenderProps<T>) => T) { }
+  constructor(private readonly renderer: (props: ButtonRenderProps<T>, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -34,6 +34,6 @@ export class ButtonComponent<T> implements Component<T> {
       disabled,
       onAction,
       child
-    });
+    }, context);
   }
 }

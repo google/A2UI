@@ -11,7 +11,7 @@ export interface CheckBoxRenderProps {
 export class CheckBoxComponent<T> implements Component<T> {
   readonly name = 'CheckBox';
 
-  constructor(private readonly renderer: (props: CheckBoxRenderProps) => T) {}
+  constructor(private readonly renderer: (props: CheckBoxRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -30,6 +30,6 @@ export class CheckBoxComponent<T> implements Component<T> {
       label,
       value,
       onChange
-    });
+    }, context);
   }
 }

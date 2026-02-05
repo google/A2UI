@@ -13,7 +13,7 @@ export interface SliderRenderProps {
 export class SliderComponent<T> implements Component<T> {
   readonly name = 'Slider';
 
-  constructor(private readonly renderer: (props: SliderRenderProps) => T) {}
+  constructor(private readonly renderer: (props: SliderRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -35,6 +35,6 @@ export class SliderComponent<T> implements Component<T> {
       max,
       value,
       onChange
-    });
+    }, context);
   }
 }

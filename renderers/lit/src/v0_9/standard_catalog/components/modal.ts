@@ -1,4 +1,5 @@
 import { html, TemplateResult, nothing, LitElement } from 'lit';
+import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ModalComponent } from '@a2ui/web_core/v0_9';
 
@@ -29,9 +30,10 @@ export class A2UiModalWrapper extends LitElement {
 }
 
 export const litModal = new ModalComponent<TemplateResult>(
-  ({ trigger, content }) => {
+  ({ trigger, content }, context) => {
+    const classes = context.surfaceContext.theme.components.Modal;
     return html`
-            <a2ui-modal-wrapper-v0-9 .trigger="${trigger}" .content="${content}"></a2ui-modal-wrapper-v0-9>
+            <a2ui-modal-wrapper-v0-9 .trigger="${trigger}" .content="${content}" class=${classMap(classes)}></a2ui-modal-wrapper-v0-9>
         `;
   }
 );

@@ -10,7 +10,7 @@ export interface ModalRenderProps<T> {
 export class ModalComponent<T> implements Component<T> {
   readonly name = 'Modal';
 
-  constructor(private readonly renderer: (props: ModalRenderProps<T>) => T) {}
+  constructor(private readonly renderer: (props: ModalRenderProps<T>, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
@@ -20,6 +20,6 @@ export class ModalComponent<T> implements Component<T> {
     const trigger = triggerId ? context.renderChild(triggerId) : null;
     const content = contentId ? context.renderChild(contentId) : null;
 
-    return this.renderer({ trigger, content });
+    return this.renderer({ trigger, content }, context);
   }
 }

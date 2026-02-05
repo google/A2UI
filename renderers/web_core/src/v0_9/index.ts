@@ -26,3 +26,9 @@ export * from './standard_catalog/components/divider.js';
 export * from './standard_catalog/components/list.js';
 export * from './standard_catalog/components/tabs.js';
 export * from './standard_catalog/components/modal.js';
+
+export * as Styles from './styles/index.js';
+export * from './types/colors.js';
+export * from './types/theme.js';
+export * as Themes from './themes/default.js';
+

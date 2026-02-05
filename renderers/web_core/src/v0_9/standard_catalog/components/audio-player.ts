@@ -10,13 +10,13 @@ export interface AudioPlayerRenderProps {
 export class AudioPlayerComponent<T> implements Component<T> {
   readonly name = 'AudioPlayer';
 
-  constructor(private readonly renderer: (props: AudioPlayerRenderProps) => T) {}
+  constructor(private readonly renderer: (props: AudioPlayerRenderProps, context: ComponentContext<T>) => T) { }
 
   render(context: ComponentContext<T>): T {
     const { properties } = context;
     const url = context.resolve<string>(properties['url'] ?? '');
     const description = context.resolve<string>(properties['description'] ?? '');
     
-    return this.renderer({ url, description });
+    return this.renderer({ url, description }, context);
   }
 }
