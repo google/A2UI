@@ -229,25 +229,25 @@ Each Lit component with `static styles` needs a corresponding entry in `componen
 | **Card** | `card.ts` | `:host`, `section`, `::slotted(*)` | Uses `> section` child combinator |
 | **Text** | `text.ts` | `:host`, `h1-h5` (uses `:where()`) | Paragraph margin reset added |
 | **Divider** | `divider.ts` | `:host`, `hr` | Added margin to match browser default |
-| **TextField** | `text-field.ts` | `:host`, `input`, `label`, `textarea` | Multiline support added |
+| **TextField** | `text-field.ts` | `:host`, `input`, `label`, `textarea` | Uses `:where()` for element selectors. Multiline support added |
 | **Button** | `button.ts` | `:host` | Simple display/flex |
 | **Icon** | `icon.ts` | `:host` | Simple display/flex |
 | **Column** | `column.ts` | `:host`, `section`, attribute selectors | Uses `data-alignment` and `data-distribution` |
 | **Row** | `row.ts` | `:host`, `section`, attribute selectors | Uses `data-alignment` and `data-distribution` |
 | **List** | `list.ts` | `:host`, `section`, `::slotted(*)` | All fixtures pass 0% including cards inside lists |
-| **Image** | `image.ts` | `:host`, `img` | All usage hints pass 0% |
-| **Slider** | `slider.ts` | `:host`, `input[type="range"]` | Basic slider passes 0% |
+| **Image** | `image.ts` | `:host`, `img` | Uses `:where()` for `img`. All usage hints pass 0% |
+| **Slider** | `slider.ts` | `:host`, `input[type="range"]` | Uses `:where()` for `input`. Basic slider passes 0% |
 | **Tabs** | `tabs.ts` | `:host`, `section`, `button` | All fixtures pass 0% |
-| **CheckBox** | `checkbox.ts` | `:host`, `input` | Works via path binding |
-| **DateTimeInput** | `datetime-input.ts` | `:host`, `input` | React uses HTML5 inputs directly |
+| **CheckBox** | `checkbox.ts` | `:host`, `input` | Uses `:where()` for `input`. Works via path binding |
+| **DateTimeInput** | `datetime-input.ts` | `:host`, `input` | Uses `:where()` for `input`. React uses HTML5 inputs directly |
 
 ### 🔄 Need Investigation
 
 | Component | Lit File | Styles | Issue |
 |-----------|----------|--------|-------|
-| **Modal** | `modal.ts` | `:host`, `dialog`, `#controls`, `button` | No test fixtures yet |
-| **Video** | `video.ts` | `:host`, `video` | No test fixtures yet |
-| **AudioPlayer** | `audio.ts` | `:host`, `audio` | No test fixtures yet |
+| **Modal** | `modal.ts` | `:host`, `dialog`, `#controls`, `button` | Uses `:where()` for `dialog`. No test fixtures yet |
+| **Video** | `video.ts` | `:host`, `video` | Uses `:where()` for `video`. No test fixtures yet |
+| **AudioPlayer** | `audio.ts` | `:host`, `audio` | Uses `:where()` for `audio`. No test fixtures yet |
 
 ### ⚠️ Lit Renderer Issues
 
@@ -294,8 +294,8 @@ Pass CSS variables via inline style:
 ```
 
 ```css
-/* componentSpecificStyles */
-.a2ui-surface .a2ui-image img {
+/* componentSpecificStyles — use :where() so utility classes (e.g. layout-el-cv) can override */
+:where(.a2ui-surface .a2ui-image) img {
   object-fit: var(--object-fit, fill);
 }
 ```
@@ -314,11 +314,11 @@ dialog section #controls button { ... }
 
 ### Form Elements
 
-Form inputs already have some shared styles. Component-specific overrides should be scoped:
+Form inputs already have some shared styles. Component-specific overrides use `:where()` so theme utility classes can override them:
 
 ```css
-/* DateTimeInput specific */
-.a2ui-surface .a2ui-datetime-input input {
+/* DateTimeInput specific — :where() keeps specificity at (0,0,1) to match Lit's bare `input` selector */
+:where(.a2ui-surface .a2ui-datetime-input) input {
   border-radius: 8px;
   padding: 8px;
   border: 1px solid #ccc;
