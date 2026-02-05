@@ -1,0 +1,235 @@
+[
+  {
+    "title": "Basic Static Content",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "static-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "static-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "componentProperties": {
+                "Column": {
+                  "children": {
+                    "explicitList": [
+                      "heading-1",
+                      "text-1",
+                      "image-1"
+                    ]
+                  },
+                  "justify": "start",
+                  "align": "stretch"
+                }
+              }
+            },
+            {
+              "id": "heading-1",
+              "componentProperties": {
+                "Text": {
+                  "text": "Welcome to A2UI v0.9",
+                  "variant": "h1"
+                }
+              }
+            },
+            {
+              "id": "text-1",
+              "componentProperties": {
+                "Text": {
+                  "text": "This is a simple static example rendered using the new Lit renderer. It features a heading, text, and an image."
+                }
+              }
+            },
+            {
+              "id": "image-1",
+              "componentProperties": {
+                "Image": {
+                  "url": "https://picsum.photos/id/237/400/200",
+                  "fit": "cover",
+                  "variant": "largeFeature"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Interactive Components",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "interactive-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "interactive-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "componentProperties": {
+                "Column": {
+                  "children": {
+                    "explicitList": [
+                      "intro-text",
+                      "action-row"
+                    ]
+                  },
+                  "justify": "start",
+                  "align": "stretch"
+                }
+              }
+            },
+            {
+              "id": "intro-text",
+              "componentProperties": {
+                "Text": {
+                  "text": "Interact with these components:"
+                }
+              }
+            },
+            {
+              "id": "action-row",
+              "componentProperties": {
+                "Row": {
+                  "children": {
+                    "explicitList": [
+                      "btn-primary",
+                      "btn-secondary"
+                    ]
+                  },
+                  "justify": "start",
+                  "align": "center"
+                }
+              }
+            },
+            {
+              "id": "btn-primary",
+              "componentProperties": {
+                "Button": {
+                  "child": "btn-primary-text",
+                  "action": {
+                    "name": "primary-click",
+                    "parameters": {
+                      "type": "primary"
+                    }
+                  },
+                  "variant": "primary"
+                }
+              }
+            },
+            {
+              "id": "btn-primary-text",
+              "componentProperties": {
+                "Text": {
+                  "text": "Click Me"
+                }
+              }
+            },
+            {
+              "id": "btn-secondary",
+              "componentProperties": {
+                "Button": {
+                  "child": "btn-secondary-text",
+                  "action": {
+                    "name": "secondary-click",
+                    "parameters": {
+                      "type": "secondary"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "btn-secondary-text",
+              "componentProperties": {
+                "Text": {
+                  "text": "Or Me"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Data Model Binding",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "data-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "data-surface-1",
+          "path": "/",
+          "value": {
+            "userName": "Jane Doe",
+            "score": 42
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "data-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "componentProperties": {
+                "Card": {
+                  "child": "content-col"
+                }
+              }
+            },
+            {
+              "id": "content-col",
+              "componentProperties": {
+                "Column": {
+                  "children": {
+                    "explicitList": [
+                      "user-greeting",
+                      "score-display"
+                    ]
+                  },
+                  "justify": "start",
+                  "align": "stretch"
+                }
+              }
+            },
+            {
+              "id": "user-greeting",
+              "componentProperties": {
+                "Text": {
+                  "text": {
+                    "path": "/userName"
+                  }
+                }
+              }
+            },
+            {
+              "id": "score-display",
+              "componentProperties": {
+                "Text": {
+                  "text": {
+                    "path": "/score"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]
