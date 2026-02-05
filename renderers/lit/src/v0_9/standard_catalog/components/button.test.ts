@@ -9,4 +9,10 @@ describe('Lit Button', () => {
         assertTemplateContains(result, '<button');
         assertTemplateContains(result, 'Click Me');
     });
+
+    it('renders child content overrides label', () => {
+        const context = createLitTestContext({ label: 'Label', child: 'Custom Content' });
+        const result = litButton.render(context);
+        assertTemplateContains(result, 'Custom Content');
+    });
 });

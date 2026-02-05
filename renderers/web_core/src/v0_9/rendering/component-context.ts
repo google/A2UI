@@ -60,6 +60,17 @@ export class ComponentContext<T> {
   }
 
   /**
+   * Resolves a single child property (ID).
+   */
+  resolveChild(propertyName: string): T | null {
+    const childId = this.properties[propertyName];
+    if (typeof childId === 'string') {
+      return this.renderChild(childId);
+    }
+    return null;
+  }
+
+  /**
    * Resolves a children property which can be an explicit list of IDs or a template.
    */
   resolveChildren(propertyName: string): T[] {

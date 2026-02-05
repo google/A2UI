@@ -49,4 +49,21 @@ describe('ButtonComponent', () => {
     (result as any).onAction();
     assert.strictEqual(actionDispatched, null);
   });
+
+  it('resolves child', () => {
+    const comp = new ButtonComponent((props) => props);
+    // Note: We need to mock renderChild or use a context that supports it if we want to verify resolveChild output
+    // The locally defined createTestContext uses a ComponentContext.
+    // We should check if ComponentContext.resolveChild works.
+    // We can inject a mock child.
+    const context = createTestContext({
+      label: 'Click Me',
+      child: 'icon-1'
+    });
+    // Mock renderChild for test-id
+    context.renderChild = (id: string) => `Rendered(${id})`;
+
+    const result = comp.render(context) as any;
+    assert.strictEqual(result.child, 'Rendered(icon-1)');
+  });
 });
