@@ -8,30 +8,47 @@ The client uses the `@a2ui/lit` renderer to interpret the JSON-based UI descript
 
 ## Getting Started
 
+To fully run the sample, you need to start **both** the Agent (frontend logic) and the Client (web renderer).
+
 ### Prerequisites
 
--   Node.js 18+
--   `npm`
+-   Python 3.10+ & `uv` (for Agent)
+-   Node.js 18+ & `npm` (for Client)
 
-### Running the Client
+### 1. Run the Agent (Backend)
 
-1.  Ensure the **Component Gallery Agent** is running (see agent README).
+The agent serves the UI definitions and handles user interactions.
 
-2.  Navigate to the client directory:
+1.  Navigate to the agent directory:
+    ```bash
+    cd samples/agent/adk/component_gallery
+    ```
+
+2.  Install dependencies and start the server:
+    ```bash
+    uv run .
+    ```
+    The agent will run on `http://localhost:10005`.
+
+### 2. Run the Client (Frontend)
+
+The client connects to the agent and renders the UI.
+
+1.  Open a **new terminal** and navigate to the client directory:
     ```bash
     cd samples/client/lit/component_gallery
     ```
 
-3.  Install dependencies:
+2.  Install dependencies:
     ```bash
     npm install
     ```
 
-4.  Start the development server:
+3.  Start the development server:
     ```bash
     npm run dev
     ```
-    Open your browser to the URL shown in the console (usually `http://localhost:5173`).
+    Open your browser to the URL shown (usually `http://localhost:5173`).
 
 ## Attribution
 

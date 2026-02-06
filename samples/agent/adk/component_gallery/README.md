@@ -10,23 +10,47 @@ This sample agent demonstrates the capabilities of the A2UI framework using the 
 
 ## Getting Started
 
+To fully run the sample, you need to start **both** the Agent (frontend logic) and the Client (web renderer).
+
 ### Prerequisites
 
--   Python 3.10+
--   `uv` package manager (recommended) or `pip`
+-   Python 3.10+ & `uv` (for Agent)
+-   Node.js 18+ & `npm` (for Client)
 
-### Running the Agent
+### 1. Run the Agent (Backend)
+
+The agent serves the UI definitions and handles user interactions.
 
 1.  Navigate to the agent directory:
     ```bash
     cd samples/agent/adk/component_gallery
     ```
 
-2.  Install dependencies and run the agent:
+2.  Install dependencies and start the server:
     ```bash
     uv run .
     ```
-    The agent will start on port `10005`.
+    The agent will run on `http://localhost:10005`.
+
+### 2. Run the Client (Frontend)
+
+The client connects to the agent and renders the UI.
+
+1.  Open a **new terminal** and navigate to the client directory:
+    ```bash
+    cd samples/client/lit/component_gallery
+    ```
+
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+    Open your browser to the URL shown (usually `http://localhost:5173`).
 
 ## Attribution
 
