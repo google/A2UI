@@ -525,7 +525,7 @@
               "$ref": "common_types.json#/$defs/DynamicStringList",
               "description": "The list of currently selected values. This should be bound to a string array in the data model."
             },
-            "type": {
+            "displayStyle": {
               "type": "string",
               "description": "The display style of the component.",
               "enum": [

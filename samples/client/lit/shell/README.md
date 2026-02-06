@@ -27,7 +27,7 @@ This sample depends on the Lit renderer. Before running this sample, you need to
    ```
 
 3. **Run the servers:**
-   - Run the [Restaurant Finder Agent](../../../agent/adk/restaurant_finder/) (Default)
+   - Run the [Restaurant Finder Agent](../../../agent/adk/restaurant_finder/) (Default): `npm run demo:restaurant`
    - Run the dev server: `npm run dev`
 
 ### Running the Contact Sample
@@ -36,8 +36,7 @@ The shell app supports multiple configured applications. To run the Contact samp
 
 1. **Start the Contact Agent:**
    ```bash
-   cd ../../../agent/adk/contact_lookup
-   uv run .
+   npm run demo:contact
    ```
 
 2. **Open the Contact App:**
