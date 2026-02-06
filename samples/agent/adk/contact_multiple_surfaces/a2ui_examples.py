@@ -18,7 +18,7 @@ import os
 from pathlib import Path
 
 import jsonschema
-from a2ui_schema import A2UI_SCHEMA
+from a2ui.core.validator import A2uiValidator
 
 logger = logging.getLogger(__name__)
 
@@ -34,11 +34,12 @@ EXAMPLE_FILES = {
 
 FLOOR_PLAN_FILE = "floor_plan.json"
 
-def load_examples(base_url: str = "http://localhost:10004") -> str:
+def load_examples(validator: A2uiValidator, base_url: str = "http://localhost:10004") -> str:
     """
     Loads, validates, and formats the UI examples from JSON files.
     
     Args:
+        validator: The validator to use for validation.
         base_url: The base URL to replace placeholder URLs with.
                   (Currently examples have http://localhost:10004 hardcoded, 
                    but we can make this dynamic if needed).
@@ -47,15 +48,6 @@ def load_examples(base_url: str = "http://localhost:10004") -> str:
         A string containing all formatted examples for the prompt.
     """
     
-    # Pre-parse validator
-    try:
-        single_msg_schema = json.loads(A2UI_SCHEMA)
-        # Examples are typically lists of messages
-        list_schema = {"type": "array", "items": single_msg_schema}
-    except json.JSONDecodeError:
-        logger.error("Failed to parse A2UI_SCHEMA for validation")
-        list_schema = None
-
     examples_dir = Path(os.path.dirname(__file__)) / "examples"
     formatted_output = []
 
@@ -68,12 +60,11 @@ def load_examples(base_url: str = "http://localhost:10004") -> str:
             # content = content.replace("{{BASE_URL}}", base_url) 
             
             # Validation
-            if list_schema:
-                try:
-                    data = json.loads(content)
-                    jsonschema.validate(instance=data, schema=list_schema)
-                except (json.JSONDecodeError, jsonschema.ValidationError) as e:
-                    logger.warning(f"Example {filename} validation failed: {e}")
+            try:
+                data = json.loads(content)
+                validator.validate(instance=data)
+            except (json.JSONDecodeError, jsonschema.ValidationError) as e:
+                logger.warning(f"Example {filename} validation failed: {e}")
             
             formatted_output.append(f"---BEGIN {curr_name}---")
             # Handle examples that include user/model text
