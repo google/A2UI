@@ -185,4 +185,77 @@ describe('Action Dispatch', () => {
     expect(event.userAction?.name).toBe('submit-form');
     expect(event.userAction?.context).toEqual({ username: 'alice123' });
   });
+
+  it('should resolve mixed literal and path context parameters', () => {
+    const mockOnAction = vi.fn();
+    const messages: Types.ServerToClientMessage[] = [
+      createSurfaceUpdate([
+        {
+          id: 'tf-name',
+          component: {
+            TextField: {
+              text: { path: 'form.name' },
+              label: { literalString: 'Name' },
+            },
+          },
+        },
+        {
+          id: 'cb-agree',
+          component: {
+            CheckBox: {
+              value: { path: 'form.agreed' },
+              label: { literalString: 'I agree' },
+            },
+          },
+        },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } } } },
+        {
+          id: 'btn-1',
+          component: {
+            Button: {
+              child: 'btn-text',
+              action: {
+                name: 'submit-form',
+                context: [
+                  { key: 'formId', value: { literalString: 'registration-form' } },
+                  { key: 'version', value: { literalNumber: 2 } },
+                  { key: 'name', value: { path: 'form.name' } },
+                  { key: 'agreed', value: { path: 'form.agreed' } },
+                ],
+              },
+            },
+          },
+        },
+        { id: 'col', component: { Column: { children: { explicitList: ['tf-name', 'cb-agree', 'btn-1'] } } } },
+      ]),
+      createBeginRendering('col'),
+    ];
+
+    const { container } = render(
+      <TestWrapper onAction={mockOnAction}>
+        <TestRenderer messages={messages} />
+      </TestWrapper>
+    );
+
+    // User fills the form
+    const input = container.querySelector('input[type="text"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'John Doe' } });
+
+    const checkbox = container.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    fireEvent.click(checkbox);
+
+    // User clicks Submit
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    // Verify mixed context: literals + resolved paths
+    expect(mockOnAction).toHaveBeenCalledTimes(1);
+    const event = getMockCallArg<Types.A2UIClientEventMessage>(mockOnAction, 0);
+    expect(event.userAction?.name).toBe('submit-form');
+    expect(event.userAction?.context).toEqual({
+      formId: 'registration-form',
+      version: 2,
+      name: 'John Doe',
+      agreed: true,
+    });
+  });
 });
