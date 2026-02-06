@@ -24,9 +24,4 @@ export interface Catalog<T> {
    * This is readonly to encourage immutable extension patterns.
    */
   readonly components: ReadonlyMap<string, Component<T>>;
-
-  /**
-   * Retrieves a component definition by name.
-   */
-  getComponent(name: string): Component<T> | undefined;
 }

@@ -92,7 +92,6 @@ classDiagram
 
     class Catalog {
         +components: Map
-        +getComponent(name)
     }
 
     class Component~T~ {
@@ -267,12 +266,6 @@ export interface Catalog<T> {
    */
   readonly components: ReadonlyMap<string, Component<T>>;
 
-  /**
-   * Retrieves a component definition by name.
-   * This can be a convenience wrapper around the map or handle fallback logic.
-   */
-  getComponent(name: string): Component<T> | undefined;
-
   // Note: Functions will also be defined here in future iterations
   // readonly functions: ReadonlyMap<string, FunctionDefinition>;
 }
@@ -334,7 +327,7 @@ export class ComponentContext<T> {
     const def = this.surfaceContext.getComponentDefinition(childId);
     if (!def) return null;
 
-    const component = this.surfaceContext.catalog.getComponent(def.type);
+    const component = this.surfaceContext.catalog.components.get(def.type);
     if (!component) return null;
 
     // The A2uiMessageProcessor has already calculated the correct data path for this component instance
@@ -498,7 +491,7 @@ export class Surface extends LitElement {
     );
 
     // 3. Render Root
-    const component = this.state.catalog.getComponent(rootDef.type);
+    const component = this.state.catalog.components.get(rootDef.type);
     if (!component) return html`Unknown component: ${rootDef.type}`;
 
     return component.render(context);
@@ -633,10 +626,7 @@ export function createStandardCatalog<T>(
 
   return {
     id: 'https://a2ui.org/specification/v0_9/standard_catalog.json',
-    components: componentMap,
-    getComponent(name: string) {
-      return this.components.get(name);
-    }
+    components: componentMap
   };
 }
 ```
@@ -698,10 +688,7 @@ export function createMyCustomCatalog(): Catalog<TemplateResult> {
 
   return {
     id: 'https://myapp.com/catalog/v1',
-    components,
-    getComponent(name: string) {
-      return this.components.get(name);
-    }
+    components
   };
 }
 ```
@@ -816,8 +803,7 @@ components.set('Map', new MapComponent());
 
 const myAppCatalog: Catalog<TemplateResult> = {
   id: 'https://myapp.com/catalog',
-  components, 
-  getComponent(name) { return this.components.get(name); }
+  components
 };
 
 processor.registerCatalog(myAppCatalog);

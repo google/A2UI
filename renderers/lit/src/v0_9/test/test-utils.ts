@@ -1,17 +1,22 @@
 import { TemplateResult } from 'lit';
-import { ComponentContext, SurfaceContext, DataContext, Component } from '@a2ui/web_core/v0_9';
+import { ComponentContext, SurfaceContext, DataContext, Component, Themes } from '@a2ui/web_core/v0_9';
 
 // Minimal mock for testing Lit components in Node (inspecting TemplateResult)
 export class TestLitSurfaceContext extends SurfaceContext {
     constructor(actionHandler: any = () => { }) {
-        super('test-lit', {} as any, {}, actionHandler);
+        super('test-lit', {} as any, Themes.defaultTheme, actionHandler);
     }
 }
 
 export function createLitTestContext(properties: any, actionHandler: any = () => { }) {
     const surface = new TestLitSurfaceContext(actionHandler);
     const dataContext = new DataContext(surface.dataModel, '/');
-    return new ComponentContext<TemplateResult>('test-id', properties, dataContext, surface, () => { });
+    const context = new ComponentContext<TemplateResult>('test-id', properties, dataContext, surface, () => { });
+    
+    // Mock renderChild to return the ID, so tests passing 'child-content' work
+    context.renderChild = (id: string) => id as any;
+
+    return context;
 }
 
 function expandTemplate(result: TemplateResult): string {

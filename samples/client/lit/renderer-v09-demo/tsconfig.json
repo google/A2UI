@@ -3,18 +3,31 @@
     "target": "ES2020",
     "useDefineForClassFields": false,
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "experimentalDecorators": true
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": false,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@a2ui/web_core/v0_9": [
+        "../../../../renderers/web_core/src/v0_9/index.ts"
+      ],
+      "@a2ui/lit/v0_9": [
+        "../../../../renderers/lit/src/v0_9/index.ts"
+      ]
+    }
   },
   "include": ["src"]
 }

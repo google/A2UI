@@ -34,7 +34,7 @@ export class Surface extends LitElement {
             return html`<div>Root component not found</div>`;
         }
 
-        const component = this.context.catalog.getComponent(rootDef.type);
+        const component = this.context.catalog.components.get(rootDef.type);
         if (!component) {
             return html`<div>Unknown component type: ${rootDef.type}</div>`;
         }

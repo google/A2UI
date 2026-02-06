@@ -62,9 +62,6 @@ export function createStandardCatalog<T>(
 
   return {
     id: 'https://a2ui.org/specification/v0_9/standard_catalog.json',
-    components: componentMap,
-    getComponent(name: string) {
-      return this.components.get(name);
-    }
+    components: componentMap
   };
 }

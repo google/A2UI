@@ -13,8 +13,7 @@ describe('A2uiMessageProcessor', () => {
     actions = [];
     testCatalog = {
       id: 'test-catalog',
-      components: new Map(),
-      getComponent: () => undefined
+      components: new Map()
     };
     processor = new A2uiMessageProcessor([testCatalog], async (a) => { actions.push(a); });
   });

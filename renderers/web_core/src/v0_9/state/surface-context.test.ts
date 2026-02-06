@@ -13,8 +13,7 @@ describe('SurfaceContext', () => {
     actions = [];
     catalog = {
       id: 'test-catalog',
-      components: new Map(),
-      getComponent: (_) => undefined
+      components: new Map()
     };
     surface = new SurfaceContext('surface-1', catalog, {}, async (action) => {
       actions.push(action);

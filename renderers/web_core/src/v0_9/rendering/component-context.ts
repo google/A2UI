@@ -45,7 +45,7 @@ export class ComponentContext<T> {
     const def = this.surfaceContext.getComponentDefinition(childId);
     if (!def) return null;
 
-    const component = this.surfaceContext.catalog.getComponent(def.type);
+    const component = this.surfaceContext.catalog.components.get(def.type);
     if (!component) return null;
 
     const childCtx = new ComponentContext<T>(
@@ -106,7 +106,7 @@ export class ComponentContext<T> {
 
       // Render a component for each item
       if (component && component.type) {
-        const compImpl = this.surfaceContext.catalog.getComponent(component.type);
+        const compImpl = this.surfaceContext.catalog.components.get(component.type);
         if (compImpl) {
           dataArray.forEach((_, index) => {
             const itemPath = `${items.path}/${index}`;
