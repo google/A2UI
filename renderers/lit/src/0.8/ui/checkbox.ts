@@ -71,8 +71,6 @@ export class Checkbox extends Root {
       return;
     }
 
-
-
     this.processor.setData(
       this.component,
       this.value.path,
@@ -121,7 +119,6 @@ export class Checkbox extends Root {
         return this.#renderField(this.value.literal);
       } else if (this.value && "path" in this.value && this.value.path) {
         if (!this.processor || !this.component) {
-
           return html`(no model)`;
         }
 
@@ -130,8 +127,6 @@ export class Checkbox extends Root {
           this.value.path,
           this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
-
-
 
         if (textValue === null) {
           return html`Invalid label`;
