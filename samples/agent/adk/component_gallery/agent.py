@@ -4,12 +4,9 @@ import logging
 import json
 from collections.abc import AsyncIterable
 from typing import Any
+import asyncio
+import datetime
 
-from google.adk.agents.llm_agent import LlmAgent
-from google.adk.artifacts import InMemoryArtifactService
-from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
 from gallery_examples import get_gallery_json
 
 logger = logging.getLogger(__name__)
@@ -28,10 +25,12 @@ class ComponentGalleryAgent:
         # Initial Load or Reset
         if "WHO_ARE_YOU" in query or "START" in query: # Simple trigger for initial load
              gallery_json = get_gallery_json()
-             response = f"Here is the component gallery.\n---a2ui_JSON---\n{gallery_json}"
              yield {
                 "is_task_complete": True,
-                "content": response
+                "payload": {
+                    "text": "Here is the component gallery.",
+                    "json_string": gallery_json
+                }
              }
              return
 
@@ -39,8 +38,7 @@ class ComponentGalleryAgent:
         if query.startswith("ACTION:"):
              action_name = query
              # Create a response update for the second surface
-             import datetime
-             import asyncio
+             # Create a response update for the second surface
              
              # Simulate network/processing delay
              await asyncio.sleep(0.5)
@@ -63,16 +61,20 @@ class ComponentGalleryAgent:
                  }
              ]
              
-             json_str = json.dumps(response_update)
-             response = f"Action processed.\n---a2ui_JSON---\n{json_str}"
+             
              yield {
                 "is_task_complete": True,
-                "content": response
+                "payload": {
+                    "text": "Action processed.",
+                    "json_data": response_update
+                }
              }
              return
 
         # Fallback for text
         yield {
              "is_task_complete": True,
-             "content": "I am the Component Gallery Agent."
+             "payload": {
+                 "text": "I am the Component Gallery Agent."
+             }
         }

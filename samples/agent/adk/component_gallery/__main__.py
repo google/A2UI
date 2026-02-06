@@ -14,7 +14,6 @@ from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
 from starlette.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from agent import ComponentGalleryAgent
 from agent_executor import ComponentGalleryExecutor
 
 load_dotenv()
