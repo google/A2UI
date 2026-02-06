@@ -80,7 +80,7 @@ class ContactAgent:
 
     def _build_agent(self, use_ui: bool) -> LlmAgent:
         """Builds the LLM agent for the contact agent."""
-        GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
         if use_ui:
             instruction = get_ui_prompt(self.base_url, CONTACT_UI_EXAMPLES)
@@ -89,7 +89,7 @@ class ContactAgent:
             instruction = get_text_prompt()
 
         return LlmAgent(
-            model=Gemini(model=GEMINI_MODEL),
+            model=Gemini(model=gemini_model),
             name="contact_agent",
             description="An agent that finds colleague contact info.",
             instruction=instruction,
