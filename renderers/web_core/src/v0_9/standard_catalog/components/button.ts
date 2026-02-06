@@ -1,6 +1,8 @@
 
 import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
+import { z } from 'zod';
+import { CommonTypes, annotated } from '../../catalog/schema_types.js';
 
 export interface ButtonRenderProps<T> {
   label: string;
@@ -9,8 +11,16 @@ export interface ButtonRenderProps<T> {
   child?: T;
 }
 
+const buttonSchema = z.object({
+    child: annotated(CommonTypes.ComponentId, "The ID of the child component. Use a 'Text' component for a labeled button. Only use an 'Icon' if the requirements explicitly ask for an icon-only button. Do NOT define the child component inline."),
+    variant: z.enum(["primary", "borderless"]).optional().describe("A hint for the button style. If omitted, a default button style is used. 'primary' indicates this is the main call-to-action button. 'borderless' means the button has no visual border or background, making its child content appear like a clickable link."),
+    action: CommonTypes.Action,
+    checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform. These are function calls that must return a boolean indicating validity.')
+});
+
 export class ButtonComponent<T> implements Component<T> {
   readonly name = 'Button';
+  readonly schema = buttonSchema;
 
   constructor(private readonly renderer: (props: ButtonRenderProps<T>, context: ComponentContext<T>) => T) { }
 

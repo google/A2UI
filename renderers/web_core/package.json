@@ -80,5 +80,9 @@
   "devDependencies": {
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.1"
   }
 }

@@ -1,6 +1,8 @@
 
 import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
+import { z } from 'zod';
+import { CommonTypes, annotated } from '../../catalog/schema_types.js';
 
 export interface ListRenderProps<T> {
   children: T[];
@@ -8,8 +10,15 @@ export interface ListRenderProps<T> {
   align: 'start' | 'center' | 'end' | 'stretch';
 }
 
+const listSchema = z.object({
+  children: annotated(CommonTypes.ChildList, "Defines the children. Use an array of strings for a fixed set of children, or a template object to generate children from a data list."),
+  direction: z.enum(["vertical", "horizontal"]).optional().describe("The direction in which the list items are laid out."),
+  align: z.enum(["start", "center", "end", "stretch"]).optional().describe("Defines the alignment of children along the cross axis.")
+});
+
 export class ListComponent<T> implements Component<T> {
   readonly name = 'List';
+  readonly schema = listSchema;
 
   constructor(private readonly renderer: (props: ListRenderProps<T>, context: ComponentContext<T>) => T) { }
 

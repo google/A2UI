@@ -1,6 +1,7 @@
 
 import { DataContext } from '../state/data-context.js';
 import { SurfaceContext } from '../state/surface-context.js';
+import { z } from 'zod';
 
 export class ComponentContext<T> {
   constructor(
@@ -10,6 +11,19 @@ export class ComponentContext<T> {
     readonly surfaceContext: SurfaceContext,
     private readonly updateCallback: () => void
   ) { }
+
+  /**
+   * Validates the current component properties against the provided schema.
+   * Logs warnings if validation fails (lazy validation).
+   */
+  validate(schema: z.ZodType<any>): boolean {
+    const result = schema.safeParse(this.properties);
+    if (!result.success) {
+      console.warn(`Validation failed for ${this.id}:`, result.error);
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Resolves a dynamic value (literal, path, or function call).

@@ -1,6 +1,8 @@
 
 import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
+import { z } from 'zod';
+import { CommonTypes, annotated } from '../../catalog/schema_types.js';
 
 export interface TextFieldRenderProps {
   label: string;
@@ -9,8 +11,16 @@ export interface TextFieldRenderProps {
   onChange: (newValue: string) => void;
 }
 
+const textFieldSchema = z.object({
+  label: annotated(CommonTypes.DynamicString, "The text label for the input field."),
+  value: annotated(CommonTypes.DynamicString, "The value of the text field."),
+  variant: z.enum(["longText", "number", "shortText", "obscured"]).optional().describe("The type of input field to display."),
+  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.')
+});
+
 export class TextFieldComponent<T> implements Component<T> {
   readonly name = 'TextField';
+  readonly schema = textFieldSchema;
 
   constructor(private readonly renderer: (props: TextFieldRenderProps, context: ComponentContext<T>) => T) { }
 
