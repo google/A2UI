@@ -131,4 +131,58 @@ describe('Action Dispatch', () => {
     expect(event2.userAction).toBeDefined();
     expect(event2.userAction?.name).toBe('action-2');
   });
+
+  it('should resolve path bindings in action context from data model', () => {
+    const mockOnAction = vi.fn();
+    const messages: Types.ServerToClientMessage[] = [
+      createSurfaceUpdate([
+        {
+          id: 'tf-1',
+          component: {
+            TextField: {
+              text: { path: 'form.username' },
+              label: { literalString: 'Username' },
+            },
+          },
+        },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } } } },
+        {
+          id: 'btn-1',
+          component: {
+            Button: {
+              child: 'btn-text',
+              action: {
+                name: 'submit-form',
+                context: [
+                  { key: 'username', value: { path: 'form.username' } },
+                ],
+              },
+            },
+          },
+        },
+        { id: 'col', component: { Column: { children: { explicitList: ['tf-1', 'btn-1'] } } } },
+      ]),
+      createBeginRendering('col'),
+    ];
+
+    const { container } = render(
+      <TestWrapper onAction={mockOnAction}>
+        <TestRenderer messages={messages} />
+      </TestWrapper>
+    );
+
+    // User types in the TextField, updating the data model via path binding
+    const input = container.querySelector('input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'alice123' } });
+
+    // User clicks the Submit button
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    // Verify the action context contains the resolved value from the data model
+    expect(mockOnAction).toHaveBeenCalledTimes(1);
+    const event = getMockCallArg<Types.A2UIClientEventMessage>(mockOnAction, 0);
+    expect(event.userAction).toBeDefined();
+    expect(event.userAction?.name).toBe('submit-form');
+    expect(event.userAction?.context).toEqual({ username: 'alice123' });
+  });
 });
