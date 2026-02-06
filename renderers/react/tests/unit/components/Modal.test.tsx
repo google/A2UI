@@ -477,8 +477,9 @@ describe('Modal Component', () => {
         </TestWrapper>
       );
 
-      const wrapper = container.querySelector('.a2ui-modal');
-      expect(wrapper).toHaveStyle({ cursor: 'pointer' });
+      // cursor: pointer is on the section inside the wrapper (entry point)
+      const section = container.querySelector('.a2ui-modal > section');
+      expect(section).toHaveStyle({ cursor: 'pointer' });
     });
   });
 
@@ -498,7 +499,7 @@ describe('Modal Component', () => {
       fireEvent.click(screen.getByText('Open Modal'));
 
       await waitFor(() => {
-        const closeButton = document.querySelector('.a2ui-modal__close');
+        const closeButton = document.querySelector('#controls button');
         expect(closeButton?.getAttribute('aria-label')).toBe('Close modal');
       });
     });
@@ -568,12 +569,16 @@ describe('Modal Component', () => {
         const dialog = document.querySelector('dialog');
         expect(dialog).toBeInTheDocument();
 
-        // Dialog should contain content wrapper
-        const contentWrapper = dialog?.querySelector('.a2ui-modal__content');
-        expect(contentWrapper).toBeInTheDocument();
+        // Dialog should contain section with content
+        const section = dialog?.querySelector('section');
+        expect(section).toBeInTheDocument();
 
-        // Close button inside content wrapper
-        const closeButton = contentWrapper?.querySelector('.a2ui-modal__close');
+        // Controls div with close button inside section
+        const controls = section?.querySelector('#controls');
+        expect(controls).toBeInTheDocument();
+
+        // Close button inside controls
+        const closeButton = controls?.querySelector('button');
         expect(closeButton).toBeInTheDocument();
       });
     });

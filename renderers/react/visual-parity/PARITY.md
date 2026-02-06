@@ -240,14 +240,9 @@ Each Lit component with `static styles` needs a corresponding entry in `componen
 | **Tabs** | `tabs.ts` | `:host`, `section`, `button` | All fixtures pass 0% |
 | **CheckBox** | `checkbox.ts` | `:host`, `input` | Uses `:where()` for `input`. Works via path binding |
 | **DateTimeInput** | `datetime-input.ts` | `:host`, `input` | Uses `:where()` for `input`. React uses HTML5 inputs directly |
-
-### 🔄 Need Investigation
-
-| Component | Lit File | Styles | Issue |
-|-----------|----------|--------|-------|
-| **Modal** | `modal.ts` | `:host`, `dialog`, `#controls`, `button` | Uses `:where()` for `dialog`. No test fixtures yet |
-| **Video** | `video.ts` | `:host`, `video` | Uses `:where()` for `video`. No test fixtures yet |
-| **AudioPlayer** | `audio.ts` | `:host`, `audio` | Uses `:where()` for `audio`. No test fixtures yet |
+| **Modal** | `modal.ts` | `:host`, `dialog`, `#controls`, `button` | Renders dialog in place (no portal) to stay inside `.a2ui-surface`. Matches Lit: closed shows section with entry, open shows dialog |
+| **Video** | `video.ts` | `:host`, `video` | Uses `:where()` for `video`. Minor pixel variance (~0.5%) due to native video element rendering |
+| **AudioPlayer** | `audio.ts` | `:host`, `audio` | Uses `:where()` for `audio`. Note: Lit does NOT implement `description` property |
 
 ### ⚠️ Lit Renderer Issues
 
