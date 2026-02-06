@@ -8,12 +8,14 @@ export interface CheckBoxRenderProps {
   label: string;
   value: boolean;
   onChange: (newValue: boolean) => void;
+  weight?: number;
 }
 
 const checkBoxSchema = z.object({
   label: annotated(CommonTypes.DynamicString, "The text to display next to the checkbox."),
   value: annotated(CommonTypes.DynamicBoolean, "The current state of the checkbox (true for checked, false for unchecked)."),
-  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.')
+  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class CheckBoxComponent<T> implements Component<T> {
@@ -26,6 +28,7 @@ export class CheckBoxComponent<T> implements Component<T> {
     const { properties } = context;
     const label = context.resolve<string>(properties['label'] ?? '');
     const value = context.resolve<boolean>(properties['value'] ?? false);
+    const weight = properties['weight'] as number | undefined;
     
     const rawValue = properties['value'];
     
@@ -38,7 +41,8 @@ export class CheckBoxComponent<T> implements Component<T> {
     return this.renderer({
       label,
       value,
-      onChange
+      onChange,
+      weight
     }, context);
   }
 }

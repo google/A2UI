@@ -7,10 +7,12 @@ import { CommonTypes, annotated } from '../../catalog/schema_types.js';
 export interface VideoRenderProps {
   url: string;
   showControls?: boolean;
+  weight?: number;
 }
 
 const videoSchema = z.object({
-  url: annotated(CommonTypes.DynamicString, "The URL of the video to display.")
+  url: annotated(CommonTypes.DynamicString, "The URL of the video to display."),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class VideoComponent<T> implements Component<T> {
@@ -23,7 +25,8 @@ export class VideoComponent<T> implements Component<T> {
     const { properties } = context;
     const url = context.resolve<string>(properties['url'] ?? '');
     const showControls = context.resolve<boolean>(properties['showControls'] ?? true);
+    const weight = properties['weight'] as number | undefined;
 
-    return this.renderer({ url, showControls }, context);
+    return this.renderer({ url, showControls, weight }, context);
   }
 }

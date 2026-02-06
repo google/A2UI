@@ -8,6 +8,7 @@ export interface ContainerRenderProps<T> {
   direction: 'row' | 'column';
   justify?: string;
   align?: string;
+  weight?: number;
 }
 
 export class ContainerComponent<T> implements Component<T> {
@@ -24,12 +25,14 @@ export class ContainerComponent<T> implements Component<T> {
     const renderedChildren = context.resolveChildren('children');
     const justify = properties['justify'];
     const align = properties['align'];
+    const weight = properties['weight'] as number | undefined;
 
     return this.renderer({
       children: renderedChildren,
       direction: this.direction,
       justify,
-      align
+      align,
+      weight
     }, context);
   }
 }

@@ -11,13 +11,15 @@ export interface TabItem<T> {
 
 export interface TabsRenderProps<T> {
   tabs: TabItem<T>[];
+  weight?: number;
 }
 
 const tabsSchema = z.object({
   tabs: z.array(z.object({
     title: annotated(CommonTypes.DynamicString, "The tab title."),
     child: annotated(CommonTypes.ComponentId, "The ID of the child component. Do NOT define the component inline.")
-  })).describe("An array of objects, where each object defines a tab with a title and a child component.")
+  })).describe("An array of objects, where each object defines a tab with a title and a child component."),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class TabsComponent<T> implements Component<T> {
@@ -39,7 +41,8 @@ export class TabsComponent<T> implements Component<T> {
         tabs.push({ title, child });
       }
     }
+    const weight = properties['weight'] as number | undefined;
 
-    return this.renderer({ tabs }, context);
+    return this.renderer({ tabs, weight }, context);
   }
 }

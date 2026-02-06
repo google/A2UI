@@ -15,6 +15,7 @@ export interface ChoicePickerRenderProps {
   value: string[];
   variant: 'multipleSelection' | 'mutuallyExclusive';
   onChange: (newValue: string[]) => void;
+  weight?: number;
 }
 
 const choicePickerSchema = z.object({
@@ -25,7 +26,8 @@ const choicePickerSchema = z.object({
     value: z.string().describe("The stable value associated with this option.")
   })).describe("The list of available options to choose from."),
   value: annotated(CommonTypes.DynamicStringList, "The list of currently selected values. This should be bound to a string array in the data model."),
-  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.')
+  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class ChoicePickerComponent<T> implements Component<T> {
@@ -50,6 +52,7 @@ export class ChoicePickerComponent<T> implements Component<T> {
 
     const value = context.resolve<string[]>(properties['value'] ?? []);
     const variant = (properties['variant'] as any) ?? 'multipleSelection';
+    const weight = properties['weight'] as number | undefined;
 
     const rawValue = properties['value'];
     const onChange = (newValue: string[]) => {
@@ -63,7 +66,8 @@ export class ChoicePickerComponent<T> implements Component<T> {
       options,
       value,
       variant,
-      onChange
+      onChange,
+      weight
     }, context);
   }
 }

@@ -12,6 +12,7 @@ export interface DateTimeInputRenderProps {
   enableDate: boolean;
   enableTime: boolean;
   onChange: (newValue: string) => void;
+  weight?: number;
 }
 
 const dateTimeInputSchema = z.object({
@@ -21,7 +22,8 @@ const dateTimeInputSchema = z.object({
   min: annotated(CommonTypes.DynamicString, "The minimum allowed date/time in ISO 8601 format.").optional(),
   max: annotated(CommonTypes.DynamicString, "The maximum allowed date/time in ISO 8601 format.").optional(),
   label: annotated(CommonTypes.DynamicString, "The text label for the input field."),
-  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.')
+  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class DateTimeInputComponent<T> implements Component<T> {
@@ -38,6 +40,7 @@ export class DateTimeInputComponent<T> implements Component<T> {
     const max = context.resolve<string>(properties['max'] ?? '');
     const enableDate = (properties['enableDate'] as boolean) ?? true;
     const enableTime = (properties['enableTime'] as boolean) ?? false;
+    const weight = properties['weight'] as number | undefined;
 
     const rawValue = properties['value'];
     const onChange = (newValue: string) => {
@@ -53,7 +56,8 @@ export class DateTimeInputComponent<T> implements Component<T> {
       max,
       enableDate,
       enableTime,
-      onChange
+      onChange,
+      weight
     }, context);
   }
 }

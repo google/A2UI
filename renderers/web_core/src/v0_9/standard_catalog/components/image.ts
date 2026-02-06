@@ -8,12 +8,14 @@ export interface ImageRenderProps {
   url: string;
   fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   variant?: 'icon' | 'avatar' | 'smallFeature' | 'mediumFeature' | 'largeFeature' | 'header';
+  weight?: number;
 }
 
 const imageSchema = z.object({
   url: annotated(CommonTypes.DynamicString, "The URL of the image to display."),
   fit: z.enum(["contain", "cover", "fill", "none", "scale-down"]).optional().describe("Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property."),
-  variant: z.enum(["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"]).optional().describe("A hint for the image size and style.")
+  variant: z.enum(["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"]).optional().describe("A hint for the image size and style."),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class ImageComponent<T> implements Component<T> {
@@ -27,7 +29,8 @@ export class ImageComponent<T> implements Component<T> {
     const url = context.resolve<string>(properties['url'] ?? '');
     const fit = properties['fit'] as ImageRenderProps['fit'];
     const variant = properties['variant'] as ImageRenderProps['variant'];
+    const weight = properties['weight'] as number | undefined;
     
-    return this.renderer({ url, fit, variant }, context);
+    return this.renderer({ url, fit, variant, weight }, context);
   }
 }

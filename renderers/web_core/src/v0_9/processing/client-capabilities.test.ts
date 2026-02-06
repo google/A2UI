@@ -63,6 +63,39 @@ describe('Client Capabilities Generation', () => {
     const specPath = join(process.cwd(), '../../specification/v0_9/json/standard_catalog.json');
     const specContent = JSON.parse(readFileSync(specPath, 'utf-8'));
 
+    // Helper to check reference equality
+    const checkRef = (propName: string, generatedProps: any, expectedProps: any, name: string) => {
+      // Only check if both expected and generated define this property with a $ref
+      const expectedProp = expectedProps[propName];
+      const generatedProp = generatedProps[propName];
+
+      if (expectedProp && expectedProp.$ref) {
+        assert.ok(generatedProp, `Generated property ${name}.${propName} is missing`);
+        assert.strictEqual(
+          generatedProp.$ref,
+          expectedProp.$ref,
+          `Reference mismatch for ${name}.${propName}`
+        );
+      } else if (name === 'Icon' && propName === 'name' && expectedProp && expectedProp.oneOf && generatedProp) {
+        // Special handling for Icon.name, which is a union
+        assert.ok(generatedProp.oneOf, `Generated property ${name}.${propName} should have oneOf`);
+        assert.strictEqual(generatedProp.oneOf.length, expectedProp.oneOf.length, `OneOf length mismatch for ${name}.${propName}`);
+
+        // Perform a simplified check: ensure types (string/object) and const values match
+        for (let i = 0; i < expectedProp.oneOf.length; i++) {
+          const expItem = expectedProp.oneOf[i];
+          const genItem = generatedProp.oneOf[i];
+          if (expItem.type === "string") {
+            assert.strictEqual(genItem.type, "string", `Union item type mismatch for ${name}.${propName}[${i}]`);
+            assert.deepStrictEqual(genItem.enum, expItem.enum, `Union item enum mismatch for ${name}.${propName}[${i}]`);
+          } else if (expItem.type === "object") {
+            assert.strictEqual(genItem.type, "object", `Union item type mismatch for ${name}.${propName}[${i}]`);
+            assert.deepStrictEqual(genItem.properties, expItem.properties, `Union item properties mismatch for ${name}.${propName}[${i}]`);
+          }
+        }
+      }
+    };
+
     // 5. Compare components
     for (const [name, expectedDef] of Object.entries(specContent.components)) {
         const generatedDef = generatedCatalog.components[name];
@@ -71,51 +104,49 @@ describe('Client Capabilities Generation', () => {
         // Check the envelope structure
         assert.strictEqual(generatedDef.type, 'object');
         assert.ok(generatedDef.allOf, `Component ${name} should have allOf`);
-        assert.strictEqual(generatedDef.allOf.length, 3);
         
-        // Check references to common types
-        assert.deepStrictEqual(generatedDef.allOf[0], { "$ref": "common_types.json#/$defs/ComponentCommon" });
-        assert.deepStrictEqual(generatedDef.allOf[1], { "$ref": "#/$defs/CatalogComponentCommon" });
-
-        // Check specific properties block
-        const propsSchema = generatedDef.allOf[2];
-        assert.strictEqual(propsSchema.type, 'object');
-        assert.strictEqual(propsSchema.properties.component.const, name);
-
-        // Find the properties block in the expected definition
-        // It's the one with "properties" and "properties.component"
-        const expectedPropsSchema = (expectedDef as any).allOf.find((item: any) => 
+        // Find the properties block in the expected definition and generated definition
+        const expectedPropsSchemaItem = (expectedDef as any).allOf.find((item: any) => 
             item.properties && item.properties.component
         );
-        assert.ok(expectedPropsSchema, `Could not find properties block in spec for ${name}`);
-        const expectedProps = expectedPropsSchema.properties;
-        const generatedProps = propsSchema.properties;
+        assert.ok(expectedPropsSchemaItem, `Could not find properties block in spec for ${name}`);
+        const expectedProps = expectedPropsSchemaItem.properties;
 
-        // Helper to check reference equality
-        const checkRef = (propName: string) => {
-             if (expectedProps[propName] && expectedProps[propName].$ref) {
-                 assert.strictEqual(
-                     generatedProps[propName].$ref, 
-                     expectedProps[propName].$ref, 
-                     `Reference mismatch for ${name}.${propName}`
-                 );
-             }
-        };
+        const generatedPropsSchemaItem = generatedDef.allOf.find((item: any) => 
+            item.properties && item.properties.component
+        );
+        assert.ok(generatedPropsSchemaItem, `Could not find properties block in generated for ${name}`);
+        const generatedProps = generatedPropsSchemaItem.properties;
+
+        // Verify basic properties of the properties block
+        assert.strictEqual(generatedProps.component.const, name);
+
+        // All components should have weight now
+        assert.ok(generatedProps.weight, `Weight property missing for ${name}`);
+        // Check if weight is defined as a DynamicNumber ref (or a number directly for now)
+        // For inline, it should be in properties directly, not via CatalogComponentCommon ref
+        assert.strictEqual(generatedProps.weight.$ref, 'common_types.json#/$defs/Weight', `Weight ref mismatch for ${name}`);
 
         // Specific component checks based on what we know uses references
-        if (name === 'Text') checkRef('text');
-        if (name === 'Image') checkRef('url');
+        if (name === 'Text') checkRef('text', generatedProps, expectedProps, name);
+        if (name === 'Image') checkRef('url', generatedProps, expectedProps, name);
         if (name === 'Button') {
-            checkRef('child');
-            checkRef('action');
+            checkRef('child', generatedProps, expectedProps, name);
+            checkRef('action', generatedProps, expectedProps, name);
         }
         if (name === 'TextField') {
-            checkRef('label');
-            checkRef('value');
+            checkRef('label', generatedProps, expectedProps, name);
+            checkRef('value', generatedProps, expectedProps, name);
         }
         if (name === 'Row' || name === 'Column' || name === 'List') {
-             checkRef('children');
+             checkRef('children', generatedProps, expectedProps, name);
         }
+        if (name === 'Icon') {
+            checkRef('name', generatedProps, expectedProps, name);
+        }
+
+        // TODO: Add more comprehensive checks for other components and their specific properties
+        // For now, we are primarily validating the reference resolution mechanism.
     }
   });
 });

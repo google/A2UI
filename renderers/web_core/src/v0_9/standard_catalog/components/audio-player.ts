@@ -7,11 +7,13 @@ import { CommonTypes, annotated } from '../../catalog/schema_types.js';
 export interface AudioPlayerRenderProps {
   url: string;
   description?: string;
+  weight?: number;
 }
 
 const audioPlayerSchema = z.object({
   url: annotated(CommonTypes.DynamicString, "The URL of the audio to be played."),
-  description: annotated(CommonTypes.DynamicString, "A description of the audio, such as a title or summary.").optional()
+  description: annotated(CommonTypes.DynamicString, "A description of the audio, such as a title or summary.").optional(),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class AudioPlayerComponent<T> implements Component<T> {
@@ -24,7 +26,8 @@ export class AudioPlayerComponent<T> implements Component<T> {
     const { properties } = context;
     const url = context.resolve<string>(properties['url'] ?? '');
     const description = context.resolve<string>(properties['description'] ?? '');
+    const weight = properties['weight'] as number | undefined;
     
-    return this.renderer({ url, description }, context);
+    return this.renderer({ url, description, weight }, context);
   }
 }

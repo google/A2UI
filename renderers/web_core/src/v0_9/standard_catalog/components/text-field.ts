@@ -9,13 +9,15 @@ export interface TextFieldRenderProps {
   value: string;
   variant: 'longText' | 'number' | 'shortText' | 'obscured';
   onChange: (newValue: string) => void;
+  weight?: number;
 }
 
 const textFieldSchema = z.object({
   label: annotated(CommonTypes.DynamicString, "The text label for the input field."),
   value: annotated(CommonTypes.DynamicString, "The value of the text field."),
   variant: z.enum(["longText", "number", "shortText", "obscured"]).optional().describe("The type of input field to display."),
-  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.')
+  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class TextFieldComponent<T> implements Component<T> {
@@ -29,6 +31,7 @@ export class TextFieldComponent<T> implements Component<T> {
     const label = context.resolve<string>(properties['label'] ?? '');
     const value = context.resolve<string>(properties['value'] ?? '');
     const variant = (properties['variant'] as any) ?? 'shortText';
+    const weight = properties['weight'] as number | undefined;
 
     // We need to know the path of 'value' to update it?
     // Spec says: value is a DynamicString. 
@@ -57,7 +60,8 @@ export class TextFieldComponent<T> implements Component<T> {
       label,
       value,
       variant,
-      onChange
+      onChange,
+      weight
     }, context);
   }
 }

@@ -10,6 +10,7 @@ export interface SliderRenderProps {
   max: number;
   value: number;
   onChange: (newValue: number) => void;
+  weight?: number;
 }
 
 const sliderSchema = z.object({
@@ -17,7 +18,8 @@ const sliderSchema = z.object({
   min: z.number().describe("The minimum value of the slider."),
   max: z.number().describe("The maximum value of the slider."),
   value: annotated(CommonTypes.DynamicNumber, "The current value of the slider."),
-  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.')
+  checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class SliderComponent<T> implements Component<T> {
@@ -32,6 +34,7 @@ export class SliderComponent<T> implements Component<T> {
     const min = (properties['min'] as number) ?? 0;
     const max = (properties['max'] as number) ?? 100;
     const value = context.resolve<number>(properties['value'] ?? min);
+    const weight = properties['weight'] as number | undefined;
 
     const rawValue = properties['value'];
     const onChange = (newValue: number) => {
@@ -45,7 +48,8 @@ export class SliderComponent<T> implements Component<T> {
       min,
       max,
       value,
-      onChange
+      onChange,
+      weight
     }, context);
   }
 }

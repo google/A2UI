@@ -1,10 +1,16 @@
 import { html, TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { ChoicePickerComponent } from '@a2ui/web_core/v0_9';
 
 export const litChoicePicker = new ChoicePickerComponent<TemplateResult>(
-    ({ label, options, value, variant, onChange }, context) => {
+    ({ label, options, value, variant, onChange, weight }, context) => {
         const classes = context.surfaceContext.theme.components.ChoicePicker;
+        const styles: Record<string, string> = {};
+        if (weight !== undefined) {
+            styles['flex-grow'] = String(weight);
+        }
+
         // Simple select implementation for now
         const isMultiple = variant === 'multipleSelection';
         const handleChange = (e: Event) => {
@@ -18,7 +24,7 @@ export const litChoicePicker = new ChoicePickerComponent<TemplateResult>(
         };
 
         return html`
-            <div class=${classMap(classes)}>
+            <div class=${classMap(classes)} style=${styleMap(styles)}>
                 <label>${label}</label>
                 <select 
                     ?multiple="${isMultiple}" 

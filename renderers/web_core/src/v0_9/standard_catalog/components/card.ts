@@ -6,10 +6,12 @@ import { CommonTypes, annotated } from '../../catalog/schema_types.js';
 
 export interface CardRenderProps<T> {
   child: T | null;
+  weight?: number;
 }
 
 const cardSchema = z.object({
-  child: annotated(CommonTypes.ComponentId, "The ID of the single child component to be rendered inside the card. To display multiple elements, you MUST wrap them in a layout component (like Column or Row) and pass that container's ID here. Do NOT pass multiple IDs or a non-existent ID. Do NOT define the child component inline.")
+  child: annotated(CommonTypes.ComponentId, "The ID of the single child component to be rendered inside the card. To display multiple elements, you MUST wrap them in a layout component (like Column or Row) and pass that container's ID here. Do NOT pass multiple IDs or a non-existent ID. Do NOT define the child component inline."),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class CardComponent<T> implements Component<T> {
@@ -22,7 +24,8 @@ export class CardComponent<T> implements Component<T> {
     const { properties } = context;
     const childId = properties['child'];
     const child = childId ? context.renderChild(childId) : null;
+    const weight = properties['weight'] as number | undefined;
 
-    return this.renderer({ child }, context);
+    return this.renderer({ child, weight }, context);
   }
 }

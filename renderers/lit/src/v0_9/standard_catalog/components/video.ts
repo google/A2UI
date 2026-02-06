@@ -1,15 +1,22 @@
 import { html, TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { VideoComponent } from '@a2ui/web_core/v0_9';
 
 export const litVideo = new VideoComponent<TemplateResult>(
-    ({ url, showControls }, context) => {
+    ({ url, showControls, weight }, context) => {
         const classes = context.surfaceContext.theme.components.Video;
+        const styles: Record<string, string> = {};
+        if (weight !== undefined) {
+            styles['flex-grow'] = String(weight);
+        }
+
         return html`
         <video 
             src="${url}" 
             ?controls="${showControls}" 
             class=${classMap(classes)}
+            style=${styleMap(styles)}
         ></video>
     `;
     }

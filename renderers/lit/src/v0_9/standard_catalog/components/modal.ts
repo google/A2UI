@@ -1,5 +1,6 @@
 import { html, TemplateResult, nothing, LitElement } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ModalComponent } from '@a2ui/web_core/v0_9';
 
@@ -7,12 +8,18 @@ import { ModalComponent } from '@a2ui/web_core/v0_9';
 export class A2UiModalWrapper extends LitElement {
   @property({ attribute: false }) accessor trigger: any;
   @property({ attribute: false }) accessor content: any;
+  @property({ type: Number }) accessor weight: number | undefined;
 
   @state() accessor isOpen = false;
 
   render() {
+    const styles: Record<string, string> = {};
+    if (this.weight !== undefined) {
+        styles['flex-grow'] = String(this.weight);
+    }
+
     return html`
-            <div @click="${() => this.isOpen = true}" style="display: inline-block;">
+            <div @click="${() => this.isOpen = true}" style=${styleMap({ ...styles, display: 'inline-block' })}>
                 ${this.trigger}
             </div>
             ${this.isOpen ? html`
@@ -30,10 +37,10 @@ export class A2UiModalWrapper extends LitElement {
 }
 
 export const litModal = new ModalComponent<TemplateResult>(
-  ({ trigger, content }, context) => {
+  ({ trigger, content, weight }, context) => {
     const classes = context.surfaceContext.theme.components.Modal;
     return html`
-            <a2ui-modal-wrapper-v0-9 .trigger="${trigger}" .content="${content}" class=${classMap(classes)}></a2ui-modal-wrapper-v0-9>
+            <a2ui-modal-wrapper-v0-9 .trigger="${trigger}" .content="${content}" .weight="${weight}" class=${classMap(classes)}></a2ui-modal-wrapper-v0-9>
         `;
   }
 );

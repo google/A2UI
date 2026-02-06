@@ -8,12 +8,14 @@ export interface ListRenderProps<T> {
   children: T[];
   direction: 'vertical' | 'horizontal';
   align: 'start' | 'center' | 'end' | 'stretch';
+  weight?: number;
 }
 
 const listSchema = z.object({
   children: annotated(CommonTypes.ChildList, "Defines the children. Use an array of strings for a fixed set of children, or a template object to generate children from a data list."),
   direction: z.enum(["vertical", "horizontal"]).optional().describe("The direction in which the list items are laid out."),
-  align: z.enum(["start", "center", "end", "stretch"]).optional().describe("Defines the alignment of children along the cross axis.")
+  align: z.enum(["start", "center", "end", "stretch"]).optional().describe("Defines the alignment of children along the cross axis."),
+  weight: CommonTypes.Weight.optional()
 });
 
 export class ListComponent<T> implements Component<T> {
@@ -39,11 +41,13 @@ export class ListComponent<T> implements Component<T> {
 
     const direction = (properties['direction'] as any) ?? 'vertical';
     const align = (properties['align'] as any) ?? 'start';
+    const weight = properties['weight'] as number | undefined;
 
     return this.renderer({
       children: renderedChildren,
       direction,
-      align
+      align,
+      weight
     }, context);
   }
 }

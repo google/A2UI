@@ -1,10 +1,11 @@
 
 import { html, TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { ColumnComponent } from '@a2ui/web_core/v0_9';
 
 export const litColumn = new ColumnComponent<TemplateResult>(
-  ({ children, justify, align }, context) => {
+  ({ children, justify, align, weight }, context) => {
     const classes = context.surfaceContext.theme.components.Column;
 
     // Map justify/align
@@ -20,8 +21,16 @@ export const litColumn = new ColumnComponent<TemplateResult>(
       if (map[align]) alignClasses[map[align]] = true;
     }
 
+    const styles: Record<string, string> = {
+      display: 'flex',
+      'flex-direction': 'column',
+    };
+    if (weight !== undefined) {
+        styles['flex-grow'] = String(weight);
+    }
+
     return html`
-    <div class=${classMap({ ...classes, ...alignClasses })} style="display: flex; flex-direction: column;">
+    <div class=${classMap({ ...classes, ...alignClasses })} style=${styleMap(styles)}>
       ${children}
     </div>
   `;
