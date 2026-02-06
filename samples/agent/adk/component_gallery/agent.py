@@ -4,6 +4,7 @@ import logging
 import json
 from collections.abc import AsyncIterable
 from typing import Any
+
 import asyncio
 import datetime
 
@@ -37,7 +38,6 @@ class ComponentGalleryAgent:
         # Handle Actions
         if query.startswith("ACTION:"):
              action_name = query
-             # Create a response update for the second surface
              # Create a response update for the second surface
              
              # Simulate network/processing delay

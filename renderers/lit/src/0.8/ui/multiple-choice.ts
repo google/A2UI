@@ -14,6 +14,7 @@
  limitations under the License.
  */
 
+
 import { html, css, PropertyValues, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { Root } from "./root.js";
@@ -36,7 +37,7 @@ export class MultipleChoice extends Root {
   accessor selections: Primitives.StringValue | string[] = [];
 
   @property()
-  accessor type: "checkbox" | "chips" = "checkbox";
+  accessor variant: "checkbox" | "chips" = "checkbox";
 
   @property({ type: Boolean })
   accessor filterable = false;
@@ -280,11 +281,12 @@ export class MultipleChoice extends Root {
   }
 
   getCurrentSelections(): string[] {
-    if (!this.processor || !this.component) {
-      return Array.isArray(this.selections) ? this.selections : [];
-    }
     if (Array.isArray(this.selections)) {
       return this.selections;
+    }
+
+    if (!this.processor || !this.component) {
+      return [];
     }
 
     const selectionValue = this.processor.getData(
@@ -304,6 +306,14 @@ export class MultipleChoice extends Root {
       this.#setBoundValue([...current, value]);
     }
     this.requestUpdate();
+  }
+
+  #renderCheckIcon() {
+    return html`
+      <svg class="chip-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+      </svg>
+    `;
   }
 
   #renderFilter() {
@@ -340,7 +350,7 @@ export class MultipleChoice extends Root {
     });
 
     // Chips Layout
-    if (this.type === "chips") {
+    if (this.variant === "chips") {
       return html`
           <div class="container">
             ${this.description ? html`<div class="header-text" style="margin-bottom: 8px;">${this.description}</div>` : nothing}
@@ -362,11 +372,7 @@ export class MultipleChoice extends Root {
             this.toggleSelection(option.value);
           }}
                   >
-                    ${isSelected ? html`
-                      <svg class="chip-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
-                      </svg>
-                    ` : nothing}
+                    ${isSelected ? this.#renderCheckIcon() : nothing}
                     <span>${label}</span>
                   </div>
                 `;

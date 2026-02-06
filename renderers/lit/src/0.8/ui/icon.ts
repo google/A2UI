@@ -39,7 +39,7 @@ export class Icon extends Root {
         display: block;
         flex: var(--weight);
         min-height: 0;
-        overflow: auto;
+
       }
 
       .g-icon {

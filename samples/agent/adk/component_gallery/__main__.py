@@ -1,4 +1,3 @@
-
 """Main entry point for the Component Gallery agent."""
 import logging
 import os
@@ -12,6 +11,7 @@ from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
 from starlette.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
 from agent_executor import ComponentGalleryExecutor
@@ -80,7 +80,12 @@ def main(host, port):
             allow_headers=["*"],
         )
         
-        # Check if images dir exists before mounting? Skipping for now.
+        # Mount assets directory
+        assets_dir = os.path.join(os.path.dirname(__file__), "assets")
+        if os.path.exists(assets_dir):
+            app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+        else:
+            logger.warning(f"Assets directory not found at {assets_dir}")
         
         print(f"Starting Component Gallery Agent on port {port}...")
         uvicorn.run(app, host=host, port=port)
