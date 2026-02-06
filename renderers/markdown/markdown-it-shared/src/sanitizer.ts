@@ -14,4 +14,11 @@
  limitations under the License.
  */
 
-export { noopMarkdown } from "./noop_markdown.js";
+// TODO: Implement the DOMPurify sanitizer.
+
+/**
+ * A sanitizer that sanitizes HTML.
+ */
+export const sanitizer = {
+  sanitize: (html: string) => html,
+}

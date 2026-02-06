@@ -14,20 +14,26 @@
  limitations under the License.
  */
 
-import { noChange } from "lit";
-import {
-  Directive,
-  DirectiveParameters,
-  Part,
-  directive,
-} from "lit/directive.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import MarkdownIt from "markdown-it";
-import { RenderRule } from "markdown-it/lib/renderer.mjs";
-import * as Sanitizer from "./sanitizer.js";
+import markdownit from 'markdown-it';
+import { sanitizer } from "./sanitizer";
 
-class MarkdownDirective extends Directive {
-  #markdownIt = MarkdownIt({
+/**
+ * A map of tag names to classes to apply when rendering a tag.
+ *
+ * For example, the following TagClassMap would apply the `a2ui-paragraph` class
+ * to all `<p>` tags:
+ *
+ * `{ "p": ["a2ui-paragraph"] }`
+ */
+export type TagClassMap = Record<string, string[]>;
+
+/**
+ * A pre-configured instance of markdown-it to render markdown in A2UI web.
+ *
+ * This renderer does not perform any sanitization of the outgoing HTML.
+ */
+class MarkdownItCore {
+  private markdownIt = markdownit({
     highlight: (str, lang) => {
       switch (lang) {
         case "html": {
@@ -39,28 +45,17 @@ class MarkdownDirective extends Directive {
         }
 
         default:
-          return Sanitizer.escapeNodeText(str);
+          return sanitizer.sanitize(str);
       }
     },
   });
-  #lastValue: string | null = null;
-  #lastTagClassMap: string | null = null;
 
-  update(_part: Part, [value, tagClassMap]: DirectiveParameters<this>) {
-    if (
-      this.#lastValue === value &&
-      JSON.stringify(tagClassMap) === this.#lastTagClassMap
-    ) {
-      return noChange;
-    }
-
-    this.#lastValue = value;
-    this.#lastTagClassMap = JSON.stringify(tagClassMap);
-    return this.render(value, tagClassMap);
-  }
-
-  #originalClassMap = new Map<string, RenderRule | undefined>();
-  #applyTagClassMap(tagClassMap: Record<string, string[]>) {
+  /**
+   * Applies a tag class map to the markdown-it renderer.
+   *
+   * @param tagClassMap The tag class map to apply.
+   */
+  private applyTagClassMap(tagClassMap: TagClassMap) {
     Object.entries(tagClassMap).forEach(([tag]) => {
       let tokenName;
       switch (tag) {
@@ -100,7 +95,7 @@ class MarkdownDirective extends Directive {
       }
 
       const key = `${tokenName}_open`;
-      this.#markdownIt.renderer.rules[key] = (
+      this.markdownIt.renderer.rules[key] = (
         tokens,
         idx,
         options,
@@ -118,35 +113,25 @@ class MarkdownDirective extends Directive {
     });
   }
 
-  #unapplyTagClassMap() {
-    for (const [key] of this.#originalClassMap) {
-      delete this.#markdownIt.renderer.rules[key];
-    }
-
-    this.#originalClassMap.clear();
-  }
-
   /**
-   * Renders the markdown string to HTML using MarkdownIt.
+   * Renders the markdown string to HTML using the internal MarkdownIt instance.
    *
-   * Note: MarkdownIt doesn't enable HTML in its output, so we render the
-   * value directly without further sanitization.
-   * @see https://github.com/markdown-it/markdown-it/blob/master/docs/security.md
+   * @param tagClassMap A map of tag names to classes to apply when rendering a tag.
+   *
+   * This method does not perform any sanitization of the outgoing HTML.
    */
-  render(value: string, tagClassMap?: Record<string, string[]>) {
+  render(value: string, tagClassMap?: TagClassMap) {
     if (tagClassMap) {
-      this.#applyTagClassMap(tagClassMap);
+      this.applyTagClassMap(tagClassMap);
     }
-    const htmlString = this.#markdownIt.render(value);
-    this.#unapplyTagClassMap();
-
-    return unsafeHTML(htmlString);
+    const htmlString = this.markdownIt.render(value);
+    return htmlString;
   }
 }
 
-export const markdown = directive(MarkdownDirective);
-
-const markdownItStandalone = MarkdownIt();
-export function renderMarkdownToHtmlString(value: string): string {
-  return markdownItStandalone.render(value);
-}
+/**
+ * A pre-configured instance of markdown-it to render markdown in A2UI web.
+ *
+ * This renderer does not perform any sanitization of the outgoing HTML.
+ */
+export const rawMarkdownRenderer = new MarkdownItCore();

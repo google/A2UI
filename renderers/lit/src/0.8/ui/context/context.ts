@@ -14,4 +14,11 @@
  limitations under the License.
  */
 
-export { noopMarkdown } from "./noop_markdown.js";
+import {markdownContext} from "./markdown.js";
+import {themeContext} from "./theme.js";
+
+export { 
+  markdownContext as markdown, 
+  themeContext as theme, 
+  themeContext, // Preserved for backwards compatibility. Prefer using `theme`.
+};

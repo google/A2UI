@@ -13,5 +13,14 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import {
+  DirectiveResult,
+} from "lit/directive.js";
+import { createContext } from "@lit/context";
 
-export { noopMarkdown } from "./noop_markdown.js";
+/**
+ * A Lit Context to override the default (noop) markdown renderer.
+ */
+export const markdownContext = createContext<DirectiveResult>(
+  Symbol("a2ui-lit-markdown-renderer")
+);

@@ -14,4 +14,22 @@
  limitations under the License.
  */
 
-export { noopMarkdown } from "./noop_markdown.js";
+import { html, TemplateResult } from "lit";
+import {
+  directive,
+  Directive,
+} from "lit/directive.js";
+
+/**
+ * "Handles" Markdown rendering by doing nothing.
+ *
+ * Configure @a2ui/lit-markdown, or your custom Markdown renderer
+ * to actually parse and render Markdown in your app.
+ */
+class NoopMarkdownRendererDirective extends Directive {
+  render(markdown: string, _tagClassMap?: Record<string, string[]>) : TemplateResult {
+    return html`<pre>${markdown}</pre>`;
+  }
+}
+
+export const noopMarkdown = directive(NoopMarkdownRendererDirective);
