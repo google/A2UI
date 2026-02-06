@@ -17,6 +17,9 @@ export * from './textField';
 export * from './slider';
 export * from './dateTimeInput';
 export * from './multipleChoice';
+export * from './video';
+export * from './audioPlayer';
+export * from './modal';
 
 // Re-export fixture groups
 export { textFixtures } from './text';
@@ -34,3 +37,6 @@ export { textFieldFixtures } from './textField';
 export { sliderFixtures } from './slider';
 export { dateTimeInputFixtures } from './dateTimeInput';
 export { multipleChoiceFixtures } from './multipleChoice';
+export { videoFixtures } from './video';
+export { audioPlayerFixtures } from './audioPlayer';
+export { modalFixtures } from './modal';
