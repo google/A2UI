@@ -1,5 +1,4 @@
 mkdocs-material
-mkdocs-redirects
 mkdocs-macros-plugin
 mkdocs-llmstxt
 mkdocs-include-markdown-plugin
