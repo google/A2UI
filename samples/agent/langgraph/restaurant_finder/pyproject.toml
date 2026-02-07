@@ -3,7 +3,7 @@ name = "a2ui-restaurant-finder-langgraph"
 version = "0.1.0"
 description = "Sample LangGraph-based Restaurant finder agent that uses a2ui UI."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "langgraph",
     "langchain",
@@ -13,7 +13,7 @@ dependencies = [
     "google-adk>=1.8.0",
     "python-dotenv>=1.1.0",
     "jsonschema>=4.0.0",
-    "a2ui",
+    "a2ui-agent",
     "uvicorn",
     "starlette",
 ]
@@ -33,4 +33,4 @@ url = "https://pypi.org/simple"
 default = true
 
 [tool.uv.sources]
-a2ui = { path = "../../../../a2a_agents/python/a2ui_extension", editable = true }
+a2ui-agent = { path = "../../../../a2a_agents/python/a2ui_agent", editable = false }

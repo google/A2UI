@@ -4,7 +4,7 @@ This sample uses [LangGraph](https://github.com/langchain-ai/langgraph) along wi
 
 ## Prerequisites
 
-- Python 3.9 or higher
+- Python 3.10 or higher
 - [UV](https://docs.astral.sh/uv/)
 - Access to an LLM and API Key (Google Gemini is used by default)
 
