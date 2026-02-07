@@ -1,0 +1,5439 @@
+[
+  {
+    "title": "Basic Static Content",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "static-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "static-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "heading-1",
+                  "text-1",
+                  "image-1"
+                ]
+              },
+              "justify": "start",
+              "align": "stretch"
+            },
+            {
+              "id": "heading-1",
+              "component": "Text",
+              "text": "Welcome to A2UI v0.9",
+              "variant": "h1"
+            },
+            {
+              "id": "text-1",
+              "component": "Text",
+              "text": "This is a simple static example rendered using the new Lit renderer. It features a heading, text, and an image."
+            },
+            {
+              "id": "image-1",
+              "component": "Image",
+              "url": "https://picsum.photos/id/237/400/200",
+              "fit": "cover",
+              "variant": "largeFeature"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Interactive Components",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "interactive-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "interactive-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "intro-text",
+                  "action-row"
+                ]
+              },
+              "justify": "start",
+              "align": "stretch"
+            },
+            {
+              "id": "intro-text",
+              "component": "Text",
+              "text": "Interact with these components:"
+            },
+            {
+              "id": "action-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "btn-primary",
+                  "btn-secondary"
+                ]
+              },
+              "justify": "start",
+              "align": "center"
+            },
+            {
+              "id": "btn-primary",
+              "component": "Button",
+              "child": "btn-primary-text",
+              "action": {
+                "name": "primary-click",
+                "parameters": {
+                  "type": "primary"
+                }
+              },
+              "variant": "primary"
+            },
+            {
+              "id": "btn-primary-text",
+              "component": "Text",
+              "text": "Click Me"
+            },
+            {
+              "id": "btn-secondary",
+              "component": "Button",
+              "child": "btn-secondary-text",
+              "action": {
+                "name": "secondary-click",
+                "parameters": {
+                  "type": "secondary"
+                }
+              }
+            },
+            {
+              "id": "btn-secondary-text",
+              "component": "Text",
+              "text": "Or Me"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Data Model Binding",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "data-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "data-surface-1",
+          "path": "/",
+          "value": {
+            "userName": "Jane Doe",
+            "score": 42
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "data-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "content-col"
+            },
+            {
+              "id": "content-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "user-greeting",
+                  "score-display"
+                ]
+              },
+              "justify": "start",
+              "align": "stretch"
+            },
+            {
+              "id": "user-greeting",
+              "component": "Text",
+              "text": {
+                "path": "/userName"
+              }
+            },
+            {
+              "id": "score-display",
+              "component": "Text",
+              "text": {
+                "path": "/score"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Coffee Order",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "coffee-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "coffee-surface-1",
+          "path": "/",
+          "value": {
+            "storeName": "Sunrise Coffee",
+            "item1": {
+              "name": "Oat Milk Latte",
+              "size": "Grande, Extra Shot",
+              "price": "$6.45"
+            },
+            "item2": {
+              "name": "Chocolate Croissant",
+              "size": "Warmed",
+              "price": "$4.25"
+            },
+            "subtotal": "$10.70",
+            "tax": "$0.96",
+            "total": "$11.66"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "coffee-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "items",
+                  "divider",
+                  "totals",
+                  "actions"
+                ]
+              },
+              "align": "stretch"
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "coffee-icon",
+                  "store-name"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "coffee-icon",
+              "component": "Icon",
+              "name": "local_cafe"
+            },
+            {
+              "id": "store-name",
+              "component": "Text",
+              "text": {
+                "path": "/storeName"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "items",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "item1",
+                  "item2"
+                ]
+              }
+            },
+            {
+              "id": "item1",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "item1-details",
+                  "item1-price"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "start"
+            },
+            {
+              "id": "item1-details",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "item1-name",
+                  "item1-size"
+                ]
+              }
+            },
+            {
+              "id": "item1-name",
+              "component": "Text",
+              "text": {
+                "path": "/item1/name"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "item1-size",
+              "component": "Text",
+              "text": {
+                "path": "/item1/size"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "item1-price",
+              "component": "Text",
+              "text": {
+                "path": "/item1/price"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "item2",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "item2-details",
+                  "item2-price"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "start"
+            },
+            {
+              "id": "item2-details",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "item2-name",
+                  "item2-size"
+                ]
+              }
+            },
+            {
+              "id": "item2-name",
+              "component": "Text",
+              "text": {
+                "path": "/item2/name"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "item2-size",
+              "component": "Text",
+              "text": {
+                "path": "/item2/size"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "item2-price",
+              "component": "Text",
+              "text": {
+                "path": "/item2/price"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "totals",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "subtotal-row",
+                  "tax-row",
+                  "total-row"
+                ]
+              }
+            },
+            {
+              "id": "subtotal-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "subtotal-label",
+                  "subtotal-value"
+                ]
+              },
+              "justify": "spaceBetween"
+            },
+            {
+              "id": "subtotal-label",
+              "component": "Text",
+              "text": "Subtotal",
+              "variant": "caption"
+            },
+            {
+              "id": "subtotal-value",
+              "component": "Text",
+              "text": {
+                "path": "/subtotal"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "tax-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "tax-label",
+                  "tax-value"
+                ]
+              },
+              "justify": "spaceBetween"
+            },
+            {
+              "id": "tax-label",
+              "component": "Text",
+              "text": "Tax",
+              "variant": "caption"
+            },
+            {
+              "id": "tax-value",
+              "component": "Text",
+              "text": {
+                "path": "/tax"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "total-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "total-label",
+                  "total-value"
+                ]
+              },
+              "justify": "spaceBetween"
+            },
+            {
+              "id": "total-label",
+              "component": "Text",
+              "text": "Total",
+              "variant": "h4"
+            },
+            {
+              "id": "total-value",
+              "component": "Text",
+              "text": {
+                "path": "/total"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "purchase-btn",
+                  "add-btn"
+                ]
+              }
+            },
+            {
+              "id": "purchase-btn-text",
+              "component": "Text",
+              "text": "Purchase"
+            },
+            {
+              "id": "purchase-btn",
+              "component": "Button",
+              "child": "purchase-btn-text",
+              "action": {
+                "event": {
+                  "name": "purchase",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "add-btn-text",
+              "component": "Text",
+              "text": "Add to cart"
+            },
+            {
+              "id": "add-btn",
+              "component": "Button",
+              "child": "add-btn-text",
+              "action": {
+                "event": {
+                  "name": "add_to_cart",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Weather",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "weather-surface-1",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "weather-surface-1",
+          "path": "/",
+          "value": {
+            "tempHigh": "72\u00b0",
+            "tempLow": "58\u00b0",
+            "location": "Austin, TX",
+            "description": "Clear skies with light breeze",
+            "forecast": [
+              {
+                "icon": "\u2600\ufe0f",
+                "temp": "74\u00b0"
+              },
+              {
+                "icon": "\u2600\ufe0f",
+                "temp": "76\u00b0"
+              },
+              {
+                "icon": "\u26c5",
+                "temp": "71\u00b0"
+              },
+              {
+                "icon": "\u2600\ufe0f",
+                "temp": "73\u00b0"
+              },
+              {
+                "icon": "\u2600\ufe0f",
+                "temp": "75\u00b0"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "weather-surface-1",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "temp-row",
+                  "location",
+                  "description",
+                  "forecast-row"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "temp-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "temp-high",
+                  "temp-low"
+                ]
+              },
+              "align": "end"
+            },
+            {
+              "id": "temp-high",
+              "component": "Text",
+              "text": {
+                "path": "/tempHigh"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "temp-low",
+              "component": "Text",
+              "text": {
+                "path": "/tempLow"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "location",
+              "component": "Text",
+              "text": {
+                "path": "/location"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "description",
+              "component": "Text",
+              "text": {
+                "path": "/description"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "forecast-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "day1",
+                  "day2",
+                  "day3",
+                  "day4",
+                  "day5"
+                ]
+              },
+              "justify": "spaceAround"
+            },
+            {
+              "id": "day1",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "day1-icon",
+                  "day1-temp"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "day1-icon",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/0/icon"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "day1-temp",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/0/temp"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "day2",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "day2-icon",
+                  "day2-temp"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "day2-icon",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/1/icon"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "day2-temp",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/1/temp"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "day3",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "day3-icon",
+                  "day3-temp"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "day3-icon",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/2/icon"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "day3-temp",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/2/temp"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "day4",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "day4-icon",
+                  "day4-temp"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "day4-icon",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/3/icon"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "day4-temp",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/3/temp"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "day5",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "day5-icon",
+                  "day5-temp"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "day5-icon",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/4/icon"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "day5-temp",
+              "component": "Text",
+              "text": {
+                "path": "/forecast/4/temp"
+              },
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Account Balance",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "account-balance-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "account-balance-surface",
+          "path": "/",
+          "value": {
+            "accountName": "Primary Checking",
+            "balance": "$12,458.32",
+            "lastUpdated": "Updated just now"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "account-balance-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "balance",
+                  "updated",
+                  "divider",
+                  "actions"
+                ]
+              }
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "account-icon",
+                  "account-name"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "account-icon",
+              "component": "Icon",
+              "name": "account_balance"
+            },
+            {
+              "id": "account-name",
+              "component": "Text",
+              "text": {
+                "path": "/accountName"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "balance",
+              "component": "Text",
+              "text": {
+                "path": "/balance"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "updated",
+              "component": "Text",
+              "text": {
+                "path": "/lastUpdated"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "transfer-btn",
+                  "pay-btn"
+                ]
+              }
+            },
+            {
+              "id": "transfer-btn-text",
+              "component": "Text",
+              "text": "Transfer"
+            },
+            {
+              "id": "transfer-btn",
+              "component": "Button",
+              "child": "transfer-btn-text",
+              "action": {
+                "event": {
+                  "name": "transfer",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "pay-btn-text",
+              "component": "Text",
+              "text": "Pay Bill"
+            },
+            {
+              "id": "pay-btn",
+              "component": "Button",
+              "child": "pay-btn-text",
+              "action": {
+                "event": {
+                  "name": "pay_bill",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Calendar Day",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "calendar-day-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "calendar-day-surface",
+          "path": "/",
+          "value": {
+            "dayName": "Friday",
+            "dayNumber": "28"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "calendar-day-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header-row",
+                  "events-list",
+                  "actions"
+                ]
+              }
+            },
+            {
+              "id": "header-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "date-col",
+                  "events-col"
+                ]
+              }
+            },
+            {
+              "id": "date-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "day-name",
+                  "day-number"
+                ]
+              },
+              "align": "start"
+            },
+            {
+              "id": "day-name",
+              "component": "Text",
+              "text": {
+                "path": "/dayName"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "day-number",
+              "component": "Text",
+              "text": {
+                "path": "/dayNumber"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "events-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "event1",
+                  "event2",
+                  "event3"
+                ]
+              }
+            },
+            {
+              "id": "event1",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "event1-title",
+                  "event1-time"
+                ]
+              }
+            },
+            {
+              "id": "event1-title",
+              "component": "Text",
+              "text": {
+                "path": "/event1/title"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "event1-time",
+              "component": "Text",
+              "text": {
+                "path": "/event1/time"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "event2",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "event2-title",
+                  "event2-time"
+                ]
+              }
+            },
+            {
+              "id": "event2-title",
+              "component": "Text",
+              "text": {
+                "path": "/event2/title"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "event2-time",
+              "component": "Text",
+              "text": {
+                "path": "/event2/time"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "event3",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "event3-title",
+                  "event3-time"
+                ]
+              }
+            },
+            {
+              "id": "event3-title",
+              "component": "Text",
+              "text": {
+                "path": "/event3/title"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "event3-time",
+              "component": "Text",
+              "text": {
+                "path": "/event3/time"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "events-list",
+              "component": "Divider"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "add-btn",
+                  "discard-btn"
+                ]
+              }
+            },
+            {
+              "id": "add-btn-text",
+              "component": "Text",
+              "text": "Add to calendar"
+            },
+            {
+              "id": "add-btn",
+              "component": "Button",
+              "child": "add-btn-text",
+              "action": {
+                "event": {
+                  "name": "add",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "discard-btn-text",
+              "component": "Text",
+              "text": "Discard"
+            },
+            {
+              "id": "discard-btn",
+              "component": "Button",
+              "child": "discard-btn-text",
+              "action": {
+                "event": {
+                  "name": "discard",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Chat Message Thread",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "chat-message-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "chat-message-surface",
+          "path": "/",
+          "value": {
+            "channelName": "project-updates",
+            "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop",
+            "username": "Mike Chen",
+            "time": "10:32 AM",
+            "text": "Just pushed the new API changes. Ready for review."
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "chat-message-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "divider",
+                  "messages"
+                ]
+              }
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "channel-icon",
+                  "channel-name"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "channel-icon",
+              "component": "Icon",
+              "name": "tag"
+            },
+            {
+              "id": "channel-name",
+              "component": "Text",
+              "text": {
+                "path": "/channelName"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "messages",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "message1",
+                  "message2"
+                ]
+              },
+              "align": "start"
+            },
+            {
+              "id": "message1",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "avatar1",
+                  "msg1-content"
+                ]
+              },
+              "align": "start"
+            },
+            {
+              "id": "avatar1",
+              "component": "Image",
+              "url": {
+                "path": "/message1/avatar"
+              },
+              "fit": "cover",
+              "variant": "avatar"
+            },
+            {
+              "id": "msg1-content",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "msg1-header",
+                  "msg1-text"
+                ]
+              }
+            },
+            {
+              "id": "msg1-header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "msg1-username",
+                  "msg1-time"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "msg1-username",
+              "component": "Text",
+              "text": {
+                "path": "/message1/username"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "msg1-time",
+              "component": "Text",
+              "text": {
+                "path": "/message1/time"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "msg1-text",
+              "component": "Text",
+              "text": {
+                "path": "/message1/text"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "message2",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "avatar2",
+                  "msg2-content"
+                ]
+              },
+              "align": "start"
+            },
+            {
+              "id": "avatar2",
+              "component": "Image",
+              "url": {
+                "path": "/message2/avatar"
+              },
+              "fit": "cover",
+              "variant": "avatar"
+            },
+            {
+              "id": "msg2-content",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "msg2-header",
+                  "msg2-text"
+                ]
+              }
+            },
+            {
+              "id": "msg2-header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "msg2-username",
+                  "msg2-time"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "msg2-username",
+              "component": "Text",
+              "text": {
+                "path": "/message2/username"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "msg2-time",
+              "component": "Text",
+              "text": {
+                "path": "/message2/time"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "msg2-text",
+              "component": "Text",
+              "text": {
+                "path": "/message2/text"
+              },
+              "variant": "body"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Contact Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "contact-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "contact-card-surface",
+          "path": "/",
+          "value": {
+            "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+            "name": "David Park",
+            "title": "Engineering Manager",
+            "phone": "+1 (555) 234-5678",
+            "email": "david.park@company.com",
+            "location": "San Francisco, CA"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "contact-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "avatar-image",
+                  "name",
+                  "title",
+                  "divider",
+                  "contact-info",
+                  "actions"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "avatar-image",
+              "component": "Image",
+              "url": {
+                "path": "/avatar"
+              },
+              "fit": "cover",
+              "variant": "avatar"
+            },
+            {
+              "id": "name",
+              "component": "Text",
+              "text": {
+                "path": "/name"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": {
+                "path": "/title"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "contact-info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "phone-row",
+                  "email-row",
+                  "location-row"
+                ]
+              }
+            },
+            {
+              "id": "phone-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "phone-icon",
+                  "phone-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "phone-icon",
+              "component": "Icon",
+              "name": "phone"
+            },
+            {
+              "id": "phone-text",
+              "component": "Text",
+              "text": {
+                "path": "/phone"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "email-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "email-icon",
+                  "email-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "email-icon",
+              "component": "Icon",
+              "name": "mail"
+            },
+            {
+              "id": "email-text",
+              "component": "Text",
+              "text": {
+                "path": "/email"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "location-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "location-icon",
+                  "location-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "location-icon",
+              "component": "Icon",
+              "name": "location_on"
+            },
+            {
+              "id": "location-text",
+              "component": "Text",
+              "text": {
+                "path": "/location"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "call-btn",
+                  "message-btn"
+                ]
+              }
+            },
+            {
+              "id": "call-btn-text",
+              "component": "Text",
+              "text": "Call"
+            },
+            {
+              "id": "call-btn",
+              "component": "Button",
+              "child": "call-btn-text",
+              "action": {
+                "event": {
+                  "name": "call",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "message-btn-text",
+              "component": "Text",
+              "text": "Message"
+            },
+            {
+              "id": "message-btn",
+              "component": "Button",
+              "child": "message-btn-text",
+              "action": {
+                "event": {
+                  "name": "message",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Countdown Timer",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "countdown-timer-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "countdown-timer-surface",
+          "path": "/",
+          "value": {
+            "eventName": "Product Launch",
+            "days": "14",
+            "hours": "08",
+            "minutes": "32",
+            "targetDate": "January 15, 2025"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "countdown-timer-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "event-name",
+                  "countdown-row",
+                  "target-date"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "event-name",
+              "component": "Text",
+              "text": {
+                "path": "/eventName"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "countdown-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "days-col",
+                  "hours-col",
+                  "minutes-col"
+                ]
+              },
+              "justify": "spaceAround"
+            },
+            {
+              "id": "days-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "days-value",
+                  "days-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "days-value",
+              "component": "Text",
+              "text": {
+                "path": "/days"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "days-label",
+              "component": "Text",
+              "text": "Days",
+              "variant": "caption"
+            },
+            {
+              "id": "hours-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "hours-value",
+                  "hours-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "hours-value",
+              "component": "Text",
+              "text": {
+                "path": "/hours"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "hours-label",
+              "component": "Text",
+              "text": "Hours",
+              "variant": "caption"
+            },
+            {
+              "id": "minutes-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "minutes-value",
+                  "minutes-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "minutes-value",
+              "component": "Text",
+              "text": {
+                "path": "/minutes"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "minutes-label",
+              "component": "Text",
+              "text": "Minutes",
+              "variant": "caption"
+            },
+            {
+              "id": "target-date",
+              "component": "Text",
+              "text": {
+                "path": "/targetDate"
+              },
+              "variant": "body"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Credit Card Display",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "credit-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "credit-card-surface",
+          "path": "/",
+          "value": {
+            "cardType": "VISA",
+            "cardNumber": "\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 4242",
+            "holderName": "SARAH JOHNSON",
+            "expiryDate": "09/27"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "credit-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "card-type-row",
+                  "card-number",
+                  "card-details"
+                ]
+              }
+            },
+            {
+              "id": "card-type-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "card-icon",
+                  "card-type"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "center"
+            },
+            {
+              "id": "card-icon",
+              "component": "Icon",
+              "name": "credit_card"
+            },
+            {
+              "id": "card-type",
+              "component": "Text",
+              "text": {
+                "path": "/cardType"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "card-number",
+              "component": "Text",
+              "text": {
+                "path": "/cardNumber"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "card-details",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "holder-col",
+                  "expiry-col"
+                ]
+              },
+              "justify": "spaceBetween"
+            },
+            {
+              "id": "holder-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "holder-label",
+                  "holder-name"
+                ]
+              }
+            },
+            {
+              "id": "holder-label",
+              "component": "Text",
+              "text": "CARD HOLDER",
+              "variant": "caption"
+            },
+            {
+              "id": "holder-name",
+              "component": "Text",
+              "text": {
+                "path": "/holderName"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "expiry-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "expiry-label",
+                  "expiry-date"
+                ]
+              },
+              "align": "end"
+            },
+            {
+              "id": "expiry-label",
+              "component": "Text",
+              "text": "EXPIRES",
+              "variant": "caption"
+            },
+            {
+              "id": "expiry-date",
+              "component": "Text",
+              "text": {
+                "path": "/expiryDate"
+              },
+              "variant": "body"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Email Compose",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "email-compose-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "email-compose-surface",
+          "path": "/",
+          "value": {
+            "from": "alex@acme.com",
+            "to": "jordan@acme.com",
+            "subject": "Q4 Revenue Forecast",
+            "greeting": "Hi Jordan,",
+            "closing": "Best,",
+            "signature": "Alex"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "email-compose-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "from-row",
+                  "to-row",
+                  "subject-row",
+                  "divider",
+                  "message",
+                  "actions"
+                ]
+              }
+            },
+            {
+              "id": "from-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "from-label",
+                  "from-value"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "from-label",
+              "component": "Text",
+              "text": "FROM",
+              "variant": "caption"
+            },
+            {
+              "id": "from-value",
+              "component": "Text",
+              "text": {
+                "path": "/from"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "to-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "to-label",
+                  "to-value"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "to-label",
+              "component": "Text",
+              "text": "TO",
+              "variant": "caption"
+            },
+            {
+              "id": "to-value",
+              "component": "Text",
+              "text": {
+                "path": "/to"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "subject-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "subject-label",
+                  "subject-value"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "subject-label",
+              "component": "Text",
+              "text": "SUBJECT",
+              "variant": "caption"
+            },
+            {
+              "id": "subject-value",
+              "component": "Text",
+              "text": {
+                "path": "/subject"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "message",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "greeting",
+                  "body-text",
+                  "closing",
+                  "signature"
+                ]
+              }
+            },
+            {
+              "id": "greeting",
+              "component": "Text",
+              "text": {
+                "path": "/greeting"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "body-text",
+              "component": "Text",
+              "text": {
+                "path": "/body"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "closing",
+              "component": "Text",
+              "text": {
+                "path": "/closing"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "signature",
+              "component": "Text",
+              "text": {
+                "path": "/signature"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "send-btn",
+                  "discard-btn"
+                ]
+              }
+            },
+            {
+              "id": "send-btn-text",
+              "component": "Text",
+              "text": "Send email"
+            },
+            {
+              "id": "send-btn",
+              "component": "Button",
+              "child": "send-btn-text",
+              "action": {
+                "event": {
+                  "name": "send",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "discard-btn-text",
+              "component": "Text",
+              "text": "Discard"
+            },
+            {
+              "id": "discard-btn",
+              "component": "Button",
+              "child": "discard-btn-text",
+              "action": {
+                "event": {
+                  "name": "discard",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Event Detail Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "event-detail-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "event-detail-surface",
+          "path": "/",
+          "value": {
+            "title": "Product Launch Meeting",
+            "dateTime": "Thu, Dec 19 \u2022 2:00 PM - 3:30 PM",
+            "location": "Conference Room A, Building 2",
+            "description": "Review final product specs and marketing materials before the Q1 launch."
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "event-detail-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "title",
+                  "time-row",
+                  "location-row",
+                  "description",
+                  "divider",
+                  "actions"
+                ]
+              }
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": {
+                "path": "/title"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "time-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "time-icon",
+                  "time-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "time-icon",
+              "component": "Icon",
+              "name": "schedule"
+            },
+            {
+              "id": "time-text",
+              "component": "Text",
+              "text": {
+                "path": "/dateTime"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "location-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "location-icon",
+                  "location-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "location-icon",
+              "component": "Icon",
+              "name": "location_on"
+            },
+            {
+              "id": "location-text",
+              "component": "Text",
+              "text": {
+                "path": "/location"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "description",
+              "component": "Text",
+              "text": {
+                "path": "/description"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "accept-btn",
+                  "decline-btn"
+                ]
+              }
+            },
+            {
+              "id": "accept-btn-text",
+              "component": "Text",
+              "text": "Accept"
+            },
+            {
+              "id": "accept-btn",
+              "component": "Button",
+              "child": "accept-btn-text",
+              "action": {
+                "event": {
+                  "name": "accept",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "decline-btn-text",
+              "component": "Text",
+              "text": "Decline"
+            },
+            {
+              "id": "decline-btn",
+              "component": "Button",
+              "child": "decline-btn-text",
+              "action": {
+                "event": {
+                  "name": "decline",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Flight Status",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "flight-status-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "flight-status-surface",
+          "path": "/",
+          "value": {
+            "flightNumber": "OS 87",
+            "date": "Mon, Dec 15",
+            "origin": "Vienna",
+            "destination": "New York",
+            "departureTime": "10:15 AM",
+            "status": "On Time",
+            "arrivalTime": "2:30 PM"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "flight-status-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header-row",
+                  "route-row",
+                  "divider",
+                  "times-row"
+                ]
+              },
+              "align": "stretch"
+            },
+            {
+              "id": "header-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "header-left",
+                  "date"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "center"
+            },
+            {
+              "id": "header-left",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "flight-indicator",
+                  "flight-number"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "flight-indicator",
+              "component": "Icon",
+              "name": "flight"
+            },
+            {
+              "id": "flight-number",
+              "component": "Text",
+              "text": {
+                "path": "/flightNumber"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "date",
+              "component": "Text",
+              "text": {
+                "path": "/date"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "route-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "origin",
+                  "arrow",
+                  "destination"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "origin",
+              "component": "Text",
+              "text": {
+                "path": "/origin"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "arrow",
+              "component": "Text",
+              "text": "\u2192",
+              "variant": "h2"
+            },
+            {
+              "id": "destination",
+              "component": "Text",
+              "text": {
+                "path": "/destination"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "times-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "departure-col",
+                  "status-col",
+                  "arrival-col"
+                ]
+              },
+              "justify": "spaceBetween"
+            },
+            {
+              "id": "departure-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "departure-label",
+                  "departure-time"
+                ]
+              },
+              "align": "start"
+            },
+            {
+              "id": "departure-label",
+              "component": "Text",
+              "text": "Departs",
+              "variant": "caption"
+            },
+            {
+              "id": "departure-time",
+              "component": "Text",
+              "text": {
+                "path": "/departureTime"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "status-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "status-label",
+                  "status-value"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "status-label",
+              "component": "Text",
+              "text": "Status",
+              "variant": "caption"
+            },
+            {
+              "id": "status-value",
+              "component": "Text",
+              "text": {
+                "path": "/status"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "arrival-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "arrival-label",
+                  "arrival-time"
+                ]
+              },
+              "align": "end"
+            },
+            {
+              "id": "arrival-label",
+              "component": "Text",
+              "text": "Arrives",
+              "variant": "caption"
+            },
+            {
+              "id": "arrival-time",
+              "component": "Text",
+              "text": {
+                "path": "/arrivalTime"
+              },
+              "variant": "h3"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Login Form",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "login-form-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "login-form-surface",
+          "path": "/",
+          "value": {
+            "email": "",
+            "password": ""
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "login-form-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "email-field",
+                  "password-field",
+                  "login-btn",
+                  "divider",
+                  "signup-text"
+                ]
+              }
+            },
+            {
+              "id": "header",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "title",
+                  "subtitle"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": "Welcome back",
+              "variant": "h2"
+            },
+            {
+              "id": "subtitle",
+              "component": "Text",
+              "text": "Sign in to your account",
+              "variant": "caption"
+            },
+            {
+              "id": "email-field",
+              "component": "TextField",
+              "value": {
+                "path": "/email"
+              },
+              "label": "Email"
+            },
+            {
+              "id": "password-field",
+              "component": "TextField",
+              "value": {
+                "path": "/password"
+              },
+              "label": "Password"
+            },
+            {
+              "id": "login-btn-text",
+              "component": "Text",
+              "text": "Sign in"
+            },
+            {
+              "id": "login-btn",
+              "component": "Button",
+              "child": "login-btn-text",
+              "action": {
+                "event": {
+                  "name": "login",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "signup-text",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "no-account",
+                  "signup-link"
+                ]
+              },
+              "justify": "center"
+            },
+            {
+              "id": "no-account",
+              "component": "Text",
+              "variant": "caption"
+            },
+            {
+              "id": "signup-link-text",
+              "component": "Text",
+              "text": "Sign up"
+            },
+            {
+              "id": "signup-link",
+              "component": "Button",
+              "child": "signup-link-text",
+              "action": {
+                "event": {
+                  "name": "signup",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Movie Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "movie-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "movie-card-surface",
+          "path": "/",
+          "value": {
+            "poster": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200&h=300&fit=crop",
+            "title": "Interstellar",
+            "year": "(2014)",
+            "genre": "Sci-Fi \u2022 Adventure \u2022 Drama",
+            "rating": "8.7/10",
+            "runtime": "2h 49min"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "movie-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "poster",
+                  "content"
+                ]
+              }
+            },
+            {
+              "id": "poster",
+              "component": "Image",
+              "url": {
+                "path": "/poster"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "content",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "title-row",
+                  "genre",
+                  "rating-row",
+                  "runtime"
+                ]
+              }
+            },
+            {
+              "id": "title-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "movie-title",
+                  "year"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "movie-title",
+              "component": "Text",
+              "text": {
+                "path": "/title"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "year",
+              "component": "Text",
+              "text": {
+                "path": "/year"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "genre",
+              "component": "Text",
+              "text": {
+                "path": "/genre"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "rating-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "star-icon",
+                  "rating-value"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "star-icon",
+              "component": "Icon",
+              "name": "star"
+            },
+            {
+              "id": "rating-value",
+              "component": "Text",
+              "text": {
+                "path": "/rating"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "runtime",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "time-icon",
+                  "runtime-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "time-icon",
+              "component": "Icon",
+              "name": "schedule"
+            },
+            {
+              "id": "runtime-text",
+              "component": "Text",
+              "text": {
+                "path": "/runtime"
+              },
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Music Player",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "music-player-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "music-player-surface",
+          "path": "/",
+          "value": {
+            "albumArt": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop",
+            "title": "Blinding Lights",
+            "artist": "The Weeknd",
+            "album": "After Hours",
+            "progress": 0.45,
+            "currentTime": "1:48",
+            "totalTime": "4:22",
+            "playIcon": "\u23f8"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "music-player-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "album-art",
+                  "track-info",
+                  "progress",
+                  "time-row",
+                  "controls"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "album-art",
+              "component": "Image",
+              "url": {
+                "path": "/albumArt"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "track-info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "song-title",
+                  "artist"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "song-title",
+              "component": "Text",
+              "text": {
+                "path": "/title"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "artist",
+              "component": "Text",
+              "text": {
+                "path": "/artist"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "progress",
+              "component": "Text",
+              "text": {
+                "literalString": "Progress..."
+              }
+            },
+            {
+              "id": "time-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "current-time",
+                  "total-time"
+                ]
+              },
+              "justify": "spaceBetween"
+            },
+            {
+              "id": "current-time",
+              "component": "Text",
+              "text": {
+                "path": "/currentTime"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "total-time",
+              "component": "Text",
+              "text": {
+                "path": "/totalTime"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "controls",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "prev-btn",
+                  "play-btn",
+                  "next-btn"
+                ]
+              },
+              "justify": "center"
+            },
+            {
+              "id": "prev-btn-text",
+              "component": "Text",
+              "text": "\u23ee"
+            },
+            {
+              "id": "prev-btn",
+              "component": "Button",
+              "child": "prev-btn-text",
+              "action": {
+                "event": {
+                  "name": "previous",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "play-btn-text",
+              "component": "Text",
+              "text": {
+                "path": "/playIcon"
+              }
+            },
+            {
+              "id": "play-btn",
+              "component": "Button",
+              "child": "play-btn-text",
+              "action": {
+                "event": {
+                  "name": "playPause",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "next-btn-text",
+              "component": "Text",
+              "text": "\u23ed"
+            },
+            {
+              "id": "next-btn",
+              "component": "Button",
+              "child": "next-btn-text",
+              "action": {
+                "event": {
+                  "name": "next",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Notification",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "notification-permission-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "notification-permission-surface",
+          "path": "/",
+          "value": {
+            "icon": "check",
+            "title": "Enable notification",
+            "description": "Get alerts for order status changes"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "notification-permission-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "icon",
+                  "title",
+                  "description",
+                  "actions"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "icon",
+              "component": "Icon",
+              "name": {
+                "path": "/icon"
+              }
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": {
+                "path": "/title"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "description",
+              "component": "Text",
+              "text": {
+                "path": "/description"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "yes-btn",
+                  "no-btn"
+                ]
+              },
+              "justify": "center"
+            },
+            {
+              "id": "yes-btn-text",
+              "component": "Text",
+              "text": "Yes"
+            },
+            {
+              "id": "yes-btn",
+              "component": "Button",
+              "child": "yes-btn-text",
+              "action": {
+                "event": {
+                  "name": "accept",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "no-btn-text",
+              "component": "Text",
+              "text": "No"
+            },
+            {
+              "id": "no-btn",
+              "component": "Button",
+              "child": "no-btn-text",
+              "action": {
+                "event": {
+                  "name": "decline",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Podcast Episode",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "podcast-episode-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "podcast-episode-surface",
+          "path": "/",
+          "value": {
+            "artwork": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=100&h=100&fit=crop",
+            "showName": "Tech Talk Daily",
+            "episodeTitle": "The Future of AI in Product Design",
+            "duration": "45 min",
+            "date": "Dec 15, 2024",
+            "description": "How AI is transforming the way we design and build products."
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "podcast-episode-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-row"
+            },
+            {
+              "id": "main-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "artwork",
+                  "content"
+                ]
+              },
+              "align": "start"
+            },
+            {
+              "id": "artwork",
+              "component": "Image",
+              "url": {
+                "path": "/artwork"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "content",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "show-name",
+                  "episode-title",
+                  "meta-row",
+                  "description",
+                  "play-btn"
+                ]
+              }
+            },
+            {
+              "id": "show-name",
+              "component": "Text",
+              "text": {
+                "path": "/showName"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "episode-title",
+              "component": "Text",
+              "text": {
+                "path": "/episodeTitle"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "meta-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "duration",
+                  "date"
+                ]
+              }
+            },
+            {
+              "id": "duration",
+              "component": "Text",
+              "text": {
+                "path": "/duration"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "date",
+              "component": "Text",
+              "text": {
+                "path": "/date"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "description",
+              "component": "Text",
+              "text": {
+                "path": "/description"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "play-btn-text",
+              "component": "Text",
+              "text": "Play Episode"
+            },
+            {
+              "id": "play-btn",
+              "component": "Button",
+              "child": "play-btn-text",
+              "action": {
+                "event": {
+                  "name": "play",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Product Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "product-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "product-card-surface",
+          "path": "/",
+          "value": {
+            "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop",
+            "name": "Wireless Headphones Pro",
+            "stars": "\u2605\u2605\u2605\u2605\u2605",
+            "reviews": "(2,847 reviews)",
+            "price": "$199.99",
+            "originalPrice": "$249.99"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "product-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "image",
+                  "details"
+                ]
+              }
+            },
+            {
+              "id": "image",
+              "component": "Image",
+              "url": {
+                "path": "/imageUrl"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "details",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "name",
+                  "rating-row",
+                  "price-row",
+                  "actions"
+                ]
+              }
+            },
+            {
+              "id": "name",
+              "component": "Text",
+              "text": {
+                "path": "/name"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "rating-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "stars",
+                  "reviews"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "stars",
+              "component": "Text",
+              "text": {
+                "path": "/stars"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "reviews",
+              "component": "Text",
+              "text": {
+                "path": "/reviews"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "price-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "price",
+                  "original-price"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "price",
+              "component": "Text",
+              "text": {
+                "path": "/price"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "original-price",
+              "component": "Text",
+              "text": {
+                "path": "/originalPrice"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "add-cart-btn"
+                ]
+              }
+            },
+            {
+              "id": "add-cart-btn-text",
+              "component": "Text",
+              "text": "Add to Cart"
+            },
+            {
+              "id": "add-cart-btn",
+              "component": "Button",
+              "child": "add-cart-btn-text",
+              "action": {
+                "event": {
+                  "name": "addToCart",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Purchase Complete",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "purchase-complete-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "purchase-complete-surface",
+          "path": "/",
+          "value": {
+            "productImage": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop",
+            "productName": "Wireless Headphones Pro",
+            "price": "$199.99",
+            "deliveryDate": "Arrives Dec 18 - Dec 20",
+            "seller": "TechStore Official"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "purchase-complete-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "success-icon",
+                  "title",
+                  "product-row",
+                  "divider",
+                  "details-col",
+                  "view-btn"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "success-icon",
+              "component": "Icon",
+              "name": "check_circle"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": "Purchase Complete",
+              "variant": "h2"
+            },
+            {
+              "id": "product-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "product-image",
+                  "product-info"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "product-image",
+              "component": "Image",
+              "url": {
+                "path": "/productImage"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "product-info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "product-name",
+                  "product-price"
+                ]
+              }
+            },
+            {
+              "id": "product-name",
+              "component": "Text",
+              "text": {
+                "path": "/productName"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "product-price",
+              "component": "Text",
+              "text": {
+                "path": "/price"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "details-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "delivery-row",
+                  "seller-row"
+                ]
+              }
+            },
+            {
+              "id": "delivery-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "delivery-icon",
+                  "delivery-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "delivery-icon",
+              "component": "Icon",
+              "name": "local_shipping"
+            },
+            {
+              "id": "delivery-text",
+              "component": "Text",
+              "text": {
+                "path": "/deliveryDate"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "seller-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "seller-label",
+                  "seller-name"
+                ]
+              }
+            },
+            {
+              "id": "seller-label",
+              "component": "Text",
+              "text": "Sold by:",
+              "variant": "caption"
+            },
+            {
+              "id": "seller-name",
+              "component": "Text",
+              "text": {
+                "path": "/seller"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "view-btn-text",
+              "component": "Text",
+              "text": "View Order Details"
+            },
+            {
+              "id": "view-btn",
+              "component": "Button",
+              "child": "view-btn-text",
+              "action": {
+                "event": {
+                  "name": "view_details",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Recipe Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "recipe-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "recipe-card-surface",
+          "path": "/",
+          "value": {
+            "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=180&fit=crop",
+            "title": "Mediterranean Quinoa Bowl",
+            "rating": "4.9",
+            "reviewCount": "(1,247 reviews)",
+            "prepTime": "15 min prep",
+            "cookTime": "20 min cook",
+            "servings": "Serves 4"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "recipe-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "recipe-image",
+                  "content"
+                ]
+              }
+            },
+            {
+              "id": "recipe-image",
+              "component": "Image",
+              "url": {
+                "path": "/image"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "content",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "title",
+                  "rating-row",
+                  "times-row",
+                  "servings"
+                ]
+              }
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": {
+                "path": "/title"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "rating-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "star-icon",
+                  "rating",
+                  "review-count"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "star-icon",
+              "component": "Icon",
+              "name": "star"
+            },
+            {
+              "id": "rating",
+              "component": "Text",
+              "text": {
+                "path": "/rating"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "review-count",
+              "component": "Text",
+              "text": {
+                "path": "/reviewCount"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "times-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "prep-time",
+                  "cook-time"
+                ]
+              }
+            },
+            {
+              "id": "prep-time",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "prep-icon",
+                  "prep-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "prep-icon",
+              "component": "Icon",
+              "name": "timer"
+            },
+            {
+              "id": "prep-text",
+              "component": "Text",
+              "text": {
+                "path": "/prepTime"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "cook-time",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "cook-icon",
+                  "cook-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "cook-icon",
+              "component": "Icon",
+              "name": "local_fire_department"
+            },
+            {
+              "id": "cook-text",
+              "component": "Text",
+              "text": {
+                "path": "/cookTime"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "servings",
+              "component": "Text",
+              "text": {
+                "path": "/servings"
+              },
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Restaurant Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "restaurant-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "restaurant-card-surface",
+          "path": "/",
+          "value": {
+            "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=300&h=150&fit=crop",
+            "name": "The Italian Kitchen",
+            "priceRange": "$$$",
+            "cuisine": "Italian \u2022 Pasta \u2022 Wine Bar",
+            "rating": "4.8",
+            "reviewCount": "(2,847 reviews)",
+            "distance": "0.8 mi",
+            "deliveryTime": "25-35 min"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "restaurant-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "restaurant-image",
+                  "content"
+                ]
+              }
+            },
+            {
+              "id": "restaurant-image",
+              "component": "Image",
+              "url": {
+                "path": "/image"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "content",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "name-row",
+                  "cuisine",
+                  "rating-row",
+                  "details-row"
+                ]
+              }
+            },
+            {
+              "id": "name-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "restaurant-name",
+                  "price-range"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "center"
+            },
+            {
+              "id": "restaurant-name",
+              "component": "Text",
+              "text": {
+                "path": "/name"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "price-range",
+              "component": "Text",
+              "text": {
+                "path": "/priceRange"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "cuisine",
+              "component": "Text",
+              "text": {
+                "path": "/cuisine"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "rating-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "star-icon",
+                  "rating",
+                  "reviews"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "star-icon",
+              "component": "Icon",
+              "name": "star"
+            },
+            {
+              "id": "rating",
+              "component": "Text",
+              "text": {
+                "path": "/rating"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "reviews",
+              "component": "Text",
+              "text": {
+                "path": "/reviewCount"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "details-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "distance",
+                  "delivery-time"
+                ]
+              }
+            },
+            {
+              "id": "distance",
+              "component": "Text",
+              "text": {
+                "path": "/distance"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "delivery-time",
+              "component": "Text",
+              "text": {
+                "path": "/deliveryTime"
+              },
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Shipping Status",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "shipping-status-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "shipping-status-surface",
+          "path": "/",
+          "value": {
+            "trackingNumber": "Tracking: 1Z999AA10123456784",
+            "currentStepIcon": "local_shipping",
+            "eta": "Estimated delivery: Today by 8 PM"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "shipping-status-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "tracking-number",
+                  "divider",
+                  "steps",
+                  "eta"
+                ]
+              }
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "package-icon",
+                  "title"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "package-icon",
+              "component": "Icon",
+              "name": "package_2"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": "Package Status",
+              "variant": "h3"
+            },
+            {
+              "id": "tracking-number",
+              "component": "Text",
+              "text": {
+                "path": "/trackingNumber"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "steps",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "step1",
+                  "step2",
+                  "step3",
+                  "step4"
+                ]
+              }
+            },
+            {
+              "id": "step1",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "step1-icon",
+                  "step1-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "step1-icon",
+              "component": "Icon",
+              "name": "check_circle"
+            },
+            {
+              "id": "step1-text",
+              "component": "Text",
+              "text": "Order Placed",
+              "variant": "body"
+            },
+            {
+              "id": "step2",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "step2-icon",
+                  "step2-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "step2-icon",
+              "component": "Icon",
+              "name": "check_circle"
+            },
+            {
+              "id": "step2-text",
+              "component": "Text",
+              "text": "Shipped",
+              "variant": "body"
+            },
+            {
+              "id": "step3",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "step3-icon",
+                  "step3-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "step3-icon",
+              "component": "Icon",
+              "name": {
+                "path": "/currentStepIcon"
+              }
+            },
+            {
+              "id": "step3-text",
+              "component": "Text",
+              "text": "Out for Delivery",
+              "variant": "h4"
+            },
+            {
+              "id": "step4",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "step4-icon",
+                  "step4-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "step4-icon",
+              "component": "Icon",
+              "name": "circle"
+            },
+            {
+              "id": "step4-text",
+              "component": "Text",
+              "text": "Delivered",
+              "variant": "caption"
+            },
+            {
+              "id": "eta",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "eta-icon",
+                  "eta-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "eta-icon",
+              "component": "Icon",
+              "name": "schedule"
+            },
+            {
+              "id": "eta-text",
+              "component": "Text",
+              "text": {
+                "path": "/eta"
+              },
+              "variant": "body"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Software Purchase Form",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "software-purchase-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "software-purchase-surface",
+          "path": "/",
+          "value": {
+            "productName": "Design Suite Pro",
+            "seats": "10 seats",
+            "billingPeriod": "Annual",
+            "total": "$1,188/year"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "software-purchase-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "title",
+                  "product-name",
+                  "divider1",
+                  "options",
+                  "divider2",
+                  "total-row",
+                  "actions"
+                ]
+              }
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": "Purchase License",
+              "variant": "h3"
+            },
+            {
+              "id": "product-name",
+              "component": "Text",
+              "text": {
+                "path": "/productName"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "divider1",
+              "component": "Divider"
+            },
+            {
+              "id": "options",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "seats-row",
+                  "period-row"
+                ]
+              }
+            },
+            {
+              "id": "seats-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "seats-label",
+                  "seats-value"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "center"
+            },
+            {
+              "id": "seats-label",
+              "component": "Text",
+              "text": "Number of seats",
+              "variant": "body"
+            },
+            {
+              "id": "seats-value",
+              "component": "Text",
+              "text": {
+                "path": "/seats"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "period-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "period-label",
+                  "period-value"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "center"
+            },
+            {
+              "id": "period-label",
+              "component": "Text",
+              "text": "Billing period",
+              "variant": "body"
+            },
+            {
+              "id": "period-value",
+              "component": "Text",
+              "text": {
+                "path": "/billingPeriod"
+              },
+              "variant": "h4"
+            },
+            {
+              "id": "divider2",
+              "component": "Divider"
+            },
+            {
+              "id": "total-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "total-label",
+                  "total-value"
+                ]
+              },
+              "justify": "spaceBetween",
+              "align": "center"
+            },
+            {
+              "id": "total-label",
+              "component": "Text",
+              "text": "Total",
+              "variant": "h4"
+            },
+            {
+              "id": "total-value",
+              "component": "Text",
+              "text": {
+                "path": "/total"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "actions",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "confirm-btn",
+                  "cancel-btn"
+                ]
+              }
+            },
+            {
+              "id": "confirm-btn-text",
+              "component": "Text",
+              "text": "Confirm Purchase"
+            },
+            {
+              "id": "confirm-btn",
+              "component": "Button",
+              "child": "confirm-btn-text",
+              "action": {
+                "event": {
+                  "name": "confirm",
+                  "context": {}
+                }
+              }
+            },
+            {
+              "id": "cancel-btn-text",
+              "component": "Text",
+              "text": "Cancel"
+            },
+            {
+              "id": "cancel-btn",
+              "component": "Button",
+              "child": "cancel-btn-text",
+              "action": {
+                "event": {
+                  "name": "cancel",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Sports Player Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "sports-player-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "sports-player-surface",
+          "path": "/",
+          "value": {
+            "playerImage": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=200&h=200&fit=crop",
+            "playerName": "Marcus Johnson",
+            "number": "#23",
+            "team": "LA Lakers"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "sports-player-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "player-image",
+                  "player-info",
+                  "divider",
+                  "stats-row"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "player-image",
+              "component": "Image",
+              "url": {
+                "path": "/playerImage"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "player-info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "player-name",
+                  "player-details"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "player-name",
+              "component": "Text",
+              "text": {
+                "path": "/playerName"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "player-details",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "player-number",
+                  "player-team"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "player-number",
+              "component": "Text",
+              "text": {
+                "path": "/number"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "player-team",
+              "component": "Text",
+              "text": {
+                "path": "/team"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "stats-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "stat1",
+                  "stat2",
+                  "stat3"
+                ]
+              },
+              "justify": "spaceAround"
+            },
+            {
+              "id": "stat1",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "stat1-value",
+                  "stat1-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "stat1-value",
+              "component": "Text",
+              "text": {
+                "path": "/stat1/value"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "stat1-label",
+              "component": "Text",
+              "text": {
+                "path": "/stat1/label"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "stat2",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "stat2-value",
+                  "stat2-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "stat2-value",
+              "component": "Text",
+              "text": {
+                "path": "/stat2/value"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "stat2-label",
+              "component": "Text",
+              "text": {
+                "path": "/stat2/label"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "stat3",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "stat3-value",
+                  "stat3-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "stat3-value",
+              "component": "Text",
+              "text": {
+                "path": "/stat3/value"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "stat3-label",
+              "component": "Text",
+              "text": {
+                "path": "/stat3/label"
+              },
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Stats Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "stats-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "stats-card-surface",
+          "path": "/",
+          "value": {
+            "icon": "trending_up",
+            "metricName": "Monthly Revenue",
+            "value": "$48,294",
+            "trendIcon": "arrow_upward",
+            "trendText": "+12.5% from last month"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "stats-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "value",
+                  "trend-row"
+                ]
+              }
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "metric-icon",
+                  "metric-name"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "metric-icon",
+              "component": "Icon",
+              "name": {
+                "path": "/icon"
+              }
+            },
+            {
+              "id": "metric-name",
+              "component": "Text",
+              "text": {
+                "path": "/metricName"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "value",
+              "component": "Text",
+              "text": {
+                "path": "/value"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "trend-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "trend-icon",
+                  "trend-text"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "trend-icon",
+              "component": "Icon",
+              "name": {
+                "path": "/trendIcon"
+              }
+            },
+            {
+              "id": "trend-text",
+              "component": "Text",
+              "text": {
+                "path": "/trendText"
+              },
+              "variant": "body"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Step Counter",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "step-counter-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "step-counter-surface",
+          "path": "/",
+          "value": {
+            "steps": "8,432",
+            "goalProgress": "84% of 10,000 goal",
+            "distance": "3.8 mi",
+            "calories": "312"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "step-counter-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "steps-display",
+                  "goal-text",
+                  "divider",
+                  "stats-row"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "steps-icon",
+                  "title"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "steps-icon",
+              "component": "Icon",
+              "name": "directions_walk"
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "variant": "h4"
+            },
+            {
+              "id": "steps-display",
+              "component": "Text",
+              "text": {
+                "path": "/steps"
+              },
+              "variant": "h1"
+            },
+            {
+              "id": "goal-text",
+              "component": "Text",
+              "text": {
+                "path": "/goalProgress"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "stats-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "distance-col",
+                  "calories-col"
+                ]
+              },
+              "justify": "spaceAround"
+            },
+            {
+              "id": "distance-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "distance-value",
+                  "distance-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "distance-value",
+              "component": "Text",
+              "text": {
+                "path": "/distance"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "distance-label",
+              "component": "Text",
+              "text": "Distance",
+              "variant": "caption"
+            },
+            {
+              "id": "calories-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "calories-value",
+                  "calories-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "calories-value",
+              "component": "Text",
+              "text": {
+                "path": "/calories"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "calories-label",
+              "component": "Text",
+              "text": "Calories",
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Task Card",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "task-card-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "task-card-surface",
+          "path": "/",
+          "value": {
+            "title": "Review pull request",
+            "description": "Review and approve the authentication module changes.",
+            "dueDate": "Today",
+            "project": "Backend",
+            "priorityIcon": "priority_high"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "task-card-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-row"
+            },
+            {
+              "id": "main-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "content",
+                  "priority"
+                ]
+              },
+              "align": "start"
+            },
+            {
+              "id": "content",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "title",
+                  "description",
+                  "meta-row"
+                ]
+              }
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": {
+                "path": "/title"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "description",
+              "component": "Text",
+              "text": {
+                "path": "/description"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "meta-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "due-date",
+                  "project"
+                ]
+              }
+            },
+            {
+              "id": "due-date",
+              "component": "Text",
+              "text": {
+                "path": "/dueDate"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "project",
+              "component": "Text",
+              "text": {
+                "path": "/project"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "priority",
+              "component": "Icon",
+              "name": {
+                "path": "/priorityIcon"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Track List",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "track-list-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "track-list-surface",
+          "path": "/",
+          "value": {
+            "playlistName": "Focus Flow",
+            "art": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=50&h=50&fit=crop",
+            "title": "Weightless",
+            "artist": "Marconi Union",
+            "duration": "8:09"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "track-list-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "divider",
+                  "tracks"
+                ]
+              }
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "playlist-icon",
+                  "playlist-name"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "playlist-icon",
+              "component": "Icon",
+              "name": "queue_music"
+            },
+            {
+              "id": "playlist-name",
+              "component": "Text",
+              "text": {
+                "path": "/playlistName"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "tracks",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "track1",
+                  "track2",
+                  "track3"
+                ]
+              }
+            },
+            {
+              "id": "track1",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "track1-num",
+                  "track1-art",
+                  "track1-info",
+                  "track1-duration"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "track1-num",
+              "component": "Text",
+              "text": "1",
+              "variant": "caption"
+            },
+            {
+              "id": "track1-art",
+              "component": "Image",
+              "url": {
+                "path": "/track1/art"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "track1-info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "track1-title",
+                  "track1-artist"
+                ]
+              }
+            },
+            {
+              "id": "track1-title",
+              "component": "Text",
+              "text": {
+                "path": "/track1/title"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "track1-artist",
+              "component": "Text",
+              "text": {
+                "path": "/track1/artist"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "track1-duration",
+              "component": "Text",
+              "text": {
+                "path": "/track1/duration"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "track2",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "track2-num",
+                  "track2-art",
+                  "track2-info",
+                  "track2-duration"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "track2-num",
+              "component": "Text",
+              "text": "2",
+              "variant": "caption"
+            },
+            {
+              "id": "track2-art",
+              "component": "Image",
+              "url": {
+                "path": "/track2/art"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "track2-info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "track2-title",
+                  "track2-artist"
+                ]
+              }
+            },
+            {
+              "id": "track2-title",
+              "component": "Text",
+              "text": {
+                "path": "/track2/title"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "track2-artist",
+              "component": "Text",
+              "text": {
+                "path": "/track2/artist"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "track2-duration",
+              "component": "Text",
+              "text": {
+                "path": "/track2/duration"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "track3",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "track3-num",
+                  "track3-art",
+                  "track3-info",
+                  "track3-duration"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "track3-num",
+              "component": "Text",
+              "text": "3",
+              "variant": "caption"
+            },
+            {
+              "id": "track3-art",
+              "component": "Image",
+              "url": {
+                "path": "/track3/art"
+              },
+              "fit": "cover"
+            },
+            {
+              "id": "track3-info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "track3-title",
+                  "track3-artist"
+                ]
+              }
+            },
+            {
+              "id": "track3-title",
+              "component": "Text",
+              "text": {
+                "path": "/track3/title"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "track3-artist",
+              "component": "Text",
+              "text": {
+                "path": "/track3/artist"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "track3-duration",
+              "component": "Text",
+              "text": {
+                "path": "/track3/duration"
+              },
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "User Profile",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "user-profile-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "user-profile-surface",
+          "path": "/",
+          "value": {
+            "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
+            "name": "Sarah Chen",
+            "username": "@sarahchen",
+            "bio": "Product Designer at Tech Co. Creating delightful experiences.",
+            "followers": "12.4K",
+            "following": "892",
+            "posts": "347",
+            "followText": "Follow"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "user-profile-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "info",
+                  "bio",
+                  "stats-row",
+                  "follow-btn"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "header",
+              "component": "Image",
+              "url": {
+                "path": "/avatar"
+              },
+              "fit": "cover",
+              "variant": "avatar"
+            },
+            {
+              "id": "info",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "name",
+                  "username"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "name",
+              "component": "Text",
+              "text": {
+                "path": "/name"
+              },
+              "variant": "h2"
+            },
+            {
+              "id": "username",
+              "component": "Text",
+              "text": {
+                "path": "/username"
+              },
+              "variant": "caption"
+            },
+            {
+              "id": "bio",
+              "component": "Text",
+              "text": {
+                "path": "/bio"
+              },
+              "variant": "body"
+            },
+            {
+              "id": "stats-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "followers-col",
+                  "following-col",
+                  "posts-col"
+                ]
+              },
+              "justify": "spaceAround"
+            },
+            {
+              "id": "followers-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "followers-count",
+                  "followers-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "followers-count",
+              "component": "Text",
+              "text": {
+                "path": "/followers"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "followers-label",
+              "component": "Text",
+              "text": "Followers",
+              "variant": "caption"
+            },
+            {
+              "id": "following-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "following-count",
+                  "following-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "following-count",
+              "component": "Text",
+              "text": {
+                "path": "/following"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "following-label",
+              "component": "Text",
+              "text": "Following",
+              "variant": "caption"
+            },
+            {
+              "id": "posts-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "posts-count",
+                  "posts-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "posts-count",
+              "component": "Text",
+              "text": {
+                "path": "/posts"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "posts-label",
+              "component": "Text",
+              "text": "Posts",
+              "variant": "caption"
+            },
+            {
+              "id": "follow-btn-text",
+              "component": "Text",
+              "text": {
+                "path": "/followText"
+              }
+            },
+            {
+              "id": "follow-btn",
+              "component": "Button",
+              "child": "follow-btn-text",
+              "action": {
+                "event": {
+                  "name": "follow",
+                  "context": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "title": "Workout Summary",
+    "messages": [
+      {
+        "createSurface": {
+          "surfaceId": "workout-summary-surface",
+          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+        }
+      },
+      {
+        "updateDataModel": {
+          "surfaceId": "workout-summary-surface",
+          "path": "/",
+          "value": {
+            "icon": "directions_run",
+            "workoutType": "Morning Run",
+            "duration": "32:15",
+            "calories": "385",
+            "distance": "5.2 km",
+            "date": "Today at 7:30 AM"
+          }
+        }
+      },
+      {
+        "updateComponents": {
+          "surfaceId": "workout-summary-surface",
+          "components": [
+            {
+              "id": "root",
+              "component": "Card",
+              "child": "main-column"
+            },
+            {
+              "id": "main-column",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "header",
+                  "divider",
+                  "metrics-row",
+                  "date"
+                ]
+              }
+            },
+            {
+              "id": "header",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "workout-icon",
+                  "title"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "workout-icon",
+              "component": "Icon",
+              "name": {
+                "path": "/icon"
+              }
+            },
+            {
+              "id": "title",
+              "component": "Text",
+              "text": "Workout Complete",
+              "variant": "h3"
+            },
+            {
+              "id": "divider",
+              "component": "Divider"
+            },
+            {
+              "id": "metrics-row",
+              "component": "Row",
+              "children": {
+                "explicitList": [
+                  "duration-col",
+                  "calories-col",
+                  "distance-col"
+                ]
+              },
+              "justify": "spaceAround"
+            },
+            {
+              "id": "duration-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "duration-value",
+                  "duration-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "duration-value",
+              "component": "Text",
+              "text": {
+                "path": "/duration"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "duration-label",
+              "component": "Text",
+              "text": "Duration",
+              "variant": "caption"
+            },
+            {
+              "id": "calories-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "calories-value",
+                  "calories-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "calories-value",
+              "component": "Text",
+              "text": {
+                "path": "/calories"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "calories-label",
+              "component": "Text",
+              "text": "Calories",
+              "variant": "caption"
+            },
+            {
+              "id": "distance-col",
+              "component": "Column",
+              "children": {
+                "explicitList": [
+                  "distance-value",
+                  "distance-label"
+                ]
+              },
+              "align": "center"
+            },
+            {
+              "id": "distance-value",
+              "component": "Text",
+              "text": {
+                "path": "/distance"
+              },
+              "variant": "h3"
+            },
+            {
+              "id": "distance-label",
+              "component": "Text",
+              "text": "Distance",
+              "variant": "caption"
+            },
+            {
+              "id": "date",
+              "component": "Text",
+              "text": {
+                "path": "/date"
+              },
+              "variant": "caption"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "name": "@a2ui/renderer-v09-demo",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@a2ui/lit": "file:../../../../renderers/lit",
+    "@a2ui/web_core": "file:../../../../renderers/web_core",
+    "lit": "^3.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0"
+  }
+}
