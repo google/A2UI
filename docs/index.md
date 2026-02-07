@@ -20,11 +20,12 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 </div>
 
-!!! warning "️Status: Early Stage Public Preview"
-    A2UI is currently in **v0.8 (Public Preview)**. The specification and
-    implementations are functional but are still evolving. We are opening the project to
-    foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
-    Expect changes.
+> ⚠️ **️Status: Early Stage Public Preview**
+>
+> A2UI is currently in **v0.8 (Public Preview)**. The specification and
+> implementations are functional but are still evolving. We are opening the project to
+> foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
+> Expect changes.
 
 ## At a Glance
 
