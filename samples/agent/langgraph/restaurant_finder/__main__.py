@@ -22,7 +22,7 @@ from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2ui.a2ui_extension import get_a2ui_agent_extension
 from agent_executor import RestaurantAgentExecutor
-from agent import RestaurantAgent # To get SUPPORTED_CONTENT_TYPES ideally, but we can hardcode for now or add it to class
+
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
@@ -63,9 +63,6 @@ def main(host, port):
 
         base_url = f"http://{host}:{port}"
         
-        # Hardcoding supported types since I didn't add them to the class yet, 
-        # or I can update agent.py to have them. Let's do that for consistency if I modify agent.py.
-        # But for now I'll just put them here.
         SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
         agent_card = AgentCard(
@@ -100,9 +97,6 @@ def main(host, port):
             allow_headers=["*"],
         )
 
-        # Ensure images dir exists or handle it. We copied the files but maybe not the dir?
-        # The `cp` command I used earlier: `cp ...samples/agent/adk/restaurant_finder/{tools.py,...} ...`
-        # It didn't copy `images` directory explicitly. I should fix that.
         if os.path.isdir("images"):
             app.mount("/static", StaticFiles(directory="images"), name="static")
 

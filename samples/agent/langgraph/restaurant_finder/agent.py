@@ -12,33 +12,120 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import json
 import logging
+import pathlib
+import re
 from typing import Annotated, List, TypedDict
 
 import jsonschema
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+
+from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import END, StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 
-from prompt_builder import (
-    A2UI_SCHEMA,
-    RESTAURANT_UI_EXAMPLES,
-    get_text_prompt,
-    get_ui_prompt,
-)
+from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
+
+
+# --- Helper Functions ---
+
+def load_a2ui_schema() -> dict:
+    current_dir = pathlib.Path(__file__).resolve().parent
+    spec_root = current_dir / "../../../../specification/v0_8/json"
+
+    server_to_client_content = (spec_root / "server_to_client.json").read_text()
+    server_to_client_json = json.loads(server_to_client_content)
+    
+    standard_catalog_content = (
+        spec_root / "standard_catalog_definition.json"
+    ).read_text()
+    standard_catalog_json = json.loads(standard_catalog_content)
+    
+    server_to_client_json["properties"]["surfaceUpdate"]["properties"]["components"]["items"]["properties"]["component"]["properties"] = standard_catalog_json
+
+    return wrap_as_json_array(server_to_client_json)
+
+def load_examples() -> dict:
+    current_dir = pathlib.Path(__file__).resolve().parent
+    examples_content = (current_dir / "restaurant_ui_examples.json").read_text()
+    return json.loads(examples_content)
+
+def get_ui_prompt(base_url: str, examples: dict) -> str:
+    # Convert the examples dict back to the string format expected by the prompt or construct it
+    # The previous logic expected a single string with all examples.
+    # Let's reconstruct it or change the prompt to accept the dict.
+    # The original prompt_builder just formatted a string. 
+    # Let's convert the json back to the format the LLM expects (e.g. ---BEGIN...---)
+    
+    examples_str = ""
+    for name, content in examples.items():
+        examples_str += f"---BEGIN {name}---\n{json.dumps(content)}\n---END {name}---\n\n"
+        
+    # Inject base_url into the examples string if it was a format string before?
+    # actually the previous code did `format(base_url=base_url)`.
+    # But now we are loading raw JSON. The JSON might contain {path: ...} which is fine.
+    # If the JSON had placeholders like `[ImageUrl]`, those are for the LLM to fill.
+    # If the examples had `{{ "path": "imageUrl" }}` that was python f-string escaping.
+    # Now it is raw JSON, so we don't need double braces for JSON, but we might verify if placeholders existed.
+    # The previous `prompt_builder` did `examples.format(base_url=base_url)`. 
+    # Let's see if the JSON we saved has `{base_url}` placeholders.
+    # Looking at the file content I wrote... I wrote straight JSON. 
+    # Ensure no `{base_url}` placeholders were lost or if they are needed.
+    # The original `a2ui_examples.py` did NOT seem to have `{base_url}` placeholders in the snippets I saw (lines 15-187).
+    # It just had `{ "path": "imageUrl" }`.
+    # So simple string concatenation is likely fine.
+
+    schema = json.dumps(load_a2ui_schema(), indent=2)
+
+    return f"""
+    You are a helpful restaurant finding assistant. Your final output MUST be a a2ui UI JSON response.
+
+    To generate the response, you MUST follow these rules:
+    1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
+    2.  The first part is your conversational text response.
+    3.  The second part is a single, raw JSON object which is a list of A2UI messages.
+    4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
+    5.  CRITICAL: You MUST output valid standard JSON. Do NOT use single quotes for keys. Do NOT use trailing commas. ALL property names MUST be enclosed in double quotes (e.g., "weight": 1, NOT weight: 1).
+
+    --- UI TEMPLATE RULES ---
+    -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
+    -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
+    -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
+    -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
+    -   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
+
+    {examples_str}
+
+    ---BEGIN A2UI JSON SCHEMA---
+    {schema}
+    ---END A2UI JSON SCHEMA---
+    """
+
+def get_text_prompt() -> str:
+    return """
+    You are a helpful restaurant finding assistant. Your final output MUST be a text response.
+
+    To generate the response, you MUST follow these rules:
+    1.  **For finding restaurants:**
+        a. You MUST call the `get_restaurants` tool. Extract the cuisine, location, and a specific number (`count`) of restaurants from the user's query.
+        b. After receiving the data, format the restaurant list as a clear, human-readable text response. You MUST preserve any markdown formatting (like for links) that you receive from the tool.
+
+    2.  **For booking a table (when you receive a query like 'USER_WANTS_TO_BOOK...'):**
+        a. Respond by asking the user for the necessary details to make a booking (party size, date, time, dietary requirements).
+
+    3.  **For confirming a booking (when you receive a query like 'User submitted a booking...'):**
+        a. Respond with a simple text confirmation of the booking details.
+    """
 from tools import get_restaurants
 
 logger = logging.getLogger(__name__)
 
 # --- Setup Tools ---
-class ToolContext:
-    """Simple context object to pass base_url to tools."""
-    def __init__(self, base_url):
-        self.state = {"base_url": base_url}
 
 @tool
 def search_restaurants(
@@ -56,13 +143,12 @@ def search_restaurants(
         config: RunnableConfig containing base_url in configurable dict.
     """
     # Extract base_url from RunnableConfig
-    base_url = config["configurable"]["base_url"]
+    base_url = config["configurable"].get("base_url", "http://localhost:10002")
     
-    ctx = ToolContext(base_url)
     return get_restaurants(
         cuisine=cuisine or "", 
         location=location or "", 
-        tool_context=ctx, 
+        base_url=base_url, 
         count=count
     )
 
@@ -99,11 +185,11 @@ def call_model(state: AgentState):
     base_url = state.get("base_url", "http://localhost:10002")
     
     # Build system prompt
-    from langchain_core.messages import SystemMessage
     
     system_prompt = AGENT_INSTRUCTION
     if use_ui:
-        system_prompt += get_ui_prompt(base_url, RESTAURANT_UI_EXAMPLES)
+        examples = load_examples()
+        system_prompt += get_ui_prompt(base_url, examples)
     else:
         system_prompt += get_text_prompt()
         
@@ -154,7 +240,6 @@ def validate_response(state: AgentState):
              return {"error_message": "Empty JSON part."}
 
         # Attempt to repair common JSON errors (like unquoted keys)
-        import re
         # Fix unquoted keys: e.g. { weight: 1 } -> { "weight": 1 }
         # This regex matches word characters followed by a colon, ensuring they aren't already quoted
         # Note: This is a simple heuristic and might need refinement for complex cases
@@ -167,8 +252,7 @@ def validate_response(state: AgentState):
             parsed_json = json.loads(json_string_cleaned)
         
         # Load schema
-        single_message_schema = json.loads(A2UI_SCHEMA)
-        schema_validator = {"type": "array", "items": single_message_schema}
+        schema_validator = load_a2ui_schema()
         
         jsonschema.validate(instance=parsed_json, schema=schema_validator)
         

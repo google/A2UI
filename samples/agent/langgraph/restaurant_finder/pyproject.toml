@@ -3,7 +3,7 @@ name = "a2ui-restaurant-finder-langgraph"
 version = "0.1.0"
 description = "Sample LangGraph-based Restaurant finder agent that uses a2ui UI."
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 dependencies = [
     "langgraph",
     "langchain",
