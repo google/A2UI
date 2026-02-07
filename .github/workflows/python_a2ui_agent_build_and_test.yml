@@ -46,10 +46,14 @@ jobs:
         working-directory: a2a_agents/python/a2ui_agent
         run: uv run pyink --check .
 
+      - name: Run unit tests
+        working-directory: a2a_agents/python/a2ui_agent
+        run: uv run --with pytest pytest tests/
+
       - name: Build the python SDK
         working-directory: a2a_agents/python/a2ui_agent
         run: uv build .
 
-      - name: Run unit tests
+      - name: Run validation scripts on assets packing
         working-directory: a2a_agents/python/a2ui_agent
-        run: uv run --with pytest pytest tests/
+        run: uv run python tests/integration/verify_load_real.py
