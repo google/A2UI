@@ -410,11 +410,31 @@ export class A2uiMessageProcessor {
 v0.9 introduces formal schema support using Zod. This enables automated runtime validation of component properties and machine-readable capability discovery.
 
 **Key Concepts:**
-*   **Property Schemas:** Each component defines a `schema` using Zod that describes its custom properties. This schema *excludes* envelope-level fields like `id` and `component`.
-*   **Reference Tagging:** Common A2UI types (defined in `common_types.json`) are provided as Zod schemas tagged with special metadata (e.g., `.describe('REF:...')`).
-*   **JSON Schema Generation:** The `A2uiMessageProcessor.getClientCapabilities()` method converts these runtime Zod schemas into the JSON Schema format required by the A2UI protocol. 
-*   **Envelope Wrapping:** During capability generation, the processor wraps component property schemas in the standard A2UI envelope (including `allOf` references to `ComponentCommon` and `CatalogComponentCommon`), ensuring the output matches the `standard_catalog.json` format.
-*   **Post-Processing Refs:** The processor traverses the generated JSON Schema and replaces tagged nodes with standard `{ "$ref": "common_types.json#/$defs/..." }` objects, preserving the protocol's modularity.
+
+1.  **Common Types Definition:** 
+    The `web_core` library exposes a `CommonTypes` object containing Zod definitions for standard A2UI types (e.g., `DynamicString`, `Action`). These definitions are crucial for two reasons:
+    *   **Runtime Validation:** They enforce structure (e.g., that an Action has an event name).
+    *   **Reference Tagging:** Each common type is tagged with a special description (e.g., `.describe('REF:common_types.json#/$defs/DynamicString')`). This allows the capability generator to identify them.
+
+2.  **Component Schema Definition:**
+    Each component defines a `schema` property using Zod. Developers must use the schemas from `CommonTypes` rather than redefining them. This ensures that the generated capabilities correctly reference the shared definitions instead of inlining verbose duplicates.
+
+    ```typescript
+    // standard_catalog/components/button.ts
+    const buttonSchema = z.object({
+      label: CommonTypes.DynamicString, // Uses the tagged schema
+      action: CommonTypes.Action
+    });
+    ```
+
+3.  **JSON Schema Generation & Post-Processing:**
+    The `A2uiMessageProcessor.getClientCapabilities()` method performs a multi-step transformation:
+    *   **Conversion:** It uses `zod-to-json-schema` to convert the component's Zod schema into a standard JSON Schema.
+    *   **Envelope Wrapping:** It wraps the property schema in the standard A2UI envelope (including `allOf` references to `ComponentCommon` and `CatalogComponentCommon`), ensuring the output structure matches `standard_catalog.json`.
+    *   **Reference Resolution:** It recursively traverses the generated JSON Schema. When it encounters a node with a description starting with `REF:`, it replaces that entire node with a `{ "$ref": "..." }` object using the path provided in the tag. This ensures the output is compact and modular, referencing `common_types.json` as required by the spec.
+
+4.  **Runtime Validation:**
+    During rendering, the `ComponentContext.validate()` method uses the Zod schema to check the raw properties received from the server. This provides immediate feedback on malformed messages.
 
 ### 8. Standard Catalog Components (Core & Frameworks)
 
