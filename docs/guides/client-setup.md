@@ -9,7 +9,7 @@ Integrate A2UI into your application using the renderer for your platform.
 | **Lit (Web Components)** | Web                | ✅ Stable          |
 | **Angular**              | Web                | ✅ Stable          |
 | **Flutter (GenUI SDK)**  | Mobile/Desktop/Web | ✅ Stable          |
-| **React**                | Web                | 🚧 Coming Q1 2026  |
+| **React**                | Web                | ✅ Stable  |
 | **SwiftUI**              | iOS/macOS          | 🚧 Planned Q2 2026 |
 | **Jetpack Compose**      | Android            | 🚧 Planned Q2 2026 |
 
