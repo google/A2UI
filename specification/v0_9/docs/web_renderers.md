@@ -125,8 +125,23 @@ A standalone, observable data store representing the client-side state. It handl
 ```typescript
 // web_core/src/v0_9/state/data-model.ts
 
-export type DataSubscriber = (value: any) => void;
-export type Unsubscribe = () => void;
+export interface Subscription<T> {
+  /**
+   * The current value at the subscribed path.
+   */
+  readonly value: T;
+
+  /**
+   * A callback function to be invoked when the value changes.
+   * The consumer sets this property to listen for updates.
+   */
+  onChange?: (value: T) => void;
+
+  /**
+   * Unsubscribes from the data model.
+   */
+  unsubscribe(): void;
+}
 
 export class DataModel {
   /**
@@ -143,9 +158,24 @@ export class DataModel {
 
   /**
    * Subscribes to changes at a specific path.
-   * The callback is invoked whenever the value at 'path' (or its ancestors/descendants) changes.
+   * Returns a Subscription object that allows access to the current value, 
+   * setting an onChange callback, and unsubscribing.
+   * 
+   * Notification Behavior:
+   * The onChange callback (if set) is invoked whenever:
+   * 1. The value at the exact 'path' changes.
+   * 2. An ancestor path changes (implying the container of this value changed).
+   * 3. A descendant path changes (implying the content of this value changed).
+   * 
+   * This ensures that a subscriber to a container (e.g. '/users') is notified when 
+   * any of its children (e.g. '/users/0/name') are updated.
    */
-  subscribe(path: string, callback: DataSubscriber): Unsubscribe;
+  subscribe<T>(path: string): Subscription<T>;
+
+  /**
+   * Disposes of the DataModel, clearing all subscriptions.
+   */
+  dispose(): void;
 }
 
 ```
@@ -252,6 +282,13 @@ export interface Component<T> {
   name: string;
 
   /**
+   * The Zod schema describing the **custom properties** of this component.
+   * This is used for runtime validation and generating machine-readable 
+   * definitions for client capabilities.
+   */
+  readonly schema: z.ZodType<any>;
+
+  /**
    * Renders the component given the context.
    */
   render(context: ComponentContext<T>): T;
@@ -288,61 +325,29 @@ export class ComponentContext<T> {
   ) {}
 
   /**
+   * Validates the component properties against its schema.
+   * Centralizes validation in the core framework to ensure consistency.
+   */
+  validate(schema: z.ZodType<any>): boolean;
+
+  /**
    * Resolves a dynamic value (literal, path, or function call).
    * When the underlying data changes, it calls `this.updateCallback()`.
    */
   resolve<V>(value: DynamicValue<V> | V): V {
-    // 1. Literal Check: If it's a primitive, return it directly.
-    if (typeof value !== 'object' || value === null) {
-      return value as V;
-    }
-
-    // 2. Path Check: If it's a data binding { path: "..." }
-    if ('path' in value) {
-      // Subscribe to changes. When data changes, trigger a re-render.
-      // Note: DataContext handles unsubscribing when it is disposed/GC'd (conceptually)
-      // or we might need a cleanup phase in ComponentContext.
-      this.dataContext.subscribe(value.path, () => this.updateCallback());
-      return this.dataContext.getValue(value.path);
-    }
-
-    // 3. Function Call: If it's { call: "...", args: ... }
-    if ('call' in value) {
-      // Execute the function logic (implementation in Core)
-      // This might involve recursive resolution of args.
-      // return executeFunction(value, this);
-    }
-
-    return value as V;
+    // ...
   }
 
   /**
    * Renders a child component by its ID.
    * 1. Looks up the component definition in SurfaceContext.
    * 2. Looks up the Component implementation in the Catalog.
-   * 3. Creates a new nested ComponentContext, propagating the updateCallback.
-   * 4. Calls `component.render(childContext)`.
+   * 3. Validates the component's properties against its schema (Optional/Lazy).
+   * 4. Creates a new nested ComponentContext, propagating the updateCallback.
+   * 5. Calls `component.render(childContext)`.
    */
   renderChild(childId: string): T | null {
-    const def = this.surfaceContext.getComponentDefinition(childId);
-    if (!def) return null;
-
-    const component = this.surfaceContext.catalog.components.get(def.type);
-    if (!component) return null;
-
-    // The A2uiMessageProcessor has already calculated the correct data path for this component instance
-    const childPath = def.dataContextPath ?? '/';
-    const childDataContext = new DataContext(this.surfaceContext.dataModel, childPath);
-
-    const childCtx = new ComponentContext<T>(
-      def.id,
-      def.properties,
-      childDataContext,
-      this.surfaceContext,
-      this.updateCallback
-    );
-
-    return component.render(childCtx);
+    // ...
   }
 
   dispatchAction(action: Action): Promise<void> {
@@ -359,6 +364,14 @@ The central entry point. It manages the lifecycle of `SurfaceContext` objects, r
 ```typescript
 // web_core/src/v0_9/processing/message-processor.ts
 
+export interface ClientCapabilitiesOptions {
+  /**
+   * A list of Catalog instances that should be serialized 
+   * and sent as 'inlineCatalogs' in the capabilities message.
+   */
+  inlineCatalogs?: Catalog<any>[];
+}
+
 export class A2uiMessageProcessor {
   /**
    * @param catalogs A map of available catalogs keyed by their URI.
@@ -368,6 +381,14 @@ export class A2uiMessageProcessor {
     private catalogs: Map<string, Catalog<any>>,
     private actionHandler: ActionHandler
   );
+
+  /**
+   * Generates the `a2uiClientCapabilities` object.
+   * It transforms runtime Zod schemas from the components into JSON Schema,
+   * wrapping them in the standard A2UI envelope and resolving references 
+   * to common types.
+   */
+  getClientCapabilities(options: ClientCapabilitiesOptions): any;
 
   /**
    * Processes a list of server-to-client messages.
@@ -384,7 +405,18 @@ export class A2uiMessageProcessor {
 
 ```
 
-### 7. Standard Catalog Components (Core & Frameworks)
+### 7. Schema Validation and Capabilities (Core)
+
+v0.9 introduces formal schema support using Zod. This enables automated runtime validation of component properties and machine-readable capability discovery.
+
+**Key Concepts:**
+*   **Property Schemas:** Each component defines a `schema` using Zod that describes its custom properties. This schema *excludes* envelope-level fields like `id` and `component`.
+*   **Reference Tagging:** Common A2UI types (defined in `common_types.json`) are provided as Zod schemas tagged with special metadata (e.g., `.describe('REF:...')`).
+*   **JSON Schema Generation:** The `A2uiMessageProcessor.getClientCapabilities()` method converts these runtime Zod schemas into the JSON Schema format required by the A2UI protocol. 
+*   **Envelope Wrapping:** During capability generation, the processor wraps component property schemas in the standard A2UI envelope (including `allOf` references to `ComponentCommon` and `CatalogComponentCommon`), ensuring the output matches the `standard_catalog.json` format.
+*   **Post-Processing Refs:** The processor traverses the generated JSON Schema and replaces tagged nodes with standard `{ "$ref": "common_types.json#/$defs/..." }` objects, preserving the protocol's modularity.
+
+### 8. Standard Catalog Components (Core & Frameworks)
 
 To reduce code duplication between Lit and Angular, we define concrete, generic component classes in Core that handle the protocol logic and delegate rendering via a functional interface (composition). This example illustrates the pattern using the **Button** component.
 
@@ -666,6 +698,12 @@ import { ComponentContext } from '@a2ui/web_core/v0_9/rendering/component-contex
 // 1. Define a Custom Component
 class MyCustomComponent implements Component<TemplateResult> {
   readonly name = 'MyCustomComponent';
+  
+  // Define schema for properties. 
+  // Common types like DynamicString are tagged to generate $refs in capabilities.
+  readonly schema = z.object({
+    title: CommonTypes.DynamicString.describe('The title for the special widget')
+  });
 
   render(context: ComponentContext<TemplateResult>): TemplateResult {
     const title = context.resolve<string>(context.properties['title'] ?? 'Custom');
@@ -816,17 +854,36 @@ processor.registerCatalog(myAppCatalog);
 
 ### Summary Table
 
+
+
 | Feature             | v0.8                                        | v0.9                                 |
+
 | :------------------ | :------------------------------------------ | :----------------------------------- |
-| **Parsing**         | JSON -> `AnyComponentNode` (Typed)          | JSON -> Raw Properties (Untyped)     |
+
+| **Parsing**         | JSON -> `AnyComponentNode` (Typed)          | JSON -> Schema Validated (Zod)       |
+
 | **Component Logic** | Duplicated in Renderers                     | Centralized in Core Generic Classes  |
+
 | **Registry**        | Singleton / Static Map                      | `Catalog` Interface (Instance based) |
+
 | **Extensibility**   | Register globally                           | Compose/Wrap Catalog objects         |
+
 | **State Scope**     | Global (mostly)                             | Scoped to `SurfaceContext`           |
+
 | **Surface Entry**   | `<surface surfaceId="..." processor="...">` | `<surface .state="...">`             |
+
+
 
 ## References
 
+
+
 *   **v0.9 Spec:** `@specification/v0_9/**`
+
+*   **Schema Support Design:** `schema_support.md`
+
 *   **Existing Lit Renderer:** `@renderers/lit/**`
+
 *   **Flutter Catalog Implementation:** `genui` package (reference for catalog patterns).
+
+
