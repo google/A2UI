@@ -519,7 +519,7 @@ The server sends `updateDataModel` messages to modify the client's data model. T
 
 - If the path exists, the value is updated.
 - If the path does not exist, the value is created.
-- If the value is `null`, the key at that path is removed.
+- If the value is omitted (or set to `undefined`), the key is removed. For arrays, the index is set to `undefined`, preserving length.
 
 The `updateDataModel` message replaces the value at the specified `path` with the new content. If `path` is omitted (or is `/`), the entire data model for the surface is replaced.
 

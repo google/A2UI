@@ -21,12 +21,12 @@ export interface Subscription<T> {
   /**
    * The current value at the subscribed path.
    */
-  readonly value: T;
+  readonly value: T | undefined;
 
   /**
    * A callback function to be invoked when the value changes.
    */
-  onChange?: (value: T) => void;
+  onChange?: (value: T | undefined) => void;
 
   /**
    * Unsubscribes from the data model.
@@ -49,6 +49,10 @@ export class DataModel {
   /**
    * Updates the model at the specific path and notifies all relevant subscribers.
    * If path is '/' or empty, replaces the entire root.
+   *
+   * Note on `undefined` values:
+   * - For objects: Setting a property to `undefined` removes the key from the object.
+   * - For arrays: Setting an index to `undefined` sets that index to `undefined` but preserves the array length (sparse array).
    */
   set(path: string, value: any): void {
     if (path === '/' || path === '') {
@@ -158,7 +162,6 @@ export class DataModel {
     while (parentPath !== '/' && parentPath !== '') {
       parentPath = parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
       this.notify(parentPath);
-      if (parentPath === '/') break;
     }
 
     // Notify Descendants
