@@ -17,6 +17,7 @@ import {
   signOutUser,
   getIdToken,
   isFirebaseConfigured,
+  checkServerAuthorization,
 } from "./firebase-auth";
 
 // Store current user for display
@@ -36,12 +37,22 @@ async function init() {
   }
 
   // Set up auth state listener
-  onAuthChange((user) => {
+  onAuthChange(async (user) => {
     if (user) {
-      currentUserEmail = user.email;
-      console.log(`[Demo] Authenticated as ${user.email}`);
-      showApp();
-      initializeApp();
+      // User is authenticated with Firebase, now check server authorization
+      console.log(`[Demo] Firebase auth OK: ${user.email}, checking server authorization...`);
+      const authorized = await checkServerAuthorization();
+      if (authorized) {
+        currentUserEmail = user.email;
+        console.log(`[Demo] Authorized: ${user.email}`);
+        showApp();
+        initializeApp();
+      } else {
+        // User authenticated but not authorized - sign them out
+        console.log(`[Demo] Not authorized: ${user.email}`);
+        await signOutUser();
+        showLoginScreen("Your email is not authorized to access this application.");
+      }
     } else {
       currentUserEmail = null;
       console.log("[Demo] Not authenticated");
@@ -51,7 +62,7 @@ async function init() {
 }
 
 // Show login screen
-function showLoginScreen() {
+function showLoginScreen(errorMessage?: string) {
   const appContainer = document.getElementById("app-container");
   const loginScreen = document.getElementById("login-screen");
 
@@ -69,7 +80,7 @@ function showLoginScreen() {
           </div>
           <h1>Personalized Learning Demo</h1>
           <p class="login-subtitle">Sign in with your Google account to continue</p>
-          <p class="login-restriction">Access restricted to @google.com accounts</p>
+          <p class="login-restriction">Access restricted to authorized users</p>
           <button id="google-signin-btn" class="google-signin-btn">
             <svg viewBox="0 0 24 24" width="24" height="24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -90,6 +101,12 @@ function showLoginScreen() {
   } else {
     loginScreen.style.display = "flex";
   }
+
+  // Show error message if provided
+  if (errorMessage) {
+    const errorEl = document.getElementById("login-error");
+    if (errorEl) errorEl.textContent = errorMessage;
+  }
 }
 
 // Handle sign in
@@ -101,12 +118,19 @@ async function handleSignIn() {
   if (btn) btn.disabled = true;
 
   try {
-    await signInWithGoogle();
+    // Firebase sign-in - authorization check happens in onAuthChange listener
+    const user = await signInWithGoogle();
+    if (!user) {
+      // User cancelled sign-in
+      if (btn) btn.disabled = false;
+    }
+    // If sign-in succeeded, onAuthChange will handle the rest
+    // (including server authorization check and showing errors if not authorized)
   } catch (error: any) {
+    // Only catches Firebase errors (network issues, etc.), not authorization errors
     if (errorEl) {
       errorEl.textContent = error.message || "Sign in failed. Please try again.";
     }
-  } finally {
     if (btn) btn.disabled = false;
   }
 }

@@ -586,6 +586,10 @@
     "MultipleChoice": {
       "type": "object",
       "additionalProperties": false,
+      "required": [
+        "selections",
+        "options"
+      ],
       "properties": {
         "selections": {
           "type": "object",
@@ -634,9 +638,20 @@
         "maxAllowedSelections": {
           "type": "integer",
           "description": "The maximum number of options that the user is allowed to select."
-        }
-      },
-      "required": ["selections", "options"]
+        },
+        "variant": {
+          "type": "string",
+          "description": "The display style of the component.",
+          "enum": [
+            "checkbox",
+            "chips"
+          ]
+        },
+        "filterable": {
+          "type": "boolean",
+          "description": "If true, displays a search input to filter the options."
+        },
+      }
     },
     "Slider": {
       "type": "object",

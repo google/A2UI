@@ -21,9 +21,70 @@ import { execSync } from "child_process";
 import { writeFileSync, readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { config } from "dotenv";
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 
 // Load environment variables
 config();
+
+// =============================================================================
+// FIREBASE ADMIN - Server-side authentication
+// =============================================================================
+initializeApp({ credential: applicationDefault() });
+
+// Local dev mode: skip auth when Firebase is not configured (matches client behavior)
+const IS_LOCAL_DEV_MODE = !process.env.VITE_FIREBASE_API_KEY;
+if (IS_LOCAL_DEV_MODE) {
+  console.warn("[API Server] ⚠️  LOCAL DEV MODE: Authentication disabled (VITE_FIREBASE_API_KEY not set)");
+}
+
+// Access control - reads from environment variables (shared with src/firebase-auth.ts)
+// Uses VITE_ prefix so the same .env works for both client and server
+const ALLOWED_DOMAIN = process.env.VITE_ALLOWED_DOMAIN ?? "google.com";
+const ALLOWED_EMAILS: string[] = (process.env.VITE_ALLOWED_EMAILS ?? "")
+  .split(",")
+  .map((e: string) => e.trim().toLowerCase())
+  .filter((e: string) => e.length > 0);
+
+function isAllowedEmail(email: string | undefined): boolean {
+  if (!email) return false;
+  const emailLower = email.toLowerCase();
+  if (ALLOWED_EMAILS.length > 0 && ALLOWED_EMAILS.includes(emailLower)) return true;
+  if (ALLOWED_DOMAIN && emailLower.endsWith(`@${ALLOWED_DOMAIN}`)) return true;
+  if (!ALLOWED_DOMAIN && ALLOWED_EMAILS.length === 0) return true; // No restrictions
+  return false;
+}
+
+async function authenticateRequest(req: any, res: any): Promise<boolean> {
+  // In local dev mode, skip authentication entirely
+  if (IS_LOCAL_DEV_MODE) {
+    return true;
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    res.writeHead(401, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Missing or malformed Authorization header" }));
+    return false;
+  }
+  try {
+    const token = authHeader.split("Bearer ")[1];
+    const decoded = await getAuth().verifyIdToken(token);
+    if (!isAllowedEmail(decoded.email)) {
+      console.error("[API Server] Access denied for:", decoded.email);
+      res.writeHead(403, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Email not authorized" }));
+      return false;
+    }
+    return true;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[API Server] Auth failed:", message);
+    res.writeHead(403, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Invalid or expired token" }));
+    return false;
+  }
+}
 
 // =============================================================================
 // MESSAGE LOG - Captures all request/response traffic for demo purposes
@@ -327,7 +388,7 @@ async function queryAgentEngine(format: string, context: string = ""): Promise<a
         }
       }
     } catch (e) {
-      console.warn("[API Server] Failed to parse chunk:", chunk.substring(0, 100));
+      console.warn("[API Server] Failed to parse chunk:", e, chunk.substring(0, 100));
     }
   }
 
@@ -761,7 +822,7 @@ async function main() {
     // CORS headers
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
     if (req.method === "OPTIONS") {
       res.writeHead(204);
@@ -791,8 +852,19 @@ async function main() {
       return;
     }
 
+    // Authorization check endpoint - used by frontend to verify user is allowed
+    // This is the SINGLE SOURCE OF TRUTH for access control decisions
+    if (req.url === "/api/check-access" && req.method === "GET") {
+      if (!(await authenticateRequest(req, res))) return;
+      // If authenticateRequest passes, user is both authenticated AND authorized
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ authorized: true }));
+      return;
+    }
+
     // A2A Agent Engine endpoint
     if (req.url === "/a2ui-agent/a2a/query" && req.method === "POST") {
+      if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
         console.log("[API Server] ========================================");
@@ -857,6 +929,7 @@ async function main() {
 
     // Chat endpoint
     if (req.url === "/api/chat" && req.method === "POST") {
+      if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
         console.log("[API Server] Chat request received");
@@ -889,6 +962,7 @@ async function main() {
 
     // Combined chat endpoint - performs intent detection AND response in one LLM call
     if (req.url === "/api/chat-with-intent" && req.method === "POST") {
+      if (!(await authenticateRequest(req, res))) return;
       try {
         const body = await parseBody(req);
         console.log("[API Server] ========================================");
