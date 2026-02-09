@@ -68,6 +68,10 @@ export class DataModel {
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
       
+      if (Array.isArray(current) && !/^\d+$/.test(segment)) {
+        throw new Error(`Cannot use non-numeric segment '${segment}' on an array in path '${path}'.`);
+      }
+
       // If we encounter a primitive where a container is expected, we cannot proceed.
       // We allow undefined/null to be overwritten by a new container.
       if (current[segment] !== undefined && current[segment] !== null && typeof current[segment] !== 'object') {
@@ -79,6 +83,10 @@ export class DataModel {
         current[segment] = /^\d+$/.test(nextSegment) ? [] : {};
       }
       current = current[segment];
+    }
+
+    if (Array.isArray(current) && !/^\d+$/.test(lastSegment)) {
+      throw new Error(`Cannot use non-numeric segment '${lastSegment}' on an array in path '${path}'.`);
     }
 
     if (value === undefined) {

@@ -194,4 +194,10 @@ describe('DataModel', () => {
         model.set('/user/name/first', 'Alice');
     }, /Cannot set path/);
   });
+
+  it('throws when using non-numeric segment on an array', () => {
+    assert.throws(() => {
+        model.set('/items/foo', 'bar');
+    }, /Cannot use non-numeric segment/);
+  });
 });

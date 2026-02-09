@@ -408,6 +408,7 @@ When a container component (such as `Column`, `Row`, or `List`) utilizes the **T
 - **Scope instantiation:** For every item in the array, the client instantiates the template component.
 - **Relative resolution:** Inside these instantiated components, any path that **does not** start with a forward slash `/` is treated as a **Relative Path**.
   - A relative path `firstName` inside a template iterating over `/users` resolves to `/users/0/firstName` for the first item, `/users/1/firstName` for the second, etc.
+  - It is an error to use a non-numeric index on a path segment that refers to an array.
 
 - **Mixing scopes:** Components inside a Child Scope can still access the Root Scope by using an Absolute Path.
 
