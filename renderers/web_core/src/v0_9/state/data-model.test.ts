@@ -1,3 +1,4 @@
+
 import assert from 'node:assert';
 import { test, describe, it, beforeEach } from 'node:test';
 import { DataModel } from './data-model.js';
@@ -16,6 +17,8 @@ describe('DataModel', () => {
       items: ['a', 'b', 'c']
     });
   });
+
+  // --- Basic Retrieval ---
 
   it('retrieves root data', () => {
     assert.deepStrictEqual(model.get('/'), { user: { name: 'Alice', settings: { theme: 'dark' } }, items: ['a', 'b', 'c'] });
@@ -36,6 +39,8 @@ describe('DataModel', () => {
     assert.strictEqual(model.get('/unknown/path'), undefined);
   });
 
+  // --- Updates ---
+
   it('sets value at existing path', () => {
     model.set('/user/name', 'Bob');
     assert.strictEqual(model.get('/user/name'), 'Bob');
@@ -51,6 +56,58 @@ describe('DataModel', () => {
     assert.strictEqual(model.get('/a/b/c'), 'foo');
     assert.notStrictEqual(model.get('/a/b'), undefined);
   });
+
+  it('removes keys when value is undefined', () => {
+    model.set('/user/name', undefined);
+    assert.strictEqual(model.get('/user/name'), undefined);
+    assert.strictEqual(Object.keys(model.get('/user')).includes('name'), false);
+  });
+
+  it('replaces root object on root update', () => {
+     model.set('/', { newRoot: true });
+     assert.deepStrictEqual(model.get('/'), { newRoot: true });
+  });
+
+  // --- Array / List Handling (Flutter Parity) ---
+
+  it('List: set and get', () => {
+    model.set('/list/0', 'hello');
+    assert.strictEqual(model.get('/list/0'), 'hello');
+    assert.ok(Array.isArray(model.get('/list')));
+  });
+
+  it('List: append and get', () => {
+    model.set('/list/0', 'hello');
+    model.set('/list/1', 'world');
+    assert.strictEqual(model.get('/list/0'), 'hello');
+    assert.strictEqual(model.get('/list/1'), 'world');
+    assert.strictEqual(model.get('/list').length, 2);
+  });
+
+  it('List: update existing index', () => {
+    model.set('/items/1', 'updated');
+    assert.strictEqual(model.get('/items/1'), 'updated');
+  });
+
+  it('Nested structures are created automatically', () => {
+    // Should create nested map and list: { a: { b: [ { c: 123 } ] } }
+    model.set('/a/b/0/c', 123);
+    assert.strictEqual(model.get('/a/b/0/c'), 123);
+    assert.ok(Array.isArray(model.get('/a/b')));
+    assert.ok(!Array.isArray(model.get('/a/b/0')));
+
+    // Should create nested maps
+    model.set('/x/y/z', 'hello');
+    assert.strictEqual(model.get('/x/y/z'), 'hello');
+
+    // Should create nested lists
+    model.set('/nestedList/0/0', 'inner');
+    assert.strictEqual(model.get('/nestedList/0/0'), 'inner');
+    assert.ok(Array.isArray(model.get('/nestedList')));
+    assert.ok(Array.isArray(model.get('/nestedList/0')));
+  });
+
+  // --- Subscriptions ---
 
   it('returns a subscription object', () => {
     model.set('/a', 1);
@@ -79,7 +136,7 @@ describe('DataModel', () => {
     model.set('/user/name', 'Charlie');
   });
 
-  it('notifies ancestor subscribers', (_, done) => {
+  it('notifies ancestor subscribers (Container Semantics)', (_, done) => {
     const sub = model.subscribe('/user');
     sub.onChange = (val: any) => {
       assert.strictEqual(val.name, 'Dave');
@@ -108,17 +165,6 @@ describe('DataModel', () => {
     model.set('/newProp', 'test');
   });
 
-  it('handles array updates', () => {
-    model.set('/items/1', 'updated');
-    assert.strictEqual(model.get('/items/1'), 'updated');
-  });
-
-  it('removes keys when value is undefined', () => {
-    model.set('/user/name', undefined);
-    assert.strictEqual(model.get('/user/name'), undefined);
-    assert.strictEqual(Object.keys(model.get('/user')).includes('name'), false);
-  });
-
   it('notifies parent when child updates', () => {
     model.set('/parent', { child: 'initial' });
     
@@ -130,12 +176,6 @@ describe('DataModel', () => {
     assert.deepStrictEqual(parentValue, { child: 'updated' });
   });
   
-  it('creates intermediate arrays for numeric segments', () => {
-    model.set('/users/0/name', 'Alice');
-    assert.ok(Array.isArray(model.get('/users')));
-    assert.strictEqual(model.get('/users/0/name'), 'Alice');
-  });
-  
   it('stops notifying after dispose', () => {
     let count = 0;
     const sub = model.subscribe('/');
@@ -144,10 +184,5 @@ describe('DataModel', () => {
     model.dispose();
     model.set('/foo', 'bar');
     assert.strictEqual(count, 0);
-  });
-  
-  it('replaces root object on root update', () => {
-     model.set('/', { newRoot: true });
-     assert.deepStrictEqual(model.get('/'), { newRoot: true });
   });
 });
