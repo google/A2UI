@@ -13,12 +13,23 @@ import json
 import logging
 import os
 import re
+import ssl
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
+# SSL context for GitHub fetches - uses certifi CA bundle if available
+def _get_ssl_context() -> ssl.SSLContext:
+    """Get SSL context with proper CA certificates."""
+    try:
+        import certifi
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        # certifi not available, use system defaults
+        return ssl.create_default_context()
 
 # GCS configuration
 GCS_OPENSTAX_BUCKET = os.getenv("GCS_OPENSTAX_BUCKET", "")
@@ -35,6 +46,7 @@ CNXML_NS = {"cnxml": "http://cnx.rice.edu/cnxml"}
 # ============================================================================
 
 # Module cache with TTL - caches parsed content to avoid re-fetching
+# Note: Cache grows unbounded. For production, consider adding LRU eviction.
 _MODULE_CACHE: dict[str, Tuple[str, float]] = {}
 _MODULE_CACHE_TTL = 3600  # 1 hour (content rarely changes)
 
@@ -193,7 +205,7 @@ def fetch_module_from_github(module_id: str) -> Optional[str]:
     url = f"{GITHUB_RAW_BASE}/{module_id}/index.cnxml"
 
     try:
-        with urllib.request.urlopen(url, timeout=10) as response:
+        with urllib.request.urlopen(url, timeout=10, context=_get_ssl_context()) as response:
             content = response.read().decode('utf-8')
             logger.info(f"Fetched module {module_id} from GitHub")
             return content

@@ -92,39 +92,63 @@ def check_prerequisites() -> dict:
 
 def prepare_build_context(demo_dir: Path) -> Path:
     """
-    Prepare the build context by copying the A2UI dependency.
+    Prepare the build context by copying the A2UI dependencies.
     Returns the path to the prepared directory.
     """
     print("\nPreparing build context...")
 
-    # The A2UI web-lib is at ../../renderers/lit relative to demo_dir
-    a2ui_source = demo_dir.parent.parent / "renderers" / "lit"
+    renderers_dir = demo_dir.parent.parent / "renderers"
+
+    # Copy web_core first (lit depends on it)
+    web_core_source = renderers_dir / "web_core"
+    web_core_dest = demo_dir / "a2ui-web-core"
+
+    if not web_core_source.exists():
+        print(f"ERROR: A2UI web_core not found at {web_core_source}")
+        sys.exit(1)
+
+    if web_core_dest.exists():
+        print(f"  Removing old {web_core_dest}")
+        shutil.rmtree(web_core_dest)
+
+    print(f"  Copying {web_core_source} → {web_core_dest}")
+    shutil.copytree(web_core_source, web_core_dest, ignore=shutil.ignore_patterns("node_modules", ".git"))
+
+    # Copy lit (the main web-lib)
+    a2ui_source = renderers_dir / "lit"
     a2ui_dest = demo_dir / "a2ui-web-lib"
 
     if not a2ui_source.exists():
         print(f"ERROR: A2UI web-lib not found at {a2ui_source}")
         sys.exit(1)
 
-    # Remove old copy if exists
     if a2ui_dest.exists():
         print(f"  Removing old {a2ui_dest}")
         shutil.rmtree(a2ui_dest)
 
     # Copy the dependency (excluding node_modules, but keeping dist/ for pre-built output)
     print(f"  Copying {a2ui_source} → {a2ui_dest}")
-
     shutil.copytree(a2ui_source, a2ui_dest, ignore=shutil.ignore_patterns("node_modules", ".git"))
+
+    # Update lit's package.json to point to the local web_core copy
+    lit_package_json = a2ui_dest / "package.json"
+    if lit_package_json.exists():
+        content = lit_package_json.read_text()
+        content = content.replace('"@a2ui/web_core": "file:../web_core"', '"@a2ui/web_core": "file:../a2ui-web-core"')
+        lit_package_json.write_text(content)
+        print("  Updated lit package.json to reference local web_core")
 
     print("  Build context ready")
     return demo_dir
 
 
 def cleanup_build_context(demo_dir: Path):
-    """Remove the temporary A2UI copy after deployment."""
-    a2ui_dest = demo_dir / "a2ui-web-lib"
-    if a2ui_dest.exists():
-        print(f"\nCleaning up {a2ui_dest}")
-        shutil.rmtree(a2ui_dest)
+    """Remove the temporary A2UI copies after deployment."""
+    for dirname in ["a2ui-web-lib", "a2ui-web-core"]:
+        dest = demo_dir / dirname
+        if dest.exists():
+            print(f"\nCleaning up {dest}")
+            shutil.rmtree(dest)
 
 
 def deploy_cloud_run(project_id: str, service_name: str, region: str) -> str:
@@ -178,6 +202,15 @@ def deploy_cloud_run(project_id: str, service_name: str, region: str) -> str:
             "gcloud", "projects", "add-iam-policy-binding", project_id,
             "--member", f"serviceAccount:{compute_sa}",
             "--role", "roles/logging.logWriter",
+            "--quiet",
+        ], check=False)
+
+        # Grant Artifact Registry writer permission to compute service account
+        # Cloud Run source deployments use the compute SA to push Docker images
+        run_command([
+            "gcloud", "projects", "add-iam-policy-binding", project_id,
+            "--member", f"serviceAccount:{compute_sa}",
+            "--role", "roles/artifactregistry.writer",
             "--quiet",
         ], check=False)
 
@@ -311,7 +344,7 @@ def configure_iap_access(
         print("\n  To grant access later, use:")
         print(f"    gcloud run services add-iam-policy-binding {service_name} \\")
         print(f"      --region={region} --member='user:EMAIL' --role='roles/run.invoker'")
-        print(f"\n  Or for a domain:")
+        print("\n  Or for a domain:")
         print(f"    gcloud run services add-iam-policy-binding {service_name} \\")
         print(f"      --region={region} --member='domain:DOMAIN' --role='roles/run.invoker'")
         return
@@ -497,20 +530,20 @@ def main():
 
     if not args.cloud_run_only:
         print(f"\n✅ Demo is live at: https://{project_id}.web.app")
-        print(f"\nAccess is controlled by Firebase Authentication.")
-        print(f"Users must sign in with a @google.com account (configurable in src/firebase-auth.ts).")
+        print("\nAccess is controlled by Firebase Authentication.")
+        print("Users must sign in with a @google.com account (configurable in src/firebase-auth.ts).")
 
     if args.cloud_run_only:
         print(f"\nCloud Run service: {args.service_name}")
         print(f"Region: {args.region}")
         if args.allow_domain or args.allow_users:
-            print(f"\nAuthentication: IAP-protected")
+            print("\nAuthentication: IAP-protected")
             if args.allow_domain:
                 print(f"  Allowed domain: {args.allow_domain}")
             if args.allow_users:
                 print(f"  Allowed users: {args.allow_users}")
         else:
-            print(f"\n⚠️  Cloud Run deployed with --no-allow-unauthenticated.")
+            print("\n⚠️  Cloud Run deployed with --no-allow-unauthenticated.")
             print(f"   Grant access with: gcloud run services add-iam-policy-binding {args.service_name} \\")
             print(f"     --region={args.region} --member='user:EMAIL' --role='roles/run.invoker'")
 

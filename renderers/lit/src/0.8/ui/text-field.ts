@@ -36,6 +36,9 @@ export class TextField extends Root {
   @property()
   accessor inputType: Types.ResolvedTextField["type"] | null = null;
 
+  @property()
+  accessor validationRegexp: string | null = null;
+
   static styles = [
     structuralStyles,
     css`
@@ -51,6 +54,17 @@ export class TextField extends Root {
       input {
         display: block;
         width: 100%;
+      }
+      
+      input:invalid {
+        border-color: var(--color-error);
+        color: var(--color-error);
+        outline-color: var(--color-error);
+      }
+      
+      input:invalid:focus {
+        border-color: var(--color-error);
+        outline-color: var(--color-error);
       }
 
       label {
@@ -107,6 +121,7 @@ export class TextField extends Root {
         id="data"
         .value=${value}
         .placeholder=${"Please enter a value"}
+        pattern=${this.validationRegexp || nothing}
         type=${this.inputType === "number" ? "number" : "text"}
       />
     </section>`;

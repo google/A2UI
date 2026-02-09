@@ -27,8 +27,22 @@ This sample depends on the Lit renderer. Before running this sample, you need to
    ```
 
 3. **Run the servers:**
-   - Run the [A2A server](../../../agent/adk/restaurant_finder/)
+   - Run the [Restaurant Finder Agent](../../../agent/adk/restaurant_finder/) (Default): `npm run demo:restaurant`
    - Run the dev server: `npm run dev`
+
+### Running the Contact Sample
+
+The shell app supports multiple configured applications. To run the Contact sample:
+
+1. **Start the Contact Agent:**
+   ```bash
+   npm run demo:contact
+   ```
+
+2. **Open the Contact App:**
+   - Open `http://localhost:5173/?app=contacts`
+
+> **Note:** The `?app=` query parameter only supports apps that are actively configured in `app.ts` (e.g., `restaurant`, `contacts`). You cannot run arbitrary agents by passing their URL as a query string without first adding them to the shell configuration.
 
 After starting the dev server, you can open http://localhost:5173/ to view the sample.
 
