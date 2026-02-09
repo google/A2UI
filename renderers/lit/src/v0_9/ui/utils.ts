@@ -17,3 +17,11 @@ export function getStyleMap(context: ComponentContext<unknown>, componentName: s
   // Otherwise it's a direct record of styles (like Button or Card)
   return styles as StyleInfo;
 }
+
+export function getAccessibilityAttributes(context: ComponentContext<unknown>) {
+  const { label, description } = context.accessibility;
+  return {
+    'aria-label': label,
+    'aria-description': description,
+  };
+}

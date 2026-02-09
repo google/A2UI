@@ -8,7 +8,17 @@ import { html, TemplateResult } from 'lit';
 // Mock SurfaceContext
 class MockSurfaceContext extends SurfaceContext {
     constructor() {
-        super('mock', {} as any, {}, async () => { });
+        const minimalTheme = {
+            components: {
+                Text: { all: {} },
+                Button: {},
+                Card: {},
+                Column: {},
+                Row: {}
+            },
+            additionalStyles: {}
+        };
+        super('mock', {} as any, minimalTheme, async () => { });
     }
 }
 

@@ -2,10 +2,12 @@ import { html, TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { SliderComponent } from '@a2ui/web_core/v0_9';
+import { getAccessibilityAttributes } from '../../ui/utils.js';
 
 export const litSlider = new SliderComponent<TemplateResult>(
     ({ label, min, max, value, onChange, weight }, context) => {
         const classes = context.surfaceContext.theme.components.Slider;
+        const a11y = getAccessibilityAttributes(context);
         const styles: Record<string, string> = {};
         if (weight !== undefined) {
             styles['flex-grow'] = String(weight);
@@ -19,7 +21,12 @@ export const litSlider = new SliderComponent<TemplateResult>(
                 min="${min}" 
                 max="${max}" 
                 .value="${value.toString()}" 
-                @input="${(e: Event) => onChange(Number((e.target as HTMLInputElement).value))}" 
+                @input="${(e: Event) => onChange(Number((e.target as HTMLInputElement).value))}"
+                aria-label=${a11y['aria-label'] || label}
+                aria-description=${a11y['aria-description'] || null}
+                aria-valuemin="${min}"
+                aria-valuemax="${max}"
+                aria-valuenow="${value}"
             />
             <span>${value}</span>
         </div>

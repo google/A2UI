@@ -2,10 +2,12 @@ import { html, TemplateResult } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { ChoicePickerComponent } from '@a2ui/web_core/v0_9';
+import { getAccessibilityAttributes } from '../../ui/utils.js';
 
 export const litChoicePicker = new ChoicePickerComponent<TemplateResult>(
     ({ label, options, value, variant, onChange, weight }, context) => {
         const classes = context.surfaceContext.theme.components.ChoicePicker;
+        const a11y = getAccessibilityAttributes(context);
         const styles: Record<string, string> = {};
         if (weight !== undefined) {
             styles['flex-grow'] = String(weight);
@@ -29,6 +31,8 @@ export const litChoicePicker = new ChoicePickerComponent<TemplateResult>(
                 <select 
                     ?multiple="${isMultiple}" 
                     @change="${handleChange}"
+                    aria-label=${a11y['aria-label'] || label}
+                    aria-description=${a11y['aria-description'] || null}
                 >
                     ${options.map(opt => html`
                         <option 
