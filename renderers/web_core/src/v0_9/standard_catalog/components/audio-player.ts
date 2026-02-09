@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface AudioPlayerRenderProps {
   url: string;
@@ -13,7 +14,7 @@ export interface AudioPlayerRenderProps {
 const audioPlayerSchema = z.object({
   url: annotated(CommonTypes.DynamicString, "The URL of the audio to be played."),
   description: annotated(CommonTypes.DynamicString, "A description of the audio, such as a title or summary.").optional(),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class AudioPlayerComponent<T> implements Component<T> {

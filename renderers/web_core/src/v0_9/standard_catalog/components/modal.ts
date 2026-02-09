@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface ModalRenderProps<T> {
   trigger: T | null;
@@ -13,7 +14,7 @@ export interface ModalRenderProps<T> {
 const modalSchema = z.object({
   trigger: annotated(CommonTypes.ComponentId, "The ID of the component that opens the modal when interacted with (e.g., a button). Do NOT define the component inline."),
   content: annotated(CommonTypes.ComponentId, "The ID of the component to be displayed inside the modal. Do NOT define the component inline."),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class ModalComponent<T> implements Component<T> {

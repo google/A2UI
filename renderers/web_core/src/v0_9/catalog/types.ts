@@ -13,8 +13,10 @@ export interface Component<T> {
 
   /**
    * The Zod schema describing the **custom properties** of this component.
-   * This should NOT include 'component', 'id', 'weight', or 'accessibility' 
-   * as those are handled by the framework/envelope.
+   * 
+   * - MUST include catalog-specific common properties (e.g. 'weight').
+   * - MUST NOT include 'component', 'id', or 'accessibility' as those are 
+   *   handled by the framework/envelope.
    */
   readonly schema: z.ZodType<any>;
 

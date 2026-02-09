@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface DateTimeInputRenderProps {
   label: string;
@@ -23,7 +24,7 @@ const dateTimeInputSchema = z.object({
   max: annotated(CommonTypes.DynamicString, "The maximum allowed date/time in ISO 8601 format.").optional(),
   label: annotated(CommonTypes.DynamicString, "The text label for the input field."),
   checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class DateTimeInputComponent<T> implements Component<T> {

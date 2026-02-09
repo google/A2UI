@@ -315,6 +315,18 @@ A generic, concrete class that implements the core logic for property resolution
 ```typescript
 // web_core/src/v0_9/rendering/component-context.ts
 
+export interface AccessibilityContext {
+  /**
+   * The resolved label for accessibility (e.g., aria-label).
+   */
+  readonly label: string | undefined;
+
+  /**
+   * The resolved description for accessibility (e.g., aria-description).
+   */
+  readonly description: string | undefined;
+}
+
 export class ComponentContext<T> {
   constructor(
     readonly id: string,
@@ -323,6 +335,16 @@ export class ComponentContext<T> {
     readonly surfaceContext: SurfaceContext,
     private readonly updateCallback: () => void
   ) {}
+
+  /**
+   * The accessibility attributes for this component, resolved from the 
+   * 'accessibility' property in the A2UI message.
+   */
+  get accessibility(): AccessibilityContext {
+    // Implementation would resolve 'accessibility.label' and 'description'
+    // using this.resolve()
+    return { label: undefined, description: undefined }; 
+  }
 
   /**
    * Validates the component properties against its schema.
@@ -357,7 +379,21 @@ export class ComponentContext<T> {
 
 ```
 
-### 6. A2uiMessageProcessor (Core)
+### 6. Common Properties Handling
+
+A2UI distinguishes between two types of "common" properties:
+
+1.  **Core Protocol Properties (e.g., `id`, `accessibility`):**
+    *   These are defined in `common_types.json` and are part of the `ComponentCommon` envelope.
+    *   **Handling:** The Core framework (`A2uiMessageProcessor` / `ComponentContext`) automatically extracts and manages these.
+    *   **Usage:** Components access them via getters on `ComponentContext` (e.g. `context.id`, `context.accessibility`). They do *not* need to define these in their own Zod schema.
+
+2.  **Catalog-Specific Common Properties (e.g., `weight` in Standard Catalog):**
+    *   These are properties that a specific Catalog (like the Standard Catalog) decides to add to all or most of its components.
+    *   **Handling:** Since the Core framework is catalog-agnostic, it does *not* know about these properties.
+    *   **Usage:** Each component MUST explicitly declare these in its Zod schema. To maintain consistency, the Catalog implementation should define a shared Zod schema for these properties and reference it in each component's definition.
+
+### 7. A2uiMessageProcessor (Core)
 
 The central entry point. It manages the lifecycle of `SurfaceContext` objects, routing incoming messages to the correct surface and multiplexing outgoing events.
 
@@ -405,7 +441,7 @@ export class A2uiMessageProcessor {
 
 ```
 
-### 7. Schema Validation and Capabilities (Core)
+### 8. Schema Validation and Capabilities (Core)
 
 v0.9 introduces formal schema support using Zod. This enables automated runtime validation of component properties and machine-readable capability discovery.
 
@@ -436,7 +472,7 @@ v0.9 introduces formal schema support using Zod. This enables automated runtime 
 4.  **Runtime Validation:**
     During rendering, the `ComponentContext.validate()` method uses the Zod schema to check the raw properties received from the server. This provides immediate feedback on malformed messages.
 
-### 8. Standard Catalog Components (Core & Frameworks)
+### 9. Standard Catalog Components (Core & Frameworks)
 
 To reduce code duplication between Lit and Angular, we define concrete, generic component classes in Core that handle the protocol logic and delegate rendering via a functional interface (composition). This example illustrates the pattern using the **Button** component.
 
@@ -509,7 +545,7 @@ export const angularButton = new ButtonComponent<RenderableDefinition>(
 ```
 
 
-### 8. Lit Renderer Implementation Example
+### 10. Lit Renderer Implementation Example
 
 This example demonstrates how the Lit implementation of the Surface component orchestrates the rendering process, including creating the `ComponentContext` with the necessary callbacks.
 
@@ -551,7 +587,7 @@ export class Surface extends LitElement {
 }
 ```
 
-### 9. SurfaceRenderer (Framework Specific)
+### 11. SurfaceRenderer (Framework Specific)
 
 The `SurfaceRenderer` (typically exported as `Surface`) is the top-level component that users place in their applications. It serves as the gateway between the framework's DOM and the A2UI state.
 

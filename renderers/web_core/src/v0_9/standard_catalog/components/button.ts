@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface ButtonRenderProps<T> {
   label: string;
@@ -17,7 +18,7 @@ const buttonSchema = z.object({
     variant: z.enum(["primary", "borderless"]).optional().describe("A hint for the button style. If omitted, a default button style is used. 'primary' indicates this is the main call-to-action button. 'borderless' means the button has no visual border or background, making its child content appear like a clickable link."),
     action: CommonTypes.Action,
     checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform. These are function calls that must return a boolean indicating validity.'),
-    weight: CommonTypes.Weight.optional()
+    weight: CatalogCommon.Weight.optional()
 });
 
 export class ButtonComponent<T> implements Component<T> {

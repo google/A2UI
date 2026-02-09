@@ -4,6 +4,7 @@ import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 
 import { CommonTypes } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface IconRenderProps {
   name: string | any; // Supports string name, { icon, font }, or { path }
@@ -17,7 +18,7 @@ const iconSchema = z.object({
       ]),
       z.object({ path: z.string() })
   ]).describe("The name of the icon to display."),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class IconComponent<T> implements Component<T> {

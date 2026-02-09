@@ -28,8 +28,10 @@ export interface Component<T> {
   
   /**
    * The Zod schema describing the **custom properties** of this component.
-   * This should NOT include 'component', 'id', 'weight', or 'accessibility' 
-   * as those are handled by the framework/envelope.
+   * 
+   * - MUST include catalog-specific common properties (e.g. 'weight').
+   * - MUST NOT include 'component', 'id', or 'accessibility' as those are 
+   *   handled by the framework/envelope.
    */
   readonly schema: z.ZodType<any>;
 
@@ -234,7 +236,10 @@ export class A2uiMessageProcessor {
        type: "object",
        allOf: [
          { "$ref": "common_types.json#/$defs/ComponentCommon" },
-         { "$ref": "#/$defs/CatalogComponentCommon" }, // Assuming this def exists in context or is substituted
+         // Note: We used to include { "$ref": "#/$defs/CatalogComponentCommon" } here for shared props like 'weight'.
+         // However, for inlineCatalogs, we are explicitly adding 'weight' to every component schema.
+         // A future optimization could be to detect shared properties duplicated across all components
+         // and extract them into a common definition here.
          {
            type: "object",
            properties: {
@@ -252,7 +257,7 @@ export class A2uiMessageProcessor {
 
 ## Example Component Definition
 
-Here is how a Standard Catalog component would be defined using the new approach.
+Here is how a Standard Catalog component would be defined using the new approach. Note how `weight` is included via a shared helper from the catalog package, while `accessibility` is omitted because it is handled by the Core framework.
 
 **File:** `renderers/web_core/src/v0_9/standard_catalog/components/button.ts`
 
@@ -260,12 +265,16 @@ Here is how a Standard Catalog component would be defined using the new approach
 import { z } from 'zod';
 import { Component } from '../../catalog/types.js';
 import { CommonTypes } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js'; // Shared catalog types
 
 const buttonSchema = z.object({
   child: CommonTypes.ComponentId.describe('The ID of the child component...'),
   variant: z.enum(['primary', 'borderless']).optional().describe('A hint for the button style...'),
   action: CommonTypes.Action,
-  enabled: z.boolean().optional().default(true) // Maps to checks/logic in full spec, simplified here
+  enabled: z.boolean().optional().default(true), // Maps to checks/logic in full spec, simplified here
+  
+  // Catalog-specific common property
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class ButtonComponent<T> implements Component<T> {
@@ -275,8 +284,8 @@ export class ButtonComponent<T> implements Component<T> {
   constructor(private readonly renderer: (props: any) => T) {}
 
   render(context: ComponentContext<T>): T {
-    // Optional: Validation
-    // context.validate(this.schema); 
+    // context.properties contains 'weight'
+    // context.accessibility is available separately
     
     // ... existing render logic
   }

@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface VideoRenderProps {
   url: string;
@@ -12,7 +13,7 @@ export interface VideoRenderProps {
 
 const videoSchema = z.object({
   url: annotated(CommonTypes.DynamicString, "The URL of the video to display."),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class VideoComponent<T> implements Component<T> {

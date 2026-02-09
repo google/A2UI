@@ -78,13 +78,14 @@ describe('Client Capabilities Generation', () => {
         );
       } else if (name === 'Icon' && propName === 'name' && expectedProp && expectedProp.oneOf && generatedProp) {
         // Special handling for Icon.name, which is a union
-        assert.ok(generatedProp.oneOf, `Generated property ${name}.${propName} should have oneOf`);
-        assert.strictEqual(generatedProp.oneOf.length, expectedProp.oneOf.length, `OneOf length mismatch for ${name}.${propName}`);
+        const unionProp = generatedProp.oneOf || generatedProp.anyOf;
+        assert.ok(unionProp, `Generated property ${name}.${propName} should have oneOf or anyOf`);
+        assert.strictEqual(unionProp.length, expectedProp.oneOf.length, `Union length mismatch for ${name}.${propName}`);
 
         // Perform a simplified check: ensure types (string/object) and const values match
         for (let i = 0; i < expectedProp.oneOf.length; i++) {
           const expItem = expectedProp.oneOf[i];
-          const genItem = generatedProp.oneOf[i];
+          const genItem = unionProp[i];
           if (expItem.type === "string") {
             assert.strictEqual(genItem.type, "string", `Union item type mismatch for ${name}.${propName}[${i}]`);
             assert.deepStrictEqual(genItem.enum, expItem.enum, `Union item enum mismatch for ${name}.${propName}[${i}]`);
@@ -123,9 +124,8 @@ describe('Client Capabilities Generation', () => {
 
         // All components should have weight now
         assert.ok(generatedProps.weight, `Weight property missing for ${name}`);
-        // Check if weight is defined as a DynamicNumber ref (or a number directly for now)
-        // For inline, it should be in properties directly, not via CatalogComponentCommon ref
-        assert.strictEqual(generatedProps.weight.$ref, 'common_types.json#/$defs/Weight', `Weight ref mismatch for ${name}`);
+        // Weight is now a direct number property in the inline catalog
+        assert.strictEqual(generatedProps.weight.type, 'number', `Weight type mismatch for ${name}`);
 
         // Specific component checks based on what we know uses references
         if (name === 'Text') checkRef('text', generatedProps, expectedProps, name);

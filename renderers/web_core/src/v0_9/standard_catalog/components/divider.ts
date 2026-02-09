@@ -4,6 +4,7 @@ import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 
 import { CommonTypes } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface DividerRenderProps {
   axis: 'horizontal' | 'vertical';
@@ -12,7 +13,7 @@ export interface DividerRenderProps {
 
 const dividerSchema = z.object({
   axis: z.enum(["horizontal", "vertical"]).default("horizontal").describe("The orientation of the divider."),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class DividerComponent<T> implements Component<T> {

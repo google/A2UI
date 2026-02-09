@@ -3,6 +3,18 @@ import { DataContext } from '../state/data-context.js';
 import { SurfaceContext } from '../state/surface-context.js';
 import { z } from 'zod';
 
+export interface AccessibilityContext {
+  /**
+   * The resolved label for accessibility (e.g., aria-label).
+   */
+  readonly label: string | undefined;
+
+  /**
+   * The resolved description for accessibility (e.g., aria-description).
+   */
+  readonly description: string | undefined;
+}
+
 export class ComponentContext<T> {
   constructor(
     readonly id: string,
@@ -11,6 +23,20 @@ export class ComponentContext<T> {
     readonly surfaceContext: SurfaceContext,
     private readonly updateCallback: () => void
   ) { }
+
+  /**
+   * The accessibility attributes for this component, resolved from the 
+   * 'accessibility' property in the A2UI message.
+   */
+  get accessibility(): AccessibilityContext {
+    const accessProp = this.properties['accessibility'];
+    if (!accessProp) return { label: undefined, description: undefined };
+
+    return {
+      label: this.resolve<string | undefined>(accessProp.label),
+      description: this.resolve<string | undefined>(accessProp.description)
+    };
+  }
 
   /**
    * Validates the current component properties against the provided schema.

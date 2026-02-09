@@ -99,8 +99,6 @@ const Checkable = z.object({
     checks: z.array(CheckRule).optional().describe('A list of checks to perform.')
 });
 
-const Weight = z.number().describe('The relative weight of this component within a Row or Column. This is similar to the CSS \'flex-grow\' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column.');
-
 export const CommonTypes = {
     ComponentId: withRef('common_types.json#/$defs/ComponentId', ComponentId),
     ChildList: withRef('common_types.json#/$defs/ChildList', ChildList),
@@ -115,5 +113,4 @@ export const CommonTypes = {
     CheckRule: withRef('common_types.json#/$defs/CheckRule', CheckRule),
     Checkable: withRef('common_types.json#/$defs/Checkable', Checkable),
     Action: withRef('common_types.json#/$defs/Action', Action),
-    Weight: Weight,
 };

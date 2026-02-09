@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface TextFieldRenderProps {
   label: string;
@@ -17,7 +18,7 @@ const textFieldSchema = z.object({
   value: annotated(CommonTypes.DynamicString, "The value of the text field."),
   variant: z.enum(["longText", "number", "shortText", "obscured"]).optional().describe("The type of input field to display."),
   checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class TextFieldComponent<T> implements Component<T> {

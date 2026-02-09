@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface ChoiceOption {
   label: string;
@@ -27,7 +28,7 @@ const choicePickerSchema = z.object({
   })).describe("The list of available options to choose from."),
   value: annotated(CommonTypes.DynamicStringList, "The list of currently selected values. This should be bound to a string array in the data model."),
   checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class ChoicePickerComponent<T> implements Component<T> {

@@ -107,10 +107,7 @@ export class A2uiMessageProcessor {
        type: "object",
        allOf: [
          { "$ref": "common_types.json#/$defs/ComponentCommon" },
-         // Note: We used to include { "$ref": "#/$defs/CatalogComponentCommon" } here for shared props like 'weight'.
-         // However, for inlineCatalogs, we are explicitly adding 'weight' to every component schema.
-         // A future optimization could be to detect shared properties duplicated across all components
-         // and extract them into a common definition here.
+         // Note: Catalog-specific common properties (like weight) should be included in propsSchema.
          {
            type: "object",
            properties: {

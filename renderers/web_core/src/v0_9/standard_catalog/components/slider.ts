@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface SliderRenderProps {
   label: string;
@@ -19,7 +20,7 @@ const sliderSchema = z.object({
   max: z.number().describe("The maximum value of the slider."),
   value: annotated(CommonTypes.DynamicNumber, "The current value of the slider."),
   checks: z.array(CommonTypes.CheckRule).optional().describe('A list of checks to perform.'),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class SliderComponent<T> implements Component<T> {

@@ -3,6 +3,7 @@ import { Component } from '../../catalog/types.js';
 import { ComponentContext } from '../../rendering/component-context.js';
 import { z } from 'zod';
 import { CommonTypes, annotated } from '../../catalog/schema_types.js';
+import { CatalogCommon } from '../schema_shared.js';
 
 export interface TabItem<T> {
   title: string;
@@ -19,7 +20,7 @@ const tabsSchema = z.object({
     title: annotated(CommonTypes.DynamicString, "The tab title."),
     child: annotated(CommonTypes.ComponentId, "The ID of the child component. Do NOT define the component inline.")
   })).describe("An array of objects, where each object defines a tab with a title and a child component."),
-  weight: CommonTypes.Weight.optional()
+  weight: CatalogCommon.Weight.optional()
 });
 
 export class TabsComponent<T> implements Component<T> {
