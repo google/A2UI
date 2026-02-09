@@ -127,7 +127,7 @@ describe('DataModel', () => {
     assert.strictEqual(updatedValue, 2);
   });
 
-  it('notifies subscribers on exact match', (_, done) => {
+  it('notifies subscribers on exact match', (_: any, done: (result?: any) => void) => {
     const sub = model.subscribe('/user/name');
     sub.onChange = (val) => {
       assert.strictEqual(val, 'Charlie');
@@ -136,7 +136,7 @@ describe('DataModel', () => {
     model.set('/user/name', 'Charlie');
   });
 
-  it('notifies ancestor subscribers (Container Semantics)', (_, done) => {
+  it('notifies ancestor subscribers (Container Semantics)', (_: any, done: (result?: any) => void) => {
     const sub = model.subscribe('/user');
     sub.onChange = (val: any) => {
       assert.strictEqual(val.name, 'Dave');
@@ -145,7 +145,7 @@ describe('DataModel', () => {
     model.set('/user/name', 'Dave');
   });
 
-  it('notifies descendant subscribers', (_, done) => {
+  it('notifies descendant subscribers', (_: any, done: (result?: any) => void) => {
     const sub = model.subscribe('/user/settings/theme');
     sub.onChange = (val) => {
       assert.strictEqual(val, 'light');
@@ -156,7 +156,7 @@ describe('DataModel', () => {
     model.set('/user/settings', { theme: 'light' });
   });
 
-  it('notifies root subscriber', (_, done) => {
+  it('notifies root subscriber', (_: any, done: (result?: any) => void) => {
     const sub = model.subscribe('/');
     sub.onChange = (val: any) => {
       assert.strictEqual(val.newProp, 'test');
