@@ -185,4 +185,13 @@ describe('DataModel', () => {
     model.set('/foo', 'bar');
     assert.strictEqual(count, 0);
   });
+
+  it('throws when trying to set nested property through a primitive', () => {
+    model.set('/user/name', 'not an object');
+    assert.strictEqual(model.get('/user/name'), 'not an object');
+    
+    assert.throws(() => {
+        model.set('/user/name/first', 'Alice');
+    }, /Cannot set path/);
+  });
 });

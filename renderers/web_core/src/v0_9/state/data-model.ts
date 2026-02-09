@@ -67,6 +67,13 @@ export class DataModel {
     let current = this.data;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
+      
+      // If we encounter a primitive where a container is expected, we cannot proceed.
+      // We allow undefined/null to be overwritten by a new container.
+      if (current[segment] !== undefined && current[segment] !== null && typeof current[segment] !== 'object') {
+        throw new Error(`Cannot set path '${path}': segment '${segment}' is a primitive value.`);
+      }
+
       if (current[segment] === undefined || current[segment] === null) {
         const nextSegment = (i < segments.length - 1) ? segments[i + 1] : lastSegment;
         current[segment] = /^\d+$/.test(nextSegment) ? [] : {};
