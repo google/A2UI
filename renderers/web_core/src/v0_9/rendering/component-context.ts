@@ -30,26 +30,19 @@ export class ComponentContext<T> {
    * When the underlying data changes, it calls `this.updateCallback()`.
    */
   resolve<V>(value: any): V {
-    // 1. Literal Check: If it's a primitive or null, return it directly.
-    if (typeof value !== 'object' || value === null) {
-      return value as V;
+    // 1. Subscription Check
+    if (value && typeof value === 'object') {
+      if ('path' in value && typeof value.path === 'string') {
+        const sub = this.dataContext.subscribe(value.path);
+        sub.onChange = () => this.updateCallback();
+        // Note: Subscription lifecycle management is implicit here (leaky).
+        // In a real implementation, we should track subscriptions and dispose them on unmount.
+        // For this prototype/refactor, we follow existing pattern but with new API.
+      }
     }
 
-    // 2. Path Check: If it's a data binding { path: "..." }
-    if ('path' in value && typeof value.path === 'string') {
-      // Subscribe to changes. When data changes, trigger a re-render.
-      this.dataContext.subscribe(value.path, () => this.updateCallback());
-      return this.dataContext.getValue(value.path);
-    }
-
-    // 3. Function Call: If it's { call: "...", args: ... }
-    // TODO: Implement function calls
-    if ('call' in value) {
-      // Placeholder
-    }
-
-    // Fallback: return as is (maybe it's a nested object that's just a literal structure)
-    return value as V;
+    // 2. Delegation
+    return this.dataContext.resolve<V>(value);
   }
 
   /**
@@ -111,7 +104,8 @@ export class ComponentContext<T> {
       // items should be a path binding e.g. { path: '/myItems' }
       let dataArray: any[] = [];
       if (items && items.path) {
-        this.dataContext.subscribe(items.path, () => this.updateCallback());
+        const sub = this.dataContext.subscribe(items.path);
+        sub.onChange = () => this.updateCallback();
         const val = this.dataContext.getValue(items.path);
         if (Array.isArray(val)) {
           dataArray = val;

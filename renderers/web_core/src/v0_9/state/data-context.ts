@@ -1,4 +1,4 @@
-import { DataModel, DataSubscriber, Unsubscribe } from './data-model.js';
+import { DataModel, Subscription } from './data-model.js';
 
 /**
  * A contextual view of the main DataModel, used by components to resolve relative and absolute paths.
@@ -16,11 +16,11 @@ export class DataContext {
 
   /**
    * Subscribes to a path, resolving it against the current context.
-   * Returns a function to unsubscribe.
+   * Returns a Subscription object.
    */
-  subscribe(path: string, callback: DataSubscriber): Unsubscribe {
+  subscribe<T>(path: string): Subscription<T> {
     const absolutePath = this.resolvePath(path);
-    return this.dataModel.subscribe(absolutePath, callback);
+    return this.dataModel.subscribe(absolutePath);
   }
 
   /**
@@ -37,6 +37,32 @@ export class DataContext {
   update(path: string, value: any): void {
     const absolutePath = this.resolvePath(path);
     this.dataModel.set(absolutePath, value);
+  }
+
+  /**
+   * Resolves a value which might be a literal, a path object, or a function call.
+   * This method performs the evaluation (e.g. looking up path values), but does NOT 
+   * set up subscriptions.
+   */
+  resolve<V>(value: any): V {
+    // 1. Literal Check
+    if (typeof value !== 'object' || value === null) {
+      return value as V;
+    }
+
+    // 2. Path Check: { path: "..." }
+    if ('path' in value && typeof value.path === 'string') {
+      return this.getValue(value.path);
+    }
+
+    // 3. Function Call: { call: "...", args: ... }
+    if ('call' in value) {
+      // TODO: Implement function calls
+      // For now, return as is or undefined?
+      // Leaving placeholder logic similar to original ComponentContext
+    }
+
+    return value as V;
   }
 
   /**

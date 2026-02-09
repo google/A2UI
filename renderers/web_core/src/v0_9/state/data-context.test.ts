@@ -1,4 +1,3 @@
-
 import assert from 'node:assert';
 import { test, describe, it, beforeEach } from 'node:test';
 import { DataModel } from './data-model.js';
@@ -50,10 +49,22 @@ describe('DataContext', () => {
   });
 
   it('subscribes relative path', (_, done) => {
-    context.subscribe('name', (val) => {
+    const sub = context.subscribe('name');
+    sub.onChange = (val) => {
       assert.strictEqual(val, 'Charlie');
       done();
-    });
+    };
     context.update('name', 'Charlie');
+  });
+
+  it('resolves using resolve() method', () => {
+    // Literal
+    assert.strictEqual(context.resolve('literal'), 'literal');
+    
+    // Path
+    assert.strictEqual(context.resolve({ path: 'name' }), 'Alice');
+    
+    // Absolute Path
+    assert.strictEqual(context.resolve({ path: '/list/0' }), 'a');
   });
 });
