@@ -115,6 +115,18 @@ export class TextField extends Root {
             return;
           }
 
+      this.dispatchEvent(
+        new CustomEvent("a2ui-validation-input", {
+          bubbles: true,
+          composed: true,
+          detail: {
+            componentId: this.id,
+            value: evt.target.value,
+            valid: evt.target.checkValidity(),
+          },
+        })
+      );
+
           this.#setBoundValue(evt.target.value);
         }}
         name="data"
