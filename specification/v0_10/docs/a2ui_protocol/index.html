@@ -7,20 +7,18 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="A2UI, a streaming protocol for Agent-Driven User Interfaces" name="description"/>
 <meta content="Google" name="author"/>
-<link href="https://a2ui.org/specification/v0.9-a2ui/" rel="canonical"/>
-<link href="../v0.8-a2a-extension/" rel="prev"/>
-<link href="../v0.9-evolution-guide/" rel="next"/>
-<link href="../../assets/A2UI_dark.svg" rel="icon"/>
+<link href="https://a2ui.org/specification/v0_10/docs/a2ui_protocol/" rel="canonical"/>
+<link href="../../../../assets/A2UI_dark.svg" rel="icon"/>
 <meta content="mkdocs-1.6.1, mkdocs-material-9.7.1" name="generator"/>
-<title>A2UI Specification - A2UI</title>
-<link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
-<link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
+<title>A2ui protocol - A2UI</title>
+<link href="../../../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
+<link href="../../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
 <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M64%20480c-35.3%200-64-28.7-64-64V96c0-35.3%2028.7-64%2064-64h320c35.3%200%2064%2028.7%2064%2064v213.5c0%2017-6.7%2033.3-18.7%2045.3L322.7%20461.3c-12%2012-28.3%2018.7-45.3%2018.7zm325.5-176H296c-13.3%200-24%2010.7-24%2024v93.5z%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M384%20512H96c-53%200-96-43-96-96V96C0%2043%2043%200%2096%200h304c26.5%200%2048%2021.5%2048%2048v288c0%2020.9-13.4%2038.7-32%2045.3V448c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032zM96%20384c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032h256v-64zm32-232c0%2013.3%2010.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24H152c-13.3%200-24%2010.7-24%2024m24%2072c-13.3%200-24%2010.7-24%2024s10.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24z%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m-32-352a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200m-8%2064h48c13.3%200%2024%2010.7%2024%2024v88h8c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-80c-13.3%200-24-10.7-24-24s10.7-24%2024-24h24v-64h-24c-13.3%200-24-10.7-24-24s10.7-24%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M461.2%2018.9C472.7%2024%20480%2035.4%20480%2048v416c0%2012.6-7.3%2024-18.8%2029.1s-24.8%203.2-34.3-5.1l-46.6-40.7c-43.6-38.1-98.7-60.3-156.4-63V480c0%2017.7-14.3%2032-32%2032h-32c-17.7%200-32-14.3-32-32v-96C57.3%20384%200%20326.7%200%20256s57.3-128%20128-128h84.5c61.8-.2%20121.4-22.7%20167.9-63.3L427%2024c9.4-8.3%2022.9-10.2%2034.3-5.1zM224%20320v.2c70.3%202.7%20137.8%2028.5%20192%2073.4V118.3c-54.2%2044.9-121.7%2070.7-192%2073.4z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M434.8%2070.1c14.3%2010.4%2017.5%2030.4%207.1%2044.7l-256%20352c-5.5%207.6-14%2012.3-23.4%2013.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8%200-45.3s32.8-12.5%2045.3%200l101.5%20101.5%20234-321.7c10.4-14.3%2030.4-17.5%2044.7-7.1z%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m0-336c-17.7%200-32%2014.3-32%2032%200%2013.3-10.7%2024-24%2024s-24-10.7-24-24c0-44.2%2035.8-80%2080-80s80%2035.8%2080%2080c0%2047.2-36%2067.2-56%2074.5v3.8c0%2013.3-10.7%2024-24%2024s-24-10.7-24-24v-8.1c0-20.5%2014.8-35.2%2030.1-40.2%206.4-2.1%2013.2-5.5%2018.2-10.3%204.3-4.2%207.7-10%207.7-19.6%200-17.7-14.3-32-32-32zm-32%20192a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%200c14.7%200%2028.2%208.1%2035.2%2021l216%20400c6.7%2012.4%206.4%2027.4-.8%2039.5S486.1%20480%20472%20480H40c-14.1%200-27.2-7.4-34.4-19.5s-7.5-27.1-.8-39.5l216-400c7-12.9%2020.5-21%2035.2-21m0%20352a32%2032%200%201%200%200%2064%2032%2032%200%201%200%200-64m0-192c-18.2%200-32.7%2015.5-31.4%2033.7l7.4%20104c.9%2012.5%2011.4%2022.3%2023.9%2022.3%2012.6%200%2023-9.7%2023.9-22.3l7.4-104c1.3-18.2-13.1-33.7-31.4-33.7z%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20576%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M480-16c6.9%200%2013%204.4%2015.2%2010.9l13.5%2040.4%2040.4%2013.5C555.6%2051%20560%2057.1%20560%2064s-4.4%2013-10.9%2015.2l-40.4%2013.5-13.5%2040.4c-2.2%206.5-8.3%2010.9-15.2%2010.9s-13-4.4-15.2-10.9l-13.5-40.4-40.4-13.5C404.4%2077%20400%2070.9%20400%2064s4.4-13%2010.9-15.2l40.4-13.5%2013.5-40.4C467-11.6%20473.1-16%20480-16M321.4%2097.4c12.5-12.5%2032.8-12.5%2045.3%200l80%2080c12.5%2012.5%2012.5%2032.8%200%2045.3l-10.9%2010.9c7.9%2022%2012.2%2045.7%2012.2%2070.5%200%20114.9-93.1%20208-208%20208S32%20418.9%2032%20304%20125.1%2096%20240%2096c24.7%200%2048.5%204.3%2070.5%2012.3zM144%20304c0-53%2043-96%2096-96%2013.3%200%2024-10.7%2024-24s-10.7-24-24-24c-79.5%200-144%2064.5-144%20144%200%2013.3%2010.7%2024%2024%2024s24-10.7%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M416%20427.4c58.5-44%2096-111.6%2096-187.4C512%20107.5%20397.4%200%20256%200S0%20107.5%200%20240c0%2075.8%2037.5%20143.4%2096%20187.4V464c0%2026.5%2021.5%2048%2048%2048h32v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h64v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h32c26.5%200%2048-21.5%2048-48zM96%20256a64%2064%200%201%201%20128%200%2064%2064%200%201%201-128%200m256-64a64%2064%200%201%201%200%20128%2064%2064%200%201%201%200-128%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M352%200c0-17.7-14.3-32-32-32s-32%2014.3-32%2032v64h-96c-53%200-96%2043-96%2096v224c0%2053%2043%2096%2096%2096h256c53%200%2096-43%2096-96V160c0-53-43-96-96-96h-96zM160%20368c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24M224%20176a48%2048%200%201%201%200%2096%2048%2048%200%201%201%200-96m144%2048a48%2048%200%201%201%2096%200%2048%2048%200%201%201-96%200m-304%200c0-17.7-14.3-32-32-32S0%20206.3%200%20224v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32zm544-32c-17.7%200-32%2014.3-32%2032v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32v-96c0-17.7-14.3-32-32-32%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M288%200H128c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032v151.5L7.5%20426.3C2.6%20435%200%20444.7%200%20454.7%200%20486.4%2025.6%20512%2057.3%20512h333.4c31.6%200%2057.3-25.6%2057.3-57.3%200-10-2.6-19.8-7.5-28.4L320%20215.5V64c17.7%200%2032-14.3%2032-32S337.7%200%20320%200zm-96%20215.5V64h64v151.5c0%2011.1%202.9%2022.1%208.4%2031.8L306%20320H142l41.6-72.7c5.5-9.7%208.4-20.6%208.4-31.8%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M0%20216C0%20149.7%2053.7%2096%20120%2096h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064H64c-35.3%200-64-28.7-64-64zm256%200c0-66.3%2053.7-120%20120-120h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064h-64c-35.3%200-64-28.7-64-64z%22/%3E%3C/svg%3E');}</style>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Google+Sans:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
 <style>:root{--md-text-font:"Google Sans";--md-code-font:"Roboto Mono"}</style>
-<link href="../../stylesheets/custom.css" rel="stylesheet"/>
-<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../../../stylesheets/custom.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 <script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-YX9TPV8DCC"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-YX9TPV8DCC",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-YX9TPV8DCC",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
 <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
 </head>
@@ -29,7 +27,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#a2ui-protocol-v09-draft">
+<a class="md-skip" href="#introduction">
           Skip to content
         </a>
 </div>
@@ -37,8 +35,8 @@
 </div>
 <header class="md-header md-header--shadow" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="A2UI" class="md-header__button md-logo" data-md-component="logo" href="../.." title="A2UI">
-<img alt="logo" src="../../assets/A2UI_light.svg"/>
+<a aria-label="A2UI" class="md-header__button md-logo" data-md-component="logo" href="../../../.." title="A2UI">
+<img alt="logo" src="../../../../assets/A2UI_light.svg"/>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
@@ -53,7 +51,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              A2UI Specification
+              A2ui protocol
             
           </span>
 </div>
@@ -120,8 +118,8 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="A2UI" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="A2UI">
-<img alt="logo" src="../../assets/A2UI_light.svg"/>
+<a aria-label="A2UI" class="md-nav__button md-logo" data-md-component="logo" href="../../../.." title="A2UI">
+<img alt="logo" src="../../../../assets/A2UI_light.svg"/>
 </a>
     A2UI
   </label>
@@ -137,7 +135,7 @@
 </div>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../..">
+<a class="md-nav__link" href="../../../..">
 <span class="md-ellipsis">
     
   
@@ -172,7 +170,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../introduction/what-is-a2ui/">
+<a class="md-nav__link" href="../../../../introduction/what-is-a2ui/">
 <span class="md-ellipsis">
     
   
@@ -184,7 +182,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../introduction/who-is-it-for/">
+<a class="md-nav__link" href="../../../../introduction/who-is-it-for/">
 <span class="md-ellipsis">
     
   
@@ -196,7 +194,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../introduction/how-to-use/">
+<a class="md-nav__link" href="../../../../introduction/how-to-use/">
 <span class="md-ellipsis">
     
   
@@ -208,7 +206,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../introduction/where-is-it-used/">
+<a class="md-nav__link" href="../../../../introduction/where-is-it-used/">
 <span class="md-ellipsis">
     
   
@@ -220,7 +218,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../introduction/agent-ui-ecosystem/">
+<a class="md-nav__link" href="../../../../introduction/agent-ui-ecosystem/">
 <span class="md-ellipsis">
     
   
@@ -235,7 +233,7 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../quickstart/">
+<a class="md-nav__link" href="../../../../quickstart/">
 <span class="md-ellipsis">
     
   
@@ -247,7 +245,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../composer/">
+<a class="md-nav__link" href="../../../../composer/">
 <span class="md-ellipsis">
     
   
@@ -282,7 +280,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../guides/client-setup/">
+<a class="md-nav__link" href="../../../../guides/client-setup/">
 <span class="md-ellipsis">
     
   
@@ -294,7 +292,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../guides/agent-development/">
+<a class="md-nav__link" href="../../../../guides/agent-development/">
 <span class="md-ellipsis">
     
   
@@ -306,7 +304,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../guides/custom-components/">
+<a class="md-nav__link" href="../../../../guides/custom-components/">
 <span class="md-ellipsis">
     
   
@@ -318,7 +316,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../guides/theming/">
+<a class="md-nav__link" href="../../../../guides/theming/">
 <span class="md-ellipsis">
     
   
@@ -356,7 +354,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../concepts/overview/">
+<a class="md-nav__link" href="../../../../concepts/overview/">
 <span class="md-ellipsis">
     
   
@@ -368,7 +366,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../concepts/data-flow/">
+<a class="md-nav__link" href="../../../../concepts/data-flow/">
 <span class="md-ellipsis">
     
   
@@ -380,7 +378,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../concepts/components/">
+<a class="md-nav__link" href="../../../../concepts/components/">
 <span class="md-ellipsis">
     
   
@@ -392,7 +390,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../concepts/data-binding/">
+<a class="md-nav__link" href="../../../../concepts/data-binding/">
 <span class="md-ellipsis">
     
   
@@ -406,8 +404,8 @@
 </ul>
 </nav>
 </li>
-<li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" id="__nav_7" type="checkbox"/>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7" type="checkbox"/>
 <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
 <span class="md-ellipsis">
     
@@ -419,7 +417,7 @@
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="true" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
+<nav aria-expanded="false" aria-labelledby="__nav_7_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_7">
 <span class="md-nav__icon md-icon"></span>
             
@@ -453,7 +451,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../v0.8-a2ui/">
+<a class="md-nav__link" href="../../../v0.8-a2ui/">
 <span class="md-ellipsis">
     
   
@@ -465,7 +463,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../v0.8-a2a-extension/">
+<a class="md-nav__link" href="../../../v0.8-a2a-extension/">
 <span class="md-ellipsis">
     
   
@@ -479,8 +477,8 @@
 </ul>
 </nav>
 </li>
-<li class="md-nav__item md-nav__item--active md-nav__item--nested">
-<input checked="" class="md-nav__toggle md-toggle" id="__nav_7_2" type="checkbox"/>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_7_2" type="checkbox"/>
 <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
 <span class="md-ellipsis">
     
@@ -492,7 +490,7 @@
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="true" aria-labelledby="__nav_7_2_label" class="md-nav" data-md-level="2">
+<nav aria-expanded="false" aria-labelledby="__nav_7_2_label" class="md-nav" data-md-level="2">
 <label class="md-nav__title" for="__nav_7_2">
 <span class="md-nav__icon md-icon"></span>
             
@@ -502,20 +500,8 @@
 
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
-<li class="md-nav__item md-nav__item--active">
-<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
-<label class="md-nav__link md-nav__link--active" for="__toc">
-<span class="md-ellipsis">
-    
-  
-    A2UI Specification
-  
-
-    
-  </span>
-<span class="md-nav__icon md-icon"></span>
-</label>
-<a class="md-nav__link md-nav__link--active" href="./">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../v0.9-a2ui/">
 <span class="md-ellipsis">
     
   
@@ -525,652 +511,9 @@
     
   </span>
 </a>
-<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#introduction">
-<span class="md-ellipsis">
-      
-        Introduction
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#changes-from-previous-versions">
-<span class="md-ellipsis">
-      
-        Changes from previous versions
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#protocol-overview-data-flow">
-<span class="md-ellipsis">
-      
-        Protocol overview &amp; data flow
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#transport-decoupling">
-<span class="md-ellipsis">
-      
-        Transport decoupling
-      
-    </span>
-</a>
-<nav aria-label="Transport decoupling" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-transport-contract">
-<span class="md-ellipsis">
-      
-        The transport contract
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#transport-bindings">
-<span class="md-ellipsis">
-      
-        Transport bindings
-      
-    </span>
-</a>
-<nav aria-label="Transport bindings" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#a2a-agent2agent-binding">
-<span class="md-ellipsis">
-      
-        A2A (Agent2Agent) binding
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#ag-ui-agent-to-user-interface-binding">
-<span class="md-ellipsis">
-      
-        AG UI (Agent to User Interface) binding
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#other-transports">
-<span class="md-ellipsis">
-      
-        Other transports
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-protocol-schemas">
-<span class="md-ellipsis">
-      
-        The protocol schemas
-      
-    </span>
-</a>
-<nav aria-label="The protocol schemas" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#common-types">
-<span class="md-ellipsis">
-      
-        Common types
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#server-to-client-message-structure-the-envelope">
-<span class="md-ellipsis">
-      
-        Server to client message structure: the envelope
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-standard-catalog">
-<span class="md-ellipsis">
-      
-        The Standard Catalog
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#validator-compliance-custom-catalogs">
-<span class="md-ellipsis">
-      
-        Validator compliance &amp; custom catalogs
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#envelope-message-structure">
-<span class="md-ellipsis">
-      
-        Envelope message structure
-      
-    </span>
-</a>
-<nav aria-label="Envelope message structure" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#createsurface">
-<span class="md-ellipsis">
-      
-        createSurface
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#updatecomponents">
-<span class="md-ellipsis">
-      
-        updateComponents
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#updatedatamodel">
-<span class="md-ellipsis">
-      
-        updateDataModel
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#deletesurface">
-<span class="md-ellipsis">
-      
-        deleteSurface
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#example-stream">
-<span class="md-ellipsis">
-      
-        Example Stream
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#component-model">
-<span class="md-ellipsis">
-      
-        Component model
-      
-    </span>
-</a>
-<nav aria-label="Component model" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-component-object">
-<span class="md-ellipsis">
-      
-        The component object
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-component-catalog">
-<span class="md-ellipsis">
-      
-        The component catalog
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#ui-composition-the-adjacency-list-model">
-<span class="md-ellipsis">
-      
-        UI composition: the adjacency list model
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#defining-actions">
-<span class="md-ellipsis">
-      
-        Defining actions
-      
-    </span>
-</a>
-<nav aria-label="Defining actions" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#server-actions">
-<span class="md-ellipsis">
-      
-        Server actions
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#local-actions">
-<span class="md-ellipsis">
-      
-        Local actions
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#data-model-representation-binding-scope">
-<span class="md-ellipsis">
-      
-        Data model representation: binding, scope
-      
-    </span>
-</a>
-<nav aria-label="Data model representation: binding, scope" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#path-resolution-scope">
-<span class="md-ellipsis">
-      
-        Path resolution &amp; scope
-      
-    </span>
-</a>
-<nav aria-label="Path resolution &amp; scope" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-root-scope">
-<span class="md-ellipsis">
-      
-        The root scope
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#collection-scopes-relative-paths">
-<span class="md-ellipsis">
-      
-        Collection scopes (relative paths)
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#example-scope-resolution">
-<span class="md-ellipsis">
-      
-        Example: scope resolution
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#type-conversion">
-<span class="md-ellipsis">
-      
-        Type conversion
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#two-way-binding-input-components">
-<span class="md-ellipsis">
-      
-        Two-way binding &amp; input components
-      
-    </span>
-</a>
-<nav aria-label="Two-way binding &amp; input components" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-readwrite-contract">
-<span class="md-ellipsis">
-      
-        The read/write contract
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#reactivity">
-<span class="md-ellipsis">
-      
-        Reactivity
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#server-synchronization">
-<span class="md-ellipsis">
-      
-        Server synchronization
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#example-form-submission-pattern">
-<span class="md-ellipsis">
-      
-        Example: form submission pattern
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#data-model-updates-synchronization-and-convergence">
-<span class="md-ellipsis">
-      
-        Data model updates: synchronization and convergence
-      
-    </span>
-</a>
-<nav aria-label="Data model updates: synchronization and convergence" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#server-to-client-updates">
-<span class="md-ellipsis">
-      
-        Server to client updates
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#client-to-server-updates">
-<span class="md-ellipsis">
-      
-        Client to server updates
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#client-side-logic-validation">
-<span class="md-ellipsis">
-      
-        Client-side logic &amp; validation
-      
-    </span>
-</a>
-<nav aria-label="Client-side logic &amp; validation" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#registered-functions">
-<span class="md-ellipsis">
-      
-        Registered functions
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#example-button-validation">
-<span class="md-ellipsis">
-      
-        Example: button validation
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#standard-component-catalog">
-<span class="md-ellipsis">
-      
-        Standard Component Catalog
-      
-    </span>
-</a>
-<nav aria-label="Standard Component Catalog" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#components">
-<span class="md-ellipsis">
-      
-        Components
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#functions">
-<span class="md-ellipsis">
-      
-        Functions
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#theme">
-<span class="md-ellipsis">
-      
-        Theme
-      
-    </span>
-</a>
-<nav aria-label="Theme" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#identity-and-attribution">
-<span class="md-ellipsis">
-      
-        Identity and attribution
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#the-formatstring-function">
-<span class="md-ellipsis">
-      
-        The formatString function
-      
-    </span>
-</a>
-<nav aria-label="The formatString function" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#formatstring-syntax">
-<span class="md-ellipsis">
-      
-        formatString syntax
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#formatstring-data-model-binding">
-<span class="md-ellipsis">
-      
-        formatString data model binding
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#formatstring-client-side-functions">
-<span class="md-ellipsis">
-      
-        formatString client-side functions
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#formatstring-nested-interpolation">
-<span class="md-ellipsis">
-      
-        formatString nested interpolation
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#formatstring-type-conversion">
-<span class="md-ellipsis">
-      
-        formatString type conversion
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#usage-pattern-the-prompt-generate-validate-loop">
-<span class="md-ellipsis">
-      
-        Usage pattern: the prompt-generate-validate loop
-      
-    </span>
-</a>
-<nav aria-label="Usage pattern: the prompt-generate-validate loop" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#standard-validation-error-format">
-<span class="md-ellipsis">
-      
-        Standard validation error format
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#client-to-server-messages">
-<span class="md-ellipsis">
-      
-        Client-to-server messages
-      
-    </span>
-</a>
-<nav aria-label="Client-to-server messages" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#action">
-<span class="md-ellipsis">
-      
-        action
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#client-capabilities-metadata">
-<span class="md-ellipsis">
-      
-        Client capabilities &amp; metadata
-      
-    </span>
-</a>
-<nav aria-label="Client capabilities &amp; metadata" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#client-capabilities">
-<span class="md-ellipsis">
-      
-        Client capabilities
-      
-    </span>
-</a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#client-data-model">
-<span class="md-ellipsis">
-      
-        Client data model
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#error">
-<span class="md-ellipsis">
-      
-        error
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../v0.9-evolution-guide/">
+<a class="md-nav__link" href="../../../v0.9-evolution-guide/">
 <span class="md-ellipsis">
     
   
@@ -1188,7 +531,7 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../renderers/">
+<a class="md-nav__link" href="../../../../renderers/">
 <span class="md-ellipsis">
     
   
@@ -1200,7 +543,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../transports/">
+<a class="md-nav__link" href="../../../../transports/">
 <span class="md-ellipsis">
     
   
@@ -1212,7 +555,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../agents/">
+<a class="md-nav__link" href="../../../../agents/">
 <span class="md-ellipsis">
     
   
@@ -1224,7 +567,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../community/">
+<a class="md-nav__link" href="../../../../community/">
 <span class="md-ellipsis">
     
   
@@ -1236,7 +579,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../roadmap/">
+<a class="md-nav__link" href="../../../../roadmap/">
 <span class="md-ellipsis">
     
   
@@ -1271,7 +614,7 @@
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../reference/components/">
+<a class="md-nav__link" href="../../../../reference/components/">
 <span class="md-ellipsis">
     
   
@@ -1283,7 +626,7 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../reference/messages/">
+<a class="md-nav__link" href="../../../../reference/messages/">
 <span class="md-ellipsis">
     
   
@@ -1952,59 +1295,21 @@
 </div>
 </div>
 <div class="md-content" data-md-component="content">
-<nav aria-label="Navigation" class="md-path">
-<ol class="md-path__list">
-<li class="md-path__item">
-<a class="md-path__link" href="../..">
-<span class="md-ellipsis">
-    Home
-  </span>
-</a>
-</li>
-<li class="md-path__item">
-<a class="md-path__link" href="../v0.8-a2ui/">
-<span class="md-ellipsis">
-    Specifications
-  </span>
-</a>
-</li>
-<li class="md-path__item">
-<a class="md-path__link" href="./">
-<span class="md-ellipsis">
-    v0.9 (Draft)
-  </span>
-</a>
-</li>
-</ol>
-</nav>
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/google/A2UI/raw/main/docs/specification/v0.9-a2ui.md" title="View source of this page">
+<a class="md-content__button md-icon" href="https://github.com/google/A2UI/raw/main/docs/specification/v0_10/docs/a2ui_protocol.md" title="View source of this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
 </a>
-<h1 id="a2ui-protocol-v09-draft">A2UI Protocol v0.9 (Draft)<a class="headerlink" href="#a2ui-protocol-v09-draft" title="Permanent link">¶</a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Draft Status</p>
-<p>Version 0.9 is currently in draft status. For production use, consider <a href="../v0.8-a2ui/">v0.8 (Stable)</a>.</p>
-</div>
-<div class="admonition info">
-<p class="admonition-title">Living Document</p>
-<p>This specification is automatically included from <code>specification/v0_9/docs/a2ui_protocol.md</code>. Any updates to the specification will automatically appear here.</p>
-</div>
-<p><strong>See also:</strong>
-- <a href="../v0.8-a2ui/">v0.8 Protocol Specification</a> (Stable)
-- <a href="../v0.9-evolution-guide/">Evolution Guide: v0.8 → v0.9</a></p>
-<hr/>
 <!-- markdownlint-disable MD041 -->
 <!-- markdownlint-disable MD033 -->
 <!-- markdownlint-disable MD034 -->
 <div style="text-align: center;">
 <div class="centered-logo-text-group">
 <img alt="A2UI Protocol Logo" src="../../../assets/A2UI_dark.svg" width="100"/>
-<h1>A2UI (Agent to UI) Protocol v0.9</h1>
+<h1>A2UI (Agent to UI) Protocol v0.10</h1>
 </div>
 </div>
 <p>A Specification for a JSON-Based, Streaming UI Protocol.</p>
-<p><strong>Version:</strong> 0.9
+<p><strong>Version:</strong> 0.10
 <strong>Status:</strong> Draft
 <strong>Created:</strong> Nov 20, 2025
 <strong>Last Updated:</strong> Dec 3, 2025</p>
@@ -2019,14 +1324,11 @@
 <li><code>deleteSurface</code>: Explicitly removes a surface and its contents from the UI.</li>
 </ul>
 <h2 id="changes-from-previous-versions">Changes from previous versions<a class="headerlink" href="#changes-from-previous-versions" title="Permanent link">¶</a></h2>
-<p>Version 0.9 of the A2UI protocol represents a philosophical shift from previous versions. While v0.8 was optimized for LLMs that support structured output, v0.9 is designed to be embedded directly within a model's prompt. The LLM is then asked to produce JSON that matches the provided examples and schema descriptions.</p>
-<p>This "prompt-first" approach offers several advantages:</p>
-<ol>
-<li><strong>Richer schema:</strong> The protocol is no longer limited by the constraints of structured output formats. This allows for more readable, complex, and expressive component catalogs.</li>
-<li><strong>Modularity:</strong> The schema is now refactored into separate, more manageable components (e.g., [<code>common_types.json</code>], [<code>standard_catalog.json</code>], [<code>server_to_client.json</code>]), improving maintainability and modularity.</li>
-</ol>
-<p>The main disadvantage of this approach is that it requires more complex post-generation validation, as the LLM is not strictly constrained by the schema. This requires robust error handling and correction, so the system can identify discrepancies and attempt to fix them before rendering, or request a retry or correction from the LLM.</p>
-<p>See <a href="evolution_guide.md">the evolution guide</a> for a detailed explanation of the differences between v0.8 and v0.9.</p>
+<p>Version 0.10 differs from 0.9 in the following ways:</p>
+<ul>
+<li><tbd></tbd></li>
+</ul>
+<p>See <a href="../evolution_guide/">the evolution guide</a> for a detailed explanation of the differences between v0.9 and v0.10.</p>
 <h2 id="protocol-overview-data-flow">Protocol overview &amp; data flow<a class="headerlink" href="#protocol-overview-data-flow" title="Permanent link">¶</a></h2>
 <p>The A2UI protocol uses a unidirectional stream of JSON messages from the server to the client to describe and update the UI. The client consumes this stream, builds the UI, and renders it. User interactions are handled separately, typically by sending events to a different endpoint, which may in turn trigger new messages on the UI stream.</p>
 <p>Here is an example sequence of events (which don't have to be in exactly this order):</p>
@@ -2077,7 +1379,7 @@
 <p>While A2UI is agnostic, it is most commonly used with the following transports.</p>
 <h4 id="a2a-agent2agent-binding">A2A (Agent2Agent) binding<a class="headerlink" href="#a2a-agent2agent-binding" title="Permanent link">¶</a></h4>
 <p><a href="https://a2a-protocol.org/latest/">A2A (Agent-to-Agent)</a> is an excellent transport option for A2UI in agentic systems, extending A2A with additional payloads.
-A2A is uniquely capable of handling remote agent communication, and can also provide a secure and effecient transport between an agentic backend and front end application.</p>
+A2A is uniquely capable of handling remote agent communication, and can also provide a secure and efficient transport between an agentic backend and front end application.</p>
 <ul>
 <li><strong>Message mapping</strong>: Each A2UI envelope (e.g., <code>updateComponents</code>) corresponds to the payload of a single A2A message Part.</li>
 <li><strong>Metadata</strong>:</li>
@@ -2097,7 +1399,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <li><strong><a href="https://cloud.google.com/discover/what-is-rest-api?hl=en">REST</a></strong>: For simple use case, REST APIs will work but lack streaming capabilities.</li>
 </ul>
 <h2 id="the-protocol-schemas">The protocol schemas<a class="headerlink" href="#the-protocol-schemas" title="Permanent link">¶</a></h2>
-<p>A2UI v0.9 is defined by three interacting JSON schemas.</p>
+<p>A2UI v0.10 is defined by three interacting JSON schemas.</p>
 <h3 id="common-types">Common types<a class="headerlink" href="#common-types" title="Permanent link">¶</a></h3>
 <p>The [<code>common_types.json</code>] schema defines reusable primitives used throughout the protocol.</p>
 <ul>
@@ -2155,10 +1457,10 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.9"</span><span class="p">,</span>
+</span><span id="__span-0-2"><a href="#__codelineno-0-2" id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.10"</span><span class="p">,</span>
 </span><span id="__span-0-3"><a href="#__codelineno-0-3" id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">  </span><span class="nt">"createSurface"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-4"><a href="#__codelineno-0-4" id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="nt">"surfaceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_profile_card"</span><span class="p">,</span>
-</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="nt">"catalogId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://a2ui.org/specification/v0_9/standard_catalog.json"</span><span class="p">,</span>
+</span><span id="__span-0-5"><a href="#__codelineno-0-5" id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="nt">"catalogId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://a2ui.org/specification/v0_10/standard_catalog.json"</span><span class="p">,</span>
 </span><span id="__span-0-6"><a href="#__codelineno-0-6" id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="nt">"theme"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-7"><a href="#__codelineno-0-7" id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">      </span><span class="nt">"primaryColor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"#00BFFF"</span>
 </span><span id="__span-0-8"><a href="#__codelineno-0-8" id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="p">},</span>
@@ -2175,7 +1477,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a href="#__codelineno-1-1" id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p">{</span>
-</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.9"</span><span class="p">,</span>
+</span><span id="__span-1-2"><a href="#__codelineno-1-2" id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.10"</span><span class="p">,</span>
 </span><span id="__span-1-3"><a href="#__codelineno-1-3" id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">"updateComponents"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-1-4"><a href="#__codelineno-1-4" id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">    </span><span class="nt">"surfaceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_profile_card"</span><span class="p">,</span>
 </span><span id="__span-1-5"><a href="#__codelineno-1-5" id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="nt">"components"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -2208,7 +1510,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a href="#__codelineno-2-1" id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="p">{</span>
-</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.9"</span><span class="p">,</span>
+</span><span id="__span-2-2"><a href="#__codelineno-2-2" id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.10"</span><span class="p">,</span>
 </span><span id="__span-2-3"><a href="#__codelineno-2-3" id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="nt">"updateDataModel"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-2-4"><a href="#__codelineno-2-4" id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">    </span><span class="nt">"surfaceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_profile_card"</span><span class="p">,</span>
 </span><span id="__span-2-5"><a href="#__codelineno-2-5" id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/user/name"</span><span class="p">,</span>
@@ -2224,7 +1526,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a href="#__codelineno-3-1" id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="p">{</span>
-</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.9"</span><span class="p">,</span>
+</span><span id="__span-3-2"><a href="#__codelineno-3-2" id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.10"</span><span class="p">,</span>
 </span><span id="__span-3-3"><a href="#__codelineno-3-3" id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w">  </span><span class="nt">"deleteSurface"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-3-4"><a href="#__codelineno-3-4" id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">    </span><span class="nt">"surfaceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_profile_card"</span>
 </span><span id="__span-3-5"><a href="#__codelineno-3-5" id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">  </span><span class="p">}</span>
@@ -2232,10 +1534,10 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </span></code></pre></div>
 <h2 id="example-stream">Example Stream<a class="headerlink" href="#example-stream" title="Permanent link">¶</a></h2>
 <p>The following example demonstrates a complete interaction to render a Contact Form, expressed as a JSONL stream.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>{"version": "v0.9", "createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.org/specification/v0_9/standard_catalog.json"}}
-</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>{"version": "v0.9", "updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","args":{"value":{"path":"/contact/email"}},"message":"Email is required."},{"call":"email","args":{"value":{"path":"/contact/email"}},"message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"value":{"path":"/contact/phone"},"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","variant":"primary","action":{"event":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"formatDate","args":{"value": "2026-02-02T15:17:00Z", "format": "E MMM d, YYYY h:mm a"},"returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}}]}}
-</span><span id="__span-4-3"><a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a>{"version": "v0.9", "updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true}}}
-</span><span id="__span-4-4"><a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a>{"version": "v0.9", "deleteSurface":{"surfaceId":"contact_form_1"}}
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a href="#__codelineno-4-1" id="__codelineno-4-1" name="__codelineno-4-1"></a>{"version": "v0.10", "createSurface":{"surfaceId":"contact_form_1","catalogId":"https://a2ui.org/specification/v0_10/standard_catalog.json"}}
+</span><span id="__span-4-2"><a href="#__codelineno-4-2" id="__codelineno-4-2" name="__codelineno-4-2"></a>{"version": "v0.10", "updateComponents":{"surfaceId":"contact_form_1","components":[{"id":"root","component":"Card","child":"form_container"},{"id":"form_container","component":"Column","children":["header_row","name_row","email_group","phone_group","pref_group","divider_1","newsletter_checkbox","submit_button"],"justify":"start","align":"stretch"},{"id":"header_row","component":"Row","children":["header_icon","header_text"],"align":"center"},{"id":"header_icon","component":"Icon","name":"mail"},{"id":"header_text","component":"Text","text":"# Contact Us","variant":"h2"},{"id":"name_row","component":"Row","children":["first_name_group","last_name_group"],"justify":"spaceBetween"},{"id":"first_name_group","component":"Column","children":["first_name_label","first_name_field"],"weight":1},{"id":"first_name_label","component":"Text","text":"First Name","variant":"caption"},{"id":"first_name_field","component":"TextField","label":"First Name","value":{"path":"/contact/firstName"},"variant":"shortText"},{"id":"last_name_group","component":"Column","children":["last_name_label","last_name_field"],"weight":1},{"id":"last_name_label","component":"Text","text":"Last Name","variant":"caption"},{"id":"last_name_field","component":"TextField","label":"Last Name","value":{"path":"/contact/lastName"},"variant":"shortText"},{"id":"email_group","component":"Column","children":["email_label","email_field"]},{"id":"email_label","component":"Text","text":"Email Address","variant":"caption"},{"id":"email_field","component":"TextField","label":"Email","value":{"path":"/contact/email"},"variant":"shortText","checks":[{"call":"required","args":{"value":{"path":"/contact/email"}},"message":"Email is required."},{"call":"email","args":{"value":{"path":"/contact/email"}},"message":"Please enter a valid email address."}]},{"id":"phone_group","component":"Column","children":["phone_label","phone_field"]},{"id":"phone_label","component":"Text","text":"Phone Number","variant":"caption"},{"id":"phone_field","component":"TextField","label":"Phone","value":{"path":"/contact/phone"},"variant":"shortText","checks":[{"call":"regex","args":{"value":{"path":"/contact/phone"},"pattern":"^\\d{10}$"},"message":"Phone number must be 10 digits."}]},{"id":"pref_group","component":"Column","children":["pref_label","pref_picker"]},{"id":"pref_label","component":"Text","text":"Preferred Contact Method","variant":"caption"},{"id":"pref_picker","component":"ChoicePicker","variant":"mutuallyExclusive","options":[{"label":"Email","value":"email"},{"label":"Phone","value":"phone"},{"label":"SMS","value":"sms"}],"value":{"path":"/contact/preference"}},{"id":"divider_1","component":"Divider","axis":"horizontal"},{"id":"newsletter_checkbox","component":"CheckBox","label":"Subscribe to our newsletter","value":{"path":"/contact/subscribe"}},{"id":"submit_button_label","component":"Text","text":"Send Message"},{"id":"submit_button","component":"Button","child":"submit_button_label","variant":"primary","action":{"event":{"name":"submitContactForm","context":{"formId":"contact_form_1","clientTime":{"call":"formatDate","args":{"value": "2026-02-02T15:17:00Z", "format": "E MMM d, YYYY h:mm a"},"returnType":"string"},"isNewsletterSubscribed":{"path":"/contact/subscribe"}}}}}]}}
+</span><span id="__span-4-3"><a href="#__codelineno-4-3" id="__codelineno-4-3" name="__codelineno-4-3"></a>{"version": "v0.10", "updateDataModel":{"surfaceId":"contact_form_1","path":"/contact","value":{"firstName":"John","lastName":"Doe","email":"john.doe@example.com","phone":"1234567890","preference":["email"],"subscribe":true}}}
+</span><span id="__span-4-4"><a href="#__codelineno-4-4" id="__codelineno-4-4" name="__codelineno-4-4"></a>{"version": "v0.10", "deleteSurface":{"surfaceId":"contact_form_1"}}
 </span></code></pre></div>
 <h2 id="component-model">Component model<a class="headerlink" href="#component-model" title="Permanent link">¶</a></h2>
 <p>A2UI's component model is designed for flexibility, separating the protocol's structure from the set of available UI components.</p>
@@ -2436,7 +1738,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <p><strong>Examples:</strong></p>
 <p><em>Update a specific field:</em></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a href="#__codelineno-10-1" id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="p">{</span>
-</span><span id="__span-10-2"><a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.9"</span><span class="p">,</span>
+</span><span id="__span-10-2"><a href="#__codelineno-10-2" id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.10"</span><span class="p">,</span>
 </span><span id="__span-10-3"><a href="#__codelineno-10-3" id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="w">  </span><span class="nt">"updateDataModel"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-10-4"><a href="#__codelineno-10-4" id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="w">    </span><span class="nt">"surfaceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"surface_123"</span><span class="p">,</span>
 </span><span id="__span-10-5"><a href="#__codelineno-10-5" id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="w">    </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/user/firstName"</span><span class="p">,</span>
@@ -2446,7 +1748,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </span></code></pre></div>
 <p><em>Remove a field:</em></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-11-1"><a href="#__codelineno-11-1" id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="p">{</span>
-</span><span id="__span-11-2"><a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.9"</span><span class="p">,</span>
+</span><span id="__span-11-2"><a href="#__codelineno-11-2" id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.10"</span><span class="p">,</span>
 </span><span id="__span-11-3"><a href="#__codelineno-11-3" id="__codelineno-11-3" name="__codelineno-11-3"></a><span class="w">  </span><span class="nt">"updateDataModel"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-11-4"><a href="#__codelineno-11-4" id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="w">    </span><span class="nt">"surfaceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"surface_123"</span><span class="p">,</span>
 </span><span id="__span-11-5"><a href="#__codelineno-11-5" id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="w">    </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/user/tempData"</span>
@@ -2455,7 +1757,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </span></code></pre></div>
 <p><em>Replace the entire data model:</em></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-12-1"><a href="#__codelineno-12-1" id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="p">{</span>
-</span><span id="__span-12-2"><a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.9"</span><span class="p">,</span>
+</span><span id="__span-12-2"><a href="#__codelineno-12-2" id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.10"</span><span class="p">,</span>
 </span><span id="__span-12-3"><a href="#__codelineno-12-3" id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="w">  </span><span class="nt">"updateDataModel"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-12-4"><a href="#__codelineno-12-4" id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="w">    </span><span class="nt">"surfaceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"surface_123"</span><span class="p">,</span>
 </span><span id="__span-12-5"><a href="#__codelineno-12-5" id="__codelineno-12-5" name="__codelineno-12-5"></a><span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2466,7 +1768,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </span><span id="__span-12-10"><a href="#__codelineno-12-10" id="__codelineno-12-10" name="__codelineno-12-10"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="client-to-server-updates">Client to server updates<a class="headerlink" href="#client-to-server-updates" title="Permanent link">¶</a></h3>
-<p>When <code>sendDataModel</code> is set to <code>true</code> for a surface, the client automatically appends the <strong>entire data model</strong> of that surface to the metadata of every message (such as <code>action</code> or user query) sent to the server that created the surface. The data model is included using the transport's metadata facility (e.g., the <code>metadata</code> field in A2A or a header in HTTP). The payload follows the schema in <a href="../json/a2ui_client_data_model.json"><code>a2ui_client_data_model.json</code></a>.</p>
+<p>When <code>sendDataModel</code> is set to <code>true</code> for a surface, the client automatically appends the <strong>entire data model</strong> of that surface to the metadata of every message (such as <code>action</code> or user query) sent to the server that created the surface. The data model is included using the transport's metadata facility (e.g., the <code>metadata</code> field in A2A or a header in HTTP). The payload follows the schema in <a href="../../json/a2ui_client_data_model.json"><code>a2ui_client_data_model.json</code></a>.</p>
 <ul>
 <li><strong>Targeted Delivery</strong>: The data model is sent exclusively to the server that created the surface. Data cannot leak to other agents or servers.</li>
 <li><strong>Trigger:</strong> Data is sent only when a client-to-server message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.</li>
@@ -2474,7 +1776,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <li><strong>Convergence:</strong> The server treats the received data model as the current state of the client at the time of the action.</li>
 </ul>
 <h2 id="client-side-logic-validation">Client-side logic &amp; validation<a class="headerlink" href="#client-side-logic-validation" title="Permanent link">¶</a></h2>
-<p>A2UI v0.9 generalizes client-side logic into <strong>Functions</strong>. These can be used for validation, data transformation, and dynamic property binding.</p>
+<p>A2UI v0.10 generalizes client-side logic into <strong>Functions</strong>. These can be used for validation, data transformation, and dynamic property binding.</p>
 <h3 id="registered-functions">Registered functions<a class="headerlink" href="#registered-functions" title="Permanent link">¶</a></h3>
 <p>The client supports a set of named <strong>Functions</strong> (e.g., <code>required</code>, <code>regex</code>, <code>email</code>, <code>add</code>, <code>concat</code>) which are defined in the JSON schema (e.g. <code>standard_catalog.json</code>) alongside the component definitions. The server references these functions by name in <code>FunctionCall</code> objects. This avoids sending executable code.</p>
 <p>Input components (like <code>TextField</code>, <code>CheckBox</code>) can define a list of checks. Each failure produces a specific error message that can be displayed when the component is rendered. Note that for validation checks, the function must return a boolean.</p>
@@ -2807,7 +2109,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <li><code>context</code> (object, required): A JSON object containing any context provided in the component's <code>action</code> property.</li>
 </ul>
 <h3 id="client-capabilities-metadata">Client capabilities &amp; metadata<a class="headerlink" href="#client-capabilities-metadata" title="Permanent link">¶</a></h3>
-<p>In A2UI v0.9, client capabilities and other metadata are sent as part of the <strong>Transport metadata</strong> (e.g., A2A metadata) envelope in every message, rather than as first-class A2UI messages.</p>
+<p>In A2UI v0.10, client capabilities and other metadata are sent as part of the <strong>Transport metadata</strong> (e.g., A2A metadata) envelope in every message.</p>
 <h4 id="client-capabilities">Client capabilities<a class="headerlink" href="#client-capabilities" title="Permanent link">¶</a></h4>
 <p>The <code>a2uiClientCapabilities</code> object in the metadata follows the [<code>a2ui_client_capabilities.json</code>] schema.</p>
 <p><strong>Properties:</strong></p>
@@ -2834,34 +2136,6 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </button>
 </main>
 <footer class="md-footer">
-<nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: A2A Extension" class="md-footer__link md-footer__link--prev" href="../v0.8-a2a-extension/">
-<div class="md-footer__button md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
-</div>
-<div class="md-footer__title">
-<span class="md-footer__direction">
-                Previous
-              </span>
-<div class="md-ellipsis">
-                A2A Extension
-              </div>
-</div>
-</a>
-<a aria-label="Next: Evolution Guide" class="md-footer__link md-footer__link--next" href="../v0.9-evolution-guide/">
-<div class="md-footer__title">
-<span class="md-footer__direction">
-                Next
-              </span>
-<div class="md-ellipsis">
-                Evolution Guide
-              </div>
-</div>
-<div class="md-footer__button md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
-</div>
-</a>
-</nav>
 <div class="md-footer-meta md-typeset">
 <div class="md-footer-meta__inner md-grid">
 <div class="md-copyright">
@@ -2916,8 +2190,8 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </aside>
 </div>
 <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
-<script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
-<script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+<script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+<script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
 <script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
 mermaid.initialize({});</script></body>
 </html>
