@@ -31,9 +31,7 @@
           ]
         }
       },
-      "required": [
-        "text"
-      ]
+      "required": ["text"]
     },
     "Image": {
       "type": "object",
@@ -76,9 +74,7 @@
           ]
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "Icon": {
       "type": "object",
@@ -148,9 +144,7 @@
           }
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": ["name"]
     },
     "Video": {
       "type": "object",
@@ -170,9 +164,7 @@
           }
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "AudioPlayer": {
       "type": "object",
@@ -205,9 +197,7 @@
           }
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "Row": {
       "type": "object",
@@ -236,10 +226,7 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
@@ -258,17 +245,10 @@
         "alignment": {
           "type": "string",
           "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "stretch"
-          ]
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "Column": {
       "type": "object",
@@ -297,10 +277,7 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
@@ -319,17 +296,10 @@
         "alignment": {
           "type": "string",
           "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
-          "enum": [
-            "center",
-            "end",
-            "start",
-            "stretch"
-          ]
+          "enum": ["center", "end", "start", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "List": {
       "type": "object",
@@ -358,35 +328,22 @@
                   "type": "string"
                 }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
         "direction": {
           "type": "string",
           "description": "The direction in which the list items are laid out.",
-          "enum": [
-            "vertical",
-            "horizontal"
-          ]
+          "enum": ["vertical", "horizontal"]
         },
         "alignment": {
           "type": "string",
           "description": "Defines the alignment of children along the cross axis.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "stretch"
-          ]
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "Card": {
       "type": "object",
@@ -397,9 +354,7 @@
           "description": "The ID of the component to be rendered inside the card."
         }
       },
-      "required": [
-        "child"
-      ]
+      "required": ["child"]
     },
     "Tabs": {
       "type": "object",
@@ -429,16 +384,11 @@
                 "type": "string"
               }
             },
-            "required": [
-              "title",
-              "child"
-            ]
+            "required": ["title", "child"]
           }
         }
       },
-      "required": [
-        "tabItems"
-      ]
+      "required": ["tabItems"]
     },
     "Divider": {
       "type": "object",
@@ -447,10 +397,7 @@
         "axis": {
           "type": "string",
           "description": "The orientation of the divider.",
-          "enum": [
-            "horizontal",
-            "vertical"
-          ]
+          "enum": ["horizontal", "vertical"]
         }
       }
     },
@@ -467,10 +414,7 @@
           "description": "The ID of the component to be displayed inside the modal."
         }
       },
-      "required": [
-        "entryPointChild",
-        "contentChild"
-      ]
+      "required": ["entryPointChild", "contentChild"]
     },
     "Button": {
       "type": "object",
@@ -521,22 +465,14 @@
                     }
                   }
                 },
-                "required": [
-                  "key",
-                  "value"
-                ]
+                "required": ["key", "value"]
               }
             }
           },
-          "required": [
-            "name"
-          ]
+          "required": ["name"]
         }
       },
-      "required": [
-        "child",
-        "action"
-      ]
+      "required": ["child", "action"]
     },
     "CheckBox": {
       "type": "object",
@@ -569,10 +505,7 @@
           }
         }
       },
-      "required": [
-        "label",
-        "value"
-      ]
+      "required": ["label", "value"]
     },
     "TextField": {
       "type": "object",
@@ -620,9 +553,7 @@
           "description": "A regular expression used for client-side validation of the input."
         }
       },
-      "required": [
-        "label"
-      ]
+      "required": ["label"]
     },
     "DateTimeInput": {
       "type": "object",
@@ -650,9 +581,7 @@
           "description": "If true, allows the user to select a time."
         }
       },
-      "required": [
-        "value"
-      ]
+      "required": ["value"]
     },
     "MultipleChoice": {
       "type": "object",
@@ -703,10 +632,7 @@
                 "description": "The value to be associated with this option when selected."
               }
             },
-            "required": [
-              "label",
-              "value"
-            ]
+            "required": ["label", "value"]
           }
         },
         "maxAllowedSelections": {
@@ -724,7 +650,7 @@
         "filterable": {
           "type": "boolean",
           "description": "If true, displays a search input to filter the options."
-        }
+        },
       }
     },
     "Slider": {
@@ -753,9 +679,7 @@
           "description": "The maximum value of the slider."
         }
       },
-      "required": [
-        "value"
-      ]
+      "required": ["value"]
     }
   },
   "styles": {
