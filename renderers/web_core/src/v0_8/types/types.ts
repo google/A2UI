@@ -312,7 +312,7 @@ export type ResolvedValue =
   | ResolvedArray;
 
 /** A generic map where each value has been recursively resolved. */
-export type ResolvedMap = { [key: string]: ResolvedValue };
+export type ResolvedMap = { [key: string]?: ResolvedValue };
 
 /** A generic array where each item has been recursively resolved. */
 export type ResolvedArray = ResolvedValue[];
