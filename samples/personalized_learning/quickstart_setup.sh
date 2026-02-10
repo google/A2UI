@@ -120,24 +120,24 @@ echo -e "${YELLOW}[5/6]${NC} Creating GCS buckets..."
 LOCATION="us-central1"
 
 # Staging bucket
-gsutil mb -l "$LOCATION" "gs://${PROJECT_ID}_cloudbuild" 2>/dev/null || true
+gcloud storage buckets create "gs://${PROJECT_ID}_cloudbuild" --location "$LOCATION" 2>/dev/null || true
 echo "  Staging bucket: gs://${PROJECT_ID}_cloudbuild"
 
 # Learner context bucket
 CONTEXT_BUCKET="${PROJECT_ID}-learner-context"
-gsutil mb -l "$LOCATION" "gs://${CONTEXT_BUCKET}" 2>/dev/null || true
+gcloud storage buckets create "gs://${CONTEXT_BUCKET}" --location "$LOCATION" 2>/dev/null || true
 echo "  Context bucket: gs://${CONTEXT_BUCKET}"
 
 # OpenStax content bucket
 OPENSTAX_BUCKET="${PROJECT_ID}-openstax"
-gsutil mb -l "$LOCATION" "gs://${OPENSTAX_BUCKET}" 2>/dev/null || true
+gcloud storage buckets create "gs://${OPENSTAX_BUCKET}" --location "$LOCATION" 2>/dev/null || true
 echo "  OpenStax bucket: gs://${OPENSTAX_BUCKET}"
 
 # Step 6: Upload learner context
 echo -e "${YELLOW}[6/6]${NC} Uploading learner context files..."
 # Note: Using -o flag to disable multiprocessing on macOS to avoid Python multiprocessing issues
-gsutil -o "GSUtil:parallel_process_count=1" -m cp -q learner_context/*.txt "gs://${CONTEXT_BUCKET}/learner_context/" 2>/dev/null || \
-    gsutil cp -q learner_context/*.txt "gs://${CONTEXT_BUCKET}/learner_context/" 2>/dev/null || true
+gcloud storage cp learner_context/*.txt "gs://${CONTEXT_BUCKET}/learner_context/" 2>/dev/null || \
+    gcloud storage cp learner_context/*.txt "gs://${CONTEXT_BUCKET}/learner_context/" 2>/dev/null || true
 echo "  Learner context uploaded to gs://${CONTEXT_BUCKET}/learner_context/"
 
 # Get project number for .env
