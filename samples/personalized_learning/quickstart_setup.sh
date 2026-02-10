@@ -135,9 +135,7 @@ echo "  OpenStax bucket: gs://${OPENSTAX_BUCKET}"
 
 # Step 6: Upload learner context
 echo -e "${YELLOW}[6/6]${NC} Uploading learner context files..."
-# Note: Using -o flag to disable multiprocessing on macOS to avoid Python multiprocessing issues
-gcloud storage cp learner_context/*.txt "gs://${CONTEXT_BUCKET}/learner_context/" 2>/dev/null || \
-    gcloud storage cp learner_context/*.txt "gs://${CONTEXT_BUCKET}/learner_context/" 2>/dev/null || true
+gcloud storage cp learner_context/*.txt "gs://${CONTEXT_BUCKET}/learner_context/" 2>/dev/null|| true
 echo "  Learner context uploaded to gs://${CONTEXT_BUCKET}/learner_context/"
 
 # Get project number for .env
