@@ -14,4 +14,4 @@
  limitations under the License.
  */
 
-export { noopMarkdown } from "./noop_markdown.js";
+export { minimalMarkdown } from "./minimal_markdown.js";

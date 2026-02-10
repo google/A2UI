@@ -17,7 +17,7 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { consume } from '@lit/context';
-import { noopMarkdown } from "./directives/noop_markdown.js";
+import { minimalMarkdown } from "./directives/directives.js";
 import * as Context from "./context/context.js";
 import { Root } from "./root.js";
 import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
@@ -47,7 +47,7 @@ export class Text extends Root {
   accessor usageHint: Types.ResolvedText["usageHint"] | null = null;
 
   @consume({context: Context.markdown})
-  accessor markdownRenderer = noopMarkdown;
+  accessor markdownRenderer = minimalMarkdown;
 
   static styles = [
     structuralStyles,
@@ -122,7 +122,7 @@ export class Text extends Root {
     }
 
     return html`${this.markdownRenderer(
-      markdownText, 
+      markdownText,
       Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
     )}`;
   }
