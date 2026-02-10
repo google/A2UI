@@ -258,7 +258,7 @@ export class ChatService {
   /**
    * Creates the agent role based on the agent card and the message response if available.
    *
-   * @param response The reponse message received from the agent.
+   * @param response The response message received from the agent.
    * @returns A new UiAgent object representing the agent that the user is chatting with.
    */
   private createRole(response?: SendMessageSuccessResponse): UiAgent {
