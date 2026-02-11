@@ -282,6 +282,23 @@ export const componentSpecificStyles: string = `
 }
 
 /* =========================================================================
+ * MultipleChoice (from Lit multiple-choice.ts static styles)
+ * ========================================================================= */
+
+/* :host { display: block; flex: var(--weight); min-height: 0; overflow: auto; } */
+.a2ui-surface .a2ui-multiplechoice {
+  display: block;
+  flex: var(--weight);
+  min-height: 0;
+  overflow: auto;
+}
+
+/* select { width: 100%; } */
+:where(.a2ui-surface .a2ui-multiplechoice) select {
+  width: 100%;
+}
+
+/* =========================================================================
  * Column (from Lit column.ts static styles)
  * ========================================================================= */
 

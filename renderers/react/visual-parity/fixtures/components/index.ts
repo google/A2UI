@@ -16,7 +16,7 @@ export * from './checkbox';
 export * from './textField';
 export * from './slider';
 export * from './dateTimeInput';
-export * from './multipleChoice';
+export { multipleChoice } from './multipleChoice';
 export * from './video';
 export * from './audioPlayer';
 export * from './modal';

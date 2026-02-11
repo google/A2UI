@@ -1,21 +1,20 @@
 import { describe, it, expect } from 'vitest';
 import { render, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { TestWrapper, TestRenderer, createSimpleMessages, getElement } from '../../utils';
+import { TestWrapper, TestRenderer, createSimpleMessages } from '../../utils';
 
 /**
  * MultipleChoice tests following A2UI specification.
  * Required: selections, options (array of { label, value })
  * Optional: maxAllowedSelections
  *
- * When maxAllowedSelections is 1, renders radio buttons.
- * Otherwise, renders checkboxes.
+ * Renders a <select> dropdown matching Lit renderer behavior.
  */
 describe('MultipleChoice Component', () => {
   describe('Basic Rendering', () => {
-    it('should render a multiple choice container', () => {
+    it('should render a select element', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
           { label: { literalString: 'Option B' }, value: 'b' },
@@ -28,13 +27,14 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const wrapper = container.querySelector('.a2ui-multiplechoice');
-      expect(wrapper).toBeInTheDocument();
+      const select = container.querySelector('select');
+      expect(select).toBeInTheDocument();
+      expect(select?.tagName).toBe('SELECT');
     });
 
-    it('should render section with group role', () => {
+    it('should render with wrapper div having correct class', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
         ],
@@ -46,13 +46,14 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const section = container.querySelector('section');
-      expect(section).toBeInTheDocument();
+      const wrapper = container.querySelector('.a2ui-multiplechoice');
+      expect(wrapper).toBeInTheDocument();
+      expect(wrapper?.tagName).toBe('DIV');
     });
 
     it('should render all option labels', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'First Option' }, value: 'first' },
           { label: { literalString: 'Second Option' }, value: 'second' },
@@ -66,14 +67,16 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      expect(container.textContent).toContain('First Option');
-      expect(container.textContent).toContain('Second Option');
-      expect(container.textContent).toContain('Third Option');
+      const options = container.querySelectorAll('option');
+      expect(options.length).toBe(3);
+      expect(options[0]?.textContent).toBe('First Option');
+      expect(options[1]?.textContent).toBe('Second Option');
+      expect(options[2]?.textContent).toBe('Third Option');
     });
 
     it('should render correct number of options', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'A' }, value: 'a' },
           { label: { literalString: 'B' }, value: 'b' },
@@ -87,19 +90,19 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const inputs = container.querySelectorAll('input');
-      expect(inputs.length).toBe(3);
+      const options = container.querySelectorAll('option');
+      expect(options.length).toBe(3);
     });
 
     it('should render different options for different inputs', () => {
       const messages1 = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections1' },
         options: [
           { label: { literalString: 'Alpha' }, value: 'alpha' },
         ],
       });
       const messages2 = createSimpleMessages('mc-2', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections2' },
         options: [
           { label: { literalString: 'Beta' }, value: 'beta' },
           { label: { literalString: 'Gamma' }, value: 'gamma' },
@@ -125,13 +128,12 @@ describe('MultipleChoice Component', () => {
     });
   });
 
-  describe('Radio Buttons (maxAllowedSelections = 1)', () => {
-    it('should render radio inputs by default (maxAllowedSelections defaults to 1)', () => {
+  describe('Description Label', () => {
+    it('should render default description when not provided', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
-          { label: { literalString: 'Option B' }, value: 'b' },
         ],
       });
 
@@ -141,18 +143,17 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const inputs = container.querySelectorAll('input[type="radio"]');
-      expect(inputs.length).toBe(2);
+      const label = container.querySelector('label');
+      expect(label).toBeInTheDocument();
+      expect(label?.textContent).toBe('Select an item');
     });
 
-    it('should render radio inputs when maxAllowedSelections = 1', () => {
+    it('should associate label with select via htmlFor', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
-          { label: { literalString: 'Option B' }, value: 'b' },
         ],
-        maxAllowedSelections: 1,
       });
 
       const { container } = render(
@@ -161,71 +162,21 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const radioInputs = container.querySelectorAll('input[type="radio"]');
-      const checkboxInputs = container.querySelectorAll('input[type="checkbox"]');
-
-      expect(radioInputs.length).toBe(2);
-      expect(checkboxInputs.length).toBe(0);
-    });
-
-    it('should have radiogroup role for radio buttons', () => {
-      const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
-        options: [
-          { label: { literalString: 'Option A' }, value: 'a' },
-        ],
-        maxAllowedSelections: 1,
-      });
-
-      const { container } = render(
-        <TestWrapper>
-          <TestRenderer messages={messages} />
-        </TestWrapper>
-      );
-
-      const section = container.querySelector('section');
-      expect(section?.getAttribute('role')).toBe('radiogroup');
-    });
-
-    it('should select only one option at a time', () => {
-      const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
-        options: [
-          { label: { literalString: 'Option A' }, value: 'a' },
-          { label: { literalString: 'Option B' }, value: 'b' },
-        ],
-        maxAllowedSelections: 1,
-      });
-
-      const { container } = render(
-        <TestWrapper>
-          <TestRenderer messages={messages} />
-        </TestWrapper>
-      );
-
-      const inputs = Array.from(container.querySelectorAll('input[type="radio"]')) as HTMLInputElement[];
-
-      // Select first option
-      fireEvent.click(getElement(inputs, 0));
-      expect(getElement(inputs, 0).checked).toBe(true);
-      expect(getElement(inputs, 1).checked).toBe(false);
-
-      // Select second option - first should be deselected
-      fireEvent.click(getElement(inputs, 1));
-      expect(getElement(inputs, 0).checked).toBe(false);
-      expect(getElement(inputs, 1).checked).toBe(true);
+      const label = container.querySelector('label');
+      const select = container.querySelector('select');
+      expect(label?.getAttribute('for')).toBe(select?.id);
     });
   });
 
-  describe('Checkboxes (maxAllowedSelections > 1)', () => {
-    it('should render checkbox inputs when maxAllowedSelections > 1', () => {
+  describe('Option Values', () => {
+    it('should set correct value attributes on options', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
-          { label: { literalString: 'Option A' }, value: 'a' },
-          { label: { literalString: 'Option B' }, value: 'b' },
+          { label: { literalString: 'Small' }, value: 'sm' },
+          { label: { literalString: 'Medium' }, value: 'md' },
+          { label: { literalString: 'Large' }, value: 'lg' },
         ],
-        maxAllowedSelections: 2,
       });
 
       const { container } = render(
@@ -234,41 +185,22 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const checkboxInputs = container.querySelectorAll('input[type="checkbox"]');
-      const radioInputs = container.querySelectorAll('input[type="radio"]');
-
-      expect(checkboxInputs.length).toBe(2);
-      expect(radioInputs.length).toBe(0);
+      const options = container.querySelectorAll('option');
+      expect(options[0]?.value).toBe('sm');
+      expect(options[1]?.value).toBe('md');
+      expect(options[2]?.value).toBe('lg');
     });
+  });
 
-    it('should have group role for checkboxes', () => {
+  describe('User Interaction', () => {
+    it('should update select value on change', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
-        options: [
-          { label: { literalString: 'Option A' }, value: 'a' },
-        ],
-        maxAllowedSelections: 3,
-      });
-
-      const { container } = render(
-        <TestWrapper>
-          <TestRenderer messages={messages} />
-        </TestWrapper>
-      );
-
-      const section = container.querySelector('section');
-      expect(section?.getAttribute('role')).toBe('group');
-    });
-
-    it('should allow multiple selections', () => {
-      const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
           { label: { literalString: 'Option B' }, value: 'b' },
           { label: { literalString: 'Option C' }, value: 'c' },
         ],
-        maxAllowedSelections: 3,
       });
 
       const { container } = render(
@@ -277,25 +209,20 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const inputs = Array.from(container.querySelectorAll('input[type="checkbox"]')) as HTMLInputElement[];
+      const select = container.querySelector('select') as HTMLSelectElement;
+      fireEvent.change(select, { target: { value: 'b' } });
 
-      // Select first option
-      fireEvent.click(getElement(inputs, 0));
-      expect(getElement(inputs, 0).checked).toBe(true);
-
-      // Select second option - first should remain selected
-      fireEvent.click(getElement(inputs, 1));
-      expect(getElement(inputs, 0).checked).toBe(true);
-      expect(getElement(inputs, 1).checked).toBe(true);
+      expect(select.value).toBe('b');
     });
 
-    it('should toggle checkbox on repeated click', () => {
+    it('should handle multiple sequential changes', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
+          { label: { literalString: 'Option B' }, value: 'b' },
+          { label: { literalString: 'Option C' }, value: 'c' },
         ],
-        maxAllowedSelections: 2,
       });
 
       const { container } = render(
@@ -304,54 +231,23 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const input = container.querySelector('input[type="checkbox"]') as HTMLInputElement;
+      const select = container.querySelector('select') as HTMLSelectElement;
 
-      expect(input.checked).toBe(false);
+      fireEvent.change(select, { target: { value: 'a' } });
+      expect(select.value).toBe('a');
 
-      fireEvent.click(input);
-      expect(input.checked).toBe(true);
+      fireEvent.change(select, { target: { value: 'c' } });
+      expect(select.value).toBe('c');
 
-      fireEvent.click(input);
-      expect(input.checked).toBe(false);
-    });
-  });
-
-  describe('Different Input Types', () => {
-    it('should render different input types for different maxAllowedSelections', () => {
-      const messagesRadio = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
-        options: [{ label: { literalString: 'A' }, value: 'a' }],
-        maxAllowedSelections: 1,
-      });
-      const messagesCheckbox = createSimpleMessages('mc-2', 'MultipleChoice', {
-        selections: { literalArray: [] },
-        options: [{ label: { literalString: 'A' }, value: 'a' }],
-        maxAllowedSelections: 2,
-      });
-
-      const { container: containerRadio } = render(
-        <TestWrapper>
-          <TestRenderer messages={messagesRadio} />
-        </TestWrapper>
-      );
-      const { container: containerCheckbox } = render(
-        <TestWrapper>
-          <TestRenderer messages={messagesCheckbox} />
-        </TestWrapper>
-      );
-
-      const radioInput = containerRadio.querySelector('input[type="radio"]');
-      const checkboxInput = containerCheckbox.querySelector('input[type="checkbox"]');
-
-      expect(radioInput).toBeInTheDocument();
-      expect(checkboxInput).toBeInTheDocument();
+      fireEvent.change(select, { target: { value: 'b' } });
+      expect(select.value).toBe('b');
     });
   });
 
   describe('Structure', () => {
-    it('should have correct DOM structure: div > section > labels', () => {
+    it('should have correct DOM structure: div > section > label + select', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
           { label: { literalString: 'Option B' }, value: 'b' },
@@ -370,13 +266,15 @@ describe('MultipleChoice Component', () => {
       const section = wrapper?.querySelector('section');
       expect(section).toBeInTheDocument();
 
-      const labels = section?.querySelectorAll('label');
-      expect(labels?.length).toBe(2);
+      const children = Array.from(section?.children ?? []);
+      expect(children.length).toBe(2);
+      expect(children[0]?.tagName).toBe('LABEL');
+      expect(children[1]?.tagName).toBe('SELECT');
     });
 
-    it('should have input and span inside each label', () => {
+    it('should have select inside section container', () => {
       const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
-        selections: { literalArray: [] },
+        selections: { path: '/mcSelections' },
         options: [
           { label: { literalString: 'Option A' }, value: 'a' },
         ],
@@ -388,9 +286,29 @@ describe('MultipleChoice Component', () => {
         </TestWrapper>
       );
 
-      const label = container.querySelector('label');
-      expect(label?.querySelector('input')).toBeInTheDocument();
-      expect(label?.querySelector('span')).toBeInTheDocument();
+      const section = container.querySelector('section');
+      const select = section?.querySelector('select');
+      expect(select).toBeInTheDocument();
+    });
+
+    it('should have options inside select', () => {
+      const messages = createSimpleMessages('mc-1', 'MultipleChoice', {
+        selections: { path: '/mcSelections' },
+        options: [
+          { label: { literalString: 'Option A' }, value: 'a' },
+          { label: { literalString: 'Option B' }, value: 'b' },
+        ],
+      });
+
+      const { container } = render(
+        <TestWrapper>
+          <TestRenderer messages={messages} />
+        </TestWrapper>
+      );
+
+      const select = container.querySelector('select');
+      const options = select?.querySelectorAll('option');
+      expect(options?.length).toBe(2);
     });
   });
 });

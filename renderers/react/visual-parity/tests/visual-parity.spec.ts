@@ -31,14 +31,8 @@ const MAX_DIFF_PERCENT = 1; // 1% of pixels can differ
 
 /**
  * Fixtures to skip in visual parity tests.
- * - multipleChoice*: Implementation differs - React uses radio/checkboxes, Lit uses <select>
  */
-const skippedFixtures: FixtureName[] = [
-  'multipleChoiceRadio',
-  'multipleChoiceCheckbox',
-  'multipleChoicePreselected',
-  'multipleChoiceMultiPreselected',
-];
+const skippedFixtures: FixtureName[] = [];
 
 /**
  * Get fixtures to test (excluding skipped ones).
