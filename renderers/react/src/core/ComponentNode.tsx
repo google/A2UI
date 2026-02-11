@@ -58,7 +58,7 @@ export const ComponentNode = memo(function ComponentNode({
 
   if (!Component) {
     console.warn(`[A2UI] Unknown component type: ${nodeType}`);
-    return <UnknownComponent type={nodeType} />;
+    return null;
   }
 
   // No wrapper div - component's root div is the :host equivalent
@@ -68,24 +68,6 @@ export const ComponentNode = memo(function ComponentNode({
     <Suspense fallback={<LoadingFallback />}>
       <Component node={node as Types.AnyComponentNode} surfaceId={surfaceId} />
     </Suspense>
-  );
-});
-
-/** Memoized unknown component fallback */
-const UnknownComponent = memo(function UnknownComponent({ type }: { type: string }) {
-  return (
-    <div
-      className="a2ui-unknown-component"
-      style={{
-        padding: '8px',
-        backgroundColor: '#fee',
-        color: '#c00',
-        borderRadius: '4px',
-        fontSize: '12px',
-      }}
-    >
-      Unknown component: {type}
-    </div>
   );
 });
 

@@ -10,7 +10,7 @@ export default defineConfig({
     strictPort: true,
   },
   optimizeDeps: {
-    exclude: ['@a2ui/react', '@a2ui/lit'],
+    exclude: ['@a2ui/react', '@a2ui/lit', 'markdown-it'],
   },
   resolve: {
     alias: {

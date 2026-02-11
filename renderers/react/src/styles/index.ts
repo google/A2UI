@@ -1,4 +1,5 @@
 import { Styles } from '@a2ui/lit/0.8';
+import { resetStyles } from './reset';
 
 /**
  * Structural CSS styles from the Lit renderer, converted for global DOM use.
@@ -462,7 +463,7 @@ export function injectStyles(): void {
   // Include structural (utility classes) and component-specific styles
   // Note: CSS variables (palette) must be defined by the host application on :root,
   // just like in the Lit renderer. This allows full customization.
-  styleElement.textContent = structuralStyles + '\n' + componentSpecificStyles;
+  styleElement.textContent = resetStyles + '\n' + structuralStyles + '\n' + componentSpecificStyles;
   document.head.appendChild(styleElement);
 }
 
