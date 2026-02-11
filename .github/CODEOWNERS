@@ -23,7 +23,7 @@
 # Renderers
 /renderers/angular/ @ditman @ava-cassiopeia  @crisbeto
 /renderers/lit/ @ditman @ava-cassiopeia @paullewis 
-/renderers/web-core/ @ditman @ava-cassiopeia
+/renderers/web_core/ @ditman @ava-cassiopeia
 
 # Samples
 /samples/ @dmandar @zeroasterisk
