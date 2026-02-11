@@ -15,6 +15,7 @@
 import json
 import logging
 import os
+import re
 from collections.abc import AsyncIterable
 from typing import Any
 
@@ -225,6 +226,9 @@ class RestaurantAgent:
 
                     if not json_string_cleaned:
                         raise ValueError("Cleaned JSON string is empty.")
+
+                    # Autofix: Remove trailing commas from arrays and objects
+                    json_string_cleaned = re.sub(r",\s*([\]}])", r"\1", json_string_cleaned)
 
                     # --- New Validation Steps ---
                     # 1. Check if it's parsable JSON
