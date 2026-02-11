@@ -22,16 +22,10 @@ from a2ui.extension.a2ui_extension import create_a2ui_part
 
 from a2ui.extension.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
 from a2ui.extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset
+from a2ui.inference.schema.catalog import A2uiCatalog
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types as genai_types
-
-# Basic A2UI Schema for testing
-TEST_A2UI_SCHEMA = {
-    "type": "object",
-    "properties": {"type": {"const": "Text"}, "text": {"type": "string"}},
-    "required": ["type", "text"],
-}
 
 # region SendA2uiToClientToolset Tests
 """Tests for the SendA2uiToClientToolset class."""
@@ -39,28 +33,38 @@ TEST_A2UI_SCHEMA = {
 
 @pytest.mark.asyncio
 async def test_toolset_init_bool():
-  toolset = SendA2uiToClientToolset(a2ui_enabled=True, a2ui_schema=TEST_A2UI_SCHEMA)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  toolset = SendA2uiToClientToolset(
+      a2ui_enabled=True, a2ui_catalog=catalog_mock, a2ui_examples="examples"
+  )
   ctx = MagicMock(spec=ReadonlyContext)
   assert await toolset._resolve_a2ui_enabled(ctx) == True
 
   # Access the tool to check schema resolution
   tool = toolset._ui_tools[0]
-  assert await tool._resolve_a2ui_schema(ctx) == TEST_A2UI_SCHEMA
+  assert await tool._resolve_a2ui_catalog(ctx) == catalog_mock
 
 
 @pytest.mark.asyncio
 async def test_toolset_init_callable():
   enabled_mock = MagicMock(return_value=True)
-  schema_mock = MagicMock(return_value=TEST_A2UI_SCHEMA)
-  toolset = SendA2uiToClientToolset(a2ui_enabled=enabled_mock, a2ui_schema=schema_mock)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  examples_mock = MagicMock(return_value="examples")
+  toolset = SendA2uiToClientToolset(
+      a2ui_enabled=enabled_mock,
+      a2ui_catalog=catalog_mock,
+      a2ui_examples=examples_mock,
+  )
   ctx = MagicMock(spec=ReadonlyContext)
   assert await toolset._resolve_a2ui_enabled(ctx) == True
 
   # Access the tool to check schema resolution
   tool = toolset._ui_tools[0]
-  assert await tool._resolve_a2ui_schema(ctx) == TEST_A2UI_SCHEMA
+  assert await tool._resolve_a2ui_catalog(ctx) == catalog_mock
+  assert await tool._resolve_a2ui_examples(ctx) == "examples"
   enabled_mock.assert_called_once_with(ctx)
-  schema_mock.assert_called_once_with(ctx)
+  catalog_mock.assert_not_called()  # It's an object, not a callable in this test
+  examples_mock.assert_called_once_with(ctx)
 
 
 @pytest.mark.asyncio
@@ -68,23 +72,33 @@ async def test_toolset_init_async_callable():
   async def async_enabled(_ctx):
     return True
 
-  async def async_schema(_ctx):
-    return TEST_A2UI_SCHEMA
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+
+  async def async_catalog(_ctx):
+    return catalog_mock
+
+  async def async_examples(_ctx):
+    return "examples"
 
   toolset = SendA2uiToClientToolset(
-      a2ui_enabled=async_enabled, a2ui_schema=async_schema
+      a2ui_enabled=async_enabled,
+      a2ui_catalog=async_catalog,
+      a2ui_examples=async_examples,
   )
   ctx = MagicMock(spec=ReadonlyContext)
   assert await toolset._resolve_a2ui_enabled(ctx) == True
 
   # Access the tool to check schema resolution
   tool = toolset._ui_tools[0]
-  assert await tool._resolve_a2ui_schema(ctx) == TEST_A2UI_SCHEMA
+  assert await tool._resolve_a2ui_catalog(ctx) == catalog_mock
+  assert await tool._resolve_a2ui_examples(ctx) == "examples"
 
 
 @pytest.mark.asyncio
 async def test_toolset_get_tools_enabled():
-  toolset = SendA2uiToClientToolset(a2ui_enabled=True, a2ui_schema=TEST_A2UI_SCHEMA)
+  toolset = SendA2uiToClientToolset(
+      a2ui_enabled=True, a2ui_catalog=MagicMock(spec=A2uiCatalog), a2ui_examples=""
+  )
   tools = await toolset.get_tools(MagicMock(spec=ReadonlyContext))
   assert len(tools) == 1
   assert isinstance(tools[0], SendA2uiToClientToolset._SendA2uiJsonToClientTool)
@@ -92,7 +106,11 @@ async def test_toolset_get_tools_enabled():
 
 @pytest.mark.asyncio
 async def test_toolset_get_tools_disabled():
-  toolset = SendA2uiToClientToolset(a2ui_enabled=False, a2ui_schema=TEST_A2UI_SCHEMA)
+  toolset = SendA2uiToClientToolset(
+      a2ui_enabled=False,
+      a2ui_catalog=MagicMock(spec=A2uiCatalog),
+      a2ui_examples="",
+  )
   tools = await toolset.get_tools(MagicMock(spec=ReadonlyContext))
   assert len(tools) == 0
 
@@ -104,13 +122,16 @@ async def test_toolset_get_tools_disabled():
 
 
 def test_send_tool_init():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
   assert tool.name == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
-  assert tool._a2ui_schema == TEST_A2UI_SCHEMA
+  assert tool._a2ui_catalog == catalog_mock
+  assert tool._a2ui_examples == "examples"
 
 
 def test_send_tool_get_declaration():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
   declaration = tool._get_declaration()
   assert declaration is not None
   assert declaration.name == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
@@ -125,24 +146,28 @@ def test_send_tool_get_declaration():
 
 
 @pytest.mark.asyncio
-async def test_send_tool_get_a2ui_schema():
-  schema_mock = MagicMock(return_value=TEST_A2UI_SCHEMA)
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(schema_mock)
-  schema = await tool.get_a2ui_schema(MagicMock(spec=ReadonlyContext))
-  assert schema == {"type": "array", "items": TEST_A2UI_SCHEMA}
+async def test_send_tool_resolve_catalog():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
+  catalog = await tool._resolve_a2ui_catalog(MagicMock(spec=ReadonlyContext))
+  assert catalog == catalog_mock
 
 
 @pytest.mark.asyncio
-async def test_send_tool_get_a2ui_schema_empty():
-  schema_mock = MagicMock(return_value=None)
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(schema_mock)
-  with pytest.raises(ValueError):
-    await tool.get_a2ui_schema(MagicMock(spec=ReadonlyContext))
+async def test_send_tool_resolve_examples():
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(
+      MagicMock(spec=A2uiCatalog), "examples"
+  )
+  examples = await tool._resolve_a2ui_examples(MagicMock(spec=ReadonlyContext))
+  assert examples == "examples"
 
 
 @pytest.mark.asyncio
 async def test_send_tool_process_llm_request():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  catalog_mock.render_as_llm_instructions.return_value = "rendered_catalog"
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
+
   tool_context_mock = MagicMock(spec=ToolContext)
   tool_context_mock.state = {}
   llm_request_mock = MagicMock()
@@ -154,15 +179,15 @@ async def test_send_tool_process_llm_request():
 
   llm_request_mock.append_instructions.assert_called_once()
   args, _ = llm_request_mock.append_instructions.call_args
-  instruction = args[0][0]
-  assert "---BEGIN A2UI JSON SCHEMA---" in instruction
-  assert json.dumps({"type": "array", "items": TEST_A2UI_SCHEMA}) in instruction
-  assert "---END A2UI JSON SCHEMA---" in instruction
+  instructions = args[0]
+  assert "rendered_catalog" in instructions
+  assert "examples" in instructions
 
 
 @pytest.mark.asyncio
 async def test_send_tool_run_async_valid():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
   tool_context_mock = MagicMock(spec=ToolContext)
   tool_context_mock.state = {}
   tool_context_mock.actions = MagicMock(skip_summarization=False)
@@ -185,7 +210,8 @@ async def test_send_tool_run_async_valid():
 
 @pytest.mark.asyncio
 async def test_send_tool_run_async_valid_list():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
   tool_context_mock = MagicMock(spec=ToolContext)
   tool_context_mock.state = {}
   tool_context_mock.actions = MagicMock(skip_summarization=False)
@@ -208,7 +234,9 @@ async def test_send_tool_run_async_valid_list():
 
 @pytest.mark.asyncio
 async def test_send_tool_run_async_missing_arg():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(
+      MagicMock(spec=A2uiCatalog), "examples"
+  )
   result = await tool.run_async(args={}, tool_context=MagicMock())
   assert "error" in result
   assert (
@@ -219,7 +247,9 @@ async def test_send_tool_run_async_missing_arg():
 
 @pytest.mark.asyncio
 async def test_send_tool_run_async_invalid_json():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(
+      MagicMock(spec=A2uiCatalog), "examples"
+  )
   args = {
       SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: "{invalid"
   }
@@ -230,7 +260,11 @@ async def test_send_tool_run_async_invalid_json():
 
 @pytest.mark.asyncio
 async def test_send_tool_run_async_schema_validation_fail():
-  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(TEST_A2UI_SCHEMA)
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  catalog_mock.validator.validate.side_effect = Exception(
+      "'text' is a required property"
+  )
+  tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
   invalid_a2ui = [{"type": "Text"}]  # Missing 'text'
   args = {
       SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: json.dumps(
