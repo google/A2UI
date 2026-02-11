@@ -15,14 +15,14 @@
 * @dmandar @gspencer @jacobsimionato
 
 # Agents
-/a2a_agents/ @nan-yu @dmandar 
+/a2a_agents/ @nan-yu @dmandar
 
 # Documentation
 /docs/ @zeroasterisk @dmandar @gspencer @jacobsimionato
 
 # Renderers
 /renderers/angular/ @ditman @ava-cassiopeia  @crisbeto
-/renderers/lit/ @ditman @ava-cassiopeia @paullewis 
+/renderers/lit/ @ditman @ava-cassiopeia @paullewis
 /renderers/web_core/ @ditman @ava-cassiopeia
 
 # Samples
