@@ -64,7 +64,7 @@ export const allFixtures = {
   ...sliderFixtures,
   // DateTimeInput component (3 fixtures)
   ...dateTimeInputFixtures,
-  // MultipleChoice component (4 fixtures)
+  // MultipleChoice component (1 fixture)
   ...multipleChoiceFixtures,
   // Video component (2 fixtures)
   ...videoFixtures,

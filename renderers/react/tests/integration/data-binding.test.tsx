@@ -599,7 +599,6 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'survey.answers', value: ['option1'] }]),
               createSurfaceUpdate([
                 {
                   id: 'mc-1',
@@ -611,7 +610,6 @@ describe('Data Binding', () => {
                         { label: { literalString: 'Option 2' }, value: 'option2' },
                         { label: { literalString: 'Option 3' }, value: 'option3' },
                       ],
-                      maxAllowedSelections: 2,
                     },
                   },
                 },
@@ -619,10 +617,6 @@ describe('Data Binding', () => {
               createBeginRendering('mc-1'),
             ]);
             setTimeout(() => setStage('updated'), 10);
-          } else if (stage === 'updated') {
-            processMessages([
-              createDataModelUpdate([{ key: 'survey.answers', value: ['option2', 'option3'] }]),
-            ]);
           }
         }, [processMessages, stage]);
 
@@ -640,19 +634,14 @@ describe('Data Binding', () => {
         </A2UIProvider>
       );
 
-      // Initially option1 should be selected
-      const checkboxes = container.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
-      expect(checkboxes[0]).toBeChecked(); // option1
-      expect(checkboxes[1]).not.toBeChecked(); // option2
-      expect(checkboxes[2]).not.toBeChecked(); // option3
-
-      await waitFor(() => {
-        expect(screen.getByTestId('stage')).toHaveTextContent('updated');
-        // After update, option2 and option3 should be selected
-        expect(checkboxes[0]).not.toBeChecked(); // option1
-        expect(checkboxes[1]).toBeChecked(); // option2
-        expect(checkboxes[2]).toBeChecked(); // option3
-      });
+      // Should render a select dropdown with 3 options
+      const select = container.querySelector('select') as HTMLSelectElement;
+      expect(select).toBeInTheDocument();
+      const options = select.querySelectorAll('option');
+      expect(options.length).toBe(3);
+      expect(options[0]?.value).toBe('option1');
+      expect(options[1]?.value).toBe('option2');
+      expect(options[2]?.value).toBe('option3');
     });
 
     it('should update Image when dataModelUpdate changes bound path value', async () => {

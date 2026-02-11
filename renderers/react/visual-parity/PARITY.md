@@ -243,6 +243,7 @@ Each Lit component with `static styles` needs a corresponding entry in `componen
 | **Modal** | `modal.ts` | `:host`, `dialog`, `#controls`, `button` | Renders dialog in place (no portal) to stay inside `.a2ui-surface`. Matches Lit: closed shows section with entry, open shows dialog |
 | **Video** | `video.ts` | `:host`, `video` | Uses `:where()` for `video`. Minor pixel variance (~0.5%) due to native video element rendering |
 | **AudioPlayer** | `audio.ts` | `:host`, `audio` | Uses `:where()` for `audio`. Note: Lit does NOT implement `description` property |
+| **MultipleChoice** | `multiple-choice.ts` | `:host`, `select` | Uses `:where()` for `select`. Both renderers use `<select>` dropdown |
 
 ### ⚠️ Lit Renderer Issues
 
@@ -252,7 +253,7 @@ Each Lit component with `static styles` needs a corresponding entry in `componen
 | **Divider** | `divider.ts` | Ignores `axis` property - always renders same orientation |
 | **CheckBox** | `checkbox.ts` | Uses `.value` instead of `.checked` (line 100), so checked state only displays correctly when using path binding. Using `literalBoolean` with `false` causes component to not render. Visual parity tests pass using path binding. |
 | **DateTimeInput** | `datetime-input.ts` | Uses `getMonth()` which is 0-indexed (0-11) without adding 1, causing issues in January and one month off otherwise. Also parses all values through `new Date()` constructor which does not accept time-only strings. React uses HTML5 inputs directly as they match A2UI format. |
-| **MultipleChoice** | `multiple-choice.ts` | React uses radio/checkbox inputs, Lit uses `<select>` dropdown. Skipped in visual parity tests. |
+| **MultipleChoice** | `multiple-choice.ts` | `<option>` tag has a bug: renders value as attribute name (`<option ${value}>`) instead of `value` attribute (`<option value=${value}>`). Also unconditionally accesses `selections.path` without checking if it exists, so `literalArray` selections don't work. Has a leftover `console.log` in `#setBoundValue`. |
 
 ### Special Cases
 
