@@ -44,6 +44,7 @@ nav:
   - Developer Guides:
       - Client Setup: guides/client-setup.md
       - Agent Development: guides/agent-development.md
+      - Renderer Development: guides/renderer-development.md
       - Custom Components: guides/custom-components.md
       - Theming & Styling: guides/theming.md
   - Core Concepts:
@@ -52,13 +53,20 @@ nav:
       - Components & Structure: concepts/components.md
       - Data Binding: concepts/data-binding.md
   - Specifications:
-      - v0.8 (Stable):
-          - A2UI Specification: v0_8/v0.8-a2ui.md
-          - A2A Extension: v0_8/v0.8-a2a-extension.md
-      - v0.9 (Draft):
+      - v0.8 (Previous):
+          - A2UI Specification: specification/v0.8-a2ui.md
+          - A2A Extension: specification/v0.8-extension-spec.md
+          - Custom Catalog Changes: specification/v0.8-custom-catalog-changes.md
+      - v0.9 (Current):
           - A2UI Specification: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
-  - Catalogs: catalogs.md
+          - Extension Specification: specification/v0.9-extension-spec.md
+          - Custom Functions: specification/v0.9-custom-functions.md
+      - v0.10 (Draft):
+          - A2UI Specification: specification/v0.10-a2ui.md
+          - Evolution Guide: specification/v0.10-evolution-guide.md
+          - Extension Specification: specification/v0.10-extension-spec.md
+          - Custom Functions: specification/v0.10-custom-functions.md
   - Renderers (Clients): renderers.md
   - Transports (Message Passing): transports.md
   - Agents (Server-side): agents.md
@@ -71,6 +79,13 @@ nav:
 
 exclude_docs: |
   scripts/**
+  specification/**/docs/a2ui_protocol.md
+  specification/**/docs/a2ui_extension_specification.md
+  specification/**/docs/a2ui_custom_functions.md
+  specification/**/docs/evolution_guide.md
+  specification/**/docs/custom_catalog_changes.md
+  specification/**/README.md
+  specification/**/json/README.md
 
 
 # Repository
@@ -179,11 +194,5 @@ markdown_extensions:
 plugins:
   - search
   - macros
-  # - include-markdown
   - mermaid2
-  # - llmstxt:
-  #     full_output: llms-full.txt
-  #     sections:
-  #       "Specification":
-  #         - a2ui_protocol.md
 

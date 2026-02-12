@@ -163,7 +163,8 @@ The following is a complete, minimal example of a JSONL stream that renders a us
 
 A2UI's component model is designed for flexibility, separating the protocol from the component set.
 
-### 2.1. Catalog Negotiation
+### 2.1. Catalog Negotiation {: #catalog-negotiation }
+
 
 A **Catalog** defines the contract between the server and the client for the UI that can be rendered. It contains a list of supported component types (e.g., `Row`, `Text`), their properties, and available styles. A catalog is defined by a **Catalog Definition Document**.
 
@@ -633,7 +634,7 @@ A robust client-side interpreter for A2UI should be composed of several key comp
 This section provides the formal JSON Schema for a single server-to-client message in the A2UI JSONL stream. Each line in the stream must be a valid JSON object that conforms to this schema. It includes the entire base catalog of components, but the components may be swapped out for other components supported by the client. It is optimized to be able to be generated in structured output mode from various LLMs.
 
 ```json
-{% include "../specification/json/server_to_client_with_standard_catalog.json" %}
+{% include "specification/v0_8/json/server_to_client_with_standard_catalog.json" %}
 ```
 
 ## Section 8: Complete A2UI Client to Server JSON Schema
@@ -641,5 +642,5 @@ This section provides the formal JSON Schema for a single server-to-client messa
 This section provides the formal JSON Schema for a single client-to-server message in the A2UI protocol.
 
 ```json
-{% include "../specification/json/client_to_server.json" %}
+{% include "specification/v0_8/json/client_to_server.json" %}
 ```
