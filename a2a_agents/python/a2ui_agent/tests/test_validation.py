@@ -52,7 +52,6 @@ SCHEMA = {
                                 "properties": {
                                     "child": {"$ref": "#/$defs/ComponentId"},
                                     "action": {
-                                        # Minimal action schema for recursion tests
                                         "properties": {
                                             "functionCall": {
                                                 "properties": {
@@ -105,7 +104,6 @@ def test_validate_a2ui_json_valid_integrity():
             }
         ]
     }
-    # Should not raise
     validate_a2ui_json(payload, SCHEMA)
 
 def test_validate_a2ui_json_duplicate_ids():
@@ -199,7 +197,6 @@ def test_validate_a2ui_json_circular_reference():
         ]
     }
     with pytest.raises(ValueError, match="Circular reference detected involving component"):
-        # The exact message depends on DFS order, but it should contain "Circular reference detected involving component"
         validate_a2ui_json(payload, SCHEMA)
 
 def test_validate_a2ui_json_orphaned_component():
@@ -219,9 +216,6 @@ def test_validate_a2ui_json_orphaned_component():
             }
         ]
     }
-    # We use regex match because the list order in set conversion might vary, though I sorted it in code.
-    # But to be safe on Python versions or whatever...
-    # I sorted it in code: sorted(list(orphans))
     with pytest.raises(ValueError, match=r"Orphaned components detected \(not reachable from 'root'\): \['orphan'\]"):
         validate_a2ui_json(payload, SCHEMA)
 
@@ -259,12 +253,10 @@ def test_validate_a2ui_json_valid_topology_complex():
             }
         ]
     }
-    # Should not raise
     validate_a2ui_json(payload, SCHEMA)
 
 def test_validate_recursion_limit_exceeded():
     """Test that recursion depth > 5 raises ValueError."""
-    # Nesting level 6
     payload = {
         "components": [
             {
@@ -293,7 +285,6 @@ def test_validate_recursion_limit_exceeded():
                                                                 "call": "fn5",
                                                                 "args": {
                                                                     "arg5": {
-                                                                        # Depth 6 - Should fail
                                                                         "call": "fn6",
                                                                         "args": {}
                                                                     }
@@ -357,7 +348,6 @@ def test_validate_recursion_limit_valid():
             }
         ]
     }
-    # Should not raise
     validate_a2ui_json(payload, SCHEMA)
 
 def test_validate_invalid_datamodel_path_update():
@@ -369,7 +359,7 @@ def test_validate_invalid_datamodel_path_update():
             "value": "data"
         }
     }
-    with pytest.raises(ValueError, match="Invalid data model path"):
+    with pytest.raises(ValueError, match="Invalid JSON Pointer syntax"):
         validate_a2ui_json(payload, SCHEMA)
 
 def test_validate_invalid_databinding_path():
@@ -388,7 +378,7 @@ def test_validate_invalid_databinding_path():
             }
         ]
     }
-    with pytest.raises(ValueError, match="Invalid data model path"):
+    with pytest.raises(ValueError, match="Invalid JSON Pointer syntax"):
         validate_a2ui_json(payload, SCHEMA)
 
 def test_validate_global_recursion_limit_exceeded():
@@ -429,7 +419,6 @@ def test_validate_custom_schema_reference():
                                 "CustomLink": {
                                     "type": "object",
                                     "properties": {
-                                        # "linkedComponentId" should be picked up because it refs ComponentId
                                         "linkedComponentId": {"$ref": "#/$defs/ComponentId"}
                                     }
                                 }
@@ -455,7 +444,17 @@ def test_validate_custom_schema_reference():
         ]
     }
     
-    # Validation should fail because "linkedComponentId" references "missing_target"
-    # and the logic should have extracted "linkedComponentId" as a reference field from the schema.
     with pytest.raises(ValueError, match="Component 'root' references missing ID 'missing_target' in field 'linkedComponentId'"):
         validate_a2ui_json(payload, custom_schema)
+
+def test_validate_invalid_json_pointer_escape():
+    """Test invalid escape sequence in JSON Pointer."""
+    payload = {
+        "updateDataModel": {
+            "surfaceId": "surface1",
+            "path": "/invalid/escape/~2",
+            "value": "data"
+        }
+    }
+    with pytest.raises(ValueError, match="Invalid JSON Pointer syntax"):
+        validate_a2ui_json(payload, SCHEMA)
