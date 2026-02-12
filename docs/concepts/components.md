@@ -21,15 +21,17 @@ A2UI uses an **adjacency list model** for component hierarchies. Instead of nest
 
 ```json
 {
-  "surfaceUpdate": {
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "main",
     "components": [
-      {"id": "root", "component": {"Column": {"children": {"explicitList": ["greeting", "buttons"]}}}},
-      {"id": "greeting", "component": {"Text": {"text": {"literalString": "Hello"}}}},
-      {"id": "buttons", "component": {"Row": {"children": {"explicitList": ["cancel-btn", "ok-btn"]}}}},
-      {"id": "cancel-btn", "component": {"Button": {"child": "cancel-text", "action": {"name": "cancel"}}}},
-      {"id": "cancel-text", "component": {"Text": {"text": {"literalString": "Cancel"}}}},
-      {"id": "ok-btn", "component": {"Button": {"child": "ok-text", "action": {"name": "ok"}}}},
-      {"id": "ok-text", "component": {"Text": {"text": {"literalString": "OK"}}}}
+      {"id": "root", "component": "Column", "children": ["greeting", "buttons"]},
+      {"id": "greeting", "component": "Text", "text": "Hello"},
+      {"id": "buttons", "component": "Row", "children": ["cancel-btn", "ok-btn"]},
+      {"id": "cancel-btn", "component": "Button", "child": "cancel-text", "action": {"name": "cancel"}},
+      {"id": "cancel-text", "component": "Text", "text": "Cancel"},
+      {"id": "ok-btn", "component": "Button", "child": "ok-text", "action": {"name": "ok"}},
+      {"id": "ok-text", "component": "Text", "text": "OK"}
     ]
   }
 }
@@ -46,7 +48,7 @@ Every component has:
 3. **Properties**: Configuration specific to that type
 
 ```json
-{"id": "welcome", "component": {"Text": {"text": {"literalString": "Hello"}, "usageHint": "h1"}}}
+{"id": "welcome", "component": "Text", "text": "Hello", "variant": "h1"}
 ```
 
 ## The Standard Catalog
@@ -62,14 +64,14 @@ For the complete component gallery with examples, see [Component Reference](../r
 
 ## Static vs. Dynamic Children
 
-**Static (`explicitList`)** - Fixed list of child IDs:
+**Static (`children` array)** - Fixed list of child IDs:
 ```json
-{"children": {"explicitList": ["back-btn", "title", "menu-btn"]}}
+{"children": ["back-btn", "title", "menu-btn"]}
 ```
 
-**Dynamic (`template`)** - Generate children from data array:
+**Dynamic (`children` template)** - Generate children from data array:
 ```json
-{"children": {"template": {"dataBinding": "/items", "componentId": "item-template"}}}
+{"children": {"template": {"path": "/items", "componentId": "item-template"}}}
 ```
 
 For each item in `/items`, render the `item-template`. See [Data Binding](data-binding.md) for details.
@@ -78,26 +80,26 @@ For each item in `/items`, render the `item-template`. See [Data Binding](data-b
 
 Components get their values two ways:
 
-- **Literal** - Fixed value: `{"text": {"literalString": "Welcome"}}`
-- **Data-bound** - From data model: `{"text": {"path": "/user/name"}}`
-
-LLMs can generate components with literal values or bind them to data paths for dynamic content.
-
-## Composing Surfaces
-
-Components compose into **surfaces** (widgets):
-
-1. LLM generates component definitions via `surfaceUpdate`
-2. LLM populates data via `dataModelUpdate`
-3. LLM signals render via `beginRendering`
-4. Client renders all components as native widgets
-
-A surface is a complete, cohesive UI (form, dashboard, chat, etc.).
-
-## Incremental Updates
-
-- **Add** - Send new `surfaceUpdate` with new component IDs
-- **Update** - Send `surfaceUpdate` with existing ID and new properties
+81: - **Literal** - Fixed value: `{"text": "Welcome"}`
+82: - **Data-bound** - From data model: `{"text": {"path": "/user/name"}}`
+83:
+84: LLMs can generate components with literal values or bind them to data paths.
+85:
+86: ## Composing Surfaces
+87:
+88: Components compose into **surfaces** (widgets):
+89:
+90: 1. LLM generates component definitions via `updateComponents`
+91: 2. LLM populates data via `updateDataModel`
+92: 3. LLM signals render via `createSurface`
+93: 4. Client renders all components as native widgets
+94:
+95: A surface is a complete, cohesive UI (form, dashboard, chat, etc.).
+96:
+97: ## Incremental Updates
+98:
+99: - **Add** - Send new `updateComponents` with new component IDs
+100: - **Update** - Send `updateComponents` with existing ID and new properties
 - **Remove** - Update parent's `children` list to exclude removed IDs
 
 The flat structure makes all updates simple ID-based operations.

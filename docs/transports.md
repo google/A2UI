@@ -39,7 +39,7 @@ If you are using A2A, this should be nearly automatic.
 
 TODO: Add a detailed guide.
 
-**See:** [A2A Extension Specification](specification/v0.8-a2a-extension.md)
+**See:** [A2A Extension Specification](v0_8/v0.8-a2a-extension.md)
 
 ## AG UI
 
@@ -74,4 +74,4 @@ You can use any transport that sends JSON:
 ## Next Steps
 
 - **[A2A Protocol Docs](https://a2a-protocol.org)**: Learn about A2A
-- **[A2A Extension Spec](specification/v0.8-a2a-extension.md)**: A2UI + A2A details
+- **[A2A Extension Spec](v0_8/v0.8-a2a-extension.md)**: A2UI + A2A details

@@ -20,16 +20,16 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 </div>
 
-> ⚠️ **️Status: Early Stage Public Preview**
+> ⚠️ **️Status: Active Development**
 >
-> A2UI is currently in **v0.8 (Public Preview)**. The specification and
-> implementations are functional but are still evolving. We are opening the project to
+> A2UI is currently at version **v0.9**. The specification and
+> implementations are still evolving. We are opening the project to
 > foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
 > Expect changes.
 
 ## At a Glance
 
-A2UI is currently [v0.8](specification/v0.8-a2ui.md),
+A2UI is currently [v0.9](specification/v0.9-a2ui.md),
 Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,
 and is in active development [on GitHub](https://github.com/google/A2UI).
@@ -39,7 +39,7 @@ The problem A2UI solves is: **how can AI agents safely send rich UIs across trus
 Instead of text-only responses or risky code execution, A2UI lets agents send **declarative component descriptions** that clients render using their own native widgets. It's like having agents speak a universal UI language.
 
 In this repo you will find
-[A2UI specifications](specification/v0.8-a2ui.md)
+[A2UI specifications](specification/v0.9-a2ui.md)
 and implementations for
 [renderers](renderers.md) (eg: Angular, Flutter, etc.) on the client side,
 and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages between agents and clients.
@@ -100,13 +100,13 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 
     [:octicons-arrow-right-24: Start building](guides/client-setup.md)
 
-- :material-file-document:{ .lg .middle } **[Protocol Reference](specification/v0.8-a2ui.md)**
+- :material-file-document:{ .lg .middle } **[Protocol Reference](specification/v0.9-a2ui.md)**
 
     ---
 
     Dive into the complete technical specification and message types.
 
-    [:octicons-arrow-right-24: Read the spec](specification/v0.8-a2ui.md)
+    [:octicons-arrow-right-24: Read the spec](specification/v0.9-a2ui.md)
 
 </div>
 
