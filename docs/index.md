@@ -42,7 +42,7 @@ In this repo you will find
 [A2UI specifications](specification/v0.9-a2ui.md)
 and implementations for
 [renderers](renderers.md) (eg: Angular, Flutter, etc.) on the client side,
-and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages between agents and clients.
+and [transports](transports.md) (eg: A2A, etc.) which communicate A2UI messages between agents and clients.
 
 <div class="grid cards" markdown>
 
