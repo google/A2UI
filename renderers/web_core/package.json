@@ -9,6 +9,10 @@
       "types": "./dist/src/v0_8/index.d.ts",
       "default": "./dist/src/v0_8/index.js"
     },
+    "./v0_9": {
+      "types": "./dist/src/v0_9/index.d.ts",
+      "default": "./dist/src/v0_9/index.js"
+    },
     "./types/*": {
       "types": "./dist/src/v0_8/types/*.d.ts",
       "default": "./dist/src/v0_8/types/*.js"
@@ -69,6 +73,7 @@
   "author": "Google",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@types/node": "^24.10.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   }
