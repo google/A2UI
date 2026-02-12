@@ -53,8 +53,8 @@ nav:
       - Data Binding: concepts/data-binding.md
   - Specifications:
       - v0.8 (Stable):
-          - A2UI Specification: specification/v0.8-a2ui.md
-          - A2A Extension: specification/v0.8-a2a-extension.md
+          - A2UI Specification: v0_8/v0.8-a2ui.md
+          - A2A Extension: v0_8/v0.8-a2a-extension.md
       - v0.9 (Draft):
           - A2UI Specification: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
@@ -71,6 +71,7 @@ nav:
 
 exclude_docs: |
   scripts/**
+
 
 # Repository
 repo_name: google/A2UI

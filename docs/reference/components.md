@@ -315,7 +315,7 @@ This launches a live gallery with all components, their variations, and interact
 
 ## Further Reading
 
-- **[Standard Catalog Definition](../../specification/v0_9/json/standard_catalog_definition.json)**: Complete technical specification
+- **[Standard Catalog Definition](../specification/v0_9/json/standard_catalog.json)**: Complete technical specification
 - **[Client-Side Functions](functions.md)**: Standard catalog functions for validation and formatting
 - **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand
