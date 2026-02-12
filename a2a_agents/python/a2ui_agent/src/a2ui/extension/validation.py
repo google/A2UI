@@ -5,6 +5,16 @@ import re
 # RFC 6901 compliant regex for JSON Pointer
 JSON_POINTER_PATTERN = re.compile(r"^(?:\/(?:[^~\/]|~[01])*)*$")
 
+# Constants
+COMPONENTS = "components"
+ID = "id"
+COMPONENT_PROPERTIES = "componentProperties"
+ROOT = "root"
+PATH = "path"
+FUNCTION_CALL = "functionCall"
+CALL = "call"
+ARGS = "args"
+
 def validate_a2ui_json(a2ui_json: Union[Dict[str, Any], List[Any]], a2ui_schema: Dict[str, Any]) -> None:
     """
     Validates the A2UI JSON payload against the provided schema and checks for integrity.
@@ -42,10 +52,10 @@ def validate_a2ui_json(a2ui_json: Union[Dict[str, Any], List[Any]], a2ui_schema:
             continue
             
         # Check for SurfaceUpdate which has 'components'
-        if "components" in message:
+        if COMPONENTS in message:
             ref_map = _extract_component_ref_fields(a2ui_schema)
-            _validate_component_integrity(message["components"], ref_map)
-            _validate_topology(message["components"], ref_map)
+            _validate_component_integrity(message[COMPONENTS], ref_map)
+            _validate_topology(message[COMPONENTS], ref_map)
             
         _validate_recursion_and_paths(message)
 
@@ -61,7 +71,7 @@ def _validate_component_integrity(components: List[Dict[str, Any]], ref_fields_m
     
     # 1. Collect IDs and check for duplicates
     for comp in components:
-        comp_id = comp.get("id")
+        comp_id = comp.get(ID)
         if comp_id is None:
             continue
             
@@ -70,14 +80,14 @@ def _validate_component_integrity(components: List[Dict[str, Any]], ref_fields_m
         ids.add(comp_id)
 
     # 2. Check for root component
-    if "root" not in ids:
-         raise ValueError("Missing 'root' component: One component must have 'id' set to 'root'.")
+    if ROOT not in ids:
+         raise ValueError(f"Missing '{ROOT}' component: One component must have '{ID}' set to '{ROOT}'.")
 
     # 3. Check for dangling references using helper
     for comp in components:
         for ref_id, field_name in _get_component_references(comp, ref_fields_map):
             if ref_id not in ids:
-                raise ValueError(f"Component '{comp.get('id')}' references missing ID '{ref_id}' in field '{field_name}'")
+                raise ValueError(f"Component '{comp.get(ID)}' references missing ID '{ref_id}' in field '{field_name}'")
 
 
 def _validate_topology(components: List[Dict[str, Any]], ref_fields_map: Dict[str, tuple[Set[str], Set[str]]]) -> None:
@@ -91,7 +101,7 @@ def _validate_topology(components: List[Dict[str, Any]], ref_fields_map: Dict[st
     
     # Build Adjacency List
     for comp in components:
-        comp_id = comp.get("id")
+        comp_id = comp.get(ID)
         if comp_id is None:
             continue
         
@@ -120,14 +130,14 @@ def _validate_topology(components: List[Dict[str, Any]], ref_fields_map: Dict[st
         
         recursion_stack.remove(node_id)
 
-    if "root" in all_ids:
-        dfs("root")
+    if ROOT in all_ids:
+        dfs(ROOT)
 
     # Check for Orphans
     orphans = all_ids - visited
     if orphans:
         sorted_orphans = sorted(list(orphans))
-        raise ValueError(f"Orphaned components detected (not reachable from 'root'): {sorted_orphans}")
+        raise ValueError(f"Orphaned components detected (not reachable from '{ROOT}'): {sorted_orphans}")
 
 
 def _extract_component_ref_fields(schema: Dict[str, Any]) -> Dict[str, tuple[Set[str], Set[str]]]:
@@ -158,9 +168,9 @@ def _extract_component_ref_fields(schema: Dict[str, Any]) -> Dict[str, tuple[Set
                     return True
             return False
 
-        comps_schema = schema.get("properties", {}).get("components", {})
+        comps_schema = schema.get("properties", {}).get(COMPONENTS, {})
         items_schema = comps_schema.get("items", {})
-        comp_props_schema = items_schema.get("properties", {}).get("componentProperties", {})
+        comp_props_schema = items_schema.get("properties", {}).get(COMPONENT_PROPERTIES, {})
         all_components = comp_props_schema.get("properties", {})
         
         for comp_name, comp_schema in all_components.items():
@@ -188,7 +198,7 @@ def _get_component_references(component: Dict[str, Any], ref_fields_map: Dict[st
     Helper to extract all referenced component IDs from a component.
     Yields (referenced_id, field_name).
     """
-    comp_props_container = component.get("componentProperties")
+    comp_props_container = component.get(COMPONENT_PROPERTIES)
     if not isinstance(comp_props_container, dict):
         return
 
@@ -223,23 +233,25 @@ def _validate_recursion_and_paths(data: Any) -> None:
         if isinstance(item, list):
             for x in item:
                 traverse(x, global_depth + 1, func_depth)
-        elif isinstance(item, dict):
+            return
+
+        if isinstance(item, dict):
             # Check for path
-            if "path" in item and isinstance(item["path"], str):
-                path = item["path"]
+            if PATH in item and isinstance(item[PATH], str):
+                path = item[PATH]
                 if not re.fullmatch(JSON_POINTER_PATTERN, path):    
                     raise ValueError(f"Invalid JSON Pointer syntax: '{path}'")
             
-            # Check for FunctionCall (heuristic: has 'call' and 'args')
-            is_func = "call" in item and "args" in item
+            # Check for FunctionCall
+            is_func = CALL in item and ARGS in item
             
             if is_func:
                 if func_depth >= 5:
-                    raise ValueError("Recursion limit exceeded: FunctionCall depth > 5")
+                    raise ValueError(f"Recursion limit exceeded: {FUNCTION_CALL} depth > 5")
                 
-                # Increment func_depth only for this branch, but global_depth matches traversal
+                # Increment func_depth only for 'args', but global_depth matches traversal
                 for k, v in item.items():
-                    if k == "args":
+                    if k == ARGS:
                         traverse(v, global_depth + 1, func_depth + 1)
                     else:
                         traverse(v, global_depth + 1, func_depth)

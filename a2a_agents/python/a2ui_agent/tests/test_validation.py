@@ -3,87 +3,89 @@ import pytest
 import jsonschema
 from a2ui.extension.validation import validate_a2ui_json
 
-# Simple schema for testing
-SCHEMA = {
-    "type": "object",
-    "$defs": {
-        "ComponentId": {"type": "string"},
-        "ChildList": {
-            "type": "array",
-            "items": {"$ref": "#/$defs/ComponentId"}
-        }
-    },
-    "properties": {
-        "components": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {"$ref": "#/$defs/ComponentId"},
-                    "componentProperties": {
-                        "type": "object",
-                        "properties": {
-                            "Column": {
-                                "type": "object",
-                                "properties": {
-                                    "children": {"$ref": "#/$defs/ChildList"}
-                                }
-                            },
-                             "Row": {
-                                "type": "object",
-                                "properties": {
-                                    "children": {"$ref": "#/$defs/ChildList"}
-                                }
-                            },
-                            "Container": {
-                                "type": "object",
-                                "properties": {
-                                    "children": {"$ref": "#/$defs/ChildList"}
-                                }
-                            },
-                            "Card": {
-                                "type": "object",
-                                "properties": {
-                                    "child": {"$ref": "#/$defs/ComponentId"}
-                                }
-                            },
-                            "Button": {
-                                "type": "object",
-                                "properties": {
-                                    "child": {"$ref": "#/$defs/ComponentId"},
-                                    "action": {
-                                        "properties": {
-                                            "functionCall": {
-                                                "properties": {
-                                                    "call": {"type": "string"},
-                                                    "args": {"type": "object"}
+# Fixture for the schema
+@pytest.fixture
+def schema():
+    return {
+        "type": "object",
+        "$defs": {
+            "ComponentId": {"type": "string"},
+            "ChildList": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/ComponentId"}
+            }
+        },
+        "properties": {
+            "components": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"$ref": "#/$defs/ComponentId"},
+                        "componentProperties": {
+                            "type": "object",
+                            "properties": {
+                                "Column": {
+                                    "type": "object",
+                                    "properties": {
+                                        "children": {"$ref": "#/$defs/ChildList"}
+                                    }
+                                },
+                                 "Row": {
+                                    "type": "object",
+                                    "properties": {
+                                        "children": {"$ref": "#/$defs/ChildList"}
+                                    }
+                                },
+                                "Container": {
+                                    "type": "object",
+                                    "properties": {
+                                        "children": {"$ref": "#/$defs/ChildList"}
+                                    }
+                                },
+                                "Card": {
+                                    "type": "object",
+                                    "properties": {
+                                        "child": {"$ref": "#/$defs/ComponentId"}
+                                    }
+                                },
+                                "Button": {
+                                    "type": "object",
+                                    "properties": {
+                                        "child": {"$ref": "#/$defs/ComponentId"},
+                                        "action": {
+                                            "properties": {
+                                                "functionCall": {
+                                                    "properties": {
+                                                        "call": {"type": "string"},
+                                                        "args": {"type": "object"}
+                                                    }
                                                 }
                                             }
+                                        } 
+                                    }
+                                },
+                                 "Text": {
+                                    "type": "object",
+                                    "properties": {
+                                        "text": {
+                                            "oneOf": [
+                                                {"type": "string"},
+                                                {"type": "object"} 
+                                            ]
                                         }
-                                    } 
-                                }
-                            },
-                             "Text": {
-                                "type": "object",
-                                "properties": {
-                                    "text": {
-                                        "oneOf": [
-                                            {"type": "string"},
-                                            {"type": "object"} 
-                                        ]
                                     }
                                 }
                             }
                         }
-                    }
-                },
-                "required": ["id"]
+                    },
+                    "required": ["id"]
+                }
             }
         }
     }
-}
 
-def test_validate_a2ui_json_valid_integrity():
+def test_validate_a2ui_json_valid_integrity(schema):
     payload = {
         "components": [
             {
@@ -104,9 +106,9 @@ def test_validate_a2ui_json_valid_integrity():
             }
         ]
     }
-    validate_a2ui_json(payload, SCHEMA)
+    validate_a2ui_json(payload, schema)
 
-def test_validate_a2ui_json_duplicate_ids():
+def test_validate_a2ui_json_duplicate_ids(schema):
     payload = {
         "components": [
             {"id": "root", "componentProperties": {}},
@@ -114,52 +116,46 @@ def test_validate_a2ui_json_duplicate_ids():
         ]
     }
     with pytest.raises(ValueError, match="Duplicate component ID found: 'root'"):
-        validate_a2ui_json(payload, SCHEMA)
+        validate_a2ui_json(payload, schema)
 
-def test_validate_a2ui_json_missing_root():
+def test_validate_a2ui_json_missing_root(schema):
     payload = {
         "components": [
             {"id": "not-root", "componentProperties": {}}
         ]
     }
     with pytest.raises(ValueError, match="Missing 'root' component"):
-        validate_a2ui_json(payload, SCHEMA)
+        validate_a2ui_json(payload, schema)
 
-def test_validate_a2ui_json_dangling_reference_child():
+@pytest.mark.parametrize("component_type, field_name, ids_to_ref", [
+    ("Card", "child", "missing_child"),
+    ("Column", "children", ["child1", "missing_child"]),
+])
+def test_validate_a2ui_json_dangling_references(schema, component_type, field_name, ids_to_ref):
+    """Test dangling references for both single and list fields."""
+    # Construct payload dynamically
+    props = {field_name: ids_to_ref}
     payload = {
         "components": [
             {
                 "id": "root", 
                 "componentProperties": {
-                    "Card": {
-                        "child": "missing_child"
-                    }
+                    component_type: props
                 }
             }
         ]
     }
-    with pytest.raises(ValueError, match="Component 'root' references missing ID 'missing_child' in field 'child'"):
-        validate_a2ui_json(payload, SCHEMA)
+    if isinstance(ids_to_ref, list):
+         # Add valid children if any
+         for child_id in ids_to_ref:
+             if child_id != "missing_child":
+                 payload["components"].append({"id": child_id, "componentProperties": {}})
 
-def test_validate_a2ui_json_dangling_reference_children():
-    payload = {
-        "components": [
-            {
-                "id": "root", 
-                "componentProperties": {
-                    "Column": {
-                        "children": ["child1", "missing_child"]
-                    }
-                }
-            },
-            {"id": "child1", "componentProperties": {}}
-        ]
-    }
-    with pytest.raises(ValueError, match="Component 'root' references missing ID 'missing_child' in field 'children'"):
-        validate_a2ui_json(payload, SCHEMA)
+    with pytest.raises(ValueError, match=f"Component 'root' references missing ID 'missing_child' in field '{field_name}'"):
+        validate_a2ui_json(payload, schema)
 
 
-def test_validate_a2ui_json_self_reference():
+def test_validate_a2ui_json_self_reference(schema):
     payload = {
         "components": [
             {
@@ -173,9 +169,9 @@ def test_validate_a2ui_json_self_reference():
         ]
     }
     with pytest.raises(ValueError, match="Self-reference detected: Component 'root' references itself in field 'children'"):
-        validate_a2ui_json(payload, SCHEMA)
+        validate_a2ui_json(payload, schema)
 
-def test_validate_a2ui_json_circular_reference():
+def test_validate_a2ui_json_circular_reference(schema):
     payload = {
         "components": [
             {
@@ -197,9 +193,9 @@ def test_validate_a2ui_json_circular_reference():
         ]
     }
     with pytest.raises(ValueError, match="Circular reference detected involving component"):
-        validate_a2ui_json(payload, SCHEMA)
+        validate_a2ui_json(payload, schema)
 
-def test_validate_a2ui_json_orphaned_component():
+def test_validate_a2ui_json_orphaned_component(schema):
     payload = {
         "components": [
             {
@@ -217,9 +213,9 @@ def test_validate_a2ui_json_orphaned_component():
         ]
     }
     with pytest.raises(ValueError, match=r"Orphaned components detected \(not reachable from 'root'\): \['orphan'\]"):
-        validate_a2ui_json(payload, SCHEMA)
+        validate_a2ui_json(payload, schema)
 
-def test_validate_a2ui_json_valid_topology_complex():
+def test_validate_a2ui_json_valid_topology_complex(schema):
     """Test a valid topology with multiple levels."""
     payload = {
         "components": [
@@ -253,10 +249,17 @@ def test_validate_a2ui_json_valid_topology_complex():
             }
         ]
     }
-    validate_a2ui_json(payload, SCHEMA)
+    validate_a2ui_json(payload, schema)
 
-def test_validate_recursion_limit_exceeded():
+def test_validate_recursion_limit_exceeded(schema):
     """Test that recursion depth > 5 raises ValueError."""
+    # Construct deep function call
+    args = {}
+    current = args
+    for i in range(5): # Depth 0 to 5 (6 levels)
+        current["arg"] = {"call": f"fn{i}", "args": {}}
+        current = current["arg"]["args"]
+        
     payload = {
         "components": [
             {
@@ -266,37 +269,8 @@ def test_validate_recursion_limit_exceeded():
                         "label": "Click me",
                         "action": {
                             "functionCall": {
-                                "call": "fn1",
-                                "args": {
-                                    "arg1": {
-                                        # Depth 2
-                                        "call": "fn2",
-                                        "args": {
-                                            "arg2": {
-                                                # Depth 3
-                                                "call": "fn3",
-                                                "args": {
-                                                    "arg3": {
-                                                        # Depth 4
-                                                        "call": "fn4",
-                                                        "args": {
-                                                            "arg4": {
-                                                                # Depth 5
-                                                                "call": "fn5",
-                                                                "args": {
-                                                                    "arg5": {
-                                                                        "call": "fn6",
-                                                                        "args": {}
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                "call": "fn_top",
+                                "args": args
                             }
                         }
                     }
@@ -305,11 +279,17 @@ def test_validate_recursion_limit_exceeded():
         ]
     }
     with pytest.raises(ValueError, match="Recursion limit exceeded"):
-        validate_a2ui_json(payload, SCHEMA)
+        validate_a2ui_json(payload, schema)
 
-def test_validate_recursion_limit_valid():
+def test_validate_recursion_limit_valid(schema):
     """Test that recursion depth <= 5 is allowed."""
-    # Nesting level 5
+    # Construct max depth function call (Depth 5)
+    args = {}
+    current = args
+    for i in range(4): # Depth 0 to 4 (5 levels)
+        current["arg"] = {"call": f"fn{i}", "args": {}}
+        current = current["arg"]["args"]
+
     payload = {
         "components": [
             {
@@ -319,28 +299,8 @@ def test_validate_recursion_limit_valid():
                         "label": "Click me",
                         "action": {
                             "functionCall": {
-                                "call": "fn1",
-                                "args": {
-                                    "arg1": {
-                                        "call": "fn2",
-                                        "args": {
-                                            "arg2": {
-                                                "call": "fn3",
-                                                "args": {
-                                                    "arg3": {
-                                                        "call": "fn4",
-                                                        "args": {
-                                                            "arg4": {
-                                                                "call": "fn5",
-                                                                "args": {}
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                "call": "fn_top",
+                                "args": args
                             }
                         }
                     }
@@ -348,23 +308,17 @@ def test_validate_recursion_limit_valid():
             }
         ]
     }
-    validate_a2ui_json(payload, SCHEMA)
+    validate_a2ui_json(payload, schema)
 
-def test_validate_invalid_datamodel_path_update():
-    """Test invalid path in UpdateDataModelMessage."""
-    payload = {
+@pytest.mark.parametrize("payload", [
+    {
         "updateDataModel": {
             "surfaceId": "surface1",
             "path": "invalid//path",
             "value": "data"
         }
-    }
-    with pytest.raises(ValueError, match="Invalid JSON Pointer syntax"):
-        validate_a2ui_json(payload, SCHEMA)
-
-def test_validate_invalid_databinding_path():
-    """Test invalid path in DataBinding."""
-    payload = {
+    },
+    {
         "components": [
             {
                 "id": "root",
@@ -377,11 +331,21 @@ def test_validate_invalid_databinding_path():
                 }
             }
         ]
+    },
+    {
+        "updateDataModel": {
+            "surfaceId": "surface1",
+            "path": "/invalid/escape/~2",
+            "value": "data"
+        }
     }
+])
+def test_validate_invalid_paths(schema, payload):
+    """Test various invalid paths (JSON Pointer syntax)."""
     with pytest.raises(ValueError, match="Invalid JSON Pointer syntax"):
-        validate_a2ui_json(payload, SCHEMA)
+        validate_a2ui_json(payload, schema)
 
-def test_validate_global_recursion_limit_exceeded():
+def test_validate_global_recursion_limit_exceeded(schema):
     """Test that global recursion depth > 50 raises ValueError."""
     # Create a deeply nested dictionary
     deep_payload = {"level": 0}
@@ -391,7 +355,7 @@ def test_validate_global_recursion_limit_exceeded():
         current = current["next"]
     
     with pytest.raises(ValueError, match="Global recursion limit exceeded"):
-        validate_a2ui_json(deep_payload, SCHEMA)
+        validate_a2ui_json(deep_payload, schema)
 
 
 def test_validate_custom_schema_reference():
@@ -446,15 +410,3 @@ def test_validate_custom_schema_reference():
     
     with pytest.raises(ValueError, match="Component 'root' references missing ID 'missing_target' in field 'linkedComponentId'"):
         validate_a2ui_json(payload, custom_schema)
-
-def test_validate_invalid_json_pointer_escape():
-    """Test invalid escape sequence in JSON Pointer."""
-    payload = {
-        "updateDataModel": {
-            "surfaceId": "surface1",
-            "path": "/invalid/escape/~2",
-            "value": "data"
-        }
-    }
-    with pytest.raises(ValueError, match="Invalid JSON Pointer syntax"):
-        validate_a2ui_json(payload, SCHEMA)
