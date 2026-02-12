@@ -17,4 +17,5 @@ site/
 .venv/
 
 # Copied specification files
-docs/specification/v0_9/
+docs/specification/v*/
+

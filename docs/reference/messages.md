@@ -289,5 +289,5 @@ Remove a surface and all its components and data.
 
 All messages should be validated against:
 
-- **[server_to_client.json](../specification/v0_9/json/server_to_client.json)**: Message envelope schema.
-- **[standard_catalog.json](../specification/v0_9/json/standard_catalog.json)**: Component schemas.
+- **[server_to_client.json](../specification/v0_9/server_to_client.json)**: Message envelope schema.
+- **[standard_catalog.json](../specification/v0_9/standard_catalog.json)**: Component schemas.
