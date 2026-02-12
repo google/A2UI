@@ -226,7 +226,9 @@ def _validate_recursion_and_paths(data: Any) -> None:
         elif isinstance(item, dict):
             # Check for path
             if "path" in item and isinstance(item["path"], str):
-                 _validate_path_syntax(item["path"])
+                path = item["path"]
+                if not re.fullmatch(JSON_POINTER_PATTERN, path):    
+                    raise ValueError(f"Invalid JSON Pointer syntax: '{path}'")
             
             # Check for FunctionCall (heuristic: has 'call' and 'args')
             is_func = "call" in item and "args" in item
@@ -246,15 +248,3 @@ def _validate_recursion_and_paths(data: Any) -> None:
                     traverse(v, global_depth + 1, func_depth)
 
     traverse(data, 0, 0)
-
-
-def _validate_path_syntax(path: str) -> None:
-    """
-    Validates that the path is either a valid JSON Pointer (starts with /)
-    or a valid relative path (no empty segments).
-    Also checks for spaces.
-    """
-    if not re.fullmatch(JSON_POINTER_PATTERN, path):    
-      raise ValueError(f"Invalid JSON Pointer syntax: '{path}'")
-    
-    
