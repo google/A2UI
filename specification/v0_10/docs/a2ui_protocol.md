@@ -388,7 +388,8 @@ To execute a local function, use the `functionCall` property within the `action`
       "call": "copyToClipboard",
       "args": {
         "text": "INVITE-1234"
-      }
+      },
+      "returnType": "void"
     }
   }
 }
