@@ -17,16 +17,16 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import * as Primitives from "@a2ui/web_core/types/primitives";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 
 @customElement("a2ui-icon")
 export class Icon extends Root {
   @property()
-  accessor name: StringValue | null = null;
+  accessor name: Primitives.StringValue | null = null;
 
   static styles = [
     structuralStyles,
@@ -39,7 +39,25 @@ export class Icon extends Root {
         display: block;
         flex: var(--weight);
         min-height: 0;
-        overflow: auto;
+
+      }
+
+      .g-icon {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: 'liga';
       }
     `,
   ];

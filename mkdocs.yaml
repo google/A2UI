@@ -67,6 +67,9 @@ nav:
       - Component Reference: reference/components.md
       - Message Reference: reference/messages.md
 
+exclude_docs: |
+  scripts/**
+
 # Repository
 repo_name: google/A2UI
 repo_url: https://github.com/google/A2UI
@@ -180,6 +183,4 @@ plugins:
   #     sections:
   #       "Specification":
   #         - a2ui_protocol.md
-  # - redirects:
-  #     redirect_maps:
-  #       "index.md": "a2ui_protocol.md"
+
