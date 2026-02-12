@@ -397,6 +397,13 @@ Each activity in the inner lists should be a 'Row' containing a 'CheckBox' (to m
     The button's action should be a client-side function call to 'openUrl' with the argument 'url': 'https://a2ui.org'.`,
   },
   {
+    name: "copyToClipboardAction",
+    description: "A button that copies text to clipboard.",
+    promptText: `Create a 'createSurface' and 'updateComponents' message. Surface ID 'main'.
+    Include a 'Button' labeled "Copy Code".
+    The button's action should be a client-side function call to 'copyToClipboard' with the argument 'text': 'SAVE20'.`,
+  },
+  {
     name: "nestedLayoutRecursive",
     description: "A deeply nested layout to test component recursion.",
     promptText: `Create a 'createSurface' and 'updateComponents' message with surfaceId 'main'.

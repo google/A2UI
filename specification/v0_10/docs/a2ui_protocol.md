@@ -379,6 +379,21 @@ To execute a local function, use the `functionCall` property within the `action`
 }
 ```
 
+```json
+{
+  "component": "Button",
+  "text": "Copy Invite Code",
+  "action": {
+    "functionCall": {
+      "call": "copyToClipboard",
+      "args": {
+        "text": "INVITE-1234"
+      }
+    }
+  }
+}
+```
+
 ## Data model representation: binding, scope
 
 This section describes how UI components **represent** and reference data from the Data Model. A2UI relies on a strictly defined relationship between the UI structure (Components) and the state (Data Model), defining the mechanics of path resolution, variable scope during iteration.
@@ -687,6 +702,7 @@ The [`standard_catalog.json`] provides the baseline set of components and functi
 | **formatDate**     | Formats a date/time using a pattern.                                     |
 | **pluralize**      | Selects a localized string based on a numeric count.                     |
 | **openUrl**        | Opens a URL in a browser.                                                |
+| **copyToClipboard**| Copies text to the system clipboard.                                     |
 | **and**            | Logical AND operation on a list of boolean values.                       |
 | **or**             | Logical OR operation on a list of boolean values.                        |
 | **not**            | Logical NOT operation on a boolean value.                                |

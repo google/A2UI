@@ -981,6 +981,31 @@
       "required": ["call", "args"],
       "unevaluatedProperties": false
     },
+    "copyToClipboard": {
+      "type": "object",
+      "description": "Copies text to the system clipboard. This function has no return value.",
+      "properties": {
+        "call": {
+          "const": "copyToClipboard"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "The text to copy."
+            }
+          },
+          "required": ["text"],
+          "additionalProperties": false
+        },
+        "returnType": {
+          "const": "void"
+        }
+      },
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
+    },
     "and": {
       "type": "object",
       "description": "Performs a logical AND operation on a list of boolean values.",
@@ -1129,6 +1154,7 @@
         { "$ref": "#/functions/formatDate" },
         { "$ref": "#/functions/pluralize" },
         { "$ref": "#/functions/openUrl" },
+        { "$ref": "#/functions/copyToClipboard" },
         { "$ref": "#/functions/and" },
         { "$ref": "#/functions/or" },
         { "$ref": "#/functions/not" }

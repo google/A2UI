@@ -473,6 +473,106 @@
       }
     },
     {
+      "description": "copyToClipboard: Valid call in Action",
+      "valid": true,
+      "data": {
+        "version": "v0.10",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "btn1",
+              "component": "Button",
+              "child": "txt1",
+              "action": {
+                "functionCall": {
+                  "call": "copyToClipboard",
+                  "args": { "text": "ABC-123" },
+                  "returnType": "void"
+                }
+              }
+            },
+            { "id": "txt1", "component": "Text", "text": "Copy" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "copyToClipboard: Invalid args (string instead of object)",
+      "valid": false,
+      "data": {
+        "version": "v0.10",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "btn1",
+              "component": "Button",
+              "child": "txt1",
+              "action": {
+                "functionCall": {
+                  "call": "copyToClipboard",
+                  "args": "ABC-123",
+                  "returnType": "void"
+                }
+              }
+            },
+            { "id": "txt1", "component": "Text", "text": "Copy" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "copyToClipboard: Invalid returnType",
+      "valid": false,
+      "data": {
+        "version": "v0.10",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "btn1",
+              "component": "Button",
+              "child": "txt1",
+              "action": {
+                "functionCall": {
+                  "call": "copyToClipboard",
+                  "args": { "text": "ABC-123" },
+                  "returnType": "string"
+                }
+              }
+            },
+            { "id": "txt1", "component": "Text", "text": "Copy" }
+          ]
+        }
+      }
+    },
+    {
+      "description": "copyToClipboard: Invalid text type (number)",
+      "valid": false,
+      "data": {
+        "version": "v0.10",
+        "updateComponents": {
+          "surfaceId": "test",
+          "components": [
+            {
+              "id": "btn1",
+              "component": "Button",
+              "child": "txt1",
+              "action": {
+                "functionCall": {
+                  "call": "copyToClipboard",
+                  "args": { "text": 12345 },
+                  "returnType": "void"
+                }
+              }
+            },
+            { "id": "txt1", "component": "Text", "text": "Copy" }
+          ]
+        }
+      }
+    },
+    {
       "description": "length: Invalid min type (string)",
       "valid": false,
       "data": {
