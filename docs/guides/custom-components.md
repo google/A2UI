@@ -23,7 +23,7 @@ You register entire catalogs with your client application, not individual compon
 2.  **Client Registers Catalog**: You register the catalog (and its component implementations) with your client app.
 3.  **Client Announces Support**: The client informs the agent which catalogs it supports.
 4.  **Agent Selects Catalog**: The agent chooses a catalog for a given UI surface.
-5.  **Agent Generates UI**: The agent generates `surfaceUpdate` messages using components from that catalog by name.
+5.  **Agent Generates UI**: The agent generates `updateComponents` messages using components from that catalog by name.
 
 ## Defining Custom Catalogs
 
@@ -45,9 +45,9 @@ TODO: Add detailed guide for defining custom catalogs for each platform.
 
 ## Agent-Side: Using Components from a Custom Catalog
 
-Once a catalog is registered on the client, agents can use components from it in `surfaceUpdate` messages.
+Once a catalog is registered on the client, agents can use components from it in `updateComponents` messages.
 
-The agent specifies which catalog to use via the `catalogId` in the `beginRendering` message.
+The agent specifies which catalog to use via the `catalogId` in the `createSurface` message.
 
 TODO: Add examples of:
 - How agents select catalogs

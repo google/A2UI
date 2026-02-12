@@ -67,6 +67,7 @@ nav:
   - Reference:
       - Component Reference: reference/components.md
       - Message Reference: reference/messages.md
+      - Client-Side Functions: reference/functions.md
 
 exclude_docs: |
   scripts/**

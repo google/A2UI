@@ -12,10 +12,13 @@ You have a lot of flexibility, to bring custom comonents to a renderer, or build
 
 | Renderer | Platform | Status | Links |
 |----------|----------|--------|-------|
-| **Lit (Web Components)** | Web | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/lit) |
-| **Angular** | Web | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/angular) |
-| **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ Stable | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
+| **Lit (Web Components)** | Web | 🚧 In Progress | [Code](https://github.com/google/A2UI/tree/main/renderers/lit) |
+| **Angular** | Web | 🚧 In Progress | [Code](https://github.com/google/A2UI/tree/main/renderers/angular) |
+| **Flutter (GenUI SDK)** | Mobile/Desktop/Web | 🚧 In Progress | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
 | **React** | Web | 🚧 In Progress | Coming Q1 2026 |
+
+> Currently, most renderers in the repo are not yet updated to the latest spec (v0.9), so the messages generated
+> may not be as described in the v0.9 documentation.
 
 Check the [Roadmap](roadmap.md) for more.
 

@@ -94,7 +94,7 @@ TODO: Add action handling examples.
 ## Error Handling
 
 Common errors to handle:
-- **Invalid Surface ID**: Surface referenced before `beginRendering` was received
+- **Invalid Surface ID**: Surface referenced before `createSurface` was received
 - **Invalid Component ID**: Component IDs must be unique within a surface
 - **Invalid Data Path**: Check data model structure and JSON Pointer syntax
 - **Schema Validation Failed**: Verify message format matches A2UI specification

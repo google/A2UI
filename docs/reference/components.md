@@ -1,6 +1,6 @@
 # Component Gallery
 
-This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://a2ui.org/specification/v0_8/standard_catalog_definition.json).
+This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://a2ui.org/specification/v0_9/standard_catalog.json).
 
 ## Layout Components
 
@@ -11,20 +11,17 @@ Horizontal layout container. Children are arranged left-to-right.
 ```json
 {
   "id": "toolbar",
-  "component": {
-    "Row": {
-      "children": {"explicitList": ["btn1", "btn2", "btn3"]},
-      "alignment": "center"
-    }
-  }
+  "component": "Row",
+  "children": ["btn1", "btn2", "btn3"],
+  "align": "center"
 }
 ```
 
 **Properties:**
 
-- `children`: Static array (`explicitList`) or dynamic `template`
-- `distribution`: Horizontal distribution of children (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
-- `alignment`: Vertical alignment (`start`, `center`, `end`, `stretch`)
+- `children`: Static array of IDs or dynamic `template`
+- `justify`: Horizontal distribution (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
+- `align`: Vertical alignment (`start`, `center`, `end`, `stretch`)
 
 ### Column
 
@@ -33,19 +30,16 @@ Vertical layout container. Children are arranged top-to-bottom.
 ```json
 {
   "id": "content",
-  "component": {
-    "Column": {
-      "children": {"explicitList": ["header", "body", "footer"]}
-    }
-  }
+  "component": "Column",
+  "children": ["header", "body", "footer"]
 }
 ```
 
 **Properties:**
 
-- `children`: Static array (`explicitList`) or dynamic `template`
-- `distribution`: Vertical distribution of children (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
-- `alignment`: Horizontal alignment (`start`, `center`, `end`, `stretch`)
+- `children`: Static array of IDs or dynamic `template`
+- `justify`: Vertical distribution (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
+- `align`: Horizontal alignment (`start`, `center`, `end`, `stretch`)
 
 ## Display Components
 
@@ -56,16 +50,13 @@ Display text content with optional styling.
 ```json
 {
   "id": "title",
-  "component": {
-    "Text": {
-      "text": {"literalString": "Welcome to A2UI"},
-      "usageHint": "h1"
-    }
-  }
+  "component": "Text",
+  "text": "Welcome to A2UI",
+  "variant": "h1"
 }
 ```
 
-**`usageHint` values:** `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
+**`variant` values:** `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
 
 ### Image
 
@@ -74,13 +65,18 @@ Display images from URLs.
 ```json
 {
   "id": "logo",
-  "component": {
-    "Image": {
-      "url": {"literalString": "https://example.com/logo.png"}
-    }
-  }
+  "component": "Image",
+  "url": "https://example.com/logo.png",
+  "fit": "contain",
+  "variant": "mediumFeature"
 }
 ```
+
+**Properties:**
+
+- `url`: The URL of the image.
+- `fit`: CSS-like object-fit (`contain`, `cover`, `fill`, `none`, `scale-down`).
+- `variant`: Image style nuance (`icon`, `avatar`, `smallFeature`, `mediumFeature`, `largeFeature`, `header`).
 
 ### Icon
 
@@ -89,11 +85,33 @@ Display icons using Material Icons or custom icon sets.
 ```json
 {
   "id": "check-icon",
-  "component": {
-    "Icon": {
-      "name": {"literalString": "check"}
-    }
-  }
+  "component": "Icon",
+  "name": "check"
+}
+```
+
+### Video
+
+Display video content.
+
+```json
+{
+  "id": "promo-video",
+  "component": "Video",
+  "url": "https://example.com/video.mp4"
+}
+```
+
+### AudioPlayer
+
+Play audio files.
+
+```json
+{
+  "id": "podcast-player",
+  "component": "AudioPlayer",
+  "url": "https://example.com/podcast.mp3",
+  "description": "Episode 1: Introduction"
 }
 ```
 
@@ -104,11 +122,8 @@ Visual separator line.
 ```json
 {
   "id": "separator",
-  "component": {
-    "Divider": {
-      "axis": "horizontal"
-    }
-  }
+  "component": "Divider",
+  "axis": "horizontal"
 }
 ```
 
@@ -121,27 +136,21 @@ Clickable button with action support.
 ```json
 {
   "id": "submit-btn-text",
-  "component": {
-    "Text": {
-      "text": { "literalString": "Submit" }
-    }
-  }
+  "component": "Text",
+  "text": "Submit"
 }
 {
   "id": "submit-btn",
-  "component": {
-    "Button": {
-      "child": "submit-btn-text",
-      "primary": true,
-      "action": {"name": "submit_form"}
-    }
-  }
+  "component": "Button",
+  "child": "submit-btn-text",
+  "variant": "primary",
+  "action": {"name": "submit_form"}
 }
 ```
 
 **Properties:**
-- `child`: The ID of the component to display in the button (e.g., a Text or Icon).
-- `primary`: Boolean indicating if this is a primary action.
+- `child`: The ID of the component to display in the button.
+- `variant`: Button style (`primary`, `borderless`).
 - `action`: The action to perform on click.
 
 ### TextField
@@ -151,29 +160,78 @@ Text input field.
 ```json
 {
   "id": "email-input",
-  "component": {
-    "TextField": {
-      "label": {"literalString": "Email Address"},
-      "text": {"path": "/user/email"},
-      "textFieldType": "shortText"
-    }
-  }
+  "component": "TextField",
+  "label": "Email Address",
+  "value": {"path": "/user/email"},
+  "variant": "shortText"
 }
 ```
 
-**`textFieldType` values:** `date`, `longText`, `number`, `shortText`, `obscured`
+**`variant` values:** `longText`, `number`, `shortText`, `obscured`
+
+
+
+### CheckBox
 
 Boolean toggle.
 
 ```json
 {
   "id": "terms-checkbox",
-  "component": {
-    "CheckBox": {
-      "label": {"literalString": "I agree to the terms"},
-      "value": {"path": "/form/agreedToTerms"}
-    }
-  }
+  "component": "CheckBox",
+  "label": "I agree to the terms",
+  "value": {"path": "/form/agreedToTerms"}
+}
+```
+
+### ChoicePicker
+
+Select from a list of options.
+
+```json
+{
+  "id": "toppings-picker",
+  "component": "ChoicePicker",
+  "label": "Choose toppings",
+  "options": [
+    {"label": "Cheese", "value": "cheese"},
+    {"label": "Pepperoni", "value": "pepperoni"},
+    {"label": "Mushrooms", "value": "mushrooms"}
+  ],
+  "value": {"path": "/order/toppings"},
+  "variant": "multipleSelection"
+}
+```
+
+**`variant` values:** `multipleSelection` (checkboxes/chips), `mutuallyExclusive` (radio buttons)
+
+### Slider
+
+Select a numeric value from a range.
+
+```json
+{
+  "id": "volume-slider",
+  "component": "Slider",
+  "label": "Volume",
+  "min": 0,
+  "max": 100,
+  "value": {"path": "/settings/volume"}
+}
+```
+
+### DateTimeInput
+
+Date and time selection.
+
+```json
+{
+  "id": "appointment-date",
+  "component": "DateTimeInput",
+  "label": "Appointment Date",
+  "enableDate": true,
+  "enableTime": true,
+  "value": {"path": "/booking/date"}
 }
 ```
 
@@ -186,11 +244,8 @@ Container with elevation/border and padding.
 ```json
 {
   "id": "info-card",
-  "component": {
-    "Card": {
-      "child": "card-content"
-    }
-  }
+  "component": "Card",
+  "child": "card-content"
 }
 ```
 
@@ -201,12 +256,9 @@ Overlay dialog.
 ```json
 {
   "id": "confirmation-modal",
-  "component": {
-    "Modal": {
-      "entryPointChild": "open-modal-btn",
-      "contentChild": "modal-content"
-    }
-  }
+  "component": "Modal",
+  "trigger": "open-modal-btn",
+  "content": "modal-content"
 }
 ```
 
@@ -217,31 +269,27 @@ Tabbed interface.
 ```json
 {
   "id": "settings-tabs",
-  "component": {
-    "Tabs": {
-      "tabItems": [
-        {"title": {"literalString": "General"}, "child": "general-settings"},
-        {"title": {"literalString": "Privacy"}, "child": "privacy-settings"},
-        {"title": {"literalString": "Advanced"}, "child": "advanced-settings"}
-      ]
-    }
-  }
+  "component": "Tabs",
+  "tabs": [
+    {"title": "General", "child": "general-settings"},
+    {"title": "Privacy", "child": "privacy-settings"},
+    {"title": "Advanced", "child": "advanced-settings"}
+  ]
 }
 ```
+
+### List
 
 Scrollable list of items.
 
 ```json
 {
   "id": "message-list",
-  "component": {
-    "List": {
-      "children": {
-        "template": {
-          "dataBinding": "/messages",
-          "componentId": "message-item"
-        }
-      }
+  "component": "List",
+  "children": {
+    "template": {
+      "path": "/messages",
+      "componentId": "message-item"
     }
   }
 }
@@ -252,7 +300,7 @@ Scrollable list of items.
 Most components support these common properties:
 
 - `id` (required): Unique identifier for the component instance.
-- `weight`: Flex-grow value when the component is a direct child of a Row or Column. This property is specified alongside `id` and `component`.
+- `weight`: Flex-grow value when the component is a direct child of a Row or Column.
 
 ## Live Examples
 
@@ -268,5 +316,6 @@ This launches a live gallery with all components, their variations, and interact
 ## Further Reading
 
 - **[Standard Catalog Definition](../../specification/v0_9/json/standard_catalog_definition.json)**: Complete technical specification
+- **[Client-Side Functions](functions.md)**: Standard catalog functions for validation and formatting
 - **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand

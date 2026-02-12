@@ -41,22 +41,40 @@ A2UI: JSON messages describing UI that:
 ### Example
 
 ```json
-{"surfaceUpdate": {"surfaceId": "booking", "components": [
-  {"id": "title", "component": {"Text": {"text": {"literalString": "Book Your Table"}, "usageHint": "h1"}}},
-  {"id": "datetime", "component": {"DateTimeInput": {"value": {"path": "/booking/date"}, "enableDate": true}}},
-  {"id": "submit-text", "component": {"Text": {"text": {"literalString": "Confirm"}}}},
-  {"id": "submit-btn", "component": {"Button": {"child": "submit-text", "action": {"name": "confirm_booking"}}}}
-]}}
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "booking",
+    "components": [
+      {"id": "title", "component": "Text", "text": "Book Your Table", "variant": "h1"},
+      {"id": "datetime", "component": "DateTimeInput", "value": {"path": "/booking/date"}, "enableDate": true},
+      {"id": "submit-text", "component": "Text", "text": "Confirm"},
+      {"id": "submit-btn", "component": "Button", "child": "submit-text", "action": {"name": "confirm_booking"}}
+    ]
+  }
+}
 ```
 
 ```json
-{"dataModelUpdate": {"surfaceId": "booking", "contents": [
-  {"key": "booking", "valueMap": [{"key": "date", "valueString": "2025-12-16T19:00:00Z"}]}
-]}}
+{
+  "version": "v0.9",
+  "updateDataModel": {
+    "surfaceId": "booking",
+    "value": {
+      "booking": {"date": "2025-12-16T19:00:00Z"}
+    }
+  }
+}
 ```
 
 ```json
-{"beginRendering": {"surfaceId": "booking", "root": "title"}}
+{
+  "version": "v0.9",
+  "createSurface": {
+    "surfaceId": "booking",
+    "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+  }
+}
 ```
 
 Client renders these messages as native components (Angular, Flutter, React, etc.).
@@ -90,6 +108,6 @@ Client renders these messages as native components (Angular, Flutter, React, etc
 - **Component**: UI element (Button, TextField, Card, etc.)
 - **Data Model**: Application state, components bind to it
 - **Catalog**: Available component types
-- **Message**: JSON object (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, etc.)
+- **Message**: JSON object (`createSurface`, `updateComponents`, `updateDataModel`, etc.)
 
 For a comparison of similar projects, see [Agent UI Ecosystem](agent-ui-ecosystem.md).

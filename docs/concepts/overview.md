@@ -25,9 +25,9 @@ How components connect to application state using JSON Pointer paths. Covers rea
 
 A2UI uses four message types:
 
-- **`surfaceUpdate`**: Define or update UI components
-- **`dataModelUpdate`**: Update application state
-- **`beginRendering`**: Signal the client to render
+- **`createSurface`**: Initialize a surface and catalog
+- **`updateComponents`**: Define or update UI components
+- **`updateDataModel`**: Update application state
 - **`deleteSurface`**: Remove a UI surface
 
 For complete technical details, see [Message Reference](../reference/messages.md).
