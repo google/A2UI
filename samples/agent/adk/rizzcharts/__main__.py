@@ -25,7 +25,7 @@ from agent_executor import RizzchartsAgentExecutor, get_a2ui_enabled, get_a2ui_s
 from agent import RizzchartsAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.models.lite_llm import LiteLlm
+from google.adk.models.google_llm import Gemini
 from google.adk.runners import Runner
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
 from dotenv import load_dotenv
@@ -53,9 +53,9 @@ def main(host, port):
                     "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI is not TRUE."
                 )
 
-        lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+        gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         agent = RizzchartsAgent(
-            model=LiteLlm(model=lite_llm_model),
+            model=Gemini(model=gemini_model),
             a2ui_enabled_provider=get_a2ui_enabled,
             a2ui_schema_provider=get_a2ui_schema,
         )

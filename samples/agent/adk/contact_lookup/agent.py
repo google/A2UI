@@ -26,7 +26,7 @@ from a2ui_schema import A2UI_SCHEMA
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
-from google.adk.models.lite_llm import LiteLlm
+from google.adk.models.google_llm import Gemini
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -80,7 +80,7 @@ class ContactAgent:
 
     def _build_agent(self, use_ui: bool) -> LlmAgent:
         """Builds the LLM agent for the contact agent."""
-        LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+        gemini_model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
         if use_ui:
             instruction = get_ui_prompt(self.base_url, CONTACT_UI_EXAMPLES)
@@ -89,7 +89,7 @@ class ContactAgent:
             instruction = get_text_prompt()
 
         return LlmAgent(
-            model=LiteLlm(model=LITELLM_MODEL),
+            model=Gemini(model=gemini_model),
             name="contact_agent",
             description="An agent that finds colleague contact info.",
             instruction=instruction,
