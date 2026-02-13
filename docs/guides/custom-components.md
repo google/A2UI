@@ -25,6 +25,31 @@ You register entire catalogs with your client application, not individual compon
 4.  **Agent Selects Catalog**: The agent chooses a catalog for a given UI surface.
 5.  **Agent Generates UI**: The agent generates `surfaceUpdate` messages using components from that catalog by name.
 
+## Enabling Custom Components on the Surface
+
+When using the `<a2ui-surface>` component, you must enable custom elements rendering by setting the `enableCustomElements` property to `true`. This allows custom components registered via the component registry to be rendered.
+
+### Web (Lit)
+
+```typescript
+// Get reference to the surface element
+const surfaceElement = document.querySelector('a2ui-surface');
+
+// Enable custom elements
+surfaceElement.enableCustomElements = true;
+
+// Set other required properties
+surfaceElement.surfaceId = 'main';
+surfaceElement.surface = surface;
+surfaceElement.processor = processor;
+```
+
+**Important**: Without setting `enableCustomElements = true`, custom components will not render, even if they are properly registered in the component registry.
+
+### Why This is Required
+
+The A2UI `Surface` component wraps the `Root` component, which handles the actual rendering. The `enableCustomElements` property controls whether the Root component should look up and instantiate custom elements from the component registry. By default, this is `false` to ensure only standard A2UI components are rendered unless explicitly enabled.
+
 ## Defining Custom Catalogs
 
 TODO: Add detailed guide for defining custom catalogs for each platform.
