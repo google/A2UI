@@ -183,4 +183,24 @@ RESTAURANT_UI_EXAMPLES = """
   }} }}
 ]
 ---END CONFIRMATION_EXAMPLE---
+
+---BEGIN NO_RESULTS_EXAMPLE---
+[
+  {{ "beginRendering": {{ "surfaceId": "default", "root": "root-column", "styles": {{ "primaryColor": "#FF0000", "font": "Roboto" }} }} }},
+  {{ "surfaceUpdate": {{
+    "surfaceId": "default",
+    "components": [
+      {{ "id": "root-column", "component": {{ "Column": {{ "children": {{ "explicitList": ["title-heading"] }} }} }} }},
+      {{ "id": "title-heading", "component": {{ "Text": {{ "usageHint": "h1", "text": {{ "path": "title" }} }} }} }}
+    ]
+  }} }},
+  {{ "dataModelUpdate": {{
+    "surfaceId": "default",
+    "path": "/",
+    "contents": [
+      {{ "key": "title", "valueString": "Sorry, our current dataset only includes restaurants in New York City. No restaurants were found in the specified location." }}
+    ]
+  }} }}
+]
+---END NO_RESULTS_EXAMPLE---
 """

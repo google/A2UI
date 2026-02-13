@@ -44,6 +44,7 @@ AGENT_INSTRUCTION = """
     1.  **For finding restaurants:**
         a. You MUST call the `get_restaurants` tool. Extract the cuisine, location, and a specific number (`count`) of restaurants from the user's query (e.g., for "top 5 chinese places", count is 5).
         b. After receiving the data, you MUST follow the instructions precisely to generate the final a2ui UI JSON, using the appropriate UI example from the `prompt_builder.py` based on the number of restaurants.
+        c. If the get_restaurants tool returns an empty list ([]), you MUST use the NO_RESULTS_EXAMPLE to inform the user that no restaurants were found.
 
     2.  **For booking a table (when you receive a query like 'USER_WANTS_TO_BOOK...'):**
         a. You MUST use the appropriate UI example from `prompt_builder.py` to generate the UI, populating the `dataModelUpdate.contents` with the details from the user's query.
