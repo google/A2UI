@@ -1,47 +1,39 @@
 import pytest
-from convert_docs import to_mkdocs, to_github
+from convert_docs import to_mkdocs
 
 # --- 1. A2UI Specific Header Cases ---
 ADMONITION_CASES = [
-    ('!!! info "Coming soon..."', "Coming soon..."),
-    ('!!! warning "Status: Early Stage Public Preview"', "Status: Early Stage Public Preview"),
-    ('!!! success "Stable Release"', "Stable Release"),
-    ('!!! note "Version Compatibility"', "Version Compatibility"),
-    ('!!! warning "Attention"', "Attention"),
-    ('!!! tip "It\'s Just JSON"', "It's Just JSON"),
+    ('!!! info "Coming soon..."', "Coming soon...", "ℹ️"),
+    ('!!! warning "Status: Early Stage Public Preview"', "Status: Early Stage Public Preview", "⚠️"),
+    ('!!! success "Stable Release"', "Stable Release", "✅"),
+    ('!!! note "Version Compatibility"', "Version Compatibility", "📝"),
+    ('!!! warning "Attention"', "Attention", "⚠️"),
+    ('!!! tip "It\'s Just JSON"', "It's Just JSON", "💡"),
 ]
 
-@pytest.mark.parametrize("header, expected_title", ADMONITION_CASES)
-def test_standard_a2ui_round_trip(header, expected_title):
-    """Verifies that all standard A2UI headers survive a round-trip conversion."""
+@pytest.mark.parametrize("expected_header, title, emoji", ADMONITION_CASES)
+def test_standard_a2ui_conversion(expected_header, title, emoji):
+    """Verifies that GitHub style converts to expected A2UI headers."""
     body = "    Line 1\n    Line 2"
-    original = f"{header}\n{body}\n"
+    github_input = f"> {emoji} **{title}**\n>\n> Line 1\n> Line 2\n"
     
-    # MkDocs -> GitHub
-    github = to_github(original)
-    assert f"**{expected_title}**" in github
+    expected = f"{expected_header}\n{body}\n"
     
     # GitHub -> MkDocs
-    back = to_mkdocs(github)
-    assert back.strip() == original.strip()
+    result = to_mkdocs(github_input)
+    assert result.strip() == expected.strip()
 
 
 # --- 2. Empty Title Edge Case ---
 def test_empty_title_case():
     """
-    Verifies !!! tip "" converts to '> 💡' exactly.
-    - No trailing spaces
-    - No bold markers (****)
+    Verifies '> 💡' converts to !!! tip "".
     """
-    original = '!!! tip ""\n    Content.\n'
-    github = to_github(original)
+    github_input = "> 💡\n>\n> Content.\n"
+    expected = '!!! tip ""\n    Content.\n'
     
-    lines = github.splitlines()
-    assert lines[0] == "> 💡"  # Strictly no space or bold markers
-    assert lines[1] == ">"     # Spacer line
-    
-    back = to_mkdocs(github)
-    assert back == original
+    result = to_mkdocs(github_input)
+    assert result == expected
 
 
 # --- 3. Spacing & Internal Paragraph Preservation ---
@@ -73,49 +65,37 @@ def test_paragraph_spacing_and_trailing_lines():
     assert result == expected
 
 
-# --- 4. Unmapped/Unknown Type Fallback ---
-def test_unknown_type_fallback():
-    """
-    Verifies that an unknown admonition type defaults to the 'note' emoji (📝).
-    """
-    original = '!!! mystery "Secret"\n    Content.\n'
-    github = to_github(original)
-    
-    assert "> 📝 **Secret**" in github
-    
-    # Note: Round trip will convert it back to '!!! note' 
-    # because the source type 'mystery' wasn't in the map.
-    back = to_mkdocs(github)
-    assert '!!! note "Secret"' in back
-
-
-# --- 5. Multiple Blocks & Isolation ---
+# --- 4. Multiple Blocks & Isolation ---
 def test_multiple_blocks_in_one_file():
     """Ensures multiple blocks are processed without bleeding into each other."""
-    original = (
+    github_input = (
+        '> ✅ **Block 1**\n'
+        '> Content 1\n'
+        '\n'
+        '> ℹ️ **Block 2**\n'
+        '> Content 2\n'
+    )
+    
+    expected = (
         '!!! success "Block 1"\n'
         '    Content 1\n'
         '\n'
         '!!! info "Block 2"\n'
         '    Content 2\n'
     )
-    github = to_github(original)
-    assert "> ✅ **Block 1**" in github
-    assert "> ℹ️ **Block 2**" in github
     
-    back = to_mkdocs(github)
-    assert back == original
+    result = to_mkdocs(github_input)
+    assert result == expected
 
 
-# --- 6. False Positive Prevention ---
+# --- 5. False Positive Prevention ---
 def test_regular_blockquote_ignored():
     """Ensures regular quotes are not touched."""
     source = "> This is just a quote, not an admonition."
     assert to_mkdocs(source) == source
-    assert to_github(source) == source
 
 
-# --- 7. GitHub Official Alert Syntax Support ---
+# --- 6. GitHub Official Alert Syntax Support ---
 def test_github_alert_to_mkdocs():
     """Verifies official [!TYPE] syntax conversion."""
     source = "> [!WARNING]\n> **Security Notice**\n> Do not share keys."

@@ -142,11 +142,11 @@ The [`server_to_client.json`] schema is the top-level entry point. Every message
 
 ### The Standard Catalog
 
-The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`) and functions (e.g., `required`, `email`).
+The [`standard_catalog.json`] schema contains the definitions for all specific UI components (e.g., `Text`, `Button`, `Row`), functions (e.g., `required`, `email`), and the theme schema.
 
 **Swappable Catalogs & Validation:**
 
-The [`server_to_client.json`] envelope schema is designed to be catalog-agnostic. It references components using a placeholder filename: `catalog.json` (specifically `$ref: "catalog.json#/$defs/anyComponent"`).
+The [`server_to_client.json`] envelope schema is designed to be catalog-agnostic. It references components and themes using a placeholder filename: `catalog.json` (specifically `$ref: "catalog.json#/$defs/anyComponent"` and `$ref: "catalog.json#/$defs/theme"`).
 
 To validate A2UI messages:
 
