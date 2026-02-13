@@ -49,13 +49,13 @@
           "component": {
             "GoogleMap": {
               "center": {
-                "path": "mapConfig.center"
+                "path": "/mapConfig.center"
               },
               "zoom": {
-                "path": "mapConfig.zoom"
+                "path": "/mapConfig.zoom"
               },
               "pins": {
-                "path": "mapConfig.locations"
+                "path": "/mapConfig.locations"
               }
             }
           }

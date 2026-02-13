@@ -53,7 +53,7 @@
             "Text": {
               "usageHint": "h2",
               "text": {
-                "path": "actionTitle"
+                "path": "/actionTitle"
               }
             }
           }
@@ -63,7 +63,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "actionMessage"
+                "path": "/actionMessage"
               }
             }
           }

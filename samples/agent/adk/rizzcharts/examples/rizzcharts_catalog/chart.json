@@ -38,10 +38,10 @@
             "Chart": {
               "type": "doughnut",
               "title": {
-                "path": "chart.title"
+                "path": "/chart.title"
               },
               "chartData": {
-                "path": "chart.items"
+                "path": "/chart.items"
               }
             }
           }

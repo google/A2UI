@@ -31,7 +31,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "chart.title"
+                "path": "/chart.title"
               },
               "usageHint": "h2"
             }
@@ -78,7 +78,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "label"
+                "path": "/label"
               }
             }
           }
@@ -88,7 +88,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "value"
+                "path": "/value"
               }
             }
           }

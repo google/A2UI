@@ -26,12 +26,15 @@ BASE_SCHEMA_URL = "https://a2ui.org/"
 BASIC_CATALOG_NAME = "basic"
 INLINE_CATALOG_NAME = "inline"
 
+VERSION_0_8 = "0.8"
+VERSION_0_9 = "0.9"
+
 SPEC_VERSION_MAP = {
-    "0.8": {
+    VERSION_0_8: {
         SERVER_TO_CLIENT_SCHEMA_KEY: "specification/v0_8/json/server_to_client.json",
         CATALOG_SCHEMA_KEY: "specification/v0_8/json/standard_catalog_definition.json",
     },
-    "0.9": {
+    VERSION_0_9: {
         SERVER_TO_CLIENT_SCHEMA_KEY: "specification/v0_9/json/server_to_client.json",
         CATALOG_SCHEMA_KEY: "specification/v0_9/json/basic_catalog.json",
         COMMON_TYPES_SCHEMA_KEY: "specification/v0_9/json/common_types.json",

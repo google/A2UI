@@ -4,7 +4,7 @@
     "surfaceId": "default",
     "components": [
       { "id": "root-column", "component": { "Column": { "children": { "explicitList": ["title-heading", "restaurant-row-1"] } } } },
-      { "id": "title-heading", "component": { "Text": { "usageHint": "h1", "text": { "path": "title" } } } },
+      { "id": "title-heading", "component": { "Text": { "usageHint": "h1", "text": { "path": "/title" } } } },
       { "id": "restaurant-row-1", "component": { "Row": { "children": { "explicitList": ["item-card-1", "item-card-2"] } } } },
       { "id": "item-card-1", "weight": 1, "component": { "Card": { "child": "card-layout-1" } } },
       { "id": "card-layout-1", "component": { "Column": { "children": { "explicitList": ["template-image-1", "card-details-1"] } } } },

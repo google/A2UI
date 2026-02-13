@@ -76,7 +76,7 @@
             "component": {
                 "Text": {
                     "text": {
-                        "path": "name"
+                        "path": "/name"
                     },
                     "usageHint": "h4"
                 }
@@ -87,7 +87,7 @@
             "component": {
                 "Text": {
                     "text": {
-                        "path": "description"
+                        "path": "/description"
                     }
                 }
             }
