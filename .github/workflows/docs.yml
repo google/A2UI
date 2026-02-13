@@ -69,6 +69,22 @@ jobs:
       - name: Install documentation dependencies
         run: pip install -r requirements-docs.txt
 
+      - name: Validate documentation conversion script
+        run: pip install pytest && pytest docs/scripts/test_convert_docs.py
+
+      - name: Copy schemas to documentation
+        run: |
+          cp -R specification/* docs/specification/
+          # Flatten JSON files to version roots to support clean URLs without redirects
+          for version in v0_8 v0_9; do
+            if [ -d "docs/specification/$version/json" ]; then
+              cp docs/specification/$version/json/*.json docs/specification/$version/
+            fi
+          done
+
+      - name: Convert Admonitions in Documentation
+        run: python docs/scripts/convert_docs.py --mode github-to-mkdocs
+
       - name: Build Documentation (PR Check)
         if: github.event_name == 'pull_request'
         run: mkdocs build

@@ -20,11 +20,12 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 </div>
 
-!!! warning "️Status: Early Stage Public Preview"
-    A2UI is currently in **v0.8 (Public Preview)**. The specification and
-    implementations are functional but are still evolving. We are opening the project to
-    foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
-    Expect changes.
+> ⚠️ **️Status: Early Stage Public Preview**
+>
+> A2UI is currently in **v0.8 (Public Preview)**. The specification and
+> implementations are functional but are still evolving. We are opening the project to
+> foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
+> Expect changes.
 
 ## At a Glance
 
@@ -146,7 +147,7 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
     </video>
   </div>
   <p style="text-align: center; margin-top: 1rem; opacity: 0.8;">
-    Watch an agent chose to respond with a chart component to answer a numberical summary quesiton.  Then the agent chooses a Google Map component to answer a location question.  Both are custom components offered by the client.
+    Watch an agent chose to respond with a chart component to answer a numerical summary question.  Then the agent chooses a Google Map component to answer a location question.  Both are custom components offered by the client.
   </p>
 </div>
 

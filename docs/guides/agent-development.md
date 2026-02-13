@@ -15,7 +15,7 @@ Building an A2UI agent:
 
 We will use the ADK to build a simple agent.  We will start with text and eventually upgrade it to A2UI.
 
-See step by step instructions at the [ADK quickstart](https://google.github.io/adk-docs/get-started/python/).
+See step-by-step instructions at the [ADK quickstart](https://google.github.io/adk-docs/get-started/python/).
 
 ```bash
 pip install google-adk
@@ -88,14 +88,15 @@ You can test out this agent with the ADK web interface:
 adk web
 ```
 
-Select `my_agent` from the list, and ask questions about restaurants in new york.  You should see a list of restaurants in the UI as plain text.
+Select `my_agent` from the list, and ask questions about restaurants in New York.  You should see a list of restaurants in the UI as plain text.
 
 ## Generating A2UI Messages
 
 Getting the LLM to generate A2UI messages requires some prompt engineering.  
 
-!!! warning "Attention"
-    This is an area we are still designing.  The developer ergonomics of this are not yet finalized.
+> ⚠️ **Attention**
+>
+> This is an area we are still designing.  The developer ergonomics of this are not yet finalized.
 
 For now, let's copy the `a2ui_schema.py` from the contact lookup example.  This is the easiest way to get the A2UI schema and examples for your agent (subject to change).
 

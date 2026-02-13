@@ -2,7 +2,7 @@
 
 Renderers convert A2UI JSON messages into native UI components for different platforms.
 
-The [agents](agents.md) are responsible for generating the A2UI messages, 
+The [agents](agents.md) are responsible for generating the A2UI messages,
 and the [transports](transports.md) are responsible for delivering the messages to the client.
 The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, and render surfaces (widgets).
 
@@ -30,46 +30,21 @@ A2UI JSON → Renderer → Native Components → Your App
 3. **Render** using platform-native components
 4. **Style** according to your app's theme
 
-## Quick Start
+## Using a Renderer
 
-**Web Components (Lit):**
+Get started integrating A2UI into your application by following the setup guide for your chosen renderer:
 
-```bash
-npm install @a2ui/lit
-```
-
-TODO: Add a quickstart guide
-
-**Angular:**
-
-```bash
-npm install @a2ui/angular
-```
-
-TODO: Add a quickstart guide
-
-**Flutter:**
-
-```bash
-flutter pub add flutter_genui
-```
-
-TODO: Add a quickstart guide
-
-## Adding custom components to a renderer
-
-TODO: Add a guide
-
-## Theming or styling a renderer
-
-TODO: Add a guide
+- **[Lit (Web Components)](guides/client-setup.md#web-components-lit)**
+- **[Angular](guides/client-setup.md#angular)**
+- **[Flutter (GenUI SDK)](guides/client-setup.md#flutter-genui-sdk)**
 
 ## Building a Renderer
 
-Want to build a renderer for your platform? 
+Want to build a renderer for your platform?
 
 - See the [Roadmap](roadmap.md) for planned frameworks.
 - Review existing renderers for patterns.
+- Check out our [Renderer Development Guide](guides/renderer-development.md) for details on implementing a renderer.
 
 ### Key requirements:
 

@@ -1,11 +1,11 @@
 {
   "name": "@a2ui/angular",
-  "version": "0.0.1",
+  "version": "0.8.3",
   "scripts": {
-    "build": "ng build"
+    "build": "ng build && node postprocess-build.mjs"
   },
   "dependencies": {
-    "@a2ui/lit": "file:../lit",
+    "@a2ui/web_core": "file:../web_core",
     "markdown-it": "^14.1.0",
     "tslib": "^2.3.0"
   },
