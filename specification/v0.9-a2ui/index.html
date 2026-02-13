@@ -2114,9 +2114,9 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <h3 id="server-to-client-message-structure-the-envelope">Server to client message structure: the envelope<a class="headerlink" href="#server-to-client-message-structure-the-envelope" title="Permanent link">¶</a></h3>
 <p>The [<code>server_to_client.json</code>] schema is the top-level entry point. Every message streamed by the server must validate against this schema. It handles the message dispatching.</p>
 <h3 id="the-standard-catalog">The Standard Catalog<a class="headerlink" href="#the-standard-catalog" title="Permanent link">¶</a></h3>
-<p>The [<code>standard_catalog.json</code>] schema contains the definitions for all specific UI components (e.g., <code>Text</code>, <code>Button</code>, <code>Row</code>) and functions (e.g., <code>required</code>, <code>email</code>).</p>
+<p>The [<code>standard_catalog.json</code>] schema contains the definitions for all specific UI components (e.g., <code>Text</code>, <code>Button</code>, <code>Row</code>), functions (e.g., <code>required</code>, <code>email</code>), and the theme schema.</p>
 <p><strong>Swappable Catalogs &amp; Validation:</strong></p>
-<p>The [<code>server_to_client.json</code>] envelope schema is designed to be catalog-agnostic. It references components using a placeholder filename: <code>catalog.json</code> (specifically <code>$ref: "catalog.json#/$defs/anyComponent"</code>).</p>
+<p>The [<code>server_to_client.json</code>] envelope schema is designed to be catalog-agnostic. It references components and themes using a placeholder filename: <code>catalog.json</code> (specifically <code>$ref: "catalog.json#/$defs/anyComponent"</code> and <code>$ref: "catalog.json#/$defs/theme"</code>).</p>
 <p>To validate A2UI messages:</p>
 <ol>
 <li><strong>Standard Catalog</strong>: Map <code>catalog.json</code> to <code>standard_catalog.json</code>.</li>
