@@ -40,18 +40,19 @@ Each surface has a JSON object holding state:
 ```
 
 - `/user/name` → `"Alice"`
-- `/items/0` → `"Apple"`
+-   `/user/name` → `"Alice"`
+-   `/items/0` → `"Apple"`
 
 ## Literal vs. Path Values
 
 **Literal (fixed):**
 ```json
-{"id": "title", "component": {"Text": {"text": {"literalString": "Welcome"}}}}
+{"id": "title", "component": "Text", "text": "Welcome"}
 ```
 
 **Data-bound (reactive):**
 ```json
-{"id": "username", "component": {"Text": {"text": {"path": "/user/name"}}}}
+{"id": "username", "component": "Text", "text": {"path": "/user/name"}}
 ```
 
 When `/user/name` changes from "Alice" to "Bob", the text **automatically updates** to "Bob".
@@ -61,11 +62,11 @@ When `/user/name` changes from "Alice" to "Bob", the text **automatically update
 Components bound to data paths automatically update when the data changes:
 
 ```json
-{"id": "status", "component": {"Text": {"text": {"path": "/order/status"}}}}
+{"id": "status", "component": "Text", "text": {"path": "/order/status"}}
 ```
 
-- **Initial:** `/order/status` = "Processing..." → displays "Processing..."
-- **Update:** Send `dataModelUpdate` with `status: "Shipped"` → displays "Shipped"
+-   **Initial:** `/order/status` = "Processing..." → displays "Processing..."
+-   **Update:** Send `updateDataModel` with `status: "Shipped"` → displays "Shipped"
 
 No component updates needed—just data updates.
 
@@ -76,11 +77,8 @@ Use templates to render arrays:
 ```json
 {
   "id": "product-list",
-  "component": {
-    "Column": {
-      "children": {"template": {"dataBinding": "/products", "componentId": "product-card"}}
-    }
-  }
+  "component": "Column",
+  "children": {"template": {"path": "/products", "componentId": "product-card"}}
 }
 ```
 
@@ -96,11 +94,11 @@ Use templates to render arrays:
 Inside a template, paths are scoped to the array item:
 
 ```json
-{"id": "product-name", "component": {"Text": {"text": {"path": "/name"}}}}
+{"id": "product-name", "component": "Text", "text": {"path": "/name"}}
 ```
 
-- For `/products/0`, `/name` resolves to `/products/0/name` → "Widget"
-- For `/products/1`, `/name` resolves to `/products/1/name` → "Gadget"
+-   For `/products/0`, `/name` resolves to `/products/0/name` → "Widget"
+-   For `/products/1`, `/name` resolves to `/products/1/name` → "Gadget"
 
 Adding/removing items automatically updates the rendered components.
 
@@ -110,15 +108,15 @@ Interactive components update the data model bidirectionally:
 
 | Component | Example | User Action | Data Update |
 |-----------|---------|-------------|-------------|
-| **TextField** | `{"text": {"path": "/form/name"}}` | Types "Alice" | `/form/name` = "Alice" |
+| **TextField** | `{"value": {"path": "/form/name"}}` | Types "Alice" | `/form/name` = "Alice" |
 | **CheckBox** | `{"value": {"path": "/form/agreed"}}` | Checks box | `/form/agreed` = true |
-| **MultipleChoice** | `{"selections": {"path": "/form/country"}}` | Selects "Canada" | `/form/country` = ["ca"] |
+| **ChoicePicker** | `{"value": {"path": "/form/country"}}` | Selects "Canada" | `/form/country` = ["ca"] |
 
 ## Best Practices
 
 **1. Use granular updates** - Update only changed paths:
 ```json
-{"dataModelUpdate": {"path": "/user", "contents": [{"key": "name", "valueString": "Alice"}]}}
+{"version": "v0.9", "updateDataModel": {"surfaceId": "main", "path": "/user", "value": {"name": "Alice"}}}
 ```
 
 **2. Organize by domain** - Group related data:
@@ -130,3 +128,9 @@ Interactive components update the data model bidirectionally:
 ```json
 {"price": "$19.99"}  // Not: {"price": 19.99}
 ```
+
+**4. Use Client-Side Formatting** - For dynamic localization or complex updates, use client-side functions:
+```json
+{"text": {"call": "formatCurrency", "args": {"value": 19.99, "currency": "USD"}}}
+```
+See the **[Functions Reference](../reference/functions.md)** for a complete list of available functions.

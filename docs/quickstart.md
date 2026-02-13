@@ -2,6 +2,9 @@
 
 Get hands-on with A2UI by running the restaurant finder demo. This guide will have you experiencing agent-generated UI in less than 5 minutes.
 
+> Currently, most renderers in the repo are not yet updated to the latest spec (v0.9), so the messages generated
+> may not be as described in the v0.9 documentation.
+
 ## What You'll Build
 
 By the end of this quickstart, you'll have:
@@ -113,66 +116,49 @@ Let's peek at what the agent is sending. Here's a simplified example of the JSON
 
 ```json
 {
-  "surfaceUpdate": {
+  "version": "v0.9",
+  "updateComponents": {
     "surfaceId": "main",
     "components": [
       {
         "id": "header",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Book Your Table"},
-            "usageHint": "h1"
-          }
-        }
+        "component": "Text",
+        "text": "Book Your Table",
+        "variant": "h1"
       },
       {
         "id": "date-picker",
-        "component": {
-          "DateTimeInput": {
-            "label": {"literalString": "Select Date"},
-            "value": {"path": "/reservation/date"},
-            "enableDate": true
-          }
-        }
+        "component": "DateTimeInput",
+        "label": "Select Date",
+        "value": { "path": "/reservation/date" }
       },
       {
         "id": "submit-btn",
-        "component": {
-          "Button": {
-            "child": "submit-text",
-            "action": {"name": "confirm_booking"}
-          }
-        }
-      },
-      {
-        "id": "submit-text",
-        "component": {
-          "Text": {"text": {"literalString": "Confirm Reservation"}}
-        }
+        "component": "Button",
+        "label": "Confirm Reservation",
+        "action": { "name": "confirm_booking" }
       }
     ]
   }
 }
 ```
 
-This defines the UI components for the surface: a text header, a date picker, and a button.
+This defines the UI components for the surface.
 
 ### Populating Data
 
 ```json
 {
-  "dataModelUpdate": {
+  "version": "v0.9",
+  "updateDataModel": {
     "surfaceId": "main",
-    "contents": [
-      {
-        "key": "reservation",
-        "valueMap": [
-          {"key": "date", "valueString": "2025-12-15"},
-          {"key": "time", "valueString": "19:00"},
-          {"key": "guests", "valueInt": 2}
-        ]
+    "value": {
+      "reservation": {
+        "date": "2025-12-15",
+        "time": "19:00",
+        "guests": 2
       }
-    ]
+    }
   }
 }
 ```
@@ -182,10 +168,16 @@ This populates the data model that components can bind to.
 ### Signaling Render
 
 ```json
-{"beginRendering": {"surfaceId": "main", "root": "header"}}
+{
+  "version": "v0.9",
+  "createSurface": {
+    "surfaceId": "main",
+    "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+  }
+}
 ```
 
-This tells the client it has enough information to render the UI.
+This tells the client to create the surface and prepare for rendering with the standard catalog.
 
 > 💡 **It's Just JSON**
 >

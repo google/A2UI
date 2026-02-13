@@ -76,7 +76,7 @@ root_agent = Agent(
 )
 ```
 
-Don't forget to set the `GOOGLE_API_KEY` environment variable to run this example.  
+Don't forget to set the `GOOGLE_API_KEY` environment variable to run this example.
 
 ```bash
 echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
@@ -92,7 +92,7 @@ Select `my_agent` from the list, and ask questions about restaurants in New York
 
 ## Generating A2UI Messages
 
-Getting the LLM to generate A2UI messages requires some prompt engineering.  
+Getting the LLM to generate A2UI messages requires some prompt engineering.
 
 > ⚠️ **Attention**
 >
@@ -131,7 +131,7 @@ To generate the response, you MUST follow these rules:
 4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
 
 --- UI TEMPLATE RULES ---
--   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
+-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `updateDataModel.contents` object (e.g., set the "items" key to the list of restaurants).
 -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
 -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
 -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
@@ -159,8 +159,9 @@ Your agent will no longer strictly output text. Instead, it will output text and
 
 The `A2UI_SCHEMA` that we imported is a standard JSON schema that defines valid operations like:
 
-* `render` (displaying a UI)
-* `update` (changing data in an existing UI)
+* `createSurface` (displaying a UI)
+* `updateComponents` (changing the UI structure)
+* `updateDataModel` (changing data in an existing UI)
 
 Because the output is structured JSON, you may parse and validate it before sending it to the client.
 

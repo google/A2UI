@@ -22,7 +22,7 @@ A2UI styling works in layers:
 
 ```mermaid
 flowchart TD
-    A["1. Semantic Hints<br/>Agent provides hints<br/>(e.g., usageHint: 'h1')"]
+    A["1. Semantic Hints<br/>Agent provides hints<br/>(e.g., variant: 'h1')"]
     B["2. Theme Configuration<br/>You configure<br/>(colors, fonts, spacing)"]
     C["3. Component Overrides<br/>You customize<br/>(CSS/styles for specific components)"]
     D["4. Rendered Output<br/>Native platform widgets"]
@@ -37,16 +37,13 @@ Agents provide semantic hints (not visual styles) to guide client rendering:
 ```json
 {
   "id": "title",
-  "component": {
-    "Text": {
-      "text": {"literalString": "Welcome"},
-      "usageHint": "h1"
-    }
-  }
+  "component": "Text",
+  "text": "Welcome",
+  "variant": "h1"
 }
 ```
 
-**Common `usageHint` values:**
+**Common `variant` values:**
 - Text: `h1`, `h2`, `h3`, `h4`, `h5`, `body`, `caption`
 - Other components have their own hints (see [Component Reference](../reference/components.md))
 
@@ -130,28 +127,22 @@ TODO: Add custom font examples.
 
 ### 1. Use Semantic Hints, Not Visual Properties
 
-Agents should provide semantic hints (`usageHint`), never visual styles:
+Agents should provide semantic hints (`variant`), never visual styles:
 
 ```json
 // ✅ Good: Semantic hint
 {
-  "component": {
-    "Text": {
-      "text": {"literalString": "Welcome"},
-      "usageHint": "h1"
-    }
-  }
+  "component": "Text",
+  "text": "Welcome",
+  "variant": "h1"
 }
 
 // ❌ Bad: Visual properties (not supported)
 {
-  "component": {
-    "Text": {
-      "text": {"literalString": "Welcome"},
-      "fontSize": 24,
-      "color": "#FF0000"
-    }
-  }
+  "component": "Text",
+  "text": "Welcome",
+  "fontSize": 24,
+  "color": "#FF0000"
 }
 ```
 

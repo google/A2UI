@@ -8,13 +8,17 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 
 | Version | Status | Notes |
 |---------|--------|-------|
-| **v0.8** | ✅ Stable | Initial public release |
-| **v0.9** | 🚧 In Progress | Draft specification improvements |
+| **v0.10** | ✅ Draft | Draft |
+| **v0.9** | ✅ Current | Current stable release |
+| **v0.8** | ⏸️ Previous | Initial public release |
+
+> Currently, most renderers in the repo are not yet updated to the latest spec (v0.9), so the messages generated
+> may not be as described in the v0.9 documentation.
 
 Key features:
 
 - ✅ Streaming JSONL message format
-- ✅ Four core message types (`surfaceUpdate`, `dataModelUpdate`, `beginRendering`, `deleteSurface`)
+- ✅ Four core message types (`createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface`)
 - ✅ Adjacency list component model
 - ✅ JSON Pointer-based data binding
 - ✅ Separation of structure and state

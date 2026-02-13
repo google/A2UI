@@ -17,9 +17,9 @@ Client (Stream Reader) → Message Parser → Renderer → Native UI
 A2UI defines a sequence of JSON messages that describe the UI. When streamed, these messages are often formatted as **JSON Lines (JSONL)**, where each line is a complete JSON object.
 
 ```jsonl
-{"surfaceUpdate":{"surfaceId":"main","components":[...]}}
-{"dataModelUpdate":{"surfaceId":"main","contents":[{"key":"user","valueMap":[{"key":"name","valueString":"Alice"}]}]}}
-{"beginRendering":{"surfaceId":"main","root":"root-component"}}
+{"version": "v0.9", "createSurface": {"surfaceId": "main", "catalogId": "..."}}
+{"version": "v0.9", "updateComponents": {"surfaceId": "main", "components": [...]}}
+{"version": "v0.9", "updateDataModel": {"surfaceId": "main", "value": {"user": "Alice"}}}
 ```
 
 **Why this format?**
@@ -30,30 +30,44 @@ A sequence of self-contained JSON objects is streaming-friendly, easy for LLMs t
 
 **User:** "Book a table for 2 tomorrow at 7pm"
 
-**1. Agent defines UI structure:**
+**1. Agent signals render (v0.9 starts with creation):**
 
 ```json
-{"surfaceUpdate": {"surfaceId": "booking", "components": [
-  {"id": "root", "component": {"Column": {"children": {"explicitList": ["header", "guests-field", "submit-btn"]}}}},
-  {"id": "header", "component": {"Text": {"text": {"literalString": "Confirm Reservation"}, "usageHint": "h1"}}},
-  {"id": "guests-field", "component": {"TextField": {"label": {"literalString": "Guests"}, "text": {"path": "/reservation/guests"}}}},
-  {"id": "submit-btn", "component": {"Button": {"child": "submit-text", "action": {"name": "confirm", "context": [{"key": "details", "value": {"path": "/reservation"}}]}}}}
-]}}
+{"version": "v0.9", "createSurface": {"surfaceId": "booking", "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"}}
 ```
 
-**2. Agent populates data:**
+**2. Agent defines UI structure:**
 
 ```json
-{"dataModelUpdate": {"surfaceId": "booking", "path": "/reservation", "contents": [
-  {"key": "datetime", "valueString": "2025-12-16T19:00:00Z"},
-  {"key": "guests", "valueString": "2"}
-]}}
+{
+  "version": "v0.9",
+  "updateComponents": {
+    "surfaceId": "booking",
+    "components": [
+      {"id": "root", "component": "Column", "children": ["header", "guests-field", "submit-btn"]},
+      {"id": "header", "component": "Text", "text": "Confirm Reservation", "variant": "h1"},
+      {"id": "guests-field", "component": "TextField", "label": "Guests", "value": {"path": "/reservation/guests"}},
+      {"id": "submit-btn", "component": "Button", "child": "submit-text", "action": {"name": "confirm", "context": {"path": "/reservation"}}},
+      {"id": "submit-text", "component": "Text", "text": "Confirm"}
+    ]
+  }
+}
 ```
 
-**3. Agent signals render:**
+**3. Agent populates data:**
 
 ```json
-{"beginRendering": {"surfaceId": "booking", "root": "root"}}
+{
+  "version": "v0.9",
+  "updateDataModel": {
+    "surfaceId": "booking",
+    "path": "/reservation",
+    "value": {
+      "datetime": "2025-12-16T19:00:00Z",
+      "guests": 2
+    }
+  }
+}
 ```
 
 **4. User edits guests to "3"** → Client updates `/reservation/guests` automatically (no message to agent yet)
@@ -61,10 +75,10 @@ A sequence of self-contained JSON objects is streaming-friendly, easy for LLMs t
 **5. User clicks "Confirm"** → Client sends action with updated data:
 
 ```json
-{"userAction": {"name": "confirm", "surfaceId": "booking", "context": {"details": {"datetime": "2025-12-16T19:00:00Z", "guests": "3"}}}}
+{"action": {"name": "confirm", "surfaceId": "booking", "context": {"datetime": "2025-12-16T19:00:00Z", "guests": 3}}}
 ```
 
-**6. Agent responds** → Updates UI or sends `{"deleteSurface": {"surfaceId": "booking"}}` to clean up
+**6. Agent responds** → Updates UI or sends `{"version": "v0.9", "deleteSurface": {"surfaceId": "booking"}}` to clean up
 
 ## Transport Options
 
