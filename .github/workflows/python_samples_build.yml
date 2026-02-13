@@ -45,6 +45,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install uv
 
+      - name: Check Formatting
+        working-directory: samples/agent/adk
+        run: uv run pyink --check .
+
       - name: Build contact_lookup
         working-directory: samples/agent/adk/contact_lookup
         run: uv build .
