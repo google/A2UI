@@ -36,7 +36,7 @@ app.use(
     maxAge: '1y',
     index: false,
     redirect: false,
-  })
+  }),
 );
 
 app.post('/a2a', (req, res) => {

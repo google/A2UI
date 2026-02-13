@@ -93,8 +93,8 @@ CONTACT_UI_EXAMPLES = """
       { "id": "call_text_column", "component": { "Column": { "children": { "explicitList": ["call_primary_text", "call_secondary_text"]} , "distribution": "start", "alignment": "start"} } } ,
       { "id": "info_row_4", "component": { "Row": { "children": { "explicitList": ["call_icon", "call_text_column"]} , "distribution": "start", "alignment": "start"} } } ,
       { "id": "info_rows_column", "weight": 1, "component": { "Column": { "children": { "explicitList": ["info_row_1", "info_row_2", "info_row_3", "info_row_4"]} , "alignment": "stretch"} } } ,
-      { "id": "button_1_text", "component": { "Text": { "text": { "literalString": "Follow"} } } } , { "id": "button_1", "component": { "Button": { "child": "button_1_text", "primary": true, "action": { "name": "follow_contact"} } } } ,
-      { "id": "button_2_text", "component": { "Text": { "text": { "literalString": "Message"} } } } , { "id": "button_2", "component": { "Button": { "child": "button_2_text", "primary": false, "action": { "name": "send_message"} } } } ,
+      { "id": "button_1_text", "component": { "Text": { "text": { "literalString": "Follow"} } } } , { "id": "button_1", "component": { "Button": { "child": "button_1_text", "primary": true, "action": { "name": "follow_contact", "context": [ { "key": "contactName", "value": { "path": "name" } } ] } } } } ,
+      { "id": "button_2_text", "component": { "Text": { "text": { "literalString": "Message"} } } } , { "id": "button_2", "component": { "Button": { "child": "button_2_text", "primary": false, "action": { "name": "send_message", "context": [ { "key": "contactName", "value": { "path": "name" } } ] } } } } ,
       { "id": "action_buttons_row", "component": { "Row": { "children": { "explicitList": ["button_1", "button_2"]} , "distribution": "center", "alignment": "center"} } } ,
       { "id": "link_text", "component": { "Text": { "text": { "literalString": "[View Full Profile](/profile)"} } } } ,
       { "id": "link_text_wrapper", "component": { "Row": { "children": { "explicitList": ["link_text"]} , "distribution": "center", "alignment": "center"} } } ,
@@ -121,25 +121,26 @@ CONTACT_UI_EXAMPLES = """
 
 ---BEGIN ACTION_CONFIRMATION_EXAMPLE---
 [
-  { "beginRendering": { "surfaceId": "action-modal", "root": "modal-wrapper", "styles": { "primaryColor": "#007BFF", "font": "Roboto" } } },
+  { "beginRendering": { "surfaceId": "contact-card", "root": "message-success-card"} },
   { "surfaceUpdate": {
-    "surfaceId": "action-modal",
+    "surfaceId": "contact-card",
     "components": [
-      { "id": "modal-wrapper", "component": { "Modal": { "entryPointChild": "hidden-entry-point", "contentChild": "modal-content-column" } } },
-      { "id": "hidden-entry-point", "component": { "Text": { "text": { "literalString": "" } } } },
-      { "id": "modal-content-column", "component": { "Column": { "children": { "explicitList": ["modal-title", "modal-message", "dismiss-button"] }, "alignment": "center" } } },
-      { "id": "modal-title", "component": { "Text": { "usageHint": "h2", "text": { "path": "actionTitle" } } } },
-      { "id": "modal-message", "component": { "Text": { "text": { "path": "actionMessage" } } } },
-      { "id": "dismiss-button-text", "component": { "Text": { "text": { "literalString": "Dismiss" } } } },
-      { "id": "dismiss-button", "component": { "Button": { "child": "dismiss-button-text", "primary": true, "action": { "name": "dismiss_modal" } } } }
+      { "id": "success_icon", "component": { "Icon": { "name": { "literalString": "send"}, "size": 48.0, "color": "#4CAF50"} } },
+      { "id": "success_title", "component": { "Text": { "text": { "path": "actionTitle"}, "usageHint": "h2"} } },
+      { "id": "success_message", "component": { "Text": { "text": { "path": "actionMessage"} } } },
+      { "id": "back_button_text", "component": { "Text": { "text": { "literalString": "Back to Profile"} } } },
+      { "id": "back_button", "component": { "Button": { "child": "back_button_text", "primary": false, "action": { "name": "view_profile", "context": [ { "key": "contactName", "value": { "path": "contactName" } } ] } } } },
+      { "id": "success_column", "component": { "Column": { "children": { "explicitList": ["success_icon", "success_title", "success_message", "back_button"]}, "alignment": "center"} } },
+      { "id": "message-success-card", "component": { "Card": { "child": "success_column"} } }
     ]
   } },
   { "dataModelUpdate": {
-    "surfaceId": "action-modal",
+    "surfaceId": "contact-card",
     "path": "/",
     "contents": [
-      { "key": "actionTitle", "valueString": "Action Confirmation" },
-      { "key": "actionMessage", "valueString": "Your action has been processed." }
+      { "key": "actionTitle", "valueString": "Message Sent" },
+      { "key": "actionMessage", "valueString": "Your message has been sent to." },
+      { "key": "contactName", "valueString": "" }
     ]
   } }
 ]
@@ -152,9 +153,19 @@ CONTACT_UI_EXAMPLES = """
     "surfaceId": "contact-card",
     "components": [
       { "id": "success_icon", "component": { "Icon": { "name": { "literalString": "check_circle"}, "size": 48.0, "color": "#4CAF50"} } } ,
-      { "id": "success_text", "component": { "Text": { "text": { "literalString": "Successfully Followed"}, "usageHint": "h2"} } } ,
-      { "id": "success_column", "component": { "Column": { "children": { "explicitList": ["success_icon", "success_text"]} , "alignment": "center"} } } ,
+      { "id": "success_text", "component": { "Text": { "text": { "path": "followMessage"}, "usageHint": "h2"} } } ,
+      { "id": "back_button_text", "component": { "Text": { "text": { "literalString": "Back to Profile"} } } } ,
+      { "id": "back_button", "component": { "Button": { "child": "back_button_text", "primary": false, "action": { "name": "view_profile", "context": [ { "key": "contactName", "value": { "path": "contactName" } } ] } } } } ,
+      { "id": "success_column", "component": { "Column": { "children": { "explicitList": ["success_icon", "success_text", "back_button"]} , "alignment": "center"} } } ,
       { "id": "success_card", "component": { "Card": { "child": "success_column"} } }
+    ]
+  } },
+  { "dataModelUpdate": {
+    "surfaceId": "contact-card",
+    "path": "/",
+    "contents": [
+      { "key": "followMessage", "valueString": "Successfully Followed" },
+      { "key": "contactName", "valueString": "" }
     ]
   } }
 ]
