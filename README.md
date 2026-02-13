@@ -7,6 +7,8 @@ to generate or populate rich user interfaces.
 
 <img src="docs/assets/a2ui_gallery_examples.png" alt="Gallery of A2UI components" height="400">
 
+*A Widget Builder demo built with CopilotKit. Try it [here](https://go.copilotkit.ai/a2ui-widget-builder-demo).*
+    
 *A gallery of A2UI rendered cards, showing a variety of UI compositions that A2UI can achieve.*
 
 ## ⚠️ Status: Early stage public preview
