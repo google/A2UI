@@ -251,7 +251,7 @@ Example of an A2A AgentCard advertising that the agent supports the basic and ri
         "description": "Provides agent driven UI using the A2UI JSON format.",
         "params": {
           "supportedCatalogIds": [
-            "https://a2ui.org/.../standard_catalog_definition.json",
+            "https://a2ui.org/specification/v0_9/standard_catalog.json",
             "https://github.com/.../rizzcharts_catalog_definition.json"
           ]
         }
@@ -277,7 +277,7 @@ Example of A2A message containing the supportedCatalogIds in metadata
   "metadata": {
     "a2uiClientCapabilities": {
       "supportedCatalogIds": [
-        "https://a2ui.org/.../standard_catalog_definition.json",
+        "https://a2ui.org/specification/v0_9/standard_catalog.json",
         "https://github.com/.../rizzcharts_catalog_definition.json"
       ]
     }
@@ -295,7 +295,7 @@ Example A2UI Message from the agent defining the catalog_id used in a surface
 {
   "createSurface": {
     "surfaceId": "salesDashboard",
-    "catalogId": "https://a2ui.org/.../standard_catalog_definition.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
   }
 }
 ```
