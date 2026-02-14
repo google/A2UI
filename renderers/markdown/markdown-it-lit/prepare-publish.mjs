@@ -54,7 +54,7 @@ if (litPkg.exports) {
 writeFileSync(join(distDir, 'package.json'), JSON.stringify(litPkg, null, 2));
 
 // 6. Copy README and LICENSE
-['README.md', 'LICENSE'].forEach(file => {
+['README.md', 'LICENSE'].forEach((file) => {
   const src = join(dirname, file);
   if (!existsSync(src)) {
     throw new Error(`Missing required file for publishing: ${file}`);

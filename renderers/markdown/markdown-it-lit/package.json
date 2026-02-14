@@ -17,12 +17,18 @@
     "url": "git+https://github.com/google/A2UI.git"
   },
   "files": [
-    "dist/src"
+    "dist/src/**/*.js",
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.map",
+    "!dist/src/**/*.test.*"
   ],
   "scripts": {
     "prepack": "npm run build",
     "build": "wireit",
-    "build:tsc": "wireit"
+    "build:tsc": "wireit",
+    "test": "wireit",
+    "format": "prettier --ignore-path ../.gitignore --write .",
+    "format:check": "prettier --ignore-path ../.gitignore --check ."
   },
   "wireit": {
     "build": {
@@ -42,6 +48,12 @@
         "!dist/**/*.min.js{,.map}"
       ],
       "clean": "if-file-deleted"
+    },
+    "test": {
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/*.test.js",
+      "dependencies": [
+        "build"
+      ]
     }
   },
   "keywords": [],
@@ -51,16 +63,19 @@
     "url": "https://github.com/google/A2UI/issues"
   },
   "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "peerDependencies": {
+    "@a2ui/web_core": "file:../../web_core"
+  },
   "devDependencies": {
+    "@a2ui/web_core": "file:../../web_core",
     "@types/node": "^24.10.1",
+    "prettier": "^3.8.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
   "dependencies": {
-    "@lit/context": "^1.1.4",
-    "lit": "^3.3.1",
-    "@a2ui/lit": "file:../../lit",
     "@a2ui/markdown-it-shared": "file:../markdown-it-shared",
-    "@a2ui/web_core": "file:../../web_core"
+    "@lit/context": "^1.1.4",
+    "lit": "^3.3.1"
   }
 }

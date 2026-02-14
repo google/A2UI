@@ -14,17 +14,11 @@
  limitations under the License.
  */
 
-import { noChange } from "lit";
-import {
-  Directive,
-  DirectiveParameters,
-  DirectiveResult,
-  Part,
-  directive,
-} from "lit/directive.js";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { markdownRenderer } from "@a2ui/markdown-it-shared";
-import * as Types from "@a2ui/web_core/types/types";
+import { noChange } from 'lit';
+import { Directive, DirectiveParameters, DirectiveResult, Part, directive } from 'lit/directive.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { markdownRenderer } from '@a2ui/markdown-it-shared';
+import * as Types from '@a2ui/web_core/types/types';
 
 /**
  * A Lit directive that renders markdown to HTML.
@@ -32,15 +26,17 @@ import * as Types from "@a2ui/web_core/types/types";
  * This directive is intended to be used by the A2UI Lit renderer to render
  * markdown to HTML.
  */
-class MarkdownItDirective extends Directive implements Types.MarkdownRenderer<DirectiveResult> {
+export class MarkdownItDirective
+  extends Directive
+  implements Types.MarkdownRenderer<DirectiveResult>
+{
   private lastValue: string | null = null;
   private lastTagClassMap: string | null = null;
 
   update(_part: Part, [value, tagClassMap]: DirectiveParameters<this>) {
-    if (
-      this.lastValue === value &&
-      JSON.stringify(tagClassMap) === this.lastTagClassMap
-    ) {
+    // Check if the value and tagClassMap are the same as the last time.
+    // If they are, return noChange to avoid re-rendering.
+    if (this.lastValue === value && JSON.stringify(tagClassMap) === this.lastTagClassMap) {
       return noChange;
     }
 
