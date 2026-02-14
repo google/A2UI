@@ -14,16 +14,20 @@
  limitations under the License.
  */
 
-import { MessageProcessor, Surface } from '@a2ui/angular';
+import { MessageProcessor, Surface, MarkdownRenderer } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
 import { Component, DOCUMENT, inject, signal } from '@angular/core';
 import { Client } from './client';
+import { MarkdownItMarkdownRenderer } from '@a2ui/markdown-it-angular';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: 'app.css',
   imports: [Surface],
+  providers: [
+    { provide: MarkdownRenderer, useClass: MarkdownItMarkdownRenderer },
+  ]
 })
 export class App {
   protected client = inject(Client);

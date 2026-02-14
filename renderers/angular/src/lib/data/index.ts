@@ -14,5 +14,6 @@
  limitations under the License.
  */
 
+export * from './markdown';
 export * from './processor';
 export * from './types';

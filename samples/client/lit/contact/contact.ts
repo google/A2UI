@@ -37,6 +37,7 @@ import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
 import { v0_8 } from "@a2ui/lit";
 import * as UI from "@a2ui/lit/ui";
+import { markdown } from "@a2ui/markdown-it-lit";
 
 // Demo elements.
 import "./ui/ui.js";
@@ -53,6 +54,9 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
   @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
+
+  @provide({ context: UI.Context.markdown })
+  accessor #markdown = markdown;
 
   @state()
   accessor #requesting = false;

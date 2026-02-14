@@ -14,29 +14,34 @@
  limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { html } from "lit";
+import {
+  directive,
+  Directive,
+  DirectiveResult,
+  PartInfo,
+} from "lit/directive.js";
 import * as Types from "@a2ui/web_core/types/types";
 
 /**
  * A minimal Markdown renderer that only supports a few tags.
  *
- * Configure @a2ui/markdown-it-angular, or build a custom Markdown renderer
+ * Configure @a2ui/markdown-it-lit, or your custom Markdown renderer
  * to actually parse and render Markdown in your app.
  */
-@Injectable({ providedIn: 'root' })
-export class MarkdownRenderer {
-
+class MinimalMarkdownRendererDirective extends Directive implements Types.MarkdownRenderer<DirectiveResult> {
   static _warned = false;
 
-  constructor() {
+  constructor(partInfo: PartInfo) {
+    super(partInfo);
     /**
      * Warn the user in case they need actual Markdown rendering.
      */
-    if (!MarkdownRenderer._warned) {
-      console.warn("[MarkdownRenderer]",
+    if (!MinimalMarkdownRendererDirective._warned) {
+      console.warn("[MinimalMarkdownRendererDirective]",
         "is a placeholder Markdown renderer. Most features are not supported.\n",
-        "Use `@a2ui/markdown-it-angular` for a fully-featured Markdown renderer.");
-      MarkdownRenderer._warned = true;
+        "Use `@a2ui/markdown-it-lit` for a fully-featured Markdown renderer.");
+      MinimalMarkdownRendererDirective._warned = true;
     }
   }
 
@@ -46,33 +51,33 @@ export class MarkdownRenderer {
    * Resist the urge to "improve" this method. Instead, use a more proper
    * Markdown renderer. This is just a placeholder.
    */
-  render(markdown: string, _tagClassMap?: Types.MarkdownRendererTagClassMap) : string {
+  render(markdown: string, _tagClassMap?: Types.MarkdownRendererTagClassMap) : DirectiveResult {
     if (markdown.startsWith('# ')) {
       let classes = this.getClasses("h1", _tagClassMap);
-      return `<h1 class="${classes}">${markdown.substring(2)}</h1>`;
+      return html`<h1 class="${classes}">${markdown.substring(2)}</h1>`;
     }
     if (markdown.startsWith('## ')) {
       let classes = this.getClasses("h2", _tagClassMap);
-      return `<h2 class="${classes}">${markdown.substring(3)}</h2>`;
+      return html`<h2 class="${classes}">${markdown.substring(3)}</h2>`;
     }
     if (markdown.startsWith('### ')) {
       let classes = this.getClasses("h3", _tagClassMap);
-      return `<h3 class="${classes}">${markdown.substring(4)}</h3>`;
+      return html`<h3 class="${classes}">${markdown.substring(4)}</h3>`;
     }
     if (markdown.startsWith('#### ')) {
       let classes = this.getClasses("h4", _tagClassMap);
-      return `<h4 class="${classes}">${markdown.substring(5)}</h4>`;
+      return html`<h4 class="${classes}">${markdown.substring(5)}</h4>`;
     }
     if (markdown.startsWith('##### ')) {
       let classes = this.getClasses("h5", _tagClassMap);
-      return `<h5 class="${classes}">${markdown.substring(6)}</h5>`;
+      return html`<h5 class="${classes}">${markdown.substring(6)}</h5>`;
     }
     if (markdown.startsWith('*') && markdown.endsWith('*')) {
       let classes = this.getClasses("strong", _tagClassMap);
-      return `<strong class="${classes}">${markdown.substring(1, markdown.length - 1)}</strong>`;
+      return html`<strong class="${classes}">${markdown.substring(1, markdown.length - 1)}</strong>`;
     }
     let classes = this.getClasses("p", _tagClassMap);
-    return `<p class="${classes}">${markdown}</p>`;
+    return html`<p class="${classes}">${markdown}</p>`;
   }
 
   /**
@@ -85,3 +90,5 @@ export class MarkdownRenderer {
     return _tagClassMap?.[tag]?.join(' ') ?? '';
   }
 }
+
+export const minimalMarkdown = directive(MinimalMarkdownRendererDirective);

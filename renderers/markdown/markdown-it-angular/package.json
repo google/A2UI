@@ -1,0 +1,47 @@
+{
+  "name": "@a2ui/markdown-it-angular",
+  "version": "0.8.3",
+  "description": "A2UI Core Library",
+  "main": "./dist/fesm2022/a2ui-markdown-it-angular.mjs",
+  "types": "./dist/types/a2ui-markdown-it-angular.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "ng build",
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "test:watch": "ng test --browsers=ChromeHeadless",
+    "format": "prettier --ignore-path ../.gitignore --write .",
+    "format:check": "prettier --ignore-path ../.gitignore --check ."
+  },
+  "dependencies": {
+    "@a2ui/markdown-it-shared": "file:../markdown-it-shared",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@a2ui/web_core": "file:../../web_core",
+    "@angular/core": "^21.0.0"
+  },
+  "devDependencies": {
+    "@a2ui/angular": "file:../../angular",
+    "@a2ui/web_core": "file:../../web_core",
+    "@angular/build": "21.1.4",
+    "@angular/common": "21.1.4",
+    "@angular/compiler": "21.1.4",
+    "@angular/compiler-cli": "21.1.4",
+    "@angular/core": "21.1.4",
+    "@angular/platform-browser": "21.1.4",
+    "@angular/platform-browser-dynamic": "21.1.4",
+    "@types/jasmine": "~5.1.0",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^20.17.19",
+    "jasmine-core": "~5.9.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-jasmine": "^5.1.0",
+    "karma-jasmine-html-reporter": "^2.1.0",
+    "ng-packagr": "^21.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
+  }
+}

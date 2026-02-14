@@ -1,0 +1,81 @@
+{
+  "name": "@a2ui/markdown-it-lit",
+  "version": "0.8.1",
+  "description": "A2UI Lit markdown renderer.",
+  "main": "./dist/src/markdown.js",
+  "types": "./dist/src/markdown.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/markdown.d.ts",
+      "default": "./dist/src/markdown.js"
+    }
+  },
+  "type": "module",
+  "repository": {
+    "directory": "renderers/markdown-it-lit",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "files": [
+    "dist/src/**/*.js",
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.map",
+    "!dist/src/**/*.test.*"
+  ],
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "test": "wireit",
+    "format": "prettier --ignore-path ../.gitignore --write .",
+    "format:check": "prettier --ignore-path ../.gitignore --check ."
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc -b --pretty",
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.json",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/",
+        "!dist/**/*.min.js{,.map}"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "test": {
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/*.test.js",
+      "dependencies": [
+        "build"
+      ]
+    }
+  },
+  "keywords": [],
+  "author": "Google",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "peerDependencies": {
+    "@a2ui/web_core": "file:../../web_core"
+  },
+  "devDependencies": {
+    "@a2ui/web_core": "file:../../web_core",
+    "@types/node": "^24.10.1",
+    "prettier": "^3.8.1",
+    "typescript": "^5.8.3",
+    "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "@a2ui/markdown-it-shared": "file:../markdown-it-shared",
+    "@lit/context": "^1.1.4",
+    "lit": "^3.3.1"
+  }
+}

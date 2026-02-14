@@ -530,3 +530,28 @@ export declare interface Surface {
   components: Map<string, ComponentInstance>;
   styles: Record<string, string>;
 }
+
+/**
+ * A list of classnames to be applied to a tag when rendering Markdown.
+ *
+ * For example, the following TagClassMap would apply the `a2ui-paragraph` class
+ * to all `<p>` tags:
+ *
+ * `{ "p": ["a2ui-paragraph"] }`
+ */
+export type MarkdownRendererTagClassMap = Record<string, string[]>;
+
+/**
+ * An object that can render Markdown with a given tag class map.
+ *
+ * The generic type parameter `T` is the type of the rendered output.
+ *
+ * This type is shared so it can be implemented and injected per renderer.
+ *
+ * TODO: replace `tagClassMap` by a more general MarkdownRendererConfig type,
+ * so it can be easily extended in the future without needing to update all
+ * renderers at the same time.
+ */
+export interface MarkdownRenderer<T> {
+  render(value: string, tagClassMap?: MarkdownRendererTagClassMap): T;
+}

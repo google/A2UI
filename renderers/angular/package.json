@@ -6,7 +6,6 @@
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
-    "markdown-it": "^14.1.0",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
@@ -22,7 +21,6 @@
     "@angular/core": "^21.0.0",
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
-    "@types/markdown-it": "^14.1.2",
     "@types/node": "^20.17.19",
     "@types/uuid": "^10.0.0",
     "@vitest/browser": "^4.0.15",

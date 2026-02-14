@@ -14,4 +14,4 @@
  limitations under the License.
  */
 
-export { minimalMarkdown } from "./minimal_markdown.js";
+export * from './lib/markdown';
