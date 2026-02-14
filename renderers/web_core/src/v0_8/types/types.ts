@@ -533,6 +533,11 @@ export interface Surface {
 
 /**
  * A list of classnames to be applied to a tag when rendering Markdown.
+ *
+ * For example, the following TagClassMap would apply the `a2ui-paragraph` class
+ * to all `<p>` tags:
+ *
+ * `{ "p": ["a2ui-paragraph"] }`
  */
 export type MarkdownRendererTagClassMap = Record<string, string[]>;
 
