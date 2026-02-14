@@ -26,7 +26,7 @@ import * as Types from "@a2ui/web_core/types/types";
 /**
  * A minimal Markdown renderer that only supports a few tags.
  *
- * Configure @a2ui/lit-markdown, or your custom Markdown renderer
+ * Configure @a2ui/markdown-it-lit, or your custom Markdown renderer
  * to actually parse and render Markdown in your app.
  */
 class MinimalMarkdownRendererDirective extends Directive implements Types.MarkdownRenderer<DirectiveResult> {
