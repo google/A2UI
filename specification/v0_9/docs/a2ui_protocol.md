@@ -112,11 +112,51 @@ A2A is uniquely capable of handling remote agent communication, and can also pro
 **[AG-UI](https://docs.ag-ui.com/introduction)** is also an excellent transport option for A2UI Agent–User Interaction protocol.
 AG UI provides convenient integrations into many agent frameworks and frontends. AG UI provides low latency and shared state message passing between front ends and agentic backends.
 
+#### MCP (Model Context Protocol) binding
+
+A2UI over MCP uses a single JSON object payload, transported through MCP tool results or MCP resources.
+
+- **Message container**: The canonical payload shape is an object with a `messages` field.
+- **Schema binding**:
+  - For server-to-client UI updates, `messages` MUST validate against [server_to_client_list.json](../json/server_to_client_list.json).
+  - For client-to-server events, `messages` MUST validate against [client_to_server_list.json](../json/client_to_server_list.json).
+- **Aggregation and ordering**: `messages` is an ordered batch. Receivers MUST process messages in order.
+- **Error handling**: If a message in the batch fails validation or application, receivers SHOULD report/log that message-level failure and SHOULD continue processing later messages in the same batch.
+- **Tool vs. resource usage**:
+  - Use MCP **tools** for request/response flows (initial render requests and user actions).
+  - Use MCP **resources** (including subscriptions/updates) for long-lived UI surfaces that are updated over time.
+- **Post-creation updates**: UIs remain mutable after first render. Additional batches MAY contain `updateComponents`, `updateDataModel`, and `deleteSurface` for previously created `surfaceId`s.
+- **Catalog negotiation**: Before the first `createSurface`, clients MUST provide `a2uiClientCapabilities` that conform to [`a2ui_client_capabilities.json`]. Servers MUST choose a compatible catalog and set it in `createSurface.catalogId`.
+
+Example MCP payload:
+
+```json
+{
+  "messages": [
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "main",
+        "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+      }
+    },
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "main",
+        "components": [
+          { "id": "root", "component": "Text", "text": "Hello from MCP" }
+        ]
+      }
+    }
+  ]
+}
+```
+
 #### Other transports
 
 A2UI can also be carried over:
 
-- **[MCP (Model Context Protocol)](https://modelcontextprotocol.io/docs/getting-started/intro)**: Delivered as tool outputs or resource subscriptions.
 - **[SSE](https://en.wikipedia.org/wiki/Server-sent_events) with [JSON RPC](https://www.jsonrpc.org/)**: Standard server-sent events for web integrations that support streaming, and JSON RPC for client-server communication.
 - **[WebSockets](https://en.wikipedia.org/wiki/WebSocket)**: For bidirectional, real-time sessions.
 - **[REST](https://cloud.google.com/discover/what-is-rest-api?hl=en)**: For simple use case, REST APIs will work but lack streaming capabilities.
