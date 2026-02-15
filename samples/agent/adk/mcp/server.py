@@ -24,6 +24,8 @@ from mcp.shared._httpx_utils import create_mcp_http_client
 from starlette.requests import Request
 from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
 
+A2UI_MCP_MESSAGES_KEY = "messages"
+
 
 def load_a2ui_schema() -> dict[str, Any]:
   current_dir = pathlib.Path(__file__).resolve().parent
@@ -80,7 +82,7 @@ def main(port: int, transport: str) -> int:
   @app.call_tool()
   async def handle_call_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     if name == "get_recipe_a2ui":
-      return {"events": recipe_a2ui_json}
+      return {A2UI_MCP_MESSAGES_KEY: recipe_a2ui_json}
 
     if name == "send_a2ui_user_action":
       return {"response": f"Received A2UI user action", "args": arguments}
@@ -102,8 +104,8 @@ def main(port: int, transport: str) -> int:
             # TODO fix this in MCP SDK
             outputSchema={
                 "type": "object",
-                "properties": {"events": a2ui_schema},
-                "required": ["events"],
+                "properties": {A2UI_MCP_MESSAGES_KEY: a2ui_schema},
+                "required": [A2UI_MCP_MESSAGES_KEY],
                 "additionalProperties": False,
             },
         ),
