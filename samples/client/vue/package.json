@@ -1,0 +1,16 @@
+{
+  "name": "@a2ui/vue3-samples",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start:restaurant": "pnpm --filter vue-restaurant dev",
+    "start:gallery": "pnpm --filter vue-gallery dev",
+    "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
+    "build:renderer": "cd ../../../renderers/web_core && npm install && npm run build && cd ../vue && npm install && npm run build",
+    "demo:restaurant": "pnpm run build:renderer && pnpm install && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"pnpm run serve:agent:restaurant\" \"pnpm run start:restaurant\""
+  },
+  "devDependencies": {
+    "concurrently": "9.2.1"
+  }
+}

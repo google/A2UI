@@ -1,0 +1,44 @@
+{
+  "name": "@a2ui/vue",
+  "version": "0.8.1",
+  "type": "module",
+  "description": "A2UI Vue3 Renderer",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --mode lib",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@a2ui/web_core": "file:../web_core",
+    "dompurify": "^3.3.1",
+    "markdown-it": "^14.1.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^20.17.19",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vue": "^3.5.27",
+    "vue-tsc": "^2.2.0"
+  },
+  "sideEffects": false
+}
