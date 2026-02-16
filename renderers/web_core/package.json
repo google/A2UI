@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.8.0",
+  "version": "0.8.2",
   "description": "A2UI Core Library",
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
@@ -39,9 +39,10 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "mkdir -p src/v0_8/schemas && cp ../../specification/v0_8/json/*.json src/v0_8/schemas",
+      "command": "node scripts/copy-spec.js",
       "files": [
-        "../../specification/v0_8/json/*.json"
+        "../../specification/v0_8/json/*.json",
+        "scripts/copy-spec.js"
       ],
       "output": [
         "src/v0_8/schemas/*.json"

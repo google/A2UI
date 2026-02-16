@@ -5,6 +5,7 @@
       "description": "TextField with valid checks",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -15,15 +16,19 @@
               "value": { "path": "/formData/email" },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": { "path": "/formData/email" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/email" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Email is required"
                 },
                 {
-                  "call": "email",
-                  "args": { "value": { "path": "/formData/email" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "email",
+                    "args": { "value": { "path": "/formData/email" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Must be valid email"
                 }
               ]
@@ -36,6 +41,7 @@
       "description": "ChoicePicker with valid checks",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -51,12 +57,14 @@
               "value": { "path": "/formData/interests" },
               "checks": [
                 {
-                  "call": "length",
-                  "args": {
-                    "value": { "path": "/formData/interests" },
-                    "min": 1
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": { "path": "/formData/interests" },
+                      "min": 1
+                    },
+                    "returnType": "boolean"
                   },
-                  "returnType": "boolean",
                   "message": "Select at least one"
                 }
               ]
@@ -69,6 +77,7 @@
       "description": "Slider with valid checks",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -81,12 +90,14 @@
               "value": { "path": "/formData/rating" },
               "checks": [
                 {
-                  "call": "numeric",
-                  "args": {
-                    "value": { "path": "/formData/rating" },
-                    "min": 3
+                  "condition": {
+                    "call": "numeric",
+                    "args": {
+                      "value": { "path": "/formData/rating" },
+                      "min": 3
+                    },
+                    "returnType": "boolean"
                   },
-                  "returnType": "boolean",
                   "message": "Rating must be > 3"
                 }
               ]
@@ -99,6 +110,7 @@
       "description": "CheckBox with valid checks",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -109,9 +121,11 @@
               "value": { "path": "/formData/agreed" },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": { "path": "/formData/agreed" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/agreed" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Must agree"
                 }
               ]
@@ -124,6 +138,7 @@
       "description": "DateTimeInput with valid checks",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -134,9 +149,11 @@
               "value": { "path": "/formData/date" },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": { "path": "/formData/date" } },
-                  "returnType": "boolean",
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": { "path": "/formData/date" } },
+                    "returnType": "boolean"
+                  },
                   "message": "Date required"
                 }
               ]
@@ -149,6 +166,7 @@
       "description": "TextField with regex validation",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -159,10 +177,13 @@
               "value": { "path": "/formData/phone" },
               "checks": [
                 {
-                  "call": "regex",
-                  "args": {
-                    "value": { "path": "/formData/phone" },
-                    "pattern": "^\\d{10}$"
+                  "condition": {
+                    "call": "regex",
+                    "args": {
+                      "value": { "path": "/formData/phone" },
+                      "pattern": "^\\d{10}$"
+                    },
+                    "returnType": "boolean"
                   },
                   "message": "Must be 10 digits"
                 }
@@ -176,6 +197,7 @@
       "description": "TextField with min/max length validation",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -186,11 +208,14 @@
               "value": { "path": "/formData/pw" },
               "checks": [
                 {
-                  "call": "length",
-                  "args": {
-                    "value": { "path": "/formData/pw" },
-                    "min": 8,
-                    "max": 64
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": { "path": "/formData/pw" },
+                      "min": 8,
+                      "max": 64
+                    },
+                    "returnType": "boolean"
                   },
                   "message": "Password must be 8-64 characters"
                 }
@@ -204,6 +229,7 @@
       "description": "Slider with min/max numeric validation",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -216,11 +242,14 @@
               "value": { "path": "/formData/score" },
               "checks": [
                 {
-                  "call": "numeric",
-                  "args": {
-                    "value": { "path": "/formData/score" },
-                    "min": 0,
-                    "max": 100
+                  "condition": {
+                    "call": "numeric",
+                    "args": {
+                      "value": { "path": "/formData/score" },
+                      "min": 0,
+                      "max": 100
+                    },
+                    "returnType": "boolean"
                   },
                   "message": "Score must be between 0 and 100"
                 }
@@ -234,6 +263,7 @@
       "description": "TextField with complex logic checks (AND/OR/NOT)",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -244,32 +274,49 @@
               "value": { "path": "/formData/code" },
               "checks": [
                 {
-                  "and": [
-                    {
-                      "call": "required",
-                      "args": { "value": { "path": "/formData/code" } }
-                    },
-                    {
-                      "or": [
+                  "condition": {
+                    "call": "and",
+                    "args": {
+                      "values": [
                         {
-                          "call": "regex",
-                          "args": {
-                            "value": { "path": "/formData/code" },
-                            "pattern": "^[A-Z]"
-                          }
+                          "call": "required",
+                          "args": { "value": { "path": "/formData/code" } },
+                          "returnType": "boolean"
                         },
                         {
-                          "not": {
-                            "call": "regex",
-                            "args": {
-                              "value": { "path": "/formData/code" },
-                              "pattern": "^[0-9]"
-                            }
-                          }
+                          "call": "or",
+                          "args": {
+                            "values": [
+                              {
+                                "call": "regex",
+                                "args": {
+                                  "value": { "path": "/formData/code" },
+                                  "pattern": "^[A-Z]"
+                                },
+                                "returnType": "boolean"
+                              },
+                              {
+                                "call": "not",
+                                "args": {
+                                  "value": {
+                                    "call": "regex",
+                                    "args": {
+                                      "value": { "path": "/formData/code" },
+                                      "pattern": "^[0-9]"
+                                    },
+                                    "returnType": "boolean"
+                                  }
+                                },
+                                "returnType": "boolean"
+                              }
+                            ]
+                          },
+                          "returnType": "boolean"
                         }
                       ]
-                    }
-                  ],
+                    },
+                    "returnType": "boolean"
+                  },
                   "message": "Code must start with letter or not start with number"
                 }
               ]
@@ -282,6 +329,7 @@
       "description": "TextField with invalid check (missing message)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -292,8 +340,11 @@
               "value": { "path": "/formData/email" },
               "checks": [
                 {
-                  "call": "email",
-                  "args": { "value": { "path": "/formData/email" } }
+                  "condition": {
+                    "call": "email",
+                    "args": { "value": { "path": "/formData/email" } },
+                    "returnType": "boolean"
+                  }
                 }
               ]
             }
@@ -305,6 +356,7 @@
       "description": "TextField with invalid function returnType in check",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -315,9 +367,11 @@
               "value": { "path": "/formData/name" },
               "checks": [
                 {
-                  "call": "formatString",
-                  "args": { "value": "Hello ${/formData/name}" },
-                  "returnType": "string",
+                  "condition": {
+                    "call": "formatString",
+                    "args": { "value": "Hello ${/formData/name}" },
+                    "returnType": "string"
+                  },
                   "message": "This should fail because returnType is string, not boolean"
                 }
               ]
@@ -330,6 +384,7 @@
       "description": "ChoicePicker with length validation (exactly 2)",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_1",
           "components": [
@@ -346,11 +401,14 @@
               "value": { "path": "/formData/interests" },
               "checks": [
                 {
-                  "call": "length",
-                  "args": {
-                    "value": { "path": "/formData/interests" },
-                    "min": 2,
-                    "max": 2
+                  "condition": {
+                    "call": "length",
+                    "args": {
+                      "value": { "path": "/formData/interests" },
+                      "min": 2,
+                      "max": 2
+                    },
+                    "returnType": "boolean"
                   },
                   "message": "Select exactly 2 interests"
                 }

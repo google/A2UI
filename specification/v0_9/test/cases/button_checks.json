@@ -5,6 +5,7 @@
       "description": "Button with nested valid checks",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -15,27 +16,37 @@
               "action": { "event": { "name": "submit" } },
               "checks": [
                 {
-                  "and": [
-                    {
-                      "call": "required",
-                      "args": { "value": { "path": "/formData/terms" } },
-                      "returnType": "boolean"
-                    },
-                    {
-                      "or": [
+                  "condition": {
+                    "call": "and",
+                    "args": {
+                      "values": [
                         {
                           "call": "required",
-                          "args": { "value": { "path": "/formData/email" } },
+                          "args": { "value": { "path": "/formData/terms" } },
                           "returnType": "boolean"
                         },
                         {
-                          "call": "required",
-                          "args": { "value": { "path": "/formData/phone" } },
+                          "call": "or",
+                          "args": {
+                            "values": [
+                              {
+                                "call": "required",
+                                "args": { "value": { "path": "/formData/email" } },
+                                "returnType": "boolean"
+                              },
+                              {
+                                "call": "required",
+                                "args": { "value": { "path": "/formData/phone" } },
+                                "returnType": "boolean"
+                              }
+                            ]
+                          },
                           "returnType": "boolean"
                         }
                       ]
-                    }
-                  ],
+                    },
+                    "returnType": "boolean"
+                  },
                   "message": "Must accept terms and provide contact info"
                 }
               ]
@@ -49,6 +60,7 @@
       "description": "Button with deprecated enabled property (should fail)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -68,6 +80,7 @@
       "description": "Button with invalid check structure (invalid returnType)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -78,9 +91,12 @@
               "action": { "event": { "name": "submit" } },
               "checks": [
                 {
-                  "call": "required",
-                  "args": { "value": "foo" },
-                  "returnType": "not_a_valid_type"
+                  "condition": {
+                    "call": "required",
+                    "args": { "value": "foo" },
+                    "returnType": "not_a_valid_type"
+                  },
+                  "message": "Msg"
                 }
               ]
             },
@@ -93,6 +109,7 @@
       "description": "Button with invalid nested structure (extra property)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -103,7 +120,11 @@
               "action": { "event": { "name": "submit" } },
               "checks": [
                 {
-                  "and": [],
+                  "condition": {
+                    "call": "and",
+                    "args": { "values": [] },
+                    "returnType": "boolean"
+                  },
                   "message": "foo",
                   "extraProp": "not allowed"
                 }
@@ -118,6 +139,7 @@
       "description": "Button with variant 'primary'",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -137,6 +159,7 @@
       "description": "Button with variant 'borderless'",
       "valid": true,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
@@ -156,6 +179,7 @@
       "description": "Button with deprecated 'primary' property (should fail)",
       "valid": false,
       "data": {
+        "version": "v0.9",
         "updateComponents": {
           "surfaceId": "test_surface",
           "components": [
