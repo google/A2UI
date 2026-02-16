@@ -79,6 +79,7 @@
   "author": "Google",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@types/node": "^25.2.3",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },

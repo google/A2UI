@@ -34,4 +34,12 @@ describe('SurfaceModel', () => {
     assert.strictEqual(actions.length, 1);
     assert.strictEqual(actions[0].type, 'click');
   });
+
+  it('creates a component context', () => {
+    surface.componentsModel.createComponent('root', 'Box', {});
+    const ctx = surface.createComponentContext('root', '/mydata');
+    assert.ok(ctx);
+    assert.strictEqual(ctx?.componentModel.id, 'root');
+    assert.strictEqual(ctx?.dataContext.path, '/mydata');
+  });
 });
