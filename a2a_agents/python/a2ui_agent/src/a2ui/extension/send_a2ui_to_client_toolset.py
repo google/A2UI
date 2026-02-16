@@ -87,6 +87,7 @@ import jsonschema
 from a2a import types as a2a_types
 from a2ui.extension.a2ui_extension import create_a2ui_part
 from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
+from a2ui.extension.validation import validate_a2ui_json
 from google.adk.a2a.converters import part_converter
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.models import LlmRequest
@@ -262,7 +263,7 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
           a2ui_json_payload = [a2ui_json_payload]
 
         a2ui_schema = await self.get_a2ui_schema(tool_context)
-        jsonschema.validate(instance=a2ui_json_payload, schema=a2ui_schema)
+        validate_a2ui_json(a2ui_json_payload, a2ui_schema)
 
         logger.info(
             f"Validated call to tool {self.TOOL_NAME} with {self.A2UI_JSON_ARG_NAME}"
