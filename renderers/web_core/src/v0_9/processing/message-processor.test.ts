@@ -2,7 +2,9 @@
 import assert from 'node:assert';
 import { test, describe, it, beforeEach } from 'node:test';
 import { A2uiMessageProcessor } from './message-processor.js';
-import { CatalogApi } from '../catalog/types.js';
+import { CatalogApi, ComponentApi } from '../catalog/types.js';
+import { CommonTypes, annotated } from '../catalog/schema_types.js';
+import { z } from 'zod';
 
 describe('A2uiMessageProcessor', () => {
   let processor: A2uiMessageProcessor<CatalogApi>;
@@ -133,5 +135,74 @@ describe('A2uiMessageProcessor', () => {
       createSurface: { surfaceId: 's2', catalogId: 'test-catalog' }
     }]);
     assert.strictEqual(created, null);
+  });
+
+  it('generates capabilities with correct references', () => {
+    // 1. Define Test Components
+    const SimpleComponentSchema = z.object({
+      title: annotated(CommonTypes.DynamicString, 'The title text'),
+      count: CommonTypes.DynamicNumber
+    });
+
+    const ComplexComponentSchema = z.object({
+      action: CommonTypes.Action,
+      children: CommonTypes.ChildList
+    });
+
+    const SimpleComp: ComponentApi = {
+      name: 'Simple',
+      schema: SimpleComponentSchema
+    };
+
+    const ComplexComp: ComponentApi = {
+      name: 'Complex',
+      schema: ComplexComponentSchema
+    };
+
+    const capsCatalog: CatalogApi = {
+      id: 'caps-catalog',
+      components: new Map([
+        ['Simple', SimpleComp],
+        ['Complex', ComplexComp]
+      ])
+    };
+
+    // 2. Initialize Processor
+    const capsProcessor = new A2uiMessageProcessor([capsCatalog], async () => {});
+
+    // 3. Generate Capabilities
+    const capabilities = capsProcessor.getClientCapabilities({ inlineCatalogs: [capsCatalog] });
+    
+    assert.ok(capabilities.inlineCatalogs, 'Should have inline catalogs');
+    const generatedCatalog = capabilities.inlineCatalogs[0];
+    assert.strictEqual(generatedCatalog.catalogId, 'caps-catalog');
+
+    const components = generatedCatalog.components;
+    assert.ok(components.Simple, 'Simple component should be present');
+    assert.ok(components.Complex, 'Complex component should be present');
+
+    // 4. Verify Simple Component Structure
+    const simpleDef = components.Simple;
+    assert.strictEqual(simpleDef.type, 'object');
+    // Check Envelope
+    const commonRef = simpleDef.allOf.find((x: any) => x.$ref === 'common_types.json#/$defs/ComponentCommon');
+    assert.ok(commonRef, 'Should reference ComponentCommon');
+
+    // Check Properties
+    const propsSchema = simpleDef.allOf.find((x: any) => x.properties && x.properties.component);
+    assert.ok(propsSchema, 'Should have properties block');
+    assert.strictEqual(propsSchema.properties.component.const, 'Simple');
+    
+    // Check Property References (DynamicString -> $ref)
+    const titleProp = propsSchema.properties.title;
+    assert.strictEqual(titleProp.$ref, 'common_types.json#/$defs/DynamicString', 'title should ref DynamicString');
+    assert.strictEqual(titleProp.description, 'The title text');
+
+    // 5. Verify Complex Component Structure
+    const complexDef = components.Complex;
+    const complexProps = complexDef.allOf.find((x: any) => x.properties && x.properties.component).properties;
+    
+    assert.strictEqual(complexProps.action.$ref, 'common_types.json#/$defs/Action');
+    assert.strictEqual(complexProps.children.$ref, 'common_types.json#/$defs/ChildList');
   });
 });
