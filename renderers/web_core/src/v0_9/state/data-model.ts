@@ -1,0 +1,189 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+/**
+ * Represents a reactive connection to a specific path in the data model.
+ */
+export interface Subscription<T> {
+  /**
+   * The current value at the subscribed path.
+   */
+  readonly value: T;
+
+  /**
+   * A callback function to be invoked when the value changes.
+   */
+  onChange?: (value: T) => void;
+
+  /**
+   * Unsubscribes from the data model.
+   */
+  unsubscribe(): void;
+}
+
+/**
+ * A standalone, observable data store representing the client-side state.
+ * It handles JSON Pointer path resolution and subscription management.
+ */
+export class DataModel {
+  private data: any = {};
+  private readonly subscriptions: Map<string, Set<Subscription<any>>> = new Map();
+
+  constructor(initialData: any = {}) {
+    this.data = initialData;
+  }
+
+  /**
+   * Updates the model at the specific path and notifies all relevant subscribers.
+   * If path is '/' or empty, replaces the entire root.
+   */
+  set(path: string, value: any): void {
+    if (path === '/' || path === '') {
+      this.data = value;
+      this.notifyAllSubscribers();
+      return;
+    }
+
+    const segments = this.parsePath(path);
+    const lastSegment = segments.pop()!;
+
+    let current = this.data;
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+      if (current[segment] === undefined || current[segment] === null) {
+        const nextSegment = (i < segments.length - 1) ? segments[i + 1] : lastSegment;
+        current[segment] = /^\d+$/.test(nextSegment) ? [] : {};
+      }
+      current = current[segment];
+    }
+
+    if (value === undefined) {
+      if (Array.isArray(current)) {
+        current[parseInt(lastSegment, 10)] = undefined;
+      } else {
+        delete current[lastSegment];
+      }
+    } else {
+      current[lastSegment] = value;
+    }
+
+    this.notifySubscribers(path);
+  }
+
+  /**
+   * Retrieves data at a specific path.
+   */
+  get(path: string): any {
+    if (path === '/' || path === '') return this.data;
+
+    const segments = this.parsePath(path);
+    let current = this.data;
+    for (const segment of segments) {
+      if (current === undefined || current === null) return undefined;
+      current = current[segment];
+    }
+    return current;
+  }
+
+  /**
+   * Subscribes to changes at a specific path. Returns a Subscription object.
+   */
+  subscribe<T>(path: string): Subscription<T> {
+    const normalizedPath = this.normalizePath(path);
+
+    const subscription: Subscription<T> = {
+      value: undefined as any,
+      onChange: undefined,
+      unsubscribe: () => {
+        const set = this.subscriptions.get(normalizedPath);
+        if (set) {
+          set.delete(subscription);
+          if (set.size === 0) {
+            this.subscriptions.delete(normalizedPath);
+          }
+        }
+      }
+    };
+
+    Object.defineProperty(subscription, 'value', {
+      get: () => this.get(normalizedPath),
+      enumerable: true
+    });
+
+    if (!this.subscriptions.has(normalizedPath)) {
+      this.subscriptions.set(normalizedPath, new Set());
+    }
+    this.subscriptions.get(normalizedPath)!.add(subscription);
+
+    return subscription;
+  }
+
+  /**
+   * Clears all internal subscriptions.
+   */
+  dispose(): void {
+    this.subscriptions.clear();
+  }
+
+  private normalizePath(path: string): string {
+    if (path.length > 1 && path.endsWith('/')) {
+      return path.slice(0, -1);
+    }
+    return path || '/';
+  }
+
+  private parsePath(path: string): string[] {
+    return path.split('/').filter(p => p.length > 0);
+  }
+
+  private notifySubscribers(path: string): void {
+    const normalizedPath = this.normalizePath(path);
+    this.notify(normalizedPath);
+
+    // Notify Ancestors
+    let parentPath = normalizedPath;
+    while (parentPath !== '/' && parentPath !== '') {
+      parentPath = parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
+      this.notify(parentPath);
+      if (parentPath === '/') break;
+    }
+
+    // Notify Descendants
+    for (const subPath of this.subscriptions.keys()) {
+      if (this.isDescendant(subPath, normalizedPath)) {
+        this.notify(subPath);
+      }
+    }
+  }
+
+  private notify(path: string): void {
+    const set = this.subscriptions.get(path);
+    if (!set) return;
+    const value = this.get(path);
+    set.forEach(sub => sub.onChange?.(value));
+  }
+
+  private notifyAllSubscribers(): void {
+    for (const path of this.subscriptions.keys()) {
+      this.notify(path);
+    }
+  }
+
+  private isDescendant(childPath: string, parentPath: string): boolean {
+    if (parentPath === '/' || parentPath === '') return childPath !== '/';
+    return childPath.startsWith(parentPath + '/');
+  }
+}
