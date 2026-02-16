@@ -1,18 +1,22 @@
 
 import { ComponentContext } from '../rendering/component-context.js';
-import { DataContext } from '../state/data-context.js';
-import { SurfaceContext } from '../state/surface-context.js';
+import { DataContext } from '../rendering/data-context.js';
+import { SurfaceModel } from '../state/surface-model.js';
+import { CatalogApi } from '../catalog/types.js';
+import { ComponentModel } from '../state/component-model.js';
 
-export class TestSurfaceContext extends SurfaceContext {
+export class TestSurfaceModel extends SurfaceModel<CatalogApi> {
   constructor(actionHandler: any = async () => { }) {
-    super('test', {} as any, {}, actionHandler);
+    super('test', { id: 'test-catalog', components: new Map() }, {}, actionHandler);
   }
 }
 
 export function createTestContext(properties: any, actionHandler: any = async () => { }) {
-  const surface = new TestSurfaceContext(actionHandler);
+  const surface = new TestSurfaceModel(actionHandler);
   const dataContext = new DataContext(surface.dataModel, '/');
-  const context = new ComponentContext<any>('test-id', properties, dataContext, surface, () => { });
-  context.renderChild = (id: string) => `Rendered(${id})`;
+  const component = new ComponentModel('test-id', 'TestComponent', properties);
+  
+  const context = new ComponentContext(component, dataContext, (action) => surface.dispatchAction(action));
+  
   return context;
 }

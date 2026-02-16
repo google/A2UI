@@ -1,27 +1,49 @@
 
-import { SurfaceContext, ActionHandler } from '../state/surface-context.js';
-import { Catalog } from '../catalog/types.js';
+import { SurfaceModel, ActionHandler } from '../state/surface-model.js';
+import { CatalogApi } from '../catalog/types.js';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { A2uiModel, SurfaceLifecycleListener } from '../state/a2ui-model.js';
 
-export interface ClientCapabilitiesOptions {
+export type { SurfaceLifecycleListener };
+
+export interface ClientCapabilitiesOptions<T extends CatalogApi> {
   /**
    * A list of Catalog instances that should be serialized 
    * and sent as 'inlineCatalogs'.
    */
-  inlineCatalogs?: Catalog<any>[];
+  inlineCatalogs?: T[];
 }
 
-export class A2uiMessageProcessor {
-  private surfaces: Map<string, SurfaceContext> = new Map();
+/**
+ * The central processor for A2UI messages.
+ * @template T The concrete type of the Catalog, which extends CatalogApi.
+ */
+export class A2uiMessageProcessor<T extends CatalogApi> {
+  readonly model: A2uiModel<T> = new A2uiModel<T>();
 
   /**
    * @param catalogs A list of available catalogs.
    * @param actionHandler A global handler for actions from all surfaces.
    */
   constructor(
-    private catalogs: Catalog<any>[],
+    private catalogs: T[],
     private actionHandler: ActionHandler
   ) { }
+
+  /**
+   * Adds a listener for surface lifecycle events.
+   * @returns A function to unsubscribe the listener.
+   */
+  addLifecycleListener(listener: SurfaceLifecycleListener<T>): () => void {
+    return this.model.addLifecycleListener(listener);
+  }
+
+  /**
+   * Removes a lifecycle listener.
+   */
+  removeLifecycleListener(listener: SurfaceLifecycleListener<T>): void {
+    this.model.removeLifecycleListener(listener);
+  }
 
   processMessages(messages: any[]): void {
     for (const msg of messages) {
@@ -35,11 +57,11 @@ export class A2uiMessageProcessor {
     }
   }
 
-  getSurfaceContext(surfaceId: string): SurfaceContext | undefined {
-    return this.surfaces.get(surfaceId);
+  getSurfaceModel(surfaceId: string): SurfaceModel<T> | undefined {
+    return this.model.getSurface(surfaceId);
   }
 
-  getClientCapabilities(options: ClientCapabilitiesOptions = {}): any {
+  getClientCapabilities(options: ClientCapabilitiesOptions<T> = {}): any {
     const inlineCatalogsDef = (options.inlineCatalogs || []).map(catalog => {
       const componentsSchema: Record<string, any> = {};
       
@@ -134,8 +156,7 @@ export class A2uiMessageProcessor {
       return;
     }
 
-    const surface = new SurfaceContext(surfaceId, catalog, theme, this.actionHandler);
-    this.surfaces.set(surfaceId, surface);
+    this.model.createSurface(surfaceId, catalog, theme, this.actionHandler);
   }
 
   private routeMessage(msg: any) {
@@ -144,13 +165,37 @@ export class A2uiMessageProcessor {
     if (!payload?.surfaceId) return;
 
     if (msg.deleteSurface) {
-      this.surfaces.delete(payload.surfaceId);
+      this.model.deleteSurface(payload.surfaceId);
       return;
     }
 
-    const surface = this.surfaces.get(payload.surfaceId);
+    const surface = this.model.getSurface(payload.surfaceId);
     if (surface) {
-      surface.handleMessage(msg);
+      if (msg.updateComponents) {
+        const payload = msg.updateComponents;
+        for (const comp of payload.components) {
+          const { id, component, ...properties } = comp;
+          
+          const existing = surface.componentsModel.get(id);
+          if (existing) {
+            if (component && component !== existing.type) {
+                console.warn(`Attempting to change type of component ${id} from ${existing.type} to ${component}. Ignoring new type.`);
+            }
+            existing.update(properties);
+          } else {
+            if (!component) {
+                console.warn(`Cannot create component ${id} without a type.`);
+                continue;
+            }
+            surface.componentsModel.createComponent(id, component, properties);
+          }
+        }
+      } else if (msg.updateDataModel) {
+        const payload = msg.updateDataModel;
+        const path = payload.path || '/';
+        const value = payload.value;
+        surface.dataModel.set(path, value);
+      }
     } else {
       console.warn(`Surface not found for message: ${payload.surfaceId}`);
     }
