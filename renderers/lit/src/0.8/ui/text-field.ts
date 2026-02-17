@@ -20,6 +20,7 @@ import { Root } from "./root.js";
 import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import * as Primitives from "@a2ui/web_core/types/primitives";
 import * as Types from "@a2ui/web_core/types/types";
+import { Events } from "@a2ui/web_core";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { extractStringValue } from "./utils/utils.js";
@@ -116,15 +117,11 @@ export class TextField extends Root {
           }
 
       this.dispatchEvent(
-        new CustomEvent("a2ui-validation-input", {
-          bubbles: true,
-          composed: true,
-          detail: {
-            componentId: this.id,
-            value: evt.target.value,
-            valid: evt.target.checkValidity(),
-          },
-        })
+        new Events.A2UIValidationEvent({
+          componentId: this.id,
+          value: evt.target.value,
+          valid: evt.target.checkValidity(),
+            })
       );
 
           this.#setBoundValue(evt.target.value);

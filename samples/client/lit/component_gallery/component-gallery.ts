@@ -204,7 +204,8 @@ export class A2UIComponentGallery extends SignalWatcher(LitElement) {
 
   // Debug Validation Events
   #handleValidationInput = (e: Event) => {
-    const detail = (e as CustomEvent).detail;
+    const detail = (e as v0_8.WebEvents.A2UIValidationEvent).detail;
+    if (!detail) return;
 
     // Log to Console
     console.log(
