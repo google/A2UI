@@ -2,23 +2,46 @@
 import os
 import shutil
 import glob
+try:
+    from migrate_wrappers import migrate_wrappers
+except ImportError:
+    # Fallback for when running directly or in different contexts
+    from docs.scripts.migrate_wrappers import migrate_wrappers
 
-def main():
-    """Calculates the source and destination paths for the specification files."""
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+"""
+Prepares the raw A2UI specification files for use in the MkDocs build.
+
+This script performs the following tasks:
+1.  **Copies Source Files**: Copies the raw specification files from the root `specification/` directory (e.g., `specification/v0_9`) into the versioned documentation structure (e.g., `docs/v0.9/specification`).
+2.  **Flattens Directory Structure**: Moves JSON files from subdirectories (like `json/`) to the root of the versioned specification directory to simplify relative linking. It updates links in the Markdown files to reflect this change.
+3.  **Rewrites Links**: Adjusts internal links within the specification files to work correctly in their new location within the documentation site. This handles cross-version linking and ensures that relative paths to assets or other docs are valid.
+
+Usage:
+    Run this script before `mkdocs build`.
+    `python3 docs/scripts/prepare_docs.py`
+"""
+
+def prepare_docs(repo_root):
+    """Prepares the documentation for the given repository root."""
     spec_source_root = os.path.join(repo_root, 'specification')
-    docs_spec_root = os.path.join(repo_root, 'docs', 'specification')
 
     print(f"Preparing documentation...")
 
     # Iterate over all directories in specification/
+    if not os.path.exists(spec_source_root):
+        print(f"Specification root {spec_source_root} does not exist.")
+        return
+
     for item in os.listdir(spec_source_root):
         source_path = os.path.join(spec_source_root, item)
         if not os.path.isdir(source_path):
             continue
 
         # We assume directories in specification/ are versions (e.g. v0_8, v0_9)
-        dest_path = os.path.join(docs_spec_root, item)
+        # Map source directory names to versioned document directories
+        # v0_8 -> v0.8, v0_9 -> v0.9
+        version_name = item.replace('_', '.')
+        dest_path = os.path.join(repo_root, 'docs', version_name, 'specification')
 
         print(f"Processing {item}...")
 
@@ -53,10 +76,10 @@ def main():
                     content = f.read()
 
                 # Rewrites for custom_catalog_changes.md
-                content = content.replace('(./a2ui_extension_specification.md)', '(v0.8-extension-spec.md)')
+                content = content.replace('(./a2ui_extension_specification.md)', '(v0.8-a2a-extension.md)')
                 content = content.replace('(./a2ui_protocol.md', '(v0.8-a2ui.md') # Note the missing closing paren to match anchor links too
-                content = content.replace('../json/', 'v0_8/')
-                content = content.replace('(../json/', '(v0_8/')
+                content = content.replace('../json/', '../')
+                content = content.replace('(../json/', '(../')
 
                 with open(ccc_path, 'w') as f:
                     f.write(content)
@@ -68,8 +91,8 @@ def main():
                 with open(protocol_path, 'r') as f:
                     content = f.read()
 
-                content = content.replace('(custom_catalog_changes.md)', '(v0.8-custom-catalog-changes.md)')
-                content = content.replace('../json/', 'v0_8/')
+                content = content.replace('(custom_catalog_changes.md)', '(custom_catalog_changes.md)')
+                content = content.replace('../json/', '../')
 
                 with open(protocol_path, 'w') as f:
                     f.write(content)
@@ -82,10 +105,10 @@ def main():
                     content = f.read()
 
                 # Fix relative links that break when included from a parent directory
-                # evolution_guide.md is in v0_9/docs/ relative to docs/specification/
+                # evolution_guide.md is in v0.9/docs/ relative to docs/specification/
                 content = content.replace('(evolution_guide.md)', '(v0.9-evolution-guide.md)')
-                # JSON files are flattened to v0_9/ relative to docs/specification/
-                content = content.replace('../json/', 'v0_9/')
+                # JSON files are flattened to the version root, so ../json/ becomes ../
+                content = content.replace('../json/', '../')
 
                 with open(protocol_path, 'w') as f:
                     f.write(content)
@@ -98,7 +121,7 @@ def main():
                     content = f.read()
 
                 content = content.replace('(a2ui_protocol.md', '(v0.9-a2ui.md')
-                content = content.replace('../json/', 'v0_9/')
+                content = content.replace('../json/', '../')
 
                 with open(cf_path, 'w') as f:
                     f.write(content)
@@ -113,8 +136,8 @@ def main():
                 # Fix relative links that break when included from a parent directory
                 # evolution_guide.md is in v0_10/docs/ relative to docs/specification/
                 content = content.replace('(evolution_guide.md)', '(v0.10-evolution-guide.md)')
-                # JSON files are flattened to v0_10/ relative to docs/specification/
-                content = content.replace('../json/', 'v0_10/')
+                # JSON files are flattened to the version root, so ../json/ becomes ../
+                content = content.replace('../json/', '../')
 
                 with open(protocol_path, 'w') as f:
                     f.write(content)
@@ -127,13 +150,21 @@ def main():
                     content = f.read()
 
                 content = content.replace('(a2ui_protocol.md', '(v0.10-a2ui.md')
-                content = content.replace('../json/', 'v0_10/')
+                content = content.replace('../json/', '../')
 
                 with open(cf_path, 'w') as f:
                     f.write(content)
                 print(f"  Rewrote links in {cf_path}")
 
     print(f"Successfully prepared documentation.")
+
+
+def main():
+    """Calculates the source and destination paths for the specification files."""
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    prepare_docs(repo_root)
+    migrate_wrappers(repo_root)
+
 
 if __name__ == '__main__':
     main()

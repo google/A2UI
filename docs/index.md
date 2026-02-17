@@ -27,9 +27,17 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 > foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
 > Expect changes.
 
+**Documentation Versions:**
+
+This site hosts documentation for:
+
+- **[v0.8 (Previous)](v0.8/quickstart.md)**: The previous stable version, available for reference.
+- **[v0.9 (Current)](v0.9/quickstart.md)**: The current specification.
+- **[v0.10 (Draft)](v0.10/specification/docs/v0.10-a2ui.md)**: The draft of the next specification.
+
 ## At a Glance
 
-A2UI is currently [v0.9](specification/v0.9-a2ui.md),
+A2UI is currently [v0.9](v0.9/specification/docs/v0.9-a2ui.md),
 Apache 2.0 licensed,
 created by Google with contributions from CopilotKit and the open source community,
 and is in active development [on GitHub](https://github.com/google/A2UI).
@@ -39,10 +47,10 @@ The problem A2UI solves is: **how can AI agents safely send rich UIs across trus
 Instead of text-only responses or risky code execution, A2UI lets agents send **declarative component descriptions** that clients render using their own native widgets. It's like having agents speak a universal UI language.
 
 In this repo you will find
-[A2UI specifications](specification/v0.9-a2ui.md)
+[A2UI specifications](v0.9/specification/docs/v0.9-a2ui.md)
 and implementations for
-[renderers](renderers.md) (eg: Angular, Flutter, etc.) on the client side,
-and [transports](transports.md) (eg: A2A, etc.) which communicate A2UI messages between agents and clients.
+[renderers](v0.9/renderers.md) (eg: Angular, Flutter, etc.) on the client side,
+and [transports](v0.9/transports.md) (eg: A2A, etc.) which communicate A2UI messages between agents and clients.
 
 <div class="grid cards" markdown>
 
@@ -76,37 +84,37 @@ and [transports](transports.md) (eg: A2A, etc.) which communicate A2UI messages 
 
 <div class="grid cards" markdown>
 
-- :material-clock-fast:{ .lg .middle } **[Quickstart Guide](quickstart.md)**
+- :material-clock-fast:{ .lg .middle } **[Quickstart Guide](v0.9/quickstart.md)**
 
     ---
 
     Run the restaurant finder demo and see A2UI in action with Gemini-powered agents.
 
-    [:octicons-arrow-right-24: Get started](quickstart.md)
+    [:octicons-arrow-right-24: Get started](v0.9/quickstart.md)
 
-- :material-book-open-variant:{ .lg .middle } **[Core Concepts](concepts/overview.md)**
+- :material-book-open-variant:{ .lg .middle } **[Core Concepts](v0.9/concepts/overview.md)**
 
     ---
 
     Understand surfaces, components, data binding, and the adjacency list model.
 
-    [:octicons-arrow-right-24: Learn concepts](concepts/overview.md)
+    [:octicons-arrow-right-24: Learn concepts](v0.9/concepts/overview.md)
 
-- :material-code-braces:{ .lg .middle } **[Developer Guides](guides/client-setup.md)**
+- :material-code-braces:{ .lg .middle } **[Developer Guides](v0.9/guides/client-setup.md)**
 
     ---
 
     Integrate A2UI renderers into your app or build agents that generate UIs.
 
-    [:octicons-arrow-right-24: Start building](guides/client-setup.md)
+    [:octicons-arrow-right-24: Start building](v0.9/guides/client-setup.md)
 
-- :material-file-document:{ .lg .middle } **[Protocol Reference](specification/v0.9-a2ui.md)**
+- :material-file-document:{ .lg .middle } **[Protocol Reference](v0.9/specification/docs/v0.9-a2ui.md)**
 
     ---
 
     Dive into the complete technical specification and message types.
 
-    [:octicons-arrow-right-24: Read the spec](specification/v0.9-a2ui.md)
+    [:octicons-arrow-right-24: Read the spec](v0.9/specification/docs/v0.9-a2ui.md)
 
 </div>
 

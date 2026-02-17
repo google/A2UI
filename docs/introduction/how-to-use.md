@@ -24,7 +24,7 @@ npm install @a2ui/angular
 
 Connect to agent messages (SSE, WebSockets, or A2A) and customize styling to match your brand.
 
-**Next:** [Client Setup Guide](../guides/client-setup.md) | [Theming](../guides/theming.md)
+**Next:** [Client Setup Guide](../v0.9/guides/client-setup.md) | [Theming](../v0.9/guides/theming.md)
 
 ---
 
@@ -39,7 +39,7 @@ Create an agent that generates A2UI responses for any compatible client.
 
 Include the A2UI schema in your LLM prompts, generate JSONL messages, and stream to clients over SSE, WebSockets, or A2A.
 
-**Next:** [Agent Development Guide](../guides/agent-development.md)
+**Next:** [Agent Development Guide](../v0.9/guides/agent-development.md)
 
 ---
 

@@ -31,6 +31,7 @@ extra:
         you're helping us to make our documentation better.
 
 # Navigation
+# Navigation
 nav:
   - Home: index.md
   - Introduction & FAQ:
@@ -39,53 +40,86 @@ nav:
       - How Can I Use It?: introduction/how-to-use.md
       - Where is it Used?: introduction/where-is-it-used.md
       - Agent UI Ecosystem: introduction/agent-ui-ecosystem.md
-  - Quickstart: quickstart.md
-  - A2UI Composer ⭐: composer.md
-  - Developer Guides:
-      - Client Setup: guides/client-setup.md
-      - Agent Development: guides/agent-development.md
-      - Renderer Development: guides/renderer-development.md
-      - Custom Components: guides/custom-components.md
-      - Theming & Styling: guides/theming.md
-  - Core Concepts:
-      - Overview: concepts/overview.md
-      - Data Flow: concepts/data-flow.md
-      - Components & Structure: concepts/components.md
-      - Data Binding: concepts/data-binding.md
-  - Specifications:
-      - v0.8 (Previous):
-          - A2UI Specification: specification/v0.8-a2ui.md
-          - A2A Extension: specification/v0.8-extension-spec.md
-          - Custom Catalog Changes: specification/v0.8-custom-catalog-changes.md
-      - v0.9 (Current):
-          - A2UI Specification: specification/v0.9-a2ui.md
-          - Evolution Guide: specification/v0.9-evolution-guide.md
-          - Extension Specification: specification/v0.9-extension-spec.md
-          - Custom Functions: specification/v0.9-custom-functions.md
-      - v0.10 (Draft):
-          - A2UI Specification: specification/v0.10-a2ui.md
-          - Evolution Guide: specification/v0.10-evolution-guide.md
-          - Extension Specification: specification/v0.10-extension-spec.md
-          - Custom Functions: specification/v0.10-custom-functions.md
-  - Renderers (Clients): renderers.md
-  - Transports (Message Passing): transports.md
-  - Agents (Server-side): agents.md
-  - Community: community.md
-  - Roadmap: roadmap.md
-  - Reference:
-      - Component Reference: reference/components.md
-      - Message Reference: reference/messages.md
-      - Client-Side Functions: reference/functions.md
+      - FAQ: introduction/faq.md
+  - v0.9 (Current):
+      - Quickstart: v0.9/quickstart.md
+      - A2UI Composer ⭐: v0.9/composer.md
+      - Developer Guides:
+          - Client Setup: v0.9/guides/client-setup.md
+          - Agent Development: v0.9/guides/agent-development.md
+          - Renderer Development: v0.9/guides/renderer-development.md
+          - Custom Components: v0.9/guides/custom-components.md
+          - Theming & Styling: v0.9/guides/theming.md
+      - Core Concepts:
+          - Overview: v0.9/concepts/overview.md
+          - Data Flow: v0.9/concepts/data-flow.md
+          - Components & Structure: v0.9/concepts/components.md
+          - Data Binding: v0.9/concepts/data-binding.md
+      - Specifications:
+          - A2UI Specification: v0.9/specification/docs/v0.9-a2ui.md
+          - Evolution Guide: v0.9/specification/docs/v0.9-evolution-guide.md
+          - Extension Specification: v0.9/specification/docs/v0.9-extension-spec.md
+          - Custom Functions: v0.9/specification/docs/v0.9-custom-functions.md
+      - Renderers (Clients): v0.9/renderers.md
+      - Transports (Message Passing): v0.9/transports.md
+      - Agents (Server-side): v0.9/agents.md
+      - Community: v0.9/community.md
+      - Roadmap: v0.9/roadmap.md
+      - Reference:
+          - Component Reference: v0.9/reference/components.md
+          - Message Reference: v0.9/reference/messages.md
+          - Client-Side Functions: v0.9/reference/functions.md
+  - v0.8 (Previous):
+      - Quickstart: v0.8/quickstart.md
+      - A2UI Composer: v0.8/composer.md
+      - Developer Guides:
+          - Client Setup: v0.8/guides/client-setup.md
+          - Agent Development: v0.8/guides/agent-development.md
+          - Renderer Development: v0.8/guides/renderer-development.md
+          - Custom Components: v0.8/guides/custom-components.md
+          - Theming & Styling: v0.8/guides/theming.md
+      - Core Concepts:
+          - Overview: v0.8/concepts/overview.md
+          - Data Flow: v0.8/concepts/data-flow.md
+          - Components & Structure: v0.8/concepts/components.md
+          - Data Binding: v0.8/concepts/data-binding.md
+      - Specifications:
+          - A2UI Specification: v0.8/specification/docs/v0.8-a2ui.md
+          - A2A Extension: v0.8/specification/docs/v0.8-a2a-extension.md
+          - Custom Catalog Changes: v0.8/specification/docs/custom_catalog_changes.md
+      - Renderers (Clients): v0.8/renderers.md
+      - Transports (Message Passing): v0.8/transports.md
+      - Agents (Server-side): v0.8/agents.md
+      - Community: v0.8/community.md
+      - Roadmap: v0.8/roadmap.md
+      - Reference:
+          - Component Reference: v0.8/reference/components.md
+          - Message Reference: v0.8/reference/messages.md
+  - v0.10 (Draft):
+      - A2UI Specification: v0.10/specification/docs/v0.10-a2ui.md
+      - Evolution Guide: v0.10/specification/docs/v0.10-evolution-guide.md
+      - Extension Specification: v0.10/specification/docs/v0.10-extension-spec.md
+      - Custom Functions: v0.10/specification/docs/v0.10-custom-functions.md
 
 exclude_docs: |
   scripts/**
-  specification/**/docs/a2ui_protocol.md
-  specification/**/docs/a2ui_extension_specification.md
-  specification/**/docs/a2ui_custom_functions.md
-  specification/**/docs/evolution_guide.md
-  specification/**/docs/custom_catalog_changes.md
-  specification/**/README.md
-  specification/**/json/README.md
+  wrappers_source/**
+  v0.8/specification/**/docs/a2ui_protocol.md
+  v0.8/specification/**/docs/a2ui_extension_specification.md
+  v0.8/specification/**/README.md
+  v0.8/specification/**/json/README.md
+  v0.9/specification/**/docs/a2ui_protocol.md
+  v0.9/specification/**/docs/a2ui_extension_specification.md
+  v0.9/specification/**/docs/a2ui_custom_functions.md
+  v0.9/specification/**/docs/evolution_guide.md
+  v0.9/specification/**/README.md
+  v0.9/specification/**/json/README.md
+  v0.10/specification/**/docs/a2ui_protocol.md
+  v0.10/specification/**/docs/a2ui_extension_specification.md
+  v0.10/specification/**/docs/a2ui_custom_functions.md
+  v0.10/specification/**/docs/evolution_guide.md
+  v0.10/specification/**/README.md
+  v0.10/specification/**/json/README.md
 
 
 # Repository
@@ -195,4 +229,26 @@ plugins:
   - search
   - macros
   - mermaid2
+  - redirects:
+      redirect_maps:
+        quickstart.md: v0.9/quickstart.md
+        composer.md: v0.9/composer.md
+        agents.md: v0.9/agents.md
+        community.md: v0.9/community.md
+        renderers.md: v0.9/renderers.md
+        roadmap.md: v0.9/roadmap.md
+        transports.md: v0.9/transports.md
+        guides/client-setup.md: v0.9/guides/client-setup.md
+        guides/agent-development.md: v0.9/guides/agent-development.md
+        guides/renderer-development.md: v0.9/guides/renderer-development.md
+        guides/custom-components.md: v0.9/guides/custom-components.md
+        guides/theming.md: v0.9/guides/theming.md
+        concepts/overview.md: v0.9/concepts/overview.md
+        concepts/data-flow.md: v0.9/concepts/data-flow.md
+        concepts/components.md: v0.9/concepts/components.md
+        concepts/data-binding.md: v0.9/concepts/data-binding.md
+        reference/components.md: v0.9/reference/components.md
+        reference/messages.md: v0.9/reference/messages.md
+        reference/functions.md: v0.9/reference/functions.md
+
 
