@@ -8,7 +8,7 @@ import json
 import hashlib
 import sys
 from pathlib import Path
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse
 
 class SchemaBundler:
     def __init__(self):
@@ -52,7 +52,7 @@ class SchemaBundler:
             print(f"❌ Error: Could not resolve pointer '{pointer}'")
             sys.exit(1)
 
-    def get_def_key(self, file_stem, pointer):
+    def get_def_key(self, full_ref_id, file_stem, pointer):
         """Generates a clean, readable key for the $defs section."""
         # Clean up the pointer to make it a valid key (e.g., /definitions/User -> User)
         clean_pointer = pointer.replace("/", "_").replace("#", "").lstrip("_")
@@ -60,7 +60,16 @@ class SchemaBundler:
             clean_pointer = "root"
             
         base_key = f"{file_stem}_{clean_pointer}"
-        return base_key
+        final_key = base_key
+        
+        # Prevent collisions for different references
+        used_keys = set(self.ref_mapping.values())
+        counter = 1
+        while final_key in used_keys:
+            final_key = f"{base_key}_{counter}"
+            counter += 1
+            
+        return final_key
 
     def process_schema(self, schema, current_file_path: Path):
         """
@@ -97,7 +106,7 @@ class SchemaBundler:
                         target_subschema = self.resolve_json_pointer(file_data, fragment)
                         
                         # Generate a key for $defs
-                        def_key = self.get_def_key(target_path.stem, fragment)
+                        def_key = self.get_def_key(full_ref_id, target_path.stem, fragment)
                         
                         # Store mapping immediately to handle recursion/cycles
                         self.ref_mapping[full_ref_id] = def_key

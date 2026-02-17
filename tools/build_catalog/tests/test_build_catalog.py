@@ -44,9 +44,18 @@ def test_resolve_json_pointer_error():
 
 def test_get_def_key():
     bundler = SchemaBundler()
-    assert bundler.get_def_key("myfile", "/definitions/User") == "myfile_definitions_User"
-    assert bundler.get_def_key("myfile", "") == "myfile_root"
-    assert bundler.get_def_key("myfile", "#") == "myfile_root"
+    assert bundler.get_def_key("path/to/target.json#/definitions/User", "myfile", "/definitions/User") == "myfile_definitions_User"
+    assert bundler.get_def_key("path/to/target.json#1", "myfile", "") == "myfile_root"
+    assert bundler.get_def_key("path/to/target.json#2", "myfile", "#") == "myfile_root"
+
+def test_get_def_key_collision():
+    bundler = SchemaBundler()
+    bundler.ref_mapping["some_other_file.json#"] = "myfile_definitions_User"
+    
+    assert bundler.get_def_key("path/to/target.json#/definitions/User", "myfile", "/definitions/User") == "myfile_definitions_User_1"
+    
+    bundler.ref_mapping["yet_another_file.json#"] = "myfile_definitions_User_1"
+    assert bundler.get_def_key("path/to/target.json#/definitions/User", "myfile", "/definitions/User") == "myfile_definitions_User_2"
 
 def test_load_json_caching(tmp_path):
     # Setup dummy JSON file
