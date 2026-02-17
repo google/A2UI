@@ -50,7 +50,7 @@ def prepare_docs(repo_root):
             shutil.rmtree(dest_path)
 
         # Copy the directory structure, ignoring specified patterns
-        # We explicitly exclude 'eval' and 'test' directories as requested.
+        # We explicitly exclude 'eval' and 'test' directories.
         shutil.copytree(source_path, dest_path, ignore=shutil.ignore_patterns(
             'node_modules', '__pycache__', '.*', 'dist', 'build', 'eval', 'test'
         ))

@@ -60,6 +60,7 @@ nav:
           - Evolution Guide: v0.9/specification/docs/v0.9-evolution-guide.md
           - Extension Specification: v0.9/specification/docs/v0.9-extension-spec.md
           - Custom Functions: v0.9/specification/docs/v0.9-custom-functions.md
+      - Catalogs: v0.9/catalogs.md
       - Renderers (Clients): v0.9/renderers.md
       - Transports (Message Passing): v0.9/transports.md
       - Agents (Server-side): v0.9/agents.md
@@ -87,6 +88,7 @@ nav:
           - A2UI Specification: v0.8/specification/docs/v0.8-a2ui.md
           - A2A Extension: v0.8/specification/docs/v0.8-a2a-extension.md
           - Custom Catalog Changes: v0.8/specification/docs/custom_catalog_changes.md
+      - Catalogs: v0.8/catalogs.md
       - Renderers (Clients): v0.8/renderers.md
       - Transports (Message Passing): v0.8/transports.md
       - Agents (Server-side): v0.8/agents.md
