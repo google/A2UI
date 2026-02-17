@@ -19,8 +19,6 @@ import click
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
 from agent import RestaurantAgent
 from agent_executor import RestaurantAgentExecutor
 from dotenv import load_dotenv
@@ -50,41 +48,19 @@ def main(host, port):
             " is not TRUE."
         )
 
-    capabilities = AgentCapabilities(
-        streaming=True,
-        extensions=[get_a2ui_agent_extension()],
-    )
-    skill = AgentSkill(
-        id="find_restaurants",
-        name="Find Restaurants Tool",
-        description=(
-            "Helps find restaurants based on user criteria (e.g., cuisine, location)."
-        ),
-        tags=["restaurant", "finder"],
-        examples=["Find me the top 10 chinese restaurants in the US"],
-    )
-
     base_url = f"http://{host}:{port}"
 
-    agent_card = AgentCard(
-        name="Restaurant Agent",
-        description="This agent helps find restaurants based on user criteria.",
-        url=base_url,  # <-- Use base_url here
-        version="1.0.0",
-        default_input_modes=RestaurantAgent.SUPPORTED_CONTENT_TYPES,
-        default_output_modes=RestaurantAgent.SUPPORTED_CONTENT_TYPES,
-        capabilities=capabilities,
-        skills=[skill],
-    )
+    ui_agent = RestaurantAgent(base_url=base_url, use_ui=True)
+    text_agent = RestaurantAgent(base_url=base_url, use_ui=False)
 
-    agent_executor = RestaurantAgentExecutor(base_url=base_url)
+    agent_executor = RestaurantAgentExecutor(ui_agent, text_agent)
 
     request_handler = DefaultRequestHandler(
         agent_executor=agent_executor,
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(
-        agent_card=agent_card, http_handler=request_handler
+        agent_card=ui_agent.get_agent_card(), http_handler=request_handler
     )
     import uvicorn
 
