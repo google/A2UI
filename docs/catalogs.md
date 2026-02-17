@@ -149,13 +149,23 @@ When the agent uses that catalog, it generates a payload strictly conforming to 
 ]
 ```
 
+### Freestanding Catalogs
+
+A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management. 
+
+While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. Run  `scripts/build_catalog.py` before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:
+
+```bash
+uv run scripts/build_catalog.py <path-to-your-catalog.json>
+```
+
 ### Composition & Imports
 
-You do not have to define everything from scratch. You can use JSON Schema `$ref` to compose your catalog by importing definitions from the Basic Catalog or other catalogs.
+You do not have to define everything from scratch. You can define a catalog which uses existing components from the basic or other catalogs, and one that reusing the existing rendering logic.
 
 #### Example: Extending the Basic Catalog
 
-This catalog imports *all* elements from the Basic Catalog and adds a new `SuggestionChips` component.
+This catalog imports all elements from the Basic Catalog and adds a new `SuggestionChips` component.
 
 ```json
 {
@@ -180,6 +190,8 @@ This catalog imports *all* elements from the Basic Catalog and adds a new `Sugge
   }
 }
 ```
+
+**Make sure to run `scripts/build_catalog.py` to resolve the external $ref before publishing.**
 
 #### Example: Cherry-picking Components
 
@@ -208,6 +220,8 @@ This catalog imports only `Text` and `Icon` from the Basic Catalog to build a si
 }
 ```
 
+**Make sure to run `scripts/build_catalog.py` to resolve the external $ref before publishing.**
+
 ### Implementing Renderers
 
 Client renderers implement the catalog by mapping the schema definition to actual code.
@@ -224,7 +238,7 @@ export const RIZZ_CHARTS_CATALOG = {
     type: () => import('./hello_world_banner').then((r) => r.HelloWorldBanner),     
     bindings: ({ properties }) => [       
       inputBinding('message', () => ('message' in properties && properties['message']) || undefined),       
-      inputBinding('backgroundColor', () => ('backgroundColor' in properties && properties['backgroundColor']) || undefined),     
+      inputBinding('backgroundColor', () => ('backgroundColor' in properties && properties['backgroundColor']) || undefined),       
     ],   
   }, 
 } as Catalog;
