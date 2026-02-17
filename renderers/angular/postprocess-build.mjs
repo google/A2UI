@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, copyFileSync } from 'fs';
 import { join } from 'path';
 
 // Locally we depend on the Core package via a relative path so we can test it from source.
@@ -33,12 +33,14 @@ const packageJson = parsePackageJson(packageJsonPath);
 if (!packageJson.dependencies['@a2ui/web_core']) {
   throw new Error(
     'Angular package does not depend on the Core library. ' +
-      'Either update the package.json or remove this script.',
+    'Either update the package.json or remove this script.',
   );
 }
 
 packageJson.dependencies['@a2ui/web_core'] = '^' + coreVersion;
 writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 2));
+
+copyFileSync(join(dirname, '../../LICENSE'), join(dirname, './dist/LICENSE'));
 
 function parsePackageJson(path) {
   const content = readFileSync(path, 'utf8');
