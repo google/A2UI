@@ -11,9 +11,10 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Validates A2UI JSON payloads against the provided schema and checks for integrity.
+ * Validates A2UI JSON payloads against the provided schema and checks for
+ * integrity.
  */
-public final class Validation {
+public final class A2uiJsonValidator {
 
     // RFC 6901 compliant regex for JSON Pointer
     private static final Pattern JSON_POINTER_PATTERN = Pattern.compile("^(?:/(?:[^~/]|~[01])*)*$");
@@ -34,16 +35,18 @@ public final class Validation {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    private Validation() {}
+    private A2uiJsonValidator() {
+    }
 
     /**
-     * Validates the A2UI JSON payload against the provided schema and checks for integrity.
+     * Validates the A2UI JSON payload against the provided schema and checks for
+     * integrity.
      *
-     * @param a2uiJson The JSON payload to validate (List or Map).
+     * @param a2uiJson   The JSON payload to validate (List or Map).
      * @param a2uiSchema The schema object to validate against.
      * @throws IllegalArgumentException if validation fails.
      */
-    public static void validateA2uiJson(Object a2uiJson, Map<String, Object> a2uiSchema) {
+    public static void validate(Object a2uiJson, Map<String, Object> a2uiSchema) {
         // 1. JSON Schema Validation using networknt
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
         JsonNode schemaNode = mapper.valueToTree(a2uiSchema);
@@ -89,13 +92,15 @@ public final class Validation {
         }
     }
 
-    private static void validateComponentIntegrity(List<Map<String, Object>> components, Map<String, RefFields> refFieldsMap) {
+    private static void validateComponentIntegrity(List<Map<String, Object>> components,
+            Map<String, RefFields> refFieldsMap) {
         Set<String> ids = new HashSet<>();
 
         // 1. Collect IDs and check for duplicates
         for (Map<String, Object> comp : components) {
             Object compIdObj = comp.get(ID);
-            if (!(compIdObj instanceof String)) continue;
+            if (!(compIdObj instanceof String))
+                continue;
             String compId = (String) compIdObj;
 
             if (ids.contains(compId)) {
@@ -106,7 +111,8 @@ public final class Validation {
 
         // 2. Check for root component
         if (!ids.contains(ROOT)) {
-            throw new IllegalArgumentException("Missing '" + ROOT + "' component: One component must have '" + ID + "' set to '" + ROOT + "'.");
+            throw new IllegalArgumentException(
+                    "Missing '" + ROOT + "' component: One component must have '" + ID + "' set to '" + ROOT + "'.");
         }
 
         // 3. Check for dangling references using helper
@@ -115,7 +121,8 @@ public final class Validation {
                 String refId = ref.getKey();
                 String fieldName = ref.getValue();
                 if (!ids.contains(refId)) {
-                    throw new IllegalArgumentException("Component '" + comp.get(ID) + "' references missing ID '" + refId + "' in field '" + fieldName + "'");
+                    throw new IllegalArgumentException("Component '" + comp.get(ID) + "' references missing ID '"
+                            + refId + "' in field '" + fieldName + "'");
                 }
             }
         }
@@ -128,7 +135,8 @@ public final class Validation {
         // Build Adjacency List
         for (Map<String, Object> comp : components) {
             Object compIdObj = comp.get(ID);
-            if (!(compIdObj instanceof String)) continue;
+            if (!(compIdObj instanceof String))
+                continue;
             String compId = (String) compIdObj;
 
             allIds.add(compId);
@@ -138,7 +146,8 @@ public final class Validation {
                 String refId = ref.getKey();
                 String fieldName = ref.getValue();
                 if (refId.equals(compId)) {
-                    throw new IllegalArgumentException("Self-reference detected: Component '" + compId + "' references itself in field '" + fieldName + "'");
+                    throw new IllegalArgumentException("Self-reference detected: Component '" + compId
+                            + "' references itself in field '" + fieldName + "'");
                 }
                 adjList.get(compId).add(refId);
             }
@@ -158,11 +167,13 @@ public final class Validation {
         if (!orphans.isEmpty()) {
             List<String> sortedOrphans = new ArrayList<>(orphans);
             Collections.sort(sortedOrphans);
-            throw new IllegalArgumentException("Orphaned components detected (not reachable from '" + ROOT + "'): " + sortedOrphans);
+            throw new IllegalArgumentException(
+                    "Orphaned components detected (not reachable from '" + ROOT + "'): " + sortedOrphans);
         }
     }
 
-    private static void dfs(String nodeId, Map<String, List<String>> adjList, Set<String> visited, Set<String> recursionStack) {
+    private static void dfs(String nodeId, Map<String, List<String>> adjList, Set<String> visited,
+            Set<String> recursionStack) {
         visited.add(nodeId);
         recursionStack.add(nodeId);
 
@@ -171,7 +182,8 @@ public final class Validation {
             if (!visited.contains(neighbor)) {
                 dfs(neighbor, adjList, visited, recursionStack);
             } else if (recursionStack.contains(neighbor)) {
-                throw new IllegalArgumentException("Circular reference detected involving component '" + neighbor + "'");
+                throw new IllegalArgumentException(
+                        "Circular reference detected involving component '" + neighbor + "'");
             }
         }
 
@@ -183,25 +195,29 @@ public final class Validation {
         Set<String> listRefs = new HashSet<>();
     }
 
-    @SuppressWarnings("unchecked")
     private static Map<String, RefFields> extractComponentRefFields(Map<String, Object> schema) {
         Map<String, RefFields> refMap = new HashMap<>();
 
         Map<String, Object> compsSchema = getMap(schema, "properties", COMPONENTS);
-        if (compsSchema == null) return refMap;
+        if (compsSchema == null)
+            return refMap;
 
         Map<String, Object> itemsSchema = getMap(compsSchema, "items");
-        if (itemsSchema == null) return refMap;
+        if (itemsSchema == null)
+            return refMap;
 
         Map<String, Object> compPropsSchema = getMap(itemsSchema, "properties", COMPONENT_PROPERTIES);
-        if (compPropsSchema == null) return refMap;
+        if (compPropsSchema == null)
+            return refMap;
 
         Map<String, Object> allComponents = getMap(compPropsSchema, "properties");
-        if (allComponents == null) return refMap;
+        if (allComponents == null)
+            return refMap;
 
         for (Map.Entry<String, Object> compEntry : allComponents.entrySet()) {
             String compName = compEntry.getKey();
-            if (!(compEntry.getValue() instanceof Map)) continue;
+            if (!(compEntry.getValue() instanceof Map))
+                continue;
             Map<String, Object> compSchema = (Map<String, Object>) compEntry.getValue();
 
             RefFields refs = new RefFields();
@@ -209,7 +225,8 @@ public final class Validation {
             if (props != null) {
                 for (Map.Entry<String, Object> propEntry : props.entrySet()) {
                     String propName = propEntry.getKey();
-                    if (!(propEntry.getValue() instanceof Map)) continue;
+                    if (!(propEntry.getValue() instanceof Map))
+                        continue;
                     Map<String, Object> propSchema = (Map<String, Object>) propEntry.getValue();
 
                     if (isComponentIdRef(propSchema)) {
@@ -261,7 +278,8 @@ public final class Validation {
     }
 
     @SuppressWarnings("unchecked")
-    private static List<Map.Entry<String, String>> getComponentReferences(Map<String, Object> component, Map<String, RefFields> refFieldsMap) {
+    private static List<Map.Entry<String, String>> getComponentReferences(Map<String, Object> component,
+            Map<String, RefFields> refFieldsMap) {
         List<Map.Entry<String, String>> references = new ArrayList<>();
         Object compPropsContainerObj = component.get(COMPONENT_PROPERTIES);
         if (!(compPropsContainerObj instanceof Map)) {
@@ -272,7 +290,8 @@ public final class Validation {
 
         for (Map.Entry<String, Object> typeEntry : compPropsContainer.entrySet()) {
             String compType = typeEntry.getKey();
-            if (!(typeEntry.getValue() instanceof Map)) continue;
+            if (!(typeEntry.getValue() instanceof Map))
+                continue;
             Map<String, Object> props = (Map<String, Object>) typeEntry.getValue();
 
             RefFields refs = refFieldsMap.getOrDefault(compType, new RefFields());
@@ -328,7 +347,8 @@ public final class Validation {
 
             if (isFunc) {
                 if (funcDepth >= MAX_FUNC_CALL_DEPTH) {
-                    throw new IllegalArgumentException("Recursion limit exceeded: " + FUNCTION_CALL + " depth > " + MAX_FUNC_CALL_DEPTH);
+                    throw new IllegalArgumentException(
+                            "Recursion limit exceeded: " + FUNCTION_CALL + " depth > " + MAX_FUNC_CALL_DEPTH);
                 }
 
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
