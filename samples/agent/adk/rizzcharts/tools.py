@@ -12,84 +12,96 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any
 import logging
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def get_store_sales() -> dict[str, Any]:
-    """
-    Gets individual store sales
+def get_store_sales(region: str = "all", **kwargs: Any) -> dict[str, Any]:
+  """
+  Gets individual store sales
 
-    Returns:
-        A dict containing the stores with locations and their sales, and with outlier stores highlighted
-    """
+  Args:
+      region: The region to get store sales for.
+      **kwargs: Additional arguments.
 
-    return {
-        "center": {"lat": 34, "lng": -118.2437},
-        "zoom": 10,
-        "locations": [
-            {
-                "lat": 34.0195,
-                "lng": -118.4912,
-                "name": "Santa Monica Branch",
-                "description": "High traffic coastal location.",
-                "outlier_reason": "Yes, 15% sales over baseline",
-                "background": "#4285F4",
-                "borderColor": "#FFFFFF",
-                "glyphColor": "#FFFFFF",
-            },
-            {"lat": 34.0488, "lng": -118.2518, "name": "Downtown Flagship"},
-            {"lat": 34.1016, "lng": -118.3287, "name": "Hollywood Boulevard Store"},
-            {"lat": 34.1478, "lng": -118.1445, "name": "Pasadena Location"},
-            {"lat": 33.7701, "lng": -118.1937, "name": "Long Beach Outlet"},
-            {"lat": 34.0736, "lng": -118.4004, "name": "Beverly Hills Boutique"},
-        ],
-    }
+  Returns:
+      A dict containing the stores with locations and their sales, and with outlier stores highlighted
+  """
+  logger.info("get_store_sales called with region=%s, kwargs=%s", region, kwargs)
+
+  return {
+      "center": {"lat": 34, "lng": -118.2437},
+      "zoom": 10,
+      "locations": [
+          {
+              "lat": 34.0195,
+              "lng": -118.4912,
+              "name": "Santa Monica Branch",
+              "description": "High traffic coastal location.",
+              "outlier_reason": "Yes, 15% sales over baseline",
+              "background": "#4285F4",
+              "borderColor": "#FFFFFF",
+              "glyphColor": "#FFFFFF",
+          },
+          {"lat": 34.0488, "lng": -118.2518, "name": "Downtown Flagship"},
+          {"lat": 34.1016, "lng": -118.3287, "name": "Hollywood Boulevard Store"},
+          {"lat": 34.1478, "lng": -118.1445, "name": "Pasadena Location"},
+          {"lat": 33.7701, "lng": -118.1937, "name": "Long Beach Outlet"},
+          {"lat": 34.0736, "lng": -118.4004, "name": "Beverly Hills Boutique"},
+      ],
+  }
 
 
-def get_sales_data() -> dict[str, Any]:
-    """
-    Gets the sales data.
+def get_sales_data(time_period: str = "year", **kwargs: Any) -> dict[str, Any]:
+  """
+  Gets the sales data.
 
-    Returns:
-        A dict containing the sales breakdown by product category.
-    """
+  Args:
+      time_period: The time period to get sales data for (e.g. 'Q1', 'year'). Defaults to 'year'.
+      **kwargs: Additional arguments.
 
-    return {
-        "sales_data": [
-            {
-                "label": "Apparel",
-                "value": 41,
-                "drillDown": [
-                    {"label": "Tops", "value": 31},
-                    {"label": "Bottoms", "value": 38},
-                    {"label": "Outerwear", "value": 20},
-                    {"label": "Footwear", "value": 11},
-                ],
-            },
-            {
-                "label": "Home Goods",
-                "value": 15,
-                "drillDown": [
-                    {"label": "Pillow", "value": 8},
-                    {"label": "Coffee Maker", "value": 16},
-                    {"label": "Area Rug", "value": 3},
-                    {"label": "Bath Towels", "value": 14},
-                ],
-            },
-            {
-                "label": "Electronics",
-                "value": 28,
-                "drillDown": [
-                    {"label": "Phones", "value": 25},
-                    {"label": "Laptops", "value": 27},
-                    {"label": "TVs", "value": 21},
-                    {"label": "Other", "value": 27},
-                ],
-            },
-            {"label": "Health & Beauty", "value": 10},
-            {"label": "Other", "value": 6},
-        ]
-    }
+  Returns:
+      A dict containing the sales breakdown by product category.
+  """
+  logger.info(
+      "get_sales_data called with time_period=%s, kwargs=%s", time_period, kwargs
+  )
+
+  return {
+      "sales_data": [
+          {
+              "label": "Apparel",
+              "value": 41,
+              "drillDown": [
+                  {"label": "Tops", "value": 31},
+                  {"label": "Bottoms", "value": 38},
+                  {"label": "Outerwear", "value": 20},
+                  {"label": "Footwear", "value": 11},
+              ],
+          },
+          {
+              "label": "Home Goods",
+              "value": 15,
+              "drillDown": [
+                  {"label": "Pillow", "value": 8},
+                  {"label": "Coffee Maker", "value": 16},
+                  {"label": "Area Rug", "value": 3},
+                  {"label": "Bath Towels", "value": 14},
+              ],
+          },
+          {
+              "label": "Electronics",
+              "value": 28,
+              "drillDown": [
+                  {"label": "Phones", "value": 25},
+                  {"label": "Laptops", "value": 27},
+                  {"label": "TVs", "value": 21},
+                  {"label": "Other", "value": 27},
+              ],
+          },
+          {"label": "Health & Beauty", "value": 10},
+          {"label": "Other", "value": 6},
+      ]
+  }

@@ -8,8 +8,9 @@ A2UI is an open-source project licensed under Apache 2.0. We welcome contributio
 
 ## Community Showcase
 
-!!! info "Coming soon..."
-    We are considering how best to showcase community projects, examples, themes, renderers, custom components, and more.  A 4 minute (or less) demo video and code sample linked in Github discussions is a great way to show off your work.
+> ℹ️ **Coming soon...**
+>
+> We are considering how best to showcase community projects, examples, themes, renderers, custom components, and more.  A 4 minute (or less) demo video and code sample linked in Github discussions is a great way to show off your work.
 
 ## Project Partners
 

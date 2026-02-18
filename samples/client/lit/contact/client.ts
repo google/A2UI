@@ -30,6 +30,8 @@ type A2AServerPayload =
   | Array<A2DataPayload | A2TextPayload>
   | { error: string };
 
+import { componentRegistry } from "@a2ui/lit/ui";
+
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
   get ready() {
@@ -39,8 +41,18 @@ export class A2UIClient {
   async send(
     message: v0_8.Types.A2UIClientEventMessage
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
+    const catalog = componentRegistry.getInlineCatalog();
+    const finalMessage = {
+      ...message,
+      metadata: {
+        "a2uiClientCapabilities": {
+          "inlineCatalogs": [catalog],
+        },
+      },
+    };
+
     const response = await fetch("/a2a", {
-      body: JSON.stringify(message),
+      body: JSON.stringify(finalMessage),
       method: "POST",
     });
 

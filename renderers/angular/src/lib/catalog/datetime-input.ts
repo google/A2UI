@@ -16,7 +16,7 @@
 
 import { computed, Component, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Primitives } from '@a2ui/lit/0.8';
+import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-datetime-input',

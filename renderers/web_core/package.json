@@ -1,0 +1,75 @@
+{
+  "name": "@a2ui/web_core",
+  "version": "0.8.2",
+  "description": "A2UI Core Library",
+  "main": "./dist/src/v0_8/index.js",
+  "types": "./dist/src/v0_8/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/v0_8/index.d.ts",
+      "default": "./dist/src/v0_8/index.js"
+    },
+    "./types/*": {
+      "types": "./dist/src/v0_8/types/*.d.ts",
+      "default": "./dist/src/v0_8/types/*.js"
+    },
+    "./data/*": {
+      "types": "./dist/src/v0_8/data/*.d.ts",
+      "default": "./dist/src/v0_8/data/*.js"
+    },
+    "./styles/*": {
+      "types": "./dist/src/v0_8/styles/*.d.ts",
+      "default": "./dist/src/v0_8/styles/*.js"
+    },
+    "./schemas/*": {
+      "default": "./dist/src/v0_8/schemas/*"
+    }
+  },
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "copy-spec": "wireit"
+  },
+  "wireit": {
+    "copy-spec": {
+      "command": "node scripts/copy-spec.js",
+      "files": [
+        "../../specification/v0_8/json/*.json",
+        "scripts/copy-spec.js"
+      ],
+      "output": [
+        "src/v0_8/schemas/*.json"
+      ]
+    },
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc -b --pretty",
+      "dependencies": [
+        "copy-spec"
+      ],
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.json",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/",
+        "!dist/**/*.min.js{,.map}"
+      ],
+      "clean": "if-file-deleted"
+    }
+  },
+  "author": "Google",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "wireit": "^0.15.0-pre.2"
+  }
+}

@@ -28,9 +28,9 @@ import {
 import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { effect } from "signal-utils/subtle/microtask-effect";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
-import { StringValue } from "../types/primitives.js";
-import { Theme, AnyComponentNode, SurfaceID } from "../types/types.js";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import { StringValue } from "@a2ui/web_core/types/primitives";
+import { AnyComponentNode, SurfaceID, Theme } from "@a2ui/web_core/types/types";
 import { themeContext } from "./context/theme.js";
 import { structuralStyles } from "./styles.js";
 import { componentRegistry } from "./component-registry.js";
@@ -348,7 +348,6 @@ export class Root extends SignalWatcher(LitElement) {
             .dataContextPath=${node.dataContextPath ?? ""}
             .enableDate=${node.properties.enableDate ?? true}
             .enableTime=${node.properties.enableTime ?? true}
-            .outputFormat=${node.properties.outputFormat}
             .value=${node.properties.value}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-datetimeinput>`;
@@ -386,6 +385,8 @@ export class Root extends SignalWatcher(LitElement) {
             .options=${node.properties.options}
             .maxAllowedSelections=${node.properties.maxAllowedSelections}
             .selections=${node.properties.selections}
+            .variant=${(node as any).properties.variant}
+            .filterable=${node.properties.filterable}
             .enableCustomElements=${this.enableCustomElements}
           ></a2ui-multiplechoice>`;
         }

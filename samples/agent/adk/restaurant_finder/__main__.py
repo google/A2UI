@@ -19,8 +19,6 @@ import click
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from a2ui.a2ui_extension import get_a2ui_agent_extension
 from agent import RestaurantAgent
 from agent_executor import RestaurantAgentExecutor
 from dotenv import load_dotenv
@@ -34,77 +32,58 @@ logger = logging.getLogger(__name__)
 
 
 class MissingAPIKeyError(Exception):
-    """Exception for missing API key."""
+  """Exception for missing API key."""
 
 
 @click.command()
 @click.option("--host", default="localhost")
 @click.option("--port", default=10002)
 def main(host, port):
-    try:
-        # Check for API key only if Vertex AI is not configured
-        if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
-            if not os.getenv("GEMINI_API_KEY"):
-                raise MissingAPIKeyError(
-                    "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI is not TRUE."
-                )
-
-        capabilities = AgentCapabilities(
-            streaming=True,
-            extensions=[get_a2ui_agent_extension()],
-        )
-        skill = AgentSkill(
-            id="find_restaurants",
-            name="Find Restaurants Tool",
-            description="Helps find restaurants based on user criteria (e.g., cuisine, location).",
-            tags=["restaurant", "finder"],
-            examples=["Find me the top 10 chinese restaurants in the US"],
+  try:
+    # Check for API key only if Vertex AI is not configured
+    if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
+      if not os.getenv("GEMINI_API_KEY"):
+        raise MissingAPIKeyError(
+            "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI"
+            " is not TRUE."
         )
 
-        base_url = f"http://{host}:{port}"
+    base_url = f"http://{host}:{port}"
 
-        agent_card = AgentCard(
-            name="Restaurant Agent",
-            description="This agent helps find restaurants based on user criteria.",
-            url=base_url,  # <-- Use base_url here
-            version="1.0.0",
-            default_input_modes=RestaurantAgent.SUPPORTED_CONTENT_TYPES,
-            default_output_modes=RestaurantAgent.SUPPORTED_CONTENT_TYPES,
-            capabilities=capabilities,
-            skills=[skill],
-        )
+    ui_agent = RestaurantAgent(base_url=base_url, use_ui=True)
+    text_agent = RestaurantAgent(base_url=base_url, use_ui=False)
 
-        agent_executor = RestaurantAgentExecutor(base_url=base_url)
+    agent_executor = RestaurantAgentExecutor(ui_agent, text_agent)
 
-        request_handler = DefaultRequestHandler(
-            agent_executor=agent_executor,
-            task_store=InMemoryTaskStore(),
-        )
-        server = A2AStarletteApplication(
-            agent_card=agent_card, http_handler=request_handler
-        )
-        import uvicorn
+    request_handler = DefaultRequestHandler(
+        agent_executor=agent_executor,
+        task_store=InMemoryTaskStore(),
+    )
+    server = A2AStarletteApplication(
+        agent_card=ui_agent.get_agent_card(), http_handler=request_handler
+    )
+    import uvicorn
 
-        app = server.build()
+    app = server.build()
 
-        app.add_middleware(
-            CORSMiddleware,
-            allow_origin_regex=r"http://localhost:\d+",
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=r"http://localhost:\d+",
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-        app.mount("/static", StaticFiles(directory="images"), name="static")
+    app.mount("/static", StaticFiles(directory="images"), name="static")
 
-        uvicorn.run(app, host=host, port=port)
-    except MissingAPIKeyError as e:
-        logger.error(f"Error: {e}")
-        exit(1)
-    except Exception as e:
-        logger.error(f"An error occurred during server startup: {e}")
-        exit(1)
+    uvicorn.run(app, host=host, port=port)
+  except MissingAPIKeyError as e:
+    logger.error(f"Error: {e}")
+    exit(1)
+  except Exception as e:
+    logger.error(f"An error occurred during server startup: {e}")
+    exit(1)
 
 
 if __name__ == "__main__":
-    main()
+  main()
