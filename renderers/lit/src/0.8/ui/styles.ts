@@ -18,15 +18,12 @@ import type { CSSResultGroup } from "lit";
 import * as Styles from "@a2ui/web_core/styles/index";
 
 const buildStructuralStyles = (): CSSResultGroup => {
-  if (typeof CSSStyleSheet === "undefined") {
-    return [];
-  }
-
   try {
     const styleSheet = new CSSStyleSheet();
     styleSheet.replaceSync(Styles.structuralStyles);
     return styleSheet;
-  } catch {
+  } catch (e) {
+    console.error('Failed to construct structural styles:', e);
     return [];
   }
 };
