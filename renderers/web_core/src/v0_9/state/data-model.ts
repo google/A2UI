@@ -21,17 +21,41 @@ export interface Subscription<T> {
   /**
    * The current value at the subscribed path.
    */
-  readonly value: T;
+  readonly value: T | undefined;
 
   /**
    * A callback function to be invoked when the value changes.
    */
-  onChange?: (value: T) => void;
+  onChange?: (value: T | undefined) => void;
 
   /**
    * Unsubscribes from the data model.
    */
   unsubscribe(): void;
+}
+
+class SubscriptionImpl<T> implements Subscription<T> {
+  private _value: T | undefined;
+  private readonly _unsubscribe: () => void;
+  public onChange?: (value: T | undefined) => void;
+
+  constructor(initialValue: T | undefined, unsubscribe: () => void) {
+    this._value = initialValue;
+    this._unsubscribe = unsubscribe;
+  }
+
+  get value(): T | undefined {
+    return this._value;
+  }
+
+  setValue(value: T | undefined): void {
+    this._value = value;
+    this.onChange?.(value);
+  }
+
+  unsubscribe(): void {
+    this._unsubscribe();
+  }
 }
 
 /**
@@ -40,7 +64,7 @@ export interface Subscription<T> {
  */
 export class DataModel {
   private data: any = {};
-  private readonly subscriptions: Map<string, Set<Subscription<any>>> = new Map();
+  private readonly subscriptions: Map<string, Set<SubscriptionImpl<any>>> = new Map();
 
   constructor(initialData: any = {}) {
     this.data = initialData;
@@ -49,6 +73,10 @@ export class DataModel {
   /**
    * Updates the model at the specific path and notifies all relevant subscribers.
    * If path is '/' or empty, replaces the entire root.
+   *
+   * Note on `undefined` values:
+   * - For objects: Setting a property to `undefined` removes the key from the object.
+   * - For arrays: Setting an index to `undefined` sets that index to `undefined` but preserves the array length (sparse array).
    */
   set(path: string, value: any): void {
     if (path === '/' || path === '') {
@@ -63,11 +91,26 @@ export class DataModel {
     let current = this.data;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
+
+      if (Array.isArray(current) && !/^\d+$/.test(segment)) {
+        throw new Error(`Cannot use non-numeric segment '${segment}' on an array in path '${path}'.`);
+      }
+
+      // If we encounter a primitive where a container is expected, we cannot proceed.
+      // We allow undefined/null to be overwritten by a new container.
+      if (current[segment] !== undefined && current[segment] !== null && typeof current[segment] !== 'object') {
+        throw new Error(`Cannot set path '${path}': segment '${segment}' is a primitive value.`);
+      }
+
       if (current[segment] === undefined || current[segment] === null) {
         const nextSegment = (i < segments.length - 1) ? segments[i + 1] : lastSegment;
         current[segment] = /^\d+$/.test(nextSegment) ? [] : {};
       }
       current = current[segment];
+    }
+
+    if (Array.isArray(current) && !/^\d+$/.test(lastSegment)) {
+      throw new Error(`Cannot use non-numeric segment '${lastSegment}' on an array in path '${path}'.`);
     }
 
     if (value === undefined) {
@@ -103,11 +146,11 @@ export class DataModel {
    */
   subscribe<T>(path: string): Subscription<T> {
     const normalizedPath = this.normalizePath(path);
+    const initialValue = this.get(normalizedPath);
 
-    const subscription: Subscription<T> = {
-      value: undefined as any,
-      onChange: undefined,
-      unsubscribe: () => {
+    const subscription = new SubscriptionImpl<T>(
+      initialValue,
+      () => {
         const set = this.subscriptions.get(normalizedPath);
         if (set) {
           set.delete(subscription);
@@ -116,12 +159,7 @@ export class DataModel {
           }
         }
       }
-    };
-
-    Object.defineProperty(subscription, 'value', {
-      get: () => this.get(normalizedPath),
-      enumerable: true
-    });
+    );
 
     if (!this.subscriptions.has(normalizedPath)) {
       this.subscriptions.set(normalizedPath, new Set());
@@ -158,7 +196,6 @@ export class DataModel {
     while (parentPath !== '/' && parentPath !== '') {
       parentPath = parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
       this.notify(parentPath);
-      if (parentPath === '/') break;
     }
 
     // Notify Descendants
@@ -173,7 +210,7 @@ export class DataModel {
     const set = this.subscriptions.get(path);
     if (!set) return;
     const value = this.get(path);
-    set.forEach(sub => sub.onChange?.(value));
+    set.forEach(sub => sub.setValue(value));
   }
 
   private notifyAllSubscribers(): void {
