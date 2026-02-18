@@ -13,21 +13,24 @@ describe('SurfaceGroupModel', () => {
     catalog = { id: 'test-catalog', components: new Map() };
   });
 
-  it('creates surface', () => {
-    const surface = model.createSurface('s1', catalog, {}, async () => {});
-    assert.ok(surface);
-    assert.strictEqual(surface.id, 's1');
+  it('adds surface', () => {
+    const surface = new SurfaceModel('s1', catalog, {});
+    model.addSurface(surface);
+    assert.ok(model.getSurface('s1'));
     assert.strictEqual(model.getSurface('s1'), surface);
   });
 
-  it('returns existing surface if created again', () => {
-    const s1 = model.createSurface('s1', catalog, {}, async () => {});
-    const s2 = model.createSurface('s1', catalog, {}, async () => {});
-    assert.strictEqual(s1, s2);
+  it('ignores duplicate surface addition', () => {
+    const s1 = new SurfaceModel('s1', catalog, {});
+    const s2 = new SurfaceModel('s1', catalog, {}); // Same ID
+    model.addSurface(s1);
+    model.addSurface(s2);
+    assert.strictEqual(model.getSurface('s1'), s1); // Should still be the first one
   });
 
   it('deletes surface', () => {
-    model.createSurface('s1', catalog, {}, async () => {});
+    const surface = new SurfaceModel('s1', catalog, {});
+    model.addSurface(surface);
     assert.ok(model.getSurface('s1'));
     
     model.deleteSurface('s1');
@@ -43,11 +46,39 @@ describe('SurfaceGroupModel', () => {
       onSurfaceDeleted: (id) => deletedId = id
     });
 
-    model.createSurface('s1', catalog, {}, async () => {});
+    const surface = new SurfaceModel('s1', catalog, {});
+    model.addSurface(surface);
     assert.ok(created);
     assert.strictEqual(created?.id, 's1');
 
     model.deleteSurface('s1');
     assert.strictEqual(deletedId, 's1');
+  });
+
+  it('propagates actions from surfaces', async () => {
+    let receivedAction: any;
+    model.addActionListener((action) => {
+        receivedAction = action;
+    });
+
+    const surface = new SurfaceModel('s1', catalog, {});
+    model.addSurface(surface);
+
+    await surface.dispatchAction({ type: 'test' });
+    assert.deepStrictEqual(receivedAction, { type: 'test' });
+  });
+
+  it('stops propagating actions after deletion', async () => {
+    let callCount = 0;
+    model.addActionListener(() => {
+        callCount++;
+    });
+
+    const surface = new SurfaceModel('s1', catalog, {});
+    model.addSurface(surface);
+    model.deleteSurface('s1');
+
+    await surface.dispatchAction({ type: 'test' });
+    assert.strictEqual(callCount, 0);
   });
 });

@@ -1,8 +1,9 @@
 
-import { SurfaceModel, ActionHandler } from '../state/surface-model.js';
+import { SurfaceModel, ActionListener } from '../state/surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { SurfaceGroupModel, SurfaceLifecycleListener } from '../state/surface-group-model.js';
+import { ComponentModel } from '../state/component-model.js';
 
 export type { SurfaceLifecycleListener };
 
@@ -27,8 +28,10 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
    */
   constructor(
     private catalogs: T[],
-    private actionHandler: ActionHandler
-  ) { }
+    private actionHandler: ActionListener
+  ) {
+    this.model.addActionListener(this.actionHandler);
+  }
 
   /**
    * Adds a listener for surface lifecycle events.
@@ -156,7 +159,13 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
       return;
     }
 
-    this.model.createSurface(surfaceId, catalog, theme, this.actionHandler);
+    if (this.model.getSurface(surfaceId)) {
+        console.warn(`Surface ${surfaceId} already exists. Ignoring.`);
+        return;
+    }
+
+    const surface = new SurfaceModel<T>(surfaceId, catalog, theme);
+    this.model.addSurface(surface);
   }
 
   private routeMessage(msg: any) {
@@ -187,7 +196,8 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
                 console.warn(`Cannot create component ${id} without a type.`);
                 continue;
             }
-            surface.componentsModel.createComponent(id, component, properties);
+            const newComponent = new ComponentModel(id, component, properties);
+            surface.componentsModel.addComponent(newComponent);
           }
         }
       } else if (msg.updateDataModel) {

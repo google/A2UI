@@ -15,15 +15,13 @@ export class ComponentsModel {
     return this.components.get(id);
   }
 
-  createComponent(id: string, type: string, properties: Record<string, any>): ComponentModel {
-    if (this.components.has(id)) {
-      throw new Error(`Component with id '${id}' already exists.`);
+  addComponent(component: ComponentModel): void {
+    if (this.components.has(component.id)) {
+      throw new Error(`Component with id '${component.id}' already exists.`);
     }
 
-    const newComponent = new ComponentModel(id, type, properties);
-    this.components.set(id, newComponent);
-    this.notifyCreated(newComponent);
-    return newComponent;
+    this.components.set(component.id, component);
+    this.notifyCreated(component);
   }
 
   addLifecycleListener(listener: ComponentsLifecycleListener): () => void {

@@ -3,6 +3,7 @@ import assert from 'node:assert';
 import { test, describe, it, beforeEach, mock } from 'node:test';
 import { SurfaceModel } from './surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
+import { ComponentModel } from './component-model.js';
 
 describe('SurfaceModel', () => {
   let surface: SurfaceModel<CatalogApi>;
@@ -15,7 +16,8 @@ describe('SurfaceModel', () => {
       id: 'test-catalog',
       components: new Map()
     };
-    surface = new SurfaceModel<CatalogApi>('surface-1', catalog, {}, async (action) => {
+    surface = new SurfaceModel<CatalogApi>('surface-1', catalog, {});
+    surface.addActionListener(async (action) => {
       actions.push(action);
     });
   });
@@ -25,7 +27,7 @@ describe('SurfaceModel', () => {
   });
 
   it('exposes components model', () => {
-    surface.componentsModel.createComponent('c1', 'Button', {});
+    surface.componentsModel.addComponent(new ComponentModel('c1', 'Button', {}));
     assert.ok(surface.componentsModel.get('c1'));
   });
 
@@ -36,7 +38,7 @@ describe('SurfaceModel', () => {
   });
 
   it('creates a component context', () => {
-    surface.componentsModel.createComponent('root', 'Box', {});
+    surface.componentsModel.addComponent(new ComponentModel('root', 'Box', {}));
     const ctx = surface.createComponentContext('root', '/mydata');
     assert.ok(ctx);
     assert.strictEqual(ctx?.componentModel.id, 'root');

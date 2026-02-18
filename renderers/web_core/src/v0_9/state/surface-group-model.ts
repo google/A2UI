@@ -1,4 +1,4 @@
-import { SurfaceModel, ActionHandler } from './surface-model.js';
+import { SurfaceModel, ActionListener } from './surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
 
 export interface SurfaceLifecycleListener<T extends CatalogApi> {
@@ -12,29 +12,36 @@ export interface SurfaceLifecycleListener<T extends CatalogApi> {
  */
 export class SurfaceGroupModel<T extends CatalogApi> {
   private surfaces: Map<string, SurfaceModel<T>> = new Map();
-  private listeners: Set<SurfaceLifecycleListener<T>> = new Set();
+  private surfaceUnsubscribers: Map<string, () => void> = new Map();
+  private lifecycleListeners: Set<SurfaceLifecycleListener<T>> = new Set();
+  private actionListeners: Set<ActionListener> = new Set();
 
   constructor() {}
 
-  createSurface(
-    id: string,
-    catalog: T,
-    theme: any,
-    actionHandler: ActionHandler
-  ): SurfaceModel<T> {
-    if (this.surfaces.has(id)) {
-      console.warn(`Surface ${id} already exists. Returning existing surface.`);
-      return this.surfaces.get(id)!;
+  addSurface(surface: SurfaceModel<T>): void {
+    if (this.surfaces.has(surface.id)) {
+      console.warn(`Surface ${surface.id} already exists. Ignoring.`);
+      return;
     }
 
-    const surface = new SurfaceModel<T>(id, catalog, theme, actionHandler);
-    this.surfaces.set(id, surface);
+    this.surfaces.set(surface.id, surface);
+    
+    // Subscribe to surface actions and propagate
+    const unsubscribe = surface.addActionListener((action) => this.dispatchAction(action));
+    this.surfaceUnsubscribers.set(surface.id, unsubscribe);
+
     this.notifyCreated(surface);
-    return surface;
   }
 
   deleteSurface(id: string): void {
     if (this.surfaces.has(id)) {
+      // Unsubscribe from actions
+      const unsubscribe = this.surfaceUnsubscribers.get(id);
+      if (unsubscribe) {
+        unsubscribe();
+        this.surfaceUnsubscribers.delete(id);
+      }
+
       this.surfaces.delete(id);
       this.notifyDeleted(id);
     }
@@ -45,16 +52,35 @@ export class SurfaceGroupModel<T extends CatalogApi> {
   }
 
   addLifecycleListener(listener: SurfaceLifecycleListener<T>): () => void {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
+    this.lifecycleListeners.add(listener);
+    return () => this.lifecycleListeners.delete(listener);
   }
 
   removeLifecycleListener(listener: SurfaceLifecycleListener<T>): void {
-    this.listeners.delete(listener);
+    this.lifecycleListeners.delete(listener);
+  }
+
+  addActionListener(listener: ActionListener): () => void {
+    this.actionListeners.add(listener);
+    return () => this.actionListeners.delete(listener);
+  }
+
+  removeActionListener(listener: ActionListener): void {
+    this.actionListeners.delete(listener);
+  }
+
+  private async dispatchAction(action: any): Promise<void> {
+    for (const listener of this.actionListeners) {
+      try {
+        await listener(action);
+      } catch (e) {
+        console.error('Error in SurfaceGroupModel ActionListener:', e);
+      }
+    }
   }
 
   private notifyCreated(surface: SurfaceModel<T>): void {
-    for (const listener of this.listeners) {
+    for (const listener of this.lifecycleListeners) {
       try {
         listener.onSurfaceCreated?.(surface);
       } catch (e) {
@@ -64,7 +90,7 @@ export class SurfaceGroupModel<T extends CatalogApi> {
   }
 
   private notifyDeleted(id: string): void {
-    for (const listener of this.listeners) {
+    for (const listener of this.lifecycleListeners) {
       try {
         listener.onSurfaceDeleted?.(id);
       } catch (e) {

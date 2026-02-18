@@ -14,17 +14,19 @@ describe('ComponentsModel', () => {
     assert.strictEqual(model.get('any'), undefined);
   });
 
-  it('creates a new component', () => {
-    model.createComponent('c1', 'Button', { label: 'Click' });
-    const c1 = model.get('c1');
-    assert.ok(c1);
-    assert.strictEqual(c1?.id, 'c1');
-    assert.strictEqual(c1?.type, 'Button');
-    assert.strictEqual(c1?.properties.label, 'Click');
+  it('adds a new component', () => {
+    const c1 = new ComponentModel('c1', 'Button', { label: 'Click' });
+    model.addComponent(c1);
+    const retrieved = model.get('c1');
+    assert.ok(retrieved);
+    assert.strictEqual(retrieved?.id, 'c1');
+    assert.strictEqual(retrieved?.type, 'Button');
+    assert.strictEqual(retrieved?.properties.label, 'Click');
   });
 
   it('updates an existing component', () => {
-    const c1 = model.createComponent('c1', 'Button', { label: 'Initial' });
+    const c1 = new ComponentModel('c1', 'Button', { label: 'Initial' });
+    model.addComponent(c1);
     
     // Track update on component itself
     let updateCount = 0;
@@ -46,15 +48,16 @@ describe('ComponentsModel', () => {
       }
     });
 
-    model.createComponent('c1', 'Button', {});
+    model.addComponent(new ComponentModel('c1', 'Button', {}));
     assert.ok(createdComponent);
     assert.strictEqual(createdComponent?.id, 'c1');
   });
 
-  it('throws when creating duplicate component', () => {
-    model.createComponent('c1', 'Button', {});
+  it('throws when adding duplicate component', () => {
+    const c1 = new ComponentModel('c1', 'Button', {});
+    model.addComponent(c1);
     assert.throws(() => {
-        model.createComponent('c1', 'Button', {});
+        model.addComponent(new ComponentModel('c1', 'Button', {}));
     }, /already exists/);
   });
 });

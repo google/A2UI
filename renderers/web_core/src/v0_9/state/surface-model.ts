@@ -6,7 +6,7 @@ import { ComponentModel } from './component-model.js';
 import { DataContext } from '../rendering/data-context.js';
 import { ComponentContext } from '../rendering/component-context.js';
 
-export type ActionHandler = (action: any) => Promise<void>;
+export type ActionListener = (action: any) => void | Promise<void>;
 
 /**
  * The state model for a single surface.
@@ -18,15 +18,31 @@ export type ActionHandler = (action: any) => Promise<void>;
 export class SurfaceModel<T extends CatalogApi> {
   readonly dataModel: DataModel;
   readonly componentsModel: ComponentsModel;
+  private actionListeners: Set<ActionListener> = new Set();
 
   constructor(
     readonly id: string,
     readonly catalog: T,
-    readonly theme: any = {},
-    private readonly actionHandler: ActionHandler
+    readonly theme: any = {}
   ) {
     this.dataModel = new DataModel({});
     this.componentsModel = new ComponentsModel();
+  }
+
+  /**
+   * Adds a listener for actions dispatched from this surface.
+   * @returns A function to unsubscribe the listener.
+   */
+  addActionListener(listener: ActionListener): () => void {
+    this.actionListeners.add(listener);
+    return () => this.actionListeners.delete(listener);
+  }
+
+  /**
+   * Removes an action listener.
+   */
+  removeActionListener(listener: ActionListener): void {
+    this.actionListeners.delete(listener);
   }
 
   /**
@@ -42,7 +58,13 @@ export class SurfaceModel<T extends CatalogApi> {
     return new ComponentContext(componentModel, dataContext, (action) => this.dispatchAction(action));
   }
 
-  dispatchAction(action: any): Promise<void> {
-    return this.actionHandler(action);
+  async dispatchAction(action: any): Promise<void> {
+    for (const listener of this.actionListeners) {
+      try {
+        await listener(action);
+      } catch (e) {
+        console.error('Error in ActionListener:', e);
+      }
+    }
   }
 }
