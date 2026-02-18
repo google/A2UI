@@ -5,7 +5,7 @@ export interface ComponentsLifecycleListener {
   onComponentDeleted?: (componentId: string) => void;
 }
 
-export class ComponentsModel {
+export class SurfaceComponentsModel {
   private components: Map<string, ComponentModel> = new Map();
   private listeners: Set<ComponentsLifecycleListener> = new Set();
 

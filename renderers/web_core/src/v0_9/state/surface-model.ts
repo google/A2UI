@@ -1,7 +1,7 @@
 
 import { DataModel } from './data-model.js';
 import { CatalogApi } from '../catalog/types.js';
-import { ComponentsModel } from './components-model.js';
+import { SurfaceComponentsModel } from './surface-components-model.js';
 import { ComponentModel } from './component-model.js';
 import { DataContext } from '../rendering/data-context.js';
 import { ComponentContext } from '../rendering/component-context.js';
@@ -17,7 +17,7 @@ export type ActionListener = (action: any) => void | Promise<void>;
  */
 export class SurfaceModel<T extends CatalogApi> {
   readonly dataModel: DataModel;
-  readonly componentsModel: ComponentsModel;
+  readonly componentsModel: SurfaceComponentsModel;
   private actionListeners: Set<ActionListener> = new Set();
 
   constructor(
@@ -26,7 +26,7 @@ export class SurfaceModel<T extends CatalogApi> {
     readonly theme: any = {}
   ) {
     this.dataModel = new DataModel({});
-    this.componentsModel = new ComponentsModel();
+    this.componentsModel = new SurfaceComponentsModel();
   }
 
   /**

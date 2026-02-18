@@ -1,13 +1,13 @@
 import assert from 'node:assert';
 import { describe, it, beforeEach } from 'node:test';
-import { ComponentsModel } from './components-model.js';
+import { SurfaceComponentsModel } from './surface-components-model.js';
 import { ComponentModel } from './component-model.js';
 
-describe('ComponentsModel', () => {
-  let model: ComponentsModel;
+describe('SurfaceComponentsModel', () => {
+  let model: SurfaceComponentsModel;
 
   beforeEach(() => {
-    model = new ComponentsModel();
+    model = new SurfaceComponentsModel();
   });
 
   it('starts empty', () => {
