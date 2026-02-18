@@ -34,13 +34,37 @@ export interface Subscription<T> {
   unsubscribe(): void;
 }
 
+class SubscriptionImpl<T> implements Subscription<T> {
+  private _value: T | undefined;
+  private readonly _unsubscribe: () => void;
+  public onChange?: (value: T | undefined) => void;
+
+  constructor(initialValue: T | undefined, unsubscribe: () => void) {
+    this._value = initialValue;
+    this._unsubscribe = unsubscribe;
+  }
+
+  get value(): T | undefined {
+    return this._value;
+  }
+
+  setValue(value: T | undefined): void {
+    this._value = value;
+    this.onChange?.(value);
+  }
+
+  unsubscribe(): void {
+    this._unsubscribe();
+  }
+}
+
 /**
  * A standalone, observable data store representing the client-side state.
  * It handles JSON Pointer path resolution and subscription management.
  */
 export class DataModel {
   private data: any = {};
-  private readonly subscriptions: Map<string, Set<Subscription<any>>> = new Map();
+  private readonly subscriptions: Map<string, Set<SubscriptionImpl<any>>> = new Map();
 
   constructor(initialData: any = {}) {
     this.data = initialData;
@@ -122,11 +146,11 @@ export class DataModel {
    */
   subscribe<T>(path: string): Subscription<T> {
     const normalizedPath = this.normalizePath(path);
+    const initialValue = this.get(normalizedPath);
 
-    const subscription: Subscription<T> = {
-      value: undefined as any,
-      onChange: undefined,
-      unsubscribe: () => {
+    const subscription = new SubscriptionImpl<T>(
+      initialValue,
+      () => {
         const set = this.subscriptions.get(normalizedPath);
         if (set) {
           set.delete(subscription);
@@ -135,12 +159,7 @@ export class DataModel {
           }
         }
       }
-    };
-
-    Object.defineProperty(subscription, 'value', {
-      get: () => this.get(normalizedPath),
-      enumerable: true
-    });
+    );
 
     if (!this.subscriptions.has(normalizedPath)) {
       this.subscriptions.set(normalizedPath, new Set());
@@ -191,7 +210,7 @@ export class DataModel {
     const set = this.subscriptions.get(path);
     if (!set) return;
     const value = this.get(path);
-    set.forEach(sub => sub.onChange?.(value));
+    set.forEach(sub => sub.setValue(value));
   }
 
   private notifyAllSubscribers(): void {
