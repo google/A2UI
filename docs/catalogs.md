@@ -195,7 +195,7 @@ This catalog imports all elements from the Basic Catalog and adds a new `Suggest
 
 #### Example: Cherry-picking Components
 
-This catalog imports only `Text` and `Icon` from the Basic Catalog to build a simple Popup surface.
+This catalog imports only `Text` from the Basic Catalog to build a simple Popup surface.
 
 ```json
 {
@@ -203,16 +203,14 @@ This catalog imports only `Text` and `Icon` from the Basic Catalog to build a si
   "components": {
     "allOf": [
       { "$ref": "standard_catalog_definition.json#/components/Text" },
-      { "$ref": "standard_catalog_definition.json#/components/Icon" },
       {
         "Popup": { 
           "type": "object",
           "description": "A modal overlay that displays an icon and text.",
           "properties": {
-            "text": { "$ref": "common_types.json#/$defs/ComponentId" },
-            "icon": { "$ref": "common_types.json#/$defs/ComponentId" }
+            "text": { "$ref": "common_types.json#/$defs/ComponentId" }
           },
-          "required": [ "text", "icon" ]
+          "required": [ "text" ]
         }
       }
     ]
@@ -226,7 +224,7 @@ This catalog imports only `Text` and `Icon` from the Basic Catalog to build a si
 
 Client renderers implement the catalog by mapping the schema definition to actual code.
 
-[Example Rizzcharts typescript renderer for the hello world catalog](../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts).
+[Example typescript renderer for the hello world catalog]
 
 ```typescript
 import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular'; 
@@ -237,12 +235,34 @@ export const RIZZ_CHARTS_CATALOG = {
   HelloWorldBanner: {     
     type: () => import('./hello_world_banner').then((r) => r.HelloWorldBanner),     
     bindings: ({ properties }) => [       
-      inputBinding('message', () => ('message' in properties && properties['message']) || undefined),       
-      inputBinding('backgroundColor', () => ('backgroundColor' in properties && properties['backgroundColor']) || undefined),       
+      inputBinding('message', () => ('message' in properties && properties['message']) || undefined)
     ],   
   }, 
 } as Catalog;
 ```
+
+and the hello_world_banner implementation
+
+```json
+import { DynamicComponent } from '@a2ui/angular';
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'hello-world-banner',
+  imports: [], 
+  template: `
+    <div>
+      <h2>Hello World Banner</h2>
+      <p>{{ message }}</p>
+    </div>
+  `,
+})
+export class HelloWorldBanner extends DynamicComponent {
+  @Input() message?: string;
+}
+```
+
+You can see a working example of a client renderer in the [Rizzcharts demo](../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts).
 
 ## A2UI Catalog Negotiation
 
