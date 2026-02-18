@@ -2,7 +2,7 @@
 import { SurfaceModel, ActionHandler } from '../state/surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { A2uiModel, SurfaceLifecycleListener } from '../state/a2ui-model.js';
+import { SurfaceGroupModel, SurfaceLifecycleListener } from '../state/surface-group-model.js';
 
 export type { SurfaceLifecycleListener };
 
@@ -19,7 +19,7 @@ export interface ClientCapabilitiesOptions<T extends CatalogApi> {
  * @template T The concrete type of the Catalog, which extends CatalogApi.
  */
 export class A2uiMessageProcessor<T extends CatalogApi> {
-  readonly model: A2uiModel<T> = new A2uiModel<T>();
+  readonly model: SurfaceGroupModel<T> = new SurfaceGroupModel<T>();
 
   /**
    * @param catalogs A list of available catalogs.

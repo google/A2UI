@@ -10,7 +10,7 @@ export interface SurfaceLifecycleListener<T extends CatalogApi> {
  * The root state model for the A2UI system.
  * Manages the collection of active surfaces.
  */
-export class A2uiModel<T extends CatalogApi> {
+export class SurfaceGroupModel<T extends CatalogApi> {
   private surfaces: Map<string, SurfaceModel<T>> = new Map();
   private listeners: Set<SurfaceLifecycleListener<T>> = new Set();
 

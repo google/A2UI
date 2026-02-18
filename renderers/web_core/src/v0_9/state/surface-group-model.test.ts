@@ -1,15 +1,15 @@
 import assert from 'node:assert';
 import { describe, it, beforeEach } from 'node:test';
-import { A2uiModel } from './a2ui-model.js';
+import { SurfaceGroupModel } from './surface-group-model.js';
 import { CatalogApi } from '../catalog/types.js';
 import { SurfaceModel } from './surface-model.js';
 
-describe('A2uiModel', () => {
-  let model: A2uiModel<CatalogApi>;
+describe('SurfaceGroupModel', () => {
+  let model: SurfaceGroupModel<CatalogApi>;
   let catalog: CatalogApi;
 
   beforeEach(() => {
-    model = new A2uiModel<CatalogApi>();
+    model = new SurfaceGroupModel<CatalogApi>();
     catalog = { id: 'test-catalog', components: new Map() };
   });
 
