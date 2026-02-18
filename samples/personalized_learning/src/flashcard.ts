@@ -222,7 +222,7 @@ export class Flashcard extends LitElement {
     this._flipped = !this._flipped;
   }
 
-  render() {
+  override render() {
     const frontText = this.resolveStringValue(this.front);
     const backText = this.resolveStringValue(this.back);
     const categoryText = this.resolveStringValue(this.category);

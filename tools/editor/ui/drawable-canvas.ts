@@ -200,12 +200,12 @@ export class DrawableCanvas extends LitElement {
       (localStorage.getItem("drawable-mode") as RenderMode) ?? "free";
   }
 
-  connectedCallback(): void {
+  override connectedCallback(): void {
     super.connectedCallback();
     this.#resizeObserver.observe(this);
   }
 
-  disconnectedCallback(): void {
+  override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.#resizeObserver.disconnect();
   }
@@ -347,7 +347,7 @@ export class DrawableCanvas extends LitElement {
     }
   }
 
-  render() {
+  override render() {
     return html`${svg`
       <svg
         viewBox="${this.#adjustment.x} ${this.#adjustment.y} ${this.#bounds.width
