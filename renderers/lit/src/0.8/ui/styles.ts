@@ -14,7 +14,18 @@
  limitations under the License.
  */
 
-import { unsafeCSS } from "lit";
+import type { CSSResultGroup } from "lit";
 import * as Styles from "@a2ui/web_core/styles/index";
 
-export const structuralStyles = unsafeCSS(Styles.structuralStyles);
+const buildStructuralStyles = (): CSSResultGroup => {
+  try {
+    const styleSheet = new CSSStyleSheet();
+    styleSheet.replaceSync(Styles.structuralStyles);
+    return styleSheet;
+  } catch (e) {
+    console.error('Failed to construct structural styles:', e);
+    return [];
+  }
+};
+
+export const structuralStyles = buildStructuralStyles();
