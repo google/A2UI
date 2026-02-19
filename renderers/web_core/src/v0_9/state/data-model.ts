@@ -58,6 +58,10 @@ class SubscriptionImpl<T> implements Subscription<T> {
   }
 }
 
+function isNumeric(value: string): boolean {
+  return /^\d+$/.test(value);
+}
+
 /**
  * A standalone, observable data store representing the client-side state.
  * It handles JSON Pointer path resolution and subscription management.
@@ -92,7 +96,7 @@ export class DataModel {
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
       
-      if (Array.isArray(current) && !/^\d+$/.test(segment)) {
+      if (Array.isArray(current) && !isNumeric(segment)) {
         throw new Error(`Cannot use non-numeric segment '${segment}' on an array in path '${path}'.`);
       }
 
@@ -104,12 +108,12 @@ export class DataModel {
 
       if (current[segment] === undefined || current[segment] === null) {
         const nextSegment = (i < segments.length - 1) ? segments[i + 1] : lastSegment;
-        current[segment] = /^\d+$/.test(nextSegment) ? [] : {};
+        current[segment] = isNumeric(nextSegment) ? [] : {};
       }
       current = current[segment];
     }
 
-    if (Array.isArray(current) && !/^\d+$/.test(lastSegment)) {
+    if (Array.isArray(current) && !isNumeric(lastSegment)) {
       throw new Error(`Cannot use non-numeric segment '${lastSegment}' on an array in path '${path}'.`);
     }
 
