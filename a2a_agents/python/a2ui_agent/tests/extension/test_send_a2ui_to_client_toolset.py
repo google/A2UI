@@ -253,9 +253,11 @@ async def test_send_tool_run_async_handles_trailing_comma(caplog):
 
   # Malformed JSON with a trailing comma in the list
   malformed_a2ui_str = '[{"type": "Text", "text": "Hello"},]'
-  
+
   args = {
-      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: malformed_a2ui_str
+      SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: (
+          malformed_a2ui_str
+      )
   }
 
   result = await tool.run_async(args=args, tool_context=tool_context_mock)
@@ -263,9 +265,11 @@ async def test_send_tool_run_async_handles_trailing_comma(caplog):
   # Assert that the fix was successful and the result is correct
   expected_a2ui = [{"type": "Text", "text": "Hello"}]
   assert result == {
-      SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY: expected_a2ui
+      SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY: (
+          expected_a2ui
+      )
   }
-  
+
   # Assert that the warning was logged
   assert "Detected trailing commas in LLM output; applied autofix." in caplog.text
 

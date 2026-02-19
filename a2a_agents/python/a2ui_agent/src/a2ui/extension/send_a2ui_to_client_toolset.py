@@ -262,7 +262,9 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
 
           # Auto-wrap single object in list
           if not isinstance(a2ui_json_payload, list):
-            logger.info("Received a single JSON object, wrapping in a list for validation.")
+            logger.info(
+                "Received a single JSON object, wrapping in a list for validation."
+            )
             a2ui_json_payload = [a2ui_json_payload]
 
           jsonschema.validate(instance=a2ui_json_payload, schema=a2ui_schema)
@@ -282,7 +284,9 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
 
             # Auto-wrap single object in list
             if not isinstance(a2ui_json_payload, list):
-              logger.info("Received a single JSON object, wrapping in a list for validation.")
+              logger.info(
+                  "Received a single JSON object, wrapping in a list for validation."
+              )
               a2ui_json_payload = [a2ui_json_payload]
 
             jsonschema.validate(instance=a2ui_json_payload, schema=a2ui_schema)
