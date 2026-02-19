@@ -4,7 +4,7 @@ This document describes the architecture of the A2UI client-side data model. The
 
 ## Architectural Layers
 
-### 1. The Processing Layer (`A2uiMessageProcessor`)
+### 1. Processing Layer (`A2uiMessageProcessor`)
 
 The **Processing Layer** is the entry point for the system. It is responsible for bridging the gap between the wire protocol (JSON messages) and the internal object model.
 
@@ -25,7 +25,7 @@ class A2uiMessageProcessor<T extends CatalogApi> {
 }
 ```
 
-### 2. The Data Layer (The "Dumb" Models)
+### 2. Data Layer (The "Dumb" Models)
 
 The **Data Layer** consists of long-lived, mutable state objects. These classes are designed to be "dumb containers" for data. They hold the state of the UI but contain minimal logic. They are organized hierarchically and use a consistent pattern for observability and composition.
 
@@ -198,28 +198,6 @@ This hierarchy allows a renderer to implement "smart" updates: re-rendering the 
 
 ---
 
-# Design Options & Future Directions
-
-## Flat vs. Hierarchical Object Model
-
-### **A) [Implemented] Flat Component Object Model**
-The `SurfaceComponentsModel` maintains a flat map of components by ID. The hierarchy is defined implicitly by `children` property references within the component properties.
-
-*   **Pros:** Simplifies the data structure and makes "update by ID" operations O(1). Matches the wire protocol directly.
-*   **Cons:** The renderer is responsible for traversing the tree by resolving ID references.
-
-### **B) [Future] Hierarchical Object Model**
-A future evolution could parse the flat list into a true object graph where parent objects hold references to child objects. This would require schema introspection to identify which properties represent relationships.
-
-## Data Model References
-
-### **[Implemented] Raw JSON with Helper Classes**
-The `ComponentModel` stores properties as raw JSON. The `DataContext` provides the logic to interpret "Dynamic Values" (objects like `{ path: "..." }`) and resolve them to actual data.
-
-This approach keeps the model serializable and simple while concentrating the resolution logic in the transient `DataContext`.
-
----
-
 # **Extensibility and Rendering**
 
 ## **Catalog Interfaces**
@@ -267,5 +245,72 @@ class MyFrameworkButtonRenderer implements ComponentApi {
      // 2. Use ctx.dataContext.subscribeDynamicValue for data bindings
      // 3. Call ctx.dispatchAction() for user interactions
   }
+}
+```
+
+# **Design alternatives**
+
+## **Flat vs hierarchical object model**
+
+From an application developer or catalog implementer’s perspective, the most intuitive way for the renderer object model to be constructed is as a tree, which reflects the structure of the data.
+
+However, it’s non-trivial to implement tree construction in a catalog-agnostic way, because the catalogs don’t have standard “child” or children.
+
+### **A) \[Recommended now\] Flat Component object model, one-pass rendering**
+
+In this option, the SurfaceModel contains a flat list of Components which refer to each other via ID. The job of the renderer is to reference the children and construct the tree.
+
+This is simple to implement on every platform and pushes the complexity around constructing the tree into the framework-specific layer. 
+
+### **B) \[Future direction\] Hierarchical object model, two-pass rendering via schema introspection**
+
+In this approach, the Object Model represents the hierarchy with actual object references. This requires the data layer to be more complex but simplifies the framework renderer.
+
+In this approach, the core library which decodes the A2UI messages and constructs the object model needs to:
+
+* For each Component schema in the Catalog, detect which properties are ID references.  
+* When parsing data, dereference those ID properties to directly link nodes  
+* Handle templated children which requires resolving data model references to find lists of data and construct a child for each list item.  
+* Create an object model which is weakly typed (because different catalogs can use different names for “child”, “children” etc, yet is a full hierarchical tree.
+
+We will pursue this approach in the future to provide a neat way for application and framework renderer logic to navigate and update the object model. We will pursue this via a codegen approach which 
+
+## **Data model references: Raw JSON vs structured references vs resolved literal values**
+
+### **\[Recommended\] Raw JSON**
+
+The object model could just expose the “props” for each component as raw JSON data which the component implementation needs to interpret e.g.
+
+```
+{
+   "id": "tf1",
+   "component": "TextField",
+   "value": { "path": "/formData/email" },
+}
+```
+
+### **\[Future direction\] Structured references**
+
+The object model includes type-safe objects to represent references to the data model. This makes it more error
+
+```
+{
+   "id": "tf1",
+   "component": "TextField",
+   "value": DataModelReference(absolutePath: "/formData/email"),
+}
+```
+
+### **Resolved literal values**
+
+The object model could include the actual values referenced from the data model.
+
+This would make the framework renderer simple to implement, but this option is not recommended, because it doesn’t provide a way for application logic to programmatically modify the object model, e.g. to update a data model reference.
+
+```
+{
+   "id": "tf1",
+   "component": "TextField",
+   "value": "no-reply@somebusiness.com",
 }
 ```
