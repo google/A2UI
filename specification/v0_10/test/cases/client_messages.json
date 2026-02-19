@@ -50,7 +50,7 @@
         "version": "v0.10",
         "error": {
           "code": "FUNCTION_FAILED",
-          "callId": "unique-call-id-132",
+          "functionCallId": "unique-call-id-132",
           "message": "Something went wrong"
         }
       }
@@ -62,7 +62,7 @@
         "version": "v0.10",
         "error": {
           "code": "FUNCTION_FAILED",
-          "callId": "unique-call-id-133",
+          "functionCallId": "unique-call-id-133",
           "surfaceId": "main",
           "message": "Something went wrong"
         }

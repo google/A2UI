@@ -12,9 +12,9 @@
             "url": "https://example.com"
           },
           "returnType": "void",
-          "allowRemote": true
+          "callableFrom": "clientOrRemote"
         },
-        "callId": "unique-call-id-123",
+        "functionCallId": "unique-call-id-123",
         "wantResponse": true
       }
     },
@@ -29,9 +29,25 @@
             "url": "https://example.com"
           },
           "returnType": "void",
-          "allowRemote": true
+          "callableFrom": "clientOrRemote"
         },
-        "callId": "unique-call-id-124"
+        "functionCallId": "unique-call-id-124"
+      }
+    },
+    {
+      "description": "CallFunctionMessage: Valid with remoteOnly",
+      "valid": true,
+      "data": {
+        "version": "v0.10",
+        "callFunction": {
+          "call": "openUrl",
+          "args": {
+            "url": "https://example.com"
+          },
+          "returnType": "void",
+          "callableFrom": "remoteOnly"
+        },
+        "functionCallId": "unique-call-id-124b"
       }
     },
     {
@@ -43,7 +59,7 @@
           "call": "required",
           "args": { "value": "bar" },
           "returnType": "boolean",
-          "allowRemote": true
+          "callableFrom": "clientOrRemote"
         }
       }
     },
@@ -52,11 +68,11 @@
       "valid": false,
       "data": {
         "version": "v0.10",
-        "callId": "unique-call-id-125"
+        "functionCallId": "unique-call-id-125"
       }
     },
     {
-      "description": "CallFunctionMessage: Invalid (`allowRemote` is false)",
+      "description": "CallFunctionMessage: Invalid (`callableFrom` is clientOnly)",
       "valid": false,
       "data": {
         "version": "v0.10",
@@ -64,13 +80,13 @@
           "call": "required",
           "args": { "value": "bar" },
           "returnType": "boolean",
-          "allowRemote": false
+          "callableFrom": "clientOnly"
         },
-        "callId": "unique-call-id-126"
+        "functionCallId": "unique-call-id-126"
       }
     },
     {
-      "description": "CallFunctionMessage: Invalid (`allowRemote` is missing)",
+      "description": "CallFunctionMessage: Invalid (`callableFrom` is missing)",
       "valid": false,
       "data": {
         "version": "v0.10",
@@ -79,7 +95,7 @@
           "args": { "value": "bar" },
           "returnType": "boolean"
         },
-        "callId": "unique-call-id-126b"
+        "functionCallId": "unique-call-id-126b"
       }
     },
     {
@@ -93,9 +109,9 @@
             "value": { "nested": "object" }
           },
           "returnType": "boolean",
-          "allowRemote": true
+          "callableFrom": "clientOrRemote"
         },
-        "callId": "unique-call-id-127"
+        "functionCallId": "unique-call-id-127"
       }
     },
     {
@@ -109,9 +125,9 @@
             "value": [{ "nested": "object" }]
           },
           "returnType": "boolean",
-          "allowRemote": true
+          "callableFrom": "clientOrRemote"
         },
-        "callId": "unique-call-id-128"
+        "functionCallId": "unique-call-id-128"
       }
     },
     {
@@ -123,9 +139,9 @@
           "call": "required",
           "args": { "value": "bar" },
           "returnType": "object",
-          "allowRemote": true
+          "callableFrom": "clientOrRemote"
         },
-        "callId": "unique-call-id-129"
+        "functionCallId": "unique-call-id-129"
       }
     },
     {
@@ -139,9 +155,9 @@
             "value": "test"
           },
           "returnType": "boolean",
-          "allowRemote": true
+          "callableFrom": "clientOrRemote"
         },
-        "callId": "id-3"
+        "functionCallId": "id-3"
       }
     }
   ]

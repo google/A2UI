@@ -136,7 +136,7 @@
         "version": {
           "const": "v0.10"
         },
-        "callId": {
+        "functionCallId": {
           "$ref": "common_types.json#/$defs/CallId",
           "description": "Unique ID for the instance of this function call. MUST be copied verbatim into the functionResponse or error."
         },
@@ -151,9 +151,12 @@
             },
             {
               "properties": {
-                "allowRemote": {
-                  "description": "Must be true for server initiated function calls",
-                  "const": true
+                "callableFrom": {
+                  "description": "Must be remoteOnly or clientOrRemote for server initiated function calls",
+                  "enum": [
+                    "remoteOnly",
+                    "clientOrRemote"
+                  ]
                 },
                 "args": {
                   "type": "object",
@@ -176,11 +179,11 @@
               }
             }
           ],
-          "required": ["call", "returnType", "allowRemote"],
+          "required": ["call", "returnType", "callableFrom"],
           "unevaluatedProperties": false
         }
       },
-      "required": ["version", "callFunction", "callId"],
+      "required": ["version", "callFunction", "functionCallId"],
       "additionalProperties": false
     }
   }
