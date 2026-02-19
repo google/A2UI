@@ -311,8 +311,8 @@ def convert_send_a2ui_to_client_genai_part_to_a2a_part(
       return []
 
     final_parts = []
+    logger.info(f"Found {len(json_data)} messages. Creating individual DataParts.")
     for message in json_data:
-      logger.info(f"Found {len(json_data)} messages. Creating individual DataParts.")
       final_parts.append(create_a2ui_part(message))
 
     return final_parts

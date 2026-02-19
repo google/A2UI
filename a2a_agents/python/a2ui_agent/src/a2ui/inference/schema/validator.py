@@ -130,10 +130,12 @@ class A2uiValidator:
     # these resolve to https://a2ui.org/specification/v0_9/catalog.json.
     # We must register them using these absolute URIs.
     base_uri = self._catalog.s2c_schema.get("$id", BASE_SCHEMA_URL)
-    import os
+    from urllib.parse import urljoin
 
     def get_sibling_uri(uri, filename):
-      return os.path.join(os.path.dirname(uri), filename)
+      # Ensure base ends with '/' so urljoin replaces only the last segment
+      base = uri if uri.endswith("/") else uri.rsplit("/", 1)[0] + "/"
+      return urljoin(base, filename)
 
     catalog_uri = get_sibling_uri(base_uri, "catalog.json")
     common_types_uri = get_sibling_uri(base_uri, "common_types.json")
