@@ -14,16 +14,14 @@ The **Processing Layer** is the entry point for the system. It is responsible fo
 
 ```typescript
 class A2uiMessageProcessor<T extends CatalogApi> {
-  // The root model state.
-  readonly model: SurfaceGroupModel<T>;
-
+  readonly model: SurfaceGroupModel<T>; // Root state container for all surfaces
+  
   constructor(catalogs: T[], actionHandler: ActionListener);
 
-  // Ingests raw JSON messages and applies them to the model.
-  processMessages(messages: any[]): void;
-  
-  // Generates the client capabilities payload.
-  getClientCapabilities(): any;
+  processMessages(messages: any[]): void; // Ingests raw JSON message stream
+  getSurfaceModel(id: string): SurfaceModel<T> | undefined; // Access specific surface state
+  addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void; // Watch for surface lifecycle
+  getClientCapabilities(options?: CapabilitiesOptions): any; // Generate advertising payload
 }
 ```
 
@@ -38,32 +36,99 @@ The **Data Layer** consists of long-lived, mutable state objects. These classes 
 
 #### `SurfaceGroupModel`
 The root container for all active surfaces.
-*   **Responsibilities:** Managing the list of active surfaces and propagating global events (like actions) from children.
-*   **Observability:** Notifies listeners when surfaces are created or deleted (`addLifecycleListener`).
-*   **Composition:** Uses `addSurface(SurfaceModel)` to accept new children.
+
+```typescript
+interface SurfaceLifecycleListener<T extends CatalogApi> {
+  onSurfaceCreated?: (s: SurfaceModel<T>) => void; // Called when a new surface is registered
+  onSurfaceDeleted?: (id: string) => void; // Called when a surface is removed
+}
+
+class SurfaceGroupModel<T extends CatalogApi> {
+  addSurface(surface: SurfaceModel<T>): void; // Register a new surface instance
+  deleteSurface(id: string): void; // Remove surface and cleanup resources
+  getSurface(id: string): SurfaceModel<T> | undefined;
+  addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void; // Watch creation/deletion
+  addActionListener(l: ActionListener): () => void; // Centralized action stream
+}
+```
 
 #### `SurfaceModel`
 Represents the state of a single UI surface.
-*   **Responsibilities:** Holds the `DataModel` (state) and `SurfaceComponentsModel` (structure) for a specific surface. It serves as the hub for surface-scoped events.
-*   **Observability:** Implements an observable pattern for user actions (`addActionListener`), allowing the application to react to events like button clicks.
-*   **Composition:** Instantiated by the processor and added to the group.
+
+```typescript
+type ActionListener = (action: any) => void | Promise<void>; // Handler for user interactions
+
+class SurfaceModel<T extends CatalogApi> {
+  readonly id: string;
+  readonly catalog: T; // Catalog containing framework-specific renderers
+  readonly dataModel: DataModel; // Scoped application data
+  readonly componentsModel: SurfaceComponentsModel; // Flat component map
+  readonly theme: any; // Theme parameters from createSurface
+
+  addActionListener(l: ActionListener): () => void; // Surface-scoped interaction events
+  dispatchAction(action: any): Promise<void>; // Report event to server
+  createComponentContext(id: string, basePath?: string): ComponentContext; // Bind component for UI
+}
+```
 
 #### `SurfaceComponentsModel`
 A flat collection of components belonging to a surface.
-*   **Responsibilities:** Storing `ComponentModel` instances indexed by ID. It enforces ID uniqueness within the surface.
-*   **Observability:** Notifies listeners when components are added or removed (`addLifecycleListener`), allowing the renderer to instantiate or destroy corresponding native widgets.
-*   **Composition:** Uses `addComponent(ComponentModel)` to accept new components.
+
+```typescript
+interface ComponentsLifecycleListener {
+  onComponentCreated: (c: ComponentModel) => void; // Called when a component is added
+  onComponentDeleted?: (id: string) => void; // Called when a component is removed
+}
+
+class SurfaceComponentsModel {
+  get(id: string): ComponentModel | undefined;
+  addComponent(component: ComponentModel): void; // Add definition to flat map
+  addLifecycleListener(l: ComponentsLifecycleListener): () => void; // Watch for tree changes
+}
+```
 
 #### `ComponentModel`
-Represents the configuration and properties of a specific component (e.g., a Button or Text field).
-*   **Responsibilities:** Stores the raw property values (e.g., `{ "text": "Hello", "color": "blue" }`) and metadata like type and ID.
-*   **Observability:** Notifies listeners when its properties are updated (`addUpdateListener`). This allows individual UI widgets to re-render efficiently when their specific configuration changes.
+Represents the configuration and properties of a specific component instance.
+
+```typescript
+interface ComponentUpdateListener {
+  onComponentUpdated(c: ComponentModel): void; // Called when any property changes
+}
+
+interface AccessibilityProperties {
+  label?: any; // Semantic label for screen readers
+  description?: any; // Detailed accessibility description
+  [key: string]: any; // Other ARIA-equivalent properties
+}
+
+class ComponentModel {
+  readonly id: string;
+  readonly type: string; // Component name (e.g. 'Button')
+  get properties(): Record<string, any>; // Current raw JSON configuration
+  get accessibility(): AccessibilityProperties | undefined;
+
+  update(newProps: Record<string, any>): void; // Apply incremental updates
+  addUpdateListener(l: ComponentUpdateListener): () => void; // Watch for config changes
+}
+```
 
 #### `DataModel`
 A dedicated store for the surface's application data (the "Model" in MVVM).
-*   **Responsibilities:** JSON pointer resolution (reading/writing paths like `/user/name`) and managing subscriptions.
-*   **Observability:** Allows granular subscriptions to specific data paths (`subscribe(path)`). This enables fine-grained reactivity where only the parts of the UI bound to changed data need to update.
 
+```typescript
+class DataModel {
+  get(path: string): any; // Resolve JSON Pointer to value
+  set(path: string, value: any): void; // Atomic update at path
+  subscribe<T>(path: string): Subscription<T>; // Reactive path monitoring
+  dispose(): void; // Lifecycle cleanup
+}
+
+interface Subscription<T> {
+  readonly value: T | undefined; // Latest evaluated value
+  onChange?: (v: T | undefined) => void; // Fired on value change
+  unsubscribe(): void; // Stop listening
+}
+```
 ### 3. The Context Layer (Transient Windows)
 
 The **Context Layer** consists of short-lived objects created on-demand during the rendering process. They solve the problem of "scope" and binding resolution.
@@ -72,16 +137,27 @@ Because the Data Layer is "dumb" (a flat list of components and a raw data tree)
 
 #### `DataContext`
 A window into the `DataModel` at a specific path.
-*   **Role:** It encapsulates the current "base path" for data resolution. When rendering a list item at index 0, a `DataContext` is created with path `/items/0`.
-*   **Logic:** It resolves relative paths (e.g., `name`) against its absolute base path (e.g., `/items/0/name`).
+
+```typescript
+class DataContext {
+  readonly path: string; // Current absolute base path
+  set(path: string, value: any): void; // Mutate model at scoped path
+  resolveDynamicValue<V>(v: any): V; // Evaluate path/literal/function calls
+  subscribeDynamicValue<V>(v: any): Subscription<V>; // Reactive evaluation
+  nested(relativePath: string): DataContext; // Create context for list items
+}
+```
 
 #### `ComponentContext`
 A binding object that pairs a `ComponentModel` with a `DataContext`.
-*   **Role:** This is the primary object passed to a renderer. It gives the renderer everything it needs to draw a specific component instance:
-    1.  **The Component:** What to draw (properties).
-    2.  **The Data:** Where to get values (the scoped data context).
-    3.  **The Actions:** How to report interactions (a dispatch method).
 
+```typescript
+class ComponentContext {
+  readonly componentModel: ComponentModel; // The instance configuration
+  readonly dataContext: DataContext; // The instance's data scope
+  dispatchAction(action: any): Promise<void>; // Propagate action to surface
+}
+```
 ---
 
 ## Data Representation and Observability Patterns
@@ -141,3 +217,55 @@ A future evolution could parse the flat list into a true object graph where pare
 The `ComponentModel` stores properties as raw JSON. The `DataContext` provides the logic to interpret "Dynamic Values" (objects like `{ path: "..." }`) and resolve them to actual data.
 
 This approach keeps the model serializable and simple while concentrating the resolution logic in the transient `DataContext`.
+
+---
+
+# **Extensibility and Rendering**
+
+## **Catalog Interfaces**
+
+The core processor uses these interfaces to manage component definitions and advertise capabilities.
+
+```typescript
+interface CatalogApi {
+  id: string; // Unique catalog URI
+  readonly components: ReadonlyMap<string, ComponentApi>;
+}
+
+interface ComponentApi {
+  name: string; // Protocol name (e.g. 'Button')
+  readonly schema: z.ZodType<any>; // Technical definition for capabilities
+}
+```
+
+## **Framework-Specific Renderers**
+
+Framework implementations (Angular, Lit, Flutter) extend the core by providing rendering logic that consumes the `ComponentContext`.
+
+### **Framework Surface**
+The entrypoint widget for a specific framework. It listens to the `SurfaceModel` to dynamically build the UI tree.
+
+```typescript
+class MyFrameworkSurface {
+  constructor(model: SurfaceModel<MyFrameworkCatalog>);
+  // Implementation uses model.componentsModel.addLifecycleListener to 
+  // recursively render children starting from the 'root' component.
+}
+```
+
+### **Framework Component Renderer**
+A specific renderer for a component type.
+
+```typescript
+class MyFrameworkButtonRenderer implements ComponentApi {
+  readonly name = 'Button';
+  readonly schema = ButtonSchema;
+
+  // Framework-specific render method
+  render(ctx: ComponentContext): MyFrameworkWidget {
+     // 1. Subscribe to ctx.componentModel.addUpdateListener for config changes
+     // 2. Use ctx.dataContext.subscribeDynamicValue for data bindings
+     // 3. Call ctx.dispatchAction() for user interactions
+  }
+}
+```
