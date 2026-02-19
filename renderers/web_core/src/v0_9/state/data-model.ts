@@ -67,10 +67,10 @@ function isNumeric(value: string): boolean {
  * It handles JSON Pointer path resolution and subscription management.
  */
 export class DataModel {
-  private data: any = {};
+  private data: Record<string, unknown> = {};
   private readonly subscriptions: Map<string, Set<SubscriptionImpl<any>>> = new Map();
 
-  constructor(initialData: any = {}) {
+  constructor(initialData: Record<string, unknown> = {}) {
     this.data = initialData;
   }
 
@@ -82,17 +82,20 @@ export class DataModel {
    * - For objects: Setting a property to `undefined` removes the key from the object.
    * - For arrays: Setting an index to `undefined` sets that index to `undefined` but preserves the array length (sparse array).
    */
-  set(path: string, value: any): void {
+  set(path: string, value: any): this {
+    if (path === null || path === undefined) {
+      throw new Error("Path cannot be null or undefined.");
+    }
     if (path === '/' || path === '') {
       this.data = value;
       this.notifyAllSubscribers();
-      return;
+      return this;
     }
 
     const segments = this.parsePath(path);
     const lastSegment = segments.pop()!;
 
-    let current = this.data;
+    let current: any = this.data;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
       
@@ -128,16 +131,20 @@ export class DataModel {
     }
 
     this.notifySubscribers(path);
+    return this;
   }
 
   /**
    * Retrieves data at a specific path.
    */
   get(path: string): any {
+    if (path === null || path === undefined) {
+      throw new Error("Path cannot be null or undefined.");
+    }
     if (path === '/' || path === '') return this.data;
 
     const segments = this.parsePath(path);
-    let current = this.data;
+    let current: any = this.data;
     for (const segment of segments) {
       if (current === undefined || current === null) return undefined;
       current = current[segment];
