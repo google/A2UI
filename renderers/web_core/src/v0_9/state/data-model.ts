@@ -98,7 +98,7 @@ export class DataModel {
     let current: any = this.data;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
-      
+
       if (Array.isArray(current) && !isNumeric(segment)) {
         throw new Error(`Cannot use non-numeric segment '${segment}' on an array in path '${path}'.`);
       }
