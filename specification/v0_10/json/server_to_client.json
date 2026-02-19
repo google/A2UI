@@ -8,7 +8,8 @@
     { "$ref": "#/$defs/CreateSurfaceMessage" },
     { "$ref": "#/$defs/UpdateComponentsMessage" },
     { "$ref": "#/$defs/UpdateDataModelMessage" },
-    { "$ref": "#/$defs/DeleteSurfaceMessage" }
+    { "$ref": "#/$defs/DeleteSurfaceMessage" },
+    { "$ref": "#/$defs/CallFunctionMessage" }
   ],
   "$defs": {
     "CreateSurfaceMessage": {
@@ -126,6 +127,60 @@
         }
       },
       "required": ["deleteSurface", "version"],
+      "additionalProperties": false
+    },
+    "CallFunctionMessage": {
+      "type": "object",
+      "description": "A function invoked from the server.",
+      "properties": {
+        "version": {
+          "const": "v0.10"
+        },
+        "callId": {
+          "$ref": "common_types.json#/$defs/CallId",
+          "description": "Unique ID for the instance of this function call. MUST be copied verbatim into the functionResponse or error."
+        },
+        "wantResponse": {
+          "type": "boolean",
+          "default": false
+        },
+        "callFunction": {
+          "allOf": [
+            {
+              "$ref": "common_types.json#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "allowRemote": {
+                  "description": "Must be true for server initiated function calls",
+                  "const": true
+                },
+                "args": {
+                  "type": "object",
+                  "description": "Arguments passed to the function.",
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "$ref": "common_types.json#/$defs/ScalarValue" },
+                      { "$ref": "common_types.json#/$defs/ScalarArrayValue" }
+                    ]
+                  }
+                },
+                "returnType": {
+                  "description": "The expected return type of the function call.",
+                  "anyOf": [
+                    { "$ref": "common_types.json#/$defs/ScalarType" },
+                    { "$ref": "common_types.json#/$defs/ScalarArrayType" },
+                    { "const": "void" }
+                  ]
+                }
+              }
+            }
+          ],
+          "required": ["call", "returnType", "allowRemote"],
+          "unevaluatedProperties": false
+        }
+      },
+      "required": ["version", "callFunction", "callId"],
       "additionalProperties": false
     }
   }

@@ -656,6 +656,9 @@
         "call": {
           "const": "required"
         },
+        "allowRemote": {
+          "const": false
+        },
         "args": {
           "type": "object",
           "properties": {
@@ -679,6 +682,9 @@
       "properties": {
         "call": {
           "const": "regex"
+        },
+        "allowRemote": {
+          "const": false
         },
         "args": {
           "type": "object",
@@ -705,6 +711,9 @@
       "properties": {
         "call": {
           "const": "length"
+        },
+        "allowRemote": {
+          "const": false
         },
         "args": {
           "type": "object",
@@ -739,6 +748,9 @@
         "call": {
           "const": "numeric"
         },
+        "allowRemote": {
+          "const": false
+        },
         "args": {
           "type": "object",
           "properties": {
@@ -770,6 +782,9 @@
         "call": {
           "const": "email"
         },
+        "allowRemote": {
+          "const": false
+        },
         "args": {
           "type": "object",
           "properties": {
@@ -792,6 +807,9 @@
         "call": {
           "const": "formatString"
         },
+        "allowRemote": {
+          "const": false
+        },
         "args": {
           "type": "object",
           "properties": {
@@ -813,6 +831,9 @@
       "properties": {
         "call": {
           "const": "formatNumber"
+        },
+        "allowRemote": {
+          "const": false
         },
         "args": {
           "type": "object",
@@ -846,6 +867,9 @@
       "properties": {
         "call": {
           "const": "formatCurrency"
+        },
+        "allowRemote": {
+          "const": false
         },
         "args": {
           "type": "object",
@@ -884,6 +908,9 @@
         "call": {
           "const": "formatDate"
         },
+        "allowRemote": {
+          "const": false
+        },
         "args": {
           "type": "object",
           "properties": {
@@ -912,6 +939,9 @@
       "properties": {
         "call": {
           "const": "pluralize"
+        },
+        "allowRemote": {
+          "const": false
         },
         "args": {
           "type": "object",
@@ -962,6 +992,9 @@
         "call": {
           "const": "openUrl"
         },
+        "allowRemote": {
+          "const": true
+        },
         "args": {
           "type": "object",
           "properties": {
@@ -987,6 +1020,9 @@
       "properties": {
         "call": {
           "const": "and"
+        },
+        "allowRemote": {
+          "const": false
         },
         "args": {
           "type": "object",
@@ -1017,6 +1053,9 @@
         "call": {
           "const": "or"
         },
+        "allowRemote": {
+          "const": false
+        },
         "args": {
           "type": "object",
           "properties": {
@@ -1045,6 +1084,9 @@
       "properties": {
         "call": {
           "const": "not"
+        },
+        "allowRemote": {
+          "const": false
         },
         "args": {
           "type": "object",

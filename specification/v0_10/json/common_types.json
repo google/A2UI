@@ -8,6 +8,10 @@
       "type": "string",
       "description": "The unique identifier for a component, used for both definitions and references within the same surface."
     },
+    "CallId": {
+      "type": "string",
+      "description": "The unique identifier for a server initiated function call."
+    },
     "AccessibilityAttributes": {
       "type": "object",
       "description": "Attributes to enhance accessibility when using assistive technologies like screen readers.",
@@ -21,6 +25,38 @@
           "description": "Additional information provided by assistive technologies about an element such as instructions, format requirements, or result of an action. For example, a mute button might have a label of 'Mute' and a description of 'Silences notifications about this conversation'."
         }
       }
+    },
+    "ScalarValue": {
+      "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
+      "type": [
+        "boolean",
+        "number",
+        "null",
+        "string"
+      ]
+    },
+    "ScalarArrayValue": {
+      "type": "array",
+      "description": "An array containing only primitive values.",
+      "items": {
+        "$ref": "#/$defs/ScalarValue"
+      }
+    },
+    "ScalarType": {
+      "description": "Allowed scalar return types.",
+      "enum": [
+        "string",
+        "number",
+        "boolean"
+      ]
+    },
+    "ScalarArrayType": {
+      "description": "Allowed scalar array return types.",
+      "enum": [
+        "string[]",
+        "number[]",
+        "boolean[]"
+      ]
     },
     "ComponentCommon": {
       "type": "object",
@@ -189,7 +225,7 @@
             {
               "properties": {
                 "returnType": {
-                  "const": "array"
+                  "const": "string[]"
                 }
               }
             }
@@ -201,6 +237,10 @@
       "type": "object",
       "description": "Invokes a named function on the client.",
       "properties": {
+        "allowRemote": {
+          "description": "Must be true if this function can be used as a server initiated function call.",
+          "type": "boolean"
+        },
         "call": {
           "type": "string",
           "description": "The name of the function to call."
@@ -221,16 +261,12 @@
           }
         },
         "returnType": {
-          "type": "string",
           "description": "The expected return type of the function call.",
-          "enum": [
-            "string",
-            "number",
-            "boolean",
-            "array",
-            "object",
-            "any",
-            "void"
+          "anyOf": [
+            { "$ref": "#/$defs/ScalarType" },
+            { "const": "object" },
+            { "const": "array" },
+            { "const": "void" }
           ],
           "default": "boolean"
         }
