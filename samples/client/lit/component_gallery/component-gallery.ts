@@ -186,7 +186,13 @@ export class A2UIComponentGallery extends SignalWatcher(LitElement) {
 
   async connectedCallback() {
     super.connectedCallback();
+    this.addEventListener("a2ui-validation-input", this.#handleValidationInput);
     await this.#initiateSession();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener("a2ui-validation-input", this.#handleValidationInput);
   }
 
   async #initiateSession() {
@@ -195,6 +201,25 @@ export class A2UIComponentGallery extends SignalWatcher(LitElement) {
     };
     await this.#sendAndProcessMessage(message);
   }
+
+  // Debug Validation Events
+  #handleValidationInput = (e: Event) => {
+    const detail = (e as v0_8.WebEvents.A2UIValidationEvent).detail;
+    if (!detail) return;
+
+    // Log to Console
+    console.log(
+      `%c[Validation] Component: ${detail.componentId} | Valid: ${detail.valid} | Value: "${detail.value}"`,
+      detail.valid ? "color: green" : "color: red; font-weight: bold"
+    );
+
+    // Log to Debug Panel
+    this.#log(
+      "info",
+      `Validation: ${detail.componentId} is ${detail.valid ? "VALID" : "INVALID"}`,
+      detail
+    );
+  };
 
   render() {
     return html`

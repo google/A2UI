@@ -58,15 +58,19 @@ class SubscriptionImpl<T> implements Subscription<T> {
   }
 }
 
+function isNumeric(value: string): boolean {
+  return /^\d+$/.test(value);
+}
+
 /**
  * A standalone, observable data store representing the client-side state.
  * It handles JSON Pointer path resolution and subscription management.
  */
 export class DataModel {
-  private data: any = {};
+  private data: Record<string, unknown> = {};
   private readonly subscriptions: Map<string, Set<SubscriptionImpl<any>>> = new Map();
 
-  constructor(initialData: any = {}) {
+  constructor(initialData: Record<string, unknown> = {}) {
     this.data = initialData;
   }
 
@@ -78,21 +82,24 @@ export class DataModel {
    * - For objects: Setting a property to `undefined` removes the key from the object.
    * - For arrays: Setting an index to `undefined` sets that index to `undefined` but preserves the array length (sparse array).
    */
-  set(path: string, value: any): void {
+  set(path: string, value: any): this {
+    if (path === null || path === undefined) {
+      throw new Error("Path cannot be null or undefined.");
+    }
     if (path === '/' || path === '') {
       this.data = value;
       this.notifyAllSubscribers();
-      return;
+      return this;
     }
 
     const segments = this.parsePath(path);
     const lastSegment = segments.pop()!;
 
-    let current = this.data;
+    let current: any = this.data;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
 
-      if (Array.isArray(current) && !/^\d+$/.test(segment)) {
+      if (Array.isArray(current) && !isNumeric(segment)) {
         throw new Error(`Cannot use non-numeric segment '${segment}' on an array in path '${path}'.`);
       }
 
@@ -104,12 +111,12 @@ export class DataModel {
 
       if (current[segment] === undefined || current[segment] === null) {
         const nextSegment = (i < segments.length - 1) ? segments[i + 1] : lastSegment;
-        current[segment] = /^\d+$/.test(nextSegment) ? [] : {};
+        current[segment] = isNumeric(nextSegment) ? [] : {};
       }
       current = current[segment];
     }
 
-    if (Array.isArray(current) && !/^\d+$/.test(lastSegment)) {
+    if (Array.isArray(current) && !isNumeric(lastSegment)) {
       throw new Error(`Cannot use non-numeric segment '${lastSegment}' on an array in path '${path}'.`);
     }
 
@@ -124,18 +131,26 @@ export class DataModel {
     }
 
     this.notifySubscribers(path);
+    return this;
   }
 
   /**
    * Retrieves data at a specific path.
    */
   get(path: string): any {
-    if (path === '/' || path === '') return this.data;
+    if (path === null || path === undefined) {
+      throw new Error("Path cannot be null or undefined.");
+    }
+    if (path === '/' || path === '') {
+      return this.data;
+    }
 
     const segments = this.parsePath(path);
-    let current = this.data;
+    let current: any = this.data;
     for (const segment of segments) {
-      if (current === undefined || current === null) return undefined;
+      if (current === undefined || current === null) {
+        return undefined;
+      }
       current = current[segment];
     }
     return current;
@@ -208,7 +223,9 @@ export class DataModel {
 
   private notify(path: string): void {
     const set = this.subscriptions.get(path);
-    if (!set) return;
+    if (!set) {
+      return;
+    }
     const value = this.get(path);
     set.forEach(sub => sub.setValue(value));
   }
@@ -220,7 +237,9 @@ export class DataModel {
   }
 
   private isDescendant(childPath: string, parentPath: string): boolean {
-    if (parentPath === '/' || parentPath === '') return childPath !== '/';
+    if (parentPath === '/' || parentPath === '') {
+      return childPath !== '/';
+    }
     return childPath.startsWith(parentPath + '/');
   }
 }
