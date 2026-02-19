@@ -291,7 +291,9 @@ The object model could just expose the “props” for each component as raw JSO
 
 ### **\[Future direction\] Structured references**
 
-The object model includes type-safe objects to represent references to the data model. This makes it more error
+The object model includes type-safe objects to represent references to the data model.
+
+This makes it less error prone, though there is no type safety around the exact value lookups in the example below.
 
 ```
 {
@@ -299,6 +301,17 @@ The object model includes type-safe objects to represent references to the data 
    "component": "TextField",
    "value": DataModelReference(absolutePath: "/formData/email"),
 }
+```
+
+This could provide much more safety using some kind of codegen to generate a typesafe model class that is specific to each catalog item from its schema.
+
+```ts
+// Replace this with an actual typesafe model example
+class TextFieldComponentModel {
+  id: String;
+  component: String;
+  value: LiteralOrFunctionOrReference<String>
+};
 ```
 
 ### **Resolved literal values**
