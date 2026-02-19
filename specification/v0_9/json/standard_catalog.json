@@ -57,7 +57,7 @@
             "fit": {
               "type": "string",
               "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
-              "enum": ["contain", "cover", "fill", "none", "scale-down"]
+              "enum": ["contain", "cover", "fill", "none", "scaleDown"]
             },
             "variant": {
               "type": "string",
@@ -738,7 +738,7 @@
                         "format": "time"
                       },
                       {
-                        "format": "date-time"
+                        "format": "dateTime"
                       }
                     ]
                   }
@@ -764,7 +764,7 @@
                         "format": "time"
                       },
                       {
-                        "format": "date-time"
+                        "format": "dateTime"
                       }
                     ]
                   }
