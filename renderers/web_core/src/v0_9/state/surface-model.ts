@@ -3,8 +3,6 @@ import { DataModel } from './data-model.js';
 import { CatalogApi } from '../catalog/types.js';
 import { SurfaceComponentsModel } from './surface-components-model.js';
 import { ComponentModel } from './component-model.js';
-import { DataContext } from '../rendering/data-context.js';
-import { ComponentContext } from '../rendering/component-context.js';
 
 export type ActionListener = (action: any) => void | Promise<void>;
 
@@ -43,19 +41,6 @@ export class SurfaceModel<T extends CatalogApi> {
    */
   removeActionListener(listener: ActionListener): void {
     this.actionListeners.delete(listener);
-  }
-
-  /**
-   * Creates a ComponentContext for a given component ID and data model base path.
-   * This context provides access to the component's model, scoped data, and action dispatching.
-   */
-  createComponentContext(componentId: string, dataModelBasePath: string = '/'): ComponentContext | undefined {
-    const componentModel = this.componentsModel.get(componentId);
-    if (!componentModel) return undefined;
-
-    const dataContext = new DataContext(this.dataModel, dataModelBasePath);
-
-    return new ComponentContext(componentModel, dataContext, (action) => this.dispatchAction(action));
   }
 
   async dispatchAction(action: any): Promise<void> {

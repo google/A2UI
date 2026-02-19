@@ -4,6 +4,7 @@ import { test, describe, it, beforeEach, mock } from 'node:test';
 import { SurfaceModel } from './surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
 import { ComponentModel } from './component-model.js';
+import { ComponentContext } from '../rendering/component-context.js';
 
 describe('SurfaceModel', () => {
   let surface: SurfaceModel<CatalogApi>;
@@ -39,9 +40,9 @@ describe('SurfaceModel', () => {
 
   it('creates a component context', () => {
     surface.componentsModel.addComponent(new ComponentModel('root', 'Box', {}));
-    const ctx = surface.createComponentContext('root', '/mydata');
+    const ctx = new ComponentContext(surface, 'root', '/mydata');
     assert.ok(ctx);
-    assert.strictEqual(ctx?.componentModel.id, 'root');
-    assert.strictEqual(ctx?.dataContext.path, '/mydata');
+    assert.strictEqual(ctx.componentModel.id, 'root');
+    assert.strictEqual(ctx.dataContext.path, '/mydata');
   });
 });

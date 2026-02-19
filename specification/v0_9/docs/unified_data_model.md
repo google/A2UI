@@ -67,7 +67,6 @@ class SurfaceModel<T extends CatalogApi> {
 
   addActionListener(l: ActionListener): () => void; // Surface-scoped interaction events
   dispatchAction(action: any): Promise<void>; // Report event to server
-  createComponentContext(id: string, basePath?: string): ComponentContext; // Bind component for UI
 }
 ```
 
@@ -133,6 +132,8 @@ interface Subscription<T> {
 
 The **Context Layer** consists of short-lived objects created on-demand during the rendering process. They solve the problem of "scope" and binding resolution.
 
+Context objects are decoupled from the Data Layer; they are constructed directly by passing model references, rather than being created through factory methods on the models. This ensures the Model layer remains focused strictly on state storage and observability.
+
 Because the Data Layer is "dumb" (a flat list of components and a raw data tree), it doesn't inherently know about the hierarchy or the current data scope (e.g., inside a list iteration). The Context Layer bridges this gap for the renderer.
 
 #### `DataContext`
@@ -140,6 +141,8 @@ A window into the `DataModel` at a specific path.
 
 ```typescript
 class DataContext {
+  constructor(dataModel: DataModel, path: string);
+
   readonly path: string; // Current absolute base path
   set(path: string, value: any): void; // Mutate model at scoped path
   resolveDynamicValue<V>(v: any): V; // Evaluate path/literal/function calls
@@ -153,6 +156,11 @@ A binding object that pairs a `ComponentModel` with a `DataContext`.
 
 ```typescript
 class ComponentContext {
+  /**
+   * Constructs a context by resolving the component and creating a data scope.
+   */
+  constructor(surface: SurfaceModel<T>, componentId: string, basePath?: string);
+
   readonly componentModel: ComponentModel; // The instance configuration
   readonly dataContext: DataContext; // The instance's data scope
   dispatchAction(action: any): Promise<void>; // Propagate action to surface

@@ -1,6 +1,5 @@
 
 import { ComponentContext } from '../rendering/component-context.js';
-import { DataContext } from '../rendering/data-context.js';
 import { SurfaceModel } from '../state/surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
 import { ComponentModel } from '../state/component-model.js';
@@ -14,10 +13,10 @@ export class TestSurfaceModel extends SurfaceModel<CatalogApi> {
 
 export function createTestContext(properties: any, actionHandler: any = async () => { }) {
   const surface = new TestSurfaceModel(actionHandler);
-  const dataContext = new DataContext(surface.dataModel, '/');
   const component = new ComponentModel('test-id', 'TestComponent', properties);
+  surface.componentsModel.addComponent(component);
   
-  const context = new ComponentContext(component, dataContext, (action) => surface.dispatchAction(action));
+  const context = new ComponentContext(surface, 'test-id', '/');
   
   return context;
 }
