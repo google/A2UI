@@ -49,7 +49,7 @@
       "allOf": [
         {
           "properties": {
-            "callId": {
+            "functionCallId": {
               "$ref": "common_types.json#/$defs/CallId",
               "description": "Unique ID for the instance of this function. MUST be copied verbatim from the function invocation."
             },
@@ -71,7 +71,7 @@
               ]
             }
           },
-          "required": ["callId", "value"]
+          "required": ["functionCallId", "value"]
         }
       ],
       "unevaluatedProperties": false
@@ -119,7 +119,7 @@
               "type": "string",
               "description": "The id of the surface where the error occurred."
             },
-            "callId": {
+            "functionCallId": {
               "$ref": "common_types.json#/$defs/CallId",
               "description": "The unique ID of the function invocation, which must be identical to the value specified in the function invocation."
             }
@@ -129,11 +129,11 @@
             {
               "required": ["surfaceId"],
               "not": {
-                "required": ["callId"]
+                "required": ["functionCallId"]
               }
             },
             {
-              "required": ["callId"],
+              "required": ["functionCallId"],
               "not": {
                 "required": ["surfaceId"]
               }

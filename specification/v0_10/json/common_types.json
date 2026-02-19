@@ -237,9 +237,13 @@
       "type": "object",
       "description": "Invokes a named function on the client.",
       "properties": {
-        "allowRemote": {
-          "description": "Must be true if this function can be used as a server initiated function call.",
-          "type": "boolean"
+        "callableFrom": {
+          "description": "Specifies where this function can be invoked from.",
+          "enum": [
+            "clientOnly",
+            "remoteOnly",
+            "clientOrRemote"
+          ]
         },
         "call": {
           "type": "string",
@@ -271,7 +275,7 @@
           "default": "boolean"
         }
       },
-      "required": ["call"],
+      "required": ["call", "callableFrom"],
       "oneOf": [
         { "$ref": "catalog.json#/$defs/anyFunction" }
       ]

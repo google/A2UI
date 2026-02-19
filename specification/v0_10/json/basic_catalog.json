@@ -656,8 +656,8 @@
         "call": {
           "const": "required"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -683,8 +683,8 @@
         "call": {
           "const": "regex"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -712,8 +712,8 @@
         "call": {
           "const": "length"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -748,8 +748,8 @@
         "call": {
           "const": "numeric"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -782,8 +782,8 @@
         "call": {
           "const": "email"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -807,8 +807,8 @@
         "call": {
           "const": "formatString"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -832,8 +832,8 @@
         "call": {
           "const": "formatNumber"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -868,8 +868,8 @@
         "call": {
           "const": "formatCurrency"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -908,8 +908,8 @@
         "call": {
           "const": "formatDate"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -940,8 +940,8 @@
         "call": {
           "const": "pluralize"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -992,8 +992,8 @@
         "call": {
           "const": "openUrl"
         },
-        "allowRemote": {
-          "const": true
+        "callableFrom": {
+          "const": "clientOrRemote"
         },
         "args": {
           "type": "object",
@@ -1021,8 +1021,8 @@
         "call": {
           "const": "and"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -1053,8 +1053,8 @@
         "call": {
           "const": "or"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -1085,8 +1085,8 @@
         "call": {
           "const": "not"
         },
-        "allowRemote": {
-          "const": false
+        "callableFrom": {
+          "const": "clientOnly"
         },
         "args": {
           "type": "object",
