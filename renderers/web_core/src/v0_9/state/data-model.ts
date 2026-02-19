@@ -141,12 +141,16 @@ export class DataModel {
     if (path === null || path === undefined) {
       throw new Error("Path cannot be null or undefined.");
     }
-    if (path === '/' || path === '') return this.data;
+    if (path === '/' || path === '') {
+      return this.data;
+    }
 
     const segments = this.parsePath(path);
     let current: any = this.data;
     for (const segment of segments) {
-      if (current === undefined || current === null) return undefined;
+      if (current === undefined || current === null) {
+        return undefined;
+      }
       current = current[segment];
     }
     return current;
@@ -219,7 +223,9 @@ export class DataModel {
 
   private notify(path: string): void {
     const set = this.subscriptions.get(path);
-    if (!set) return;
+    if (!set) {
+      return;
+    }
     const value = this.get(path);
     set.forEach(sub => sub.setValue(value));
   }
@@ -231,7 +237,9 @@ export class DataModel {
   }
 
   private isDescendant(childPath: string, parentPath: string): boolean {
-    if (parentPath === '/' || parentPath === '') return childPath !== '/';
+    if (parentPath === '/' || parentPath === '') {
+      return childPath !== '/';
+    }
     return childPath.startsWith(parentPath + '/');
   }
 }
