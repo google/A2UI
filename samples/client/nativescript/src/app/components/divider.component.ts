@@ -1,0 +1,35 @@
+import { Component, ChangeDetectionStrategy, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NativeScriptCommonModule } from '@nativescript/angular';
+import { DynamicComponent, Types } from '@a2ui/nativescript';
+import { SimpleNode } from '../../a2ui-types';
+
+@Component({
+  selector: 'a2ui-divider',
+  imports: [NativeScriptCommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <ContentView 
+      class="a2ui-divider"
+      [class.vertical]="orientation === 'vertical'"
+      [height]="orientation === 'horizontal' ? 1 : '100%'"
+      [width]="orientation === 'vertical' ? 1 : '100%'">
+    </ContentView>
+  `,
+  styles: [`
+    .a2ui-divider {
+      background-color: #2a2a4a;
+      margin: 8 0;
+    }
+    
+    .a2ui-divider.vertical {
+      margin: 0 8;
+    }
+  `],
+  schemas: [NO_ERRORS_SCHEMA],
+})
+export class DividerComponent extends DynamicComponent<any> {
+  get orientation(): 'horizontal' | 'vertical' {
+    const node = this.node as SimpleNode;
+    return node?.orientation ?? 'horizontal';
+  }
+}
