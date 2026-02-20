@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { html, noChange, TemplateResult } from "lit";
+import { html, noChange } from "lit";
 import {
   Directive,
   DirectiveParameters,
@@ -46,15 +46,12 @@ class MarkdownDirective extends Directive {
    * Renders the markdown string to HTML using the injected markdown renderer,
    * if present. Otherwise, it returns the value wrapped in a span.
    */
-  render(value: string, markdownRenderer?: Types.MarkdownRenderer, tagClassMap?: Record<string, string[]>) {
-    console.log('MarkdownDirective', value, tagClassMap);
+  render(value: string, markdownRenderer?: Types.MarkdownRenderer, markdownOptions?: Types.MarkdownRendererOptions) {
     if (markdownRenderer) {
       // The markdown renderer returns a string, which we need to convert to a
       // template result using unsafeHTML.
       // It is the responsibilty of the markdown renderer to sanitize the HTML.
-      return unsafeHTML(markdownRenderer(value, {
-        tagClassMap: tagClassMap,
-      }));
+      return unsafeHTML(markdownRenderer(value, markdownOptions));
     }
     // TODO: Log once that the markdown renderer is not available.
     if (!this.defaultMarkdownWarningLogged) {

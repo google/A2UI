@@ -28,7 +28,6 @@ export { MarkdownItRenderer } from './raw-markdown.js';
  * @returns The rendered HTML as a string.
  */
 export function renderMarkdown(value: string, options?: Types.MarkdownRendererOptions): string {
-  console.log('renderMarkdown', options, value);
   const htmlString = rawMarkdownRenderer.render(value, options?.tagClassMap);
   return sanitizer.sanitize(htmlString);
 }
