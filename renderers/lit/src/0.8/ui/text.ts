@@ -125,8 +125,9 @@ export class Text extends Root {
 
     return html`${markdown(
       markdownText,
-      this.markdownRenderer,
-      Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
+      this.markdownRenderer, {
+        tagClassMap: Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
+      },
     )}`;
   }
 
