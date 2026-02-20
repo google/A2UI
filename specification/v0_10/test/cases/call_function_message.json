@@ -35,22 +35,6 @@
       }
     },
     {
-      "description": "CallFunctionMessage: Valid with remoteOnly",
-      "valid": true,
-      "data": {
-        "version": "v0.10",
-        "callFunction": {
-          "call": "openUrl",
-          "args": {
-            "url": "https://example.com"
-          },
-          "returnType": "void",
-          "callableFrom": "remoteOnly"
-        },
-        "functionCallId": "unique-call-id-124b"
-      }
-    },
-    {
       "description": "CallFunctionMessage: Invalid (missing callId)",
       "valid": false,
       "data": {

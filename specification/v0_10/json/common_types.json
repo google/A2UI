@@ -243,7 +243,8 @@
             "clientOnly",
             "remoteOnly",
             "clientOrRemote"
-          ]
+          ],
+          "default": "clientOnly"
         },
         "call": {
           "type": "string",
@@ -275,7 +276,7 @@
           "default": "boolean"
         }
       },
-      "required": ["call", "callableFrom"],
+      "required": ["call"],
       "oneOf": [
         { "$ref": "catalog.json#/$defs/anyFunction" }
       ]
