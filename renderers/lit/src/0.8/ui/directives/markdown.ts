@@ -41,7 +41,7 @@ class MarkdownDirective extends Directive {
     return this.render(value, markdownRenderer, tagClassMap);
   }
 
-  private defaultMarkdownWarningLogged = false;
+  private static defaultMarkdownWarningLogged = false;
   /**
    * Renders the markdown string to HTML using the injected markdown renderer,
    * if present. Otherwise, it returns the value wrapped in a span.
@@ -54,11 +54,11 @@ class MarkdownDirective extends Directive {
       return unsafeHTML(markdownRenderer(value, markdownOptions));
     }
     // TODO: Log once that the markdown renderer is not available.
-    if (!this.defaultMarkdownWarningLogged) {
+    if (!MarkdownDirective.defaultMarkdownWarningLogged) {
       console.warn("[MarkdownDirective]",
         "can't render markdown because no markdown renderer is configured.\n",
         "Use `@a2ui/markdown-it-shared`, or your own markdown renderer.");
-      this.defaultMarkdownWarningLogged = true;
+      MarkdownDirective.defaultMarkdownWarningLogged = true;
     }
     return html`<span class="no-markdown-renderer">${value}</span>`;
   }
