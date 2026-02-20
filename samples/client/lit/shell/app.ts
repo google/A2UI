@@ -55,10 +55,10 @@ const configs: Record<string, AppConfig> = {
 
 @customElement("a2ui-shell")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  @provide({ context: UI.Context.themeContext })
+  @provide({ context: UI.Context.theme })
   accessor theme: v0_8.Types.Theme = uiTheme;
 
-  @provide({ context: UI.Context.markdownRenderer })
+  @provide({ context: UI.Context.markdown })
   accessor markdownRenderer: v0_8.Types.MarkdownRenderer = renderMarkdown;
 
   @state()
