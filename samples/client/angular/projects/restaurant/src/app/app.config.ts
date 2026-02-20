@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { DEFAULT_CATALOG, provideA2UI } from '@a2ui/angular';
+import { DEFAULT_CATALOG, provideA2UI, provideMarkdownRenderer } from '@a2ui/angular';
 import { IMAGE_CONFIG } from '@angular/common';
 import {
   ApplicationConfig,
@@ -23,6 +23,7 @@ import {
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { theme } from './theme';
+import { renderMarkdown } from '@a2ui/markdown-it-shared';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,6 +34,7 @@ export const appConfig: ApplicationConfig = {
       catalog: DEFAULT_CATALOG,
       theme: theme,
     }),
+    provideMarkdownRenderer(renderMarkdown),
     {
       provide: IMAGE_CONFIG,
       useValue: {
