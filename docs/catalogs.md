@@ -243,7 +243,7 @@ export const RIZZ_CHARTS_CATALOG = {
 
 and the hello_world_banner implementation
 
-```json
+```typescript
 import { DynamicComponent } from '@a2ui/angular';
 import { Component, Input } from '@angular/core';
 
