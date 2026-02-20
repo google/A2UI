@@ -16,7 +16,7 @@ Build multi-agent platforms, enterprise assistants, or cross-platform apps where
 - Cross-platform: web, mobile, desktop
 - Interoperable: open source, same spec with multiple renderers
 
-**Get started:** [Client Setup](../guides/client-setup.md) | [Theming](../guides/theming.md) | [Custom Components](../guides/custom-components.md)
+**Get started:** [Client Setup](../v0.9/guides/client-setup.md) | [Theming](../v0.9/guides/theming.md) | [Custom Components](../v0.9/guides/custom-components.md)
 
 ### 2. Agent Developers (Backend/AI)
 
@@ -30,11 +30,11 @@ Build agents that generate forms, dashboards, and interactive workflows.
 - Portable: one agent response works across all A2UI clients
 - Streamable: progressive rendering as you generate
 
-**Get started:** [Agent Development](../guides/agent-development.md)
+**Get started:** [Agent Development](../v0.9/guides/agent-development.md)
 
 ### 3. Platform Builders (SDK Creators)
 
-Build agent orchestration platforms, frameworks, or UI integrations.  
+Build agent orchestration platforms, frameworks, or UI integrations.
 
 Do you bring remote agents into your app?
 
@@ -46,7 +46,7 @@ Do you ship your agent into other apps you don't necessarily control?
 - Extensible: custom component catalogs
 - Open source (Apache 2.0)
 
-**Get started:** [Community](../community.md) | [Roadmap](../roadmap.md)
+**Get started:** [Community](../v0.9/community.md) | [Roadmap](../v0.9/roadmap.md)
 
 ---
 
@@ -63,4 +63,4 @@ Do you ship your agent into other apps you don't necessarily control?
 - ❌ **Remote widgets not integrated with client** - Use iframes, like MCP Apps
 <!-- TODO: figure out when to use AG UI vs when to use A2UI -->
 - ❌ **Rapid UI + Agent app built together** - Use AG UI / CopilotKit
-<!-- TODO: Document styling constraints - agents use semantic hints (usageHint), not pixel-perfect control -->
+<!-- TODO: Document styling constraints - agents use semantic hints (variant), not pixel-perfect control -->

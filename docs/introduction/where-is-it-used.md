@@ -134,16 +134,16 @@ The A2UI community is building exciting projects:
 
 ### Community Contributions
 
-Have you built something with A2UI? [Share it with the community!](../community.md)
+Have you built something with A2UI? [Share it with the community!](../v0.9/community.md)
 
 ---
 
 ## Next Steps
 
-- [Quickstart Guide](../quickstart.md) - Try the demo
-- [Agent Development](../guides/agent-development.md) - Build an agent
-- [Client Setup](../guides/client-setup.md) - Integrate a renderer
-- [Community](../community.md) - Join the community
+- [Quickstart Guide](../v0.9/quickstart.md) - Try the demo
+- [Agent Development](../v0.9/guides/agent-development.md) - Build an agent
+- [Client Setup](../v0.9/guides/client-setup.md) - Integrate a renderer
+- [Community](../v0.9/community.md) - Join the community
 
 ---
 

@@ -15,3 +15,7 @@ site/
 
 # Python virtual environment
 .venv/
+
+# Copied specification files
+docs/specification/v*/
+
