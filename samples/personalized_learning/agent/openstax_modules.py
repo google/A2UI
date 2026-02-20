@@ -687,13 +687,16 @@ KEYWORD_TO_MODULES = {
     # CHAPTER 7: CELLULAR RESPIRATION
     # ==========================================================================
     "cellular respiration": ["m62786", "m62787", "m62788", "m62789"],
-    "respiration": ["m62786", "m62982", "m62987"],
+    "respiration": ["m62786", "m62787", "m62788", "m62789"],
     "aerobic respiration": ["m62786", "m62789"],
     "glycolysis": ["m62787"],
     "pyruvate": ["m62787", "m62788"],
     "citric acid cycle": ["m62788"],
+    "citric acid": ["m62788"],
     "krebs cycle": ["m62788"],
+    "krebs": ["m62788"],
     "tca cycle": ["m62788"],
+    "tca": ["m62788"],
     "acetyl coa": ["m62788"],
     "nadh": ["m62788", "m62789"],
     "fadh2": ["m62788", "m62789"],
