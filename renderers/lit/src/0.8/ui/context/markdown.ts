@@ -18,13 +18,6 @@ import { createContext } from "@lit/context";
 import * as Types from "@a2ui/web_core/types/types";
 
 /**
- * The theme context.
+ * The markdown renderer context.
  */
-export const theme = createContext<Types.Theme | undefined>("A2UITheme");
-
-/**
- * An alias for the theme context, for backwards-compatibility.
- *
- * @deprecated Use `theme` instead.
- */
-export const themeContext = theme;
+export const markdown = createContext<Types.MarkdownRenderer | undefined>("A2UIMarkdown");
