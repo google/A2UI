@@ -21,6 +21,8 @@ import { Root } from "./root.js";
 import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import * as Primitives from "@a2ui/web_core/types/primitives";
 import * as Types from "@a2ui/web_core/types/types";
+import * as Context from "./context/theme.js";
+import { consume } from "@lit/context";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
@@ -44,6 +46,11 @@ export class Text extends Root {
   @property({ reflect: true, attribute: "usage-hint" })
   accessor usageHint: Types.ResolvedText["usageHint"] | null = null;
 
+  // Allow users to specify their own markdown renderer,
+  // or the one provided by @a2ui/markdown-it-shared.
+  @consume({context: Context.markdownRenderer})
+  accessor markdownRenderer: Types.MarkdownRenderer | undefined = undefined;
+  
   static styles = [
     structuralStyles,
     css`
@@ -118,6 +125,7 @@ export class Text extends Root {
 
     return html`${markdown(
       markdownText,
+      this.markdownRenderer,
       Styles.appendToAll(this.theme.markdown, ["ol", "ul", "li"], {})
     )}`;
   }

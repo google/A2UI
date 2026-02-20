@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { noChange } from "lit";
+import { html, noChange, TemplateResult } from "lit";
 import {
   Directive,
   DirectiveParameters,
@@ -22,31 +22,13 @@ import {
   directive,
 } from "lit/directive.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import MarkdownIt from "markdown-it";
-import { RenderRule } from "markdown-it/lib/renderer.mjs";
-import * as Sanitizer from "./sanitizer.js";
+import * as Types from "@a2ui/web_core/types/types";
 
 class MarkdownDirective extends Directive {
-  #markdownIt = MarkdownIt({
-    highlight: (str, lang) => {
-      switch (lang) {
-        case "html": {
-          const iframe = document.createElement("iframe");
-          iframe.classList.add("html-view");
-          iframe.srcdoc = str;
-          iframe.sandbox = "";
-          return iframe.innerHTML;
-        }
-
-        default:
-          return Sanitizer.escapeNodeText(str);
-      }
-    },
-  });
   #lastValue: string | null = null;
   #lastTagClassMap: string | null = null;
 
-  update(_part: Part, [value, tagClassMap]: DirectiveParameters<this>) {
+  update(_part: Part, [value, markdownRenderer, tagClassMap]: DirectiveParameters<this>) {
     if (
       this.#lastValue === value &&
       JSON.stringify(tagClassMap) === this.#lastTagClassMap
@@ -56,97 +38,33 @@ class MarkdownDirective extends Directive {
 
     this.#lastValue = value;
     this.#lastTagClassMap = JSON.stringify(tagClassMap);
-    return this.render(value, tagClassMap);
+    return this.render(value, markdownRenderer, tagClassMap);
   }
 
-  #originalClassMap = new Map<string, RenderRule | undefined>();
-  #applyTagClassMap(tagClassMap: Record<string, string[]>) {
-    Object.entries(tagClassMap).forEach(([tag]) => {
-      let tokenName;
-      switch (tag) {
-        case "p":
-          tokenName = "paragraph";
-          break;
-        case "h1":
-        case "h2":
-        case "h3":
-        case "h4":
-        case "h5":
-        case "h6":
-          tokenName = "heading";
-          break;
-        case "ul":
-          tokenName = "bullet_list";
-          break;
-        case "ol":
-          tokenName = "ordered_list";
-          break;
-        case "li":
-          tokenName = "list_item";
-          break;
-        case "a":
-          tokenName = "link";
-          break;
-        case "strong":
-          tokenName = "strong";
-          break;
-        case "em":
-          tokenName = "em";
-          break;
-      }
-
-      if (!tokenName) {
-        return;
-      }
-
-      const key = `${tokenName}_open`;
-      this.#markdownIt.renderer.rules[key] = (
-        tokens,
-        idx,
-        options,
-        _env,
-        self
-      ) => {
-        const token = tokens[idx];
-        const tokenClasses = tagClassMap[token.tag] ?? [];
-        for (const clazz of tokenClasses) {
-          token.attrJoin("class", clazz);
-        }
-
-        return self.renderToken(tokens, idx, options);
-      };
-    });
-  }
-
-  #unapplyTagClassMap() {
-    for (const [key] of this.#originalClassMap) {
-      delete this.#markdownIt.renderer.rules[key];
-    }
-
-    this.#originalClassMap.clear();
-  }
-
+  private defaultMarkdownWarningLogged = false;
   /**
-   * Renders the markdown string to HTML using MarkdownIt.
-   *
-   * Note: MarkdownIt doesn't enable HTML in its output, so we render the
-   * value directly without further sanitization.
-   * @see https://github.com/markdown-it/markdown-it/blob/master/docs/security.md
+   * Renders the markdown string to HTML using the injected markdown renderer,
+   * if present. Otherwise, it returns the value wrapped in a span.
    */
-  render(value: string, tagClassMap?: Record<string, string[]>) {
-    if (tagClassMap) {
-      this.#applyTagClassMap(tagClassMap);
+  render(value: string, markdownRenderer?: Types.MarkdownRenderer, tagClassMap?: Record<string, string[]>) {
+    console.log('MarkdownDirective', value, tagClassMap);
+    if (markdownRenderer) {
+      // The markdown renderer returns a string, which we need to convert to a
+      // template result using unsafeHTML.
+      // It is the responsibilty of the markdown renderer to sanitize the HTML.
+      return unsafeHTML(markdownRenderer(value, {
+        tagClassMap: tagClassMap,
+      }));
     }
-    const htmlString = this.#markdownIt.render(value);
-    this.#unapplyTagClassMap();
-
-    return unsafeHTML(htmlString);
+    // TODO: Log once that the markdown renderer is not available.
+    if (!this.defaultMarkdownWarningLogged) {
+      console.warn("[MarkdownDirective]",
+        "can't render markdown because no markdown renderer is configured.\n",
+        "Use `@a2ui/markdown-it-shared`, or your own markdown renderer.");
+      this.defaultMarkdownWarningLogged = true;
+    }
+    return html`<span class="no-markdown-renderer">${value}</span>`;
   }
 }
 
 export const markdown = directive(MarkdownDirective);
-
-const markdownItStandalone = MarkdownIt();
-export function renderMarkdownToHtmlString(value: string): string {
-  return markdownItStandalone.render(value);
-}
