@@ -17,4 +17,14 @@
 import { createContext } from "@lit/context";
 import * as Types from "@a2ui/web_core/types/types";
 
-export const themeContext = createContext<Types.Theme | undefined>("A2UITheme");
+/**
+ * The theme context.
+ */
+export const theme = createContext<Types.Theme | undefined>("A2UITheme");
+
+/**
+ * An alias for the theme context, for backwards-compatibility.
+ *
+ * @deprecated Use `theme` instead.
+ */
+export const themeContext = theme;

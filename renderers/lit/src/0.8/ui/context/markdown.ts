@@ -14,6 +14,10 @@
  limitations under the License.
  */
 
-export * from './processor';
-export * from './types';
-export { provideMarkdownRenderer } from './markdown';
+import { createContext } from "@lit/context";
+import * as Types from "@a2ui/web_core/types/types";
+
+/**
+ * The markdown renderer context.
+ */
+export const markdown = createContext<Types.MarkdownRenderer | undefined>("A2UIMarkdown");

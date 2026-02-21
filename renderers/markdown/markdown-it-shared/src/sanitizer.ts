@@ -14,6 +14,11 @@
  limitations under the License.
  */
 
-export * from './processor';
-export * from './types';
-export { provideMarkdownRenderer } from './markdown';
+// TODO: Implement the DOMPurify sanitizer.
+
+/**
+ * A sanitizer that sanitizes HTML.
+ */
+export const sanitizer = {
+  sanitize: (html: string) => html,
+};

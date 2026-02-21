@@ -1,0 +1,77 @@
+{
+  "name": "@a2ui/markdown-it-shared",
+  "version": "0.0.1",
+  "description": "A Markdown renderer using markdown-it and dompurify.",
+  "main": "./dist/src/markdown.js",
+  "types": "./dist/src/markdown.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/markdown.d.ts",
+      "default": "./dist/src/markdown.js"
+    }
+  },
+  "type": "module",
+  "repository": {
+    "directory": "renderers/markdown/markdown-it-shared",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "files": [
+    "dist/src"
+  ],
+  "scripts": {
+    "prepack": "npm run build",
+    "build": "wireit",
+    "build:tsc": "wireit",
+    "test": "wireit",
+    "format": "prettier --ignore-path ../.gitignore --write .",
+    "format:check": "prettier --ignore-path ../.gitignore --check ."
+  },
+  "wireit": {
+    "build": {
+      "dependencies": [
+        "build:tsc"
+      ]
+    },
+    "build:tsc": {
+      "command": "tsc -b --pretty",
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.json",
+        "tsconfig.json"
+      ],
+      "output": [
+        "dist/",
+        "!dist/**/*.min.js{,.map}"
+      ],
+      "clean": "if-file-deleted"
+    },
+    "test": {
+      "command": "node --test --enable-source-maps --test-reporter spec dist/src/*.test.js",
+      "dependencies": [
+        "build"
+      ]
+    }
+  },
+  "keywords": [],
+  "author": "Google",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "peerDependencies": {
+    "@a2ui/web_core": "file:../../web_core"
+  },
+  "devDependencies": {
+    "@a2ui/web_core": "file:../../web_core",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^24.10.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.3",
+    "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0"
+  }
+}
