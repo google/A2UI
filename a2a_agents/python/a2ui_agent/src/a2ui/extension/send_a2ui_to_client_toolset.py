@@ -80,6 +80,7 @@ Usage Examples:
 import inspect
 import json
 import logging
+import re
 from typing import Any, Awaitable, Callable, Optional, TypeAlias, Union
 
 import jsonschema
@@ -87,6 +88,7 @@ import jsonschema
 from a2a import types as a2a_types
 from a2ui.extension.a2ui_extension import create_a2ui_part
 from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
+from a2ui.extension.validation import validate_a2ui_json
 from google.adk.a2a.converters import part_converter
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.models import LlmRequest
@@ -252,17 +254,44 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
               f" arg {self.A2UI_JSON_ARG_NAME} "
           )
 
-        a2ui_json_payload = json.loads(a2ui_json)
-
-        # Auto-wrap single object in list
-        if not isinstance(a2ui_json_payload, list):
-          logger.info(
-              "Received a single JSON object, wrapping in a list for validation."
-          )
-          a2ui_json_payload = [a2ui_json_payload]
-
         a2ui_schema = await self.get_a2ui_schema(tool_context)
-        jsonschema.validate(instance=a2ui_json_payload, schema=a2ui_schema)
+
+        try:
+          # Attempt to parse and validate
+          a2ui_json_payload = json.loads(a2ui_json)
+
+          # Auto-wrap single object in list
+          if not isinstance(a2ui_json_payload, list):
+            logger.info(
+                "Received a single JSON object, wrapping in a list for validation."
+            )
+            a2ui_json_payload = [a2ui_json_payload]
+
+          jsonschema.validate(instance=a2ui_json_payload, schema=a2ui_schema)
+
+        except (jsonschema.exceptions.ValidationError, json.JSONDecodeError) as e:
+          logger.warning(f"Initial A2UI JSON validation failed: {e}")
+
+          # Run Fixer
+          fixed_a2ui_json = re.sub(r",(?=\s*[\]}])", "", a2ui_json)
+
+          if fixed_a2ui_json != a2ui_json:
+            # Emit Warning
+            logger.warning("Detected trailing commas in LLM output; applied autofix.")
+
+            # Re-parse and Re-validate
+            a2ui_json_payload = json.loads(fixed_a2ui_json)
+
+            # Auto-wrap single object in list
+            if not isinstance(a2ui_json_payload, list):
+              logger.info(
+                  "Received a single JSON object, wrapping in a list for validation."
+              )
+              a2ui_json_payload = [a2ui_json_payload]
+
+            jsonschema.validate(instance=a2ui_json_payload, schema=a2ui_schema)
+          else:
+            raise e
 
         logger.info(
             f"Validated call to tool {self.TOOL_NAME} with {self.A2UI_JSON_ARG_NAME}"

@@ -62,7 +62,7 @@ export type MessageProcessor = {
   resolvePath(path: string, dataContextPath?: string): string;
 };
 
-export type Theme = {
+export declare type Theme = {
   components: {
     AudioPlayer: Record<string, boolean>;
     Button: Record<string, boolean>;
@@ -197,7 +197,7 @@ export type Theme = {
 /**
  * Represents a user-initiated action, sent from the client to the server.
  */
-export interface UserAction {
+export declare interface UserAction {
   /**
    * The name of the action, taken from the component's `action.action`
    * property.
@@ -221,7 +221,7 @@ export interface UserAction {
 }
 
 /** A recursive type for any valid JSON-like value in the data model. */
-export type DataValue =
+export declare type DataValue =
   | string
   | number
   | boolean
@@ -229,24 +229,24 @@ export type DataValue =
   | DataMap
   | DataObject
   | DataArray;
-export type DataObject = { [key: string]: DataValue };
-export type DataMap = Map<string, DataValue>;
-export type DataArray = DataValue[];
+export declare type DataObject = { [key: string]: DataValue };
+export declare type DataMap = Map<string, DataValue>;
+export declare type DataArray = DataValue[];
 
 /** A template for creating components from a list in the data model. */
-export interface ComponentArrayTemplate {
+export declare interface ComponentArrayTemplate {
   componentId: string;
   dataBinding: string;
 }
 
 /** Defines a list of child components, either explicitly or via a template. */
-export interface ComponentArrayReference {
+export declare interface ComponentArrayReference {
   explicitList?: string[];
   template?: ComponentArrayTemplate;
 }
 
 /** Represents the general shape of a component's properties. */
-export type ComponentProperties = {
+export declare type ComponentProperties = {
   // Allow any property, but define known structural ones for type safety.
   children?: ComponentArrayReference;
   child?: string;
@@ -254,31 +254,31 @@ export type ComponentProperties = {
 };
 
 /** A raw component instance from a SurfaceUpdate message. */
-export interface ComponentInstance {
+export declare interface ComponentInstance {
   id: string;
   weight?: number;
   component?: ComponentProperties;
 }
 
-export interface BeginRenderingMessage {
+export declare interface BeginRenderingMessage {
   surfaceId: string;
   root: string;
   styles?: Record<string, string>;
 }
 
-export interface SurfaceUpdateMessage {
+export declare interface SurfaceUpdateMessage {
   surfaceId: string;
   components: ComponentInstance[];
 }
 
-export interface DataModelUpdate {
+export declare interface DataModelUpdate {
   surfaceId: string;
   path?: string;
   contents: ValueMap[];
 }
 
 // ValueMap is a type of DataObject for passing to the data model.
-export type ValueMap = DataObject & {
+export declare type ValueMap = DataObject & {
   key: string;
   /** May be JSON */
   valueString?: string;
@@ -287,11 +287,11 @@ export type ValueMap = DataObject & {
   valueMap?: ValueMap[];
 };
 
-export interface DeleteSurfaceMessage {
+export declare interface DeleteSurfaceMessage {
   surfaceId: string;
 }
 
-export interface ServerToClientMessage {
+export declare interface ServerToClientMessage {
   beginRendering?: BeginRenderingMessage;
   surfaceUpdate?: SurfaceUpdateMessage;
   dataModelUpdate?: DataModelUpdate;
@@ -302,7 +302,7 @@ export interface ServerToClientMessage {
  * A recursive type for any value that can appear within a resolved component
  * tree. This is the main type that makes the recursive resolution possible.
  */
-export type ResolvedValue =
+export declare type ResolvedValue =
   | string
   | number
   | boolean
@@ -312,10 +312,10 @@ export type ResolvedValue =
   | ResolvedArray;
 
 /** A generic map where each value has been recursively resolved. */
-export type ResolvedMap = { [key: string]: ResolvedValue };
+export declare type ResolvedMap = { [key: string]: ResolvedValue };
 
 /** A generic array where each item has been recursively resolved. */
-export type ResolvedArray = ResolvedValue[];
+export declare type ResolvedArray = ResolvedValue[];
 
 /**
  * A base interface that all component nodes share.
@@ -327,97 +327,97 @@ interface BaseComponentNode {
   slotName?: string;
 }
 
-export interface TextNode extends BaseComponentNode {
+export declare interface TextNode extends BaseComponentNode {
   type: "Text";
   properties: ResolvedText;
 }
 
-export interface ImageNode extends BaseComponentNode {
+export declare interface ImageNode extends BaseComponentNode {
   type: "Image";
   properties: ResolvedImage;
 }
 
-export interface IconNode extends BaseComponentNode {
+export declare interface IconNode extends BaseComponentNode {
   type: "Icon";
   properties: ResolvedIcon;
 }
 
-export interface VideoNode extends BaseComponentNode {
+export declare interface VideoNode extends BaseComponentNode {
   type: "Video";
   properties: ResolvedVideo;
 }
 
-export interface AudioPlayerNode extends BaseComponentNode {
+export declare interface AudioPlayerNode extends BaseComponentNode {
   type: "AudioPlayer";
   properties: ResolvedAudioPlayer;
 }
 
-export interface RowNode extends BaseComponentNode {
+export declare interface RowNode extends BaseComponentNode {
   type: "Row";
   properties: ResolvedRow;
 }
 
-export interface ColumnNode extends BaseComponentNode {
+export declare interface ColumnNode extends BaseComponentNode {
   type: "Column";
   properties: ResolvedColumn;
 }
 
-export interface ListNode extends BaseComponentNode {
+export declare interface ListNode extends BaseComponentNode {
   type: "List";
   properties: ResolvedList;
 }
 
-export interface CardNode extends BaseComponentNode {
+export declare interface CardNode extends BaseComponentNode {
   type: "Card";
   properties: ResolvedCard;
 }
 
-export interface TabsNode extends BaseComponentNode {
+export declare interface TabsNode extends BaseComponentNode {
   type: "Tabs";
   properties: ResolvedTabs;
 }
 
-export interface DividerNode extends BaseComponentNode {
+export declare interface DividerNode extends BaseComponentNode {
   type: "Divider";
   properties: ResolvedDivider;
 }
 
-export interface ModalNode extends BaseComponentNode {
+export declare interface ModalNode extends BaseComponentNode {
   type: "Modal";
   properties: ResolvedModal;
 }
 
-export interface ButtonNode extends BaseComponentNode {
+export declare interface ButtonNode extends BaseComponentNode {
   type: "Button";
   properties: ResolvedButton;
 }
 
-export interface CheckboxNode extends BaseComponentNode {
+export declare interface CheckboxNode extends BaseComponentNode {
   type: "CheckBox";
   properties: ResolvedCheckbox;
 }
 
-export interface TextFieldNode extends BaseComponentNode {
+export declare interface TextFieldNode extends BaseComponentNode {
   type: "TextField";
   properties: ResolvedTextField;
 }
 
-export interface DateTimeInputNode extends BaseComponentNode {
+export declare interface DateTimeInputNode extends BaseComponentNode {
   type: "DateTimeInput";
   properties: ResolvedDateTimeInput;
 }
 
-export interface MultipleChoiceNode extends BaseComponentNode {
+export declare interface MultipleChoiceNode extends BaseComponentNode {
   type: "MultipleChoice";
   properties: ResolvedMultipleChoice;
 }
 
-export interface SliderNode extends BaseComponentNode {
+export declare interface SliderNode extends BaseComponentNode {
   type: "Slider";
   properties: ResolvedSlider;
 }
 
-export interface CustomNode extends BaseComponentNode {
+export declare interface CustomNode extends BaseComponentNode {
   type: string;
   // For custom nodes, properties are just a map of string keys to any resolved value.
   properties: CustomNodeProperties;
@@ -427,7 +427,7 @@ export interface CustomNode extends BaseComponentNode {
  * The complete discriminated union of all possible resolved component nodes.
  * A renderer would use this type for any given node in the component tree.
  */
-export type AnyComponentNode =
+export declare type AnyComponentNode =
   | TextNode
   | IconNode
   | ImageNode
@@ -450,19 +450,19 @@ export type AnyComponentNode =
 
 // These components do not contain other components can reuse their
 // original interfaces.
-export type ResolvedText = Text;
-export type ResolvedIcon = Icon;
-export type ResolvedImage = Image;
-export type ResolvedVideo = Video;
-export type ResolvedAudioPlayer = AudioPlayer;
-export type ResolvedDivider = Divider;
-export type ResolvedCheckbox = Checkbox;
-export type ResolvedTextField = TextField;
-export type ResolvedDateTimeInput = DateTimeInput;
-export type ResolvedMultipleChoice = MultipleChoice;
-export type ResolvedSlider = Slider;
+export declare type ResolvedText = Text;
+export declare type ResolvedIcon = Icon;
+export declare type ResolvedImage = Image;
+export declare type ResolvedVideo = Video;
+export declare type ResolvedAudioPlayer = AudioPlayer;
+export declare type ResolvedDivider = Divider;
+export declare type ResolvedCheckbox = Checkbox;
+export declare type ResolvedTextField = TextField;
+export declare type ResolvedDateTimeInput = DateTimeInput;
+export declare type ResolvedMultipleChoice = MultipleChoice;
+export declare type ResolvedSlider = Slider;
 
-export interface ResolvedRow {
+export declare interface ResolvedRow {
   children: AnyComponentNode[];
   distribution?:
   | "start"
@@ -474,7 +474,7 @@ export interface ResolvedRow {
   alignment?: "start" | "center" | "end" | "stretch";
 }
 
-export interface ResolvedColumn {
+export declare interface ResolvedColumn {
   children: AnyComponentNode[];
   distribution?:
   | "start"
@@ -486,44 +486,44 @@ export interface ResolvedColumn {
   alignment?: "start" | "center" | "end" | "stretch";
 }
 
-export interface ResolvedButton {
+export declare interface ResolvedButton {
   child: AnyComponentNode;
   action: Button["action"];
 }
 
-export interface ResolvedList {
+export declare interface ResolvedList {
   children: AnyComponentNode[];
   direction?: "vertical" | "horizontal";
   alignment?: "start" | "center" | "end" | "stretch";
 }
 
-export interface ResolvedCard {
+export declare interface ResolvedCard {
   child: AnyComponentNode;
   children: AnyComponentNode[];
 }
 
-export interface ResolvedTabItem {
+export declare interface ResolvedTabItem {
   title: StringValue;
   child: AnyComponentNode;
 }
 
-export interface ResolvedTabs {
+export declare interface ResolvedTabs {
   tabItems: ResolvedTabItem[];
 }
 
-export interface ResolvedModal {
+export declare interface ResolvedModal {
   entryPointChild: AnyComponentNode;
   contentChild: AnyComponentNode;
 }
 
-export interface CustomNodeProperties {
+export declare interface CustomNodeProperties {
   [k: string]: ResolvedValue;
 }
 
-export type SurfaceID = string;
+export declare type SurfaceID = string;
 
 /** The complete state of a single UI surface. */
-export interface Surface {
+export declare interface Surface {
   rootComponentId: string | null;
   componentTree: AnyComponentNode | null;
   dataModel: DataMap;
