@@ -73,6 +73,8 @@
   "author": "Google",
   "license": "Apache-2.0",
   "devDependencies": {
+    "cpy-cli": "^5.0.0",
+    "mkdirp": "^1.0.4",
     "@types/node": "^24.10.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"

@@ -1,0 +1,36 @@
+name: Windows Build
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # --- Build web_core first ---
+      - name: Install web_core deps
+        working-directory: renderers/web_core
+        run: npm install
+
+      - name: Build web_core
+        working-directory: renderers/web_core
+        run: npm run build
+
+      # --- Then build lit ---
+      - name: Install lit deps
+        working-directory: renderers/lit
+        run: npm install
+
+      - name: Build lit
+        working-directory: renderers/lit
+        run: npm run build
