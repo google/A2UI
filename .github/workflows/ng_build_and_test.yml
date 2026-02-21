@@ -35,33 +35,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install web_core dependencies
-        working-directory: ./renderers/web_core
-        run: npm i
-
-      - name: Build web_core
-        working-directory: ./renderers/web_core
-        run: npm run build
-
-      - name: Install web lib deps
-        working-directory: ./renderers/lit
-        run: npm i
-
-      - name: Build web lib
-        working-directory: ./renderers/lit
-        run: npm run build
-
-      - name: Install renderer deps
-        working-directory: ./renderers/angular
-        run: npm i
-
-      - name: Build Angular renderer
-        working-directory: ./renderers/angular
-        run: npm run build
-
       - name: Install top-level deps
         working-directory: ./samples/client/angular
         run: npm i
+
+      - name: Build Angular renderer and its dependencies
+        working-directory: ./samples/client/angular
+        run: npm run build:renderer
 
       - name: Build contact sample
         working-directory: ./samples/client/angular
