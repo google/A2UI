@@ -61,7 +61,7 @@ class ContactAgent:
   def get_agent_card(self) -> AgentCard:
     capabilities = AgentCapabilities(
         streaming=True,
-        extensions=[self._schema_manager.get_agent_extension()],
+        extensions=[self._schema_manager.get_agent_extension()] if self._schema_manager else [],
     )
     skill = AgentSkill(
         id="find_contact",
@@ -196,7 +196,7 @@ class ContactAgent:
         )
         if attempt <= max_retries:
           current_query_text = (
-              "I received no response. Please try again."
+              "I received no response. Please try again. "
               f"Please retry the original request: '{query}'"
           )
           continue  # Go to next retry
