@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.8.0",
+  "version": "0.8.2",
   "description": "A2UI Core Library",
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
@@ -8,6 +8,10 @@
     ".": {
       "types": "./dist/src/v0_8/index.d.ts",
       "default": "./dist/src/v0_8/index.js"
+    },
+    "./v0_9": {
+      "types": "./dist/src/v0_9/index.d.ts",
+      "default": "./dist/src/v0_9/index.js"
     },
     "./types/*": {
       "types": "./dist/src/v0_8/types/*.d.ts",
@@ -35,9 +39,10 @@
   },
   "wireit": {
     "copy-spec": {
-      "command": "npx mkdirp src/v0_8/schemas && npx cpy \"../../specification/v0_8/json/*.json\" src/v0_8/schemas",
+      "command": "node scripts/copy-spec.js",
       "files": [
-        "../../specification/v0_8/json/*.json"
+        "../../specification/v0_8/json/*.json",
+        "scripts/copy-spec.js"
       ],
       "output": [
         "src/v0_8/schemas/*.json"
@@ -70,6 +75,7 @@
   "devDependencies": {
     "cpy-cli": "^5.0.0",
     "mkdirp": "^1.0.4",
+    "@types/node": "^24.10.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   }

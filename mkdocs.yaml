@@ -58,6 +58,7 @@ nav:
       - v0.9 (Draft):
           - A2UI Specification: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
+  - Catalogs: catalogs.md
   - Renderers (Clients): renderers.md
   - Transports (Message Passing): transports.md
   - Agents (Server-side): agents.md
@@ -183,17 +184,4 @@ plugins:
   #     sections:
   #       "Specification":
   #         - a2ui_protocol.md
-  - redirects:
-      redirect_maps:
-        "specification/v0_9/server_to_client.json": "specification/v0_9/json/server_to_client.json"
-        "specification/v0_9/client_to_server.json": "specification/v0_9/json/client_to_server.json"
-        "specification/v0_9/common_types.json": "specification/v0_9/json/common_types.json"
-        "specification/v0_9/standard_catalog.json": "specification/v0_9/json/standard_catalog.json"
-        "specification/v0_9/a2ui_client_capabilities.json": "specification/v0_9/json/a2ui_client_capabilities.json"
-        "specification/v0_9/a2ui_client_data_model.json": "specification/v0_9/json/a2ui_client_data_model.json"
-        "specification/v0_8/a2ui_client_capabilities_schema.json": "specification/v0_8/json/a2ui_client_capabilities_schema.json"
-        "specification/v0_8/catalog_description_schema.json": "specification/v0_8/json/catalog_description_schema.json"
-        "specification/v0_8/client_to_server.json": "specification/v0_8/json/client_to_server.json"
-        "specification/v0_8/server_to_client.json": "specification/v0_8/json/server_to_client.json"
-        "specification/v0_8/server_to_client_with_standard_catalog.json": "specification/v0_8/json/server_to_client_with_standard_catalog.json"
-        "specification/v0_8/standard_catalog_definition.json": "specification/v0_8/json/standard_catalog_definition.json"
+

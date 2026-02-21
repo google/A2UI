@@ -70,9 +70,12 @@
               "variant": "shortText",
               "checks": [
                 {
-                  "call": "email",
-                  "message": "Please enter a valid email address.",
-                  "args": { "value": { "path": "/contact/email" } }
+                  "condition": {
+                    "call": "email",
+                    "args": { "value": { "path": "/contact/email" } },
+                    "returnType": "boolean"
+                  },
+                  "message": "Please enter a valid email address."
                 }
               ]
             },

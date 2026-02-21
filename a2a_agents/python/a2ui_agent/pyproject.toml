@@ -12,11 +12,18 @@ dependencies = [
 ]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "jsonschema"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/a2ui"]
+artifacts = ["src/a2ui/assets/**"]
+
+[tool.hatch.build.targets.sdist]
+artifacts = ["src/a2ui/assets/**"]
+
+[tool.hatch.build.hooks.custom]
+path = "pack_specs_hook.py"
 
 [[tool.uv.index]]
 url = "https://pypi.org/simple"
