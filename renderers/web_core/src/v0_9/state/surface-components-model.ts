@@ -24,6 +24,13 @@ export class SurfaceComponentsModel {
     this.notifyCreated(component);
   }
 
+  removeComponent(id: string): void {
+    if (this.components.has(id)) {
+      this.components.delete(id);
+      this.notifyDeleted(id);
+    }
+  }
+
   addLifecycleListener(listener: ComponentsLifecycleListener): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
@@ -39,6 +46,16 @@ export class SurfaceComponentsModel {
         listener.onComponentCreated(component);
       } catch (e) {
         console.error('Error in ComponentsLifecycleListener.onComponentCreated:', e);
+      }
+    }
+  }
+
+  private notifyDeleted(id: string): void {
+    for (const listener of this.listeners) {
+      try {
+        listener.onComponentDeleted?.(id);
+      } catch (e) {
+        console.error('Error in ComponentsLifecycleListener.onComponentDeleted:', e);
       }
     }
   }

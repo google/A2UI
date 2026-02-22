@@ -78,6 +78,12 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
   }
 
   private routeMessage(msg: any) {
+    const updateTypes = ['updateComponents', 'updateDataModel', 'deleteSurface'].filter(k => msg[k]);
+    if (updateTypes.length > 1) {
+      console.warn(`Message contains multiple update types: ${updateTypes.join(', ')}. Ignoring.`);
+      return;
+    }
+
     // Extract surfaceId from payload
     const payload = msg.updateComponents || msg.updateDataModel || msg.deleteSurface;
     if (!payload?.surfaceId) return;
@@ -97,9 +103,13 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
           const existing = surface.componentsModel.get(id);
           if (existing) {
             if (component && component !== existing.type) {
-                console.warn(`Attempting to change type of component ${id} from ${existing.type} to ${component}. Ignoring new type.`);
+                // Recreate component if type changes
+                surface.componentsModel.removeComponent(id);
+                const newComponent = new ComponentModel(id, component, properties);
+                surface.componentsModel.addComponent(newComponent);
+            } else {
+                existing.update(properties);
             }
-            existing.update(properties);
           } else {
             if (!component) {
                 console.warn(`Cannot create component ${id} without a type.`);
