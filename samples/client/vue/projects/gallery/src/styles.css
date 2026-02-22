@@ -1,0 +1,76 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+:root {
+  --n-100: #ffffff;
+  --n-99: #fcfcfc;
+  --n-98: #f9f9f9;
+  --n-95: #f1f1f1;
+  --n-90: #e2e2e2;
+  --n-80: #c6c6c6;
+  --n-70: #ababab;
+  --n-60: #919191;
+  --n-50: #777777;
+  --n-40: #5e5e5e;
+  --n-35: #525252;
+  --n-30: #474747;
+  --n-25: #3b3b3b;
+  --n-20: #303030;
+  --n-15: #262626;
+  --n-10: #1b1b1b;
+  --n-5: #111111;
+  --n-0: #000000;
+
+  --p-100: #ffffff;
+  --p-99: #fffbff;
+  --p-98: #fcf8ff;
+  --p-95: #f2efff;
+  --p-90: #e1e0ff;
+  --p-80: #c0c1ff;
+  --p-70: #a0a3ff;
+  --p-60: #8487ea;
+  --p-50: #6a6dcd;
+  --p-40: #5154b3;
+  --p-35: #4447a6;
+  --p-30: #383b99;
+  --p-25: #2c2e8d;
+  --p-20: #202182;
+  --p-15: #131178;
+  --p-10: #06006c;
+  --p-5: #03004d;
+  --p-0: #000000;
+
+  --font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--n-98);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  width: 100svw;
+  height: 100svh;
+  overflow: auto;
+}
+
+#app {
+  min-height: 100%;
+}
