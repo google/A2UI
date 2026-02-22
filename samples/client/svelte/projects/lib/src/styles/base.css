@@ -1,0 +1,175 @@
+/*
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+:root {
+	--bb-grid-size: 4px;
+	--bb-grid-size-2: calc(var(--bb-grid-size) * 2);
+	--bb-grid-size-3: calc(var(--bb-grid-size) * 3);
+	--bb-grid-size-4: calc(var(--bb-grid-size) * 4);
+	--bb-grid-size-5: calc(var(--bb-grid-size) * 5);
+	--bb-grid-size-6: calc(var(--bb-grid-size) * 6);
+
+	/* Primary color palette */
+	--p-100: #ffffff;
+	--p-99: #fffbfe;
+	--p-98: #fef7ff;
+	--p-95: #f6edff;
+	--p-90: #eaddff;
+	--p-80: #d0bcff;
+	--p-70: #b69df8;
+	--p-60: #9a82db;
+	--p-50: #7f67be;
+	--p-40: #6750a4;
+	--p-35: #5b4497;
+	--p-30: #4f378b;
+	--p-25: #432b7e;
+	--p-20: #381e72;
+	--p-15: #2d1166;
+	--p-10: #21005d;
+	--p-5: #11002f;
+	--p-0: #000000;
+
+	/* Neutral palette */
+	--n-100: #ffffff;
+	--n-99: #fffbfe;
+	--n-98: #fef7ff;
+	--n-95: #f4eff4;
+	--n-90: #e6e1e5;
+	--n-80: #c9c5ca;
+	--n-70: #aeaaae;
+	--n-60: #939094;
+	--n-50: #79767a;
+	--n-40: #605d62;
+	--n-35: #545255;
+	--n-30: #484649;
+	--n-25: #3d3b3e;
+	--n-20: #313033;
+	--n-15: #262528;
+	--n-10: #1c1b1f;
+	--n-5: #0f0e11;
+	--n-0: #000000;
+
+	/* Secondary palette */
+	--s-100: #ffffff;
+	--s-95: #f6edff;
+	--s-90: #ead5ff;
+	--s-80: #d4bcf8;
+	--s-70: #b99ddb;
+	--s-60: #9e80bf;
+	--s-50: #8464a3;
+	--s-40: #6b4a89;
+	--s-30: #533170;
+	--s-20: #3b1a58;
+	--s-10: #250341;
+
+	/* Error palette */
+	--e-100: #ffffff;
+	--e-95: #fceeee;
+	--e-90: #f9dedc;
+	--e-80: #f2b8b5;
+	--e-70: #ec928e;
+	--e-60: #e46962;
+	--e-50: #dc362e;
+	--e-40: #b3261e;
+	--e-30: #8c1d18;
+	--e-20: #601410;
+	--e-10: #370b07;
+
+	--font-family: 'Inter', system-ui, -apple-system, sans-serif;
+	--font-family-flex: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	min-height: 100%;
+	font-family: var(--font-family);
+	/* Use system preference by default */
+	color-scheme: light dark;
+	background: light-dark(var(--n-98), var(--n-10));
+	color: light-dark(var(--n-10), var(--n-90));
+}
+
+/* Manual overrides via toggle */
+body.light {
+	color-scheme: light;
+}
+
+body.dark {
+	color-scheme: dark;
+}
+
+.g-icon {
+	font-family: 'Material Symbols Outlined', 'Google Symbols', sans-serif;
+	font-weight: normal;
+	font-style: normal;
+	font-display: optional;
+	font-size: 20px;
+	width: 1em;
+	height: 1em;
+	user-select: none;
+	line-height: 1;
+	letter-spacing: normal;
+	text-transform: none;
+	display: inline-block;
+	white-space: nowrap;
+	word-wrap: normal;
+	direction: ltr;
+	-webkit-font-feature-settings: 'liga';
+	-webkit-font-smoothing: antialiased;
+	overflow: hidden;
+	font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 48, 'ROND' 100;
+}
+
+.g-icon.filled {
+	font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 48, 'ROND' 100;
+}
+
+.g-icon.filled-heavy {
+	font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 48, 'ROND' 100;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.6;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

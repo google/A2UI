@@ -1,0 +1,17 @@
+{
+  "name": "svelte-samples",
+  "version": "1.0.0",
+  "description": "Svelte samples based on A2UI",
+  "private": true,
+  "license": "",
+  "author": "Michele Preziuso <mpreziuso@kaosdynamics.com>",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "workspaces": [
+    "projects/lib",
+    "projects/restaurant"
+  ]
+}
