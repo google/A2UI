@@ -29,7 +29,7 @@ Example catalog (in specification/v0_9/json) that imports Text from the Basic Ca
     ]
   }
 }
-```sdfsf
+```
 
 **2. Run `uv run build_catalog.py <path-to-your-catalog` to bundle all external file references into a single, independent JSON Schema file**
 
