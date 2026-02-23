@@ -8,7 +8,7 @@
         "version": "v0.9",
         "createSurface": {
           "surfaceId": "test_surface",
-          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
+          "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
           "theme": {
             "primaryColor": "#00BFFF",
             "agentDisplayName": "Test Agent"
@@ -23,7 +23,7 @@
         "version": "v0.9",
         "createSurface": {
           "surfaceId": "test_surface",
-          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
+          "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
           "theme": {
             "primaryColor": 123
           }
@@ -37,7 +37,7 @@
         "version": "v0.9",
         "createSurface": {
           "surfaceId": "test_surface",
-          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
+          "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
           "theme": {
             "primaryColor": "invalid-color"
           }
@@ -51,7 +51,7 @@
         "version": "v0.9",
         "createSurface": {
           "surfaceId": "test_surface",
-          "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
+          "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
           "theme": {
             "primaryColor": "#00BFFF",
             "customProperty": "customValue"

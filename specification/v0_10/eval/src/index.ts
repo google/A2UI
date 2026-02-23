@@ -29,7 +29,7 @@ import { analysisFlow } from "./analysis_flow";
 
 const schemaFiles = [
   "../../json/common_types.json",
-  "../../json/standard_catalog.json",
+  "../../json/basic_catalog.json",
   "../../json/server_to_client.json",
 ];
 
@@ -41,15 +41,15 @@ function loadSchemas(): Record<string, any> {
     schemas[path.basename(file)] = schema;
   }
 
-  // Alias standard_catalog.json to catalog.json to match server_to_client.json references
+  // Alias basic_catalog.json to catalog.json to match server_to_client.json references
   // This mirrors the logic in run_tests.py
-  if (schemas["standard_catalog.json"]) {
+  if (schemas["basic_catalog.json"]) {
     const catalogSchema = JSON.parse(
-      JSON.stringify(schemas["standard_catalog.json"]),
+      JSON.stringify(schemas["basic_catalog.json"]),
     );
     if (catalogSchema["$id"]) {
       catalogSchema["$id"] = catalogSchema["$id"].replace(
-        "standard_catalog.json",
+        "basic_catalog.json",
         "catalog.json",
       );
     }
@@ -392,7 +392,7 @@ async function main() {
   const schemas = loadSchemas();
   const catalogRulesPath = path.join(
     __dirname,
-    "../../json/standard_catalog_rules.txt"
+    "../../json/basic_catalog_rules.txt"
   );
   let catalogRules: string | undefined;
   if (fs.existsSync(catalogRulesPath)) {
