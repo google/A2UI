@@ -1,0 +1,42 @@
+{
+  "name": "Card Layouts",
+  "description": "Card component with various layouts",
+  "scenarios": [
+    {
+      "name": "Simple Card",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Card", "child": "txt1" },
+          { "id": "txt1", "component": "Text", "text": "Simple card content" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Card with Header",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Card", "child": "col1" },
+          { "id": "col1", "component": "Column", "children": ["header", "divider", "body"] },
+          { "id": "header", "component": "Text", "text": "Card Title", "variant": "h2" },
+          { "id": "divider", "component": "Divider", "axis": "horizontal" },
+          { "id": "body", "component": "Text", "text": "Card body content goes here." }
+        ]}}
+      ]
+    },
+    {
+      "name": "Nested Cards",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Card", "child": "col1" },
+          { "id": "col1", "component": "Column", "children": ["title", "inner_card"] },
+          { "id": "title", "component": "Text", "text": "Outer Card", "variant": "h2" },
+          { "id": "inner_card", "component": "Card", "child": "inner_txt" },
+          { "id": "inner_txt", "component": "Text", "text": "Inner card content" }
+        ]}}
+      ]
+    }
+  ]
+}

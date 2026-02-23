@@ -1,0 +1,51 @@
+{
+  "name": "Text Variants",
+  "description": "All text variant types",
+  "scenarios": [
+    {
+      "name": "Heading 1",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Text", "text": "Heading 1", "variant": "h1" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Heading 2",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Text", "text": "Heading 2", "variant": "h2" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Heading 3",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Text", "text": "Heading 3", "variant": "h3" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Body",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Text", "text": "This is body text with normal styling.", "variant": "body" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Caption",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Text", "text": "Caption text", "variant": "caption" }
+        ]}}
+      ]
+    }
+  ]
+}

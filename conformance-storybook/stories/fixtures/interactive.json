@@ -1,0 +1,44 @@
+{
+  "name": "Interactive Components",
+  "description": "Modal and List",
+  "scenarios": [
+    {
+      "name": "Modal with Content",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Modal", "child": "content", "title": "Example Modal" },
+          { "id": "content", "component": "Column", "children": ["msg", "btn1"] },
+          { "id": "msg", "component": "Text", "text": "This is modal content." },
+          { "id": "btn1", "component": "Button", "child": "btn_txt", "variant": "primary", "action": { "event": { "name": "close" } } },
+          { "id": "btn_txt", "component": "Text", "text": "Close" }
+        ]}}
+      ]
+    },
+    {
+      "name": "List Basic",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "List", "children": ["item1", "item2", "item3"] },
+          { "id": "item1", "component": "Text", "text": "Item 1" },
+          { "id": "item2", "component": "Text", "text": "Item 2" },
+          { "id": "item3", "component": "Text", "text": "Item 3" }
+        ]}}
+      ]
+    },
+    {
+      "name": "List with Cards",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "List", "children": ["card1", "card2"] },
+          { "id": "card1", "component": "Card", "child": "c1txt" },
+          { "id": "c1txt", "component": "Text", "text": "Card Item 1" },
+          { "id": "card2", "component": "Card", "child": "c2txt" },
+          { "id": "c2txt", "component": "Text", "text": "Card Item 2" }
+        ]}}
+      ]
+    }
+  ]
+}

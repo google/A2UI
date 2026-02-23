@@ -1,0 +1,76 @@
+{
+  "name": "Layout Components",
+  "description": "Row, Column, Divider, and Tabs",
+  "scenarios": [
+    {
+      "name": "Row Basic",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Row", "children": ["t1", "t2", "t3"] },
+          { "id": "t1", "component": "Text", "text": "Left" },
+          { "id": "t2", "component": "Text", "text": "Center" },
+          { "id": "t3", "component": "Text", "text": "Right" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Row SpaceBetween",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Row", "children": ["t1", "t2"], "justify": "spaceBetween" },
+          { "id": "t1", "component": "Text", "text": "Left" },
+          { "id": "t2", "component": "Text", "text": "Right" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Column Basic",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Column", "children": ["t1", "t2", "t3"] },
+          { "id": "t1", "component": "Text", "text": "First" },
+          { "id": "t2", "component": "Text", "text": "Second" },
+          { "id": "t3", "component": "Text", "text": "Third" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Column Aligned Center",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Column", "children": ["t1", "t2"], "align": "center" },
+          { "id": "t1", "component": "Text", "text": "Centered" },
+          { "id": "t2", "component": "Text", "text": "Content" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Divider",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Column", "children": ["t1", "div1", "t2"] },
+          { "id": "t1", "component": "Text", "text": "Above divider" },
+          { "id": "div1", "component": "Divider", "axis": "horizontal" },
+          { "id": "t2", "component": "Text", "text": "Below divider" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Tabs",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Tabs", "children": ["tab1", "tab2", "tab3"], "labels": ["Tab A", "Tab B", "Tab C"] },
+          { "id": "tab1", "component": "Text", "text": "Content of Tab A" },
+          { "id": "tab2", "component": "Text", "text": "Content of Tab B" },
+          { "id": "tab3", "component": "Text", "text": "Content of Tab C" }
+        ]}}
+      ]
+    }
+  ]
+}

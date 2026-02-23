@@ -1,0 +1,64 @@
+{
+  "name": "Media Components",
+  "description": "Image, Video, AudioPlayer, Icon",
+  "scenarios": [
+    {
+      "name": "Image Basic",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Image", "url": "https://picsum.photos/400/300", "alt": "Sample image" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Image Cover Fit",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Image", "url": "https://picsum.photos/800/400", "alt": "Wide image", "fit": "cover" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Icon Single",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Icon", "name": "favorite" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Icon Row",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Row", "children": ["i1", "i2", "i3", "i4"] },
+          { "id": "i1", "component": "Icon", "name": "home" },
+          { "id": "i2", "component": "Icon", "name": "settings" },
+          { "id": "i3", "component": "Icon", "name": "favorite" },
+          { "id": "i4", "component": "Icon", "name": "search" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Video Basic",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Video", "url": "https://www.w3schools.com/html/mov_bbb.mp4" }
+        ]}}
+      ]
+    },
+    {
+      "name": "AudioPlayer Basic",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "AudioPlayer", "url": "https://www.w3schools.com/html/horse.mp3", "title": "Horse Sound" }
+        ]}}
+      ]
+    }
+  ]
+}

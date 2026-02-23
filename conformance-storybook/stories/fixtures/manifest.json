@@ -1,0 +1,16 @@
+{
+  "fixtures": [
+    { "file": "text-variants.json", "category": "Components/Text" },
+    { "file": "button-variants.json", "category": "Components/Button" },
+    { "file": "card-layouts.json", "category": "Components/Card" },
+    { "file": "layout.json", "category": "Components/Layout" },
+    { "file": "form-inputs.json", "category": "Components/Form Inputs" },
+    { "file": "media.json", "category": "Components/Media" },
+    { "file": "interactive.json", "category": "Components/Interactive" },
+    { "file": "contact-form.json", "category": "Integration/Contact Form" }
+  ],
+  "renderers": [
+    { "id": "lit-v08", "label": "v0.8 Lit", "translate": "v08" }
+  ],
+  "versions": ["v0.8", "v0.10"]
+}
