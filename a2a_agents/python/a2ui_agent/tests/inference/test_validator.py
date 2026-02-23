@@ -100,9 +100,9 @@ class TestValidator:
     }
     catalog_schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://a2ui.org/specification/v0_9/standard_catalog.json",
-        "title": "A2UI Standard Catalog",
-        "catalogId": "https://a2ui.dev/specification/v0_9/standard_catalog.json",
+        "$id": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+        "title": "A2UI Basic Catalog",
+        "catalogId": "https://a2ui.dev/specification/v0_9/basic_catalog.json",
         "components": {
             "Text": {
                 "type": "object",

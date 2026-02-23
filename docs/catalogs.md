@@ -59,7 +59,7 @@ Whether you are building a simple prototype or a complex production application,
 
 ### The Basic Catalog
 
-To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../specification/v0_9/json/standard_catalog.json).
+To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../specification/v0_9/json/basic_catalog.json).
 
 This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for. 
 
@@ -67,7 +67,7 @@ The basic catalog allows you to bootstrap an application or validate A2UI concep
 
 Since A2UI is designed for LLMs to generate the UI at either design time or runtime, we do not think portability requires a standardized catalog across multiple clients; the LLM can interpret the catalog for each individual frontend.
 
-[See the A2UI v0.9 basic catalog](../specification/v0_9/json/standard_catalog.json)
+[See the A2UI v0.9 basic catalog](../specification/v0_9/json/basic_catalog.json)
 
 ### Defining Your Own Catalog
 
@@ -172,7 +172,7 @@ This catalog imports all elements from the Basic Catalog and adds a new `Suggest
   "$id": "https://github.com/.../hello_world_with_all_basic/v1/catalog.json",
   "components": {
     "allOf": [
-      { "$ref": "standard_catalog_definition.json#/components" },
+      { "$ref": "basic_catalog_definition.json#/components" },
       {
         "SuggestionChips": {
           "type": "object",
@@ -202,8 +202,8 @@ This catalog imports only `Text` and `Icon` from the Basic Catalog to build a si
   "$id": "https://github.com/.../hello_world_with_some_basic/v1/catalog.json",
   "components": {
     "allOf": [
-      { "$ref": "standard_catalog_definition.json#/components/Text" },
-      { "$ref": "standard_catalog_definition.json#/components/Icon" },
+      { "$ref": "basic_catalog_definition.json#/components/Text" },
+      { "$ref": "basic_catalog_definition.json#/components/Icon" },
       {
         "Popup": { 
           "type": "object",
@@ -265,7 +265,7 @@ Example of an A2A AgentCard advertising that the agent supports the basic and ri
         "description": "Provides agent driven UI using the A2UI JSON format.",
         "params": {
           "supportedCatalogIds": [
-            "https://a2ui.org/specification/v0_9/standard_catalog.json",
+            "https://a2ui.org/specification/v0_9/basic_catalog.json",
             "https://github.com/.../rizzcharts_catalog_definition.json"
           ]
         }
@@ -291,7 +291,7 @@ Example of A2A message containing the supportedCatalogIds in metadata
   "metadata": {
     "a2uiClientCapabilities": {
       "supportedCatalogIds": [
-        "https://a2ui.org/specification/v0_9/standard_catalog.json",
+        "https://a2ui.org/specification/v0_9/basic_catalog.json",
         "https://github.com/.../rizzcharts_catalog_definition.json"
       ]
     }
@@ -309,7 +309,7 @@ Example A2UI Message from the agent defining the catalog_id used in a surface
 {
   "createSurface": {
     "surfaceId": "salesDashboard",
-    "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json"
+    "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
   }
 }
 ```

@@ -33,7 +33,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 **v0.8.1:**
 
 - Monolithic tendencies. `server_to_client.json` often contained deep definitions or relied on complex `oneOf` structures that were hard to decompose.
-- `standard_catalog_definition.json` existed but was often implicitly coupled.ß
+- `basic_catalog_definition.json` existed but was often implicitly coupled.
 
 **v0.9:**
 

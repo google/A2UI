@@ -33,7 +33,7 @@ SPEC_VERSION_MAP = {
     },
     "0.9": {
         SERVER_TO_CLIENT_SCHEMA_KEY: "specification/v0_9/json/server_to_client.json",
-        CATALOG_SCHEMA_KEY: "specification/v0_9/json/standard_catalog.json",
+        CATALOG_SCHEMA_KEY: "specification/v0_9/json/basic_catalog.json",
         COMMON_TYPES_SCHEMA_KEY: "specification/v0_9/json/common_types.json",
     },
 }

@@ -15,7 +15,7 @@ Example catalog (in specification/v0_9/json) that imports Text from the Basic Ca
   "$id": "sample_popup_catalog",
   "components": {
     "allOf": [
-      { "$ref": "standard_catalog.json#/components/Text" },
+      { "$ref": "basic_catalog.json#/components/Text" },
       {
         "Popup": {
           "type": "object",
@@ -89,7 +89,7 @@ Output from running build_catalog on the sample catalog, with all `$ref` to exte
         }
       ]
     },
-    "standard_catalog_components_Text": {
+    "basic_catalog_components_Text": {
       "type": "object",
       "allOf": [
         {
@@ -139,7 +139,7 @@ Output from running build_catalog on the sample catalog, with all `$ref` to exte
   "components": {
     "allOf": [
       {
-        "$ref": "#/$defs/standard_catalog_components_Text"
+        "$ref": "#/$defs/basic_catalog_components_Text"
       },
       {
         "Popup": {
