@@ -15,7 +15,7 @@
  */
 
 import markdownit from 'markdown-it';
-import { sanitizer } from './sanitizer.js';
+import { sanitize } from './sanitizer.js';
 import * as Types from '@a2ui/web_core';
 
 /**
@@ -36,7 +36,7 @@ export class MarkdownItRenderer {
         }
 
         default:
-          return sanitizer.sanitize(str);
+          return sanitize(str);
       }
     },
   });

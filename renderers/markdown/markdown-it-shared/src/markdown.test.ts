@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { MarkdownItRenderer } from './raw-markdown.js';
+import { renderMarkdown } from './markdown.js';
 
 describe('MarkdownItRenderer', () => {
   it('renders basic markdown', () => {
@@ -38,5 +39,53 @@ describe('MarkdownItRenderer', () => {
     const renderer = new MarkdownItRenderer();
     const result = renderer.render('# Hello', {});
     assert.match(result, /<h1>Hello<\/h1>/);
+  });
+});
+
+describe('renderMarkdown', () => {
+  it('renders markdown successfully', () => {
+    const html = renderMarkdown('# Hello World');
+    assert.match(html, /<h1>Hello World<\/h1>/);
+  });
+
+  it('sanitizes malicious markdown links', () => {
+    // Markdown-it strips javascript links by default, emitting the raw markdown string.
+    // DOMPurify acts as a secondary layer of defense.
+    const input = 'This is a test [link](javascript:alert("XSS"))';
+    const html = renderMarkdown(input);
+
+    // Ensure the javascript protocol link is neutralized completely
+    assert.doesNotMatch(html, /href="javascript:alert/);
+    assert.match(html, /\[link\]\(javascript:alert\("XSS"\)\)/); // It remains raw text
+  });
+
+  it('safely escapes HTML input without enabling raw HTML', () => {
+    const input = 'This is a test <script>alert("XSS")</script>';
+    const html = renderMarkdown(input);
+
+    // Markdown-it will escape it to &lt;script&gt;
+    assert.match(html, /&lt;script&gt;alert\("XSS"\)&lt;\/script&gt;/);
+    assert.doesNotMatch(html, /<script>/);
+  });
+
+  it('preserves safe HTML output', () => {
+    const input = 'This is **bold** and *italic*.';
+    const html = renderMarkdown(input);
+
+    assert.match(html, /<strong>bold<\/strong>/);
+    assert.match(html, /<em>italic<\/em>/);
+  });
+
+  it('preserves classnames applied via tagClassMap', () => {
+    const input = '# Heading\n\nParagraph text';
+    const html = renderMarkdown(input, {
+      tagClassMap: {
+        h1: ['text-h1', 'bold'],
+        p: ['body-text'],
+      },
+    });
+
+    assert.match(html, /<h1 class="text-h1 bold">Heading<\/h1>/);
+    assert.match(html, /<p class="body-text">Paragraph text<\/p>/);
   });
 });

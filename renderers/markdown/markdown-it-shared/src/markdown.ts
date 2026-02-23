@@ -15,11 +15,8 @@
  */
 
 import { rawMarkdownRenderer } from './raw-markdown.js';
-import { sanitizer } from './sanitizer.js';
+import { sanitize } from './sanitizer.js';
 import * as Types from '@a2ui/web_core';
-
-// Export the class and type for consumers
-export { MarkdownItRenderer } from './raw-markdown.js';
 
 /**
  * A Markdown to HTML renderer using markdown-it and dompurify.
@@ -29,5 +26,5 @@ export { MarkdownItRenderer } from './raw-markdown.js';
  */
 export function renderMarkdown(value: string, options?: Types.MarkdownRendererOptions): string {
   const htmlString = rawMarkdownRenderer.render(value, options?.tagClassMap);
-  return sanitizer.sanitize(htmlString);
+  return sanitize(htmlString);
 }

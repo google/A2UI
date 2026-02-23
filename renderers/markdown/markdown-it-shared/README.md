@@ -17,6 +17,9 @@ Run `npm run build` to build the project. The build artifacts will be stored in 
 
 Run `npm test` to execute the unit tests.
 
+> [!NOTE]
+> This package uses `isomorphic-dompurify` to allow DOMPurify to run in Node.js during unit testing. This avoids having to configure JSDOM in Node environments to provide a missing `Window` object.
+
 ### Code Formatting
 
 This project uses [Prettier](https://prettier.io/) for code formatting. The configuration is defined in `../.prettierrc`.
@@ -30,7 +33,7 @@ npm run format
 To check the format, run:
 
 ```bash
-npx prettier --check .
+npx run format:check
 ```
 
 Most IDEs (like VS Code) can be configured to **Format On Save** using the local Prettier version and configuration. This is the recommended workflow.

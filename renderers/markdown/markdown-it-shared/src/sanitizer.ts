@@ -14,11 +14,13 @@
  limitations under the License.
  */
 
-// TODO: Implement the DOMPurify sanitizer.
+import DOMPurify from 'isomorphic-dompurify';
 
 /**
- * A sanitizer that sanitizes HTML.
+ * Sanitizes an HTML string.
+ * @param {string} html the HTML string to sanitize.
+ * @returns a sanitized HTML string.
  */
-export const sanitizer = {
-  sanitize: (html: string) => html,
-};
+export function sanitize(html: string): string {
+  return DOMPurify.sanitize(html);
+}
