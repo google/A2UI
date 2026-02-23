@@ -35,28 +35,12 @@
         "string"
       ]
     },
-    "ScalarArrayValue": {
+    "ScalarValueArray": {
       "type": "array",
       "description": "An array containing only primitive values.",
       "items": {
         "$ref": "#/$defs/ScalarValue"
       }
-    },
-    "ScalarType": {
-      "description": "Allowed scalar return types.",
-      "enum": [
-        "string",
-        "number",
-        "boolean"
-      ]
-    },
-    "ScalarArrayType": {
-      "description": "Allowed scalar array return types.",
-      "enum": [
-        "string[]",
-        "number[]",
-        "boolean[]"
-      ]
     },
     "ComponentCommon": {
       "type": "object",
@@ -267,11 +251,13 @@
         },
         "returnType": {
           "description": "The expected return type of the function call.",
-          "anyOf": [
-            { "$ref": "#/$defs/ScalarType" },
-            { "const": "object" },
-            { "const": "array" },
-            { "const": "void" }
+          "enum": [
+            "array",
+            "boolean",
+            "number",
+            "object",
+            "string",
+            "void"
           ],
           "default": "boolean"
         }

@@ -1,5 +1,6 @@
 {
   "schema": "server_to_client.json",
+  "catalog": "testing_catalog.json",
   "tests": [
     {
       "description": "CallFunctionMessage: Valid with wantResponse",
@@ -16,6 +17,20 @@
         },
         "functionCallId": "unique-call-id-123",
         "wantResponse": true
+      }
+    },
+    {
+      "description": "CallFunctionMessage: Valid with remoteOnly",
+      "valid": true,
+      "data": {
+        "version": "v0.10",
+        "callFunction": {
+          "call": "pingServer",
+          "returnType": "void",
+          "callableFrom": "remoteOnly"
+        },
+        "functionCallId": "unique-call-id-123a",
+        "wantResponse": false
       }
     },
     {

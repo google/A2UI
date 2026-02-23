@@ -57,14 +57,14 @@
               "description": "The return value of the function invocation.",
               "oneOf": [
                 { "$ref": "common_types.json#/$defs/ScalarValue" },
-                { "$ref": "common_types.json#/$defs/ScalarArrayValue" },
+                { "$ref": "common_types.json#/$defs/ScalarValueArray" },
                 {
                   "type": "object",
                   "description": "Zero or more named parameters comprising the response.",
                   "additionalProperties": {
                     "anyOf": [
                       { "$ref": "common_types.json#/$defs/ScalarValue" },
-                      { "$ref": "common_types.json#/$defs/ScalarArrayValue" }
+                      { "$ref": "common_types.json#/$defs/ScalarValueArray" }
                     ]
                   }
                 }

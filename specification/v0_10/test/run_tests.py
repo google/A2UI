@@ -22,15 +22,19 @@ SCHEMAS = {
     "client_to_server.json": os.path.join(SCHEMA_DIR, "client_to_server.json"),
 }
 
-def setup_catalog_alias():
+def setup_catalog_alias(catalog_file="basic_catalog.json"):
     """
-    Creates a temporary catalog.json from basic_catalog.json
-    with the $id modified to match what server_to_client.json expects.
+    Creates a temporary catalog.json from basic_catalog.json (or the
+    specified file)  with the $id modified to match what server_to_client.json
+    expects.
     """
-    basic_catalog_path = os.path.join(SCHEMA_DIR, "basic_catalog.json")
+    basic_catalog_path = os.path.join(SCHEMA_DIR, catalog_file)
     if not os.path.exists(basic_catalog_path):
-        print(f"Error: basic_catalog.json not found at {basic_catalog_path}")
-        sys.exit(1)
+        # Fallback to current directory for relative paths like 'testing_catalog.json'
+        basic_catalog_path = os.path.join(TEST_DIR, catalog_file)
+        if not os.path.exists(basic_catalog_path):
+            print(f"Error: Catalog file not found: {catalog_file}")
+            sys.exit(1)
 
     with open(basic_catalog_path, 'r') as f:
         try:
@@ -43,8 +47,11 @@ def setup_catalog_alias():
     # This allows server_to_client.json to refer to "catalog.json"
     # and have it resolve to this schema content.
     if "$id" in catalog:
-        catalog["$id"] = catalog["$id"].replace("basic_catalog.json", "catalog.json")
-    
+        # Extract the base URL and append catalog.json
+        base_url = catalog["$id"].rsplit("/", 1)[0]
+        catalog["$id"] = f"{base_url}/catalog.json"
+
+
     with open(TEMP_CATALOG_FILE, 'w') as f:
         json.dump(catalog, f, indent=2)
 
@@ -80,42 +87,48 @@ def run_suite(suite_path):
             print(f"Error parsing JSON in {suite_path}: {e}")
             return 0, 0
 
-    schema_name = suite.get("schema", "server_to_client.json")
-    if schema_name not in SCHEMAS:
-        print(f"Error: Unknown schema '{schema_name}' referenced in {suite_path}")
-        return 0, 0
+    catalog_file = suite.get("catalog", "basic_catalog.json")
+    setup_catalog_alias(catalog_file)
 
-    schema_path = SCHEMAS[schema_name]
-    tests = suite.get("tests", [])
+    try:
+        schema_name = suite.get("schema", "server_to_client.json")
+        if schema_name not in SCHEMAS:
+            print(f"Error: Unknown schema '{schema_name}' referenced in {suite_path}")
+            return 0, 0
 
-    print(f"\nRunning suite: {os.path.basename(suite_path)} ({len(tests)} tests)")
-    print(f"Target Schema: {schema_name}")
+        schema_path = SCHEMAS[schema_name]
+        tests = suite.get("tests", [])
 
-    passed = 0
-    failed = 0
+        print(f"\nRunning suite: {os.path.basename(suite_path)} ({len(tests)} tests)")
+        print(f"Target Schema: {schema_name}")
 
-    for i, test in enumerate(tests):
-        description = test.get("description", f"Test #{i+1}")
-        expect_valid = test.get("valid", True)
-        data = test.get("data")
+        passed = 0
+        failed = 0
 
-        # Write data to temp file
-        with open(TEMP_FILE, 'w') as f:
-            json.dump(data, f)
+        for i, test in enumerate(tests):
+            description = test.get("description", f"Test #{i+1}")
+            expect_valid = test.get("valid", True)
+            data = test.get("data")
 
-        is_valid, output = validate_ajv(schema_path, TEMP_FILE, SCHEMAS)
+            # Write data to temp file
+            with open(TEMP_FILE, 'w') as f:
+                json.dump(data, f)
 
-        if is_valid == expect_valid:
-            passed += 1
-            # print(f"  [PASS] {description}")
-        else:
-            failed += 1
-            print(f"  [FAIL] {description}")
-            print(f"         Expected Valid: {expect_valid}, Got Valid: {is_valid}")
-            if not is_valid:
-                 print(f"         Output: {output.strip()}")
+            is_valid, output = validate_ajv(schema_path, TEMP_FILE, SCHEMAS)
 
-    return passed, failed
+            if is_valid == expect_valid:
+                passed += 1
+                # print(f"  [PASS] {description}")
+            else:
+                failed += 1
+                print(f"  [FAIL] {description}")
+                print(f"         Expected Valid: {expect_valid}, Got Valid: {is_valid}")
+                if not is_valid:
+                     print(f"         Output: {output.strip()}")
+
+        return passed, failed
+    finally:
+        cleanup_catalog_alias()
 
 def validate_jsonl_example(jsonl_path):
     if not os.path.exists(jsonl_path):
@@ -129,34 +142,35 @@ def validate_jsonl_example(jsonl_path):
     failed = 0
     schema_path = SCHEMAS["server_to_client.json"]
 
-    with open(jsonl_path, 'r') as f:
-        for i, line in enumerate(f):
-            line = line.strip()
-            if not line:
-                continue
+    setup_catalog_alias()
+    try:
+        with open(jsonl_path, 'r') as f:
+            for i, line in enumerate(f):
+                line = line.strip()
+                if not line:
+                    continue
 
-            # Use temp file for each line
-            with open(TEMP_FILE, 'w') as tf:
-                tf.write(line)
+                # Use temp file for each line
+                with open(TEMP_FILE, 'w') as tf:
+                    tf.write(line)
 
-            is_valid, output = validate_ajv(schema_path, TEMP_FILE, SCHEMAS)
-            if is_valid:
-                passed += 1
-                # print(f"  [PASS] Line {i+1}")
-            else:
-                failed += 1
-                print(f"  [FAIL] Line {i+1}")
-                print(f"         Output: {output.strip()}")
+                is_valid, output = validate_ajv(schema_path, TEMP_FILE, SCHEMAS)
+                if is_valid:
+                    passed += 1
+                    # print(f"  [PASS] Line {i+1}")
+                else:
+                    failed += 1
+                    print(f"  [FAIL] Line {i+1}")
+                    print(f"         Output: {output.strip()}")
 
-    return passed, failed
+        return passed, failed
+    finally:
+        cleanup_catalog_alias()
 
 def main():
     if not os.path.exists(CASES_DIR):
         print(f"No cases directory found at {CASES_DIR}")
         return
-
-    # Create the temporary catalog.json alias
-    setup_catalog_alias()
 
     try:
         test_files = glob.glob(os.path.join(CASES_DIR, "*.json"))
@@ -183,8 +197,6 @@ def main():
     finally:
         if os.path.exists(TEMP_FILE):
             os.remove(TEMP_FILE)
-        # Clean up the catalog alias
-        cleanup_catalog_alias()
 
     if total_failed > 0:
         sys.exit(1)

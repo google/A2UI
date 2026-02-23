@@ -656,9 +656,6 @@
         "call": {
           "const": "required"
         },
-        "callableFrom": {
-          "const": "clientOnly"
-        },
         "args": {
           "type": "object",
           "properties": {
@@ -682,9 +679,6 @@
       "properties": {
         "call": {
           "const": "regex"
-        },
-        "callableFrom": {
-          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -711,9 +705,6 @@
       "properties": {
         "call": {
           "const": "length"
-        },
-        "callableFrom": {
-          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -748,9 +739,6 @@
         "call": {
           "const": "numeric"
         },
-        "callableFrom": {
-          "const": "clientOnly"
-        },
         "args": {
           "type": "object",
           "properties": {
@@ -782,9 +770,6 @@
         "call": {
           "const": "email"
         },
-        "callableFrom": {
-          "const": "clientOnly"
-        },
         "args": {
           "type": "object",
           "properties": {
@@ -807,9 +792,6 @@
         "call": {
           "const": "formatString"
         },
-        "callableFrom": {
-          "const": "clientOnly"
-        },
         "args": {
           "type": "object",
           "properties": {
@@ -831,9 +813,6 @@
       "properties": {
         "call": {
           "const": "formatNumber"
-        },
-        "callableFrom": {
-          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -867,9 +846,6 @@
       "properties": {
         "call": {
           "const": "formatCurrency"
-        },
-        "callableFrom": {
-          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -908,9 +884,6 @@
         "call": {
           "const": "formatDate"
         },
-        "callableFrom": {
-          "const": "clientOnly"
-        },
         "args": {
           "type": "object",
           "properties": {
@@ -939,9 +912,6 @@
       "properties": {
         "call": {
           "const": "pluralize"
-        },
-        "callableFrom": {
-          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -992,9 +962,6 @@
         "call": {
           "const": "openUrl"
         },
-        "callableFrom": {
-          "const": "clientOrRemote"
-        },
         "args": {
           "type": "object",
           "properties": {
@@ -1020,9 +987,6 @@
       "properties": {
         "call": {
           "const": "and"
-        },
-        "callableFrom": {
-          "const": "clientOnly"
         },
         "args": {
           "type": "object",
@@ -1053,9 +1017,6 @@
         "call": {
           "const": "or"
         },
-        "callableFrom": {
-          "const": "clientOnly"
-        },
         "args": {
           "type": "object",
           "properties": {
@@ -1084,9 +1045,6 @@
       "properties": {
         "call": {
           "const": "not"
-        },
-        "callableFrom": {
-          "const": "clientOnly"
         },
         "args": {
           "type": "object",

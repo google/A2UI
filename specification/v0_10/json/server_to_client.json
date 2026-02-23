@@ -164,16 +164,20 @@
                   "additionalProperties": {
                     "anyOf": [
                       { "$ref": "common_types.json#/$defs/ScalarValue" },
-                      { "$ref": "common_types.json#/$defs/ScalarArrayValue" }
+                      { "$ref": "common_types.json#/$defs/ScalarValueArray" }
                     ]
                   }
                 },
                 "returnType": {
                   "description": "The expected return type of the function call.",
-                  "anyOf": [
-                    { "$ref": "common_types.json#/$defs/ScalarType" },
-                    { "$ref": "common_types.json#/$defs/ScalarArrayType" },
-                    { "const": "void" }
+                  "enum": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "string[]",
+                    "number[]",
+                    "boolean[]",
+                    "void"
                   ]
                 }
               }
