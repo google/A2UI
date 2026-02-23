@@ -23,18 +23,8 @@ from a2ui.extension.a2ui_extension import A2UI_EXTENSION_URI
 from a2ui.extension.a2ui_extension import STANDARD_CATALOG_ID
 from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
 from a2ui.extension.a2ui_extension import try_activate_a2ui_extension
+from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.extension.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
-
-try:
-  from .agent import A2UI_CATALOG_URI_STATE_KEY  # pylint: disable=import-error
-  from .agent import RIZZCHARTS_CATALOG_URI  # pylint: disable=import-error
-  from .agent import RizzchartsAgent  # pylint: disable=import-error
-  from .component_catalog_builder import ComponentCatalogBuilder  # pylint: disable=import-error
-except ImportError:
-  from agent import A2UI_CATALOG_URI_STATE_KEY
-  from agent import RIZZCHARTS_CATALOG_URI
-  from agent import RizzchartsAgent
-  from component_catalog_builder import ComponentCatalogBuilder
 from google.adk.a2a.converters.request_converter import AgentRunRequest
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutorConfig
@@ -47,19 +37,32 @@ from google.adk.runners import Runner
 logger = logging.getLogger(__name__)
 
 _A2UI_ENABLED_KEY = "system:a2ui_enabled"
-_A2UI_SCHEMA_KEY = "system:a2ui_schema"
+_A2UI_CATALOG_KEY = "system:a2ui_catalog"
+_A2UI_EXAMPLES_KEY = "system:a2ui_examples"
 
 
-def get_a2ui_schema(ctx: ReadonlyContext):
-  """Retrieves the A2UI schema from the session state.
+def get_a2ui_catalog(ctx: ReadonlyContext):
+  """Retrieves the A2UI catalog from the session state.
 
   Args:
-      ctx: The ReadonlyContext for resolving the schema.
+      ctx: The ReadonlyContext for resolving the catalog.
 
   Returns:
-      The A2UI schema or None if not found.
+      The A2UI catalog or None if not found.
   """
-  return ctx.state.get(_A2UI_SCHEMA_KEY)
+  return ctx.state.get(_A2UI_CATALOG_KEY)
+
+
+def get_a2ui_examples(ctx: ReadonlyContext):
+  """Retrieves the A2UI examples from the session state.
+
+  Args:
+      ctx: The ReadonlyContext for resolving the examples.
+
+  Returns:
+      The A2UI examples or None if not found.
+  """
+  return ctx.state.get(_A2UI_EXAMPLES_KEY)
 
 
 def get_a2ui_enabled(ctx: ReadonlyContext):
@@ -81,78 +84,15 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
       self,
       base_url: str,
       runner: Runner,
-      a2ui_schema_content: str,
-      standard_catalog_content: str,
-      rizzcharts_catalog_content: str,
+      schema_manager: A2uiSchemaManager,
   ):
     self._base_url = base_url
-    self._component_catalog_builder = ComponentCatalogBuilder(
-        a2ui_schema_content=a2ui_schema_content,
-        uri_to_local_catalog_content={
-            STANDARD_CATALOG_ID: standard_catalog_content,
-            RIZZCHARTS_CATALOG_URI: rizzcharts_catalog_content,
-        },
-        default_catalog_uri=STANDARD_CATALOG_ID,
-    )
+    self.schema_manager = schema_manager
 
     config = A2aAgentExecutorConfig(
         gen_ai_part_converter=convert_send_a2ui_to_client_genai_part_to_a2a_part
     )
     super().__init__(runner=runner, config=config)
-
-  def get_agent_card(self) -> AgentCard:
-    """Returns the AgentCard defining this agent's metadata and skills.
-
-    Returns:
-        An AgentCard object.
-    """
-    return AgentCard(
-        name="Ecommerce Dashboard Agent",
-        description=(
-            "This agent visualizes ecommerce data, showing sales breakdowns, YOY"
-            " revenue performance, and regional sales outliers."
-        ),
-        url=self._base_url,
-        version="1.0.0",
-        default_input_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
-        default_output_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
-        capabilities=AgentCapabilities(
-            streaming=True,
-            extensions=[
-                get_a2ui_agent_extension(
-                    supported_catalog_ids=[STANDARD_CATALOG_ID, RIZZCHARTS_CATALOG_URI]
-                )
-            ],
-        ),
-        skills=[
-            AgentSkill(
-                id="view_sales_by_category",
-                name="View Sales by Category",
-                description=(
-                    "Displays a pie chart of sales broken down by product category for"
-                    " a given time period."
-                ),
-                tags=["sales", "breakdown", "category", "pie chart", "revenue"],
-                examples=[
-                    "show my sales breakdown by product category for q3",
-                    "What's the sales breakdown for last month?",
-                ],
-            ),
-            AgentSkill(
-                id="view_regional_outliers",
-                name="View Regional Sales Outliers",
-                description=(
-                    "Displays a map showing regional sales outliers or store-level"
-                    " performance."
-                ),
-                tags=["sales", "regional", "outliers", "stores", "map", "performance"],
-                examples=[
-                    "interesting. were there any outlier stores",
-                    "show me a map of store performance",
-                ],
-            ),
-        ],
-    )
 
   @override
   async def _prepare_session(
@@ -170,13 +110,16 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
 
     use_ui = try_activate_a2ui_extension(context)
     if use_ui:
-      a2ui_schema, catalog_uri = self._component_catalog_builder.load_a2ui_schema(
-          client_ui_capabilities=context.message.metadata.get(
-              A2UI_CLIENT_CAPABILITIES_KEY
-          )
+      capabilities = (
+          context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY)
           if context.message and context.message.metadata
           else None
       )
+      a2ui_catalog = self.schema_manager.get_effective_catalog(
+          client_ui_capabilities=capabilities
+      )
+
+      examples = self.schema_manager.load_examples(a2ui_catalog, validate=True)
 
       await runner.session_service.append_event(
           session,
@@ -186,8 +129,8 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
               actions=EventActions(
                   state_delta={
                       _A2UI_ENABLED_KEY: True,
-                      _A2UI_SCHEMA_KEY: a2ui_schema,
-                      A2UI_CATALOG_URI_STATE_KEY: catalog_uri,
+                      _A2UI_CATALOG_KEY: a2ui_catalog,
+                      _A2UI_EXAMPLES_KEY: examples,
                   }
               ),
           ),
