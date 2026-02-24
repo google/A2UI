@@ -88,8 +88,8 @@
       }
     },
     {
-      "description": "functionResponse: Invalid (value contains nested object)",
-      "valid": false,
+      "description": "functionResponse: Valid (value contains nested object)",
+      "valid": true,
       "data": {
         "version": "v0.10",
         "functionResponse": {
@@ -101,8 +101,8 @@
       }
     },
     {
-      "description": "functionResponse: Invalid (array contains nested object)",
-      "valid": false,
+      "description": "functionResponse: Valid (array contains nested object)",
+      "valid": true,
       "data": {
         "version": "v0.10",
         "functionResponse": {

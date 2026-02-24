@@ -156,47 +156,6 @@
                     "remoteOnly",
                     "clientOrRemote"
                   ]
-                },
-                "args": {
-                  "type": "object",
-                  "description": "Arguments passed to the function.",
-                  "additionalProperties": {
-                    "anyOf": [
-                      {
-                        "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
-                        "type": [
-                          "boolean",
-                          "number",
-                          "null",
-                          "string"
-                        ]
-                      },
-                      {
-                        "type": "array",
-                        "description": "An array containing only primitive values.",
-                        "items": {
-                          "type": [
-                            "boolean",
-                            "number",
-                            "null",
-                            "string"
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                },
-                "returnType": {
-                  "description": "The expected return type of the function call.",
-                  "enum": [
-                    "boolean",
-                    "number",
-                    "string",
-                    "string[]",
-                    "number[]",
-                    "boolean[]",
-                    "void"
-                  ]
                 }
               }
             }

@@ -55,57 +55,13 @@
             },
             "value": {
               "description": "The return value of the function invocation.",
-              "oneOf": [
-                {
-                  "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
-                  "type": [
-                    "boolean",
-                    "number",
-                    "null",
-                    "string"
-                  ]
-                },
-                {
-                  "type": "array",
-                  "description": "An array containing only primitive values.",
-                  "items": {
-                    "type": [
-                      "boolean",
-                      "number",
-                      "null",
-                      "string"
-                    ]
-                  }
-                },
-                {
-                  "type": "object",
-                  "description": "Zero or more named parameters comprising the response.",
-                  "additionalProperties": {
-                    "anyOf": [
-                      {
-                        "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
-                        "type": [
-                          "boolean",
-                          "number",
-                          "null",
-                          "string"
-                        ]
-                      },
-                      {
-                        "type": "array",
-                        "description": "An array containing only primitive values.",
-                        "items": {
-                          "type": [
-                            "boolean",
-                            "number",
-                            "null",
-                            "string"
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                }
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
               ]
             }
           },
