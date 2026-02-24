@@ -1,4 +1,3 @@
-
 import { SurfaceModel, ActionListener } from '../state/surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
 import { SurfaceGroupModel, SurfaceLifecycleListener } from '../state/surface-group-model.js';
@@ -41,13 +40,7 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
 
   processMessages(messages: any[]): void {
     for (const msg of messages) {
-      if (msg.createSurface) {
-        this.handleCreateSurface(msg.createSurface);
-      } else if (msg.blockInput) {
-        // TODO: Handle blockInput
-      } else if (msg.updateComponents || msg.updateDataModel || msg.deleteSurface) {
-        this.routeMessage(msg);
-      }
+      this.processMessage(msg);
     }
   }
 
@@ -55,29 +48,28 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
     return this.model.getSurface(surfaceId);
   }
 
-  private handleCreateSurface(payload: any) {
-    const { surfaceId, catalogId, theme } = payload;
+  private processMessage(msg: any): void {
+    if (msg.createSurface) {
+      const payload = msg.createSurface;
+      const { surfaceId, catalogId, theme } = payload;
 
-    // Find catalog
-    const catalog = this.catalogs.find(c => c.id === catalogId);
-    if (!catalog) {
-      console.warn(`Catalog not found: ${catalogId}`);
-      // Using first catalog as fallback or erroring? 
-      // For now, let's create a surface with no catalog or throw?
-      // Better to ignore or error.
+      // Find catalog
+      const catalog = this.catalogs.find(c => c.id === catalogId);
+      if (!catalog) {
+        console.warn(`Catalog not found: ${catalogId}`);
+        return;
+      }
+
+      if (this.model.getSurface(surfaceId)) {
+        console.warn(`Surface ${surfaceId} already exists. Ignoring.`);
+        return;
+      }
+
+      const surface = new SurfaceModel<T>(surfaceId, catalog, theme);
+      this.model.addSurface(surface);
       return;
     }
 
-    if (this.model.getSurface(surfaceId)) {
-        console.warn(`Surface ${surfaceId} already exists. Ignoring.`);
-        return;
-    }
-
-    const surface = new SurfaceModel<T>(surfaceId, catalog, theme);
-    this.model.addSurface(surface);
-  }
-
-  private routeMessage(msg: any) {
     const updateTypes = ['updateComponents', 'updateDataModel', 'deleteSurface'].filter(k => msg[k]);
     if (updateTypes.length > 1) {
       console.warn(`Message contains multiple update types: ${updateTypes.join(', ')}. Ignoring.`);
@@ -96,33 +88,33 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
     const surface = this.model.getSurface(payload.surfaceId);
     if (surface) {
       if (msg.updateComponents) {
-        const payload = msg.updateComponents;
-        for (const comp of payload.components) {
+        const updatePayload = msg.updateComponents;
+        for (const comp of updatePayload.components) {
           const { id, component, ...properties } = comp;
-          
+
           const existing = surface.componentsModel.get(id);
           if (existing) {
             if (component && component !== existing.type) {
-                // Recreate component if type changes
-                surface.componentsModel.removeComponent(id);
-                const newComponent = new ComponentModel(id, component, properties);
-                surface.componentsModel.addComponent(newComponent);
+              // Recreate component if type changes
+              surface.componentsModel.removeComponent(id);
+              const newComponent = new ComponentModel(id, component, properties);
+              surface.componentsModel.addComponent(newComponent);
             } else {
-                existing.update(properties);
+              existing.update(properties);
             }
           } else {
             if (!component) {
-                console.warn(`Cannot create component ${id} without a type.`);
-                continue;
+              console.warn(`Cannot create component ${id} without a type.`);
+              continue;
             }
             const newComponent = new ComponentModel(id, component, properties);
             surface.componentsModel.addComponent(newComponent);
           }
         }
       } else if (msg.updateDataModel) {
-        const payload = msg.updateDataModel;
-        const path = payload.path || '/';
-        const value = payload.value;
+        const updatePayload = msg.updateDataModel;
+        const path = updatePayload.path || '/';
+        const value = updatePayload.value;
         surface.dataModel.set(path, value);
       }
     } else {
