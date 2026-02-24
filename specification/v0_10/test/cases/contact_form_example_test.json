@@ -8,7 +8,7 @@
         "version": "v0.10",
         "createSurface": {
           "surfaceId": "contact_form_1",
-          "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json"
+          "catalogId": "https://a2ui.org/specification/v0_10/basic_catalog.json"
         }
       }
     },
