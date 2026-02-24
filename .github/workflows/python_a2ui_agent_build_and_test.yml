@@ -20,9 +20,11 @@ on:
       - '*'
     paths:
       - 'a2a_agents/python/a2ui_agent/**'
+      - 'specification/**/json/**'
   pull_request:
     paths:
       - 'a2a_agents/python/a2ui_agent/**'
+      - 'specification/**/json/**'
 
 jobs:
   build-and-test:
