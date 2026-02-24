@@ -16,7 +16,7 @@ import json
 import copy
 import pytest
 from unittest.mock import MagicMock
-from a2ui.inference.schema.manager import A2uiSchemaManager, A2uiCatalog, CustomCatalogConfig
+from a2ui.inference.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
 from a2ui.inference.schema.constants import VERSION_0_8, VERSION_0_9
 
 
@@ -278,7 +278,7 @@ class TestValidator:
         },
     }
     return A2uiCatalog(
-        version="0.9",
+        version=VERSION_0_9,
         name="standard",
         catalog_schema=catalog_schema,
         s2c_schema=s2c_schema,
@@ -401,17 +401,17 @@ class TestValidator:
         "styles": {"font": {"type": "string"}, "primaryColor": {"type": "string"}},
     }
     return A2uiCatalog(
-        version="0.8",
+        version=VERSION_0_8,
         name="standard",
         catalog_schema=catalog_schema,
         s2c_schema=s2c_schema,
         common_types_schema=None,
     )
 
-  @pytest.fixture(params=["0.8", "0.9"])
+  @pytest.fixture(params=[VERSION_0_8, VERSION_0_9])
   def test_catalog(self, request, catalog_0_8, catalog_0_9):
     """Parameterized fixture to run tests on both v0.8 and v0.9 catalogs."""
-    if request.param == "0.8":
+    if request.param == VERSION_0_8:
       return catalog_0_8
     return catalog_0_9
 
@@ -438,7 +438,7 @@ class TestValidator:
 
     # Test failure: wrong version const
     invalid_message = [{
-        "version": "0.9",
+        "version": VERSION_0_8,
         "createSurface": {"surfaceId": "123", "catalogId": "standard"},
     }]
     with pytest.raises(ValueError) as excinfo:
@@ -549,7 +549,7 @@ class TestValidator:
     catalog_schema["components"] = custom_components
 
     custom_catalog = A2uiCatalog(
-        version="0.8",
+        version=VERSION_0_8,
         name="custom",
         catalog_schema=catalog_schema,
         s2c_schema=catalog_0_8.s2c_schema,
@@ -649,7 +649,7 @@ class TestValidator:
     ]
 
     custom_catalog = A2uiCatalog(
-        version="0.9",
+        version=VERSION_0_9,
         name="custom",
         catalog_schema=catalog_schema,
         s2c_schema=catalog_0_9.s2c_schema,

@@ -94,7 +94,7 @@ def get_a2ui_agent_extension(
   """Creates the A2UI AgentExtension configuration.
 
   Args:
-      accepts_inline_catalogs: Whether the agent accepts inline custom catalogs.
+      accepts_inline_catalogs: Whether the agent accepts inline catalogs.
       supported_catalog_ids: All pre-defined catalogs the agent is known to support.
 
   Returns:

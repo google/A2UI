@@ -15,17 +15,19 @@
 import sys
 
 from a2ui.inference.schema.manager import A2uiSchemaManager
-from a2ui.inference.schema.constants import CATALOG_COMPONENTS_KEY
+from a2ui.inference.schema.constants import CATALOG_COMPONENTS_KEY, VERSION_0_8, VERSION_0_9
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 
 def verify():
   print('Verifying A2uiSchemaManager...')
   try:
-    manager = A2uiSchemaManager('0.8', schema_modifiers=[remove_strict_validation])
+    manager = A2uiSchemaManager(
+        VERSION_0_8, schema_modifiers=[remove_strict_validation]
+    )
     catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
-    print(f'Successfully loaded 0.8: {len(catalog_components)} components')
+    print(f'Successfully loaded {VERSION_0_8}: {len(catalog_components)} components')
     print(f'Components found: {list(catalog_components.keys())[:5]}...')
 
     a2ui_message = [
@@ -379,14 +381,16 @@ def verify():
     catalog.validator.validate(a2ui_message)
     print('Validation successful')
   except Exception as e:
-    print(f'Failed to load 0.8: {e}')
+    print(f'Failed to load {VERSION_0_8}: {e}')
     sys.exit(1)
 
   try:
-    manager = A2uiSchemaManager('0.9', schema_modifiers=[remove_strict_validation])
+    manager = A2uiSchemaManager(
+        VERSION_0_9, schema_modifiers=[remove_strict_validation]
+    )
     catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
-    print(f'Successfully loaded 0.9: {len(catalog_components)} components')
+    print(f'Successfully loaded {VERSION_0_9}: {len(catalog_components)} components')
     print(f'Components found: {list(catalog_components.keys())}...')
 
     a2ui_message = [
@@ -613,7 +617,7 @@ def verify():
     catalog.validator.validate(a2ui_message)
     print('Validation successful')
   except Exception as e:
-    print(f'Failed to load 0.9: {e}')
+    print(f'Failed to load {VERSION_0_9}: {e}')
     sys.exit(1)
 
 

@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import json
-from a2ui.inference.schema.manager import A2uiSchemaManager
+
+from a2ui.inference.schema.constants import VERSION_0_8
+from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 ROLE_DESCRIPTION = (
@@ -70,8 +72,8 @@ if __name__ == "__main__":
   # Example of how to use the A2UI Schema Manager to generate a system prompt
   my_base_url = "http://localhost:8000"
   schema_manager = A2uiSchemaManager(
-      "0.8",
-      basic_examples_path="examples",
+      VERSION_0_8,
+      catalogs=[CatalogConfig.bundled(version=VERSION_0_8, examples_path="examples")],
       accepts_inline_catalogs=True,
       schema_modifiers=[remove_strict_validation],
   )

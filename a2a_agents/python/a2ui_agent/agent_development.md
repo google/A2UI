@@ -6,7 +6,7 @@ This guide explains how to build AI agents that generate A2UI interfaces using t
 
 The `a2ui_agent` SDK revolves around three main classes:
 
-*   **`CustomCatalogConfig`**: Defines the metadata for a component catalog (name, schema path, examples path).
+*   **`CatalogConfig`**: Defines the metadata for a component catalog (name, schema path, examples path).
 *   **`A2uiCatalog`**: Represents a processed catalog, providing methods for validation and LLM instruction rendering.
 *   **`A2uiSchemaManager`**: The central coordinator that loads catalogs, manages versioning, and generates system prompts.
 
@@ -17,24 +17,25 @@ The `a2ui_agent` SDK revolves around three main classes:
 The first step in any A2UI-enabled agent is initializing the `A2uiSchemaManager`.
 
 ```python
-from a2ui.inference.schema.manager import A2uiSchemaManager, CustomCatalogConfig
+from a2ui.inference.schema.constants import VERSION_0_8
+from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
 
 schema_manager = A2uiSchemaManager(
-    version="0.8",
-    basic_examples_path="path/to/basic/examples",
-    custom_catalogs=[
-        CustomCatalogConfig(
+    version=VERSION_0_8,
+    catalogs=[
+        CatalogConfig.bundled(version=VERSION_0_8, examples_path="examples"),
+        CatalogConfig.from_path(
             name="my_custom_catalog",
             catalog_path="path/to/catalog.json",
             examples_path="path/to/examples"
-        )
-    ]
+        ),
+    ],
 )
 ```
 
 Notes:
-- The `custom_catalogs` parameter is optional. If not provided, the schema manager will use the basic catalog maintained by the A2UI team.
-- The provided custom catalog must be freestanding, i.e. it should not reference any external schemas or components, except for the common types.
+- The `catalogs` parameter is optional. If not provided, the schema manager will use the basic catalog maintained by the A2UI team.
+- The provided catalogs must be freestanding, i.e. they should not reference any external schemas or components, except for the common types.
 - If you have a modular catalog that references other catalogs, refer to [Freestanding Catalogs](../../../docs/catalogs.md#freestanding-catalogs) for more information.
 
 ### Step 2: Generate System Prompt

@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.schema.constants import VERSION_0_8
+from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
 
 ROLE_DESCRIPTION = (
     "You are a helpful contact lookup assistant. Your final output MUST be an A2UI JSON"
@@ -68,7 +69,8 @@ def get_text_prompt() -> str:
 if __name__ == "__main__":
   # Example of how to use the A2UI Schema Manager to generate a system prompt
   contact_prompt = A2uiSchemaManager(
-      "0.8", basic_examples_path="examples"
+      VERSION_0_8,
+      catalogs=[CatalogConfig.bundled(version=VERSION_0_8, examples_path="examples")],
   ).generate_system_prompt(
       role_description=ROLE_DESCRIPTION,
       workflow_description=WORKFLOW_DESCRIPTION,

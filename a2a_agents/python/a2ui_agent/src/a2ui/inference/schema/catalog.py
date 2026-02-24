@@ -19,21 +19,49 @@ import os
 from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from .constants import CATALOG_COMPONENTS_KEY, CATALOG_ID_KEY
-from referencing import Registry, Resource
-
-if TYPE_CHECKING:
-  from .validator import A2uiValidator
-  from .payload_fixer import A2uiPayloadFixer
+from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider, BundledCatalogProvider
+from .constants import CATALOG_COMPONENTS_KEY, CATALOG_ID_KEY, BASIC_CATALOG_NAME
 
 
 @dataclass
-class CustomCatalogConfig:
-  """Configuration for a custom component catalog."""
+class CatalogConfig:
+  """
+  Configuration for a catalog of components.
+
+  A catalog consists of a provider that knows how to load the schema,
+  and optionally a path to examples.
+
+  Attributes:
+    name: The name of the catalog.
+    provider: The provider to use to load the catalog schema.
+    examples_path: The path to the examples directory.
+  """
 
   name: str
-  catalog_path: str
+  provider: A2uiCatalogProvider
   examples_path: Optional[str] = None
+
+  @classmethod
+  def bundled(
+      cls, version: str, examples_path: Optional[str] = None
+  ) -> "CatalogConfig":
+    """Returns a CatalogConfig for the basic bundled catalog."""
+    return cls(
+        name=BASIC_CATALOG_NAME,
+        provider=BundledCatalogProvider(version),
+        examples_path=examples_path,
+    )
+
+  @classmethod
+  def from_path(
+      cls, name: str, catalog_path: str, examples_path: Optional[str] = None
+  ) -> "CatalogConfig":
+    """Returns a CatalogConfig that loads from a file path."""
+    return cls(
+        name=name,
+        provider=FileSystemCatalogProvider(catalog_path),
+        examples_path=examples_path,
+    )
 
 
 @dataclass(frozen=True)
@@ -164,113 +192,6 @@ class A2uiCatalog:
     if not merged_examples:
       return ""
     return "\n\n".join(merged_examples)
-
-  @staticmethod
-  def resolve_schema(basic: Dict[str, Any], custom: Dict[str, Any]) -> Dict[str, Any]:
-    """Resolves references in custom catalog schema against the basic catalog.
-
-    Args:
-      basic: The basic catalog schema.
-      custom: The custom catalog schema.
-
-    Returns:
-      A new dictionary with references resolved.
-    """
-    result = copy.deepcopy(custom)
-
-    # Initialize registry with basic catalog and maybe others from basic's $id
-    registry = Registry()
-    if CATALOG_ID_KEY in basic:
-      basic_resource = Resource.from_contents(basic)
-      registry = registry.with_resource(basic[CATALOG_ID_KEY], basic_resource)
-
-    def resolve_ref(ref_uri: str) -> Any:
-      try:
-        resolver = registry.resolver()
-        resolved = resolver.lookup(ref_uri)
-        return resolved.contents
-      except Exception as e:
-        logging.warning("Could not resolve reference %s: %s", ref_uri, e)
-        return None
-
-    def merge_into(target: Dict[str, Any], source: Dict[str, Any]):
-      for key, value in source.items():
-        if key not in target:
-          target[key] = copy.deepcopy(value)
-
-    # Process components
-    if CATALOG_COMPONENTS_KEY in result:
-      comp_dict = result[CATALOG_COMPONENTS_KEY]
-      if "$ref" in comp_dict:
-        resolved = resolve_ref(comp_dict["$ref"])
-        if isinstance(resolved, dict):
-          merge_into(comp_dict, resolved)
-        del comp_dict["$ref"]
-
-    # Process functions
-    if "functions" in result:
-      func_dict = result["functions"]
-      if "$ref" in func_dict:
-        resolved = resolve_ref(func_dict["$ref"])
-        if isinstance(resolved, dict):
-          merge_into(func_dict, resolved)
-        del func_dict["$ref"]
-
-    # Process $defs
-    if "$defs" in result:
-      res_defs = result["$defs"]
-      if "$ref" in res_defs:
-        resolved = resolve_ref(res_defs["$ref"])
-        if isinstance(resolved, dict):
-          merge_into(res_defs, resolved)
-        del res_defs["$ref"]
-
-      for name in ["anyComponent", "anyFunction"]:
-        if name in res_defs:
-          target = res_defs[name]
-          one_of = target.get("oneOf", [])
-          new_one_of = []
-          for item in one_of:
-            if isinstance(item, dict) and "$ref" in item:
-              ref_uri = item["$ref"]
-              # Check if it points to basic collector
-              resolved = resolve_ref(ref_uri)
-              if isinstance(resolved, dict) and "oneOf" in resolved:
-                # Merge oneOf items and resolve transitive refs to components/functions
-                for sub_item in resolved["oneOf"]:
-                  if sub_item not in new_one_of:
-                    new_one_of.append(copy.deepcopy(sub_item))
-                    # Transitive merge: if sub_item is a ref to a component/function
-                    if isinstance(sub_item, dict) and "$ref" in sub_item:
-                      sub_ref = sub_item["$ref"]
-                      if (
-                          sub_ref.startswith("#/components/")
-                          and CATALOG_COMPONENTS_KEY in basic
-                      ):
-                        comp_name = sub_ref.split("/")[-1]
-                        if comp_name in basic[CATALOG_COMPONENTS_KEY]:
-                          if CATALOG_COMPONENTS_KEY not in result:
-                            result[CATALOG_COMPONENTS_KEY] = {}
-                          if comp_name not in result[CATALOG_COMPONENTS_KEY]:
-                            result[CATALOG_COMPONENTS_KEY][comp_name] = copy.deepcopy(
-                                basic[CATALOG_COMPONENTS_KEY][comp_name]
-                            )
-                      elif sub_ref.startswith("#/functions/") and "functions" in basic:
-                        func_name = sub_ref.split("/")[-1]
-                        if func_name in basic["functions"]:
-                          if "functions" not in result:
-                            result["functions"] = {}
-                          if func_name not in result["functions"]:
-                            result["functions"][func_name] = copy.deepcopy(
-                                basic["functions"][func_name]
-                            )
-              else:
-                new_one_of.append(item)
-            else:
-              new_one_of.append(item)
-          target["oneOf"] = new_one_of
-
-    return result
 
   def _validate_example(self, full_path: str, basename: str, content: str) -> bool:
     try:

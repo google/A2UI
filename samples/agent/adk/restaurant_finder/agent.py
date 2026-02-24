@@ -34,7 +34,8 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.schema.constants import VERSION_0_8
+from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 logger = logging.getLogger(__name__)
@@ -50,8 +51,10 @@ class RestaurantAgent:
     self.use_ui = use_ui
     self._schema_manager = (
         A2uiSchemaManager(
-            "0.8",
-            basic_examples_path="examples/",
+            VERSION_0_8,
+            catalogs=[
+                CatalogConfig.bundled(version=VERSION_0_8, examples_path="examples")
+            ],
             schema_modifiers=[remove_strict_validation],
         )
         if use_ui

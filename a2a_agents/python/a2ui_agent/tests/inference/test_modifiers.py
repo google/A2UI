@@ -14,6 +14,7 @@
 
 import pytest
 from unittest.mock import patch
+from a2ui.inference.schema.constants import VERSION_0_8
 from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
@@ -46,19 +47,22 @@ def test_remove_strict_validation():
 
 def test_manager_with_modifiers():
   """Tests that A2uiSchemaManager applies modifiers during loading."""
-  # Mock _load_basic_component to return a simple schema with strict validation
+  # Mock load_from_bundled_resource to return a simple schema with strict validation
   mock_schema = {"type": "object", "additionalProperties": False}
   with patch(
-      "a2ui.inference.schema.manager._load_basic_component", return_value=mock_schema
+      "a2ui.inference.schema.manager.load_from_bundled_resource",
+      return_value=mock_schema,
   ):
-    manager = A2uiSchemaManager("0.8", schema_modifiers=[remove_strict_validation])
+    manager = A2uiSchemaManager(
+        VERSION_0_8, schema_modifiers=[remove_strict_validation]
+    )
 
     # Verify that loaded schemas have modifiers applied
     assert "additionalProperties" not in manager._server_to_client_schema
     assert "additionalProperties" not in manager._common_types_schema
 
     # basic catalog should also be modified
-    for catalog in manager._supported_catalogs.values():
+    for catalog in manager.supported_catalogs:
       assert "additionalProperties" not in catalog.catalog_schema
 
 
@@ -66,9 +70,10 @@ def test_manager_no_modifiers():
   """Tests that A2uiSchemaManager works fine without modifiers."""
   mock_schema = {"type": "object", "additionalProperties": False}
   with patch(
-      "a2ui.inference.schema.manager._load_basic_component", return_value=mock_schema
+      "a2ui.inference.schema.manager.load_from_bundled_resource",
+      return_value=mock_schema,
   ):
-    manager = A2uiSchemaManager("0.8", schema_modifiers=None)
+    manager = A2uiSchemaManager(VERSION_0_8, schema_modifiers=None)
 
     # Verify that schemas are NOT modified
     assert manager._server_to_client_schema["additionalProperties"] is False
