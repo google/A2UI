@@ -193,7 +193,7 @@
             {
               "properties": {
                 "returnType": {
-                  "const": "string[]"
+                  "const": "array"
                 }
               }
             }

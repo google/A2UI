@@ -151,7 +151,7 @@
             {
               "properties": {
                 "callableFrom": {
-                  "description": "Must be remoteOnly or clientOrRemote for server initiated function calls",
+                  "description": "Specifies where this function can be invoked from.",
                   "enum": [
                     "remoteOnly",
                     "clientOrRemote"
