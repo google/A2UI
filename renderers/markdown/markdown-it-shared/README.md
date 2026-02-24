@@ -18,7 +18,7 @@ Run `npm run build` to build the project. The build artifacts will be stored in 
 Run `npm test` to execute the unit tests.
 
 > [!NOTE]
-> This package uses `isomorphic-dompurify` to allow DOMPurify to run in Node.js during unit testing. This avoids having to configure JSDOM in Node environments to provide a missing `Window` object.
+> This package uses `dompurify` which requires a Window object. For unit testing in a Node.js environment, `jsdom` must be provided globally before importing the renderer.
 
 ### Code Formatting
 

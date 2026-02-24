@@ -14,7 +14,15 @@
  limitations under the License.
  */
 
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from 'dompurify';
+
+// An isomorphic instance of DOMPurify.
+// We use this instead of `isomorphic-dompurify` because our angular samples
+// don't like building with jsdom as a "dependency" (not dev). Since this
+// package is meant to be used by all renderers, we add some code in the
+// sanitize function to initialize this the first time, looking at the
+// environment (globalThis).
+let purify: any;
 
 /**
  * Sanitizes an HTML string.
@@ -22,5 +30,17 @@ import DOMPurify from 'isomorphic-dompurify';
  * @returns a sanitized HTML string.
  */
 export function sanitize(html: string): string {
-  return DOMPurify.sanitize(html);
+  if (!purify) {
+    if (typeof DOMPurify.sanitize === 'function') {
+      purify = DOMPurify;
+    } else {
+      const globalWindow = (globalThis as any).window;
+      if (globalWindow) {
+        purify = DOMPurify(globalWindow);
+      } else {
+        throw new Error('DOMPurify requires a window object. If testing, provide a jsdom window as `globalThis`.');
+      }
+    }
+  }
+  return purify.sanitize(html);
 }

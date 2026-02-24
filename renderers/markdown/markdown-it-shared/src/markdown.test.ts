@@ -1,3 +1,10 @@
+import { JSDOM } from 'jsdom';
+
+// Provide a jsdom window for DOMPurify in the Node test environment.
+const jsdom = new JSDOM('');
+(globalThis as any).window = jsdom.window;
+(globalThis as any).document = jsdom.window.document;
+
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { MarkdownItRenderer } from './raw-markdown.js';
