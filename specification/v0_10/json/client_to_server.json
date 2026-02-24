@@ -56,15 +56,53 @@
             "value": {
               "description": "The return value of the function invocation.",
               "oneOf": [
-                { "$ref": "common_types.json#/$defs/ScalarValue" },
-                { "$ref": "common_types.json#/$defs/ScalarValueArray" },
+                {
+                  "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
+                  "type": [
+                    "boolean",
+                    "number",
+                    "null",
+                    "string"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "description": "An array containing only primitive values.",
+                  "items": {
+                    "type": [
+                      "boolean",
+                      "number",
+                      "null",
+                      "string"
+                    ]
+                  }
+                },
                 {
                   "type": "object",
                   "description": "Zero or more named parameters comprising the response.",
                   "additionalProperties": {
                     "anyOf": [
-                      { "$ref": "common_types.json#/$defs/ScalarValue" },
-                      { "$ref": "common_types.json#/$defs/ScalarValueArray" }
+                      {
+                        "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
+                        "type": [
+                          "boolean",
+                          "number",
+                          "null",
+                          "string"
+                        ]
+                      },
+                      {
+                        "type": "array",
+                        "description": "An array containing only primitive values.",
+                        "items": {
+                          "type": [
+                            "boolean",
+                            "number",
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
                     ]
                   }
                 }

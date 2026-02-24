@@ -60,7 +60,6 @@
               "type": "string",
               "description": "The unique identifier for the UI surface to be updated."
             },
-
             "components": {
               "type": "array",
               "description": "A list containing all UI components for the surface.",
@@ -163,17 +162,36 @@
                   "description": "Arguments passed to the function.",
                   "additionalProperties": {
                     "anyOf": [
-                      { "$ref": "common_types.json#/$defs/ScalarValue" },
-                      { "$ref": "common_types.json#/$defs/ScalarValueArray" }
+                      {
+                        "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
+                        "type": [
+                          "boolean",
+                          "number",
+                          "null",
+                          "string"
+                        ]
+                      },
+                      {
+                        "type": "array",
+                        "description": "An array containing only primitive values.",
+                        "items": {
+                          "type": [
+                            "boolean",
+                            "number",
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
                     ]
                   }
                 },
                 "returnType": {
                   "description": "The expected return type of the function call.",
                   "enum": [
-                    "string",
-                    "number",
                     "boolean",
+                    "number",
+                    "string",
                     "string[]",
                     "number[]",
                     "boolean[]",

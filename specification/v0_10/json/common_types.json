@@ -26,22 +26,6 @@
         }
       }
     },
-    "ScalarValue": {
-      "description": "Restricts values to primitives only to prevent recursive execution or data-model leakage.",
-      "type": [
-        "boolean",
-        "number",
-        "null",
-        "string"
-      ]
-    },
-    "ScalarValueArray": {
-      "type": "array",
-      "description": "An array containing only primitive values.",
-      "items": {
-        "$ref": "#/$defs/ScalarValue"
-      }
-    },
     "ComponentCommon": {
       "type": "object",
       "properties": {
