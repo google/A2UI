@@ -226,7 +226,7 @@ interface ComponentApi {
 
 ## **Framework-Specific Renderers**
 
-Framework implementations (Angular, Lit, Flutter) extend the core by providing rendering logic that consumes the `ComponentContext`.
+Framework implementations (Angular, Lit, Flutter) extend a core library written in the relevant language (e.g. TS, Dart) by providing rendering logic that consumes a `ComponentContext` instance.
 
 ### **Framework Surface**
 The entrypoint widget for a specific framework. It listens to the `SurfaceModel` to dynamically build the UI tree.
