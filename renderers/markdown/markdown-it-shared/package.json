@@ -2,38 +2,55 @@
   "name": "@a2ui/markdown-it-shared",
   "version": "0.0.1",
   "description": "A Markdown renderer using markdown-it and dompurify.",
-  "main": "./dist/src/markdown.js",
-  "types": "./dist/src/markdown.d.ts",
+  "keywords": [],
+  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git",
+    "directory": "renderers/markdown/markdown-it-shared"
+  },
+  "license": "Apache-2.0",
+  "author": "Google",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/src/markdown.d.ts",
       "default": "./dist/src/markdown.js"
     }
   },
-  "type": "module",
-  "repository": {
-    "directory": "renderers/markdown/markdown-it-shared",
-    "type": "git",
-    "url": "git+https://github.com/google/A2UI.git"
-  },
   "files": [
     "dist/src"
   ],
   "scripts": {
-    "prepack": "npm run build",
     "build": "wireit",
-    "build:tsc": "wireit",
-    "test": "wireit",
     "format": "prettier --ignore-path ../.gitignore --write .",
-    "format:check": "prettier --ignore-path ../.gitignore --check ."
+    "format:check": "prettier --ignore-path ../.gitignore --check .",
+    "prepack": "npm run build",
+    "test": "wireit"
+  },
+  "dependencies": {
+    "dompurify": "^3.3.1",
+    "markdown-it": "^14.1.0"
+  },
+  "devDependencies": {
+    "@a2ui/web_core": "file:../../web_core",
+    "@types/dompurify": "^3.0.5",
+    "@types/jsdom": "^28.0.0",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^24.10.1",
+    "jsdom": "^28.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.3",
+    "wireit": "^0.15.0-pre.2"
+  },
+  "peerDependencies": {
+    "@a2ui/web_core": "file:../../web_core"
   },
   "wireit": {
     "build": {
-      "dependencies": [
-        "build:tsc"
-      ]
-    },
-    "build:tsc": {
       "command": "tsc -b --pretty",
       "files": [
         "src/**/*.ts",
@@ -52,30 +69,5 @@
         "build"
       ]
     }
-  },
-  "keywords": [],
-  "author": "Google",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/google/A2UI/issues"
-  },
-  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
-  "peerDependencies": {
-    "@a2ui/web_core": "file:../../web_core"
-  },
-  "devDependencies": {
-    "@a2ui/web_core": "file:../../web_core",
-    "@types/dompurify": "^3.0.5",
-    "@types/jsdom": "^28.0.0",
-    "@types/markdown-it": "^14.1.2",
-    "@types/node": "^24.10.1",
-    "jsdom": "^28.1.0",
-    "prettier": "^3.4.2",
-    "typescript": "^5.8.3",
-    "wireit": "^0.15.0-pre.2"
-  },
-  "dependencies": {
-    "dompurify": "^3.3.1",
-    "markdown-it": "^14.1.0"
   }
 }

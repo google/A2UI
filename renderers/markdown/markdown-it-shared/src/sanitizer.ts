@@ -38,7 +38,9 @@ export function sanitize(html: string): string {
       if (globalWindow) {
         purify = DOMPurify(globalWindow);
       } else {
-        throw new Error('DOMPurify requires a window object. If testing, provide a jsdom window as `globalThis`.');
+        throw new Error(
+          'DOMPurify requires a window object. If testing, provide a jsdom window as `globalThis`.',
+        );
       }
     }
   }
