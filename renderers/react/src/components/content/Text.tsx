@@ -36,33 +36,69 @@ function isHintedStyles(styles: unknown): styles is HintedStyles {
 const markdownRenderer = new MarkdownIt();
 
 /**
- * Apply theme classes to markdown HTML elements.
- * Replaces default element tags with themed versions.
+ * Maps HTML tag names to their markdown-it token names.
+ * Mirrors the Lit renderer's markdown directive approach.
  */
-function applyMarkdownTheme(html: string, markdownTheme: Types.Theme['markdown']): string {
-  if (!markdownTheme) return html;
+const TAG_TO_TOKEN: Record<string, string> = {
+  p: 'paragraph',
+  h1: 'heading', h2: 'heading', h3: 'heading',
+  h4: 'heading', h5: 'heading', h6: 'heading',
+  ul: 'bullet_list',
+  ol: 'ordered_list',
+  li: 'list_item',
+  a: 'link',
+  strong: 'strong',
+  em: 'em',
+};
 
-  // Map of element -> classes
-  const replacements: Array<[RegExp, string]> = [];
-
-  for (const [element, classes] of Object.entries(markdownTheme)) {
-    if (!classes || (Array.isArray(classes) && classes.length === 0)) continue;
-
-    const classString = Array.isArray(classes) ? classes.join(' ') : classMapToString(classes);
-    if (!classString) continue;
-
-    // Create regex to match opening tags (handles self-closing and regular)
-    const tagRegex = new RegExp(`<${element}(?=\\s|>|/>)`, 'gi');
-    replacements.push([tagRegex, `<${element} class="${classString}"`]);
-  }
-
-  let result = html;
-  for (const [regex, replacement] of replacements) {
-    result = result.replace(regex, replacement);
-  }
-
-  return result;
+function toClassArray(classes: string[] | Record<string, boolean>): string[] {
+  if (Array.isArray(classes)) return classes;
+  return Object.entries(classes).filter(([, v]) => v).map(([k]) => k);
 }
+
+/**
+ * Render markdown to HTML, applying theme classes via markdown-it renderer rules.
+ * Uses token.attrJoin() on _open tokens — same approach as the Lit renderer.
+ * Safe to mutate the module-level renderer because MarkdownIt.render() is synchronous.
+ */
+function renderWithTheme(text: string, markdownTheme: Types.Theme['markdown']): string {
+  const appliedKeys: string[] = [];
+  // Cast to a generic record for dynamic token.tag lookups inside renderer rules
+  const themeMap = markdownTheme as Record<string, string[] | Record<string, boolean>> | undefined;
+
+  if (themeMap) {
+    for (const [tag, classes] of Object.entries(themeMap)) {
+      if (!classes) continue;
+      const tokenName = TAG_TO_TOKEN[tag];
+      if (!tokenName) continue;
+
+      const key = `${tokenName}_open`;
+      if (!appliedKeys.includes(key)) appliedKeys.push(key);
+
+      markdownRenderer.renderer.rules[key] = (tokens, idx, options, _env, self) => {
+        const token = tokens[idx];
+        if (token) {
+          const tagClasses = themeMap[token.tag];
+          if (tagClasses) {
+            for (const cls of toClassArray(tagClasses)) {
+              token.attrJoin('class', cls);
+            }
+          }
+        }
+        return self.renderToken(tokens, idx, options);
+      };
+    }
+  }
+
+  const html = markdownRenderer.render(text);
+
+  for (const key of appliedKeys) {
+    delete markdownRenderer.renderer.rules[key];
+  }
+
+  return html;
+}
+
 
 /**
  * Text component - renders text content with markdown support.
@@ -143,9 +179,7 @@ export const Text = memo(function Text({ node, surfaceId }: A2UIComponentProps<T
         break; // Body - no prefix
     }
 
-    const rawHtml = markdownRenderer.render(markdownText);
-    const themedHtml = applyMarkdownTheme(rawHtml, theme.markdown);
-    return { __html: themedHtml };
+    return { __html: renderWithTheme(markdownText, theme.markdown) };
   }, [textValue, theme.markdown, usageHint]);
 
   if (!renderedContent) {
