@@ -261,6 +261,9 @@ In the standard A2A binding, A2UI messages are encoded as an A2A **DataPart**. T
 
 The `data` field of the `DataPart` contains a **list** of A2UI messages. This allows multiple updates (e.g., `createSurface` followed by `updateComponents`) to be sent in a single network packet.
 
+> [!NOTE]
+> **A2A Versioning**: The use of a **list** in the `data` field was introduced in **A2A v1.0**. Earlier versions of the A2A protocol expect the `data` field to contain a single JSON object.
+
 ```json
 {
   "kind": "data",
