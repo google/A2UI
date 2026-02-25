@@ -603,7 +603,7 @@
                         "format": "time"
                       },
                       {
-                        "format": "dateTime"
+                        "format": "date-time"
                       }
                     ]
                   }
@@ -629,7 +629,7 @@
                         "format": "time"
                       },
                       {
-                        "format": "dateTime"
+                        "format": "date-time"
                       }
                     ]
                   }
