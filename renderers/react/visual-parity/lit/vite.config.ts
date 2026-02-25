@@ -7,8 +7,16 @@ export default defineConfig({
     strictPort: true,
   },
   optimizeDeps: {
-    // Don't pre-bundle @a2ui/lit to avoid duplicate module instances
-    exclude: ['@a2ui/lit'],
+    // Don't pre-bundle @a2ui/lit or its deps to avoid duplicate module instances
+    exclude: [
+      '@a2ui/lit',
+      'markdown-it',
+      'clsx',
+      'signal-utils/array',
+      'signal-utils/map',
+      'signal-utils/object',
+      'signal-utils/set',
+    ],
   },
   esbuild: {
     // Enable decorator support

@@ -165,7 +165,7 @@ This happens when Vite's dependency optimization cache becomes stale, typically 
 **Fix:** Clear the Vite cache and restart:
 ```bash
 # From renderers/react/visual-parity/
-rm -rf node_modules/.vite react/node_modules/.vite lit/node_modules/.vite
+rm -rf node_modules/.vite react/node_modules/.vite lit/node_modules/.vite ../node_modules/.vite
 npm run dev:react  # or dev:lit
 ```
 

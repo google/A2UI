@@ -10,7 +10,16 @@ export default defineConfig({
     strictPort: true,
   },
   optimizeDeps: {
-    exclude: ['@a2ui/react', '@a2ui/lit', 'markdown-it'],
+    exclude: [
+      '@a2ui/react',
+      '@a2ui/lit',
+      'markdown-it',
+      'clsx',
+      'signal-utils/array',
+      'signal-utils/map',
+      'signal-utils/object',
+      'signal-utils/set',
+    ],
   },
   resolve: {
     alias: {
