@@ -14,10 +14,10 @@
 
 import json
 
-from a2ui.inference.schema.constants import VERSION_0_8
-from a2ui.inference.schema.manager import A2uiSchemaManager
-from a2ui.inference.basic_catalog.provider import BasicCatalog
-from a2ui.inference.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.core.schema.common_modifiers import remove_strict_validation
 
 ROLE_DESCRIPTION = (
     "You are a helpful contact lookup assistant. Your final output MUST be a a2ui UI"

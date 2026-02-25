@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui.inference.schema.constants import VERSION_0_8
-from a2ui.inference.schema.manager import A2uiSchemaManager
-from a2ui.inference.basic_catalog.provider import BasicCatalog
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
 
 ROLE_DESCRIPTION = (
     "You are a helpful contact lookup assistant. Your final output MUST be an A2UI JSON"

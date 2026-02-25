@@ -21,9 +21,9 @@ import click
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2ui.inference.schema.constants import VERSION_0_8
-from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
-from a2ui.inference.basic_catalog.provider import BasicCatalog
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.basic_catalog.provider import BasicCatalog
 from agent_executor import RizzchartsAgentExecutor, get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
 from agent import RizzchartsAgent
 from google.adk.artifacts import InMemoryArtifactService

@@ -6,7 +6,7 @@ default = true
 members = ["contact_lookup", "contact_multiple_surfaces", "orchestrator", "restaurant_finder", "rizzcharts"]
 
 [tool.uv.sources]
-a2ui-agent = { path = "../../../a2a_agents/python/a2ui_agent", editable = true }
+a2ui-agent = { path = "../../../agent_sdks/python", editable = true }
 
 [tool.pyink]
 unstable = true

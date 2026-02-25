@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,25 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Build python samples
+name: Build and Test A2UI-agent Python SDK
 
 on:
   push:
     branches:
-      - main
+      - '*'
     paths:
-      - 'samples/agent/adk/**'
       - 'agent_sdks/python/**'
       - 'specification/**/json/**'
   pull_request:
     paths:
-      - 'samples/agent/adk/**'
       - 'agent_sdks/python/**'
       - 'specification/**/json/**'
 
 jobs:
-  build:
-    name: Build samples
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,21 +45,17 @@ jobs:
           pip install uv
 
       - name: Check Formatting
-        working-directory: samples/agent/adk
+        working-directory: agent_sdks/python
         run: uv run pyink --check .
 
-      - name: Build contact_lookup
-        working-directory: samples/agent/adk/contact_lookup
+      - name: Run unit tests
+        working-directory: agent_sdks/python
+        run: uv run --with pytest pytest tests/
+
+      - name: Build the python SDK
+        working-directory: agent_sdks/python
         run: uv build .
 
-      - name: Build orchestrator
-        working-directory: samples/agent/adk/orchestrator
-        run: uv build .
-
-      - name: Build restaurant_finder
-        working-directory: samples/agent/adk/restaurant_finder
-        run: uv build .
-
-      - name: Build rizzcharts
-        working-directory: samples/agent/adk/rizzcharts
-        run: uv build .
+      - name: Run validation scripts on assets packing
+        working-directory: agent_sdks/python
+        run: uv run python tests/integration/verify_load_real.py

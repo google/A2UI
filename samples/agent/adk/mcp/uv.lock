@@ -27,7 +27,7 @@ wheels = [
 [[package]]
 name = "a2ui-agent"
 version = "0.1.0"
-source = { editable = "../../../../a2a_agents/python/a2ui_agent" }
+source = { editable = "../../../../agent_sdks/python" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "google-adk" },
@@ -70,7 +70,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "a2ui-agent", editable = "../../../../a2a_agents/python/a2ui_agent" },
+    { name = "a2ui-agent", editable = "../../../../agent_sdks/python" },
     { name = "anyio", specifier = ">=4.5" },
     { name = "click", specifier = ">=8.2.0" },
     { name = "httpx", specifier = ">=0.27" },
