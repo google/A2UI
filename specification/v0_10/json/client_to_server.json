@@ -46,28 +46,24 @@
       ]
     },
     "functionResponse": {
-      "allOf": [
-        {
-          "properties": {
-            "functionCallId": {
-              "$ref": "common_types.json#/$defs/CallId",
-              "description": "Unique ID for the instance of this function. MUST be copied verbatim from the function invocation."
-            },
-            "value": {
-              "description": "The return value of the function invocation.",
-              "type": [
-                "string",
-                "number",
-                "boolean",
-                "array",
-                "object",
-                "null"
-              ]
-            }
-          },
-          "required": ["functionCallId", "value"]
+      "properties": {
+        "functionCallId": {
+          "$ref": "common_types.json#/$defs/CallId",
+          "description": "Unique ID for the instance of this function. MUST be copied verbatim from the function invocation."
+        },
+        "value": {
+          "description": "The return value of the function invocation.",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null"
+          ]
         }
-      ],
+      },
+      "required": ["functionCallId", "value"],
       "unevaluatedProperties": false
     },
     "error": {
