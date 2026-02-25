@@ -12,24 +12,15 @@
 # - An email address (e.g., octocat@github.com)
 
 # Default ownership (is overriden by specfic rules below)
-* @dmandar @gspencergoog @jacobsimionato
+* @dmandar @gspencergoog @jacobsimionato @nan-yu @ditman @zeroasterisk
 
 # Agents
-/a2a_agents/ @nan-yu @dmandar
-
-# Documentation
-/docs/ @zeroasterisk @dmandar @gspencer @jacobsimionato
+/a2a_agents/ @nan-yu @dmandar @gspencergoog
 
 # Renderers
 /renderers/angular/ @ditman @ava-cassiopeia  @crisbeto
 /renderers/lit/ @ditman @ava-cassiopeia @paullewis
-/renderers/web_core/ @ditman @ava-cassiopeia
-
-# Samples
-/samples/ @dmandar @zeroasterisk
+/renderers/web_core/ @ditman @ava-cassiopeia @jacobsimionato
 
 # Specifications
 /specification/ @gspencergoog @jacobsimionato
-
-# Tools
-/tools/ @dmandar @jacobsimionato @paullewis
