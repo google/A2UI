@@ -190,21 +190,3 @@ export function useA2UIContext(): A2UIContextValue {
     [actions, state.version]
   );
 }
-
-/**
- * @deprecated Use useA2UIContext instead. This alias exists for backward compatibility only.
- */
-export const useA2UIStore = useA2UIContext;
-
-/**
- * @deprecated This selector pattern does not provide performance benefits with React Context.
- * Components will re-render on any context change regardless of what you select.
- * Use useA2UIContext() or useA2UI() directly instead.
- *
- * @param selector - Function to select a slice of state
- * @returns The selected state
- */
-export function useA2UIStoreSelector<T>(selector: (state: A2UIContextValue) => T): T {
-  const context = useA2UIContext();
-  return selector(context);
-}
