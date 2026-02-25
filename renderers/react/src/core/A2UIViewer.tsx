@@ -90,9 +90,7 @@ export function A2UIViewer({
     const definitionKey = `${root}-${JSON.stringify(components)}`;
     let hash = 0;
     for (let i = 0; i < definitionKey.length; i++) {
-      const char = definitionKey.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash;
+      hash = 31 * hash + definitionKey.charCodeAt(i);
     }
     return `surface${baseId.replace(/:/g, '-')}${hash}`;
   }, [baseId, root, components]);
