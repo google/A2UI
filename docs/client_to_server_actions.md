@@ -234,11 +234,13 @@ Clients include an `a2uiClientCapabilities` object in the **metadata** of their 
 
 ```json
 {
-  "supportedCatalogIds": [
-    "https://a2ui.org/specification/v0_9/basic_catalog.json",
-    "https://my-company.com/catalogs/v1/custom.json"
-  ],
-  "inlineCatalogs": []
+  "v0.9": {
+    "supportedCatalogIds": [
+      "https://a2ui.org/specification/v0_9/basic_catalog.json",
+      "https://my-company.com/catalogs/v1/custom.json"
+    ],
+    "inlineCatalogs": []
+  }
 }
 ```
 
@@ -343,8 +345,8 @@ async def intercept(self, request_payload, target_agent, session):
     if data_model:
         # Filter surfaces to only those owned by the target_agent
         filtered_surfaces = {
-            id: state for id, state in data_model["surfaces"].items()
-            if session.state.get(f"owner_of_{id}") == target_agent.name
+            surface_id: state for surface_id, state in data_model["surfaces"].items()
+            if session.state.get(f"owner_of_{surface_id}") == target_agent.name
         }
         
         # Replace with the stripped data model
@@ -356,7 +358,7 @@ async def intercept(self, request_payload, target_agent, session):
 By stripping the metadata, the orchestrator ensures that sub-agents only receive the portion of the data model they are authorized to see.
 
 > [!CAUTION]
-> **Security Scraped State**: If an Orchestrator fails to strip the `a2uiClientDataModel`, a malicious or compromised sub-agent could potentially "scrape" the state of other active surfaces. For example, a weather sub-agent could read sensitive data from a banking surface if the orchestrator leaks the entire multi-surface data model. Stripping is a mandatory security requirement in multi-agent systems.
+> **Security Risk: State Scraping**: If an Orchestrator fails to strip the `a2uiClientDataModel`, a malicious or compromised sub-agent could potentially "scrape" the state of other active surfaces. For example, a weather sub-agent could read sensitive data from a banking surface if the orchestrator leaks the entire multi-surface data model. Stripping is a mandatory security requirement in multi-agent systems.
 
 ---
 
