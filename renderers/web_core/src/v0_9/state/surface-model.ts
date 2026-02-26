@@ -16,7 +16,7 @@ export type ActionListener = (action: any) => void | Promise<void>;
 export class SurfaceModel<T extends CatalogApi> {
   readonly dataModel: DataModel;
   readonly componentsModel: SurfaceComponentsModel;
-  private actionListeners: Set<ActionListener> = new Set();
+  private actionListeners: Set<ActionListener>;
 
   constructor(
     readonly id: string,
@@ -25,6 +25,7 @@ export class SurfaceModel<T extends CatalogApi> {
   ) {
     this.dataModel = new DataModel({});
     this.componentsModel = new SurfaceComponentsModel();
+    this.actionListeners = new Set();
   }
 
   /**

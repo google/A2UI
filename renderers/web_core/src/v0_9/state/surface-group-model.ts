@@ -16,8 +16,6 @@ export class SurfaceGroupModel<T extends CatalogApi> {
   private lifecycleListeners: Set<SurfaceLifecycleListener<T>> = new Set();
   private actionListeners: Set<ActionListener> = new Set();
 
-  constructor() {}
-
   addSurface(surface: SurfaceModel<T>): void {
     if (this.surfaces.has(surface.id)) {
       console.warn(`Surface ${surface.id} already exists. Ignoring.`);
@@ -25,7 +23,7 @@ export class SurfaceGroupModel<T extends CatalogApi> {
     }
 
     this.surfaces.set(surface.id, surface);
-    
+
     // Subscribe to surface actions and propagate
     const unsubscribe = surface.addActionListener((action) => this.dispatchAction(action));
     this.surfaceUnsubscribers.set(surface.id, unsubscribe);
