@@ -31,6 +31,7 @@ export class DataContext {
   resolveDynamicValue<V>(value: DynamicValueDef): V {
     // 1. Literal Check
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+      // TODO: Define error handling when V doesn't match
       return value as V;
     }
 
@@ -46,6 +47,7 @@ export class DataContext {
       // For now, return as is or undefined
     }
 
+    // TODO: Define error handling when V doesn't match
     return value as V;
   }
 
@@ -57,6 +59,7 @@ export class DataContext {
     // 1. Literal: Return a static subscription
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return {
+        // TODO: Define error handling when V doesn't match
         value: value as V,
         unsubscribe: () => { }
       };
@@ -69,8 +72,8 @@ export class DataContext {
     }
 
     // 3. Function Call (TODO)
-    // For now, treat as static
     return {
+      // TODO: Define error handling when V doesn't match
       value: value as V,
       unsubscribe: () => { }
     };
