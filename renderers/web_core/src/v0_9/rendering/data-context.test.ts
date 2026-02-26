@@ -50,11 +50,10 @@ describe('DataContext', () => {
 
   it('subscribes relative path', () => {
     let called = false;
-    const sub = context.subscribeDynamicValue({ path: 'name' });
-    sub.onChange = (val) => {
+    const sub = context.subscribeDynamicValue({ path: 'name' }, (val) => {
       assert.strictEqual(val, 'Charlie');
       called = true;
-    };
+    });
     context.set('name', 'Charlie');
     assert.strictEqual(called, true, 'Callback was never called');
   });

@@ -24,11 +24,6 @@ export interface Subscription<T> {
   readonly value: T | undefined;
 
   /**
-   * A callback function to be invoked when the value changes.
-   */
-  onChange?: (value: T | undefined) => void;
-
-  /**
    * Unsubscribes from the data model.
    */
   unsubscribe(): void;
@@ -37,10 +32,11 @@ export interface Subscription<T> {
 class SubscriptionImpl<T> implements Subscription<T> {
   private _value: T | undefined;
   private readonly _unsubscribe: () => void;
-  public onChange?: (value: T | undefined) => void;
+  public onChange: (value: T | undefined) => void;
 
-  constructor(initialValue: T | undefined, unsubscribe: () => void) {
+  constructor(initialValue: T | undefined, onChange: (value: T | undefined) => void, unsubscribe: () => void) {
     this._value = initialValue;
+    this.onChange = onChange;
     this._unsubscribe = unsubscribe;
   }
 
@@ -50,7 +46,7 @@ class SubscriptionImpl<T> implements Subscription<T> {
 
   setValue(value: T | undefined): void {
     this._value = value;
-    this.onChange?.(value);
+    this.onChange(value);
   }
 
   unsubscribe(): void {
@@ -159,12 +155,13 @@ export class DataModel {
   /**
    * Subscribes to changes at a specific path. Returns a Subscription object.
    */
-  subscribe<T>(path: string): Subscription<T> {
+  subscribe<T>(path: string, onChange: (value: T | undefined) => void): Subscription<T> {
     const normalizedPath = this.normalizePath(path);
     const initialValue = this.get(normalizedPath);
 
     const subscription = new SubscriptionImpl<T>(
       initialValue,
+      onChange,
       () => {
         const set = this.subscriptions.get(normalizedPath);
         if (set) {

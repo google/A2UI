@@ -52,12 +52,11 @@ export class DataContext {
    * Subscribes to changes in a DynamicValue.
    * Returns a Subscription object that provides the current value and allows listening for updates.
    */
-  subscribeDynamicValue<V>(value: any): Subscription<V> {
+  subscribeDynamicValue<V>(value: any, onChange: (value: V | undefined) => void): Subscription<V> {
     // 1. Literal: Return a static subscription
     if (typeof value !== 'object' || value === null) {
       return {
         value: value as V,
-        onChange: undefined,
         unsubscribe: () => {}
       };
     }
@@ -65,14 +64,13 @@ export class DataContext {
     // 2. Path Check: { path: "..." }
     if ('path' in value && typeof value.path === 'string') {
       const absolutePath = this.resolvePath(value.path);
-      return this.dataModel.subscribe(absolutePath);
+      return this.dataModel.subscribe(absolutePath, onChange);
     }
 
     // 3. Function Call (TODO)
     // For now, treat as static
     return {
       value: value as V,
-      onChange: undefined,
       unsubscribe: () => {}
     };
   }
