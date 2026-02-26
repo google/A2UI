@@ -8,13 +8,13 @@ import MarkdownIt from 'markdown-it';
 type UsageHint = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'caption' | 'body';
 
 interface HintedStyles {
-  h1: Record<string, string>;
-  h2: Record<string, string>;
-  h3: Record<string, string>;
-  h4: Record<string, string>;
-  h5: Record<string, string>;
-  body: Record<string, string>;
-  caption: Record<string, string>;
+  h1?: Record<string, string>;
+  h2?: Record<string, string>;
+  h3?: Record<string, string>;
+  h4?: Record<string, string>;
+  h5?: Record<string, string>;
+  body?: Record<string, string>;
+  caption?: Record<string, string>;
 }
 
 function isHintedStyles(styles: unknown): styles is HintedStyles {
