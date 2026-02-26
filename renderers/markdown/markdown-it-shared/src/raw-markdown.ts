@@ -15,7 +15,6 @@
  */
 
 import markdownit from 'markdown-it';
-import { sanitize } from './sanitizer.js';
 import * as Types from '@a2ui/web_core';
 
 /**
@@ -24,22 +23,7 @@ import * as Types from '@a2ui/web_core';
  * This renderer does not perform any sanitization of the outgoing HTML.
  */
 export class MarkdownItRenderer {
-  private markdownIt = markdownit({
-    highlight: (str, lang) => {
-      switch (lang) {
-        case 'html': {
-          const iframe = document.createElement('iframe');
-          iframe.classList.add('html-view');
-          iframe.srcdoc = str;
-          iframe.sandbox.add('');
-          return iframe.innerHTML;
-        }
-
-        default:
-          return sanitize(str);
-      }
-    },
-  });
+  private markdownIt = markdownit();
 
   constructor() {
     this.registerTagClassMapRules();
