@@ -58,7 +58,7 @@ export class DataContext {
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return {
         value: value as V,
-        unsubscribe: () => {}
+        unsubscribe: () => { }
       };
     }
 
@@ -72,7 +72,7 @@ export class DataContext {
     // For now, treat as static
     return {
       value: value as V,
-      unsubscribe: () => {}
+      unsubscribe: () => { }
     };
   }
 
@@ -86,6 +86,7 @@ export class DataContext {
   }
 
   private resolvePath(path: string): string {
+    // Absolute path - no resolution required.
     if (path.startsWith('/')) {
       return path;
     }
