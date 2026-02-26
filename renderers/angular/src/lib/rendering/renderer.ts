@@ -29,7 +29,8 @@ import {
   untracked,
   ViewContainerRef,
 } from '@angular/core';
-import { Types, Styles } from '@a2ui/lit/0.8';
+import * as Styles from '@a2ui/web_core/styles/index';
+import * as Types from '@a2ui/web_core/types/types';
 import { Catalog } from './catalog';
 import { isPlatformBrowser } from '@angular/common';
 

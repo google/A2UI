@@ -6,6 +6,6 @@
   },
   "allowedNonPeerDependencies": [
     "markdown-it",
-    "@a2ui/lit"
+    "@a2ui/web_core"
   ]
 }

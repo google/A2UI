@@ -14,31 +14,33 @@
  limitations under the License.
  */
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, copyFileSync } from 'fs';
 import { join } from 'path';
 
-// Locally we depend on the Lit package via a relative path so we can test it from source.
+// Locally we depend on the Core package via a relative path so we can test it from source.
 // This breaks when published to npm so the following script updates the version to the npm one.
 
 const dirname = import.meta.dirname;
-const litVersion = parsePackageJson(join(dirname, '../lit/package.json')).version;
+const coreVersion = parsePackageJson(join(dirname, '../web_core/package.json')).version;
 
-if (!litVersion) {
-  throw new Error('Cannot determine version of Lit package');
+if (!coreVersion) {
+  throw new Error('Cannot determine version of Core package');
 }
 
 const packageJsonPath = join(dirname, './dist/package.json');
 const packageJson = parsePackageJson(packageJsonPath);
 
-if (!packageJson.dependencies['@a2ui/lit']) {
+if (!packageJson.dependencies['@a2ui/web_core']) {
   throw new Error(
-    'Angular package does not depend on the Lit library. ' +
-      'Either update the package.json or remove this script.',
+    'Angular package does not depend on the Core library. ' +
+    'Either update the package.json or remove this script.',
   );
 }
 
-packageJson.dependencies['@a2ui/lit'] = '^' + litVersion;
+packageJson.dependencies['@a2ui/web_core'] = '^' + coreVersion;
 writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 2));
+
+copyFileSync(join(dirname, '../../LICENSE'), join(dirname, './dist/LICENSE'));
 
 function parsePackageJson(path) {
   const content = readFileSync(path, 'utf8');

@@ -15,21 +15,18 @@
  */
 
 export * as Events from "./events/events.js";
-export * as Types from "./types/types.js";
-export * as Primitives from "./types/primitives.js";
-export * as Styles from "./styles/index.js";
-import * as Guards from "./data/guards.js";
-
+import * as Types from "@a2ui/web_core/types/types";
+import * as Guards from "@a2ui/web_core/data/guards";
+import { Schemas } from "@a2ui/web_core";
+import * as Styles from "@a2ui/web_core/styles/index";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import * as Primitives from "@a2ui/web_core/types/primitives";
 import { create as createSignalA2uiMessageProcessor } from "./data/signal-model-processor.js";
-import { A2uiMessageProcessor } from "./data/model-processor.js";
-import A2UIClientEventMessage from "./schemas/server_to_client_with_standard_catalog.json" with { type: "json" };
+import { Events as WebEvents } from "@a2ui/web_core";
+export { Types, Guards, Schemas, Styles, A2uiMessageProcessor, Primitives, WebEvents };
 
 export const Data = {
   createSignalA2uiMessageProcessor,
   A2uiMessageProcessor,
   Guards,
-};
-
-export const Schemas = {
-  A2UIClientEventMessage,
 };

@@ -18,13 +18,13 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { markdown } from "./directives/directives.js";
 import { Root } from "./root.js";
-import { StringValue } from "../types/primitives.js";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import * as Primitives from "@a2ui/web_core/types/primitives";
+import * as Types from "@a2ui/web_core/types/types";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
 import { Styles } from "../index.js";
-import { ResolvedText, Theme } from "../types/types.js";
 
 interface HintedStyles {
   h1: Record<string, string>;
@@ -39,10 +39,10 @@ interface HintedStyles {
 @customElement("a2ui-text")
 export class Text extends Root {
   @property()
-  accessor text: StringValue | null = null;
+  accessor text: Primitives.StringValue | null = null;
 
   @property({ reflect: true, attribute: "usage-hint" })
-  accessor usageHint: ResolvedText["usageHint"] | null = null;
+  accessor usageHint: Types.ResolvedText["usageHint"] | null = null;
 
   static styles = [
     structuralStyles,

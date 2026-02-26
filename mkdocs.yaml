@@ -58,6 +58,8 @@ nav:
       - v0.9 (Draft):
           - A2UI Specification: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
+  - Catalogs: catalogs.md
+  - Client-to-Server Actions: client_to_server_actions.md
   - Renderers (Clients): renderers.md
   - Transports (Message Passing): transports.md
   - Agents (Server-side): agents.md
@@ -66,6 +68,9 @@ nav:
   - Reference:
       - Component Reference: reference/components.md
       - Message Reference: reference/messages.md
+
+exclude_docs: |
+  scripts/**
 
 # Repository
 repo_name: google/A2UI
@@ -180,6 +185,4 @@ plugins:
   #     sections:
   #       "Specification":
   #         - a2ui_protocol.md
-  # - redirects:
-  #     redirect_maps:
-  #       "index.md": "a2ui_protocol.md"
+

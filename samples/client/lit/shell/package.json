@@ -12,7 +12,9 @@
     "build:tsc": "wireit",
     "dev": "npm run serve --watch",
     "test": "wireit",
-    "serve": "wireit"
+    "serve": "wireit",
+    "demo:contact": "(cd ../../../agent/adk/contact_lookup && uv run .)",
+    "demo:restaurant": "(cd ../../../agent/adk/restaurant_finder && uv run .)"
   },
   "wireit": {
     "serve": {

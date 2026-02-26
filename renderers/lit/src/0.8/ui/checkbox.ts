@@ -17,19 +17,20 @@
 import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
-import { StringValue, BooleanValue } from "../types/primitives";
+import * as Primitives from "@a2ui/web_core/types/primitives";
+import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiMessageProcessor } from "../data/model-processor.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
+import { extractStringValue } from "./utils/utils.js";
 
 @customElement("a2ui-checkbox")
 export class Checkbox extends Root {
   @property()
-  accessor value: BooleanValue | null = null;
+  accessor value: Primitives.BooleanValue | null = null;
 
   @property()
-  accessor label: StringValue | null = null;
+  accessor label: Primitives.StringValue | null = null;
 
   static styles = [
     structuralStyles,
@@ -57,7 +58,7 @@ export class Checkbox extends Root {
     `,
   ];
 
-  #setBoundValue(value: string) {
+  #setBoundValue(value: boolean) {
     if (!this.value || !this.processor) {
       return;
     }
@@ -93,14 +94,19 @@ export class Checkbox extends Root {
             return;
           }
 
-          this.#setBoundValue(evt.target.value);
+          this.#setBoundValue(evt.target.checked);
         }}
         id="data"
         type="checkbox"
-        .value=${value}
+        .checked=${value}
       />
       <label class=${classMap(this.theme.components.CheckBox.label)} for="data"
-        >${this.label?.literalString}</label
+        >${extractStringValue(
+          this.label,
+          this.component,
+          this.processor,
+          this.surfaceId
+        )}</label
       >
     </section>`;
   }

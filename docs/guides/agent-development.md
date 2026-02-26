@@ -94,8 +94,9 @@ Select `my_agent` from the list, and ask questions about restaurants in New York
 
 Getting the LLM to generate A2UI messages requires some prompt engineering.  
 
-!!! warning "Attention"
-    This is an area we are still designing.  The developer ergonomics of this are not yet finalized.
+> ⚠️ **Attention**
+>
+> This is an area we are still designing.  The developer ergonomics of this are not yet finalized.
 
 For now, let's copy the `a2ui_schema.py` from the contact lookup example.  This is the easiest way to get the A2UI schema and examples for your agent (subject to change).
 
