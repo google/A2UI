@@ -48,13 +48,15 @@ describe('DataContext', () => {
     assert.strictEqual(rootContext.resolveDynamicValue({ path: 'user/name' }), 'Alice');
   });
 
-  it('subscribes relative path', (_, done) => {
+  it('subscribes relative path', () => {
+    let called = false;
     const sub = context.subscribeDynamicValue({ path: 'name' });
     sub.onChange = (val) => {
       assert.strictEqual(val, 'Charlie');
-      done();
+      called = true;
     };
     context.set('name', 'Charlie');
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
   it('resolves using resolveDynamicValue() method with literals', () => {

@@ -126,42 +126,50 @@ describe('DataModel', () => {
     assert.strictEqual(updatedValue, 2);
   });
 
-  it('notifies subscribers on exact match', (_: any, done: (result?: any) => void) => {
+  it('notifies subscribers on exact match', () => {
+    let called = false;
     const sub = model.subscribe('/user/name');
     sub.onChange = (val) => {
       assert.strictEqual(val, 'Charlie');
-      done();
+      called = true;
     };
     model.set('/user/name', 'Charlie');
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
-  it('notifies ancestor subscribers (Container Semantics)', (_: any, done: (result?: any) => void) => {
+  it('notifies ancestor subscribers (Container Semantics)', () => {
+    let called = false;
     const sub = model.subscribe('/user');
     sub.onChange = (val: any) => {
       assert.strictEqual(val.name, 'Dave');
-      done();
+      called = true;
     };
     model.set('/user/name', 'Dave');
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
-  it('notifies descendant subscribers', (_: any, done: (result?: any) => void) => {
+  it('notifies descendant subscribers', () => {
+    let called = false;
     const sub = model.subscribe('/user/settings/theme');
     sub.onChange = (val) => {
       assert.strictEqual(val, 'light');
-      done();
+      called = true;
     };
 
     // We update the parent object
     model.set('/user/settings', { theme: 'light' });
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
-  it('notifies root subscriber', (_: any, done: (result?: any) => void) => {
+  it('notifies root subscriber', () => {
+    let called = false;
     const sub = model.subscribe('/');
     sub.onChange = (val: any) => {
       assert.strictEqual(val.newProp, 'test');
-      done();
+      called = true;
     };
     model.set('/newProp', 'test');
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
   it('notifies parent when child updates', () => {
