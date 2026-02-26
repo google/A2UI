@@ -2513,10 +2513,11 @@
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">}</span>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Common uses for Local Actions include:
-- <strong>Routing</strong>: Navigating to a different URL or application state via <code>openUrl</code>.
-- <strong>Formatting</strong>: Using <code>formatString</code> to update a local display value based on other model changes.
-- <strong>UI Management</strong>: Closing modals or switching tabs without agent intervention.</p>
+<p>Common uses for Local Actions include:</p>
+<ul>
+<li><strong>Validation</strong>: Validating inputs for a form before submitting it to the server.</li>
+<li><strong>Formatting</strong>: Using <code>formatString</code> to format a local display value.</li>
+</ul>
 <h3 id="basic-catalog-action-validation-checks">Basic Catalog Action Validation (Checks)<a class="headerlink" href="#basic-catalog-action-validation-checks" title="Permanent link">&para;</a></h3>
 <p>The basic catalog defines a limited set of checks that can be performed on the client. Interactive components can define a list of <code>checks</code> (using the <code>Checkable</code> schema in <a href="../specification/v0_9/json/common_types.json"><code>common_types.json</code></a>). For a <code>Button</code>, if any check fails, the button is <strong>automatically disabled</strong> on the client.</p>
 <ul>
@@ -2551,10 +2552,12 @@
 </div>
 <p>This local-first approach offers a significant <strong>Performance Benefit</strong>. Because synchronization is immediate and local, developers don't need to implement network debouncing or worry about latency jitters as a user types in a <code>TextField</code>. The network is completely protected from "UI noise" (like individual keystrokes) until the user is ready to dispatch a formal Action.</p>
 <h3 id="the-form-submission-pattern">The Form Submission Pattern<a class="headerlink" href="#the-form-submission-pattern" title="Permanent link">&para;</a></h3>
-<p>This separation allows for a robust form submission pattern:
-- <strong>Binding</strong>: A <code>TextField</code> is bound to <code>/reservationTime</code>.
-- <strong>Interaction</strong>: The user types "7:00 PM". The local model at <code>/reservationTime</code> is updated instantly.
-- <strong>Submission</strong>: The user clicks a "Book" button. The button's action resolves the <code>path: "/reservationTime"</code> from the local model and sends the current value to the server.</p>
+<p>This separation allows for a robust form submission pattern:</p>
+<ul>
+<li><strong>Binding</strong>: A <code>TextField</code> is bound to <code>/reservationTime</code>.</li>
+<li><strong>Interaction</strong>: The user types "7:00 PM". The local model at <code>/reservationTime</code> is updated instantly.</li>
+<li><strong>Submission</strong>: The user clicks a "Book" button. The button's action resolves the <code>path: "/reservationTime"</code> from the local model and sends the current value to the server.</li>
+</ul>
 <h2 id="user-interaction-flow">User Interaction Flow<a class="headerlink" href="#user-interaction-flow" title="Permanent link">&para;</a></h2>
 <p>When a user interacts with a component (e.g., clicks a button):</p>
 <ol>
