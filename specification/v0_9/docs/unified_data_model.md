@@ -4,7 +4,7 @@ This document describes the architecture of the A2UI client-side data model. The
 
 ## Architectural Layers
 
-### 1. Processing Layer (`A2uiMessageProcessor`)
+### 1. Processing Layer (`MessageProcessor`)
 
 The **Processing Layer** is the entry point for the system. It is responsible for bridging the gap between the wire protocol (JSON messages) and the internal object model.
 
@@ -13,7 +13,7 @@ The **Processing Layer** is the entry point for the system. It is responsible fo
 *   **Logic:** It handles the complexity of the protocol, such as routing messages to the correct surface, validating schema references, and instantiating model objects.
 
 ```typescript
-class A2uiMessageProcessor<T extends CatalogApi> {
+class MessageProcessor<T extends CatalogApi> {
   readonly model: SurfaceGroupModel<T>; // Root state container for all surfaces
   
   constructor(catalogs: T[], actionHandler: ActionListener);

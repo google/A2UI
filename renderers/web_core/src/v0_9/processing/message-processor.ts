@@ -5,12 +5,14 @@ import { ComponentModel } from '../state/component-model.js';
 
 export type { SurfaceLifecycleListener };
 
+import { A2UIMessage } from './messages.js';
+
 /**
  * The central processor for A2UI messages.
  * @template T The concrete type of the Catalog, which extends CatalogApi.
  */
-export class A2uiMessageProcessor<T extends CatalogApi> {
-  readonly model: SurfaceGroupModel<T> = new SurfaceGroupModel<T>();
+export class MessageProcessor<T extends CatalogApi> {
+  readonly model: SurfaceGroupModel<T>;
 
   /**
    * @param catalogs A list of available catalogs.
@@ -20,6 +22,7 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
     private catalogs: T[],
     private actionHandler: ActionListener
   ) {
+    this.model = new SurfaceGroupModel<T>();
     this.model.addActionListener(this.actionHandler);
   }
 
@@ -38,9 +41,9 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
     this.model.removeLifecycleListener(listener);
   }
 
-  processMessages(messages: any[]): void {
-    for (const msg of messages) {
-      this.processMessage(msg);
+  processMessages(messages: A2UIMessage[]): void {
+    for (const message of messages) {
+      this.processMessage(message);
     }
   }
 
@@ -48,77 +51,106 @@ export class A2uiMessageProcessor<T extends CatalogApi> {
     return this.model.getSurface(surfaceId);
   }
 
-  private processMessage(msg: any): void {
-    if (msg.createSurface) {
-      const payload = msg.createSurface;
-      const { surfaceId, catalogId, theme } = payload;
-
-      // Find catalog
-      const catalog = this.catalogs.find(c => c.id === catalogId);
-      if (!catalog) {
-        console.warn(`Catalog not found: ${catalogId}`);
-        return;
-      }
-
-      if (this.model.getSurface(surfaceId)) {
-        console.warn(`Surface ${surfaceId} already exists. Ignoring.`);
-        return;
-      }
-
-      const surface = new SurfaceModel<T>(surfaceId, catalog, theme);
-      this.model.addSurface(surface);
+  private processMessage(message: A2UIMessage): void {
+    if (message.createSurface) {
+      this.processCreateSurfaceMessage(message);
       return;
     }
 
-    const updateTypes = ['updateComponents', 'updateDataModel', 'deleteSurface'].filter(k => msg[k]);
+    const updateTypes = ['updateComponents', 'updateDataModel', 'deleteSurface'].filter(k => (message as any)[k]);
     if (updateTypes.length > 1) {
       console.warn(`Message contains multiple update types: ${updateTypes.join(', ')}. Ignoring.`);
       return;
     }
 
-    // Extract surfaceId from payload
-    const payload = msg.updateComponents || msg.updateDataModel || msg.deleteSurface;
-    if (!payload?.surfaceId) return;
-
-    if (msg.deleteSurface) {
-      this.model.deleteSurface(payload.surfaceId);
+    if (message.deleteSurface) {
+      this.processDeleteSurfaceMessage(message);
       return;
     }
 
-    const surface = this.model.getSurface(payload.surfaceId);
-    if (surface) {
-      if (msg.updateComponents) {
-        const updatePayload = msg.updateComponents;
-        for (const comp of updatePayload.components) {
-          const { id, component, ...properties } = comp;
-
-          const existing = surface.componentsModel.get(id);
-          if (existing) {
-            if (component && component !== existing.type) {
-              // Recreate component if type changes
-              surface.componentsModel.removeComponent(id);
-              const newComponent = new ComponentModel(id, component, properties);
-              surface.componentsModel.addComponent(newComponent);
-            } else {
-              existing.update(properties);
-            }
-          } else {
-            if (!component) {
-              console.warn(`Cannot create component ${id} without a type.`);
-              continue;
-            }
-            const newComponent = new ComponentModel(id, component, properties);
-            surface.componentsModel.addComponent(newComponent);
-          }
-        }
-      } else if (msg.updateDataModel) {
-        const updatePayload = msg.updateDataModel;
-        const path = updatePayload.path || '/';
-        const value = updatePayload.value;
-        surface.dataModel.set(path, value);
-      }
-    } else {
-      console.warn(`Surface not found for message: ${payload.surfaceId}`);
+    if (message.updateComponents) {
+      this.processUpdateComponentsMessage(message);
+      return;
     }
+
+    if (message.updateDataModel) {
+      this.processUpdateDataModelMessage(message);
+      return;
+    }
+  }
+
+  private processCreateSurfaceMessage(message: A2UIMessage): void {
+    const payload = message.createSurface!;
+    const { surfaceId, catalogId, theme } = payload;
+
+    // Find catalog
+    const catalog = this.catalogs.find(c => c.id === catalogId);
+    if (!catalog) {
+      console.warn(`Catalog not found: ${catalogId}`);
+      return;
+    }
+
+    if (this.model.getSurface(surfaceId)) {
+      console.warn(`Surface ${surfaceId} already exists. Ignoring.`);
+      return;
+    }
+
+    const surface = new SurfaceModel<T>(surfaceId, catalog, theme);
+    this.model.addSurface(surface);
+  }
+
+  private processDeleteSurfaceMessage(message: A2UIMessage): void {
+    const payload = message.deleteSurface!;
+    if (!payload.surfaceId) return;
+    this.model.deleteSurface(payload.surfaceId);
+  }
+
+  private processUpdateComponentsMessage(message: A2UIMessage): void {
+    const payload = message.updateComponents!;
+    if (!payload.surfaceId) return;
+
+    const surface = this.model.getSurface(payload.surfaceId);
+    if (!surface) {
+      console.warn(`Surface not found for message: ${payload.surfaceId}`);
+      return;
+    }
+
+    for (const comp of payload.components) {
+      const { id, component, ...properties } = comp;
+
+      const existing = surface.componentsModel.get(id);
+      if (existing) {
+        if (component && component !== existing.type) {
+          // Recreate component if type changes
+          surface.componentsModel.removeComponent(id);
+          const newComponent = new ComponentModel(id, component, properties);
+          surface.componentsModel.addComponent(newComponent);
+        } else {
+          existing.update(properties);
+        }
+      } else {
+        if (!component) {
+          console.warn(`Cannot create component ${id} without a type.`);
+          continue;
+        }
+        const newComponent = new ComponentModel(id, component, properties);
+        surface.componentsModel.addComponent(newComponent);
+      }
+    }
+  }
+
+  private processUpdateDataModelMessage(message: A2UIMessage): void {
+    const payload = message.updateDataModel!;
+    if (!payload.surfaceId) return;
+
+    const surface = this.model.getSurface(payload.surfaceId);
+    if (!surface) {
+      console.warn(`Surface not found for message: ${payload.surfaceId}`);
+      return;
+    }
+
+    const path = payload.path || '/';
+    const value = payload.value;
+    surface.dataModel.set(path, value);
   }
 }

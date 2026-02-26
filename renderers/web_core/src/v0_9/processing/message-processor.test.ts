@@ -1,11 +1,11 @@
 
 import assert from 'node:assert';
 import { test, describe, it, beforeEach } from 'node:test';
-import { A2uiMessageProcessor } from './message-processor.js';
+import { MessageProcessor } from './message-processor.js';
 import { CatalogApi } from '../catalog/types.js';
 
-describe('A2uiMessageProcessor', () => {
-  let processor: A2uiMessageProcessor<CatalogApi>;
+describe('MessageProcessor', () => {
+  let processor: MessageProcessor<CatalogApi>;
   let testCatalog: CatalogApi;
   let actions: any[] = [];
 
@@ -15,7 +15,7 @@ describe('A2uiMessageProcessor', () => {
       id: 'test-catalog',
       components: new Map()
     };
-    processor = new A2uiMessageProcessor<CatalogApi>([testCatalog], async (a) => { actions.push(a); });
+    processor = new MessageProcessor<CatalogApi>([testCatalog], async (a) => { actions.push(a); });
   });
 
   it('creates surface', () => {

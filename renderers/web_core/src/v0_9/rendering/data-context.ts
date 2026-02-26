@@ -41,7 +41,7 @@ export class DataContext {
 
     // 3. Function Call: { call: "...", args: ... }
     if ('call' in value) {
-      // TODO: Implement function calls
+      // TODO: Implement function calls (expected for now)
       // For now, return as is or undefined
     }
 
