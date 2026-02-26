@@ -26,7 +26,7 @@ describe('MessageProcessor', () => {
         theme: {}
       }
     }]);
-    const surface = processor.getSurfaceModel('s1');
+    const surface = processor.model.getSurface('s1');
     assert.ok(surface);
     assert.strictEqual(surface.id, 's1');
   });
@@ -43,7 +43,7 @@ describe('MessageProcessor', () => {
       }
     }]);
 
-    const surface = processor.getSurfaceModel('s1');
+    const surface = processor.model.getSurface('s1');
     assert.ok(surface?.componentsModel.get('root'));
   });
 
@@ -60,7 +60,7 @@ describe('MessageProcessor', () => {
       }
     }]);
 
-    const surface = processor.getSurfaceModel('s1');
+    const surface = processor.model.getSurface('s1');
     const btn = surface?.componentsModel.get('btn');
     assert.strictEqual(btn?.properties.label, 'Initial');
 
@@ -79,12 +79,12 @@ describe('MessageProcessor', () => {
     processor.processMessages([{
       createSurface: { surfaceId: 's1', catalogId: 'test-catalog' }
     }]);
-    assert.ok(processor.getSurfaceModel('s1'));
+    assert.ok(processor.model.getSurface('s1'));
 
     processor.processMessages([{
       deleteSurface: { surfaceId: 's1' }
     }]);
-    assert.strictEqual(processor.getSurfaceModel('s1'), undefined);
+    assert.strictEqual(processor.model.getSurface('s1'), undefined);
   });
 
   it('routes data model updates', () => {
@@ -100,7 +100,7 @@ describe('MessageProcessor', () => {
       }
     }]);
 
-    const surface = processor.getSurfaceModel('s1');
+    const surface = processor.model.getSurface('s1');
     assert.strictEqual(surface?.dataModel.get('/foo'), 'bar');
   });
 

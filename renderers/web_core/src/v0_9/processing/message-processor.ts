@@ -47,10 +47,6 @@ export class MessageProcessor<T extends CatalogApi> {
     }
   }
 
-  getSurfaceModel(surfaceId: string): SurfaceModel<T> | undefined {
-    return this.model.getSurface(surfaceId);
-  }
-
   private processMessage(message: A2UIMessage): void {
     if (message.createSurface) {
       this.processCreateSurfaceMessage(message);
