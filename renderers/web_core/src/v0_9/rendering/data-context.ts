@@ -1,5 +1,5 @@
-import { DataModel, Subscription } from '../state/data-model.js';
-import type { DynamicValueDef, DataBindingDef, FunctionCallDef } from '../catalog/schema_types.js';
+import { DataModel, DataSubscription } from '../state/data-model.js';
+import type { DynamicValueDef, DataBindingDef, FunctionCallDef } from '../schema/common-types.js';
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving 
@@ -55,7 +55,7 @@ export class DataContext {
    * Subscribes to changes in a DynamicValue.
    * Returns a Subscription object that provides the current value and allows listening for updates.
    */
-  subscribeDynamicValue<V>(value: DynamicValueDef, onChange: (value: V | undefined) => void): Subscription<V> {
+  subscribeDynamicValue<V>(value: DynamicValueDef, onChange: (value: V | undefined) => void): DataSubscription<V> {
     // 1. Literal: Return a static subscription
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return {

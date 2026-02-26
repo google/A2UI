@@ -14,22 +14,19 @@
  limitations under the License.
  */
 
+import { Subscription as BaseSubscription } from '../common/events.js';
+
 /**
  * Represents a reactive connection to a specific path in the data model.
  */
-export interface Subscription<T> {
+export interface DataSubscription<T> extends BaseSubscription {
   /**
    * The current value at the subscribed path.
    */
   readonly value: T | undefined;
-
-  /**
-   * Unsubscribes from the data model.
-   */
-  unsubscribe(): void;
 }
 
-class SubscriptionImpl<T> implements Subscription<T> {
+class SubscriptionImpl<T> implements DataSubscription<T> {
   private _value: T | undefined;
   private readonly _unsubscribe: () => void;
   public onChange: (value: T | undefined) => void;
@@ -155,7 +152,7 @@ export class DataModel {
   /**
    * Subscribes to changes at a specific path. Returns a Subscription object.
    */
-  subscribe<T>(path: string, onChange: (value: T | undefined) => void): Subscription<T> {
+  subscribe<T>(path: string, onChange: (value: T | undefined) => void): DataSubscription<T> {
     const normalizedPath = this.normalizePath(path);
     const initialValue = this.get(normalizedPath);
 

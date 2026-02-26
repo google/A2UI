@@ -30,11 +30,9 @@ describe('SurfaceComponentsModel', () => {
     
     // Track update on component itself
     let updateCount = 0;
-    c1.addUpdateListener({
-      onComponentUpdated: () => updateCount++
-    });
+    c1.onUpdated.subscribe(() => { updateCount++; });
 
-    c1.update({ label: 'Updated' });
+    c1.properties = { label: 'Updated' };
     
     assert.strictEqual(c1.properties.label, 'Updated');
     assert.strictEqual(updateCount, 1);
@@ -42,10 +40,8 @@ describe('SurfaceComponentsModel', () => {
 
   it('notifies on component creation', () => {
     let createdComponent: ComponentModel | undefined;
-    model.addLifecycleListener({
-      onComponentCreated: (c) => {
-        createdComponent = c;
-      }
+    model.onCreated.subscribe((c) => {
+      createdComponent = c;
     });
 
     model.addComponent(new ComponentModel('c1', 'Button', {}));

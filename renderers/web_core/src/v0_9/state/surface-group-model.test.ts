@@ -41,10 +41,8 @@ describe('SurfaceGroupModel', () => {
     let created: SurfaceModel<CatalogApi> | undefined;
     let deletedId: string | undefined;
 
-    model.addLifecycleListener({
-      onSurfaceCreated: (s) => created = s,
-      onSurfaceDeleted: (id) => deletedId = id
-    });
+    model.onSurfaceCreated.subscribe((s) => { created = s; });
+    model.onSurfaceDeleted.subscribe((id) => { deletedId = id; });
 
     const surface = new SurfaceModel('s1', catalog, {});
     model.addSurface(surface);
@@ -57,7 +55,7 @@ describe('SurfaceGroupModel', () => {
 
   it('propagates actions from surfaces', async () => {
     let receivedAction: any;
-    model.addActionListener((action) => {
+    model.onAction.subscribe((action) => {
         receivedAction = action;
     });
 
@@ -70,7 +68,7 @@ describe('SurfaceGroupModel', () => {
 
   it('stops propagating actions after deletion', async () => {
     let callCount = 0;
-    model.addActionListener(() => {
+    model.onAction.subscribe(() => {
         callCount++;
     });
 

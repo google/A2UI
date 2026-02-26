@@ -1,4 +1,3 @@
-
 import assert from 'node:assert';
 import { test, describe, it, beforeEach } from 'node:test';
 import { MessageProcessor } from './message-processor.js';
@@ -108,10 +107,8 @@ describe('MessageProcessor', () => {
     let created: any = null;
     let deletedId: string | null = null;
 
-    const unsubscribe = processor.addLifecycleListener({
-      onSurfaceCreated: (s) => created = s,
-      onSurfaceDeleted: (id) => deletedId = id
-    });
+    const sub = processor.onSurfaceCreated((s) => { created = s; });
+    const sub2 = processor.onSurfaceDeleted((id) => { deletedId = id; });
 
     // Create
     processor.processMessages([{
@@ -128,10 +125,12 @@ describe('MessageProcessor', () => {
 
     // Test Unsubscribe
     created = null;
-    unsubscribe();
+    sub.unsubscribe();
     processor.processMessages([{
       createSurface: { surfaceId: 's2', catalogId: 'test-catalog' }
     }]);
     assert.strictEqual(created, null);
+    
+    sub2.unsubscribe();
   });
 });

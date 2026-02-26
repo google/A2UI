@@ -7,7 +7,7 @@ import { ComponentModel } from '../state/component-model.js';
 export class TestSurfaceModel extends SurfaceModel<CatalogApi> {
   constructor(actionHandler: any = async () => { }) {
     super('test', { id: 'test-catalog', components: new Map() }, {});
-    this.addActionListener(actionHandler);
+    this.onAction.subscribe(actionHandler);
   }
 }
 

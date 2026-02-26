@@ -1,10 +1,6 @@
-import { SurfaceModel, ActionListener } from './surface-model.js';
+import { SurfaceModel } from './surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
-
-export interface SurfaceLifecycleListener<T extends CatalogApi> {
-  onSurfaceCreated?: (surface: SurfaceModel<T>) => void;
-  onSurfaceDeleted?: (surfaceId: string) => void;
-}
+import { EventEmitter, EventSource, Subscription } from '../common/events.js';
 
 /**
  * The root state model for the A2UI system.
@@ -12,9 +8,18 @@ export interface SurfaceLifecycleListener<T extends CatalogApi> {
  */
 export class SurfaceGroupModel<T extends CatalogApi> {
   private surfaces: Map<string, SurfaceModel<T>> = new Map();
-  private surfaceUnsubscribers: Map<string, () => void> = new Map();
-  private lifecycleListeners: Set<SurfaceLifecycleListener<T>> = new Set();
-  private actionListeners: Set<ActionListener> = new Set();
+  private surfaceUnsubscribers: Map<string, Subscription> = new Map();
+  
+  private readonly _onSurfaceCreated = new EventEmitter<SurfaceModel<T>>();
+  private readonly _onSurfaceDeleted = new EventEmitter<string>();
+  private readonly _onAction = new EventEmitter<any>();
+
+  /** Fires when a new surface is added. */
+  readonly onSurfaceCreated: EventSource<SurfaceModel<T>> = this._onSurfaceCreated;
+  /** Fires when a surface is removed. */
+  readonly onSurfaceDeleted: EventSource<string> = this._onSurfaceDeleted;
+  /** Fires when an action is dispatched from ANY surface in the group. */
+  readonly onAction: EventSource<any> = this._onAction;
 
   addSurface(surface: SurfaceModel<T>): void {
     if (this.surfaces.has(surface.id)) {
@@ -25,23 +30,24 @@ export class SurfaceGroupModel<T extends CatalogApi> {
     this.surfaces.set(surface.id, surface);
 
     // Subscribe to surface actions and propagate
-    const unsubscribe = surface.addActionListener((action) => this.dispatchAction(action));
-    this.surfaceUnsubscribers.set(surface.id, unsubscribe);
+    const sub = surface.onAction.subscribe((action) => this._onAction.emit(action));
+    this.surfaceUnsubscribers.set(surface.id, sub);
 
-    this.notifyCreated(surface);
+    this._onSurfaceCreated.emit(surface);
   }
 
   deleteSurface(id: string): void {
-    if (this.surfaces.has(id)) {
-      // Unsubscribe from actions
-      const unsubscribe = this.surfaceUnsubscribers.get(id);
-      if (unsubscribe) {
-        unsubscribe();
+    const surface = this.surfaces.get(id);
+    if (surface) {
+      const sub = this.surfaceUnsubscribers.get(id);
+      if (sub) {
+        sub.unsubscribe();
         this.surfaceUnsubscribers.delete(id);
       }
 
       this.surfaces.delete(id);
-      this.notifyDeleted(id);
+      surface.dispose();
+      this._onSurfaceDeleted.emit(id);
     }
   }
 
@@ -49,51 +55,12 @@ export class SurfaceGroupModel<T extends CatalogApi> {
     return this.surfaces.get(id);
   }
 
-  addLifecycleListener(listener: SurfaceLifecycleListener<T>): () => void {
-    this.lifecycleListeners.add(listener);
-    return () => this.lifecycleListeners.delete(listener);
-  }
-
-  removeLifecycleListener(listener: SurfaceLifecycleListener<T>): void {
-    this.lifecycleListeners.delete(listener);
-  }
-
-  addActionListener(listener: ActionListener): () => void {
-    this.actionListeners.add(listener);
-    return () => this.actionListeners.delete(listener);
-  }
-
-  removeActionListener(listener: ActionListener): void {
-    this.actionListeners.delete(listener);
-  }
-
-  private async dispatchAction(action: any): Promise<void> {
-    for (const listener of this.actionListeners) {
-      try {
-        await listener(action);
-      } catch (e) {
-        console.error('Error in SurfaceGroupModel ActionListener:', e);
-      }
+  dispose(): void {
+    for (const id of Array.from(this.surfaces.keys())) {
+      this.deleteSurface(id);
     }
-  }
-
-  private notifyCreated(surface: SurfaceModel<T>): void {
-    for (const listener of this.lifecycleListeners) {
-      try {
-        listener.onSurfaceCreated?.(surface);
-      } catch (e) {
-        console.error('Error in onSurfaceCreated listener:', e);
-      }
-    }
-  }
-
-  private notifyDeleted(id: string): void {
-    for (const listener of this.lifecycleListeners) {
-      try {
-        listener.onSurfaceDeleted?.(id);
-      } catch (e) {
-        console.error('Error in onSurfaceDeleted listener:', e);
-      }
-    }
+    this._onSurfaceCreated.dispose();
+    this._onSurfaceDeleted.dispose();
+    this._onAction.dispose();
   }
 }

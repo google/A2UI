@@ -1,15 +1,19 @@
 import { ComponentModel } from './component-model.js';
+import { EventEmitter, EventSource } from '../common/events.js';
 
-export interface ComponentsLifecycleListener {
-  onComponentCreated: (component: ComponentModel) => void;
-  onComponentDeleted?: (componentId: string) => void;
-}
-
+/**
+ * Manages the collection of components for a specific surface.
+ */
 export class SurfaceComponentsModel {
   private components: Map<string, ComponentModel> = new Map();
-  private listeners: Set<ComponentsLifecycleListener> = new Set();
+  
+  private readonly _onCreated = new EventEmitter<ComponentModel>();
+  private readonly _onDeleted = new EventEmitter<string>();
 
-  constructor() {}
+  /** Fires when a new component is added to the model. */
+  readonly onCreated: EventSource<ComponentModel> = this._onCreated;
+  /** Fires when a component is removed, providing the ID of the deleted component. */
+  readonly onDeleted: EventSource<string> = this._onDeleted;
 
   get(id: string): ComponentModel | undefined {
     return this.components.get(id);
@@ -21,42 +25,24 @@ export class SurfaceComponentsModel {
     }
 
     this.components.set(component.id, component);
-    this.notifyCreated(component);
+    this._onCreated.emit(component);
   }
 
   removeComponent(id: string): void {
-    if (this.components.has(id)) {
+    const component = this.components.get(id);
+    if (component) {
       this.components.delete(id);
-      this.notifyDeleted(id);
+      component.dispose();
+      this._onDeleted.emit(id);
     }
   }
 
-  addLifecycleListener(listener: ComponentsLifecycleListener): () => void {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  }
-
-  removeLifecycleListener(listener: ComponentsLifecycleListener): void {
-    this.listeners.delete(listener);
-  }
-
-  private notifyCreated(component: ComponentModel): void {
-    for (const listener of this.listeners) {
-      try {
-        listener.onComponentCreated(component);
-      } catch (e) {
-        console.error('Error in ComponentsLifecycleListener.onComponentCreated:', e);
-      }
+  dispose(): void {
+    for (const component of this.components.values()) {
+      component.dispose();
     }
-  }
-
-  private notifyDeleted(id: string): void {
-    for (const listener of this.listeners) {
-      try {
-        listener.onComponentDeleted?.(id);
-      } catch (e) {
-        console.error('Error in ComponentsLifecycleListener.onComponentDeleted:', e);
-      }
-    }
+    this.components.clear();
+    this._onCreated.dispose();
+    this._onDeleted.dispose();
   }
 }

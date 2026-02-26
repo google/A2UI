@@ -1,11 +1,10 @@
 import { SurfaceModel, ActionListener } from '../state/surface-model.js';
 import { CatalogApi } from '../catalog/types.js';
-import { SurfaceGroupModel, SurfaceLifecycleListener } from '../state/surface-group-model.js';
+import { SurfaceGroupModel } from '../state/surface-group-model.js';
 import { ComponentModel } from '../state/component-model.js';
+import { Subscription } from '../common/events.js';
 
-export type { SurfaceLifecycleListener };
-
-import { A2UIMessage } from './messages.js';
+import { A2UIMessage } from '../schema/server-to-client.js';
 
 /**
  * The central processor for A2UI messages.
@@ -23,22 +22,21 @@ export class MessageProcessor<T extends CatalogApi> {
     private actionHandler: ActionListener
   ) {
     this.model = new SurfaceGroupModel<T>();
-    this.model.addActionListener(this.actionHandler);
+    this.model.onAction.subscribe(this.actionHandler);
   }
 
   /**
-   * Adds a listener for surface lifecycle events.
-   * @returns A function to unsubscribe the listener.
+   * Subscribes to surface creation events.
    */
-  addLifecycleListener(listener: SurfaceLifecycleListener<T>): () => void {
-    return this.model.addLifecycleListener(listener);
+  onSurfaceCreated(handler: (surface: SurfaceModel<T>) => void): Subscription {
+    return this.model.onSurfaceCreated.subscribe(handler);
   }
 
   /**
-   * Removes a lifecycle listener.
+   * Subscribes to surface deletion events.
    */
-  removeLifecycleListener(listener: SurfaceLifecycleListener<T>): void {
-    this.model.removeLifecycleListener(listener);
+  onSurfaceDeleted(handler: (id: string) => void): Subscription {
+    return this.model.onSurfaceDeleted.subscribe(handler);
   }
 
   processMessages(messages: A2UIMessage[]): void {
@@ -122,7 +120,7 @@ export class MessageProcessor<T extends CatalogApi> {
           const newComponent = new ComponentModel(id, component, properties);
           surface.componentsModel.addComponent(newComponent);
         } else {
-          existing.update(properties);
+          existing.properties = properties;
         }
       } else {
         if (!component) {

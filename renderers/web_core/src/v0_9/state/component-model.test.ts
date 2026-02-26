@@ -20,20 +20,18 @@ describe('ComponentModel', () => {
   });
 
   it('updates properties', () => {
-    component.update({ label: 'Clicked' });
+    component.properties = { label: 'Clicked' };
     assert.strictEqual(component.properties.label, 'Clicked');
   });
 
   it('notifies listeners on update', () => {
     let updatedComponent: ComponentModel | undefined;
-    const listener = {
-      onComponentUpdated: (c: ComponentModel) => {
-        updatedComponent = c;
-      }
-    };
     
-    component.addUpdateListener(listener);
-    component.update({ label: 'New' });
+    component.onUpdated.subscribe((c: ComponentModel) => {
+      updatedComponent = c;
+    });
+    
+    component.properties = { label: 'New' };
     
     assert.strictEqual(updatedComponent, component);
     assert.strictEqual(updatedComponent?.properties.label, 'New');
@@ -41,18 +39,16 @@ describe('ComponentModel', () => {
 
   it('unsubscribes listeners', () => {
     let callCount = 0;
-    const listener = {
-      onComponentUpdated: () => {
-        callCount++;
-      }
-    };
     
-    const unsubscribe = component.addUpdateListener(listener);
-    component.update({ label: '1' });
+    const sub = component.onUpdated.subscribe(() => {
+      callCount++;
+    });
+    
+    component.properties = { label: '1' };
     assert.strictEqual(callCount, 1);
     
-    unsubscribe();
-    component.update({ label: '2' });
+    sub.unsubscribe();
+    component.properties = { label: '2' };
     assert.strictEqual(callCount, 1);
   });
 });

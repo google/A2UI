@@ -1,6 +1,4 @@
-export interface ComponentUpdateListener {
-  onComponentUpdated(component: ComponentModel): void;
-}
+import { EventEmitter, EventSource } from '../common/events.js';
 
 export interface AccessibilityProperties {
   label?: any;
@@ -10,7 +8,12 @@ export interface AccessibilityProperties {
 
 export class ComponentModel {
   private _properties: Record<string, any>;
-  private listeners: Set<ComponentUpdateListener> = new Set();
+  private readonly _onUpdated = new EventEmitter<ComponentModel>();
+  
+  /** 
+   * Fires whenever the component's properties are updated.
+   */
+  readonly onUpdated: EventSource<ComponentModel> = this._onUpdated;
 
   constructor(
     readonly id: string,
@@ -24,31 +27,16 @@ export class ComponentModel {
     return this._properties;
   }
 
+  set properties(newProperties: Record<string, any>) {
+    this._properties = newProperties;
+    this._onUpdated.emit(this);
+  }
+
   get accessibility(): AccessibilityProperties | undefined {
     return this._properties['accessibility'];
   }
 
-  update(newProperties: Record<string, any>): void {
-    this._properties = newProperties;
-    this.notifyListeners();
-  }
-
-  addUpdateListener(listener: ComponentUpdateListener): () => void {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
-  }
-
-  removeUpdateListener(listener: ComponentUpdateListener): void {
-    this.listeners.delete(listener);
-  }
-
-  private notifyListeners(): void {
-    for (const listener of this.listeners) {
-      try {
-        listener.onComponentUpdated(this);
-      } catch (e) {
-        console.error(`Error in ComponentUpdateListener for ${this.id}:`, e);
-      }
-    }
+  dispose(): void {
+    this._onUpdated.dispose();
   }
 }

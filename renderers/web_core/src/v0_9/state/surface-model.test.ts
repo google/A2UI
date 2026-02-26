@@ -1,4 +1,3 @@
-
 import assert from 'node:assert';
 import { test, describe, it, beforeEach, mock } from 'node:test';
 import { SurfaceModel } from './surface-model.js';
@@ -18,7 +17,7 @@ describe('SurfaceModel', () => {
       components: new Map()
     };
     surface = new SurfaceModel<CatalogApi>('surface-1', catalog, {});
-    surface.addActionListener(async (action) => {
+    surface.onAction.subscribe(async (action) => {
       actions.push(action);
     });
   });
