@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-const DataBinding = z.object({
+export const DataBinding = z.object({
   path: z.string().describe('A JSON Pointer path to a value in the data model.')
 });
 
-const FunctionCall = z.object({
+export const FunctionCall = z.object({
   call: z.string().describe('The name of the function to call.'),
   args: z.record(z.any()).describe('Arguments passed to the function.'),
   returnType: z.enum(['string', 'number', 'boolean', 'array', 'object', 'any', 'void']).default('boolean')
@@ -44,13 +44,18 @@ const DynamicStringList = z.union([
     FunctionCall
 ]);
 
-const DynamicValue = z.union([
+export const DynamicValue = z.union([
     z.string(),
     z.number(),
     z.boolean(),
+    z.array(z.any()),
     DataBinding,
     FunctionCall
 ]);
+
+export type DataBindingDef = z.infer<typeof DataBinding>;
+export type FunctionCallDef = z.infer<typeof FunctionCall>;
+export type DynamicValueDef = z.infer<typeof DynamicValue>;
 
 const ComponentId = z.string().describe('The unique identifier for a component.');
 

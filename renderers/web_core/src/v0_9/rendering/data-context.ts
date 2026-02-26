@@ -1,4 +1,5 @@
 import { DataModel, Subscription } from '../state/data-model.js';
+import type { DynamicValueDef, DataBindingDef, FunctionCallDef } from '../catalog/schema_types.js';
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving 
@@ -27,15 +28,15 @@ export class DataContext {
    * Resolves a DynamicValue to its current evaluation.
    * Does not set up any subscriptions.
    */
-  resolveDynamicValue<V>(value: any): V {
+  resolveDynamicValue<V>(value: DynamicValueDef): V {
     // 1. Literal Check
-    if (typeof value !== 'object' || value === null) {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return value as V;
     }
 
     // 2. Path Check: { path: "..." }
-    if ('path' in value && typeof value.path === 'string') {
-      const absolutePath = this.resolvePath(value.path);
+    if ('path' in value) {
+      const absolutePath = this.resolvePath((value as DataBindingDef).path);
       return this.dataModel.get(absolutePath);
     }
 
@@ -52,9 +53,9 @@ export class DataContext {
    * Subscribes to changes in a DynamicValue.
    * Returns a Subscription object that provides the current value and allows listening for updates.
    */
-  subscribeDynamicValue<V>(value: any, onChange: (value: V | undefined) => void): Subscription<V> {
+  subscribeDynamicValue<V>(value: DynamicValueDef, onChange: (value: V | undefined) => void): Subscription<V> {
     // 1. Literal: Return a static subscription
-    if (typeof value !== 'object' || value === null) {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return {
         value: value as V,
         unsubscribe: () => {}
@@ -62,8 +63,8 @@ export class DataContext {
     }
 
     // 2. Path Check: { path: "..." }
-    if ('path' in value && typeof value.path === 'string') {
-      const absolutePath = this.resolvePath(value.path);
+    if ('path' in value) {
+      const absolutePath = this.resolvePath((value as DataBindingDef).path);
       return this.dataModel.subscribe(absolutePath, onChange);
     }
 

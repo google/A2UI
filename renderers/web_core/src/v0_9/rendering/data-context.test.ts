@@ -68,4 +68,18 @@ describe('DataContext', () => {
     // Absolute Path
     assert.strictEqual(context.resolveDynamicValue({ path: '/list/0' }), 'a');
   });
+
+  it('resolves literal arrays', () => {
+    assert.deepStrictEqual(context.resolveDynamicValue(['literal', 'array']), ['literal', 'array']);
+  });
+
+  it('subscribes literal arrays as static', () => {
+    let called = false;
+    const sub = context.subscribeDynamicValue(['literal', 'array'], () => { called = true; });
+    assert.deepStrictEqual(sub.value, ['literal', 'array']);
+    
+    // Simulate some generic path update that shouldn't trigger anything for this static sub
+    context.set('name', 'Charlie');
+    assert.strictEqual(called, false);
+  });
 });
