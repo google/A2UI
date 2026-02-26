@@ -39,12 +39,7 @@ os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "TRUE")
 from google.adk.agents import Agent
 from google.adk.tools import ToolContext
 
-# ============================================================================
-# MODULE-LEVEL CONFIGURATION
-# These variables are captured by cloudpickle during deployment.
-# They are set at import time from environment variables, ensuring they
-# persist in the deployed agent even though os.environ is not pickled.
-# ============================================================================
+# Captured at import time for cloudpickle serialization during deployment
 _CONFIG_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
 _CONFIG_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 
@@ -53,8 +48,7 @@ _CONFIG_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 try:
     from .context_loader import get_combined_context, load_context_file
     from .a2ui_templates import get_system_prompt, SURFACE_ID as _IMPORTED_SURFACE_ID
-    from .openstax_content import fetch_content_for_topic, fetch_chapter_content
-    from .openstax_chapters import OPENSTAX_CHAPTERS, KEYWORD_HINTS, get_openstax_url_for_chapter
+    from .openstax_content import fetch_content_for_topic
     _HAS_EXTERNAL_MODULES = True
     _HAS_OPENSTAX = True
 except Exception as e:
@@ -65,19 +59,18 @@ except Exception as e:
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Log warnings for degraded functionality
+# Log errors for missing modules (these are required, not optional)
 if not _HAS_EXTERNAL_MODULES:
-    logger.warning(
-        "External modules (context_loader, a2ui_templates) not available. "
-        "Using embedded fallback content. Import error: %s",
+    logger.error(
+        "Required modules (context_loader, a2ui_templates) not available. "
+        "Import error: %s",
         _IMPORT_ERROR if '_IMPORT_ERROR' in globals() else "unknown"
     )
 
 if not _HAS_OPENSTAX:
-    logger.warning(
-        "OpenStax content modules not available. Flashcards and quizzes will use "
-        "embedded content only, without textbook source material. "
-        "This may result in less accurate educational content."
+    logger.error(
+        "OpenStax content modules not available. "
+        "Flashcards and quizzes will not have textbook source material."
     )
 
 # Model configuration - use Gemini 2.5 Flash (available in us-central1)
@@ -89,217 +82,9 @@ SUPPORTED_FORMATS = ["flashcards", "audio", "podcast", "video", "quiz"]
 # Surface ID for A2UI rendering (use imported value if available, else fallback)
 SURFACE_ID = _IMPORTED_SURFACE_ID if _HAS_EXTERNAL_MODULES else "learningContent"
 
-# ============================================================================
-# GCS CONTEXT LOADING (for Agent Engine - loads dynamic context from GCS)
-# ============================================================================
-
-# GCS configuration - set via environment variables
-GCS_CONTEXT_BUCKET = os.getenv("GCS_CONTEXT_BUCKET", "a2ui-demo-context")
-GCS_CONTEXT_PREFIX = os.getenv("GCS_CONTEXT_PREFIX", "learner_context/")
-
-# Context files to load
-CONTEXT_FILES = [
-    "01_maria_learner_profile.txt",
-    "02_chemistry_bond_energy.txt",
-    "03_chemistry_thermodynamics.txt",
-    "04_biology_atp_cellular_respiration.txt",
-    "05_misconception_resolution.txt",
-    "06_mcat_practice_concepts.txt",
-]
 
 
-def _load_from_gcs(filename: str) -> Optional[str]:
-    """Load a context file from GCS bucket."""
-    try:
-        from google.cloud import storage
-
-        client = storage.Client()
-        bucket = client.bucket(GCS_CONTEXT_BUCKET)
-        blob = bucket.blob(f"{GCS_CONTEXT_PREFIX}{filename}")
-
-        if blob.exists():
-            content = blob.download_as_text()
-            logger.info(f"Loaded {filename} from GCS bucket {GCS_CONTEXT_BUCKET}")
-            return content
-        else:
-            logger.warning(f"File {filename} not found in GCS bucket {GCS_CONTEXT_BUCKET}")
-            return None
-
-    except Exception as e:
-        logger.warning(f"Failed to load from GCS: {e}")
-        return None
-
-
-def _load_all_context_from_gcs() -> dict[str, str]:
-    """Load all context files from GCS."""
-    context = {}
-    for filename in CONTEXT_FILES:
-        content = _load_from_gcs(filename)
-        if content:
-            context[filename] = content
-    logger.info(f"Loaded {len(context)} context files from GCS")
-    return context
-
-
-def _get_combined_context_from_gcs() -> str:
-    """Get all context combined from GCS."""
-    all_context = _load_all_context_from_gcs()
-
-    if all_context:
-        combined = []
-        for filename, content in sorted(all_context.items()):
-            combined.append(f"=== {filename} ===\n{content}\n")
-        return "\n".join(combined)
-
-    # Return empty string if GCS load failed - will trigger fallback
-    return ""
-
-
-# ============================================================================
-# EMBEDDED CONTEXT DATA (fallback when GCS is unavailable)
-# ============================================================================
-
-EMBEDDED_LEARNER_PROFILE = """
-## Learner Profile: Maria Santos
-
-**Background:**
-- Pre-med sophomore majoring in Biochemistry
-- Preparing for MCAT in 8 months
-- Works part-time as a pharmacy technician (20 hrs/week)
-
-**Learning Style:**
-- Visual-kinesthetic learner
-- Prefers analogies connecting to real-world applications
-- Responds well to gym/fitness metaphors (exercises regularly)
-- Benefits from spaced repetition for memorization
-
-**Current Progress:**
-- Completed: Cell structure, basic chemistry
-- In progress: Cellular energetics (ATP, metabolism)
-- Struggling with: Thermodynamics concepts, especially Gibbs free energy
-
-**Known Misconceptions:**
-- Believes "energy is stored in bonds" (common misconception)
-- Needs clarification that bond BREAKING releases energy in ATP hydrolysis
-"""
-
-EMBEDDED_CURRICULUM_CONTEXT = """
-## Current Topic: ATP and Cellular Energy
-
-**Learning Objectives:**
-1. Explain why ATP is considered the "energy currency" of cells
-2. Describe the structure of ATP and how it stores potential energy
-3. Understand that energy is released during hydrolysis due to product stability, not bond breaking
-4. Connect ATP usage to cellular processes like muscle contraction
-
-**Key Concepts:**
-- Adenosine triphosphate structure (adenine + ribose + 3 phosphate groups)
-- Phosphoanhydride bonds and electrostatic repulsion
-- Hydrolysis reaction: ATP + H2O → ADP + Pi + Energy
-- Gibbs free energy change (ΔG = -30.5 kJ/mol)
-- Coupled reactions in cellular metabolism
-
-**Common Misconceptions to Address:**
-- "Energy stored in bonds" - Actually, breaking bonds REQUIRES energy;
-  the energy released comes from forming more stable products (ADP + Pi)
-- ATP is not a long-term energy storage molecule (that's glycogen/fat)
-"""
-
-EMBEDDED_MISCONCEPTION_CONTEXT = """
-## Misconception Resolution: "Energy Stored in Bonds"
-
-**The Misconception:**
-Many students believe ATP releases energy because "energy is stored in the phosphate bonds."
-
-**The Reality:**
-- Breaking ANY chemical bond REQUIRES energy input (endothermic)
-- Energy is released when NEW, more stable bonds FORM (exothermic)
-- ATP hydrolysis releases energy because the products (ADP + Pi) are MORE STABLE than ATP
-
-**Why ATP is "High Energy":**
-- The three phosphate groups are negatively charged and repel each other
-- This electrostatic repulsion creates molecular strain (like a compressed spring)
-- When the terminal phosphate is removed, the products achieve better stability
-- The energy comes from relieving this strain, not from "stored bond energy"
-
-**Gym Analogy for Maria:**
-Think of ATP like holding a heavy plank position:
-- Holding the plank (ATP) requires constant energy expenditure to maintain
-- Dropping to rest (ADP + Pi) releases that tension
-- The "energy" wasn't stored in your muscles - it was the relief of an unstable state
-"""
-
-
-def _get_combined_context_fallback() -> str:
-    """Get combined context using embedded data when files aren't available."""
-    return f"""
-{EMBEDDED_LEARNER_PROFILE}
-
-{EMBEDDED_CURRICULUM_CONTEXT}
-
-{EMBEDDED_MISCONCEPTION_CONTEXT}
-"""
-
-
-def _get_system_prompt_fallback(format_type: str, context: str) -> str:
-    """Generate system prompt for A2UI generation (fallback for Agent Engine)."""
-    if format_type.lower() == "flashcards":
-        return f"""You are creating MCAT study flashcards for Maria, a pre-med student.
-
-## Maria's Profile
-{context}
-
-## Your Task
-Create 4-5 high-quality flashcards about ATP and bond energy that:
-1. Directly address her misconception that "energy is stored in bonds"
-2. Use sports/gym analogies she loves (compressed springs, holding planks, etc.)
-3. Are MCAT exam-focused with precise scientific language
-4. Have COMPLETE, THOUGHTFUL answers - not placeholders
-
-## A2UI JSON Format
-Output a JSON array starting with beginRendering, then surfaceUpdate with components.
-Use Flashcard components with front, back, and category fields.
-Use surfaceId: "{SURFACE_ID}"
-
-Generate the flashcards JSON (output ONLY valid JSON, no markdown):"""
-
-    if format_type.lower() == "quiz":
-        return f"""You are creating MCAT practice quiz questions for Maria, a pre-med student.
-
-## Maria's Profile
-{context}
-
-## Your Task
-Create 2-3 interactive quiz questions about ATP and bond energy that:
-1. Test her understanding of WHY ATP hydrolysis releases energy
-2. Include plausible wrong answers reflecting common misconceptions
-3. Provide detailed explanations using sports/gym analogies
-4. Are MCAT exam-style with precise scientific language
-
-## A2UI JSON Format
-Output a JSON array with QuizCard components. Each QuizCard has:
-- question: The question text
-- options: Array of 4 choices with label, value (a/b/c/d), isCorrect
-- explanation: Detailed explanation shown after answering
-- category: Topic category
-Use surfaceId: "{SURFACE_ID}"
-
-Generate the quiz JSON (output ONLY valid JSON, no markdown):"""
-
-    return f"""Generate A2UI JSON for {format_type} content.
-
-## Context
-{context}
-
-Use surfaceId: "{SURFACE_ID}"
-Output ONLY valid JSON, no markdown."""
-
-
-# ============================================================================
-# CACHING FOR PERFORMANCE
-# ============================================================================
-
-# Context cache with TTL
+# Context cache with TTL for performance
 _CONTEXT_CACHE: dict[str, Tuple[str, float]] = {}
 _CONTEXT_CACHE_TTL = 300  # 5 minutes
 
@@ -334,77 +119,54 @@ def clear_context_cache() -> None:
     logger.info("Context cache cleared")
 
 
-# Wrapper functions with priority: local files -> GCS -> embedded fallback
 def _safe_get_combined_context() -> str:
     """
-    Get combined context with fallback chain:
-    1. Local files (via external modules) - for local development
-    2. GCS bucket - for Agent Engine with dynamic context
-    3. Embedded data - final fallback
+    Get combined learner context. Uses context_loader which handles
+    local files (for development) and GCS fallback (for Agent Engine).
     """
-    # Try local files first (for local development with adk web)
-    if _HAS_EXTERNAL_MODULES:
-        try:
-            context = get_combined_context()
-            if context:
-                logger.info("Loaded context from local files")
-                return context
-        except Exception as e:
-            logger.warning(f"Failed to load context from local files: {e}")
+    if not _HAS_EXTERNAL_MODULES:
+        raise RuntimeError(
+            "context_loader module not available. Cannot load learner context."
+        )
 
-    # Try GCS (for Agent Engine deployment)
-    gcs_context = _get_combined_context_from_gcs()
-    if gcs_context:
-        logger.info("Loaded context from GCS")
-        return gcs_context
+    try:
+        context = get_combined_context()
+        if context:
+            return context
+    except Exception as e:
+        logger.error(f"Failed to load learner context: {e}")
+        raise RuntimeError(f"Could not load learner context: {e}")
 
-    # Fall back to embedded data
-    logger.info("Using embedded fallback context")
-    return _get_combined_context_fallback()
+    raise RuntimeError(
+        "No learner context found. Ensure context files exist in "
+        "learner_context/ or GCS bucket is configured."
+    )
 
 
 def _safe_load_context_file(filename: str) -> Optional[str]:
     """
-    Load context file with fallback chain:
-    1. Local files (via external modules)
-    2. GCS bucket
-    3. Embedded data
+    Load a single context file. Uses context_loader which handles
+    local files and GCS fallback.
     """
-    # Try local files first
-    if _HAS_EXTERNAL_MODULES:
-        try:
-            content = load_context_file(filename)
-            if content:
-                return content
-        except Exception as e:
-            logger.debug(f"Failed to load context file {filename} from local: {e}")
+    if not _HAS_EXTERNAL_MODULES:
+        logger.warning(f"context_loader not available, cannot load {filename}")
+        return None
 
-    # Try GCS
-    gcs_content = _load_from_gcs(filename)
-    if gcs_content:
-        return gcs_content
-
-    # Fall back to embedded data based on filename
-    if "learner_profile" in filename:
-        return EMBEDDED_LEARNER_PROFILE
-    if "misconception" in filename:
-        return EMBEDDED_MISCONCEPTION_CONTEXT
-    return None
+    try:
+        return load_context_file(filename)
+    except Exception as e:
+        logger.warning(f"Failed to load {filename}: {e}")
+        return None
 
 
 def _safe_get_system_prompt(format_type: str, context: str) -> str:
-    """Get system prompt, using fallback if external modules unavailable."""
-    if _HAS_EXTERNAL_MODULES:
-        try:
-            return get_system_prompt(format_type, context)
-        except Exception as e:
-            logger.warning(f"Failed to get system prompt: {e}, using fallback")
-    return _get_system_prompt_fallback(format_type, context)
-
-
-# ============================================================================
-# TOOL FUNCTIONS
-# ============================================================================
+    """Get system prompt from a2ui_templates module."""
+    if not _HAS_EXTERNAL_MODULES:
+        raise RuntimeError(
+            "a2ui_templates module not available. "
+            "Cannot generate system prompts without it."
+        )
+    return get_system_prompt(format_type, context)
 
 
 async def generate_flashcards(
@@ -425,10 +187,7 @@ async def generate_flashcards(
     Returns:
         A2UI JSON for flashcard components that can be rendered in the chat
     """
-    logger.info("=" * 60)
-    logger.info("GENERATE_FLASHCARDS CALLED")
-    logger.info(f"Topic received: {topic or '(none)'}")
-    logger.info("=" * 60)
+    logger.info(f"Generating flashcards for topic: {topic or '(none)'}")
 
     # Get learner context (profile, preferences, misconceptions) - uses cache
     learner_context = _get_cached_context()
@@ -443,10 +202,7 @@ async def generate_flashcards(
             openstax_content = content_result.get("combined_content", "")
             sources = content_result.get("sources", [])
             matched_chapters = content_result.get("matched_chapters", [])
-            logger.info(f"OpenStax fetch result:")
-            logger.info(f"  - Matched chapters: {matched_chapters}")
-            logger.info(f"  - Sources: {sources}")
-            logger.info(f"  - Content length: {len(openstax_content)} chars")
+            logger.info(f"OpenStax: matched {len(matched_chapters)} chapters, {len(openstax_content)} chars")
             if not openstax_content:
                 logger.warning("NO CONTENT RETURNED from OpenStax fetch!")
         except Exception as e:
@@ -802,27 +558,15 @@ async def get_textbook_content(
         }
 
 
-# ============================================================================
-# HELPER FUNCTIONS
-# ============================================================================
-
-
 async def _generate_a2ui_content(
     format_type: str,
     context: str,
     tool_context: ToolContext,
 ) -> dict[str, Any]:
-    """
-    Generate A2UI content using the Gemini model.
-
-    This is an internal helper that calls the LLM to generate A2UI JSON.
-    """
+    """Generate A2UI content using the Gemini model."""
     from google import genai
     from google.genai import types
 
-    # Initialize client with VertexAI - use us-central1 for consistency with Agent Engine
-    # Use module-level config variables (captured by cloudpickle) with
-    # environment variable fallback for local development
     project = _CONFIG_PROJECT or os.getenv("GOOGLE_CLOUD_PROJECT")
     location = _CONFIG_LOCATION or os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 
@@ -870,14 +614,7 @@ async def _generate_a2ui_content(
         return {"error": str(e)}
 
 
-# ============================================================================
-# AGENT DEFINITION
-# ============================================================================
-
-# System prompt for tool selection and agent behavior.
-# Note: Maria's profile also appears in src/chat-orchestrator.ts (for chat responses)
-# and learner_context/ files (for dynamic personalization). This duplication is
-# intentional—the frontend and agent operate independently.
+# System prompt for tool selection and agent behavior
 SYSTEM_PROMPT = """# Personalized Learning Agent
 
 You are a personalized learning assistant that helps students study biology more effectively.
@@ -949,20 +686,8 @@ You don't need to understand the A2UI format in detail - just use the tools
 and explain the content to the learner.
 """
 
-# ============================================================================
-# AGENT FACTORY FOR AGENT ENGINE DEPLOYMENT
-# ============================================================================
-# Agent Engine requires a class that creates the agent on the SERVER,
-# not a pre-instantiated agent object. This avoids serialization issues
-# with live objects (connections, locks, etc).
-
-
 def create_agent() -> Agent:
-    """Factory function to create the ADK agent.
-
-    This is called on the server side after deployment, avoiding
-    serialization of live objects.
-    """
+    """Create the ADK agent with all tools."""
     return Agent(
         name="personalized_learning_agent",
         model=MODEL_ID,
@@ -978,154 +703,7 @@ def create_agent() -> Agent:
     )
 
 
-# For local development with `adk web`, we still need a module-level agent
-# This is only instantiated when running locally, not during deployment
+# Module-level agent for local development with `adk web`
 root_agent = create_agent()
 
 
-# ============================================================================
-# SERVER-SIDE AGENT WRAPPER FOR AGENT ENGINE DEPLOYMENT
-# ============================================================================
-# This wrapper class enables lazy initialization - the agent is created
-# on the server side after deployment, avoiding serialization of live objects.
-
-
-class ServerSideAgent:
-    """
-    Wrapper class for Agent Engine deployment using ReasoningEngine pattern.
-
-    This class is COMPLETELY SELF-CONTAINED - it does not import from the
-    'agent' package to avoid module resolution issues during unpickling.
-    All agent creation logic is inlined here.
-
-    Usage:
-        reasoning_engines.ReasoningEngine.create(
-            ServerSideAgent,  # Pass the CLASS, not an instance
-            requirements=[...],
-        )
-    """
-
-    def __init__(self):
-        """Initialize the agent on the server side."""
-        # ALL imports happen inside __init__ to avoid capture during pickling
-        import os
-        from google.adk.agents import Agent
-        from vertexai.agent_engines import AdkApp
-
-        # Model configuration
-        model_id = os.getenv("GENAI_MODEL", "gemini-2.5-flash")
-
-        # Create a simple agent with basic instruction
-        # Tools would need to be defined inline here too to avoid imports
-        self.agent = Agent(
-            name="personalized_learning_agent",
-            model=model_id,
-            instruction="""You are a personalized learning assistant that helps students study biology.
-
-You can help students understand concepts like ATP, cellular respiration, and bond energy.
-Use sports and gym analogies when explaining concepts.
-
-When asked for flashcards or quizzes, explain that this feature requires the full agent deployment.
-For now, you can have a helpful conversation about biology topics.""",
-            tools=[],  # No tools for now - keep it simple
-        )
-
-        # Wrap in AdkApp for session management and tracing
-        self.app = AdkApp(agent=self.agent, enable_tracing=True)
-
-    def query(self, *, user_id: str, message: str, **kwargs):
-        """
-        Handle a query from the user.
-
-        This method signature matches what ReasoningEngine expects.
-        """
-        return self.app.query(user_id=user_id, message=message, **kwargs)
-
-    async def aquery(self, *, user_id: str, message: str, **kwargs):
-        """
-        Handle an async query from the user.
-        """
-        return await self.app.aquery(user_id=user_id, message=message, **kwargs)
-
-    def stream_query(self, *, user_id: str, message: str, **kwargs):
-        """
-        Handle a streaming query from the user.
-        """
-        return self.app.stream_query(user_id=user_id, message=message, **kwargs)
-
-
-# ============================================================================
-# LEGACY COMPATIBILITY (for server.py)
-# ============================================================================
-
-class LearningMaterialAgent:
-    """
-    Legacy wrapper for backwards compatibility with server.py.
-
-    This class wraps the ADK agent's tools to maintain the same interface
-    that server.py expects.
-    """
-
-    SUPPORTED_FORMATS = SUPPORTED_FORMATS
-
-    def __init__(self, init_client: bool = True):
-        self._init_client = init_client
-
-    async def generate_content(
-        self,
-        format_type: str,
-        additional_context: str = "",
-    ) -> dict[str, Any]:
-        """Generate content using the appropriate tool."""
-        # Create a minimal tool context (duck-typed to match ToolContext interface)
-        class MinimalToolContext:
-            def __init__(self):
-                self.state = {}
-
-        ctx = MinimalToolContext()
-
-        format_lower = format_type.lower()
-
-        if format_lower == "flashcards":
-            return await generate_flashcards(ctx, additional_context or None)
-        elif format_lower == "quiz":
-            return await generate_quiz(ctx, additional_context or None)
-        elif format_lower in ["audio", "podcast"]:
-            return await get_audio_content(ctx)
-        elif format_lower == "video":
-            return await get_video_content(ctx)
-        else:
-            return {
-                "error": f"Unsupported format: {format_type}",
-                "supported_formats": SUPPORTED_FORMATS,
-            }
-
-    async def stream(self, request: str, session_id: str = "default"):
-        """Stream response for A2A compatibility."""
-        parts = request.split(":", 1)
-        format_type = parts[0].strip().lower()
-        additional_context = parts[1].strip() if len(parts) > 1 else ""
-
-        yield {
-            "is_task_complete": False,
-            "updates": f"Generating {format_type}...",
-        }
-
-        result = await self.generate_content(format_type, additional_context)
-
-        yield {
-            "is_task_complete": True,
-            "content": result,
-        }
-
-
-# Singleton for backwards compatibility
-_agent_instance = None
-
-
-def get_agent() -> LearningMaterialAgent:
-    """Get or create the legacy agent wrapper singleton."""
-    global _agent_instance
-    if _agent_instance is None:
-        _agent_instance = LearningMaterialAgent()
-    return _agent_instance

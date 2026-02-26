@@ -267,6 +267,6 @@ This launches a live gallery with all components, their variations, and interact
 
 ## Further Reading
 
-- **[Standard Catalog Definition](../../specification/v0_9/json/standard_catalog_definition.json)**: Complete technical specification
+- **[Basic Catalog Definition](../../specification/v0_9/json/basic_catalog.json)**: Complete technical specification
 - **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand

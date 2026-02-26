@@ -22,6 +22,7 @@ import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
+import { extractStringValue } from "./utils/utils.js";
 
 @customElement("a2ui-checkbox")
 export class Checkbox extends Root {
@@ -100,7 +101,12 @@ export class Checkbox extends Root {
         .checked=${value}
       />
       <label class=${classMap(this.theme.components.CheckBox.label)} for="data"
-        >${this.label?.literalString}</label
+        >${extractStringValue(
+          this.label,
+          this.component,
+          this.processor,
+          this.surfaceId
+        )}</label
       >
     </section>`;
   }

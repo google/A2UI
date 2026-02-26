@@ -12,7 +12,7 @@
   {
     "surfaceUpdate": {
       "surfaceId": "sales-dashboard",
-      "components": [        
+      "components": [
         {
           "id": "root-column",
           "component": {
@@ -31,7 +31,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "chart.title"
+                "path": "/chart.title"
               },
               "usageHint": "h2"
             }
@@ -78,7 +78,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "label"
+                "path": "/label"
               }
             }
           }
@@ -88,7 +88,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "value"
+                "path": "/value"
               }
             }
           }
@@ -101,17 +101,50 @@
       "surfaceId": "sales-dashboard",
       "path": "/",
       "contents": [
-        { "key": "chart.title", "valueString": "Sales by Category" },
-        { "key": "chart.items[0].label", "valueString": "Apparel" },
-        { "key": "chart.items[0].value", "valueNumber": 41 },
-        { "key": "chart.items[1].label", "valueString": "Home Goods" },
-        { "key": "chart.items[1].value", "valueNumber": 15 },
-        { "key": "chart.items[2].label", "valueString": "Electronics" },
-        { "key": "chart.items[2].value", "valueNumber": 28 },
-        { "key": "chart.items[3].label", "valueString": "Health & Beauty" },
-        { "key": "chart.items[3].value", "valueNumber": 10 },
-        { "key": "chart.items[4].label", "valueString": "Other" },
-        { "key": "chart.items[4].value", "valueNumber": 6 }
+        {
+          "key": "chart.title",
+          "valueString": "Sales by Category"
+        },
+        {
+          "key": "chart.items[0].label",
+          "valueString": "Apparel"
+        },
+        {
+          "key": "chart.items[0].value",
+          "valueNumber": 41
+        },
+        {
+          "key": "chart.items[1].label",
+          "valueString": "Home Goods"
+        },
+        {
+          "key": "chart.items[1].value",
+          "valueNumber": 15
+        },
+        {
+          "key": "chart.items[2].label",
+          "valueString": "Electronics"
+        },
+        {
+          "key": "chart.items[2].value",
+          "valueNumber": 28
+        },
+        {
+          "key": "chart.items[3].label",
+          "valueString": "Health & Beauty"
+        },
+        {
+          "key": "chart.items[3].value",
+          "valueNumber": 10
+        },
+        {
+          "key": "chart.items[4].label",
+          "valueString": "Other"
+        },
+        {
+          "key": "chart.items[4].value",
+          "valueNumber": 6
+        }
       ]
     }
   }

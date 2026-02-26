@@ -88,57 +88,24 @@ def to_mkdocs(content):
     content = re.sub(GITHUB_ALERT_PATTERN, alert_replacer, content, flags=re.MULTILINE)
     return content
 
-def to_github(content):
-    """Converts MkDocs style to GitHub style."""
-
-    def mkdocs_replacer(match):
-        adm_type, title, body = match.groups()
-        # Safely retrieve the emoji, default to 'note' (📝) for unknown/unmapped types
-        emoji = MAPPING.get(adm_type, {"emoji": "📝"})["emoji"]
-        
-        # Strip trailing whitespace from captured body to prevent hanging '>'
-        clean_body = body.rstrip()
-        raw_lines = clean_body.split('\n')
-        content_lines = [re.sub(r'^\s{4}', '', line).rstrip() for line in raw_lines]
-        
-        # Header line logic
-        github_lines = [f"> {emoji} **{title}**"] if title.strip() else [f"> {emoji}"]
-        github_lines.append(">") # Spacer line
-        
-        for line in content_lines:
-            github_lines.append(f"> {line}" if line else ">")
-        
-        return "\n".join(github_lines) + "\n"
-
-    return re.sub(MKDOCS_PATTERN, mkdocs_replacer, content)
-
-def process_file(path, mode):
-    mode_map = {
-        "github-to-mkdocs": to_mkdocs,
-        "mkdocs-to-github": to_github
-    }
-    if mode not in mode_map:
-        raise ValueError(f"Unsupported mode: {mode}. Choose from {list(mode_map.keys())}.")
-    target_func = mode_map[mode]
-
+def process_file(path):
     with open(path, 'r', encoding='utf-8') as f:
         content = f.read()
-    new_content = target_func(content)
+    new_content = to_mkdocs(content)
     if new_content != content:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(new_content)
-        print(f"[{mode.upper()}] Converted: {path}")
+        print(f"[CONVERTED] {path}")
 
-def run_conversion(mode):
+def run_conversion():
     for root, dirs, files in os.walk('docs'):
         if any(x in root for x in ['scripts', 'assets', '__pycache__']):
             continue
         for file in files:
             if file.endswith('.md'):
-                process_file(os.path.join(root, file), mode)
+                process_file(os.path.join(root, file))
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Bidirectional Markdown Admonition Converter")
-    parser.add_argument("--mode", choices=["github-to-mkdocs", "mkdocs-to-github"], required=True, help="Target format")
+    parser = argparse.ArgumentParser(description="GitHub to MkDocs Markdown Admonition Converter")
     args = parser.parse_args()
-    run_conversion(args.mode)
+    run_conversion()

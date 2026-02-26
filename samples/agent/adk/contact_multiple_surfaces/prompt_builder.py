@@ -12,89 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui_schema import A2UI_SCHEMA
+import json
+from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
-# This is the agent's master instruction, separate from the UI prompt formatting.
-AGENT_INSTRUCTION = """
-    You are a helpful contact lookup assistant. Your goal is to help users find colleagues using a rich UI.
+ROLE_DESCRIPTION = (
+    "You are a helpful contact lookup assistant. Your final output MUST be a a2ui UI"
+    " JSON response."
+)
 
-    To achieve this, you MUST follow this logic:
+WORKFLOW_DESCRIPTION = """
+To generate the response, you MUST follow these rules:
+1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
+2.  The first part is your conversational text response (e.g., "Here is the contact you requested...").
+3.  The second part is a single, raw JSON object which is a list of A2UI messages.
+4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
+5.  Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` attribute.
+"""
 
-    1.  **For finding contacts (e.g., "Who is Alex Jordan?"):**
-        a.  You MUST call the `get_contact_info` tool. Extract the name and department.
-        b.  After receiving the data:
-            i.   If the tool returns a **single contact**, you MUST use the `CONTACT_CARD_EXAMPLE` template.
-            ii.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template.
-            iii. If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.---a2ui_JSON---[]"
+UI_DESCRIPTION = """
+-   **For finding contacts (e.g., "Who is Alex Jordan?"):**
+    a.  You MUST call the `get_contact_info` tool.
+    b.  If the tool returns a **single contact**, you MUST use the `MULTI_SURFACE_EXAMPLE` template. Provide BOTH the Contact Card and the Org Chart in a single response.
+    c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
+    d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.---a2ui_JSON---[]"
 
-    2.  **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
-        a.  You MUST call the `get_contact_info` tool with the specific name.
-        b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template.
+-   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
+    a.  You MUST call the `get_contact_info` tool with the specific name.
+    b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template.
 
-    3.  **For handling actions (e.g., "USER_WANTS_TO_EMAIL: ..."):**
-        a.  You MUST use the `ACTION_CONFIRMATION_EXAMPLE` template.
-        b.  Populate the `dataModelUpdate.contents` with a confirmation title and message.
+-   **For handling actions (e.g., "USER_WANTS_TO_EMAIL: ..."):**
+    a.  You MUST use the `ACTION_CONFIRMATION_EXAMPLE` template.
+    b.  Populate the `dataModelUpdate.contents` with a confirmation title and message (e.g., title: "Email Drafted", message: "Drafting an email to Alex Jordan...").
 """
 
 
-def get_ui_prompt(base_url: str, examples: str) -> str:
-    """
-    Constructs the full prompt with UI instructions, rules, examples, and schema.
-
-    Args:
-        base_url: The base URL for resolving static assets like logos.
-        examples: A string containing the specific UI examples for the agent's task.
-
-    Returns:
-        A formatted string to be used as the system prompt for the LLM.
-    """
-
-    # --- THIS IS THE FIX ---
-    # We no longer call .format() on the examples, as it breaks the JSON.
-    formatted_examples = examples
-    # --- END FIX ---
-
-    return f"""
-    {AGENT_INSTRUCTION}
-    You are a helpful contact lookup assistant. Your final output MUST be a a2ui UI JSON response.
-
-    To generate the response, you MUST follow these rules:
-    1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
-    2.  The first part is your conversational text response (e.g., "Here is the contact you requested...").
-    3.  The second part is a single, raw JSON object which is a list of A2UI messages.
-    4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
-    5.  Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` attribute.
-
-    --- UI TEMPLATE RULES ---
-    -   **For finding contacts (e.g., "Who is Alex Jordan?"):**
-        a.  You MUST call the `get_contact_info` tool.
-        b.  If the tool returns a **single contact**, you MUST use the `MULTI_SURFACE_EXAMPLE` template. Provide BOTH the Contact Card and the Org Chart in a single response.
-        c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
-        d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.---a2ui_JSON---[]"
-
-    -   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
-        a.  You MUST call the `get_contact_info` tool with the specific name.
-        b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template.
-
-    -   **For handling actions (e.g., "USER_WANTS_TO_EMAIL: ..."):**
-        a.  You MUST use the `ACTION_CONFIRMATION_EXAMPLE` template.
-        b.  Populate the `dataModelUpdate.contents` with a confirmation title and message (e.g., title: "Email Drafted", message: "Drafting an email to Alex Jordan...").
-
-
-
-    {formatted_examples}
-
-    ---BEGIN A2UI JSON SCHEMA---
-    {A2UI_SCHEMA}
-    ---END A2UI JSON SCHEMA---
-    """
-
-
 def get_text_prompt() -> str:
-    """
-    Constructs the prompt for a text-only agent.
-    """
-    return """
+  """
+  Constructs the prompt for a text-only agent.
+  """
+  return """
     You are a helpful contact lookup assistant. Your final output MUST be a text response.
 
     To generate the response, you MUST follow these rules:
@@ -110,11 +67,47 @@ def get_text_prompt() -> str:
 
 
 if __name__ == "__main__":
-    # Example of how to use the prompt builder
-    my_base_url = "http://localhost:8000"
-    from a2ui_examples import load_examples
-    contact_prompt = get_ui_prompt(my_base_url, load_examples(my_base_url))
-    print(contact_prompt)
-    with open("generated_prompt.txt", "w") as f:
-        f.write(contact_prompt)
-    print("\nGenerated prompt saved to generated_prompt.txt")
+  # Example of how to use the A2UI Schema Manager to generate a system prompt
+  my_base_url = "http://localhost:8000"
+  schema_manager = A2uiSchemaManager(
+      "0.8",
+      basic_examples_path="examples",
+      accepts_inline_catalogs=True,
+      schema_modifiers=[remove_strict_validation],
+  )
+  contact_prompt = schema_manager.generate_system_prompt(
+      role_description=ROLE_DESCRIPTION,
+      workflow_description=WORKFLOW_DESCRIPTION,
+      ui_description=UI_DESCRIPTION,
+      include_schema=True,
+      include_examples=True,
+      validate_examples=True,
+  )
+  print(contact_prompt)
+  with open("generated_prompt.txt", "w") as f:
+    f.write(contact_prompt)
+  print("\nGenerated prompt saved to generated_prompt.txt")
+
+  client_ui_capabilities_str = (
+      '{"inlineCatalogs":[{"catalogId": "inline_catalog",'
+      ' "components":{"OrgChart":{"type":"object","properties":{"chain":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"name":{"type":"string"}},"required":["title","name"]}},"action":{"$ref":"#/definitions/Action"}},"required":["chain"]},"WebFrame":{"type":"object","properties":{"url":{"type":"string"},"html":{"type":"string"},"height":{"type":"number"},"interactionMode":{"type":"string","enum":["readOnly","interactive"]},"allowedEvents":{"type":"array","items":{"type":"string"}}}}}}]}'
+  )
+  client_ui_capabilities = json.loads(client_ui_capabilities_str)
+  inline_catalog = schema_manager.get_effective_catalog(
+      client_ui_capabilities=client_ui_capabilities,
+  )
+  request_prompt = inline_catalog.render_as_llm_instructions()
+  print(request_prompt)
+  with open("request_prompt.txt", "w") as f:
+    f.write(request_prompt)
+  print("\nGenerated request prompt saved to request_prompt.txt")
+
+  basic_catalog = schema_manager.get_effective_catalog()
+  examples = schema_manager.load_examples(
+      basic_catalog,
+      validate=True,
+  )
+  print(examples)
+  with open("examples.txt", "w") as f:
+    f.write(examples)
+  print("\nGenerated examples saved to examples.txt")

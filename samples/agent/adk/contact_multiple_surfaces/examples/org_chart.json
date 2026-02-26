@@ -38,7 +38,7 @@
           "component": {
             "OrgChart": {
               "chain": {
-                "path": "hierarchy"
+                "path": "/hierarchy"
               },
               "action": {
                 "name": "chart_node_click",

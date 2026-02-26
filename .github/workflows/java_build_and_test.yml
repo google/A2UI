@@ -20,9 +20,11 @@ on:
       - main
     paths:
       - 'a2a_agents/java/**'
+      - 'specification/**/json/**'
   pull_request:
     paths:
       - 'a2a_agents/java/**'
+      - 'specification/**/json/**'
 
 jobs:
   build-and-test:

@@ -84,6 +84,9 @@
           "type": "boolean"
         },
         {
+          "type": "array"
+        },
+        {
           "$ref": "#/$defs/DataBinding"
         },
         {
@@ -110,8 +113,7 @@
                 "returnType": {
                   "const": "string"
                 }
-              },
-              "required": ["returnType"]
+              }
             }
           ]
         }
@@ -136,15 +138,14 @@
                 "returnType": {
                   "const": "number"
                 }
-              },
-              "required": ["returnType"]
+              }
             }
           ]
         }
       ]
     },
     "DynamicBoolean": {
-      "description": "A boolean value that can be a literal, a path, or a logic expression (including function calls returning boolean).",
+      "description": "A boolean value that can be a literal, a path, or a function call returning a boolean.",
       "oneOf": [
         {
           "type": "boolean"
@@ -153,7 +154,18 @@
           "$ref": "#/$defs/DataBinding"
         },
         {
-          "$ref": "#/$defs/LogicExpression"
+          "allOf": [
+            {
+              "$ref": "#/$defs/FunctionCall"
+            },
+            {
+              "properties": {
+                "returnType": {
+                  "const": "boolean"
+                }
+              }
+            }
+          ]
         }
       ]
     },
@@ -179,8 +191,7 @@
                 "returnType": {
                   "const": "array"
                 }
-              },
-              "required": ["returnType"]
+              }
             }
           ]
         }
@@ -224,95 +235,25 @@
           "default": "boolean"
         }
       },
-      "required": ["call"]
-    },
-    "LogicExpression": {
-      "type": "object",
-      "description": "A boolean expression used for conditional state (e.g. 'enabled').",
+      "required": ["call"],
       "oneOf": [
-        {
-          "properties": {
-            "and": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/LogicExpression"
-              },
-              "minItems": 1
-            }
-          },
-          "required": ["and"]
-        },
-        {
-          "properties": {
-            "or": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/LogicExpression"
-              },
-              "minItems": 1
-            }
-          },
-          "required": ["or"]
-        },
-        {
-          "properties": {
-            "not": {
-              "$ref": "#/$defs/LogicExpression"
-            }
-          },
-          "required": ["not"]
-        },
-        {
-          "allOf": [
-            {
-              "$ref": "#/$defs/FunctionCall"
-            },
-            {
-              "properties": {
-                "returnType": {
-                  "const": "boolean"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "properties": {
-            "true": {
-              "const": true
-            }
-          },
-          "required": ["true"]
-        },
-        {
-          "properties": {
-            "false": {
-              "const": false
-            }
-          },
-          "required": ["false"]
-        }
+        { "$ref": "catalog.json#/$defs/anyFunction" }
       ]
     },
     "CheckRule": {
       "type": "object",
       "description": "A single validation rule applied to an input component.",
-      "unevaluatedProperties": false,
-      "allOf": [
-        {
-          "$ref": "#/$defs/LogicExpression"
+      "properties": {
+        "condition": {
+          "$ref": "#/$defs/DynamicBoolean"
         },
-        {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string",
-              "description": "The error message to display if the check fails."
-            }
-          },
-          "required": ["message"]
+        "message": {
+          "type": "string",
+          "description": "The error message to display if the check fails."
         }
-      ]
+      },
+      "required": ["condition", "message"],
+      "additionalProperties": false
     },
     "Checkable": {
       "description": "Properties for components that support client-side checks.",

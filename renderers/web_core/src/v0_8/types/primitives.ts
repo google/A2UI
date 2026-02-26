@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-export interface StringValue {
+export declare interface StringValue {
   /**
    * A data binding reference to a location in the data model (e.g., '/user/name').
    */
@@ -29,7 +29,7 @@ export interface StringValue {
   literal?: string;
 }
 
-export interface NumberValue {
+export declare interface NumberValue {
   /**
    * A data binding reference to a location in the data model (e.g., '/user/name').
    */
@@ -44,7 +44,7 @@ export interface NumberValue {
   literal?: number;
 }
 
-export interface BooleanValue {
+export declare interface BooleanValue {
   /**
    * A data binding reference to a location in the data model (e.g., '/user/name').
    */
