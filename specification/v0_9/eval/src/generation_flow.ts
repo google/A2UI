@@ -68,7 +68,7 @@ ${prompt}
     const estimatedInputTokens = Math.ceil(fullPrompt.length / 2.5);
     await rateLimiter.acquirePermit(
       modelConfig as ModelConfiguration,
-      estimatedInputTokens
+      estimatedInputTokens,
     );
 
     // Generate text response
@@ -104,7 +104,7 @@ ${prompt}
 
     if (!candidate) {
       logger.error(
-        `No candidates returned in response. Full response: ${JSON.stringify(response, null, 2)}`
+        `No candidates returned in response. Full response: ${JSON.stringify(response, null, 2)}`,
       );
       throw new Error("No candidates returned");
     }
@@ -115,25 +115,18 @@ ${prompt}
     ) {
       logger.warn(
         `Model finished with reason: ${candidate.finishReason}. Content: ${JSON.stringify(
-          candidate.content
-        )}`
+          candidate.content,
+        )}`,
       );
     }
 
-    // Record token usage (adjusting for actual usage)
+    // Reconcile estimated vs actual token usage and log the difference for precise rate limiting.
     const inputTokens = response.usage?.inputTokens || 0;
     const outputTokens = response.usage?.outputTokens || 0;
-    const totalTokens = inputTokens + outputTokens;
-
-    // We already recorded estimatedInputTokens. We need to record the difference.
-    // If actual > estimated, we record the positive difference.
-    // If actual < estimated, we technically over-counted, but RateLimiter doesn't support negative adjustments yet.
-    // For safety, we just record any *additional* tokens if we under-estimated.
-    // And we definitely record the output tokens.
 
     const additionalInputTokens = Math.max(
       0,
-      inputTokens - estimatedInputTokens
+      inputTokens - estimatedInputTokens,
     );
     const tokensToAdd = additionalInputTokens + outputTokens;
 
@@ -141,10 +134,10 @@ ${prompt}
       rateLimiter.recordUsage(
         modelConfig as ModelConfiguration,
         tokensToAdd,
-        false
+        false,
       );
     }
 
     return { text: response.text, latency };
-  }
+  },
 );
