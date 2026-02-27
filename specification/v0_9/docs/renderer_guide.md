@@ -279,15 +279,15 @@ A change at a specific path must trigger notifications for related paths to ensu
 #### Type Coercion Standards
 To ensure the Data Layer behaves identically across all platforms (e.g., TypeScript, Swift, Kotlin), the following coercion rules MUST be followed when resolving dynamic values:
 
-| Input Type | Target Type | Result |
-| :--- | :--- | :--- |
-| `String` ("true", "false") | `Boolean` | `true` or `false` (case-insensitive) |
-| `Number` (non-zero) | `Boolean` | `true` |
-| `Number` (0) | `Boolean` | `false` |
-| `Any` | `String` | Locale-neutral string representation |
-| `null` / `undefined` | `String` | `""` (empty string) |
-| `null` / `undefined` | `Number` | `0` |
-| `String` (numeric) | `Number` | Parsed numeric value or `0` |
+| Input Type                 | Target Type | Result                               |
+| :------------------------- | :---------- | :----------------------------------- |
+| `String` ("true", "false") | `Boolean`   | `true` or `false` (case-insensitive) |
+| `Number` (non-zero)        | `Boolean`   | `true`                               |
+| `Number` (0)               | `Boolean`   | `false`                              |
+| `Any`                      | `String`    | Locale-neutral string representation |
+| `null` / `undefined`       | `String`    | `""` (empty string)                  |
+| `null` / `undefined`       | `Number`    | `0`                                  |
+| `String` (numeric)         | `Number`    | Parsed numeric value or `0`          |
 
 
 ### The Context Layer (Transient Windows)
@@ -405,90 +405,6 @@ The model is designed to support high-performance rendering through granular upd
 *   **Data Changes:** The `DataModel` notifies only subscribers to the specific path that changed.
 
 This hierarchy allows a renderer to implement "smart" updates: re-rendering the whole list only when the list structure changes, but updating just a text node when a bound string value changes.
-
----
-
-# **Design alternatives**
-
-## **Flat vs hierarchical object model**
-
-From an application developer or catalog implementer’s perspective, the most intuitive way for the renderer object model to be constructed is as a tree, which reflects the structure of the data.
-
-However, it’s non-trivial to implement tree construction in a catalog-agnostic way, because the catalogs don’t have standard “child” or children.
-
-### **A) \[Recommended now\] Flat Component object model, one-pass rendering**
-
-In this option, the SurfaceModel contains a flat list of Components which refer to each other via ID. The job of the renderer is to reference the children and construct the tree.
-
-This is simple to implement on every platform and pushes the complexity around constructing the tree into the framework-specific layer. 
-
-### **B) \[Future direction\] Hierarchical object model, two-pass rendering via schema introspection**
-
-In this approach, the Object Model represents the hierarchy with actual object references. This requires the data layer to be more complex but simplifies the framework renderer.
-
-In this approach, the core library which decodes the A2UI messages and constructs the object model needs to:
-
-* For each Component schema in the Catalog, detect which properties are ID references.  
-* When parsing data, dereference those ID properties to directly link nodes  
-* Handle templated children which requires resolving data model references to find lists of data and construct a child for each list item.  
-* Create an object model which is weakly typed (because different catalogs can use different names for “child”, “children” etc, yet is a full hierarchical tree.
-
-We will pursue this approach in the future to provide a neat way for application and framework renderer logic to navigate and update the object model. We will pursue this via a codegen approach which 
-
-## **Data model references: Raw JSON vs structured references vs resolved literal values**
-
-### **\[Recommended\] Raw JSON**
-
-The object model could just expose the “props” for each component as raw JSON data which the component implementation needs to interpret e.g.
-
-```
-{
-   "id": "tf1",
-   "component": "TextField",
-   "value": { "path": "/formData/email" },
-}
-```
-
-### **\[Future direction\] Structured references**
-
-The object model includes type-safe objects to represent references to the data model.
-
-This makes it less error prone, though there is no type safety around the exact value lookups in the example below.
-
-```
-{
-   "id": "tf1",
-   "component": "TextField",
-   "value": DataModelReference(absolutePath: "/formData/email"),
-}
-```
-
-This could provide much more safety using some kind of codegen to generate a typesafe model class that is specific to each catalog item from its schema.
-
-```ts
-// Replace this with an actual typesafe model example
-class TextFieldComponentModel {
-  id: String;
-  component: String;
-  value: LiteralOrFunctionOrReference<String>
-};
-```
-
-### **Resolved literal values**
-
-The object model could include the actual values referenced from the data model.
-
-This would make the framework renderer simple to implement, but this option is not recommended, because it doesn’t provide a way for application logic to programmatically modify the object model, e.g. to update a data model reference.
-
-```
-{
-   "id": "tf1",
-   "component": "TextField",
-   "value": "no-reply@somebusiness.com",
-}
-```
-
----
 
 ## **Basic Catalog Implementation**
 
