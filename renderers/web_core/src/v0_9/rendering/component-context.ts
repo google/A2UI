@@ -1,7 +1,7 @@
 import { DataContext } from './data-context.js';
 import { ComponentModel } from '../state/component-model.js';
 import type { SurfaceModel } from '../state/surface-model.js';
-import type { CatalogApi } from '../catalog/types.js';
+import type { ComponentApi } from '../catalog/types.js';
 
 /**
  * Context provided to components during rendering.
@@ -12,7 +12,7 @@ export class ComponentContext {
   readonly dataContext: DataContext;
 
   constructor(
-    surface: SurfaceModel<CatalogApi>,
+    surface: SurfaceModel<ComponentApi>,
     componentId: string,
     dataModelBasePath: string = '/'
   ) {

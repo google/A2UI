@@ -100,6 +100,13 @@ export const CheckableSchema = z.object({
 });
 export type Checkable = z.infer<typeof CheckableSchema>;
 
+export const AccessibilityAttributesSchema = z.object({
+    label: DynamicStringSchema.optional().describe('REF:common_types.json#/$defs/DynamicString|A short string used by assistive technologies to convey the purpose of an element.'),
+    description: DynamicStringSchema.optional().describe('REF:common_types.json#/$defs/DynamicString|Additional information provided by assistive technologies about an element.')
+}).describe('REF:common_types.json#/$defs/AccessibilityAttributes|Attributes to enhance accessibility.');
+
+export type AccessibilityAttributes = z.infer<typeof AccessibilityAttributesSchema>;
+
 export const CommonSchemas = {
     ComponentId: ComponentIdSchema,
     ChildList: ChildListSchema,
@@ -114,4 +121,5 @@ export const CommonSchemas = {
     CheckRule: CheckRuleSchema,
     Checkable: CheckableSchema,
     Action: ActionSchema,
+    AccessibilityAttributes: AccessibilityAttributesSchema,
 };

@@ -1,20 +1,17 @@
 import assert from 'node:assert';
 import { test, describe, it, beforeEach } from 'node:test';
 import { MessageProcessor } from './message-processor.js';
-import { CatalogApi } from '../catalog/types.js';
+import { Catalog, ComponentApi } from '../catalog/types.js';
 
 describe('MessageProcessor', () => {
-  let processor: MessageProcessor<CatalogApi>;
-  let testCatalog: CatalogApi;
+  let processor: MessageProcessor<ComponentApi>;
+  let testCatalog: Catalog<ComponentApi>;
   let actions: any[] = [];
 
   beforeEach(() => {
     actions = [];
-    testCatalog = {
-      id: 'test-catalog',
-      components: new Map()
-    };
-    processor = new MessageProcessor<CatalogApi>([testCatalog], async (a) => { actions.push(a); });
+    testCatalog = new Catalog('test-catalog', []);
+    processor = new MessageProcessor<ComponentApi>([testCatalog], async (a) => { actions.push(a); });
   });
 
   it('creates surface', () => {

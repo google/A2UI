@@ -1,16 +1,16 @@
 import assert from 'node:assert';
 import { describe, it, beforeEach } from 'node:test';
 import { SurfaceGroupModel } from './surface-group-model.js';
-import { CatalogApi } from '../catalog/types.js';
+import { Catalog, ComponentApi } from '../catalog/types.js';
 import { SurfaceModel } from './surface-model.js';
 
 describe('SurfaceGroupModel', () => {
-  let model: SurfaceGroupModel<CatalogApi>;
-  let catalog: CatalogApi;
+  let model: SurfaceGroupModel<ComponentApi>;
+  let catalog: Catalog<ComponentApi>;
 
   beforeEach(() => {
-    model = new SurfaceGroupModel<CatalogApi>();
-    catalog = { id: 'test-catalog', components: new Map() };
+    model = new SurfaceGroupModel<ComponentApi>();
+    catalog = new Catalog('test-catalog', []);
   });
 
   it('adds surface', () => {
@@ -38,7 +38,7 @@ describe('SurfaceGroupModel', () => {
   });
 
   it('notifies lifecycle listeners', () => {
-    let created: SurfaceModel<CatalogApi> | undefined;
+    let created: SurfaceModel<ComponentApi> | undefined;
     let deletedId: string | undefined;
 
     model.onSurfaceCreated.subscribe((s) => { created = s; });

@@ -1,12 +1,12 @@
 import { SurfaceModel } from './surface-model.js';
-import { CatalogApi } from '../catalog/types.js';
+import { ComponentApi } from '../catalog/types.js';
 import { EventEmitter, EventSource, Subscription } from '../common/events.js';
 
 /**
  * The root state model for the A2UI system.
  * Manages the collection of active surfaces.
  */
-export class SurfaceGroupModel<T extends CatalogApi> {
+export class SurfaceGroupModel<T extends ComponentApi> {
   private surfaces: Map<string, SurfaceModel<T>> = new Map();
   private surfaceUnsubscribers: Map<string, Subscription> = new Map();
   

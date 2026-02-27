@@ -1,0 +1,24 @@
+# Description
+
+_Replace this paragraph with a description of what this PR is changing or adding, and why. Consider including before/after screenshots._
+
+_List which issues are fixed by this PR. For larger changes, raising an issue first helps reduce redundant work._
+
+## Pre-launch Checklist
+
+- [ ] I signed the [CLA].
+- [ ] I read the [Contributors Guide].
+- [ ] I read the [Style Guide].
+- [ ] I have added updates to the [CHANGELOG].
+- [ ] I updated/added relevant documentation.
+- [ ] My code changes (if any) have tests.
+
+If you need help, consider asking for advice on the [discussion board].
+
+<!-- Links -->
+
+[CHANGELOG]: ../CHANGELOG.md
+[CLA]: https://cla.developers.google.com/
+[Contributors Guide]: ../CONTRIBUTING.md
+[discussion board]: https://github.com/google/A2UI/discussions
+[Style Guide]: ../STYLE_GUIDE.md

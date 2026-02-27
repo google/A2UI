@@ -1,22 +1,19 @@
 import assert from 'node:assert';
 import { test, describe, it, beforeEach, mock } from 'node:test';
 import { SurfaceModel } from './surface-model.js';
-import { CatalogApi } from '../catalog/types.js';
+import { Catalog, ComponentApi } from '../catalog/types.js';
 import { ComponentModel } from './component-model.js';
 import { ComponentContext } from '../rendering/component-context.js';
 
 describe('SurfaceModel', () => {
-  let surface: SurfaceModel<CatalogApi>;
-  let catalog: CatalogApi;
+  let surface: SurfaceModel<ComponentApi>;
+  let catalog: Catalog<ComponentApi>;
   let actions: any[] = [];
 
   beforeEach(() => {
     actions = [];
-    catalog = {
-      id: 'test-catalog',
-      components: new Map()
-    };
-    surface = new SurfaceModel<CatalogApi>('surface-1', catalog, {});
+    catalog = new Catalog('test-catalog', []);
+    surface = new SurfaceModel<ComponentApi>('surface-1', catalog, {});
     surface.onAction.subscribe(async (action) => {
       actions.push(action);
     });

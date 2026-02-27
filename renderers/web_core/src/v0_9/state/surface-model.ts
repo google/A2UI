@@ -1,5 +1,5 @@
 import { DataModel } from './data-model.js';
-import { CatalogApi } from '../catalog/types.js';
+import { Catalog, ComponentApi } from '../catalog/types.js';
 import { SurfaceComponentsModel } from './surface-components-model.js';
 import { EventEmitter, EventSource } from '../common/events.js';
 
@@ -7,9 +7,9 @@ export type ActionListener = (action: any) => void | Promise<void>;
 
 /**
  * The state model for a single surface.
- * @template T The concrete type of the Catalog, which extends CatalogApi. 
+ * @template T The concrete type of the ComponentApi. 
  */
-export class SurfaceModel<T extends CatalogApi> {
+export class SurfaceModel<T extends ComponentApi> {
   readonly dataModel: DataModel;
   readonly componentsModel: SurfaceComponentsModel;
   
@@ -20,7 +20,7 @@ export class SurfaceModel<T extends CatalogApi> {
 
   constructor(
     readonly id: string,
-    readonly catalog: T,
+    readonly catalog: Catalog<T>,
     readonly theme: any = {}
   ) {
     this.dataModel = new DataModel({});

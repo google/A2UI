@@ -1,5 +1,5 @@
 import { SurfaceModel, ActionListener } from '../state/surface-model.js';
-import { CatalogApi } from '../catalog/types.js';
+import { Catalog, ComponentApi } from '../catalog/types.js';
 import { SurfaceGroupModel } from '../state/surface-group-model.js';
 import { ComponentModel } from '../state/component-model.js';
 import { Subscription } from '../common/events.js';
@@ -8,9 +8,9 @@ import { A2uiMessage } from '../schema/server-to-client.js';
 
 /**
  * The central processor for A2UI messages.
- * @template T The concrete type of the Catalog, which extends CatalogApi.
+ * @template T The concrete type of the ComponentApi.
  */
-export class MessageProcessor<T extends CatalogApi> {
+export class MessageProcessor<T extends ComponentApi> {
   readonly model: SurfaceGroupModel<T>;
 
   /**
@@ -18,7 +18,7 @@ export class MessageProcessor<T extends CatalogApi> {
    * @param actionHandler A global handler for actions from all surfaces.
    */
   constructor(
-    private catalogs: T[],
+    private catalogs: Catalog<T>[],
     private actionHandler: ActionListener
   ) {
     this.model = new SurfaceGroupModel<T>();

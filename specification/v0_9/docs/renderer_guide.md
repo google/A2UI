@@ -8,6 +8,8 @@ Both of these architectural layers are completely agnostic to the specific compo
 
 The Data Layer is responsible for receiving the wire protocol (JSON messages), parsing them, and maintaining a long-lived, mutable state object. This layer follows the exact same design in all programming languages (with minor syntactical variations) and **does not require design work when porting to a new framework**. 
 
+> **Note on Language & Frameworks**: While the examples in this document are provided in TypeScript for clarity, the A2UI Data Layer is intended to be implemented in any language (e.g., Java, Python, Swift, Kotlin, Rust) and remain completely independent of any specific UI framework.
+
 It consists of three sub-components: the Processing Layer, the Dumb Models, and the Context Layer.
 
 ### Key Interfaces and Classes
@@ -19,6 +21,25 @@ It consists of three sub-components: the Processing Layer, the Dumb Models, and 
 *   **`DataModel`**: A dedicated store for application data.
 *   **`DataContext`**: A scoped window into the `DataModel`.
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
+
+### The Catalog and Component API
+The Data Layer relies on a **Catalog** to know which components exist. The Catalog and its components are defined by the `ComponentApi` interface and the concrete `Catalog` class.
+
+```typescript
+interface ComponentApi {
+  name: string; // Protocol name (e.g. 'Button')
+  readonly schema: z.ZodType<any>; // Technical definition for capabilities
+}
+
+class Catalog<T extends ComponentApi> {
+  readonly id: string; // Unique catalog URI
+  readonly components: ReadonlyMap<string, T>;
+
+  constructor(id: string, components: T[]) {
+    // Initializes the read-only map of components
+  }
+}
+```
 
 ### The Processing Layer (`MessageProcessor`)
 The **Processing Layer** acts as the "Controller." It accepts the raw stream of A2UI messages (`createSurface`, `updateComponents`, etc.), parses them, and mutates the underlying Data Models accordingly.
@@ -36,6 +57,12 @@ class MessageProcessor<T extends CatalogApi> {
   getClientCapabilities(options?: CapabilitiesOptions): any; // Generate advertising payload
 }
 ```
+
+#### Component Lifecycle: Update vs. Recreate
+When processing `updateComponents`, the processor must handle existing IDs carefully:
+*   **Property Update**: If the component `id` exists and the `type` matches the existing instance, update the `properties` record. This triggers the component's `onUpdated` event.
+*   **Type Change (Re-creation)**: If the `type` in the message differs from the existing instance's type, the processor MUST remove the old component instance from the model and create a fresh one. This ensures framework renderers correctly reset their internal state and widget types.
+
 
 #### Generating Client Capabilities and Schema Types
 
@@ -73,8 +100,19 @@ These classes are designed to be "dumb containers" for data. They hold the state
 
 **Key Characteristics:**
 *   **Mutable:** State is updated in place.
-*   **Observable:** Each layer is responsible for making its direct properties observable via standard listener patterns (callbacks), avoiding heavy reactive dependencies.
+*   **Observable:** Each layer is responsible for making its direct properties observable via standard listener patterns, avoiding heavy reactive dependencies.
 *   **Encapsulated Composition:** Parent layers expose methods to add fully-formed child instances (e.g., `addSurface`, `addComponent`) rather than factory methods that take parameters.
+
+#### Listener Implementation
+The models must provide a mechanism for the rendering layer to observe changes. The exact implementation should follow the preferred idioms and libraries of the target language, following these principles:
+
+1.  **Low Dependency**: Prefer "lowest common denominator" mechanisms (like simple callbacks or delegates) over complex reactive libraries. This ensures the core models remain portable and easy to adapt to any UI framework's specific needs.
+2.  **Multi-Cast**: The mechanism must support multiple listeners registered simultaneously.
+3.  **Unsubscribe Pattern**: There MUST be a clear way for application logic to unsubscribe listeners to prevent memory leaks.
+4.  **Payload Support**: The mechanism must be able to communicate both specific data updates (e.g., passing the updated `ComponentModel` instance) and lifecycle events (e.g., the ID of a deleted component).
+
+In the TypeScript examples below, we use a simple `EventSource` pattern with vanilla callbacks. However, other idiomatic approaches—such as `Listenable` properties, `Signals`, or `Streams`—are perfectly acceptable as long as they meet the requirements above.
+
 #### `SurfaceGroupModel` & `SurfaceModel`
 The root containers for active surfaces and their catalogs, data, and components.
 
@@ -121,25 +159,14 @@ class SurfaceComponentsModel {
   addLifecycleListener(l: ComponentsLifecycleListener): () => void;
 }
 
-interface ComponentUpdateListener {
-  onComponentUpdated(c: ComponentModel): void; // Called when any property changes
-}
-
-interface AccessibilityProperties {
-  label?: any; // Semantic label for screen readers
-  description?: any; // Detailed accessibility description
-  [key: string]: any; // Other ARIA-equivalent properties
-}
-
 class ComponentModel {
   readonly id: string;
-...
   readonly type: string; // Component name (e.g. 'Button')
+  
   get properties(): Record<string, any>; // Current raw JSON configuration
-  get accessibility(): AccessibilityProperties | undefined;
-
-  update(newProps: Record<string, any>): void;
-  addUpdateListener(l: ComponentUpdateListener): () => void;
+  set properties(newProps: Record<string, any>);
+  
+  readonly onUpdated: EventSource<ComponentModel>; // Fires when any property changes
 }
 ```
 #### `DataModel`
@@ -153,12 +180,32 @@ interface Subscription<T> {
 
 class DataModel {
   get(path: string): any; // Resolve JSON Pointer to value
-...
   set(path: string, value: any): void; // Atomic update at path
   subscribe<T>(path: string, onChange: (v: T | undefined) => void): Subscription<T>; // Reactive path monitoring
   dispose(): void; // Lifecycle cleanup
 }
 ```
+
+#### JSON Pointer Implementation Rules
+To ensure parity across implementations, the `DataModel` must follow these rules:
+
+**1. Auto-typing (Auto-vivification)**
+When setting a value at a nested path (e.g., `/a/b/0/c`), if intermediate segments do not exist, the model must create them:
+*   Look at the *next* segment in the path.
+*   If the next segment is numeric (e.g., `0`, `12`), initialize the current segment as an **Array** `[]`.
+*   Otherwise, initialize it as an **Object** `{}`.
+*   **Error Case**: Throw an exception if an update attempts to traverse through a primitive value (e.g., setting `/a/b` when `/a` is already a string).
+
+**2. Notification Strategy (The Bubble & Cascade)**
+A change at a specific path must trigger notifications for related paths to ensure UI consistency:
+*   **Exact Match**: Notify all subscribers to the modified path.
+*   **Ancestor Notification (Bubble Up)**: Notify subscribers to all parent paths. For example, updating `/user/name` must notify subscribers to `/user` and `/`.
+*   **Descendant Notification (Cascade Down)**: Notify subscribers to all paths nested *under* the modified path. For example, replacing the entire `/user` object must notify a subscriber to `/user/name`.
+
+**3. Undefined Handling**
+*   **Objects**: Setting a key to `undefined` should remove that key from the object.
+*   **Arrays**: Setting an index to `undefined` should preserve the array's length but set that specific index to `undefined` (sparse array support).
+
 
 ### The Context Layer (Transient Windows)
 The **Context Layer** consists of short-lived objects created on-demand during the rendering process to solve the problem of "scope" and binding resolution. 
@@ -185,59 +232,40 @@ class ComponentContext {
 }
 ```
 
-## 2. Framework-Specific Rendering Layer
+## 2. Framework Binding Layer
 
-The Framework-Specific Rendering Layer takes the structured state provided by the Data Layer and translates it into actual UI elements (DOM nodes, Flutter widgets, etc.). This layer is specific to the UI framework being used (e.g., React, Angular, Lit, Flutter) and is the primary area requiring design work when creating a new renderer.
+The Framework Binding Layer takes the structured state provided by the Data Layer and translates it into actual UI elements (DOM nodes, Flutter widgets, etc.). This layer is specific to the UI framework being used (e.g., React, Angular, Lit, Flutter) and is the primary area requiring design work when creating a new renderer.
 
-This layer remains completely agnostic to what components are actually being rendered. It relies on the Catalog to provide the actual implementations.
+This layer provides framework-specific component implementations that extend the data layer's `ComponentApi` to include actual rendering logic.
 
 ### Key Interfaces and Classes
 *   **`FrameworkSurface`**: The entrypoint widget for a specific framework.
+*   **`FrameworkComponent`**: The framework-specific logic for rendering a specific component (e.g. an `AngularComponent` or `LitComponent`).
 
 ### `FrameworkSurface`
 The entrypoint widget for a specific framework. It listens to the `SurfaceModel` to dynamically build the UI tree.
 
 ```typescript
 class MyFrameworkSurface {
-  constructor(model: SurfaceModel<MyFrameworkCatalog>);
+  constructor(model: SurfaceModel<MyFrameworkComponent>);
   // Implementation uses model.componentsModel.addLifecycleListener to 
   // recursively render children starting from the 'root' component.
 }
 ```
 
-## 3. Catalog Architecture
-
-The previous two layers are entirely catalog-agnostic. To actually render a UI, a **Catalog** must be provided. The Catalog defines what components exist and how to render them. It is split into two layers: the API (Schema) and the Implementation.
-
-### Key Interfaces and Classes
-*   **`CatalogApi`**: Defines the unique ID and the list of supported components.
-*   **`ComponentApi`**: Defines the name and schema of a specific component.
-*   **`ComponentRenderer`**: The framework-specific logic for rendering a specific component (e.g. a Button).
-
-### Catalog API (Framework Agnostic)
-The Catalog API defines the schema for components and the catalog's interface. This is shared and is completely decoupled from any specific rendering framework.
+### Framework-Specific Components
+The framework-specific components define how to render each component using a particular UI framework. They implement the `ComponentApi`.
 
 ```typescript
-interface CatalogApi {
-  id: string; // Unique catalog URI
-  readonly components: ReadonlyMap<string, ComponentApi>;
+interface MyFrameworkComponent extends ComponentApi {
+  // Framework-specific render method
+  render(ctx: ComponentContext): MyFrameworkWidget;
 }
 
-interface ComponentApi {
-  name: string; // Protocol name (e.g. 'Button')
-  readonly schema: z.ZodType<any>; // Technical definition for capabilities
-}
-```
-
-### Catalog Implementation (Framework Specific)
-The Catalog Implementation defines how to render each component defined in the API using a particular UI framework. This is where the core design work happens for individual components (`ComponentRenderer`).
-
-```typescript
-class MyFrameworkButtonRenderer implements ComponentApi {
+class MyFrameworkButton implements MyFrameworkComponent {
   readonly name = 'Button';
   readonly schema = ButtonSchema;
 
-  // Framework-specific render method
   render(ctx: ComponentContext): MyFrameworkWidget {
      // 1. Subscribe to ctx.componentModel.addUpdateListener for config changes
      // 2. Use ctx.dataContext.subscribeDynamicValue for data bindings
@@ -246,7 +274,7 @@ class MyFrameworkButtonRenderer implements ComponentApi {
 }
 ```
 
-## 4. Design alternatives
+## 3. Design alternatives
 
 To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.
 

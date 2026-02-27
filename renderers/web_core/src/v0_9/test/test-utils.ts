@@ -1,12 +1,12 @@
 
 import { ComponentContext } from '../rendering/component-context.js';
 import { SurfaceModel } from '../state/surface-model.js';
-import { CatalogApi } from '../catalog/types.js';
+import { Catalog, ComponentApi } from '../catalog/types.js';
 import { ComponentModel } from '../state/component-model.js';
 
-export class TestSurfaceModel extends SurfaceModel<CatalogApi> {
+export class TestSurfaceModel extends SurfaceModel<ComponentApi> {
   constructor(actionHandler: any = async () => { }) {
-    super('test', { id: 'test-catalog', components: new Map() }, {});
+    super('test', new Catalog('test-catalog', []), {});
     this.onAction.subscribe(actionHandler);
   }
 }

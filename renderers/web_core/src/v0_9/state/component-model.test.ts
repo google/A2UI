@@ -6,17 +6,13 @@ describe('ComponentModel', () => {
   let component: ComponentModel;
 
   beforeEach(() => {
-    component = new ComponentModel('c1', 'Button', { label: 'Click Me', accessibility: { label: 'A11y Label' } });
+    component = new ComponentModel('c1', 'Button', { label: 'Click Me' });
   });
 
   it('initializes properties', () => {
     assert.strictEqual(component.id, 'c1');
     assert.strictEqual(component.type, 'Button');
     assert.strictEqual(component.properties.label, 'Click Me');
-  });
-
-  it('accesses accessibility properties', () => {
-    assert.strictEqual(component.accessibility?.label, 'A11y Label');
   });
 
   it('updates properties', () => {
