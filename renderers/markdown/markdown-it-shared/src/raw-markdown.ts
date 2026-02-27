@@ -33,6 +33,8 @@ export class MarkdownItRenderer {
    * Registers rules to apply tag class maps from the environment.
    */
   private registerTagClassMapRules() {
+    // Proxy the "_open" default rules to apply classes to their tokens.
+    // See: https://github.com/markdown-it/markdown-it/blob/master/docs/examples/renderer_rules.md#default-renderer-rules
     const rulesToProxy = [
       'paragraph_open',
       'heading_open',

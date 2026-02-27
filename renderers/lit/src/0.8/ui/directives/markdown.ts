@@ -28,17 +28,18 @@ class MarkdownDirective extends Directive {
   #lastValue: string | null = null;
   #lastTagClassMap: string | null = null;
 
-  update(_part: Part, [value, markdownRenderer, tagClassMap]: DirectiveParameters<this>) {
+  update(_part: Part, [value, markdownRenderer, markdownOptions]: DirectiveParameters<this>) {
+    const jsonTagClassMap = JSON.stringify(markdownOptions?.tagClassMap);
     if (
       this.#lastValue === value &&
-      JSON.stringify(tagClassMap) === this.#lastTagClassMap
+      jsonTagClassMap === this.#lastTagClassMap
     ) {
       return noChange;
     }
 
     this.#lastValue = value;
-    this.#lastTagClassMap = JSON.stringify(tagClassMap);
-    return this.render(value, markdownRenderer, tagClassMap);
+    this.#lastTagClassMap = jsonTagClassMap;
+    return this.render(value, markdownRenderer, markdownOptions);
   }
 
   private static defaultMarkdownWarningLogged = false;
@@ -53,7 +54,7 @@ class MarkdownDirective extends Directive {
       // It is the responsibilty of the markdown renderer to sanitize the HTML.
       return unsafeHTML(markdownRenderer(value, markdownOptions));
     }
-    // TODO: Log once that the markdown renderer is not available.
+
     if (!MarkdownDirective.defaultMarkdownWarningLogged) {
       console.warn("[MarkdownDirective]",
         "can't render markdown because no markdown renderer is configured.\n",
