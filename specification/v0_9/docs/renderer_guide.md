@@ -23,6 +23,8 @@ It consists of three sub-components: the Processing Layer, the Dumb Models, and 
 ### The Processing Layer (`MessageProcessor`)
 The **Processing Layer** acts as the "Controller." It accepts the raw stream of A2UI messages (`createSurface`, `updateComponents`, etc.), parses them, and mutates the underlying Data Models accordingly.
 
+It also handles generating the client capabilities payload via `getClientCapabilities()`. By passing inline catalog definitions to this method, the processor can dynamically generate JSON Schemas for the supported components, allowing the agent to understand the client's available UI components on the fly.
+
 ```typescript
 class MessageProcessor<T extends CatalogApi> {
   readonly model: SurfaceGroupModel<T>; // Root state container for all surfaces
@@ -34,6 +36,37 @@ class MessageProcessor<T extends CatalogApi> {
   getClientCapabilities(options?: CapabilitiesOptions): any; // Generate advertising payload
 }
 ```
+
+#### Generating Client Capabilities and Schema Types
+
+To dynamically generate the `a2uiClientCapabilities` payload (specifically the `inlineCatalogs` array), the renderer needs to convert its internal component schemas into valid JSON Schemas that adhere to the A2UI protocol.
+
+**Schema Types Location**
+The foundational schema types for A2UI components are defined in the `schema` directory (e.g., `renderers/web_core/src/v0_9/schema/common-types.ts`). This is where reusable validation schemas (like Zod definitions) reside.
+
+**Detectable Common Types**
+A2UI heavily relies on shared schema definitions (like `DynamicString`, `DataBinding`, and `Action` from `common_types.json`). However, most schema validation libraries (such as Zod) do not natively support emitting external JSON Schema `$ref` pointers out-of-the-box.
+
+To solve this, common types must be **detectable** during the JSON Schema conversion process. This is achieved by "tagging" the schemas using their `description` property (e.g., `REF:common_types.json#/$defs/DynamicString`). 
+
+When `getClientCapabilities()` converts the internal schemas:
+1. It translates the definition into a raw JSON Schema.
+2. It traverses the schema tree looking for string descriptions starting with the `REF:` tag.
+3. It strips the tag and replaces the entire node with a valid JSON Schema `$ref` object, preserving any actual developer descriptions using a separator token.
+4. It wraps the resulting property schemas in the standard A2UI component envelope (`allOf` containing `ComponentCommon` and the component's `const` type identifier).
+
+**The Inline Catalogs API**
+By passing `{ inlineCatalogs: [myCatalog] }` to `getClientCapabilities()`, the processor:
+* Iterates over all the components defined in the provided `catalog`.
+* Translates their schemas into the structured format required by the A2UI specification.
+* Returns a configuration object ready to be sent in the transport metadata (populating `supportedCatalogIds` and `inlineCatalogs`).
+
+**Test Cases to Include**
+When implementing or modifying the capabilities generator, you must include test cases that verify:
+* **Capabilities Generation:** The output successfully includes the `inlineCatalogs` list when requested.
+* **Component Envelope:** Generated schemas correctly wrap component properties in an `allOf` block referencing `common_types.json#/$defs/ComponentCommon` and correctly assert the `component` property `const` value.
+* **Reference Resolution:** Properties tagged with `REF:` successfully resolve to `$ref` objects instead of expanding the inline schema definition (e.g., a `title` property correctly emits `"$ref": "common_types.json#/$defs/DynamicString"`).
+* **Description Preservation:** Additional descriptions appended to tagged types are preserved and properly formatted alongside the reference pointer.
 
 ### The "Dumb" Models
 These classes are designed to be "dumb containers" for data. They hold the state of the UI but contain minimal logic. They are organized hierarchically and use a consistent pattern for observability and composition.
@@ -213,9 +246,7 @@ class MyFrameworkButtonRenderer implements ComponentApi {
 }
 ```
 
----
-
-## Data Representation and Observability Patterns
+## 4. Design alternatives
 
 To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.
 
