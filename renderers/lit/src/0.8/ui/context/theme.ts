@@ -20,7 +20,7 @@ import * as Types from "@a2ui/web_core/types/types";
 /**
  * The theme context.
  */
-export const theme = createContext<Types.Theme | undefined>("A2UITheme");
+export const theme = createContext<Types.Theme | undefined>(Symbol("A2UITheme"));
 
 /**
  * An alias for the theme context, for backwards-compatibility.
