@@ -45,6 +45,10 @@ export class MarkdownItRenderer {
     ];
 
     for (const ruleName of rulesToProxy) {
+      // We cache the original rule here to use it to render the token after
+      // we've applied classes to it.
+      // See: https://github.com/markdown-it/markdown-it/blob/master/docs/examples/renderer_rules.md#to-add-a-default-css-class-to-an-element
+      const originalRule = this.markdownIt.renderer.rules[ruleName];
       this.markdownIt.renderer.rules[ruleName] = (tokens, idx, options, env, self) => {
         const token = tokens[idx];
         const tagClassMap = env?.tagClassMap as Types.MarkdownRendererTagClassMap | undefined;
@@ -55,7 +59,11 @@ export class MarkdownItRenderer {
             token.attrJoin('class', clazz);
           }
         }
-
+        if (originalRule) {
+          // Delegate to the original rule to render the token.
+          return originalRule(tokens, idx, options, env, self);
+        }
+        // Fallback to the default renderToken behavior.
         return self.renderToken(tokens, idx, options);
       };
     }
