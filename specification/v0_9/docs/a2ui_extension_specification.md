@@ -51,7 +51,7 @@ Example AgentExtension block:
 
 ### Parameter definitions
 The `params` object corresponds to the `v0.9` object in the `server_capabilities.json` schema:
-- `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is a URI pointing to a Catalog Definition Schema that the agent can generate.
+- `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is an ID identifying a Catalog Definition Schema that the agent can generate. This is not necessarily a resolvable URI.
 - `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
 ## Extension activation
