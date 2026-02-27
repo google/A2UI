@@ -1,5 +1,5 @@
 import { DataModel, DataSubscription } from '../state/data-model.js';
-import type { DynamicValueDef, DataBindingDef, FunctionCallDef } from '../schema/common-types.js';
+import type { DynamicValue, DataBinding, FunctionCall } from '../schema/common-types.js';
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving 
@@ -28,7 +28,7 @@ export class DataContext {
    * Resolves a DynamicValue to its current evaluation.
    * Does not set up any subscriptions.
    */
-  resolveDynamicValue<V>(value: DynamicValueDef): V {
+  resolveDynamicValue<V>(value: DynamicValue): V {
     // 1. Literal Check
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       // TODO: Define error handling when V doesn't match
@@ -37,7 +37,7 @@ export class DataContext {
 
     // 2. Path Check: { path: "..." }
     if ('path' in value) {
-      const absolutePath = this.resolvePath((value as DataBindingDef).path);
+      const absolutePath = this.resolvePath((value as DataBinding).path);
       return this.dataModel.get(absolutePath);
     }
 
@@ -55,7 +55,7 @@ export class DataContext {
    * Subscribes to changes in a DynamicValue.
    * Returns a Subscription object that provides the current value and allows listening for updates.
    */
-  subscribeDynamicValue<V>(value: DynamicValueDef, onChange: (value: V | undefined) => void): DataSubscription<V> {
+  subscribeDynamicValue<V>(value: DynamicValue, onChange: (value: V | undefined) => void): DataSubscription<V> {
     // 1. Literal: Return a static subscription
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
       return {
@@ -67,7 +67,7 @@ export class DataContext {
 
     // 2. Path Check: { path: "..." }
     if ('path' in value) {
-      const absolutePath = this.resolvePath((value as DataBindingDef).path);
+      const absolutePath = this.resolvePath((value as DataBinding).path);
       return this.dataModel.subscribe(absolutePath, onChange);
     }
 
