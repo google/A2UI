@@ -12,6 +12,41 @@ The Data Layer is responsible for receiving the wire protocol (JSON messages), p
 
 It consists of three sub-components: the Processing Layer, the Dumb Models, and the Context Layer.
 
+### Design Principles
+
+To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.
+
+#### 1. The "Add" Pattern for Composition
+We strictly separate **construction** from **composition**. Parent containers do not act as factories for their children.
+
+*   **Why?** This decoupling allows the child classes to evolve their constructor signatures without breaking the parent. It also simplifies testing by allowing mock children to be injected easily.
+*   **Pattern:**
+    ```typescript
+    // Parent knows nothing about Child's constructor options
+    const child = new ChildModel(config); 
+    parent.addChild(child); 
+    ```
+
+#### 2. Standard Observer Pattern (Observability)
+The models must provide a mechanism for the rendering layer to observe changes. The exact implementation should follow the preferred idioms and libraries of the target language, avoiding heavy reactive dependencies (like RxJS) in the core model.
+
+**Principles:**
+1.  **Low Dependency**: Prefer "lowest common denominator" mechanisms (like simple callbacks or delegates) over complex reactive libraries.
+2.  **Multi-Cast**: The mechanism must support multiple listeners registered simultaneously.
+3.  **Unsubscribe Pattern**: There MUST be a clear way (e.g., returning an "unsubscribe" callback) to stop listening and prevent memory leaks.
+4.  **Payload Support**: The mechanism must communicate specific data updates (e.g., passing the updated instance) and lifecycle events.
+5.  **Consistency**: This pattern is used uniformly across `SurfaceGroupModel` (lifecycle), `SurfaceModel` (actions), `SurfaceComponentsModel` (lifecycle), `ComponentModel` (updates), and `DataModel` (data changes).
+
+In the TypeScript examples, we use a simple `EventSource` pattern with vanilla callbacks. However, other idiomatic approaches—such as `Listenable` properties, `Signals`, or `Streams`—are perfectly acceptable as long as they meet the requirements above.
+
+#### 3. Granular Reactivity
+The model is designed to support high-performance rendering through granular updates rather than full-surface refreshes.
+*   **Structure Changes**: The `SurfaceComponentsModel` notifies when items are added/removed.
+*   **Property Changes**: The `ComponentModel` notifies when its specific configuration changes.
+*   **Data Changes**: The `DataModel` notifies only subscribers to the specific path that changed.
+
+This hierarchy allows a renderer to implement "smart" updates: re-rendering a container only when its children list changes, but updating just a specific text node when its bound data value changes.
+
 ### Schema Library Requirements
 To represent and validate component and function APIs, the Data Layer requires a **Schema Library**. 
 
@@ -173,17 +208,7 @@ These classes are designed to be "dumb containers" for data. They hold the state
 *   **Observable:** Each layer is responsible for making its direct properties observable via standard listener patterns, avoiding heavy reactive dependencies.
 *   **Encapsulated Composition:** Parent layers expose methods to add fully-formed child instances (e.g., `addSurface`, `addComponent`) rather than factory methods that take parameters.
 
-#### Listener Implementation
-The models must provide a mechanism for the rendering layer to observe changes. The exact implementation should follow the preferred idioms and libraries of the target language, following these principles:
-
-1.  **Low Dependency**: Prefer "lowest common denominator" mechanisms (like simple callbacks or delegates) over complex reactive libraries. This ensures the core models remain portable and easy to adapt to any UI framework's specific needs.
-2.  **Multi-Cast**: The mechanism must support multiple listeners registered simultaneously.
-3.  **Unsubscribe Pattern**: There MUST be a clear way for application logic to unsubscribe listeners to prevent memory leaks.
-4.  **Payload Support**: The mechanism must be able to communicate both specific data updates (e.g., passing the updated `ComponentModel` instance) and lifecycle events (e.g., the ID of a deleted component).
-
-In the TypeScript examples below, we use a simple `EventSource` pattern with vanilla callbacks. However, other idiomatic approaches—such as `Listenable` properties, `Signals`, or `Streams`—are perfectly acceptable as long as they meet the requirements above.
-
-#### `SurfaceGroupModel` & `SurfaceModel`
+#### SurfaceGroupModel & SurfaceModel
 The root containers for active surfaces and their catalogs, data, and components.
 
 ```typescript
@@ -369,43 +394,6 @@ To ensure performance and correctness, components MUST follow these rules:
 1.  **Lazy Subscription**: Only subscribe to data paths or property updates when the component is actually mounted/attached to the UI.
 2.  **Path Stability**: If a component's property (e.g., a `value` data path) changes via an `updateComponents` message, the component MUST unsubscribe from the old path and subscribe to the new one.
 
-
-## 3. Design alternatives
-
-To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.
-
-### 1. The "Add" Pattern for Composition
-We strictly separate **construction** from **composition**. Parent containers do not act as factories for their children.
-
-*   **Why?** This decoupling allows the child classes to evolve their constructor signatures without breaking the parent. It also simplifies testing by allowing mock children to be injected easily.
-*   **Pattern:**
-    ```typescript
-    // Parent knows nothing about Child's constructor options
-    const child = new ChildModel(config); 
-    parent.addChild(child); 
-    ```
-
-### 2. Standard Observer Pattern
-Observability is implemented using simple subscription functions that return an "unsubscribe" callback. This avoids the need for `RxJS` or other heavy event libraries in the core model.
-
-*   **Pattern:**
-    ```typescript
-    // Subscribe
-    const unsubscribe = model.addChangeListener((event) => { ... });
-    
-    // Unsubscribe later
-    unsubscribe();
-    ```
-*   **Consistency:** This pattern is used uniformly across `SurfaceGroupModel` (lifecycle), `SurfaceModel` (actions), `SurfaceComponentsModel` (lifecycle), `ComponentModel` (updates), and `DataModel` (data changes).
-
-### 3. Granular Reactivity
-The model is designed to support high-performance rendering through granular updates.
-*   **Structure Changes:** The `SurfaceComponentsModel` notifies when items are added/removed.
-*   **Property Changes:** The `ComponentModel` notifies when its specific configuration changes.
-*   **Data Changes:** The `DataModel` notifies only subscribers to the specific path that changed.
-
-This hierarchy allows a renderer to implement "smart" updates: re-rendering the whole list only when the list structure changes, but updating just a text node when a bound string value changes.
-
 ## **Basic Catalog Implementation**
 
 The Standard A2UI Catalog (v0.9) requires a shared logic layer for expression resolution and standard component definitions. To maintain consistency across renderers, implementations should follow this structure:
@@ -423,4 +411,3 @@ The standard `formatString` function is responsible for interpreting the `${expr
     *   **FunctionCall**: Identified by parentheses (e.g., `${now()}`).
 3.  **Escaping**: Literal `${` sequences must be handled (typically by escaping as `\${`).
 4.  **Reactive Coercion**: Results are transformed into strings using the **Type Coercion Standards** defined in the Data Layer section.
-
