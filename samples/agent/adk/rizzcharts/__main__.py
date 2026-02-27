@@ -23,6 +23,7 @@ from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2ui.inference.schema.constants import VERSION_0_8
 from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.inference.basic_catalog.provider import BasicCatalog
 from agent_executor import RizzchartsAgentExecutor, get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
 from agent import RizzchartsAgent
 from google.adk.artifacts import InMemoryArtifactService
@@ -68,8 +69,9 @@ def main(host, port):
                 catalog_path="rizzcharts_catalog_definition.json",
                 examples_path="examples/rizzcharts_catalog",
             ),
-            CatalogConfig.bundled(
-                version=VERSION_0_8, examples_path="examples/standard_catalog"
+            BasicCatalog.get_config(
+                version=VERSION_0_8,
+                examples_path="examples/standard_catalog",
             ),
         ],
         accepts_inline_catalogs=True,

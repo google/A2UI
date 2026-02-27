@@ -37,7 +37,8 @@ from prompt_builder import (
 )
 from tools import get_contact_info
 from a2ui.inference.schema.constants import VERSION_0_8
-from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.basic_catalog.provider import BasicCatalog
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ class ContactAgent:
         A2uiSchemaManager(
             VERSION_0_8,
             catalogs=[
-                CatalogConfig.bundled(version=VERSION_0_8, examples_path="examples")
+                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
             ],
             schema_modifiers=[remove_strict_validation],
             accepts_inline_catalogs=True,

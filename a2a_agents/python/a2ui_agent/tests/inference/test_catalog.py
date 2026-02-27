@@ -17,7 +17,8 @@ import os
 import pytest
 from typing import Any, Dict, List
 from a2ui.inference.schema.catalog import A2uiCatalog
-from a2ui.inference.schema.constants import BASIC_CATALOG_NAME, VERSION_0_8, VERSION_0_9
+from a2ui.inference.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.inference.basic_catalog.constants import BASIC_CATALOG_NAME
 
 
 def test_catalog_id_property():

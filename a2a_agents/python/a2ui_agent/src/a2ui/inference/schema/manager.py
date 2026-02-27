@@ -19,7 +19,7 @@ import os
 import importlib.resources
 from typing import List, Dict, Any, Optional, Callable
 from dataclasses import dataclass, field
-from .catalog_provider import BundledCatalogProvider, load_from_bundled_resource
+from .utils import load_from_bundled_resource
 from ..inference_strategy import InferenceStrategy
 from .constants import *
 from .catalog import CatalogConfig, A2uiCatalog
@@ -77,17 +77,15 @@ class A2uiSchemaManager(InferenceStrategy):
 
     # Load server-to-client and common types schemas
     self._server_to_client_schema = self._apply_modifiers(
-        load_from_bundled_resource(version, SERVER_TO_CLIENT_SCHEMA_KEY)
+        load_from_bundled_resource(
+            version, SERVER_TO_CLIENT_SCHEMA_KEY, SPEC_VERSION_MAP
+        )
     )
     self._common_types_schema = self._apply_modifiers(
-        load_from_bundled_resource(version, COMMON_TYPES_SCHEMA_KEY)
+        load_from_bundled_resource(version, COMMON_TYPES_SCHEMA_KEY, SPEC_VERSION_MAP)
     )
 
     # Process catalogs
-    if not catalogs:
-      # If no catalogs are provided, use the bundled catalog (basic catalog)
-      catalogs = [CatalogConfig.bundled(version)]
-
     for config in catalogs:
       catalog_schema = config.provider.load()
       catalog_schema = self._apply_modifiers(catalog_schema)

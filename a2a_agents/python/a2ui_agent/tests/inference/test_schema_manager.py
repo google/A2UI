@@ -15,10 +15,11 @@ import json
 import os
 from unittest.mock import patch, MagicMock, PropertyMock
 from a2ui.inference.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
+from a2ui.inference.basic_catalog import BasicCatalog
+from a2ui.inference.basic_catalog.constants import BASIC_CATALOG_NAME
 from a2ui.inference.schema.constants import (
     CATALOG_COMPONENTS_KEY,
     INLINE_CATALOG_NAME,
-    BASIC_CATALOG_NAME,
     VERSION_0_8,
     VERSION_0_9,
 )
@@ -66,7 +67,9 @@ def test_schema_manager_init_valid_version(mock_importlib_resources):
 
   mock_traversable.joinpath.side_effect = joinpath_side_effect
 
-  manager = A2uiSchemaManager(VERSION_0_8)
+  manager = A2uiSchemaManager(
+      VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8)]
+  )
 
   assert manager._server_to_client_schema["defs"] == "server_defs"
   # Basic catalog might have a URI-based ID if not explicitly matched
@@ -109,7 +112,9 @@ def test_schema_manager_fallback_local_assets(mock_importlib_resources):
 
     mock_open.side_effect = open_side_effect
 
-    manager = A2uiSchemaManager(VERSION_0_8)
+    manager = A2uiSchemaManager(
+        VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8)]
+    )
 
     assert manager._server_to_client_schema["defs"] == "local_server"
     assert len(manager._supported_catalogs) >= 1
@@ -153,7 +158,7 @@ def test_schema_manager_init_custom_catalog(tmp_path, mock_importlib_resources):
 
   config = CatalogConfig.from_path(name="Custom", catalog_path=str(d))
   manager = A2uiSchemaManager(
-      VERSION_0_8, catalogs=[CatalogConfig.bundled(VERSION_0_8), config]
+      VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8), config]
   )
 
   assert len(manager._supported_catalogs) == 2
@@ -190,7 +195,9 @@ def test_generate_system_prompt(mock_importlib_resources):
 
   mock_traversable.joinpath.side_effect = joinpath_side_effect
 
-  manager = A2uiSchemaManager(VERSION_0_8)
+  manager = A2uiSchemaManager(
+      VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8)]
+  )
 
   prompt = manager.generate_system_prompt(
       role_description="You are a helpful assistant.",
@@ -233,7 +240,9 @@ def test_generate_system_prompt_with_examples(mock_importlib_resources):
 
   mock_traversable.joinpath.side_effect = joinpath_side_effect
 
-  manager = A2uiSchemaManager(VERSION_0_8)
+  manager = A2uiSchemaManager(
+      VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8)]
+  )
 
   # Test with examples
   with patch("os.path.isdir", return_value=True):
@@ -285,7 +294,9 @@ def test_generate_system_prompt_v0_9_common_types(mock_importlib_resources):
   mock_traversable.joinpath.side_effect = joinpath_side_effect
 
   # Initialize with version 0.9 which expects common types
-  manager = A2uiSchemaManager(VERSION_0_9)
+  manager = A2uiSchemaManager(
+      VERSION_0_9, catalogs=[BasicCatalog.get_config(VERSION_0_9)]
+  )
 
   prompt = manager.generate_system_prompt("Role", include_schema=True)
 
@@ -312,7 +323,9 @@ def test_generate_system_prompt_minimal_args(mock_importlib_resources):
 
   mock_traversable.joinpath.side_effect = joinpath_side_effect
 
-  manager = A2uiSchemaManager(VERSION_0_8)
+  manager = A2uiSchemaManager(
+      VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8)]
+  )
 
   prompt = manager.generate_system_prompt("Just Role")
 
@@ -345,7 +358,11 @@ def test_generate_system_prompt_with_inline_catalog(mock_importlib_resources):
     return mock_file
 
   mock_traversable.joinpath.side_effect = joinpath_side_effect
-  manager = A2uiSchemaManager(VERSION_0_8, accepts_inline_catalogs=True)
+  manager = A2uiSchemaManager(
+      VERSION_0_8,
+      catalogs=[BasicCatalog.get_config(VERSION_0_8)],
+      accepts_inline_catalogs=True,
+  )
 
   inline_schema = {
       "$schema": "https://json-schema.org/draft/2020-12/schema",

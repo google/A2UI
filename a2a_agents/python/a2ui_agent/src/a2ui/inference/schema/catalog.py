@@ -19,8 +19,8 @@ import os
 from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider, BundledCatalogProvider
-from .constants import CATALOG_COMPONENTS_KEY, CATALOG_ID_KEY, BASIC_CATALOG_NAME
+from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
+from .constants import CATALOG_COMPONENTS_KEY, CATALOG_ID_KEY
 
 
 @dataclass
@@ -40,17 +40,6 @@ class CatalogConfig:
   name: str
   provider: A2uiCatalogProvider
   examples_path: Optional[str] = None
-
-  @classmethod
-  def bundled(
-      cls, version: str, examples_path: Optional[str] = None
-  ) -> "CatalogConfig":
-    """Returns a CatalogConfig for the basic bundled catalog."""
-    return cls(
-        name=BASIC_CATALOG_NAME,
-        provider=BundledCatalogProvider(version),
-        examples_path=examples_path,
-    )
 
   @classmethod
   def from_path(

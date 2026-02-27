@@ -33,7 +33,8 @@ from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
 from a2ui.inference.schema.constants import VERSION_0_8
-from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.basic_catalog.provider import BasicCatalog
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ class ContactAgent:
         A2uiSchemaManager(
             version=VERSION_0_8,
             catalogs=[
-                CatalogConfig.bundled(version=VERSION_0_8, examples_path="examples")
+                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
             ],
         )
         if use_ui

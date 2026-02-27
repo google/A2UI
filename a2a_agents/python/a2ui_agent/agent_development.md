@@ -19,11 +19,15 @@ The first step in any A2UI-enabled agent is initializing the `A2uiSchemaManager`
 ```python
 from a2ui.inference.schema.constants import VERSION_0_8
 from a2ui.inference.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.inference.basic_catalog.provider import BasicCatalog
 
 schema_manager = A2uiSchemaManager(
     version=VERSION_0_8,
     catalogs=[
-        CatalogConfig.bundled(version=VERSION_0_8, examples_path="examples"),
+        BasicCatalog.get_config(
+            version=VERSION_0_8,
+            examples_path="examples"
+        ),
         CatalogConfig.from_path(
             name="my_custom_catalog",
             catalog_path="path/to/catalog.json",

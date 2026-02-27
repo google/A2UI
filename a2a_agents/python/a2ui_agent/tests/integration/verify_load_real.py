@@ -17,13 +17,16 @@ import sys
 from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.constants import CATALOG_COMPONENTS_KEY, VERSION_0_8, VERSION_0_9
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
+from a2ui.inference.basic_catalog.provider import BasicCatalog
 
 
 def verify():
   print('Verifying A2uiSchemaManager...')
   try:
     manager = A2uiSchemaManager(
-        VERSION_0_8, schema_modifiers=[remove_strict_validation]
+        version=VERSION_0_8,
+        catalogs=[BasicCatalog.get_config(VERSION_0_8)],
+        schema_modifiers=[remove_strict_validation],
     )
     catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
@@ -386,7 +389,9 @@ def verify():
 
   try:
     manager = A2uiSchemaManager(
-        VERSION_0_9, schema_modifiers=[remove_strict_validation]
+        version=VERSION_0_9,
+        catalogs=[BasicCatalog.get_config(VERSION_0_9)],
+        schema_modifiers=[remove_strict_validation],
     )
     catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
