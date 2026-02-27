@@ -2,6 +2,7 @@ import { DataContext } from './data-context.js';
 import { ComponentModel } from '../state/component-model.js';
 import type { SurfaceModel } from '../state/surface-model.js';
 import type { ComponentApi } from '../catalog/types.js';
+import type { SurfaceComponentsModel } from '../state/surface-components-model.js';
 
 /**
  * Context provided to components during rendering.
@@ -10,9 +11,10 @@ import type { ComponentApi } from '../catalog/types.js';
 export class ComponentContext {
   readonly componentModel: ComponentModel;
   readonly dataContext: DataContext;
+  readonly surfaceComponents: SurfaceComponentsModel;
 
   constructor(
-    surface: SurfaceModel<ComponentApi>,
+    surface: SurfaceModel<any>,
     componentId: string,
     dataModelBasePath: string = '/'
   ) {
@@ -21,6 +23,7 @@ export class ComponentContext {
       throw new Error(`Component not found: ${componentId}`);
     }
     this.componentModel = model;
+    this.surfaceComponents = surface.componentsModel;
     this.dataContext = new DataContext(surface.dataModel, dataModelBasePath);
     this._actionDispatcher = (action) => surface.dispatchAction(action);
   }

@@ -12,6 +12,13 @@ The Data Layer is responsible for receiving the wire protocol (JSON messages), p
 
 It consists of three sub-components: the Processing Layer, the Dumb Models, and the Context Layer.
 
+### Schema Library Requirements
+To represent and validate component and function APIs, the Data Layer requires a **Schema Library**. 
+
+*   **Ideal Choice**: A library (like **Zod** in TypeScript or **JsonSchemaBuilder** in Flutter) that allows for programmatic definition of schemas and the ability to validate raw JSON data against those definitions.
+*   **Capabilities Generation**: The library should ideally support exporting these programmatic definitions to standard JSON Schema for the `getClientCapabilities` payload.
+*   **Fallback**: If no suitable programmatic library exists for the target language, raw **JSON Schema strings** or manual validation logic can be used instead.
+
 ### Key Interfaces and Classes
 *   **`MessageProcessor`**: The entry point that ingests raw JSON streams.
 *   **`SurfaceGroupModel`**: The root container for all active surfaces.
@@ -23,7 +30,7 @@ It consists of three sub-components: the Processing Layer, the Dumb Models, and 
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
 ### The Catalog and Component API
-The Data Layer relies on a **Catalog** to know which components exist. The Catalog and its components are defined by the `ComponentApi` interface and the concrete `Catalog` class.
+The Data Layer relies on a **Catalog** to know which components and functions exist. 
 
 ```typescript
 interface ComponentApi {
@@ -31,15 +38,78 @@ interface ComponentApi {
   readonly schema: z.ZodType<any>; // Technical definition for capabilities
 }
 
+/** 
+ * Context provided to functions during execution.
+ * Allows functions to resolve other dynamic values or interact with the data model.
+ */
+interface FunctionContext {
+  /** The current data model path context (useful for relative paths). */
+  readonly path: string;
+
+  /** 
+   * Resolves any DynamicValue (literal, path, or function call) to a reactive stream. 
+   * The returned type should be an observable/listenable implementation idiomatic to the language.
+   */
+  resolve(value: any): Observable<any>;
+
+  /** Retrieves another registered function by name. */
+  getFunction(name: string): ClientFunction | undefined;
+
+  /** Updates the data model at a specific path. */
+  update(path: string, value: any): void;
+}
+
+/** 
+ * Defines a client-side logic handler. 
+ */
+interface ClientFunction {
+  readonly name: string;
+  readonly description: string;
+  readonly returnType: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
+  
+  /** 
+   * The schema for the arguments this function accepts (similar to Flutter's `argumentSchema`).
+   * MUST use the same schema library as the ComponentApi to ensure consistency 
+   * across the catalog.
+   */
+  readonly argumentSchema: z.ZodType<any>;
+
+  /**
+   * Executes the function logic.
+   * @param args The key-value pairs of arguments provided in the JSON.
+   * @param context The execution context for resolving dependencies.
+   * @returns A reactive stream (or Observable/Signal) of the result.
+   * 
+   * Rationale: Like the Model Layer, functions MUST return an observable implementation
+   * that is idiomatic to the target language but follows "lowest common denominator" 
+   * principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+   */
+  execute(args: Record<string, any>, context: FunctionContext): Observable<any>;
+}
+
 class Catalog<T extends ComponentApi> {
   readonly id: string; // Unique catalog URI
   readonly components: ReadonlyMap<string, T>;
+  readonly functions: ReadonlyMap<string, ClientFunction>;
 
-  constructor(id: string, components: T[]) {
-    // Initializes the read-only map of components
+  constructor(id: string, components: T[], functions: ClientFunction[] = []) {
+    // Initializes the read-only maps
   }
 }
 ```
+
+#### Function Implementation Rationale
+A2UI categorizes client-side functions to balance performance and reactivity. 
+
+**Observability Consistency**: Like the "Dumb Models," functions MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+
+**API Documentation**: Every function MUST include a schema (e.g., `argumentSchema`) using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities for the AI model.
+
+**Function Categories**:
+1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. While they return observable streams for consistency, their logic is immediate and depends only on their inputs.
+2.  **External State (Reactive)**: Functions like `clock()` or `networkStatus()`. These return long-lived streams that push updates to the UI independently of data model changes.
+3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`, `closeModal`) that return `void`. These are typically triggered by user actions rather than interpolation.
+
 
 ### The Processing Layer (`MessageProcessor`)
 The **Processing Layer** acts as the "Controller." It accepts the raw stream of A2UI messages (`createSurface`, `updateComponents`, etc.), parses them, and mutates the underlying Data Models accordingly.
@@ -206,6 +276,19 @@ A change at a specific path must trigger notifications for related paths to ensu
 *   **Objects**: Setting a key to `undefined` should remove that key from the object.
 *   **Arrays**: Setting an index to `undefined` should preserve the array's length but set that specific index to `undefined` (sparse array support).
 
+#### Type Coercion Standards
+To ensure the Data Layer behaves identically across all platforms (e.g., TypeScript, Swift, Kotlin), the following coercion rules MUST be followed when resolving dynamic values:
+
+| Input Type | Target Type | Result |
+| :--- | :--- | :--- |
+| `String` ("true", "false") | `Boolean` | `true` or `false` (case-insensitive) |
+| `Number` (non-zero) | `Boolean` | `true` |
+| `Number` (0) | `Boolean` | `false` |
+| `Any` | `String` | Locale-neutral string representation |
+| `null` / `undefined` | `String` | `""` (empty string) |
+| `null` / `undefined` | `Number` | `0` |
+| `String` (numeric) | `Number` | Parsed numeric value or `0` |
+
 
 ### The Context Layer (Transient Windows)
 The **Context Layer** consists of short-lived objects created on-demand during the rendering process to solve the problem of "scope" and binding resolution. 
@@ -228,51 +311,64 @@ class ComponentContext {
   constructor(surface: SurfaceModel<T>, componentId: string, basePath?: string);
   readonly componentModel: ComponentModel; // The instance configuration
   readonly dataContext: DataContext; // The instance's data scope
+  readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
   dispatchAction(action: any): Promise<void>; // Propagate action to surface
 }
+
+#### Inter-Component Dependencies (The "Escape Hatch")
+While A2UI components are designed to be self-contained, certain rendering logic requires knowledge of a child or sibling's properties. 
+
+**The Weight Example**: In the standard catalog, a `Row` or `Column` container often needs to know if its children have a `weight` property to correctly apply `Flex` or `Expanded` logic in frameworks like Flutter or SwiftUI.
+
+**Usage**: Component implementations can use `ctx.surfaceComponents` to inspect the metadata of other components in the same surface.
+> **Guidance**: This pattern is generally discouraged as it increases coupling. Use it only as an essential escape hatch when a framework's layout engine cannot be satisfied by explicit component properties alone.
+
 ```
 
 ## 2. Framework Binding Layer
 
-The Framework Binding Layer takes the structured state provided by the Data Layer and translates it into actual UI elements (DOM nodes, Flutter widgets, etc.). This layer is specific to the UI framework being used (e.g., React, Angular, Lit, Flutter) and is the primary area requiring design work when creating a new renderer.
-
-This layer provides framework-specific component implementations that extend the data layer's `ComponentApi` to include actual rendering logic.
+The Framework Binding Layer takes the structured state provided by the Data Layer and translates it into actual UI elements (DOM nodes, Flutter widgets, etc.). This layer provides framework-specific component implementations that extend the data layer's `ComponentApi` to include actual rendering logic.
 
 ### Key Interfaces and Classes
 *   **`FrameworkSurface`**: The entrypoint widget for a specific framework.
-*   **`FrameworkComponent`**: The framework-specific logic for rendering a specific component (e.g. an `AngularComponent` or `LitComponent`).
+*   **`FrameworkComponent`**: The framework-specific logic for rendering a specific component.
 
 ### `FrameworkSurface`
-The entrypoint widget for a specific framework. It listens to the `SurfaceModel` to dynamically build the UI tree.
+The entrypoint widget for a specific framework. It listens to the `SurfaceModel` to dynamically build the UI tree. It initiates the rendering loop at the component with ID `root`.
 
-```typescript
-class MyFrameworkSurface {
-  constructor(model: SurfaceModel<MyFrameworkComponent>);
-  // Implementation uses model.componentsModel.addLifecycleListener to 
-  // recursively render children starting from the 'root' component.
-}
-```
+### The Rendering Pattern
+How components are rendered depends on the target framework's architecture.
 
-### Framework-Specific Components
-The framework-specific components define how to render each component using a particular UI framework. They implement the `ComponentApi`.
+#### 1. Functional / Reactive Frameworks (e.g., Flutter, SwiftUI)
+In frameworks that use an immutable widget tree, components typically implement a `build` or `render` method that is called whenever the component's properties or bound data change.
 
+**Example Recursive Builder Pattern**:
 ```typescript
 interface MyFrameworkComponent extends ComponentApi {
-  // Framework-specific render method
-  render(ctx: ComponentContext): MyFrameworkWidget;
-}
-
-class MyFrameworkButton implements MyFrameworkComponent {
-  readonly name = 'Button';
-  readonly schema = ButtonSchema;
-
-  render(ctx: ComponentContext): MyFrameworkWidget {
-     // 1. Subscribe to ctx.componentModel.addUpdateListener for config changes
-     // 2. Use ctx.dataContext.subscribeDynamicValue for data bindings
-     // 3. Call ctx.dispatchAction() for user interactions
-  }
+  /**
+   * @param ctx The component's context.
+   * @param buildChild A closure provided by the surface to recursively build children.
+   */
+  build(ctx: ComponentContext, buildChild: (id: string) => Widget): Widget;
 }
 ```
+
+#### 2. Stateful / Imperative Frameworks (e.g., Vanilla DOM, Android Views)
+In stateful frameworks, a parent component instance might persist even as its configuration changes. In these cases, the `FrameworkComponent` might maintain a reference to its native element and provide an `update()` method to apply new properties without re-creating the entire child tree.
+
+### Component Traits
+
+#### Reactive Validation (`Checkable`)
+Interactive components that support the `checks` property should implement the `Checkable` trait.
+*   **Aggregate Error Stream**: The component should subscribe to all `CheckRule` conditions defined in its properties.
+*   **UI Feedback**: It should reactively display the `message` of the first failing check as a validation error hint.
+*   **Action Blocking**: Actions (like `Button` clicks) should be reactively disabled or blocked if any validation check in the surface or component fails.
+
+#### Component Subscription Lifecycle
+To ensure performance and correctness, components MUST follow these rules:
+1.  **Lazy Subscription**: Only subscribe to data paths or property updates when the component is actually mounted/attached to the UI.
+2.  **Path Stability**: If a component's property (e.g., a `value` data path) changes via an `updateComponents` message, the component MUST unsubscribe from the old path and subscribe to the new one.
+
 
 ## 3. Design alternatives
 
@@ -391,3 +487,24 @@ This would make the framework renderer simple to implement, but this option is n
    "value": "no-reply@somebusiness.com",
 }
 ```
+
+---
+
+## **Basic Catalog Implementation**
+
+The Standard A2UI Catalog (v0.9) requires a shared logic layer for expression resolution and standard component definitions. To maintain consistency across renderers, implementations should follow this structure:
+
+*   **`basic_catalog_api/`**: Contains the framework-agnostic `ComponentApi` definitions for standard components (`Text`, `Button`, `Row`, etc.) and the `ClientFunction` definitions for standard functions.
+*   **`basic_catalog_implementation/`**: Contains the framework-specific rendering logic (e.g. `SwiftUIButton`, `FlutterRow`).
+
+### **Expression Resolution Logic (`formatString`)**
+The standard `formatString` function is responsible for interpreting the `${expression}` syntax within string properties. 
+
+**Implementation Requirements**:
+1.  **Recursion**: The function implementation MUST use `FunctionContext.resolve()` to recursively evaluate nested expressions or function calls (e.g., `${formatDate(value:${/date})}`).
+2.  **Tokenization**: The parser must distinguish between:
+    *   **DataPath**: A raw JSON Pointer (e.g., `${/user/name}`).
+    *   **FunctionCall**: Identified by parentheses (e.g., `${now()}`).
+3.  **Escaping**: Literal `${` sequences must be handled (typically by escaping as `\${`).
+4.  **Reactive Coercion**: Results are transformed into strings using the **Type Coercion Standards** defined in the Data Layer section.
+

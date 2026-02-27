@@ -15,8 +15,8 @@ export function createTestContext(properties: any, actionHandler: any = async ()
   const surface = new TestSurfaceModel(actionHandler);
   const component = new ComponentModel('test-id', 'TestComponent', properties);
   surface.componentsModel.addComponent(component);
-  
+
   const context = new ComponentContext(surface, 'test-id', '/');
-  
+
   return context;
 }
