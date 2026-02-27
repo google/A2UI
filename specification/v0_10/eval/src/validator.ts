@@ -25,11 +25,11 @@ import { logger } from "./logger";
 export class Validator {
   private ajv: Ajv;
   private validateFn: any;
-  private standardFunctions = new Set<string>();
+  private basicFunctions = new Set<string>();
 
   constructor(
     private schemas: Record<string, any>,
-    private outputDir?: string
+    private outputDir?: string,
   ) {
     this.ajv = new Ajv({ allErrors: true, strict: false }); // strict: false to be lenient with unknown keywords if any
     for (const [name, schema] of Object.entries(schemas)) {
@@ -39,27 +39,29 @@ export class Validator {
       "https://a2ui.org/specification/v0_10/server_to_client.json",
     );
 
-    // Populate standard functions from the catalog schema
+    // Populate basic functions from the catalog schema
     // Note: schemas are keyed by filename in index.ts
-    const catalogSchema = schemas["standard_catalog.json"];
-    if (catalogSchema && Array.isArray(catalogSchema.functions)) {
-      for (const func of catalogSchema.functions) {
-        if (func.name && typeof func.name === "string") {
-          this.standardFunctions.add(func.name);
-        }
+    const catalogSchema = schemas["basic_catalog.json"];
+    if (
+      catalogSchema &&
+      typeof catalogSchema.functions === "object" &&
+      catalogSchema.functions !== null
+    ) {
+      for (const funcName of Object.keys(catalogSchema.functions)) {
+        this.basicFunctions.add(funcName);
       }
     }
 
-    if (this.standardFunctions.size === 0) {
+    if (this.basicFunctions.size === 0) {
       logger.warn(
-        "No standard functions loaded from schema 'standard_catalog.json'. Function validation will fail open."
+        "No basic functions loaded from schema 'basic_catalog.json'. Function validation will fail open.",
       );
     }
   }
 
   async run(results: GeneratedResult[]): Promise<ValidatedResult[]> {
     logger.info(
-      `Starting Phase 2: Schema Validation (${results.length} items)`
+      `Starting Phase 2: Schema Validation (${results.length} items)`,
     );
     const validatedResults: ValidatedResult[] = [];
     let passedCount = 0;
@@ -90,22 +92,22 @@ export class Validator {
           if (message.createSurface) {
             validated = this.ajv.validate(
               `${schemaUri}#/$defs/CreateSurfaceMessage`,
-              message
+              message,
             );
           } else if (message.updateComponents) {
             validated = this.ajv.validate(
               `${schemaUri}#/$defs/UpdateComponentsMessage`,
-              message
+              message,
             );
           } else if (message.updateDataModel) {
             validated = this.ajv.validate(
               `${schemaUri}#/$defs/UpdateDataModelMessage`,
-              message
+              message,
             );
           } else if (message.deleteSurface) {
             validated = this.ajv.validate(
               `${schemaUri}#/$defs/DeleteSurfaceMessage`,
-              message
+              message,
             );
           } else {
             // Fallback to top-level validation if no known key matches (or if it's empty/invalid structure)
@@ -115,8 +117,8 @@ export class Validator {
           if (!validated) {
             errors.push(
               ...(this.ajv.errors || []).map(
-                (err: any) => `${err.instancePath} ${err.message}`
-              )
+                (err: any) => `${err.instancePath} ${err.message}`,
+              ),
             );
           }
         }
@@ -141,7 +143,7 @@ export class Validator {
     }
 
     logger.info(
-      `Phase 2: Validation Complete. Passed: ${passedCount}, Failed: ${failedCount}`
+      `Phase 2: Validation Complete. Passed: ${passedCount}, Failed: ${failedCount}`,
     );
     return validatedResults;
   }
@@ -150,7 +152,7 @@ export class Validator {
     if (!this.outputDir) return;
     const modelDir = path.join(
       this.outputDir,
-      `output-${result.modelName.replace(/[\/:]/g, "_")}`
+      `output-${result.modelName.replace(/[\/:]/g, "_")}`,
     );
     const detailsDir = path.join(modelDir, "details");
     const failureData = {
@@ -166,9 +168,9 @@ export class Validator {
     fs.writeFileSync(
       path.join(
         detailsDir,
-        `${result.prompt.name}.${result.runNumber}.failed.yaml`
+        `${result.prompt.name}.${result.runNumber}.failed.yaml`,
       ),
-      yaml.dump(failureData)
+      yaml.dump(failureData),
     );
   }
 
@@ -183,7 +185,7 @@ export class Validator {
         const surfaceId = message.updateComponents.surfaceId;
         if (surfaceId && !createdSurfaces.has(surfaceId)) {
           errors.push(
-            `updateComponents message received for surface '${surfaceId}' before createSurface message.`
+            `updateComponents message received for surface '${surfaceId}' before createSurface message.`,
           );
         }
 
@@ -208,7 +210,7 @@ export class Validator {
         this.validateDeleteSurface(message.deleteSurface, errors);
       } else {
         errors.push(
-          `Unknown message type in output: ${JSON.stringify(message)}`
+          `Unknown message type in output: ${JSON.stringify(message)}`,
         );
       }
     }
@@ -216,7 +218,7 @@ export class Validator {
     // Algorithmic check for root component
     if (hasUpdateComponents && !hasRootComponent) {
       errors.push(
-        "Missing root component: At least one 'updateComponents' message must contain a component with id: 'root'."
+        "Missing root component: At least one 'updateComponents' message must contain a component with id: 'root'.",
       );
     }
 
@@ -241,8 +243,8 @@ export class Validator {
     ) {
       const functionName = root.call;
 
-      if (this.standardFunctions.has(functionName)) {
-        // Dummy validation: Always succeed for standard functions.
+      if (this.basicFunctions.has(functionName)) {
+        // Dummy validation: Always succeed for basic functions.
         return;
       }
 
@@ -307,7 +309,7 @@ export class Validator {
       if (this.ajv && c.component) {
         const componentType = c.component;
         const schemaUri =
-          "https://a2ui.org/specification/v0_10/standard_catalog.json";
+          "https://a2ui.org/specification/v0_10/basic_catalog.json";
 
         const defRef = `${schemaUri}#/components/${componentType}`;
 
@@ -318,8 +320,8 @@ export class Validator {
               (err: any) =>
                 `${err.instancePath} ${err.message} (in component '${
                   c.id || "unknown"
-                }')`
-            )
+                }')`,
+            ),
           );
         }
       }
@@ -341,7 +343,7 @@ export class Validator {
   private validateComponent(
     component: any,
     allIds: Set<string>,
-    errors: string[]
+    errors: string[],
   ) {
     const id = component.id;
     if (!id) {
@@ -362,7 +364,7 @@ export class Validator {
       for (const id of ids) {
         if (id && !allIds.has(id)) {
           errors.push(
-            `Component ${JSON.stringify(id)} references non-existent component ID.`
+            `Component ${JSON.stringify(id)} references non-existent component ID.`,
           );
         }
       }

@@ -23,7 +23,7 @@ def verify():
   print('Verifying A2uiSchemaManager...')
   try:
     manager = A2uiSchemaManager('0.8', schema_modifiers=[remove_strict_validation])
-    catalog = manager.get_effective_catalog()
+    catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
     print(f'Successfully loaded 0.8: {len(catalog_components)} components')
     print(f'Components found: {list(catalog_components.keys())[:5]}...')
@@ -38,7 +38,7 @@ def verify():
                         'id': 'profile_image',
                         'component': {
                             'Image': {
-                                'url': {'path': 'imageUrl'},
+                                'url': {'path': '/imageUrl'},
                                 'usageHint': 'avatar',
                                 'fit': 'cover',
                             }
@@ -48,16 +48,16 @@ def verify():
                         'id': 'user_heading',
                         'weight': 1,
                         'component': {
-                            'Text': {'text': {'path': 'name'}, 'usageHint': 'h2'}
+                            'Text': {'text': {'path': '/name'}, 'usageHint': 'h2'}
                         },
                     },
                     {
                         'id': 'description_text_1',
-                        'component': {'Text': {'text': {'path': 'title'}}},
+                        'component': {'Text': {'text': {'path': '/title'}}},
                     },
                     {
                         'id': 'description_text_2',
-                        'component': {'Text': {'text': {'path': 'team'}}},
+                        'component': {'Text': {'text': {'path': '/team'}}},
                     },
                     {
                         'id': 'description_column',
@@ -83,7 +83,7 @@ def verify():
                     {
                         'id': 'calendar_primary_text',
                         'component': {
-                            'Text': {'usageHint': 'h5', 'text': {'path': 'calendar'}}
+                            'Text': {'usageHint': 'h5', 'text': {'path': '/calendar'}}
                         },
                     },
                     {
@@ -129,7 +129,7 @@ def verify():
                     {
                         'id': 'location_primary_text',
                         'component': {
-                            'Text': {'usageHint': 'h5', 'text': {'path': 'location'}}
+                            'Text': {'usageHint': 'h5', 'text': {'path': '/location'}}
                         },
                     },
                     {
@@ -173,7 +173,7 @@ def verify():
                     {
                         'id': 'mail_primary_text',
                         'component': {
-                            'Text': {'usageHint': 'h5', 'text': {'path': 'email'}}
+                            'Text': {'usageHint': 'h5', 'text': {'path': '/email'}}
                         },
                     },
                     {
@@ -215,7 +215,7 @@ def verify():
                     {
                         'id': 'call_primary_text',
                         'component': {
-                            'Text': {'usageHint': 'h5', 'text': {'path': 'mobile'}}
+                            'Text': {'usageHint': 'h5', 'text': {'path': '/mobile'}}
                         },
                     },
                     {
@@ -384,7 +384,7 @@ def verify():
 
   try:
     manager = A2uiSchemaManager('0.9', schema_modifiers=[remove_strict_validation])
-    catalog = manager.get_effective_catalog()
+    catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
     print(f'Successfully loaded 0.9: {len(catalog_components)} components')
     print(f'Components found: {list(catalog_components.keys())}...')
@@ -394,9 +394,7 @@ def verify():
             'version': 'v0.9',
             'createSurface': {
                 'surfaceId': 'contact_form_1',
-                'catalogId': (
-                    'https://a2ui.dev/specification/v0_9/standard_catalog.json'
-                ),
+                'catalogId': 'https://a2ui.dev/specification/v0_9/basic_catalog.json',
                 'fakeProperty': 'should be allowed',
             },
         },

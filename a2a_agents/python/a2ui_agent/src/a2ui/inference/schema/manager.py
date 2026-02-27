@@ -45,7 +45,7 @@ def _load_basic_component(version: str, spec_name: str) -> Dict:
 
   Args:
     version: The version of the schema to load.
-    spec_name: The name of the schema component (e.g. 'server_to_client', 'standard_catalog', 'common_types') to load.
+    spec_name: The name of the schema component (e.g. 'server_to_client', 'basic_catalog', 'common_types') to load.
 
   Returns:
     The loaded schema component.
@@ -184,7 +184,7 @@ class A2uiSchemaManager(InferenceStrategy):
           # Strip the `json/` part from the catalog file path.
           SPEC_VERSION_MAP[version][CATALOG_SCHEMA_KEY].replace("/json/", "/")
           if CATALOG_SCHEMA_KEY in SPEC_VERSION_MAP[version]
-          else f"specification/{version}/standard_catalog.json"
+          else f"specification/{version}/basic_catalog.json"
       )
       basic_catalog_schema[CATALOG_ID_KEY] = BASE_SCHEMA_URL + catalog_file
     if "$schema" not in basic_catalog_schema:
@@ -288,12 +288,12 @@ class A2uiSchemaManager(InferenceStrategy):
         f" {list(self._supported_catalogs.keys())}"
     )
 
-  def get_effective_catalog(
+  def get_selected_catalog(
       self,
       client_ui_capabilities: Optional[dict[str, Any]] = None,
       allowed_components: List[str] = [],
   ) -> A2uiCatalog:
-    """Gets the effective catalog after selection and component pruning."""
+    """Gets the selected catalog after selection and component pruning."""
     catalog = self._determine_catalog(client_ui_capabilities)
     pruned_catalog = catalog.with_pruned_components(allowed_components)
     return pruned_catalog
@@ -324,15 +324,15 @@ class A2uiSchemaManager(InferenceStrategy):
     if ui_description:
       parts.append(f"## UI Description:\n{ui_description}")
 
-    final_catalog = self.get_effective_catalog(
+    selected_catalog = self.get_selected_catalog(
         client_ui_capabilities, allowed_components
     )
 
     if include_schema:
-      parts.append(final_catalog.render_as_llm_instructions())
+      parts.append(selected_catalog.render_as_llm_instructions())
 
     if include_examples:
-      examples_str = self.load_examples(final_catalog, validate=validate_examples)
+      examples_str = self.load_examples(selected_catalog, validate=validate_examples)
       if examples_str:
         parts.append(f"### Examples:\n{examples_str}")
 
