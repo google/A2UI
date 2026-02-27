@@ -4,7 +4,7 @@ import { SurfaceGroupModel } from '../state/surface-group-model.js';
 import { ComponentModel } from '../state/component-model.js';
 import { Subscription } from '../common/events.js';
 
-import { A2UIMessage } from '../schema/server-to-client.js';
+import { A2uiMessage } from '../schema/server-to-client.js';
 
 /**
  * The central processor for A2UI messages.
@@ -39,13 +39,13 @@ export class MessageProcessor<T extends CatalogApi> {
     return this.model.onSurfaceDeleted.subscribe(handler);
   }
 
-  processMessages(messages: A2UIMessage[]): void {
+  processMessages(messages: A2uiMessage[]): void {
     for (const message of messages) {
       this.processMessage(message);
     }
   }
 
-  private processMessage(message: A2UIMessage): void {
+  private processMessage(message: A2uiMessage): void {
     if (message.createSurface) {
       this.processCreateSurfaceMessage(message);
       return;
@@ -73,7 +73,7 @@ export class MessageProcessor<T extends CatalogApi> {
     }
   }
 
-  private processCreateSurfaceMessage(message: A2UIMessage): void {
+  private processCreateSurfaceMessage(message: A2uiMessage): void {
     const payload = message.createSurface!;
     const { surfaceId, catalogId, theme } = payload;
 
@@ -93,13 +93,13 @@ export class MessageProcessor<T extends CatalogApi> {
     this.model.addSurface(surface);
   }
 
-  private processDeleteSurfaceMessage(message: A2UIMessage): void {
+  private processDeleteSurfaceMessage(message: A2uiMessage): void {
     const payload = message.deleteSurface!;
     if (!payload.surfaceId) return;
     this.model.deleteSurface(payload.surfaceId);
   }
 
-  private processUpdateComponentsMessage(message: A2UIMessage): void {
+  private processUpdateComponentsMessage(message: A2uiMessage): void {
     const payload = message.updateComponents!;
     if (!payload.surfaceId) return;
 
@@ -133,7 +133,7 @@ export class MessageProcessor<T extends CatalogApi> {
     }
   }
 
-  private processUpdateDataModelMessage(message: A2UIMessage): void {
+  private processUpdateDataModelMessage(message: A2uiMessage): void {
     const payload = message.updateDataModel!;
     if (!payload.surfaceId) return;
 

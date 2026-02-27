@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const A2UIMessageSchema = z.object({
+export const A2uiMessageSchema = z.object({
   createSurface: z.object({
     surfaceId: z.string(),
     catalogId: z.string(),
@@ -20,4 +20,4 @@ export const A2UIMessageSchema = z.object({
   }).optional(),
 });
 
-export type A2UIMessage = z.infer<typeof A2UIMessageSchema>;
+export type A2uiMessage = z.infer<typeof A2uiMessageSchema>;
