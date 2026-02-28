@@ -23,13 +23,14 @@ Schemas: The a2ui extension is defined by several primary JSON schemas:
 - Catalog Definition Schema: A standard format for defining a library of components and functions.
 - Server-to-Client Message List Schema: The core wire format for messages sent from the agent to the client (e.g., updateComponents, updateDataModel).
 - Client-to-Server Message List Schema: The core wire format for messages sent from the client to the agent (e.g., action).
+- Server Capabilities Schema: The schema for the `a2uiServerCapabilities` object, used by servers to declare their UI generation capabilities.
 - Client Capabilities Schema: The schema for the `a2uiClientCapabilities` object.
 
 Client Capabilities: The client sends its capabilities to the server in an `a2uiClientCapabilities` object. This object is included in the `metadata` field of every A2A `Message` sent from the client to the server. This object allows the client to declare which catalogs it supports.
 
 ## Agent Card details
 
-Agents advertise their A2UI capabilities in their AgentCard within the `AgentCapabilities.extensions` list. The `params` object defines the agent's specific UI support.
+Agents advertise their A2UI capabilities in their AgentCard within the `AgentCapabilities.extensions` list. The `params` object defines the agent's specific UI support and corresponds directly to the **Server Capabilities Schema** (`server_capabilities.json`).
 
 Example AgentExtension block:
 
@@ -40,7 +41,7 @@ Example AgentExtension block:
   "required": false,
   "params": {
     "supportedCatalogIds": [
-      "https://a2ui.org/specification/v0_10/standard_catalog.json",
+      "https://a2ui.org/specification/v0_10/basic_catalog.json",
       "https://my-company.com/a2ui/v0_1/my_custom_catalog.json"
     ],
     "acceptsInlineCatalogs": true
@@ -49,7 +50,8 @@ Example AgentExtension block:
 ```
 
 ### Parameter definitions
-- `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is a URI pointing to a Catalog Definition Schema that the agent can generate.
+The `params` object corresponds to the `v0.10` object in the `server_capabilities.json` schema:
+- `params.supportedCatalogIds`: (OPTIONAL) An array of strings, where each string is an ID identifying a Catalog Definition Schema that the agent can generate. This is not necessarily a resolvable URI.
 - `params.acceptsInlineCatalogs`: (OPTIONAL) A boolean indicating if the agent can accept an `inlineCatalogs` array in the client's `a2uiClientCapabilities`. If omitted, this defaults to `false`.
 
 ## Extension activation
@@ -92,7 +94,7 @@ Example DataPart:
       "version": "v0.10",
       "createSurface": {
         "surfaceId": "example_surface",
-        "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json"
+        "catalogId": "https://a2ui.org/specification/v0_10/basic_catalog.json"
       }
     },
     {

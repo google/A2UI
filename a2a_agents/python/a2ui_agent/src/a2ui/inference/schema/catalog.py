@@ -24,6 +24,7 @@ from referencing import Registry, Resource
 
 if TYPE_CHECKING:
   from .validator import A2uiValidator
+  from .payload_fixer import A2uiPayloadFixer
 
 
 @dataclass
@@ -64,6 +65,12 @@ class A2uiCatalog:
     from .validator import A2uiValidator
 
     return A2uiValidator(self)
+
+  @property
+  def payload_fixer(self) -> "A2uiPayloadFixer":
+    from .payload_fixer import A2uiPayloadFixer
+
+    return A2uiPayloadFixer(self)
 
   def with_pruned_components(self, allowed_components: List[str]) -> "A2uiCatalog":
     """Returns a new catalog with only allowed components.

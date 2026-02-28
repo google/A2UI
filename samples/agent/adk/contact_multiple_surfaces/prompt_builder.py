@@ -93,7 +93,7 @@ if __name__ == "__main__":
       ' "components":{"OrgChart":{"type":"object","properties":{"chain":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"name":{"type":"string"}},"required":["title","name"]}},"action":{"$ref":"#/definitions/Action"}},"required":["chain"]},"WebFrame":{"type":"object","properties":{"url":{"type":"string"},"html":{"type":"string"},"height":{"type":"number"},"interactionMode":{"type":"string","enum":["readOnly","interactive"]},"allowedEvents":{"type":"array","items":{"type":"string"}}}}}}]}'
   )
   client_ui_capabilities = json.loads(client_ui_capabilities_str)
-  inline_catalog = schema_manager.get_effective_catalog(
+  inline_catalog = schema_manager.get_selected_catalog(
       client_ui_capabilities=client_ui_capabilities,
   )
   request_prompt = inline_catalog.render_as_llm_instructions()
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     f.write(request_prompt)
   print("\nGenerated request prompt saved to request_prompt.txt")
 
-  basic_catalog = schema_manager.get_effective_catalog()
+  basic_catalog = schema_manager.get_selected_catalog()
   examples = schema_manager.load_examples(
       basic_catalog,
       validate=True,

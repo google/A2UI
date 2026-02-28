@@ -20,7 +20,7 @@
           "component": {
             "Image": {
               "url": {
-                "path": "imageUrl"
+                "path": "/imageUrl"
               },
               "usageHint": "avatar",
               "fit": "cover"
@@ -33,7 +33,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "name"
+                "path": "/name"
               },
               "usageHint": "h2"
             }
@@ -44,7 +44,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "title"
+                "path": "/title"
               }
             }
           }
@@ -54,7 +54,7 @@
           "component": {
             "Text": {
               "text": {
-                "path": "team"
+                "path": "/team"
               }
             }
           }
@@ -90,7 +90,7 @@
             "Text": {
               "usageHint": "h5",
               "text": {
-                "path": "calendar"
+                "path": "/calendar"
               }
             }
           }
@@ -151,7 +151,7 @@
             "Text": {
               "usageHint": "h5",
               "text": {
-                "path": "location"
+                "path": "/location"
               }
             }
           }
@@ -212,7 +212,7 @@
             "Text": {
               "usageHint": "h5",
               "text": {
-                "path": "email"
+                "path": "/email"
               }
             }
           }
@@ -279,7 +279,7 @@
             "Text": {
               "usageHint": "h5",
               "text": {
-                "path": "mobile"
+                "path": "/mobile"
               }
             }
           }
@@ -362,7 +362,7 @@
                   {
                     "key": "contactName",
                     "value": {
-                      "path": "name"
+                      "path": "/name"
                     }
                   }
                 ]
@@ -391,7 +391,7 @@
                   {
                     "key": "contactId",
                     "value": {
-                      "path": "id"
+                      "path": "/id"
                     }
                   }
                 ]
@@ -463,7 +463,7 @@
           "component": {
             "OrgChart": {
               "chain": {
-                "path": "hierarchy"
+                "path": "/hierarchy"
               },
               "action": {
                 "name": "chart_node_click",

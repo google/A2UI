@@ -31,7 +31,7 @@ export const analysisFlow = ai.defineFlow(
           failureType: z.string(),
           reason: z.string(),
           issues: z.array(z.string()).optional(),
-        })
+        }),
       ),
       numRuns: z.number(),
       evalModel: z.string(),
@@ -114,5 +114,5 @@ Return a Markdown formatted summary. Use headers and bullet points.
       }
       return `Analysis failed: ${e.message}`;
     }
-  }
+  },
 );

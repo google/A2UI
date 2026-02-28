@@ -59,6 +59,7 @@ nav:
           - A2UI Specification: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
   - Catalogs: catalogs.md
+  - Client-to-Server Actions: client_to_server_actions.md
   - Renderers (Clients): renderers.md
   - Transports (Message Passing): transports.md
   - Agents (Server-side): agents.md

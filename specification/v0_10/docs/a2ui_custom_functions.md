@@ -71,7 +71,7 @@ Use the `functions` property to define a map of function schemas.
 
 ## 2. Make the functions available
 
-The `FunctionCall` definition refers to a [catalog-agnostic reference](a2ui_protocol.md#the-standard-catalog).
+The `FunctionCall` definition refers to a [catalog-agnostic reference](a2ui_protocol.md#the-basic-catalog).
 In your catalog, you simply need to define the `anyFunction` reference:
 ```json
 {
@@ -86,7 +86,7 @@ In your catalog, you simply need to define the `anyFunction` reference:
 }
 ```
 
-If you want to incorporate functions defined in the [`standard_catalog.json`],
+If you want to incorporate functions defined in the [`basic_catalog.json`],
 those can be added too:
 ```json
 {
@@ -95,7 +95,7 @@ those can be added too:
       "oneOf": [
         {"$ref": "#/functions/trim"},
         {"$ref": "#/functions/getScreenResolution"},
-        {"$ref": "standard_catalog.json#/$defs/anyFunction" }
+        {"$ref": "basic_catalog.json#/$defs/anyFunction" }
       ]
     }
   }

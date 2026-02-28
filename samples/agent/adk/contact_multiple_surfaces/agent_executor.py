@@ -92,7 +92,7 @@ class ContactAgentExecutor(AgentExecutor):
               client_ui_capabilities = part.root.data["metadata"][
                   "a2uiClientCapabilities"
               ]
-              catalog = agent.schema_manager.get_effective_catalog(
+              catalog = agent.schema_manager.get_selected_catalog(
                   client_ui_capabilities=client_ui_capabilities
               )
               catalog_schema_str = catalog.render_as_llm_instructions()

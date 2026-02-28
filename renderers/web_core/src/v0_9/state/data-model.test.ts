@@ -110,11 +110,11 @@ describe('DataModel', () => {
 
   it('returns a subscription object', () => {
     model.set('/a', 1);
-    const sub = model.subscribe<number>('/a');
+    const sub = model.subscribe<number>('/a', (val) => updatedValue = val);
     assert.strictEqual(sub.value, 1);
 
     let updatedValue: number | undefined;
-    sub.onChange = (val) => updatedValue = val;
+    
 
     model.set('/a', 2);
     assert.strictEqual(sub.value, 2);
@@ -126,50 +126,53 @@ describe('DataModel', () => {
     assert.strictEqual(updatedValue, 2);
   });
 
-  it('notifies subscribers on exact match', (_: any, done: (result?: any) => void) => {
-    const sub = model.subscribe('/user/name');
-    sub.onChange = (val) => {
+  it('notifies subscribers on exact match', () => {
+    let called = false;
+    const sub = model.subscribe('/user/name', (val) => {
       assert.strictEqual(val, 'Charlie');
-      done();
-    };
+      called = true;
+    });
     model.set('/user/name', 'Charlie');
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
-  it('notifies ancestor subscribers (Container Semantics)', (_: any, done: (result?: any) => void) => {
-    const sub = model.subscribe('/user');
-    sub.onChange = (val: any) => {
+  it('notifies ancestor subscribers (Container Semantics)', () => {
+    let called = false;
+    const sub = model.subscribe('/user', (val: any) => {
       assert.strictEqual(val.name, 'Dave');
-      done();
-    };
+      called = true;
+    });
     model.set('/user/name', 'Dave');
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
-  it('notifies descendant subscribers', (_: any, done: (result?: any) => void) => {
-    const sub = model.subscribe('/user/settings/theme');
-    sub.onChange = (val) => {
+  it('notifies descendant subscribers', () => {
+    let called = false;
+    const sub = model.subscribe('/user/settings/theme', (val) => {
       assert.strictEqual(val, 'light');
-      done();
-    };
+      called = true;
+    });
 
     // We update the parent object
     model.set('/user/settings', { theme: 'light' });
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
-  it('notifies root subscriber', (_: any, done: (result?: any) => void) => {
-    const sub = model.subscribe('/');
-    sub.onChange = (val: any) => {
+  it('notifies root subscriber', () => {
+    let called = false;
+    const sub = model.subscribe('/', (val: any) => {
       assert.strictEqual(val.newProp, 'test');
-      done();
-    };
+      called = true;
+    });
     model.set('/newProp', 'test');
+    assert.strictEqual(called, true, 'Callback was never called');
   });
 
   it('notifies parent when child updates', () => {
     model.set('/parent', { child: 'initial' });
 
-    const sub = model.subscribe('/parent');
     let parentValue: any;
-    sub.onChange = (val) => parentValue = val;
+    const sub = model.subscribe('/parent', (val) => parentValue = val);
 
     model.set('/parent/child', 'updated');
     assert.deepStrictEqual(parentValue, { child: 'updated' });
@@ -177,8 +180,7 @@ describe('DataModel', () => {
 
   it('stops notifying after dispose', () => {
     let count = 0;
-    const sub = model.subscribe('/');
-    sub.onChange = () => count++;
+    const sub = model.subscribe('/', () => count++);
 
     model.dispose();
     model.set('/foo', 'bar');
@@ -189,11 +191,9 @@ describe('DataModel', () => {
     let callCount1 = 0;
     let callCount2 = 0;
 
-    const sub1 = model.subscribe('/user/name');
-    sub1.onChange = () => callCount1++;
+    const sub1 = model.subscribe('/user/name', () => callCount1++);
 
-    const sub2 = model.subscribe('/user/name');
-    sub2.onChange = () => callCount2++;
+    const sub2 = model.subscribe('/user/name', () => callCount2++);
 
     model.set('/user/name', 'Eve');
 
@@ -207,11 +207,9 @@ describe('DataModel', () => {
     let callCount1 = 0;
     let callCount2 = 0;
 
-    const sub1 = model.subscribe('/user/name');
-    sub1.onChange = () => callCount1++;
+    const sub1 = model.subscribe('/user/name', () => callCount1++);
 
-    const sub2 = model.subscribe('/user/name');
-    sub2.onChange = () => callCount2++;
+    const sub2 = model.subscribe('/user/name', () => callCount2++);
 
     sub1.unsubscribe();
 
@@ -223,11 +221,9 @@ describe('DataModel', () => {
   });
 
   it('handles subscription to non-existent path', () => {
-    const sub = model.subscribe('/non/existent');
-    assert.strictEqual(sub.value, undefined);
-
     let val: any;
-    sub.onChange = (v) => val = v;
+    const sub = model.subscribe('/non/existent', (v) => val = v);
+    assert.strictEqual(sub.value, undefined);
 
     model.set('/non/existent', 'exists now');
     assert.strictEqual(sub.value, 'exists now');
@@ -236,10 +232,8 @@ describe('DataModel', () => {
 
   it('handles updates to undefined', () => {
     model.set('/foo', 'bar');
-    const sub = model.subscribe('/foo');
-
     let val: any = 'initial';
-    sub.onChange = (v) => val = v;
+    const sub = model.subscribe('/foo', (v) => val = v);
 
     model.set('/foo', undefined);
     assert.strictEqual(sub.value, undefined);

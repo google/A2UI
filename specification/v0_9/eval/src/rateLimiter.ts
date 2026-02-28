@@ -48,7 +48,7 @@ export class RateLimiter {
     // Use 65 seconds to be safe against clock drift and server bucket alignment
     const minuteAgo = Date.now() - 65 * 1000;
     state.usageRecords = state.usageRecords.filter(
-      (record) => record.timestamp > minuteAgo
+      (record) => record.timestamp > minuteAgo,
     );
   }
 
@@ -76,14 +76,14 @@ export class RateLimiter {
       this.modelPauses.set(modelConfig.name, pausedUntil);
 
       logger.verbose(
-        `RateLimiter: Pausing ${modelConfig.name} for ${pauseDuration}ms due to 429 error. Resuming at ${new Date(pausedUntil).toISOString()}`
+        `RateLimiter: Pausing ${modelConfig.name} for ${pauseDuration}ms due to 429 error. Resuming at ${new Date(pausedUntil).toISOString()}`,
       );
     }
   }
 
   async acquirePermit(
     modelConfig: ModelConfiguration,
-    tokensCost: number = 0
+    tokensCost: number = 0,
   ): Promise<void> {
     this._waitingCount++;
     try {
@@ -101,7 +101,7 @@ export class RateLimiter {
         if (pausedUntil && pausedUntil > Date.now()) {
           const pauseWait = pausedUntil - Date.now();
           logger.verbose(
-            `Rate limiting ${name}: Paused by circuit breaker for ${pauseWait}ms`
+            `Rate limiting ${name}: Paused by circuit breaker for ${pauseWait}ms`,
           );
           await new Promise((resolve) => setTimeout(resolve, pauseWait));
           // After waiting, loop again to check normal rate limits
@@ -125,7 +125,7 @@ export class RateLimiter {
           : 0;
 
         logger.debug(
-          `RateLimiter check for ${name}: Cost=${tokensCost}, CurrentTokens=${currentTokens}, Limit=${effectiveTokensPerMinute}, Requests=${currentRequests}, RPM=${requestsPerMinute}`
+          `RateLimiter check for ${name}: Cost=${tokensCost}, CurrentTokens=${currentTokens}, Limit=${effectiveTokensPerMinute}, Requests=${currentRequests}, RPM=${requestsPerMinute}`,
         );
 
         // Check RPM
@@ -135,7 +135,7 @@ export class RateLimiter {
           if (oldestRequest) {
             rpmWait = Math.max(
               0,
-              oldestRequest.timestamp + 60 * 1000 - currentNow
+              oldestRequest.timestamp + 60 * 1000 - currentNow,
             );
           }
         }
@@ -157,7 +157,7 @@ export class RateLimiter {
               if (cumulativeTokens >= tokensToShed) {
                 tpmWait = Math.max(
                   tpmWait,
-                  record.timestamp + 60 * 1000 - currentNow
+                  record.timestamp + 60 * 1000 - currentNow,
                 );
                 break;
               }
@@ -177,7 +177,7 @@ export class RateLimiter {
         }
 
         logger.verbose(
-          `Rate limiting ${name}: Waiting ${requiredWait}ms (RPM wait: ${rpmWait}ms, TPM wait: ${tpmWait}ms)`
+          `Rate limiting ${name}: Waiting ${requiredWait}ms (RPM wait: ${rpmWait}ms, TPM wait: ${tpmWait}ms)`,
         );
         await new Promise((resolve) => setTimeout(resolve, requiredWait));
       }
@@ -189,7 +189,7 @@ export class RateLimiter {
   recordUsage(
     modelConfig: ModelConfiguration,
     tokensUsed: number,
-    isRequest: boolean = true
+    isRequest: boolean = true,
   ): void {
     if (tokensUsed > 0 || isRequest) {
       const state = this.getModelState(modelConfig.name);

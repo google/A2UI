@@ -1,4 +1,6 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2ui.org/specification/v0_10/client_to_server.json",
   "title": "A2UI (Agent to UI) Client-to-Server Event Schema",
   "description": "Describes a JSON payload for a client-to-server event message.",
   "type": "object",
@@ -43,6 +45,27 @@
         "context"
       ]
     },
+    "functionResponse": {
+      "properties": {
+        "functionCallId": {
+          "$ref": "common_types.json#/$defs/CallId",
+          "description": "Unique ID for the instance of this function. MUST be copied verbatim from the function invocation."
+        },
+        "value": {
+          "description": "The return value of the function invocation.",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": ["functionCallId", "value"],
+      "unevaluatedProperties": false
+    },
     "error": {
       "description": "Reports a client-side error.",
       "oneOf": [
@@ -85,9 +108,27 @@
             "surfaceId": {
               "type": "string",
               "description": "The id of the surface where the error occurred."
+            },
+            "functionCallId": {
+              "$ref": "common_types.json#/$defs/CallId",
+              "description": "The unique ID of the function invocation, which must be identical to the value specified in the function invocation."
             }
           },
-          "required": ["code", "surfaceId", "message"],
+          "required": ["code", "message"],
+          "oneOf": [
+            {
+              "required": ["surfaceId"],
+              "not": {
+                "required": ["functionCallId"]
+              }
+            },
+            {
+              "required": ["functionCallId"],
+              "not": {
+                "required": ["surfaceId"]
+              }
+            }
+          ],
           "additionalProperties": true
         }
       ]
@@ -96,6 +137,9 @@
   "oneOf": [
     {
       "required": ["action", "version"]
+    },
+    {
+      "required": ["functionResponse", "version"]
     },
     {
       "required": ["error", "version"]

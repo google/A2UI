@@ -21,8 +21,8 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 | **Data Binding**         | `dataBinding` / `literalString`          | `path` / Native JSON types                               |
 | **Button Context**       | Array of Key-Value pairs                 | Standard JSON Object                                     |
 | **Button Variant**       | Boolean (`primary: true`)                | Enum (`variant: "primary"`)                              |
-| **Catalog**              | Separate component and function catalogs | Unified Catalog (`standard_catalog.json`)                |
-| **Auxiliary Rules**      | N/A                                      | `standard_catalog_rules.txt`                             |
+| **Catalog**              | Separate component and function catalogs | Unified Catalog (`basic_catalog.json`)                |
+| **Auxiliary Rules**      | N/A                                      | `basic_catalog_rules.txt`                             |
 | **Validation**           | Basic Schema                             | Strict `ValidationFailed` feedback loop                  |
 | **Data Synchronization** | Implicit                                 | Explicit Client->Server data syncing (`sendDataModel`) |
 
@@ -33,15 +33,15 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 **v0.8.1:**
 
 - Monolithic tendencies. `server_to_client.json` often contained deep definitions or relied on complex `oneOf` structures that were hard to decompose.
-- `standard_catalog_definition.json` existed but was often implicitly coupled.ß
+- `basic_catalog_definition.json` existed but was often implicitly coupled.
 
 **v0.9:**
 
 - **Modularization**: The schema is strictly split into:
   - `common_types.json`: Reusable primitives (IDs, paths) and logic/expression types.
   - `server_to_client.json`: The "envelope" defining the message types.
-  - `standard_catalog.json`: The unified catalog of UI components and functions.
-- **Swappable Catalogs**: `server_to_client.json` now uses a relative reference to `catalog.json` as a placeholder. This allows developers to alias `catalog.json` to `standard_catalog.json` (or any custom catalog) during validation, enabling the use of custom component sets without modifying the core envelope schema.
+  - `basic_catalog.json`: The unified catalog of UI components and functions.
+- **Swappable Catalogs**: `server_to_client.json` now uses a relative reference to `catalog.json` as a placeholder. This allows developers to alias `catalog.json` to `basic_catalog.json` (or any custom catalog) during validation, enabling the use of custom component sets without modifying the core envelope schema.
 - **Unification**: Components and functions are now part of the same catalog object, simplifying capability negotiation and inline definitions.
 
 ### 2.2. Strict Message Typing
@@ -60,7 +60,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
 
 **v0.9:**
 
-- **New Artifact**: `standard_catalog_rules.txt`.
+- **New Artifact**: `basic_catalog_rules.txt`.
 - **Purpose**: A plain-text prompt fragment containing rules for using the catalog schema (e.g., "MUST provide 'action' for Button").
 - **Usage**: Designed to be included in the system prompt alongside the catalog schema.
 - **Reason**: Some constraints (like conditional requirements or specific property combinations) are difficult or verbose to express in JSON Schema but easy to express in natural language rules for an LLM, and it can be packaged with the catalog schema for ease of customizing the prompt for a particular catalog.
@@ -106,7 +106,7 @@ Version 0.9 represents a fundamental philosophical shift from "Structured Output
   "version": "v0.9",
   "createSurface": {
     "surfaceId": "user_profile_card",
-    "catalogId": "https://a2ui.org/specification/v0_9/standard_catalog.json",
+    "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
     "theme": {
       "primaryColor": "#007bff"
     }
