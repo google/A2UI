@@ -205,6 +205,7 @@ export const theme: v0_8.Types.Theme = {
     },
     TextField: {
       "--p-0": "light-dark(var(--n-0), #1e293b)",
+      "--color-error": "#B3261E",
     },
   },
   components: {

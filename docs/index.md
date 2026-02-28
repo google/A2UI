@@ -20,11 +20,12 @@ A2UI enables AI agents to generate rich, interactive user interfaces that render
 
 </div>
 
-!!! warning "️Status: Early Stage Public Preview"
-    A2UI is currently in **v0.8 (Public Preview)**. The specification and
-    implementations are functional but are still evolving. We are opening the project to
-    foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
-    Expect changes.
+> ⚠️ **️Status: Early Stage Public Preview**
+>
+> A2UI is currently in **v0.8 (Public Preview)**. The specification and
+> implementations are functional but are still evolving. We are opening the project to
+> foster collaboration, gather feedback, and solicit contributions (e.g., on client renderers).
+> Expect changes.
 
 ## At a Glance
 
@@ -141,7 +142,7 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 <div style="margin: 2rem 0;">
   <div style="border-radius: .8rem; overflow: hidden; box-shadow: var(--md-shadow-z2);">
     <video width="100%" height="auto" controls playsinline style="display: block; aspect-ratio: 16/9; object-fit: cover;">
-      <source src="assets/a2ui-custom-compnent.mp4" type="video/mp4">
+      <source src="assets/a2ui-custom-component.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>

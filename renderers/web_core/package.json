@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.8.0",
+  "version": "0.8.2",
   "description": "A2UI Core Library",
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
@@ -8,6 +8,10 @@
     ".": {
       "types": "./dist/src/v0_8/index.d.ts",
       "default": "./dist/src/v0_8/index.js"
+    },
+    "./v0_9": {
+      "types": "./dist/src/v0_9/index.d.ts",
+      "default": "./dist/src/v0_9/index.js"
     },
     "./types/*": {
       "types": "./dist/src/v0_8/types/*.d.ts",
@@ -20,6 +24,9 @@
     "./styles/*": {
       "types": "./dist/src/v0_8/styles/*.d.ts",
       "default": "./dist/src/v0_8/styles/*.js"
+    },
+    "./schemas/*": {
+      "default": "./dist/src/v0_8/schemas/*"
     }
   },
   "type": "module",
@@ -28,13 +35,14 @@
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "copy-spec": "wireit"
+    "test": "wireit"
   },
   "wireit": {
     "copy-spec": {
-      "command": "npx mkdirp src/v0_8/schemas && npx cpy \"../../specification/v0_8/json/*.json\" src/v0_8/schemas",
+      "command": "node scripts/copy-spec.js",
       "files": [
-        "../../specification/v0_8/json/*.json"
+        "../../specification/v0_8/json/*.json",
+        "scripts/copy-spec.js"
       ],
       "output": [
         "src/v0_8/schemas/*.json"
@@ -60,6 +68,12 @@
         "!dist/**/*.min.js{,.map}"
       ],
       "clean": "if-file-deleted"
+    },
+    "test": {
+      "command": "node --test dist/**/*.test.js",
+      "dependencies": [
+        "build"
+      ]
     }
   },
   "author": "Google",
@@ -67,7 +81,12 @@
   "devDependencies": {
     "cpy-cli": "^5.0.0",
     "mkdirp": "^1.0.4",
+    "@types/node": "^24.10.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.1"
   }
 }

@@ -1,0 +1,26 @@
+# CODEOWNERS file
+#
+# It allows us to define individuals or teams that are responsible for code in the repository.
+#
+# Syntax:
+# pattern owner1 owner2
+#
+# The pattern is a glob pattern relative to the root of the repository.
+# Owners can be:
+# - A GitHub username (e.g., @octocat)
+# - An organization team (e.g., @org/team-name)
+# - An email address (e.g., octocat@github.com)
+
+# Default ownership (is overriden by specfic rules below)
+* @dmandar @gspencergoog @jacobsimionato @nan-yu @ditman @zeroasterisk @yjbanov
+
+# Agents
+/a2a_agents/ @nan-yu @dmandar @gspencergoog
+
+# Renderers
+/renderers/angular/ @ditman @ava-cassiopeia  @crisbeto
+/renderers/lit/ @ditman @ava-cassiopeia @paullewis
+/renderers/web_core/ @ditman @ava-cassiopeia @jacobsimionato
+
+# Specifications
+/specification/ @gspencergoog @jacobsimionato

@@ -6,7 +6,7 @@ The [agents](agents.md) are responsible for generating the A2UI messages,
 and the [transports](transports.md) are responsible for delivering the messages to the client.
 The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, and render surfaces (widgets).
 
-You have a lot of flexibility, to bring custom comonents to a renderer, or build your own renderer to support your UI component framework.
+You have a lot of flexibility, to bring custom components to a renderer, or build your own renderer to support your UI component framework.
 
 ## Available Renderers
 

@@ -9,7 +9,7 @@ to generate or populate rich user interfaces.
 
 *A gallery of A2UI rendered cards, showing a variety of UI compositions that A2UI can achieve.*
 
-## ⚠️ Status: Early Stage Public Preview
+## ⚠️ Status: Early stage public preview
 
 > **Note:** A2UI is currently in **v0.8 (Public Preview)**. The specification and
 implementations are functional but are still evolving. We are opening the project to
@@ -30,7 +30,7 @@ component library (Flutter, Angular, Lit, etc.).
 This approach ensures that agent-generated UIs are
 **safe like data, but expressive like code**.
 
-## High-Level Philosophy
+## High-level philosophy
 
 A2UI was designed to address the specific challenges of interoperable,
 cross-platform, generative or template-based UI responses from agents.
@@ -63,7 +63,7 @@ places security firmly in the developer's hands, enabling them to enforce
 strict sandboxing policies and "trust ladders" directly within their custom
 component logic rather than relying solely on the core system.
 
-## Use Cases
+## Use cases
 
 Some of the use cases include:
 
@@ -98,7 +98,7 @@ A2UI is designed to be a lightweight format, but it fits into a larger ecosystem
 * **Host Frameworks:** Requires a host application built in a supported framework
 (currently: Web or Flutter).
 
-## Getting Started
+## Getting started
 
 The best way to understand A2UI is to run the samples.
 
@@ -108,7 +108,7 @@ The best way to understand A2UI is to run the samples.
 * Python (for agent samples)
 * A valid [Gemini API Key](https://aistudio.google.com/) is required for the samples.
 
-### Running the Restaurant Finder Demo
+### Running the Restaurant Finder demo
 
 1. **Clone the repository:**
 
@@ -117,7 +117,7 @@ The best way to understand A2UI is to run the samples.
     cd A2UI
     ```
 
-2. **Set your API Key:**
+2. **Set your API key:**
 
     ```bash
     export GEMINI_API_KEY="your_gemini_api_key"
@@ -160,10 +160,10 @@ to try out as well.
 
 We hope to work with the community on the following:
 
-* **Spec Stabilization:** Moving towards a v1.0 specification.
-* **More Renderers:** Adding official support for React, Jetpack Compose, iOS (SwiftUI), and more.
-* **Additional Transports:** Support for REST and more.
-* **Additional Agent Frameworks:** Genkit, LangGraph, and more.
+* **Spec stabilization:** Moving towards a v1.0 specification.
+* **More renderers:** Adding official support for React, Jetpack Compose, iOS (SwiftUI), and more.
+* **Additional transports:** Support for REST and more.
+* **Additional Agent frameworks:** Genkit, LangGraph, and more.
 
 ## Contribute
 

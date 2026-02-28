@@ -39,7 +39,25 @@ export class Icon extends Root {
         display: block;
         flex: var(--weight);
         min-height: 0;
-        overflow: auto;
+
+      }
+
+      .g-icon {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: 'liga';
       }
     `,
   ];
