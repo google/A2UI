@@ -68,7 +68,7 @@ def test_fix_payload_success_first_time():
   fixer = A2uiPayloadFixer(catalog_mock)
 
   valid_json = '[{"type": "Text", "text": "Hello"}]'
-  result = fixer.fix(valid_json)
+  result = fixer.validate_and_fix(valid_json)
 
   assert result == [{"type": "Text", "text": "Hello"}]
   catalog_mock.validator.validate.assert_called_once()
@@ -90,7 +90,7 @@ def test_fix_payload_success_after_fix(caplog):
   fixer = A2uiPayloadFixer(catalog_mock)
 
   malformed_json = '[{"type": "Text", "text": "Hello"},]'
-  result = fixer.fix(malformed_json)
+  result = fixer.validate_and_fix(malformed_json)
 
   assert result == [{"type": "Text", "text": "Hello"}]
   assert "Initial A2UI payload validation failed" in caplog.text
