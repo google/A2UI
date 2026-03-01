@@ -19,7 +19,7 @@
     "demo:restaurant": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST\" -c \"magenta,blue\" \"npm run serve:shell\" \"npm run serve:agent:restaurant\"",
     "demo:contact": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,CONT1\" -c \"magenta,green\" \"npm run serve:shell\" \"npm run serve:agent:contact_lookup\"",
     "demo:rizzcharts": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,RIZZ\" -c \"magenta,yellow\" \"npm run serve:shell\" \"npm run serve:agent:rizzcharts\"",
-    "demo:orchestrator": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST,CONT,RIZZ,ORCH\" -c \"magenta,blue,green,yellow,cyan\" \"npm run serve:shell\" \"cd ../../agent/adk/restaurant_finder && uv run . --port=10003\" \"cd ../../agent/adk/contact_lookup && uv run . --port=10004\" \"cd ../../agent/adk/rizzcharts && uv run . --port=10005\" \"npm run serve:agent:orchestrator\""
+    "demo:orchestrator": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,REST,CONT,RIZZ,ORCH\" -c \"magenta,blue,green,yellow,cyan\" \"npm run serve:shell\" \"npm run serve:agent:restaurant -- --port=10003\" \"npm run serve:agent:contact_lookup -- --port=10004\" \"npm run serve:agent:rizzcharts -- --port=10005\" \"npm run serve:agent:orchestrator\""
   },
   "devDependencies": {
     "concurrently": "9.2.1"
