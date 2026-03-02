@@ -46,7 +46,7 @@ import { AppConfig } from "./configs/types.js";
 import { config as restaurantConfig } from "./configs/restaurant.js";
 import { config as contactsConfig } from "./configs/contacts.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { renderMarkdown } from "@a2ui/markdown-it-shared";
+import { renderMarkdown } from "@a2ui/markdown-it";
 
 const configs: Record<string, AppConfig> = {
   restaurant: restaurantConfig,
