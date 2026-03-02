@@ -14,13 +14,14 @@
  limitations under the License.
  */
 
-import { computed, Component, input } from '@angular/core';
+import { computed, Component, input, ChangeDetectionStrategy } from '@angular/core';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-text-field',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
       display: flex;

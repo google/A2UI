@@ -14,13 +14,14 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import * as Types from '@a2ui/web_core/types/types';
 import { Renderer } from '../rendering/renderer';
 
 @Component({
   selector: 'a2ui-surface',
   imports: [Renderer],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @let surfaceId = this.surfaceId();
     @let surface = this.surface();

@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-video',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @let resolvedUrl = this.resolvedUrl();
 

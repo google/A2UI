@@ -14,7 +14,14 @@
  limitations under the License.
  */
 
-import { Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Styles from '@a2ui/web_core/styles/index';
@@ -33,6 +40,7 @@ interface HintedStyles {
 
 @Component({
   selector: 'a2ui-text',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <section
       [class]="classes()"

@@ -14,7 +14,15 @@
  limitations under the License.
  */
 
-import { Component, Inject, OnInit, Renderer2, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnInit,
+  Renderer2,
+  inject,
+  signal,
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,23 +30,23 @@ import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
 import { ChatService } from '@a2a_chat_canvas/services/chat-service';
 import { Toolbar } from '@rizzcharts/components/toolbar/toolbar';
 import { environment } from '@rizzcharts/environments/environment';
-import { A2aService } from '@rizzcharts/services/a2a_service'
+import { A2aService } from '@rizzcharts/services/a2a_service';
 
 @Component({
   selector: 'app-root',
   imports: [A2aChatCanvas, RouterOutlet, Toolbar, MatButtonModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class App implements OnInit {
   protected readonly agentName = signal('');
   readonly chatService = inject(ChatService);
   private readonly a2aService = inject(A2aService);
 
-  
   constructor(
     private _renderer2: Renderer2,
-    @Inject(DOCUMENT) private _document: Document
+    @Inject(DOCUMENT) private _document: Document,
   ) {}
 
   ngOnInit() {

@@ -7,8 +7,8 @@
     "@a2ui/web_core": "file:../../../../../renderers/web_core"
   },
   "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0"
+    "@angular/common": "^21.2.0",
+    "@angular/core": "^21.2.0"
   },
   "sideEffects": false
 }
