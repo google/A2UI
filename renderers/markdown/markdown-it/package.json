@@ -1,5 +1,5 @@
 {
-  "name": "@a2ui/markdown-it-shared",
+  "name": "@a2ui/markdown-it",
   "version": "0.0.1",
   "description": "A Markdown renderer using markdown-it and dompurify.",
   "keywords": [],
@@ -10,7 +10,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git",
-    "directory": "renderers/markdown/markdown-it-shared"
+    "directory": "renderers/markdown/markdown-it"
   },
   "license": "Apache-2.0",
   "author": "Google",
