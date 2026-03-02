@@ -17,7 +17,14 @@
 import { Canvas } from '@a2a_chat_canvas/components/canvas/canvas';
 import { Chat } from '@a2a_chat_canvas/components/chat/chat';
 import { MessageDecorator } from '@a2a_chat_canvas/components/chat/chat-history/message-decorator/types';
-import { Component, computed, inject, input, TemplateRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  TemplateRef,
+} from '@angular/core';
 import { CanvasService } from './services/canvas-service';
 
 /**
@@ -29,6 +36,7 @@ import { CanvasService } from './services/canvas-service';
   templateUrl: './a2a-chat-canvas.html',
   styleUrl: './a2a-chat-canvas.scss',
   imports: [Canvas, Chat],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class A2aChatCanvas {
   readonly emptyHistoryTemplate = input<TemplateRef<unknown>>();

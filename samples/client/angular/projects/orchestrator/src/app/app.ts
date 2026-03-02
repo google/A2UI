@@ -16,8 +16,15 @@
 
 import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
 import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnInit, Renderer2, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DOCUMENT,
+  OnInit,
+  Renderer2,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterOutlet } from '@angular/router';
 import { environment } from '../environments/environment';
@@ -28,23 +35,21 @@ import { demoMessageDecorator } from '../message-decorator/demo-message-decorato
   templateUrl: './app.html',
   styleUrl: './app.scss',
   imports: [A2aChatCanvas, RouterOutlet, MatButtonModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class App implements OnInit {
   protected demoMessageDecorator = demoMessageDecorator;
   protected readonly agentName = signal('Orchestrator Agent');
   private readonly chatService = inject(ChatService);
-
-  constructor(
-    private _renderer2: Renderer2,
-    @Inject(DOCUMENT) private _document: Document,
-  ) {}
+  private readonly renderer2 = inject(Renderer2);
+  private readonly document = inject(DOCUMENT);
 
   ngOnInit() {
-    const script = this._renderer2.createElement('script');
+    const script = this.renderer2.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&callback=initMap&libraries=marker`;
     script.async = true;
     script.defer = true;
-    this._renderer2.appendChild(this._document.body, script);
+    this.renderer2.appendChild(this.document.body, script);
   }
 
   sendMessage(text: string) {

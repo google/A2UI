@@ -21,7 +21,7 @@ import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
 import { isA2aDataPart } from '@a2a_chat_canvas/utils/type-guards';
 import { Surface } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
-import { Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 
 /**
  * Component responsible for rendering an A2UI surface embedded within an A2A message part.
@@ -32,6 +32,7 @@ import { Component, computed, inject, input } from '@angular/core';
   templateUrl: './a2ui-data-part.html',
   styleUrl: './a2ui-data-part.scss',
   imports: [Surface],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class A2uiDataPart implements RendererComponent {
   /** The UiMessageContent containing the A2A data part with the embedded A2UI message. */
