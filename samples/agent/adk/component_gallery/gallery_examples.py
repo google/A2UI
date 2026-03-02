@@ -23,6 +23,166 @@ def get_gallery_json() -> str:
           {"key": "favorites", "valueMap": [{"key": "0", "valueString": "A"}]},
           {"key": "favoritesChips", "valueMap": []},
           {"key": "favoritesFilter", "valueMap": []},
+          # Chart demo data
+          {"key": "pieChartData", "valueMap": [
+              {"key": "0", "valueMap": [
+                  {"key": "label", "valueString": "Apparel"},
+                  {"key": "value", "valueNumber": 41},
+                  {"key": "drillDown", "valueMap": [
+                      {"key": "0", "valueMap": [
+                          {"key": "label", "valueString": "Tops"},
+                          {"key": "value", "valueNumber": 31},
+                      ]},
+                      {"key": "1", "valueMap": [
+                          {"key": "label", "valueString": "Bottoms"},
+                          {"key": "value", "valueNumber": 38},
+                      ]},
+                      {"key": "2", "valueMap": [
+                          {"key": "label", "valueString": "Outerwear"},
+                          {"key": "value", "valueNumber": 20},
+                      ]},
+                      {"key": "3", "valueMap": [
+                          {"key": "label", "valueString": "Footwear"},
+                          {"key": "value", "valueNumber": 11},
+                      ]},
+                  ]},
+              ]},
+              {"key": "1", "valueMap": [
+                  {"key": "label", "valueString": "Electronics"},
+                  {"key": "value", "valueNumber": 28},
+                  {"key": "drillDown", "valueMap": [
+                      {"key": "0", "valueMap": [
+                          {"key": "label", "valueString": "Phones"},
+                          {"key": "value", "valueNumber": 25},
+                      ]},
+                      {"key": "1", "valueMap": [
+                          {"key": "label", "valueString": "Laptops"},
+                          {"key": "value", "valueNumber": 27},
+                      ]},
+                      {"key": "2", "valueMap": [
+                          {"key": "label", "valueString": "TVs"},
+                          {"key": "value", "valueNumber": 21},
+                      ]},
+                  ]},
+              ]},
+              {"key": "2", "valueMap": [
+                  {"key": "label", "valueString": "Home Goods"},
+                  {"key": "value", "valueNumber": 15},
+                  {"key": "drillDown", "valueMap": [
+                      {"key": "0", "valueMap": [
+                          {"key": "label", "valueString": "Furniture"},
+                          {"key": "value", "valueNumber": 8},
+                      ]},
+                      {"key": "1", "valueMap": [
+                          {"key": "label", "valueString": "Kitchen"},
+                          {"key": "value", "valueNumber": 16},
+                      ]},
+                      {"key": "2", "valueMap": [
+                          {"key": "label", "valueString": "Decor"},
+                          {"key": "value", "valueNumber": 3},
+                      ]},
+                  ]},
+              ]},
+              {"key": "3", "valueMap": [
+                  {"key": "label", "valueString": "Health"},
+                  {"key": "value", "valueNumber": 10},
+              ]},
+              {"key": "4", "valueMap": [
+                  {"key": "label", "valueString": "Other"},
+                  {"key": "value", "valueNumber": 6},
+              ]},
+          ]},
+          {"key": "barChartData", "valueMap": [
+              {"key": "0", "valueMap": [
+                  {"key": "label", "valueString": "Jan"},
+                  {"key": "value", "valueNumber": 12},
+              ]},
+              {"key": "1", "valueMap": [
+                  {"key": "label", "valueString": "Feb"},
+                  {"key": "value", "valueNumber": 19},
+              ]},
+              {"key": "2", "valueMap": [
+                  {"key": "label", "valueString": "Mar"},
+                  {"key": "value", "valueNumber": 15},
+              ]},
+              {"key": "3", "valueMap": [
+                  {"key": "label", "valueString": "Apr"},
+                  {"key": "value", "valueNumber": 22},
+              ]},
+              {"key": "4", "valueMap": [
+                  {"key": "label", "valueString": "May"},
+                  {"key": "value", "valueNumber": 30},
+              ]},
+              {"key": "5", "valueMap": [
+                  {"key": "label", "valueString": "Jun"},
+                  {"key": "value", "valueNumber": 28},
+              ]},
+          ]},
+          # OrgChart demo data
+          {"key": "orgChartChain", "valueMap": [
+              {"key": "0", "valueMap": [
+                  {"key": "title", "valueString": "CEO"},
+                  {"key": "name", "valueString": "Alice Johnson"},
+              ]},
+              {"key": "1", "valueMap": [
+                  {"key": "title", "valueString": "SVP Engineering"},
+                  {"key": "name", "valueString": "Bob Smith"},
+              ]},
+              {"key": "2", "valueMap": [
+                  {"key": "title", "valueString": "VP Product"},
+                  {"key": "name", "valueString": "Charlie Brown"},
+              ]},
+              {"key": "3", "valueMap": [
+                  {"key": "title", "valueString": "Director"},
+                  {"key": "name", "valueString": "Diana Prince"},
+              ]},
+              {"key": "4", "valueMap": [
+                  {"key": "title", "valueString": "Software Engineer"},
+                  {"key": "name", "valueString": "Evan Wright"},
+              ]},
+          ]},
+          {"key": "doughnutChartData", "valueMap": [
+              {"key": "0", "valueMap": [
+                  {"key": "label", "valueString": "Engineering"},
+                  {"key": "value", "valueNumber": 45},
+                  {"key": "drillDown", "valueMap": [
+                      {"key": "0", "valueMap": [
+                          {"key": "label", "valueString": "Frontend"},
+                          {"key": "value", "valueNumber": 18},
+                      ]},
+                      {"key": "1", "valueMap": [
+                          {"key": "label", "valueString": "Backend"},
+                          {"key": "value", "valueNumber": 15},
+                      ]},
+                      {"key": "2", "valueMap": [
+                          {"key": "label", "valueString": "Infra"},
+                          {"key": "value", "valueNumber": 12},
+                      ]},
+                  ]},
+              ]},
+              {"key": "1", "valueMap": [
+                  {"key": "label", "valueString": "Marketing"},
+                  {"key": "value", "valueNumber": 20},
+                  {"key": "drillDown", "valueMap": [
+                      {"key": "0", "valueMap": [
+                          {"key": "label", "valueString": "Digital"},
+                          {"key": "value", "valueNumber": 12},
+                      ]},
+                      {"key": "1", "valueMap": [
+                          {"key": "label", "valueString": "Brand"},
+                          {"key": "value", "valueNumber": 8},
+                      ]},
+                  ]},
+              ]},
+              {"key": "2", "valueMap": [
+                  {"key": "label", "valueString": "Operations"},
+                  {"key": "value", "valueNumber": 20},
+              ]},
+              {"key": "3", "valueMap": [
+                  {"key": "label", "valueString": "Sales"},
+                  {"key": "value", "valueNumber": 15},
+              ]},
+          ]},
       ],
   }
 
@@ -436,6 +596,56 @@ def get_gallery_json() -> str:
           "AudioPlayer": {
               "url": {"literalString": "http://localhost:10005/assets/audio.mp3"},
               "description": {"literalString": "Local Audio Sample"},
+          }
+      },
+  )
+
+  # 16. Chart (Pie) — with drill-down data
+  add_demo_surface(
+      "demo-chart-pie",
+      {
+          "Chart": {
+              "chartType": "pie",
+              "chartTitle": {"literalString": "Sales by Category"},
+              "chartData": {"path": "galleryData/pieChartData"},
+          }
+      },
+  )
+
+  # 17. Chart (Bar) — flat data, no drill-down
+  add_demo_surface(
+      "demo-chart-bar",
+      {
+          "Chart": {
+              "chartType": "bar",
+              "chartTitle": {"literalString": "Monthly Revenue"},
+              "chartData": {"path": "galleryData/barChartData"},
+          }
+      },
+  )
+
+  # 18. Chart (Doughnut) — with drill-down data
+  add_demo_surface(
+      "demo-chart-doughnut",
+      {
+          "Chart": {
+              "chartType": "doughnut",
+              "chartTitle": {"literalString": "Budget Allocation"},
+              "chartData": {"path": "galleryData/doughnutChartData"},
+          }
+      },
+  )
+
+  # 19. OrgChart — custom component showing organizational hierarchy
+  add_demo_surface(
+      "demo-org-chart",
+      {
+          "OrgChart": {
+              "chain": {"path": "galleryData/orgChartChain"},
+              "action": {
+                  "name": "org_chart_click",
+                  "context": [],
+              },
           }
       },
   )

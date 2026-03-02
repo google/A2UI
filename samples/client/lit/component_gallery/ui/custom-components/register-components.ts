@@ -15,11 +15,65 @@
  */
 
 import { componentRegistry } from "@a2ui/lit/ui";
+import { ChartComponent } from "./chart.js";
 import { OrgChart } from "./org-chart.js";
 import { WebFrame } from "./web-frame.js";
 import { PremiumTextField } from "./premium-text-field.js";
 
 export function registerContactComponents() {
+  // Register Chart
+  componentRegistry.register("Chart", ChartComponent, "a2ui-custom-chart", {
+    type: "object",
+    description:
+      "An interactive chart component. Supports pie, doughnut, and bar chart types with one-level drill-down.",
+    properties: {
+      chartType: {
+        type: "string",
+        enum: ["pie", "doughnut", "bar"],
+      },
+      chartTitle: {
+        type: "object",
+        properties: {
+          literalString: { type: "string" },
+          path: { type: "string" },
+        },
+      },
+      chartData: {
+        type: "object",
+        description:
+          "The data for the chart. Can be a literal array or a data model path.",
+        properties: {
+          literalArray: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                label: { type: "string" },
+                value: { type: "number" },
+                drillDown: {
+                  type: "array",
+                  description:
+                    "An optional list of items for the next level of data.",
+                  items: {
+                    type: "object",
+                    properties: {
+                      label: { type: "string" },
+                      value: { type: "number" },
+                    },
+                    required: ["label", "value"],
+                  },
+                },
+              },
+              required: ["label", "value"],
+            },
+          },
+          path: { type: "string" },
+        },
+      },
+    },
+    required: ["chartType", "chartData"],
+  });
+
   // Register OrgChart
   componentRegistry.register("OrgChart", OrgChart, "org-chart", {
     type: "object",
