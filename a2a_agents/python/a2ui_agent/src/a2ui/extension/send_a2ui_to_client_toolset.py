@@ -267,7 +267,7 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
           )
 
         a2ui_catalog = await self._resolve_a2ui_catalog(tool_context)
-        a2ui_json_payload = a2ui_catalog.payload_fixer.fix(a2ui_json)
+        a2ui_json_payload = a2ui_catalog.payload_fixer.validate_and_fix(a2ui_json)
 
         logger.info(
             f"Validated call to tool {self.TOOL_NAME} with {self.A2UI_JSON_ARG_NAME}"

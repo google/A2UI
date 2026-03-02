@@ -23,7 +23,7 @@ def verify():
   print('Verifying A2uiSchemaManager...')
   try:
     manager = A2uiSchemaManager('0.8', schema_modifiers=[remove_strict_validation])
-    catalog = manager.get_effective_catalog()
+    catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
     print(f'Successfully loaded 0.8: {len(catalog_components)} components')
     print(f'Components found: {list(catalog_components.keys())[:5]}...')
@@ -384,7 +384,7 @@ def verify():
 
   try:
     manager = A2uiSchemaManager('0.9', schema_modifiers=[remove_strict_validation])
-    catalog = manager.get_effective_catalog()
+    catalog = manager.get_selected_catalog()
     catalog_components = catalog.catalog_schema[CATALOG_COMPONENTS_KEY]
     print(f'Successfully loaded 0.9: {len(catalog_components)} components')
     print(f'Components found: {list(catalog_components.keys())}...')

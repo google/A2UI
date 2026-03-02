@@ -145,8 +145,8 @@ class RestaurantAgent:
     current_query_text = query
 
     # Ensure schema was loaded
-    effective_catalog = self._schema_manager.get_effective_catalog()
-    if self.use_ui and not effective_catalog.catalog_schema:
+    selected_catalog = self._schema_manager.get_selected_catalog()
+    if self.use_ui and not selected_catalog.catalog_schema:
       logger.error(
           "--- RestaurantAgent.stream: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
@@ -243,7 +243,7 @@ class RestaurantAgent:
           logger.info(
               "--- RestaurantAgent.stream: Validating against A2UI_SCHEMA... ---"
           )
-          effective_catalog.validator.validate(parsed_json_data)
+          selected_catalog.validator.validate(parsed_json_data)
           # --- End New Validation Steps ---
 
           logger.info(

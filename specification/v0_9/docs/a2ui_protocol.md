@@ -89,7 +89,7 @@ To support A2UI, a transport layer must fulfill the following contract:
 2.  **Message framing**: The transport must clearly delimit individual JSON envelope messages (e.g., using newlines in JSONL, WebSocket frames, or SSE events).
 3.  **Metadata support**: The transport must provide a mechanism to associate metadata with messages. This is critical for:
     - **Data model synchronization**: The `sendDataModel` feature requires the client to send the current data model state as metadata alongside user actions.
-    - **Capabilities exchange**: Client capabilities (supported catalogs, custom components) are exchanged via metadata.
+    - **Capabilities exchange**: Client capabilities (supported catalogs, custom components) and Server capabilities are exchanged via metadata or transport-specific handshakes (like Agent Cards in A2A or initialization in MCP).
 4.  **Bidirectional capability (optional)**: While the rendering stream is unidirectional (Server -> Client), interactive applications require a return channel for `action` messages (Client -> Server).
 
 ### Transport bindings
@@ -820,9 +820,13 @@ This message is sent when the user interacts with a component that has an `actio
 - `timestamp` (string, required): An ISO 8601 timestamp.
 - `context` (object, required): A JSON object containing any context provided in the component's `action` property.
 
-### Client capabilities & metadata
+### Capabilities & metadata
 
-In A2UI v0.9, client capabilities and other metadata are sent as part of the **Transport metadata** (e.g., A2A metadata) envelope in every message, rather than as first-class A2UI messages.
+In A2UI v0.9, capabilities and other metadata are exchanged via **Transport metadata** or initialization payloads (e.g., A2A metadata, Agent Cards, or MCP initialization), rather than as first-class A2UI messages.
+
+#### Server capabilities
+
+A server (or agent) advertises its capabilities using the [`server_capabilities.json`] schema. This indicates which catalogs it can generate UI for, and whether it accepts inline catalogs from the client. The exact mechanism depends on the transport (e.g., the `params` object in an A2A AgentCard, or server capabilities in MCP).
 
 #### Client capabilities
 
@@ -849,6 +853,7 @@ This message is used to report a client-side error to the server.
 [`common_types.json`]: ../json/common_types.json
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
+[`server_capabilities.json`]: ../json/server_capabilities.json
 [`a2ui_client_capabilities.json`]: ../json/a2ui_client_capabilities.json
 [`a2ui_client_data_model.json`]: ../json/a2ui_client_data_model.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901

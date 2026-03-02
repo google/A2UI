@@ -61,7 +61,7 @@ function loadSchemas(): Record<string, any> {
 
 function generateSummary(
   results: EvaluatedResult[],
-  analysisResults: Record<string, string>
+  analysisResults: Record<string, string>,
 ): string {
   const promptNameWidth = 40;
   const latencyWidth = 20;
@@ -81,20 +81,20 @@ function generateSummary(
   for (const modelName in resultsByModel) {
     summary += `\n\n## Model: ${modelName}\n\n`;
     const header = `| ${"Prompt Name".padEnd(
-      promptNameWidth
+      promptNameWidth,
     )} | ${"Avg Latency (ms)".padEnd(latencyWidth)} | ${"Schema Fail".padEnd(
-      failedRunsWidth
+      failedRunsWidth,
     )} | ${"Eval Fail".padEnd(failedRunsWidth)} | ${"Minor".padEnd(
-      severityWidth
+      severityWidth,
     )} | ${"Significant".padEnd(severityWidth)} | ${"Critical".padEnd(
-      severityWidth
+      severityWidth,
     )} |`;
     const divider = `|${"-".repeat(promptNameWidth + 2)}|${"-".repeat(
-      latencyWidth + 2
+      latencyWidth + 2,
     )}|${"-".repeat(failedRunsWidth + 2)}|${"-".repeat(
-      failedRunsWidth + 2
+      failedRunsWidth + 2,
     )}|${"-".repeat(severityWidth + 2)}|${"-".repeat(
-      severityWidth + 2
+      severityWidth + 2,
     )}|${"-".repeat(severityWidth + 2)}|`;
     summary += header;
     summary += `\n${divider}`;
@@ -108,7 +108,7 @@ function generateSummary(
         acc[result.prompt.name].push(result);
         return acc;
       },
-      {} as Record<string, EvaluatedResult[]>
+      {} as Record<string, EvaluatedResult[]>,
     );
 
     const sortedPromptNames = Object.keys(promptsInModel).sort();
@@ -116,10 +116,10 @@ function generateSummary(
       const runs = promptsInModel[promptName];
       const totalRuns = runs.length;
       const schemaFailedRuns = runs.filter(
-        (r) => r.error || r.validationErrors.length > 0
+        (r) => r.error || r.validationErrors.length > 0,
       ).length;
       const evalFailedRuns = runs.filter(
-        (r) => r.evaluationResult && !r.evaluationResult.pass
+        (r) => r.evaluationResult && !r.evaluationResult.pass,
       ).length;
 
       const totalLatency = runs.reduce((acc, r) => acc + r.latency, 0);
@@ -149,13 +149,13 @@ function generateSummary(
       const criticalStr = criticalCount > 0 ? `${criticalCount}` : "";
 
       summary += `\n| ${promptName.padEnd(
-        promptNameWidth
+        promptNameWidth,
       )} | ${avgLatency.padEnd(latencyWidth)} | ${schemaFailedStr.padEnd(
-        failedRunsWidth
+        failedRunsWidth,
       )} | ${evalFailedStr.padEnd(failedRunsWidth)} | ${minorStr.padEnd(
-        severityWidth
+        severityWidth,
       )} | ${significantStr.padEnd(severityWidth)} | ${criticalStr.padEnd(
-        severityWidth
+        severityWidth,
       )} |`;
     }
 
@@ -164,15 +164,25 @@ function generateSummary(
       (r) =>
         !r.error &&
         r.validationErrors.length === 0 &&
-        (!r.evaluationResult || r.evaluationResult.pass)
+        (!r.evaluationResult || r.evaluationResult.pass),
     ).length;
+
+    const schemaSuccessfulRuns = modelResults.filter(
+      (r) => !r.error && r.validationErrors.length === 0,
+    ).length;
+
+    const schemaSuccessPercentage =
+      totalRunsForModel === 0
+        ? "0.0"
+        : ((schemaSuccessfulRuns / totalRunsForModel) * 100.0).toFixed(1);
 
     const successPercentage =
       totalRunsForModel === 0
         ? "0.0"
         : ((successfulRuns / totalRunsForModel) * 100.0).toFixed(1);
 
-    summary += `\n\n**Total successful runs:** ${successfulRuns} / ${totalRunsForModel} (${successPercentage}% success)`;
+    summary += `\n\n**Schema successful runs:** ${schemaSuccessfulRuns} / ${totalRunsForModel} (${schemaSuccessPercentage}% schema success)`;
+    summary += `\n**Total successful eval runs:** ${successfulRuns} / ${totalRunsForModel} (${successPercentage}% overall success)`;
 
     if (analysisResults[modelName]) {
       summary += `\n\n### Failure Analysis\n\n${analysisResults[modelName]}`;
@@ -186,7 +196,7 @@ function generateSummary(
     (r) =>
       r.error ||
       r.validationErrors.length > 0 ||
-      (r.evaluationResult && !r.evaluationResult.pass)
+      (r.evaluationResult && !r.evaluationResult.pass),
   ).length;
 
   const modelsWithFailures = [
@@ -196,9 +206,9 @@ function generateSummary(
           (r) =>
             r.error ||
             r.validationErrors.length > 0 ||
-            (r.evaluationResult && !r.evaluationResult.pass)
+            (r.evaluationResult && !r.evaluationResult.pass),
         )
-        .map((r) => r.modelName)
+        .map((r) => r.modelName),
     ),
   ].join(", ");
 
@@ -223,7 +233,7 @@ function generateSummary(
     totalRuns === 0
       ? "0.0"
       : (((totalRuns - totalRunsWithAnyFailure) / totalRuns) * 100.0).toFixed(
-          1
+          1,
         );
   summary += `\n- **Number of runs with any failure (tool error, validation, or eval):** ${totalRunsWithAnyFailure} / ${totalRuns} (${successPercentage}% success)`;
   summary += `\n- **Severity Breakdown:**`;
@@ -319,11 +329,11 @@ async function main() {
   if (argv.prompt && argv.prompt.length > 0) {
     const promptPrefixes = argv.prompt as string[];
     filteredPrompts = prompts.filter((p) =>
-      promptPrefixes.some((prefix) => p.name.startsWith(prefix))
+      promptPrefixes.some((prefix) => p.name.startsWith(prefix)),
     );
     if (filteredPrompts.length === 0) {
       logger.error(
-        `No prompt found with prefix "${promptPrefixes.join(", ")}".`
+        `No prompt found with prefix "${promptPrefixes.join(", ")}".`,
       );
       process.exit(1);
     }
@@ -346,43 +356,20 @@ async function main() {
     resultsBaseDir &&
     fs.existsSync(resultsBaseDir)
   ) {
-    // Only clean if we are using the default structure or explicit path
-    // We should be careful not to delete root if user passed "/" (unlikely but possible)
-    // For safety, let's iterate over models and clean their specific dirs if they exist
-    // Or just clean the base dir if it looks like our results dir.
-    // The previous logic cleaned `outputDir` which was per-model.
-    // Here we might want to clean the whole results dir if it's the default "results".
+    // Only force clean known result directories for safety if the user provides the flag.
     if (resultsBaseDir === "results") {
       fs.rmSync(resultsBaseDir, { recursive: true, force: true });
     } else {
-      // If custom dir, maybe just clean it?
-      // User asked to clean results.
       fs.rmSync(resultsBaseDir, { recursive: true, force: true });
     }
   }
 
-  // Setup Logger (Global)
-  // We need to setup logger to write to file?
-  // Previous logic setup logger per model output dir.
-  // Now we have multiple models potentially.
-  // We can setup logger to write to stdout/stderr primarily, and maybe a global log file?
-  // Or we can setup logger to NOT write to file, and let phases write their own logs?
-  // The `setupLogger` function takes an outputDir.
-  // If we have multiple models, where do we log?
-  // Maybe just log to the first model's dir or a "latest" dir?
-  // Or just console for now if multiple models?
-  // If single model, use that model's dir.
-
+  // Configure global logger. File logging is currently only supported when testing a single model.
   if (resultsBaseDir) {
     if (filteredModels.length === 1) {
       const modelDirName = `output-${filteredModels[0].name.replace(/[\/:]/g, "_")}`;
       setupLogger(path.join(resultsBaseDir, modelDirName), argv["log-level"]);
     } else {
-      // If multiple models, maybe just log to console or a shared log?
-      // For now, let's just use console logging (default if setupLogger not called with dir?)
-      // Actually setupLogger needs a dir to create 'eval.log'.
-      // Let's create a 'combined' log if multiple models?
-      // Or just skip file logging for multiple models for now.
       setupLogger(undefined, argv["log-level"]);
     }
   } else {
@@ -392,14 +379,14 @@ async function main() {
   const schemas = loadSchemas();
   const catalogRulesPath = path.join(
     __dirname,
-    "../../json/basic_catalog_rules.txt"
+    "../../json/basic_catalog_rules.txt",
   );
   let catalogRules: string | undefined;
   if (fs.existsSync(catalogRulesPath)) {
     catalogRules = fs.readFileSync(catalogRulesPath, "utf-8");
   } else {
     logger.warn(
-      `Catalog rules file not found at ${catalogRulesPath}. Proceeding without specific catalog rules.`
+      `Catalog rules file not found at ${catalogRulesPath}. Proceeding without specific catalog rules.`,
     );
   }
 
@@ -408,7 +395,7 @@ async function main() {
   const generatedResults = await generator.run(
     filteredPrompts,
     filteredModels,
-    argv["runs-per-prompt"]
+    argv["runs-per-prompt"],
   );
 
   // Phase 2: Validation
@@ -436,7 +423,7 @@ async function main() {
         (r) =>
           r.error ||
           r.validationErrors.length > 0 ||
-          (r.evaluationResult && !r.evaluationResult.pass)
+          (r.evaluationResult && !r.evaluationResult.pass),
       )
       .map((r) => {
         let failureType = "Unknown";
@@ -455,7 +442,7 @@ async function main() {
           reason = r.evaluationResult.reason;
           if (r.evaluationResult.issues) {
             issues = r.evaluationResult.issues.map(
-              (i) => `${i.severity}: ${i.issue}`
+              (i) => `${i.severity}: ${i.issue}`,
             );
           }
         }
@@ -491,9 +478,7 @@ async function main() {
   logger.info(summary);
 
   if (resultsBaseDir) {
-    // Save summary to each model dir?
-    // Or just one summary?
-    // Previous logic saved summary.md in model dir.
+    // Save a copy of the evaluation summary to each model's output directory.
     for (const model of filteredModels) {
       const modelDirName = `output-${model.name.replace(/[\/:]/g, "_")}`;
       const modelDir = path.join(resultsBaseDir, modelDirName);
