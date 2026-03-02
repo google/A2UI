@@ -59,7 +59,7 @@ export interface Image {
     | "largeFeature"
     | "header";
   fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
-  altText: string;
+  altText?: StringValue;
 }
 
 export interface Icon {

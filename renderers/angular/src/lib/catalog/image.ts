@@ -44,7 +44,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
     @if (resolvedUrl) {
       <section [class]="classes()" [style]="theme.additionalStyles?.Image">
-        <img [src]="resolvedUrl" [alt]="resolvedAltText || ''" />
+        <img [src]="resolvedUrl" [alt]="resolvedAltText" />
       </section>
     }
   `,
@@ -57,7 +57,7 @@ export class Image extends DynamicComponent {
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
   protected readonly resolvedAltText = computed(() => {
     const raw = this.altText();
-    return raw ? this.resolvePrimitive(raw) : '';
+    return (raw ? this.resolvePrimitive(raw) : null) ?? '';
   });
 
   protected classes = computed(() => {
