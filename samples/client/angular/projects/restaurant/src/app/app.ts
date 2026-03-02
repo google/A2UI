@@ -16,7 +16,7 @@
 
 import { MessageProcessor, Surface } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
-import { Component, DOCUMENT, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DOCUMENT, inject, signal } from '@angular/core';
 import { Client } from './client';
 
 @Component({
@@ -24,6 +24,7 @@ import { Client } from './client';
   templateUrl: './app.html',
   styleUrl: 'app.css',
   imports: [Surface],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class App {
   protected client = inject(Client);

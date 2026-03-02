@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-audio',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @let resolvedUrl = this.resolvedUrl();
 
@@ -42,7 +43,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
       width: 100%;
       box-sizing: border-box;
     }
-  `
+  `,
 })
 export class Audio extends DynamicComponent {
   readonly url = input.required<Primitives.StringValue | null>();

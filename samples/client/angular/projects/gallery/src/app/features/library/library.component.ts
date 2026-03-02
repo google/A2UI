@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { Surface } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
 
@@ -23,6 +23,7 @@ import * as Types from '@a2ui/web_core/types/types';
   imports: [Surface],
   templateUrl: './library.html',
   styleUrl: './library.css',
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class LibraryComponent {
   @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
