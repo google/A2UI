@@ -20,6 +20,10 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-icon',
+  host: {
+    'aria-hidden': 'true',
+    tabindex: '-1',
+  },
   changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
