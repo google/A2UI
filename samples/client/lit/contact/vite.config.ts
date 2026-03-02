@@ -27,6 +27,7 @@ export default async () => {
 
   const entry: Record<string, string> = {
     contact: resolve(__dirname, "index.html"),
+    sandbox: resolve(__dirname, "sandbox.html"),
   };
 
   return {
@@ -40,6 +41,9 @@ export default async () => {
     define: {},
     resolve: {
       dedupe: ["lit"],
+    },
+    server: {
+      host: true, // Listen on all network interfaces (0.0.0.0), enabling both localhost and 127.0.0.1 simultaneously
     },
   } satisfies UserConfig;
 };

@@ -18,6 +18,7 @@ import { componentRegistry } from "@a2ui/lit/ui";
 import { OrgChart } from "./org-chart.js";
 import { WebFrame } from "./web-frame.js";
 import { PremiumTextField } from "./premium-text-field.js";
+import { McpAppsCustomComponent } from "./mcp-apps-component.js";
 
 export function registerContactComponents() {
   // Register OrgChart
@@ -46,6 +47,20 @@ export function registerContactComponents() {
     PremiumTextField,
     "premium-text-field"
   );
+
+  // Register McpAppsCustomComponent
+  componentRegistry.register("McpAppsCustomComponent", McpAppsCustomComponent, "a2ui-mcp-apps-component", {
+    type: "object",
+    properties: {
+      resourceUri: { type: "string" },
+      htmlContent: { type: "string" },
+      height: { type: "number" },
+      allowedTools: {
+        type: "array",
+        items: { type: "string" }
+      }
+    },
+  });
 
   // Register WebFrame
   componentRegistry.register("WebFrame", WebFrame, "a2ui-web-frame", {
