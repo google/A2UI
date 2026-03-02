@@ -582,7 +582,7 @@
               "description": "The current value of the slider."
             }
           },
-          "required": ["component", "value", "min", "max"]
+          "required": ["component", "value", "max"]
         }
       ],
       "unevaluatedProperties": false
