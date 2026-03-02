@@ -15,6 +15,7 @@
  */
 
 import Ajv from "ajv/dist/2020";
+import addFormats from "ajv-formats";
 import * as fs from "fs";
 import * as path from "path";
 import * as yaml from "js-yaml";
@@ -31,7 +32,9 @@ export class Validator {
     private schemas: Record<string, any>,
     private outputDir?: string,
   ) {
-    this.ajv = new Ajv({ allErrors: true, strict: false }); // strict: false to be lenient with unknown keywords if any
+    // Set strict: false to be lenient with unknown keywords, if any.
+    this.ajv = new Ajv({ allErrors: true, strict: false });
+    addFormats(this.ajv);
     for (const [name, schema] of Object.entries(schemas)) {
       this.ajv.addSchema(schema, name);
     }
@@ -40,7 +43,7 @@ export class Validator {
     );
 
     // Populate basic functions from the catalog schema
-    // Note: schemas are keyed by filename in index.ts
+    // schemas are keyed by filename in index.ts
     const catalogSchema = schemas["basic_catalog.json"];
     if (
       catalogSchema &&
@@ -67,8 +70,7 @@ export class Validator {
     let passedCount = 0;
     let failedCount = 0;
 
-    // Phase 2 is fast (CPU bound), so we can just iterate.
-    // If we wanted to be fancy we could chunk it, but for < 1000 items it's instant.
+    // Run schema validation sequentially (pure CPU bound).
 
     for (const result of results) {
       if (result.error || !result.components) {
@@ -79,7 +81,6 @@ export class Validator {
       const errors: string[] = [];
       const components = result.components;
 
-      // AJV Validation
       // AJV Validation
       if (this.ajv) {
         for (const message of components) {
@@ -115,10 +116,107 @@ export class Validator {
           }
 
           if (!validated) {
+            const originalErrors = [...(this.ajv.errors || [])];
+
+            // Map out every component generated in the message to perform targeted validation
+            // and eliminate `oneOf` noise entirely.
+            const pathToObject = new Map<string, any>();
+            const visited = new Set<any>();
+            const traverse = (obj: any, currentPath: string = '') => {
+              if (typeof obj !== 'object' || obj === null || visited.has(obj)) {
+                return;
+              }
+              visited.add(obj);
+
+              if (Array.isArray(obj)) {
+                obj.forEach((item, index) => traverse(item, `${currentPath}/${index}`));
+              } else if (typeof obj === 'object' && obj !== null) {
+                if (typeof obj.component === 'string') {
+                  pathToObject.set(currentPath, obj);
+                }
+                for (const [key, value] of Object.entries(obj)) {
+                  traverse(value, `${currentPath}/${key}`);
+                }
+              }
+            };
+            traverse(message);
+
+            const targetedErrors: any[] = [];
+            const handledPaths = new Set<string>();
+
+            // Perform targeted validation for every identified component
+            for (const [path, obj] of pathToObject.entries()) {
+              const componentName = obj.component;
+              let isValid = false;
+
+              try {
+                isValid = this.ajv.validate(`basic_catalog.json#/components/${componentName}`, obj);
+              } catch (e) {
+                // If the schema isn't found, it's a hallucinated component.
+                targetedErrors.push({
+                  instancePath: path,
+                  message: `Unknown or hallucinated component type '${componentName}'`,
+                  params: { component: componentName }
+                });
+                isValid = true; // prevents further noise collection, we already handled it
+              }
+
+              if (!isValid && this.ajv.errors) {
+                this.ajv.errors.forEach(err => {
+                  // Prepend the base path so the error correctly identifies where in the message it occurred
+                  targetedErrors.push({
+                    ...err,
+                    instancePath: `${path}${err.instancePath}`
+                  });
+                });
+              }
+              handledPaths.add(path);
+            }
+
+            // Filter the original errors to only keep structural errors that are OUTSIDE the
+            // bounds of the components we already handled manually.
+            const filteredOriginalErrors = originalErrors.filter(err => {
+              if (err.keyword === 'oneOf' || err.keyword === 'anyOf') return false; // Always drop these at the top level
+
+              // If this error happened inside a path we already handled, drop it
+              for (const handledPath of handledPaths) {
+                if (err.instancePath === handledPath || err.instancePath.startsWith(`${handledPath}/`)) {
+                  return false;
+                }
+              }
+              return true;
+            });
+
+            // Combine and format the errors
+            const deduplicatedFinalErrors = [...filteredOriginalErrors, ...targetedErrors];
+
             errors.push(
-              ...(this.ajv.errors || []).map(
-                (err: any) => `${err.instancePath} ${err.message}`,
-              ),
+              ...deduplicatedFinalErrors.map((err: any) => {
+                // Determine the component name for the current instance path
+                let componentNameStr = '';
+                const pathParts = err.instancePath.split('/');
+                let currentPath = err.instancePath;
+                while (pathParts.length > 0) {
+                  const obj = pathToObject.get(currentPath);
+                  if (obj && obj.component) {
+                    componentNameStr = ` (${obj.component})`;
+                    break;
+                  }
+                  pathParts.pop();
+                  currentPath = pathParts.join('/');
+                }
+
+                let msg = `${err.instancePath}${componentNameStr} ${err.message}`;
+                if (err.params && Object.keys(err.params).length > 0) {
+                  msg += " (\n";
+                  for (const [key, value] of Object.entries(err.params)) {
+                    const formattedValue = typeof value === 'object' && value !== null ? JSON.stringify(value) : String(value);
+                    msg += `    ${key}: ${formattedValue}\n`;
+                  }
+                  msg += "  )";
+                }
+                return msg;
+              })
             );
           }
         }
@@ -248,8 +346,7 @@ export class Validator {
         return;
       }
 
-      // If we wanted to validate unknown functions, we'd do it here.
-      // For now, we just proceed.
+      // Unknown functions are ignored here; strict schema validation should handle them if necessary.
     }
 
     // Recurse into properties

@@ -59,8 +59,8 @@ class A2uiPayloadFixer:
       logger.error(f"Failed to parse JSON: {e}")
       raise ValueError(f"Failed to parse JSON: {e}")
 
-  def fix(self, payload: str) -> List[Dict[str, Any]]:
-    """Applies autofixes to a raw JSON string and returns the parsed payload.
+  def validate_and_fix(self, payload: str) -> List[Dict[str, Any]]:
+    """Validates and applies autofixes to a raw JSON string and returns the parsed payload.
 
     Args:
       payload: The raw JSON string from the LLM.

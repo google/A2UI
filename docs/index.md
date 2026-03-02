@@ -142,7 +142,7 @@ and [transports](/transports.md) (eg: A2A, etc.) which communicate A2UI messages
 <div style="margin: 2rem 0;">
   <div style="border-radius: .8rem; overflow: hidden; box-shadow: var(--md-shadow-z2);">
     <video width="100%" height="auto" controls playsinline style="display: block; aspect-ratio: 16/9; object-fit: cover;">
-      <source src="assets/a2ui-custom-compnent.mp4" type="video/mp4">
+      <source src="assets/a2ui-custom-component.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
