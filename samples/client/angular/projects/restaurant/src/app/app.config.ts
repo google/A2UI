@@ -23,7 +23,7 @@ import {
 } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { theme } from './theme';
-import { renderMarkdown } from '@a2ui/markdown-it-shared';
+import { renderMarkdown } from '@a2ui/markdown-it';
 
 export const appConfig: ApplicationConfig = {
   providers: [
