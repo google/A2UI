@@ -56,7 +56,7 @@
         {
           "id": "calendar_icon",
           "component": "Icon",
-          "name": "calendarToday"
+          "name": "calendar_today"
         },
         {
           "id": "calendar_primary_text",
@@ -94,7 +94,7 @@
         {
           "id": "location_icon",
           "component": "Icon",
-          "name": "locationOn"
+          "name": "location_on"
         },
         {
           "id": "location_primary_text",

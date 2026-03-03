@@ -39,7 +39,7 @@ SAMPLE_CONFIGS = [
             )
         ],
         "schema_modifiers": [],
-        "validate": True,
+        "validate": False,  # Use invalid examples to test retry logic
     },
     {
         "name": "contact_multiple_surfaces",

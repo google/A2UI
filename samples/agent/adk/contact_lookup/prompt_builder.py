@@ -84,7 +84,7 @@ if __name__ == "__main__":
       ui_description=UI_DESCRIPTION,
       include_schema=True,
       include_examples=True,
-      validate_examples=True,
+      validate_examples=False,  # Use invalid examples to test retry logic
   )
   print(contact_prompt)
   with open("generated_prompt.txt", "w") as f:
