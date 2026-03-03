@@ -48,11 +48,15 @@ class ContactAgent:
   def __init__(self, base_url: str, use_ui: bool = False):
     self.base_url = base_url
     self.use_ui = use_ui
+    self.version = VERSION_0_8
     self._schema_manager = (
         A2uiSchemaManager(
-            version=VERSION_0_8,
+            version=self.version,
             catalogs=[
-                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+                BasicCatalog.get_config(
+                    version=self.version,
+                    examples_path=f"examples/{self.version}",
+                )
             ],
         )
         if use_ui

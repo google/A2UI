@@ -60,18 +60,19 @@ def main(host, port):
     lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
     base_url = f"http://{host}:{port}"
+    version = VERSION_0_8
 
     schema_manager = A2uiSchemaManager(
-        VERSION_0_8,
+        version,
         catalogs=[
             CatalogConfig.from_path(
                 name="rizzcharts",
                 catalog_path="rizzcharts_catalog_definition.json",
-                examples_path="examples/rizzcharts_catalog",
+                examples_path=f"examples/rizzcharts_catalog/{version}",
             ),
             BasicCatalog.get_config(
-                version=VERSION_0_8,
-                examples_path="examples/standard_catalog",
+                version=version,
+                examples_path=f"examples/standard_catalog/{version}",
             ),
         ],
         accepts_inline_catalogs=True,

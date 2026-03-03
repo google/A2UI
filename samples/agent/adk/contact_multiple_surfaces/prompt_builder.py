@@ -72,9 +72,15 @@ def get_text_prompt() -> str:
 if __name__ == "__main__":
   # Example of how to use the A2UI Schema Manager to generate a system prompt
   my_base_url = "http://localhost:8000"
+  my_version = VERSION_0_8
   schema_manager = A2uiSchemaManager(
-      VERSION_0_8,
-      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
+      my_version,
+      catalogs=[
+          BasicCatalog.get_config(
+              version=my_version,
+              examples_path=f"examples/{my_version}",
+          )
+      ],
       accepts_inline_catalogs=True,
       schema_modifiers=[remove_strict_validation],
   )

@@ -66,9 +66,15 @@ if __name__ == "__main__":
   # You can now easily construct a prompt with the relevant examples.
   # For a different agent (e.g., a flight booker), you would pass in
   # different examples but use the same `get_ui_prompt` function.
+  version = VERSION_0_8
   restaurant_prompt = A2uiSchemaManager(
-      VERSION_0_8,
-      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
+      version,
+      catalogs=[
+          BasicCatalog.get_config(
+              version=version,
+              examples_path=f"examples/{version}",
+          )
+      ],
       schema_modifiers=[remove_strict_validation],
   ).generate_system_prompt(
       role_description=ROLE_DESCRIPTION,
