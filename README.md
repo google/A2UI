@@ -134,8 +134,13 @@ The best way to understand A2UI is to run the samples.
     Open a new terminal window:
 
     ```bash
+    # Install and build the Markdown renderer
+    cd renderers/markdown/markdown-it
+    npm install
+    npm run build
+
     # Install and build the Web Core library
-    cd renderers/web_core
+    cd ../../web_core
     npm install
     npm run build
 
