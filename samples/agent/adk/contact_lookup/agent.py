@@ -32,7 +32,10 @@ from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.a2a import get_a2ui_agent_extension
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +49,14 @@ class ContactAgent:
     self.base_url = base_url
     self.use_ui = use_ui
     self._schema_manager = (
-        A2uiSchemaManager("0.8", basic_examples_path="examples") if use_ui else None
+        A2uiSchemaManager(
+            version=VERSION_0_8,
+            catalogs=[
+                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+            ],
+        )
+        if use_ui
+        else None
     )
     self._agent = self._build_agent(use_ui)
     self._user_id = "remote_agent"
@@ -61,7 +71,12 @@ class ContactAgent:
   def get_agent_card(self) -> AgentCard:
     capabilities = AgentCapabilities(
         streaming=True,
-        extensions=[self._schema_manager.get_agent_extension()],
+        extensions=[
+            get_a2ui_agent_extension(
+                self._schema_manager.accepts_inline_catalogs,
+                self._schema_manager.supported_catalog_ids,
+            )
+        ],
     )
     skill = AgentSkill(
         id="find_contact",
