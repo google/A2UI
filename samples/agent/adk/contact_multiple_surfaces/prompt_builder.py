@@ -100,7 +100,7 @@ if __name__ == "__main__":
     f.write(contact_prompt)
   print("\nGenerated prompt saved to generated_prompt.txt")
 
-  with open('inline_catalog.json', 'r', encoding='utf-8') as f:
+  with open("inline_catalog.json", "r", encoding="utf-8") as f:
     inline_catalog = json.load(f)
 
   client_ui_capabilities = {"inlineCatalogs": [inline_catalog]}

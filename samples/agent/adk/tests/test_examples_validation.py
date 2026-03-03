@@ -46,10 +46,10 @@ SAMPLE_CONFIGS = [
         "path": SAMPLES_DIR / "contact_multiple_surfaces",
         "catalogs": [
             CatalogConfig.from_path(
-              name="contact_multiple_surfaces_inline_catalog",
-              catalog_path="inline_catalog.json",
-              examples_path=f"examples/{VERSION_0_9}",
-          ),
+                name="contact_multiple_surfaces_inline_catalog",
+                catalog_path="inline_catalog.json",
+                examples_path=f"examples/{VERSION_0_9}",
+            ),
         ],
         "schema_modifiers": [remove_strict_validation],
         "validate": True,
