@@ -14,13 +14,6 @@ interface DemoItem {
   description: string;
 }
 
-interface DemoItem {
-  id: string;
-  title: string;
-  filename: string;
-  description: string;
-}
-
 @customElement("local-gallery")
 export class LocalGallery extends SignalWatcher(LitElement) {
 
