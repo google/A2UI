@@ -90,6 +90,23 @@ def main(port: int, transport: str) -> int:
 
     raise ValueError(f"Unknown tool: {name}")
 
+  @app.list_resources()
+  async def list_resources() -> list[types.Resource]:
+    return [
+        types.Resource(
+            uri="ui://calculator/app",
+            name="Calculator App",
+            mimeType="text/html;profile=mcp-app",
+            description="A simple calculator application",
+        )
+    ]
+
+  @app.read_resource()
+  async def read_resource(uri: Any) -> str | bytes:
+    if str(uri) == "ui://calculator/app":
+      return (pathlib.Path(__file__).parent / "apps" / "calculator.html").read_text()
+    raise ValueError(f"Unknown resource: {uri}")
+
   @app.list_tools()
   async def list_tools() -> list[types.Tool]:
     return [
