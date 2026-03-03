@@ -5,6 +5,19 @@ from pathlib import Path
 VERSION_0_9_CATALOG_ID = "https://a2ui.org/specification/v0_9/basic_catalog.json"
 
 
+def _convert_map(v_map):
+  res = {}
+  for m_item in v_map:
+    m_key = m_item["key"]
+    m_val_key = [mk for mk in m_item.keys() if mk.startswith("value")][0]
+    m_val = m_item[m_val_key]
+    if m_val_key == "valueMap":
+      res[m_key] = _convert_map(m_val)
+    else:
+      res[m_key] = m_val
+  return res
+
+
 def migrate_v08_to_v09(v08_data, catalog_id=VERSION_0_9_CATALOG_ID):
   v09_data = []
 
@@ -47,7 +60,10 @@ def migrate_v08_to_v09(v08_data, catalog_id=VERSION_0_9_CATALOG_ID):
           # Some custom components might be different.
           continue
 
-        comp_type = list(comp_wrapper["component"].keys())[0]
+        comp_keys = list(comp_wrapper["component"].keys())
+        if not comp_keys:
+          continue
+        comp_type = comp_keys[0]
         comp_props = comp_wrapper["component"][comp_type]
 
         new_comp = {"id": comp_id, "component": comp_type}
@@ -108,7 +124,7 @@ def migrate_v08_to_v09(v08_data, catalog_id=VERSION_0_9_CATALOG_ID):
               new_action["event"]["context"] = new_context
             new_comp["action"] = new_action
           elif k == "fit":
-            new_comp["fit"] = v
+            new_comp["fit"] = "scaleDown" if v == "scale-down" else v
           elif k == "alignment":
             new_comp["align"] = v
           elif k == "distribution":
@@ -170,25 +186,14 @@ def migrate_v08_to_v09(v08_data, catalog_id=VERSION_0_9_CATALOG_ID):
       for item in dmu.get("contents", []):
         key = item["key"]
         # Find the value key (valueString, valueNumber, etc.)
-        val_key = [k for k in item.keys() if k.startswith("value")][0]
+        val_key = next((k for k in item.keys() if k.startswith("value")), None)
+        if val_key is None:
+          continue
         val = item[val_key]
 
         # Recursive map conversion if needed
         if val_key == "valueMap":
-
-          def convert_map(v_map):
-            res = {}
-            for m_item in v_map:
-              m_key = m_item["key"]
-              m_val_key = [mk for mk in m_item.keys() if mk.startswith("value")][0]
-              m_val = m_item[m_val_key]
-              if m_val_key == "valueMap":
-                res[m_key] = convert_map(m_val)
-              else:
-                res[m_key] = m_val
-            return res
-
-          val = convert_map(val)
+          val = _convert_map(val)
 
         value_obj[key] = val
 
@@ -208,13 +213,13 @@ def migrate_v08_to_v09(v08_data, catalog_id=VERSION_0_9_CATALOG_ID):
 
 def process_file(src_file, dst_file, catalog_id):
   print(f"Migrating {src_file.name}...")
-  with open(src_file, "r") as f:
+  with open(src_file, "r", encoding="utf-8") as f:
     v08_data = json.load(f)
 
   v09_data = migrate_v08_to_v09(v08_data, catalog_id=catalog_id)
 
   dst_file.parent.mkdir(parents=True, exist_ok=True)
-  with open(dst_file, "w") as f:
+  with open(dst_file, "w", encoding="utf-8") as f:
     json.dump(v09_data, f, indent=2)
 
 
