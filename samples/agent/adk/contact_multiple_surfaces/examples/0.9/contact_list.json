@@ -27,9 +27,7 @@
           "id": "title-heading",
           "component": "Text",
           "variant": "h1",
-          "text": {
-            "literalString": "Found Contacts"
-          }
+          "text": "Found Contacts"
         },
         {
           "id": "item-list",
@@ -89,15 +87,13 @@
         {
           "id": "view-button-text",
           "component": "Text",
-          "text": {
-            "literalString": "View"
-          }
+          "text": "View"
         },
         {
           "id": "view-button",
           "component": "Button",
           "child": "view-button-text",
-          "primary": true,
+          "variant": "primary",
           "action": {
             "event": {
               "name": "view_profile",

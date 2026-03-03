@@ -30,9 +30,7 @@
         {
           "id": "map-header",
           "component": "Text",
-          "text": {
-            "literalString": "Points of Interest in Los Angeles"
-          },
+          "text": "Points of Interest in Los Angeles",
           "variant": "h2"
         },
         {

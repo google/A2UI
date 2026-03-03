@@ -21,6 +21,20 @@
           "child": "confirmation-column"
         },
         {
+          "id": "confirmation-column",
+          "component": "Column",
+          "children": [
+            "confirm-title",
+            "confirm-image",
+            "confirm-details",
+            "confirm-dietary",
+            "divider1",
+            "divider2",
+            "divider3",
+            "confirm-text"
+          ]
+        },
+        {
           "id": "confirm-title",
           "component": "Text",
           "variant": "h2",
@@ -53,9 +67,7 @@
           "id": "confirm-text",
           "component": "Text",
           "variant": "h5",
-          "text": {
-            "literalString": "We look forward to seeing you!"
-          }
+          "text": "We look forward to seeing you!"
         },
         {
           "id": "divider1",

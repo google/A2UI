@@ -106,7 +106,7 @@
           "id": "template-book-button",
           "component": "Button",
           "child": "book-now-text",
-          "primary": true,
+          "variant": "primary",
           "action": {
             "event": {
               "name": "book_restaurant",
@@ -127,9 +127,7 @@
         {
           "id": "book-now-text",
           "component": "Text",
-          "text": {
-            "literalString": "Book Now"
-          }
+          "text": "Book Now"
         }
       ]
     }

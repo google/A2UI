@@ -53,20 +53,16 @@
         {
           "id": "party-size-field",
           "component": "TextField",
-          "label": {
-            "literalString": "Party Size"
-          },
-          "text": {
+          "label": "Party Size",
+          "value": {
             "path": "/partySize"
           },
-          "type": "number"
+          "variant": "number"
         },
         {
           "id": "datetime-field",
           "component": "DateTimeInput",
-          "label": {
-            "literalString": "Date & Time"
-          },
+          "label": "Date & Time",
           "value": {
             "path": "/reservationTime"
           },
@@ -76,10 +72,8 @@
         {
           "id": "dietary-field",
           "component": "TextField",
-          "label": {
-            "literalString": "Dietary Requirements"
-          },
-          "text": {
+          "label": "Dietary Requirements",
+          "value": {
             "path": "/dietary"
           }
         },
@@ -113,9 +107,7 @@
         {
           "id": "submit-reservation-text",
           "component": "Text",
-          "text": {
-            "literalString": "Submit Reservation"
-          }
+          "text": "Submit Reservation"
         }
       ]
     }

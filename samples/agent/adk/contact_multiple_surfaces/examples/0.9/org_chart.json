@@ -3,7 +3,7 @@
     "version": "v0.9",
     "createSurface": {
       "surfaceId": "org-chart-view",
-      "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+      "catalogId": "inline_catalog"
     }
   },
   {
@@ -23,9 +23,7 @@
           "id": "title",
           "component": "Text",
           "variant": "h2",
-          "text": {
-            "literalString": "Organizational Chart"
-          }
+          "text": "Organizational Chart"
         },
         {
           "id": "org-chart",

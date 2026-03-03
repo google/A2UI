@@ -24,9 +24,7 @@
         {
           "id": "hidden-entry-point",
           "component": "Text",
-          "text": {
-            "literalString": ""
-          }
+          "text": ""
         },
         {
           "id": "modal-content-column",
@@ -56,15 +54,13 @@
         {
           "id": "dismiss-button-text",
           "component": "Text",
-          "text": {
-            "literalString": "Dismiss"
-          }
+          "text": "Dismiss"
         },
         {
           "id": "dismiss-button",
           "component": "Button",
           "child": "dismiss-button-text",
-          "primary": true,
+          "variant": "primary",
           "action": {
             "event": {
               "name": "dismiss_modal"

@@ -3,7 +3,7 @@
     "version": "v0.9",
     "createSurface": {
       "surfaceId": "location-surface",
-      "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+      "catalogId": "inline_catalog"
     }
   },
   {
@@ -29,9 +29,7 @@
           "id": "floor-plan-title",
           "component": "Text",
           "variant": "h2",
-          "text": {
-            "literalString": "Office Floor Plan"
-          }
+          "text": "Office Floor Plan"
         },
         {
           "id": "floor-plan-comp",
@@ -46,9 +44,7 @@
         {
           "id": "dismiss-fp-text",
           "component": "Text",
-          "text": {
-            "literalString": "Close Map"
-          }
+          "text": "Close Map"
         },
         {
           "id": "dismiss-fp",

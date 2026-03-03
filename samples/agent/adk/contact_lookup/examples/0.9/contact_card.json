@@ -56,9 +56,7 @@
         {
           "id": "calendar_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "calendar_today"
-          }
+          "name": "calendarToday"
         },
         {
           "id": "calendar_primary_text",
@@ -71,9 +69,7 @@
         {
           "id": "calendar_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Calendar"
-          }
+          "text": "Calendar"
         },
         {
           "id": "calendar_text_column",
@@ -98,9 +94,7 @@
         {
           "id": "location_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "location_on"
-          }
+          "name": "locationOn"
         },
         {
           "id": "location_primary_text",
@@ -113,9 +107,7 @@
         {
           "id": "location_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Location"
-          }
+          "text": "Location"
         },
         {
           "id": "location_text_column",
@@ -140,9 +132,7 @@
         {
           "id": "mail_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "mail"
-          }
+          "name": "mail"
         },
         {
           "id": "mail_primary_text",
@@ -155,9 +145,7 @@
         {
           "id": "mail_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Email"
-          }
+          "text": "Email"
         },
         {
           "id": "mail_text_column",
@@ -186,9 +174,7 @@
         {
           "id": "call_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "call"
-          }
+          "name": "call"
         },
         {
           "id": "call_primary_text",
@@ -201,9 +187,7 @@
         {
           "id": "call_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Mobile"
-          }
+          "text": "Mobile"
         },
         {
           "id": "call_text_column",
@@ -240,15 +224,13 @@
         {
           "id": "button_1_text",
           "component": "Text",
-          "text": {
-            "literalString": "Follow"
-          }
+          "text": "Follow"
         },
         {
           "id": "button_1",
           "component": "Button",
           "child": "button_1_text",
-          "primary": true,
+          "variant": "primary",
           "action": {
             "event": {
               "name": "follow_contact"
@@ -258,15 +240,13 @@
         {
           "id": "button_2_text",
           "component": "Text",
-          "text": {
-            "literalString": "Message"
-          }
+          "text": "Message"
         },
         {
           "id": "button_2",
           "component": "Button",
           "child": "button_2_text",
-          "primary": false,
+          "variant": "default",
           "action": {
             "event": {
               "name": "send_message"
@@ -286,9 +266,7 @@
         {
           "id": "link_text",
           "component": "Text",
-          "text": {
-            "literalString": "[View Full Profile](/profile)"
-          }
+          "text": "[View Full Profile](/profile)"
         },
         {
           "id": "link_text_wrapper",

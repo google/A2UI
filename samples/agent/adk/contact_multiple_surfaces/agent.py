@@ -36,7 +36,7 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
@@ -53,7 +53,7 @@ class ContactAgent:
   def __init__(self, base_url: str, use_ui: bool = False):
     self.base_url = base_url
     self.use_ui = use_ui
-    self.version = VERSION_0_8
+    self.version = VERSION_0_9
     self.schema_manager = (
         A2uiSchemaManager(
             self.version,

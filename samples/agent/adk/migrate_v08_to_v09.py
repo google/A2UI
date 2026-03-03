@@ -95,7 +95,16 @@ def migrate_v08_to_v09(v08_data, catalog_id=VERSION_0_9_CATALOG_ID):
             if "context" in v:
               new_context = {}
               for item in v["context"]:
-                new_context[item["key"]] = item["value"]
+                # Unwrap context value if needed
+                val = item["value"]
+                if isinstance(val, dict) and "literalString" in val:
+                  val = val["literalString"]
+                elif isinstance(val, dict) and "literalNumber" in val:
+                  val = val["literalNumber"]
+                elif isinstance(val, dict) and "literalBoolean" in val:
+                  val = val["literalBoolean"]
+
+                new_context[item["key"]] = val
               new_action["event"]["context"] = new_context
             new_comp["action"] = new_action
           elif k == "fit":
@@ -104,7 +113,44 @@ def migrate_v08_to_v09(v08_data, catalog_id=VERSION_0_9_CATALOG_ID):
             new_comp["align"] = v
           elif k == "distribution":
             new_comp["justify"] = v
+          elif k == "text" and comp_type == "TextField":
+            new_comp["value"] = v
+          elif k == "type" and comp_type == "TextField":
+            new_comp["variant"] = v
+          elif k == "primary":
+            # Map Button primary to variant
+            if comp_type == "Button":
+              new_comp["variant"] = "primary" if v else "default"
+            else:
+              new_comp[k] = v
           else:
+            # General literal unwrapping
+            if isinstance(v, dict) and "literalString" in v:
+              v = v["literalString"]
+            elif isinstance(v, dict) and "literalNumber" in v:
+              v = v["literalNumber"]
+            elif isinstance(v, dict) and "literalBoolean" in v:
+              v = v["literalBoolean"]
+
+            # Icon specific handling
+            if comp_type == "Icon":
+              if k == "name":
+                # Map common icon names to v0.9 enum
+                icon_map = {
+                    "check_circle": "check",
+                    "calendar_today": "calendarToday",
+                    "location_on": "locationOn",
+                }
+                v = icon_map.get(v, v)
+              elif k in ["size", "color"]:
+                # Skip properties not in basic catalog v0.9
+                continue
+
+            # Image specific handling
+            if comp_type == "Image":
+              if k in ["width", "height"]:
+                continue
+
             new_comp[k] = v
 
         new_components.append(new_comp)

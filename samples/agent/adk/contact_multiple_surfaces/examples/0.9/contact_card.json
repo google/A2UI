@@ -56,9 +56,7 @@
         {
           "id": "calendar_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "calendarToday"
-          }
+          "name": "calendarToday"
         },
         {
           "id": "calendar_primary_text",
@@ -71,9 +69,7 @@
         {
           "id": "calendar_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Calendar"
-          }
+          "text": "Calendar"
         },
         {
           "id": "calendar_text_column",
@@ -98,9 +94,7 @@
         {
           "id": "location_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "locationOn"
-          }
+          "name": "locationOn"
         },
         {
           "id": "location_primary_text",
@@ -113,9 +107,7 @@
         {
           "id": "location_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Location"
-          }
+          "text": "Location"
         },
         {
           "id": "location_text_column",
@@ -140,9 +132,7 @@
         {
           "id": "mail_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "mail"
-          }
+          "name": "mail"
         },
         {
           "id": "mail_primary_text",
@@ -155,9 +145,7 @@
         {
           "id": "mail_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Email"
-          }
+          "text": "Email"
         },
         {
           "id": "mail_text_column",
@@ -186,9 +174,7 @@
         {
           "id": "call_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "call"
-          }
+          "name": "call"
         },
         {
           "id": "call_primary_text",
@@ -201,9 +187,7 @@
         {
           "id": "call_secondary_text",
           "component": "Text",
-          "text": {
-            "literalString": "Mobile"
-          }
+          "text": "Mobile"
         },
         {
           "id": "call_text_column",
@@ -240,9 +224,7 @@
         {
           "id": "message-button-text",
           "component": "Text",
-          "text": {
-            "literalString": "Message"
-          }
+          "text": "Message"
         },
         {
           "id": "message-button",
@@ -262,9 +244,7 @@
         {
           "id": "location-button-text",
           "component": "Text",
-          "text": {
-            "literalString": "Location"
-          }
+          "text": "Location"
         },
         {
           "id": "location-button",

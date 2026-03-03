@@ -28,10 +28,14 @@
         {
           "id": "map-header",
           "component": "Text",
-          "text": {
-            "literalString": "Points of Interest in Los Angeles"
-          },
+          "text": "Points of Interest in Los Angeles",
           "variant": "h2"
+        },
+        {
+          "id": "map-image",
+          "component": "Image",
+          "url": "https://maps.googleapis.com/maps/api/staticmap?center=Los+Angeles,CA&zoom=11&size=600x300&key=YOUR_API_KEY",
+          "fit": "cover"
         },
         {
           "id": "location-list",

@@ -14,18 +14,12 @@
         {
           "id": "success_icon",
           "component": "Icon",
-          "name": {
-            "literalString": "check_circle"
-          },
-          "size": 48.0,
-          "color": "#4CAF50"
+          "name": "check"
         },
         {
           "id": "success_text",
           "component": "Text",
-          "text": {
-            "literalString": "Successfully Followed"
-          },
+          "text": "Successfully Followed",
           "variant": "h2"
         },
         {

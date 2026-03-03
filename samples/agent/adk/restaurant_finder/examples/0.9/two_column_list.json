@@ -58,8 +58,7 @@
           "component": "Image",
           "url": {
             "path": "/items/0/imageUrl"
-          },
-          "width": "100%"
+          }
         },
         {
           "id": "card-details-1",
@@ -125,9 +124,7 @@
         {
           "id": "book-now-text-1",
           "component": "Text",
-          "text": {
-            "literalString": "Book Now"
-          }
+          "text": "Book Now"
         },
         {
           "id": "item-card-2",
@@ -148,8 +145,7 @@
           "component": "Image",
           "url": {
             "path": "/items/1/imageUrl"
-          },
-          "width": "100%"
+          }
         },
         {
           "id": "card-details-2",
@@ -215,9 +211,7 @@
         {
           "id": "book-now-text-2",
           "component": "Text",
-          "text": {
-            "literalString": "Book Now"
-          }
+          "text": "Book Now"
         }
       ]
     }
