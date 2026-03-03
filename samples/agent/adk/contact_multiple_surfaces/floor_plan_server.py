@@ -7,26 +7,29 @@ app = Server("floor-plan-server")
 RESOURCE_URI = "ui://floor-plan-server/map"
 MIME_TYPE = "text/html;profile=mcp-app"
 
+
 @app.list_resources()
 async def list_resources() -> list[Resource]:
-    return [
-        Resource(
-            uri=RESOURCE_URI,
-            name="Interactive Floor Plan",
-            mimeType=MIME_TYPE,
-            description="A visual floor plan showing desk assignments."
-        )
-    ]
+  return [
+      Resource(
+          uri=RESOURCE_URI,
+          name="Interactive Floor Plan",
+          mimeType=MIME_TYPE,
+          description="A visual floor plan showing desk assignments.",
+      )
+  ]
+
 
 @app.read_resource()
 async def read_resource(uri: str) -> str | bytes:
-    if str(uri) != RESOURCE_URI:
-        raise ValueError(f"Unknown resource: {uri}")
-        
-    import os
-    agent_static_url = os.environ.get("AGENT_STATIC_URL", "http://localhost:10004")
-    
-    html = """<!DOCTYPE html>
+  if str(uri) != RESOURCE_URI:
+    raise ValueError(f"Unknown resource: {uri}")
+
+  import os
+
+  agent_static_url = os.environ.get("AGENT_STATIC_URL", "http://localhost:10004")
+
+  html = """<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -274,8 +277,9 @@ async def read_resource(uri: str) -> str | bytes:
     </script>
 </body>
 </html>"""
-    html = html.replace("__AGENT_STATIC_URL__", agent_static_url)
-    return html
+  html = html.replace("__AGENT_STATIC_URL__", agent_static_url)
+  return html
+
 
 import uvicorn
 from starlette.applications import Starlette
@@ -286,17 +290,13 @@ from mcp.server.sse import SseServerTransport
 
 sse = SseServerTransport("/messages/")
 
+
 async def handle_sse(request: Request):
-    """Handle the initial SSE connection from the A2UI agent."""
-    async with sse.connect_sse(
-        request.scope, request.receive, request._send
-    ) as streams:
-        await app.run(
-            streams[0], 
-            streams[1], 
-            app.create_initialization_options()
-        )
-    return Response()
+  """Handle the initial SSE connection from the A2UI agent."""
+  async with sse.connect_sse(request.scope, request.receive, request._send) as streams:
+    await app.run(streams[0], streams[1], app.create_initialization_options())
+  return Response()
+
 
 starlette_app = Starlette(
     routes=[
@@ -306,4 +306,4 @@ starlette_app = Starlette(
 )
 
 if __name__ == "__main__":
-    uvicorn.run(starlette_app, host="127.0.0.1", port=8000)
+  uvicorn.run(starlette_app, host="127.0.0.1", port=8000)

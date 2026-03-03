@@ -248,114 +248,102 @@ class ContactAgent:
         sse_url = os.environ.get("FLOOR_PLAN_SERVER_URL", "http://127.0.0.1:8000/sse")
 
         try:
-            # Connect to the persistent Starlette SSE server
-            async with sse_client(sse_url) as (read, write):
-                async with ClientSession(read, write) as mcp_session:
-                    await mcp_session.initialize()
+          # Connect to the persistent Starlette SSE server
+          async with sse_client(sse_url) as (read, write):
+            async with ClientSession(read, write) as mcp_session:
+              await mcp_session.initialize()
 
-                    logger.info("--- ContactAgent: Fetching ui://floor-plan-server/map from persistent SSE server ---")
-                    result = await mcp_session.read_resource("ui://floor-plan-server/map")
-                    
-                    if not result.contents or len(result.contents) == 0:
-                        raise ValueError("No content returned from floor plan server")
-                        
-                    html_content = result.contents[0].text
+              logger.info(
+                  "--- ContactAgent: Fetching ui://floor-plan-server/map from"
+                  " persistent SSE server ---"
+              )
+              result = await mcp_session.read_resource("ui://floor-plan-server/map")
+
+              if not result.contents or len(result.contents) == 0:
+                raise ValueError("No content returned from floor plan server")
+
+              html_content = result.contents[0].text
         except ValueError as e:
-            logger.error(f"Invalid floor plan data: {e}")
-            yield {
-                "is_task_complete": True,
-                "content": f"Failed to load floor plan data: {str(e)}"
-            }
-            return
+          logger.error(f"Invalid floor plan data: {e}")
+          yield {
+              "is_task_complete": True,
+              "content": f"Failed to load floor plan data: {str(e)}",
+          }
+          return
         except Exception as e:
-            logger.error(f"Failed to fetch floor plan from SSE server: {e}")
-            yield {
-                "is_task_complete": True,
-                "content": f"Failed to connect to floor plan server: {str(e)}"
-            }
-            return
+          logger.error(f"Failed to fetch floor plan from SSE server: {e}")
+          yield {
+              "is_task_complete": True,
+              "content": f"Failed to connect to floor plan server: {str(e)}",
+          }
+          return
 
         json_content = [
-          {
-            "beginRendering": {
-              "surfaceId": "location-surface",
-              "root": "floor-plan-card"
-            }
-          },
-          {
-            "surfaceUpdate": {
-              "surfaceId": "location-surface",
-              "components": [
-                {
-                  "id": "floor-plan-card",
-                  "component": {
-                    "Card": {
-                      "child": "floor-plan-col"
-                    }
-                  }
-                },
-                {
-                  "id": "floor-plan-col",
-                  "component": {
-                    "Column": {
-                      "children": {
-                        "explicitList": [
-                          "floor-plan-title",
-                          "floor-plan-comp",
-                          "dismiss-fp"
-                        ]
-                      }
-                    }
-                  }
-                },
-                {
-                  "id": "floor-plan-title",
-                  "component": {
-                    "Text": {
-                      "usageHint": "h2",
-                      "text": {
-                        "literalString": "Office Floor Plan"
-                      }
-                    }
-                  }
-                },
-                {
-                  "id": "floor-plan-comp",
-                  "component": {
-                    "McpAppsCustomComponent": {
-                      "htmlContent": html_content,
-                      "height": 400,
-                      "allowedTools": [
-                        "chart_node_click"
-                      ]
-                    }
-                  }
-                },
-                {
-                  "id": "dismiss-fp-text",
-                  "component": {
-                    "Text": {
-                      "text": {
-                        "literalString": "Close Map"
-                      }
-                    }
-                  }
-                },
-                {
-                  "id": "dismiss-fp",
-                  "component": {
-                    "Button": {
-                      "child": "dismiss-fp-text",
-                      "action": {
-                        "name": "close_modal",
-                        "context": []
-                      }
-                    }
-                  }
+            {
+                "beginRendering": {
+                    "surfaceId": "location-surface",
+                    "root": "floor-plan-card",
                 }
-              ]
-            }
-          }
+            },
+            {
+                "surfaceUpdate": {
+                    "surfaceId": "location-surface",
+                    "components": [
+                        {
+                            "id": "floor-plan-card",
+                            "component": {"Card": {"child": "floor-plan-col"}},
+                        },
+                        {
+                            "id": "floor-plan-col",
+                            "component": {
+                                "Column": {
+                                    "children": {
+                                        "explicitList": [
+                                            "floor-plan-title",
+                                            "floor-plan-comp",
+                                            "dismiss-fp",
+                                        ]
+                                    }
+                                }
+                            },
+                        },
+                        {
+                            "id": "floor-plan-title",
+                            "component": {
+                                "Text": {
+                                    "usageHint": "h2",
+                                    "text": {"literalString": "Office Floor Plan"},
+                                }
+                            },
+                        },
+                        {
+                            "id": "floor-plan-comp",
+                            "component": {
+                                "McpAppsCustomComponent": {
+                                    "htmlContent": html_content,
+                                    "height": 400,
+                                    "allowedTools": ["chart_node_click"],
+                                }
+                            },
+                        },
+                        {
+                            "id": "dismiss-fp-text",
+                            "component": {
+                                "Text": {"text": {"literalString": "Close Map"}}
+                            },
+                        },
+                        {
+                            "id": "dismiss-fp",
+                            "component": {
+                                "Button": {
+                                    "child": "dismiss-fp-text",
+                                    "action": {"name": "close_modal", "context": []},
+                                }
+                            },
+                        },
+                    ],
+                }
+            },
         ]
 
         logger.info(f"--- ContactAgent.stream: Sending Floor Plan ---")
@@ -367,13 +355,7 @@ class ContactAgent:
 
       if query.startswith("ACTION:") and "close_modal" in query:
         logger.info("--- ContactAgent.stream: Handling close_modal ACTION ---")
-        json_content = [
-          {
-            "deleteSurface": {
-              "surfaceId": "location-surface"
-            }
-          }
-        ]
+        json_content = [{"deleteSurface": {"surfaceId": "location-surface"}}]
         final_response_content = (
             f"Modal closed.\n---a2ui_JSON---\n{json.dumps(json_content)}"
         )
