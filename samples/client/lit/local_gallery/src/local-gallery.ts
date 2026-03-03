@@ -5,6 +5,7 @@ import { customElement, state } from "lit/decorators.js";
 import { theme as uiTheme } from "./theme.js";
 import { v0_8 } from "@a2ui/lit";
 import * as UI from "@a2ui/lit/ui";
+import { renderMarkdown } from "@a2ui/markdown-it";
 
 interface DemoItem {
   id: string;
@@ -25,6 +26,9 @@ export class LocalGallery extends SignalWatcher(LitElement) {
 
   @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
+
+  @provide({ context: UI.Context.markdown })
+  accessor markdownRenderer: v0_8.Types.MarkdownRenderer = renderMarkdown;
 
   @state() accessor #mockLogs: string[] = [];
   @state() accessor #demoItems: DemoItem[] = [];
