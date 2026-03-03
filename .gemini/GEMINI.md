@@ -72,7 +72,11 @@ The Lit clients are located in `samples/client/lit/`.
 1.  **Build the Renderer**:
     First, ensure the shared renderers are built:
     ```bash
-    cd renderers/web_core
+    cd renderers/markdown/markdown-it
+    npm install
+    npm run build
+
+    cd ../../web_core
     npm install
     npm run build
 
@@ -95,7 +99,11 @@ The Angular clients are located in `samples/client/angular/`.
 
 First, ensure the shared renderers are built (if not already done):
 ```bash
-cd renderers/web_core
+cd renderers/markdown/markdown-it
+npm install
+npm run build
+
+cd ../../web_core
 npm install
 npm run build
 

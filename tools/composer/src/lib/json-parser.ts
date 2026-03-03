@@ -38,7 +38,20 @@ export function parseRobustJSON(input: string | unknown): unknown {
 
   // Strategy 1: Try standard JSON.parse
   try {
-    return JSON.parse(trimmed);
+    const result = JSON.parse(trimmed);
+    // If the result is a string that looks like JSON, try parsing it again
+    if (
+      typeof result === "string" &&
+      (result.trim().startsWith("{") || result.trim().startsWith("["))
+    ) {
+      try {
+        return parseRobustJSON(result);
+      } catch {
+        // If recursive call fails, return the first result
+        return result;
+      }
+    }
+    return result;
   } catch (firstError) {
     // Strategy 2: Check if it's a malformed string that looks like JSON but has unescaped quotes
     // This happens when AI sends: "{ "foo": "bar" }" instead of '{ "foo": "bar" }' or "{ \"foo\": \"bar\" }"
