@@ -103,8 +103,9 @@ export class Text extends DynamicComponent {
     }
 
     return this.markdownRenderer.render(
-      value,
-      Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
+      value, {
+        tagClassMap: Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
+      },
     );
   });
 

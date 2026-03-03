@@ -15,12 +15,13 @@
 * @dmandar @gspencergoog @jacobsimionato @nan-yu @ditman @zeroasterisk @yjbanov
 
 # Agents
-/a2a_agents/ @nan-yu @dmandar @gspencergoog
+/agent_sdks/ @nan-yu @dmandar @gspencergoog
 
 # Renderers
 /renderers/angular/ @ditman @ava-cassiopeia  @crisbeto
 /renderers/lit/ @ditman @ava-cassiopeia @paullewis
 /renderers/web_core/ @ditman @ava-cassiopeia @jacobsimionato
+/renderers/markdown/ @ditman
 
 # Specifications
 /specification/ @gspencergoog @jacobsimionato
