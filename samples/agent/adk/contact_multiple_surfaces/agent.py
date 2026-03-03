@@ -21,6 +21,7 @@ from typing import Any, Dict, Optional
 
 import jsonschema
 
+from a2ui_examples import load_floor_plan_example
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
@@ -63,7 +64,7 @@ class ContactAgent:
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
 
-    for version in [VERSION_0_8]:
+    for version in [VERSION_0_8, VERSION_0_9]:
       schema_manager = self._build_schema_manager(version)
       self._schema_managers[version] = schema_manager
       agent = self._build_llm_agent(schema_manager)
@@ -83,7 +84,11 @@ class ContactAgent:
   def _build_schema_manager(self, version: str) -> A2uiSchemaManager:
     return A2uiSchemaManager(
         version=version,
-        catalogs=[BasicCatalog.get_config(version=version, examples_path="examples")],
+        catalogs=[
+            BasicCatalog.get_config(
+                version=version, examples_path=f"examples/{version}"
+            )
+        ],
         schema_modifiers=[remove_strict_validation],
         accepts_inline_catalogs=True,
     )
@@ -169,12 +174,18 @@ class ContactAgent:
         tools=[get_contact_info],
     )
 
-  async def _handle_action(self, query: str) -> dict[str, Any] | None:
+  async def _handle_action(
+      self, query: str, ui_version: Optional[str] = None
+  ) -> dict[str, Any] | None:
     """Handles simulated UI actions like close_modal or view_location."""
     if not query.startswith("ACTION:"):
       return None
 
-    from a2ui_examples import load_floor_plan_example, load_close_modal_example, load_send_message_example
+    from a2ui_examples import (
+        load_floor_plan_example,
+        load_close_modal_example,
+        load_send_message_example,
+    )
 
     if "send_message" in query:
       logger.info("--- ContactAgent.stream: Detected send_message ACTION ---")
@@ -184,7 +195,7 @@ class ContactAgent:
           contact_name = query.split("(contact:")[1].split(")")[0].strip()
         except Exception:
           pass
-      json_content = load_send_message_example(contact_name)
+      json_content = load_send_message_example(contact_name, ui_version)
       final_response_content = (
           f"Message sent to {contact_name}\n"
           f"{A2UI_OPEN_TAG}\n{json_content}\n{A2UI_CLOSE_TAG}"
@@ -225,7 +236,7 @@ class ContactAgent:
             ),
         }
 
-      json_content = json.dumps(load_floor_plan_example(html_content))
+      json_content = json.dumps(load_floor_plan_example(ui_version, html_content))
       logger.info(f"--- ContactAgent.stream: Sending Floor Plan ---")
 
       final_response_content = (
@@ -240,7 +251,7 @@ class ContactAgent:
     elif "close_modal" in query:
       logger.info("--- ContactAgent.stream: Handling close_modal ACTION ---")
       # Action maps to closing the FloorPlan overlay
-      json_content = json.dumps(load_close_modal_example())
+      json_content = json.dumps(load_close_modal_example(ui_version))
 
       final_response_content = (
           f"Modal closed.\n{A2UI_OPEN_TAG}\n{json_content}\n{A2UI_CLOSE_TAG}"
@@ -363,7 +374,7 @@ class ContactAgent:
       logger.info(f"--- ContactAgent.stream: Received query: '{query}' ---")
 
       # --- Check for User Action ---
-      action_response = await self._handle_action(query)
+      action_response = await self._handle_action(query, ui_version)
       if action_response:
         yield action_response
         return

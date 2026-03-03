@@ -39,7 +39,7 @@ from a2a.types import (
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
@@ -62,7 +62,7 @@ class ContactAgent:
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
 
-    for version in [VERSION_0_8]:
+    for version in [VERSION_0_8, VERSION_0_9]:
       schema_manager = self._build_schema_manager(version)
       self._schema_managers[version] = schema_manager
       agent = self._build_llm_agent(schema_manager)
@@ -77,7 +77,11 @@ class ContactAgent:
   def _build_schema_manager(self, version: str) -> A2uiSchemaManager:
     return A2uiSchemaManager(
         version=version,
-        catalogs=[BasicCatalog.get_config(version=version, examples_path="examples")],
+        catalogs=[
+            BasicCatalog.get_config(
+                version=version, examples_path=f"examples/{version}"
+            )
+        ],
     )
 
   def _build_agent_card(self) -> AgentCard:
