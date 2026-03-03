@@ -8,7 +8,6 @@ import {
   Box,
   Shapes,
   LucideIcon,
-  ExternalLink,
   BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

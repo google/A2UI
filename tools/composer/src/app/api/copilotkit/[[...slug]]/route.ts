@@ -2,7 +2,7 @@ import {
   CopilotRuntime,
   createCopilotEndpoint,
   InMemoryAgentRunner,
-  BasicAgent,
+  BuiltInAgent,
 } from "@copilotkit/runtime/v2";
 import { handle } from "hono/vercel";
 import { A2UI_SYSTEM_PROMPT } from "../a2ui-prompt";
@@ -32,7 +32,7 @@ const determineModel = () => {
   return "google/gemini-2.5-flash";
 };
 
-const agent = new BasicAgent({
+const agent = new BuiltInAgent({
   model: determineModel(),
   prompt: A2UI_SYSTEM_PROMPT,
   temperature: 0.7,

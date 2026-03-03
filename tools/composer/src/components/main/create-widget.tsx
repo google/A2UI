@@ -13,7 +13,6 @@ import { WidgetInput } from "./widget-input";
 import { useWidgets } from "@/contexts/widgets-context";
 import type { Widget } from "@/types/widget";
 import type { ComponentInstance } from "@copilotkit/a2ui-renderer";
-import { success } from "zod/v4";
 import { parseRobustJSON } from "@/lib/json-parser";
 
 const DEFAULT_COMPONENTS: ComponentInstance[] = [
