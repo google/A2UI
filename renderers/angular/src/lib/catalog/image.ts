@@ -57,7 +57,7 @@ export class Image extends DynamicComponent {
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
   protected readonly resolvedAltText = computed(() => {
     const raw = this.altText();
-    return (raw ? this.resolvePrimitive(raw) : null) ?? '';
+    return raw ? this.resolvePrimitive(raw) : '';
   });
 
   protected classes = computed(() => {
