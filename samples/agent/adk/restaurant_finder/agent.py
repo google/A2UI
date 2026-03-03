@@ -34,8 +34,11 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.inference.schema.manager import A2uiSchemaManager
-from a2ui.inference.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.a2a import get_a2ui_agent_extension
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +53,10 @@ class RestaurantAgent:
     self.use_ui = use_ui
     self._schema_manager = (
         A2uiSchemaManager(
-            "0.8",
-            basic_examples_path="examples/",
+            VERSION_0_8,
+            catalogs=[
+                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+            ],
             schema_modifiers=[remove_strict_validation],
         )
         if use_ui
@@ -70,7 +75,12 @@ class RestaurantAgent:
   def get_agent_card(self) -> AgentCard:
     capabilities = AgentCapabilities(
         streaming=True,
-        extensions=[self._schema_manager.get_agent_extension()],
+        extensions=[
+            get_a2ui_agent_extension(
+                self._schema_manager.accepts_inline_catalogs,
+                self._schema_manager.supported_catalog_ids,
+            )
+        ],
     )
     skill = AgentSkill(
         id="find_restaurants",
@@ -145,8 +155,8 @@ class RestaurantAgent:
     current_query_text = query
 
     # Ensure schema was loaded
-    effective_catalog = self._schema_manager.get_effective_catalog()
-    if self.use_ui and not effective_catalog.catalog_schema:
+    selected_catalog = self._schema_manager.get_selected_catalog()
+    if self.use_ui and not selected_catalog.catalog_schema:
       logger.error(
           "--- RestaurantAgent.stream: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
@@ -243,7 +253,7 @@ class RestaurantAgent:
           logger.info(
               "--- RestaurantAgent.stream: Validating against A2UI_SCHEMA... ---"
           )
-          effective_catalog.validator.validate(parsed_json_data)
+          selected_catalog.validator.validate(parsed_json_data)
           # --- End New Validation Steps ---
 
           logger.info(

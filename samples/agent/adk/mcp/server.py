@@ -22,7 +22,7 @@ import mcp.types as types
 from mcp.server.lowlevel import Server
 from mcp.shared._httpx_utils import create_mcp_http_client
 from starlette.requests import Request
-from a2ui.extension.a2ui_schema_utils import wrap_as_json_array
+from a2ui.core.schema.utils import wrap_as_json_array
 
 
 def load_a2ui_schema() -> dict[str, Any]:

@@ -14,12 +14,13 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: '[a2ui-slider]',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <section [class]="theme.components.Slider.container">
       <label [class]="theme.components.Slider.label" [for]="inputId">

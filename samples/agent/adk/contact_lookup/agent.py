@@ -32,7 +32,10 @@ from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.a2a import get_a2ui_agent_extension
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +49,14 @@ class ContactAgent:
     self.base_url = base_url
     self.use_ui = use_ui
     self._schema_manager = (
-        A2uiSchemaManager("0.8", basic_examples_path="examples") if use_ui else None
+        A2uiSchemaManager(
+            version=VERSION_0_8,
+            catalogs=[
+                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+            ],
+        )
+        if use_ui
+        else None
     )
     self._agent = self._build_agent(use_ui)
     self._user_id = "remote_agent"
@@ -61,7 +71,12 @@ class ContactAgent:
   def get_agent_card(self) -> AgentCard:
     capabilities = AgentCapabilities(
         streaming=True,
-        extensions=[self._schema_manager.get_agent_extension()],
+        extensions=[
+            get_a2ui_agent_extension(
+                self._schema_manager.accepts_inline_catalogs,
+                self._schema_manager.supported_catalog_ids,
+            )
+        ],
     )
     skill = AgentSkill(
         id="find_contact",
@@ -142,8 +157,8 @@ class ContactAgent:
     current_query_text = query
 
     # Ensure catalog schema was loaded
-    effective_catalog = self._schema_manager.get_effective_catalog()
-    if self.use_ui and not effective_catalog.catalog_schema:
+    selected_catalog = self._schema_manager.get_selected_catalog()
+    if self.use_ui and not selected_catalog.catalog_schema:
       logger.error(
           "--- ContactAgent.stream: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
@@ -245,7 +260,7 @@ class ContactAgent:
             logger.info(
                 "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
             )
-            effective_catalog.validator.validate(parsed_json_data)
+            selected_catalog.validator.validate(parsed_json_data)
             # --- End New Validation Steps ---
 
             logger.info(

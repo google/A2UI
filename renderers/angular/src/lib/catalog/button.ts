@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import * as Types from '@a2ui/web_core/types/types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
@@ -22,6 +22,7 @@ import { Renderer } from '../rendering/renderer';
 @Component({
   selector: 'a2ui-button',
   imports: [Renderer],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <button
       [class]="theme.components.Button"

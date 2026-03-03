@@ -18,14 +18,13 @@ from pathlib import Path
 import pkgutil
 from typing import Any, ClassVar
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from a2ui.extension.a2ui_extension import STANDARD_CATALOG_ID
-from a2ui.extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEnabledProvider, A2uiCatalogProvider, A2uiExamplesProvider
-from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEnabledProvider, A2uiCatalogProvider, A2uiExamplesProvider
+from a2ui.core.schema.manager import A2uiSchemaManager
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners.built_in_planner import BuiltInPlanner
 from google.genai import types
-import jsonschema
 from pydantic import PrivateAttr
 
 try:
@@ -167,7 +166,12 @@ class RizzchartsAgent(LlmAgent):
         default_output_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
         capabilities=AgentCapabilities(
             streaming=True,
-            extensions=[self.schema_manager.get_agent_extension()],
+            extensions=[
+                get_a2ui_agent_extension(
+                    self.schema_manager.accepts_inline_catalogs,
+                    self.schema_manager.supported_catalog_ids,
+                )
+            ],
         ),
         skills=[
             AgentSkill(

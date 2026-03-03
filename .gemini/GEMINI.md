@@ -20,8 +20,8 @@ The A2UI repository is organized into several key directories:
         -   `lit/`: Clients using Lit and Vite (e.g., `contact`, `shell`).
         -   `angular/`: Clients using Angular.
     -   `mcp/`: MCP server samples (e.g., `flight_booking`).
--   `a2a_agents/`: Contains source code for A2A extension integrations.
-    -   `python/a2ui_agent/`: Python implementation of the A2UI agent library.
+-   `agent_sdks/`: Contains source code for Agent integrations.
+    -   `python/`: Python implementation of the A2UI agent library.
     -   `java/`: Java implementation of the A2UI agent library.
 -   `renderers/`: Contains renderer libraries.
     -   `lit/`: The shared Lit renderer library used by the Lit clients.

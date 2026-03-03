@@ -35,7 +35,7 @@
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "copy-spec": "wireit"
+    "test": "wireit"
   },
   "wireit": {
     "copy-spec": {
@@ -68,6 +68,12 @@
         "!dist/**/*.min.js{,.map}"
       ],
       "clean": "if-file-deleted"
+    },
+    "test": {
+      "command": "node --test dist/**/*.test.js",
+      "dependencies": [
+        "build"
+      ]
     }
   },
   "author": "Google",
@@ -76,5 +82,9 @@
     "@types/node": "^24.10.1",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
+  },
+  "dependencies": {
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.1"
   }
 }

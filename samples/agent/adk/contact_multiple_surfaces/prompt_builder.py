@@ -13,8 +13,11 @@
 # limitations under the License.
 
 import json
-from a2ui.inference.schema.manager import A2uiSchemaManager
-from a2ui.inference.schema.common_modifiers import remove_strict_validation
+
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.core.schema.common_modifiers import remove_strict_validation
 
 ROLE_DESCRIPTION = (
     "You are a helpful contact lookup assistant. Your final output MUST be a a2ui UI"
@@ -70,8 +73,8 @@ if __name__ == "__main__":
   # Example of how to use the A2UI Schema Manager to generate a system prompt
   my_base_url = "http://localhost:8000"
   schema_manager = A2uiSchemaManager(
-      "0.8",
-      basic_examples_path="examples",
+      VERSION_0_8,
+      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
       accepts_inline_catalogs=True,
       schema_modifiers=[remove_strict_validation],
   )
@@ -93,7 +96,7 @@ if __name__ == "__main__":
       ' "components":{"OrgChart":{"type":"object","properties":{"chain":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"name":{"type":"string"}},"required":["title","name"]}},"action":{"$ref":"#/definitions/Action"}},"required":["chain"]},"WebFrame":{"type":"object","properties":{"url":{"type":"string"},"html":{"type":"string"},"height":{"type":"number"},"interactionMode":{"type":"string","enum":["readOnly","interactive"]},"allowedEvents":{"type":"array","items":{"type":"string"}}}}}}]}'
   )
   client_ui_capabilities = json.loads(client_ui_capabilities_str)
-  inline_catalog = schema_manager.get_effective_catalog(
+  inline_catalog = schema_manager.get_selected_catalog(
       client_ui_capabilities=client_ui_capabilities,
   )
   request_prompt = inline_catalog.render_as_llm_instructions()
@@ -102,7 +105,7 @@ if __name__ == "__main__":
     f.write(request_prompt)
   print("\nGenerated request prompt saved to request_prompt.txt")
 
-  basic_catalog = schema_manager.get_effective_catalog()
+  basic_catalog = schema_manager.get_selected_catalog()
   examples = schema_manager.load_examples(
       basic_catalog,
       validate=True,
