@@ -32,7 +32,7 @@ from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.a2a import get_a2ui_agent_extension
@@ -48,11 +48,15 @@ class ContactAgent:
   def __init__(self, base_url: str, use_ui: bool = False):
     self.base_url = base_url
     self.use_ui = use_ui
+    self.version = VERSION_0_9
     self._schema_manager = (
         A2uiSchemaManager(
-            version=VERSION_0_8,
+            version=self.version,
             catalogs=[
-                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+                BasicCatalog.get_config(
+                    version=self.version,
+                    examples_path=f"examples/{self.version}",
+                )
             ],
         )
         if use_ui

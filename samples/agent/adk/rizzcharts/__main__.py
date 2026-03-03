@@ -21,7 +21,7 @@ import click
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.basic_catalog.provider import BasicCatalog
 from agent_executor import RizzchartsAgentExecutor, get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
@@ -60,18 +60,19 @@ def main(host, port):
     lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
     base_url = f"http://{host}:{port}"
+    version = VERSION_0_9
 
     schema_manager = A2uiSchemaManager(
-        VERSION_0_8,
+        version,
         catalogs=[
             CatalogConfig.from_path(
                 name="rizzcharts",
                 catalog_path="rizzcharts_catalog_definition.json",
-                examples_path="examples/rizzcharts_catalog",
+                examples_path=f"examples/rizzcharts_catalog/{version}",
             ),
             BasicCatalog.get_config(
-                version=VERSION_0_8,
-                examples_path="examples/standard_catalog",
+                version=version,
+                examples_path=f"examples/standard_catalog/{version}",
             ),
         ],
         accepts_inline_catalogs=True,

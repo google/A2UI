@@ -36,7 +36,7 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
@@ -53,11 +53,15 @@ class ContactAgent:
   def __init__(self, base_url: str, use_ui: bool = False):
     self.base_url = base_url
     self.use_ui = use_ui
+    self.version = VERSION_0_9
     self.schema_manager = (
         A2uiSchemaManager(
-            VERSION_0_8,
+            self.version,
             catalogs=[
-                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+                BasicCatalog.get_config(
+                    version=self.version,
+                    examples_path=f"examples/{self.version}",
+                )
             ],
             schema_modifiers=[remove_strict_validation],
             accepts_inline_catalogs=True,
@@ -193,7 +197,7 @@ class ContactAgent:
         # Re-implement logic to read from file
         from pathlib import Path
 
-        examples_dir = Path(__file__).parent / "examples"
+        examples_dir = Path(__file__).parent / "examples" / self.version
         action_file = examples_dir / "action_confirmation.json"
 
         if action_file.exists():
@@ -242,7 +246,7 @@ class ContactAgent:
         logger.info("--- ContactAgent.stream: Detected view_location ACTION ---")
 
         # Use the predefined example floor plan
-        json_content = load_floor_plan_example().strip()
+        json_content = load_floor_plan_example(self.version).strip()
         start_idx = json_content.find("[")
         end_idx = json_content.rfind("]")
         if start_idx != -1 and end_idx != -1:

@@ -1,5 +1,6 @@
 {
-  "catalogId": "https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json",
+  "catalogId": "inline_catalog",
+  "title": "Contact Multiple Surfaces Inline Catalog",
   "components": {
     "Text": {
       "type": "object",
@@ -911,7 +912,7 @@
       ],
       "unevaluatedProperties": false
     },
-    "Canvas": {
+    "OrgChart": {
       "type": "object",
       "allOf": [
         {
@@ -922,25 +923,48 @@
         },
         {
           "type": "object",
-          "description": "Renders the UI element in a stateful panel next to the chat window.",
           "properties": {
             "component": {
-              "const": "Canvas"
+              "const": "OrgChart"
             },
-            "children": {
-              "$ref": "common_types.json#/$defs/ChildList",
-              "description": "Defines the children of the canvas."
+            "chain": {
+              "oneOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "name"
+                    ]
+                  }
+                },
+                {
+                  "$ref": "common_types.json#/$defs/DataBinding"
+                }
+              ]
+            },
+            "action": {
+              "$ref": "common_types.json#/$defs/Action"
             }
           },
           "required": [
             "component",
-            "children"
+            "chain"
           ]
         }
       ],
       "unevaluatedProperties": false
     },
-    "Chart": {
+    "WebFrame": {
       "type": "object",
       "allOf": [
         {
@@ -951,90 +975,36 @@
         },
         {
           "type": "object",
-          "description": "An interactive chart that uses a hierarchical list of objects for its data.",
           "properties": {
             "component": {
-              "const": "Chart"
+              "const": "WebFrame"
             },
-            "type": {
+            "url": {
+              "type": "string"
+            },
+            "html": {
+              "type": "string"
+            },
+            "height": {
+              "type": "number"
+            },
+            "interactionMode": {
               "type": "string",
-              "description": "The type of chart to render.",
               "enum": [
-                "doughnut",
-                "pie"
+                "readOnly",
+                "interactive"
               ]
             },
-            "title": {
-              "$ref": "common_types.json#/$defs/DynamicString",
-              "description": "The title of the chart."
-            },
-            "chartData": {
-              "description": "The data for the chart, provided as a list of items. Can be a literal array or a data model path.",
-              "oneOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/$defs/ChartItem"
-                  }
-                },
-                {
-                  "$ref": "common_types.json#/$defs/DataBinding"
-                }
-              ]
+            "allowedEvents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "required": [
             "component",
-            "type",
-            "chartData"
-          ]
-        }
-      ],
-      "unevaluatedProperties": false
-    },
-    "GoogleMap": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "common_types.json#/$defs/ComponentCommon"
-        },
-        {
-          "$ref": "#/$defs/CatalogComponentCommon"
-        },
-        {
-          "type": "object",
-          "description": "A component to display a Google Map with pins.",
-          "properties": {
-            "component": {
-              "const": "GoogleMap"
-            },
-            "center": {
-              "$ref": "#/$defs/DynamicLatLng",
-              "description": "The center point of the map, containing latitude and longitude."
-            },
-            "zoom": {
-              "$ref": "common_types.json#/$defs/DynamicNumber",
-              "description": "The zoom level of the map."
-            },
-            "pins": {
-              "description": "A list of pin objects to display on the map. Can be a literal array or a data model path.",
-              "oneOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/$defs/MapPin"
-                  }
-                },
-                {
-                  "$ref": "common_types.json#/$defs/DataBinding"
-                }
-              ]
-            }
-          },
-          "required": [
-            "component",
-            "center",
-            "zoom"
+            "url"
           ]
         }
       ],
@@ -1046,118 +1016,74 @@
       "type": "object",
       "properties": {
         "weight": {
-          "$ref": "common_types.json#/$defs/DynamicNumber"
+          "type": "number",
+          "description": "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
         }
       }
     },
-    "ChartItem": {
+    "theme": {
       "type": "object",
       "properties": {
-        "label": {
-          "type": "string"
+        "primaryColor": {
+          "type": "string",
+          "description": "The primary brand color used for highlights (e.g., primary buttons, active borders). Renderers may generate variants of this color for different contexts. Format: Hexadecimal code (e.g., '#00BFFF').",
+          "pattern": "^#[0-9a-fA-F]{6}$"
         },
-        "value": {
-          "type": "number"
+        "iconUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "A URL for an image that identifies the agent or tool associated with the surface."
         },
-        "drillDown": {
-          "type": "array",
-          "description": "An optional list of items for the next level of data.",
-          "items": {
-            "type": "object",
-            "properties": {
-              "label": {
-                "type": "string"
-              },
-              "value": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "label",
-              "value"
-            ]
-          }
+        "agentDisplayName": {
+          "type": "string",
+          "description": "Text to be displayed next to the surface to identify the agent or tool that created it."
         }
       },
-      "required": [
-        "label",
-        "value"
-      ]
-    },
-    "DynamicLatLng": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "lat": {
-              "type": "number"
-            },
-            "lng": {
-              "type": "number"
-            }
-          },
-          "required": [
-            "lat",
-            "lng"
-          ],
-          "additionalProperties": false
-        },
-        {
-          "$ref": "common_types.json#/$defs/DataBinding"
-        }
-      ]
-    },
-    "MapPin": {
-      "type": "object",
-      "properties": {
-        "lat": {
-          "type": "number"
-        },
-        "lng": {
-          "type": "number"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "background": {
-          "type": "string",
-          "description": "Hex color code for the pin background (e.g., '#FBBC04')."
-        },
-        "borderColor": {
-          "type": "string",
-          "description": "Hex color code for the pin border (e.g., '#000000')."
-        },
-        "glyphColor": {
-          "type": "string",
-          "description": "Hex color code for the pin's glyph/icon (e.g., '#000000')."
-        }
-      },
-      "required": [
-        "lat",
-        "lng",
-        "name"
-      ],
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "anyComponent": {
       "oneOf": [
         {
+          "$ref": "#/components/Text"
+        },
+        {
+          "$ref": "#/components/Image"
+        },
+        {
+          "$ref": "#/components/Icon"
+        },
+        {
+          "$ref": "#/components/Video"
+        },
+        {
           "$ref": "#/components/AudioPlayer"
         },
         {
-          "$ref": "#/components/Button"
+          "$ref": "#/components/Row"
         },
         {
-          "$ref": "#/components/Canvas"
+          "$ref": "#/components/Column"
+        },
+        {
+          "$ref": "#/components/List"
         },
         {
           "$ref": "#/components/Card"
         },
         {
-          "$ref": "#/components/Chart"
+          "$ref": "#/components/Tabs"
+        },
+        {
+          "$ref": "#/components/Modal"
+        },
+        {
+          "$ref": "#/components/Divider"
+        },
+        {
+          "$ref": "#/components/Button"
+        },
+        {
+          "$ref": "#/components/TextField"
         },
         {
           "$ref": "#/components/CheckBox"
@@ -1166,53 +1092,529 @@
           "$ref": "#/components/ChoicePicker"
         },
         {
-          "$ref": "#/components/Column"
+          "$ref": "#/components/Slider"
         },
         {
           "$ref": "#/components/DateTimeInput"
         },
         {
-          "$ref": "#/components/Divider"
+          "$ref": "#/components/OrgChart"
         },
         {
-          "$ref": "#/components/GoogleMap"
-        },
-        {
-          "$ref": "#/components/Icon"
-        },
-        {
-          "$ref": "#/components/Image"
-        },
-        {
-          "$ref": "#/components/List"
-        },
-        {
-          "$ref": "#/components/Modal"
-        },
-        {
-          "$ref": "#/components/Row"
-        },
-        {
-          "$ref": "#/components/Slider"
-        },
-        {
-          "$ref": "#/components/Tabs"
-        },
-        {
-          "$ref": "#/components/Text"
-        },
-        {
-          "$ref": "#/components/TextField"
-        },
-        {
-          "$ref": "#/components/Video"
+          "$ref": "#/components/WebFrame"
         }
-      ]
+      ],
+      "discriminator": {
+        "propertyName": "component"
+      }
     },
     "anyFunction": {
-      "enum": [
-        "none"
+      "oneOf": [
+        {
+          "$ref": "#/functions/required"
+        },
+        {
+          "$ref": "#/functions/regex"
+        },
+        {
+          "$ref": "#/functions/length"
+        },
+        {
+          "$ref": "#/functions/numeric"
+        },
+        {
+          "$ref": "#/functions/email"
+        },
+        {
+          "$ref": "#/functions/formatString"
+        },
+        {
+          "$ref": "#/functions/formatNumber"
+        },
+        {
+          "$ref": "#/functions/formatCurrency"
+        },
+        {
+          "$ref": "#/functions/formatDate"
+        },
+        {
+          "$ref": "#/functions/pluralize"
+        },
+        {
+          "$ref": "#/functions/openUrl"
+        },
+        {
+          "$ref": "#/functions/and"
+        },
+        {
+          "$ref": "#/functions/or"
+        },
+        {
+          "$ref": "#/functions/not"
+        }
       ]
+    }
+  },
+  "functions": {
+    "required": {
+      "type": "object",
+      "description": "Validation function: check if a value is NOT null or empty.",
+      "properties": {
+        "call": {
+          "const": "required"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicValue"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "regex": {
+      "type": "object",
+      "description": "Validation function: check if a string matches a regular expression.",
+      "properties": {
+        "call": {
+          "const": "regex"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            },
+            "pattern": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value",
+            "pattern"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "length": {
+      "type": "object",
+      "description": "Validation function: check string or array length.",
+      "properties": {
+        "call": {
+          "const": "length"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicValue"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "numeric": {
+      "type": "object",
+      "description": "Validation function: check if value is numeric within range.",
+      "properties": {
+        "call": {
+          "const": "numeric"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicNumber"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "email": {
+      "type": "object",
+      "description": "Validation function: check if value is a valid email address.",
+      "properties": {
+        "call": {
+          "const": "email"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "formatString": {
+      "type": "object",
+      "description": "Formats a string using placeholders.",
+      "properties": {
+        "call": {
+          "const": "formatString"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "template": {
+              "type": "string"
+            },
+            "values": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "common_types.json#/$defs/DynamicValue"
+              }
+            }
+          },
+          "required": [
+            "template",
+            "values"
+          ]
+        },
+        "returnType": {
+          "const": "string"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "formatNumber": {
+      "type": "object",
+      "description": "Formats a number as a string.",
+      "properties": {
+        "call": {
+          "const": "formatNumber"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicNumber"
+            },
+            "decimals": {
+              "$ref": "common_types.json#/$defs/DynamicNumber"
+            },
+            "grouping": {
+              "$ref": "common_types.json#/$defs/DynamicBoolean"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "string"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "formatCurrency": {
+      "type": "object",
+      "description": "Formats a number as a currency string.",
+      "properties": {
+        "call": {
+          "const": "formatCurrency"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicNumber"
+            },
+            "currency": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            },
+            "decimals": {
+              "$ref": "common_types.json#/$defs/DynamicNumber"
+            },
+            "grouping": {
+              "$ref": "common_types.json#/$defs/DynamicBoolean"
+            }
+          },
+          "required": [
+            "currency",
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "string"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "formatDate": {
+      "type": "object",
+      "description": "Formats a timestamp into a string using a pattern.",
+      "properties": {
+        "call": {
+          "const": "formatDate"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicValue"
+            },
+            "format": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            }
+          },
+          "required": [
+            "format",
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "string"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "pluralize": {
+      "type": "object",
+      "description": "Returns a localized string based on count.",
+      "properties": {
+        "call": {
+          "const": "pluralize"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicNumber"
+            },
+            "zero": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            },
+            "one": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            },
+            "two": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            },
+            "few": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            },
+            "many": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            },
+            "other": {
+              "$ref": "common_types.json#/$defs/DynamicString"
+            }
+          },
+          "required": [
+            "value",
+            "other"
+          ]
+        },
+        "returnType": {
+          "const": "string"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "openUrl": {
+      "type": "object",
+      "description": "Opens the specified URL.",
+      "properties": {
+        "call": {
+          "const": "openUrl"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        "returnType": {
+          "const": "void"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "and": {
+      "type": "object",
+      "description": "Logical AND.",
+      "properties": {
+        "call": {
+          "const": "and"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "items": {
+                "$ref": "common_types.json#/$defs/DynamicBoolean"
+              }
+            }
+          },
+          "required": [
+            "values"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "or": {
+      "type": "object",
+      "description": "Logical OR.",
+      "properties": {
+        "call": {
+          "const": "or"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "items": {
+                "$ref": "common_types.json#/$defs/DynamicBoolean"
+              }
+            }
+          },
+          "required": [
+            "values"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
+    },
+    "not": {
+      "type": "object",
+      "description": "Logical NOT.",
+      "properties": {
+        "call": {
+          "const": "not"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "common_types.json#/$defs/DynamicBoolean"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "returnType": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "call",
+        "args"
+      ],
+      "unevaluatedProperties": false
     }
   }
 }
