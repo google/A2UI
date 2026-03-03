@@ -64,10 +64,10 @@ struct GalleryComponent: Identifiable, Hashable {
 	}
 	
 	static func == (lhs: GalleryComponent, rhs: GalleryComponent) -> Bool {
-		return lhs.id == rhs.id
+		return lhs.resolvedTemplate == rhs.resolvedTemplate
 	}
 	func hash(into hasher: inout Hasher) {
-		hasher.combine(id)
+		hasher.combine(resolvedTemplate)
 	}
 }
 

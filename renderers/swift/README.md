@@ -20,6 +20,21 @@ The Swift renderer follows a reactive, data-driven UI paradigm tailored for Swif
 -   **A2UISurfaceView**: A SwiftUI view that orchestrates the rendering of the entire A2UI surface.
 -   **A2UIComponentRenderer**: A view responsible for dynamically rendering individual A2UI components as native SwiftUI views.
 
+## Data Store Injection and Precedence
+
+`A2UISurfaceView` supports two dependency injection styles for `A2UIDataStore`:
+
+1.  Pass a store directly in the initializer (`A2UISurfaceView(surfaceId:dataStore:)`).
+2.  Provide a store through SwiftUI environment (`.environment(dataStore)`).
+
+When both are present, initializer injection takes precedence. The effective store is resolved as:
+
+```swift
+dataStore ?? dataStoreEnv
+```
+
+This is intentional and not a second source of truth. `A2UIDataStore` remains the single source of truth for surface state; the two properties represent two wiring paths so the view can be used ergonomically in different contexts (for example, explicit injection in previews/tests and environment injection in app-level composition).
+
 ### Implemented UI Components
 - **Layout**: `Column`, `Row`, `List`, `Card`
 - **Content**: `Text`, `Image`, `Icon`, `Video`, `AudioPlayer`
