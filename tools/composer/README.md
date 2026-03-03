@@ -26,3 +26,15 @@ Then, just install and run!
 pnpm i
 pnpm dev
 ```
+
+## Testing
+To run the tests:
+```bash
+pnpm test
+```
+
+To run tests in watch mode:
+```bash
+pnpm test:watch
+```
+
