@@ -17,7 +17,7 @@
 import { RENDERERS_MAP } from '@a2a_chat_canvas/a2a-renderer/tokens';
 import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
 import { NgComponentOutlet } from '@angular/common';
-import { Component, inject, input, resource } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, resource } from '@angular/core';
 
 /**
  * Dynamically renders a component based on the provided UiMessageContent and variant.
@@ -28,6 +28,7 @@ import { Component, inject, input, resource } from '@angular/core';
   templateUrl: './a2a-renderer.html',
   styleUrl: './a2a-renderer.scss',
   imports: [NgComponentOutlet],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class A2aRenderer {
   /** The UiMessageContent to be rendered. */

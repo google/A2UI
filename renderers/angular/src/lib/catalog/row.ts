@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 import * as Types from '@a2ui/web_core/types/types';
@@ -22,6 +22,7 @@ import * as Types from '@a2ui/web_core/types/types';
 @Component({
   selector: 'a2ui-row',
   imports: [Renderer],
+  changeDetection: ChangeDetectionStrategy.Eager,
   host: {
     '[attr.alignment]': 'alignment()',
     '[attr.distribution]': 'distribution()',

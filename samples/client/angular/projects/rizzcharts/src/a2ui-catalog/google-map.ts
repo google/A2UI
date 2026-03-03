@@ -17,7 +17,7 @@
 import { DynamicComponent } from '@a2ui/angular';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Types from '@a2ui/web_core/types/types';
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -38,6 +38,7 @@ export interface CustomProperties {
 @Component({
   selector: 'a2ui-map',
   imports: [GoogleMapsModule, MatIconButton, MatIcon],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
       display: block;
