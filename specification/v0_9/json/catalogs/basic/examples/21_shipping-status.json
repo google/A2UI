@@ -40,7 +40,7 @@
         {
           "id": "package-icon",
           "component": "Icon",
-          "name": "package_2"
+          "name": "info"
         },
         {
           "id": "title",
@@ -82,7 +82,7 @@
         {
           "id": "step1-icon",
           "component": "Icon",
-          "name": "check_circle"
+          "name": "check"
         },
         {
           "id": "step1-text",
@@ -102,7 +102,7 @@
         {
           "id": "step2-icon",
           "component": "Icon",
-          "name": "check_circle"
+          "name": "check"
         },
         {
           "id": "step2-text",
@@ -164,7 +164,7 @@
         {
           "id": "eta-icon",
           "component": "Icon",
-          "name": "schedule"
+          "name": "calendarToday"
         },
         {
           "id": "eta-text",

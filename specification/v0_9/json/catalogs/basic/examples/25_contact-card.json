@@ -124,7 +124,7 @@
         {
           "id": "location-icon",
           "component": "Icon",
-          "name": "location_on"
+          "name": "locationOn"
         },
         {
           "id": "location-text",

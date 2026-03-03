@@ -22,7 +22,7 @@
           "component": "Column",
           "children": [
             "header-row",
-            "events-list",
+            "divider",
             "actions"
           ]
         },
@@ -141,7 +141,7 @@
           "variant": "caption"
         },
         {
-          "id": "events-list",
+          "id": "divider",
           "component": "Divider"
         },
         {

@@ -49,7 +49,7 @@
         {
           "id": "time-icon",
           "component": "Icon",
-          "name": "schedule"
+          "name": "calendarToday"
         },
         {
           "id": "time-text",
@@ -71,7 +71,7 @@
         {
           "id": "location-icon",
           "component": "Icon",
-          "name": "location_on"
+          "name": "locationOn"
         },
         {
           "id": "location-text",
@@ -142,7 +142,7 @@
       "surfaceId": "gallery-event-detail",
       "value": {
         "title": "Product Launch Meeting",
-        "dateTime": "Thu, Dec 19 • 2:00 PM - 3:30 PM",
+        "dateTime": "Thu, Dec 19 \u2022 2:00 PM - 3:30 PM",
         "location": "Conference Room A, Building 2",
         "description": "Review final product specs and marketing materials before the Q1 launch."
       }

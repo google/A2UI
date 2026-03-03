@@ -40,7 +40,7 @@
         {
           "id": "account-icon",
           "component": "Icon",
-          "name": "account_balance"
+          "name": "payment"
         },
         {
           "id": "account-name",

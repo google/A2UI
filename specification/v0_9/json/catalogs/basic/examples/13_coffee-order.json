@@ -40,7 +40,7 @@
         {
           "id": "coffee-icon",
           "component": "Icon",
-          "name": "local_cafe"
+          "name": "favorite"
         },
         {
           "id": "store-name",

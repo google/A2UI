@@ -57,13 +57,7 @@
             "path": "/email"
           },
           "placeholder": "Email address",
-          "label": "Email",
-          "action": {
-            "event": {
-              "name": "updateEmail",
-              "context": {}
-            }
-          }
+          "label": "Email"
         },
         {
           "id": "password-field",
@@ -73,12 +67,7 @@
           },
           "placeholder": "Password",
           "label": "Password",
-          "action": {
-            "event": {
-              "name": "updatePassword",
-              "context": {}
-            }
-          }
+          "variant": "obscured"
         },
         {
           "id": "login-btn-text",

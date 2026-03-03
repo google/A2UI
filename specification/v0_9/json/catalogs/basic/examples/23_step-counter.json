@@ -41,7 +41,7 @@
         {
           "id": "steps-icon",
           "component": "Icon",
-          "name": "directions_walk"
+          "name": "person"
         },
         {
           "id": "title",
