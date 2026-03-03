@@ -44,9 +44,9 @@ npm run build
 cd ../../tools/composer
 ```
 
-Then, just install and run!
+Then, just install, build, and run!
 ```bash
-pnpm i
+pnpm i && pnpm build
 pnpm dev
 ```
 
@@ -60,4 +60,3 @@ To run tests in watch mode:
 ```bash
 pnpm test:watch
 ```
-
