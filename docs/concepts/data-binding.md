@@ -44,15 +44,51 @@ Each surface has a JSON object holding state:
 
 ## Literal vs. Path Values
 
-**Literal (fixed):**
-```json
-{"id": "title", "component": {"Text": {"text": {"literalString": "Welcome"}}}}
-```
+=== "v0.8"
 
-**Data-bound (reactive):**
-```json
-{"id": "username", "component": {"Text": {"text": {"path": "/user/name"}}}}
-```
+    **Literal (fixed):**
+    ```json
+    {
+      "id": "title",
+      "component": {
+        "Text": {
+          "text": { "literalString": "Welcome" }
+        }
+      }
+    }
+    ```
+
+    **Data-bound (reactive):**
+    ```json
+    {
+      "id": "username",
+      "component": {
+        "Text": {
+          "text": { "path": "/user/name" }
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Literal (fixed):**
+    ```json
+    {
+      "id": "title",
+      "component": "Text",
+      "text": "Welcome"
+    }
+    ```
+
+    **Data-bound (reactive):**
+    ```json
+    {
+      "id": "username",
+      "component": "Text",
+      "text": { "path": "/user/name" }
+    }
+    ```
 
 When `/user/name` changes from "Alice" to "Bob", the text **automatically updates** to "Bob".
 
@@ -61,11 +97,18 @@ When `/user/name` changes from "Alice" to "Bob", the text **automatically update
 Components bound to data paths automatically update when the data changes:
 
 ```json
-{"id": "status", "component": {"Text": {"text": {"path": "/order/status"}}}}
+{
+  "id": "status",
+  "component": {
+    "Text": {
+      "text": { "path": "/order/status" }
+    }
+  }
+}
 ```
 
 - **Initial:** `/order/status` = "Processing..." → displays "Processing..."
-- **Update:** Send `dataModelUpdate` with `status: "Shipped"` → displays "Shipped"
+- **Update:** Send a data model update with `status: "Shipped"` → displays "Shipped"
 
 No component updates needed—just data updates.
 
@@ -78,7 +121,12 @@ Use templates to render arrays:
   "id": "product-list",
   "component": {
     "Column": {
-      "children": {"template": {"dataBinding": "/products", "componentId": "product-card"}}
+      "children": {
+        "template": {
+          "dataBinding": "/products",
+          "componentId": "product-card"
+        }
+      }
     }
   }
 }
@@ -86,7 +134,12 @@ Use templates to render arrays:
 
 **Data:**
 ```json
-{"products": [{"name": "Widget", "price": 9.99}, {"name": "Gadget", "price": 19.99}]}
+{
+  "products": [
+    { "name": "Widget", "price": 9.99 },
+    { "name": "Gadget", "price": 19.99 }
+  ]
+}
 ```
 
 **Result:** Two cards rendered, one per product.
@@ -96,7 +149,14 @@ Use templates to render arrays:
 Inside a template, paths are scoped to the array item:
 
 ```json
-{"id": "product-name", "component": {"Text": {"text": {"path": "/name"}}}}
+{
+  "id": "product-name",
+  "component": {
+    "Text": {
+      "text": { "path": "/name" }
+    }
+  }
+}
 ```
 
 - For `/products/0`, `/name` resolves to `/products/0/name` → "Widget"
@@ -118,7 +178,14 @@ Interactive components update the data model bidirectionally:
 
 **1. Use granular updates** - Update only changed paths:
 ```json
-{"dataModelUpdate": {"path": "/user", "contents": [{"key": "name", "valueString": "Alice"}]}}
+{
+  "dataModelUpdate": {
+    "path": "/user",
+    "contents": [
+      { "key": "name", "valueString": "Alice" }
+    ]
+  }
+}
 ```
 
 **2. Organize by domain** - Group related data:
