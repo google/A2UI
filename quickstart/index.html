@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/A2UI_dark.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -732,45 +732,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Anatomy of an A2UI Message">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#defining-the-ui" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Defining the UI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#populating-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Populating Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signaling-render" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Signaling Render
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -858,10 +819,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#python-dependencies" class="md-nav__link">
+  <a href="#connection-errors-on-startup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Python Dependencies
+        Connection Errors on Startup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-uv-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python / uv Issues
       
     </span>
   </a>
@@ -947,6 +919,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -965,7 +943,7 @@
   <span class="md-ellipsis">
     
   
-    Developer Guides
+    Concepts
   
 
     
@@ -981,183 +959,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Developer Guides
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../guides/client-setup/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Client Setup
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../guides/agent-development/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Agent Development
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../guides/custom-components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Custom Components
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../guides/theming/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Theming & Styling
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Core Concepts
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Core Concepts
+    Concepts
   
 
           </label>
@@ -1275,6 +1077,472 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catalogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client_to_server_actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client-to-Server Actions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/client-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/agent-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/renderer-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderer Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/custom-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/theming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theming & Styling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../renderers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderers (Clients)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents (Server-side)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1303,10 +1571,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1324,8 +1592,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1356,10 +1624,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
         
           
-          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
             
   
   
@@ -1377,8 +1645,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1402,7 +1670,7 @@
   <span class="md-ellipsis">
     
   
-    A2UI Specification
+    A2UI Protocol
   
 
     
@@ -1473,10 +1741,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
         
           
-          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
             
   
   
@@ -1494,8 +1762,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1519,7 +1787,7 @@
   <span class="md-ellipsis">
     
   
-    A2UI Specification
+    A2UI Protocol
   
 
     
@@ -1582,15 +1850,72 @@
   
   
   
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ecosystem
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../catalogs/" class="md-nav__link">
+      <a href="../introduction/agent-ui-ecosystem/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Catalogs
+    Agent UI Ecosystem
   
 
     
@@ -1602,22 +1927,23 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../client_to_server_actions/" class="md-nav__link">
+      <a href="../ecosystem/renderers/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Client-to-Server Actions
+    Community Renderers
   
 
     
@@ -1629,22 +1955,23 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../renderers/" class="md-nav__link">
+      <a href="../introduction/where-is-it-used/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Renderers (Clients)
+    Where is it Used?
   
 
     
@@ -1656,63 +1983,10 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../transports/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transports (Message Passing)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../agents/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Agents (Server-side)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -1734,6 +2008,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1761,122 +2043,6 @@
   
 
       </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_15" >
-        
-          
-          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reference
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_15">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Reference
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Component Reference
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/messages/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Message Reference
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -2010,45 +2176,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Anatomy of an A2UI Message">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#defining-the-ui" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Defining the UI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#populating-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Populating Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signaling-render" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Signaling Render
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2136,10 +2263,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#python-dependencies" class="md-nav__link">
+  <a href="#connection-errors-on-startup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Python Dependencies
+        Connection Errors on Startup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python-uv-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python / uv Issues
       
     </span>
   </a>
@@ -2222,8 +2360,9 @@
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <p>Before you begin, make sure you have:</p>
 <ul>
-<li><strong>Node.js</strong> (v18 or later) - <a href="https://nodejs.org/">Download here</a></li>
-<li><strong>A Gemini API key</strong> - <a href="https://aistudio.google.com/apikey">Get one free from Google AI Studio</a></li>
+<li><strong>Node.js</strong> (v18 or later) — <a href="https://nodejs.org/">Download here</a></li>
+<li><strong>uv</strong> (Python package manager) — <a href="https://docs.astral.sh/uv/getting-started/installation/">Install here</a> (used to run the Python agent backend)</li>
+<li><strong>A Gemini API key</strong> — <a href="https://aistudio.google.com/apikey">Get one free from Google AI Studio</a></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Security Notice</p>
@@ -2297,72 +2436,49 @@
 </ol>
 <h2 id="anatomy-of-an-a2ui-message">Anatomy of an A2UI Message<a class="headerlink" href="#anatomy-of-an-a2ui-message" title="Permanent link">&para;</a></h2>
 <p>Let's peek at what the agent is sending. Here's a simplified example of the JSON messages:</p>
-<h3 id="defining-the-ui">Defining the UI<a class="headerlink" href="#defining-the-ui" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;surfaceUpdate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span><span class="p">,</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">          </span><span class="nt">&quot;Text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">            </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;literalString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Book Your Table&quot;</span><span class="p">},</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">            </span><span class="nt">&quot;usageHint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;h1&quot;</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">          </span><span class="p">}</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;date-picker&quot;</span><span class="p">,</span>
-</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">        </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">          </span><span class="nt">&quot;DateTimeInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">            </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;literalString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Select Date&quot;</span><span class="p">},</span>
-</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">            </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/reservation/date&quot;</span><span class="p">},</span>
-</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">            </span><span class="nt">&quot;enableDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">          </span><span class="p">}</span>
-</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-btn&quot;</span><span class="p">,</span>
-</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">        </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">          </span><span class="nt">&quot;Button&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">            </span><span class="nt">&quot;child&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-text&quot;</span><span class="p">,</span>
-</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">            </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;confirm_booking&quot;</span><span class="p">}</span>
-</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="w">          </span><span class="p">}</span>
-</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-5-33"><a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-5-34"><a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-text&quot;</span><span class="p">,</span>
-</span><span id="__span-5-35"><a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">        </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-5-36"><a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="w">          </span><span class="nt">&quot;Text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;literalString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Confirm Reservation&quot;</span><span class="p">}}</span>
-</span><span id="__span-5-37"><a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-5-38"><a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-5-39"><a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-5-40"><a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-5-41"><a id="__codelineno-5-41" name="__codelineno-5-41" href="#__codelineno-5-41"></a><span class="p">}</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="v08-stable" name="__tabbed_1" type="radio" /><input id="v09-draft" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="v08-stable">v0.8 (Stable)</label><label for="v09-draft">v0.9 (Draft)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><strong>Defining the UI:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span><span class="nt">&quot;surfaceUpdate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;literalString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Book Your Table&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;usageHint&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;h1&quot;</span><span class="p">}}},</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;date-picker&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;DateTimeInput&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;literalString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Select Date&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/reservation/date&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;enableDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}}},</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;literalString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Confirm Reservation&quot;</span><span class="p">}}}},</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-btn&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;Button&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;child&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;confirm_booking&quot;</span><span class="p">}}}}</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">]}}</span>
 </span></code></pre></div>
-<p>This defines the UI components for the surface: a text header, a date picker, and a button.</p>
-<h3 id="populating-data">Populating Data<a class="headerlink" href="#populating-data" title="Permanent link">&para;</a></h3>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;dataModelUpdate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">&quot;contents&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">        </span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reservation&quot;</span><span class="p">,</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="nt">&quot;valueMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">          </span><span class="p">{</span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;date&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;valueString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-12-15&quot;</span><span class="p">},</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">          </span><span class="p">{</span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;time&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;valueString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;19:00&quot;</span><span class="p">},</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">          </span><span class="p">{</span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;guests&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;valueInt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">        </span><span class="p">]</span>
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">      </span><span class="p">}</span>
-</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">}</span>
+<p><strong>Populating data:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span><span class="nt">&quot;dataModelUpdate&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;contents&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;reservation&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;valueMap&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="p">{</span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;date&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;valueString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-12-15&quot;</span><span class="p">},</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="p">{</span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;time&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;valueString&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;19:00&quot;</span><span class="p">},</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="p">{</span><span class="nt">&quot;key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;guests&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;valueInt&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="p">]}</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">]}}</span>
 </span></code></pre></div>
-<p>This populates the data model that components can bind to.</p>
-<h3 id="signaling-render">Signaling Render<a class="headerlink" href="#signaling-render" title="Permanent link">&para;</a></h3>
+<p><strong>Signaling render:</strong></p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span><span class="nt">&quot;beginRendering&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;root&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span><span class="p">}}</span>
 </span></code></pre></div>
-<p>This tells the client it has enough information to render the UI.</p>
+</div>
+<div class="tabbed-block">
+<p><strong>Creating the surface:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v0.9&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;createSurface&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;catalogId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/basic_catalog.json&quot;</span><span class="p">}}</span>
+</span></code></pre></div>
+<p><strong>Defining the UI:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v0.9&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;updateComponents&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;header&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;# Book Your Table&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;variant&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;h1&quot;</span><span class="p">},</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;date-picker&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DateTimeInput&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Select Date&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/reservation/date&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;enableDate&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Confirm Reservation&quot;</span><span class="p">},</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="p">{</span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-btn&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;component&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Button&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;child&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;submit-text&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;variant&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;action&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;event&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;confirm_booking&quot;</span><span class="p">}}}</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="p">]}}</span>
+</span></code></pre></div>
+<p><strong>Populating data:</strong></p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v0.9&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;updateDataModel&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;surfaceId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/reservation&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-12-15&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;19:00&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;guests&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}}}</span>
+</span></code></pre></div>
+<p>Note: In v0.9, <code>createSurface</code> replaces <code>beginRendering</code>, components use a flatter format, and the data model uses plain JSON values instead of typed adjacency lists.</p>
+</div>
+</div>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">It's Just JSON</p>
 <p>Notice how readable and structured this is? LLMs can generate this easily, and it's safe to transmit and render—no code execution required.</p>
@@ -2371,12 +2487,12 @@
 <p>The repository includes several other demos:</p>
 <h3 id="component-gallery-no-agent-required">Component Gallery (No Agent Required)<a class="headerlink" href="#component-gallery-no-agent-required" title="Permanent link">&para;</a></h3>
 <p>See all available A2UI components:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>npm<span class="w"> </span>start<span class="w"> </span>--<span class="w"> </span>gallery
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>npm<span class="w"> </span>start<span class="w"> </span>--<span class="w"> </span>gallery
 </span></code></pre></div>
 <p>This runs a client-only demo showcasing every standard component (Card, Button, TextField, Timeline, etc.) with live examples and code samples.</p>
 <h3 id="contact-lookup-demo">Contact Lookup Demo<a class="headerlink" href="#contact-lookup-demo" title="Permanent link">&para;</a></h3>
 <p>Try a different agent use case:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>npm<span class="w"> </span>run<span class="w"> </span>demo:contact
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>npm<span class="w"> </span>run<span class="w"> </span>demo:contact
 </span></code></pre></div>
 <p>This demonstrates a contact lookup agent that generates search forms and result lists.</p>
 <h2 id="whats-next">What's Next?<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
@@ -2397,15 +2513,23 @@
 <li>Make sure it's a valid Gemini API key from <a href="https://aistudio.google.com/apikey">Google AI Studio</a></li>
 <li>Try re-exporting: <code>export GEMINI_API_KEY="your_key"</code></li>
 </ol>
-<h3 id="python-dependencies">Python Dependencies<a class="headerlink" href="#python-dependencies" title="Permanent link">&para;</a></h3>
-<p>The demo uses Python for the A2A agent. If you encounter Python errors:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Make sure Python 3.10+ is installed</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>python3<span class="w"> </span>--version
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># The demo should auto-install dependencies via the npm script</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># If not, manually install them:</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="nb">cd</span><span class="w"> </span>../../agent/adk/restaurant_finder
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>pip<span class="w"> </span>install<span class="w"> </span>.
+<h3 id="connection-errors-on-startup">Connection Errors on Startup<a class="headerlink" href="#connection-errors-on-startup" title="Permanent link">&para;</a></h3>
+<p>If you see <code>ERR_CONNECTION_REFUSED</code> errors when the browser opens, <strong>don't worry</strong> — this is a known race condition (<a href="https://github.com/google/A2UI/issues/587">#587</a>). The web app starts faster than the Python agent backend. Just wait a few seconds and refresh the page.</p>
+<h3 id="python-uv-issues">Python / uv Issues<a class="headerlink" href="#python-uv-issues" title="Permanent link">&para;</a></h3>
+<p>The demo agents require <a href="https://docs.astral.sh/uv/">uv</a> to run. If you see <code>uv: command not found</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Install uv</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Verify</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>uv<span class="w"> </span>--version
+</span></code></pre></div>
+<p>If you encounter other Python errors:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Make sure Python 3.10+ is available</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>python3<span class="w"> </span>--version
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Try running the agent manually</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="nb">cd</span><span class="w"> </span>samples/agent/adk/restaurant_finder
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>uv<span class="w"> </span>run<span class="w"> </span>.
 </span></code></pre></div>
 <h3 id="still-having-issues">Still Having Issues?<a class="headerlink" href="#still-having-issues" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2416,9 +2540,9 @@
 <h2 id="understanding-the-demo-code">Understanding the Demo Code<a class="headerlink" href="#understanding-the-demo-code" title="Permanent link">&para;</a></h2>
 <p>Want to see how it works? Check out:</p>
 <ul>
-<li><strong>Agent Code</strong>: <code>samples/agent/adk/restaurant_finder/</code> - The Python A2A agent</li>
-<li><strong>Client Code</strong>: <code>samples/client/lit/</code> - The Lit web client with A2UI renderer</li>
-<li><strong>A2UI Renderer</strong>: <code>web-lib/</code> - The web renderer implementation</li>
+<li><strong>Agent Code</strong>: <code>samples/agent/adk/restaurant_finder/</code> — The Python A2A agent</li>
+<li><strong>Client Code</strong>: <code>samples/client/lit/</code> — The Lit web client with A2UI renderer</li>
+<li><strong>A2UI Renderers</strong>: <code>renderers/lit/</code> (Lit) and <code>renderers/web_core/</code> (framework-agnostic core)</li>
 </ul>
 <p>Each directory has its own README with detailed documentation.</p>
 <hr />

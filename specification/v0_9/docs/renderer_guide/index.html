@@ -1,0 +1,2755 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A2UI, a streaming protocol for Agent-Driven User Interfaces">
+      
+      
+        <meta name="author" content="Google">
+      
+      
+        <link rel="canonical" href="https://a2ui.org/specification/v0_9/docs/renderer_guide/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/A2UI_dark.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+    
+    
+      
+        <title>Unified Data Model Architecture - A2UI</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+  
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+    
+      
+      
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M64%20480c-35.3%200-64-28.7-64-64V96c0-35.3%2028.7-64%2064-64h320c35.3%200%2064%2028.7%2064%2064v213.5c0%2017-6.7%2033.3-18.7%2045.3L322.7%20461.3c-12%2012-28.3%2018.7-45.3%2018.7zm325.5-176H296c-13.3%200-24%2010.7-24%2024v93.5z%22/%3E%3C/svg%3E');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M384%20512H96c-53%200-96-43-96-96V96C0%2043%2043%200%2096%200h304c26.5%200%2048%2021.5%2048%2048v288c0%2020.9-13.4%2038.7-32%2045.3V448c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032zM96%20384c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032h256v-64zm32-232c0%2013.3%2010.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24H152c-13.3%200-24%2010.7-24%2024m24%2072c-13.3%200-24%2010.7-24%2024s10.7%2024%2024%2024h176c13.3%200%2024-10.7%2024-24s-10.7-24-24-24z%22/%3E%3C/svg%3E');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m-32-352a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200m-8%2064h48c13.3%200%2024%2010.7%2024%2024v88h8c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-80c-13.3%200-24-10.7-24-24s10.7-24%2024-24h24v-64h-24c-13.3%200-24-10.7-24-24s10.7-24%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M461.2%2018.9C472.7%2024%20480%2035.4%20480%2048v416c0%2012.6-7.3%2024-18.8%2029.1s-24.8%203.2-34.3-5.1l-46.6-40.7c-43.6-38.1-98.7-60.3-156.4-63V480c0%2017.7-14.3%2032-32%2032h-32c-17.7%200-32-14.3-32-32v-96C57.3%20384%200%20326.7%200%20256s57.3-128%20128-128h84.5c61.8-.2%20121.4-22.7%20167.9-63.3L427%2024c9.4-8.3%2022.9-10.2%2034.3-5.1zM224%20320v.2c70.3%202.7%20137.8%2028.5%20192%2073.4V118.3c-54.2%2044.9-121.7%2070.7-192%2073.4z%22/%3E%3C/svg%3E');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M434.8%2070.1c14.3%2010.4%2017.5%2030.4%207.1%2044.7l-256%20352c-5.5%207.6-14%2012.3-23.4%2013.1s-18.5-2.7-25.1-9.3l-128-128c-12.5-12.5-12.5-32.8%200-45.3s32.8-12.5%2045.3%200l101.5%20101.5%20234-321.7c10.4-14.3%2030.4-17.5%2044.7-7.1z%22/%3E%3C/svg%3E');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%20512a256%20256%200%201%200%200-512%20256%20256%200%201%200%200%20512m0-336c-17.7%200-32%2014.3-32%2032%200%2013.3-10.7%2024-24%2024s-24-10.7-24-24c0-44.2%2035.8-80%2080-80s80%2035.8%2080%2080c0%2047.2-36%2067.2-56%2074.5v3.8c0%2013.3-10.7%2024-24%2024s-24-10.7-24-24v-8.1c0-20.5%2014.8-35.2%2030.1-40.2%206.4-2.1%2013.2-5.5%2018.2-10.3%204.3-4.2%207.7-10%207.7-19.6%200-17.7-14.3-32-32-32zm-32%20192a32%2032%200%201%201%2064%200%2032%2032%200%201%201-64%200%22/%3E%3C/svg%3E');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M256%200c14.7%200%2028.2%208.1%2035.2%2021l216%20400c6.7%2012.4%206.4%2027.4-.8%2039.5S486.1%20480%20472%20480H40c-14.1%200-27.2-7.4-34.4-19.5s-7.5-27.1-.8-39.5l216-400c7-12.9%2020.5-21%2035.2-21m0%20352a32%2032%200%201%200%200%2064%2032%2032%200%201%200%200-64m0-192c-18.2%200-32.7%2015.5-31.4%2033.7l7.4%20104c.9%2012.5%2011.4%2022.3%2023.9%2022.3%2012.6%200%2023-9.7%2023.9-22.3l7.4-104c1.3-18.2-13.1-33.7-31.4-33.7z%22/%3E%3C/svg%3E');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20576%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M480-16c6.9%200%2013%204.4%2015.2%2010.9l13.5%2040.4%2040.4%2013.5C555.6%2051%20560%2057.1%20560%2064s-4.4%2013-10.9%2015.2l-40.4%2013.5-13.5%2040.4c-2.2%206.5-8.3%2010.9-15.2%2010.9s-13-4.4-15.2-10.9l-13.5-40.4-40.4-13.5C404.4%2077%20400%2070.9%20400%2064s4.4-13%2010.9-15.2l40.4-13.5%2013.5-40.4C467-11.6%20473.1-16%20480-16M321.4%2097.4c12.5-12.5%2032.8-12.5%2045.3%200l80%2080c12.5%2012.5%2012.5%2032.8%200%2045.3l-10.9%2010.9c7.9%2022%2012.2%2045.7%2012.2%2070.5%200%20114.9-93.1%20208-208%20208S32%20418.9%2032%20304%20125.1%2096%20240%2096c24.7%200%2048.5%204.3%2070.5%2012.3zM144%20304c0-53%2043-96%2096-96%2013.3%200%2024-10.7%2024-24s-10.7-24-24-24c-79.5%200-144%2064.5-144%20144%200%2013.3%2010.7%2024%2024%2024s24-10.7%2024-24%22/%3E%3C/svg%3E');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M416%20427.4c58.5-44%2096-111.6%2096-187.4C512%20107.5%20397.4%200%20256%200S0%20107.5%200%20240c0%2075.8%2037.5%20143.4%2096%20187.4V464c0%2026.5%2021.5%2048%2048%2048h32v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h64v-40c0-13.3%2010.7-24%2024-24s24%2010.7%2024%2024v40h32c26.5%200%2048-21.5%2048-48zM96%20256a64%2064%200%201%201%20128%200%2064%2064%200%201%201-128%200m256-64a64%2064%200%201%201%200%20128%2064%2064%200%201%201%200-128%22/%3E%3C/svg%3E');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M352%200c0-17.7-14.3-32-32-32s-32%2014.3-32%2032v64h-96c-53%200-96%2043-96%2096v224c0%2053%2043%2096%2096%2096h256c53%200%2096-43%2096-96V160c0-53-43-96-96-96h-96zM160%20368c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24m120%200c0-13.3%2010.7-24%2024-24h32c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024h-32c-13.3%200-24-10.7-24-24M224%20176a48%2048%200%201%201%200%2096%2048%2048%200%201%201%200-96m144%2048a48%2048%200%201%201%2096%200%2048%2048%200%201%201-96%200m-304%200c0-17.7-14.3-32-32-32S0%20206.3%200%20224v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32zm544-32c-17.7%200-32%2014.3-32%2032v96c0%2017.7%2014.3%2032%2032%2032s32-14.3%2032-32v-96c0-17.7-14.3-32-32-32%22/%3E%3C/svg%3E');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M288%200H128c-17.7%200-32%2014.3-32%2032s14.3%2032%2032%2032v151.5L7.5%20426.3C2.6%20435%200%20444.7%200%20454.7%200%20486.4%2025.6%20512%2057.3%20512h333.4c31.6%200%2057.3-25.6%2057.3-57.3%200-10-2.6-19.8-7.5-28.4L320%20215.5V64c17.7%200%2032-14.3%2032-32S337.7%200%20320%200zm-96%20215.5V64h64v151.5c0%2011.1%202.9%2022.1%208.4%2031.8L306%20320H142l41.6-72.7c5.5-9.7%208.4-20.6%208.4-31.8%22/%3E%3C/svg%3E');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20448%20512%22%3E%3C%21--%21%20Font%20Awesome%20Free%207.1.0%20by%20%40fontawesome%20-%20https%3A//fontawesome.com%20License%20-%20https%3A//fontawesome.com/license/free%20%28Icons%3A%20CC%20BY%204.0%2C%20Fonts%3A%20SIL%20OFL%201.1%2C%20Code%3A%20MIT%20License%29%20Copyright%202025%20Fonticons%2C%20Inc.--%3E%3Cpath%20d%3D%22M0%20216C0%20149.7%2053.7%2096%20120%2096h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064H64c-35.3%200-64-28.7-64-64zm256%200c0-66.3%2053.7-120%20120-120h8c17.7%200%2032%2014.3%2032%2032s-14.3%2032-32%2032h-8c-30.9%200-56%2025.1-56%2056v8h64c35.3%200%2064%2028.7%2064%2064v64c0%2035.3-28.7%2064-64%2064h-64c-35.3%200-64-28.7-64-64z%22/%3E%3C/svg%3E');}</style>
+
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Google Sans";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-YX9TPV8DCC"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-YX9TPV8DCC",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-YX9TPV8DCC",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#unified-data-model-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="A2UI" class="md-header__button md-logo" aria-label="A2UI" data-md-component="logo">
+      
+  <img src="../../../../assets/A2UI_light.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            A2UI
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Unified Data Model Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/google/A2UI" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    google/A2UI
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="A2UI" class="md-nav__button md-logo" aria-label="A2UI" data-md-component="logo">
+      
+  <img src="../../../../assets/A2UI_light.svg" alt="logo">
+
+    </a>
+    A2UI
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/google/A2UI" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    google/A2UI
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction & FAQ
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Introduction & FAQ
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../introduction/what-is-a2ui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What is A2UI?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../introduction/who-is-it-for/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Who is it For?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../introduction/how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How Can I Use It?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../introduction/where-is-it-used/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Where is it Used?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../introduction/agent-ui-ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent UI Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../composer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2UI Composer ⭐
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../concepts/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../concepts/data-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../concepts/components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Components & Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../concepts/data-binding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Binding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../catalogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../client_to_server_actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client-to-Server Actions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../guides/client-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../guides/agent-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../guides/renderer-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderer Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../guides/custom-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../guides/theming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theming & Styling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../renderers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderers (Clients)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents (Server-side)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specifications
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specifications
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0.8 (Stable)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    v0.8 (Stable)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v0.8-a2ui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2UI Protocol
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v0.8-a2a-extension/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2A Extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0.9 (Draft)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    v0.9 (Draft)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v0.9-a2ui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A2UI Protocol
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../v0.9-evolution-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evolution Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ecosystem
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../introduction/agent-ui-ecosystem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent UI Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ecosystem/renderers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Renderers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../introduction/where-is-it-used/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Where is it Used?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../community/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-data-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Data Layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Data Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#design-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design Principles
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Design Principles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-the-add-pattern-for-composition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The "Add" Pattern for Composition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-standard-observer-pattern-observability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Standard Observer Pattern (Observability)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-granular-reactivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Granular Reactivity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schema-library-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema Library Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-interfaces-and-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Interfaces and Classes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-catalog-and-component-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Catalog and Component API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Catalog and Component API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-implementation-rationale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function Implementation Rationale
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-processing-layer-messageprocessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Processing Layer (MessageProcessor)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Processing Layer (MessageProcessor)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#component-lifecycle-update-vs-recreate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component Lifecycle: Update vs. Recreate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#generating-client-capabilities-and-schema-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generating Client Capabilities and Schema Types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-dumb-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Dumb" Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The &#34;Dumb&#34; Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#surfacegroupmodel-surfacemodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SurfaceGroupModel &amp; SurfaceModel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#surfacecomponentsmodel-componentmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SurfaceComponentsModel &amp; ComponentModel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datamodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DataModel
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#json-pointer-implementation-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Pointer Implementation Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-coercion-standards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Coercion Standards
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-context-layer-transient-windows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Context Layer (Transient Windows)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Context Layer (Transient Windows)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#datacontext-componentcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DataContext &amp; ComponentContext
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-framework-binding-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Framework Binding Layer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Framework Binding Layer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-interfaces-and-classes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Interfaces and Classes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frameworksurface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FrameworkSurface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-rendering-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Rendering Pattern
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Rendering Pattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-functional-reactive-frameworks-eg-flutter-swiftui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Functional / Reactive Frameworks (e.g., Flutter, SwiftUI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-stateful-imperative-frameworks-eg-vanilla-dom-android-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Stateful / Imperative Frameworks (e.g., Vanilla DOM, Android Views)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#component-traits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component Traits
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Component Traits">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reactive-validation-checkable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reactive Validation (Checkable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#component-subscription-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component Subscription Lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-catalog-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Catalog Implementation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic Catalog Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#expression-resolution-logic-formatstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expression Resolution Logic (formatString)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+    
+      
+    
+    <a href="https://github.com/google/A2UI/raw/main/docs/specification/v0_9/docs/renderer_guide.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="unified-data-model-architecture">Unified Data Model Architecture<a class="headerlink" href="#unified-data-model-architecture" title="Permanent link">&para;</a></h1>
+<p>This document describes the architecture of the A2UI client-side data model. The design separates concerns into two distinct primary layers: the language-agnostic <strong>Data Layer</strong> (which parses messages and stores state) and the <strong>Framework-Specific Rendering Layer</strong> (which paints the pixels). </p>
+<p>Both of these architectural layers are completely agnostic to the specific components being rendered. Instead, they interact with <strong>Catalogs</strong>. Within a catalog, there is a similar two-layer split: the <strong>Catalog API</strong> defines the schema and interface, while the <strong>Catalog Implementation</strong> defines how to actually render those components in a specific framework.</p>
+<h2 id="1-data-layer">1. Data Layer<a class="headerlink" href="#1-data-layer" title="Permanent link">&para;</a></h2>
+<p>The Data Layer is responsible for receiving the wire protocol (JSON messages), parsing them, and maintaining a long-lived, mutable state object. This layer follows the exact same design in all programming languages (with minor syntactical variations) and <strong>does not require design work when porting to a new framework</strong>. </p>
+<blockquote>
+<p><strong>Note on Language &amp; Frameworks</strong>: While the examples in this document are provided in TypeScript for clarity, the A2UI Data Layer is intended to be implemented in any language (e.g., Java, Python, Swift, Kotlin, Rust) and remain completely independent of any specific UI framework.</p>
+</blockquote>
+<p>It consists of three sub-components: the Processing Layer, the Dumb Models, and the Context Layer.</p>
+<h3 id="design-principles">Design Principles<a class="headerlink" href="#design-principles" title="Permanent link">&para;</a></h3>
+<p>To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.</p>
+<h4 id="1-the-add-pattern-for-composition">1. The "Add" Pattern for Composition<a class="headerlink" href="#1-the-add-pattern-for-composition" title="Permanent link">&para;</a></h4>
+<p>We strictly separate <strong>construction</strong> from <strong>composition</strong>. Parent containers do not act as factories for their children.</p>
+<ul>
+<li><strong>Why?</strong> This decoupling allows the child classes to evolve their constructor signatures without breaking the parent. It also simplifies testing by allowing mock children to be injected easily.</li>
+<li><strong>Pattern:</strong>
+    <div class="language-typescript highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Parent knows nothing about Child&#39;s constructor options</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">child</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">ChildModel</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span><span class="w"> </span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nx">parent</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span><span class="w"> </span>
+</span></code></pre></div></li>
+</ul>
+<h4 id="2-standard-observer-pattern-observability">2. Standard Observer Pattern (Observability)<a class="headerlink" href="#2-standard-observer-pattern-observability" title="Permanent link">&para;</a></h4>
+<p>The models must provide a mechanism for the rendering layer to observe changes. The exact implementation should follow the preferred idioms and libraries of the target language, avoiding heavy reactive dependencies (like RxJS) in the core model.</p>
+<p><strong>Principles:</strong>
+1.  <strong>Low Dependency</strong>: Prefer "lowest common denominator" mechanisms (like simple callbacks or delegates) over complex reactive libraries.
+2.  <strong>Multi-Cast</strong>: The mechanism must support multiple listeners registered simultaneously.
+3.  <strong>Unsubscribe Pattern</strong>: There MUST be a clear way (e.g., returning an "unsubscribe" callback) to stop listening and prevent memory leaks.
+4.  <strong>Payload Support</strong>: The mechanism must communicate specific data updates (e.g., passing the updated instance) and lifecycle events.
+5.  <strong>Consistency</strong>: This pattern is used uniformly across <code>SurfaceGroupModel</code> (lifecycle), <code>SurfaceModel</code> (actions), <code>SurfaceComponentsModel</code> (lifecycle), <code>ComponentModel</code> (updates), and <code>DataModel</code> (data changes).</p>
+<p>In the TypeScript examples, we use a simple <code>EventSource</code> pattern with vanilla callbacks. However, other idiomatic approaches—such as <code>Listenable</code> properties, <code>Signals</code>, or <code>Streams</code>—are perfectly acceptable as long as they meet the requirements above.</p>
+<h4 id="3-granular-reactivity">3. Granular Reactivity<a class="headerlink" href="#3-granular-reactivity" title="Permanent link">&para;</a></h4>
+<p>The model is designed to support high-performance rendering through granular updates rather than full-surface refreshes.
+*   <strong>Structure Changes</strong>: The <code>SurfaceComponentsModel</code> notifies when items are added/removed.
+*   <strong>Property Changes</strong>: The <code>ComponentModel</code> notifies when its specific configuration changes.
+*   <strong>Data Changes</strong>: The <code>DataModel</code> notifies only subscribers to the specific path that changed.</p>
+<p>This hierarchy allows a renderer to implement "smart" updates: re-rendering a container only when its children list changes, but updating just a specific text node when its bound data value changes.</p>
+<h3 id="schema-library-requirements">Schema Library Requirements<a class="headerlink" href="#schema-library-requirements" title="Permanent link">&para;</a></h3>
+<p>To represent and validate component and function APIs, the Data Layer requires a <strong>Schema Library</strong>. </p>
+<ul>
+<li><strong>Ideal Choice</strong>: A library (like <strong>Zod</strong> in TypeScript or <strong>JsonSchemaBuilder</strong> in Flutter) that allows for programmatic definition of schemas and the ability to validate raw JSON data against those definitions.</li>
+<li><strong>Capabilities Generation</strong>: The library should ideally support exporting these programmatic definitions to standard JSON Schema for the <code>getClientCapabilities</code> payload.</li>
+<li><strong>Fallback</strong>: If no suitable programmatic library exists for the target language, raw <strong>JSON Schema strings</strong> or manual validation logic can be used instead.</li>
+</ul>
+<h3 id="key-interfaces-and-classes">Key Interfaces and Classes<a class="headerlink" href="#key-interfaces-and-classes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>MessageProcessor</code></strong>: The entry point that ingests raw JSON streams.</li>
+<li><strong><code>SurfaceGroupModel</code></strong>: The root container for all active surfaces.</li>
+<li><strong><code>SurfaceModel</code></strong>: Represents the state of a single UI surface.</li>
+<li><strong><code>SurfaceComponentsModel</code></strong>: A flat collection of component configurations.</li>
+<li><strong><code>ComponentModel</code></strong>: A specific component's raw configuration.</li>
+<li><strong><code>DataModel</code></strong>: A dedicated store for application data.</li>
+<li><strong><code>DataContext</code></strong>: A scoped window into the <code>DataModel</code>.</li>
+<li><strong><code>ComponentContext</code></strong>: A binding object pairing a component with its data scope.</li>
+</ul>
+<h3 id="the-catalog-and-component-api">The Catalog and Component API<a class="headerlink" href="#the-catalog-and-component-api" title="Permanent link">&para;</a></h3>
+<p>The Data Layer relies on a <strong>Catalog</strong> to know which components and functions exist. </p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">ComponentApi</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"> </span><span class="c1">// Protocol name (e.g. &#39;Button&#39;)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">schema</span><span class="o">:</span><span class="w"> </span><span class="kt">z.ZodType</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Technical definition for capabilities</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="cm">/** </span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="cm"> * Context provided to functions during execution.</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="cm"> * Allows functions to resolve other dynamic values or interact with the data model.</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="cm"> */</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">FunctionContext</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="cm">/** The current data model path context (useful for relative paths). */</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="cm">/** </span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="cm">   * Resolves any DynamicValue (literal, path, or function call) to a reactive stream. </span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="cm">   * The returned type should be an observable/listenable implementation idiomatic to the language.</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="cm">   */</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">  </span><span class="nx">resolve</span><span class="p">(</span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">  </span><span class="cm">/** Retrieves another registered function by name. */</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">  </span><span class="nx">getFunction</span><span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ClientFunction</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">  </span><span class="cm">/** Updates the data model at a specific path. */</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">  </span><span class="nx">update</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="p">}</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="cm">/** </span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a><span class="cm"> * Defines a client-side logic handler. </span>
+</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="cm"> */</span>
+</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">ClientFunction</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">description</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">returnType</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;string&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;number&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;boolean&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;array&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;object&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;any&#39;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s1">&#39;void&#39;</span><span class="p">;</span>
+</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a>
+</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a><span class="w">  </span><span class="cm">/** </span>
+</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a><span class="cm">   * The schema for the arguments this function accepts (similar to Flutter&#39;s `argumentSchema`).</span>
+</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="cm">   * MUST use the same schema library as the ComponentApi to ensure consistency </span>
+</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a><span class="cm">   * across the catalog.</span>
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a><span class="cm">   */</span>
+</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">argumentSchema</span><span class="o">:</span><span class="w"> </span><span class="kt">z.ZodType</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a>
+</span><span id="__span-1-42"><a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a><span class="w">  </span><span class="cm">/**</span>
+</span><span id="__span-1-43"><a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a><span class="cm">   * Executes the function logic.</span>
+</span><span id="__span-1-44"><a id="__codelineno-1-44" name="__codelineno-1-44" href="#__codelineno-1-44"></a><span class="cm">   * @param args The key-value pairs of arguments provided in the JSON.</span>
+</span><span id="__span-1-45"><a id="__codelineno-1-45" name="__codelineno-1-45" href="#__codelineno-1-45"></a><span class="cm">   * @param context The execution context for resolving dependencies.</span>
+</span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46" href="#__codelineno-1-46"></a><span class="cm">   * @returns A reactive stream (or Observable/Signal) of the result.</span>
+</span><span id="__span-1-47"><a id="__codelineno-1-47" name="__codelineno-1-47" href="#__codelineno-1-47"></a><span class="cm">   * </span>
+</span><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48" href="#__codelineno-1-48"></a><span class="cm">   * Rationale: Like the Model Layer, functions MUST return an observable implementation</span>
+</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49" href="#__codelineno-1-49"></a><span class="cm">   * that is idiomatic to the target language but follows &quot;lowest common denominator&quot; </span>
+</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50" href="#__codelineno-1-50"></a><span class="cm">   * principles: low dependency, multi-cast support, and a standard unsubscription pattern.</span>
+</span><span id="__span-1-51"><a id="__codelineno-1-51" name="__codelineno-1-51" href="#__codelineno-1-51"></a><span class="cm">   */</span>
+</span><span id="__span-1-52"><a id="__codelineno-1-52" name="__codelineno-1-52" href="#__codelineno-1-52"></a><span class="w">  </span><span class="nx">execute</span><span class="p">(</span><span class="nx">args</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">any</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="nx">context</span><span class="o">:</span><span class="w"> </span><span class="kt">FunctionContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-1-53"><a id="__codelineno-1-53" name="__codelineno-1-53" href="#__codelineno-1-53"></a><span class="p">}</span>
+</span><span id="__span-1-54"><a id="__codelineno-1-54" name="__codelineno-1-54" href="#__codelineno-1-54"></a>
+</span><span id="__span-1-55"><a id="__codelineno-1-55" name="__codelineno-1-55" href="#__codelineno-1-55"></a><span class="kd">class</span><span class="w"> </span><span class="nx">Catalog</span><span class="o">&lt;</span><span class="nx">T</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">ComponentApi</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-56"><a id="__codelineno-1-56" name="__codelineno-1-56" href="#__codelineno-1-56"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"> </span><span class="c1">// Unique catalog URI</span>
+</span><span id="__span-1-57"><a id="__codelineno-1-57" name="__codelineno-1-57" href="#__codelineno-1-57"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">components</span><span class="o">:</span><span class="w"> </span><span class="kt">ReadonlyMap</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-1-58"><a id="__codelineno-1-58" name="__codelineno-1-58" href="#__codelineno-1-58"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">functions</span><span class="o">:</span><span class="w"> </span><span class="kt">ReadonlyMap</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">ClientFunction</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-1-59"><a id="__codelineno-1-59" name="__codelineno-1-59" href="#__codelineno-1-59"></a>
+</span><span id="__span-1-60"><a id="__codelineno-1-60" name="__codelineno-1-60" href="#__codelineno-1-60"></a><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">components</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">[],</span><span class="w"> </span><span class="nx">functions</span><span class="o">:</span><span class="w"> </span><span class="kt">ClientFunction</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-61"><a id="__codelineno-1-61" name="__codelineno-1-61" href="#__codelineno-1-61"></a><span class="w">    </span><span class="c1">// Initializes the read-only maps</span>
+</span><span id="__span-1-62"><a id="__codelineno-1-62" name="__codelineno-1-62" href="#__codelineno-1-62"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-63"><a id="__codelineno-1-63" name="__codelineno-1-63" href="#__codelineno-1-63"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="function-implementation-rationale">Function Implementation Rationale<a class="headerlink" href="#function-implementation-rationale" title="Permanent link">&para;</a></h4>
+<p>A2UI categorizes client-side functions to balance performance and reactivity. </p>
+<p><strong>Observability Consistency</strong>: Like the "Dumb Models," functions MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.</p>
+<p><strong>API Documentation</strong>: Every function MUST include a schema (e.g., <code>argumentSchema</code>) using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities for the AI model.</p>
+<p><strong>Function Categories</strong>:
+1.  <strong>Pure Logic (Synchronous)</strong>: Functions like <code>add</code> or <code>concat</code>. While they return observable streams for consistency, their logic is immediate and depends only on their inputs.
+2.  <strong>External State (Reactive)</strong>: Functions like <code>clock()</code> or <code>networkStatus()</code>. These return long-lived streams that push updates to the UI independently of data model changes.
+3.  <strong>Effect Functions</strong>: Side-effect handlers (e.g., <code>openUrl</code>, <code>closeModal</code>) that return <code>void</code>. These are typically triggered by user actions rather than interpolation.</p>
+<h3 id="the-processing-layer-messageprocessor">The Processing Layer (<code>MessageProcessor</code>)<a class="headerlink" href="#the-processing-layer-messageprocessor" title="Permanent link">&para;</a></h3>
+<p>The <strong>Processing Layer</strong> acts as the "Controller." It accepts the raw stream of A2UI messages (<code>createSurface</code>, <code>updateComponents</code>, etc.), parses them, and mutates the underlying Data Models accordingly.</p>
+<p>It also handles generating the client capabilities payload via <code>getClientCapabilities()</code>. By passing inline catalog definitions to this method, the processor can dynamically generate JSON Schemas for the supported components, allowing the agent to understand the client's available UI components on the fly.</p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">class</span><span class="w"> </span><span class="nx">MessageProcessor</span><span class="o">&lt;</span><span class="nx">T</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">CatalogApi</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">model</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceGroupModel</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Root state container for all surfaces</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">catalogs</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">[],</span><span class="w"> </span><span class="nx">actionHandler</span><span class="o">:</span><span class="w"> </span><span class="kt">ActionListener</span><span class="p">);</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nx">processMessages</span><span class="p">(</span><span class="nx">messages</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Ingests raw JSON message stream</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nx">addLifecycleListener</span><span class="p">(</span><span class="nx">l</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceLifecycleListener</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Watch for surface lifecycle</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="nx">getClientCapabilities</span><span class="p">(</span><span class="nx">options?</span><span class="o">:</span><span class="w"> </span><span class="kt">CapabilitiesOptions</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">any</span><span class="p">;</span><span class="w"> </span><span class="c1">// Generate advertising payload</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="component-lifecycle-update-vs-recreate">Component Lifecycle: Update vs. Recreate<a class="headerlink" href="#component-lifecycle-update-vs-recreate" title="Permanent link">&para;</a></h4>
+<p>When processing <code>updateComponents</code>, the processor must handle existing IDs carefully:
+*   <strong>Property Update</strong>: If the component <code>id</code> exists and the <code>type</code> matches the existing instance, update the <code>properties</code> record. This triggers the component's <code>onUpdated</code> event.
+*   <strong>Type Change (Re-creation)</strong>: If the <code>type</code> in the message differs from the existing instance's type, the processor MUST remove the old component instance from the model and create a fresh one. This ensures framework renderers correctly reset their internal state and widget types.</p>
+<h4 id="generating-client-capabilities-and-schema-types">Generating Client Capabilities and Schema Types<a class="headerlink" href="#generating-client-capabilities-and-schema-types" title="Permanent link">&para;</a></h4>
+<p>To dynamically generate the <code>a2uiClientCapabilities</code> payload (specifically the <code>inlineCatalogs</code> array), the renderer needs to convert its internal component schemas into valid JSON Schemas that adhere to the A2UI protocol.</p>
+<p><strong>Schema Types Location</strong>
+The foundational schema types for A2UI components are defined in the <code>schema</code> directory (e.g., <code>renderers/web_core/src/v0_9/schema/common-types.ts</code>). This is where reusable validation schemas (like Zod definitions) reside.</p>
+<p><strong>Detectable Common Types</strong>
+A2UI heavily relies on shared schema definitions (like <code>DynamicString</code>, <code>DataBinding</code>, and <code>Action</code> from <code>common_types.json</code>). However, most schema validation libraries (such as Zod) do not natively support emitting external JSON Schema <code>$ref</code> pointers out-of-the-box.</p>
+<p>To solve this, common types must be <strong>detectable</strong> during the JSON Schema conversion process. This is achieved by "tagging" the schemas using their <code>description</code> property (e.g., <code>REF:common_types.json#/$defs/DynamicString</code>). </p>
+<p>When <code>getClientCapabilities()</code> converts the internal schemas:
+1. It translates the definition into a raw JSON Schema.
+2. It traverses the schema tree looking for string descriptions starting with the <code>REF:</code> tag.
+3. It strips the tag and replaces the entire node with a valid JSON Schema <code>$ref</code> object, preserving any actual developer descriptions using a separator token.
+4. It wraps the resulting property schemas in the standard A2UI component envelope (<code>allOf</code> containing <code>ComponentCommon</code> and the component's <code>const</code> type identifier).</p>
+<p><strong>The Inline Catalogs API</strong>
+By passing <code>{ inlineCatalogs: [myCatalog] }</code> to <code>getClientCapabilities()</code>, the processor:
+* Iterates over all the components defined in the provided <code>catalog</code>.
+* Translates their schemas into the structured format required by the A2UI specification.
+* Returns a configuration object ready to be sent in the transport metadata (populating <code>supportedCatalogIds</code> and <code>inlineCatalogs</code>).</p>
+<p><strong>Test Cases to Include</strong>
+When implementing or modifying the capabilities generator, you must include test cases that verify:
+* <strong>Capabilities Generation:</strong> The output successfully includes the <code>inlineCatalogs</code> list when requested.
+* <strong>Component Envelope:</strong> Generated schemas correctly wrap component properties in an <code>allOf</code> block referencing <code>common_types.json#/$defs/ComponentCommon</code> and correctly assert the <code>component</code> property <code>const</code> value.
+* <strong>Reference Resolution:</strong> Properties tagged with <code>REF:</code> successfully resolve to <code>$ref</code> objects instead of expanding the inline schema definition (e.g., a <code>title</code> property correctly emits <code>"$ref": "common_types.json#/$defs/DynamicString"</code>).
+* <strong>Description Preservation:</strong> Additional descriptions appended to tagged types are preserved and properly formatted alongside the reference pointer.</p>
+<h3 id="the-dumb-models">The "Dumb" Models<a class="headerlink" href="#the-dumb-models" title="Permanent link">&para;</a></h3>
+<p>These classes are designed to be "dumb containers" for data. They hold the state of the UI but contain minimal logic. They are organized hierarchically and use a consistent pattern for observability and composition.</p>
+<p><strong>Key Characteristics:</strong>
+*   <strong>Mutable:</strong> State is updated in place.
+*   <strong>Observable:</strong> Each layer is responsible for making its direct properties observable via standard listener patterns, avoiding heavy reactive dependencies.
+*   <strong>Encapsulated Composition:</strong> Parent layers expose methods to add fully-formed child instances (e.g., <code>addSurface</code>, <code>addComponent</code>) rather than factory methods that take parameters.</p>
+<h4 id="surfacegroupmodel-surfacemodel">SurfaceGroupModel &amp; SurfaceModel<a class="headerlink" href="#surfacegroupmodel-surfacemodel" title="Permanent link">&para;</a></h4>
+<p>The root containers for active surfaces and their catalogs, data, and components.</p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">SurfaceLifecycleListener</span><span class="o">&lt;</span><span class="nx">T</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">CatalogApi</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nx">onSurfaceCreated</span><span class="o">?:</span><span class="w"> </span><span class="p">(</span><span class="nx">s</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceModel</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Called when a new surface is registered</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nx">onSurfaceDeleted</span><span class="o">?:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Called when a surface is removed</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="kd">class</span><span class="w"> </span><span class="nx">SurfaceGroupModel</span><span class="o">&lt;</span><span class="nx">T</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">CatalogApi</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nx">addSurface</span><span class="p">(</span><span class="nx">surface</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceModel</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="nx">deleteSurface</span><span class="p">(</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="nx">getSurface</span><span class="p">(</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">SurfaceModel</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="nx">addLifecycleListener</span><span class="p">(</span><span class="nx">l</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceLifecycleListener</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="nx">addActionListener</span><span class="p">(</span><span class="nx">l</span><span class="o">:</span><span class="w"> </span><span class="kt">ActionListener</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="p">}</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="kr">type</span><span class="w"> </span><span class="nx">ActionListener</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Handler for user interactions</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="kd">class</span><span class="w"> </span><span class="nx">SurfaceModel</span><span class="o">&lt;</span><span class="nx">T</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">CatalogApi</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="p">...</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">catalog</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">;</span><span class="w"> </span><span class="c1">// Catalog containing framework-specific renderers</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">dataModel</span><span class="o">:</span><span class="w"> </span><span class="kt">DataModel</span><span class="p">;</span><span class="w"> </span><span class="c1">// Scoped application data</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">componentsModel</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceComponentsModel</span><span class="p">;</span><span class="w"> </span><span class="c1">// Flat component map</span>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">theme</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">;</span><span class="w"> </span><span class="c1">// Theme parameters from createSurface</span>
+</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>
+</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="w">  </span><span class="nx">addActionListener</span><span class="p">(</span><span class="nx">l</span><span class="o">:</span><span class="w"> </span><span class="kt">ActionListener</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="w">  </span><span class="nx">dispatchAction</span><span class="p">(</span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="surfacecomponentsmodel-componentmodel"><code>SurfaceComponentsModel</code> &amp; <code>ComponentModel</code><a class="headerlink" href="#surfacecomponentsmodel-componentmodel" title="Permanent link">&para;</a></h4>
+<p>Manages the raw JSON configuration of components in a flat map.</p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">ComponentsLifecycleListener</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nx">onComponentCreated</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="o">:</span><span class="w"> </span><span class="kt">ComponentModel</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Called when a component is added</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nx">onComponentDeleted</span><span class="o">?:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Called when a component is removed</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="kd">class</span><span class="w"> </span><span class="nx">SurfaceComponentsModel</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nx">get</span><span class="p">(</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">ComponentModel</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nx">addComponent</span><span class="p">(</span><span class="nx">component</span><span class="o">:</span><span class="w"> </span><span class="kt">ComponentModel</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="nx">addLifecycleListener</span><span class="p">(</span><span class="nx">l</span><span class="o">:</span><span class="w"> </span><span class="kt">ComponentsLifecycleListener</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">}</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="kd">class</span><span class="w"> </span><span class="nx">ComponentModel</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"> </span><span class="c1">// Component name (e.g. &#39;Button&#39;)</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">  </span><span class="nx">get</span><span class="w"> </span><span class="nx">properties</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">any</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Current raw JSON configuration</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">  </span><span class="nx">set</span><span class="w"> </span><span class="nx">properties</span><span class="p">(</span><span class="nx">newProps</span><span class="o">:</span><span class="w"> </span><span class="kt">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">any</span><span class="o">&gt;</span><span class="p">);</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">onUpdated</span><span class="o">:</span><span class="w"> </span><span class="kt">EventSource</span><span class="o">&lt;</span><span class="nx">ComponentModel</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Fires when any property changes</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="datamodel"><code>DataModel</code><a class="headerlink" href="#datamodel" title="Permanent link">&para;</a></h4>
+<p>A dedicated store for the surface's application data (the "Model" in MVVM).</p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">Subscription</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">;</span><span class="w"> </span><span class="c1">// Latest evaluated value</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nx">unsubscribe</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Stop listening</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">}</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="kd">class</span><span class="w"> </span><span class="nx">DataModel</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="nx">get</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">any</span><span class="p">;</span><span class="w"> </span><span class="c1">// Resolve JSON Pointer to value</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span><span class="nx">set</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Atomic update at path</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span><span class="nx">subscribe</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">onChange</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Subscription</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Reactive path monitoring</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span><span class="nx">dispose</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span><span class="w"> </span><span class="c1">// Lifecycle cleanup</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="json-pointer-implementation-rules">JSON Pointer Implementation Rules<a class="headerlink" href="#json-pointer-implementation-rules" title="Permanent link">&para;</a></h4>
+<p>To ensure parity across implementations, the <code>DataModel</code> must follow these rules:</p>
+<p><strong>1. Auto-typing (Auto-vivification)</strong>
+When setting a value at a nested path (e.g., <code>/a/b/0/c</code>), if intermediate segments do not exist, the model must create them:
+*   Look at the <em>next</em> segment in the path.
+*   If the next segment is numeric (e.g., <code>0</code>, <code>12</code>), initialize the current segment as an <strong>Array</strong> <code>[]</code>.
+*   Otherwise, initialize it as an <strong>Object</strong> <code>{}</code>.
+*   <strong>Error Case</strong>: Throw an exception if an update attempts to traverse through a primitive value (e.g., setting <code>/a/b</code> when <code>/a</code> is already a string).</p>
+<p><strong>2. Notification Strategy (The Bubble &amp; Cascade)</strong>
+A change at a specific path must trigger notifications for related paths to ensure UI consistency:
+*   <strong>Exact Match</strong>: Notify all subscribers to the modified path.
+*   <strong>Ancestor Notification (Bubble Up)</strong>: Notify subscribers to all parent paths. For example, updating <code>/user/name</code> must notify subscribers to <code>/user</code> and <code>/</code>.
+*   <strong>Descendant Notification (Cascade Down)</strong>: Notify subscribers to all paths nested <em>under</em> the modified path. For example, replacing the entire <code>/user</code> object must notify a subscriber to <code>/user/name</code>.</p>
+<p><strong>3. Undefined Handling</strong>
+*   <strong>Objects</strong>: Setting a key to <code>undefined</code> should remove that key from the object.
+*   <strong>Arrays</strong>: Setting an index to <code>undefined</code> should preserve the array's length but set that specific index to <code>undefined</code> (sparse array support).</p>
+<h4 id="type-coercion-standards">Type Coercion Standards<a class="headerlink" href="#type-coercion-standards" title="Permanent link">&para;</a></h4>
+<p>To ensure the Data Layer behaves identically across all platforms (e.g., TypeScript, Swift, Kotlin), the following coercion rules MUST be followed when resolving dynamic values:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Input Type</th>
+<th style="text-align: left;">Target Type</th>
+<th style="text-align: left;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>String</code> ("true", "false")</td>
+<td style="text-align: left;"><code>Boolean</code></td>
+<td style="text-align: left;"><code>true</code> or <code>false</code> (case-insensitive)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Number</code> (non-zero)</td>
+<td style="text-align: left;"><code>Boolean</code></td>
+<td style="text-align: left;"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Number</code> (0)</td>
+<td style="text-align: left;"><code>Boolean</code></td>
+<td style="text-align: left;"><code>false</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Any</code></td>
+<td style="text-align: left;"><code>String</code></td>
+<td style="text-align: left;">Locale-neutral string representation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>null</code> / <code>undefined</code></td>
+<td style="text-align: left;"><code>String</code></td>
+<td style="text-align: left;"><code>""</code> (empty string)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>null</code> / <code>undefined</code></td>
+<td style="text-align: left;"><code>Number</code></td>
+<td style="text-align: left;"><code>0</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>String</code> (numeric)</td>
+<td style="text-align: left;"><code>Number</code></td>
+<td style="text-align: left;">Parsed numeric value or <code>0</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-context-layer-transient-windows">The Context Layer (Transient Windows)<a class="headerlink" href="#the-context-layer-transient-windows" title="Permanent link">&para;</a></h3>
+<p>The <strong>Context Layer</strong> consists of short-lived objects created on-demand during the rendering process to solve the problem of "scope" and binding resolution. </p>
+<p>Because the Data Layer is a flat list of components and a raw data tree, it doesn't inherently know about the hierarchy or the current data scope (e.g., inside a list iteration). The Context Layer bridges this gap.</p>
+<h4 id="datacontext-componentcontext"><code>DataContext</code> &amp; <code>ComponentContext</code><a class="headerlink" href="#datacontext-componentcontext" title="Permanent link">&para;</a></h4>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">class</span><span class="w"> </span><span class="nx">DataContext</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">dataModel</span><span class="o">:</span><span class="w"> </span><span class="kt">DataModel</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">);</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nx">set</span><span class="p">(</span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="ow">void</span><span class="p">;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nx">resolveDynamicValue</span><span class="o">&lt;</span><span class="nx">V</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">v</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">V</span><span class="p">;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nx">subscribeDynamicValue</span><span class="o">&lt;</span><span class="nx">V</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">v</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">,</span><span class="w"> </span><span class="nx">onChange</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="o">:</span><span class="w"> </span><span class="kt">V</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">void</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Subscription</span><span class="o">&lt;</span><span class="nx">V</span><span class="o">&gt;</span><span class="p">;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="nx">nested</span><span class="p">(</span><span class="nx">relativePath</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">DataContext</span><span class="p">;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">}</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="kd">class</span><span class="w"> </span><span class="nx">ComponentContext</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="nx">surface</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceModel</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="nx">componentId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">basePath?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">);</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">componentModel</span><span class="o">:</span><span class="w"> </span><span class="kt">ComponentModel</span><span class="p">;</span><span class="w"> </span><span class="c1">// The instance configuration</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">dataContext</span><span class="o">:</span><span class="w"> </span><span class="kt">DataContext</span><span class="p">;</span><span class="w"> </span><span class="c1">// The instance&#39;s data scope</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span><span class="k">readonly</span><span class="w"> </span><span class="nx">surfaceComponents</span><span class="o">:</span><span class="w"> </span><span class="kt">SurfaceComponentsModel</span><span class="p">;</span><span class="w"> </span><span class="c1">// The escape hatch</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">  </span><span class="nx">dispatchAction</span><span class="p">(</span><span class="nx">action</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="ow">void</span><span class="o">&gt;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Propagate action to surface</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="p">}</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="err">####</span><span class="w"> </span><span class="nx">Inter</span><span class="o">-</span><span class="nx">Component</span><span class="w"> </span><span class="nx">Dependencies</span><span class="w"> </span><span class="p">(</span><span class="nx">The</span><span class="w"> </span><span class="s2">&quot;Escape Hatch&quot;</span><span class="p">)</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="nx">While</span><span class="w"> </span><span class="nx">A2UI</span><span class="w"> </span><span class="nx">components</span><span class="w"> </span><span class="nx">are</span><span class="w"> </span><span class="nx">designed</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">be</span><span class="w"> </span><span class="nx">self</span><span class="o">-</span><span class="nx">contained</span><span class="p">,</span><span class="w"> </span><span class="nx">certain</span><span class="w"> </span><span class="nx">rendering</span><span class="w"> </span><span class="nx">logic</span><span class="w"> </span><span class="nx">requires</span><span class="w"> </span><span class="nx">knowledge</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">child</span><span class="w"> </span><span class="nx">or</span><span class="w"> </span><span class="nx">sibling</span><span class="s1">&#39;s properties. </span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="s1">**The Weight Example**: In the standard catalog, a `Row` or `Column` container often needs to know if its children have a `weight` property to correctly apply `Flex` or `Expanded` logic in frameworks like Flutter or SwiftUI.</span>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="s1">**Usage**: Component implementations can use `ctx.surfaceComponents` to inspect the metadata of other components in the same surface.</span>
+</span><span id="__span-6-24"><a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="s1">&gt; **Guidance**: This pattern is generally discouraged as it increases coupling. Use it only as an essential escape hatch when a framework&#39;</span><span class="nx">s</span><span class="w"> </span><span class="nx">layout</span><span class="w"> </span><span class="nx">engine</span><span class="w"> </span><span class="nx">cannot</span><span class="w"> </span><span class="nx">be</span><span class="w"> </span><span class="nx">satisfied</span><span class="w"> </span><span class="nx">by</span><span class="w"> </span><span class="nx">explicit</span><span class="w"> </span><span class="nx">component</span><span class="w"> </span><span class="nx">properties</span><span class="w"> </span><span class="nx">alone</span><span class="p">.</span>
+</span></code></pre></div>
+<h2 id="2-framework-binding-layer">2. Framework Binding Layer<a class="headerlink" href="#2-framework-binding-layer" title="Permanent link">&para;</a></h2>
+<p>The Framework Binding Layer takes the structured state provided by the Data Layer and translates it into actual UI elements (DOM nodes, Flutter widgets, etc.). This layer provides framework-specific component implementations that extend the data layer's <code>ComponentApi</code> to include actual rendering logic.</p>
+<h3 id="key-interfaces-and-classes_1">Key Interfaces and Classes<a class="headerlink" href="#key-interfaces-and-classes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>FrameworkSurface</code></strong>: The entrypoint widget for a specific framework.</li>
+<li><strong><code>FrameworkComponent</code></strong>: The framework-specific logic for rendering a specific component.</li>
+</ul>
+<h3 id="frameworksurface"><code>FrameworkSurface</code><a class="headerlink" href="#frameworksurface" title="Permanent link">&para;</a></h3>
+<p>The entrypoint widget for a specific framework. It listens to the <code>SurfaceModel</code> to dynamically build the UI tree. It initiates the rendering loop at the component with ID <code>root</code>.</p>
+<h3 id="the-rendering-pattern">The Rendering Pattern<a class="headerlink" href="#the-rendering-pattern" title="Permanent link">&para;</a></h3>
+<p>How components are rendered depends on the target framework's architecture.</p>
+<h4 id="1-functional-reactive-frameworks-eg-flutter-swiftui">1. Functional / Reactive Frameworks (e.g., Flutter, SwiftUI)<a class="headerlink" href="#1-functional-reactive-frameworks-eg-flutter-swiftui" title="Permanent link">&para;</a></h4>
+<p>In frameworks that use an immutable widget tree, components typically implement a <code>build</code> or <code>render</code> method that is called whenever the component's properties or bound data change.</p>
+<p><strong>Example Recursive Builder Pattern</strong>:
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">interface</span><span class="w"> </span><span class="nx">MyFrameworkComponent</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">ComponentApi</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="cm">/**</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="cm">   * @param ctx The component&#39;s context.</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="cm">   * @param buildChild A closure provided by the surface to recursively build children.</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="cm">   */</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="nx">build</span><span class="p">(</span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="kt">ComponentContext</span><span class="p">,</span><span class="w"> </span><span class="nx">buildChild</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">Widget</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">Widget</span><span class="p">;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h4 id="2-stateful-imperative-frameworks-eg-vanilla-dom-android-views">2. Stateful / Imperative Frameworks (e.g., Vanilla DOM, Android Views)<a class="headerlink" href="#2-stateful-imperative-frameworks-eg-vanilla-dom-android-views" title="Permanent link">&para;</a></h4>
+<p>In stateful frameworks, a parent component instance might persist even as its configuration changes. In these cases, the <code>FrameworkComponent</code> might maintain a reference to its native element and provide an <code>update()</code> method to apply new properties without re-creating the entire child tree.</p>
+<h3 id="component-traits">Component Traits<a class="headerlink" href="#component-traits" title="Permanent link">&para;</a></h3>
+<h4 id="reactive-validation-checkable">Reactive Validation (<code>Checkable</code>)<a class="headerlink" href="#reactive-validation-checkable" title="Permanent link">&para;</a></h4>
+<p>Interactive components that support the <code>checks</code> property should implement the <code>Checkable</code> trait.
+*   <strong>Aggregate Error Stream</strong>: The component should subscribe to all <code>CheckRule</code> conditions defined in its properties.
+*   <strong>UI Feedback</strong>: It should reactively display the <code>message</code> of the first failing check as a validation error hint.
+*   <strong>Action Blocking</strong>: Actions (like <code>Button</code> clicks) should be reactively disabled or blocked if any validation check in the surface or component fails.</p>
+<h4 id="component-subscription-lifecycle">Component Subscription Lifecycle<a class="headerlink" href="#component-subscription-lifecycle" title="Permanent link">&para;</a></h4>
+<p>To ensure performance and correctness, components MUST follow these rules:
+1.  <strong>Lazy Subscription</strong>: Only subscribe to data paths or property updates when the component is actually mounted/attached to the UI.
+2.  <strong>Path Stability</strong>: If a component's property (e.g., a <code>value</code> data path) changes via an <code>updateComponents</code> message, the component MUST unsubscribe from the old path and subscribe to the new one.</p>
+<h2 id="basic-catalog-implementation"><strong>Basic Catalog Implementation</strong><a class="headerlink" href="#basic-catalog-implementation" title="Permanent link">&para;</a></h2>
+<p>The Standard A2UI Catalog (v0.9) requires a shared logic layer for expression resolution and standard component definitions. To maintain consistency across renderers, implementations should follow this structure:</p>
+<ul>
+<li><strong><code>basic_catalog_api/</code></strong>: Contains the framework-agnostic <code>ComponentApi</code> definitions for standard components (<code>Text</code>, <code>Button</code>, <code>Row</code>, etc.) and the <code>ClientFunction</code> definitions for standard functions.</li>
+<li><strong><code>basic_catalog_implementation/</code></strong>: Contains the framework-specific rendering logic (e.g. <code>SwiftUIButton</code>, <code>FlutterRow</code>).</li>
+</ul>
+<h3 id="expression-resolution-logic-formatstring"><strong>Expression Resolution Logic (<code>formatString</code>)</strong><a class="headerlink" href="#expression-resolution-logic-formatstring" title="Permanent link">&para;</a></h3>
+<p>The standard <code>formatString</code> function is responsible for interpreting the <code>${expression}</code> syntax within string properties. </p>
+<p><strong>Implementation Requirements</strong>:
+1.  <strong>Recursion</strong>: The function implementation MUST use <code>FunctionContext.resolve()</code> to recursively evaluate nested expressions or function calls (e.g., <code>${formatDate(value:${/date})}</code>).
+2.  <strong>Tokenization</strong>: The parser must distinguish between:
+    *   <strong>DataPath</strong>: A raw JSON Pointer (e.g., <code>${/user/name}</code>).
+    *   <strong>FunctionCall</strong>: Identified by parentheses (e.g., <code>${now()}</code>).
+3.  <strong>Escaping</strong>: Literal <code>${</code> sequences must be handled (typically by escaping as <code>\${</code>).
+4.  <strong>Reactive Coercion</strong>: Results are transformed into strings using the <strong>Type Coercion Standards</strong> defined in the Data Layer section.</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+  
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find the information they need. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="github" checked>
+      <span class="task-list-indicator"></span>
+      GitHub
+    </label>
+  </li>
+
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">Accept</button>
+    
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">Manage settings</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

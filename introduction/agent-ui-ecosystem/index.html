@@ -15,17 +15,17 @@
         <link rel="canonical" href="https://a2ui.org/introduction/agent-ui-ecosystem/">
       
       
-        <link rel="prev" href="../where-is-it-used/">
+        <link rel="prev" href="../../specification/v0.9-evolution-guide/">
       
       
-        <link rel="next" href="../../quickstart/">
+        <link rel="next" href="../../ecosystem/renderers/">
       
       
         
       
       
       <link rel="icon" href="../../assets/A2UI_dark.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -157,7 +157,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#a2ui-in-the-agent-ecosystem" class="md-skip">
+        <a href="#agent-ui-ecosystem" class="md-skip">
           Skip to content
         </a>
       
@@ -361,10 +361,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -382,11 +380,11 @@
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -407,7 +405,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -597,10 +595,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#at-a-glance" class="md-nav__link">
+  <a href="#comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
-        At a glance
+        Comparison
       
     </span>
   </a>
@@ -608,52 +606,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigating-the-agentic-ui-ecosystem" class="md-nav__link">
+  <a href="#a2ui-integrations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Navigating the Agentic UI Ecosystem
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Navigating the Agentic UI Ecosystem">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-building-the-host-application-ui" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Building the "Host" Application UI
+        A2UI Integrations
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#2-ui-as-a-resource-mcp-apps" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-each" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. UI as a "Resource" (MCP Apps)
+        When to Use Each
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#3-platform-specific-ecosystems-openai-chatkit" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#using-them-together" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Platform-Specific Ecosystems (OpenAI ChatKit)
+        Using Them Together
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
   
 </li>
       
@@ -744,6 +736,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -762,7 +760,7 @@
   <span class="md-ellipsis">
     
   
-    Developer Guides
+    Concepts
   
 
     
@@ -778,183 +776,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Developer Guides
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/client-setup/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Client Setup
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/agent-development/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Agent Development
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/custom-components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Custom Components
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/theming/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Theming & Styling
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Core Concepts
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Core Concepts
+    Concepts
   
 
           </label>
@@ -1072,6 +894,472 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../catalogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catalogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../transports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../client_to_server_actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client-to-Server Actions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/client-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Client Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/agent-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/renderer-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderer Development
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/custom-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom Components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/theming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Theming & Styling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../renderers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Renderers (Clients)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents (Server-side)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1100,10 +1388,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -1121,8 +1409,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1153,10 +1441,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
         
           
-          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="0">
             
   
   
@@ -1174,8 +1462,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1199,7 +1487,7 @@
   <span class="md-ellipsis">
     
   
-    A2UI Specification
+    A2UI Protocol
   
 
     
@@ -1270,10 +1558,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
         
           
-          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="0">
             
   
   
@@ -1291,8 +1579,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1316,7 +1604,7 @@
   <span class="md-ellipsis">
     
   
-    A2UI Specification
+    A2UI Protocol
   
 
     
@@ -1377,17 +1665,206 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../catalogs/" class="md-nav__link">
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ecosystem
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent UI Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    Catalogs
+    Agent UI Ecosystem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a2ui-integrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A2UI Integrations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-each" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use Each
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-them-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Them Together
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ecosystem/renderers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Community Renderers
   
 
     
@@ -1399,22 +1876,23 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     <li class="md-nav__item">
-      <a href="../../client_to_server_actions/" class="md-nav__link">
+      <a href="../where-is-it-used/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Client-to-Server Actions
+    Where is it Used?
   
 
     
@@ -1426,90 +1904,10 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../renderers/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Renderers (Clients)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../transports/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transports (Message Passing)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../agents/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Agents (Server-side)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -1531,6 +1929,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1562,122 +1968,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_15" >
-        
-          
-          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reference
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_15">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Reference
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Component Reference
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/messages/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Message Reference
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -1705,10 +1995,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#at-a-glance" class="md-nav__link">
+  <a href="#comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
-        At a glance
+        Comparison
       
     </span>
   </a>
@@ -1716,52 +2006,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigating-the-agentic-ui-ecosystem" class="md-nav__link">
+  <a href="#a2ui-integrations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Navigating the Agentic UI Ecosystem
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Navigating the Agentic UI Ecosystem">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-building-the-host-application-ui" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Building the "Host" Application UI
+        A2UI Integrations
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#2-ui-as-a-resource-mcp-apps" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-each" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. UI as a "Resource" (MCP Apps)
+        When to Use Each
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#3-platform-specific-ecosystems-openai-chatkit" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#using-them-together" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Platform-Specific Ecosystems (OpenAI ChatKit)
+        Using Them Together
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further Reading
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1808,10 +2092,10 @@
     
     
       <li class="md-path__item">
-        <a href="../what-is-a2ui/" class="md-path__link">
+        <a href="./" class="md-path__link">
           
   <span class="md-ellipsis">
-    Introduction & FAQ
+    Ecosystem
   </span>
 
         </a>
@@ -1841,29 +2125,118 @@
   
 
 
-<h1 id="a2ui-in-the-agent-ecosystem">A2UI in the Agent Ecosystem<a class="headerlink" href="#a2ui-in-the-agent-ecosystem" title="Permanent link">&para;</a></h1>
-<p>The space for agentic UI is evolving rapidly, with excellent tools emerging to solve different parts of the stack. A2UI is not a replacement for these frameworks—it's a specialized protocol that solves the specific problem of <strong>interoperable, cross-platform, generative or template-based UI responses.</strong></p>
-<h2 id="at-a-glance">At a glance<a class="headerlink" href="#at-a-glance" title="Permanent link">&para;</a></h2>
-<p>The A2UI approach is to send JSON as a message to the client, which then uses a renderer to convert it into native UI components.  LLMs can generate the component layout on the fly or you can use a template.</p>
-<div class="admonition tip">
-<p><strong>This makes it secure like data, and expressive like code.</strong></p>
-</div>
-<p>This rest of this page will help you understand A2UI in relationship to other options.</p>
-<h2 id="navigating-the-agentic-ui-ecosystem">Navigating the Agentic UI Ecosystem<a class="headerlink" href="#navigating-the-agentic-ui-ecosystem" title="Permanent link">&para;</a></h2>
-<h3 id="1-building-the-host-application-ui">1. Building the "Host" Application UI<a class="headerlink" href="#1-building-the-host-application-ui" title="Permanent link">&para;</a></h3>
-<p>If you're building a full-stack application (the "host" UI that the user interacts with), in addition to building the actual UI, you may also utilize a framework <strong>(AG UI / CopilotKit, Vercel AI SDK, GenUI SDK for Flutter which already uses A2UI under the covers)</strong> to handle the "pipes": state synchronization, chat history, and input handling.</p>
-<p><strong>Where A2UI fits:</strong> A2UI is complementary. If you connect your host application using AG UI, it can use A2UI as the data format for rendering responses from the host agent and also from third-party or remote agents. This gives you the best of both worlds: a rich, stateful host app that can safely render content from external agents it doesn't control.</p>
+<h1 id="agent-ui-ecosystem">Agent UI Ecosystem<a class="headerlink" href="#agent-ui-ecosystem" title="Permanent link">&para;</a></h1>
+<p>The agentic UI space is evolving rapidly. This page helps you understand where A2UI fits relative to other approaches.</p>
+<h2 id="comparison">Comparison<a class="headerlink" href="#comparison" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>A2UI</strong></th>
+<th><strong>MCP Apps</strong></th>
+<th><strong>AG UI</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Approach</strong></td>
+<td>Agent sends declarative component blueprints</td>
+<td>Server provides pre-built HTML via <code>ui://</code> URIs</td>
+<td>High-bandwidth protocol connecting any agent backend to any frontend</td>
+</tr>
+<tr>
+<td><strong>Rendering</strong></td>
+<td>Native components (Angular, Flutter, Lit, etc.)</td>
+<td>Sandboxed <code>iframe</code></td>
+<td>Developer-defined (any framework)</td>
+</tr>
+<tr>
+<td><strong>Styling</strong></td>
+<td>Client controls — inherits host design system</td>
+<td>Isolated — server controls appearance</td>
+<td>Developer controls — part of the host app</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Declarative data, no code execution</td>
+<td>Sandboxed iframe isolation</td>
+<td>Trusted code within your own app</td>
+</tr>
+<tr>
+<td><strong>Multi-agent</strong></td>
+<td>✅ Agents across trust boundaries</td>
+<td>✅ Multiple MCP servers can each provide UI</td>
+<td>⚠️ Primarily for apps where you build both agent and frontend</td>
+</tr>
+<tr>
+<td><strong>Cross-platform</strong></td>
+<td>✅ Web, mobile, desktop, native</td>
+<td>⚠️ Web-focused (iframe)</td>
+<td>✅ Protocol is framework-agnostic</td>
+</tr>
+<tr>
+<td><strong>LLM generation</strong></td>
+<td>✅ Designed for streaming LLM output</td>
+<td>❌ Pre-built by server</td>
+<td>✅ Via A2UI integration</td>
+</tr>
+<tr>
+<td><strong>Spec</strong></td>
+<td>Open protocol (Apache 2.0)</td>
+<td>Part of MCP specification</td>
+<td>Open source protocol (by CopilotKit)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="a2ui-integrations">A2UI Integrations<a class="headerlink" href="#a2ui-integrations" title="Permanent link">&para;</a></h2>
+<p>Several projects have built A2UI renderers and integrations:</p>
 <ul>
-<li><strong>A2UI with A2A:</strong> You can send via A2A directly to a client front end.</li>
-<li><strong>A2UI with AG UI:</strong> You can send via AG UI directly to a client front end.</li>
-<li>A2UI with REST, SSE, WebSockets and other transports are feasible but not yet available.</li>
+<li><strong><a href="https://json-render.dev/docs/a2ui">json-render</a></strong> — Vercel's React library for rendering A2UI component catalogs via Zod schemas. Maps A2UI's declarative JSON to React components. See <a href="https://dipjyotimetia.medium.com/vercels-json-render-vs-google-s-a2ui-the-head-to-head-6f213cf1a23b">json-render vs. A2UI comparison</a> for an in-depth technical breakdown of the "monolith vs. protocol" tradeoff.</li>
+<li><strong><a href="https://docs.openclaw.ai/platforms/mac/canvas">OpenClaw Canvas</a></strong> — OpenClaw uses A2UI to render agent-generated UI on connected devices (Mac, iOS, Android) via its canvas system and native node apps. See <a href="https://ppaolo.substack.com/p/openclaw-system-architecture-overview">OpenClaw architecture overview</a> for how A2UI fits into their agent runtime.</li>
 </ul>
-<h3 id="2-ui-as-a-resource-mcp-apps">2. UI as a "Resource" (MCP Apps)<a class="headerlink" href="#2-ui-as-a-resource-mcp-apps" title="Permanent link">&para;</a></h3>
-<p>The <strong>Model Context Protocol (MCP)</strong> has <a href="https://blog.modelcontextprotocol.io/posts/2025-11-21-mcp-apps/">recently introduced <strong>MCP Apps</strong></a>, a new standard consolidating the great work from MCP-UI and OpenAI to enable servers to provide interactive interfaces. This approach treats UI as a resource (accessed via a <code>ui://</code> URI) that tools can return, typically rendering pre-built HTML content within a sandboxed <code>iframe</code> to ensure isolation and security.</p>
-<p><strong>How A2UI is different:</strong> A2UI takes a "native-first" approach that is distinct from the resource-fetching model of MCP Apps. Instead of retrieving an opaque payload to display in a sandbox, an A2UI agent sends a blueprint of native components. This allows the UI to inherit the host app's styling and accessibility features perfectly. In a multi-agent system, an orchestrator agent can easily understand the lightweight A2UI message content from a subagent, allowing for more fluid collaboration between agents.</p>
-<h3 id="3-platform-specific-ecosystems-openai-chatkit">3. Platform-Specific Ecosystems (OpenAI ChatKit)<a class="headerlink" href="#3-platform-specific-ecosystems-openai-chatkit" title="Permanent link">&para;</a></h3>
-<p>Tools like <strong>ChatKit</strong> offer a highly integrated, optimized experience for deploying agents specifically within the OpenAI ecosystem.</p>
-<p><strong>How A2UI is different:</strong> A2UI is designed for developers building their own agentic surfaces across Web, Flutter, and native mobile, or for enterprise meshes (like <strong>A2A</strong>) where agents need to communicate across trust boundaries. A2UI gives the client more control over styling at the expense of the agent, in order to allow for greater visual consistency with the host client application.</p>
+<div class="admonition tip">
+<p class="admonition-title">A2UI + MCP Apps Bridge</p>
+<p>We are actively working on bridging A2UI and MCP Apps, enabling MCP servers to provide A2UI component blueprints as an alternative to HTML resources. This would let MCP tools return native, styled UI that renders in any A2UI-capable client. Follow progress on <a href="https://github.com/google/A2UI">GitHub</a>.</p>
+</div>
+<h2 id="when-to-use-each">When to Use Each<a class="headerlink" href="#when-to-use-each" title="Permanent link">&para;</a></h2>
+<p><strong>Choose A2UI when:</strong></p>
+<ul>
+<li>Agents generate UI dynamically (forms, dashboards, workflows)</li>
+<li>You need cross-platform rendering (web + mobile + desktop)</li>
+<li>Multiple agents from different providers need to render UI in your app</li>
+<li>Brand consistency matters — the client must control styling</li>
+<li>Security is critical — no code execution from untrusted agents</li>
+</ul>
+<p><strong>Choose MCP Apps when:</strong></p>
+<ul>
+<li>The server owns the full UI experience (self-contained widgets)</li>
+<li>You want iframe isolation with minimal client integration</li>
+<li>UI is a pre-built resource, not dynamically generated by an LLM</li>
+<li>Multiple MCP servers each provide their own isolated UI surfaces</li>
+</ul>
+<p><strong>Choose AG UI when:</strong></p>
+<ul>
+<li>You're building both the agent backend and the frontend together</li>
+<li>You need high-bandwidth, real-time state synchronization between agent and client</li>
+<li>You want a flexible transport layer that works with any frontend framework</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">AG UI vs. CopilotKit</p>
+<p>AG UI is the open protocol for connecting agent backends to frontends — it's framework-agnostic. <a href="https://copilotkit.ai">CopilotKit</a> is a React-specific frontend framework built by the same team that also created AG UI. You can use AG UI without CopilotKit.</p>
+</div>
+<h2 id="using-them-together">Using Them Together<a class="headerlink" href="#using-them-together" title="Permanent link">&para;</a></h2>
+<p>These approaches are complementary, not competing:</p>
+<ul>
+<li><strong>A2UI + AG UI</strong>: Use AG UI as the transport layer connecting your agent backend to your frontend, and A2UI as the format for generative UI payloads — especially from remote or third-party agents.</li>
+<li><strong>A2UI + A2A</strong>: Send A2UI messages via the <a href="../../transports/">A2A protocol</a> for multi-agent systems where agents communicate across trust boundaries.</li>
+<li><strong>A2UI + MCP</strong>: With the upcoming bridge, MCP servers will be able to provide A2UI blueprints alongside HTML resources, giving clients a choice of rendering approach.</li>
+</ul>
+<h2 id="further-reading">Further Reading<a class="headerlink" href="#further-reading" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../what-is-a2ui/">What is A2UI?</a> — Protocol overview</li>
+<li><a href="../who-is-it-for/">Who is it For?</a> — Use cases by audience</li>
+<li><a href="../../transports/">Transports</a> — How A2UI messages travel between agents and clients</li>
+</ul>
 
 
 
@@ -1903,7 +2276,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../where-is-it-used/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Where is it Used?">
+          <a href="../../specification/v0.9-evolution-guide/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Evolution Guide">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1913,20 +2286,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Where is it Used?
+                Evolution Guide
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../quickstart/" class="md-footer__link md-footer__link--next" aria-label="Next: Quickstart">
+          <a href="../../ecosystem/renderers/" class="md-footer__link md-footer__link--next" aria-label="Next: Community Renderers">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Quickstart
+                Community Renderers
               </div>
             </div>
             <div class="md-footer__button md-icon">
