@@ -1,0 +1,6 @@
+{"type": "createSurface", "surfaceId": "test-tabs", "components": [
+  {"type": "Tabs", "properties": {"tabItems": [
+    {"label": "Tab 1", "children": [{"type": "Text", "properties": {"text": "Tab 1 content"}}]},
+    {"label": "Tab 2", "children": [{"type": "Text", "properties": {"text": "Tab 2 content"}}]}
+  ]}}
+]}

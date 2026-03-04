@@ -1,0 +1,5 @@
+{"type": "createSurface", "surfaceId": "test-datetimeinput", "components": [
+  {"type": "DateTimeInput", "properties": {"enableDate": true, "enableTime": false}},
+  {"type": "DateTimeInput", "properties": {"enableDate": false, "enableTime": true}},
+  {"type": "DateTimeInput", "properties": {"enableDate": true, "enableTime": true}}
+]}

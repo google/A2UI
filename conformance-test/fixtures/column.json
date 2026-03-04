@@ -1,0 +1,7 @@
+{"type": "createSurface", "surfaceId": "test-column", "components": [
+  {"type": "Column", "properties": {"children": [
+    {"type": "Text", "properties": {"text": "Item 1"}},
+    {"type": "Text", "properties": {"text": "Item 2"}},
+    {"type": "Text", "properties": {"text": "Item 3"}}
+  ]}}
+]}

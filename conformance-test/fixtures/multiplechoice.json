@@ -1,0 +1,7 @@
+{"type": "createSurface", "surfaceId": "test-multiplechoice", "components": [
+  {"type": "MultipleChoice", "properties": {"type": "mutuallyExclusive", "options": [
+    {"id": "a", "label": "Option A"},
+    {"id": "b", "label": "Option B"},
+    {"id": "c", "label": "Option C"}
+  ], "selections": []}}
+]}

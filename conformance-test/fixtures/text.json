@@ -1,0 +1,5 @@
+{"type": "createSurface", "surfaceId": "test-text", "components": [
+  {"type": "Text", "properties": {"text": "Heading 1", "usageHint": "h1"}},
+  {"type": "Text", "properties": {"text": "Body text content", "usageHint": "body"}},
+  {"type": "Text", "properties": {"text": "Caption text", "usageHint": "caption"}}
+]}

@@ -1,0 +1,5 @@
+{"type": "createSurface", "surfaceId": "test-button", "components": [
+  {"type": "Button", "properties": {"label": "Primary", "action": {"type": "function", "name": "click"}, "variant": "filled"}},
+  {"type": "Button", "properties": {"label": "Outlined", "action": {"type": "function", "name": "click"}, "variant": "outlined"}},
+  {"type": "Button", "properties": {"label": "Text", "action": {"type": "function", "name": "click"}, "variant": "text"}}
+]}

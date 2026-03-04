@@ -67,6 +67,7 @@ nav:
           - Evolution Guide: specification/v0.9-evolution-guide.md
   - Ecosystem:
       - Agent UI Ecosystem: introduction/agent-ui-ecosystem.md
+      - Community Renderers: ecosystem/renderers.md
       - Where is it Used?: introduction/where-is-it-used.md
       - Community: community.md
   - Roadmap: roadmap.md

@@ -1,0 +1,5 @@
+{"type": "createSurface", "surfaceId": "test-divider", "components": [
+  {"type": "Text", "properties": {"text": "Above"}},
+  {"type": "Divider", "properties": {}},
+  {"type": "Text", "properties": {"text": "Below"}}
+]}

@@ -1,0 +1,16 @@
+import{r as e}from"./a2ui-story-wrapper-CvQ-30RQ.js";import{t as a}from"./version-adapter-CEmIuBFF.js";import"./lit-element-CZsjY6Q-.js";const V={title:"Generated/Components/Text"},C=[{createSurface:{surfaceId:"s1",catalogId:"https://a2ui.org/specification/v0_10/standard_catalog.json"}},{updateComponents:{surfaceId:"s1",components:[{id:"root",component:"Text",text:"Heading 1",variant:"h1"}]}}],t={name:"Heading 1 [v0.8 Lit]",render:()=>e(a(C),"s1")},T=[{createSurface:{surfaceId:"s1",catalogId:"https://a2ui.org/specification/v0_10/standard_catalog.json"}},{updateComponents:{surfaceId:"s1",components:[{id:"root",component:"Text",text:"Heading 2",variant:"h2"}]}}],s={name:"Heading 2 [v0.8 Lit]",render:()=>e(a(T),"s1")},h=[{createSurface:{surfaceId:"s1",catalogId:"https://a2ui.org/specification/v0_10/standard_catalog.json"}},{updateComponents:{surfaceId:"s1",components:[{id:"root",component:"Text",text:"Heading 3",variant:"h3"}]}}],r={name:"Heading 3 [v0.8 Lit]",render:()=>e(a(h),"s1")},S=[{createSurface:{surfaceId:"s1",catalogId:"https://a2ui.org/specification/v0_10/standard_catalog.json"}},{updateComponents:{surfaceId:"s1",components:[{id:"root",component:"Text",text:"This is body text with normal styling.",variant:"body"}]}}],n={name:"Body [v0.8 Lit]",render:()=>e(a(S),"s1")},y=[{createSurface:{surfaceId:"s1",catalogId:"https://a2ui.org/specification/v0_10/standard_catalog.json"}},{updateComponents:{surfaceId:"s1",components:[{id:"root",component:"Text",text:"Caption text",variant:"caption"}]}}],o={name:"Caption [v0.8 Lit]",render:()=>e(a(y),"s1")};var d,i,c;t.parameters={...t.parameters,docs:{...(d=t.parameters)==null?void 0:d.docs,source:{originalSource:`{
+  name: "Heading 1 [v0.8 Lit]",
+  render: () => renderA2UI(translateToV08(Heading_1_messages), "s1")
+}`,...(c=(i=t.parameters)==null?void 0:i.docs)==null?void 0:c.source}}};var m,p,_;s.parameters={...s.parameters,docs:{...(m=s.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  name: "Heading 2 [v0.8 Lit]",
+  render: () => renderA2UI(translateToV08(Heading_2_messages), "s1")
+}`,...(_=(p=s.parameters)==null?void 0:p.docs)==null?void 0:_.source}}};var g,u,v;r.parameters={...r.parameters,docs:{...(g=r.parameters)==null?void 0:g.docs,source:{originalSource:`{
+  name: "Heading 3 [v0.8 Lit]",
+  render: () => renderA2UI(translateToV08(Heading_3_messages), "s1")
+}`,...(v=(u=r.parameters)==null?void 0:u.docs)==null?void 0:v.source}}};var l,f,H;n.parameters={...n.parameters,docs:{...(l=n.parameters)==null?void 0:l.docs,source:{originalSource:`{
+  name: "Body [v0.8 Lit]",
+  render: () => renderA2UI(translateToV08(Body_messages), "s1")
+}`,...(H=(f=n.parameters)==null?void 0:f.docs)==null?void 0:H.source}}};var I,L,x;o.parameters={...o.parameters,docs:{...(I=o.parameters)==null?void 0:I.docs,source:{originalSource:`{
+  name: "Caption [v0.8 Lit]",
+  render: () => renderA2UI(translateToV08(Caption_messages), "s1")
+}`,...(x=(L=o.parameters)==null?void 0:L.docs)==null?void 0:x.source}}};const j=["Heading_1_v08_Lit","Heading_2_v08_Lit","Heading_3_v08_Lit","Body_v08_Lit","Caption_v08_Lit"];export{n as Body_v08_Lit,o as Caption_v08_Lit,t as Heading_1_v08_Lit,s as Heading_2_v08_Lit,r as Heading_3_v08_Lit,j as __namedExportsOrder,V as default};

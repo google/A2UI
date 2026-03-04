@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>A2UI Lit Conformance Harness</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body { font-family: system-ui; margin: 20px; }
+    #surface { border: 1px solid #ccc; padding: 16px; min-height: 100px; }
+  </style>
+</head>
+<body>
+  <div id="surface">
+    <a2ui-surface></a2ui-surface>
+  </div>
+  <script type="module">
+    import { A2uiMessageProcessor } from '../../renderers/lit/src/0.8/index.js';
+
+    const surface = document.querySelector('a2ui-surface');
+    const processor = new A2uiMessageProcessor(surface);
+
+    // Load fixture from URL param
+    const params = new URLSearchParams(location.search);
+    const fixture = params.get('fixture');
+    if (fixture) {
+      const resp = await fetch(`../fixtures/${fixture}`);
+      const msg = await resp.json();
+      processor.processA2UIMessage(msg);
+    }
+  </script>
+</body>
+</html>

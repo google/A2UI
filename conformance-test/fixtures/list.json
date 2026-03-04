@@ -1,0 +1,7 @@
+{"type": "createSurface", "surfaceId": "test-list", "components": [
+  {"type": "List", "properties": {"children": [
+    {"type": "Text", "properties": {"text": "List item 1"}},
+    {"type": "Text", "properties": {"text": "List item 2"}},
+    {"type": "Text", "properties": {"text": "List item 3"}}
+  ]}}
+]}

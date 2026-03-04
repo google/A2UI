@@ -1,0 +1,4 @@
+{"type": "createSurface", "surfaceId": "test-textfield", "components": [
+  {"type": "TextField", "properties": {"label": "Name", "type": "shortText"}},
+  {"type": "TextField", "properties": {"label": "Bio", "type": "longText"}}
+]}

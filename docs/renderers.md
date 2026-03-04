@@ -8,18 +8,22 @@ The client renderer library must buffer and handle A2UI messages, implement the 
 
 You have a lot of flexibility, to bring custom components to a renderer, or build your own renderer to support your UI component framework.
 
-## Available Renderers
+## Maintained Renderers
 
-| Renderer | Platform | v0.8 | v0.9 | Status | Links |
-|----------|----------|------|------|--------|-------|
-| **React** | Web | ✅ | ❌ | ✅ Stable | Coming soon |
-| **Lit (Web Components)** | Web | ✅ | ✅ | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/lit) |
-| **Angular** | Web | ✅ | ✅ | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/angular) |
-| **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ | ✅ | ✅ Stable | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
-| **SwiftUI** | iOS/macOS | — | — | 🚧 Planned Q2 2026 | — |
-| **Jetpack Compose** | Android | — | — | 🚧 Planned Q2 2026 | — |
+| Renderer | Platform | v0.8 | v0.9 | Links |
+|----------|----------|------|------|-------|
+| **React** | Web | ✅ Stable | ❌ | Coming soon |
+| **Lit (Web Components)** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/lit) |
+| **Angular** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/angular) |
+| **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ Stable | ✅ Stable | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
+| **SwiftUI** | iOS/macOS | — | 🚧 Planned Q2 | — |
+| **Jetpack Compose** | Android | — | 🚧 Planned Q2 | — |
 
 Check the [Roadmap](roadmap.md) for more.
+
+## Ecosystem Renderers
+
+<!-- TODO: Community and third-party A2UI renderers. See docs/ecosystem/renderers.md for the full list. -->
 
 ## How Renderers Work
 

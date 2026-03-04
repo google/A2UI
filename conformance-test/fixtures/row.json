@@ -1,0 +1,7 @@
+{"type": "createSurface", "surfaceId": "test-row", "components": [
+  {"type": "Row", "properties": {"children": [
+    {"type": "Text", "properties": {"text": "Left"}},
+    {"type": "Text", "properties": {"text": "Center"}},
+    {"type": "Text", "properties": {"text": "Right"}}
+  ]}}
+]}

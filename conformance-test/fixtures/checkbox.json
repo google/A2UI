@@ -1,0 +1,4 @@
+{"type": "createSurface", "surfaceId": "test-checkbox", "components": [
+  {"type": "CheckBox", "properties": {"label": "Unchecked option", "value": false}},
+  {"type": "CheckBox", "properties": {"label": "Checked option", "value": true}}
+]}

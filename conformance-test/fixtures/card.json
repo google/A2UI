@@ -1,0 +1,6 @@
+{"type": "createSurface", "surfaceId": "test-card", "components": [
+  {"type": "Card", "properties": {"children": [
+    {"type": "Text", "properties": {"text": "Card Title", "usageHint": "h3"}},
+    {"type": "Text", "properties": {"text": "Card body content"}}
+  ]}}
+]}

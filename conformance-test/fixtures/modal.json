@@ -1,0 +1,6 @@
+{"type": "createSurface", "surfaceId": "test-modal", "components": [
+  {"type": "Modal", "properties": {"children": [
+    {"type": "Text", "properties": {"text": "Modal content"}},
+    {"type": "Button", "properties": {"label": "Close", "action": {"type": "function", "name": "close"}}}
+  ]}}
+]}

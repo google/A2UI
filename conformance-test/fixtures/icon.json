@@ -1,0 +1,5 @@
+{"type": "createSurface", "surfaceId": "test-icon", "components": [
+  {"type": "Icon", "properties": {"name": "home"}},
+  {"type": "Icon", "properties": {"name": "settings"}},
+  {"type": "Icon", "properties": {"name": "favorite"}}
+]}
