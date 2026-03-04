@@ -48,9 +48,9 @@ import { Renderer } from '../rendering/renderer';
     }
   `,
   template: `
-    <section [class]="$any(theme.components).List?.container || theme.components.List" [style]="theme.additionalStyles?.List">
+    <section [class]="theme.components.List" [style]="theme.additionalStyles?.List">
       @for (child of component().properties.children; track child) {
-        <div [class]="$any(theme.components).List?.item">
+        <div class="a2ui-list-item">
           <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
         </div>
       }
