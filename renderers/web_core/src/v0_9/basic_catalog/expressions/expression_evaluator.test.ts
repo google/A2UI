@@ -47,14 +47,14 @@ describe('ExpressionEvaluator', () => {
   it('evaluates function calls', () => {
     evaluator.registerFunction('add', (args) => (args['a'] as number) + (args['b'] as number));
 
-    // Call with primitives
+    // Call with primitives.
     const result = evaluator.evaluate({
       call: 'add',
       args: { a: 10, b: 20 }
     }, context);
     assert.strictEqual(result, 30);
 
-    // Call with nested evaluations (wrappers)
+    // Call with nested evaluations (wrappers).
     const result2 = evaluator.evaluate({
       call: 'add',
       args: {

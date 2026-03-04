@@ -19,6 +19,10 @@ import {
   FunctionImplementation,
 } from "../expressions/expression_evaluator.js";
 
+/**
+ * Standard function implementations for the Basic Catalog.
+ * These functions cover arithmetic, comparison, logic, string manipulation, validation, and formatting.
+ */
 export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
   // Arithmetic
   add: (args) => (Number(args["a"]) || 0) + (Number(args["b"]) || 0),
@@ -56,6 +60,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     String(args["string"] || "").endsWith(String(args["suffix"] || "")),
 
   // Validation
+  /**
+   * Checks if a value is present and not empty.
+   */
   required: (args) => {
     const val = args["value"];
     if (val === null || val === undefined) return false;
@@ -64,6 +71,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     return true;
   },
 
+  /**
+   * Checks if a value matches a regular expression.
+   */
   regex: (args) => {
     const val = String(args["value"] || "");
     const pattern = String(args["pattern"] || "");
@@ -75,6 +85,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     }
   },
 
+  /**
+   * Checks if a value's length is within a specified range.
+   */
   length: (args) => {
     const val = args["value"];
     let len = 0;
@@ -88,6 +101,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     return true;
   },
 
+  /**
+   * Checks if a value is numeric and optionally within a range.
+   */
   numeric: (args) => {
     const val = Number(args["value"]);
     if (isNaN(val)) return false;
@@ -98,6 +114,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     return true;
   },
 
+  /**
+   * Checks if a value is a valid email address.
+   */
   email: (args) => {
     const val = String(args["value"] || "");
     // Simple email regex
@@ -105,6 +124,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
   },
 
   // Formatting
+  /**
+   * Formats a string using a template and the current context.
+   */
   formatString: (args, context: EvaluationContext) => {
     const template = String(args["value"] || "");
     if (context.parser) {
@@ -115,6 +137,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     );
   },
 
+  /**
+   * Formats a number with locale support.
+   */
   formatNumber: (args) => {
     const val = Number(args["value"]);
     if (isNaN(val)) return "";
@@ -128,6 +153,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     }).format(val);
   },
 
+  /**
+   * Formats a number as currency.
+   */
   formatCurrency: (args) => {
     const val = Number(args["value"]);
     if (isNaN(val)) return "";
@@ -148,6 +176,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     }
   },
 
+  /**
+   * Formats a date.
+   */
   formatDate: (args) => {
     const val = args["value"];
     if (!val) return "";
@@ -174,6 +205,9 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     }
   },
 
+  /**
+   * Selects a string based on pluralization rules.
+   */
   pluralize: (args) => {
     const val = Number(args["value"]) || 0;
     const rule = new Intl.PluralRules("en-US").select(val);

@@ -53,7 +53,7 @@ describe('BASIC_FUNCTIONS', () => {
 
   describe('Logical', () => {
     it('and', () => {
-      // Logic from source: checks args['values'] array OR args['a'] && args['b']
+      // Checks args['values'] array OR args['a'] && args['b'].
       assert.strictEqual(BASIC_FUNCTIONS.and({ values: [true, true] }, context), true);
       assert.strictEqual(BASIC_FUNCTIONS.and({ values: [true, false] }, context), false);
       assert.strictEqual(BASIC_FUNCTIONS.and({ a: true, b: true }, context), true);
@@ -110,7 +110,7 @@ describe('BASIC_FUNCTIONS', () => {
 
   describe('Formatting', () => {
      it('formatNumber', () => {
-        // We can just test basic output as Intl behavior varies by environment
+        // Test basic output as Intl behavior varies by environment.
         const result = BASIC_FUNCTIONS.formatNumber({ value: 1234.56, decimals: 1 }, context);
         assert.ok(typeof result === 'string');
         assert.ok(result.includes('1,234.6') || result.includes('1234.6') || result.includes('1 234,6'));

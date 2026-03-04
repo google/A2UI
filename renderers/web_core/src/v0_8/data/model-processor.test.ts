@@ -25,7 +25,7 @@ describe('A2uiMessageProcessor', () => {
     assert.ok(surface);
     assert.strictEqual(surface.rootComponentId, 'root');
     assert.deepStrictEqual(surface.styles, { 'Text': 'text-style' });
-    // Component tree is null because components haven't been added yet
+    // The component tree remains null until components are added via surfaceUpdate.
     assert.strictEqual(surface.componentTree, null);
   });
 

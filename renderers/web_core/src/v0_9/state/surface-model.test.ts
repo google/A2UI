@@ -42,27 +42,17 @@ describe('SurfaceModel', () => {
   });
 
   it('disposes resources', () => {
-    // We can verify dispose by checking if listeners are removed or internal state is cleared.
-    // Since DataModel and SurfaceComponentsModel also have dispose, we assume they are called.
-    // A simple check is to ensure we can call dispose without error,
-    // and perhaps check side effects if possible (e.g. mocked dependencies).
-    // For now, we'll verify it doesn't throw and maybe check a property if accessible.
-
-    // To be more thorough, we could mock the dependencies, but they are hardcoded in constructor.
-    // Let's at least verify onAction is disposed.
+    // Verify that the dispose method clears subscriptions and internal state.
+    // Ideally, we would need to mock dependencies to verify deep disposal,
+    // but here we ensure that the surface's own emitters are cleared.
 
     let actionReceived = false;
     const sub = surface.onAction.subscribe(() => { actionReceived = true; });
 
     surface.dispose();
 
-    // After dispose, onAction should probably not emit or subscriptions should be cleared.
-    // The current EventEmitter implementation clears listeners on dispose?
-    // Let's check EventEmitter implementation again if needed, but assuming standard behavior:
-
-    // dispatchAction might throw or do nothing after dispose depending on implementation.
-    // The current implementation of EventEmitter.dispose just clears listeners.
-
+    // After dispose, no more actions should be emitted.
+    // The EventEmitter.dispose method clears all listeners.
     surface.dispatchAction({ type: 'click' });
     assert.strictEqual(actionReceived, false, 'Should not receive actions after dispose');
   });

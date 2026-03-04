@@ -9,6 +9,13 @@ export class ComponentModel {
    */
   readonly onUpdated: EventSource<ComponentModel> = this._onUpdated;
 
+  /**
+   * Creates a new component model.
+   *
+   * @param id The unique identifier for this component.
+   * @param type The component type name.
+   * @param initialProperties The initial properties for the component.
+   */
   constructor(
     readonly id: string,
     readonly type: string,
@@ -17,6 +24,9 @@ export class ComponentModel {
     this._properties = initialProperties;
   }
 
+  /**
+   * The current properties of the component.
+   */
   get properties(): Record<string, any> {
     return this._properties;
   }
@@ -26,10 +36,16 @@ export class ComponentModel {
     this._onUpdated.emit(this);
   }
 
+  /**
+   * Disposes of the component and its resources.
+   */
   dispose(): void {
     this._onUpdated.dispose();
   }
 
+  /**
+   * Returns a JSON representation of the component tree.
+   */
   get componentTree(): any {
     return {
       id: this.id,

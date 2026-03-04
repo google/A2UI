@@ -6,21 +6,27 @@ export interface Subscription {
 /** The listener function signature. */
 export type EventListener<T> = (data: T) => void | Promise<void>;
 
-/** 
- * Public interface exposed by models. 
+/**
+ * Public interface exposed by models.
  * Allows ONLY subscribing to events.
  */
 export interface EventSource<T> {
   subscribe(listener: EventListener<T>): Subscription;
 }
 
-/** 
- * Internal implementation used by the model. 
+/**
+ * Internal implementation used by the model.
  * Implements EventSource but also provides the 'emit' method.
  */
 export class EventEmitter<T> implements EventSource<T> {
   private listeners = new Set<EventListener<T>>();
 
+  /**
+   * Subscribes to the event.
+   *
+   * @param listener The listener function to call when the event is emitted.
+   * @returns A subscription object that can be used to unsubscribe.
+   */
   subscribe(listener: EventListener<T>): Subscription {
     this.listeners.add(listener);
     return {
@@ -28,6 +34,11 @@ export class EventEmitter<T> implements EventSource<T> {
     };
   }
 
+  /**
+   * Emits an event to all subscribers.
+   *
+   * @param data The data to pass to subscribers.
+   */
   async emit(data: T): Promise<void> {
     for (const listener of this.listeners) {
       try {
@@ -38,6 +49,9 @@ export class EventEmitter<T> implements EventSource<T> {
     }
   }
 
+  /**
+   * Removes all listeners.
+   */
   dispose(): void {
     this.listeners.clear();
   }

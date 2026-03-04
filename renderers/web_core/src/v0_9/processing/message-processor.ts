@@ -41,6 +41,11 @@ export class MessageProcessor<T extends ComponentApi> {
     return this.model.onSurfaceDeleted.subscribe(handler);
   }
 
+  /**
+   * Processing a list of messages.
+   *
+   * @param messages The messages to process.
+   */
   processMessages(messages: A2uiMessage[]): void {
     for (const message of messages) {
       this.processMessage(message);
@@ -156,6 +161,13 @@ export class MessageProcessor<T extends ComponentApi> {
     surface.dataModel.set(path, value);
   }
 
+  /**
+   * Retrieves data from the data model of a specific surface.
+   *
+   * @param _component Unused component context.
+   * @param path The JSON Pointer path to the data.
+   * @param surfaceId The ID of the surface.
+   */
   getData(
     _component: { id: string },
     path: string,
@@ -173,6 +185,12 @@ export class MessageProcessor<T extends ComponentApi> {
     return surface.dataModel.get(path);
   }
 
+  /**
+   * Resolves a relative path against a context path.
+   *
+   * @param path The path to resolve.
+   * @param contextPath The base path (optional).
+   */
   resolvePath(path: string, contextPath?: string): string {
     if (path.startsWith("/")) {
       return path;
@@ -184,6 +202,14 @@ export class MessageProcessor<T extends ComponentApi> {
     return `/${path}`;
   }
 
+  /**
+   * Updates data in the data model of a specific surface.
+   *
+   * @param _component Unused component context.
+   * @param path The JSON Pointer path where data should be written.
+   * @param value The value to write.
+   * @param surfaceId The ID of the surface.
+   */
   setData(
     _component: { id: string },
     path: string,

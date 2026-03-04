@@ -15,6 +15,9 @@
  */
 
 // Basic types for the catalog - these might need to be refined or imported from a shared types definition
+/**
+ * Types used by the expression evaluator.
+ */
 export namespace Types {
   export interface FunctionCall {
     call: string;
@@ -22,23 +25,41 @@ export namespace Types {
   }
 }
 
+/**
+ * A function implementation that can be registered with the evaluator.
+ */
 export type FunctionImplementation = (
   args: Record<string, unknown>,
   context: EvaluationContext,
 ) => unknown;
 
+/**
+ * Interface for a custom parser.
+ */
 export interface Parser {
   parse(input: string): any;
 }
 
+/**
+ * The context in which an expression is evaluated.
+ */
 export interface EvaluationContext {
   resolveData: (path: string) => unknown;
   parser?: Parser;
 }
 
+/**
+ * Evaluates expressions in a given context.
+ * Supports function calls, data bindings, and primitive wrappers.
+ */
 export class ExpressionEvaluator {
   private functions = new Map<string, FunctionImplementation>();
 
+  /**
+   * Creates a new evaluator.
+   *
+   * @param functions Optional initial functions to register.
+   */
   constructor(
     functions?:
       | Record<string, FunctionImplementation>
@@ -59,14 +80,31 @@ export class ExpressionEvaluator {
     }
   }
 
+  /**
+   * Registers a function implementation.
+   *
+   * @param name The name of the function.
+   * @param impl The implementation of the function.
+   */
   registerFunction(name: string, impl: FunctionImplementation) {
     this.functions.set(name, impl);
   }
 
+  /**
+   * Retrieves a registered function by name.
+   *
+   * @param name The name of the function.
+   */
   getFunction(name: string): FunctionImplementation | undefined {
     return this.functions.get(name);
   }
 
+  /**
+   * Evaluates an expression.
+   *
+   * @param expression The expression to evaluate.
+   * @param context The context for evaluation.
+   */
   evaluate(expression: unknown, context: EvaluationContext): unknown {
     if (expression === null || expression === undefined) {
       return expression;

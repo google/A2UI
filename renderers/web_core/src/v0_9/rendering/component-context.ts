@@ -13,6 +13,13 @@ export class ComponentContext {
   readonly dataContext: DataContext;
   readonly surfaceComponents: SurfaceComponentsModel;
 
+  /**
+   * Creates a new component context.
+   *
+   * @param surface The surface model the component belongs to.
+   * @param componentId The ID of the component.
+   * @param dataModelBasePath The base path for data model access (default: '/').
+   */
   constructor(
     surface: SurfaceModel<any>,
     componentId: string,
@@ -30,6 +37,11 @@ export class ComponentContext {
 
   private _actionDispatcher: (action: any) => Promise<void>;
 
+  /**
+   * Dispatches an action from the component.
+   *
+   * @param action The action to dispatch.
+   */
   dispatchAction(action: any): Promise<void> {
     return this._actionDispatcher(action);
   }

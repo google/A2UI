@@ -110,11 +110,7 @@ describe('ExpressionParser', () => {
   });
 
   it('handles deep recursion gracefully or throws', (_t, done) => {
-     // Triggering max depth via recursion might be hard with simple path resolution without self-reference loop in data,
-     // but we can test that the depth parameter is respected if we could call evaluateExpression directly often.
-     // The public API is parse(input, depth).
-
-     // Let's just verify it works for reasonable depth
+     // Verify it works for reasonable depth.
      parser.parse('${${${"hello"}}}').subscribe(result => {
        assert.strictEqual(result, 'hello');
        done();

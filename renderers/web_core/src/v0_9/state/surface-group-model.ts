@@ -22,6 +22,12 @@ export class SurfaceGroupModel<T extends ComponentApi> {
   /** Fires when an action is dispatched from ANY surface in the group. */
   readonly onAction: EventSource<any> = this._onAction;
 
+  /**
+   * Adds a surface to the group.
+   * Ignores if a surface with the same ID already exists.
+   *
+   * @param surface The surface model to add.
+   */
   addSurface(surface: SurfaceModel<T>): void {
     if (this.surfaces.has(surface.id)) {
       console.warn(`Surface ${surface.id} already exists. Ignoring.`);
@@ -39,6 +45,12 @@ export class SurfaceGroupModel<T extends ComponentApi> {
     this._onSurfaceCreated.emit(surface);
   }
 
+  /**
+   * Removes a surface from the group by its ID.
+   * Disposes of the surface upon removal.
+   *
+   * @param id The ID of the surface to remove.
+   */
   deleteSurface(id: string): void {
     const surface = this.surfaces.get(id);
     if (surface) {
@@ -54,14 +66,25 @@ export class SurfaceGroupModel<T extends ComponentApi> {
     }
   }
 
+  /**
+   * Retrieves a surface by its ID.
+   *
+   * @param id The ID of the surface to retrieve.
+   */
   getSurface(id: string): SurfaceModel<T> | undefined {
     return this.surfaces.get(id);
   }
 
+  /**
+   * Returns a readonly map of all active surfaces.
+   */
   get surfacesMap(): ReadonlyMap<string, SurfaceModel<T>> {
     return this.surfaces;
   }
 
+  /**
+   * Disposes of the group and all its surfaces.
+   */
   dispose(): void {
     for (const id of Array.from(this.surfaces.keys())) {
       this.deleteSurface(id);

@@ -48,7 +48,7 @@ describe('MessageProcessor', () => {
       createSurface: { surfaceId: 's1', catalogId: 'test-catalog' }
     }]);
 
-    // Create
+    // Verify component creation.
     processor.processMessages([{
       updateComponents: {
         surfaceId: 's1',
@@ -60,7 +60,7 @@ describe('MessageProcessor', () => {
     const btn = surface?.componentsModel.get('btn');
     assert.strictEqual(btn?.properties.label, 'Initial');
 
-    // Update
+    // Verify component update.
     processor.processMessages([{
       updateComponents: {
         surfaceId: 's1',
@@ -107,20 +107,20 @@ describe('MessageProcessor', () => {
     const sub = processor.onSurfaceCreated((s) => { created = s; });
     const sub2 = processor.onSurfaceDeleted((id) => { deletedId = id; });
 
-    // Create
+    // Verify creation notification.
     processor.processMessages([{
       createSurface: { surfaceId: 's1', catalogId: 'test-catalog' }
     }]);
     assert.ok(created);
     assert.strictEqual(created.id, 's1');
 
-    // Delete
+    // Verify deletion notification.
     processor.processMessages([{
       deleteSurface: { surfaceId: 's1' }
     }]);
     assert.strictEqual(deletedId, 's1');
 
-    // Test Unsubscribe
+    // Verify unsubscribe stops notifications.
     created = null;
     sub.unsubscribe();
     processor.processMessages([{
