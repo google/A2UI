@@ -43,8 +43,8 @@
     .c-Text { color: #202124; }
     .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
     .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
-    .c-Text[data-variant="label"] { font-size: 0.85rem; font-weight: 500; color: #202124; min-width: 70px; }
-    .c-Text[data-variant="caption"] { font-size: 0.8rem; color: #d93025; font-weight: 500; }
+    .c-Text[data-variant="caption"] { font-size: 0.85rem; font-weight: 500; color: #5f6368; min-width: 70px; }
+    #ttl-text { color: #d93025; min-width: auto; }
     .c-Button {
       border: 1px solid #dadce0;
       border-radius: 20px;
@@ -154,7 +154,9 @@
           return el;
         }
         case 'Divider': {
-          return document.createElement('hr');
+          const el = document.createElement('hr');
+          el.className = 'c-Divider';
+          return el;
         }
         case 'Icon': {
           const el = document.createElement('span');
@@ -165,6 +167,7 @@
         case 'Text': {
           const el = document.createElement('span');
           el.className = 'c-Text';
+          el.id = id;
           if (comp.variant) el.dataset.variant = comp.variant;
           el.textContent = resolve(comp.text);
           return el;

@@ -19,7 +19,7 @@ A financial assistant agent wants to transfer $500 from a checking account to a 
 
 ```bash
 # Any static file server works
-cd samples/a2h-prototypes/p1-approval
+cd samples/a2h-prototypes/p1-approval-v0.9.0
 python3 -m http.server 8080
 # Open http://localhost:8080
 ```

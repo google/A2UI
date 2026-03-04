@@ -81,7 +81,7 @@
           "id": "detail-action-label",
           "component": "Text",
           "text": "Action:",
-          "variant": "label"
+          "variant": "caption"
         },
         {
           "id": "detail-action-value",
@@ -98,7 +98,7 @@
           "id": "detail-from-label",
           "component": "Text",
           "text": "From:",
-          "variant": "label"
+          "variant": "caption"
         },
         {
           "id": "detail-from-value",
@@ -115,7 +115,7 @@
           "id": "detail-to-label",
           "component": "Text",
           "text": "To:",
-          "variant": "label"
+          "variant": "caption"
         },
         {
           "id": "detail-to-value",
@@ -132,7 +132,7 @@
           "id": "detail-amount-label",
           "component": "Text",
           "text": "Amount:",
-          "variant": "label"
+          "variant": "caption"
         },
         {
           "id": "detail-amount-value",
