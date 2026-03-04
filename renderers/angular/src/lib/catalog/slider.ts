@@ -23,7 +23,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <section [class]="theme.components.Slider.container">
-      <label [class]="theme.components.Slider.label" [for]="inputId">
+      <label class="a2ui-slider-label" [class]="theme.components.Slider.label" [for]="inputId">
         {{ label() }}
       </label>
 
@@ -46,6 +46,11 @@ import { DynamicComponent } from '../rendering/dynamic-component';
       display: block;
       flex: var(--weight);
       width: 100%;
+    }
+
+    .a2ui-slider-label {
+      display: block;
+      margin-bottom: 8px;
     }
 
     input {

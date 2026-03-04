@@ -46,6 +46,13 @@ import { Renderer } from '../rendering/renderer';
       overflow-y: hidden;
       scrollbar-width: none;
     }
+
+    .a2ui-list-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
   `,
   template: `
     <section [class]="theme.components.List" [style]="theme.additionalStyles?.List">

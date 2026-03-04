@@ -28,9 +28,10 @@ import * as Types from '@a2ui/web_core/types/types';
     @let selectedIndex = this.selectedIndex();
 
     <section [class]="theme.components.Tabs.container" [style]="theme.additionalStyles?.Tabs">
-      <div [class]="theme.components.Tabs.element">
+      <div class="a2ui-tabs-container" [class]="theme.components.Tabs.element">
         @for (tab of tabs; track tab) {
           <button
+            class="a2ui-tab-button"
             (click)="this.selectedIndex.set($index)"
             [disabled]="selectedIndex === $index"
             [class]="theme.components.Tabs.controls.all"
@@ -53,6 +54,24 @@ import * as Types from '@a2ui/web_core/types/types';
       display: block;
       flex: var(--weight);
       width: 100%;
+    }
+
+    .a2ui-tabs-container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .a2ui-tab-button {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
     }
   `,
 })
