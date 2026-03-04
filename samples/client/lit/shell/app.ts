@@ -289,8 +289,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
     // Load config from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const appKey = urlParams.get("app") || "contacts";
-    this.config = configs[appKey] || configs.contacts;
+    const appKey = urlParams.get("app");
+    this.config = (appKey && configs[appKey]) || configs.contacts;
 
     // Apply the theme directly, which will use the Lit context.
     if (this.config.theme) {
