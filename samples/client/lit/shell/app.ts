@@ -71,7 +71,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #lastMessages: v0_8.Types.ServerToClientMessage[] = [];
 
   @state()
-  accessor config: AppConfig = configs.restaurant;
+  accessor config: AppConfig = configs.contacts;
 
   @state()
   accessor #loadingTextIndex = 0;
@@ -289,8 +289,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
     // Load config from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const appKey = urlParams.get("app") || "restaurant";
-    this.config = configs[appKey] || configs.restaurant;
+    const appKey = urlParams.get("app");
+    this.config = (appKey && configs[appKey]) || configs.contacts;
 
     // Apply the theme directly, which will use the Lit context.
     if (this.config.theme) {
