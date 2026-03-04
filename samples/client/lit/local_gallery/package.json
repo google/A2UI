@@ -5,7 +5,7 @@
   "description": "A2UI Local Gallery (Agentless)",
   "type": "module",
   "scripts": {
-    "sync-specs": "node -e \"const fs=require('fs'); const path=require('path'); const targetDir='public/specs/v0_8/minimal/examples'; const sourceDir='../../../../specification/v0_8/json/catalogs/minimal/examples'; fs.mkdirSync(targetDir, {recursive: true}); const files=fs.readdirSync(sourceDir).filter(f=>f.endsWith('.json')); files.forEach(f=>fs.copyFileSync(path.join(sourceDir, f), path.join(targetDir, f))); const indexFiles=fs.readdirSync(targetDir).filter(f=>f.endsWith('.json') && f!=='index.json'); fs.writeFileSync(path.join(targetDir, 'index.json'), JSON.stringify(indexFiles))\"",
+    "sync-specs": "node scripts/sync-specs.js",
     "dev": "npm run sync-specs && vite",
     "build": "npm run sync-specs && tsc && vite build",
     "serve": "vite preview"
