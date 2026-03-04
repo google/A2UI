@@ -56,7 +56,6 @@
           "value": {
             "path": "/email"
           },
-          "placeholder": "Email address",
           "label": "Email"
         },
         {
@@ -65,7 +64,6 @@
           "value": {
             "path": "/password"
           },
-          "placeholder": "Password",
           "label": "Password",
           "variant": "obscured"
         },

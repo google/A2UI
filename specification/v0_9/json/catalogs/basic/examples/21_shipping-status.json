@@ -144,7 +144,7 @@
         {
           "id": "step4-icon",
           "component": "Icon",
-          "name": "circle"
+          "name": "check"
         },
         {
           "id": "step4-text",

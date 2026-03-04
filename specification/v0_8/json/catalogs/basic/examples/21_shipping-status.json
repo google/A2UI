@@ -218,7 +218,7 @@
           "component": {
             "Icon": {
               "name": {
-                "literalString": "circle"
+                "literalString": "check"
               }
             }
           }

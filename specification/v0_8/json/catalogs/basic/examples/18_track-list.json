@@ -44,7 +44,7 @@
           "component": {
             "Icon": {
               "name": {
-                "literalString": "play"
+                "literalString": "arrowForward"
               }
             }
           }

@@ -82,7 +82,7 @@
               "value": {
                 "path": "/progress"
               },
-              "max": 1
+              "maxValue": 1
             }
           }
         },
