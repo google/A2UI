@@ -127,7 +127,84 @@ describe('MessageProcessor', () => {
       createSurface: { surfaceId: 's2', catalogId: 'test-catalog' }
     }]);
     assert.strictEqual(created, null);
-    
+
     sub2.unsubscribe();
+  });
+  it('warns and ignores message with multiple update types', (t) => {
+    const warn = t.mock.method(console, 'warn');
+    processor.processMessages([{
+      createSurface: { surfaceId: 's1', catalogId: 'test-catalog' }
+    }]);
+
+    processor.processMessages([{
+      updateComponents: { surfaceId: 's1', components: [] },
+      updateDataModel: { surfaceId: 's1', path: '/', value: {} }
+    } as any]);
+
+    assert.strictEqual(warn.mock.callCount(), 1);
+    assert.match(warn.mock.calls[0].arguments[0], /Message contains multiple update types/);
+  });
+
+  it('warns when creating component without type', (t) => {
+    const warn = t.mock.method(console, 'warn');
+    processor.processMessages([{
+      createSurface: { surfaceId: 's1', catalogId: 'test-catalog' }
+    }]);
+
+    processor.processMessages([{
+      updateComponents: {
+        surfaceId: 's1',
+        components: [{ id: 'comp1', label: 'No Type' } as any]
+      }
+    }]);
+
+    assert.strictEqual(warn.mock.callCount(), 1);
+    assert.match(warn.mock.calls[0].arguments[0], /Cannot create component comp1 without a type/);
+    const surface = processor.model.getSurface('s1');
+    assert.strictEqual(surface?.componentsModel.get('comp1'), undefined);
+  });
+
+  it('recreates component when type changes', () => {
+    processor.processMessages([{
+      createSurface: { surfaceId: 's1', catalogId: 'test-catalog' }
+    }]);
+
+    processor.processMessages([{
+      updateComponents: {
+        surfaceId: 's1',
+        components: [{ id: 'comp1', component: 'Button', label: 'Btn' }]
+      }
+    }]);
+
+    let surface = processor.model.getSurface('s1');
+    let comp = surface?.componentsModel.get('comp1');
+    assert.strictEqual(comp?.type, 'Button');
+
+    // Change type to Label
+    processor.processMessages([{
+      updateComponents: {
+        surfaceId: 's1',
+        components: [{ id: 'comp1', component: 'Label', text: 'Lbl' }]
+      }
+    }]);
+
+    surface = processor.model.getSurface('s1');
+    comp = surface?.componentsModel.get('comp1');
+    assert.strictEqual(comp?.type, 'Label');
+    assert.strictEqual(comp?.properties.text, 'Lbl');
+    assert.strictEqual(comp?.properties.label, undefined);
+  });
+
+  it('getData and setData interact with data model', () => {
+    processor.processMessages([{
+      createSurface: { surfaceId: 's1', catalogId: 'test-catalog' }
+    }]);
+
+    processor.setData({ id: 'comp1' }, '/test', 'value', 's1');
+    assert.strictEqual(processor.getData({ id: 'comp1' }, '/test', 's1'), 'value');
+
+    // Test without surfaceId (should return undefined/do nothing)
+    processor.setData({ id: 'comp1' }, '/test2', 'value');
+    assert.strictEqual(processor.getData({ id: 'comp1' }, '/test2'), undefined);
   });
 });

@@ -63,6 +63,10 @@ export class ExpressionEvaluator {
     this.functions.set(name, impl);
   }
 
+  getFunction(name: string): FunctionImplementation | undefined {
+    return this.functions.get(name);
+  }
+
   evaluate(expression: unknown, context: EvaluationContext): unknown {
     if (expression === null || expression === undefined) {
       return expression;
