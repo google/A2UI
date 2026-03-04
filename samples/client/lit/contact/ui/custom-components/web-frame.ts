@@ -174,7 +174,24 @@ export class WebFrame extends Root {
   }
 
   #onMessage = (event: MessageEvent) => {
-    // In production, verify event.origin matches this.src origin (if not opaque).
+    // SECURITY 1: Enforce that the message physically originated from our embedded iframe
+    if (event.source !== this.iframe?.contentWindow) return;
+
+    // SECURITY 2: Defense-in-depth cross-origin validation
+    let expectedOrigin = "null"; // Default for srcdoc (sandboxed without allow-same-origin)
+    if (!this.html && this.url) {
+      try {
+        expectedOrigin = new URL(this.url, window.location.href).origin;
+      } catch {
+        // Fallback for invalid URLs
+      }
+    }
+
+    if (expectedOrigin !== "null" && event.origin !== expectedOrigin) {
+      console.warn(`[WebFrame] Blocked postMessage from unexpected origin: ${event.origin}`);
+      return;
+    }
+
     const data = event.data;
 
     // Spec Protocol: { type: 'a2ui_action', action: '...', data: ... }

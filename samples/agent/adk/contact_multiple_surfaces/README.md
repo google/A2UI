@@ -22,11 +22,19 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
    echo "GEMINI_API_KEY=your_api_key_here" > .env
    ```
 
-3. Run the server:
+3. You will need two terminal tabs open in this directory to run both the persistent MCP Server and the A2UI Agent backend:
 
+   **Terminal 1 (Floor Plan MCP Server):**
+   ```bash
+   uv run floor_plan_server.py
+   ```
+   *This hosts the custom `ui://` resources and the `chart_node_click` tools.*
+
+   **Terminal 2 (Main A2UI Agent):**
    ```bash
    uv run .
    ```
+   *This connects to the backend MCP Server and orchestrates the GenUI surface.*
 
 
 ## Disclaimer
