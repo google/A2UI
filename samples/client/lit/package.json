@@ -13,7 +13,6 @@
     "serve:agent:orchestrator": "cd ../../agent/adk/orchestrator && uv run .",
     "serve:shell": "cd shell && npm run dev",
     "build:renderer": "cd ../../../renderers && for dir in 'web_core' 'markdown/markdown-it' 'lit'; do (cd \"$dir\" && npm install && npm run build); done",
-    "demo:all": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,CONT1\" -c \"magenta,green\" \"npm run serve:shell\" \"npm run serve:agent:contact_lookup\"",
     "demo:contact": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,CONT1\" -c \"magenta,green\" \"npm run serve:shell\" \"npm run serve:agent:contact_lookup\"",
     "demo:rizzcharts": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,RIZZ\" -c \"magenta,yellow\" \"npm run serve:shell\" \"npm run serve:agent:rizzcharts\"",
     "demo:orchestrator": "npm install && npm run build:renderer && concurrently -k -n \"SHELL,ORCH\" -c \"magenta,cyan\" \"npm run serve:shell\" \"npm run serve:agent:orchestrator\""
