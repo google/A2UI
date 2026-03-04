@@ -61,6 +61,7 @@ export const DEFAULT_CATALOG: Catalog = {
       return [
         inputBinding('url', () => properties.url),
         inputBinding('usageHint', () => properties.usageHint),
+        inputBinding('altText', () => properties.altText ?? null),
       ];
     },
   },
