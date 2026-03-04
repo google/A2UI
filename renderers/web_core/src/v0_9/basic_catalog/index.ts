@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-export * from "./functions/basic_functions.js";
 export * from "./expressions/expression_evaluator.js";
 export * from "./expressions/expression_parser.js";
+export * from "./functions/basic_functions.js";
