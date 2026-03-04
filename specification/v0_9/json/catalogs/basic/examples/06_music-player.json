@@ -106,14 +106,14 @@
           "justify": "center"
         },
         {
-          "id": "prev-btn-text",
-          "component": "Text",
-          "text": "⏮"
+          "id": "prev-btn-icon",
+          "component": "Icon",
+          "name": "skipPrevious"
         },
         {
           "id": "prev-btn",
           "component": "Button",
-          "child": "prev-btn-text",
+          "child": "prev-btn-icon",
           "action": {
             "event": {
               "name": "previous",
@@ -122,16 +122,16 @@
           }
         },
         {
-          "id": "play-btn-text",
-          "component": "Text",
-          "text": {
+          "id": "play-btn-icon",
+          "component": "Icon",
+          "name": {
             "path": "/playIcon"
           }
         },
         {
           "id": "play-btn",
           "component": "Button",
-          "child": "play-btn-text",
+          "child": "play-btn-icon",
           "action": {
             "event": {
               "name": "playPause",
@@ -140,14 +140,14 @@
           }
         },
         {
-          "id": "next-btn-text",
-          "component": "Text",
-          "text": "⏭"
+          "id": "next-btn-icon",
+          "component": "Icon",
+          "name": "skipNext"
         },
         {
           "id": "next-btn",
           "component": "Button",
-          "child": "next-btn-text",
+          "child": "next-btn-icon",
           "action": {
             "event": {
               "name": "next",
@@ -170,7 +170,7 @@
         "progress": 0.45,
         "currentTime": "1:48",
         "totalTime": "4:22",
-        "playIcon": "⏸"
+        "playIcon": "pause"
       }
     }
   }

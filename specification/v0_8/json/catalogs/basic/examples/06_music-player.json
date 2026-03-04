@@ -138,11 +138,11 @@
           }
         },
         {
-          "id": "prev-btn-text",
+          "id": "prev-btn-icon",
           "component": {
-            "Text": {
-              "text": {
-                "literalString": "\u23ee"
+            "Icon": {
+              "name": {
+                "literalString": "arrowBack"
               }
             }
           }
@@ -151,7 +151,7 @@
           "id": "prev-btn",
           "component": {
             "Button": {
-              "child": "prev-btn-text",
+              "child": "prev-btn-icon",
               "action": {
                 "name": "previous",
                 "context": []
@@ -160,10 +160,10 @@
           }
         },
         {
-          "id": "play-btn-text",
+          "id": "play-btn-icon",
           "component": {
-            "Text": {
-              "text": {
+            "Icon": {
+              "name": {
                 "path": "/playIcon"
               }
             }
@@ -173,7 +173,7 @@
           "id": "play-btn",
           "component": {
             "Button": {
-              "child": "play-btn-text",
+              "child": "play-btn-icon",
               "action": {
                 "name": "playPause",
                 "context": []
@@ -182,11 +182,11 @@
           }
         },
         {
-          "id": "next-btn-text",
+          "id": "next-btn-icon",
           "component": {
-            "Text": {
-              "text": {
-                "literalString": "\u23ed"
+            "Icon": {
+              "name": {
+                "literalString": "arrowForward"
               }
             }
           }
@@ -195,7 +195,7 @@
           "id": "next-btn",
           "component": {
             "Button": {
-              "child": "next-btn-text",
+              "child": "next-btn-icon",
               "action": {
                 "name": "next",
                 "context": []
@@ -240,7 +240,7 @@
         },
         {
           "key": "playIcon",
-          "valueString": "\u23f8"
+          "valueString": "pause"
         }
       ]
     }

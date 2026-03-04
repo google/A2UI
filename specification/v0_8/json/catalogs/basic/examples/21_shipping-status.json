@@ -282,7 +282,7 @@
         },
         {
           "key": "currentStepIcon",
-          "valueString": "local_shipping"
+          "valueString": "send"
         },
         {
           "key": "eta",

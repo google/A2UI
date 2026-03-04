@@ -307,7 +307,7 @@
         },
         {
           "key": "forecast",
-          "valueString": "[{'icon': '\u2600\ufe0f', 'temp': '74\u00b0'}, {'icon': '\u2600\ufe0f', 'temp': '76\u00b0'}, {'icon': '\u26c5', 'temp': '71\u00b0'}, {'icon': '\u2600\ufe0f', 'temp': '73\u00b0'}, {'icon': '\u2600\ufe0f', 'temp': '75\u00b0'}]"
+          "valueString": "[{\"icon\": \"\\u2600\\ufe0f\", \"temp\": \"74\\u00b0\"}, {\"icon\": \"\\u2600\\ufe0f\", \"temp\": \"76\\u00b0\"}, {\"icon\": \"\\u26c5\", \"temp\": \"71\\u00b0\"}, {\"icon\": \"\\u2600\\ufe0f\", \"temp\": \"73\\u00b0\"}, {\"icon\": \"\\u2600\\ufe0f\", \"temp\": \"75\\u00b0\"}]"
         }
       ]
     }

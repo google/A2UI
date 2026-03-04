@@ -183,7 +183,7 @@
       "surfaceId": "gallery-shipping-status",
       "value": {
         "trackingNumber": "Tracking: 1Z999AA10123456784",
-        "currentStepIcon": "local_shipping",
+        "currentStepIcon": "send",
         "eta": "Estimated delivery: Today by 8 PM"
       }
     }
