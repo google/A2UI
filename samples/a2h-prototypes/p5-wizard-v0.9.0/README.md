@@ -57,6 +57,14 @@ All fields live under `/expense/*`. The renderer accumulates values as users fil
 - **sendDataModel: true**: The entire form state ships with every event — the agent/server always has the full picture
 - **Consistent layout**: Reusing IDs like `main-col`, `actions`, `step-title` means the card structure stays stable across steps
 
+## Fixes Applied (v0.9.0 critical review)
+
+1. **Removed `_comment` fields** — violated `additionalProperties: false` on all message schemas
+2. **`MultipleChoice` → `ChoicePicker`** — `MultipleChoice` is not in the basic catalog; replaced with `ChoicePicker` using structured `{label, value}` options and `variant: "mutuallyExclusive"`
+3. **`variant: "label"` → `variant: "caption"`** — `"label"` is not in the Text variant enum (`h1–h5, caption, body`); used `caption` as the closest semantic match for field labels in review/auth steps
+4. **Data model `category: ""` → `category: []`** — `ChoicePicker.value` is a `DynamicStringList` (array), not a string
+5. **HTML renderer updated** — handles `ChoicePicker` with structured options, array values, and display of array values in review Text components
+
 ## What's Painful
 
 - **No wizard/stepper component**: There's no native `Stepper` or `Tabs` in the v0.9 catalog. Step indicator is just a Text string — no visual progress bar, no clickable breadcrumbs

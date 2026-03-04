@@ -56,9 +56,9 @@
       font-family: inherit; font-size: 0.9rem; outline: none;
     }
     .c-TextField input:focus { border-color: #1a73e8; }
-    .c-MultipleChoice { display: flex; flex-direction: column; gap: 4px; }
-    .c-MultipleChoice label.mc-label { font-size: 0.8rem; font-weight: 500; color: #5f6368; }
-    .c-MultipleChoice select {
+    .c-ChoicePicker { display: flex; flex-direction: column; gap: 4px; }
+    .c-ChoicePicker label.cp-label { font-size: 0.8rem; font-weight: 500; color: #5f6368; }
+    .c-ChoicePicker select {
       border: 1px solid #dadce0; border-radius: 8px; padding: 0.5rem;
       font-family: inherit; font-size: 0.9rem; background: #fff;
     }
@@ -133,7 +133,8 @@
 
     function resolve(val) {
       if (val && typeof val === 'object' && val.path) {
-        return deepGet(dataModel, val.path) ?? '';
+        const result = deepGet(dataModel, val.path) ?? '';
+        return Array.isArray(result) ? result.join(', ') : result;
       }
       return val;
     }
@@ -237,26 +238,28 @@
           el.appendChild(inp);
           return el;
         }
-        case 'MultipleChoice': {
+        case 'ChoicePicker': {
           const el = document.createElement('div');
-          el.className = 'c-MultipleChoice';
+          el.className = 'c-ChoicePicker';
           const lbl = document.createElement('label');
-          lbl.className = 'mc-label';
+          lbl.className = 'cp-label';
           lbl.textContent = comp.label || '';
           const sel = document.createElement('select');
           const emptyOpt = document.createElement('option');
           emptyOpt.value = '';
           emptyOpt.textContent = '— Select —';
           sel.appendChild(emptyOpt);
+          const currentVal = resolve(comp.value);
+          const selected = Array.isArray(currentVal) ? currentVal : (currentVal ? [currentVal] : []);
           for (const opt of (comp.options || [])) {
             const o = document.createElement('option');
-            o.value = opt; o.textContent = opt;
-            if (resolve(comp.value) === opt) o.selected = true;
+            o.value = opt.value; o.textContent = opt.label;
+            if (selected.includes(opt.value)) o.selected = true;
             sel.appendChild(o);
           }
           if (comp.value?.path) {
             sel.addEventListener('change', (e) => {
-              deepSet(dataModel, comp.value.path, e.target.value);
+              deepSet(dataModel, comp.value.path, e.target.value ? [e.target.value] : []);
               updateDataPanel();
             });
           }

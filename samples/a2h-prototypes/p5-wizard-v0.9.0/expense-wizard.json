@@ -1,6 +1,5 @@
 [
   {
-    "_comment": "Step 0: Create surface + initial data model",
     "version": "v0.9",
     "createSurface": {
       "surfaceId": "a2h-expense-wizard-001",
@@ -15,7 +14,7 @@
       "value": {
         "expense": {
           "date": "",
-          "category": "",
+          "category": [],
           "amount": "",
           "description": "",
           "receiptNumber": "",
@@ -32,7 +31,6 @@
     }
   },
   {
-    "_comment": "Step 1 (COLLECT): Expense basics",
     "version": "v0.9",
     "updateComponents": {
       "surfaceId": "a2h-expense-wizard-001",
@@ -48,9 +46,17 @@
         { "id": "step-desc", "component": "Text", "text": "Enter the basic details for your expense report.", "variant": "body" },
         { "id": "field-date", "component": "TextField", "label": "Date (YYYY-MM-DD)", "value": { "path": "/expense/date" } },
         {
-          "id": "field-category", "component": "MultipleChoice", "label": "Category",
+          "id": "field-category", "component": "ChoicePicker", "label": "Category",
           "value": { "path": "/expense/category" },
-          "options": ["Travel", "Meals", "Equipment", "Software", "Office Supplies", "Other"]
+          "variant": "mutuallyExclusive",
+          "options": [
+            { "label": "Travel", "value": "Travel" },
+            { "label": "Meals", "value": "Meals" },
+            { "label": "Equipment", "value": "Equipment" },
+            { "label": "Software", "value": "Software" },
+            { "label": "Office Supplies", "value": "Office Supplies" },
+            { "label": "Other", "value": "Other" }
+          ]
         },
         { "id": "field-amount", "component": "TextField", "label": "Amount ($)", "value": { "path": "/expense/amount" } },
         { "id": "field-description", "component": "TextField", "label": "Description", "value": { "path": "/expense/description" } },
@@ -68,7 +74,6 @@
     }
   },
   {
-    "_comment": "Step 2 (COLLECT): Receipt details",
     "version": "v0.9",
     "updateComponents": {
       "surfaceId": "a2h-expense-wizard-001",
@@ -101,7 +106,6 @@
     }
   },
   {
-    "_comment": "Step 3 (INFORM): Review summary",
     "version": "v0.9",
     "updateComponents": {
       "surfaceId": "a2h-expense-wizard-001",
@@ -119,26 +123,26 @@
           "children": ["rev-date-row", "rev-cat-row", "rev-amount-row", "rev-desc-row", "rev-divider", "rev-receipt-row", "rev-vendor-row", "rev-notes-row"]
         },
         { "id": "rev-date-row", "component": "Row", "children": ["rev-date-label", "rev-date-val"] },
-        { "id": "rev-date-label", "component": "Text", "text": "Date:", "variant": "label" },
+        { "id": "rev-date-label", "component": "Text", "text": "Date:", "variant": "caption" },
         { "id": "rev-date-val", "component": "Text", "text": { "path": "/expense/date" }, "variant": "body" },
         { "id": "rev-cat-row", "component": "Row", "children": ["rev-cat-label", "rev-cat-val"] },
-        { "id": "rev-cat-label", "component": "Text", "text": "Category:", "variant": "label" },
+        { "id": "rev-cat-label", "component": "Text", "text": "Category:", "variant": "caption" },
         { "id": "rev-cat-val", "component": "Text", "text": { "path": "/expense/category" }, "variant": "body" },
         { "id": "rev-amount-row", "component": "Row", "children": ["rev-amount-label", "rev-amount-val"] },
-        { "id": "rev-amount-label", "component": "Text", "text": "Amount:", "variant": "label" },
+        { "id": "rev-amount-label", "component": "Text", "text": "Amount:", "variant": "caption" },
         { "id": "rev-amount-val", "component": "Text", "text": { "path": "/expense/amount" }, "variant": "body" },
         { "id": "rev-desc-row", "component": "Row", "children": ["rev-desc-label", "rev-desc-val"] },
-        { "id": "rev-desc-label", "component": "Text", "text": "Description:", "variant": "label" },
+        { "id": "rev-desc-label", "component": "Text", "text": "Description:", "variant": "caption" },
         { "id": "rev-desc-val", "component": "Text", "text": { "path": "/expense/description" }, "variant": "body" },
         { "id": "rev-divider", "component": "Divider" },
         { "id": "rev-receipt-row", "component": "Row", "children": ["rev-receipt-label", "rev-receipt-val"] },
-        { "id": "rev-receipt-label", "component": "Text", "text": "Receipt #:", "variant": "label" },
+        { "id": "rev-receipt-label", "component": "Text", "text": "Receipt #:", "variant": "caption" },
         { "id": "rev-receipt-val", "component": "Text", "text": { "path": "/expense/receiptNumber" }, "variant": "body" },
         { "id": "rev-vendor-row", "component": "Row", "children": ["rev-vendor-label", "rev-vendor-val"] },
-        { "id": "rev-vendor-label", "component": "Text", "text": "Vendor:", "variant": "label" },
+        { "id": "rev-vendor-label", "component": "Text", "text": "Vendor:", "variant": "caption" },
         { "id": "rev-vendor-val", "component": "Text", "text": { "path": "/expense/vendor" }, "variant": "body" },
         { "id": "rev-notes-row", "component": "Row", "children": ["rev-notes-label", "rev-notes-val"] },
-        { "id": "rev-notes-label", "component": "Text", "text": "Notes:", "variant": "label" },
+        { "id": "rev-notes-label", "component": "Text", "text": "Notes:", "variant": "caption" },
         { "id": "rev-notes-val", "component": "Text", "text": { "path": "/expense/notes" }, "variant": "body" },
         {
           "id": "actions", "component": "Row", "justify": "end",
@@ -158,7 +162,6 @@
     }
   },
   {
-    "_comment": "Step 4 (AUTHORIZE): Final approval",
     "version": "v0.9",
     "updateComponents": {
       "surfaceId": "a2h-expense-wizard-001",
@@ -178,13 +181,13 @@
           "children": ["auth-amount-row", "auth-cat-row", "auth-vendor-row"]
         },
         { "id": "auth-amount-row", "component": "Row", "children": ["auth-amount-label", "auth-amount-val"] },
-        { "id": "auth-amount-label", "component": "Text", "text": "Amount:", "variant": "label" },
+        { "id": "auth-amount-label", "component": "Text", "text": "Amount:", "variant": "caption" },
         { "id": "auth-amount-val", "component": "Text", "text": { "path": "/expense/amount" }, "variant": "h3" },
         { "id": "auth-cat-row", "component": "Row", "children": ["auth-cat-label", "auth-cat-val"] },
-        { "id": "auth-cat-label", "component": "Text", "text": "Category:", "variant": "label" },
+        { "id": "auth-cat-label", "component": "Text", "text": "Category:", "variant": "caption" },
         { "id": "auth-cat-val", "component": "Text", "text": { "path": "/expense/category" }, "variant": "body" },
         { "id": "auth-vendor-row", "component": "Row", "children": ["auth-vendor-label", "auth-vendor-val"] },
-        { "id": "auth-vendor-label", "component": "Text", "text": "Vendor:", "variant": "label" },
+        { "id": "auth-vendor-label", "component": "Text", "text": "Vendor:", "variant": "caption" },
         { "id": "auth-vendor-val", "component": "Text", "text": { "path": "/expense/vendor" }, "variant": "body" },
         { "id": "policy-note", "component": "Text", "text": "⚠️ Expenses over $500 require manager co-approval.", "variant": "caption" },
         {
