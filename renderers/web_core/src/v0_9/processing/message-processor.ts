@@ -30,6 +30,8 @@ export class MessageProcessor<T extends ComponentApi> {
   readonly model: SurfaceGroupModel<T>;
 
   /**
+   * Creates a new message processor.
+   *
    * @param catalogs A list of available catalogs.
    * @param actionHandler A global handler for actions from all surfaces.
    */
@@ -58,7 +60,7 @@ export class MessageProcessor<T extends ComponentApi> {
   }
 
   /**
-   * Processing a list of messages.
+   * Processes a list of messages.
    *
    * @param messages The messages to process.
    */

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { DataModel } from './data-model.js';
-import { Catalog, ComponentApi } from '../catalog/types.js';
-import { SurfaceComponentsModel } from './surface-components-model.js';
-import { EventEmitter, EventSource } from '../common/events.js';
+import { DataModel } from "./data-model.js";
+import { Catalog, ComponentApi } from "../catalog/types.js";
+import { SurfaceComponentsModel } from "./surface-components-model.js";
+import { EventEmitter, EventSource } from "../common/events.js";
 
+/** A function that listens for actions emitted from a surface. */
 export type ActionListener = (action: any) => void | Promise<void>;
 
 /**
@@ -26,7 +27,9 @@ export type ActionListener = (action: any) => void | Promise<void>;
  * @template T The concrete type of the ComponentApi.
  */
 export class SurfaceModel<T extends ComponentApi> {
+  /** The data model for this surface. */
   readonly dataModel: DataModel;
+  /** The collection of component models for this surface. */
   readonly componentsModel: SurfaceComponentsModel;
 
   private readonly _onAction = new EventEmitter<any>();
@@ -44,7 +47,7 @@ export class SurfaceModel<T extends ComponentApi> {
   constructor(
     readonly id: string,
     readonly catalog: Catalog<T>,
-    readonly theme: any = {}
+    readonly theme: any = {},
   ) {
     this.dataModel = new DataModel({});
     this.componentsModel = new SurfaceComponentsModel();

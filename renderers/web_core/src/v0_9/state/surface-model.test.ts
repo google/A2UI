@@ -14,62 +14,70 @@
  * limitations under the License.
  */
 
-import assert from 'node:assert';
-import { test, describe, it, beforeEach, mock } from 'node:test';
-import { SurfaceModel } from './surface-model.js';
-import { Catalog, ComponentApi } from '../catalog/types.js';
-import { ComponentModel } from './component-model.js';
-import { ComponentContext } from '../rendering/component-context.js';
+import assert from "node:assert";
+import { test, describe, it, beforeEach, mock } from "node:test";
+import { SurfaceModel } from "./surface-model.js";
+import { Catalog, ComponentApi } from "../catalog/types.js";
+import { ComponentModel } from "./component-model.js";
+import { ComponentContext } from "../rendering/component-context.js";
 
-describe('SurfaceModel', () => {
+describe("SurfaceModel", () => {
   let surface: SurfaceModel<ComponentApi>;
   let catalog: Catalog<ComponentApi>;
   let actions: any[] = [];
 
   beforeEach(() => {
     actions = [];
-    catalog = new Catalog('test-catalog', []);
-    surface = new SurfaceModel<ComponentApi>('surface-1', catalog, {});
+    catalog = new Catalog("test-catalog", []);
+    surface = new SurfaceModel<ComponentApi>("surface-1", catalog, {});
     surface.onAction.subscribe(async (action) => {
       actions.push(action);
     });
   });
 
-  it('initializes with empty data model', () => {
-    assert.deepStrictEqual(surface.dataModel.get('/'), {});
+  it("initializes with empty data model", () => {
+    assert.deepStrictEqual(surface.dataModel.get("/"), {});
   });
 
-  it('exposes components model', () => {
-    surface.componentsModel.addComponent(new ComponentModel('c1', 'Button', {}));
-    assert.ok(surface.componentsModel.get('c1'));
+  it("exposes components model", () => {
+    surface.componentsModel.addComponent(
+      new ComponentModel("c1", "Button", {}),
+    );
+    assert.ok(surface.componentsModel.get("c1"));
   });
 
-  it('dispatches actions', async () => {
-    await surface.dispatchAction({ type: 'click' });
+  it("dispatches actions", async () => {
+    await surface.dispatchAction({ type: "click" });
     assert.strictEqual(actions.length, 1);
-    assert.strictEqual(actions[0].type, 'click');
+    assert.strictEqual(actions[0].type, "click");
   });
 
-  it('creates a component context', () => {
-    surface.componentsModel.addComponent(new ComponentModel('root', 'Box', {}));
-    const ctx = new ComponentContext(surface, 'root', '/mydata');
+  it("creates a component context", () => {
+    surface.componentsModel.addComponent(new ComponentModel("root", "Box", {}));
+    const ctx = new ComponentContext(surface, "root", "/mydata");
     assert.ok(ctx);
-    assert.strictEqual(ctx.dataContext.path, '/mydata');
+    assert.strictEqual(ctx.dataContext.path, "/mydata");
   });
 
-  it('disposes resources', () => {
+  it("disposes resources", () => {
     // Verify that the dispose method clears subscriptions and internal state.
     // Ideally, we would need to mock dependencies to verify deep disposal,
     // but here we ensure that the surface's own emitters are cleared.
 
     let actionReceived = false;
-    const sub = surface.onAction.subscribe(() => { actionReceived = true; });
+    const sub = surface.onAction.subscribe(() => {
+      actionReceived = true;
+    });
 
     surface.dispose();
 
     // After dispose, no more actions should be emitted.
     // The EventEmitter.dispose method clears all listeners.
-    surface.dispatchAction({ type: 'click' });
-    assert.strictEqual(actionReceived, false, 'Should not receive actions after dispose');
+    surface.dispatchAction({ type: "click" });
+    assert.strictEqual(
+      actionReceived,
+      false,
+      "Should not receive actions after dispose",
+    );
   });
 });

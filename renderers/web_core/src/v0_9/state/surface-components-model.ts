@@ -34,7 +34,9 @@ export class SurfaceComponentsModel {
   /**
    * Retrieves a component by its ID.
    *
+   *
    * @param id The ID of the component to retrieve.
+   * @returns The component model, or undefined if not found.
    */
   get(id: string): ComponentModel | undefined {
     return this.components.get(id);

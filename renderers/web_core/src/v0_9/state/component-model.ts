@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import { EventEmitter, EventSource } from '../common/events.js';
+import { EventEmitter, EventSource } from "../common/events.js";
 
+/**
+ * Represents the state model for an individual UI component.
+ */
 export class ComponentModel {
   private _properties: Record<string, any>;
   private readonly _onUpdated = new EventEmitter<ComponentModel>();

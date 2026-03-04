@@ -16,10 +16,11 @@
 
 /** Standard cleanup interface returned by all subscriptions. */
 export interface Subscription {
+  /** Unsubscribes from the event source. */
   unsubscribe(): void;
 }
 
-/** The listener function signature. */
+/** A function that handles emitted events. */
 export type EventListener<T> = (data: T) => void | Promise<void>;
 
 /**
@@ -27,6 +28,12 @@ export type EventListener<T> = (data: T) => void | Promise<void>;
  * Allows ONLY subscribing to events.
  */
 export interface EventSource<T> {
+  /**
+   * Subscribes to the event.
+   *
+   * @param listener The listener function to call when the event is emitted.
+   * @returns A subscription object that can be used to unsubscribe.
+   */
   subscribe(listener: EventListener<T>): Subscription;
 }
 
@@ -46,7 +53,7 @@ export class EventEmitter<T> implements EventSource<T> {
   subscribe(listener: EventListener<T>): Subscription {
     this.listeners.add(listener);
     return {
-      unsubscribe: () => this.listeners.delete(listener)
+      unsubscribe: () => this.listeners.delete(listener),
     };
   }
 
@@ -60,7 +67,7 @@ export class EventEmitter<T> implements EventSource<T> {
       try {
         await listener(data);
       } catch (e) {
-        console.error('EventEmitter error:', e);
+        console.error("EventEmitter error:", e);
       }
     }
   }

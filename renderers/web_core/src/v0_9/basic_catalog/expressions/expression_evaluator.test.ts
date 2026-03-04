@@ -14,43 +14,54 @@
  * limitations under the License.
  */
 
-import { describe, it, beforeEach } from 'node:test';
-import * as assert from 'node:assert';
-import { ExpressionEvaluator, EvaluationContext } from './expression_evaluator.js';
+import { describe, it, beforeEach } from "node:test";
+import * as assert from "node:assert";
+import {
+  ExpressionEvaluator,
+  EvaluationContext,
+} from "./expression_evaluator.js";
+import { DataModel } from "../../state/data-model.js";
+import { DataContext } from "../../rendering/data-context.js";
 
-describe('ExpressionEvaluator', () => {
+describe("ExpressionEvaluator", () => {
   let evaluator: ExpressionEvaluator;
   let context: EvaluationContext;
-  let dataModel: Map<string, any>;
+  let dataModel: DataModel;
 
   beforeEach(() => {
     evaluator = new ExpressionEvaluator();
-    dataModel = new Map();
-    dataModel.set('user', { name: 'Alice', age: 30 });
-    dataModel.set('items', ['a', 'b']);
+    dataModel = new DataModel({
+      user: { name: "Alice", age: 30 },
+      items: ["a", "b"],
+    });
 
-    context = {
-      resolveData: (path: string) => {
-        if (path === '/user/name') return dataModel.get('user').name;
-        if (path === '/user/age') return dataModel.get('user').age;
-        if (path === '/items') return dataModel.get('items');
-        return undefined;
-      },
-    };
+    context = new DataContext(dataModel, "/", (name, args) => {
+      const fn = evaluator.getFunction(name);
+      return fn ? fn(args, context) : undefined;
+    });
   });
 
-  it('evaluates primitives as themselves', () => {
+  it("evaluates primitives as themselves", () => {
     assert.strictEqual(evaluator.evaluate(123, context), 123);
-    assert.strictEqual(evaluator.evaluate('hello', context), 'hello');
+    assert.strictEqual(evaluator.evaluate("hello", context), "hello");
     assert.strictEqual(evaluator.evaluate(true, context), true);
     assert.strictEqual(evaluator.evaluate(null, context), null);
   });
 
-  it('evaluates data bindings', () => {
-    assert.strictEqual(evaluator.evaluate({ path: '/user/name' }, context), 'Alice');
-    assert.strictEqual(evaluator.evaluate({ path: '/user/age' }, context), 30);
-    assert.deepStrictEqual(evaluator.evaluate({ path: '/items' }, context), ['a', 'b']);
-    assert.strictEqual(evaluator.evaluate({ path: '/nonexistent' }, context), undefined);
+  it("evaluates data bindings", () => {
+    assert.strictEqual(
+      evaluator.evaluate({ path: "/user/name" }, context),
+      "Alice",
+    );
+    assert.strictEqual(evaluator.evaluate({ path: "/user/age" }, context), 30);
+    assert.deepStrictEqual(evaluator.evaluate({ path: "/items" }, context), [
+      "a",
+      "b",
+    ]);
+    assert.strictEqual(
+      evaluator.evaluate({ path: "/nonexistent" }, context),
+      undefined,
+    );
   });
 
   it("evaluates function calls", () => {
@@ -98,21 +109,30 @@ describe('ExpressionEvaluator', () => {
     });
   });
 
-  it('evaluates dependent function calls (nested calls)', () => {
-    evaluator.registerFunction('add', (args) => (args['a'] as number) + (args['b'] as number));
-    evaluator.registerFunction('multiply', (args) => (args['a'] as number) * (args['b'] as number));
+  it("evaluates dependent function calls (nested calls)", () => {
+    evaluator.registerFunction(
+      "add",
+      (args) => (args["a"] as number) + (args["b"] as number),
+    );
+    evaluator.registerFunction(
+      "multiply",
+      (args) => (args["a"] as number) * (args["b"] as number),
+    );
 
     // multiply(add(2, 3), 4) = (2+3)*4 = 20
-    const result = evaluator.evaluate({
-      call: 'multiply',
-      args: {
-        a: {
-          call: 'add',
-          args: { a: 2, b: 3 }
+    const result = evaluator.evaluate(
+      {
+        call: "multiply",
+        args: {
+          a: {
+            call: "add",
+            args: { a: 2, b: 3 },
+          },
+          b: 4,
         },
-        b: 4
-      }
-    }, context);
+      },
+      context,
+    );
 
     assert.strictEqual(result, 20);
   });

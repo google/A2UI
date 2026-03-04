@@ -14,22 +14,37 @@
  * limitations under the License.
  */
 
-import { DataModel, DataSubscription } from '../state/data-model.js';
-import type { DynamicValue, DataBinding, FunctionCall } from '../schema/common-types.js';
+import { Observable, of, combineLatest, isObservable } from "rxjs";
+import { map, switchMap, skip } from "rxjs/operators";
+import { DataModel, DataSubscription } from "../state/data-model.js";
+import type {
+  DynamicValue,
+  DataBinding,
+  FunctionCall,
+} from "../schema/common-types.js";
+
+/** A function that invokes a catalog function by name and returns its result synchronously or as an Observable. */
+export type FunctionInvoker = (
+  name: string,
+  args: Record<string, any>,
+  context: DataContext,
+) => any;
 
 /**
- * A contextual view of the main DataModel, serving as the unified interface for resolving 
+ * A contextual view of the main DataModel, serving as the unified interface for resolving
  * DynamicValues (literals, data paths, function calls) within a specific scope.
  */
 export class DataContext {
   /**
    * @param dataModel The shared DataModel instance.
    * @param path The absolute path this context is currently pointing to.
+   * @param functionInvoker An optional invoker for resolving function calls against a catalog.
    */
   constructor(
     readonly dataModel: DataModel,
-    readonly path: string
-  ) { }
+    readonly path: string,
+    readonly functionInvoker?: FunctionInvoker,
+  ) {}
 
   /**
    * Updates the data model at the specified path, resolving it against the current context.
@@ -46,21 +61,36 @@ export class DataContext {
    */
   resolveDynamicValue<V>(value: DynamicValue): V {
     // 1. Literal Check
-    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
       // TODO: Define error handling when V doesn't match
       return value as V;
     }
 
     // 2. Path Check: { path: "..." }
-    if ('path' in value) {
+    if ("path" in value) {
       const absolutePath = this.resolvePath((value as DataBinding).path);
       return this.dataModel.get(absolutePath);
     }
 
     // 3. Function Call: { call: "...", args: ... }
-    if ('call' in value) {
-      // TODO: Implement function calls (expected for now)
-      // For now, return as is or undefined
+    if ("call" in value) {
+      const call = value as FunctionCall;
+      const args: Record<string, any> = {};
+
+      // Resolve arguments recursively
+      for (const [key, argVal] of Object.entries(call.args)) {
+        args[key] = this.resolveDynamicValue(argVal);
+      }
+
+      // Evaluate function
+      // Note: sync resolution of async functions returns the Observable itself
+      if (!this.functionInvoker) {
+        console.warn(`Function not found: ${call.call}`);
+        return null as unknown as V;
+      }
+
+      const result = this.functionInvoker(call.call, args, this);
+      return result as V;
     }
 
     // TODO: Define error handling when V doesn't match
@@ -71,55 +101,113 @@ export class DataContext {
    * Subscribes to changes in a DynamicValue.
    * Returns a Subscription object that provides the current value and allows listening for updates.
    */
-  subscribeDynamicValue<V>(value: DynamicValue, onChange: (value: V | undefined) => void): DataSubscription<V> {
-    // 1. Literal: Return a static subscription
-    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-      return {
-        // TODO: Define error handling when V doesn't match
-        value: value as V,
-        unsubscribe: () => { }
-      };
-    }
+  subscribeDynamicValue<V>(
+    value: DynamicValue,
+    onChange: (value: V | undefined) => void,
+  ): DataSubscription<V> {
+    let initialValue: V | undefined;
+    let isSync = true;
 
-    // 2. Path Check: { path: "..." }
-    if ('path' in value) {
-      const absolutePath = this.resolvePath((value as DataBinding).path);
-      return this.dataModel.subscribe(absolutePath, onChange);
-    }
+    const observable = this.toObservable<V>(value);
+    const sub = observable.subscribe((val) => {
+      if (isSync) {
+        initialValue = val;
+      } else {
+        onChange(val);
+      }
+    });
+    isSync = false;
 
-    // 3. Function Call (TODO)
     return {
-      // TODO: Define error handling when V doesn't match
-      value: value as V,
-      unsubscribe: () => { }
+      value: initialValue as unknown as V,
+      unsubscribe: () => sub.unsubscribe(),
     };
   }
 
+  private toObservable<V>(value: DynamicValue): Observable<V> {
+    // 1. Literal
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      return of(value as V);
+    }
+
+    // 2. Path Check
+    if ("path" in value) {
+      const absolutePath = this.resolvePath((value as DataBinding).path);
+      // Create an observable from the data model subscription
+      return new Observable<V>((subscriber) => {
+        const sub = this.dataModel.subscribe<V>(absolutePath, (val) => {
+          subscriber.next(val as V);
+        });
+        // Emit initial value immediately
+        subscriber.next(this.dataModel.get(absolutePath));
+        return () => sub.unsubscribe();
+      });
+    }
+
+    // 3. Function Call
+    if ("call" in value) {
+      const call = value as FunctionCall;
+      const argObservables: Record<string, Observable<any>> = {};
+
+      for (const [key, argVal] of Object.entries(call.args)) {
+        argObservables[key] = this.toObservable(argVal);
+      }
+
+      // If no args, just call directly
+      if (Object.keys(argObservables).length === 0) {
+        return this.evaluateFunctionReactive(call.call, {});
+      }
+
+      return combineLatest(argObservables).pipe(
+        switchMap((args) => this.evaluateFunctionReactive<V>(call.call, args)),
+      );
+    }
+
+    return of(value as V);
+  }
+
+  private evaluateFunctionReactive<V>(
+    name: string,
+    args: Record<string, any>,
+  ): Observable<V> {
+    if (!this.functionInvoker) {
+      console.warn(`Function not found: ${name}`);
+      return of(null as unknown as V);
+    }
+    const result = this.functionInvoker(name, args, this);
+
+    if (isObservable(result)) {
+      return result as Observable<V>;
+    }
+    return of(result as V);
+  }
+
   /**
-   * Creates a new, nested DataContext for a child component.
-   * Used by list/template components for their children.
+   * Creates a nested data context at the given relative path.
+   *
+   * @param relativePath The path relative to the current context.
    */
   nested(relativePath: string): DataContext {
     const newPath = this.resolvePath(relativePath);
-    return new DataContext(this.dataModel, newPath);
+    return new DataContext(this.dataModel, newPath, this.functionInvoker);
   }
 
   private resolvePath(path: string): string {
     // Absolute path - no resolution required.
-    if (path.startsWith('/')) {
+    if (path.startsWith("/")) {
       return path;
     }
     // Handle specific cases like '.' or empty
-    if (path === '' || path === '.') {
+    if (path === "" || path === ".") {
       return this.path;
     }
 
     // Normalize current path (remove trailing slash if exists, unless root)
     let base = this.path;
-    if (base.endsWith('/') && base.length > 1) {
+    if (base.endsWith("/") && base.length > 1) {
       base = base.slice(0, -1);
     }
-    if (base === '/') base = '';
+    if (base === "/") base = "";
 
     return `${base}/${path}`;
   }

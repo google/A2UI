@@ -50,12 +50,14 @@ export function isDataBinding(value: unknown): value is Types.DataBinding {
   );
 }
 
+import { DataContext } from "../../rendering/data-context.js";
+
 /**
  * A function implementation that can be registered with the evaluator.
  */
 export type FunctionImplementation = (
   args: Record<string, unknown>,
-  context: EvaluationContext,
+  context: DataContext,
 ) => unknown;
 
 /**
@@ -68,10 +70,7 @@ export interface Parser {
 /**
  * The context in which an expression is evaluated.
  */
-export interface EvaluationContext {
-  resolveData: (path: string) => unknown;
-  parser?: Parser;
-}
+export type EvaluationContext = DataContext;
 
 /**
  * Evaluates expressions in a given context.
@@ -156,7 +155,7 @@ export class ExpressionEvaluator {
 
     // Check if it's a DataBinding (v0.9)
     if (isDataBinding(expression)) {
-      return context.resolveData(expression.path);
+      return context.resolveDynamicValue(expression as any);
     }
 
     if (Array.isArray(expression)) {

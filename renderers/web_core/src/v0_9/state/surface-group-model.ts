@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { SurfaceModel } from './surface-model.js';
-import { ComponentApi } from '../catalog/types.js';
-import { EventEmitter, EventSource, Subscription } from '../common/events.js';
+import { SurfaceModel } from "./surface-model.js";
+import { ComponentApi } from "../catalog/types.js";
+import { EventEmitter, EventSource, Subscription } from "../common/events.js";
 
 /**
  * The root state model for the A2UI system.
@@ -85,7 +85,9 @@ export class SurfaceGroupModel<T extends ComponentApi> {
   /**
    * Retrieves a surface by its ID.
    *
+   *
    * @param id The ID of the surface to retrieve.
+   * @returns The surface model, or undefined if not found.
    */
   getSurface(id: string): SurfaceModel<T> | undefined {
     return this.surfaces.get(id);

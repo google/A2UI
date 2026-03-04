@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * A definition of a UI component's API.
@@ -27,28 +27,44 @@ export interface ComponentApi {
 
   /**
    * The Zod schema describing the **properties** of this component.
-   * 
+   *
    * - MUST include catalog-specific common properties (e.g. 'weight', 'accessibility').
    * - MUST NOT include 'component' or 'id' as those are handled by the framework/envelope.
    */
   readonly schema: z.ZodType<any>;
 }
 
+/**
+ * A collection of available components and functions.
+ */
 export class Catalog<T extends ComponentApi> {
   readonly id: string;
 
-  /** 
-   * A map of available components. 
+  /**
+   * A map of available components.
    * This is readonly to encourage immutable extension patterns.
    */
   readonly components: ReadonlyMap<string, T>;
 
-  constructor(id: string, components: T[]) {
+  /**
+   * Optional map of functions provided by this catalog.
+   */
+  readonly functions?: ReadonlyMap<string, any>;
+
+  constructor(id: string, components: T[], functions?: Record<string, any>) {
     this.id = id;
     const map = new Map<string, T>();
     for (const comp of components) {
       map.set(comp.name, comp);
     }
     this.components = map;
+
+    if (functions) {
+      const funcMap = new Map<string, any>();
+      for (const [name, fn] of Object.entries(functions)) {
+        funcMap.set(name, fn);
+      }
+      this.functions = funcMap;
+    }
   }
 }

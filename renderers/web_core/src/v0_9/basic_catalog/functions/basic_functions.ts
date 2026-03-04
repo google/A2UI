@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import {
-  EvaluationContext,
-  FunctionImplementation,
-} from "../expressions/expression_evaluator.js";
+import { FunctionImplementation } from "../expressions/expression_evaluator.js";
+import { ExpressionParser } from "../expressions/expression_parser.js";
+import { ExpressionEvaluator } from "../expressions/expression_evaluator.js";
+import { DataContext } from "../../rendering/data-context.js";
+import { Observable } from "rxjs";
 
 /**
  * Standard function implementations for the Basic Catalog.
@@ -28,13 +29,27 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
   add: (args) => (Number(args["a"]) || 0) + (Number(args["b"]) || 0),
   subtract: (args) => (Number(args["a"]) || 0) - (Number(args["b"]) || 0),
   multiply: (args) => (Number(args["a"]) || 0) * (Number(args["b"]) || 0),
+  /**
+   * Divides a by b.
+   * Converts string values to numbers automatically.
+   * Returns Infinity if division by zero occurs.
+   * Returns NaN if either a or b is undefined, null, or cannot be converted to a number.
+   */
   divide: (args) => {
-    const numerator = Number(args["a"]) || 0;
-    let denominator = Number(args["b"]);
-    if (args["b"] == null) { // Catches null and undefined
-      denominator = 1;
+    const a = args["a"];
+    const b = args["b"];
+    if (a === undefined || a === null || b === undefined || b === null) {
+      return NaN;
     }
-    return numerator / denominator;
+    const numA = Number(a);
+    const numB = Number(b);
+    if (Number.isNaN(numA) || Number.isNaN(numB)) {
+      return NaN;
+    }
+    if (numB === 0) {
+      return Infinity;
+    }
+    return numA / numB;
   },
 
   // Comparison
@@ -134,14 +149,13 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
   /**
    * Formats a string using a template and the current context.
    */
-  formatString: (args, context: EvaluationContext) => {
+  formatString: (args, context: DataContext) => {
     const template = String(args["value"] || "");
-    if (context.parser) {
-      return context.parser.parse(template);
-    }
-    throw new Error(
-      "ExpressionParser is required for formatString but was not provided in the evaluation context.",
+    const parser = new ExpressionParser(
+      context,
+      new ExpressionEvaluator(BASIC_FUNCTIONS), // A local evaluator config for the parser
     );
+    return parser.parse(template);
   },
 
   /**
@@ -220,5 +234,16 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
     const rule = new Intl.PluralRules("en-US").select(val);
     // args: zero, one, two, few, many, other
     return String(args[rule] || args["other"] || "");
+  },
+
+  // Actions
+  /**
+   * Opens a URL in a new browser tab/window if available.
+   */
+  openUrl: (args) => {
+    const url = String(args["url"] || "");
+    if (url && typeof window !== "undefined" && window.open) {
+      window.open(url, "_blank");
+    }
   },
 };

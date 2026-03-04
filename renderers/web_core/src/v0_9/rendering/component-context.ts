@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import { DataContext } from './data-context.js';
-import { ComponentModel } from '../state/component-model.js';
-import type { SurfaceModel } from '../state/surface-model.js';
-import type { ComponentApi } from '../catalog/types.js';
-import type { SurfaceComponentsModel } from '../state/surface-components-model.js';
+import { DataContext } from "./data-context.js";
+import { ComponentModel } from "../state/component-model.js";
+import type { SurfaceModel } from "../state/surface-model.js";
+import type { ComponentApi } from "../catalog/types.js";
+import type { SurfaceComponentsModel } from "../state/surface-components-model.js";
 
 /**
  * Context provided to components during rendering.
  * It provides access to the component's model, the data context, and a way to dispatch actions.
  */
 export class ComponentContext {
+  /** The state model for this specific component. */
   readonly componentModel: ComponentModel;
+  /** The data context scoped to this component's position in the visual hierarchy. */
   readonly dataContext: DataContext;
+  /** The collection of all component models for the current surface. */
   readonly surfaceComponents: SurfaceComponentsModel;
 
   /**
@@ -39,7 +42,7 @@ export class ComponentContext {
   constructor(
     surface: SurfaceModel<any>,
     componentId: string,
-    dataModelBasePath: string = '/'
+    dataModelBasePath: string = "/",
   ) {
     const model = surface.componentsModel.get(componentId);
     if (!model) {

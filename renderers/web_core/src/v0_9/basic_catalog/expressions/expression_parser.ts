@@ -18,16 +18,13 @@ import { combineLatest, Observable, of, throwError } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { ExpressionEvaluator, EvaluationContext } from "./expression_evaluator";
 
-export interface ParserDataContext {
-  getValue(path: string): any;
-  observe(path: string): Observable<any>;
-}
+import { DataContext } from "../../rendering/data-context";
 
 export class ExpressionParser {
   private static readonly MAX_DEPTH = 10;
 
   constructor(
-    private context: ParserDataContext,
+    private context: DataContext,
     private evaluator: ExpressionEvaluator,
   ) {}
 
@@ -228,10 +225,7 @@ export class ExpressionParser {
 
     return combineLatest(args).pipe(
       switchMap((resolvedArgs: Record<string, unknown>) => {
-        const evalContext: EvaluationContext = {
-          resolveData: (path: string) => this.context.getValue(path),
-          parser: this,
-        };
+        const evalContext: EvaluationContext = this.context;
         const result = this.evaluator.evaluate(
           { call: funcName, args: resolvedArgs } as any,
           evalContext,
@@ -288,7 +282,13 @@ export class ExpressionParser {
   }
 
   private resolvePath(path: string): Observable<any> {
-    return this.context.observe(path);
+    return new Observable((sub) => {
+      const observer = this.context.subscribeDynamicValue({ path }, (val) =>
+        sub.next(val),
+      );
+      sub.next(observer.value);
+      return () => observer.unsubscribe();
+    });
   }
 
   private isAlnum(c: string): boolean {
