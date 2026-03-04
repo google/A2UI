@@ -308,6 +308,14 @@ npm package, TypeScript, zero dependencies. Works with any A2UI renderer. Genera
 
 Five prototypes validate the intent-to-surface mapping. Each is a standalone HTML file with a vanilla JS renderer plus the A2UI message sequence as JSON.
 
+> **Note:** All v0.9.0 prototypes underwent critical developer and user review. Common bugs found across multiple prototypes:
+> - `variant: "label"` on Text — not a valid v0.9 variant (fixed to `"caption"`)
+> - `MultipleChoice` component — doesn't exist in basic catalog (fixed to `ChoicePicker`)
+> - `_comment` fields — invalid per `additionalProperties: false` (removed)
+> - Invalid icon names — some icons not in the catalog enum (fixed to valid alternatives)
+>
+> These recurring errors are instructive: they reveal what LLMs and developers *expect* from the spec. See [Lessons for the Spec Team](#lessons-for-the-spec-team) below.
+
 ### P1: Approval Card (AUTHORIZE) — [p1-approval-v0.9.0/](./p1-approval-v0.9.0/)
 
 A financial transfer approval card. Shows transfer details (account, amount formatted with `formatCurrency`, description) in a detail section, with Approve and Reject buttons. Demonstrates the core AUTHORIZE lifecycle and `sendDataModel: true` pattern.
@@ -338,7 +346,7 @@ A deployment pipeline that progressively updates: Build ✅ → Test ✅ → Sta
 
 **What users see:** A pipeline visualization with four steps. Each step animates from pending (⬜) to running (⏳) to complete (✅). At step 4, an approval card slides in with "Deploy to Production?" and Approve/Rollback buttons.
 
-**Rating: 3/5.** Most technically interesting prototype — progressive updates and tree mutation are compelling. However, the JSON structure deviates from valid A2UI JSONL (missing `version` fields, combined message objects). Needs a conformance fix before sharing externally. Emoji-as-icons is fragile across platforms.
+**Rating: 4/5.** Most technically interesting prototype — progressive updates and tree mutation are compelling. JSON structure was validated and fixed during critical review (proper `version` fields, separate messages, no `_comment` fields). Emoji-as-icons is fragile across platforms; the v0.9.1 version replaces them with ProgressIndicator.
 
 ### P5: Expense Report Wizard (COLLECT → COLLECT → INFORM → AUTHORIZE) — [p5-wizard-v0.9.0/](./p5-wizard-v0.9.0/)
 
@@ -346,7 +354,7 @@ A four-step wizard on a single persistent surface. Step 1 collects expense basic
 
 **What users see:** A step indicator ("Step 1 of 4") with a title that changes per step. Form fields in steps 1-2, a summary table in step 3, and an approval card with a policy warning in step 4. Back/Next navigation.
 
-**Rating: 3.5/5.** Ambitious and realistic multi-intent flow. Exposes every gap simultaneously — the review step's 21-component summary table desperately needs KeyValue, step navigation relies on fragile ID reuse, and the lack of conditional visibility makes the step-swap pattern verbose.
+**Rating: 4/5.** Ambitious and realistic multi-intent flow. Exposes every gap simultaneously — the review step's 21-component summary table desperately needs KeyValue, step navigation relies on fragile ID reuse, and the lack of conditional visibility makes the step-swap pattern verbose. Critical review fixed `MultipleChoice`→`ChoicePicker`, `variant: "label"`→`"caption"`, and `_comment` fields. The v0.9.1 version is the most dramatic improvement of all five prototypes.
 
 ---
 
