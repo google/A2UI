@@ -1,0 +1,156 @@
+[
+  {
+    "createSurface": {
+      "id": "deploy-pipeline",
+      "title": "Deployment Pipeline",
+      "sendDataModel": true
+    },
+    "updateDataModel": {
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "startedAt": "2026-03-04T07:30:00Z",
+          "steps": {
+            "build": { "status": "running", "startedAt": "2026-03-04T07:30:00Z" },
+            "test": { "status": "pending" },
+            "stage": { "status": "pending" },
+            "deploy": { "status": "pending" }
+          }
+        }
+      }
+    },
+    "updateComponents": {
+      "components": [
+        { "id": "root", "component": "Card", "child": "main-col" },
+        { "id": "main-col", "component": "Column", "children": ["header-row", "divider1", "info-row", "divider2", "step-build", "step-test", "step-stage", "step-deploy"] },
+
+        { "id": "header-row", "component": "Row", "children": ["header-icon", "header-text"], "align": "center" },
+        { "id": "header-icon", "component": "Text", "text": "🚀", "variant": "h3" },
+        { "id": "header-text", "component": "Text", "text": "Deployment Pipeline", "variant": "h3" },
+
+        { "id": "divider1", "component": "Divider" },
+
+        { "id": "info-row", "component": "Column", "children": ["info-app", "info-commit"] },
+        { "id": "info-app", "component": "Text", "text": { "path": "/pipeline/app" }, "variant": "body" },
+        { "id": "info-commit", "component": "Text", "text": { "path": "/pipeline/commit" }, "variant": "caption" },
+
+        { "id": "divider2", "component": "Divider" },
+
+        { "id": "step-build", "component": "Row", "children": ["build-icon", "build-label"], "align": "center" },
+        { "id": "build-icon", "component": "Text", "text": "⏳" },
+        { "id": "build-label", "component": "Text", "text": "Build", "variant": "body" },
+
+        { "id": "step-test", "component": "Row", "children": ["test-icon", "test-label"], "align": "center" },
+        { "id": "test-icon", "component": "Text", "text": "⬜" },
+        { "id": "test-label", "component": "Text", "text": "Test", "variant": "body" },
+
+        { "id": "step-stage", "component": "Row", "children": ["stage-icon", "stage-label"], "align": "center" },
+        { "id": "stage-icon", "component": "Text", "text": "⬜" },
+        { "id": "stage-label", "component": "Text", "text": "Stage", "variant": "body" },
+
+        { "id": "step-deploy", "component": "Row", "children": ["deploy-icon", "deploy-label"], "align": "center" },
+        { "id": "deploy-icon", "component": "Text", "text": "⬜" },
+        { "id": "deploy-label", "component": "Text", "text": "Deploy", "variant": "body" }
+      ]
+    }
+  },
+
+  {
+    "_comment": "Step 2: Build complete, Test running",
+    "updateDataModel": {
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "startedAt": "2026-03-04T07:30:00Z",
+          "steps": {
+            "build": { "status": "complete", "startedAt": "2026-03-04T07:30:00Z", "completedAt": "2026-03-04T07:31:12Z", "artifact": "acme-web:a3f9c21" },
+            "test": { "status": "running", "startedAt": "2026-03-04T07:31:12Z" },
+            "stage": { "status": "pending" },
+            "deploy": { "status": "pending" }
+          }
+        }
+      }
+    },
+    "updateComponents": {
+      "components": [
+        { "id": "build-icon", "component": "Text", "text": "✅" },
+        { "id": "build-label", "component": "Text", "text": "Build — 1m 12s", "variant": "body" },
+        { "id": "test-icon", "component": "Text", "text": "⏳" },
+        { "id": "test-label", "component": "Text", "text": "Test — running…", "variant": "body" }
+      ]
+    }
+  },
+
+  {
+    "_comment": "Step 3: Test complete, Stage running",
+    "updateDataModel": {
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "startedAt": "2026-03-04T07:30:00Z",
+          "steps": {
+            "build": { "status": "complete", "startedAt": "2026-03-04T07:30:00Z", "completedAt": "2026-03-04T07:31:12Z", "artifact": "acme-web:a3f9c21" },
+            "test": { "status": "complete", "startedAt": "2026-03-04T07:31:12Z", "completedAt": "2026-03-04T07:33:45Z", "results": "48/48 passed" },
+            "stage": { "status": "running", "startedAt": "2026-03-04T07:33:45Z" },
+            "deploy": { "status": "pending" }
+          }
+        }
+      }
+    },
+    "updateComponents": {
+      "components": [
+        { "id": "test-icon", "component": "Text", "text": "✅" },
+        { "id": "test-label", "component": "Text", "text": "Test — 48/48 passed", "variant": "body" },
+        { "id": "stage-icon", "component": "Text", "text": "⏳" },
+        { "id": "stage-label", "component": "Text", "text": "Stage — running…", "variant": "body" }
+      ]
+    }
+  },
+
+  {
+    "_comment": "Step 4: Stage complete, Deploy PAUSED for approval",
+    "updateDataModel": {
+      "value": {
+        "pipeline": {
+          "app": "acme-web-v2.4.1",
+          "branch": "main",
+          "commit": "a3f9c21",
+          "startedAt": "2026-03-04T07:30:00Z",
+          "steps": {
+            "build": { "status": "complete", "startedAt": "2026-03-04T07:30:00Z", "completedAt": "2026-03-04T07:31:12Z", "artifact": "acme-web:a3f9c21" },
+            "test": { "status": "complete", "startedAt": "2026-03-04T07:31:12Z", "completedAt": "2026-03-04T07:33:45Z", "results": "48/48 passed" },
+            "stage": { "status": "complete", "startedAt": "2026-03-04T07:33:45Z", "completedAt": "2026-03-04T07:35:20Z", "url": "https://stage.acme.dev" },
+            "deploy": { "status": "paused", "reason": "Requires human approval" }
+          }
+        }
+      }
+    },
+    "updateComponents": {
+      "components": [
+        { "id": "stage-icon", "component": "Text", "text": "✅" },
+        { "id": "stage-label", "component": "Text", "text": "Stage — live at stage.acme.dev", "variant": "body" },
+        { "id": "deploy-icon", "component": "Text", "text": "⏸️" },
+        { "id": "deploy-label", "component": "Text", "text": "Deploy — awaiting approval", "variant": "body" },
+
+        { "id": "main-col", "component": "Column", "children": ["header-row", "divider1", "info-row", "divider2", "step-build", "step-test", "step-stage", "step-deploy", "divider3", "approve-card"] },
+        { "id": "divider3", "component": "Divider" },
+
+        { "id": "approve-card", "component": "Card", "child": "approve-col" },
+        { "id": "approve-col", "component": "Column", "children": ["approve-title", "approve-desc", "approve-buttons"] },
+        { "id": "approve-title", "component": "Text", "text": "⚠️ Deploy to production?", "variant": "h3" },
+        { "id": "approve-desc", "component": "Text", "text": "acme-web-v2.4.1 (a3f9c21) • 48/48 tests passed • Staged OK", "variant": "body" },
+        { "id": "approve-buttons", "component": "Row", "children": ["btn-rollback", "btn-approve"], "justify": "end" },
+        { "id": "btn-rollback", "component": "Button", "variant": "default", "child": "btn-rollback-text", "action": { "event": { "name": "pipeline.rollback", "context": { "app": { "path": "/pipeline/app" }, "commit": { "path": "/pipeline/commit" } } } } },
+        { "id": "btn-rollback-text", "component": "Text", "text": "Rollback" },
+        { "id": "btn-approve", "component": "Button", "variant": "primary", "child": "btn-approve-text", "action": { "event": { "name": "pipeline.approve_deploy", "context": { "app": { "path": "/pipeline/app" }, "commit": { "path": "/pipeline/commit" } } } } },
+        { "id": "btn-approve-text", "component": "Text", "text": "Approve" }
+      ]
+    }
+  }
+]
