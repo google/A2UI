@@ -47,4 +47,8 @@ jobs:
         working-directory: ./samples/client/lit
         run: npm run build --workspaces
 
+      - name: Test all lit samples workspaces
+        working-directory: ./samples/client/lit
+        run: npm run test --workspaces --if-present
+
 
