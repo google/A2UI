@@ -48,7 +48,7 @@ jobs:
         run: |
           for project in a2a-chat-canvas lib gallery contact restaurant rizzcharts orchestrator; do
             echo "Typechecking $project..."
-            npx ng build $project --no-build-optimizer --no-optimization --no-extract-licenses --no-source-map --no-aot --no-stats-json
+            npx ng build $project --configuration development --no-progress
           done
 
       - name: Build all Angular projects

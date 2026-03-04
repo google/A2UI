@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import '../contact.js';
-import '../client.js';
+import '../contact.ts';
+import '../client.ts';
 
 test('smoke test: contact imports resolve', () => {
   assert.ok(true);

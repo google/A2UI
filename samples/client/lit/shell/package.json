@@ -25,7 +25,7 @@
       "service": true
     },
     "test": {
-      "command": "node --test --enable-source-maps --test-reporter spec dist/tests/**/*.test.js",
+      "command": "npx tsx --test --test-reporter spec tests/**/*.test.ts",
       "dependencies": [
         "build"
       ]
