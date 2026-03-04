@@ -35,6 +35,8 @@ export type FunctionInvoker = (
  * DynamicValues (literals, data paths, function calls) within a specific scope.
  */
 export class DataContext {
+  private readonly _errors: string[] = [];
+
   /**
    * @param dataModel The shared DataModel instance.
    * @param path The absolute path this context is currently pointing to.
@@ -45,6 +47,21 @@ export class DataContext {
     readonly path: string,
     readonly functionInvoker?: FunctionInvoker,
   ) {}
+
+  /** Returns any resolution errors encountered by this context. */
+  get errors(): readonly string[] {
+    return this._errors;
+  }
+
+  /** Appends an error to the resolution context. */
+  reportError(error: string): void {
+    this._errors.push(error);
+  }
+
+  /** Clears all accumulated errors. */
+  clearErrors(): void {
+    this._errors.length = 0;
+  }
 
   /**
    * Updates the data model at the specified path, resolving it against the current context.
@@ -62,7 +79,8 @@ export class DataContext {
   resolveDynamicValue<V>(value: DynamicValue): V {
     // 1. Literal Check
     if (typeof value !== "object" || value === null || Array.isArray(value)) {
-      // TODO: Define error handling when V doesn't match
+      // TypeScript erases types at runtime, so we return the literal as V.
+      // Schema validation handles strict type checking.
       return value as V;
     }
 
@@ -85,16 +103,16 @@ export class DataContext {
       // Evaluate function
       // Note: sync resolution of async functions returns the Observable itself
       if (!this.functionInvoker) {
-        console.warn(`Function not found: ${call.call}`);
-        return null as unknown as V;
+        this.reportError(`Function not found: ${call.call}`);
+        return undefined as unknown as V;
       }
 
       const result = this.functionInvoker(call.call, args, this);
       return result as V;
     }
 
-    // TODO: Define error handling when V doesn't match
-    return value as V;
+    this.reportError(`Invalid DynamicValue format: ${JSON.stringify(value)}`);
+    return undefined as unknown as V;
   }
 
   /**

@@ -112,4 +112,32 @@ describe("DataContext", () => {
     context.set("name", "Charlie");
     assert.strictEqual(called, false);
   });
+  it("records errors for missing functions", () => {
+    const result = context.resolveDynamicValue({
+      call: "missing_func",
+      args: {},
+      returnType: "string",
+    });
+    assert.strictEqual(result, undefined);
+    assert.deepStrictEqual(context.errors, [
+      "Function not found: missing_func",
+    ]);
+  });
+
+  it("records errors for invalid dynamic value formats", () => {
+    const invalidVal = { strange: "format" } as any;
+    const result = context.resolveDynamicValue(invalidVal);
+    assert.strictEqual(result, undefined);
+    assert.strictEqual(context.errors.length, 1);
+    assert.match(context.errors[0], /Invalid DynamicValue format/);
+  });
+
+  it("can clear accumulated errors", () => {
+    context.reportError("Test error 1");
+    context.reportError("Test error 2");
+    assert.strictEqual(context.errors.length, 2);
+
+    context.clearErrors();
+    assert.strictEqual(context.errors.length, 0);
+  });
 });
