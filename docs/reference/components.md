@@ -10,11 +10,15 @@ This page showcases all A2UI components with examples and usage patterns.
 
     For the complete technical specification, see the [Basic Catalog Definition](https://a2ui.org/specification/v0_9/basic_catalog.json).
 
+---
+
 ## Layout Components
 
 ### Row
 
 Horizontal layout container. Children are arranged left-to-right.
+
+**Properties:** `children`, `justify` / `distribution`, `align` / `alignment`
 
 === "v0.8"
 
@@ -30,12 +34,6 @@ Horizontal layout container. Children are arranged left-to-right.
     }
     ```
 
-    **Properties:**
-
-    - `children`: Static array (`explicitList`) or dynamic `template`
-    - `distribution`: `start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`
-    - `alignment`: `start`, `center`, `end`, `stretch`
-
 === "v0.9"
 
     ```json
@@ -47,15 +45,11 @@ Horizontal layout container. Children are arranged left-to-right.
     }
     ```
 
-    **Properties:**
-
-    - `children`: Array of component IDs, or a template object for dynamic lists
-    - `justify`: `start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`, `stretch`
-    - `align`: `center`, `start`, `end`, `stretch`, `baseline`
-
 ### Column
 
 Vertical layout container. Children are arranged top-to-bottom.
+
+**Properties:** `children`, `justify` / `distribution`, `align` / `alignment`
 
 === "v0.8"
 
@@ -82,7 +76,9 @@ Vertical layout container. Children are arranged top-to-bottom.
 
 ### List
 
-Scrollable list of items.
+Scrollable list of items. Supports both static children and dynamic templates.
+
+**Properties:** `children`, `direction` (`horizontal` / `vertical`), `alignment`
 
 === "v0.8"
 
@@ -115,11 +111,15 @@ Scrollable list of items.
     }
     ```
 
+---
+
 ## Display Components
 
 ### Text
 
-Display text content with optional styling.
+Display text content with styling hints.
+
+**Properties:** `text`, `variant` (v0.9) / `usageHint` (v0.8) — values: `h1`–`h5`, `caption`, `body`
 
 === "v0.8"
 
@@ -135,8 +135,6 @@ Display text content with optional styling.
     }
     ```
 
-    **`usageHint` values:** `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
-
 === "v0.9"
 
     ```json
@@ -148,11 +146,11 @@ Display text content with optional styling.
     }
     ```
 
-    **`variant` values:** `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
-
 ### Image
 
 Display images from URLs.
+
+**Properties:** `url`, `fit` (`cover`, `contain`, etc.), `variant` (`avatar`, `hero`, etc.)
 
 === "v0.8"
 
@@ -179,7 +177,9 @@ Display images from URLs.
 
 ### Icon
 
-Display icons using Material Icons or custom icon sets.
+Display icons from the standard set defined in the catalog.
+
+**Properties:** `name`
 
 === "v0.8"
 
@@ -208,15 +208,15 @@ Display icons using Material Icons or custom icon sets.
 
 Visual separator line.
 
+**Properties:** `axis` (`horizontal`, `vertical`)
+
 === "v0.8"
 
     ```json
     {
       "id": "separator",
       "component": {
-        "Divider": {
-          "axis": "horizontal"
-        }
+        "Divider": { "axis": "horizontal" }
       }
     }
     ```
@@ -231,11 +231,15 @@ Visual separator line.
     }
     ```
 
+---
+
 ## Interactive Components
 
 ### Button
 
-Clickable button with action support.
+Clickable button that triggers an action.
+
+**Properties:** `child` (component ID to display), `variant` (v0.9) / `primary` (v0.8), `action`
 
 === "v0.8"
 
@@ -252,12 +256,6 @@ Clickable button with action support.
     }
     ```
 
-    **Properties:**
-
-    - `child`: ID of the component to display inside the button
-    - `primary`: Boolean for primary action styling
-    - `action`: Action to perform on click
-
 === "v0.9"
 
     ```json
@@ -272,15 +270,11 @@ Clickable button with action support.
     }
     ```
 
-    **Properties:**
-
-    - `child`: ID of the component to display inside the button
-    - `variant`: `primary`, `secondary`, etc.
-    - `action`: Action with structured event format
-
 ### TextField
 
-Text input field.
+Text input field with optional validation.
+
+**Properties:** `label`, `text` / `value` (data-bound), `textFieldType` (`shortText`, `longText`, `number`, `obscured`, `date`), `validationRegexp`
 
 === "v0.8"
 
@@ -297,8 +291,6 @@ Text input field.
     }
     ```
 
-    **`textFieldType` values:** `date`, `longText`, `number`, `shortText`, `obscured`
-
 === "v0.9"
 
     ```json
@@ -311,11 +303,11 @@ Text input field.
     }
     ```
 
-    **`textFieldType` values:** `date`, `longText`, `number`, `shortText`, `obscured`
-
 ### CheckBox
 
 Boolean toggle.
+
+**Properties:** `label`, `value` (data-bound boolean)
 
 === "v0.8"
 
@@ -345,6 +337,8 @@ Boolean toggle.
 ### Slider
 
 Numeric range input.
+
+**Properties:** `value` (data-bound), `minValue`, `maxValue`
 
 === "v0.8"
 
@@ -377,6 +371,8 @@ Numeric range input.
 
 Date and/or time picker.
 
+**Properties:** `value` (data-bound), `enableDate`, `enableTime`
+
 === "v0.8"
 
     ```json
@@ -404,9 +400,14 @@ Date and/or time picker.
     }
     ```
 
-### ChoicePicker
+### ChoicePicker / MultipleChoice
 
-Select one or more options from a list. (Called `MultipleChoice` in v0.8.)
+Select one or more options from a list.
+
+!!! note "Renamed in v0.9"
+    `MultipleChoice` in v0.8 → `ChoicePicker` in v0.9
+
+**Properties:** `options` (array of label/value pairs), `selections` (data-bound), `maxAllowedSelections`
 
 === "v0.8"
 
@@ -417,8 +418,7 @@ Select one or more options from a list. (Called `MultipleChoice` in v0.8.)
         "MultipleChoice": {
           "options": [
             { "label": { "literalString": "USA" }, "value": "us" },
-            { "label": { "literalString": "Canada" }, "value": "ca" },
-            { "label": { "literalString": "UK" }, "value": "uk" }
+            { "label": { "literalString": "Canada" }, "value": "ca" }
           ],
           "selections": { "path": "/form/country" },
           "maxAllowedSelections": 1
@@ -435,13 +435,14 @@ Select one or more options from a list. (Called `MultipleChoice` in v0.8.)
       "component": "ChoicePicker",
       "options": [
         { "label": "USA", "value": "us" },
-        { "label": "Canada", "value": "ca" },
-        { "label": "UK", "value": "uk" }
+        { "label": "Canada", "value": "ca" }
       ],
       "selections": { "path": "/form/country" },
       "maxAllowedSelections": 1
     }
     ```
+
+---
 
 ## Container Components
 
@@ -449,15 +450,15 @@ Select one or more options from a list. (Called `MultipleChoice` in v0.8.)
 
 Container with elevation/border and padding.
 
+**Properties:** `child` (component ID)
+
 === "v0.8"
 
     ```json
     {
       "id": "info-card",
       "component": {
-        "Card": {
-          "child": "card-content"
-        }
+        "Card": { "child": "card-content" }
       }
     }
     ```
@@ -474,7 +475,9 @@ Container with elevation/border and padding.
 
 ### Modal
 
-Overlay dialog.
+Overlay dialog triggered by an entry point component.
+
+**Properties:** `entryPointChild` (trigger component ID), `contentChild` (dialog content ID)
 
 === "v0.8"
 
@@ -503,7 +506,9 @@ Overlay dialog.
 
 ### Tabs
 
-Tabbed interface.
+Tabbed interface for organizing content into switchable panels.
+
+**Properties:** `tabItems` (array of `{ title, child }`)
 
 === "v0.8"
 
@@ -513,18 +518,8 @@ Tabbed interface.
       "component": {
         "Tabs": {
           "tabItems": [
-            {
-              "title": { "literalString": "General" },
-              "child": "general-settings"
-            },
-            {
-              "title": { "literalString": "Privacy" },
-              "child": "privacy-settings"
-            },
-            {
-              "title": { "literalString": "Advanced" },
-              "child": "advanced-settings"
-            }
+            { "title": { "literalString": "General" }, "child": "general-tab" },
+            { "title": { "literalString": "Privacy" }, "child": "privacy-tab" }
           ]
         }
       }
@@ -538,49 +533,54 @@ Tabbed interface.
       "id": "settings-tabs",
       "component": "Tabs",
       "tabItems": [
-        { "title": "General", "child": "general-settings" },
-        { "title": "Privacy", "child": "privacy-settings" },
-        { "title": "Advanced", "child": "advanced-settings" }
+        { "title": "General", "child": "general-tab" },
+        { "title": "Privacy", "child": "privacy-tab" }
       ]
     }
     ```
 
+---
+
 ## Common Properties
 
-Most components support these common properties:
+All components share:
 
-- `id` (required): Unique identifier for the component instance
+- `id` (required): Unique identifier within the surface
 - `accessibility`: Accessibility attributes (label, role)
+- `weight`: Flex-grow value when inside a Row or Column
 
-=== "v0.8"
+## Version Differences Summary
 
-    - `weight`: Flex-grow value when inside a Row or Column (specified alongside `id` and `component`)
+The component *names* and *properties* are largely the same across versions. The structural differences are:
 
-=== "v0.9"
-
-    - `weight`: Flex-grow value when inside a Row or Column (top-level property on the component)
+| Aspect | v0.8 | v0.9 |
+|--------|------|------|
+| Component wrapper | `"component": { "Text": { ... } }` | `"component": "Text", ...props` |
+| String values | `{ "literalString": "Hello" }` | `"Hello"` |
+| Children | `{ "explicitList": ["a", "b"] }` | `["a", "b"]` |
+| Data binding | `{ "path": "/data" }` | `{ "path": "/data" }` (same) |
+| Text styling | `usageHint` | `variant` |
+| Button styling | `primary: true` | `variant: "primary"` |
+| Choice component | `MultipleChoice` | `ChoicePicker` |
 
 ## Live Examples
 
-To see all components in action, run the component gallery demo:
+To see all components in action:
 
 ```bash
 cd samples/client/angular
 npm start -- gallery
 ```
 
-This launches a live gallery with all components, their variations, and interactive examples.
-
 ## Further Reading
 
 === "v0.8"
 
     - **[Standard Catalog Definition](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)**: Complete v0.8 component schemas
-    - **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
-    - **[Theming Guide](../guides/theming.md)**: Style components to match your brand
 
 === "v0.9"
 
     - **[Basic Catalog Definition](https://a2ui.org/specification/v0_9/basic_catalog.json)**: Complete v0.9 component schemas
-    - **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
-    - **[Theming Guide](../guides/theming.md)**: Style components to match your brand
+
+- **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
+- **[Theming Guide](../guides/theming.md)**: Style components to match your brand
