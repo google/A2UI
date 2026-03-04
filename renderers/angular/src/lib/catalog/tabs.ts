@@ -14,10 +14,9 @@
  limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import * as Styles from '@a2ui/web_core/styles/index';
 import * as Types from '@a2ui/web_core/types/types';
 
 @Component({
@@ -34,7 +33,8 @@ import * as Types from '@a2ui/web_core/types/types';
           <button
             (click)="this.selectedIndex.set($index)"
             [disabled]="selectedIndex === $index"
-            [class]="buttonClasses()[selectedIndex]"
+            [class]="theme.components.Tabs.controls.all"
+            [class.selected]="selectedIndex === $index"
           >
             {{ resolvePrimitive(tab.title) }}
           </button>
@@ -52,23 +52,11 @@ import * as Types from '@a2ui/web_core/types/types';
     :host {
       display: block;
       flex: var(--weight);
+      width: 100%;
     }
   `,
 })
 export class Tabs extends DynamicComponent {
   protected selectedIndex = signal(0);
   readonly tabs = input.required<Types.ResolvedTabItem[]>();
-
-  protected readonly buttonClasses = computed(() => {
-    const selectedIndex = this.selectedIndex();
-
-    return this.tabs().map((_, index) => {
-      return index === selectedIndex
-        ? Styles.merge(
-            this.theme.components.Tabs.controls.all,
-            this.theme.components.Tabs.controls.selected,
-          )
-        : this.theme.components.Tabs.controls.all;
-    });
-  });
 }

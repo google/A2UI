@@ -37,6 +37,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
         (input)="handleInput($event)"
         [class]="theme.components.Slider.element"
         [style]="theme.additionalStyles?.Slider"
+        [style.--slider-percent]="percentComplete() + '%'"
       />
     </section>
   `,
@@ -44,6 +45,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
     :host {
       display: block;
       flex: var(--weight);
+      width: 100%;
     }
 
     input {
@@ -62,13 +64,32 @@ export class Slider extends DynamicComponent {
   protected readonly inputId = super.getUniqueId('a2ui-slider');
   protected resolvedValue = computed(() => super.resolvePrimitive(this.value()) ?? 0);
 
+  protected percentComplete = computed(() => {
+    const min = this.minValue() ?? 0;
+    const max = this.maxValue() ?? 100;
+    const val = this.resolvedValue();
+    const range = max - min;
+    return range > 0 ? Math.max(0, Math.min(100, ((val - min) / range) * 100)) : 0;
+  });
+
   protected handleInput(event: Event) {
     const path = this.value()?.path;
 
-    if (!(event.target instanceof HTMLInputElement) || !path) {
+    if (!(event.target instanceof HTMLInputElement)) {
       return;
     }
 
-    this.processor.setData(this.component(), path, event.target.valueAsNumber, this.surfaceId());
+    const val = event.target.valueAsNumber;
+
+    // Inject CSS variable directly to avoid Angular change detection lag/snapback
+    const min = this.minValue() ?? 0;
+    const max = this.maxValue() ?? 100;
+    const range = max - min;
+    const percent = range > 0 ? Math.max(0, Math.min(100, ((val - min) / range) * 100)) : 0;
+    event.target.style.setProperty('--slider-percent', percent + '%');
+
+    if (path) {
+      this.processor.setData(this.component(), path, val, this.surfaceId());
+    }
   }
 }

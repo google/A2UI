@@ -35,7 +35,8 @@ import { Renderer } from '../rendering/renderer';
     }
 
     :host([direction='vertical']) section {
-      display: grid;
+      display: flex;
+      flex-direction: column;
     }
 
     :host([direction='horizontal']) section {
@@ -44,17 +45,14 @@ import { Renderer } from '../rendering/renderer';
       overflow-x: scroll;
       overflow-y: hidden;
       scrollbar-width: none;
-
-      > ::slotted(*) {
-        flex: 1 0 fit-content;
-        max-width: min(80%, 400px);
-      }
     }
   `,
   template: `
-    <section [class]="theme.components.List" [style]="theme.additionalStyles?.List">
+    <section [class]="$any(theme.components).List?.container || theme.components.List" [style]="theme.additionalStyles?.List">
       @for (child of component().properties.children; track child) {
+        <div [class]="$any(theme.components).List?.item">
         <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+        </div>
       }
     </section>
   `,
