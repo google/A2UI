@@ -23,7 +23,14 @@ Check the [Roadmap](roadmap.md) for more.
 
 ## Ecosystem Renderers
 
-<!-- TODO: Community and third-party A2UI renderers. See docs/ecosystem/renderers.md for the full list. -->
+The community is building A2UI renderers for platforms not yet officially supported. Top community projects:
+
+- **[@a2ui-sdk/react](https://github.com/easyops-cn/a2ui-sdk)** — React renderer with Radix UI + Tailwind (~20 ⭐, v0.8, [npm](https://www.npmjs.com/package/@a2ui-sdk/react))
+- **[A2UI-Android](https://github.com/lmee/A2UI-Android)** — Jetpack Compose renderer, 20+ components (~15 ⭐, v0.8)
+- **[a2ui-react-native](https://github.com/sivamrudram-eng/a2ui-react-native)** — React Native renderer for iOS/Android (~9 ⭐, v0.8)
+- **[@zhama/a2ui](https://www.npmjs.com/package/@zhama/a2ui)** — React implementation with markdown support (v0.8, [npm](https://www.npmjs.com/package/@zhama/a2ui))
+
+See the **[full ecosystem renderers list](ecosystem/renderers.md)** for more community projects and how to submit your own.
 
 ## How Renderers Work
 
