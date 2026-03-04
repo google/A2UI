@@ -43,6 +43,14 @@ jobs:
         working-directory: ./samples/client/angular
         run: npm run build:renderer
 
+      - name: Typecheck all Angular projects
+        working-directory: ./samples/client/angular
+        run: |
+          for project in a2a-chat-canvas lib gallery contact restaurant rizzcharts orchestrator; do
+            echo "Typechecking $project..."
+            npx ng build $project --no-build-optimizer --no-optimization --no-extract-licenses --no-source-map --no-aot --no-stats-json
+          done
+
       - name: Build all Angular projects
         working-directory: ./samples/client/angular
         run: |

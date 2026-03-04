@@ -43,6 +43,10 @@ jobs:
         working-directory: ./samples/client/lit
         run: npm install --workspaces
 
+      - name: Typecheck all lit samples workspaces
+        working-directory: ./samples/client/lit
+        run: npm run build:tsc --workspaces
+
       - name: Build all lit samples workspaces
         working-directory: ./samples/client/lit
         run: npm run build --workspaces

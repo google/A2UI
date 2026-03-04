@@ -55,20 +55,34 @@ jobs:
 
       - name: Build contact_lookup
         working-directory: samples/agent/adk/contact_lookup
-        run: uv build . && uv run . --help
+        run: |
+          uv build .
+          uv run . --help
+          uv run python -c "from agent import ContactAgent; a = ContactAgent(base_url='http://localhost', use_ui=True); print(f'Agent card validated: {a.get_agent_card().name}')"
 
       - name: Build orchestrator
         working-directory: samples/agent/adk/orchestrator
-        run: uv build . && uv run . --help
+        run: |
+          uv build .
+          uv run . --help
+          uv run python -c "from agent import OrchestratorAgent; a = OrchestratorAgent(base_url='http://localhost', use_ui=True); print(f'Agent card validated: {a.get_agent_card().name}')"
 
       - name: Build restaurant_finder
         working-directory: samples/agent/adk/restaurant_finder
-        run: uv build . && uv run . --help
+        run: |
+          uv build .
+          uv run . --help
+          uv run python -c "from agent import RestaurantAgent; a = RestaurantAgent(base_url='http://localhost', use_ui=True); print(f'Agent card validated: {a.get_agent_card().name}')"
 
       - name: Build rizzcharts
         working-directory: samples/agent/adk/rizzcharts
-        run: uv build . && uv run . --help
+        run: |
+          uv build .
+          uv run . --help
+          uv run python -c "from agent import RizzchartsAgent; a = RizzchartsAgent(base_url='http://localhost', use_ui=True); print(f'Agent card validated: {a.get_agent_card().name}')"
 
       - name: Build mcp demo
         working-directory: samples/agent/mcp
-        run: uv build . && uv run . --help
+        run: |
+          uv build .
+          uv run . --help
