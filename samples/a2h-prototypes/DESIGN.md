@@ -308,7 +308,7 @@ npm package, TypeScript, zero dependencies. Works with any A2UI renderer. Genera
 
 Five prototypes validate the intent-to-surface mapping. Each is a standalone HTML file with a vanilla JS renderer plus the A2UI message sequence as JSON.
 
-### P1: Approval Card (AUTHORIZE) — [p1-approval/](./p1-approval/)
+### P1: Approval Card (AUTHORIZE) — [p1-approval-v0.9.0/](./p1-approval-v0.9.0/)
 
 A financial transfer approval card. Shows transfer details (account, amount formatted with `formatCurrency`, description) in a detail section, with Approve and Reject buttons. Demonstrates the core AUTHORIZE lifecycle and `sendDataModel: true` pattern.
 
@@ -316,7 +316,7 @@ A financial transfer approval card. Shows transfer details (account, amount form
 
 **Rating: 4/5.** Clean and production-ready pattern. Missing post-approval state transition and dismiss option.
 
-### P2: Escalation Handoff (ESCALATE) — [p2-escalation/](./p2-escalation/)
+### P2: Escalation Handoff (ESCALATE) — [p2-escalation-v0.9.0/](./p2-escalation-v0.9.0/)
 
 A customer service escalation card. Shows the escalation reason, conversation context preserved in a nested card, priority indicator, and three connection method buttons (chat, phone, video). Status message updates via `updateDataModel`.
 
@@ -324,7 +324,7 @@ A customer service escalation card. Shows the escalation reason, conversation co
 
 **Rating: 4/5.** Good use of live data model updates. The context preservation pattern (nested card with prior conversation) is well-designed.
 
-### P3: Guided Input Form (COLLECT) — [p3-guided-input/](./p3-guided-input/)
+### P3: Guided Input Form (COLLECT) — [p3-guided-input-v0.9.0/](./p3-guided-input-v0.9.0/)
 
 A shipping address form with TextFields, a ChoicePicker for delivery speed, and pre-populated values. The star prototype — cleanest mapping, most LLM-friendly component tree.
 
@@ -332,7 +332,7 @@ A shipping address form with TextFields, a ChoicePicker for delivery speed, and 
 
 **Rating: 5/5.** This is exactly what COLLECT should look like. Simple, clean, immediately understandable. The `sendDataModel` pattern shines here.
 
-### P4: Deploy Pipeline (INFORM → AUTHORIZE) — [p4-progress-intervention/](./p4-progress-intervention/)
+### P4: Deploy Pipeline (INFORM → AUTHORIZE) — [p4-progress-intervention-v0.9.0/](./p4-progress-intervention-v0.9.0/)
 
 A deployment pipeline that progressively updates: Build ✅ → Test ✅ → Stage ✅ → Approval Gate ⏸️. Demonstrates INFORM-to-AUTHORIZE transition and dynamic tree modification (injecting an approval card at step 4).
 
@@ -340,7 +340,7 @@ A deployment pipeline that progressively updates: Build ✅ → Test ✅ → Sta
 
 **Rating: 3/5.** Most technically interesting prototype — progressive updates and tree mutation are compelling. However, the JSON structure deviates from valid A2UI JSONL (missing `version` fields, combined message objects). Needs a conformance fix before sharing externally. Emoji-as-icons is fragile across platforms.
 
-### P5: Expense Report Wizard (COLLECT → COLLECT → INFORM → AUTHORIZE) — [p5-wizard/](./p5-wizard/)
+### P5: Expense Report Wizard (COLLECT → COLLECT → INFORM → AUTHORIZE) — [p5-wizard-v0.9.0/](./p5-wizard-v0.9.0/)
 
 A four-step wizard on a single persistent surface. Step 1 collects expense basics, step 2 collects receipt details, step 3 shows a read-only review, step 4 requests final approval. Each step is a full `updateComponents` that swaps the visible content.
 

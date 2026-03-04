@@ -11,6 +11,15 @@ cd demo && npx serve .
 # Or just open demo/index.html in your browser
 ```
 
+## Two Versions
+
+Each prototype has (or will have) two versions:
+
+- **`*-v0.9.0`** — Built with the current A2UI v0.9 spec only. No spec changes required. Shows what's possible today, including workarounds for missing features.
+- **`*-v0.9.1-with-helper`** — Built with proposed spec additions (`visible` binding, button `label`, ProgressIndicator, KeyValue) plus the `a2h-a2ui` helper library. Shows what's possible with small, targeted improvements to the spec.
+
+Comparing the two versions side-by-side makes the case for each proposed enhancement concrete and measurable.
+
 ## Contents
 
 | Path | Description |
@@ -18,11 +27,11 @@ cd demo && npx serve .
 | [DESIGN.md](./DESIGN.md) | Full design document — intent mapping, conventions, proposed enhancements |
 | [demo/](./demo/) | **All 5 intents on one page**, generated via the helper library |
 | [lib/a2h-a2ui.js](./lib/a2h-a2ui.js) | Helper library — generates A2UI v0.9 messages from A2H intent descriptions |
-| [p1-approval/](./p1-approval/) | **AUTHORIZE** — Financial transfer approval card |
-| [p2-escalation/](./p2-escalation/) | **ESCALATE** — Customer service handoff |
-| [p3-guided-input/](./p3-guided-input/) | **COLLECT** — Shipping address form (⭐ cleanest prototype) |
-| [p4-progress-intervention/](./p4-progress-intervention/) | **INFORM → AUTHORIZE** — Deploy pipeline with progressive updates |
-| [p5-wizard/](./p5-wizard/) | **COLLECT → COLLECT → INFORM → AUTHORIZE** — Expense report wizard |
+| [p1-approval-v0.9.0/](./p1-approval-v0.9.0/) | **AUTHORIZE** — Financial transfer approval card |
+| [p2-escalation-v0.9.0/](./p2-escalation-v0.9.0/) | **ESCALATE** — Customer service handoff |
+| [p3-guided-input-v0.9.0/](./p3-guided-input-v0.9.0/) | **COLLECT** — Shipping address form (⭐ cleanest prototype) |
+| [p4-progress-intervention-v0.9.0/](./p4-progress-intervention-v0.9.0/) | **INFORM → AUTHORIZE** — Deploy pipeline with progressive updates |
+| [p5-wizard-v0.9.0/](./p5-wizard-v0.9.0/) | **COLLECT → COLLECT → INFORM → AUTHORIZE** — Expense report wizard |
 
 ## Helper Library API
 
