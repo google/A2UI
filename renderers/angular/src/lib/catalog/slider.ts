@@ -65,11 +65,7 @@ export class Slider extends DynamicComponent {
   protected resolvedValue = computed(() => super.resolvePrimitive(this.value()) ?? 0);
 
   protected percentComplete = computed(() => {
-    const min = this.minValue() ?? 0;
-    const max = this.maxValue() ?? 100;
-    const val = this.resolvedValue();
-    const range = max - min;
-    return range > 0 ? Math.max(0, Math.min(100, ((val - min) / range) * 100)) : 0;
+    return this.computePercentage(this.resolvedValue());
   });
 
   protected handleInput(event: Event) {
@@ -80,16 +76,20 @@ export class Slider extends DynamicComponent {
     }
 
     const val = event.target.valueAsNumber;
+    const percent = this.computePercentage(val);
 
     // Inject CSS variable directly to avoid Angular change detection lag/snapback
-    const min = this.minValue() ?? 0;
-    const max = this.maxValue() ?? 100;
-    const range = max - min;
-    const percent = range > 0 ? Math.max(0, Math.min(100, ((val - min) / range) * 100)) : 0;
     event.target.style.setProperty('--slider-percent', percent + '%');
 
     if (path) {
       this.processor.setData(this.component(), path, val, this.surfaceId());
     }
+  }
+
+  private computePercentage(val: number): number {
+    const min = this.minValue() ?? 0;
+    const max = this.maxValue() ?? 100;
+    const range = max - min;
+    return range > 0 ? Math.max(0, Math.min(100, ((val - min) / range) * 100)) : 0;
   }
 }
