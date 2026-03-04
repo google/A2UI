@@ -49,5 +49,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install dependencies
+        working-directory: ./specification/v0_9/test
+        run: pnpm install
+
       - name: Run validation script
         run: python3 specification/scripts/validate.py

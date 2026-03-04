@@ -7,12 +7,24 @@ import glob
 import sys
 import shutil
 
-def run_ajv(schema_path, data_path, refs=None):
-    """Runs ajv validate via subprocess using pnpm dlx."""
-    cmd = ["pnpm", "dlx", "ajv-cli", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats", "-d", data_path]
+def run_ajv(schema_path, data_paths, refs=None):
+    """Runs ajv validate via subprocess. Batch validates multiple data paths."""
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    # Try to find local ajv in specification/v0_9/test first
+    local_ajv = os.path.join(repo_root, "specification", "v0_9", "test", "node_modules", ".bin", "ajv")
+    
+    if os.path.exists(local_ajv):
+        cmd = [local_ajv, "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats"]
+    else:
+        # Fallback to pnpm dlx with both packages
+        cmd = ["pnpm", "dlx", "--package=ajv-cli", "--package=ajv-formats", "ajv", "validate", "-s", schema_path, "--spec=draft2020", "--strict=false", "-c", "ajv-formats"]
+        
     if refs:
         for ref in refs:
             cmd.extend(["-r", ref])
+    
+    for data_path in data_paths:
+        cmd.extend(["-d", data_path])
     
     result = subprocess.run(cmd, capture_output=True, text=True)
     return result.returncode == 0, result.stdout + result.stderr
@@ -33,31 +45,31 @@ def validate_messages(root_schema, example_files, refs=None, temp_dir="temp_val"
                 continue
         
         if not isinstance(messages, list):
-             # Try single object
              messages = [messages]
 
-        file_ok = True
+        temp_data_paths = []
         for i, msg in enumerate(messages):
             temp_data_path = os.path.join(temp_dir, f"msg_{os.path.basename(example_file)}_{i}.json")
             with open(temp_data_path, 'w') as f:
                 json.dump(msg, f)
-            
-            is_valid, output = run_ajv(root_schema, temp_data_path, refs)
-            if not is_valid:
-                print(f"    [FAIL] Message #{i+1} failed validation:")
-                print(output.strip())
-                file_ok = False
-                success = False
+            temp_data_paths.append(temp_data_path)
         
-        if file_ok:
+        if not temp_data_paths:
+            print("    [SKIP] No messages to validate")
+            continue
+
+        is_valid, output = run_ajv(root_schema, temp_data_paths, refs)
+        if not is_valid:
+            print(f"    [FAIL] Validation failed for {os.path.basename(example_file)}:")
+            print(output.strip())
+            success = False
+        else:
             print(f"    [PASS]")
 
-    shutil.rmtree(temp_dir)
     return success
 
 def main():
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-    spec_root = os.path.join(repo_root, "specification")
     
     overall_success = True
     
@@ -72,7 +84,7 @@ def main():
             "root_schema": "specification/v0_9/json/server_to_client.json",
             "refs": [
                 "specification/v0_9/json/common_types.json",
-                "specification/v0_9/json/basic_catalog.json" # Will be aliased below
+                "specification/v0_9/json/basic_catalog.json"
             ],
             "examples": "specification/v0_9/json/catalogs/basic/examples/*.json"
         }
@@ -82,6 +94,8 @@ def main():
         print(f"\n=== Validating {version} ===")
         
         version_temp_dir = os.path.join(repo_root, f"temp_val_{version}")
+        if os.path.exists(version_temp_dir):
+            shutil.rmtree(version_temp_dir)
         os.makedirs(version_temp_dir, exist_ok=True)
         
         root_schema = os.path.join(repo_root, config["root_schema"])
