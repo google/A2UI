@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H Prototype 3 — Guided Form v0.9.1 (with Helper Comparison)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
+    h1 { font-size: 1.2rem; color: #444; text-align: center; margin-bottom: 1rem; }
+
+    /* Tab bar */
+    .tabs {
+      display: flex; justify-content: center; gap: 0; margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      padding: 0.5rem 1.5rem; border: 1px solid #dadce0; background: #fff;
+      font-family: inherit; font-size: 0.875rem; cursor: pointer; color: #5f6368;
+      transition: all 0.15s;
+    }
+    .tab-btn:first-child { border-radius: 20px 0 0 20px; }
+    .tab-btn:last-child { border-radius: 0 20px 20px 0; }
+    .tab-btn.active { background: #1a73e8; color: #fff; border-color: #1a73e8; }
+
+    /* Layout */
+    .panels { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+    .panel { flex: 0 1 480px; display: flex; flex-direction: column; gap: 1rem; }
+    .panel.hidden { display: none; }
+    .panel-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
+
+    .surface { max-width: 460px; width: 100%; margin: 0 auto; }
+
+    /* Component renderers */
+    .c-Card {
+      background: #fff; border-radius: 12px; padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Card .c-Card {
+      background: #f8f9fa; box-shadow: none; border: 1px solid #e0e0e0;
+    }
+    .c-Column { display: flex; flex-direction: column; gap: 0.75rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Row[data-justify="center"] { justify-content: center; }
+    .c-Row > .c-TextField { flex: 1; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.25rem 0; }
+    .c-Icon { font-family: 'Material Symbols Outlined'; font-size: 24px; color: #1a73e8; }
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
+    .c-Text[data-variant="label"] { font-size: 0.85rem; font-weight: 500; color: #202124; }
+    .c-Text[data-variant="caption"] { font-size: 0.8rem; color: #5f6368; }
+
+    .c-TextField {
+      display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    .c-TextField label {
+      font-size: 0.8rem; font-weight: 500; color: #5f6368;
+    }
+    .c-TextField input {
+      border: 1px solid #dadce0; border-radius: 8px;
+      padding: 0.6rem 0.75rem; font-family: inherit; font-size: 0.9rem;
+      outline: none; transition: border-color 0.15s;
+    }
+    .c-TextField input:focus { border-color: #1a73e8; }
+
+    .c-ChoicePicker {
+      display: flex; flex-direction: row; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .c-ChoicePicker .choice-chip {
+      border: 1px solid #dadce0; border-radius: 20px;
+      padding: 0.45rem 1rem; font-family: inherit; font-size: 0.85rem;
+      cursor: pointer; background: #fff; color: #202124; transition: all 0.15s;
+    }
+    .c-ChoicePicker .choice-chip:hover { background: #f1f3f4; }
+    .c-ChoicePicker .choice-chip.selected {
+      background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; font-weight: 500;
+    }
+
+    /* v0.9.1: KeyValue */
+    .c-KeyValue {
+      display: flex; flex-direction: row; gap: 0.75rem; align-items: baseline;
+    }
+    .c-KeyValue-label {
+      font-size: 0.85rem; font-weight: 500; color: #5f6368; min-width: 70px;
+    }
+    .c-KeyValue-value {
+      font-size: 0.9rem; color: #202124;
+    }
+
+    /* v0.9.1: ProgressIndicator */
+    .c-ProgressIndicator {
+      display: inline-block; width: 20px; height: 20px;
+      border: 2.5px solid #dadce0; border-top-color: #1a73e8;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .c-Button {
+      border: 1px solid #dadce0; border-radius: 20px;
+      padding: 0.5rem 1.25rem; font-family: inherit;
+      font-size: 0.875rem; font-weight: 500; cursor: pointer;
+      background: #fff; color: #202124; transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] {
+      background: #1a73e8; color: #fff; border-color: #1a73e8;
+    }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+
+    /* JSON viewer */
+    .json-view {
+      max-width: 480px; width: 100%; margin: 1rem auto 0;
+      background: #263238; color: #aed581; border-radius: 8px;
+      padding: 1rem; font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+      max-height: 400px; overflow: auto; white-space: pre-wrap;
+    }
+
+    /* Event log */
+    #event-log {
+      max-width: 480px; width: 100%; margin: 1rem auto 0;
+      background: #263238; color: #aed581; border-radius: 8px;
+      padding: 1rem; font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+      max-height: 200px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log:empty::before {
+      content: '// Fill out the form, review, and submit to see events...';
+      color: #607d8b;
+    }
+
+    .stats {
+      text-align: center; margin: 1rem 0; font-size: 0.85rem; color: #5f6368;
+    }
+    .stats strong { color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — P3: Guided Form v0.9.1 (with Helper Comparison)</h1>
+
+  <div class="stats">
+    v0.9.0: <strong>22 components</strong>, ~90 lines &nbsp;|&nbsp;
+    v0.9.1: <strong>45 components</strong>, ~140 lines (4 states) &nbsp;|&nbsp;
+    Helper: <strong>~25 lines</strong> of JS
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="side-by-side">Side by Side</button>
+    <button class="tab-btn" data-tab="raw-json">v0.9.1 JSON</button>
+    <button class="tab-btn" data-tab="helper-json">Helper Output</button>
+  </div>
+
+  <div id="view-side-by-side" class="panels">
+    <div class="panel">
+      <div class="panel-label">v0.9.1 — Raw JSON (review + processing + success)</div>
+      <div class="surface" id="surface-raw"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Helper Library (~25 lines of JS)</div>
+      <div class="surface" id="surface-helper"></div>
+    </div>
+  </div>
+
+  <div id="view-raw-json" class="panels hidden">
+    <div class="panel">
+      <div class="panel-label">collect-shipping.json (v0.9.1)</div>
+      <div class="json-view" id="json-raw"></div>
+    </div>
+  </div>
+
+  <div id="view-helper-json" class="panels hidden">
+    <div class="panel">
+      <div class="panel-label">Helper-generated output (v0.9.0-compatible)</div>
+      <div class="json-view" id="json-helper"></div>
+    </div>
+  </div>
+
+  <h1 style="margin-top:1.5rem">Event Log</h1>
+  <div id="event-log"></div>
+
+  <script type="module">
+    // --- Tab switching ---
+    const tabs = document.querySelectorAll('.tab-btn');
+    const views = { 'side-by-side': 'view-side-by-side', 'raw-json': 'view-raw-json', 'helper-json': 'view-helper-json' };
+    tabs.forEach(btn => btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.values(views).forEach(id => document.getElementById(id).classList.add('hidden'));
+      document.getElementById(views[btn.dataset.tab]).classList.remove('hidden');
+    }));
+
+    // --- Load raw JSON ---
+    const response = await fetch('./collect-shipping.json');
+    const rawMessages = await response.json();
+
+    // --- Generate helper-equivalent messages ---
+    const helperMessages = generateHelperOutput();
+
+    function generateHelperOutput() {
+      const surfaceId = 'a2h-collect-shipping-001';
+      return [
+        {
+          version: 'v0.9',
+          createSurface: { surfaceId, catalogId: 'https://a2ui.org/specification/v0_9/basic_catalog.json', sendDataModel: true }
+        },
+        {
+          version: 'v0.9',
+          updateDataModel: {
+            surfaceId,
+            value: {
+              shipping: {
+                name: 'Jane Doe', street: '742 Evergreen Terrace',
+                city: 'Springfield', state: 'IL', zip: '62704', phone: '', speed: ['standard']
+              }
+            }
+          }
+        },
+        {
+          version: 'v0.9',
+          updateComponents: {
+            surfaceId,
+            components: [
+              { id: 'collect-root', component: 'Card', child: 'collect-col' },
+              { id: 'collect-col', component: 'Column', children: ['collect-header-row','collect-div-1','collect-body','collect-div-2','collect-actions'] },
+              { id: 'collect-header-row', component: 'Row', children: ['collect-header-icon','collect-header-text'], align: 'center' },
+              { id: 'collect-header-icon', component: 'Text', text: '📝', variant: 'h3' },
+              { id: 'collect-header-text', component: 'Text', text: 'Where should we ship your order?', variant: 'h3' },
+              { id: 'collect-div-1', component: 'Divider' },
+              { id: 'collect-body', component: 'Column', children: [
+                'field-name-label','field-name','field-street-label','field-street',
+                'field-city-label','field-city','field-state-label','field-state',
+                'field-zip-label','field-zip','field-phone-label','field-phone',
+                'field-speed-label','field-speed'
+              ] },
+              { id: 'field-name-label', component: 'Text', text: 'Full name', variant: 'label' },
+              { id: 'field-name', component: 'TextField', placeholder: 'Full name', value: { path: '/shipping/name' }, data: { path: '/shipping/name' } },
+              { id: 'field-street-label', component: 'Text', text: 'Street address', variant: 'label' },
+              { id: 'field-street', component: 'TextField', placeholder: 'Street address', value: { path: '/shipping/street' }, data: { path: '/shipping/street' } },
+              { id: 'field-city-label', component: 'Text', text: 'City', variant: 'label' },
+              { id: 'field-city', component: 'TextField', placeholder: 'City', value: { path: '/shipping/city' }, data: { path: '/shipping/city' } },
+              { id: 'field-state-label', component: 'Text', text: 'State', variant: 'label' },
+              { id: 'field-state', component: 'TextField', placeholder: 'State', value: { path: '/shipping/state' }, data: { path: '/shipping/state' } },
+              { id: 'field-zip-label', component: 'Text', text: 'ZIP code', variant: 'label' },
+              { id: 'field-zip', component: 'TextField', placeholder: 'ZIP code', value: { path: '/shipping/zip' }, data: { path: '/shipping/zip' } },
+              { id: 'field-phone-label', component: 'Text', text: 'Phone number', variant: 'label' },
+              { id: 'field-phone', component: 'TextField', placeholder: 'Phone number', value: { path: '/shipping/phone' }, data: { path: '/shipping/phone' } },
+              { id: 'field-speed-label', component: 'Text', text: 'Delivery speed', variant: 'label' },
+              { id: 'field-speed', component: 'ChoicePicker', options: [
+                { label: 'Standard (5–7 days)', value: 'standard' },
+                { label: 'Express (2–3 days)', value: 'express' },
+                { label: 'Overnight', value: 'overnight' }
+              ], value: { path: '/shipping/speed' }, data: { path: '/shipping/speed' } },
+              { id: 'collect-div-2', component: 'Divider' },
+              { id: 'collect-actions', component: 'Row', children: ['btn-submit-text','btn-submit'], justify: 'end' },
+              { id: 'btn-submit-text', component: 'Text', text: 'Submit shipping info' },
+              { id: 'btn-submit', component: 'Button', variant: 'primary', child: 'btn-submit-text', action: { event: { name: 'a2h.collect.submit', context: {} } } },
+            ]
+          }
+        }
+      ];
+    }
+
+    // --- Show JSON ---
+    document.getElementById('json-raw').textContent = JSON.stringify(rawMessages, null, 2);
+    document.getElementById('json-helper').textContent = JSON.stringify(helperMessages, null, 2);
+
+    // --- Icon map ---
+    const iconMap = {
+      shoppingCart: 'shopping_cart', factCheck: 'fact_check', checkCircle: 'check_circle',
+      locationOn: 'location_on', accountCircle: 'account_circle', lock: 'lock',
+    };
+
+    // --- A2UI Renderer ---
+    function createRenderer(targetId, messages) {
+      let surfaceConfig = null;
+      const components = {};
+      let dataModel = {};
+
+      for (const msg of messages) {
+        if (msg.createSurface) surfaceConfig = msg.createSurface;
+        if (msg.updateComponents) {
+          for (const c of msg.updateComponents.components) components[c.id] = c;
+        }
+        if (msg.updateDataModel) dataModel = msg.updateDataModel.value;
+      }
+
+      function getPath(obj, path) {
+        const parts = path.split('/').filter(Boolean);
+        let cur = obj;
+        for (const p of parts) cur = cur?.[p];
+        return cur ?? '';
+      }
+
+      function setPath(obj, path, value) {
+        const parts = path.split('/').filter(Boolean);
+        let cur = obj;
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (!(parts[i] in cur)) cur[parts[i]] = {};
+          cur = cur[parts[i]];
+        }
+        cur[parts[parts.length - 1]] = value;
+      }
+
+      function resolve(val) {
+        if (val && typeof val === 'object' && val.path) return getPath(dataModel, val.path);
+        return val;
+      }
+
+      function isVisible(comp) {
+        if (!comp.visible) return true;
+        const vis = comp.visible;
+        if (vis.fn === 'equals' && Array.isArray(vis.args)) {
+          return resolve(vis.args[0]) === vis.args[1];
+        }
+        return true;
+      }
+
+      // Speed label lookup helper
+      const speedLabels = { standard: 'Standard (5–7 days)', express: 'Express (2–3 days)', overnight: 'Overnight' };
+
+      function updateSpeedLabel() {
+        const speed = getPath(dataModel, '/shipping/speed');
+        const val = Array.isArray(speed) ? speed[0] : speed;
+        setPath(dataModel, '/shipping/speedLabel', speedLabels[val] || val || '');
+      }
+
+      function render(id) {
+        const comp = components[id];
+        if (!comp) return document.createTextNode(`[missing: ${id}]`);
+        if (!isVisible(comp)) {
+          const ph = document.createElement('span');
+          ph.style.display = 'none';
+          ph.dataset.hiddenId = id;
+          return ph;
+        }
+
+        switch (comp.component) {
+          case 'Card': {
+            const el = document.createElement('div');
+            el.className = 'c-Card';
+            if (comp.child) el.appendChild(render(comp.child));
+            return el;
+          }
+          case 'Column': {
+            const el = document.createElement('div');
+            el.className = 'c-Column';
+            for (const cid of (comp.children || [])) el.appendChild(render(cid));
+            return el;
+          }
+          case 'Row': {
+            const el = document.createElement('div');
+            el.className = 'c-Row';
+            if (comp.justify) el.dataset.justify = comp.justify;
+            if (comp.align) el.style.alignItems = comp.align;
+            for (const cid of (comp.children || [])) el.appendChild(render(cid));
+            return el;
+          }
+          case 'Divider': {
+            const el = document.createElement('hr');
+            el.className = 'c-Divider';
+            return el;
+          }
+          case 'Icon': {
+            const el = document.createElement('span');
+            el.className = 'c-Icon';
+            const name = resolve(comp.name);
+            el.textContent = iconMap[name] || name;
+            return el;
+          }
+          case 'Text': {
+            const el = document.createElement('span');
+            el.className = 'c-Text';
+            if (comp.variant) el.dataset.variant = comp.variant;
+            el.textContent = resolve(comp.text);
+            return el;
+          }
+          case 'KeyValue': {
+            const el = document.createElement('div');
+            el.className = 'c-KeyValue';
+            const label = document.createElement('span');
+            label.className = 'c-KeyValue-label';
+            label.textContent = resolve(comp.label) + ':';
+            const value = document.createElement('span');
+            value.className = 'c-KeyValue-value';
+            value.textContent = resolve(comp.value);
+            el.append(label, value);
+            return el;
+          }
+          case 'ProgressIndicator': {
+            const el = document.createElement('div');
+            el.className = 'c-ProgressIndicator';
+            return el;
+          }
+          case 'TextField': {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'c-TextField';
+            const label = document.createElement('label');
+            label.textContent = comp.label || comp.placeholder || '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            const path = comp.value?.path || comp.data?.path;
+            input.value = path ? getPath(dataModel, path) : '';
+            if (path) {
+              input.addEventListener('input', () => setPath(dataModel, path, input.value));
+            }
+            wrapper.appendChild(label);
+            wrapper.appendChild(input);
+            return wrapper;
+          }
+          case 'ChoicePicker': {
+            const wrap = document.createElement('div');
+            wrap.className = 'c-ChoicePicker';
+            const path = comp.value?.path || comp.data?.path;
+            const currentVal = path ? (getPath(dataModel, path) || []) : [];
+            const isMulti = comp.variant === 'multipleSelection';
+            for (const opt of (comp.options || [])) {
+              const chip = document.createElement('button');
+              chip.className = 'choice-chip' + (currentVal.includes(opt.value) ? ' selected' : '');
+              chip.textContent = opt.label;
+              chip.addEventListener('click', () => {
+                if (path) {
+                  let arr = getPath(dataModel, path) || [];
+                  if (isMulti) {
+                    arr = arr.includes(opt.value) ? arr.filter(v => v !== opt.value) : [...arr, opt.value];
+                  } else {
+                    arr = [opt.value];
+                    wrap.querySelectorAll('.choice-chip').forEach(c => c.classList.remove('selected'));
+                  }
+                  setPath(dataModel, path, arr);
+                  chip.classList.toggle('selected', arr.includes(opt.value));
+                  updateSpeedLabel();
+                }
+              });
+              wrap.appendChild(chip);
+            }
+            return wrap;
+          }
+          case 'Button': {
+            const el = document.createElement('button');
+            el.className = 'c-Button';
+            if (comp.variant) el.dataset.variant = comp.variant;
+            if (comp.label) {
+              el.textContent = resolve(comp.label);
+            } else if (comp.child) {
+              const childComp = components[comp.child];
+              el.textContent = childComp ? resolve(childComp.text) : comp.child;
+            }
+            if (comp.action?.event) {
+              el.addEventListener('click', () => {
+                const evt = comp.action.event;
+                const ctx = {};
+                for (const [k, v] of Object.entries(evt.context || {})) ctx[k] = resolve(v);
+                const payload = {
+                  eventName: evt.name, context: ctx,
+                  ...(surfaceConfig?.sendDataModel ? { dataModel: structuredClone(dataModel) } : {}),
+                  timestamp: new Date().toISOString()
+                };
+                logEvent(payload);
+
+                // Demo state transitions (v0.9.1 visible binding)
+                if (evt.name === 'a2h.collect.review') {
+                  updateSpeedLabel();
+                  dataModel.state = 'reviewing';
+                  rerender(targetId);
+                } else if (evt.name === 'a2h.collect.edit') {
+                  dataModel.state = 'editing';
+                  rerender(targetId);
+                } else if (evt.name === 'a2h.collect.submit') {
+                  dataModel.state = 'processing';
+                  rerender(targetId);
+                  setTimeout(() => {
+                    dataModel.state = 'success';
+                    rerender(targetId);
+                  }, 1500);
+                }
+              });
+            }
+            return el;
+          }
+          default:
+            return document.createTextNode(`[unknown: ${comp.component}]`);
+        }
+      }
+
+      function rerender(targetId) {
+        const container = document.getElementById(targetId);
+        container.innerHTML = '';
+        const rootId = Object.keys(components).find(k =>
+          components[k].component === 'Card' &&
+          !Object.values(components).some(c => (c.children || []).includes(k) || c.child === k)
+        );
+        container.appendChild(render(rootId || 'root'));
+      }
+
+      updateSpeedLabel();
+      rerender(targetId);
+    }
+
+    function logEvent(payload) {
+      const log = document.getElementById('event-log');
+      log.textContent += `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Mount both renderers
+    createRenderer('surface-raw', rawMessages);
+    createRenderer('surface-helper', helperMessages);
+  </script>
+</body>
+</html>
