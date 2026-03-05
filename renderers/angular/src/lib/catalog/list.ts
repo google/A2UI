@@ -49,7 +49,6 @@ import { Renderer } from '../rendering/renderer';
 
     .a2ui-list-item {
       display: flex;
-      align-items: center;
       cursor: pointer;
       box-sizing: border-box;
     }
