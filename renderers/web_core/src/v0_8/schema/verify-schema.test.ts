@@ -94,6 +94,12 @@ function getObjectDiff(obj1: any, obj2: any, path = ""): Record<string, any> {
       continue;
     }
 
+    // The A2UI v0.8 JSON spec inadvertently omitted recursion for valueMap,
+    // but the runtime and agent examples rely on it. Skip this difference.
+    if (currentPath.includes("valueMap.items.properties.valueMap")) {
+      continue;
+    }
+
     if (
       typeof val1 === "object" &&
       val1 !== null &&

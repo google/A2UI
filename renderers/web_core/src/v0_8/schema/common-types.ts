@@ -122,19 +122,23 @@ export const ActionSchema = z.object({
 
 export const TextSchema = z.object({
   text: StringValueSchema,
-  usageHint: z.enum(["h1", "h2", "h3", "h4", "h5", "caption", "body"]),
+  usageHint: z
+    .enum(["h1", "h2", "h3", "h4", "h5", "caption", "body"])
+    .optional(),
 });
 
 export const ImageSchema = z.object({
   url: StringValueSchema,
-  usageHint: z.enum([
-    "icon",
-    "avatar",
-    "smallFeature",
-    "mediumFeature",
-    "largeFeature",
-    "header",
-  ]),
+  usageHint: z
+    .enum([
+      "icon",
+      "avatar",
+      "smallFeature",
+      "mediumFeature",
+      "largeFeature",
+      "header",
+    ])
+    .optional(),
   fit: z.enum(["contain", "cover", "fill", "none", "scale-down"]).optional(),
   altText: StringValueSchema.optional(),
 });
