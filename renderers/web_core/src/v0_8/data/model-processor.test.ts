@@ -559,7 +559,7 @@ describe("A2uiMessageProcessor", () => {
     }, /Value must have exactly one value property/);
   });
 
-  it.only("path resolves through primitive objects and arrays", () => {
+  it("path resolves through primitive objects and arrays", () => {
     processor.processMessages([
       { beginRendering: { surfaceId: "s1_path", root: "list" } },
     ]);
