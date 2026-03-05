@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Styles from '@a2ui/web_core/styles/index';
 import * as Types from '@a2ui/web_core/types/types';
@@ -22,6 +22,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-image',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
       display: block;
@@ -39,10 +40,11 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   `,
   template: `
     @let resolvedUrl = this.resolvedUrl();
+    @let resolvedAltText = this.resolvedAltText();
 
     @if (resolvedUrl) {
       <section [class]="classes()" [style]="theme.additionalStyles?.Image">
-        <img [src]="resolvedUrl" />
+        <img [src]="resolvedUrl" [alt]="resolvedAltText" />
       </section>
     }
   `,
@@ -50,8 +52,13 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 export class Image extends DynamicComponent {
   readonly url = input.required<Primitives.StringValue | null>();
   readonly usageHint = input.required<Types.ResolvedImage['usageHint'] | null>();
+  readonly altText = input.required<Primitives.StringValue | null>();
 
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
+  protected readonly resolvedAltText = computed(() => {
+    const raw = this.altText();
+    return raw ? this.resolvePrimitive(raw) : '';
+  });
 
   protected classes = computed(() => {
     const usageHint = this.usageHint();

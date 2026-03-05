@@ -14,47 +14,13 @@
  limitations under the License.
  */
 
-export declare interface StringValue {
-  /**
-   * A data binding reference to a location in the data model (e.g., '/user/name').
-   */
-  path?: string;
-  /**
-   * A fixed, hardcoded string value.
-   */
-  literalString?: string;
-  /**
-   * A fixed, hardcoded string value.
-   */
-  literal?: string;
-}
+import type { z } from "zod";
+import type {
+  StringValueSchema,
+  NumberValueSchema,
+  BooleanValueSchema,
+} from "../schema/common-types.js";
 
-export declare interface NumberValue {
-  /**
-   * A data binding reference to a location in the data model (e.g., '/user/name').
-   */
-  path?: string;
-  /**
-   * A fixed, hardcoded number value.
-   */
-  literalNumber?: number;
-  /**
-   * A fixed, hardcoded number value.
-   */
-  literal?: number;
-}
-
-export declare interface BooleanValue {
-  /**
-   * A data binding reference to a location in the data model (e.g., '/user/name').
-   */
-  path?: string;
-  /**
-   * A fixed, hardcoded boolean value.
-   */
-  literalBoolean?: boolean;
-  /**
-   * A fixed, hardcoded boolean value.
-   */
-  literal?: boolean;
-}
+export type StringValue = z.infer<typeof StringValueSchema>;
+export type NumberValue = z.infer<typeof NumberValueSchema>;
+export type BooleanValue = z.infer<typeof BooleanValueSchema>;

@@ -23,11 +23,20 @@ How components connect to application state using JSON Pointer paths. Covers rea
 
 ## Message Types
 
-A2UI uses four message types:
+=== "v0.8 (Stable)"
 
-- **`surfaceUpdate`**: Define or update UI components
-- **`dataModelUpdate`**: Update application state
-- **`beginRendering`**: Signal the client to render
-- **`deleteSurface`**: Remove a UI surface
+    - **`surfaceUpdate`**: Define or update UI components
+    - **`dataModelUpdate`**: Update application state
+    - **`beginRendering`**: Signal the client to render
+    - **`deleteSurface`**: Remove a UI surface
+
+=== "v0.9 (Draft)"
+
+    - **`createSurface`**: Create a new surface and specify its catalog
+    - **`updateComponents`**: Add or update UI components in a surface
+    - **`updateDataModel`**: Update application state
+    - **`deleteSurface`**: Remove a UI surface
+
+    v0.9 separates surface creation from rendering — `createSurface` replaces both `beginRendering` and the implicit surface creation in `surfaceUpdate`. All messages include a `version` field.
 
 For complete technical details, see [Message Reference](../reference/messages.md).

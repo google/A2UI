@@ -19,8 +19,7 @@ import { BaseEventDetail } from "./base.js";
 /**
  * Detailed payload for the `a2ui-validation-input` event.
  */
-export interface ValidationEventDetail
-  extends BaseEventDetail<"a2ui-validation-input"> {
+export interface ValidationEventDetail extends BaseEventDetail<"a2ui-validation-input"> {
   /**
    * The ID of the component that is being validated.
    */
@@ -45,7 +44,7 @@ export class A2UIValidationEvent extends CustomEvent<ValidationEventDetail> {
 
   constructor(
     detail: Omit<ValidationEventDetail, "eventType">,
-    eventInitDict?: EventInit
+    eventInitDict?: EventInit,
   ) {
     super(A2UIValidationEvent.EVENT_NAME, {
       bubbles: true,

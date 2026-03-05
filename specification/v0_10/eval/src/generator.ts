@@ -28,13 +28,13 @@ export class Generator {
   constructor(
     private schemas: any,
     private outputDir?: string,
-    private catalogRules?: string
+    private catalogRules?: string,
   ) {}
 
   async run(
     prompts: TestPrompt[],
     models: ModelConfiguration[],
-    runsPerPrompt: number
+    runsPerPrompt: number,
   ): Promise<GeneratedResult[]> {
     const totalJobs = prompts.length * models.length * runsPerPrompt;
     let completedCount = 0;
@@ -53,7 +53,7 @@ export class Generator {
           ? Math.round(((completedCount + failedCount) / totalJobs) * 100)
           : 0;
       process.stderr.write(
-        `\r[Phase 1] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `
+        `\r[Phase 1] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `,
       );
     }, 1000);
 
@@ -69,7 +69,7 @@ export class Generator {
               }
               results.push(result);
               return result;
-            })
+            }),
           );
         }
       }
@@ -87,7 +87,7 @@ export class Generator {
     model: ModelConfiguration,
     prompt: TestPrompt,
     runIndex: number,
-    retryCount: number = 0
+    retryCount: number = 0,
   ): Promise<GeneratedResult> {
     const startTime = Date.now();
     try {
@@ -148,24 +148,24 @@ export class Generator {
     prompt: TestPrompt,
     runIndex: number,
     text: string,
-    components: any[]
+    components: any[],
   ) {
     if (!this.outputDir) return;
     const modelDir = path.join(
       this.outputDir,
-      `output-${model.name.replace(/[\/:]/g, "_")}`
+      `output-${model.name.replace(/[\/:]/g, "_")}`,
     );
     const detailsDir = path.join(modelDir, "details");
     fs.mkdirSync(detailsDir, { recursive: true });
 
     fs.writeFileSync(
       path.join(detailsDir, `${prompt.name}.${runIndex}.json`),
-      JSON.stringify(components, null, 2)
+      JSON.stringify(components, null, 2),
     );
 
     const samplePath = path.join(
       detailsDir,
-      `${prompt.name}.${runIndex}.sample`
+      `${prompt.name}.${runIndex}.sample`,
     );
     const yamlHeader = `---
 description: ${prompt.description}
@@ -189,23 +189,23 @@ ${prompt.promptText
     prompt: TestPrompt,
     runIndex: number,
     text: string | undefined,
-    error: any
+    error: any,
   ) {
     if (!this.outputDir) return;
     const modelDir = path.join(
       this.outputDir,
-      `output-${model.name.replace(/[\/:]/g, "_")}`
+      `output-${model.name.replace(/[\/:]/g, "_")}`,
     );
     const detailsDir = path.join(modelDir, "details");
     fs.mkdirSync(detailsDir, { recursive: true });
 
     fs.writeFileSync(
       path.join(detailsDir, `${prompt.name}.${runIndex}.output.txt`),
-      text || "No output"
+      text || "No output",
     );
     fs.writeFileSync(
       path.join(detailsDir, `${prompt.name}.${runIndex}.error.json`),
-      JSON.stringify({ message: error.message, stack: error.stack }, null, 2)
+      JSON.stringify({ message: error.message, stack: error.stack }, null, 2),
     );
   }
 }

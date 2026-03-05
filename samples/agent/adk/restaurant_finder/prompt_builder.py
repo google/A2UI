@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui.inference.schema.manager import A2uiSchemaManager
-from a2ui.inference.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.core.schema.common_modifiers import remove_strict_validation
 
 ROLE_DESCRIPTION = (
     "You are a helpful restaurant finding assistant. Your final output MUST be a a2ui"
@@ -65,8 +67,8 @@ if __name__ == "__main__":
   # For a different agent (e.g., a flight booker), you would pass in
   # different examples but use the same `get_ui_prompt` function.
   restaurant_prompt = A2uiSchemaManager(
-      "0.8",
-      basic_examples_path="examples/",
+      VERSION_0_8,
+      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
       schema_modifiers=[remove_strict_validation],
   ).generate_system_prompt(
       role_description=ROLE_DESCRIPTION,

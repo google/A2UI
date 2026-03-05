@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 import * as Types from '@a2ui/web_core/types/types';
@@ -23,6 +23,7 @@ import * as Types from '@a2ui/web_core/types/types';
   selector: 'a2ui-card',
   imports: [Renderer],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     a2ui-card {
       display: block;
@@ -54,4 +55,4 @@ import * as Types from '@a2ui/web_core/types/types';
     </section>
   `,
 })
-export class Card extends DynamicComponent<Types.CardNode> { }
+export class Card extends DynamicComponent<Types.CardNode> {}

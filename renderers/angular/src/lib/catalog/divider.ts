@@ -14,11 +14,12 @@
  limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-divider',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<hr [class]="theme.components.Divider" [style]="theme.additionalStyles?.Divider"/>',
   styles: `
     :host {

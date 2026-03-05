@@ -14,12 +14,17 @@
  limitations under the License.
  */
 
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-icon',
+  host: {
+    'aria-hidden': 'true',
+    tabindex: '-1',
+  },
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
       display: block;

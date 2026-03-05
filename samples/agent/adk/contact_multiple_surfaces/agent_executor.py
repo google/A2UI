@@ -34,7 +34,7 @@ from a2a.utils import (
 )
 from a2a.utils.errors import ServerError
 from agent import ContactAgent
-from a2ui.extension.a2ui_extension import create_a2ui_part, try_activate_a2ui_extension
+from a2ui.a2a import create_a2ui_part, try_activate_a2ui_extension
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +92,7 @@ class ContactAgentExecutor(AgentExecutor):
               client_ui_capabilities = part.root.data["metadata"][
                   "a2uiClientCapabilities"
               ]
-              catalog = agent.schema_manager.get_effective_catalog(
+              catalog = agent.schema_manager.get_selected_catalog(
                   client_ui_capabilities=client_ui_capabilities
               )
               catalog_schema_str = catalog.render_as_llm_instructions()

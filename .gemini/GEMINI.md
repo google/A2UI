@@ -7,28 +7,39 @@ This document serves as a guide for using the Gemini agent within the A2UI repos
 The A2UI repository is organized into several key directories:
 
 -   `specification/`: Contains the A2UI protocol specifications.
-    -   `0_8/`: The current protocol version.
+    -   `v0_8/`: The stable protocol version.
         -   `docs/`: Human-readable documentation.
         -   `json/`: JSON schema definitions.
-    -   `0_9/`: The next protocol version (in development).
+        -   `eval/`: Genkit-based evaluation framework.
+    -   `v0_9/`: The draft protocol version (in development).
+        -   `docs/`: Human-readable documentation.
+        -   `json/`: JSON schema definitions.
+        -   `eval/`: Genkit-based evaluation framework.
+    -   `v0_10/`: The proposed protocol version (next version).
         -   `docs/`: Human-readable documentation.
         -   `json/`: JSON schema definitions.
         -   `eval/`: Genkit-based evaluation framework.
 -   `samples/`: Contains sample implementations.
-    -   `agent/adk/`: Python-based ADK agent samples (e.g., `contact_lookup`, `restaurant_finder`, `rizzcharts`, `orchestrator`).
+    -   `agent/`:
+        -   `adk/`: Python-based ADK agent samples (e.g., `contact_lookup`, `restaurant_finder`, `rizzcharts`, `orchestrator`).
+        -   `mcp/`: MCP server sample (A2UI over MCP).
     -   `client/`: Web client implementations.
         -   `lit/`: Clients using Lit and Vite (e.g., `contact`, `shell`).
-        -   `angular/`: Clients using Angular.
-    -   `mcp/`: MCP server samples (e.g., `flight_booking`).
--   `a2a_agents/`: Contains source code for A2A extension integrations.
-    -   `python/a2ui_agent/`: Python implementation of the A2UI agent library.
+        -   `angular/`: Clients using Angular (e.g., `contact`, `orchestrator`).
+    -   `personalized_learning/`: Personalized learning sample implementation.
+-   `agent_sdks/`: Contains source code for Agent integrations.
+    -   `python/`: Python implementation of the A2UI agent library.
     -   `java/`: Java implementation of the A2UI agent library.
 -   `renderers/`: Contains renderer libraries.
     -   `lit/`: The shared Lit renderer library used by the Lit clients.
-    -   `web_core/`: The shared core library used by Lit and Angular renderers.
+    -   `angular/`: The shared Angular renderer library used by the Angular clients.
+    -   `web_core/`: The shared core library used by web renderers.
+    -   `markdown/`: Markdown rendering utilities.
 -   `tools/`: Helper tools for development.
     -   `editor/`: A web-based editor for generating and visualizing A2UI.
     -   `inspector/`: A web-based inspector for A2UI responses.
+    -   `composer/`: Visual composer tool.
+    -   `build_catalog/`: Catalog building utility.
 
 ## A2UI Specification Overview
 
@@ -36,19 +47,19 @@ The A2UI protocol is a JSONL-based, streaming UI protocol designed to be easily 
 
 ### Core Concepts
 
-The core concepts of the A2UI protocol are detailed in the main specification document. Refer to the authoritative source for the current version (0.8):
+The core concepts of the A2UI protocol are detailed in the main specification document. Refer to the authoritative source for the current version (0.9):
 
--   **A2UI Protocol Specification**: `@specification/0_8/docs/a2ui_protocol.md`
+-   **A2UI Protocol Specification**: `@specification/v0_9/docs/a2ui_protocol.md`
 
 This document covers the design philosophy, architecture, data flow, and core concepts of the protocol.
 
 ### Schemas
 
-The formal, machine-readable definitions of the protocol are maintained as JSON schemas. For version 0.8:
+The formal, machine-readable definitions of the protocol are maintained as JSON schemas. For version 0.9:
 
--   **Server-to-Client Schema**: `@specification/0_8/json/server_to_client.json`
--   **Client-to-Server Schema**: `@specification/0_8/json/client_to_server.json`
--   **Standard Catalog**: `@specification/0_8/json/standard_catalog_definition.json`
+-   **Server-to-Client Schema**: `@specification/v0_9/json/server_to_client.json`
+-   **Client-to-Server Schema**: `@specification/v0_9/json/client_to_server.json`
+-   **Basic Catalog**: `@specification/v0_9/json/basic_catalog.json`
 
 ## Running the Demos
 
@@ -72,7 +83,11 @@ The Lit clients are located in `samples/client/lit/`.
 1.  **Build the Renderer**:
     First, ensure the shared renderers are built:
     ```bash
-    cd renderers/web_core
+    cd renderers/markdown/markdown-it
+    npm install
+    npm run build
+
+    cd ../../web_core
     npm install
     npm run build
 
@@ -95,7 +110,11 @@ The Angular clients are located in `samples/client/angular/`.
 
 First, ensure the shared renderers are built (if not already done):
 ```bash
-cd renderers/web_core
+cd renderers/markdown/markdown-it
+npm install
+npm run build
+
+cd ../../web_core
 npm install
 npm run build
 

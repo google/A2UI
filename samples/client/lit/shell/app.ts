@@ -46,6 +46,7 @@ import { AppConfig } from "./configs/types.js";
 import { config as restaurantConfig } from "./configs/restaurant.js";
 import { config as contactsConfig } from "./configs/contacts.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { renderMarkdown } from "@a2ui/markdown-it";
 
 const configs: Record<string, AppConfig> = {
   restaurant: restaurantConfig,
@@ -54,8 +55,11 @@ const configs: Record<string, AppConfig> = {
 
 @customElement("a2ui-shell")
 export class A2UILayoutEditor extends SignalWatcher(LitElement) {
-  @provide({ context: UI.Context.themeContext })
+  @provide({ context: UI.Context.theme })
   accessor theme: v0_8.Types.Theme = uiTheme;
+
+  @provide({ context: UI.Context.markdown })
+  accessor markdownRenderer: v0_8.Types.MarkdownRenderer = renderMarkdown;
 
   @state()
   accessor #requesting = false;
@@ -67,7 +71,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #lastMessages: v0_8.Types.ServerToClientMessage[] = [];
 
   @state()
-  accessor config: AppConfig = configs.restaurant;
+  accessor config: AppConfig = configs.contacts;
 
   @state()
   accessor #loadingTextIndex = 0;
@@ -285,8 +289,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
     // Load config from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const appKey = urlParams.get("app") || "restaurant";
-    this.config = configs[appKey] || configs.restaurant;
+    const appKey = urlParams.get("app");
+    this.config = (appKey && configs[appKey]) || configs.contacts;
 
     // Apply the theme directly, which will use the Lit context.
     if (this.config.theme) {
