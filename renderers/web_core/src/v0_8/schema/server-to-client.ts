@@ -20,6 +20,21 @@ import {
   VideoSchema,
 } from "./common-types.js";
 
+
+const validateValueProperty = (val: any, ctx: z.RefinementCtx) => {
+  let count = 0;
+  if (val.valueString !== undefined) count++;
+  if (val.valueNumber !== undefined) count++;
+  if (val.valueBoolean !== undefined) count++;
+  if (val.valueMap !== undefined) count++;
+  if (count !== 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
+    });
+  }
+};
+
 const ValueMapItemSchema = z
   .object({
     key: z.string(),
@@ -28,6 +43,7 @@ const ValueMapItemSchema = z
     valueBoolean: z.boolean().optional(),
   })
   .strict()
+  .superRefine(validateValueProperty)
   .describe(
     "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
   );
@@ -44,6 +60,7 @@ export const ValueMapSchema = z
       .describe("Represents a map as an adjacency list."),
   })
   .strict()
+  .superRefine(validateValueProperty)
   .describe(
     "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
   );
@@ -130,6 +147,77 @@ export const SurfaceUpdateMessageSchema = z
       .describe("A list containing all UI components for the surface."),
   })
   .strict()
+  .superRefine((data, ctx) => {
+    const componentIds = new Set<string>();
+    for (const c of data.components) {
+      if (c.id) {
+        if (componentIds.has(c.id)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Duplicate component ID found: ${c.id}`,
+            path: ["components"],
+          });
+        }
+        componentIds.add(c.id);
+      }
+    }
+
+    const checkRefs = (ids: (string | undefined)[], componentId: string) => {
+      for (const id of ids) {
+        if (id && !componentIds.has(id)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Component '${componentId}' references non-existent component ID '${id}'.`,
+            path: ["components"],
+          });
+        }
+      }
+    };
+
+    for (const component of data.components) {
+      if (!component.id || !component.component) continue;
+      const componentTypes = Object.keys(component.component);
+      if (componentTypes.length !== 1) continue;
+
+      const componentType = componentTypes[0];
+      const properties: any = (component.component as any)[componentType];
+
+      switch (componentType) {
+        case "Row":
+        case "Column":
+        case "List":
+          if (properties.children && !Array.isArray(properties.children)) {
+            const hasExplicit = !!properties.children.explicitList;
+            const hasTemplate = !!properties.children.template;
+            if ((hasExplicit && hasTemplate) || (!hasExplicit && !hasTemplate)) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: `Component '${component.id}' must have either 'explicitList' or 'template' in children, but not both or neither.`,
+              });
+            }
+            if (hasExplicit) checkRefs(properties.children.explicitList, component.id);
+            if (hasTemplate) checkRefs([properties.children.template?.componentId], component.id);
+          }
+          break;
+        case "Card":
+          if (properties.child) checkRefs([properties.child], component.id);
+          break;
+        case "Tabs":
+          if (properties.tabItems && Array.isArray(properties.tabItems)) {
+            properties.tabItems.forEach((tab: any) => {
+              if (tab.child) checkRefs([tab.child], component.id);
+            });
+          }
+          break;
+        case "Modal":
+          checkRefs([properties.entryPointChild, properties.contentChild], component.id);
+          break;
+        case "Button":
+          if (properties.child) checkRefs([properties.child], component.id);
+          break;
+      }
+    }
+  })
   .describe("Updates a surface with a new set of components.");
 
 export const DataModelUpdateMessageSchema = z
@@ -173,6 +261,15 @@ export const A2uiMessageSchema = z
     deleteSurface: DeleteSurfaceMessageSchema.optional(),
   })
   .strict()
+  .superRefine((data, ctx) => {
+    const keys = Object.keys(data).filter(k => ["beginRendering", "surfaceUpdate", "dataModelUpdate", "deleteSurface"].includes(k));
+    if (keys.length !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "A2UI Protocol message must have exactly one of: surfaceUpdate, dataModelUpdate, beginRendering, deleteSurface.",
+      });
+    }
+  })
   .describe(
     "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
   );

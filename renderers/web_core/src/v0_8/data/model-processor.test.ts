@@ -546,21 +546,17 @@ describe("A2uiMessageProcessor", () => {
     );
 
     // Test the fallback where valueString is absent but we pass something anyway
-    processor.processMessages([
-      {
-        dataModelUpdate: {
-          surfaceId: "s1_prim",
-          path: "/nested/malformed",
-          contents: [{ key: "." }],
+    assert.throws(() => {
+      processor.processMessages([
+        {
+          dataModelUpdate: {
+            surfaceId: "s1_prim",
+            path: "/nested/malformed",
+            contents: [{ key: "." } as any],
+          },
         },
-      },
-    ]);
-    const result = processor.getData(
-      root,
-      "/nested/malformed",
-      "s1_prim",
-    ) as Map<any, any>;
-    assert.strictEqual(result instanceof Map, true);
+      ]);
+    }, /Must have exactly one value property/);
   });
 
   it.only("path resolves through primitive objects and arrays", () => {

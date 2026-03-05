@@ -4,21 +4,44 @@ import { z } from "zod";
  * Base primitives
  */
 
+const exactlyOneKey = (val: any, ctx: z.RefinementCtx) => {
+  const keys = Object.keys(val).filter((k) => val[k] !== undefined);
+  if (keys.length !== 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: `Must define exactly one property, found ${keys.length} (${keys.join(", ")}).`,
+    });
+  }
+};
+
 export const StringValueSchema = z.object({
   path: z.string().optional(),
   literalString: z.string().optional(),
   literal: z.string().optional(),
-});
+}).strict().superRefine(exactlyOneKey);
 export type StringValue = z.infer<typeof StringValueSchema>;
 
-const DataValueMapItemSchema = z
+const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() => z
   .object({
     key: z.string(),
     valueString: z.string().optional(),
     valueNumber: z.number().optional(),
     valueBoolean: z.boolean().optional(),
+    valueMap: z.array(DataValueMapItemSchema).optional(),
   })
-  .strict();
+  .strict().superRefine((val: any, ctx: z.RefinementCtx) => {
+    let count = 0;
+    if (val.valueString !== undefined) count++;
+    if (val.valueNumber !== undefined) count++;
+    if (val.valueBoolean !== undefined) count++;
+    if (val.valueMap !== undefined) count++;
+    if (count !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Value map item must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
+      });
+    }
+  }));
 
 export const DataValueSchema = z
   .object({
@@ -28,20 +51,32 @@ export const DataValueSchema = z
     valueBoolean: z.boolean().optional(),
     valueMap: z.array(DataValueMapItemSchema).optional(),
   })
-  .strict();
+  .strict().superRefine((val: any, ctx: z.RefinementCtx) => {
+    let count = 0;
+    if (val.valueString !== undefined) count++;
+    if (val.valueNumber !== undefined) count++;
+    if (val.valueBoolean !== undefined) count++;
+    if (val.valueMap !== undefined) count++;
+    if (count !== 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Value must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
+      });
+    }
+  });
 
 export const NumberValueSchema = z.object({
   path: z.string().optional(),
   literalNumber: z.number().optional(),
   literal: z.number().optional(),
-});
+}).strict().superRefine(exactlyOneKey);
 export type NumberValue = z.infer<typeof NumberValueSchema>;
 
 export const BooleanValueSchema = z.object({
   path: z.string().optional(),
   literalBoolean: z.boolean().optional(),
   literal: z.boolean().optional(),
-});
+}).strict().superRefine(exactlyOneKey);
 export type BooleanValue = z.infer<typeof BooleanValueSchema>;
 
 /**
@@ -70,9 +105,9 @@ export const ActionSchema = z.object({
             literalNumber: z.number().optional(),
             literalBoolean: z.boolean().optional(),
           })
-          .describe(
-            "The dynamic value. Define EXACTLY ONE of the nested properties.",
-          ),
+            .describe(
+              "The dynamic value. Define EXACTLY ONE of the nested properties.",
+            ).strict().superRefine(exactlyOneKey),
       }),
     )
     .describe(
@@ -138,6 +173,16 @@ export const TabsSchema = z.object({
         child: z
           .string()
           .describe("A reference to a component instance by its unique ID."),
+      }).strict().superRefine((val: any, ctx: z.RefinementCtx) => {
+        if (!val.title) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tab item is missing 'title'." });
+        }
+        if (!val.child) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tab item is missing 'child'." });
+        }
+        if (val.title) {
+          exactlyOneKey(val.title, ctx);
+        }
       }),
     )
     .describe("A list of tabs, each with a title and a child component ID."),
@@ -183,7 +228,7 @@ export const CheckboxSchema = z.object({
       )
       .optional(),
     literalBoolean: z.boolean().optional(),
-  }),
+  }).strict().superRefine(exactlyOneKey),
 });
 
 export const TextFieldSchema = z.object({
@@ -215,7 +260,7 @@ export const MultipleChoiceSchema = z.object({
       )
       .optional(),
     literalArray: z.array(z.string()).optional(),
-  }),
+  }).strict().superRefine(exactlyOneKey),
   options: z
     .array(
       z.object({
@@ -230,7 +275,7 @@ export const MultipleChoiceSchema = z.object({
             .string()
             .describe("A fixed, hardcoded string value.")
             .optional(),
-        }),
+        }).strict().superRefine(exactlyOneKey),
         value: z.string(),
       }),
     )
@@ -249,7 +294,7 @@ export const SliderSchema = z.object({
       )
       .optional(),
     literalNumber: z.number().optional(),
-  }),
+  }).strict().superRefine(exactlyOneKey),
   minValue: z.number().optional(),
   maxValue: z.number().optional(),
 });
@@ -264,7 +309,7 @@ export const ComponentArrayReferenceSchema = z.object({
   template: ComponentArrayTemplateSchema.describe(
     "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
   ).optional(),
-});
+}).strict().superRefine(exactlyOneKey);
 
 export const RowSchema = z.object({
   children: ComponentArrayReferenceSchema,
