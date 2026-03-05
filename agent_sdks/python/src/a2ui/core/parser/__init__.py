@@ -13,5 +13,6 @@
 # limitations under the License.
 
 from .parser import parse_response
+from .payload_fixer import parse_and_fix
 
-__all__ = ["parse_response"]
+__all__ = ["parse_response", "parse_and_fix"]

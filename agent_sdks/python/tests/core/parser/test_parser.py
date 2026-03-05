@@ -59,7 +59,7 @@ def test_parse_response_empty_json_object_with_delimiter():
   content = f"{A2UI_DELIMITER} {{ }}"
   text, json_obj = parse_response(content)
   assert text == ""
-  assert json_obj == {}
+  assert json_obj == [{}]
 
 
 def test_parse_response_with_markdown_blocks():

@@ -99,18 +99,16 @@ agent_executor = MyAgentExecutor(
 To ensure reliability, always validate the LLM's JSON output before returning it. The SDK's `A2uiCatalog` provides a validator that checks the payload against the A2UI schema. If the payload is invalid, the validator will attempt to fix it.
 
 ```python
+from a2ui.core.parser import parse_response
+
 # Get the catalog for the current request
 selected_catalog = schema_manager.get_selected_catalog()
 
-try:
-    # Parse the LLM's JSON part
-    parsed_json = json.loads(json_string)
-    
-    # Validate and fix against the schema
-    selected_catalog.payload_fixer.validate_and_fix(parsed_json)
-except Exception as e:
-    # Handle validation errors (e.g., log error or retry with correction prompt)
-    print(f"Validation failed: {e}")
+# Parse the LLM's JSON part with simple fixers like removing trailing commas
+text_part, json_data = parse_response(text)
+
+# Validate the JSON part against the schema
+selected_catalog.validator.validate(json_data)
 ```
 
 #### 4c. Stream the A2UI Payload
@@ -203,8 +201,9 @@ ui_toolset = SendA2uiToClientToolset(
 #### 2c. Runtime Validation
 
 When the LLM calls the UI tool, the toolset uses the dynamic catalog to:
-1.  **Generate Instructions**: Automatically inject the specific schema and examples into the LLM's system prompt for that turn.
-2.  **Validate and Fix Payloads**: Automatically validate and fix the LLM's generated JSON against the specific `A2uiCatalog` object's validator and auto-fixer.
+1.  **Generate Instructions**: Inject the specific schema and examples into the LLM's system prompt for that turn.
+2.  **Parse and Fix Payloads**: Parse and fix the LLM's generated JSON using the parser and payload-fixer.
+3.  **Validate Payloads**: Validate the LLM's generated JSON against the specific `A2uiCatalog` object's validator.
 
 ### 3. Orchestration and Delegation
 

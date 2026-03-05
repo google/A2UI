@@ -15,6 +15,7 @@
 import json
 from typing import Tuple, Any
 from ..schema.constants import A2UI_DELIMITER
+from .payload_fixer import parse_and_fix
 
 
 def parse_response(content: str) -> Tuple[str, Any]:
@@ -47,10 +48,5 @@ def parse_response(content: str) -> Tuple[str, Any]:
   if not json_string_cleaned:
     raise ValueError("A2UI JSON part is empty.")
 
-  try:
-    parsed_json_data = json.loads(json_string_cleaned)
-    return text_part, parsed_json_data
-  except json.JSONDecodeError as e:
-    # Truncate string if it's too long to keep logs readable
-    snippet = (json_string[:100] + "...") if len(json_string) > 100 else json_string
-    raise ValueError(f"Failed to parse JSON: {snippet}") from e
+  json_data = parse_and_fix(json_string_cleaned)
+  return text_part, json_data
