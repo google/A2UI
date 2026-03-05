@@ -12,6 +12,27 @@ The Data Layer is responsible for receiving the wire protocol (JSON messages), p
 
 It consists of three sub-components: the Processing Layer, the Dumb Models, and the Context Layer.
 
+### Prerequisites
+
+To implement the Data Layer effectively, your target environment needs two foundational utilities: a Schema Library and an Observable Library.
+
+#### 1. Schema Library
+To represent and validate component and function APIs, the Data Layer requires a **Schema Library**. 
+
+*   **Ideal Choice**: A library (like **Zod** in TypeScript or **JsonSchemaBuilder** in Flutter) that allows for programmatic definition of schemas and the ability to validate raw JSON data against those definitions.
+*   **Capabilities Generation**: The library should ideally support exporting these programmatic definitions to standard JSON Schema for the `getClientCapabilities` payload.
+*   **Fallback**: If no suitable programmatic library exists for the target language, raw **JSON Schema strings** or manual validation logic can be used instead.
+
+#### 2. Observable Library
+A2UI relies on a standard observer pattern to reactively update the UI when data changes. The Data Layer and client-side functions must be able to return streams or reactive variables that hold an initial value and emit subsequent updates.
+
+*   **Requirement**: You need a reactive mechanism that acts like a "BehaviorSubject" or a stateful stream—it must have a current value available synchronously upon subscription, and notify listeners of future changes.
+*   **Examples by Platform**:
+    *   **Web (TypeScript/JavaScript)**: RxJS (`BehaviorSubject`), Signals, or a simple custom `EventEmitter` class.
+    *   **Android (Kotlin)**: Kotlin Coroutines (`StateFlow`) or Android `LiveData`.
+    *   **iOS (Swift)**: Combine (`CurrentValueSubject`) or SwiftUI `@Published` / `Binding`.
+*   **Guidance**: If your ecosystem doesn't have a lightweight built-in option, you can easily implement a simple observer class with `subscribe` and `unsubscribe` methods, keeping external dependencies low.
+
 ### Design Principles
 
 To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.
@@ -47,13 +68,6 @@ The model is designed to support high-performance rendering through granular upd
 
 This hierarchy allows a renderer to implement "smart" updates: re-rendering a container only when its children list changes, but updating just a specific text node when its bound data value changes.
 
-### Schema Library Requirements
-To represent and validate component and function APIs, the Data Layer requires a **Schema Library**. 
-
-*   **Ideal Choice**: A library (like **Zod** in TypeScript or **JsonSchemaBuilder** in Flutter) that allows for programmatic definition of schemas and the ability to validate raw JSON data against those definitions.
-*   **Capabilities Generation**: The library should ideally support exporting these programmatic definitions to standard JSON Schema for the `getClientCapabilities` payload.
-*   **Fallback**: If no suitable programmatic library exists for the target language, raw **JSON Schema strings** or manual validation logic can be used instead.
-
 ### Key Interfaces and Classes
 *   **`MessageProcessor`**: The entry point that ingests raw JSON streams.
 *   **`SurfaceGroupModel`**: The root container for all active surfaces.
@@ -61,7 +75,7 @@ To represent and validate component and function APIs, the Data Layer requires a
 *   **`SurfaceComponentsModel`**: A flat collection of component configurations.
 *   **`ComponentModel`**: A specific component's raw configuration.
 *   **`DataModel`**: A dedicated store for application data.
-*   **`DataContext`**: A scoped window into the `DataModel`.
+*   **`DataContext`**: A scoped window into the `DataModel`. Used by functions and components to resolve dependencies and mutate state.
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
 ### The Catalog and Component API
@@ -74,60 +88,43 @@ interface ComponentApi {
 }
 
 /** 
- * Context provided to functions during execution.
- * Allows functions to resolve other dynamic values or interact with the data model.
- */
-interface FunctionContext {
-  /** The current data model path context (useful for relative paths). */
-  readonly path: string;
-
-  /** 
-   * Resolves any DynamicValue (literal, path, or function call) to a reactive stream. 
-   * The returned type should be an observable/listenable implementation idiomatic to the language.
-   */
-  resolve(value: any): Observable<any>;
-
-  /** Retrieves another registered function by name. */
-  getFunction(name: string): ClientFunction | undefined;
-
-  /** Updates the data model at a specific path. */
-  update(path: string, value: any): void;
-}
-
-/** 
  * Defines a client-side logic handler. 
  */
-interface ClientFunction {
+interface FunctionImplementation {
   readonly name: string;
   readonly description: string;
   readonly returnType: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
   
   /** 
-   * The schema for the arguments this function accepts (similar to Flutter's `argumentSchema`).
+   * The schema for the arguments this function accepts.
    * MUST use the same schema library as the ComponentApi to ensure consistency 
-   * across the catalog.
+   * across the catalog. 
+   * This maps directly to the `parameters` field of the `FunctionDefinition`
+   * in the A2UI client capabilities schema, allowing dynamic capabilities advertising.
    */
-  readonly argumentSchema: z.ZodType<any>;
+  readonly schema: z.ZodType<any>;
 
   /**
    * Executes the function logic.
    * @param args The key-value pairs of arguments provided in the JSON.
-   * @param context The execution context for resolving dependencies.
-   * @returns A reactive stream (or Observable/Signal) of the result.
+   * @param context The DataContext for resolving dependencies and mutating state.
+   * @returns A synchronous value or a reactive stream (e.g. Observable).
    * 
-   * Rationale: Like the Model Layer, functions MUST return an observable implementation
-   * that is idiomatic to the target language but follows "lowest common denominator" 
-   * principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+   * Rationale: The return type here should be flexible based on your language.
+   * Dynamic languages (like TS/JS) can return a union type (e.g., `unknown | Observable<unknown>`) 
+   * and let the framework wrap static values. Strictly typed languages (like Swift or Kotlin) 
+   * might instead require this to strictly return their observable equivalent (e.g., `StateFlow<Any>`) 
+   * internally wrapping static returns to avoid messy generic union types.
    */
-  execute(args: Record<string, any>, context: FunctionContext): Observable<any>;
+  execute(args: Record<string, any>, context: DataContext): unknown | Observable<unknown>;
 }
 
 class Catalog<T extends ComponentApi> {
   readonly id: string; // Unique catalog URI
   readonly components: ReadonlyMap<string, T>;
-  readonly functions: ReadonlyMap<string, ClientFunction>;
+  readonly functions?: ReadonlyMap<string, FunctionImplementation>;
 
-  constructor(id: string, components: T[], functions: ClientFunction[] = []) {
+  constructor(id: string, components: T[], functions?: FunctionImplementation[]) {
     // Initializes the read-only maps
   }
 }
@@ -136,12 +133,12 @@ class Catalog<T extends ComponentApi> {
 #### Function Implementation Rationale
 A2UI categorizes client-side functions to balance performance and reactivity. 
 
-**Observability Consistency**: Like the "Dumb Models," functions MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+**Observability Consistency**: Functions can return either a synchronous literal value (for static results) or a reactive stream (for values that change over time). The execution engine (`DataContext`) is responsible for treating these consistently by wrapping synchronous returns in static observables when evaluating reactively. 
 
-**API Documentation**: Every function MUST include a schema (e.g., `argumentSchema`) using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities for the AI model.
+**API Documentation**: Every function MUST include a `schema` using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities (`parameters` in `FunctionDefinition`) for the AI model.
 
 **Function Categories**:
-1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. While they return observable streams for consistency, their logic is immediate and depends only on their inputs.
+1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. Their logic is immediate and depends only on their inputs. They typically return a static primitive value.
 2.  **External State (Reactive)**: Functions like `clock()` or `networkStatus()`. These return long-lived streams that push updates to the UI independently of data model changes.
 3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`, `closeModal`) that return `void`. These are typically triggered by user actions rather than interpolation.
 
@@ -339,6 +336,7 @@ class ComponentContext {
   readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
   dispatchAction(action: any): Promise<void>; // Propagate action to surface
 }
+```
 
 #### Inter-Component Dependencies (The "Escape Hatch")
 While A2UI components are designed to be self-contained, certain rendering logic requires knowledge of a child or sibling's properties. 
@@ -347,8 +345,6 @@ While A2UI components are designed to be self-contained, certain rendering logic
 
 **Usage**: Component implementations can use `ctx.surfaceComponents` to inspect the metadata of other components in the same surface.
 > **Guidance**: This pattern is generally discouraged as it increases coupling. Use it only as an essential escape hatch when a framework's layout engine cannot be satisfied by explicit component properties alone.
-
-```
 
 ## 2. Framework Binding Layer
 
@@ -398,14 +394,14 @@ To ensure performance and correctness, components MUST follow these rules:
 
 The Standard A2UI Catalog (v0.9) requires a shared logic layer for expression resolution and standard component definitions. To maintain consistency across renderers, implementations should follow this structure:
 
-*   **`basic_catalog_api/`**: Contains the framework-agnostic `ComponentApi` definitions for standard components (`Text`, `Button`, `Row`, etc.) and the `ClientFunction` definitions for standard functions.
+*   **`basic_catalog_api/`**: Contains the framework-agnostic `ComponentApi` definitions for standard components (`Text`, `Button`, `Row`, etc.) and the `FunctionImplementation` definitions for standard functions.
 *   **`basic_catalog_implementation/`**: Contains the framework-specific rendering logic (e.g. `SwiftUIButton`, `FlutterRow`).
 
 ### **Expression Resolution Logic (`formatString`)**
 The standard `formatString` function is responsible for interpreting the `${expression}` syntax within string properties. 
 
 **Implementation Requirements**:
-1.  **Recursion**: The function implementation MUST use `FunctionContext.resolve()` to recursively evaluate nested expressions or function calls (e.g., `${formatDate(value:${/date})}`).
+1.  **Recursion**: The function implementation MUST use `DataContext.resolveDynamicValue()` or `DataContext.subscribeDynamicValue()` to recursively evaluate nested expressions or function calls (e.g., `${formatDate(value:${/date})}`).
 2.  **Tokenization**: The parser must distinguish between:
     *   **DataPath**: A raw JSON Pointer (e.g., `${/user/name}`).
     *   **FunctionCall**: Identified by parentheses (e.g., `${now()}`).
