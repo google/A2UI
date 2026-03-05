@@ -38,6 +38,12 @@ if (!packageJson.dependencies['@a2ui/web_core']) {
 }
 
 packageJson.dependencies['@a2ui/web_core'] = '^' + coreVersion;
+
+// Remove scripts and properties that should not be in the published package
+delete packageJson.scripts;
+delete packageJson.prepublishOnly;
+delete packageJson.files;
+
 writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 2));
 
 copyFileSync(join(dirname, '../../LICENSE'), join(dirname, './dist/LICENSE'));

@@ -3,7 +3,9 @@
   "version": "0.8.4",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "ng build && node postprocess-build.mjs"
+    "build": "ng build && node postprocess-build.mjs",
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
+    "publish:package": "npm run build && npm publish dist/ --access public"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
