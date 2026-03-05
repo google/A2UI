@@ -1,0 +1,28 @@
+{
+  "name": "@a2ui/nativescript",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "ng build"
+  },
+  "dependencies": {
+    "@a2ui/lit": "file:../lit",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@nativescript/angular": "21.0.0-rc.2",
+    "@nativescript/core": "^9.0.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.0.0",
+    "@angular/cli": "^21.0.0",
+    "@angular/compiler": "^21.0.0",
+    "@angular/compiler-cli": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@nativescript/angular": "21.0.0-rc.2",
+    "@nativescript/core": "^9.0.0",
+    "ng-packagr": "^21.0.0",
+    "typescript": "~5.9.2"
+  }
+}
