@@ -21,22 +21,12 @@ import jsonschema
 
 logger = logging.getLogger(__name__)
 
-# Map logical example names (used in prompt) to filenames
-EXAMPLE_FILES = {
-    "CONTACT_LIST_EXAMPLE": "contact_list.json",
-    "CONTACT_CARD_EXAMPLE": "contact_card.json",
-    "ACTION_CONFIRMATION_EXAMPLE": "action_confirmation.json",
-    "ORG_CHART_EXAMPLE": "org_chart.json",
-    "MULTI_SURFACE_EXAMPLE": "multi_surface.json",
-    "CHART_NODE_CLICK_EXAMPLE": "chart_node_click.json",
-}
-
 FLOOR_PLAN_FILE = "floor_plan.json"
 
 
-def load_floor_plan_example() -> str:
+def load_floor_plan_example(version: str) -> str:
   """Loads the floor plan example specifically."""
-  examples_dir = Path(os.path.dirname(__file__)) / "examples"
+  examples_dir = Path(os.path.dirname(__file__)) / "examples" / version
   file_path = examples_dir / FLOOR_PLAN_FILE
   try:
     return file_path.read_text(encoding="utf-8")

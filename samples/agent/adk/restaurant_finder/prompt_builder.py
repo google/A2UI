@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
@@ -31,7 +31,7 @@ To generate the response, you MUST follow these rules:
 """
 
 UI_DESCRIPTION = """
--   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
+-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `updateDataModel.value` object (e.g., for the "items" key).
 -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
 -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
 -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
@@ -66,9 +66,15 @@ if __name__ == "__main__":
   # You can now easily construct a prompt with the relevant examples.
   # For a different agent (e.g., a flight booker), you would pass in
   # different examples but use the same `get_ui_prompt` function.
+  version = VERSION_0_9
   restaurant_prompt = A2uiSchemaManager(
-      VERSION_0_8,
-      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
+      version,
+      catalogs=[
+          BasicCatalog.get_config(
+              version=version,
+              examples_path=f"examples/{version}",
+          )
+      ],
       schema_modifiers=[remove_strict_validation],
   ).generate_system_prompt(
       role_description=ROLE_DESCRIPTION,
