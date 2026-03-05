@@ -30,7 +30,6 @@ from google.genai import types
 from prompt_builder import (
     get_text_prompt,
     ROLE_DESCRIPTION,
-    WORKFLOW_DESCRIPTION,
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
@@ -113,7 +112,6 @@ class RestaurantAgent:
     instruction = (
         self._schema_manager.generate_system_prompt(
             role_description=ROLE_DESCRIPTION,
-            workflow_description=WORKFLOW_DESCRIPTION,
             ui_description=UI_DESCRIPTION,
             include_schema=True,
             include_examples=True,
