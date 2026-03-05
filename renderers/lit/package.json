@@ -1,9 +1,9 @@
 {
   "name": "@a2ui/lit",
-  "version": "0.8.1",
+  "version": "0.8.3",
   "description": "A2UI Lit Library",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
@@ -20,7 +20,8 @@
   },
   "type": "module",
   "scripts": {
-    "prepack": "npm run build",
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
+    "publish:package": "npm run build && node prepare-publish.mjs && npm publish dist/ --access public",
     "build": "wireit",
     "build:tsc": "wireit",
     "dev": "npm run serve --watch",

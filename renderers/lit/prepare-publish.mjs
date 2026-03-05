@@ -7,7 +7,7 @@ import { join } from 'path';
 // 3. Adjusting paths in package.json (main, types, exports) to be relative to dist/
 
 const dirname = import.meta.dirname;
-const corePkgPath = join(dirname, '../core/package.json');
+const corePkgPath = join(dirname, '../web_core/package.json');
 const litPkgPath = join(dirname, './package.json');
 const distDir = join(dirname, './dist');
 
@@ -48,17 +48,28 @@ if (litPkg.exports) {
   }
 }
 
+// Remove properties that should not be in the published package
+delete litPkg.scripts;
+delete litPkg.wireit;
+delete litPkg.files;
+delete litPkg.prepublishOnly;
+
 // 5. Write to dist/package.json
 writeFileSync(join(distDir, 'package.json'), JSON.stringify(litPkg, null, 2));
 
 // 6. Copy README and LICENSE
-['README.md', 'LICENSE'].forEach(file => {
-  const src = join(dirname, file);
-  if (!existsSync(src)) {
-    throw new Error(`Missing required file for publishing: ${file}`);
-  }
-  copyFileSync(src, join(distDir, file));
-});
+const readmeSrc = join(dirname, 'README.md');
+const licenseSrc = join(dirname, '../../LICENSE');
+
+if (!existsSync(readmeSrc)) {
+  throw new Error(`Missing required file for publishing: README.md`);
+}
+copyFileSync(readmeSrc, join(distDir, 'README.md'));
+
+if (!existsSync(licenseSrc)) {
+  throw new Error(`Missing required file for publishing: LICENSE`);
+}
+copyFileSync(licenseSrc, join(distDir, 'LICENSE'));
 
 console.log(`Prepared dist/package.json with @a2ui/web_core@${coreVersion}`);
 
