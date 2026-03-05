@@ -26,7 +26,7 @@ To represent and validate component and function APIs, the Data Layer requires a
 #### 2. Observable Library
 A2UI relies on a standard observer pattern to reactively update the UI when data changes. The Data Layer and client-side functions must be able to return streams or reactive variables that hold an initial value and emit subsequent updates.
 
-*   **Requirement**: You need a reactive mechanism that acts like a "BehaviorSubject" or a stateful stream—it must have a current value available synchronously upon subscription, and notify listeners of future changes.
+*   **Requirement**: You need a reactive mechanism that acts like a "BehaviorSubject" or a stateful stream—it must have a current value available synchronously upon subscription, and notify listeners of future changes. Crucially, the subscription must provide a clear mechanism to **unsubscribe** (e.g., a `dispose()` method or a returned cleanup function) to prevent memory leaks when components are removed.
 *   **Examples by Platform**:
     *   **Web (TypeScript/JavaScript)**: RxJS (`BehaviorSubject`), Signals, or a simple custom `EventEmitter` class.
     *   **Android (Kotlin)**: Kotlin Coroutines (`StateFlow`) or Android `LiveData`.
@@ -377,6 +377,9 @@ interface MyFrameworkComponent extends ComponentApi {
 #### 2. Stateful / Imperative Frameworks (e.g., Vanilla DOM, Android Views)
 In stateful frameworks, a parent component instance might persist even as its configuration changes. In these cases, the `FrameworkComponent` might maintain a reference to its native element and provide an `update()` method to apply new properties without re-creating the entire child tree.
 
+#### Subscription Management
+Regardless of the framework paradigm (functional or stateful), the `FrameworkComponent` implementation is responsible for tracking any active subscriptions returned by the `DataContext` or `ComponentModel`. It must ensure these subscriptions are properly disposed of when the component is unmounted from the UI tree.
+
 ### Component Traits
 
 #### Reactive Validation (`Checkable`)
@@ -386,9 +389,10 @@ Interactive components that support the `checks` property should implement the `
 *   **Action Blocking**: Actions (like `Button` clicks) should be reactively disabled or blocked if any validation check in the surface or component fails.
 
 #### Component Subscription Lifecycle
-To ensure performance and correctness, components MUST follow these rules:
+To ensure performance and prevent memory leaks, components MUST strictly manage their subscriptions. Follow these rules:
 1.  **Lazy Subscription**: Only subscribe to data paths or property updates when the component is actually mounted/attached to the UI.
-2.  **Path Stability**: If a component's property (e.g., a `value` data path) changes via an `updateComponents` message, the component MUST unsubscribe from the old path and subscribe to the new one.
+2.  **Path Stability**: If a component's property (e.g., a `value` data path) changes via an `updateComponents` message, the component MUST unsubscribe from the old path before subscribing to the new one.
+3.  **Destruction / Cleanup**: When a component is removed from the UI (e.g., via a `deleteSurface` message, a conditional render, or when its parent is replaced), the framework binding MUST hook into its native lifecycle (e.g., `ngOnDestroy` in Angular, `dispose` in Flutter, `useEffect` cleanup in React, `onDisappear` in SwiftUI) to trigger unsubscription from all active data and property observables. This ensures listeners are cleared from the `DataModel`.
 
 ## **Basic Catalog Implementation**
 
