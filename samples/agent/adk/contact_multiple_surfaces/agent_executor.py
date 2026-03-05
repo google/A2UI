@@ -35,6 +35,7 @@ from a2a.utils import (
 from a2a.utils.errors import ServerError
 from agent import ContactAgent
 from a2ui.a2a import create_a2ui_part, try_activate_a2ui_extension
+from a2ui.core.parser import parse_response
 
 logger = logging.getLogger(__name__)
 
@@ -180,40 +181,30 @@ class ContactAgentExecutor(AgentExecutor):
 
       content = item["content"]
       final_parts = []
-      if "---a2ui_JSON---" in content:
-        logger.info("Splitting final response into text and UI parts.")
-        text_content, json_string = content.split("---a2ui_JSON---", 1)
 
-        if text_content.strip():
-          final_parts.append(Part(root=TextPart(text=text_content.strip())))
+      try:
+        text_part, json_data = parse_response(content)
 
-        if json_string.strip():
-          try:
-            json_string_cleaned = (
-                json_string.strip().lstrip("```json").rstrip("```").strip()
-            )
+        if text_part.strip():
+          final_parts.append(Part(root=TextPart(text=text_part.strip())))
 
+        if json_data:
+          if isinstance(json_data, list):
             # Handle empty JSON list (e.g., no results)
-            if not json_string_cleaned or json_string_cleaned == "[]":
-              logger.info("Received empty/no JSON part. Skipping DataPart.")
+            if len(json_data) == 0:
+              logger.info("Received empty list. Skipping DataPart.")
             else:
-              json_data = json.loads(json_string_cleaned)
-              if isinstance(json_data, list):
-                logger.info(
-                    f"Found {len(json_data)} messages. Creating individual DataParts."
-                )
-                for message in json_data:
-                  final_parts.append(create_a2ui_part(message))
+              logger.info(
+                  f"Found {len(json_data)} messages. Creating individual DataParts."
+              )
+              for message in json_data:
+                final_parts.append(create_a2ui_part(message))
+          else:
+            logger.info("Received a single JSON object. Creating a DataPart.")
+            final_parts.append(create_a2ui_part(json_data))
 
-              else:
-                # Handle the case where a single JSON object is returned
-                logger.info("Received a single JSON object. Creating a DataPart.")
-                final_parts.append(create_a2ui_part(json_data))
-
-          except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse UI JSON: {e}")
-            final_parts.append(Part(root=TextPart(text=json_string)))
-      else:
+      except (ValueError, json.JSONDecodeError) as e:
+        logger.warning(f"Failed to parse A2UI response: {e}. Falling back to text.")
         final_parts.append(Part(root=TextPart(text=content.strip())))
 
       # If after all that, we only have empty parts, add a default text response
