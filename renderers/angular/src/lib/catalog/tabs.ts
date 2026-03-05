@@ -14,9 +14,10 @@
  limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
+import * as Styles from '@a2ui/web_core/styles/index';
 import * as Types from '@a2ui/web_core/types/types';
 
 @Component({
@@ -28,14 +29,12 @@ import * as Types from '@a2ui/web_core/types/types';
     @let selectedIndex = this.selectedIndex();
 
     <section [class]="theme.components.Tabs.container" [style]="theme.additionalStyles?.Tabs">
-      <div class="a2ui-tabs-container" [class]="theme.components.Tabs.element">
+      <div [class]="theme.components.Tabs.element">
         @for (tab of tabs; track tab) {
           <button
-            class="a2ui-tab-button"
             (click)="this.selectedIndex.set($index)"
             [disabled]="selectedIndex === $index"
-            [class]="theme.components.Tabs.controls.all"
-            [class.selected]="selectedIndex === $index"
+            [class]="buttonClasses()[$index]"
           >
             {{ resolvePrimitive(tab.title) }}
           </button>
@@ -55,27 +54,22 @@ import * as Types from '@a2ui/web_core/types/types';
       flex: var(--weight);
       width: 100%;
     }
-
-    .a2ui-tabs-container {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    .a2ui-tab-button {
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-    }
   `,
 })
 export class Tabs extends DynamicComponent {
   protected selectedIndex = signal(0);
   readonly tabs = input.required<Types.ResolvedTabItem[]>();
+
+  protected readonly buttonClasses = computed(() => {
+    const selectedIndex = this.selectedIndex();
+
+    return this.tabs().map((_, index) => {
+      return index === selectedIndex
+          ? Styles.merge(
+              this.theme.components.Tabs.controls.all,
+              this.theme.components.Tabs.controls.selected,
+          )
+          : this.theme.components.Tabs.controls.all;
+    });
+  });
 }

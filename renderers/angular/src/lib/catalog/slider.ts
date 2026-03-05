@@ -23,7 +23,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <section [class]="theme.components.Slider.container">
-      <label class="a2ui-slider-label" [class]="theme.components.Slider.label" [for]="inputId">
+      <label [class]="theme.components.Slider.label" [for]="inputId">
         {{ label() }}
       </label>
 
@@ -47,17 +47,6 @@ import { DynamicComponent } from '../rendering/dynamic-component';
       flex: var(--weight);
       width: 100%;
     }
-
-    .a2ui-slider-label {
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    input {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-    }
   `,
 })
 export class Slider extends DynamicComponent {
@@ -80,21 +69,21 @@ export class Slider extends DynamicComponent {
       return;
     }
 
-    const val = event.target.valueAsNumber;
-    const percent = this.computePercentage(val);
+    const newValue = event.target.valueAsNumber;
+    const percent = this.computePercentage(newValue);
 
     // Inject CSS variable directly to avoid Angular change detection lag/snapback
     event.target.style.setProperty('--slider-percent', percent + '%');
 
     if (path) {
-      this.processor.setData(this.component(), path, val, this.surfaceId());
+      this.processor.setData(this.component(), path, newValue, this.surfaceId());
     }
   }
 
-  private computePercentage(val: number): number {
+  private computePercentage(value: number): number {
     const min = this.minValue() ?? 0;
     const max = this.maxValue() ?? 100;
     const range = max - min;
-    return range > 0 ? Math.max(0, Math.min(100, ((val - min) / range) * 100)) : 0;
+    return range > 0 ? Math.max(0, Math.min(100, ((value - min) / range) * 100)) : 0;
   }
 }
