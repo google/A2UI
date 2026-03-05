@@ -67,7 +67,7 @@ nav:
           - A2UI Protocol: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
   - Ecosystem:
-      - Where is A2UI Used?: ecosystem/where-is-it-used.md
+      - A2UI in the World: ecosystem/where-is-it-used.md
       - Community Renderers: ecosystem/renderers.md
       - Community: ecosystem/community.md
   - Roadmap: roadmap.md

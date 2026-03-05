@@ -1,4 +1,4 @@
-# Where is A2UI Used?
+# A2UI in the World
 
 A2UI is being adopted by teams at Google and partner organizations to build the next generation of agent-driven applications. Here are real-world examples of where A2UI is making an impact.
 
