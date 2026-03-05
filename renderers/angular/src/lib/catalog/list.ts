@@ -31,18 +31,19 @@ import { Renderer } from '../rendering/renderer';
       display: block;
       flex: var(--weight);
       min-height: 0;
-      overflow: auto;
     }
 
     :host([direction='vertical']) section {
       display: flex;
       flex-direction: column;
+      max-height: 100%;
+      overflow-y: auto;
     }
 
     :host([direction='horizontal']) section {
       display: flex;
       max-width: 100%;
-      overflow-x: scroll;
+      overflow-x: auto;
       overflow-y: hidden;
       scrollbar-width: none;
     }
