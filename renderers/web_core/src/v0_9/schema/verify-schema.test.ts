@@ -11,6 +11,7 @@ import {
   UpdateDataModelMessageSchema,
   DeleteSurfaceMessageSchema,
 } from "./server-to-client.js";
+import { LogicExpressionSchema } from "./common-types.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -221,5 +222,22 @@ describe("A2UI Schema Verification v0.9", () => {
         DeleteSurfaceMessage: DeleteSurfaceMessageSchema,
       },
     );
+  });
+
+  it("validates LogicExpression boolean literals", () => {
+    assert.deepStrictEqual(LogicExpressionSchema.parse({ true: true }), {
+      true: true,
+    });
+    assert.deepStrictEqual(LogicExpressionSchema.parse({ false: false }), {
+      false: false,
+    });
+  });
+
+  it("validates A2uiMessage wrapper", () => {
+    const msg = {
+      version: "v0.9",
+      deleteSurface: { surfaceId: "surface-1" },
+    };
+    assert.deepStrictEqual(A2uiMessageSchema.parse(msg), msg);
   });
 });

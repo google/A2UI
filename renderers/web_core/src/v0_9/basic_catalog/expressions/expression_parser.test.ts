@@ -115,4 +115,35 @@ describe("ExpressionParser", () => {
       parser.parse("${true false}");
     }, /Unexpected characters/);
   });
+
+  it("handles empty identifiers", () => {
+    assert.deepStrictEqual(parser.parse("${()}"), [
+      { call: "", args: {}, returnType: "any" },
+    ]);
+    assert.deepStrictEqual(parser.parseExpression(""), "");
+    assert.deepStrictEqual(parser.parseExpression("()"), {
+      call: "",
+      args: {},
+      returnType: "any",
+    });
+  });
+
+  it("handles string literals with escaped characters", () => {
+    assert.deepStrictEqual(
+      parser.parseExpression("'line1\\nline2\\t\\r\\'\\\\x'"),
+      "line1\nline2\t\r'\\x",
+    );
+  });
+
+  it("handles parsing paths with special characters", () => {
+    assert.deepStrictEqual(parser.parseExpression("my-path.with_underscores"), {
+      path: "my-path.with_underscores",
+    });
+  });
+
+  it("returns error on missing colon in function args", () => {
+    assert.throws(() => {
+      parser.parseExpression("add(a 10, b: 20)");
+    }, /Expected ':'/);
+  });
 });

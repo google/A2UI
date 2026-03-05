@@ -74,4 +74,36 @@ describe("SurfaceComponentsModel", () => {
       model.addComponent(new ComponentModel("c1", "Button", {}));
     }, /already exists/);
   });
+
+  it("returns entries iterator", () => {
+    const c1 = new ComponentModel("c1", "Button", {});
+    const c2 = new ComponentModel("c2", "Text", {});
+    model.addComponent(c1);
+    model.addComponent(c2);
+
+    const entries = Array.from(model.entries);
+    assert.strictEqual(entries.length, 2);
+    assert.deepStrictEqual(entries[0], ["c1", c1]);
+    assert.deepStrictEqual(entries[1], ["c2", c2]);
+  });
+
+  it("disposes components during model dispose", () => {
+    const c1 = new ComponentModel("c1", "Button", {});
+    model.addComponent(c1);
+
+    let childDisposed = false;
+    c1.dispose = () => {
+      childDisposed = true;
+    };
+
+    model.dispose();
+
+    assert.strictEqual(childDisposed, true);
+    assert.strictEqual((model as any).components.size, 0);
+  });
+
+  it("safely attempts to remove non-existent component", () => {
+    // Should not throw
+    model.removeComponent("does-not-exist");
+  });
 });

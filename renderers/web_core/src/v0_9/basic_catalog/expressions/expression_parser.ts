@@ -228,7 +228,6 @@ export class ExpressionParser {
     while (!scanner.isAtEnd()) {
       const c = scanner.advance();
       if (c === "\\") {
-        scanner.advance();
         const next = scanner.advance();
         if (next === "n") result += "\n";
         else if (next === "t") result += "\t";
@@ -318,23 +317,5 @@ class Scanner {
     while (!this.isAtEnd() && /\s/.test(this.peek())) {
       this.advance();
     }
-  }
-
-  advanceUntil(target: string): string {
-    const idx = this.input.indexOf(target, this.pos);
-    if (idx === -1) {
-      const res = this.input.substring(this.pos);
-      this.pos = this.input.length;
-      return res;
-    }
-    const res = this.input.substring(this.pos, idx);
-    this.pos = idx;
-    return res;
-  }
-
-  advanceRest(): string {
-    const res = this.input.substring(this.pos);
-    this.pos = this.input.length;
-    return res;
   }
 }

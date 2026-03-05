@@ -797,8 +797,8 @@ export class A2uiMessageProcessor implements MessageProcessor {
           dataContextPath,
         );
         const data = this.getDataByPath(surface.dataModel, fullDataPath);
-
         const template = value.template;
+
         // Handle Array data.
         if (Array.isArray(data)) {
           return data.map((_, index) => {

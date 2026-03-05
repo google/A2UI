@@ -224,6 +224,13 @@ describe("BASIC_FUNCTIONS", () => {
         false,
       );
     });
+
+    it("regex handles invalid pattern", () => {
+      assert.strictEqual(
+        BASIC_FUNCTIONS.regex({ value: "abc", pattern: "[" }, context),
+        false, // fallback when regex throws
+      );
+    });
   });
 
   describe("Formatting", () => {
@@ -332,6 +339,44 @@ describe("BASIC_FUNCTIONS", () => {
       assert.strictEqual(resultISO, "2025-01-01T00:00:00.000Z");
     });
 
+    it("formatDate handles invalid dates", () => {
+      const result = BASIC_FUNCTIONS.formatDate(
+        { value: "invalid-date" },
+        context,
+      );
+      assert.strictEqual(result, "");
+    });
+
+    it("formatDate uses options properly", () => {
+      const result = BASIC_FUNCTIONS.formatDate(
+        {
+          value: "2025-01-01T00:00:00Z",
+          options: { year: "numeric", timeZone: "UTC" },
+        },
+        context,
+      );
+      assert.ok(typeof result === "string");
+      assert.ok(result.includes("2025"), `Result was: ${result}`);
+    });
+
+    it("formatDate fallback on formatting error", () => {
+      const result = BASIC_FUNCTIONS.formatDate(
+        { value: "2025-01-01T00:00:00Z", locale: "invalid-locale-!!!11123" },
+        context,
+      );
+      // It should fallback to .toISOString() which starts with 2025
+      assert.ok(typeof result === "string" && result.includes("2025"));
+    });
+
+    it("formatCurrency fallback on formatting error", () => {
+      const result = BASIC_FUNCTIONS.formatCurrency(
+        { value: 1234.56, currency: "INVALID-CURRENCY", decimals: 2 },
+        context,
+      );
+      // Fallbacks to toFixed
+      assert.strictEqual(result, "1234.56");
+    });
+
     it("pluralize", () => {
       assert.strictEqual(
         BASIC_FUNCTIONS.pluralize(
@@ -352,9 +397,21 @@ describe("BASIC_FUNCTIONS", () => {
 
   describe("Actions", () => {
     it("openUrl", () => {
-      // Should safely return or do nothing in a Node environment where window is undefined.
-      BASIC_FUNCTIONS.openUrl({ url: "https://google.com" }, context);
-      assert.ok(true);
+      // Set up mock window object
+      const originalWindow = (global as any).window;
+      let openedUrl = "";
+      (global as any).window = {
+        open: (url: string) => {
+          openedUrl = url;
+        },
+      };
+
+      try {
+        BASIC_FUNCTIONS.openUrl({ url: "https://google.com" }, context);
+        assert.strictEqual(openedUrl, "https://google.com");
+      } finally {
+        (global as any).window = originalWindow;
+      }
     });
   });
 });

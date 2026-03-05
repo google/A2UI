@@ -99,4 +99,29 @@ describe("SurfaceGroupModel", () => {
     await surface.dispatchAction({ type: "test" });
     assert.strictEqual(callCount, 0);
   });
+
+  it("exposes surfacesMap", () => {
+    const surface = new SurfaceModel("s1", catalog, {});
+    model.addSurface(surface);
+    const map = model.surfacesMap;
+    assert.strictEqual(map.size, 1);
+    assert.strictEqual(map.get("s1"), surface);
+  });
+
+  it("disposes correctly", () => {
+    const s1 = new SurfaceModel("s1", catalog, {});
+    const s2 = new SurfaceModel("s2", catalog, {});
+    model.addSurface(s1);
+    model.addSurface(s2);
+
+    let deletedCount = 0;
+    model.onSurfaceDeleted.subscribe(() => {
+      deletedCount++;
+    });
+
+    model.dispose();
+
+    assert.strictEqual(deletedCount, 2);
+    assert.strictEqual(model.surfacesMap.size, 0);
+  });
 });

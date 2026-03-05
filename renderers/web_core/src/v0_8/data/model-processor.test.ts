@@ -289,4 +289,546 @@ describe("A2uiMessageProcessor", () => {
     const config = surface?.dataModel.get("config") as any;
     assert.deepStrictEqual(config, { theme: "dark" });
   });
+
+  it("test basic edge cases and internal fallbacks", () => {
+    // 1. clearSurfaces
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s1", root: "root" } },
+    ]);
+    assert.strictEqual(processor.getSurfaces().size, 1);
+    processor.clearSurfaces();
+    assert.strictEqual(processor.getSurfaces().size, 0);
+
+    // 2. setData with null node
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s1", root: "root" } },
+    ]);
+    // Shouldn't throw
+    processor.setData(null, "foo", "bar");
+
+    // 3. setData with default data context (default to /)
+    const node = { id: "test", dataContextPath: undefined } as any;
+    processor.setData(node, ".", "value");
+    const surface = processor.getSurfaces().get("s1")!;
+    assert.strictEqual(surface.dataModel.get("."), undefined); // Normal setDataByPath logic when root=/
+
+    // 4. parseIfJsonString with invalid JSON layout
+    processor.processMessages([
+      {
+        dataModelUpdate: {
+          surfaceId: "s1",
+          contents: [{ key: "badJson", valueString: '{bad" }' }],
+        },
+      },
+    ]);
+    assert.strictEqual(surface.dataModel.get("badJson"), '{bad" }'); // Returns original
+
+    // 5. convertKeyValueArrayToMap with missing valueKey
+    // Explicit array pass directly to internal mapping simulation
+    (processor as any).setDataByPath(surface.dataModel, "malformed", [
+      { key: "foo", unknownKey: "bar" }, // missing value map/string etc
+    ]);
+    const malformed = surface.dataModel.get("malformed") as Map<string, any>;
+    assert.strictEqual(malformed.has("foo"), false); // Skips processing
+
+    // 6. object normalization at root
+    (processor as any).setDataByPath(surface.dataModel, "/", {
+      plain: "object",
+    });
+    assert.strictEqual(surface.dataModel.get("plain"), "object");
+
+    // 7. non-map/object root fails gracefully
+    (processor as any).setDataByPath(surface.dataModel, "/", "stringroot");
+    // Doesn't explode, just prints error internally
+  });
+
+  it("test array set operations and invalid primitive traversal", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s1", root: "root" } },
+    ]);
+    const surface = processor.getSurfaces().get("s1")!;
+
+    // Manually set an array to avoid empty array being converted to Map
+    surface.dataModel.set("list", ["dummy"]);
+
+    // Now it's an array at /list, set something deep inside it
+    (processor as any).setDataByPath(
+      surface.dataModel,
+      "/list/0/name",
+      "Alice",
+    );
+
+    // Also test setting a value directly on an array index
+    (processor as any).setDataByPath(surface.dataModel, "/list/1", "Bob");
+
+    const list = surface.dataModel.get("list") as any[];
+    assert.strictEqual(list[0].get("name"), "Alice"); // It creates a Map for `name`
+    assert.strictEqual(list[1], "Bob");
+
+    // Test getDataByPath failing traversal over a primitive
+    (processor as any).setDataByPath(surface.dataModel, "/primitive", "hello");
+    const result = (processor as any).getDataByPath(
+      surface.dataModel,
+      "/primitive/invalid",
+    );
+    assert.strictEqual(result, null);
+  });
+
+  it("test tree rebuilding edge cases", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s_tree", root: "root" } },
+    ]);
+    const surface = processor.getSurfaces().get("s_tree")!;
+
+    // 1. rebuildComponentTree without rootComponentId
+    surface.rootComponentId = null;
+    (processor as any).rebuildComponentTree(surface);
+    assert.strictEqual(surface.componentTree, null);
+
+    // 2. Circular dependency
+    surface.rootComponentId = "circleA";
+    surface.components.set("circleA", {
+      id: "circleA",
+      component: { Row: { children: ["circleB"] } } as any,
+    });
+    surface.components.set("circleB", {
+      id: "circleB",
+      component: { Row: { children: ["circleA"] } } as any,
+    });
+
+    assert.throws(() => {
+      (processor as any).rebuildComponentTree(surface);
+    }, /Circular dependency/);
+  });
+
+  it("throws A2uiValidationError for malformed components", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: `s_bad_comp`, root: "bad" } },
+    ]);
+    const surface = processor.getSurfaces().get("s_bad_comp")!;
+    surface.rootComponentId = "bad";
+
+    // Divider is omitted here because it has no required fields, so `{}` is valid.
+    const types = [
+      "Text",
+      "Image",
+      "Icon",
+      "Video",
+      "AudioPlayer",
+      "Row",
+      "Column",
+      "List",
+      "Card",
+      "Tabs",
+      "Modal",
+      "Button",
+      "CheckBox",
+      "TextField",
+      "DateTimeInput",
+      "MultipleChoice",
+      "Slider",
+    ];
+
+    for (const type of types) {
+      assert.throws(() => {
+        surface.components.set("bad", {
+          id: "bad",
+          component: {
+            [type]: {
+              /* missing required fields */
+            },
+          } as any,
+        });
+        (processor as any).rebuildComponentTree(surface);
+      }, /Invalid data; expected/);
+    }
+
+    // Default catch-all (doesn't throw, just passes it through)
+    surface.components.set("bad", {
+      id: "bad",
+      component: { CustomWidget: { foo: "bar" } } as any,
+    });
+    (processor as any).rebuildComponentTree(surface);
+    assert.strictEqual((surface.componentTree as any).type, "CustomWidget");
+  });
+
+  it("resolves Template with Array data", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s3_arr", root: "list" } },
+      {
+        dataModelUpdate: {
+          surfaceId: "s3_arr",
+          path: "/items",
+          contents: [
+            { key: "0", valueString: "a" },
+            { key: "1", valueString: "b" },
+          ],
+        },
+      },
+    ]);
+    const surface = processor.getSurfaces().get("s3_arr")!;
+
+    surface.components.set("list", {
+      id: "list",
+      component: {
+        List: {
+          children: {
+            template: { dataBinding: "/items", componentId: "item" },
+          },
+        },
+      } as any,
+    });
+    surface.components.set("item", {
+      id: "item",
+      component: {
+        Text: { text: { literalString: "hello" }, usageHint: "body" },
+      },
+    });
+    (processor as any).rebuildComponentTree(surface);
+
+    const root = surface.componentTree as any;
+    assert.strictEqual(root.properties.children.length, 2);
+    assert.strictEqual(root.properties.children[0].id, "item:0");
+    assert.strictEqual(root.properties.children[0].dataContextPath, "/items/0");
+    assert.strictEqual(root.properties.children[1].id, "item:1");
+    assert.strictEqual(root.properties.children[1].dataContextPath, "/items/1");
+  });
+
+  it("resolves Template with undefined/null data as empty array", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s3_null", root: "list" } },
+    ]);
+    const surface = processor.getSurfaces().get("s3_null")!;
+    surface.components.set("list", {
+      id: "list",
+      component: {
+        List: {
+          children: {
+            template: { dataBinding: "/missingItems", componentId: "item" },
+          },
+        },
+      } as any,
+    });
+    surface.components.set("item", {
+      id: "item",
+      component: {
+        Text: { text: { literalString: "hello" }, usageHint: "body" },
+      },
+    });
+
+    (processor as any).rebuildComponentTree(surface);
+
+    const root = surface.componentTree as any;
+    assert.deepStrictEqual(root.properties.children, []);
+  });
+
+  it("sets primitive at path via single array element with dot key", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s1_prim", root: "list" } },
+      {
+        dataModelUpdate: {
+          surfaceId: "s1_prim",
+          path: "/nested/item",
+          contents: [{ key: ".", valueString: "hello" }],
+        },
+      },
+    ]);
+    const surface = processor.getSurfaces().get("s1_prim")!;
+    surface.components.set("list", {
+      id: "list",
+      component: { Row: { children: { explicitList: [] } } } as any,
+    });
+    (processor as any).rebuildComponentTree(surface);
+    const root = surface.componentTree!;
+    assert.strictEqual(
+      processor.getData(root, "/nested/item", "s1_prim"),
+      "hello",
+    );
+
+    // Test the fallback where valueString is absent but we pass something anyway
+    processor.processMessages([
+      {
+        dataModelUpdate: {
+          surfaceId: "s1_prim",
+          path: "/nested/malformed",
+          contents: [{ key: "." }],
+        },
+      },
+    ]);
+    const result = processor.getData(
+      root,
+      "/nested/malformed",
+      "s1_prim",
+    ) as Map<any, any>;
+    assert.strictEqual(result instanceof Map, true);
+  });
+
+  it.only("path resolves through primitive objects and arrays", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s1_path", root: "list" } },
+    ]);
+    const surface = processor.getSurfaces().get("s1_path")!;
+    surface.dataModel.set("obj", {
+      nestedMap: new Map([["index", [1, 2, { val: "hi" }]]]),
+    });
+    surface.components.set("list", {
+      id: "list",
+      component: { Row: { children: { explicitList: [] } } } as any,
+    });
+    (processor as any).rebuildComponentTree(surface);
+    const root = surface.componentTree!;
+
+    assert.strictEqual(
+      processor.getData(root, "/obj/nestedMap/index/2/val", "s1_path"),
+      "hi",
+    );
+    assert.strictEqual(
+      processor.getData(root, "/obj/nestedMap/index/2/val/deeper", "s1_path"),
+      null,
+    );
+  });
+
+  it("builds all component types correctly", () => {
+    const surfaceId = "s_all";
+    processor.processMessages([{ beginRendering: { surfaceId, root: "col" } }]);
+    const surface = processor.getSurfaces().get(surfaceId)!;
+
+    const components = {
+      col: { Column: { children: ["row"] } },
+      row: { Row: { children: ["card"] } },
+      card: { Card: { child: "tabs" } },
+      tabs: {
+        Tabs: {
+          tabItems: [{ title: { literalString: "T1" }, child: "modal" }],
+        },
+      },
+      modal: { Modal: { entryPointChild: "list", contentChild: "div" } },
+      list: { List: { children: ["btn"] } },
+      btn: { Button: { child: "btn_txt", action: "act" } },
+      btn_txt: { Text: { text: { literalString: "Click" } } },
+      div: { Divider: {} },
+      chk: {
+        CheckBox: {
+          label: { literalString: "Chk" },
+          value: { literalBoolean: true },
+        },
+      },
+      txt: { TextField: { label: { literalString: "Txt" } } },
+      dt: { DateTimeInput: { value: { literalString: "2022-01-01" } } },
+      mc: { MultipleChoice: { selections: { literal: ["a"] } } },
+      sl: { Slider: { value: { literalNumber: 50 } } },
+      img: { Image: { url: { literalString: "http://img" } } },
+      icon: { Icon: { name: { literalString: "home" } } },
+      vid: { Video: { url: { literalString: "http://vid" } } },
+      aud: { AudioPlayer: { url: { literalString: "http://aud" } } },
+    };
+
+    for (const [id, comp] of Object.entries(components)) {
+      surface.components.set(id, { id, component: comp } as any);
+    }
+
+    surface.components.set("root_all", {
+      id: "root_all",
+      component: {
+        Column: {
+          children: [
+            "col",
+            "chk",
+            "txt",
+            "dt",
+            "mc",
+            "sl",
+            "img",
+            "icon",
+            "vid",
+            "aud",
+          ],
+        },
+      },
+    } as any);
+
+    surface.rootComponentId = "root_all";
+    (processor as any).rebuildComponentTree(surface);
+
+    const root = surface.componentTree as any;
+    assert.strictEqual(root.type, "Column");
+    assert.strictEqual(root.properties.children.length, 10);
+  });
+
+  it("handles recursive valueMap in convertKeyValueArrayToMap", () => {
+    // We need to bypass private check or use a method that calls it.
+    // setData calls setDataByPath which calls convertKeyValueArrayToMap.
+    const update = {
+      surfaceId: "s_rec",
+      contents: [
+        {
+          key: "nested",
+          valueMap: [{ key: "inner", valueString: "val" }],
+        },
+      ] as any, // Recursive generic type difficult to construct in TS literal
+    };
+
+    // We can use processMessages with dataModelUpdate.
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s_rec", root: "root" } },
+    ]);
+
+    // Set root to Map first
+    const surface = processor.getSurfaces().get("s_rec")!;
+    (surface.dataModel as any).set("junk", "ignored");
+
+    processor.processMessages([{ dataModelUpdate: update }]);
+
+    // Verify data
+    const nested = surface.dataModel.get("nested") as Map<string, any>;
+    assert.strictEqual(nested instanceof Map, true);
+    assert.strictEqual(nested.get("inner"), "val");
+  });
+
+  it("resolves Template with Map data", () => {
+    processor.processMessages([
+      { beginRendering: { surfaceId: "s3_map", root: "list" } },
+      {
+        dataModelUpdate: {
+          surfaceId: "s3_map",
+          contents: [
+            {
+              key: "items",
+              valueMap: [
+                { key: "a", valueString: "valA" },
+                { key: "b", valueString: "valB" },
+              ],
+            },
+          ],
+        },
+      },
+    ]);
+
+    const surface = processor.getSurfaces().get("s3_map")!;
+
+    // Define components
+    surface.components.set("list", {
+      id: "list",
+      component: {
+        List: {
+          children: {
+            template: {
+              dataBinding: "/items",
+              componentId: "item",
+            },
+          },
+        },
+      } as any,
+    });
+    surface.components.set("item", {
+      id: "item",
+      component: {
+        Text: { text: { path: "." } },
+      } as any,
+    });
+
+    (processor as any).rebuildComponentTree(surface);
+    const root = surface.componentTree as any;
+    assert.strictEqual(root.type, "List");
+    // Map entries should be processed.
+    assert.strictEqual(root.properties.children.length, 2);
+  });
+
+  it("handles Object-to-Map normalization in handleDataModelUpdate (direct call)", () => {
+    const surfaceId = "s_norm";
+    processor.processMessages([
+      { beginRendering: { surfaceId, root: "root" } },
+    ]);
+    const surface = processor.getSurfaces().get(surfaceId)!;
+
+    // Direct call to bypass Zod validation in processMessages
+    (processor as any).handleDataModelUpdate(
+      {
+        surfaceId,
+        contents: { normalized: "value" },
+      },
+      surfaceId,
+    );
+
+    assert.strictEqual(surface.dataModel.get("normalized"), "value");
+  });
+
+  it("throws validation error for invalid List", () => {
+    const surfaceId = "s_bad_list";
+    processor.processMessages([
+      { beginRendering: { surfaceId, root: "badList" } },
+    ]);
+    const surface = processor.getSurfaces().get(surfaceId)!;
+
+    surface.components.set("badList", {
+      id: "badList",
+      component: { List: { children: "not-array" } } as any,
+    });
+
+    assert.throws(() => {
+      (processor as any).rebuildComponentTree(surface);
+    }, /Invalid data; expected List/);
+  });
+
+  it("handles recursive valueMap in convertKeyValueArrayToMap with dot key", () => {
+    const surfaceId = "s_dot_rec";
+    const surface = (processor as any).getOrCreateSurface(surfaceId);
+    const value = [
+      {
+        key: ".",
+        valueMap: [{ key: "inner", valueString: "val" }],
+      },
+    ];
+
+    // Calling setDataByPath directly (private)
+    (processor as any).setDataByPath(surface.dataModel, "/target", value);
+
+    const target = surface.dataModel.get("target") as Map<string, any>;
+    assert.strictEqual(target instanceof Map, true);
+    assert.strictEqual(target.get("inner"), "val");
+  });
+
+  it("resolves Template with Array data (via direct setData)", () => {
+    const surfaceId = "s_direct_arr";
+    processor.processMessages([
+      { beginRendering: { surfaceId, root: "list" } },
+    ]);
+    const surface = processor.getSurfaces().get(surfaceId)!;
+
+    // Setup components
+    surface.components.set("list", {
+      id: "list",
+      component: {
+        List: {
+          children: {
+            template: {
+              dataBinding: "/items",
+              componentId: "item",
+            },
+          },
+        },
+      } as any,
+    });
+    surface.components.set("item", {
+      id: "item",
+      component: {
+        Text: { text: { path: "." } },
+      } as any,
+    });
+
+    // Direct set array to bypass normalization/schema
+    const itemsArray = ["A", "B"];
+    surface.dataModel.set("items", itemsArray);
+
+    (processor as any).rebuildComponentTree(surface);
+
+    const root = surface.componentTree as any;
+    assert.strictEqual(root.type, "List");
+    assert.strictEqual(root.properties.children.length, 2);
+  });
+
+  it("ignores non-strings when trying to parse JSON", () => {
+    const result = (processor as any).parseIfJsonString(123);
+    assert.strictEqual(result, 123);
+  });
 });

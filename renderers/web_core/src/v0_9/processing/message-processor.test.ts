@@ -318,4 +318,42 @@ describe("MessageProcessor", () => {
       ]);
     }, /Surface not found for message: unknown-s/);
   });
+
+  it("throws when component is missing id", () => {
+    processor.processMessages([
+      {
+        version: "v0.9",
+        createSurface: { surfaceId: "s1", catalogId: "test-catalog" },
+      },
+    ]);
+    assert.throws(() => {
+      processor.processMessages([
+        {
+          version: "v0.9",
+          updateComponents: {
+            surfaceId: "s1",
+            components: [{ component: "Button" } as any],
+          },
+        },
+      ]);
+    }, /missing an 'id'/);
+  });
+
+  it("throws when updating data on non-existent surface", () => {
+    assert.throws(() => {
+      processor.processMessages([
+        {
+          version: "v0.9",
+          updateDataModel: { surfaceId: "unknown-s", path: "/", value: {} },
+        },
+      ]);
+    }, /Surface not found for message: unknown-s/);
+  });
+
+  it("resolves paths correctly via resolvePath", () => {
+    assert.strictEqual(processor.resolvePath("/foo", "/bar"), "/foo");
+    assert.strictEqual(processor.resolvePath("foo", "/bar"), "/bar/foo");
+    assert.strictEqual(processor.resolvePath("foo", "/bar/"), "/bar/foo");
+    assert.strictEqual(processor.resolvePath("foo"), "/foo");
+  });
 });

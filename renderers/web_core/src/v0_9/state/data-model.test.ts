@@ -33,6 +33,13 @@ describe("DataModel", () => {
     });
   });
 
+  // --- Initialization ---
+
+  it("initializes with empty data if not provided", () => {
+    const emptyModel = new DataModel();
+    assert.deepStrictEqual(emptyModel.get("/"), {});
+  });
+
   // --- Basic Retrieval ---
 
   it("retrieves root data", () => {
@@ -57,6 +64,11 @@ describe("DataModel", () => {
     assert.strictEqual(model.get("/unknown/path"), undefined);
   });
 
+  it("returns undefined when traversing through undefined/null segments", () => {
+    model.set("/nullable", null);
+    assert.strictEqual(model.get("/nullable/deep/path"), undefined);
+  });
+
   // --- Updates ---
 
   it("sets value at existing path", () => {
@@ -79,11 +91,6 @@ describe("DataModel", () => {
     model.set("/user/name", undefined);
     assert.strictEqual(model.get("/user/name"), undefined);
     assert.strictEqual(Object.keys(model.get("/user")).includes("name"), false);
-  });
-
-  it("replaces root object on root update", () => {
-    model.set("/", { newRoot: true });
-    assert.deepStrictEqual(model.get("/"), { newRoot: true });
   });
 
   // --- Array / List Handling (Flutter Parity) ---
@@ -236,6 +243,10 @@ describe("DataModel", () => {
     assert.strictEqual(callCount1, 0); // sub1 was unsubscribed
     assert.strictEqual(callCount2, 1); // sub2 still active
     assert.strictEqual(sub2.value, "Frank");
+
+    sub2.unsubscribe(); // Should clear the internal map set
+    model.set("/user/name", "Grace");
+    assert.strictEqual(callCount2, 1); // still 1
   });
 
   it("handles subscription to non-existent path", () => {
@@ -273,6 +284,32 @@ describe("DataModel", () => {
     }, /Cannot use non-numeric segment/);
   });
 
+  it("throws when using non-numeric segment on an array (intermediate)", () => {
+    model.set("/", { items: [1, 2, 3] });
+    assert.throws(() => {
+      model.set("/items/foo/bar", "value");
+    }, /Cannot use non-numeric segment 'foo' on an array/);
+  });
+
+  it("normalizes trailing slashes", () => {
+    let callCount = 0;
+    model.subscribe("/foo", () => callCount++);
+    model.set("/foo/", "bar"); // Trailing slash
+    assert.strictEqual(model.get("/foo/"), "bar");
+    assert.strictEqual(callCount, 1);
+  });
+
+  it("replaces root object on root update", () => {
+    let callCount = 0;
+    model.subscribe("/", () => callCount++);
+    // Just add another sub on a generic path to ensure notifyAllSubscribers loop hits multiple items
+    model.subscribe("/unrelated", () => {});
+
+    model.set("/", { newRoot: "foo" });
+    assert.deepStrictEqual(model.get(""), { newRoot: "foo" });
+    assert.strictEqual(callCount, 1);
+  });
+
   it("throws when path is null or undefined", () => {
     assert.throws(
       () => model.get(null as any),
@@ -290,5 +327,12 @@ describe("DataModel", () => {
       () => model.set(undefined as any, "value"),
       /Path cannot be null or undefined/,
     );
+  });
+
+  it("calculates descendants against root path", () => {
+    // This explicitly hits an internal method branch where parentPath === "/"
+    const isDescendant = (model as any).isDescendant.bind(model);
+    assert.strictEqual(isDescendant("/user", "/"), true);
+    assert.strictEqual(isDescendant("/", "/"), false);
   });
 });
