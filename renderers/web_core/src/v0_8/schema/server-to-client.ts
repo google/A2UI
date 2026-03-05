@@ -5,7 +5,6 @@ import {
   CardSchema,
   CheckboxSchema,
   ColumnSchema,
-  ComponentArrayReferenceSchema,
   DateTimeInputSchema,
   DividerSchema,
   IconSchema,
@@ -59,17 +58,7 @@ export const AnyComponentSchema = z
     Row: z.lazy(() => RowSchema).optional(),
     Column: z.lazy(() => ColumnSchema).optional(),
     List: z.lazy(() => ListSchema).optional(),
-    Card: z
-      .lazy(() =>
-        z.object({
-          child: z
-            .string()
-            .describe(
-              "The ID of the component to be rendered inside the card.",
-            ),
-        }),
-      )
-      .optional(),
+    Card: z.lazy(() => CardSchema).optional(),
     Tabs: TabsSchema.optional(),
     Divider: DividerSchema.optional(),
     Modal: ModalSchema.optional(),

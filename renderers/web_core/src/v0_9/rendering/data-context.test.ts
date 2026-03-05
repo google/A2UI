@@ -15,7 +15,7 @@
  */
 
 import assert from "node:assert";
-import { test, describe, it, beforeEach } from "node:test";
+import { describe, it, beforeEach } from "node:test";
 import { DataModel } from "../state/data-model.js";
 import { DataContext } from "./data-context.js";
 
@@ -75,7 +75,7 @@ describe("DataContext", () => {
 
   it("subscribes relative path", () => {
     let called = false;
-    const sub = context.subscribeDynamicValue({ path: "name" }, (val) => {
+    context.subscribeDynamicValue({ path: "name" }, (val) => {
       assert.strictEqual(val, "Charlie");
       called = true;
     });

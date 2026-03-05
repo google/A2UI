@@ -1,4 +1,4 @@
-import { test, describe, it } from "node:test";
+import { describe, it } from "node:test";
 import * as assert from "node:assert";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { readFileSync } from "fs";

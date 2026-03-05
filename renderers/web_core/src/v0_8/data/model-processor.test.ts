@@ -15,10 +15,9 @@
  */
 
 import assert from "node:assert";
-import { test, describe, it, beforeEach } from "node:test";
+import { describe, it, beforeEach } from "node:test";
 import { A2uiMessageProcessor } from "./model-processor.js";
 import { TextNode, RowNode } from "../types/types.js";
-import { StringValue } from "../types/primitives.js";
 
 describe("A2uiMessageProcessor", () => {
   let processor: A2uiMessageProcessor;
@@ -237,7 +236,7 @@ describe("A2uiMessageProcessor", () => {
       },
     ]);
 
-    const surface = processor.getSurfaces().get("s1");
+    processor.getSurfaces().get("s1");
     const node = { id: "test", dataContextPath: "/user" } as any;
 
     const name = processor.getData(node, "name", "s1");

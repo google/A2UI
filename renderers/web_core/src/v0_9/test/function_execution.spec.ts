@@ -3,8 +3,8 @@ import assert from "node:assert";
 import { DataModel } from "../state/data-model.js";
 import { DataContext } from "../rendering/data-context.js";
 
-import { Observable, timer } from "rxjs";
-import { map, take } from "rxjs/operators";
+import { timer } from "rxjs";
+import { map } from "rxjs/operators";
 
 describe("Function Execution in DataContext", () => {
   it("resolves and subscribes to metronome function", (_t, done) => {

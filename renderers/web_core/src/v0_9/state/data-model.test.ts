@@ -15,7 +15,7 @@
  */
 
 import assert from "node:assert";
-import { test, describe, it, beforeEach } from "node:test";
+import { describe, it, beforeEach } from "node:test";
 import { DataModel } from "./data-model.js";
 
 describe("DataModel", () => {
@@ -146,7 +146,7 @@ describe("DataModel", () => {
 
   it("notifies subscribers on exact match", () => {
     let called = false;
-    const sub = model.subscribe("/user/name", (val) => {
+    model.subscribe("/user/name", (val) => {
       assert.strictEqual(val, "Charlie");
       called = true;
     });
@@ -156,7 +156,7 @@ describe("DataModel", () => {
 
   it("notifies ancestor subscribers (Container Semantics)", () => {
     let called = false;
-    const sub = model.subscribe("/user", (val: any) => {
+    model.subscribe("/user", (val: any) => {
       assert.strictEqual(val.name, "Dave");
       called = true;
     });
@@ -166,7 +166,7 @@ describe("DataModel", () => {
 
   it("notifies descendant subscribers", () => {
     let called = false;
-    const sub = model.subscribe("/user/settings/theme", (val) => {
+    model.subscribe("/user/settings/theme", (val) => {
       assert.strictEqual(val, "light");
       called = true;
     });
@@ -178,7 +178,7 @@ describe("DataModel", () => {
 
   it("notifies root subscriber", () => {
     let called = false;
-    const sub = model.subscribe("/", (val: any) => {
+    model.subscribe("/", (val: any) => {
       assert.strictEqual(val.newProp, "test");
       called = true;
     });
@@ -190,7 +190,7 @@ describe("DataModel", () => {
     model.set("/parent", { child: "initial" });
 
     let parentValue: any;
-    const sub = model.subscribe("/parent", (val) => (parentValue = val));
+    model.subscribe("/parent", (val) => (parentValue = val));
 
     model.set("/parent/child", "updated");
     assert.deepStrictEqual(parentValue, { child: "updated" });
@@ -198,7 +198,7 @@ describe("DataModel", () => {
 
   it("stops notifying after dispose", () => {
     let count = 0;
-    const sub = model.subscribe("/", () => count++);
+    model.subscribe("/", () => count++);
 
     model.dispose();
     model.set("/foo", "bar");

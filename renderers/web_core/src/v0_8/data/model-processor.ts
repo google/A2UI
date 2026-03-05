@@ -29,8 +29,6 @@ import {
   SurfaceID,
   SurfaceUpdateMessage,
   MessageProcessor,
-  ValueMap,
-  DataObject,
 } from "../types/types.js";
 import { A2uiMessageSchema } from "../schema/server-to-client.js";
 import { A2uiStateError, A2uiValidationError } from "../../v0_9/errors.js";
@@ -56,7 +54,6 @@ import {
   isResolvedText,
   isResolvedTextField,
   isResolvedVideo,
-  isValueMap,
 } from "./guards.js";
 
 /**

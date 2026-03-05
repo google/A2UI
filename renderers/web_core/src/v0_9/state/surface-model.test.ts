@@ -15,7 +15,7 @@
  */
 
 import assert from "node:assert";
-import { test, describe, it, beforeEach, mock } from "node:test";
+import { describe, it, beforeEach } from "node:test";
 import { SurfaceModel } from "./surface-model.js";
 import { Catalog, ComponentApi } from "../catalog/types.js";
 import { ComponentModel } from "./component-model.js";
@@ -65,7 +65,7 @@ describe("SurfaceModel", () => {
     // but here we ensure that the surface's own emitters are cleared.
 
     let actionReceived = false;
-    const sub = surface.onAction.subscribe(() => {
+    surface.onAction.subscribe(() => {
       actionReceived = true;
     });
 

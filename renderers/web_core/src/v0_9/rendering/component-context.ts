@@ -17,7 +17,6 @@
 import { DataContext } from "./data-context.js";
 import { ComponentModel } from "../state/component-model.js";
 import type { SurfaceModel } from "../state/surface-model.js";
-import type { ComponentApi } from "../catalog/types.js";
 import type { SurfaceComponentsModel } from "../state/surface-components-model.js";
 import { A2uiStateError } from "../errors.js";
 

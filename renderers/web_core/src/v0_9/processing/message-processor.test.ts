@@ -15,7 +15,7 @@
  */
 
 import assert from "node:assert";
-import { test, describe, it, beforeEach } from "node:test";
+import { describe, it, beforeEach } from "node:test";
 import { MessageProcessor } from "./message-processor.js";
 import { Catalog, ComponentApi } from "../catalog/types.js";
 

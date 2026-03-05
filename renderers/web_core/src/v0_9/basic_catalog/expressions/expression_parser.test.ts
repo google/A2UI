@@ -17,7 +17,7 @@
 import { describe, it, beforeEach } from "node:test";
 import * as assert from "node:assert";
 import { ExpressionParser } from "./expression_parser.js";
-import { DynamicValue } from "../../schema/common-types.js";
+
 
 describe("ExpressionParser", () => {
   let parser: ExpressionParser;
