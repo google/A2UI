@@ -411,3 +411,27 @@ The standard `formatString` function is responsible for interpreting the `${expr
     *   **FunctionCall**: Identified by parentheses (e.g., `${now()}`).
 3.  **Escaping**: Literal `${` sequences must be handled (typically by escaping as `\${`).
 4.  **Reactive Coercion**: Results are transformed into strings using the **Type Coercion Standards** defined in the Data Layer section.
+
+## Resources
+
+When implementing a new rendering framework, you should definitely read the core JSON schema files for the protocol and the markdown doc in the specification. Here are the key resources:
+
+*   **A2UI Protocol Specification:**
+    *   `specification/v0_9/docs/a2ui_protocol.md`
+    *   [GitHub Link](https://github.com/google/A2UI/tree/main/specification/v0_9/docs/a2ui_protocol.md)
+*   **JSON Schemas:** (Core files for the protocol)
+    *   `a2ui_client_capabilities.json`: [`specification/v0_9/json/a2ui_client_capabilities.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/a2ui_client_capabilities.json)
+    *   `a2ui_client_data_model.json`: [`specification/v0_9/json/a2ui_client_data_model.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/a2ui_client_data_model.json)
+    *   `basic_catalog.json`: [`specification/v0_9/json/basic_catalog.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/basic_catalog.json)
+    *   `basic_catalog_rules.txt`: [`specification/v0_9/json/basic_catalog_rules.txt`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/basic_catalog_rules.txt)
+    *   `client_to_server.json`: [`specification/v0_9/json/client_to_server.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/client_to_server.json)
+    *   `client_to_server_list.json`: [`specification/v0_9/json/client_to_server_list.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/client_to_server_list.json)
+    *   `common_types.json`: [`specification/v0_9/json/common_types.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/common_types.json)
+    *   `server_to_client.json`: [`specification/v0_9/json/server_to_client.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/server_to_client.json)
+    *   `server_to_client_list.json`: [`specification/v0_9/json/server_to_client_list.json`](https://github.com/google/A2UI/tree/main/specification/v0_9/json/server_to_client_list.json)
+*   **Web Core Reference Implementation:**
+    *   `renderers/web_core/src/v0_9/`
+    *   [GitHub Link](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_9)
+*   **Flutter Implementation:**
+    *   The Flutter renderer is maintained in a separate repository.
+    *   [GitHub Link](https://github.com/flutter/genui/tree/main/packages/genui)
