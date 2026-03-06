@@ -3,6 +3,7 @@ import * as UI from '@a2ui/lit/ui';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { provide } from '@lit/context';
+import { renderMarkdown } from '@a2ui/markdown-it';
 import { allFixtures, type FixtureName, type ComponentFixture } from '../../fixtures';
 import { getTheme, themeNames, type ThemeName } from '../../fixtures/themes';
 
@@ -15,6 +16,9 @@ class ThemedA2UISurface extends LitElement {
   @provide({ context: UI.Context.themeContext })
   @property({ attribute: false })
   accessor theme: v0_8.Types.Theme | undefined = undefined;
+
+  @provide({ context: UI.Context.markdown })
+  accessor markdownRenderer: v0_8.Types.MarkdownRenderer = renderMarkdown;
 
   @property({ attribute: false })
   accessor surfaceId: string = '';
