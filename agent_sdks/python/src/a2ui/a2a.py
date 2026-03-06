@@ -16,7 +16,7 @@ import logging
 from typing import Any, Optional, List
 
 from a2a.server.agent_execution import RequestContext
-from a2a.types import AgentExtension, Part, DataPart
+from a2a.types import AgentExtension, Part, DataPart, TextPart
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +104,49 @@ def get_a2ui_agent_extension(
       description="Provides agent driven UI using the A2UI JSON format.",
       params=params if params else None,
   )
+
+
+def parse_response_to_parts(
+    content: str,
+    validator: Optional[Any] = None,
+    fallback_text: Optional[str] = None,
+) -> List[Part]:
+  """Helper to parse LLM response content into A2A Parts, with optional validation.
+
+  Args:
+      content: The LLM response content, potentially containing A2UI delimiters.
+      validator: Optional validator to run against extracted JSON payloads.
+      fallback_text: Optional text to return if no parts are successfully created.
+
+  Returns:
+      A list of A2A Part objects (TextPart and/or DataPart).
+  """
+  from a2ui.core.parser import parse_response
+
+  parts = []
+  try:
+    text_part, json_data = parse_response(content)
+
+    if text_part:
+      parts.append(Part(root=TextPart(text=text_part.strip())))
+
+    if validator and json_data is not None and json_data != []:
+      validator.validate(json_data)
+
+    if json_data:
+      if isinstance(json_data, list):
+        for message in json_data:
+          parts.append(create_a2ui_part(message))
+      else:
+        parts.append(create_a2ui_part(json_data))
+
+  except Exception as e:
+    logger.warning(f"Failed to parse or validate A2UI response: {e}")
+
+  if not parts and fallback_text:
+    parts.append(Part(root=TextPart(text=fallback_text)))
+
+  return parts
 
 
 def try_activate_a2ui_extension(context: RequestContext) -> bool:

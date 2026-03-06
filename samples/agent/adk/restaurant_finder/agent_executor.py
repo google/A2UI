@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import logging
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
@@ -32,8 +31,7 @@ from a2a.utils import (
     new_task,
 )
 from a2a.utils.errors import ServerError
-from a2ui.a2a import create_a2ui_part, try_activate_a2ui_extension
-from a2ui.core.parser import parse_response
+from a2ui.a2a import try_activate_a2ui_extension
 from agent import RestaurantAgent
 
 logger = logging.getLogger(__name__)
@@ -143,34 +141,7 @@ class RestaurantAgentExecutor(AgentExecutor):
           else TaskState.input_required
       )
 
-      content = item["content"]
-      final_parts = []
-
-      try:
-        text_part, parsed_json_data = parse_response(content)
-
-        if text_part.strip():
-          final_parts.append(Part(root=TextPart(text=text_part.strip())))
-
-        if parsed_json_data:
-          if isinstance(parsed_json_data, list):
-            # Handle empty JSON list (e.g., no results)
-            if len(parsed_json_data) == 0:
-              logger.info("Received empty list. Skipping DataPart.")
-            else:
-              logger.info(
-                  f"Found {len(parsed_json_data)} messages. Creating individual"
-                  " DataParts."
-              )
-              for message in parsed_json_data:
-                final_parts.append(create_a2ui_part(message))
-          else:
-            logger.info("Received a single JSON object. Creating a DataPart.")
-            final_parts.append(create_a2ui_part(parsed_json_data))
-
-      except (ValueError, json.JSONDecodeError) as e:
-        logger.warning(f"Failed to parse A2UI response: {e}. Falling back to text.")
-        final_parts.append(Part(root=TextPart(text=content.strip())))
+      final_parts = item["parts"]
 
       logger.info("--- FINAL PARTS TO BE SENT ---")
       for i, part in enumerate(final_parts):

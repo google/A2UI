@@ -104,7 +104,11 @@ from typing import (
 import jsonschema
 
 from a2a import types as a2a_types
-from ...a2a import create_a2ui_part
+from a2ui.a2a import (
+    A2UI_EXTENSION_URI,
+    create_a2ui_part,
+    parse_response_to_parts,
+)
 from a2ui.core.parser import parse_response, parse_and_fix
 from a2ui.core.schema.catalog import A2uiCatalog
 from a2ui.core.schema.constants import A2UI_DELIMITER
@@ -384,41 +388,11 @@ class A2uiPartConverter:
     # 3. Handle Text-based A2UI (TextPart)
     if text := part.text:
       if A2UI_DELIMITER in text:
-        return self._convert_text_with_a2ui(text)
+        return parse_response_to_parts(text, validator=self._catalog.validator)
 
     # 4. Default conversion for other parts
     converted_part = part_converter.convert_genai_part_to_a2a_part(part)
     return [converted_part] if converted_part else []
-
-  def _convert_text_with_a2ui(self, text: str) -> list[a2a_types.Part]:
-    """Helper to split text and extract/validate A2UI JSON."""
-    parts = []
-    try:
-      text_part, json_data = parse_response(text)
-      self._catalog.validator.validate(json_data)
-
-      if text_part:
-        parts.append(
-            a2a_types.Part(root=a2a_types.TextPart(kind="text", text=text_part))
-        )
-
-      logger.info(f"Found {len(json_data)} messages. Creating individual DataParts.")
-      for message in json_data:
-        parts.append(create_a2ui_part(message))
-
-    except Exception as e:
-      logger.error(f"Failed to parse or validate text-based A2UI JSON: {e}")
-      # Fallback: at least try to return the leading text part if we can split it
-      if not parts:
-        segments = text.split(A2UI_DELIMITER, 1)
-        if segments[0].strip():
-          parts.append(
-              a2a_types.Part(
-                  root=a2a_types.TextPart(kind="text", text=segments[0].strip())
-              )
-          )
-
-    return parts
 
 
 @experimental
