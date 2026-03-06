@@ -14,7 +14,8 @@
  limitations under the License.
  */
 
-import { Subscription as BaseSubscription } from '../common/events.js';
+import { Subscription as BaseSubscription } from "../common/events.js";
+import { A2uiDataError } from "../errors.js";
 
 /**
  * Represents a reactive connection to a specific path in the data model.
@@ -31,7 +32,11 @@ class SubscriptionImpl<T> implements DataSubscription<T> {
   private readonly _unsubscribe: () => void;
   public onChange: (value: T | undefined) => void;
 
-  constructor(initialValue: T | undefined, onChange: (value: T | undefined) => void, unsubscribe: () => void) {
+  constructor(
+    initialValue: T | undefined,
+    onChange: (value: T | undefined) => void,
+    unsubscribe: () => void,
+  ) {
     this._value = initialValue;
     this.onChange = onChange;
     this._unsubscribe = unsubscribe;
@@ -61,8 +66,14 @@ function isNumeric(value: string): boolean {
  */
 export class DataModel {
   private data: Record<string, unknown> = {};
-  private readonly subscriptions: Map<string, Set<SubscriptionImpl<any>>> = new Map();
+  private readonly subscriptions: Map<string, Set<SubscriptionImpl<any>>> =
+    new Map();
 
+  /**
+   * Creates a new data model.
+   *
+   * @param initialData The initial data for the model. Defaults to an empty object.
+   */
   constructor(initialData: Record<string, unknown> = {}) {
     this.data = initialData;
   }
@@ -77,9 +88,9 @@ export class DataModel {
    */
   set(path: string, value: any): this {
     if (path === null || path === undefined) {
-      throw new Error("Path cannot be null or undefined.");
+      throw new A2uiDataError("Path cannot be null or undefined.");
     }
-    if (path === '/' || path === '') {
+    if (path === "/" || path === "") {
       this.data = value;
       this.notifyAllSubscribers();
       return this;
@@ -93,24 +104,38 @@ export class DataModel {
       const segment = segments[i];
 
       if (Array.isArray(current) && !isNumeric(segment)) {
-        throw new Error(`Cannot use non-numeric segment '${segment}' on an array in path '${path}'.`);
+        throw new A2uiDataError(
+          `Cannot use non-numeric segment '${segment}' on an array in path '${path}'.`,
+          path,
+        );
       }
 
       // If we encounter a primitive where a container is expected, we cannot proceed.
       // We allow undefined/null to be overwritten by a new container.
-      if (current[segment] !== undefined && current[segment] !== null && typeof current[segment] !== 'object') {
-        throw new Error(`Cannot set path '${path}': segment '${segment}' is a primitive value.`);
+      if (
+        current[segment] !== undefined &&
+        current[segment] !== null &&
+        typeof current[segment] !== "object"
+      ) {
+        throw new A2uiDataError(
+          `Cannot set path '${path}': segment '${segment}' is a primitive value.`,
+          path,
+        );
       }
 
       if (current[segment] === undefined || current[segment] === null) {
-        const nextSegment = (i < segments.length - 1) ? segments[i + 1] : lastSegment;
+        const nextSegment =
+          i < segments.length - 1 ? segments[i + 1] : lastSegment;
         current[segment] = isNumeric(nextSegment) ? [] : {};
       }
       current = current[segment];
     }
 
     if (Array.isArray(current) && !isNumeric(lastSegment)) {
-      throw new Error(`Cannot use non-numeric segment '${lastSegment}' on an array in path '${path}'.`);
+      throw new A2uiDataError(
+        `Cannot use non-numeric segment '${lastSegment}' on an array in path '${path}'.`,
+        path,
+      );
     }
 
     if (value === undefined) {
@@ -128,13 +153,16 @@ export class DataModel {
   }
 
   /**
-   * Retrieves data at a specific path.
+   * Retrieves data at a specific JSON pointer path.
+   *
+   * @param path The JSON pointer path to read from.
+   * @returns The value at the specified path, or undefined if not found.
    */
   get(path: string): any {
     if (path === null || path === undefined) {
-      throw new Error("Path cannot be null or undefined.");
+      throw new A2uiDataError("Path cannot be null or undefined.");
     }
-    if (path === '/' || path === '') {
+    if (path === "/" || path === "") {
       return this.data;
     }
 
@@ -150,25 +178,28 @@ export class DataModel {
   }
 
   /**
-   * Subscribes to changes at a specific path. Returns a Subscription object.
+   * Subscribes to changes at the specified data path.
+   *
+   * @param path The JSON pointer path to subscribe to.
+   * @param onChange The callback to invoke when the data changes.
+   * @returns A subscription object that provides the current value and allows unsubscribing.
    */
-  subscribe<T>(path: string, onChange: (value: T | undefined) => void): DataSubscription<T> {
+  subscribe<T>(
+    path: string,
+    onChange: (value: T | undefined) => void,
+  ): DataSubscription<T> {
     const normalizedPath = this.normalizePath(path);
     const initialValue = this.get(normalizedPath);
 
-    const subscription = new SubscriptionImpl<T>(
-      initialValue,
-      onChange,
-      () => {
-        const set = this.subscriptions.get(normalizedPath);
-        if (set) {
-          set.delete(subscription);
-          if (set.size === 0) {
-            this.subscriptions.delete(normalizedPath);
-          }
+    const subscription = new SubscriptionImpl<T>(initialValue, onChange, () => {
+      const set = this.subscriptions.get(normalizedPath);
+      if (set) {
+        set.delete(subscription);
+        if (set.size === 0) {
+          this.subscriptions.delete(normalizedPath);
         }
       }
-    );
+    });
 
     if (!this.subscriptions.has(normalizedPath)) {
       this.subscriptions.set(normalizedPath, new Set());
@@ -186,14 +217,14 @@ export class DataModel {
   }
 
   private normalizePath(path: string): string {
-    if (path.length > 1 && path.endsWith('/')) {
+    if (path.length > 1 && path.endsWith("/")) {
       return path.slice(0, -1);
     }
-    return path || '/';
+    return path || "/";
   }
 
   private parsePath(path: string): string[] {
-    return path.split('/').filter(p => p.length > 0);
+    return path.split("/").filter((p) => p.length > 0);
   }
 
   private notifySubscribers(path: string): void {
@@ -202,8 +233,8 @@ export class DataModel {
 
     // Notify Ancestors
     let parentPath = normalizedPath;
-    while (parentPath !== '/' && parentPath !== '') {
-      parentPath = parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
+    while (parentPath !== "/" && parentPath !== "") {
+      parentPath = parentPath.substring(0, parentPath.lastIndexOf("/")) || "/";
       this.notify(parentPath);
     }
 
@@ -221,7 +252,7 @@ export class DataModel {
       return;
     }
     const value = this.get(path);
-    set.forEach(sub => sub.setValue(value));
+    set.forEach((sub) => sub.setValue(value));
   }
 
   private notifyAllSubscribers(): void {
@@ -231,9 +262,9 @@ export class DataModel {
   }
 
   private isDescendant(childPath: string, parentPath: string): boolean {
-    if (parentPath === '/' || parentPath === '') {
-      return childPath !== '/';
+    if (parentPath === "/" || parentPath === "") {
+      return childPath !== "/";
     }
-    return childPath.startsWith(parentPath + '/');
+    return childPath.startsWith(parentPath + "/");
   }
 }

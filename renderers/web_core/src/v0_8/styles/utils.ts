@@ -22,7 +22,7 @@ export function merge(...classes: Array<Record<string, boolean>>) {
     for (const [key, val] of Object.entries(clazz)) {
       const prefix = key.split("-").with(-1, "").join("-");
       const existingKeys = Object.keys(styles).filter((key) =>
-        key.startsWith(prefix)
+        key.startsWith(prefix),
       );
 
       for (const existingKey of existingKeys) {
@@ -82,7 +82,7 @@ export function appendToAll(
 }
 
 export function createThemeStyles(
-  palettes: ColorPalettes
+  palettes: ColorPalettes,
 ): Record<string, string> {
   const styles: Record<string, string> = {};
   for (const palette of Object.values(palettes)) {

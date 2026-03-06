@@ -6,3 +6,4 @@ mkdocs-mermaid2-plugin
 sphinx
 furo
 myst-parser
+mkdocs-redirects

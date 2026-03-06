@@ -1,6 +1,9 @@
 # A2UI Renderer Implementation Guide
 
-This document outlines the required features for a new renderer implementation of the A2UI protocol, based on the version 0.8 specification. It is intended for developers building new renderers (e.g., for React, Flutter, iOS, etc.).
+This document outlines the required features for a new renderer implementation of the A2UI protocol. It is intended for developers building new renderers (e.g., for React, Flutter, iOS, etc.).
+
+!!! info "Version Notes"
+    This guide primarily describes the v0.8 message flow. v0.9 renames several messages (`surfaceUpdate` → `updateComponents`, `dataModelUpdate` → `updateDataModel`, `beginRendering` → `createSurface`) and uses a flatter component format. See the [v0.9 specification](../specification/v0.9-a2ui.md) for details.
 
 ## I. Core Protocol Implementation Checklist
 

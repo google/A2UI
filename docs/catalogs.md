@@ -124,24 +124,22 @@ When the agent uses that catalog, it generates a payload strictly conforming to 
 ```json
 [
   {
+    "version": "v0.9",
     "createSurface": {
       "surfaceId": "hello-world-surface",
-      "catalogId": "https://github.com/.../hello_world/v1/catalog.json",
-      "root": "root-element"
+      "catalogId": "https://github.com/.../hello_world/v1/catalog.json"
     }
   },
   {
-    "surfaceUpdate": {
+    "version": "v0.9",
+    "updateComponents": {
       "surfaceId": "hello-world-surface",
       "components": [
         {
-          "id": "root-element",
-          "component": {
-            "HelloWorldBanner": {
-              "message": "Hello, world! Welcome to your first catalog.",
-              "backgroundColor": "#4CAF50"
-            }
-          }
+          "id": "root",
+          "component": "HelloWorldBanner",
+          "message": "Hello, world! Welcome to your first catalog.",
+          "backgroundColor": "#4CAF50"
         }
       ]
     }

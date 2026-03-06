@@ -4,14 +4,26 @@ Integrate A2UI into your application using the renderer for your platform.
 
 ## Renderers
 
-| Renderer                 | Platform           | Status            |
-| ------------------------ | ------------------ | ----------------- |
-| **Lit (Web Components)** | Web                | ✅ Stable          |
-| **Angular**              | Web                | ✅ Stable          |
-| **Flutter (GenUI SDK)**  | Mobile/Desktop/Web | ✅ Stable          |
-| **React**                | Web                | 🚧 Coming Q1 2026  |
-| **SwiftUI**              | iOS/macOS          | 🚧 Planned Q2 2026 |
-| **Jetpack Compose**      | Android            | 🚧 Planned Q2 2026 |
+| Renderer                 | Platform           | v0.8 | v0.9 | Status            |
+| ------------------------ | ------------------ | ---- | ---- | ----------------- |
+| **React**                | Web                | ✅    | ❌    | ✅ Stable          |
+| **Lit (Web Components)** | Web                | ✅    | ✅    | ✅ Stable          |
+| **Angular**              | Web                | ✅    | ✅    | ✅ Stable          |
+| **Flutter (GenUI SDK)**  | Mobile/Desktop/Web | ✅    | ✅    | ✅ Stable          |
+| **SwiftUI**              | iOS/macOS          | —    | —    | 🚧 Planned Q2 2026 |
+| **Jetpack Compose**      | Android            | —    | —    | 🚧 Planned Q2 2026 |
+
+## Component Catalogs
+
+A component catalog is any collection of components — standard ones, your custom components, or shared libraries. **Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
+
+See [Custom Components](custom-components.md) for how to extend or replace the standard catalog.
+
+## Shared Web Library
+
+All web renderers (Lit, Angular, React) share a common foundation: **`@a2ui/web-lib`**. This library provides the message processor, state management, and data binding logic that every web renderer needs. Each framework-specific renderer builds on top of it, adding only the rendering layer for its framework.
+
+This means core protocol handling is consistent across web platforms — only the component rendering differs.
 
 ## Web Components (Lit)
 
@@ -94,7 +106,7 @@ TODO: Add action handling examples.
 ## Error Handling
 
 Common errors to handle:
-- **Invalid Surface ID**: Surface referenced before `beginRendering` was received
+- **Invalid Surface ID**: Surface referenced before `beginRendering` (v0.8) or `createSurface` (v0.9) was received
 - **Invalid Component ID**: Component IDs must be unique within a surface
 - **Invalid Data Path**: Check data model structure and JSON Pointer syntax
 - **Schema Validation Failed**: Verify message format matches A2UI specification

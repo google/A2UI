@@ -40,24 +40,129 @@ A2UI: JSON messages describing UI that:
 
 ### Example
 
-```json
-{"surfaceUpdate": {"surfaceId": "booking", "components": [
-  {"id": "title", "component": {"Text": {"text": {"literalString": "Book Your Table"}, "usageHint": "h1"}}},
-  {"id": "datetime", "component": {"DateTimeInput": {"value": {"path": "/booking/date"}, "enableDate": true}}},
-  {"id": "submit-text", "component": {"Text": {"text": {"literalString": "Confirm"}}}},
-  {"id": "submit-btn", "component": {"Button": {"child": "submit-text", "action": {"name": "confirm_booking"}}}}
-]}}
-```
+=== "v0.8 (Stable)"
 
-```json
-{"dataModelUpdate": {"surfaceId": "booking", "contents": [
-  {"key": "booking", "valueMap": [{"key": "date", "valueString": "2025-12-16T19:00:00Z"}]}
-]}}
-```
+    ```jsonl
+    {
+      "surfaceUpdate": {
+        "surfaceId": "booking",
+        "components": [
+          {
+            "id": "title",
+            "component": {
+              "Text": {
+                "text": { "literalString": "Book Your Table" },
+                "usageHint": "h1"
+              }
+            }
+          },
+          {
+            "id": "datetime",
+            "component": {
+              "DateTimeInput": {
+                "value": { "path": "/booking/date" },
+                "enableDate": true
+              }
+            }
+          },
+          {
+            "id": "submit-text",
+            "component": {
+              "Text": {
+                "text": { "literalString": "Confirm" }
+              }
+            }
+          },
+          {
+            "id": "submit-btn",
+            "component": {
+              "Button": {
+                "child": "submit-text",
+                "action": { "name": "confirm_booking" }
+              }
+            }
+          }
+        ]
+      }
+    }
+    {
+      "dataModelUpdate": {
+        "surfaceId": "booking",
+        "contents": [
+          {
+            "key": "booking",
+            "valueMap": [
+              { "key": "date", "valueString": "2025-12-16T19:00:00Z" }
+            ]
+          }
+        ]
+      }
+    }
+    {
+      "beginRendering": {
+        "surfaceId": "booking",
+        "root": "title"
+      }
+    }
+    ```
 
-```json
-{"beginRendering": {"surfaceId": "booking", "root": "title"}}
-```
+=== "v0.9 (Draft)"
+
+    ```jsonl
+    {
+      "version": "v0.9",
+      "createSurface": {
+        "surfaceId": "booking",
+        "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+      }
+    }
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "booking",
+        "components": [
+          {
+            "id": "title",
+            "component": "Text",
+            "text": "Book Your Table",
+            "variant": "h1"
+          },
+          {
+            "id": "datetime",
+            "component": "DateTimeInput",
+            "value": { "path": "/booking/date" },
+            "enableDate": true
+          },
+          {
+            "id": "submit-text",
+            "component": "Text",
+            "text": "Confirm"
+          },
+          {
+            "id": "submit-btn",
+            "component": "Button",
+            "child": "submit-text",
+            "variant": "primary",
+            "action": {
+              "event": { "name": "confirm_booking" }
+            }
+          }
+        ]
+      }
+    }
+    {
+      "version": "v0.9",
+      "updateDataModel": {
+        "surfaceId": "booking",
+        "path": "/booking",
+        "value": {
+          "date": "2025-12-16T19:00:00Z"
+        }
+      }
+    }
+    ```
+
+    Key differences in v0.9: `createSurface` replaces `beginRendering`, components use a flatter structure with `"component": "Text"` instead of nested objects, and all messages include a `version` field.
 
 Client renders these messages as native components (Angular, Flutter, React, etc.).
 

@@ -19,6 +19,7 @@ from a2ui.basic_catalog import BasicCatalog
 from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME
 from a2ui.core.schema.constants import (
     CATALOG_COMPONENTS_KEY,
+    DEFAULT_WORKFLOW_RULES,
     INLINE_CATALOG_NAME,
     VERSION_0_8,
     VERSION_0_9,
@@ -329,12 +330,46 @@ def test_generate_system_prompt_minimal_args(mock_importlib_resources):
 
   prompt = manager.generate_system_prompt("Just Role")
 
-  # Check that optional sections are missing
-  assert "## Workflow Description:" not in prompt
+  # Check that default workflow description is present even with no args
+  assert "## Workflow Description:" in prompt
+  assert DEFAULT_WORKFLOW_RULES in prompt
   assert "## UI Description:" not in prompt
   assert "## Examples:" not in prompt
   assert "Just Role" in prompt
   assert "---BEGIN A2UI JSON SCHEMA---" not in prompt
+
+
+def test_generate_system_prompt_custom_workflow_appending(mock_importlib_resources):
+  mock_files = mock_importlib_resources
+  mock_traversable = MagicMock()
+  mock_files.return_value = mock_traversable
+
+  def joinpath_side_effect(path):
+    if path == VERSION_0_8:
+      return mock_traversable
+
+    mock_file = MagicMock()
+    if "catalog" in path:
+      content = '{"catalogId": "basic", "components": {}}'
+    else:
+      content = "{}"
+    mock_file.open.return_value.__enter__.return_value = io.StringIO(content)
+    return mock_file
+
+  mock_traversable.joinpath.side_effect = joinpath_side_effect
+
+  manager = A2uiSchemaManager(
+      VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8)]
+  )
+
+  custom_rule = "Custom Rule Content"
+  prompt = manager.generate_system_prompt("Role", workflow_description=custom_rule)
+
+  assert "## Workflow Description:" in prompt
+  assert DEFAULT_WORKFLOW_RULES in prompt
+  assert custom_rule in prompt
+  # Ensure custom rule is appended to default
+  assert prompt.index(DEFAULT_WORKFLOW_RULES) < prompt.index(custom_rule)
 
 
 def test_generate_system_prompt_with_inline_catalog(mock_importlib_resources):

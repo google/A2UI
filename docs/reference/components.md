@@ -1,6 +1,18 @@
 # Component Gallery
 
-This page showcases all standard A2UI components with examples and usage patterns. For the complete technical specification, see the [Standard Catalog Definition](https://a2ui.org/specification/v0_8/standard_catalog_definition.json).
+This page showcases all A2UI components with examples and usage patterns.
+
+!!! abstract "Schema Files"
+
+    === "v0.8"
+
+        [:material-code-json: Standard Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)
+
+    === "v0.9"
+
+        [:material-code-json: Basic Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_9/basic_catalog.json)
+
+---
 
 ## Layout Components
 
@@ -8,174 +20,480 @@ This page showcases all standard A2UI components with examples and usage pattern
 
 Horizontal layout container. Children are arranged left-to-right.
 
-```json
-{
-  "id": "toolbar",
-  "component": {
-    "Row": {
-      "children": {"explicitList": ["btn1", "btn2", "btn3"]},
-      "alignment": "center"
+=== "v0.8"
+
+    **Properties:** `children` (`explicitList` or `template`), `distribution`, `alignment`
+
+    ```json
+    {
+      "id": "toolbar",
+      "component": {
+        "Row": {
+          "children": { "explicitList": ["btn1", "btn2", "btn3"] },
+          "distribution": "spaceBetween",
+          "alignment": "center"
+        }
+      }
     }
-  }
-}
-```
+    ```
 
-**Properties:**
+=== "v0.9"
 
-- `children`: Static array (`explicitList`) or dynamic `template`
-- `distribution`: Horizontal distribution of children (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
-- `alignment`: Vertical alignment (`start`, `center`, `end`, `stretch`)
+    **Properties:** `children` (array or template), `justify`, `align`
+
+    ```json
+    {
+      "id": "toolbar",
+      "component": "Row",
+      "children": ["btn1", "btn2", "btn3"],
+      "justify": "spaceBetween",
+      "align": "center"
+    }
+    ```
 
 ### Column
 
 Vertical layout container. Children are arranged top-to-bottom.
 
-```json
-{
-  "id": "content",
-  "component": {
-    "Column": {
-      "children": {"explicitList": ["header", "body", "footer"]}
+=== "v0.8"
+
+    **Properties:** `children` (`explicitList` or `template`), `distribution`, `alignment`
+
+    ```json
+    {
+      "id": "content",
+      "component": {
+        "Column": {
+          "children": { "explicitList": ["header", "body", "footer"] },
+          "distribution": "start",
+          "alignment": "stretch"
+        }
+      }
     }
-  }
-}
-```
+    ```
 
-**Properties:**
+=== "v0.9"
 
-- `children`: Static array (`explicitList`) or dynamic `template`
-- `distribution`: Vertical distribution of children (`start`, `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`)
-- `alignment`: Horizontal alignment (`start`, `center`, `end`, `stretch`)
+    **Properties:** `children` (array or template), `justify`, `align`
+
+    ```json
+    {
+      "id": "content",
+      "component": "Column",
+      "children": ["header", "body", "footer"],
+      "justify": "start",
+      "align": "stretch"
+    }
+    ```
+
+### List
+
+Scrollable list of items. Supports static children and dynamic templates.
+
+=== "v0.8"
+
+    **Properties:** `children` (`explicitList` or `template`), `direction`, `alignment`
+
+    ```json
+    {
+      "id": "message-list",
+      "component": {
+        "List": {
+          "children": {
+            "template": {
+              "dataBinding": "/messages",
+              "componentId": "message-item"
+            }
+          },
+          "direction": "vertical"
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `children` (array or template), `direction`, `align`
+
+    ```json
+    {
+      "id": "message-list",
+      "component": "List",
+      "children": {
+        "componentId": "message-item",
+        "path": "/messages"
+      },
+      "direction": "vertical"
+    }
+    ```
+
+---
 
 ## Display Components
 
 ### Text
 
-Display text content with optional styling.
+Display text content with styling hints.
 
-```json
-{
-  "id": "title",
-  "component": {
-    "Text": {
-      "text": {"literalString": "Welcome to A2UI"},
-      "usageHint": "h1"
+=== "v0.8"
+
+    **Properties:** `text` (BoundValue), `usageHint`
+
+    `usageHint` values: `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
+
+    ```json
+    {
+      "id": "title",
+      "component": {
+        "Text": {
+          "text": { "literalString": "Welcome to A2UI" },
+          "usageHint": "h1"
+        }
+      }
     }
-  }
-}
-```
+    ```
 
-**`usageHint` values:** `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
+=== "v0.9"
+
+    **Properties:** `text` (string or DataBinding), `variant`
+
+    `variant` values: `h1`, `h2`, `h3`, `h4`, `h5`, `caption`, `body`
+
+    ```json
+    {
+      "id": "title",
+      "component": "Text",
+      "text": "Welcome to A2UI",
+      "variant": "h1"
+    }
+    ```
 
 ### Image
 
 Display images from URLs.
 
-```json
-{
-  "id": "logo",
-  "component": {
-    "Image": {
-      "url": {"literalString": "https://example.com/logo.png"}
+=== "v0.8"
+
+    **Properties:** `url` (BoundValue), `fit`, `usageHint`
+
+    ```json
+    {
+      "id": "hero",
+      "component": {
+        "Image": {
+          "url": { "literalString": "https://example.com/hero.png" },
+          "fit": "cover",
+          "usageHint": "hero"
+        }
+      }
     }
-  }
-}
-```
+    ```
+
+=== "v0.9"
+
+    **Properties:** `url` (string or DataBinding), `fit`, `variant`
+
+    ```json
+    {
+      "id": "hero",
+      "component": "Image",
+      "url": "https://example.com/hero.png",
+      "fit": "cover",
+      "variant": "hero"
+    }
+    ```
 
 ### Icon
 
-Display icons using Material Icons or custom icon sets.
+Display icons from the standard set defined in the catalog.
 
-```json
-{
-  "id": "check-icon",
-  "component": {
-    "Icon": {
-      "name": {"literalString": "check"}
+=== "v0.8"
+
+    **Properties:** `name` (BoundValue)
+
+    ```json
+    {
+      "id": "check-icon",
+      "component": {
+        "Icon": {
+          "name": { "literalString": "check" }
+        }
+      }
     }
-  }
-}
-```
+    ```
+
+=== "v0.9"
+
+    **Properties:** `name` (string or DataBinding)
+
+    ```json
+    {
+      "id": "check-icon",
+      "component": "Icon",
+      "name": "check"
+    }
+    ```
 
 ### Divider
 
 Visual separator line.
 
-```json
-{
-  "id": "separator",
-  "component": {
-    "Divider": {
+=== "v0.8"
+
+    **Properties:** `axis`
+
+    ```json
+    {
+      "id": "separator",
+      "component": {
+        "Divider": {
+          "axis": "horizontal"
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `axis`
+
+    ```json
+    {
+      "id": "separator",
+      "component": "Divider",
       "axis": "horizontal"
     }
-  }
-}
-```
+    ```
+
+---
 
 ## Interactive Components
 
 ### Button
 
-Clickable button with action support.
+Clickable button that triggers an action.
 
-```json
-{
-  "id": "submit-btn-text",
-  "component": {
-    "Text": {
-      "text": { "literalString": "Submit" }
-    }
-  }
-}
-{
-  "id": "submit-btn",
-  "component": {
-    "Button": {
-      "child": "submit-btn-text",
-      "primary": true,
-      "action": {"name": "submit_form"}
-    }
-  }
-}
-```
+=== "v0.8"
 
-**Properties:**
-- `child`: The ID of the component to display in the button (e.g., a Text or Icon).
-- `primary`: Boolean indicating if this is a primary action.
-- `action`: The action to perform on click.
+    **Properties:** `child` (component ID), `primary` (boolean), `action`
+
+    ```json
+    {
+      "id": "submit-btn",
+      "component": {
+        "Button": {
+          "child": "submit-text",
+          "primary": true,
+          "action": {
+            "name": "submit_form"
+          }
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `child` (component ID), `variant`, `action`
+
+    ```json
+    {
+      "id": "submit-btn",
+      "component": "Button",
+      "child": "submit-text",
+      "variant": "primary",
+      "action": {
+        "event": {
+          "name": "submit_form"
+        }
+      }
+    }
+    ```
 
 ### TextField
 
-Text input field.
+Text input field with optional validation.
 
-```json
-{
-  "id": "email-input",
-  "component": {
-    "TextField": {
-      "label": {"literalString": "Email Address"},
-      "text": {"path": "/user/email"},
+=== "v0.8"
+
+    **Properties:** `label` (BoundValue), `text` (BoundValue), `textFieldType`, `validationRegexp`
+
+    `textFieldType` values: `shortText`, `longText`, `number`, `obscured`, `date`
+
+    ```json
+    {
+      "id": "email-input",
+      "component": {
+        "TextField": {
+          "label": { "literalString": "Email Address" },
+          "text": { "path": "/user/email" },
+          "textFieldType": "shortText"
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `label` (string), `value` (string or DataBinding), `textFieldType`, `validationRegexp`
+
+    `textFieldType` values: `shortText`, `longText`, `number`, `obscured`, `date`
+
+    ```json
+    {
+      "id": "email-input",
+      "component": "TextField",
+      "label": "Email Address",
+      "value": { "path": "/user/email" },
       "textFieldType": "shortText"
     }
-  }
-}
-```
+    ```
 
-**`textFieldType` values:** `date`, `longText`, `number`, `shortText`, `obscured`
+### CheckBox
 
 Boolean toggle.
 
-```json
-{
-  "id": "terms-checkbox",
-  "component": {
-    "CheckBox": {
-      "label": {"literalString": "I agree to the terms"},
-      "value": {"path": "/form/agreedToTerms"}
+=== "v0.8"
+
+    **Properties:** `label` (BoundValue), `value` (BoundValue, boolean)
+
+    ```json
+    {
+      "id": "terms-checkbox",
+      "component": {
+        "CheckBox": {
+          "label": { "literalString": "I agree to the terms" },
+          "value": { "path": "/form/agreedToTerms" }
+        }
+      }
     }
-  }
-}
-```
+    ```
+
+=== "v0.9"
+
+    **Properties:** `label` (string), `value` (DataBinding, boolean)
+
+    ```json
+    {
+      "id": "terms-checkbox",
+      "component": "CheckBox",
+      "label": "I agree to the terms",
+      "value": { "path": "/form/agreedToTerms" }
+    }
+    ```
+
+### Slider
+
+Numeric range input.
+
+=== "v0.8"
+
+    **Properties:** `value` (BoundValue), `minValue`, `maxValue`
+
+    ```json
+    {
+      "id": "volume",
+      "component": {
+        "Slider": {
+          "value": { "path": "/settings/volume" },
+          "minValue": 0,
+          "maxValue": 100
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `value` (DataBinding), `minValue`, `maxValue`
+
+    ```json
+    {
+      "id": "volume",
+      "component": "Slider",
+      "value": { "path": "/settings/volume" },
+      "minValue": 0,
+      "maxValue": 100
+    }
+    ```
+
+### DateTimeInput
+
+Date and/or time picker.
+
+=== "v0.8"
+
+    **Properties:** `value` (BoundValue), `enableDate`, `enableTime`
+
+    ```json
+    {
+      "id": "date-picker",
+      "component": {
+        "DateTimeInput": {
+          "value": { "path": "/booking/date" },
+          "enableDate": true,
+          "enableTime": false
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `value` (DataBinding), `enableDate`, `enableTime`
+
+    ```json
+    {
+      "id": "date-picker",
+      "component": "DateTimeInput",
+      "value": { "path": "/booking/date" },
+      "enableDate": true,
+      "enableTime": false
+    }
+    ```
+
+### MultipleChoice (v0.8) / ChoicePicker (v0.9)
+
+Select one or more options from a list.
+
+=== "v0.8"
+
+    **Properties:** `options` (array), `selections` (BoundValue), `maxAllowedSelections`
+
+    ```json
+    {
+      "id": "country-select",
+      "component": {
+        "MultipleChoice": {
+          "options": [
+            { "label": { "literalString": "USA" }, "value": "us" },
+            { "label": { "literalString": "Canada" }, "value": "ca" }
+          ],
+          "selections": { "path": "/form/country" },
+          "maxAllowedSelections": 1
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `options` (array), `selections` (DataBinding), `maxAllowedSelections`
+
+    ```json
+    {
+      "id": "country-select",
+      "component": "ChoicePicker",
+      "options": [
+        { "label": "USA", "value": "us" },
+        { "label": "Canada", "value": "ca" }
+      ],
+      "selections": { "path": "/form/country" },
+      "maxAllowedSelections": 1
+    }
+    ```
+
+---
 
 ## Container Components
 
@@ -183,90 +501,150 @@ Boolean toggle.
 
 Container with elevation/border and padding.
 
-```json
-{
-  "id": "info-card",
-  "component": {
-    "Card": {
-      "child": "card-content"
-    }
-  }
-}
-```
+=== "v0.8"
 
-### Modal
+    **Properties:** `child` (component ID)
 
-Overlay dialog.
-
-```json
-{
-  "id": "confirmation-modal",
-  "component": {
-    "Modal": {
-      "entryPointChild": "open-modal-btn",
-      "contentChild": "modal-content"
-    }
-  }
-}
-```
-
-### Tabs
-
-Tabbed interface.
-
-```json
-{
-  "id": "settings-tabs",
-  "component": {
-    "Tabs": {
-      "tabItems": [
-        {"title": {"literalString": "General"}, "child": "general-settings"},
-        {"title": {"literalString": "Privacy"}, "child": "privacy-settings"},
-        {"title": {"literalString": "Advanced"}, "child": "advanced-settings"}
-      ]
-    }
-  }
-}
-```
-
-Scrollable list of items.
-
-```json
-{
-  "id": "message-list",
-  "component": {
-    "List": {
-      "children": {
-        "template": {
-          "dataBinding": "/messages",
-          "componentId": "message-item"
+    ```json
+    {
+      "id": "info-card",
+      "component": {
+        "Card": {
+          "child": "card-content"
         }
       }
     }
-  }
-}
-```
+    ```
+
+=== "v0.9"
+
+    **Properties:** `child` (component ID)
+
+    ```json
+    {
+      "id": "info-card",
+      "component": "Card",
+      "child": "card-content"
+    }
+    ```
+
+### Modal
+
+Overlay dialog triggered by an entry point component.
+
+=== "v0.8"
+
+    **Properties:** `entryPointChild` (component ID), `contentChild` (component ID)
+
+    ```json
+    {
+      "id": "confirmation-modal",
+      "component": {
+        "Modal": {
+          "entryPointChild": "open-modal-btn",
+          "contentChild": "modal-content"
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `entryPointChild` (component ID), `contentChild` (component ID)
+
+    ```json
+    {
+      "id": "confirmation-modal",
+      "component": "Modal",
+      "entryPointChild": "open-modal-btn",
+      "contentChild": "modal-content"
+    }
+    ```
+
+### Tabs
+
+Tabbed interface for organizing content into switchable panels.
+
+=== "v0.8"
+
+    **Properties:** `tabItems` (array of `{ title, child }`)
+
+    ```json
+    {
+      "id": "settings-tabs",
+      "component": {
+        "Tabs": {
+          "tabItems": [
+            { "title": { "literalString": "General" }, "child": "general-tab" },
+            { "title": { "literalString": "Privacy" }, "child": "privacy-tab" }
+          ]
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    **Properties:** `tabItems` (array of `{ title, child }`)
+
+    ```json
+    {
+      "id": "settings-tabs",
+      "component": "Tabs",
+      "tabItems": [
+        { "title": "General", "child": "general-tab" },
+        { "title": "Privacy", "child": "privacy-tab" }
+      ]
+    }
+    ```
+
+---
 
 ## Common Properties
 
-Most components support these common properties:
+All components share:
 
-- `id` (required): Unique identifier for the component instance.
-- `weight`: Flex-grow value when the component is a direct child of a Row or Column. This property is specified alongside `id` and `component`.
+- `id` (required): Unique identifier within the surface
+- `accessibility`: Accessibility attributes (label, role)
+- `weight`: Flex-grow value when inside a Row or Column
+
+## Version Differences Summary
+
+The component names and properties are largely the same across versions. The structural differences are:
+
+| Aspect | v0.8 | v0.9 |
+|--------|------|------|
+| Component wrapper | `"component": { "Text": { ... } }` | `"component": "Text", ...props` |
+| String values | `{ "literalString": "Hello" }` | `"Hello"` |
+| Children | `{ "explicitList": ["a", "b"] }` | `["a", "b"]` |
+| Data binding | `{ "path": "/data" }` | `{ "path": "/data" }` (same) |
+| Text/Image styling | `usageHint` | `variant` |
+| Button styling | `primary: true` | `variant: "primary"` |
+| Action format | `{ "name": "..." }` | `{ "event": { "name": "..." } }` |
+| Choice component | `MultipleChoice` | `ChoicePicker` |
+| Layout alignment | `distribution`, `alignment` | `justify`, `align` |
+| TextField value | `text` | `value` |
 
 ## Live Examples
 
-To see all components in action, run the component gallery demo:
+To see all components in action:
 
 ```bash
 cd samples/client/angular
 npm start -- gallery
 ```
 
-This launches a live gallery with all components, their variations, and interactive examples.
-
 ## Further Reading
 
-- **[Basic Catalog Definition](../../specification/v0_9/json/basic_catalog.json)**: Complete technical specification
+!!! abstract "Schema Files"
+
+    === "v0.8"
+
+        [:material-code-json: Standard Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)
+
+    === "v0.9"
+
+        [:material-code-json: Basic Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_9/basic_catalog.json)
+
 - **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand

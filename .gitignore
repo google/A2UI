@@ -16,14 +16,8 @@ site/
 # Python virtual environment
 .venv/
 
-# Claude Code
-.claude/
-
-# Xcode user data
-xcuserdata/
-
-# Internal docs
-docs/guides/competitive-analysis-pr729.md
-
-# Misc
-samples/client/lit/component_gallery/package-lock.json
+# Generated spec assets in the agent SDK
+## old agent SDK path
+a2a_agents/python/a2ui_agent/src/a2ui/assets/**/*.json
+## new agent SDK path
+agent_sdks/python/src/a2ui/assets/**/*.json

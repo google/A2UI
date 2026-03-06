@@ -41,33 +41,38 @@ nav:
       - Agent UI Ecosystem: introduction/agent-ui-ecosystem.md
   - Quickstart: quickstart.md
   - A2UI Composer ⭐: composer.md
-  - Developer Guides:
-      - Client Setup: guides/client-setup.md
-      - Agent Development: guides/agent-development.md
-      - Custom Components: guides/custom-components.md
-      - Theming & Styling: guides/theming.md
-  - Core Concepts:
+  - Concepts:
       - Overview: concepts/overview.md
       - Data Flow: concepts/data-flow.md
       - Components & Structure: concepts/components.md
       - Data Binding: concepts/data-binding.md
+      - Catalogs: catalogs.md
+      - Transports: transports.md
+      - Client-to-Server Actions: client_to_server_actions.md
+  - Guides:
+      - Client Setup: guides/client-setup.md
+      - Agent Development: guides/agent-development.md
+      - Renderer Development: guides/renderer-development.md
+      - Custom Components: guides/custom-components.md
+      - Theming & Styling: guides/theming.md
+  - Reference:
+      - Component Gallery: reference/components.md
+      - Message Reference: reference/messages.md
+      - Renderers (Clients): renderers.md
+      - Agents (Server-side): agents.md
   - Specifications:
       - v0.8 (Stable):
-          - A2UI Specification: specification/v0.8-a2ui.md
+          - A2UI Protocol: specification/v0.8-a2ui.md
           - A2A Extension: specification/v0.8-a2a-extension.md
       - v0.9 (Draft):
-          - A2UI Specification: specification/v0.9-a2ui.md
+          - A2UI Protocol: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
-  - Catalogs: catalogs.md
-  - Client-to-Server Actions: client_to_server_actions.md
-  - Renderers (Clients): renderers.md
-  - Transports (Message Passing): transports.md
-  - Agents (Server-side): agents.md
-  - Community: community.md
+  - Ecosystem:
+      - Agent UI Ecosystem: introduction/agent-ui-ecosystem.md
+      - Community Renderers: ecosystem/renderers.md
+      - Where is it Used?: introduction/where-is-it-used.md
+      - Community: community.md
   - Roadmap: roadmap.md
-  - Reference:
-      - Component Reference: reference/components.md
-      - Message Reference: reference/messages.md
 
 exclude_docs: |
   scripts/**
@@ -180,6 +185,8 @@ plugins:
   - macros
   # - include-markdown
   - mermaid2
+  - redirects:
+      redirect_maps: {}
   # - llmstxt:
   #     full_output: llms-full.txt
   #     sections:

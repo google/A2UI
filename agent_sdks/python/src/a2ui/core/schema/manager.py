@@ -198,8 +198,12 @@ class A2uiSchemaManager(InferenceStrategy):
   ) -> str:
     """Assembles the final system instruction for the LLM."""
     parts = [role_description]
+
+    workflow = DEFAULT_WORKFLOW_RULES
     if workflow_description:
-      parts.append(f"## Workflow Description:\n{workflow_description}")
+      workflow += f"\n{workflow_description}"
+    parts.append(f"## Workflow Description:\n{workflow}")
+
     if ui_description:
       parts.append(f"## UI Description:\n{ui_description}")
 

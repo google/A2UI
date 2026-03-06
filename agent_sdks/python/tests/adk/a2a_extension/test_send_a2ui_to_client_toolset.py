@@ -19,10 +19,16 @@ import pytest
 
 from a2a import types as a2a_types
 from a2ui.a2a import create_a2ui_part
+from google.adk.agents.invocation_context import InvocationContext
+from google.adk.events.event import Event
 
-from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
-from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset
+from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import (
+    A2uiEventConverter,
+    A2uiPartConverter,
+    SendA2uiToClientToolset,
+)
 from a2ui.core.schema.catalog import A2uiCatalog
+from a2ui.core.schema.constants import A2UI_DELIMITER
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types as genai_types
@@ -193,7 +199,7 @@ async def test_send_tool_run_async_valid():
   tool_context_mock.actions = MagicMock(skip_summarization=False)
 
   valid_a2ui = [{"type": "Text", "text": "Hello"}]
-  catalog_mock.payload_fixer.validate_and_fix.return_value = valid_a2ui
+  catalog_mock.validator.validate.return_value = None
   args = {
       SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: json.dumps(
           valid_a2ui
@@ -207,6 +213,7 @@ async def test_send_tool_run_async_valid():
       )
   }
   assert tool_context_mock.actions.skip_summarization == True
+  catalog_mock.validator.validate.assert_called_once_with(valid_a2ui)
 
 
 @pytest.mark.asyncio
@@ -218,7 +225,7 @@ async def test_send_tool_run_async_valid_list():
   tool_context_mock.actions = MagicMock(skip_summarization=False)
 
   valid_a2ui = [{"type": "Text", "text": "Hello"}]
-  catalog_mock.payload_fixer.validate_and_fix.return_value = valid_a2ui
+  catalog_mock.validator.validate.return_value = None
   args = {
       SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: json.dumps(
           valid_a2ui
@@ -232,6 +239,7 @@ async def test_send_tool_run_async_valid_list():
       )
   }
   assert tool_context_mock.actions.skip_summarization == True
+  catalog_mock.validator.validate.assert_called_once_with(valid_a2ui)
 
 
 @pytest.mark.asyncio
@@ -250,9 +258,6 @@ async def test_send_tool_run_async_missing_arg():
 @pytest.mark.asyncio
 async def test_send_tool_run_async_invalid_json():
   catalog_mock = MagicMock(spec=A2uiCatalog)
-  catalog_mock.payload_fixer.validate_and_fix.side_effect = Exception(
-      "Failed to parse JSON"
-  )
   tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
   args = {
       SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: "{invalid"
@@ -260,12 +265,13 @@ async def test_send_tool_run_async_invalid_json():
   result = await tool.run_async(args=args, tool_context=MagicMock())
   assert "error" in result
   assert "Failed to call A2UI tool" in result["error"]
+  assert "Expecting property name enclosed in double quotes" in result["error"]
 
 
 @pytest.mark.asyncio
 async def test_send_tool_run_async_schema_validation_fail():
   catalog_mock = MagicMock(spec=A2uiCatalog)
-  catalog_mock.payload_fixer.validate_and_fix.side_effect = Exception(
+  catalog_mock.validator.validate.side_effect = Exception(
       "'text' is a required property"
   )
   tool = SendA2uiToClientToolset._SendA2uiJsonToClientTool(catalog_mock, "examples")
@@ -283,11 +289,14 @@ async def test_send_tool_run_async_schema_validation_fail():
 
 # endregion
 
-# region send_a2ui_to_client_part_converter Tests
-"""Tests for the send_a2ui_to_client_part_converter function."""
+# region A2uiPartConverter Tests
+"""Tests for the A2uiPartConverter class."""
 
 
-def test_converter_convert_valid_response_single():
+def test_converter_class_convert_valid_tool_response():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
   valid_a2ui = {"type": "Text", "text": "Hello"}
   function_response = genai_types.FunctionResponse(
       name=SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME,
@@ -299,88 +308,208 @@ def test_converter_convert_valid_response_single():
   )
   part = genai_types.Part(function_response=function_response)
 
-  a2a_parts = convert_send_a2ui_to_client_genai_part_to_a2a_part(part)
+  a2a_parts = converter.convert(part)
   assert len(a2a_parts) == 1
   assert a2a_parts[0] == create_a2ui_part(valid_a2ui)
 
 
-def test_converter_convert_valid_response_list():
-  valid_a2ui = [
-      {"type": "Text", "text": "Hello"},
-      {"type": "Text", "text": "World"},
-  ]
+def test_converter_class_convert_tool_error_response():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
   function_response = genai_types.FunctionResponse(
       name=SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME,
       response={
-          SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY: (
-              valid_a2ui
-          )
+          SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_ERROR_KEY: "Some error"
       },
   )
   part = genai_types.Part(function_response=function_response)
 
-  a2a_parts = convert_send_a2ui_to_client_genai_part_to_a2a_part(part)
-  assert len(a2a_parts) == 2
-  assert a2a_parts[0] == create_a2ui_part(valid_a2ui[0])
-  assert a2a_parts[1] == create_a2ui_part(valid_a2ui[1])
+  a2a_parts = converter.convert(part)
+  assert len(a2a_parts) == 0
 
 
-def test_converter_convert_function_call_returns_empty():
-  # Converter should ignore the function call itself
+def test_converter_class_convert_tool_response_no_result():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
+  function_response = genai_types.FunctionResponse(
+      name=SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME,
+      response={},
+  )
+  part = genai_types.Part(function_response=function_response)
+
+  a2a_parts = converter.convert(part)
+  assert len(a2a_parts) == 0
+
+
+def test_converter_class_convert_function_call_ignores():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
   function_call = genai_types.FunctionCall(
       name=SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME,
-      args={
-          SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: "..."
-      },
+      args={SendA2uiToClientToolset._SendA2uiJsonToClientTool.A2UI_JSON_ARG_NAME: "{}"},
   )
   part = genai_types.Part(function_call=function_call)
-  a2a_parts = convert_send_a2ui_to_client_genai_part_to_a2a_part(part)
+
+  a2a_parts = converter.convert(part)
   assert len(a2a_parts) == 0
 
 
-def test_converter_convert_error_response():
-  function_response = genai_types.FunctionResponse(
-      name=SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME,
-      response={"error": "Something went wrong"},
-  )
-  part = genai_types.Part(function_response=function_response)
-  a2a_parts = convert_send_a2ui_to_client_genai_part_to_a2a_part(part)
-  assert len(a2a_parts) == 0
+def test_converter_class_convert_text_with_a2ui():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
+  valid_a2ui = [{"type": "Text", "text": "Hello"}]
+  catalog_mock.validator.validate.return_value = None
+
+  text = f"Here is the UI:{A2UI_DELIMITER}{json.dumps(valid_a2ui)}"
+  part = genai_types.Part(text=text)
+
+  a2a_parts = converter.convert(part)
+
+  # Expect 2 parts: TextPart and A2UI DataPart
+  assert len(a2a_parts) == 2
+  assert a2a_parts[0].root.text == "Here is the UI:"
+  assert a2a_parts[1] == create_a2ui_part(valid_a2ui[0])
+  catalog_mock.validator.validate.assert_called_once_with(valid_a2ui)
 
 
-def test_converter_convert_empty_result_response():
-  function_response = genai_types.FunctionResponse(
-      name=SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME,
-      response={},  # Missing result
-  )
-  part = genai_types.Part(function_response=function_response)
-  a2a_parts = convert_send_a2ui_to_client_genai_part_to_a2a_part(part)
-  assert len(a2a_parts) == 0
+def test_converter_class_convert_text_multiple_segments():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
 
+  ui1 = [{"type": "Text", "text": "one"}]
+  ui2 = [{"type": "Text", "text": "two"}]
 
-@patch("google.adk.a2a.converters.part_converter.convert_genai_part_to_a2a_part")
-def test_converter_convert_non_a2ui_function_call(mock_convert):
-  function_call = genai_types.FunctionCall(name="other_tool", args={})
-  part = genai_types.Part(function_call=function_call)
-  mock_a2a_part = a2a_types.Part(root=a2a_types.TextPart(text="test"))
-  mock_convert.return_value = mock_a2a_part
+  text = f"Intro{A2UI_DELIMITER}{json.dumps(ui1)}{A2UI_DELIMITER}Middle{A2UI_DELIMITER}{json.dumps(ui2)}"
 
-  a2a_parts = convert_send_a2ui_to_client_genai_part_to_a2a_part(part)
+  part = genai_types.Part(text=text)
+  a2a_parts = converter.convert(part)
+
+  # parse_response with single segment assumption will fail to parse the whole trailing string as JSON.
+  # But our robust _convert_text_with_a2ui will still return the leading text part.
   assert len(a2a_parts) == 1
-  assert a2a_parts[0] is mock_a2a_part
-  mock_convert.assert_called_once_with(part)
+  assert a2a_parts[0].root.text == "Intro"
 
 
-@patch("google.adk.a2a.converters.part_converter.convert_genai_part_to_a2a_part")
-def test_converter_convert_other_part(mock_convert):
-  part = genai_types.Part(text="Hello")
-  mock_a2a_part = a2a_types.Part(root=a2a_types.TextPart(text="Hello"))
-  mock_convert.return_value = mock_a2a_part
+def test_converter_class_convert_text_empty_leading():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
 
-  a2a_parts = convert_send_a2ui_to_client_genai_part_to_a2a_part(part)
+  ui = [{"type": "Text", "text": "Top"}]
+  catalog_mock.validator.validate.return_value = None
+
+  text = f"{A2UI_DELIMITER}{json.dumps(ui)}"
+  part = genai_types.Part(text=text)
+  a2a_parts = converter.convert(part)
+
   assert len(a2a_parts) == 1
-  assert a2a_parts[0] is mock_a2a_part
-  mock_convert.assert_called_once_with(part)
+  assert a2a_parts[0] == create_a2ui_part(ui[0])
+
+
+def test_converter_class_convert_text_markdown_wrapped():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
+  ui = [{"type": "Text", "text": "Inside Markdown"}]
+  catalog_mock.validator.validate.return_value = None
+
+  # Text containing JSON wrapped in markdown tags
+  text = f"Behold:{A2UI_DELIMITER}```json\n{json.dumps(ui)}\n```"
+  part = genai_types.Part(text=text)
+  a2a_parts = converter.convert(part)
+
+  assert len(a2a_parts) == 2
+  assert a2a_parts[0].root.text == "Behold:"
+  assert a2a_parts[1] == create_a2ui_part(ui[0])
+  catalog_mock.validator.validate.assert_called_once_with(ui)
+
+
+def test_converter_class_convert_text_with_invalid_a2ui():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
+  text = f"Here is the UI:{A2UI_DELIMITER}invalid_json"
+  part = genai_types.Part(text=text)
+
+  a2a_parts = converter.convert(part)
+
+  # Expect only 1 part: the leading TextPart. The invalid A2UI is skipped.
+  assert len(a2a_parts) == 1
+  assert a2a_parts[0].root.text == "Here is the UI:"
+
+
+def test_converter_class_convert_other_part():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  converter = A2uiPartConverter(catalog_mock)
+
+  part = genai_types.Part(
+      inline_data=genai_types.Blob(mime_type="image/png", data=b"abc")
+  )
+
+  with patch(
+      "google.adk.a2a.converters.part_converter.convert_genai_part_to_a2a_part"
+  ) as mock_convert:
+    mock_a2a_part = a2a_types.Part(root=a2a_types.DataPart(kind="data", data={}))
+    mock_convert.return_value = mock_a2a_part
+
+    a2a_parts = converter.convert(part)
+    assert len(a2a_parts) == 1
+    assert a2a_parts[0] is mock_a2a_part
+    mock_convert.assert_called_once_with(part)
+
+
+@pytest.mark.asyncio
+async def test_event_converter_injects_catalog():
+  catalog_mock = MagicMock(spec=A2uiCatalog)
+  event_mock = MagicMock()
+  invocation_context_mock = MagicMock()
+  # Correctly access session via mock
+  invocation_context_mock.session.state = {"system:a2ui_catalog": catalog_mock}
+
+  converter = A2uiEventConverter()
+
+  with patch(
+      "google.adk.a2a.converters.event_converter.convert_event_to_a2a_events"
+  ) as mock_base_converter:
+    mock_base_converter.return_value = []
+
+    # Converter is not async
+    converter(event_mock, invocation_context_mock)
+
+    # Verify that mock_base_converter was called with a part_converter that uses the catalog
+    args, kwargs = mock_base_converter.call_args
+    effective_part_converter = args[4]
+
+    assert effective_part_converter.__name__ == "convert"
+    assert isinstance(effective_part_converter.__self__, A2uiPartConverter)
+    assert effective_part_converter.__self__._catalog == catalog_mock
+
+
+@pytest.mark.asyncio
+async def test_event_converter_falls_back_without_catalog():
+  event_mock = MagicMock()
+  invocation_context_mock = MagicMock()
+  invocation_context_mock.session.state = {}  # No catalog
+
+  converter = A2uiEventConverter()
+
+  with patch(
+      "google.adk.a2a.converters.event_converter.convert_event_to_a2a_events"
+  ) as mock_base_converter:
+    mock_base_converter.return_value = []
+
+    # Converter is not async
+    converter(event_mock, invocation_context_mock)
+
+    args, kwargs = mock_base_converter.call_args
+    effective_part_converter = args[4]
+
+    from google.adk.a2a.converters.part_converter import convert_genai_part_to_a2a_part
+
+    assert effective_part_converter == convert_genai_part_to_a2a_part
 
 
 # endregion
