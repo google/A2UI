@@ -33,14 +33,14 @@ function createModalMessages(
         {
           id: triggerId,
           component: {
-            Text: { text: { literalString: props.triggerText } },
+            Text: { text: { literalString: props.triggerText }, usageHint: 'body' },
           },
         },
         // Content component
         {
           id: contentId,
           component: {
-            Text: { text: { literalString: props.contentText } },
+            Text: { text: { literalString: props.contentText }, usageHint: 'body' },
           },
         },
         // Modal component
@@ -386,10 +386,10 @@ describe('Modal Component', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
           // Trigger
-          { id: 'trigger-text', component: { Text: { text: { literalString: 'Open' } } } },
+          { id: 'trigger-text', component: { Text: { text: { literalString: 'Open' } , usageHint: 'body' } } },
           // Modal content: Column with button
           { id: 'modal-title', component: { Text: { text: { literalString: 'Modal Title' }, usageHint: 'h2' } } },
-          { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } } } },
+          { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } , usageHint: 'body' } } },
           { id: 'modal-btn', component: { Button: { child: 'btn-text', action: { name: 'submit' } } } },
           { id: 'modal-content', component: { Column: { children: { explicitList: ['modal-title', 'modal-btn'] } } } },
           // Modal
@@ -425,8 +425,8 @@ describe('Modal Component', () => {
       const mockOnAction = vi.fn();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'trigger-text', component: { Text: { text: { literalString: 'Open' } } } },
-          { id: 'btn-text', component: { Text: { text: { literalString: 'Action Button' } } } },
+          { id: 'trigger-text', component: { Text: { text: { literalString: 'Open' } , usageHint: 'body' } } },
+          { id: 'btn-text', component: { Text: { text: { literalString: 'Action Button' } , usageHint: 'body' } } },
           { id: 'modal-btn', component: { Button: { child: 'btn-text', action: { name: 'modal-action' } } } },
           {
             id: 'modal-1',

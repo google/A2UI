@@ -27,7 +27,7 @@ describe('Component Updates', () => {
           // Initial render: surfaceUpdate + beginRendering
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'Original text' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'Original text' } , usageHint: 'body' } } },
             ]),
             createBeginRendering('text-1'),
           ]);
@@ -36,7 +36,7 @@ describe('Component Updates', () => {
           // Update: only surfaceUpdate, NO beginRendering
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'Updated text' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'Updated text' } , usageHint: 'body' } } },
             ]),
             // Note: no createBeginRendering here
           ]);
@@ -75,7 +75,7 @@ describe('Component Updates', () => {
       useEffect(() => {
         processMessages([
           createSurfaceUpdate([
-            { id: 'text-1', component: { Text: { text: { literalString: 'Before' } } } },
+            { id: 'text-1', component: { Text: { text: { literalString: 'Before' } , usageHint: 'body' } } },
           ]),
           createBeginRendering('text-1'),
         ]);
@@ -83,7 +83,7 @@ describe('Component Updates', () => {
         setTimeout(() => {
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'After' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'After' } , usageHint: 'body' } } },
             ]),
             createBeginRendering('text-1'),
           ]);
@@ -113,7 +113,7 @@ describe('Component Updates', () => {
       useEffect(() => {
         processMessages([
           createSurfaceUpdate([
-            { id: 'comp-1', component: { Text: { text: { literalString: 'I am text' } } } },
+            { id: 'comp-1', component: { Text: { text: { literalString: 'I am text' } , usageHint: 'body' } } },
           ]),
           createBeginRendering('comp-1'),
         ]);
@@ -121,7 +121,7 @@ describe('Component Updates', () => {
         setTimeout(() => {
           processMessages([
             createSurfaceUpdate([
-              { id: 'btn-text', component: { Text: { text: { literalString: 'Click me' } } } },
+              { id: 'btn-text', component: { Text: { text: { literalString: 'Click me' } , usageHint: 'body' } } },
               { id: 'comp-1', component: { Button: { child: 'btn-text', action: { name: 'test' } } } },
             ]),
             createBeginRendering('comp-1'),
@@ -152,7 +152,7 @@ describe('Component Updates', () => {
       useEffect(() => {
         processMessages([
           createSurfaceUpdate([
-            { id: 'text-1', component: { Text: { text: { literalString: 'First' } } } },
+            { id: 'text-1', component: { Text: { text: { literalString: 'First' } , usageHint: 'body' } } },
           ]),
           createBeginRendering('text-1'),
         ]);
@@ -160,8 +160,8 @@ describe('Component Updates', () => {
         setTimeout(() => {
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'First' } } } },
-              { id: 'text-2', component: { Text: { text: { literalString: 'Second' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'First' } , usageHint: 'body' } } },
+              { id: 'text-2', component: { Text: { text: { literalString: 'Second' } , usageHint: 'body' } } },
               { id: 'col-1', component: { Column: { children: { explicitList: ['text-1', 'text-2'] } } } },
             ]),
             createBeginRendering('col-1'),
@@ -194,9 +194,9 @@ describe('Component Updates', () => {
           // Initial: list with 3 items
           processMessages([
             createSurfaceUpdate([
-              { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } } } },
-              { id: 'item-2', component: { Text: { text: { literalString: 'Item 2' } } } },
-              { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } } } },
+              { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } , usageHint: 'body' } } },
+              { id: 'item-2', component: { Text: { text: { literalString: 'Item 2' } , usageHint: 'body' } } },
+              { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } , usageHint: 'body' } } },
               { id: 'list-1', component: { List: { children: { explicitList: ['item-1', 'item-2', 'item-3'] } } } },
             ]),
             createBeginRendering('list-1'),
@@ -206,8 +206,8 @@ describe('Component Updates', () => {
           // Update: remove middle item (only surfaceUpdate, no beginRendering)
           processMessages([
             createSurfaceUpdate([
-              { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } } } },
-              { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } } } },
+              { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } , usageHint: 'body' } } },
+              { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } , usageHint: 'body' } } },
               { id: 'list-1', component: { List: { children: { explicitList: ['item-1', 'item-3'] } } } },
             ]),
           ]);
@@ -252,9 +252,9 @@ describe('Component Updates', () => {
           // Initial order: A, B, C
           processMessages([
             createSurfaceUpdate([
-              { id: 'item-a', component: { Text: { text: { literalString: 'A' } } } },
-              { id: 'item-b', component: { Text: { text: { literalString: 'B' } } } },
-              { id: 'item-c', component: { Text: { text: { literalString: 'C' } } } },
+              { id: 'item-a', component: { Text: { text: { literalString: 'A' } , usageHint: 'body' } } },
+              { id: 'item-b', component: { Text: { text: { literalString: 'B' } , usageHint: 'body' } } },
+              { id: 'item-c', component: { Text: { text: { literalString: 'C' } , usageHint: 'body' } } },
               { id: 'col-1', component: { Column: { children: { explicitList: ['item-a', 'item-b', 'item-c'] } } } },
             ]),
             createBeginRendering('col-1'),
@@ -264,9 +264,9 @@ describe('Component Updates', () => {
           // Reorder: C, A, B (only surfaceUpdate, no beginRendering)
           processMessages([
             createSurfaceUpdate([
-              { id: 'item-a', component: { Text: { text: { literalString: 'A' } } } },
-              { id: 'item-b', component: { Text: { text: { literalString: 'B' } } } },
-              { id: 'item-c', component: { Text: { text: { literalString: 'C' } } } },
+              { id: 'item-a', component: { Text: { text: { literalString: 'A' } , usageHint: 'body' } } },
+              { id: 'item-b', component: { Text: { text: { literalString: 'B' } , usageHint: 'body' } } },
+              { id: 'item-c', component: { Text: { text: { literalString: 'C' } , usageHint: 'body' } } },
               { id: 'col-1', component: { Column: { children: { explicitList: ['item-c', 'item-a', 'item-b'] } } } },
             ]),
           ]);
@@ -300,8 +300,31 @@ describe('Component Updates', () => {
     expect(textElements[2]).toHaveTextContent('B');
   });
 
-  it('should NOT empty the surface via empty surfaceUpdate alone (requires deleteSurface)', async () => {
-    // This test documents that an empty surfaceUpdate does NOT clear an already-rendered surface.
+  it('should reject empty surfaceUpdate (schema requires at least 1 component)', () => {
+    // The A2UI protocol schema enforces min(1) on surfaceUpdate.components.
+    // An empty surfaceUpdate is a protocol violation and should throw a validation error.
+    function EmptySurfaceRenderer() {
+      const { processMessages } = useA2UI();
+
+      useEffect(() => {
+        expect(() => {
+          processMessages([createSurfaceUpdate([])]);
+        }).toThrow();
+      }, [processMessages]);
+
+      return <A2UIRenderer surfaceId="@default" />;
+    }
+
+    render(
+      <A2UIProvider>
+        <EmptySurfaceRenderer />
+      </A2UIProvider>
+    );
+  });
+
+  it('should NOT empty the surface when invalid surfaceUpdate is rejected (requires deleteSurface)', async () => {
+    // An empty surfaceUpdate is now rejected by schema validation (min 1 component).
+    // This test verifies that a rejected message does not affect the existing surface.
     // To truly clear a surface, use deleteSurface message instead.
     function EmptySurfaceRenderer() {
       const { processMessages } = useA2UI();
@@ -309,20 +332,24 @@ describe('Component Updates', () => {
 
       useEffect(() => {
         if (stage === 'initial') {
-          // Initial: surface with content
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'Persistent content' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'Persistent content' }, usageHint: 'body' } } },
               { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
             ]),
             createBeginRendering('col-1'),
           ]);
           setTimeout(() => setStage('attempted'), 10);
         } else if (stage === 'attempted') {
-          // Attempt to empty via surfaceUpdate with no components
-          processMessages([
-            createSurfaceUpdate([]),
-          ]);
+          // Attempt an empty surfaceUpdate — schema validation will reject it,
+          // but the existing surface should be unaffected.
+          try {
+            processMessages([
+              { surfaceUpdate: { surfaceId: '@default', components: [] } } as unknown as Types.ServerToClientMessage,
+            ]);
+          } catch {
+            // Expected: Zod validation rejects empty components array
+          }
         }
       }, [processMessages, stage]);
 
@@ -340,15 +367,12 @@ describe('Component Updates', () => {
       </A2UIProvider>
     );
 
-    // Content should be visible initially
     expect(screen.getByText('Persistent content')).toBeInTheDocument();
 
-    // After empty surfaceUpdate, content should STILL be present (not cleared)
+    // After rejected surfaceUpdate, content should STILL be present (not cleared)
     await waitFor(() => {
       expect(screen.getByTestId('stage')).toHaveTextContent('attempted');
-      // Content persists - empty surfaceUpdate doesn't clear the surface
       expect(screen.getByText('Persistent content')).toBeInTheDocument();
-      // Fallback is NOT shown because surface still has content
       expect(screen.queryByTestId('empty-fallback')).not.toBeInTheDocument();
     });
   });
@@ -358,7 +382,7 @@ describe('Nested Components', () => {
   it('should render deeply nested component structures', () => {
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'inner-text', component: { Text: { text: { literalString: 'Deep content' } } } },
+        { id: 'inner-text', component: { Text: { text: { literalString: 'Deep content' } , usageHint: 'body' } } },
         { id: 'inner-card', component: { Card: { child: 'inner-text' } } },
         { id: 'inner-col', component: { Column: { children: { explicitList: ['inner-card'] } } } },
         { id: 'outer-card', component: { Card: { child: 'inner-col' } } },
@@ -382,9 +406,9 @@ describe('Nested Components', () => {
   it('should handle List with multiple items', () => {
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } } } },
-        { id: 'item-2', component: { Text: { text: { literalString: 'Item 2' } } } },
-        { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } } } },
+        { id: 'item-1', component: { Text: { text: { literalString: 'Item 1' } , usageHint: 'body' } } },
+        { id: 'item-2', component: { Text: { text: { literalString: 'Item 2' } , usageHint: 'body' } } },
+        { id: 'item-3', component: { Text: { text: { literalString: 'Item 3' } , usageHint: 'body' } } },
         {
           id: 'list-1',
           component: {
@@ -409,8 +433,8 @@ describe('Nested Components', () => {
   it('should handle Row with mixed children', () => {
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'text-1', component: { Text: { text: { literalString: 'Label' } } } },
-        { id: 'btn-text', component: { Text: { text: { literalString: 'Action' } } } },
+        { id: 'text-1', component: { Text: { text: { literalString: 'Label' } , usageHint: 'body' } } },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Action' } , usageHint: 'body' } } },
         { id: 'btn-1', component: { Button: { child: 'btn-text', action: { name: 'act' } } } },
         { id: 'icon-1', component: { Icon: { name: { literalString: 'home' } } } },
         {
@@ -460,7 +484,7 @@ describe('Error Handling', () => {
   it('should render valid content without issues', () => {
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'text-1', component: { Text: { text: { literalString: 'Safe content' } } } },
+        { id: 'text-1', component: { Text: { text: { literalString: 'Safe content' } , usageHint: 'body' } } },
       ]),
       createBeginRendering('text-1'),
     ];

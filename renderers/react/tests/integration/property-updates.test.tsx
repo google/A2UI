@@ -23,7 +23,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Original text' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Original text' } , usageHint: 'body' } } },
               ]),
               createBeginRendering('text-1'),
             ]);
@@ -31,7 +31,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Updated text' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Updated text' } , usageHint: 'body' } } },
               ]),
             ]);
           }
@@ -117,7 +117,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'img-1', component: { Image: { url: { literalString: 'https://example.com/old.jpg' } } } },
+                { id: 'img-1', component: { Image: { url: { literalString: 'https://example.com/old.jpg' }, usageHint: 'mediumFeature' } } },
               ]),
               createBeginRendering('img-1'),
             ]);
@@ -125,7 +125,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'img-1', component: { Image: { url: { literalString: 'https://example.com/new.jpg' } } } },
+                { id: 'img-1', component: { Image: { url: { literalString: 'https://example.com/new.jpg' }, usageHint: 'mediumFeature' } } },
               ]),
             ]);
           }
@@ -257,7 +257,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'btn-text', component: { Text: { text: { literalString: 'Click me' } } } },
+                { id: 'btn-text', component: { Text: { text: { literalString: 'Click me' } , usageHint: 'body' } } },
                 { id: 'btn-1', component: { Button: { child: 'btn-text', action: { name: 'submit' } } } },
               ]),
               createBeginRendering('btn-1'),
@@ -266,7 +266,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'btn-text', component: { Text: { text: { literalString: 'Submit now' } } } },
+                { id: 'btn-text', component: { Text: { text: { literalString: 'Submit now' } , usageHint: 'body' } } },
                 { id: 'btn-1', component: { Button: { child: 'btn-text', action: { name: 'submit' } } } },
               ]),
             ]);
@@ -573,7 +573,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } , usageHint: 'body' } } },
                 { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] }, alignment: 'start' } } },
               ]),
               createBeginRendering('col-1'),
@@ -582,7 +582,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } , usageHint: 'body' } } },
                 { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] }, alignment: 'center' } } },
               ]),
             ]);
@@ -620,7 +620,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } , usageHint: 'body' } } },
                 { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] }, distribution: 'start' } } },
               ]),
               createBeginRendering('col-1'),
@@ -629,7 +629,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } , usageHint: 'body' } } },
                 { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] }, distribution: 'spaceBetween' } } },
               ]),
             ]);
@@ -667,7 +667,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } , usageHint: 'body' } } },
                 { id: 'row-1', component: { Row: { children: { explicitList: ['text-1'] }, alignment: 'start' } } },
               ]),
               createBeginRendering('row-1'),
@@ -676,7 +676,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Content' } , usageHint: 'body' } } },
                 { id: 'row-1', component: { Row: { children: { explicitList: ['text-1'] }, alignment: 'end' } } },
               ]),
             ]);
@@ -714,7 +714,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'item-1', component: { Text: { text: { literalString: 'Item' } } } },
+                { id: 'item-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
                 { id: 'list-1', component: { List: { children: { explicitList: ['item-1'] }, direction: 'vertical' } } },
               ]),
               createBeginRendering('list-1'),
@@ -723,7 +723,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'item-1', component: { Text: { text: { literalString: 'Item' } } } },
+                { id: 'item-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
                 { id: 'list-1', component: { List: { children: { explicitList: ['item-1'] }, direction: 'horizontal' } } },
               ]),
             ]);
@@ -763,7 +763,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'content-1', component: { Text: { text: { literalString: 'Tab content' } } } },
+                { id: 'content-1', component: { Text: { text: { literalString: 'Tab content' } , usageHint: 'body' } } },
                 {
                   id: 'tabs-1',
                   component: {
@@ -779,7 +779,7 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'content-1', component: { Text: { text: { literalString: 'Tab content' } } } },
+                { id: 'content-1', component: { Text: { text: { literalString: 'Tab content' } , usageHint: 'body' } } },
                 {
                   id: 'tabs-1',
                   component: {
@@ -825,7 +825,7 @@ describe('Property Updates via surfaceUpdate', () => {
           if (stage === 'initial') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'content-1', component: { Text: { text: { literalString: 'Content 1' } } } },
+                { id: 'content-1', component: { Text: { text: { literalString: 'Content 1' } , usageHint: 'body' } } },
                 {
                   id: 'tabs-1',
                   component: {
@@ -841,8 +841,8 @@ describe('Property Updates via surfaceUpdate', () => {
           } else if (stage === 'updated') {
             processMessages([
               createSurfaceUpdate([
-                { id: 'content-1', component: { Text: { text: { literalString: 'Content 1' } } } },
-                { id: 'content-2', component: { Text: { text: { literalString: 'Content 2' } } } },
+                { id: 'content-1', component: { Text: { text: { literalString: 'Content 1' } , usageHint: 'body' } } },
+                { id: 'content-2', component: { Text: { text: { literalString: 'Content 2' } , usageHint: 'body' } } },
                 {
                   id: 'tabs-1',
                   component: {

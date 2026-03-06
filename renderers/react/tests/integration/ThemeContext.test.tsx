@@ -127,7 +127,7 @@ describe('ThemeContext', () => {
     it('should apply litTheme classes by default', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Click' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Click' } , usageHint: 'body' } } },
           { id: 'btn-1', component: { Button: { child: 'text-1', action: { name: 'test' } } } },
         ]),
         createBeginRendering('btn-1'),
@@ -158,7 +158,7 @@ describe('ThemeContext', () => {
       const mockTheme = createMockTheme();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Click' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Click' } , usageHint: 'body' } } },
           { id: 'btn-1', component: { Button: { child: 'text-1', action: { name: 'test' } } } },
         ]),
         createBeginRendering('btn-1'),
@@ -186,7 +186,7 @@ describe('ThemeContext', () => {
       const mockTheme = createMockTheme();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Content' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Content' } , usageHint: 'body' } } },
           { id: 'card-1', component: { Card: { child: 'text-1' } } },
         ]),
         createBeginRendering('card-1'),
@@ -207,7 +207,7 @@ describe('ThemeContext', () => {
       const mockTheme = createMockTheme();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Hello' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Hello' } , usageHint: 'body' } } },
         ]),
         createBeginRendering('text-1'),
       ];
@@ -227,7 +227,7 @@ describe('ThemeContext', () => {
       const mockTheme = createMockTheme();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('col-1'),
@@ -248,7 +248,7 @@ describe('ThemeContext', () => {
       const mockTheme = createMockTheme();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'row-1', component: { Row: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('row-1'),
@@ -328,8 +328,8 @@ describe('ThemeContext', () => {
       const mockTheme = createMockTheme();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'tab-content-1', component: { Text: { text: { literalString: 'Tab 1 Content' } } } },
-          { id: 'tab-content-2', component: { Text: { text: { literalString: 'Tab 2 Content' } } } },
+          { id: 'tab-content-1', component: { Text: { text: { literalString: 'Tab 1 Content' } , usageHint: 'body' } } },
+          { id: 'tab-content-2', component: { Text: { text: { literalString: 'Tab 2 Content' } , usageHint: 'body' } } },
           {
             id: 'tabs-1',
             component: {
@@ -462,7 +462,7 @@ describe('ThemeContext', () => {
       const mockTheme = createMockTheme();
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Click' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Click' } , usageHint: 'body' } } },
           { id: 'btn-1', component: { Button: { child: 'text-1', action: { name: 'test' } } } },
         ]),
         createBeginRendering('btn-1'),

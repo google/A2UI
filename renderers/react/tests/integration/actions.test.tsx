@@ -21,7 +21,7 @@ describe('Action Dispatch', () => {
     const mockOnAction = vi.fn();
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } } } },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } , usageHint: 'body' } } },
         { id: 'btn-1', component: { Button: { child: 'btn-text', action: { name: 'submit' } } } },
       ]),
       createBeginRendering('btn-1'),
@@ -45,7 +45,7 @@ describe('Action Dispatch', () => {
     const mockOnAction = vi.fn();
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'btn-text', component: { Text: { text: { literalString: 'Delete' } } } },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Delete' } , usageHint: 'body' } } },
         {
           id: 'btn-1',
           component: {
@@ -83,7 +83,7 @@ describe('Action Dispatch', () => {
   it('should not call onAction if not provided', () => {
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'btn-text', component: { Text: { text: { literalString: 'Click' } } } },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Click' } , usageHint: 'body' } } },
         { id: 'btn-1', component: { Button: { child: 'btn-text', action: { name: 'test' } } } },
       ]),
       createBeginRendering('btn-1'),
@@ -104,9 +104,9 @@ describe('Action Dispatch', () => {
     const mockOnAction = vi.fn();
     const messages: Types.ServerToClientMessage[] = [
       createSurfaceUpdate([
-        { id: 'btn1-text', component: { Text: { text: { literalString: 'Action 1' } } } },
+        { id: 'btn1-text', component: { Text: { text: { literalString: 'Action 1' } , usageHint: 'body' } } },
         { id: 'btn1', component: { Button: { child: 'btn1-text', action: { name: 'action-1' } } } },
-        { id: 'btn2-text', component: { Text: { text: { literalString: 'Action 2' } } } },
+        { id: 'btn2-text', component: { Text: { text: { literalString: 'Action 2' } , usageHint: 'body' } } },
         { id: 'btn2', component: { Button: { child: 'btn2-text', action: { name: 'action-2' } } } },
         { id: 'col', component: { Column: { children: { explicitList: ['btn1', 'btn2'] } } } },
       ]),
@@ -145,7 +145,7 @@ describe('Action Dispatch', () => {
             },
           },
         },
-        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } } } },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } , usageHint: 'body' } } },
         {
           id: 'btn-1',
           component: {
@@ -208,7 +208,7 @@ describe('Action Dispatch', () => {
             },
           },
         },
-        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } } } },
+        { id: 'btn-text', component: { Text: { text: { literalString: 'Submit' } , usageHint: 'body' } } },
         {
           id: 'btn-1',
           component: {

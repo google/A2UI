@@ -31,7 +31,7 @@ function createTabsMessages(
     components.push({
       id: contentId,
       component: {
-        Text: { text: { literalString: tab.contentText } },
+        Text: { text: { literalString: tab.contentText }, usageHint: 'body' },
       },
     });
     return {
@@ -324,11 +324,11 @@ describe('Tabs Component', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
           // Tab 1: Column with multiple text items
-          { id: 'text-1a', component: { Text: { text: { literalString: 'Item 1' } } } },
-          { id: 'text-1b', component: { Text: { text: { literalString: 'Item 2' } } } },
+          { id: 'text-1a', component: { Text: { text: { literalString: 'Item 1' } , usageHint: 'body' } } },
+          { id: 'text-1b', component: { Text: { text: { literalString: 'Item 2' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1a', 'text-1b'] } } } },
           // Tab 2: Button
-          { id: 'btn-text', component: { Text: { text: { literalString: 'Click me' } } } },
+          { id: 'btn-text', component: { Text: { text: { literalString: 'Click me' } , usageHint: 'body' } } },
           { id: 'btn-1', component: { Button: { child: 'btn-text', action: { name: 'test' } } } },
           // Tabs
           {

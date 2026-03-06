@@ -28,6 +28,7 @@ function createListMessages(
     component: {
       Text: {
         text: { literalString: props.childTexts?.[index] ?? `Item ${index + 1}` },
+        usageHint: 'body',
       },
     },
   }));

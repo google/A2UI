@@ -8,6 +8,7 @@ describe('Image Component', () => {
     it('should render an img element', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -23,6 +24,7 @@ describe('Image Component', () => {
     it('should render with wrapper div', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -38,6 +40,7 @@ describe('Image Component', () => {
     it('should set src attribute from url', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/photo.png' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -53,6 +56,7 @@ describe('Image Component', () => {
     it('should have empty alt attribute', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -68,9 +72,11 @@ describe('Image Component', () => {
     it('should render different src for different url inputs', () => {
       const messages1 = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/first.jpg' },
+        usageHint: 'mediumFeature',
       });
       const messages2 = createSimpleMessages('img-2', 'Image', {
         url: { literalString: 'https://example.com/second.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container: container1 } = render(
@@ -95,6 +101,7 @@ describe('Image Component', () => {
     it('should return null for empty url', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: '' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -133,6 +140,7 @@ describe('Image Component', () => {
       // usageHint affects which theme classes are merged onto the section element
       const messagesNoHint = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
       const messagesWithHint = createSimpleMessages('img-2', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
@@ -168,6 +176,7 @@ describe('Image Component', () => {
     it('should default to fill fit mode', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -186,6 +195,7 @@ describe('Image Component', () => {
       it(`should set --object-fit CSS variable for fit="${fit}"`, () => {
         const messages = createSimpleMessages('img-1', 'Image', {
           url: { literalString: 'https://example.com/image.jpg' },
+          usageHint: 'mediumFeature',
           fit,
         });
 
@@ -203,10 +213,12 @@ describe('Image Component', () => {
     it('should set different --object-fit for different fit inputs', () => {
       const messagesCover = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
         fit: 'cover',
       });
       const messagesContain = createSimpleMessages('img-2', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
         fit: 'contain',
       });
 
@@ -236,6 +248,7 @@ describe('Image Component', () => {
     it('should render within section container', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -252,6 +265,7 @@ describe('Image Component', () => {
     it('should apply theme classes to section', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(
@@ -273,6 +287,7 @@ describe('Image Component', () => {
     it('should have correct DOM structure', () => {
       const messages = createSimpleMessages('img-1', 'Image', {
         url: { literalString: 'https://example.com/image.jpg' },
+        usageHint: 'mediumFeature',
       });
 
       const { container } = render(

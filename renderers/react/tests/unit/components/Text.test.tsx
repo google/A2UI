@@ -9,6 +9,7 @@ describe('Text Component', () => {
     it('should render text with literal string', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'Hello World' },
+        usageHint: 'body',
       });
 
       render(
@@ -25,6 +26,7 @@ describe('Text Component', () => {
     it('should render text with whitespace only', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '   ' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -41,6 +43,7 @@ describe('Text Component', () => {
     it('should render empty string', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -159,6 +162,7 @@ describe('Text Component', () => {
     it('should apply default theme classes', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'Themed text' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -220,6 +224,7 @@ describe('Text Component', () => {
     it('should render bold text', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'This is **bold** text' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -238,6 +243,7 @@ describe('Text Component', () => {
     it('should render italic text', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'This is *italic* text' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -256,6 +262,7 @@ describe('Text Component', () => {
     it('should render inline code', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'Use the `console.log()` function' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -274,6 +281,7 @@ describe('Text Component', () => {
     it('should render unordered lists', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '- Item 1\n- Item 2\n- Item 3' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -293,6 +301,7 @@ describe('Text Component', () => {
     it('should render ordered lists', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '1. First\n2. Second\n3. Third' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -312,6 +321,7 @@ describe('Text Component', () => {
     it('should render links', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'Visit [Google](https://google.com)' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -331,6 +341,7 @@ describe('Text Component', () => {
     it('should render plain URLs as text (auto-linkify not enabled)', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'Check out https://example.com for more' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -349,6 +360,7 @@ describe('Text Component', () => {
     it('should render blockquotes', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '> This is a quote' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -366,6 +378,7 @@ describe('Text Component', () => {
     it('should render code blocks', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '```\nconst x = 1;\n```' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -385,6 +398,7 @@ describe('Text Component', () => {
     it('should preserve line breaks in text', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'Line 1\nLine 2' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -405,6 +419,7 @@ describe('Text Component', () => {
     it('should apply theme classes to markdown elements', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '- List item' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -424,6 +439,7 @@ describe('Text Component', () => {
     it('should apply paragraph classes from theme', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: 'A paragraph of text.' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -445,6 +461,7 @@ describe('Text Component', () => {
     it('should not render raw HTML', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '<script>alert("xss")</script>' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -465,6 +482,7 @@ describe('Text Component', () => {
     it('should not render onclick handlers', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '<div onclick="alert(1)">Click me</div>' },
+        usageHint: 'body',
       });
 
       const { container } = render(
@@ -483,6 +501,7 @@ describe('Text Component', () => {
     it('should not render iframe tags', async () => {
       const messages = createSimpleMessages('text-1', 'Text', {
         text: { literalString: '<iframe src="https://evil.com"></iframe>' },
+        usageHint: 'body',
       });
 
       const { container } = render(

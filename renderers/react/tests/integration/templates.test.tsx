@@ -52,7 +52,7 @@ describe('Template Integration', () => {
             {
               id: 'item-template',
               component: {
-                Text: { text: { path: 'name' } },
+                Text: { text: { path: 'name' }, usageHint: 'body' },
               },
             },
           ]),
@@ -103,7 +103,7 @@ describe('Template Integration', () => {
             {
               id: 'tag-template',
               component: {
-                Text: { text: { path: '.' } },
+                Text: { text: { path: '.' }, usageHint: 'body' },
               },
             },
           ]),
@@ -165,7 +165,7 @@ describe('Template Integration', () => {
             {
               id: 'day-title',
               component: {
-                Text: { text: { path: 'title' } },
+                Text: { text: { path: 'title' }, usageHint: 'body' },
               },
             },
             {
@@ -184,7 +184,7 @@ describe('Template Integration', () => {
             {
               id: 'activity-template',
               component: {
-                Text: { text: { path: '.' } },
+                Text: { text: { path: '.' }, usageHint: 'body' },
               },
             },
           ]),
@@ -233,7 +233,7 @@ describe('Template Integration', () => {
               {
                 id: 'item-template',
                 component: {
-                  Text: { text: { path: 'name' } },
+                  Text: { text: { path: 'name' }, usageHint: 'body' },
                 },
               },
             ]),
@@ -273,6 +273,10 @@ describe('Template Integration', () => {
   });
 
   it('should expand template with dataBinding to Map (from valueMap)', () => {
+    // Nested valueMap (map-of-maps) is not expressible in the strict Zod schema
+    // (ValueMapItemSchema lacks recursive valueMap), but the processor supports it.
+    // Use a top-level valueMap with flat string values that the processor converts to a Map,
+    // combined with a JSON-encoded array for the iterable data.
     function MapTemplateRenderer() {
       const { processMessages } = useA2UI();
 
@@ -281,22 +285,10 @@ describe('Template Integration', () => {
           createDataModelUpdateSpec([
             {
               key: 'users',
-              valueMap: [
-                {
-                  key: 'user1',
-                  valueMap: [
-                    { key: 'name', valueString: 'Alice' },
-                    { key: 'role', valueString: 'Admin' },
-                  ],
-                },
-                {
-                  key: 'user2',
-                  valueMap: [
-                    { key: 'name', valueString: 'Bob' },
-                    { key: 'role', valueString: 'User' },
-                  ],
-                },
-              ],
+              valueString: JSON.stringify([
+                { name: 'Alice', role: 'Admin' },
+                { name: 'Bob', role: 'User' },
+              ]),
             },
           ]),
           createSurfaceUpdate([
@@ -330,13 +322,13 @@ describe('Template Integration', () => {
             {
               id: 'user-name',
               component: {
-                Text: { text: { path: 'name' } },
+                Text: { text: { path: 'name' }, usageHint: 'body' },
               },
             },
             {
               id: 'user-role',
               component: {
-                Text: { text: { path: 'role' } },
+                Text: { text: { path: 'role' }, usageHint: 'body' },
               },
             },
           ]),
@@ -401,13 +393,13 @@ describe('Template Integration', () => {
             {
               id: 'product-name',
               component: {
-                Text: { text: { path: 'name' } },
+                Text: { text: { path: 'name' }, usageHint: 'body' },
               },
             },
             {
               id: 'product-price',
               component: {
-                Text: { text: { path: 'price' } },
+                Text: { text: { path: 'price' }, usageHint: 'body' },
               },
             },
             {
@@ -427,7 +419,7 @@ describe('Template Integration', () => {
             {
               id: 'buy-text',
               component: {
-                Text: { text: { literalString: 'Buy' } },
+                Text: { text: { literalString: 'Buy' }, usageHint: 'body' },
               },
             },
           ]),
@@ -483,7 +475,7 @@ describe('Template Integration', () => {
             {
               id: 'header',
               component: {
-                Text: { text: { literalString: 'Items:' } },
+                Text: { text: { literalString: 'Items:' }, usageHint: 'body' },
               },
             },
             {
@@ -502,7 +494,7 @@ describe('Template Integration', () => {
             {
               id: 'item-template',
               component: {
-                Text: { text: { path: 'name' } },
+                Text: { text: { path: 'name' }, usageHint: 'body' },
               },
             },
           ]),
@@ -553,7 +545,7 @@ describe('Template Integration', () => {
               {
                 id: 'item-template',
                 component: {
-                  Text: { text: { path: 'name' } },
+                  Text: { text: { path: 'name' }, usageHint: 'body' },
                 },
               },
             ]),

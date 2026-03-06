@@ -17,7 +17,7 @@ describe('Column Component', () => {
     it('should render a section element', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('col-1'),
@@ -36,7 +36,7 @@ describe('Column Component', () => {
     it('should render with wrapper div', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('col-1'),
@@ -57,8 +57,8 @@ describe('Column Component', () => {
     it('should render child Text components', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Row 1' } } } },
-          { id: 'text-2', component: { Text: { text: { literalString: 'Row 2' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Row 1' } , usageHint: 'body' } } },
+          { id: 'text-2', component: { Text: { text: { literalString: 'Row 2' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1', 'text-2'] } } } },
         ]),
         createBeginRendering('col-1'),
@@ -97,7 +97,7 @@ describe('Column Component', () => {
     it('should default to stretch alignment', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('col-1'),
@@ -119,7 +119,7 @@ describe('Column Component', () => {
       it(`should set data-alignment="${alignment}"`, () => {
         const messages: Types.ServerToClientMessage[] = [
           createSurfaceUpdate([
-            { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+            { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
             { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] }, alignment } } },
           ]),
           createBeginRendering('col-1'),
@@ -141,7 +141,7 @@ describe('Column Component', () => {
     it('should default to start distribution', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('col-1'),
@@ -163,7 +163,7 @@ describe('Column Component', () => {
       it(`should set data-distribution="${distribution}"`, () => {
         const messages: Types.ServerToClientMessage[] = [
           createSurfaceUpdate([
-            { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+            { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
             { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] }, distribution } } },
           ]),
           createBeginRendering('col-1'),
@@ -185,7 +185,7 @@ describe('Column Component', () => {
     it('should render Row inside Column', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Nested text' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Nested text' } , usageHint: 'body' } } },
           { id: 'row-1', component: { Row: { children: { explicitList: ['text-1'] } } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['row-1'] } } } },
         ]),
@@ -208,7 +208,7 @@ describe('Column Component', () => {
     it('should apply theme classes to section', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('col-1'),
@@ -229,7 +229,7 @@ describe('Column Component', () => {
     it('should have correct DOM structure', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Item' } , usageHint: 'body' } } },
           { id: 'col-1', component: { Column: { children: { explicitList: ['text-1'] } } } },
         ]),
         createBeginRendering('col-1'),

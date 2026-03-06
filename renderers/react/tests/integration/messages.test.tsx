@@ -30,7 +30,7 @@ describe('Message Processing', () => {
             // Step 1: Only send surfaceUpdate (no beginRendering)
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Should not appear yet' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Should not appear yet' } , usageHint: 'body' } } },
               ]),
             ]);
             setStage('updated');
@@ -71,7 +71,7 @@ describe('Message Processing', () => {
     it('should process surfaceUpdate and beginRendering messages', () => {
       const messages: Types.ServerToClientMessage[] = [
         createSurfaceUpdate([
-          { id: 'text-1', component: { Text: { text: { literalString: 'Hello World' } } } },
+          { id: 'text-1', component: { Text: { text: { literalString: 'Hello World' } , usageHint: 'body' } } },
         ]),
         createBeginRendering('text-1'),
       ];
@@ -92,14 +92,14 @@ describe('Message Processing', () => {
         useEffect(() => {
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'Initial' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'Initial' } , usageHint: 'body' } } },
             ]),
             createBeginRendering('text-1'),
           ]);
 
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'Updated' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'Updated' } , usageHint: 'body' } } },
             ]),
             createBeginRendering('text-1'),
           ]);
@@ -126,7 +126,7 @@ describe('Message Processing', () => {
           processMessages([]);
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'After empty' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'After empty' } , usageHint: 'body' } } },
             ]),
             createBeginRendering('text-1'),
           ]);
@@ -153,12 +153,12 @@ describe('Message Processing', () => {
         useEffect(() => {
           processMessages([
             createSurfaceUpdate(
-              [{ id: 'text-a', component: { Text: { text: { literalString: 'Surface A Content' } } } }],
+              [{ id: 'text-a', component: { Text: { text: { literalString: 'Surface A Content' } , usageHint: 'body' } } }],
               'surface-a'
             ),
             createBeginRendering('text-a', 'surface-a'),
             createSurfaceUpdate(
-              [{ id: 'text-b', component: { Text: { text: { literalString: 'Surface B Content' } } } }],
+              [{ id: 'text-b', component: { Text: { text: { literalString: 'Surface B Content' } , usageHint: 'body' } } }],
               'surface-b'
             ),
             createBeginRendering('text-b', 'surface-b'),
@@ -201,12 +201,12 @@ describe('Message Processing', () => {
           if (step === 0) {
             processMessages([
               createSurfaceUpdate(
-                [{ id: 'text-a', component: { Text: { text: { literalString: 'A: Initial' } } } }],
+                [{ id: 'text-a', component: { Text: { text: { literalString: 'A: Initial' } , usageHint: 'body' } } }],
                 'surface-a'
               ),
               createBeginRendering('text-a', 'surface-a'),
               createSurfaceUpdate(
-                [{ id: 'text-b', component: { Text: { text: { literalString: 'B: Initial' } } } }],
+                [{ id: 'text-b', component: { Text: { text: { literalString: 'B: Initial' } , usageHint: 'body' } } }],
                 'surface-b'
               ),
               createBeginRendering('text-b', 'surface-b'),
@@ -215,7 +215,7 @@ describe('Message Processing', () => {
           } else if (step === 1) {
             processMessages([
               createSurfaceUpdate(
-                [{ id: 'text-a', component: { Text: { text: { literalString: 'A: Updated' } } } }],
+                [{ id: 'text-a', component: { Text: { text: { literalString: 'A: Updated' } , usageHint: 'body' } } }],
                 'surface-a'
               ),
               createBeginRendering('text-a', 'surface-a'),
@@ -260,7 +260,7 @@ describe('Message Processing', () => {
         useEffect(() => {
           processMessages([
             createSurfaceUpdate(
-              [{ id: 'text-1', component: { Text: { text: { literalString: 'Surface content' } } } }],
+              [{ id: 'text-1', component: { Text: { text: { literalString: 'Surface content' } , usageHint: 'body' } } }],
               'deletable-surface'
             ),
             createBeginRendering('text-1', 'deletable-surface'),
@@ -327,12 +327,12 @@ describe('Message Processing', () => {
           // Create two surfaces
           processMessages([
             createSurfaceUpdate(
-              [{ id: 'text-a', component: { Text: { text: { literalString: 'Surface A content' } } } }],
+              [{ id: 'text-a', component: { Text: { text: { literalString: 'Surface A content' } , usageHint: 'body' } } }],
               'surface-a'
             ),
             createBeginRendering('text-a', 'surface-a'),
             createSurfaceUpdate(
-              [{ id: 'text-b', component: { Text: { text: { literalString: 'Surface B content' } } } }],
+              [{ id: 'text-b', component: { Text: { text: { literalString: 'Surface B content' } , usageHint: 'body' } } }],
               'surface-b'
             ),
             createBeginRendering('text-b', 'surface-b'),
@@ -382,7 +382,7 @@ describe('Message Processing', () => {
             // Create surface
             processMessages([
               createSurfaceUpdate(
-                [{ id: 'text-1', component: { Text: { text: { literalString: 'Original content' } } } }],
+                [{ id: 'text-1', component: { Text: { text: { literalString: 'Original content' } , usageHint: 'body' } } }],
                 'recyclable-surface'
               ),
               createBeginRendering('text-1', 'recyclable-surface'),
@@ -396,7 +396,7 @@ describe('Message Processing', () => {
             // Re-create surface with same ID but different content
             processMessages([
               createSurfaceUpdate(
-                [{ id: 'text-2', component: { Text: { text: { literalString: 'New content after recreation' } } } }],
+                [{ id: 'text-2', component: { Text: { text: { literalString: 'New content after recreation' } , usageHint: 'body' } } }],
                 'recyclable-surface'
               ),
               createBeginRendering('text-2', 'recyclable-surface'),
@@ -439,7 +439,7 @@ describe('Message Processing', () => {
         useEffect(() => {
           processMessages([
             createSurfaceUpdate([
-              { id: 'text-1', component: { Text: { text: { literalString: 'Will be cleared' } } } },
+              { id: 'text-1', component: { Text: { text: { literalString: 'Will be cleared' } , usageHint: 'body' } } },
             ]),
             createBeginRendering('text-1'),
           ]);
@@ -481,7 +481,7 @@ describe('Message Processing', () => {
           if (step === 0) {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { literalString: 'Original' } } } },
+                { id: 'text-1', component: { Text: { text: { literalString: 'Original' } , usageHint: 'body' } } },
               ]),
               createBeginRendering('text-1'),
             ]);
@@ -492,7 +492,7 @@ describe('Message Processing', () => {
           } else if (step === 2) {
             processMessages([
               createSurfaceUpdate([
-                { id: 'text-2', component: { Text: { text: { literalString: 'New Content' } } } },
+                { id: 'text-2', component: { Text: { text: { literalString: 'New Content' } , usageHint: 'body' } } },
               ]),
               createBeginRendering('text-2'),
             ]);

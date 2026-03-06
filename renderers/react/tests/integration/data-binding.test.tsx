@@ -26,13 +26,13 @@ describe('Data Binding', () => {
         useEffect(() => {
           processMessages([
             createDataModelUpdate([
-              { key: 'greeting', value: 'Hello from data model' },
+              { key: 'greeting', valueString: 'Hello from data model'},
             ]),
             createSurfaceUpdate([
               {
                 id: 'text-1',
                 component: {
-                  Text: { text: { path: 'greeting' } },
+                  Text: { text: { path: 'greeting' }, usageHint: 'body' },
                 },
               },
             ]),
@@ -60,9 +60,9 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (step === 0) {
             processMessages([
-              createDataModelUpdate([{ key: 'counter', value: 'Count: 0' }]),
+              createDataModelUpdate([{ key: 'counter', valueString: 'Count: 0'}]),
               createSurfaceUpdate([
-                { id: 'text-1', component: { Text: { text: { path: 'counter' } } } },
+                { id: 'text-1', component: { Text: { text: { path: 'counter' } , usageHint: 'body' } } },
               ]),
               createBeginRendering('text-1'),
             ]);
@@ -70,7 +70,7 @@ describe('Data Binding', () => {
           } else if (step === 1) {
             setTimeout(() => {
               processMessages([
-                createDataModelUpdate([{ key: 'counter', value: 'Count: 1' }]),
+                createDataModelUpdate([{ key: 'counter', valueString: 'Count: 1'}]),
               ]);
             }, 10);
           }
@@ -111,7 +111,7 @@ describe('Data Binding', () => {
               {
                 id: 'text-1',
                 component: {
-                  Text: { text: { path: 'shared.name' } },
+                  Text: { text: { path: 'shared.name' }, usageHint: 'body' },
                 },
               },
               {
@@ -213,7 +213,7 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'user.name', value: 'Alice' }]),
+              createDataModelUpdate([{ key: 'user.name', valueString: 'Alice'}]),
               createSurfaceUpdate([
                 {
                   id: 'tf-1',
@@ -230,7 +230,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'user.name', value: 'Bob' }]),
+              createDataModelUpdate([{ key: 'user.name', valueString: 'Bob'}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -266,7 +266,7 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'settings.enabled', value: false }]),
+              createDataModelUpdate([{ key: 'settings.enabled', valueBoolean: false}]),
               createSurfaceUpdate([
                 {
                   id: 'cb-1',
@@ -283,7 +283,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'settings.enabled', value: true }]),
+              createDataModelUpdate([{ key: 'settings.enabled', valueBoolean: true}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -318,7 +318,7 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'volume', value: 30 }]),
+              createDataModelUpdate([{ key: 'volume', valueNumber: 30}]),
               createSurfaceUpdate([
                 {
                   id: 'slider-1',
@@ -336,7 +336,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'volume', value: 80 }]),
+              createDataModelUpdate([{ key: 'volume', valueNumber: 80}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -371,11 +371,11 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'shared.value', value: 'Initial' }]),
+              createDataModelUpdate([{ key: 'shared.value', valueString: 'Initial'}]),
               createSurfaceUpdate([
                 {
                   id: 'text-1',
-                  component: { Text: { text: { path: 'shared.value' } } },
+                  component: { Text: { text: { path: 'shared.value' } , usageHint: 'body' } },
                 },
                 {
                   id: 'tf-1',
@@ -396,7 +396,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'shared.value', value: 'Updated' }]),
+              createDataModelUpdate([{ key: 'shared.value', valueString: 'Updated'}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -435,12 +435,12 @@ describe('Data Binding', () => {
           if (stage === 'initial') {
             processMessages([
               createDataModelUpdate([
-                { key: 'form.firstName', value: 'John' },
-                { key: 'form.lastName', value: 'Doe' },
+                { key: 'form.firstName', valueString: 'John'},
+                { key: 'form.lastName', valueString: 'Doe'},
               ]),
               createSurfaceUpdate([
-                { id: 'text-first', component: { Text: { text: { path: 'form.firstName' } } } },
-                { id: 'text-last', component: { Text: { text: { path: 'form.lastName' } } } },
+                { id: 'text-first', component: { Text: { text: { path: 'form.firstName' } , usageHint: 'body' } } },
+                { id: 'text-last', component: { Text: { text: { path: 'form.lastName' } , usageHint: 'body' } } },
                 {
                   id: 'row-1',
                   component: { Row: { children: { explicitList: ['text-first', 'text-last'] } } },
@@ -452,8 +452,8 @@ describe('Data Binding', () => {
           } else if (stage === 'updated') {
             processMessages([
               createDataModelUpdate([
-                { key: 'form.firstName', value: 'Jane' },
-                { key: 'form.lastName', value: 'Smith' },
+                { key: 'form.firstName', valueString: 'Jane'},
+                { key: 'form.lastName', valueString: 'Smith'},
               ]),
             ]);
           }
@@ -494,12 +494,12 @@ describe('Data Binding', () => {
           if (stage === 'initial') {
             processMessages([
               createDataModelUpdate([
-                { key: 'user.profile.address.city', value: 'New York' },
+                { key: 'user.profile.address.city', valueString: 'New York'},
               ]),
               createSurfaceUpdate([
                 {
                   id: 'text-1',
-                  component: { Text: { text: { path: 'user.profile.address.city' } } },
+                  component: { Text: { text: { path: 'user.profile.address.city' } , usageHint: 'body' } },
                 },
               ]),
               createBeginRendering('text-1'),
@@ -508,7 +508,7 @@ describe('Data Binding', () => {
           } else if (stage === 'updated') {
             processMessages([
               createDataModelUpdate([
-                { key: 'user.profile.address.city', value: 'Los Angeles' },
+                { key: 'user.profile.address.city', valueString: 'Los Angeles'},
               ]),
             ]);
           }
@@ -545,7 +545,7 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'appointment.date', value: '2024-01-15' }]),
+              createDataModelUpdate([{ key: 'appointment.date', valueString: '2024-01-15'}]),
               createSurfaceUpdate([
                 {
                   id: 'dt-1',
@@ -563,7 +563,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'appointment.date', value: '2024-06-20' }]),
+              createDataModelUpdate([{ key: 'appointment.date', valueString: '2024-06-20'}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -652,12 +652,12 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'product.imageUrl', value: 'https://example.com/old-product.jpg' }]),
+              createDataModelUpdate([{ key: 'product.imageUrl', valueString: 'https://example.com/old-product.jpg'}]),
               createSurfaceUpdate([
                 {
                   id: 'img-1',
                   component: {
-                    Image: { url: { path: 'product.imageUrl' } },
+                    Image: { url: { path: 'product.imageUrl' }, usageHint: 'mediumFeature' },
                   },
                 },
               ]),
@@ -666,7 +666,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'product.imageUrl', value: 'https://example.com/new-product.jpg' }]),
+              createDataModelUpdate([{ key: 'product.imageUrl', valueString: 'https://example.com/new-product.jpg'}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -702,7 +702,7 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'ui.statusIcon', value: 'check' }]),
+              createDataModelUpdate([{ key: 'ui.statusIcon', valueString: 'check'}]),
               createSurfaceUpdate([
                 {
                   id: 'icon-1',
@@ -716,7 +716,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'ui.statusIcon', value: 'error' }]),
+              createDataModelUpdate([{ key: 'ui.statusIcon', valueString: 'error'}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -751,7 +751,7 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'media.videoUrl', value: 'https://example.com/old-video.mp4' }]),
+              createDataModelUpdate([{ key: 'media.videoUrl', valueString: 'https://example.com/old-video.mp4'}]),
               createSurfaceUpdate([
                 {
                   id: 'video-1',
@@ -765,7 +765,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'media.videoUrl', value: 'https://example.com/new-video.mp4' }]),
+              createDataModelUpdate([{ key: 'media.videoUrl', valueString: 'https://example.com/new-video.mp4'}]),
             ]);
           }
         }, [processMessages, stage]);
@@ -801,7 +801,7 @@ describe('Data Binding', () => {
         useEffect(() => {
           if (stage === 'initial') {
             processMessages([
-              createDataModelUpdate([{ key: 'media.audioUrl', value: 'https://example.com/old-audio.mp3' }]),
+              createDataModelUpdate([{ key: 'media.audioUrl', valueString: 'https://example.com/old-audio.mp3'}]),
               createSurfaceUpdate([
                 {
                   id: 'audio-1',
@@ -818,7 +818,7 @@ describe('Data Binding', () => {
             setTimeout(() => setStage('updated'), 10);
           } else if (stage === 'updated') {
             processMessages([
-              createDataModelUpdate([{ key: 'media.audioUrl', value: 'https://example.com/new-audio.mp3' }]),
+              createDataModelUpdate([{ key: 'media.audioUrl', valueString: 'https://example.com/new-audio.mp3'}]),
             ]);
           }
         }, [processMessages, stage]);

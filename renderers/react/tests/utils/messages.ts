@@ -56,7 +56,7 @@ export function createSimpleMessages(
  * Per A2UI spec: Updates application state independently of UI structure.
  */
 export function createDataModelUpdate(
-  contents: Array<{ key: string; value: unknown }>,
+  contents: Array<{ key: string; valueString?: string; valueNumber?: number; valueBoolean?: boolean; valueMap?: unknown[] }>,
   surfaceId = '@default',
   path?: string
 ): Types.ServerToClientMessage {

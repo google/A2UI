@@ -38,6 +38,7 @@ function createButtonMessages(
           component: {
             Text: {
               text: { literalString: props.childText ?? 'Click me' },
+            usageHint: 'body',
             },
           },
         },
