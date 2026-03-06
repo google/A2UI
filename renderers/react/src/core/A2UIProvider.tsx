@@ -10,7 +10,19 @@ import type * as Types from '@a2ui/web_core/types/types';
 import { A2uiMessageProcessor } from '@a2ui/web_core/data/model-processor';
 import type { A2UIContextValue, A2UIActions } from './store';
 import { ThemeProvider } from '../theme/ThemeContext';
+import { initializeDefaultCatalog } from '../registry/defaultCatalog';
+import { injectStyles } from '../styles';
 import type { OnActionCallback } from '../types';
+
+// Auto-initialize catalog and styles once on first import
+let initialized = false;
+function ensureInitialized() {
+  if (!initialized) {
+    initializeDefaultCatalog();
+    injectStyles();
+    initialized = true;
+  }
+}
 
 /**
  * Context for stable actions (never changes reference, prevents re-renders).
@@ -63,6 +75,8 @@ export interface A2UIProviderProps {
  * ```
  */
 export function A2UIProvider({ onAction, theme, children }: A2UIProviderProps) {
+  ensureInitialized();
+
   // Create message processor only once using ref
   const processorRef = useRef<Types.MessageProcessor | null>(null);
   if (!processorRef.current) {

@@ -4,9 +4,7 @@ import React, { useId, useMemo, useEffect, useRef } from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
 import { A2UIProvider, useA2UIActions } from './A2UIProvider';
 import { A2UIRenderer } from './A2UIRenderer';
-import { initializeDefaultCatalog } from '../registry/defaultCatalog';
 import { litTheme } from '../theme/litTheme';
-import { injectStyles } from '../styles';
 import type { OnActionCallback } from '../types';
 
 /**
@@ -42,16 +40,6 @@ export interface A2UIViewerProps {
   className?: string;
 }
 
-// Initialize the component catalog and styles once
-let initialized = false;
-function ensureInitialized() {
-  if (!initialized) {
-    initializeDefaultCatalog();
-    injectStyles(); // Inject structural CSS for litTheme utility classes
-    initialized = true;
-  }
-}
-
 /**
  * A2UIViewer renders an A2UI component tree from static JSON definitions.
  *
@@ -82,8 +70,6 @@ export function A2UIViewer({
   theme = litTheme,
   className,
 }: A2UIViewerProps) {
-  ensureInitialized();
-
   // Generate a stable surface ID based on the definition
   const baseId = useId();
   const surfaceId = useMemo(() => {
