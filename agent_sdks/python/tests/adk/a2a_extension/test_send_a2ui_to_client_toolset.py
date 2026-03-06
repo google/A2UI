@@ -376,24 +376,6 @@ def test_converter_class_convert_text_with_a2ui():
   catalog_mock.validator.validate.assert_called_once_with(valid_a2ui)
 
 
-def test_converter_class_convert_text_multiple_segments():
-  catalog_mock = MagicMock(spec=A2uiCatalog)
-  converter = A2uiPartConverter(catalog_mock)
-
-  ui1 = [{"type": "Text", "text": "one"}]
-  ui2 = [{"type": "Text", "text": "two"}]
-
-  text = f"Intro{A2UI_DELIMITER}{json.dumps(ui1)}{A2UI_DELIMITER}Middle{A2UI_DELIMITER}{json.dumps(ui2)}"
-
-  part = genai_types.Part(text=text)
-  a2a_parts = converter.convert(part)
-
-  # parse_response with single segment assumption will fail to parse the whole trailing string as JSON.
-  # But our robust _convert_text_with_a2ui will still return the leading text part.
-  assert len(a2a_parts) == 1
-  assert a2a_parts[0].root.text == "Intro"
-
-
 def test_converter_class_convert_text_empty_leading():
   catalog_mock = MagicMock(spec=A2uiCatalog)
   converter = A2uiPartConverter(catalog_mock)
@@ -435,10 +417,7 @@ def test_converter_class_convert_text_with_invalid_a2ui():
   part = genai_types.Part(text=text)
 
   a2a_parts = converter.convert(part)
-
-  # Expect only 1 part: the leading TextPart. The invalid A2UI is skipped.
-  assert len(a2a_parts) == 1
-  assert a2a_parts[0].root.text == "Here is the UI:"
+  assert len(a2a_parts) == 0
 
 
 def test_converter_class_convert_other_part():

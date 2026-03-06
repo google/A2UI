@@ -116,7 +116,23 @@ After parsing and validating the A2UI JSON payloads, wrap them in an A2A DataPar
 
 To ensure the A2UI Renderers on the frontend recognize the data, add `{"mimeType": "application/json+a2ui"}` to the DataPart's metadata.
 
-**Recommendation:** Use the [create_a2ui_datapart](src/a2ui/a2a.py#L37-L54) helper method to convert A2UI JSON payloads into an A2A DataPart.
+**Recommendation:** Use the [create_a2ui_part](src/a2ui/a2a.py) helper method to convert A2UI JSON payloads into an A2A DataPart.
+
+#### 4d. Complete Agent Output Structure
+
+The most efficient way to generate structured agent output is to use the `parse_response_to_parts` helper. It handles splitting the text, extracting A2UI JSON, optional validation, and wrapping everything into A2A `Part` objects.
+
+```python
+from a2ui.a2a import parse_response_to_parts
+
+# Inside your agent's stream method:
+final_response_content = f"{text_segment}\n{A2UI_DELIMITER}\n{json_payload}"
+
+yield {
+    "is_task_complete": True,
+    "parts": parse_response_to_parts(final_response_content, fallback_text="OK."),
+}
+```
 
 ## Use Cases
 

@@ -19,7 +19,14 @@ from collections.abc import AsyncIterable
 from typing import Any
 
 import jsonschema
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
+from a2a.types import (
+    AgentCapabilities,
+    AgentCard,
+    AgentSkill,
+    DataPart,
+    Part,
+    TextPart,
+)
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
@@ -38,7 +45,7 @@ from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser import parse_response
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -162,10 +169,16 @@ class RestaurantAgent:
       )
       yield {
           "is_task_complete": True,
-          "content": (
-              "I'm sorry, I'm facing an internal configuration error with my UI"
-              " components. Please contact support."
-          ),
+          "parts": [
+              Part(
+                  root=TextPart(
+                      text=(
+                          "I'm sorry, I'm facing an internal configuration error with"
+                          " my UI components. Please contact support."
+                      )
+                  )
+              )
+          ],
       }
       return
 
@@ -230,14 +243,14 @@ class RestaurantAgent:
         try:
           text_part, parsed_json_data = parse_response(final_response_content)
 
-          # --- New Validation Steps ---
-          # 1. Check if it validates against the A2UI_SCHEMA
+          # --- Validation Steps ---
+          # Check if it validates against the A2UI_SCHEMA
           # This will raise jsonschema.exceptions.ValidationError if it fails
           logger.info(
               "--- RestaurantAgent.stream: Validating against A2UI_SCHEMA... ---"
           )
           selected_catalog.validator.validate(parsed_json_data)
-          # --- End New Validation Steps ---
+          # --- End Validation Steps ---
 
           logger.info(
               "--- RestaurantAgent.stream: UI JSON successfully parsed AND validated"
@@ -267,10 +280,13 @@ class RestaurantAgent:
             "--- RestaurantAgent.stream: Response is valid. Sending final response"
             f" (Attempt {attempt}). ---"
         )
-        logger.info(f"Final response: {final_response_content}")
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
+        )
+
         yield {
             "is_task_complete": True,
-            "content": final_response_content,
+            "parts": final_parts,
         }
         return  # We're done, exit the generator
 
@@ -297,9 +313,15 @@ class RestaurantAgent:
     )
     yield {
         "is_task_complete": True,
-        "content": (
-            "I'm sorry, I'm having trouble generating the interface for that request"
-            " right now. Please try again in a moment."
-        ),
+        "parts": [
+            Part(
+                root=TextPart(
+                    text=(
+                        "I'm sorry, I'm having trouble generating the interface for"
+                        " that request right now. Please try again in a moment."
+                    )
+                )
+            )
+        ],
     }
     # --- End: UI Validation and Retry Logic ---

@@ -21,7 +21,14 @@ from typing import Any
 import jsonschema
 from a2ui_examples import load_floor_plan_example
 
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
+from a2a.types import (
+    AgentCapabilities,
+    AgentCard,
+    AgentSkill,
+    DataPart,
+    Part,
+    TextPart,
+)
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
@@ -41,7 +48,7 @@ from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser import parse_response
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -233,9 +240,11 @@ class ContactAgent:
             f"Message sent to {contact_name}\n{A2UI_DELIMITER}\n{json_content}"
         )
 
+        final_parts = parse_response_to_parts(final_response_content)
+
         yield {
             "is_task_complete": True,
-            "content": final_response_content,
+            "parts": final_parts,
         }
         return
 
@@ -253,7 +262,10 @@ class ContactAgent:
         final_response_content = (
             f"Here is the floor plan.\n{A2UI_DELIMITER}\n{json_content}"
         )
-        yield {"is_task_complete": True, "content": final_response_content}
+
+        final_parts = parse_response_to_parts(final_response_content)
+
+        yield {"is_task_complete": True, "parts": final_parts}
         return
 
       current_message = types.Content(
@@ -317,16 +329,17 @@ class ContactAgent:
                 "Assuming valid (e.g., 'no results'). ---"
             )
             is_valid = True
-            continue
+          else:
+            logger.info(
+                "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
+            )
+            selected_catalog.validator.validate(parsed_json_data)
 
-          logger.info("--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---")
-          selected_catalog.validator.validate(parsed_json_data)
-
-          logger.info(
-              "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
-              f" against schema. Validation OK (Attempt {attempt}). ---"
-          )
-          is_valid = True
+            logger.info(
+                "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
+                f" against schema. Validation OK (Attempt {attempt}). ---"
+            )
+            is_valid = True
 
         except (
             ValueError,
@@ -350,10 +363,14 @@ class ContactAgent:
             "--- ContactAgent.stream: Response is valid. Sending final response"
             f" (Attempt {attempt}). ---"
         )
-        logger.info(f"Final response: {final_response_content}")
+
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
+        )
+
         yield {
             "is_task_complete": True,
-            "content": final_response_content,
+            "parts": final_parts,
         }
         return  # We're done, exit the generator
 
@@ -379,9 +396,15 @@ class ContactAgent:
     )
     yield {
         "is_task_complete": True,
-        "content": (
-            "I'm sorry, I'm having trouble generating the interface for that request"
-            " right now. Please try again in a moment."
-        ),
+        "parts": [
+            Part(
+                root=TextPart(
+                    text=(
+                        "I'm sorry, I'm having trouble generating the interface for"
+                        " that request right now. Please try again in a moment."
+                    )
+                )
+            )
+        ],
     }
     # --- End: UI Validation and Retry Logic ---

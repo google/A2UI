@@ -27,7 +27,14 @@ from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
+from a2a.types import (
+    AgentCapabilities,
+    AgentCard,
+    AgentSkill,
+    DataPart,
+    Part,
+    TextPart,
+)
 
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
@@ -36,7 +43,7 @@ from a2ui.core.schema.constants import VERSION_0_8, A2UI_DELIMITER
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser import parse_response
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -166,10 +173,16 @@ class ContactAgent:
       )
       yield {
           "is_task_complete": True,
-          "content": (
-              "I'm sorry, I'm facing an internal configuration error with my UI"
-              " components. Please contact support."
-          ),
+          "parts": [
+              Part(
+                  root=TextPart(
+                      text=(
+                          "I'm sorry, I'm facing an internal configuration error with"
+                          " my UI components. Please contact support."
+                      )
+                  )
+              )
+          ],
       }
       return
 
@@ -241,20 +254,21 @@ class ContactAgent:
                 "Assuming valid (e.g., 'no results'). ---"
             )
             is_valid = True
-            continue
+          else:
+            # --- Validation Steps ---
+            # Check if it validates against the A2UI_SCHEMA
+            # This will raise jsonschema.exceptions.ValidationError if it fails
+            logger.info(
+                "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
+            )
+            selected_catalog.validator.validate(parsed_json_data)
+            # --- End Validation Steps ---
 
-          # --- New Validation Steps ---
-          # 1. Check if it validates against the A2UI_SCHEMA
-          # This will raise jsonschema.exceptions.ValidationError if it fails
-          logger.info("--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---")
-          selected_catalog.validator.validate(parsed_json_data)
-          # --- End New Validation Steps ---
-
-          logger.info(
-              "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
-              f" against schema. Validation OK (Attempt {attempt}). ---"
-          )
-          is_valid = True
+            logger.info(
+                "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
+                f" against schema. Validation OK (Attempt {attempt}). ---"
+            )
+            is_valid = True
         except (
             ValueError,
             json.JSONDecodeError,
@@ -277,10 +291,13 @@ class ContactAgent:
             "--- ContactAgent.stream: Response is valid. Sending final response"
             f" (Attempt {attempt}). ---"
         )
-        logger.info(f"Final response: {final_response_content}")
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
+        )
+
         yield {
             "is_task_complete": True,
-            "content": final_response_content,
+            "parts": final_parts,
         }
         return  # We're done, exit the generator
 
@@ -306,9 +323,15 @@ class ContactAgent:
     )
     yield {
         "is_task_complete": True,
-        "content": (
-            "I'm sorry, I'm having trouble generating the interface for that request"
-            " right now. Please try again in a moment."
-        ),
+        "parts": [
+            Part(
+                root=TextPart(
+                    text=(
+                        "I'm sorry, I'm having trouble generating the interface for"
+                        " that request right now. Please try again in a moment."
+                    )
+                )
+            )
+        ],
     }
     # --- End: UI Validation and Retry Logic ---
