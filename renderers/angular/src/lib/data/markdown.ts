@@ -43,7 +43,7 @@ export class MarkdownRenderer {
 
     // Return a span with a sanitized version of the input `value`.
     const sanitizedValue = this.sanitizer.sanitize(SecurityContext.HTML, value);
-    return Promise.resolve(`<span class="no-markdown-renderer">${sanitizedValue}</span>`);
+    return `<span class="no-markdown-renderer">${sanitizedValue}</span>`;
   }
 }
 

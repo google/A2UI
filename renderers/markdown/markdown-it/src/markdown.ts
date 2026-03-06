@@ -26,5 +26,5 @@ import * as Types from '@a2ui/web_core';
  */
 export async function renderMarkdown(value: string, options?: Types.MarkdownRendererOptions): Promise<string> {
   const htmlString = rawMarkdownRenderer.render(value, options?.tagClassMap);
-  return Promise.resolve(sanitize(htmlString));
+  return sanitize(htmlString);
 }
