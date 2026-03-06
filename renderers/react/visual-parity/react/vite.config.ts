@@ -10,6 +10,8 @@ export default defineConfig({
     strictPort: true,
   },
   optimizeDeps: {
+    // Always re-optimize on startup so rebuilds of file: deps don't cause 504s
+    force: true,
     exclude: [
       '@a2ui/react',
       '@a2ui/lit',

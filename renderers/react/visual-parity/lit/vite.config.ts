@@ -7,6 +7,8 @@ export default defineConfig({
     strictPort: true,
   },
   optimizeDeps: {
+    // Always re-optimize on startup so rebuilds of file: deps don't cause 504s
+    force: true,
     // Don't pre-bundle @a2ui/lit or its deps to avoid duplicate module instances
     exclude: [
       '@a2ui/lit',
