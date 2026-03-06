@@ -28,7 +28,7 @@ export class MarkdownRenderer {
   private sanitizer = inject(DomSanitizer);
   private static defaultMarkdownWarningLogged = false;
 
-  render(value: string, markdownOptions?: Types.MarkdownRendererOptions) {
+  async render(value: string, markdownOptions?: Types.MarkdownRendererOptions): Promise<string> {
     if (this.markdownRenderer) {
       // The markdownRenderer should return a sanitized string.
       return this.markdownRenderer(value, markdownOptions);

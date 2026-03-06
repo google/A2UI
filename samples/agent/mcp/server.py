@@ -27,7 +27,7 @@ from a2ui.core.schema.utils import wrap_as_json_array
 
 def load_a2ui_schema() -> dict[str, Any]:
   current_dir = pathlib.Path(__file__).resolve().parent
-  spec_root = current_dir / "../../../../specification/v0_8/json"
+  spec_root = current_dir / "../../../specification/v0_8/json"
 
   server_to_client_content = (spec_root / "server_to_client.json").read_text()
   server_to_client_json = json.loads(server_to_client_content)
@@ -46,7 +46,7 @@ def load_a2ui_schema() -> dict[str, Any]:
 
 def load_a2ui_client_to_server_schema() -> dict[str, Any]:
   current_dir = pathlib.Path(__file__).resolve().parent
-  spec_root = current_dir / "../../../../specification/v0_8/json"
+  spec_root = current_dir / "../../../specification/v0_8/json"
 
   client_to_server_content = (spec_root / "client_to_server.json").read_text()
   client_to_server_json = json.loads(client_to_server_content)

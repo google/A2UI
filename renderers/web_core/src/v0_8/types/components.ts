@@ -14,201 +14,45 @@
  limitations under the License.
  */
 
-import { StringValue } from "./primitives";
+import type { z } from "zod";
+import type {
+  ActionSchema,
+  AudioPlayerSchema,
+  ButtonSchema,
+  CardSchema,
+  CheckboxSchema,
+  ColumnSchema,
+  DateTimeInputSchema,
+  DividerSchema,
+  IconSchema,
+  ImageSchema,
+  ListSchema,
+  ModalSchema,
+  MultipleChoiceSchema,
+  RowSchema,
+  SliderSchema,
+  TabsSchema,
+  TextFieldSchema,
+  TextSchema,
+  VideoSchema,
+} from "../schema/common-types.js";
 
-export interface Action {
-  /**
-   * A unique name identifying the action (e.g., 'submitForm').
-   */
-  name: string;
-  /**
-   * A key-value map of data bindings to be resolved when the action is triggered.
-   */
-  context?: {
-    key: string;
-    /**
-     * The dynamic value. Define EXACTLY ONE of the nested properties.
-     */
-    value: {
-      /**
-       * A data binding reference to a location in the data model (e.g., '/user/name').
-       */
-      path?: string;
-      /**
-       * A fixed, hardcoded string value.
-       */
-      literalString?: string;
-      literalNumber?: number;
-      literalBoolean?: boolean;
-    };
-  }[];
-}
-
-export interface Text {
-  text: StringValue;
-  usageHint: "h1" | "h2" | "h3" | "h4" | "h5" | "caption" | "body";
-}
-
-export interface Image {
-  url: StringValue;
-  usageHint:
-    | "icon"
-    | "avatar"
-    | "smallFeature"
-    | "mediumFeature"
-    | "largeFeature"
-    | "header";
-  fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
-  altText?: StringValue;
-}
-
-export interface Icon {
-  name: StringValue;
-}
-
-export interface Video {
-  url: StringValue;
-}
-
-export interface AudioPlayer {
-  url: StringValue;
-  /**
-   * A label, title, or placeholder text.
-   */
-  description?: StringValue;
-}
-
-export interface Tabs {
-  /**
-   * A list of tabs, each with a title and a child component ID.
-   */
-  tabItems: {
-    /**
-     * The title of the tab.
-     */
-    title: {
-      /**
-       * A data binding reference to a location in the data model (e.g., '/user/name').
-       */
-      path?: string;
-      /**
-       * A fixed, hardcoded string value.
-       */
-      literalString?: string;
-    };
-    /**
-     * A reference to a component instance by its unique ID.
-     */
-    child: string;
-  }[];
-}
-
-export interface Divider {
-  /**
-   * The orientation.
-   */
-  axis?: "horizontal" | "vertical";
-  /**
-   * The color of the divider (e.g., hex code or semantic name).
-   */
-  color?: string;
-  /**
-   * The thickness of the divider.
-   */
-  thickness?: number;
-}
-
-export interface Modal {
-  /**
-   * The ID of the component (e.g., a button) that triggers the modal.
-   */
-  entryPointChild: string;
-  /**
-   * The ID of the component to display as the modal's content.
-   */
-  contentChild: string;
-}
-
-export interface Button {
-  /**
-   * The ID of the component to display as the button's content.
-   */
-  child: string;
-
-  /**
-   * Represents a user-initiated action.
-   */
-  action: Action;
-}
-
-export interface Checkbox {
-  label: StringValue;
-  value: {
-    /**
-     * A data binding reference to a location in the data model (e.g., '/user/name').
-     */
-    path?: string;
-    literalBoolean?: boolean;
-  };
-}
-
-export interface TextField {
-  text?: StringValue;
-  /**
-   * A label, title, or placeholder text.
-   */
-  label: StringValue;
-  type?: "shortText" | "number" | "date" | "longText";
-  /**
-   * A regex string to validate the input.
-   */
-  validationRegexp?: string;
-}
-
-export interface DateTimeInput {
-  value: StringValue;
-  enableDate?: boolean;
-  enableTime?: boolean;
-  /**
-   * The string format for the output (e.g., 'YYYY-MM-DD').
-   */
-  outputFormat?: string;
-}
-
-export interface MultipleChoice {
-  selections: {
-    /**
-     * A data binding reference to a location in the data model (e.g., '/user/name').
-     */
-    path?: string;
-    literalArray?: string[];
-  };
-  options?: {
-    label: {
-      /**
-       * A data binding reference to a location in the data model (e.g., '/user/name').
-       */
-      path?: string;
-      /**
-       * A fixed, hardcoded string value.
-       */
-      literalString?: string;
-    };
-    value: string;
-  }[];
-  maxAllowedSelections?: number;
-  type?: "checkbox" | "chips";
-  filterable?: boolean;
-}
-
-export interface Slider {
-  value: {
-    /**
-     * A data binding reference to a location in the data model (e.g., '/user/name').
-     */
-    path?: string;
-    literalNumber?: number;
-  };
-  minValue?: number;
-  maxValue?: number;
-}
+export type Action = z.infer<typeof ActionSchema>;
+export type Text = z.infer<typeof TextSchema>;
+export type Image = z.infer<typeof ImageSchema>;
+export type Icon = z.infer<typeof IconSchema>;
+export type Video = z.infer<typeof VideoSchema>;
+export type AudioPlayer = z.infer<typeof AudioPlayerSchema>;
+export type Tabs = z.infer<typeof TabsSchema>;
+export type Row = z.infer<typeof RowSchema>;
+export type Column = z.infer<typeof ColumnSchema>;
+export type List = z.infer<typeof ListSchema>;
+export type Button = z.infer<typeof ButtonSchema>;
+export type Modal = z.infer<typeof ModalSchema>;
+export type Card = z.infer<typeof CardSchema>;
+export type Divider = z.infer<typeof DividerSchema>;
+export type TextField = z.infer<typeof TextFieldSchema>;
+export type Checkbox = z.infer<typeof CheckboxSchema>;
+export type DateTimeInput = z.infer<typeof DateTimeInputSchema>;
+export type MultipleChoice = z.infer<typeof MultipleChoiceSchema>;
+export type Slider = z.infer<typeof SliderSchema>;

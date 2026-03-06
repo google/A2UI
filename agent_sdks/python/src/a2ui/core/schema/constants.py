@@ -45,3 +45,13 @@ SPEC_VERSION_MAP = {
 SPECIFICATION_DIR = "specification"
 
 ENCODING = "utf-8"
+
+A2UI_DELIMITER = "---a2ui_JSON---"
+
+DEFAULT_WORKFLOW_RULES = f"""
+The generated response MUST follow these rules:
+1.  The response MUST be in two parts, separated by the delimiter: `{A2UI_DELIMITER}`.
+2.  The first part is your conversational text response.
+3.  The second part is a single, raw JSON object which is a list of A2UI messages.
+4.  The JSON part MUST validate against the provided A2UI JSON SCHEMA.
+"""

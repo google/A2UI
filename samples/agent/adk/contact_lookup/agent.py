@@ -32,8 +32,9 @@ from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_8, A2UI_DELIMITER
 from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.core.parser import parse_response
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.a2a import get_a2ui_agent_extension
 
@@ -231,44 +232,29 @@ class ContactAgent:
             f" {attempt})... ---"
         )
         try:
-          if "---a2ui_JSON---" not in final_response_content:
-            raise ValueError("Delimiter '---a2ui_JSON---' not found.")
+          text_part, parsed_json_data = parse_response(final_response_content)
 
-          text_part, json_string = final_response_content.split("---a2ui_JSON---", 1)
+          # Handle the "no results found" or empty JSON case
+          if parsed_json_data == []:
+            logger.info(
+                "--- ContactAgent.stream: Empty JSON list found. "
+                "Assuming valid (e.g., 'no results'). ---"
+            )
+            is_valid = True
+            continue
 
-          # Handle the "no results found" case
-          json_string_cleaned = (
-              json_string.strip().lstrip("```json").rstrip("```").strip()
+          # --- New Validation Steps ---
+          # 1. Check if it validates against the A2UI_SCHEMA
+          # This will raise jsonschema.exceptions.ValidationError if it fails
+          logger.info("--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---")
+          selected_catalog.validator.validate(parsed_json_data)
+          # --- End New Validation Steps ---
+
+          logger.info(
+              "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
+              f" against schema. Validation OK (Attempt {attempt}). ---"
           )
-          if not json_string.strip() or json_string_cleaned == "[]":
-            logger.info(
-                "--- ContactAgent.stream: Empty JSON list found. Assuming valid (e.g.,"
-                " 'no results'). ---"
-            )
-            is_valid = True
-
-          else:
-            if not json_string_cleaned:
-              raise ValueError("Cleaned JSON string is empty.")
-
-            # --- New Validation Steps ---
-            # 1. Check if it's parsable JSON
-            parsed_json_data = json.loads(json_string_cleaned)
-
-            # 2. Check if it validates against the A2UI_SCHEMA
-            # This will raise jsonschema.exceptions.ValidationError if it fails
-            logger.info(
-                "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
-            )
-            selected_catalog.validator.validate(parsed_json_data)
-            # --- End New Validation Steps ---
-
-            logger.info(
-                "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
-                f" against schema. Validation OK (Attempt {attempt}). ---"
-            )
-            is_valid = True
-
+          is_valid = True
         except (
             ValueError,
             json.JSONDecodeError,
@@ -309,7 +295,7 @@ class ContactAgent:
             f"Your previous response was invalid. {error_message} You MUST generate a"
             " valid response that strictly follows the A2UI JSON SCHEMA. The response"
             " MUST be a JSON list of A2UI messages. Ensure the response is split by"
-            " '---a2ui_JSON---' and the JSON part is well-formed. Please retry the"
+            f" '{A2UI_DELIMITER}' and the JSON part is well-formed. Please retry the"
             f" original request: '{query}'"
         )
         # Loop continues...

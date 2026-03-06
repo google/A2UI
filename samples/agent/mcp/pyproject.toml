@@ -40,5 +40,5 @@ target-version = "py310"
 dev = ["pyright>=1.1.378", "pytest>=8.3.3", "ruff>=0.6.9"]
 
 [tool.uv.sources]
-a2ui-agent = { path = "../../../../agent_sdks/python", editable = true }
+a2ui-agent = { path = "../../../agent_sdks/python", editable = true }
 

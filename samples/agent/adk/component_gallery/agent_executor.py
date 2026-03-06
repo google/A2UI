@@ -9,6 +9,7 @@ from a2a.types import (DataPart, Part, TaskState, TextPart)
 from a2a.utils import new_agent_parts_message, new_task
 from agent import ComponentGalleryAgent
 from a2ui.a2a import create_a2ui_part, try_activate_a2ui_extension
+from a2ui.core.parser import parse_response
 
 logger = logging.getLogger(__name__)
 
@@ -74,23 +75,21 @@ class ComponentGalleryExecutor(AgentExecutor):
             final_parts.append(create_a2ui_part(json_data))
       else:
         content = item.get("content", "")
-        if "---a2ui_JSON---" in content:
-          text_content, json_string = content.split("---a2ui_JSON---", 1)
-          if text_content.strip():
-            final_parts.append(Part(root=TextPart(text=text_content.strip())))
+        try:
+          text_part, json_data = parse_response(content)
+          if text_part.strip():
+            final_parts.append(Part(root=TextPart(text=text_part.strip())))
 
-          if json_string.strip():
-            try:
-              json_data = json.loads(json_string.strip())
-              if isinstance(json_data, list):
-                for msg in json_data:
-                  final_parts.append(create_a2ui_part(msg))
-              else:
-                final_parts.append(create_a2ui_part(json_data))
-            except Exception as e:
-              logger.error(f"Failed to parse JSON: {e}")
-        elif content:
-          final_parts.append(Part(root=TextPart(text=content)))
+          if json_data:
+            if isinstance(json_data, list):
+              for msg in json_data:
+                final_parts.append(create_a2ui_part(msg))
+            else:
+              final_parts.append(create_a2ui_part(json_data))
+        except (ValueError, json.JSONDecodeError) as e:
+          logger.error(f"Failed to parse response: {content}, {e}")
+          if content:
+            final_parts.append(Part(root=TextPart(text=content)))
 
       await updater.update_status(
           TaskState.completed,

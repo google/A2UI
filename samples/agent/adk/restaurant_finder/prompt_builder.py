@@ -22,14 +22,6 @@ ROLE_DESCRIPTION = (
     " UI JSON response."
 )
 
-WORKFLOW_DESCRIPTION = """
-To generate the response, you MUST follow these rules:
-1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
-2.  The first part is your conversational text response.
-3.  The second part is a single, raw JSON object which is a list of A2UI messages.
-4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
-"""
-
 UI_DESCRIPTION = """
 -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
 -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
@@ -72,7 +64,6 @@ if __name__ == "__main__":
       schema_modifiers=[remove_strict_validation],
   ).generate_system_prompt(
       role_description=ROLE_DESCRIPTION,
-      workflow_description=WORKFLOW_DESCRIPTION,
       ui_description=UI_DESCRIPTION,
       include_schema=True,
       include_examples=True,
