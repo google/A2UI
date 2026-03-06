@@ -21,7 +21,7 @@ The A2UI repository is organized into several key directories:
         -   `eval/`: Genkit-based evaluation framework.
 -   `samples/`: Contains sample implementations.
     -   `agent/`:
-        -   `adk/`: Python-based ADK agent samples (e.g., `contact_lookup`, `restaurant_finder`, `rizzcharts`, `orchestrator`).
+        -   `adk/`: Python-based ADK agent samples (e.g., `contact_lookup`, `restaurant_finder`, `orchestrator`).
         -   `mcp/`: MCP server sample (A2UI over MCP).
     -   `client/`: Web client implementations.
         -   `lit/`: Clients using Lit and Vite (e.g., `contact`, `shell`).
@@ -127,7 +127,7 @@ Then run the Angular client:
 ```bash
 cd samples/client/angular
 npm install
-npm start -- contact  # Replace 'contact' with the desired project name (e.g., restaurant, gallery, rizzcharts)
+npm start -- contact  # Replace 'contact' with the desired project name (e.g., restaurant, orchestrator)
 ```
 
 ### Running Tools

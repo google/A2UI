@@ -51,10 +51,6 @@ jobs:
         working-directory: ./samples/client/angular
         run: npm run build restaurant
 
-      - name: Build Rizzchart sample
-        working-directory: ./samples/client/angular
-        run: npm run build rizzcharts
-
       - name: Build Orchestrator
         working-directory: ./samples/client/angular
         run: npm run build orchestrator

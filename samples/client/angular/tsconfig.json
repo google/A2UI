@@ -10,9 +10,6 @@
       ],
       "@a2a_chat_canvas/*": [
         "./projects/a2a-chat-canvas/src/lib/*"
-      ],
-      "@rizzcharts/*": [
-        "./projects/rizzcharts/src/*"
       ]
     },
     "noImplicitReturns": true,
@@ -44,12 +41,6 @@
     },
     {
       "path": "./projects/restaurant/tsconfig.spec.json"
-    },
-    {
-      "path": "./projects/rizzcharts/tsconfig.app.json"
-    },
-    {
-      "path": "./projects/rizzcharts/tsconfig.spec.json"
     },
     {
       "path": "./projects/contact/tsconfig.app.json"
