@@ -24,7 +24,10 @@ import * as Types from '@a2ui/web_core';
  * @param options Options for the markdown renderer.
  * @returns A promise that resolves to the rendered HTML as a string.
  */
-export async function renderMarkdown(value: string, options?: Types.MarkdownRendererOptions): Promise<string> {
+export async function renderMarkdown(
+  value: string,
+  options?: Types.MarkdownRendererOptions,
+): Promise<string> {
   const htmlString = rawMarkdownRenderer.render(value, options?.tagClassMap);
   return sanitize(htmlString);
 }
