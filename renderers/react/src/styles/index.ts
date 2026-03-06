@@ -124,6 +124,9 @@ export const componentSpecificStyles: string = `
   min-height: 0;
   overflow: auto;
 }
+:where(.a2ui-surface .a2ui-icon) .g-icon {
+  font-size: 24px;
+}
 
 .a2ui-surface .a2ui-tabs {
   display: block;
