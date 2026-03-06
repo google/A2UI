@@ -243,14 +243,14 @@ class RestaurantAgent:
         try:
           text_part, parsed_json_data = parse_response(final_response_content)
 
-          # --- New Validation Steps ---
-          # 1. Check if it validates against the A2UI_SCHEMA
+          # --- Validation Steps ---
+          # Check if it validates against the A2UI_SCHEMA
           # This will raise jsonschema.exceptions.ValidationError if it fails
           logger.info(
               "--- RestaurantAgent.stream: Validating against A2UI_SCHEMA... ---"
           )
           selected_catalog.validator.validate(parsed_json_data)
-          # --- End New Validation Steps ---
+          # --- End Validation Steps ---
 
           logger.info(
               "--- RestaurantAgent.stream: UI JSON successfully parsed AND validated"

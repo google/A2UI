@@ -255,14 +255,14 @@ class ContactAgent:
             )
             is_valid = True
           else:
-            # --- New Validation Steps ---
-            # 1. Check if it validates against the A2UI_SCHEMA
+            # --- Validation Steps ---
+            # Check if it validates against the A2UI_SCHEMA
             # This will raise jsonschema.exceptions.ValidationError if it fails
             logger.info(
                 "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
             )
             selected_catalog.validator.validate(parsed_json_data)
-            # --- End New Validation Steps ---
+            # --- End Validation Steps ---
 
             logger.info(
                 "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
