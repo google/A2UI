@@ -2629,7 +2629,7 @@
 <p>Whether you are building a simple prototype or a complex production application, the requirement is the same: you must provide a catalog definition that the agent uses to express UI.</p>
 <h3 id="the-basic-catalog">The Basic Catalog<a class="headerlink" href="#the-basic-catalog" title="Permanent link">&para;</a></h3>
 <p>To help developers get started quickly, the A2UI team maintains the <a href="../specification/v0_9/json/basic_catalog.json">Basic Catalog</a>.</p>
-<p>This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for. </p>
+<p>This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards) and functions. It is not a special "type" of catalog; it is simply a version of a catalog that we have already written and have open source renderers for.</p>
 <p>The basic catalog allows you to bootstrap an application or validate A2UI concepts without needing to write your own schema from scratch. It is intentionally sparse to remain easily implementable by different renderers.</p>
 <p>Since A2UI is designed for LLMs to generate the UI at either design time or runtime, we do not think portability requires a standardized catalog across multiple clients; the LLM can interpret the catalog for each individual frontend.</p>
 <p><a href="../specification/v0_9/json/basic_catalog.json">See the A2UI v0.9 basic catalog</a></p>
@@ -2637,7 +2637,6 @@
 <p>While the Basic Catalog is useful for starting out, most production applications will define their own catalog to reflect their specific design system.</p>
 <p>By defining your own catalog, you restrict the agent to using exactly the components and visual language that exist in your application, rather than generic inputs or buttons. This catalog can be built entirely from scratch, or it can import definitions from the Basic Catalog to save time (e.g., using the Basic text definitions while defining your own unique Card component).</p>
 <p>For simplicity we recommend building catalogs that directly reflect a client's design system rather than trying to map the Basic Catalog to it through an adapter. Since A2UI is designed for GenUI, we expect the LLM can interpret different catalogs for different clients.</p>
-<p><a href="../samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json">See an example Rizzcharts catalog</a></p>
 <h3 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2713,7 +2712,7 @@
 </span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="p">]</span>
 </span></code></pre></div>
 <h3 id="freestanding-catalogs">Freestanding Catalogs<a class="headerlink" href="#freestanding-catalogs" title="Permanent link">&para;</a></h3>
-<p>A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management. </p>
+<p>A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management.</p>
 <p>While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema <code>$ref</code> pointing to external documents during local development. Run  <code>scripts/build_catalog.py</code> before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>run<span class="w"> </span>scripts/build_catalog.py<span class="w"> </span>&lt;path-to-your-catalog.json&gt;
 </span></code></pre></div>
@@ -2752,7 +2751,7 @@
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="nt">&quot;allOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;basic_catalog.json#/components/Text&quot;</span><span class="w"> </span><span class="p">},</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="nt">&quot;Popup&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="nt">&quot;Popup&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
 </span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">          </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A modal overlay that displays an icon and text.&quot;</span><span class="p">,</span>
 </span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">          </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -2769,17 +2768,17 @@
 <h3 id="implementing-renderers">Implementing Renderers<a class="headerlink" href="#implementing-renderers" title="Permanent link">&para;</a></h3>
 <p>Client renderers implement the catalog by mapping the schema definition to actual code.</p>
 <p>Example typescript renderer for the hello world catalog</p>
-<div class="language-typescript highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Catalog</span><span class="p">,</span><span class="w"> </span><span class="nx">DEFAULT_CATALOG</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@a2ui/angular&#39;</span><span class="p">;</span><span class="w"> </span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">inputBinding</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span><span class="w"> </span>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Catalog</span><span class="p">,</span><span class="w"> </span><span class="nx">DEFAULT_CATALOG</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@a2ui/angular&#39;</span><span class="p">;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">inputBinding</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">RIZZ_CHARTS_CATALOG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w">   </span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="p">...</span><span class="nx">DEFAULT_CATALOG</span><span class="p">,</span><span class="w"> </span><span class="c1">// Include the basic catalog   </span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nx">HelloWorldBanner</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w">     </span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">import</span><span class="p">(</span><span class="s1">&#39;./hello_world_banner&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">r</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">HelloWorldBanner</span><span class="p">),</span><span class="w">     </span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="nx">bindings</span><span class="o">:</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">properties</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="w">       </span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">RIZZ_CHARTS_CATALOG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="p">...</span><span class="nx">DEFAULT_CATALOG</span><span class="p">,</span><span class="w"> </span><span class="c1">// Include the basic catalog</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="nx">HelloWorldBanner</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="kr">type</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">import</span><span class="p">(</span><span class="s1">&#39;./hello_world_banner&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">r</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">HelloWorldBanner</span><span class="p">),</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="nx">bindings</span><span class="o">:</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">properties</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">      </span><span class="nx">inputBinding</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">properties</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">properties</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">])</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="kc">undefined</span><span class="p">)</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="p">],</span><span class="w">   </span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="p">},</span><span class="w"> </span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="p">],</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">  </span><span class="p">},</span>
 </span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="p">}</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Catalog</span><span class="p">;</span>
 </span></code></pre></div>
 <p>and the hello_world_banner implementation</p>
@@ -2788,7 +2787,7 @@
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
 </span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="kd">@Component</span><span class="p">({</span>
 </span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="nx">selector</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;hello-world-banner&#39;</span><span class="p">,</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="nx">imports</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="nx">imports</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span>
 </span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nx">template</span><span class="o">:</span><span class="w"> </span><span class="sb">`</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="sb">    &lt;div&gt;</span>
 </span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="sb">      &lt;h2&gt;Hello World Banner&lt;/h2&gt;</span>
@@ -2800,12 +2799,11 @@
 </span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">  </span><span class="kd">@Input</span><span class="p">()</span><span class="w"> </span><span class="nx">message?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span>
 </span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>You can see a working example of a client renderer in the <a href="../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts">Rizzcharts demo</a>.</p>
 <h2 id="a2ui-catalog-negotiation">A2UI Catalog Negotiation<a class="headerlink" href="#a2ui-catalog-negotiation" title="Permanent link">&para;</a></h2>
 <p>Because clients and agents can support multiple catalogs, they must agree on which catalog to use through a catalog negotiation handshake.</p>
 <h3 id="step-1-agent-advertises-its-support-catalogs-optional">Step 1: Agent advertises its support catalogs (optional)<a class="headerlink" href="#step-1-agent-advertises-its-support-catalogs-optional" title="Permanent link">&para;</a></h3>
 <p>The agent may optionally advertise which catalogs it is capable of speaking (e.g., in the A2A Agent Card). This is informational; it helps the client know if the agent supports their specific features, but the client doesn’t have to use it.</p>
-<p>Example of an A2A AgentCard advertising that the agent supports the basic and rizzcharts catalogs</p>
+<p>Example of an A2A AgentCard advertising that the agent supports the basic and custom dashboard catalogs</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ecommerce Dashboard Agent&quot;</span><span class="p">,</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;This agent visualizes ecommerce data...&quot;</span><span class="p">,</span>
@@ -2817,7 +2815,7 @@
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">          </span><span class="nt">&quot;supportedCatalogIds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">            </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/basic_catalog.json&quot;</span><span class="p">,</span>
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">            </span><span class="s2">&quot;https://github.com/.../rizzcharts_catalog_definition.json&quot;</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">            </span><span class="s2">&quot;https://github.com/.../dashboard_catalog_definition.json&quot;</span>
 </span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">          </span><span class="p">]</span>
 </span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">        </span><span class="p">}</span>
 </span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">      </span><span class="p">}</span>
@@ -2838,7 +2836,7 @@
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="nt">&quot;a2uiClientCapabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">      </span><span class="nt">&quot;supportedCatalogIds&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">        </span><span class="s2">&quot;https://a2ui.org/specification/v0_9/basic_catalog.json&quot;</span><span class="p">,</span>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="s2">&quot;https://github.com/.../rizzcharts_catalog_definition.json&quot;</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="s2">&quot;https://github.com/.../dashboard_catalog_definition.json&quot;</span>
 </span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">      </span><span class="p">]</span>
 </span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">  </span><span class="p">}</span>
@@ -2859,19 +2857,19 @@
 <h3 id="catalogid-naming-convention">CatalogId Naming Convention<a class="headerlink" href="#catalogid-naming-convention" title="Permanent link">&para;</a></h3>
 <p>The <code>catalogId</code> is a unique text identifier used for negotiation between the client and the agent.</p>
 <ul>
-<li><strong>Format:</strong> While the <code>catalogId</code> is technically a string, the A2UI convention is to use a <strong>URI</strong> (e.g., <code>https://example.com/catalogs/mysurface/v1/catalog.json</code>).  </li>
-<li><strong>Purpose:</strong> We use URIs to make the ID globally unique and easy for human developers to inspect in a browser.  </li>
+<li><strong>Format:</strong> While the <code>catalogId</code> is technically a string, the A2UI convention is to use a <strong>URI</strong> (e.g., <code>https://example.com/catalogs/mysurface/v1/catalog.json</code>).</li>
+<li><strong>Purpose:</strong> We use URIs to make the ID globally unique and easy for human developers to inspect in a browser.</li>
 <li><strong>No Runtime Fetching:</strong> This URI does not imply that the agent or client downloads the catalog at runtime. <strong>The catalog definition must be known to the agent and client beforehand (at compile/deploy time)</strong>. The URI serves only as a stable identifier.</li>
 </ul>
 <h3 id="versioning-guidelines">Versioning Guidelines<a class="headerlink" href="#versioning-guidelines" title="Permanent link">&para;</a></h3>
-<p>Unlike standard JSON parsers where extra data is safely ignored, A2UI requires strict versioning to prevent semantic errors. If a client silently drops a new component (like a new "Itinerary" component) because it doesn't recognize it, the user misses critical information. </p>
+<p>Unlike standard JSON parsers where extra data is safely ignored, A2UI requires strict versioning to prevent semantic errors. If a client silently drops a new component (like a new "Itinerary" component) because it doesn't recognize it, the user misses critical information.</p>
 <p>To ensure the agent only generates UI the client can fully render, any structural change—even purely additive ones—requires a new catalog version. This is enforced by the A2UI JSON Schema which generally does not allow for unrecognized properties.</p>
 <ul>
 <li>
 <p><strong>Structural Changes (New Version Required)</strong> Any change that alters the semantic meaning of the A2UI JSON payload requires a new catalog version. This ensures the Agent never sends a component the Client cannot render. A new catalog version is required for:</p>
 <ul>
 <li><strong>Adding a new component:</strong> (e.g., adding <code>FacePile</code> or <code>Itinerary</code>).</li>
-<li><strong>Adding a new property:</strong> Even if optional, if the Agent generates it, it expects it to be rendered. </li>
+<li><strong>Adding a new property:</strong> Even if optional, if the Agent generates it, it expects it to be rendered.</li>
 <li><strong>Renaming/Removing fields:</strong> These are standard breaking changes.</li>
 </ul>
 </li>
@@ -2897,12 +2895,12 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>Current</strong></td>
-<td style="text-align: left;">.../rizzcharts/v1/catalog.json</td>
+<td style="text-align: left;">.../dashboard/v1/catalog.json</td>
 <td style="text-align: left;">The stable, production schema.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Breaking</strong></td>
-<td style="text-align: left;">.../rizzcharts/v2/catalog.json</td>
+<td style="text-align: left;">.../dashboard/v2/catalog.json</td>
 <td style="text-align: left;">A new schema introducing renamed components or structural changes.</td>
 </tr>
 </tbody>
@@ -2910,26 +2908,26 @@
 <h3 id="handling-migrations">Handling Migrations<a class="headerlink" href="#handling-migrations" title="Permanent link">&para;</a></h3>
 <p>To upgrade a catalog without breaking active agents, use A2UI Catalog Negotiation:</p>
 <ol>
-<li><strong>Client Update:</strong> The client updates its list of supportedCatalogIds to include <em>both</em> the old and new versions (e.g., [".../v2/...", ".../v1/..."]).  </li>
-<li><strong>Agent Update:</strong> Agents are rebuilt with the v2 schema. When they see the client supports v2, they prefer it.  </li>
+<li><strong>Client Update:</strong> The client updates its list of supportedCatalogIds to include <em>both</em> the old and new versions (e.g., [".../v2/...", ".../v1/..."]).</li>
+<li><strong>Agent Update:</strong> Agents are rebuilt with the v2 schema. When they see the client supports v2, they prefer it.</li>
 <li><strong>Legacy Support:</strong> Older agents that have not yet been rebuilt will continue to match against v1 in the client's list, ensuring they remain functional.</li>
 </ol>
 <h2 id="a2ui-schema-validation-fallback">A2UI Schema Validation &amp; Fallback<a class="headerlink" href="#a2ui-schema-validation-fallback" title="Permanent link">&para;</a></h2>
 <p>To ensure a stable user experience, A2UI employs a two-phase validation strategy. This "defense in depth" approach catches errors as early as possible while ensuring clients remain robust when facing unexpected payloads.</p>
 <h3 id="two-phase-validation">Two-Phase Validation<a class="headerlink" href="#two-phase-validation" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Agent-Side (Pre-Send):</strong> Before transmitting any UI payload, the agent runtime validates the generated JSON against the catalog definition.  </li>
-<li>Purpose: To catch hallucinated properties or malformed structures at the source.  </li>
-<li>Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.  </li>
-<li><strong>Client-Side:</strong> Upon receiving the payload, the client library validates the JSON against its local definition of the catalog.  </li>
-<li>Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.  </li>
+<li><strong>Agent-Side (Pre-Send):</strong> Before transmitting any UI payload, the agent runtime validates the generated JSON against the catalog definition.</li>
+<li>Purpose: To catch hallucinated properties or malformed structures at the source.</li>
+<li>Outcome: If validation fails, the agent can attempt to fix or regenerate the A2UI JSON, or it can do graceful degradation such as falling back to text in a conversational app.</li>
+<li><strong>Client-Side:</strong> Upon receiving the payload, the client library validates the JSON against its local definition of the catalog.</li>
+<li>Purpose: Security and stability. This ensures that the code executing on the user's device strictly conforms to the expected contract, protecting against version mismatches or compromised agent outputs.</li>
 <li>Outcome: Failures here are reported back to the agent using the “error” client message</li>
 </ol>
 <h3 id="graceful-degradation">Graceful Degradation<a class="headerlink" href="#graceful-degradation" title="Permanent link">&para;</a></h3>
 <p>Even if a payload passes schema validation, the renderer may encounter runtime issues (e.g., a missing asset, a component implementation not yet loaded, or a platform-specific limitation).</p>
 <p>Clients should not crash when encountering these errors. Instead, they should employ Graceful Degradation:</p>
 <ul>
-<li><strong>Unknown Components:</strong> If a component is recognized in the schema but not implemented in the renderer, render a "safe" fallback (e.g., a generic card with the component's debug name) or skip rendering that specific node entirely.  </li>
+<li><strong>Unknown Components:</strong> If a component is recognized in the schema but not implemented in the renderer, render a "safe" fallback (e.g., a generic card with the component's debug name) or skip rendering that specific node entirely.</li>
 <li><strong>Text Fallback:</strong> If the entire surface fails to render, display the raw text description (if available) or a generic error message: <em>"This interface could not be displayed."</em></li>
 </ul>
 <h3 id="client-to-server-error-reporting">Client-to-Server Error Reporting<a class="headerlink" href="#client-to-server-error-reporting" title="Permanent link">&para;</a></h3>
