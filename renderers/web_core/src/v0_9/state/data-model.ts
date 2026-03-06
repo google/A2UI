@@ -178,24 +178,37 @@ export class DataModel {
       return; // Still in a nested batch
     }
 
-    // Collect all unique paths and their ancestors/descendants
-    const pathsToNotify = new Set<string>();
-
+    // Step 1: Collect all pending paths and their ancestors into a Set.
+    // This gives us O(1) lookups for descendant checking in Step 2.
+    const modifiedPaths = new Set<string>();
     for (const path of this._pendingPaths) {
       const normalizedPath = this.normalizePath(path);
-      pathsToNotify.add(normalizedPath);
+      modifiedPaths.add(normalizedPath);
 
-      // Add ancestors
+      // Walk up the ancestor chain
       let parentPath = normalizedPath;
       while (parentPath !== "/" && parentPath !== "") {
-        parentPath = parentPath.substring(0, parentPath.lastIndexOf("/")) || "/";
-        pathsToNotify.add(parentPath);
+        parentPath =
+          parentPath.substring(0, parentPath.lastIndexOf("/")) || "/";
+        modifiedPaths.add(parentPath);
       }
+    }
 
-      // Add descendants from existing subscriptions
-      for (const subPath of this.subscriptions.keys()) {
-        if (this.isDescendant(subPath, normalizedPath)) {
+    // Step 2: Find descendant subscriptions in a single pass over subscriptions.
+    // For each subscription, walk up its hierarchy to check if any ancestor
+    // is a pending path. This is O(S * D) instead of O(P * S).
+    const pathsToNotify = new Set<string>(modifiedPaths);
+    for (const subPath of this.subscriptions.keys()) {
+      if (pathsToNotify.has(subPath)) {
+        continue; // Already included
+      }
+      // Walk up from subscription path to check if any ancestor was modified
+      let ancestor = subPath;
+      while (ancestor !== "/" && ancestor !== "") {
+        ancestor = ancestor.substring(0, ancestor.lastIndexOf("/")) || "/";
+        if (this._pendingPaths.has(ancestor)) {
           pathsToNotify.add(subPath);
+          break;
         }
       }
     }

@@ -494,6 +494,8 @@ describe("MessageProcessor", () => {
 
       // Data was written before the error
       assert.strictEqual(surface.dataModel.get("/value"), "updated");
+      // Pending notifications should have been cleared, not fired
+      assert.strictEqual(notificationCount, 0, "No notifications fired due to error");
     });
   });
 });
