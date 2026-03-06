@@ -36,7 +36,7 @@ def test_parse_response_empty_tags():
 
 
 def test_parse_response_only_json_with_tags():
-  content = f'{A2UI_OPEN_TAG} [{{"id": "test"}}] {A2UI_CLOSE_TAG}'
+  content = f'{A2UI_OPEN_TAG}\n[{{"id": "test"}}]\n{A2UI_CLOSE_TAG}'
   parts = parse_response(content)
   assert len(parts) == 1
   assert parts[0].text == ""
@@ -44,7 +44,7 @@ def test_parse_response_only_json_with_tags():
 
 
 def test_parse_response_with_text_and_tags():
-  content = f'Hello {A2UI_OPEN_TAG} [{{"id": "test"}}] {A2UI_CLOSE_TAG}'
+  content = f'Hello\n{A2UI_OPEN_TAG}\n[{{"id": "test"}}]\n{A2UI_CLOSE_TAG}'
   parts = parse_response(content)
   assert len(parts) == 1
   assert parts[0].text == "Hello"
@@ -52,7 +52,7 @@ def test_parse_response_with_text_and_tags():
 
 
 def test_parse_response_with_trailing_text():
-  content = f'Hello {A2UI_OPEN_TAG} [{{"id": "test"}}] {A2UI_CLOSE_TAG} Goodbye'
+  content = f'Hello\n{A2UI_OPEN_TAG}\n[{{"id": "test"}}]\n{A2UI_CLOSE_TAG}\nGoodbye'
   parts = parse_response(content)
   assert len(parts) == 2
   assert parts[0].text == "Hello"
@@ -88,7 +88,9 @@ Part 3
 
 def test_parse_response_with_markdown_blocks():
   content = (
-      f"Text {A2UI_OPEN_TAG} ```json\n" f'[{{"id": "test"}}]\n' f"``` {A2UI_CLOSE_TAG}"
+      f"Text\n{A2UI_OPEN_TAG}\n```json\n"
+      f'[{{"id": "test"}}]\n'
+      f"```\n{A2UI_CLOSE_TAG}"
   )
   parts = parse_response(content)
   assert len(parts) == 1
@@ -97,6 +99,6 @@ def test_parse_response_with_markdown_blocks():
 
 
 def test_parse_response_invalid_json():
-  content = f"{A2UI_OPEN_TAG} INVALID JSON {A2UI_CLOSE_TAG}"
+  content = f"{A2UI_OPEN_TAG}\ninvalid_json\n{A2UI_CLOSE_TAG}"
   with pytest.raises(ValueError):
     parse_response(content)
