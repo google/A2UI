@@ -1,6 +1,6 @@
 # A2H × A2UI Prototypes
 
-Exploration of rendering [A2H](https://github.com/twilio/a2h) (Agent-to-Human) intents using the A2UI v0.9 protocol. Five working prototypes validate the mapping between A2H's five intent types and A2UI's component model.
+Exploration of rendering [A2H]([https://github.com/twilio/a2h](https://github.com/twilio-labs/Agent2Human)) (Agent-to-Human) intents using the A2UI v0.9 protocol. Five working prototypes validate the mapping between A2H's five intent types and A2UI's component model.
 
 ## Quick Start
 
