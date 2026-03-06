@@ -28,7 +28,7 @@ export class MarkdownRenderer {
   private sanitizer = inject(DomSanitizer);
   private static defaultMarkdownWarningLogged = false;
 
-  render(value: string, markdownOptions?: Types.MarkdownRendererOptions) {
+  async render(value: string, markdownOptions?: Types.MarkdownRendererOptions): Promise<string> {
     if (this.markdownRenderer) {
       // The markdownRenderer should return a sanitized string.
       return this.markdownRenderer(value, markdownOptions);
@@ -43,7 +43,7 @@ export class MarkdownRenderer {
 
     // Return a span with a sanitized version of the input `value`.
     const sanitizedValue = this.sanitizer.sanitize(SecurityContext.HTML, value);
-    return `<span class="no-markdown-renderer">${sanitizedValue}</span>`;
+    return Promise.resolve(`<span class="no-markdown-renderer">${sanitizedValue}</span>`);
   }
 }
 

@@ -22,6 +22,7 @@ import {
   input,
   ViewEncapsulation,
 } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Styles from '@a2ui/web_core/styles/index';
@@ -45,10 +46,11 @@ interface HintedStyles {
     <section
       [class]="classes()"
       [style]="additionalStyles()"
-      [innerHTML]="resolvedText()"
+      [innerHTML]="resolvedText() | async"
     ></section>
   `,
   encapsulation: ViewEncapsulation.None,
+  imports: [AsyncPipe],
   styles: `
     a2ui-text {
       display: block;
@@ -75,7 +77,7 @@ export class Text extends DynamicComponent {
     let value = super.resolvePrimitive(this.text());
 
     if (value == null) {
-      return '(empty)';
+      return Promise.resolve('(empty)');
     }
 
     switch (usageHint) {
