@@ -514,12 +514,12 @@ export declare interface Surface {
 // Markdown rendering
 /**
  * Renders `markdown` using `options`.
- * @returns The rendered HTML as a string.
+ * @returns A promise that resolves to the rendered HTML as a string.
  */
 export declare type MarkdownRenderer = (
   markdown: string,
   options?: MarkdownRendererOptions,
-) => string;
+) => Promise<string>;
 
 /**
  * A map of tag names to a list of classnames to be applied to a tag.
