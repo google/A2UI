@@ -1,4 +1,4 @@
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 import type { OnActionCallback } from '../types';
 
 /**
@@ -45,7 +45,7 @@ export interface A2UIActions {
  * Combines stable actions with reactive state.
  */
 export interface A2UIContextValue extends A2UIActions {
-  /** The underlying message processor from @a2ui/lit */
+  /** The underlying message processor from @a2ui/web_core */
   processor: Types.MessageProcessor;
 
   /** Version counter for triggering React re-renders */

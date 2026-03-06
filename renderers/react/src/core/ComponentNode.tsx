@@ -1,5 +1,5 @@
 import { Suspense, useMemo, memo } from 'react';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 import { ComponentRegistry } from '../registry/ComponentRegistry';
 
 /** Memoized loading fallback to avoid recreating on each render */

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect, memo } from 'react';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 import type { A2UIComponentProps } from '../../types';
 import { useA2UIComponent } from '../../hooks/useA2UIComponent';
 import { classMapToString, stylesToObject } from '../../lib/utils';

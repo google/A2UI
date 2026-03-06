@@ -1,4 +1,4 @@
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 
 /**
  * Create a surface update message with components.

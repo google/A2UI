@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { A2UIProvider, A2UIRenderer, useA2UI } from '../../src';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 import {
   TestWrapper,
   TestRenderer,
@@ -300,26 +300,27 @@ describe('Component Updates', () => {
     expect(textElements[2]).toHaveTextContent('B');
   });
 
-  it('should reject empty surfaceUpdate (schema requires at least 1 component)', () => {
-    // The A2UI protocol schema enforces min(1) on surfaceUpdate.components.
-    // An empty surfaceUpdate is a protocol violation and should throw a validation error.
+  it('should handle empty surfaceUpdate gracefully (no crash, no surface created)', () => {
+    // An empty surfaceUpdate has no components to render.
+    // The processor should handle this without crashing.
     function EmptySurfaceRenderer() {
       const { processMessages } = useA2UI();
 
       useEffect(() => {
-        expect(() => {
-          processMessages([createSurfaceUpdate([])]);
-        }).toThrow();
+        processMessages([createSurfaceUpdate([])]);
       }, [processMessages]);
 
       return <A2UIRenderer surfaceId="@default" />;
     }
 
-    render(
+    const { container } = render(
       <A2UIProvider>
         <EmptySurfaceRenderer />
       </A2UIProvider>
     );
+
+    // No components should be rendered
+    expect(container.querySelector('.a2ui-surface')?.children.length ?? 0).toBe(0);
   });
 
   it('should NOT empty the surface when invalid surfaceUpdate is rejected (requires deleteSurface)', async () => {

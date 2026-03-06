@@ -1,5 +1,5 @@
 import { lazy, type ComponentType } from 'react';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 import type { A2UIComponentProps, ComponentLoader, ComponentRegistration } from '../types';
 
 /**

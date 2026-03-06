@@ -1,4 +1,4 @@
-import { Styles } from '@a2ui/lit/0.8';
+import * as Styles from '@a2ui/web_core/styles/index';
 import { resetStyles } from './reset';
 
 /**

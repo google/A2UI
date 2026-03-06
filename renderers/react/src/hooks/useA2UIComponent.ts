@@ -1,5 +1,6 @@
 import { useCallback, useId, useMemo } from 'react';
-import type { Types, Primitives } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
+import type * as Primitives from '@a2ui/web_core/types/primitives';
 import { useA2UIActions, useA2UIState } from '../core/A2UIProvider';
 import { useTheme } from '../theme/ThemeContext';
 

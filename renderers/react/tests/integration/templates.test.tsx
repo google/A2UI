@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { A2UIProvider, A2UIRenderer, useA2UI } from '../../src';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 import {
   createSurfaceUpdate,
   createBeginRendering,

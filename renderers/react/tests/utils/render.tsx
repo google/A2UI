@@ -1,6 +1,6 @@
 import React, { useEffect, type ReactNode } from 'react';
 import { A2UIProvider, A2UIRenderer, useA2UI } from '../../src';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 
 /**
  * Helper component that processes messages and renders a surface.

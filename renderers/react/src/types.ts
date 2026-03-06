@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
-import type { Types, Primitives } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
+import type * as Primitives from '@a2ui/web_core/types/primitives';
 
 // Re-export the Types and Primitives namespaces for convenience
 export type { Types, Primitives };

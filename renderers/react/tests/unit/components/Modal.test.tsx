@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering, getMockCallArg } from '../../utils';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 
 /**
  * Modal tests following A2UI specification.

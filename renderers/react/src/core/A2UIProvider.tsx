@@ -6,7 +6,8 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
-import { Data, type Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
+import { A2uiMessageProcessor } from '@a2ui/web_core/data/model-processor';
 import type { A2UIContextValue, A2UIActions } from './store';
 import { ThemeProvider } from '../theme/ThemeContext';
 import type { OnActionCallback } from '../types';
@@ -65,7 +66,7 @@ export function A2UIProvider({ onAction, theme, children }: A2UIProviderProps) {
   // Create message processor only once using ref
   const processorRef = useRef<Types.MessageProcessor | null>(null);
   if (!processorRef.current) {
-    processorRef.current = Data.createSignalA2uiMessageProcessor();
+    processorRef.current = new A2uiMessageProcessor();
   }
   const processor = processorRef.current;
 

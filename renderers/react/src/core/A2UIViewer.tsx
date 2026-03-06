@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useId, useMemo, useEffect, useRef } from 'react';
-import type { Types } from '@a2ui/lit/0.8';
+import type * as Types from '@a2ui/web_core/types/types';
 import { A2UIProvider, useA2UIActions } from './A2UIProvider';
 import { A2UIRenderer } from './A2UIRenderer';
 import { initializeDefaultCatalog } from '../registry/defaultCatalog';
