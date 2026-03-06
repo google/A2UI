@@ -27,17 +27,17 @@ export class Evaluator {
   constructor(
     private schemas: any,
     private evalModel: string,
-    private outputDir?: string
+    private outputDir?: string,
   ) {}
 
   async run(results: ValidatedResult[]): Promise<EvaluatedResult[]> {
     const passedResults = results.filter(
-      (r) => r.validationErrors.length === 0 && r.components
+      (r) => r.validationErrors.length === 0 && r.components,
     );
     const skippedCount = results.length - passedResults.length;
 
     logger.info(
-      `Starting Phase 3: LLM Evaluation (${passedResults.length} items to evaluate, ${skippedCount} skipped due to validation failure)`
+      `Starting Phase 3: LLM Evaluation (${passedResults.length} items to evaluate, ${skippedCount} skipped due to validation failure)`,
     );
 
     const totalJobs = passedResults.length;
@@ -77,10 +77,10 @@ export class Evaluator {
       const inProgressCount =
         totalJobs - completedCount - failedCount - queuedCount;
       const pct = Math.round(
-        ((completedCount + failedCount) / totalJobs) * 100
+        ((completedCount + failedCount) / totalJobs) * 100,
       );
       process.stderr.write(
-        `\r[Phase 3] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `
+        `\r[Phase 3] Progress: ${pct}% | Completed: ${completedCount} | In Progress: ${inProgressCount} | Queued: ${queuedCount} | Failed: ${failedCount}          `,
       );
     }, 1000);
 
@@ -93,7 +93,7 @@ export class Evaluator {
         }
         evaluatedResults.push(evalResult);
         return evalResult;
-      })
+      }),
     );
 
     await Promise.all(promises);
@@ -126,7 +126,7 @@ export class Evaluator {
       } catch (e: any) {
         if (evalRetry === maxEvalRetries - 1) {
           logger.warn(
-            `Evaluation failed for ${result.prompt.name} run ${result.runNumber}: ${e.message}`
+            `Evaluation failed for ${result.prompt.name} run ${result.runNumber}: ${e.message}`,
           );
           evaluationResult = {
             pass: false,
@@ -134,7 +134,7 @@ export class Evaluator {
           };
         } else {
           await new Promise((resolve) =>
-            setTimeout(resolve, 1000 * Math.pow(2, evalRetry))
+            setTimeout(resolve, 1000 * Math.pow(2, evalRetry)),
           );
         }
       }
@@ -172,7 +172,7 @@ export class Evaluator {
       issues?: { issue: string; severity: IssueSeverity }[];
       evalPrompt?: string;
     },
-    overallSeverity?: IssueSeverity
+    overallSeverity?: IssueSeverity,
   ) {
     if (!this.outputDir) return;
 
@@ -181,24 +181,24 @@ export class Evaluator {
 
     const modelDir = path.join(
       this.outputDir,
-      `output-${result.modelName.replace(/[\/:]/g, "_")}`
+      `output-${result.modelName.replace(/[\/:]/g, "_")}`,
     );
     const detailsDir = path.join(modelDir, "details");
     fs.writeFileSync(
       path.join(
         detailsDir,
-        `${result.prompt.name}.${result.runNumber}.failed.yaml`
+        `${result.prompt.name}.${result.runNumber}.failed.yaml`,
       ),
-      yaml.dump({ ...evaluationResult, overallSeverity })
+      yaml.dump({ ...evaluationResult, overallSeverity }),
     );
 
     if (evaluationResult.evalPrompt) {
       fs.writeFileSync(
         path.join(
           detailsDir,
-          `${result.prompt.name}.${result.runNumber}.eval_prompt.txt`
+          `${result.prompt.name}.${result.runNumber}.eval_prompt.txt`,
         ),
-        evaluationResult.evalPrompt
+        evaluationResult.evalPrompt,
       );
     }
   }

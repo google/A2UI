@@ -12,7 +12,7 @@
 # - An email address (e.g., octocat@github.com)
 
 # Default ownership (is overriden by specfic rules below)
-* @dmandar @gspencergoog @jacobsimionato @nan-yu @ditman @zeroasterisk
+* @dmandar @gspencergoog @jacobsimionato @nan-yu @ditman @zeroasterisk @yjbanov
 
 # Agents
 /a2a_agents/ @nan-yu @dmandar @gspencergoog

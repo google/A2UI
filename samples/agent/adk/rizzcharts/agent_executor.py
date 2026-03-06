@@ -115,7 +115,7 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
           if context.message and context.message.metadata
           else None
       )
-      a2ui_catalog = self.schema_manager.get_effective_catalog(
+      a2ui_catalog = self.schema_manager.get_selected_catalog(
           client_ui_capabilities=capabilities
       )
 

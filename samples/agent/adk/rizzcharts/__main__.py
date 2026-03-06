@@ -32,7 +32,7 @@ from google.adk.sessions.in_memory_session_service import InMemorySessionService
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 
-load_dotenv()
+load_dotenv(override=True)
 
 # LiteLLM reads OPENAI_API_BASE (not OPENAI_BASE_URL) for custom endpoints.
 # Map OPENAI_BASE_URL → OPENAI_API_BASE so vLLM / Ollama / etc. work out of the box.

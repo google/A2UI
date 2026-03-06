@@ -288,12 +288,12 @@ class A2uiSchemaManager(InferenceStrategy):
         f" {list(self._supported_catalogs.keys())}"
     )
 
-  def get_effective_catalog(
+  def get_selected_catalog(
       self,
       client_ui_capabilities: Optional[dict[str, Any]] = None,
       allowed_components: List[str] = [],
   ) -> A2uiCatalog:
-    """Gets the effective catalog after selection and component pruning."""
+    """Gets the selected catalog after selection and component pruning."""
     catalog = self._determine_catalog(client_ui_capabilities)
     pruned_catalog = catalog.with_pruned_components(allowed_components)
     return pruned_catalog
@@ -324,15 +324,15 @@ class A2uiSchemaManager(InferenceStrategy):
     if ui_description:
       parts.append(f"## UI Description:\n{ui_description}")
 
-    final_catalog = self.get_effective_catalog(
+    selected_catalog = self.get_selected_catalog(
         client_ui_capabilities, allowed_components
     )
 
     if include_schema:
-      parts.append(final_catalog.render_as_llm_instructions())
+      parts.append(selected_catalog.render_as_llm_instructions())
 
     if include_examples:
-      examples_str = self.load_examples(final_catalog, validate=validate_examples)
+      examples_str = self.load_examples(selected_catalog, validate=validate_examples)
       if examples_str:
         parts.append(f"### Examples:\n{examples_str}")
 

@@ -1,4 +1,3 @@
-
 /*
  Copyright 2025 Google LLC
 
@@ -39,7 +38,7 @@ export const evaluationFlow = ai.defineFlow(
           z.object({
             issue: z.string(),
             severity: z.enum(["minor", "significant", "critical"]),
-          })
+          }),
         )
         .optional(),
       evalPrompt: z.string().optional(),
@@ -62,7 +61,7 @@ export const evaluationFlow = ai.defineFlow(
             severity: z
               .enum(["minor", "significant", "critical"])
               .describe("Severity of the issue"),
-          })
+          }),
         )
         .describe("List of specific issues found."),
     });
@@ -141,22 +140,18 @@ Return a JSON object with the following schema:
 \`\`\`
 `;
 
-    // Calculate estimated tokens for rate limiting
     const estimatedInputTokens = Math.ceil(evalPrompt.length / 2.5);
 
-    // Find the model config for the eval model
-    // We need to look it up from the models list or create a temporary config
-    // For now, we'll try to find it in the imported models list, or default to a safe config
+    // Lookup eval model config to enforce rate limits, or generate a safe default fallback.
     const { modelsToTest } = await import("./models");
     let evalModelConfig = modelsToTest.find((m) => m.name === evalModel);
 
     if (!evalModelConfig) {
-      // If not found, create a temporary config with default limits
       evalModelConfig = {
         name: evalModel,
-        model: null, // We don't need the model object for rate limiting if we just use the name
-        requestsPerMinute: 60, // Safe default
-        tokensPerMinute: 100000, // Safe default
+        model: null,
+        requestsPerMinute: 60,
+        tokensPerMinute: 100000,
       };
     }
 
@@ -191,5 +186,5 @@ Return a JSON object with the following schema:
       }
       throw e; // Re-throw to let the retry logic handle it
     }
-  }
+  },
 );

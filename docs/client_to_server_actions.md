@@ -54,9 +54,9 @@ While Server Events are the primary way to interact with an agent, **Local Actio
 ```
 
 Common uses for Local Actions include:
-- **Routing**: Navigating to a different URL or application state via `openUrl`.
-- **Formatting**: Using `formatString` to update a local display value based on other model changes.
-- **UI Management**: Closing modals or switching tabs without agent intervention.
+
+- **Validation**: Validating inputs for a form before submitting it to the server.
+- **Formatting**: Using `formatString` to format a local display value.
 
 ### Basic Catalog Action Validation (Checks)
 
@@ -101,6 +101,7 @@ This local-first approach offers a significant **Performance Benefit**. Because 
 ### The Form Submission Pattern
 
 This separation allows for a robust form submission pattern:
+
 - **Binding**: A `TextField` is bound to `/reservationTime`.
 - **Interaction**: The user types "7:00 PM". The local model at `/reservationTime` is updated instantly.
 - **Submission**: The user clicks a "Book" button. The button's action resolves the `path: "/reservationTime"` from the local model and sends the current value to the server.
