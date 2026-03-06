@@ -16,10 +16,6 @@
           "type": "string",
           "description": "Identifies the agent initiating the function call."
         },
-        "call": {
-          "type": "string",
-          "description": "Name of the function call."
-        },
         "callId": {
           "type": "string",
           "description": "Uniquely identifies this instance of the function call."
