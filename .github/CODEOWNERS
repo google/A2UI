@@ -20,6 +20,7 @@
 # Renderers
 /renderers/angular/ @ditman @ava-cassiopeia  @crisbeto
 /renderers/lit/ @ditman @ava-cassiopeia @paullewis
+/renderers/react/ @lukasmoschitz
 /renderers/web_core/ @ditman @ava-cassiopeia @jacobsimionato
 /renderers/markdown/ @ditman
 
