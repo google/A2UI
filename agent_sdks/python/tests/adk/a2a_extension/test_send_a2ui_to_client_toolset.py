@@ -28,7 +28,7 @@ from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import (
     SendA2uiToClientToolset,
 )
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.schema.constants import A2UI_DELIMITER
+from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types as genai_types
@@ -364,7 +364,7 @@ def test_converter_class_convert_text_with_a2ui():
   valid_a2ui = [{"type": "Text", "text": "Hello"}]
   catalog_mock.validator.validate.return_value = None
 
-  text = f"Here is the UI:{A2UI_DELIMITER}{json.dumps(valid_a2ui)}"
+  text = f"Here is the UI:{A2UI_OPEN_TAG}{json.dumps(valid_a2ui)}{A2UI_CLOSE_TAG}"
   part = genai_types.Part(text=text)
 
   a2a_parts = converter.convert(part)
@@ -383,7 +383,7 @@ def test_converter_class_convert_text_empty_leading():
   ui = [{"type": "Text", "text": "Top"}]
   catalog_mock.validator.validate.return_value = None
 
-  text = f"{A2UI_DELIMITER}{json.dumps(ui)}"
+  text = f"{A2UI_OPEN_TAG}{json.dumps(ui)}{A2UI_CLOSE_TAG}"
   part = genai_types.Part(text=text)
   a2a_parts = converter.convert(part)
 
@@ -399,7 +399,7 @@ def test_converter_class_convert_text_markdown_wrapped():
   catalog_mock.validator.validate.return_value = None
 
   # Text containing JSON wrapped in markdown tags
-  text = f"Behold:{A2UI_DELIMITER}```json\n{json.dumps(ui)}\n```"
+  text = f"Behold:{A2UI_OPEN_TAG}```json\n{json.dumps(ui)}\n```{A2UI_CLOSE_TAG}"
   part = genai_types.Part(text=text)
   a2a_parts = converter.convert(part)
 
@@ -413,7 +413,7 @@ def test_converter_class_convert_text_with_invalid_a2ui():
   catalog_mock = MagicMock(spec=A2uiCatalog)
   converter = A2uiPartConverter(catalog_mock)
 
-  text = f"Here is the UI:{A2UI_DELIMITER}invalid_json"
+  text = f"Here is the UI:{A2UI_OPEN_TAG}invalid_json{A2UI_CLOSE_TAG}"
   part = genai_types.Part(text=text)
 
   a2a_parts = converter.convert(part)

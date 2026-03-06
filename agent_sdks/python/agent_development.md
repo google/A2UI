@@ -99,16 +99,18 @@ agent_executor = MyAgentExecutor(
 To ensure reliability, always validate the LLM's JSON output before returning it. The SDK's `A2uiCatalog` provides a validator that checks the payload against the A2UI schema. If the payload is invalid, the validator will attempt to fix it.
 
 ```python
-from a2ui.core.parser import parse_response
+from a2ui.core.parser.parser import parse_response
 
 # Get the catalog for the current request
 selected_catalog = schema_manager.get_selected_catalog()
 
-# Parse the LLM's JSON part with simple fixers like removing trailing commas
-text_part, json_data = parse_response(text)
+# Parse the LLM's response into parts with simple fixers like removing trailing commas
+response_parts = parse_response(text)
 
-# Validate the JSON part against the schema
-selected_catalog.validator.validate(json_data)
+for part in response_parts:
+    if part.a2ui_json:
+        # Validate the JSON part against the schema
+        selected_catalog.validator.validate(part.a2ui_json)
 ```
 
 #### 4c. Stream the A2UI Payload
@@ -124,9 +126,10 @@ The most efficient way to generate structured agent output is to use the `parse_
 
 ```python
 from a2ui.a2a import parse_response_to_parts
+from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 
 # Inside your agent's stream method:
-final_response_content = f"{text_segment}\n{A2UI_DELIMITER}\n{json_payload}"
+final_response_content = f"{text_segment}\n{A2UI_OPEN_TAG}\n{json_payload}\n{A2UI_CLOSE_TAG}"
 
 yield {
     "is_task_complete": True,
