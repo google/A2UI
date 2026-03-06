@@ -18,6 +18,7 @@ export const Image = memo(function Image({ node, surfaceId }: A2UIComponentProps
   const props = node.properties;
 
   const url = resolveString(props.url);
+  const altText = resolveString((props as any).altText);
   const usageHint = props.usageHint as UsageHint | undefined;
   const fit = (props.fit as FitMode) ?? 'fill';
 
@@ -48,7 +49,7 @@ export const Image = memo(function Image({ node, surfaceId }: A2UIComponentProps
         className={classMapToString(classes)}
         style={style}
       >
-        <img src={url} alt="" />
+        <img src={url} alt={altText || ''} />
       </section>
     </div>
   );
