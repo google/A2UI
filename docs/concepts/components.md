@@ -19,21 +19,120 @@ A2UI uses an **adjacency list model** for component hierarchies. Instead of nest
 
 ## The Adjacency List Model
 
-```json
-{
-  "surfaceUpdate": {
-    "components": [
-      {"id": "root", "component": {"Column": {"children": {"explicitList": ["greeting", "buttons"]}}}},
-      {"id": "greeting", "component": {"Text": {"text": {"literalString": "Hello"}}}},
-      {"id": "buttons", "component": {"Row": {"children": {"explicitList": ["cancel-btn", "ok-btn"]}}}},
-      {"id": "cancel-btn", "component": {"Button": {"child": "cancel-text", "action": {"name": "cancel"}}}},
-      {"id": "cancel-text", "component": {"Text": {"text": {"literalString": "Cancel"}}}},
-      {"id": "ok-btn", "component": {"Button": {"child": "ok-text", "action": {"name": "ok"}}}},
-      {"id": "ok-text", "component": {"Text": {"text": {"literalString": "OK"}}}}
-    ]
-  }
-}
-```
+=== "v0.8"
+
+    ```json
+    {
+      "surfaceUpdate": {
+        "components": [
+          {
+            "id": "root",
+            "component": {
+              "Column": {
+                "children": { "explicitList": ["greeting", "buttons"] }
+              }
+            }
+          },
+          {
+            "id": "greeting",
+            "component": {
+              "Text": { "text": { "literalString": "Hello" } }
+            }
+          },
+          {
+            "id": "buttons",
+            "component": {
+              "Row": {
+                "children": { "explicitList": ["cancel-btn", "ok-btn"] }
+              }
+            }
+          },
+          {
+            "id": "cancel-btn",
+            "component": {
+              "Button": {
+                "child": "cancel-text",
+                "action": { "name": "cancel" }
+              }
+            }
+          },
+          {
+            "id": "cancel-text",
+            "component": {
+              "Text": { "text": { "literalString": "Cancel" } }
+            }
+          },
+          {
+            "id": "ok-btn",
+            "component": {
+              "Button": {
+                "child": "ok-text",
+                "action": { "name": "ok" }
+              }
+            }
+          },
+          {
+            "id": "ok-text",
+            "component": {
+              "Text": { "text": { "literalString": "OK" } }
+            }
+          }
+        ]
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    ```json
+    {
+      "version": "v0.9",
+      "updateComponents": {
+        "surfaceId": "main",
+        "components": [
+          {
+            "id": "root",
+            "component": "Column",
+            "children": ["greeting", "buttons"]
+          },
+          {
+            "id": "greeting",
+            "component": "Text",
+            "text": "Hello"
+          },
+          {
+            "id": "buttons",
+            "component": "Row",
+            "children": ["cancel-btn", "ok-btn"]
+          },
+          {
+            "id": "cancel-btn",
+            "component": "Button",
+            "child": "cancel-text",
+            "action": { "event": { "name": "cancel" } }
+          },
+          {
+            "id": "cancel-text",
+            "component": "Text",
+            "text": "Cancel"
+          },
+          {
+            "id": "ok-btn",
+            "component": "Button",
+            "child": "ok-text",
+            "action": { "event": { "name": "ok" } }
+          },
+          {
+            "id": "ok-text",
+            "component": "Text",
+            "text": "OK"
+          }
+        ]
+      }
+    }
+    ```
+
+    v0.9 uses a flatter component format: `"component": "Text"` instead of nested `{"Text": {...}}`, and children are simple arrays instead of `{"explicitList": [...]}`.
 
 Components reference children by ID, not by nesting.
 
@@ -45,9 +144,30 @@ Every component has:
 2. **Type**: Component type (`Text`, `Button`, `Card`)
 3. **Properties**: Configuration specific to that type
 
-```json
-{"id": "welcome", "component": {"Text": {"text": {"literalString": "Hello"}, "usageHint": "h1"}}}
-```
+=== "v0.8"
+
+    ```json
+    {
+      "id": "welcome",
+      "component": {
+        "Text": {
+          "text": { "literalString": "Hello" },
+          "usageHint": "h1"
+        }
+      }
+    }
+    ```
+
+=== "v0.9"
+
+    ```json
+    {
+      "id": "welcome",
+      "component": "Text",
+      "text": "Hello",
+      "variant": "h1"
+    }
+    ```
 
 ## The Standard Catalog
 
@@ -64,12 +184,23 @@ For the complete component gallery with examples, see [Component Reference](../r
 
 **Static (`explicitList`)** - Fixed list of child IDs:
 ```json
-{"children": {"explicitList": ["back-btn", "title", "menu-btn"]}}
+{
+  "children": {
+    "explicitList": ["back-btn", "title", "menu-btn"]
+  }
+}
 ```
 
 **Dynamic (`template`)** - Generate children from data array:
 ```json
-{"children": {"template": {"dataBinding": "/items", "componentId": "item-template"}}}
+{
+  "children": {
+    "template": {
+      "dataBinding": "/items",
+      "componentId": "item-template"
+    }
+  }
+}
 ```
 
 For each item in `/items`, render the `item-template`. See [Data Binding](data-binding.md) for details.
@@ -87,17 +218,26 @@ LLMs can generate components with literal values or bind them to data paths for 
 
 Components compose into **surfaces** (widgets):
 
-1. LLM generates component definitions via `surfaceUpdate`
-2. LLM populates data via `dataModelUpdate`
-3. LLM signals render via `beginRendering`
-4. Client renders all components as native widgets
+=== "v0.8"
+
+    1. LLM generates component definitions via `surfaceUpdate`
+    2. LLM populates data via `dataModelUpdate`
+    3. LLM signals render via `beginRendering`
+    4. Client renders all components as native widgets
+
+=== "v0.9"
+
+    1. LLM creates a surface via `createSurface` (specifying catalog)
+    2. LLM generates component definitions via `updateComponents`
+    3. LLM populates data via `updateDataModel`
+    4. Client renders all components as native widgets
 
 A surface is a complete, cohesive UI (form, dashboard, chat, etc.).
 
 ## Incremental Updates
 
-- **Add** - Send new `surfaceUpdate` with new component IDs
-- **Update** - Send `surfaceUpdate` with existing ID and new properties
+- **Add** - Send new component definitions with new IDs
+- **Update** - Send component definitions with existing ID and new properties
 - **Remove** - Update parent's `children` list to exclude removed IDs
 
 The flat structure makes all updates simple ID-based operations.

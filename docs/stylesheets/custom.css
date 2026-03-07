@@ -39,3 +39,47 @@
 [data-md-color-scheme="slate"] .light-mode-only {
   display: none !important;
 }
+
+/* Version badges for spec pages */
+.version-badge {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 1em;
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  margin-left: 0.5em;
+}
+.version-badge.stable {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.version-badge.draft {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+.version-badge.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+/* Dark mode overrides */
+[data-md-color-scheme="slate"] .version-badge.stable {
+  background-color: #1b5e20;
+  color: #a5d6a7;
+  border-color: #2e7d32;
+}
+[data-md-color-scheme="slate"] .version-badge.draft {
+  background-color: #e65100;
+  color: #ffe0b2;
+  border-color: #ef6c00;
+}
+[data-md-color-scheme="slate"] .version-badge.info {
+  background-color: #01579b;
+  color: #b3e5fc;
+  border-color: #0277bd;
+}

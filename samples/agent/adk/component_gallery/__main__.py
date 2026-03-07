@@ -10,7 +10,7 @@ from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
-from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
+from a2ui.a2a import get_a2ui_agent_extension
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from dotenv import load_dotenv

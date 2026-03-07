@@ -16,12 +16,12 @@
 
 import { DynamicComponent } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
 import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
 
 @Component({
   selector: 'a2ui-canvas',
-  imports: [],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
       display: block;

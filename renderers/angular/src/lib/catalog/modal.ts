@@ -14,7 +14,14 @@
  limitations under the License.
  */
 
-import { Component, signal, viewChild, ElementRef, effect } from '@angular/core';
+import {
+  Component,
+  signal,
+  viewChild,
+  ElementRef,
+  effect,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Types from '@a2ui/web_core/types/types';
 import { Renderer } from '../rendering';
@@ -22,6 +29,7 @@ import { Renderer } from '../rendering';
 @Component({
   selector: 'a2ui-modal',
   imports: [Renderer],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     @if (showDialog()) {
       <dialog #dialog [class]="theme.components.Modal.backdrop" (click)="handleDialogClick($event)">
@@ -53,7 +61,9 @@ import { Renderer } from '../rendering';
     dialog {
       padding: 0;
       border: none;
-      background: none;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
 
       & section {
         & .controls {

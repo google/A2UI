@@ -19,11 +19,11 @@ on:
     branches:
       - main
     paths:
-      - 'a2a_agents/java/**'
+      - 'agent_sdks/java/**'
       - 'specification/**/json/**'
   pull_request:
     paths:
-      - 'a2a_agents/java/**'
+      - 'agent_sdks/java/**'
       - 'specification/**/json/**'
 
 jobs:
@@ -42,9 +42,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
-        working-directory: a2a_agents/java
+        working-directory: agent_sdks/java
         run: mvn clean install
 
       - name: Run Tests
-        working-directory: a2a_agents/java
+        working-directory: agent_sdks/java
         run: mvn test

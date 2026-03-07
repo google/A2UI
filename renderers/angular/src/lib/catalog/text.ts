@@ -14,7 +14,15 @@
  limitations under the License.
  */
 
-import { Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Styles from '@a2ui/web_core/styles/index';
@@ -33,14 +41,16 @@ interface HintedStyles {
 
 @Component({
   selector: 'a2ui-text',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <section
       [class]="classes()"
       [style]="additionalStyles()"
-      [innerHTML]="resolvedText()"
+      [innerHTML]="resolvedText() | async"
     ></section>
   `,
   encapsulation: ViewEncapsulation.None,
+  imports: [AsyncPipe],
   styles: `
     a2ui-text {
       display: block;
@@ -67,7 +77,7 @@ export class Text extends DynamicComponent {
     let value = super.resolvePrimitive(this.text());
 
     if (value == null) {
-      return '(empty)';
+      return Promise.resolve('(empty)');
     }
 
     switch (usageHint) {
@@ -95,8 +105,9 @@ export class Text extends DynamicComponent {
     }
 
     return this.markdownRenderer.render(
-      value,
-      Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
+      value, {
+        tagClassMap: Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
+      },
     );
   });
 

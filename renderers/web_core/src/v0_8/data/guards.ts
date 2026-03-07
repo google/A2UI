@@ -53,7 +53,7 @@ export function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 export function isComponentArrayReference(
-  value: unknown
+  value: unknown,
 ): value is ComponentArrayReference {
   if (!isObject(value)) return false;
   return "explicitList" in value || "template" in value;
@@ -95,7 +95,7 @@ function isAnyComponentNode(value: unknown): value is AnyComponentNode {
 }
 
 export function isResolvedAudioPlayer(
-  props: unknown
+  props: unknown,
 ): props is ResolvedAudioPlayer {
   return isObject(props) && "url" in props && isStringValue(props.url);
 }
@@ -145,7 +145,7 @@ export function isResolvedColumn(props: unknown): props is ResolvedColumn {
 }
 
 export function isResolvedDateTimeInput(
-  props: unknown
+  props: unknown,
 ): props is ResolvedDateTimeInput {
   return isObject(props) && "value" in props && isStringValue(props.value);
 }
@@ -184,7 +184,7 @@ export function isResolvedModal(props: unknown): props is ResolvedModal {
 }
 
 export function isResolvedMultipleChoice(
-  props: unknown
+  props: unknown,
 ): props is ResolvedMultipleChoice {
   return isObject(props) && "selections" in props;
 }
@@ -226,7 +226,7 @@ export function isResolvedText(props: unknown): props is ResolvedText {
 }
 
 export function isResolvedTextField(
-  props: unknown
+  props: unknown,
 ): props is ResolvedTextField {
   return isObject(props) && "label" in props && isStringValue(props.label);
 }

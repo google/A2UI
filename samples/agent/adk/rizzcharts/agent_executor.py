@@ -18,13 +18,15 @@ from typing import override
 
 from a2a.server.agent_execution import RequestContext
 from a2a.types import AgentCapabilities, AgentCard, AgentExtension, AgentSkill
-from a2ui.extension.a2ui_extension import A2UI_CLIENT_CAPABILITIES_KEY
-from a2ui.extension.a2ui_extension import A2UI_EXTENSION_URI
-from a2ui.extension.a2ui_extension import STANDARD_CATALOG_ID
-from a2ui.extension.a2ui_extension import get_a2ui_agent_extension
-from a2ui.extension.a2ui_extension import try_activate_a2ui_extension
-from a2ui.inference.schema.manager import A2uiSchemaManager
-from a2ui.extension.send_a2ui_to_client_toolset import convert_send_a2ui_to_client_genai_part_to_a2a_part
+from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.a2a import try_activate_a2ui_extension
+from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import (
+    A2uiEventConverter,
+    A2uiPartConverter,
+    SendA2uiToClientToolset,
+)
+from a2ui.core.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
+from a2ui.core.schema.manager import A2uiSchemaManager
 from google.adk.a2a.converters.request_converter import AgentRunRequest
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutor
 from google.adk.a2a.executor.a2a_agent_executor import A2aAgentExecutorConfig
@@ -89,9 +91,7 @@ class RizzchartsAgentExecutor(A2aAgentExecutor):
     self._base_url = base_url
     self.schema_manager = schema_manager
 
-    config = A2aAgentExecutorConfig(
-        gen_ai_part_converter=convert_send_a2ui_to_client_genai_part_to_a2a_part
-    )
+    config = A2aAgentExecutorConfig(event_converter=A2uiEventConverter())
     super().__init__(runner=runner, config=config)
 
   @override

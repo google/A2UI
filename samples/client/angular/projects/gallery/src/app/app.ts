@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { LibraryComponent } from './features/library/library.component';
 import { GalleryComponent } from './features/gallery/gallery.component';
 
@@ -22,7 +22,8 @@ import { GalleryComponent } from './features/gallery/gallery.component';
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.css',
-  imports: [LibraryComponent, GalleryComponent]
+  imports: [LibraryComponent, GalleryComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class App {
   readonly currentView = signal<'library' | 'gallery'>('library');

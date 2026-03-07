@@ -43,7 +43,7 @@ import { TextField } from "./text-field.js";
 import { Text } from "./text.js";
 import { Video } from "./video.js";
 
-export * as Context from "./context/theme.js";
+export * as Context from "./context/context.js";
 export * as Utils from "./utils/utils.js";
 export { ComponentRegistry, componentRegistry } from "./component-registry.js";
 export { registerCustomComponents } from "./custom-components/index.js";

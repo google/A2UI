@@ -1,9 +1,13 @@
 """Agent logic for the Component Gallery."""
 
 import logging
-import json
 from collections.abc import AsyncIterable
 from typing import Any
+import json
+
+from a2a.types import DataPart, Part, TextPart
+from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.a2a import create_a2ui_part, parse_response_to_parts
 
 import asyncio
 import datetime
@@ -29,10 +33,10 @@ class ComponentGalleryAgent:
       gallery_json = get_gallery_json()
       yield {
           "is_task_complete": True,
-          "payload": {
-              "text": "Here is the component gallery.",
-              "json_string": gallery_json,
-          },
+          "parts": parse_response_to_parts(
+              "Here is the component"
+              f" gallery.\n{A2UI_OPEN_TAG}\n{gallery_json}\n{A2UI_CLOSE_TAG}"
+          ),
       }
       return
 
@@ -46,7 +50,7 @@ class ComponentGalleryAgent:
 
       timestamp = datetime.datetime.now().strftime("%H:%M:%S")
 
-      response_update = [{
+      response_update = {
           "surfaceUpdate": {
               "surfaceId": "response-surface",
               "components": [{
@@ -63,16 +67,19 @@ class ComponentGalleryAgent:
                   },
               }],
           }
-      }]
+      }
 
       yield {
           "is_task_complete": True,
-          "payload": {"text": "Action processed.", "json_data": response_update},
+          "parts": [
+              Part(root=TextPart(text="Action processed.")),
+              create_a2ui_part(response_update),
+          ],
       }
       return
 
     # Fallback for text
     yield {
         "is_task_complete": True,
-        "payload": {"text": "I am the Component Gallery Agent."},
+        "parts": [Part(root=TextPart(text="I am the Component Gallery Agent."))],
     }

@@ -27,7 +27,8 @@
             "variant": {
               "type": "string",
               "description": "A hint for the base text style.",
-              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
+              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"],
+              "default": "body"
             }
           },
           "required": ["component", "text"]
@@ -57,7 +58,8 @@
             "fit": {
               "type": "string",
               "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
-              "enum": ["contain", "cover", "fill", "none", "scaleDown"]
+              "enum": ["contain", "cover", "fill", "none", "scaleDown"],
+              "default": "fill"
             },
             "variant": {
               "type": "string",
@@ -69,7 +71,8 @@
                 "mediumFeature",
                 "largeFeature",
                 "header"
-              ]
+              ],
+              "default": "mediumFeature"
             }
           },
           "required": ["component", "url"]
@@ -262,12 +265,14 @@
                 "spaceEvenly",
                 "start",
                 "stretch"
-              ]
+              ],
+              "default": "start"
             },
             "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis (vertically). This is similar to the CSS 'align-items' property, but uses camelCase values (e.g., 'start').",
-              "enum": ["start", "center", "end", "stretch"]
+              "enum": ["start", "center", "end", "stretch"],
+              "default": "stretch"
             }
           },
           "required": ["component", "children"]
@@ -306,12 +311,14 @@
                 "spaceAround",
                 "spaceEvenly",
                 "stretch"
-              ]
+              ],
+              "default": "start"
             },
             "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis (horizontally). This is similar to the CSS 'align-items' property.",
-              "enum": ["center", "end", "start", "stretch"]
+              "enum": ["center", "end", "start", "stretch"],
+              "default": "stretch"
             }
           },
           "required": ["component", "children"]
@@ -341,12 +348,14 @@
             "direction": {
               "type": "string",
               "description": "The direction in which the list items are laid out.",
-              "enum": ["vertical", "horizontal"]
+              "enum": ["vertical", "horizontal"],
+              "default": "vertical"
             },
             "align": {
               "type": "string",
               "description": "Defines the alignment of children along the cross axis.",
-              "enum": ["start", "center", "end", "stretch"]
+              "enum": ["start", "center", "end", "stretch"],
+              "default": "stretch"
             }
           },
           "required": ["component", "children"]
@@ -500,7 +509,8 @@
             "variant": {
               "type": "string",
               "description": "A hint for the button style. If omitted, a default button style is used. 'primary' indicates this is the main call-to-action button. 'borderless' means the button has no visual border or background, making its child content appear like a clickable link.",
-              "enum": ["primary", "borderless"]
+              "enum": ["default", "primary", "borderless"],
+              "default": "default"
             },
             "action": {
               "$ref": "common_types.json#/$defs/Action"
@@ -540,7 +550,8 @@
             "variant": {
               "type": "string",
               "description": "The type of input field to display.",
-              "enum": ["longText", "number", "shortText", "obscured"]
+              "enum": ["longText", "number", "shortText", "obscured"],
+              "default": "shortText"
             },
             "validationRegexp": {
               "type": "string",
@@ -610,7 +621,8 @@
             "variant": {
               "type": "string",
               "description": "A hint for how the choice picker should be displayed and behave.",
-              "enum": ["multipleSelection", "mutuallyExclusive"]
+              "enum": ["multipleSelection", "mutuallyExclusive"],
+              "default": "mutuallyExclusive"
             },
             "options": {
               "type": "array",
@@ -638,11 +650,13 @@
             "displayStyle": {
               "type": "string",
               "description": "The display style of the component.",
-              "enum": ["checkbox", "chips"]
+              "enum": ["checkbox", "chips"],
+              "default": "checkbox"
             },
             "filterable": {
               "type": "boolean",
-              "description": "If true, displays a search input to filter the options."
+              "description": "If true, displays a search input to filter the options.",
+              "default": false
             }
           },
           "required": ["component", "options", "value"]
@@ -674,7 +688,8 @@
             },
             "min": {
               "type": "number",
-              "description": "The minimum value of the slider."
+              "description": "The minimum value of the slider.",
+              "default": 0
             },
             "max": {
               "type": "number",
@@ -685,7 +700,7 @@
               "description": "The current value of the slider."
             }
           },
-          "required": ["component", "value", "min", "max"]
+          "required": ["component", "value", "max"]
         }
       ],
       "unevaluatedProperties": false
@@ -714,11 +729,13 @@
             },
             "enableDate": {
               "type": "boolean",
-              "description": "If true, allows the user to select a date."
+              "description": "If true, allows the user to select a date.",
+              "default": false
             },
             "enableTime": {
               "type": "boolean",
-              "description": "If true, allows the user to select a time."
+              "description": "If true, allows the user to select a time.",
+              "default": false
             },
             "min": {
               "allOf": [
