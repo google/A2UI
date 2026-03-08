@@ -61,7 +61,9 @@ import { Renderer } from '../rendering';
     dialog {
       padding: 0;
       border: none;
-      background: none;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
 
       & section {
         & .controls {

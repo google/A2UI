@@ -18,6 +18,7 @@ import {
   TextFieldSchema,
   TextSchema,
   VideoSchema,
+  DataValueSchema,
 } from "./common-types.js";
 
 
@@ -35,35 +36,9 @@ const validateValueProperty = (val: any, ctx: z.RefinementCtx) => {
   }
 };
 
-const ValueMapItemSchema = z
-  .object({
-    key: z.string(),
-    valueString: z.string().optional(),
-    valueNumber: z.number().optional(),
-    valueBoolean: z.boolean().optional(),
-  })
-  .strict()
-  .superRefine(validateValueProperty)
-  .describe(
-    "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
-  );
-
-export const ValueMapSchema = z
-  .object({
-    key: z.string().describe("The key for this data entry."),
-    valueString: z.string().optional(),
-    valueNumber: z.number().optional(),
-    valueBoolean: z.boolean().optional(),
-    valueMap: z
-      .array(ValueMapItemSchema)
-      .optional()
-      .describe("Represents a map as an adjacency list."),
-  })
-  .strict()
-  .superRefine(validateValueProperty)
-  .describe(
-    "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
-  );
+export const ValueMapSchema = DataValueSchema.describe(
+  "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
+);
 
 export const AnyComponentSchema = z
   .object({

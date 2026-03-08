@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/markdown-it",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Markdown renderer using markdown-it and dompurify.",
   "keywords": [],
   "homepage": "https://github.com/google/A2UI/tree/main/web#readme",

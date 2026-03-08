@@ -22,6 +22,7 @@ import {
   directive,
 } from "lit/directive.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { until } from "lit/directives/until.js";
 import * as Types from "@a2ui/web_core/types/types";
 
 class MarkdownDirective extends Directive {
@@ -49,10 +50,15 @@ class MarkdownDirective extends Directive {
    */
   render(value: string, markdownRenderer?: Types.MarkdownRenderer, markdownOptions?: Types.MarkdownRendererOptions) {
     if (markdownRenderer) {
-      // The markdown renderer returns a string, which we need to convert to a
-      // template result using unsafeHTML.
-      // It is the responsibilty of the markdown renderer to sanitize the HTML.
-      return unsafeHTML(markdownRenderer(value, markdownOptions));
+      const rendered = markdownRenderer(value, markdownOptions).then((value) => {
+        // `value` is a plain string, which we need to convert to a template
+        // with the `unsafeHTML` directive.
+        // It is the responsibility of the markdown renderer to sanitize the HTML.
+        return unsafeHTML(value);
+      })
+      // The until directive lets us render a placeholder *until* the rendered
+      // content resolves.
+      return until(rendered, html`<span class="no-markdown-renderer">${value}</span>`);
     }
 
     if (!MarkdownDirective.defaultMarkdownWarningLogged) {
