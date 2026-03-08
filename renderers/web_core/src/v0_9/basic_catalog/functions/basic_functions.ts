@@ -15,8 +15,7 @@
  */
 
 import { ExpressionParser } from "../expressions/expression_parser.js";
-import { Observable, combineLatest, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { computed, Signal } from "@preact/signals-core";
 import { FunctionImplementation } from "../../catalog/types.js";
 
 /**
@@ -156,27 +155,24 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
 
     if (parts.length === 0) return "";
 
-    const observables = parts.map((part) => {
-      // If it's a literal string (or number/boolean/etc), wrap it in 'of'
+    const dynamicParts = parts.map((part) => {
+      // If it's a literal string (or number/boolean/etc), keep it as is
       if (typeof part !== "object" || part === null || Array.isArray(part)) {
-        return of(part);
+        return part;
       }
-
-      // Otherwise, it's a dynamic value we need to subscribe to
-      return new Observable<unknown>((subscriber) => {
-        const sub = context.subscribeDynamicValue(part, (val) => {
-          subscriber.next(val);
-        });
-
-        // Emit the initial synchronously-resolved value
-        subscriber.next(sub.value);
-
-        return () => sub.unsubscribe();
-      });
+      return context.resolveSignal(part);
     });
 
-    // Combine all parts and join them into a single string whenever any part changes
-    return combineLatest(observables).pipe(map((values) => values.join("")));
+    return computed(() => {
+      return dynamicParts
+        .map((p) => {
+          if (p instanceof Signal) {
+             return p.value;
+          }
+          return p;
+        })
+        .join("");
+    });
   },
 
   /**
