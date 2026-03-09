@@ -13,7 +13,7 @@
     "serve:ssr:contact": "node dist/contact/server/server.mjs",
     "build:renderer": "cd ../../../renderers && for dir in 'web_core' 'markdown/markdown-it'; do (cd \"$dir\" && npm install && npm run build); done",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
-    "demo:restaurant": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\""
+    "demo:restaurant": "npm install && npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\""
   },
   "prettier": {
     "printWidth": 100,
