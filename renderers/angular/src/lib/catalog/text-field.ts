@@ -21,7 +21,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-text-field',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
       display: flex;

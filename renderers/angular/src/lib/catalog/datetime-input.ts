@@ -20,7 +20,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-datetime-input',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section [class]="theme.components.DateTimeInput.container">
       <label [for]="inputId" [class]="theme.components.DateTimeInput.label">{{ label() }}</label>

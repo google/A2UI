@@ -20,7 +20,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: '[a2ui-slider]',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section [class]="theme.components.Slider.container">
       <label [class]="theme.components.Slider.label" [for]="inputId">
