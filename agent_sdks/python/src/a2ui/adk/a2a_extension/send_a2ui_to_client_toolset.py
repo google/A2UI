@@ -109,9 +109,9 @@ from a2ui.a2a import (
     create_a2ui_part,
     parse_response_to_parts,
 )
-from a2ui.core.parser import parse_response, parse_and_fix
+from a2ui.core.parser.parser import has_a2ui_parts
+from a2ui.core.parser.payload_fixer import parse_and_fix
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.schema.constants import A2UI_DELIMITER
 from google.adk.a2a.converters import part_converter
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.models import LlmRequest
@@ -387,7 +387,7 @@ class A2uiPartConverter:
 
     # 3. Handle Text-based A2UI (TextPart)
     if text := part.text:
-      if A2UI_DELIMITER in text:
+      if has_a2ui_parts(text):
         return parse_response_to_parts(text, validator=self._catalog.validator)
 
     # 4. Default conversion for other parts

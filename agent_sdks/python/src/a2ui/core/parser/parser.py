@@ -12,41 +12,91 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-from typing import Tuple, Any
-from ..schema.constants import A2UI_DELIMITER
+import re
+from dataclasses import dataclass
+from typing import List, Optional, Any
+from ..schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from .payload_fixer import parse_and_fix
 
 
-def parse_response(content: str) -> Tuple[str, Any]:
+_A2UI_BLOCK_PATTERN = re.compile(
+    f"{re.escape(A2UI_OPEN_TAG)}(.*?){re.escape(A2UI_CLOSE_TAG)}", re.DOTALL
+)
+
+
+@dataclass
+class ResponsePart:
+  """Represents a part of the LLM response.
+
+  Attributes:
+      text: The conversational text part. Can be an empty string.
+      a2ui_json: The parsed A2UI JSON data. None if this part only contains
+        trailing text.
   """
-    Parses the LLM response into a text part and a JSON object.
 
-    Args:
-        content: The raw LLM response.
+  text: str
+  a2ui_json: Optional[Any] = None
 
-    Returns:
-        A tuple of (text_part, json_object).
-      - text_part (str): The text before the delimiter, stripped of whitespace.
-      - json_object (Any): The parsed JSON object.
+
+def has_a2ui_parts(content: str) -> bool:
+  """Checks if the content has A2UI parts."""
+  return A2UI_OPEN_TAG in content and A2UI_CLOSE_TAG in content
+
+
+def _sanitize_json_string(json_string: str) -> str:
+  """Sanitizes the JSON string by removing markdown code blocks."""
+  json_string = json_string.strip()
+  if json_string.startswith("```json"):
+    json_string = json_string[len("```json") :]
+  elif json_string.startswith("```"):
+    json_string = json_string[len("```") :]
+  if json_string.endswith("```"):
+    json_string = json_string[: -len("```")]
+  json_string = json_string.strip()
+  return json_string
+
+
+def parse_response(content: str) -> List[ResponsePart]:
+  """
+  Parses the LLM response into a list of ResponsePart objects.
+
+  Args:
+      content: The raw LLM response.
+
+  Returns:
+      A list of ResponsePart objects.
 
   Raises:
-      ValueError: If the delimiter is missing, the JSON part is empty, or the JSON
-                  part is invalid.
+      ValueError: If no A2UI tags are found or if the JSON part is invalid.
   """
-  if A2UI_DELIMITER not in content:
-    raise ValueError(f"Delimiter '{A2UI_DELIMITER}' not found in response.")
+  matches = list(_A2UI_BLOCK_PATTERN.finditer(content))
 
-  text_part, json_string = content.split(A2UI_DELIMITER, 1)
-  text_part = text_part.strip()
+  if not matches:
+    raise ValueError(
+        f"A2UI tags '{A2UI_OPEN_TAG}' and '{A2UI_CLOSE_TAG}' not found in response."
+    )
 
-  # Clean the JSON string (strip whitespace and common markdown blocks)
-  json_string_cleaned = (
-      json_string.strip().lstrip("```json").lstrip("```").rstrip("```").strip()
-  )
+  response_parts = []
+  last_end = 0
 
-  if not json_string_cleaned:
-    raise ValueError("A2UI JSON part is empty.")
+  for match in matches:
+    start, end = match.span()
+    # Text preceding the JSON block
+    text_part = content[last_end:start].strip()
 
-  json_data = parse_and_fix(json_string_cleaned)
-  return text_part, json_data
+    # The JSON content within the tags
+    json_string = match.group(1)
+    json_string_cleaned = _sanitize_json_string(json_string)
+    if not json_string_cleaned:
+      raise ValueError("A2UI JSON part is empty.")
+
+    json_data = parse_and_fix(json_string_cleaned)
+    response_parts.append(ResponsePart(text=text_part, a2ui_json=json_data))
+    last_end = end
+
+  # Trailing text after the last JSON block
+  trailing_text = content[last_end:].strip()
+  if trailing_text:
+    response_parts.append(ResponsePart(text=trailing_text, a2ui_json=None))
+
+  return response_parts

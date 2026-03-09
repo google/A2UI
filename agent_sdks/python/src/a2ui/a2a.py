@@ -121,24 +121,26 @@ def parse_response_to_parts(
   Returns:
       A list of A2A Part objects (TextPart and/or DataPart).
   """
-  from a2ui.core.parser import parse_response
+  from a2ui.core.parser.parser import parse_response
 
   parts = []
   try:
-    text_part, json_data = parse_response(content)
+    response_parts = parse_response(content)
 
-    if text_part:
-      parts.append(Part(root=TextPart(text=text_part.strip())))
+    for part in response_parts:
+      if part.text:
+        parts.append(Part(root=TextPart(text=part.text)))
 
-    if validator and json_data is not None and json_data != []:
-      validator.validate(json_data)
+      if part.a2ui_json:
+        json_data = part.a2ui_json
+        if validator:
+          validator.validate(json_data)
 
-    if json_data:
-      if isinstance(json_data, list):
-        for message in json_data:
-          parts.append(create_a2ui_part(message))
-      else:
-        parts.append(create_a2ui_part(json_data))
+        if isinstance(json_data, list):
+          for message in json_data:
+            parts.append(create_a2ui_part(message))
+        else:
+          parts.append(create_a2ui_part(json_data))
 
   except Exception as e:
     logger.warning(f"Failed to parse or validate A2UI response: {e}")

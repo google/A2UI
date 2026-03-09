@@ -1,3 +1,17 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Agent logic for the Component Gallery."""
 
 import logging
@@ -6,7 +20,7 @@ from typing import Any
 import json
 
 from a2a.types import DataPart, Part, TextPart
-from a2ui.core.schema.constants import A2UI_DELIMITER
+from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.a2a import create_a2ui_part, parse_response_to_parts
 
 import asyncio
@@ -34,7 +48,8 @@ class ComponentGalleryAgent:
       yield {
           "is_task_complete": True,
           "parts": parse_response_to_parts(
-              f"Here is the component gallery.\n{A2UI_DELIMITER}\n{gallery_json}"
+              "Here is the component"
+              f" gallery.\n{A2UI_OPEN_TAG}\n{gallery_json}\n{A2UI_CLOSE_TAG}"
           ),
       }
       return

@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import pytest
-from a2ui.core.parser import parse_response
-from a2ui.core.schema.constants import A2UI_DELIMITER
+from a2ui.core.parser.parser import parse_response, ResponsePart
+from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 
 
 def test_parse_empty_response():
@@ -23,67 +23,82 @@ def test_parse_empty_response():
     parse_response(content)
 
 
-def test_parse_response_only_text_no_delimiter():
-  content = "Only text, no delimiter."
+def test_parse_response_only_text_no_tags():
+  content = "Only text, no tags."
   with pytest.raises(ValueError, match="not found in response"):
     parse_response(content)
 
 
-def test_parse_response_only_text_with_delimiter():
-  content = f"Only text, no delimiter. {A2UI_DELIMITER}```json```"
+def test_parse_response_empty_tags():
+  content = f"{A2UI_OPEN_TAG}{A2UI_CLOSE_TAG}"
   with pytest.raises(ValueError, match="A2UI JSON part is empty"):
     parse_response(content)
 
 
-def test_parse_response_only_json_no_delimiter():
-  content = '[{"id": "test"}]'
-  with pytest.raises(ValueError, match="not found in response"):
-    parse_response(content)
+def test_parse_response_only_json_with_tags():
+  content = f'{A2UI_OPEN_TAG}\n[{{"id": "test"}}]\n{A2UI_CLOSE_TAG}'
+  parts = parse_response(content)
+  assert len(parts) == 1
+  assert parts[0].text == ""
+  assert parts[0].a2ui_json == [{"id": "test"}]
 
 
-def test_parse_response_only_json_with_delimiter():
-  content = f'{A2UI_DELIMITER} [{{"id": "test"}}]'
-  text, json_obj = parse_response(content)
-  assert text == ""
-  assert json_obj == [{"id": "test"}]
+def test_parse_response_with_text_and_tags():
+  content = f'Hello\n{A2UI_OPEN_TAG}\n[{{"id": "test"}}]\n{A2UI_CLOSE_TAG}'
+  parts = parse_response(content)
+  assert len(parts) == 1
+  assert parts[0].text == "Hello"
+  assert parts[0].a2ui_json == [{"id": "test"}]
 
 
-def test_parse_response_empty_json_list_with_delimiter():
-  content = f"{A2UI_DELIMITER} [ ]"
-  text, json_obj = parse_response(content)
-  assert text == ""
-  assert json_obj == []
+def test_parse_response_with_trailing_text():
+  content = f'Hello\n{A2UI_OPEN_TAG}\n[{{"id": "test"}}]\n{A2UI_CLOSE_TAG}\nGoodbye'
+  parts = parse_response(content)
+  assert len(parts) == 2
+  assert parts[0].text == "Hello"
+  assert parts[0].a2ui_json == [{"id": "test"}]
+  assert parts[1].text == "Goodbye"
+  assert parts[1].a2ui_json is None
 
 
-def test_parse_response_empty_json_object_with_delimiter():
-  content = f"{A2UI_DELIMITER} {{ }}"
-  text, json_obj = parse_response(content)
-  assert text == ""
-  assert json_obj == [{}]
+def test_parse_response_multiple_blocks():
+  content = """
+Part 1
+<a2ui-json>
+[{"id": "1"}]
+</a2ui-json>
+Part 2
+<a2ui-json>
+[{"id": "2"}]
+</a2ui-json>
+Part 3
+  """
+  parts = parse_response(content)
+  assert len(parts) == 3
+
+  assert parts[0].text == "Part 1"
+  assert parts[0].a2ui_json == [{"id": "1"}]
+
+  assert parts[1].text == "Part 2"
+  assert parts[1].a2ui_json == [{"id": "2"}]
+
+  assert parts[2].text == "Part 3"
+  assert parts[2].a2ui_json is None
 
 
 def test_parse_response_with_markdown_blocks():
-  content = f'Text {A2UI_DELIMITER} ```json\n[{{"id": "test"}}]\n```'
-  text, json_obj = parse_response(content)
-  assert text == "Text"
-  assert json_obj == [{"id": "test"}]
-
-
-def test_parse_response_with_markdown_blocks_no_json_language():
-  content = f'Text {A2UI_DELIMITER} ```\n[{{"id": "test"}}]\n```'
-  text, json_obj = parse_response(content)
-  assert text == "Text"
-  assert json_obj == [{"id": "test"}]
-
-
-def test_parse_response_no_markdown_blocks():
-  content = f'Text {A2UI_DELIMITER} [{{"id": "test"}}]'
-  text, json_obj = parse_response(content)
-  assert text == "Text"
-  assert json_obj == [{"id": "test"}]
+  content = (
+      f"Text\n{A2UI_OPEN_TAG}\n```json\n"
+      f'[{{"id": "test"}}]\n'
+      f"```\n{A2UI_CLOSE_TAG}"
+  )
+  parts = parse_response(content)
+  assert len(parts) == 1
+  assert parts[0].text == "Text"
+  assert parts[0].a2ui_json == [{"id": "test"}]
 
 
 def test_parse_response_invalid_json():
-  content = f"Text {A2UI_DELIMITER} INVALID JSON"
+  content = f"{A2UI_OPEN_TAG}\ninvalid_json\n{A2UI_CLOSE_TAG}"
   with pytest.raises(ValueError):
     parse_response(content)

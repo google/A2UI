@@ -12,32 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[[tool.uv.index]]
-url = "https://pypi.org/simple"
-default = true
+name: Google open-source license
 
-[tool.uv.workspace]
-members = ["contact_lookup", "contact_multiple_surfaces", "orchestrator", "restaurant_finder", "rizzcharts"]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
-[tool.uv.sources]
-a2ui-agent = { path = "../../../agent_sdks/python", editable = true }
+jobs:
+  check-license:
+    runs-on: ubuntu-latest
 
-[tool.pyink]
-unstable = true
-target-version = []
-pyink-indentation = 2
-pyink-use-majority-quotes = true
-pyink-annotation-pragmas = [
-  "noqa",
-  "pylint:",
-  "type: ignore",
-  "pytype:",
-  "mypy:",
-  "pyright:",
-  "pyre-",
-]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-[dependency-groups]
-dev = [
-    "pyink>=24.10.0",
-]
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install addlicense
+        run: go install github.com/google/addlicense@latest
+
+      - name: Check license headers
+        run: |
+          addlicense -check \
+            -l apache \
+            -c "Google LLC" \
+            .
