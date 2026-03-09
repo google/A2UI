@@ -1,13 +1,15 @@
 # Visual Parity Tests
 
-Visual parity tests ensure the React renderer produces pixel-identical output to the Lit renderer (the reference implementation).
+Visual parity tests ensure the React renderer produces pixel-identical output to
+the Lit renderer (the reference implementation).
 
 ## Overview
 
-These tests compare screenshots of the same A2UI components rendered by both implementations:
+These tests compare screenshots of the same A2UI components rendered by both
+implementations:
 
-- **Lit renderer** (Shadow DOM) - Reference implementation at `localhost:5002`
-- **React renderer** (Light DOM) - Test subject at `localhost:5001`
+-   **Lit renderer** (Shadow DOM) - Reference implementation at `localhost:5002`
+-   **React renderer** (Light DOM) - Test subject at `localhost:5001`
 
 Tests pass when the pixel difference is ≤1%.
 
@@ -42,18 +44,10 @@ Tests pass when the pixel difference is ≤1%.
 
 ### Prerequisites
 
-1. Build the React renderer first:
-   ```bash
-   cd renderers/react
-   npm install
-   npm run build
-   ```
+1.  Build the React renderer first: `bash cd renderers/react npm install npm run
+    build`
 
-2. Install visual-parity dependencies:
-   ```bash
-   cd visual-parity
-   npm install
-   ```
+2.  Install visual-parity dependencies: `bash cd visual-parity npm install`
 
 ### Running Tests
 
@@ -87,9 +81,8 @@ npm run dev:react  # localhost:5001
 npm run dev:lit    # localhost:5002
 ```
 
-Then open:
-- http://localhost:5001?fixture=buttonPrimary&theme=lit (React)
-- http://localhost:5002?fixture=buttonPrimary&theme=lit (Lit)
+Then open: - http://localhost:5001?fixture=buttonPrimary&theme=lit (React) -
+http://localhost:5002?fixture=buttonPrimary&theme=lit (Lit)
 
 ## Project Structure
 
@@ -204,24 +197,22 @@ interface ComponentFixture {
 
 Tests run across multiple themes to ensure theme switching works:
 
-| Theme | Description |
-|-------|-------------|
-| `lit` | Default litTheme from @a2ui/react |
-| `visualParity` | Alternate theme for testing |
-| `minimal` | Stripped-down theme |
+Theme          | Description
+-------------- | ---------------------------------
+`lit`          | Default litTheme from @a2ui/react
+`visualParity` | Alternate theme for testing
+`minimal`      | Stripped-down theme
 
-To test a specific theme:
-```bash
-npm test -- --grep "Theme: minimal"
-```
+To test a specific theme: `bash npm test -- --grep "Theme: minimal"`
 
 ## Skipped Fixtures
 
 Some fixtures are skipped due to known implementation differences:
 
-| Fixture | Reason |
-|---------|--------|
-| `multipleChoice*` | Implementation differs: React uses radio/checkboxes, Lit uses `<select>` |
+| Fixture           | Reason                                                   |
+| ----------------- | -------------------------------------------------------- |
+| `multipleChoice*` | Implementation differs: React uses radio/checkboxes, Lit |
+:                   : uses `<select>`                                          :
 
 ## Troubleshooting
 
@@ -236,7 +227,8 @@ npm run dev:react  # or dev:lit
 
 ### React Changes Not Reflected
 
-The visual parity apps import from the **built** `@a2ui/react` package. After making changes:
+The visual parity apps import from the **built** `@a2ui/react` package. After
+making changes:
 
 ```bash
 # 1. Rebuild React renderer
@@ -251,33 +243,35 @@ npm run dev:react
 
 ### Test Failures
 
-When a test fails, Playwright saves screenshots to `test-results/`. Compare them to identify the visual difference.
+When a test fails, Playwright saves screenshots to `test-results/`. Compare them
+to identify the visual difference.
 
-To debug a specific fixture:
-```bash
+To debug a specific fixture: ```bash
+
 # Run with headed browser
+
 npm test -- --grep "buttonPrimary" --headed
 
 # Or use UI mode
-npm run test:ui
-```
+
+npm run test:ui ```
 
 ## Key Modules
 
-| Module | Purpose |
-|--------|---------|
-| `@playwright/test` | Browser automation and test framework |
-| `pixelmatch` | Pixel-by-pixel image comparison |
-| `pngjs` | PNG image parsing |
-| `vite` | Dev server for React and Lit apps |
+Module             | Purpose
+------------------ | -------------------------------------
+`@playwright/test` | Browser automation and test framework
+`pixelmatch`       | Pixel-by-pixel image comparison
+`pngjs`            | PNG image parsing
+`vite`             | Dev server for React and Lit apps
 
 ## Thresholds
 
-| Parameter | Value | Purpose |
-|-----------|-------|---------|
-| `PIXEL_DIFF_THRESHOLD` | 0.01 (1%) | Per-pixel color tolerance |
-| `MAX_DIFF_PERCENT` | 1% | Maximum % of pixels that can differ |
+Parameter              | Value     | Purpose
+---------------------- | --------- | -----------------------------------
+`PIXEL_DIFF_THRESHOLD` | 0.01 (1%) | Per-pixel color tolerance
+`MAX_DIFF_PERCENT`     | 1%        | Maximum % of pixels that can differ
 
 ## Related Documentation
 
-- [PARITY.md](./PARITY.md) - CSS transformation approach for React/Lit parity
+-   [PARITY.md](./PARITY.md) - CSS transformation approach for React/Lit parity
