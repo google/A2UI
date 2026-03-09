@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { useState, useCallback, useRef, useEffect, memo } from 'react';
+import {useState, useCallback, useRef, useEffect, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
-import { ComponentNode } from '../../core/ComponentNode';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
+import {ComponentNode} from '../../core/ComponentNode';
 
 /**
  * Modal component - displays content in a dialog overlay.
@@ -31,8 +31,8 @@ import { ComponentNode } from '../../core/ComponentNode';
  * The dialog is rendered in place (no portal) so it stays inside .a2ui-surface
  * and CSS selectors work correctly. showModal() handles the top-layer overlay.
  */
-export const Modal = memo(function Modal({ node, surfaceId }: A2UIComponentProps<Types.ModalNode>) {
-  const { theme } = useA2UIComponent(node, surfaceId);
+export const Modal = memo(function Modal({node, surfaceId}: A2UIComponentProps<Types.ModalNode>) {
+  const {theme} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -84,15 +84,14 @@ export const Modal = memo(function Modal({ node, surfaceId }: A2UIComponentProps
   );
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   // Match Lit's render approach: closed shows section with entry, open shows dialog
   if (!isOpen) {
     return (
       <div className="a2ui-modal" style={hostStyle}>
-        <section onClick={openModal} style={{ cursor: 'pointer' }}>
+        <section onClick={openModal} style={{cursor: 'pointer'}}>
           <ComponentNode node={props.entryPointChild} surfaceId={surfaceId} />
         </section>
       </div>

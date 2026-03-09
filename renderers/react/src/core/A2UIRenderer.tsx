@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { Suspense, useMemo, memo, type ReactNode } from 'react';
-import { useA2UI } from '../hooks/useA2UI';
-import { ComponentNode } from './ComponentNode';
-import { type ComponentRegistry } from '../registry/ComponentRegistry';
-import { cn } from '../lib/utils';
+import {Suspense, useMemo, memo, type ReactNode} from 'react';
+import {useA2UI} from '../hooks/useA2UI';
+import {ComponentNode} from './ComponentNode';
+import {type ComponentRegistry} from '../registry/ComponentRegistry';
+import {cn} from '../lib/utils';
 
 /** Default loading fallback - memoized to prevent recreation */
 const DefaultLoadingFallback = memo(function DefaultLoadingFallback() {
   return (
-    <div className="a2ui-loading" style={{ padding: '16px', opacity: 0.5 }}>
+    <div className="a2ui-loading" style={{padding: '16px', opacity: 0.5}}>
       Loading...
     </div>
   );
@@ -68,7 +68,7 @@ export const A2UIRenderer = memo(function A2UIRenderer({
   loadingFallback,
   registry,
 }: A2UIRendererProps) {
-  const { getSurface, version } = useA2UI();
+  const {getSurface, version} = useA2UI();
 
   // Get surface - this will re-render when version changes
   const surface = getSurface(surfaceId);
@@ -133,11 +133,7 @@ export const A2UIRenderer = memo(function A2UIRenderer({
       data-version={version}
     >
       <Suspense fallback={actualLoadingFallback}>
-        <ComponentNode
-          node={surface.componentTree}
-          surfaceId={surfaceId}
-          registry={registry}
-        />
+        <ComponentNode node={surface.componentTree} surfaceId={surfaceId} registry={registry} />
       </Suspense>
     </div>
   );

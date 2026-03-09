@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import { useState, useCallback, useEffect, useId, memo } from 'react';
+import {useState, useCallback, useEffect, useId, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
 
 /**
  * Slider component - a numeric value selector with a range.
  *
  * Supports two-way data binding for the value.
  */
-export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentProps<Types.SliderNode>) {
-  const { theme, resolveNumber, resolveString, setValue, getValue } = useA2UIComponent(
+export const Slider = memo(function Slider({
+  node,
+  surfaceId,
+}: A2UIComponentProps<Types.SliderNode>) {
+  const {theme, resolveNumber, resolveString, setValue, getValue} = useA2UIComponent(
     node,
     surfaceId
   );
@@ -86,19 +89,13 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
   //   </div>
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-slider" style={hostStyle}>
-      <section
-        className={classMapToString(theme.components.Slider.container)}
-      >
-        <label
-          htmlFor={id}
-          className={classMapToString(theme.components.Slider.label)}
-        >
+      <section className={classMapToString(theme.components.Slider.container)}>
+        <label htmlFor={id} className={classMapToString(theme.components.Slider.label)}>
           {label}
         </label>
         <input
@@ -112,9 +109,7 @@ export const Slider = memo(function Slider({ node, surfaceId }: A2UIComponentPro
           className={classMapToString(theme.components.Slider.element)}
           style={stylesToObject(theme.additionalStyles?.Slider)}
         />
-        <span className={classMapToString(theme.components.Slider.label)}>
-          {value}
-        </span>
+        <span className={classMapToString(theme.components.Slider.label)}>{value}</span>
       </section>
     </div>
   );

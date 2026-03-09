@@ -188,7 +188,7 @@ export const litTheme: Types.Theme = {
         'layout-w-100': true,
         'layout-h-100': true,
       },
-      avatar: { 'is-avatar': true },
+      avatar: {'is-avatar': true},
       header: {},
       icon: {},
       largeFeature: {},

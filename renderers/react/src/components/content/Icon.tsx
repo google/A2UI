@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { memo } from 'react';
+import {memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
 
 /**
  * Convert camelCase to snake_case for Material Symbols font.
@@ -40,8 +40,8 @@ function toSnakeCase(str: string): string {
  * <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
  * ```
  */
-export const Icon = memo(function Icon({ node, surfaceId }: A2UIComponentProps<Types.IconNode>) {
-  const { theme, resolveString } = useA2UIComponent(node, surfaceId);
+export const Icon = memo(function Icon({node, surfaceId}: A2UIComponentProps<Types.IconNode>) {
+  const {theme, resolveString} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
 
   const iconName = resolveString(props.name);
@@ -54,9 +54,8 @@ export const Icon = memo(function Icon({ node, surfaceId }: A2UIComponentProps<T
   const snakeCaseName = toSnakeCase(iconName);
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-icon" style={hostStyle}>

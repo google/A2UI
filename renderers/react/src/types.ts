@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import type { ComponentType } from 'react';
+import type {ComponentType} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
 import type * as Primitives from '@a2ui/web_core/types/primitives';
 
 // Re-export the Types and Primitives namespaces for convenience
-export type { Types, Primitives };
+export type {Types, Primitives};
 
 // Re-export commonly used types from Types namespace
 export type AnyComponentNode = Types.AnyComponentNode;
@@ -50,9 +50,10 @@ export interface A2UIComponentProps<T extends Types.AnyComponentNode = Types.Any
 /**
  * A function that loads a React component asynchronously.
  */
-export type ComponentLoader<T extends Types.AnyComponentNode = Types.AnyComponentNode> = () => Promise<{
-  default: ComponentType<A2UIComponentProps<T>>;
-}>;
+export type ComponentLoader<T extends Types.AnyComponentNode = Types.AnyComponentNode> =
+  () => Promise<{
+    default: ComponentType<A2UIComponentProps<T>>;
+  }>;
 
 /**
  * Registration entry for a component in the registry.

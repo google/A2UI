@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { memo } from 'react';
+import {memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject, mergeClassMaps } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject, mergeClassMaps} from '../../lib/utils';
 
 type UsageHint = 'icon' | 'avatar' | 'smallFeature' | 'mediumFeature' | 'largeFeature' | 'header';
 type FitMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
@@ -29,8 +29,8 @@ type FitMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
  * Supports usageHint values: icon, avatar, smallFeature, mediumFeature, largeFeature, header
  * Supports fit values: contain, cover, fill, none, scale-down (maps to object-fit via CSS variable)
  */
-export const Image = memo(function Image({ node, surfaceId }: A2UIComponentProps<Types.ImageNode>) {
-  const { theme, resolveString } = useA2UIComponent(node, surfaceId);
+export const Image = memo(function Image({node, surfaceId}: A2UIComponentProps<Types.ImageNode>) {
+  const {theme, resolveString} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
 
   const url = resolveString(props.url);
@@ -55,16 +55,12 @@ export const Image = memo(function Image({ node, surfaceId }: A2UIComponentProps
   }
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-image" style={hostStyle}>
-      <section
-        className={classMapToString(classes)}
-        style={style}
-      >
+      <section className={classMapToString(classes)} style={style}>
         <img src={url} alt={altText || ''} />
       </section>
     </div>

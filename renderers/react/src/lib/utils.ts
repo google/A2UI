@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { clsx, type ClassValue } from 'clsx';
+import {clsx, type ClassValue} from 'clsx';
 import * as Styles from '@a2ui/web_core/styles/index';
 
 /**
@@ -38,7 +38,7 @@ export function cn(...inputs: ClassValue[]): string {
  * @param classMap - An object where keys are class names and values are booleans
  * @returns A space-separated string of class names where the value is true
  */
-export { classMapToString, stylesToObject } from '../theme/utils';
+export {classMapToString, stylesToObject} from '../theme/utils';
 
 /**
  * Merges multiple class maps into a single class map.

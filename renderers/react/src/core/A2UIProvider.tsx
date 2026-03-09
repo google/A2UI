@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  createContext,
-  useContext,
-  useRef,
-  useState,
-  useMemo,
-  type ReactNode,
-} from 'react';
+import {createContext, useContext, useRef, useState, useMemo, type ReactNode} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import { A2uiMessageProcessor } from '@a2ui/web_core/data/model-processor';
-import type { A2UIContextValue, A2UIActions } from './store';
-import { ThemeProvider } from '../theme/ThemeContext';
-import { initializeDefaultCatalog } from '../registry/defaultCatalog';
-import { injectStyles } from '../styles';
-import type { OnActionCallback } from '../types';
+import {A2uiMessageProcessor} from '@a2ui/web_core/data/model-processor';
+import type {A2UIContextValue, A2UIActions} from './store';
+import {ThemeProvider} from '../theme/ThemeContext';
+import {initializeDefaultCatalog} from '../registry/defaultCatalog';
+import {injectStyles} from '../styles';
+import type {OnActionCallback} from '../types';
 
 // Auto-initialize catalog and styles once on first import
 let initialized = false;
@@ -50,7 +43,7 @@ const A2UIActionsContext = createContext<A2UIActions | null>(null);
  * Context for reactive state (changes trigger re-renders).
  * Only components that need to react to state changes subscribe to this.
  */
-const A2UIStateContext = createContext<{ version: number } | null>(null);
+const A2UIStateContext = createContext<{version: number} | null>(null);
 
 /**
  * Props for the A2UIProvider component.
@@ -90,7 +83,7 @@ export interface A2UIProviderProps {
  * }
  * ```
  */
-export function A2UIProvider({ onAction, theme, children }: A2UIProviderProps) {
+export function A2UIProvider({onAction, theme, children}: A2UIProviderProps) {
   ensureInitialized();
 
   // Create message processor only once using ref
@@ -157,7 +150,7 @@ export function A2UIProvider({ onAction, theme, children }: A2UIProviderProps) {
   const actions = actionsRef.current;
 
   // State context value - only changes when version changes
-  const stateValue = useMemo(() => ({ version }), [version]);
+  const stateValue = useMemo(() => ({version}), [version]);
 
   return (
     <A2UIActionsContext.Provider value={actions}>
@@ -190,7 +183,7 @@ export function useA2UIActions(): A2UIActions {
  * @returns Current version number
  * @throws If used outside of an A2UIProvider
  */
-export function useA2UIState(): { version: number } {
+export function useA2UIState(): {version: number} {
   const state = useContext(A2UIStateContext);
   if (!state) {
     throw new Error('useA2UIState must be used within an A2UIProvider');

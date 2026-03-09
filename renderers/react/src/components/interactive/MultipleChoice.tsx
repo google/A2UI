@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { useCallback, useId, memo } from 'react';
+import {useCallback, useId, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
 
 /**
  * MultipleChoice component - a selection component using a dropdown.
@@ -30,11 +30,12 @@ export const MultipleChoice = memo(function MultipleChoice({
   node,
   surfaceId,
 }: A2UIComponentProps<Types.MultipleChoiceNode>) {
-  const { theme, resolveString, setValue } = useA2UIComponent(node, surfaceId);
+  const {theme, resolveString, setValue} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
   const id = useId();
 
-  const options = (props.options as { label: { literalString?: string; path?: string }; value: string }[]) ?? [];
+  const options =
+    (props.options as {label: {literalString?: string; path?: string}; value: string}[]) ?? [];
   const selectionsPath = props.selections?.path;
 
   // Access description from props (Lit component supports it)
@@ -52,9 +53,8 @@ export const MultipleChoice = memo(function MultipleChoice({
   );
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   // Structure mirrors Lit's MultipleChoice component:
   //   <div class="a2ui-multiplechoice">  ← :host equivalent
@@ -65,13 +65,8 @@ export const MultipleChoice = memo(function MultipleChoice({
   //   </div>
   return (
     <div className="a2ui-multiplechoice" style={hostStyle}>
-      <section
-        className={classMapToString(theme.components.MultipleChoice.container)}
-      >
-        <label
-          htmlFor={id}
-          className={classMapToString(theme.components.MultipleChoice.label)}
-        >
+      <section className={classMapToString(theme.components.MultipleChoice.container)}>
+        <label htmlFor={id} className={classMapToString(theme.components.MultipleChoice.label)}>
           {description}
         </label>
         <select

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { createContext, useContext, type ReactNode } from 'react';
+import {createContext, useContext, type ReactNode} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import { defaultTheme } from './litTheme';
+import {defaultTheme} from './litTheme';
 
 /**
  * React context for the A2UI theme.
@@ -36,12 +36,8 @@ export interface ThemeProviderProps {
 /**
  * Provider component that makes the A2UI theme available to descendant components.
  */
-export function ThemeProvider({ theme, children }: ThemeProviderProps) {
-  return (
-    <ThemeContext.Provider value={theme ?? defaultTheme}>
-      {children}
-    </ThemeContext.Provider>
-  );
+export function ThemeProvider({theme, children}: ThemeProviderProps) {
+  return <ThemeContext.Provider value={theme ?? defaultTheme}>{children}</ThemeContext.Provider>;
 }
 
 /**

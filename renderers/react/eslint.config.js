@@ -27,6 +27,9 @@ export default tseslint.config(
   // TypeScript recommended rules
   ...tseslint.configs.recommended,
 
+  // Google
+  ...require('gts'),
+
   // React configuration
   {
     files: ['**/*.{ts,tsx}'],

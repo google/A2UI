@@ -16,12 +16,12 @@
 
 'use client';
 
-import React, { useId, useMemo, useEffect, useRef } from 'react';
+import React, {useId, useMemo, useEffect, useRef} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import { A2UIProvider, useA2UIActions } from './A2UIProvider';
-import { A2UIRenderer } from './A2UIRenderer';
-import { litTheme } from '../theme/litTheme';
-import type { OnActionCallback } from '../types';
+import {A2UIProvider, useA2UIActions} from './A2UIProvider';
+import {A2UIRenderer} from './A2UIRenderer';
+import {litTheme} from '../theme/litTheme';
+import type {OnActionCallback} from '../types';
 
 /**
  * Component instance format for static A2UI definitions.
@@ -143,7 +143,7 @@ function A2UIViewerInner({
   data: Record<string, unknown>;
   className?: string;
 }) {
-  const { processMessages } = useA2UIActions();
+  const {processMessages} = useA2UIActions();
   const lastProcessedRef = useRef<string>('');
 
   // Process messages when props change
@@ -153,8 +153,8 @@ function A2UIViewerInner({
     lastProcessedRef.current = key;
 
     const messages: Types.ServerToClientMessage[] = [
-      { beginRendering: { surfaceId, root, styles: {} } },
-      { surfaceUpdate: { surfaceId, components } },
+      {beginRendering: {surfaceId, root, styles: {}}},
+      {surfaceUpdate: {surfaceId, components}},
     ];
 
     // Add data model updates
@@ -162,7 +162,7 @@ function A2UIViewerInner({
       const contents = objectToValueMaps(data);
       if (contents.length > 0) {
         messages.push({
-          dataModelUpdate: { surfaceId, path: '/', contents },
+          dataModelUpdate: {surfaceId, path: '/', contents},
         });
       }
     }
@@ -190,28 +190,26 @@ function objectToValueMaps(obj: Record<string, unknown>): Types.ValueMap[] {
  */
 function valueToValueMap(key: string, value: unknown): Types.ValueMap {
   if (typeof value === 'string') {
-    return { key, valueString: value };
+    return {key, valueString: value};
   }
   if (typeof value === 'number') {
-    return { key, valueNumber: value };
+    return {key, valueNumber: value};
   }
   if (typeof value === 'boolean') {
-    return { key, valueBoolean: value };
+    return {key, valueBoolean: value};
   }
   if (value === null || value === undefined) {
-    return { key };
+    return {key};
   }
   if (Array.isArray(value)) {
-    const valueMap = value.map((item, index) =>
-      valueToValueMap(String(index), item)
-    );
-    return { key, valueMap };
+    const valueMap = value.map((item, index) => valueToValueMap(String(index), item));
+    return {key, valueMap};
   }
   if (typeof value === 'object') {
     const valueMap = objectToValueMaps(value as Record<string, unknown>);
-    return { key, valueMap };
+    return {key, valueMap};
   }
-  return { key };
+  return {key};
 }
 
 export default A2UIViewer;

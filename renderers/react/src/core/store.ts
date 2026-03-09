@@ -15,7 +15,7 @@
  */
 
 import type * as Types from '@a2ui/web_core/types/types';
-import type { OnActionCallback } from '../types';
+import type {OnActionCallback} from '../types';
 
 /**
  * Stable actions that never change (won't cause re-renders).

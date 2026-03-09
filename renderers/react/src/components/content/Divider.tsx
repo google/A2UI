@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { memo } from 'react';
+import {memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
 
 /**
  * Divider component - renders a visual separator line.
@@ -28,13 +28,15 @@ import { classMapToString, stylesToObject } from '../../lib/utils';
  *     <hr class="...">          ← internal element
  *   </div>
  */
-export const Divider = memo(function Divider({ node, surfaceId }: A2UIComponentProps<Types.DividerNode>) {
-  const { theme } = useA2UIComponent(node, surfaceId);
+export const Divider = memo(function Divider({
+  node,
+  surfaceId,
+}: A2UIComponentProps<Types.DividerNode>) {
+  const {theme} = useA2UIComponent(node, surfaceId);
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-divider" style={hostStyle}>

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { useMemo, memo } from 'react';
+import {useMemo, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject, mergeClassMaps } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject, mergeClassMaps} from '../../lib/utils';
 import MarkdownIt from 'markdown-it';
 
 type UsageHint = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'caption' | 'body';
@@ -57,8 +57,12 @@ const markdownRenderer = new MarkdownIt();
  */
 const TAG_TO_TOKEN: Record<string, string> = {
   p: 'paragraph',
-  h1: 'heading', h2: 'heading', h3: 'heading',
-  h4: 'heading', h5: 'heading', h6: 'heading',
+  h1: 'heading',
+  h2: 'heading',
+  h3: 'heading',
+  h4: 'heading',
+  h5: 'heading',
+  h6: 'heading',
   ul: 'bullet_list',
   ol: 'ordered_list',
   li: 'list_item',
@@ -69,7 +73,9 @@ const TAG_TO_TOKEN: Record<string, string> = {
 
 function toClassArray(classes: string[] | Record<string, boolean>): string[] {
   if (Array.isArray(classes)) return classes;
-  return Object.entries(classes).filter(([, v]) => v).map(([k]) => k);
+  return Object.entries(classes)
+    .filter(([, v]) => v)
+    .map(([k]) => k);
 }
 
 /**
@@ -115,7 +121,6 @@ function renderWithTheme(text: string, markdownTheme: Types.Theme['markdown']): 
   return html;
 }
 
-
 /**
  * Text component - renders text content with markdown support.
  *
@@ -139,8 +144,8 @@ function renderWithTheme(text: string, markdownTheme: Types.Theme['markdown']): 
  *
  * Note: Raw HTML is disabled for security.
  */
-export const Text = memo(function Text({ node, surfaceId }: A2UIComponentProps<Types.TextNode>) {
-  const { theme, resolveString } = useA2UIComponent(node, surfaceId);
+export const Text = memo(function Text({node, surfaceId}: A2UIComponentProps<Types.TextNode>) {
+  const {theme, resolveString} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
 
   const textValue = resolveString(props.text);
@@ -195,7 +200,7 @@ export const Text = memo(function Text({ node, surfaceId }: A2UIComponentProps<T
         break; // Body - no prefix
     }
 
-    return { __html: renderWithTheme(markdownText, theme.markdown) };
+    return {__html: renderWithTheme(markdownText, theme.markdown)};
   }, [textValue, theme.markdown, usageHint]);
 
   if (!renderedContent) {
@@ -203,9 +208,8 @@ export const Text = memo(function Text({ node, surfaceId }: A2UIComponentProps<T
   }
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-text" style={hostStyle}>

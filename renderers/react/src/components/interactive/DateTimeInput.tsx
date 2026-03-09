@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import { useState, useCallback, useEffect, useId, memo } from 'react';
+import {useState, useCallback, useEffect, useId, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
 
 /**
  * DateTimeInput component - a date and/or time picker.
  *
  * Supports enabling date, time, or both. Uses native HTML5 date/time inputs.
  */
-export const DateTimeInput = memo(function DateTimeInput({ node, surfaceId }: A2UIComponentProps<Types.DateTimeInputNode>) {
-  const { theme, resolveString, setValue, getValue } = useA2UIComponent(node, surfaceId);
+export const DateTimeInput = memo(function DateTimeInput({
+  node,
+  surfaceId,
+}: A2UIComponentProps<Types.DateTimeInputNode>) {
+  const {theme, resolveString, setValue, getValue} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
   const id = useId();
 
@@ -87,19 +90,13 @@ export const DateTimeInput = memo(function DateTimeInput({ node, surfaceId }: A2
   //   </div>
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-datetime-input" style={hostStyle}>
-      <section
-        className={classMapToString(theme.components.DateTimeInput.container)}
-      >
-        <label
-          htmlFor={id}
-          className={classMapToString(theme.components.DateTimeInput.label)}
-        >
+      <section className={classMapToString(theme.components.DateTimeInput.container)}>
+        <label htmlFor={id} className={classMapToString(theme.components.DateTimeInput.label)}>
           {getPlaceholderText()}
         </label>
         <input

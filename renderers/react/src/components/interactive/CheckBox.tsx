@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import { useState, useCallback, useEffect, useId, memo } from 'react';
+import {useState, useCallback, useEffect, useId, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
 
 /**
  * CheckBox component - a boolean toggle with a label.
  *
  * Supports two-way data binding for the checked state.
  */
-export const CheckBox = memo(function CheckBox({ node, surfaceId }: A2UIComponentProps<Types.CheckboxNode>) {
-  const { theme, resolveString, resolveBoolean, setValue, getValue } = useA2UIComponent(
+export const CheckBox = memo(function CheckBox({
+  node,
+  surfaceId,
+}: A2UIComponentProps<Types.CheckboxNode>) {
+  const {theme, resolveString, resolveBoolean, setValue, getValue} = useA2UIComponent(
     node,
     surfaceId
   );
@@ -78,9 +81,8 @@ export const CheckBox = memo(function CheckBox({ node, surfaceId }: A2UIComponen
   //   </div>
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-checkbox" style={hostStyle}>
@@ -96,10 +98,7 @@ export const CheckBox = memo(function CheckBox({ node, surfaceId }: A2UIComponen
           className={classMapToString(theme.components.CheckBox.element)}
         />
         {label && (
-          <label
-            htmlFor={id}
-            className={classMapToString(theme.components.CheckBox.label)}
-          >
+          <label htmlFor={id} className={classMapToString(theme.components.CheckBox.label)}>
             {label}
           </label>
         )}

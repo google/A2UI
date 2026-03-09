@@ -15,7 +15,7 @@
  */
 
 import * as Styles from '@a2ui/web_core/styles/index';
-import { resetStyles } from './reset';
+import {resetStyles} from './reset';
 
 /**
  * Structural CSS styles from the Lit renderer, converted for global DOM use.

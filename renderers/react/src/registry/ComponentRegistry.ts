@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { lazy, type ComponentType } from 'react';
+import {lazy, type ComponentType} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps, ComponentLoader, ComponentRegistration } from '../types';
+import type {A2UIComponentProps, ComponentLoader, ComponentRegistration} from '../types';
 
 /**
  * Registry for A2UI components. Allows registration of custom components

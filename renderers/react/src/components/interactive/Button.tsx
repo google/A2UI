@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { useCallback, memo } from 'react';
+import {useCallback, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
-import { ComponentNode } from '../../core/ComponentNode';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
+import {ComponentNode} from '../../core/ComponentNode';
 
 /**
  * Button component - a clickable element that triggers an action.
@@ -27,8 +27,11 @@ import { ComponentNode } from '../../core/ComponentNode';
  * Contains a child component (usually Text or Icon) and dispatches
  * a user action when clicked.
  */
-export const Button = memo(function Button({ node, surfaceId }: A2UIComponentProps<Types.ButtonNode>) {
-  const { theme, sendAction } = useA2UIComponent(node, surfaceId);
+export const Button = memo(function Button({
+  node,
+  surfaceId,
+}: A2UIComponentProps<Types.ButtonNode>) {
+  const {theme, sendAction} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
 
   const handleClick = useCallback(() => {
@@ -38,9 +41,8 @@ export const Button = memo(function Button({ node, surfaceId }: A2UIComponentPro
   }, [props.action, sendAction]);
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-button" style={hostStyle}>

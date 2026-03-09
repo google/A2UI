@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Suspense, useMemo, memo } from 'react';
+import {Suspense, useMemo, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import { ComponentRegistry } from '../registry/ComponentRegistry';
+import {ComponentRegistry} from '../registry/ComponentRegistry';
 
 /** Memoized loading fallback to avoid recreating on each render */
 const LoadingFallback = memo(function LoadingFallback() {
   return (
-    <div className="a2ui-loading" style={{ padding: '8px', opacity: 0.5 }}>
+    <div className="a2ui-loading" style={{padding: '8px', opacity: 0.5}}>
       Loading...
     </div>
   );

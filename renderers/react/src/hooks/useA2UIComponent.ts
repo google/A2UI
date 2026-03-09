@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { useCallback, useId, useMemo } from 'react';
+import {useCallback, useId, useMemo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
 import type * as Primitives from '@a2ui/web_core/types/primitives';
-import { useA2UIActions, useA2UIState } from '../core/A2UIProvider';
-import { useTheme } from '../theme/ThemeContext';
+import {useA2UIActions, useA2UIState} from '../core/A2UIProvider';
+import {useTheme} from '../theme/ThemeContext';
 
 /**
  * Result returned by the useA2UIComponent hook.
@@ -240,6 +240,15 @@ export function useA2UIComponent<T extends Types.AnyComponentNode>(
       sendAction,
       getUniqueId,
     }),
-    [theme, resolveString, resolveNumber, resolveBoolean, setValue, getValue, sendAction, getUniqueId]
+    [
+      theme,
+      resolveString,
+      resolveNumber,
+      resolveBoolean,
+      setValue,
+      getValue,
+      sendAction,
+      getUniqueId,
+    ]
   );
 }

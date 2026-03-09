@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { useState, useCallback, useEffect, useId, memo } from 'react';
+import {useState, useCallback, useEffect, useId, memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
-import type { A2UIComponentProps } from '../../types';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { classMapToString, stylesToObject } from '../../lib/utils';
+import type {A2UIComponentProps} from '../../types';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {classMapToString, stylesToObject} from '../../lib/utils';
 
 type TextFieldType = 'shortText' | 'longText' | 'number' | 'date';
 
@@ -27,8 +27,11 @@ type TextFieldType = 'shortText' | 'longText' | 'number' | 'date';
  *
  * Supports various input types and two-way data binding.
  */
-export const TextField = memo(function TextField({ node, surfaceId }: A2UIComponentProps<Types.TextFieldNode>) {
-  const { theme, resolveString, setValue, getValue } = useA2UIComponent(node, surfaceId);
+export const TextField = memo(function TextField({
+  node,
+  surfaceId,
+}: A2UIComponentProps<Types.TextFieldNode>) {
+  const {theme, resolveString, setValue, getValue} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
   const id = useId();
 
@@ -70,12 +73,7 @@ export const TextField = memo(function TextField({ node, surfaceId }: A2UICompon
     [validationRegexp, textPath, setValue]
   );
 
-  const inputType =
-    fieldType === 'number'
-      ? 'number'
-      : fieldType === 'date'
-        ? 'date'
-        : 'text';
+  const inputType = fieldType === 'number' ? 'number' : fieldType === 'date' ? 'date' : 'text';
   const isTextArea = fieldType === 'longText';
 
   // Structure mirrors Lit's TextField component:
@@ -87,18 +85,14 @@ export const TextField = memo(function TextField({ node, surfaceId }: A2UICompon
   //   </div>
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties = node.weight !== undefined
-    ? { '--weight': node.weight } as React.CSSProperties
-    : {};
+  const hostStyle: React.CSSProperties =
+    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
 
   return (
     <div className="a2ui-textfield" style={hostStyle}>
       <section className={classMapToString(theme.components.TextField.container)}>
         {label && (
-          <label
-            htmlFor={id}
-            className={classMapToString(theme.components.TextField.label)}
-          >
+          <label htmlFor={id} className={classMapToString(theme.components.TextField.label)}>
             {label}
           </label>
         )}
