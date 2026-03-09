@@ -80,11 +80,13 @@ Flutter uses the GenUI SDK which provides native A2UI rendering.
 ## Connecting to Agents
 
 Your client application needs to:
+
 1. **Receive A2UI messages** from the agent (via transport)
 2. **Process messages** using the Message Processor
 3. **Send user actions** back to the agent
 
 Common transport options:
+
 - **Server-Sent Events (SSE)**: One-way streaming from server to client
 - **WebSockets**: Bidirectional real-time communication
 - **A2A Protocol**: Standardized agent-to-agent communication with A2UI support
@@ -96,6 +98,7 @@ TODO: Add transport implementation examples.
 ## Handling User Actions
 
 When users interact with A2UI components (clicking buttons, submitting forms, etc.), the client:
+
 1. Captures the action event from the component
 2. Resolves any data context needed for the action
 3. Sends the action to the agent
@@ -106,6 +109,7 @@ TODO: Add action handling examples.
 ## Error Handling
 
 Common errors to handle:
+
 - **Invalid Surface ID**: Surface referenced before `beginRendering` (v0.8) or `createSurface` (v0.9) was received
 - **Invalid Component ID**: Component IDs must be unique within a surface
 - **Invalid Data Path**: Check data model structure and JSON Pointer syntax
