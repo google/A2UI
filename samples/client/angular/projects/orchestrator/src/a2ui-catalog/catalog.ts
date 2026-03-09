@@ -38,4 +38,14 @@ export const DEMO_CATALOG = {
       inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
     ],
   },
+  McpApp: {
+    type: () => import('./mcp-app').then((r) => r.McpApp),
+    bindings: ({ properties }) => [
+      inputBinding(
+        'content',
+        () => ('content' in properties && properties['content']) || undefined,
+      ),
+      inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
+    ],
+  },
 } as Catalog;
