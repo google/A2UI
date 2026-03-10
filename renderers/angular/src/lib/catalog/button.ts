@@ -46,6 +46,8 @@ import { Renderer } from '../rendering/renderer';
 })
 export class Button extends DynamicComponent<Types.ButtonNode> {
   readonly action = input.required<Types.Action | null>();
+  // This is currently not handled by the template.
+  readonly primary = input<boolean | null>(false);
 
   protected handleClick() {
     const action = this.action();

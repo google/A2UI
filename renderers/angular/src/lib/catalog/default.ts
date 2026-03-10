@@ -105,7 +105,10 @@ export const DEFAULT_CATALOG: Catalog = {
     type: () => import('./button').then((r) => r.Button),
     bindings: (node) => {
       const properties = (node as Types.ButtonNode).properties;
-      return [inputBinding('action', () => properties.action)];
+      return [
+        inputBinding('action', () => properties.action),
+        inputBinding('primary', () => properties.primary),
+      ];
     },
   },
 
@@ -130,7 +133,7 @@ export const DEFAULT_CATALOG: Catalog = {
       return [
         inputBinding('text', () => properties.text ?? null),
         inputBinding('label', () => properties.label),
-        inputBinding('inputType', () => properties.type),
+        inputBinding('textFieldType', () => properties.textFieldType),
       ];
     },
   },

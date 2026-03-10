@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/angular",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "license": "Apache-2.0",
   "scripts": {
     "build": "ng build && node postprocess-build.mjs"
