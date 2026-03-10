@@ -351,7 +351,7 @@ export class MyA2UIApp extends LitElement {
 In a Flutter application, the global theme configuration (colors, typography,
 spacing, border radiuses) and widget-specific component overrides are mapped
 natively via Flutter's `ThemeData`. You provide this configuration directly to
-your host Flutter application, rather than providing a literal TypeScript`Theme`
+your host Flutter application, rather than providing a literal TypeScript `Theme`
 dictionary to a web context.
 
 ## 5. Reference: Default Styling Levers
