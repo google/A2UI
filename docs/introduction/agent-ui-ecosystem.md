@@ -25,7 +25,7 @@ The agentic UI space is evolving rapidly. Here's how A2UI relates to the other m
 
 ## A2UI vs ChatKit (OpenAI)
 
-[ChatKit](https://openai.com) offers a tightly integrated experience within the OpenAI ecosystem. A2UI shares some design philosophy with ChatKit — both define a set of basic components and use a configurable, declarative abstraction layer. A2UI is **platform-agnostic** — designed for developers building their own agentic surfaces across web, mobile, and desktop, or for multi-agent systems where agents need to render UI across trust boundaries.
+[ChatKit](https://platform.openai.com/docs/guides/chatkit) offers a tightly integrated experience within the OpenAI ecosystem. A2UI shares some design philosophy with ChatKit — both define a set of basic components and use a configurable, declarative abstraction layer. A2UI is **platform-agnostic** — designed for developers building their own agentic surfaces across web, mobile, and desktop, or for multi-agent systems where agents need to render UI across trust boundaries.
 
 ## Using Them Together
 
