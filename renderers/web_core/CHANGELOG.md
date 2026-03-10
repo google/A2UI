@@ -2,6 +2,7 @@
 
 - Add `V8ErrorConstructor` interface to be able to access V8-only 
   `captureStackTrace` method in errors.
+- Removes dependency from `v0_8` to `v0_9` by duplicating the `errors.ts` file.
 
 ## 0.8.4
 
