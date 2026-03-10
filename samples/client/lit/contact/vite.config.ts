@@ -36,11 +36,16 @@ export default async () => {
       rollupOptions: {
         input: entry,
       },
-      target: "esnext",
+      target: "es2021",
     },
     define: {},
     resolve: {
       dedupe: ["lit"],
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        target: "es2021",
+      }
     },
     server: {
       host: true, // Listen on all network interfaces (0.0.0.0), enabling both localhost and 127.0.0.1 simultaneously

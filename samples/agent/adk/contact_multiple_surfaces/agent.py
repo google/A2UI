@@ -324,6 +324,13 @@ class ContactAgent:
                                     "height": 400,
                                     "allowedTools": ["chart_node_click"],
                                 }
+                            } if os.environ.get("USE_MCP_SANDBOX", "true").lower() == "true" else {
+                                "WebFrame": {
+                                    "html": html_content,
+                                    "height": 400,
+                                    "interactionMode": "interactive",
+                                    "allowedEvents": ["chart_node_click"],
+                                }
                             },
                         },
                         {

@@ -41,6 +41,9 @@ import * as UI from "@a2ui/lit/ui";
 // Demo elements.
 import "./ui/ui.js";
 import { registerContactComponents } from "./ui/custom-components/register-components.js";
+import { Context } from "@a2ui/lit/ui";
+// @ts-ignore
+import { renderMarkdown } from "@a2ui/markdown-it";
 
 // Register custom components for the contact app
 registerContactComponents();
@@ -53,6 +56,9 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
   @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
+
+  @provide({ context: UI.Context.markdown })
+  accessor markdownRenderer: v0_8.Types.MarkdownRenderer = renderMarkdown;
 
   @state()
   accessor #requesting = false;
@@ -345,7 +351,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
             const message: v0_8.Types.A2UIClientEventMessage = {
               userAction: {
                 surfaceId: surfaceId,
-                name: evt.detail.action.name,
+                name: "ACTION: " + evt.detail.action.name,
                 sourceComponentId: target.id,
                 timestamp: new Date().toISOString(),
                 context,

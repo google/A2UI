@@ -1,7 +1,0 @@
-Check out the contact_multiple_surfaces sample for a2ui. Here, we are using a single agent to handle multiple a2ui surfaces. One is a genUI surface (JSON coming down and rendered using standard catalog components). The second is a custom component surface (where we are using a custom component to render the UI). The third one (for showing office location) is an iframe custom component. 
-
-We want to create a new MCP-APPs SDK based custom component that can be used similar to the iframe component (be fully interactive and update combined state of all surfaces through piped action events). Make ultra sure that you are strictly referring to the official MCP-Apps docs and use the official MCP apps sdk for this custom MCPAppsCustomComponent. It is at https://github.com/modelcontextprotocol/ext-apps
-
-For this, I assume you will need to create a new MCP server that will host this custom component. This MCP server will be called by the agent to render the custom component. We need to make sure that it is still within A2UI. (The ui:// resource is encapsulated with a2ui).
-
-Goal of this new custom component is to be able to easily integrate with already built MCP servers that support MCP apps. Make sure that the sample functionality (including shared state across all a2ui surfaces) and looks are maintained. You can just replace the iframe component with this new MCPAppsCustomComponent. Then the surface will be an MCP apps custom component surface.

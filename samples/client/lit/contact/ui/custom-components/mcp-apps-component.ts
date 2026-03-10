@@ -75,13 +75,17 @@ export class McpAppsCustomComponent extends Root {
         <iframe
           id="mcp-sandbox"
           referrerpolicy="origin"
+          sandbox="allow-scripts allow-forms allow-popups allow-modals allow-same-origin"
         ></iframe>
       </div>
     `;
   }
 
-  override firstUpdated() {
-    this.#initializeSandbox();
+  override updated(changedProperties: Map<string, any>) {
+    super.updated(changedProperties);
+    if (!this.#bridge && this.htmlContent && this.iframe) {
+      this.#initializeSandbox();
+    }
   }
 
   override disconnectedCallback() {
@@ -151,8 +155,8 @@ export class McpAppsCustomComponent extends Root {
     // 1. Listen for the Outer Iframe to declare itself ready.
     const readyNotification: McpUiSandboxProxyReadyNotification["method"] = "ui/notifications/sandbox-proxy-ready";
     const proxyReady = new Promise<boolean>((resolve) => {
-      const listener = ({ source, data }: MessageEvent) => {
-        if (source === this.iframe.contentWindow && data?.method === readyNotification) {
+      const listener = ({ source, data, origin }: MessageEvent) => {
+        if (source === this.iframe.contentWindow && origin === sandboxUrl.origin && data?.method === readyNotification) {
           window.removeEventListener("message", listener);
           resolve(true);
         }
