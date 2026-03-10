@@ -35,7 +35,7 @@ export class TextField extends Root {
   accessor label: Primitives.StringValue | null = null;
 
   @property()
-  accessor inputType: Types.ResolvedTextField["type"] | null = null;
+  accessor textFieldType: Types.ResolvedTextField["textFieldType"] | null = null;
 
   @property()
   accessor validationRegexp: string | null = null;
@@ -131,7 +131,7 @@ export class TextField extends Root {
         .value=${value}
         .placeholder=${"Please enter a value"}
         pattern=${this.validationRegexp || nothing}
-        type=${this.inputType === "number" ? "number" : "text"}
+        type=${this.textFieldType === "number" ? "number" : "text"}
       />
     </section>`;
   }

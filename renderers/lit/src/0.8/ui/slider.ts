@@ -39,9 +39,6 @@ export class Slider extends Root {
   @property()
   accessor label: Primitives.StringValue | null = null;
 
-  @property()
-  accessor inputType: Types.ResolvedTextField["type"] | null = null;
-
   static styles = [
     structuralStyles,
     css`

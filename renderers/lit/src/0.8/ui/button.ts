@@ -28,6 +28,9 @@ export class Button extends Root {
   @property()
   accessor action: Types.Action | null = null;
 
+  @property()
+  accessor primary: boolean | null = false;
+
   static styles = [
     structuralStyles,
     css`
