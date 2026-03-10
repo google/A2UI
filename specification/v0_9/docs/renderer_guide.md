@@ -92,7 +92,7 @@ The model is designed to support high-performance rendering through granular upd
 *   **`SurfaceComponentsModel`**: A flat collection of component configurations.
 *   **`ComponentModel`**: A specific component's raw configuration.
 *   **`DataModel`**: A dedicated store for application data.
-*   **`DataContext`**: A scoped window into the `DataModel`. Used by functions and components to resolve dependencies and mutate state.
+*   **`DataContext`**: A scoped window into the `DataModel`. Used by functions and components to resolve dependencies and mutate state. The window is specifically a view of the data model that has some defined base path, so that relative path references are resolved against this. This is typically just the root `/`, except for cases where we are using the "template" pattern to build a `ChildList` of Components. When this occurs, the parent component will generally call some function to build each child, specifying the same component ID but a different base path for each child so that the same template can be rendered with different data.
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
 ### The Models
