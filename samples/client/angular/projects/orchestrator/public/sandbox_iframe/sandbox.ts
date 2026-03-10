@@ -21,7 +21,7 @@ import {
     SANDBOX_RESOURCE_READY_METHOD
 } from '@modelcontextprotocol/ext-apps/app-bridge';
 
-const contentDiv = document.getElementById('content');
+const content = document.getElementById('content');
 
 // Initialize AppBridge
 const bridge = new AppBridge(
@@ -57,20 +57,18 @@ window.addEventListener('message', async (event) => {
     if (data && data.method === SANDBOX_RESOURCE_READY_METHOD) {
         const { html, sandbox } = data.params;
         
-        if (html && contentDiv) {
+        if (html && content) {
             // Create an inner iframe with srcdoc to enable Javascript execution if any.
             const innerFrame = document.createElement('iframe');
             innerFrame.srcdoc = html;
             innerFrame.style.width = '100%';
             innerFrame.style.height = '100%';
             innerFrame.style.border = 'none';
-            if (sandbox) {
-                innerFrame.sandbox = sandbox;
-            }
+            innerFrame.sandbox = sandbox || '';
 
             // Clear any existing content and inject the new iframe
-            contentDiv.innerHTML = '';
-            contentDiv.appendChild(innerFrame);
+            content.innerHTML = '';
+            content.appendChild(innerFrame);
         }
     }
 });

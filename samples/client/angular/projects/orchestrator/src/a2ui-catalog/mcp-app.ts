@@ -23,7 +23,6 @@ import {
   SANDBOX_PROXY_READY_METHOD,
 } from '@modelcontextprotocol/ext-apps/app-bridge';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -31,9 +30,10 @@ import {
   inject,
   input,
   OnDestroy,
+  OnInit,
   signal,
   Signal,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -71,7 +71,7 @@ import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-brows
 })
 export class McpApp
   extends DynamicComponent<Types.CustomNode>
-  implements OnDestroy, AfterViewInit
+  implements OnDestroy, OnInit
 {
   private readonly sanitizer = inject(DomSanitizer);
 
@@ -93,11 +93,11 @@ export class McpApp
     this.sanitizer.bypassSecurityTrustResourceUrl('about:blank')
   );
 
-  @ViewChild('iframe') iframeElement!: ElementRef<HTMLIFrameElement>;
+  private iframe = viewChild.required<ElementRef<HTMLIFrameElement>>('iframe');
   private appBridge: AppBridge | null = null;
   private messageHandler: ((event: MessageEvent) => void) | null = null;
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.setupSandbox();
   }
 
@@ -115,8 +115,8 @@ export class McpApp
     this.messageHandler = (event: MessageEvent) => {
       // Check if the message is from our iframe
       if (
-        this.iframeElement?.nativeElement &&
-        event.source === this.iframeElement.nativeElement.contentWindow &&
+        this.iframe().nativeElement &&
+        event.source === this.iframe().nativeElement.contentWindow &&
         event.data?.method === SANDBOX_PROXY_READY_METHOD
       ) {
         // Init bridge
@@ -136,11 +136,11 @@ export class McpApp
   }
 
   private async initializeBridge() {
-    if (!this.iframeElement?.nativeElement?.contentWindow) {
+    if (!this.iframe().nativeElement.contentWindow) {
       return;
     }
 
-    const iframe = this.iframeElement.nativeElement;
+    const iframe = this.iframe().nativeElement;
 
     // The app bridge is initialized without a direct connection to MCP server.
     // Communication with MCP server is expected to be handled by the sandbox iframe.
@@ -172,7 +172,7 @@ export class McpApp
       //
       // Example logic:
       // if (height !== undefined) {
-      //   this.iframeElement.nativeElement.style.height = `${height}px`;
+      //   this.iframe().nativeElement.style.height = `${height}px`;
       // }
       console.log(`[MCP App] Resize requested: ${width}x${height}`);
     };
