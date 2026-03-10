@@ -67,6 +67,20 @@ TODO: Add verified setup example.
 
 **See working example:** [Angular restaurant sample](https://github.com/google/a2ui/tree/main/samples/client/angular/projects/restaurant)
 
+## React
+
+```bash
+npm install @a2ui/react @a2ui/web-lib
+```
+
+The React renderer provides:
+
+- **`<A2UISurface>` component**: Renders A2UI surfaces in your React app
+- **`useA2UI()` hook**: Accesses the message processor from any component
+- **`MessageProcessor` class**: Handles incoming A2UI messages (shared with other web renderers)
+
+**See working example:** [React sample](https://github.com/google/A2UI/tree/main/samples/client/react) *(coming soon)*
+
 ## Flutter (GenUI SDK)
 
 ```bash

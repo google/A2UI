@@ -38,14 +38,25 @@ No credible A2UI renderer packages were found on PyPI as of March 2026. A2UI ren
 
 ## Submitting a Renderer
 
-Built an A2UI renderer? We'd love to list it here:
+Built an A2UI renderer? We'd love to list it here.
 
-1. Open a PR to add it to this page
-2. Or file an issue on the [A2UI repo](https://github.com/google/A2UI)
+### How to submit
+
+1. **Fork** the [google/A2UI](https://github.com/google/A2UI) repository
+2. **Edit** this file (`docs/ecosystem/renderers.md`) — add a row to the Community Renderers table with your renderer's name, platform, npm package (if any), version support, and a link to the source
+3. **Open a PR** against `google/A2UI` with a short description of your renderer
+4. **Post in [GitHub Discussions](https://github.com/google/A2UI/discussions)** — let the community know what you built! A short demo video goes a long way.
+
+Need inspiration? Browse the **[community samples](https://github.com/google/A2UI/tree/main/samples)** in the repo — these cover Angular, Lit, and ADK-based agents and are a good starting point.
 
 ### What makes a good community renderer?
 
-- Published source code (open-source preferred)
-- Clear documentation on which A2UI spec version is supported
-- At least basic component coverage (text, buttons, inputs, layout)
-- Active maintenance
+A listing is more likely to be accepted and used if it:
+
+- Has **published source code** (open-source preferred, MIT or Apache 2.0)
+- Clearly states **which A2UI spec version** it supports (v0.8, v0.9, or both)
+- Covers **core components**: text, buttons, inputs, and basic layout
+- Includes a **README** with install instructions and a minimal usage example
+- Is **actively maintained** — flag it as archived if you're no longer supporting it
+
+Community renderers don't need to be production-ready to be listed — experimental and early-stage projects are welcome in the Notable Mentions section.

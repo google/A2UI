@@ -10,16 +10,21 @@ Integrate A2UI rendering into your existing app or build a new agent-powered fro
 
 **Choose a renderer:**
 
-- **Web:** Lit, Angular
+- **Web:** Lit, Angular, React
 - **Mobile/Desktop:** Flutter GenUI SDK
-- **React:** Coming Q1 2026
 
 **Quick setup:**
 
-If we are using an Angular app, we can add the Angular renderer:
+For Angular:
 
 ```bash
-npm install @a2ui/angular 
+npm install @a2ui/angular @a2ui/web-lib
+```
+
+For React:
+
+```bash
+npm install @a2ui/react @a2ui/web-lib
 ```
 
 Connect to agent messages (SSE, WebSockets, or A2A) and customize styling to match your brand.

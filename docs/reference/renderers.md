@@ -12,7 +12,7 @@ You have a lot of flexibility, to bring custom components to a renderer, or buil
 
 | Renderer | Platform | v0.8 | v0.9 | Links |
 |----------|----------|------|------|-------|
-| **React** | Web | 🔄 [In Review](https://github.com/google/A2UI/pull/542) | ❌ | [PR #542](https://github.com/google/A2UI/pull/542) |
+| **React** | Web | ✅ Stable | ❌ | [Code](https://github.com/google/A2UI/tree/main/renderers/react) |
 | **Lit (Web Components)** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/lit) |
 | **Angular** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/angular) |
 | **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ Stable | ✅ Stable | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
@@ -46,6 +46,7 @@ A2UI JSON → Renderer → Native Components → Your App
 
 Get started integrating A2UI into your application by following the setup guide for your chosen renderer:
 
+- **[React](../guides/client-setup.md#react)**
 - **[Lit (Web Components)](../guides/client-setup.md#web-components-lit)**
 - **[Angular](../guides/client-setup.md#angular)**
 - **[Flutter (GenUI SDK)](../guides/client-setup.md#flutter-genui-sdk)**
