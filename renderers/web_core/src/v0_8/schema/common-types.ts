@@ -255,6 +255,12 @@ export const ButtonSchema = z.object({
     .string()
     .describe("The ID of the component to display as the button's content."),
   action: ActionSchema.describe("Represents a user-initiated action."),
+  primary: z
+    .boolean()
+    .optional()
+    .describe(
+      "Indicates if this button should be styled as the primary action."
+    ),
 });
 
 export const CheckboxSchema = z.object({
@@ -273,7 +279,7 @@ export const CheckboxSchema = z.object({
 export const TextFieldSchema = z.object({
   text: StringValueSchema.optional(),
   label: StringValueSchema.describe("A label, title, or placeholder text."),
-  type: z.enum(["shortText", "number", "date", "longText"]).optional(),
+  textFieldType: z.enum(["shortText", "number", "date", "longText"]).optional(),
   validationRegexp: z
     .string()
     .optional()
