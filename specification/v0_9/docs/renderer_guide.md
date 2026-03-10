@@ -32,7 +32,7 @@ The Data Layer is responsible for receiving the wire protocol (JSON messages), p
 
 > **Note on Language & Frameworks**: While the examples in this document are provided in TypeScript for clarity, the A2UI Data Layer is intended to be implemented in any language (e.g., Java, Python, Swift, Kotlin, Rust) and remain completely independent of any specific UI framework.
 
-It consists of three sub-components: the Processing Layer, the Dumb Models, and the Context Layer.
+It consists of three sub-components: the Processing Layer, the Models, and the Context Layer.
 
 ### Prerequisites
 
@@ -95,8 +95,8 @@ The model is designed to support high-performance rendering through granular upd
 *   **`DataContext`**: A scoped window into the `DataModel`. Used by functions and components to resolve dependencies and mutate state.
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
-### The "Dumb" Models
-These classes are designed to be "dumb containers" for data. They hold the state of the UI but contain minimal logic. They are organized hierarchically.
+### The Models
+These classes are designed to be "simple containers" for data. They hold the state of the UI but contain minimal logic. They are organized hierarchically.
 
 #### SurfaceGroupModel & SurfaceModel
 The root containers for active surfaces and their catalogs, data, and components.
