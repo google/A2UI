@@ -15,6 +15,14 @@
  */
 
 /**
+ * This interface is needed for typescript to allow us to access the V8-only
+ * `captureStackTrace` property in Errors.
+ */
+interface V8ErrorConstructor extends ErrorConstructor {
+  captureStackTrace(targetObject: object, constructorOpt?: Function): void;
+}
+
+/**
  * Base class for all A2UI specific errors.
  */
 export class A2uiError extends Error {
@@ -26,8 +34,8 @@ export class A2uiError extends Error {
     this.code = code;
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
+    if ((Error as V8ErrorConstructor).captureStackTrace) {
+      (Error as V8ErrorConstructor).captureStackTrace(this, this.constructor);
     }
   }
 }
