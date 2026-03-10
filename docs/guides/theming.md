@@ -108,7 +108,7 @@ However, A2UI follows a **client-controlled styling approach**:
 2. **The Client application** maps these semantic hints to actual visual styles
    natively (CSS classes, colors, spacing).
 
-Therefore, while the agent can hint at styling via the schema's `theme`property,
+Therefore, while the agent can hint at styling via the schema's `theme` property,
 strict visual execution is safely controlled by the client renderer (Angular,
 Lit, Flutter).
 
