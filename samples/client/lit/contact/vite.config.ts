@@ -41,6 +41,9 @@ export default async () => {
     define: {},
     resolve: {
       dedupe: ["lit"],
+      alias: {
+        "@a2ui/markdown-it": resolve(__dirname, "../../../../renderers/markdown/markdown-it/dist/src/markdown.js")
+      }
     },
     optimizeDeps: {
       esbuildOptions: {

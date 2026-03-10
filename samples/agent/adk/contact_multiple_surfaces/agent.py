@@ -185,189 +185,65 @@ class ContactAgent:
       logger.info(f"--- ContactAgent.stream: Received query: '{query}' ---")
 
       # --- Check for User Action ---
-      # If the query looks like an action (starts with "ACTION:"), parsing it to see if it's send_message
-
-      if query.startswith("ACTION:") and "send_message" in query:
-        logger.info("--- ContactAgent.stream: Detected send_message ACTION ---")
-
-        # Re-implement logic to read from file
-        from pathlib import Path
-
-        examples_dir = Path(__file__).parent / "examples"
-        action_file = examples_dir / "action_confirmation.json"
-
-        if action_file.exists():
-          json_content = action_file.read_text(encoding="utf-8").strip()
-
-          # Extract contact name from query if present
+      # If the query looks like an action (starts with "ACTION:"), parsing it to see which action
+      if query.startswith("ACTION:"):
+        from a2ui_examples import load_floor_plan_example, load_close_modal_example, load_send_message_example
+        
+        if "send_message" in query:
+          logger.info("--- ContactAgent.stream: Detected send_message ACTION ---")
           contact_name = "Unknown"
           if "(contact:" in query:
             try:
               contact_name = query.split("(contact:")[1].split(")")[0].strip()
             except Exception:
               pass
-
-          # Inject contact name into the message
-          if contact_name != "Unknown":
-            json_content = json_content.replace(
-                "Your action has been processed.", f"Message sent to {contact_name}!"
-            )
-
-        else:
-          logger.error(
-              "Could not find ACTION_CONFIRMATION_EXAMPLE in CONTACT_UI_EXAMPLES"
-          )
-          # Fallback to a minimal valid response to avoid crash
-          json_content = (
-              '[{ "beginRendering": { "surfaceId": "action-modal", "root":'
-              ' "modal-wrapper" } }, { "surfaceUpdate": { "surfaceId": "action-modal",'
-              ' "components": [ { "id": "modal-wrapper", "component": { "Modal": {'
-              ' "entryPointChild": "hidden", "contentChild": "msg", "open": true } } },'
-              ' { "id": "hidden", "component": { "Text": { "text": {"literalString": "'
-              ' "} } } }, { "id": "msg", "component": { "Text": { "text":'
-              ' {"literalString": "Message Sent (Fallback)"} } } } ] } }]'
-          )
-
-        final_response_content = (
-            f"Message sent to {contact_name}\n---a2ui_JSON---\n{json_content}"
-        )
-
-        yield {
-            "is_task_complete": True,
-            "content": final_response_content,
-        }
-        return
-
-      if query.startswith("ACTION:") and "view_location" in query:
-        logger.info("--- ContactAgent.stream: Detected view_location ACTION ---")
-
-        from mcp import ClientSession
-        from mcp.client.sse import sse_client
-        import os
-
-        sse_url = os.environ.get("FLOOR_PLAN_SERVER_URL", "http://127.0.0.1:8000/sse")
-
-        try:
-          # Connect to the persistent Starlette SSE server
-          async with sse_client(sse_url) as (read, write):
-            async with ClientSession(read, write) as mcp_session:
-              await mcp_session.initialize()
-
-              logger.info(
-                  "--- ContactAgent: Fetching ui://floor-plan-server/map from"
-                  " persistent SSE server ---"
-              )
-              result = await mcp_session.read_resource("ui://floor-plan-server/map")
-
-              if not result.contents or len(result.contents) == 0:
-                raise ValueError("No content returned from floor plan server")
-
-              html_content = result.contents[0].text
-        except ValueError as e:
-          logger.error(f"Invalid floor plan data: {e}")
+          json_content = load_send_message_example(contact_name)
           yield {
               "is_task_complete": True,
-              "content": f"Failed to load floor plan data: {str(e)}",
-          }
-          return
-        except Exception as e:
-          logger.error(f"Failed to fetch floor plan from SSE server: {e}")
-          yield {
-              "is_task_complete": True,
-              "content": f"Failed to connect to floor plan server: {str(e)}",
+              "content": f"Message sent to {contact_name}\n---a2ui_JSON---\n{json_content}",
           }
           return
 
-        json_content = [
-            {
-                "beginRendering": {
-                    "surfaceId": "location-surface",
-                    "root": "floor-plan-card",
-                }
-            },
-            {
-                "surfaceUpdate": {
-                    "surfaceId": "location-surface",
-                    "components": [
-                        {
-                            "id": "floor-plan-card",
-                            "component": {"Card": {"child": "floor-plan-col"}},
-                        },
-                        {
-                            "id": "floor-plan-col",
-                            "component": {
-                                "Column": {
-                                    "children": {
-                                        "explicitList": [
-                                            "floor-plan-title",
-                                            "floor-plan-comp",
-                                            "dismiss-fp",
-                                        ]
-                                    }
-                                }
-                            },
-                        },
-                        {
-                            "id": "floor-plan-title",
-                            "component": {
-                                "Text": {
-                                    "usageHint": "h2",
-                                    "text": {"literalString": "Office Floor Plan"},
-                                }
-                            },
-                        },
-                        {
-                            "id": "floor-plan-comp",
-                            "component": {
-                                "McpAppsCustomComponent": {
-                                    "htmlContent": html_content,
-                                    "height": 400,
-                                    "allowedTools": ["chart_node_click"],
-                                }
-                            } if os.environ.get("USE_MCP_SANDBOX", "true").lower() == "true" else {
-                                "WebFrame": {
-                                    "html": html_content,
-                                    "height": 400,
-                                    "interactionMode": "interactive",
-                                    "allowedEvents": ["chart_node_click"],
-                                }
-                            },
-                        },
-                        {
-                            "id": "dismiss-fp-text",
-                            "component": {
-                                "Text": {"text": {"literalString": "Close Map"}}
-                            },
-                        },
-                        {
-                            "id": "dismiss-fp",
-                            "component": {
-                                "Button": {
-                                    "child": "dismiss-fp-text",
-                                    "action": {"name": "close_modal", "context": []},
-                                }
-                            },
-                        },
-                    ],
-                }
-            },
-        ]
+        elif "view_location" in query:
+          logger.info("--- ContactAgent.stream: Detected view_location ACTION ---")
+          # Action maps to opening the FloorPlan overlay to view the contact's location
+          from mcp import ClientSession
+          from mcp.client.sse import sse_client
+          import os
 
-        logger.info(f"--- ContactAgent.stream: Sending Floor Plan ---")
-        final_response_content = (
-            f"Here is the floor plan.\n---a2ui_JSON---\n{json.dumps(json_content)}"
-        )
-        yield {"is_task_complete": True, "content": final_response_content}
-        return
+          sse_url = os.environ.get("FLOOR_PLAN_SERVER_URL", "http://127.0.0.1:8000/sse")
+          try:
+            async with sse_client(sse_url) as (read, write):
+              async with ClientSession(read, write) as mcp_session:
+                await mcp_session.initialize()
+                logger.info("--- ContactAgent: Fetching ui://floor-plan-server/map from persistent SSE server ---")
+                result = await mcp_session.read_resource("ui://floor-plan-server/map")
 
-      if query.startswith("ACTION:") and "close_modal" in query:
-        logger.info("--- ContactAgent.stream: Handling close_modal ACTION ---")
-        json_content = [{"deleteSurface": {"surfaceId": "location-surface"}}]
-        final_response_content = (
-            f"Modal closed.\n---a2ui_JSON---\n{json.dumps(json_content)}"
-        )
-        yield {"is_task_complete": True, "content": final_response_content}
-        return
+                if not result.contents or len(result.contents) == 0:
+                  raise ValueError("No content returned from floor plan server")
+                html_content = result.contents[0].text
+          except Exception as e:
+            logger.error(f"Failed to fetch floor plan: {e}")
+            yield {"is_task_complete": True, "content": f"Failed to load floor plan data: {str(e)}"}
+            return
+
+          json_content = load_floor_plan_example(html_content)
+          logger.info(f"--- ContactAgent.stream: Sending Floor Plan ---")
+          yield {
+              "is_task_complete": True, 
+              "content": f"Here is the floor plan.\n---a2ui_JSON---\n{json.dumps(json_content)}"
+          }
+          return
+
+        elif "close_modal" in query:
+          logger.info("--- ContactAgent.stream: Handling close_modal ACTION ---")
+          # Action maps to closing the FloorPlan overlay
+          json_content = load_close_modal_example()
+          yield {
+              "is_task_complete": True, 
+              "content": f"Modal closed.\n---a2ui_JSON---\n{json.dumps(json_content)}"
+          }
+          return
 
       current_message = types.Content(
           role="user", parts=[types.Part.from_text(text=current_query_text)]
