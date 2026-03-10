@@ -284,7 +284,7 @@ in your theme object.
 > [!TIP]
 > **Keep Styling Externalized**
 > The best practice in A2UI is to put as much styling configuration into the
-`Theme` object (either via CSS classes mapped in `components` or inline styles
+> `Theme` object (either via CSS classes mapped in `components` or inline styles
 > mapped in `additionalStyles`) as possible. You should avoid hardcoding CSS
 > classes or specific native styles directly into the internal A2UI component
 > implementations unless those visual rules are absolutely necessary for the
@@ -295,6 +295,8 @@ in your theme object.
 > hardcoded inside the component itself will be extremely difficult, if not
 > impossible, to override with a different Theme.
 
+For example, if you initially define your button styles in the component CSS like this:
+
 ```css
 /* In your application's global CSS or component CSS */
 .my-company-button {
@@ -303,6 +305,22 @@ in your theme object.
   border-radius: 4px;
   padding: 8px 16px;
 }
+```
+
+You can migrate these directly into the `additionalStyles` property of your Theme object to keep them centralized:
+
+```typescript
+export const myCustomTheme: Types.Theme = {
+  // ...
+  additionalStyles: {
+    Button: {
+      'backgroundColor': '#1a73e8',
+      'color': 'white',
+      'borderRadius': '4px',
+      'padding': '8px 16px',
+    }
+  }
+};
 ```
 
 ### Step 3: Provide the Theme to the Renderer
