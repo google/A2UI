@@ -12,8 +12,8 @@ In highly dynamic ecosystems like the web, the architecture is typically split a
 *   **Core Library (`web_core`)**: Implements the Core Data Layer, Component Schemas, and a Generic Binder Layer. Because TS/JS has powerful runtime reflection, the core library can provide a generic binder that automatically handles all data binding without framework-specific code. 
 *   **Framework Library (`react_renderer`, `angular_renderer`)**: Implements the Framework-Specific Adapters and the actual view implementations (the React `Button`, `Text`, etc.).
 
-### Static Languages (e.g., Kotlin, Swift)
-In statically typed languages, runtime reflection is often limited or discouraged for performance reasons.
+### Static Languages (e.g., Kotlin, Swift, Dart)
+In statically typed languages (and AOT-compiled languages like Dart), runtime reflection is often limited or discouraged for performance reasons.
 *   **Core Library (e.g., `kotlin_core`)**: Implements the Core Data Layer and Component Schemas. The core library typically provides a manually implemented **Binder Layer** for the standard Basic Catalog components. This ensures that even in static environments, basic components have a standardized, framework-agnostic reactive state definition.
 *   **Code Generation (Future/Optional)**: While the core library starts with manual binders, it may eventually offer Code Generation (e.g., KSP, Swift Macros) to automate the creation of Binders for custom components.
 *   **Custom Components**: In the absence of code generation, developers implementing new, ad-hoc components typically utilize a **"Binderless" Implementation** flow, which allows for direct binding to the data model without intermediate boilerplate.
@@ -60,7 +60,7 @@ A2UI relies on a standard observer pattern to reactively update the UI when data
 To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.
 
 #### 1. The "Add" Pattern for Composition
-We strictly separate **construction** from **composition**. Parent containers do not act as factories for their children.
+We strictly separate **construction** from **composition**. Parent containers do not act as factories for their children. This decoupling allows child classes to evolve their constructor signatures without breaking the parent. It also simplifies testing by allowing mock children to be injected easily.
 
 *   **Pattern:**
     ```typescript
@@ -96,7 +96,14 @@ The model is designed to support high-performance rendering through granular upd
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
 ### The Models
-These classes are designed to be "simple containers" for data. They hold the state of the UI but contain minimal logic. They are organized hierarchically.
+These classes are designed to be "simple containers" for data. They hold the state of the UI but contain minimal logic (i.e. they do not handle side effects, layout algorithms, or framework integration). 
+
+**Key Characteristics:**
+*   **Mutable**: Their properties can be updated over time.
+*   **Observable**: They provide mechanisms to listen for those updates.
+*   **Encapsulated Composition**: Parent models hold references to children, but do not construct them.
+
+They are organized hierarchically based on the structure of the data and component tree.
 
 #### SurfaceGroupModel & SurfaceModel
 The root containers for active surfaces and their catalogs, data, and components.
@@ -111,37 +118,43 @@ class SurfaceGroupModel<T> {
   addSurface(surface: SurfaceModel<T>): void;
   deleteSurface(id: string): void;
   getSurface(id: string): SurfaceModel<T> | undefined;
-  addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
-  addActionListener(l: ActionListener): () => void;
+  
+  readonly onSurfaceCreated: EventSource<SurfaceModel<T>>;
+  readonly onSurfaceDeleted: EventSource<string>;
+  readonly onAction: EventSource<ActionEvent>;
 }
 
-type ActionListener = (action: any) => void | Promise<void>; // Handler for user interactions
+interface ActionEvent {
+  surfaceId: string;
+  sourceComponentId: string;
+  name: string;
+  context: Record<string, any>;
+}
+
+type ActionListener = (action: ActionEvent) => void | Promise<void>; // Handler for user interactions
 
 class SurfaceModel<T> {
   readonly id: string;
 ...
-  readonly catalog: T; // Catalog containing framework-specific renderers
+  readonly catalog: Catalog<T>; // Catalog containing component implementations
   readonly dataModel: DataModel; // Scoped application data
   readonly componentsModel: SurfaceComponentsModel; // Flat component map
-  readonly theme: any; // Theme parameters from createSurface
+  readonly theme?: any; // Theme parameters (validated against catalog.theme)
 
-  addActionListener(l: ActionListener): () => void;
-  dispatchAction(action: any): Promise<void>;
+  readonly onAction: EventSource<ActionEvent>;
+  dispatchAction(action: ActionEvent): Promise<void>;
 }
 ```
 #### `SurfaceComponentsModel` & `ComponentModel`
 Manages the raw JSON configuration of components in a flat map.
 
 ```typescript
-interface ComponentsLifecycleListener {
-  onComponentCreated: (c: ComponentModel) => void; // Called when a component is added
-  onComponentDeleted?: (id: string) => void; // Called when a component is removed
-}
-
 class SurfaceComponentsModel {
   get(id: string): ComponentModel | undefined;
   addComponent(component: ComponentModel): void;
-  addLifecycleListener(l: ComponentsLifecycleListener): () => void;
+  
+  readonly onCreated: EventSource<ComponentModel>;
+  readonly onDeleted: EventSource<string>;
 }
 
 class ComponentModel {
@@ -151,7 +164,7 @@ class ComponentModel {
   get properties(): Record<string, any>; // Current raw JSON configuration
   set properties(newProps: Record<string, any>);
   
-  readonly onUpdated: EventSource<ComponentModel>; // Fires when any property changes
+  readonly onUpdated: EventSource<ComponentModel>; // Invoked when any property changes
 }
 ```
 #### `DataModel`
@@ -196,7 +209,7 @@ To ensure the Data Layer behaves identically across all platforms (e.g., TypeScr
 
 | Input Type                 | Target Type | Result                               |
 | :------------------------- | :---------- | :----------------------------------- |
-| `String` ("true", "false") | `Boolean`   | `true` or `false` (case-insensitive) |
+| `String` ("true", "false") | `Boolean`   | `true` or `false` (case-insensitive). Any other string maps to `false`. |
 | `Number` (non-zero)        | `Boolean`   | `true`                               |
 | `Number` (0)               | `Boolean`   | `false`                              |
 | `Any`                      | `String`    | Locale-neutral string representation |
@@ -208,7 +221,7 @@ To ensure the Data Layer behaves identically across all platforms (e.g., TypeScr
 ### The Context Layer (Transient Windows)
 The **Context Layer** consists of short-lived objects created on-demand during the rendering process to solve the problem of "scope" and binding resolution. 
 
-Because the Data Layer is a flat list of components and a raw data tree, it doesn't inherently know about the hierarchy or the current data scope (e.g., inside a list iteration). The Context Layer bridges this gap.
+Because the Data Layer is a flat list of components and a raw data tree, it doesn't inherently know about the hierarchy or the current data scope (e.g., inside a list iteration). The Context Layer bridges this gap. The appropriate "window" is determined by the structural parent components (like a `List`) which generate specific `DataContext` scopes for their children.
 
 #### `DataContext` & `ComponentContext`
 
@@ -264,7 +277,7 @@ When processing `updateComponents`, the processor must handle existing IDs caref
 
 #### Generating Client Capabilities and Schema Types
 
-To dynamically generate the `a2uiClientCapabilities` payload (specifically the `inlineCatalogs` array), the renderer needs to convert its internal component schemas into valid JSON Schemas that adhere to the A2UI protocol.
+To dynamically generate the `a2uiClientCapabilities` payload (specifically the `inlineCatalogs` array), the renderer needs to convert its internal component and theme schemas into valid JSON Schemas that adhere to the A2UI protocol.
 
 A2UI heavily relies on shared schema definitions (like `DynamicString`, `DataBinding`, and `Action` from `common_types.json`). However, most schema validation libraries (such as Zod) do not natively support emitting external JSON Schema `$ref` pointers out-of-the-box.
 
@@ -289,9 +302,10 @@ class Catalog<T> {
   readonly id: string; // Unique catalog URI (e.g., "https://mycompany.com/catalog.json")
   readonly components: ReadonlyMap<string, T>;
   readonly functions?: ReadonlyMap<string, FunctionImplementation>;
+  readonly theme?: Schema; // Schema for theme parameters (e.g. Zod object)
 
-  constructor(id: string, components: T[], functions?: FunctionImplementation[]) {
-    // Initializes the read-only maps
+  constructor(id: string, components: T[], functions?: FunctionImplementation[], theme?: Schema) {
+    // Initializes the properties
   }
 }
 ```
@@ -305,7 +319,8 @@ Extensibility is a core feature of A2UI. It should be trivial to create a new ca
 myCustomCatalog = Catalog(
   id="https://mycompany.com/catalogs/custom_catalog.json",
   functions=basicCatalog.functions,
-  components=basicCatalog.components.append([MyCompanyLogoComponent()])
+  components=basicCatalog.components + [MyCompanyLogoComponent()],
+  theme=basicCatalog.theme # Inherit theme schema
 )
 ```
 
@@ -385,7 +400,7 @@ For dynamic languages, you can write a generic factory that automatically inspec
 // Illustrative Generic Binder Factory
 export function createGenericBinding<T>(schema: Schema, context: ComponentContext): ComponentBinding<T> {
   // 1. Walk the schema to find all DynamicValue properties.
-  // 2. Map them to `context.dataContext.subscribeDynamicValue()` 
+  // 2. Map them to `context.dataContext.subscribeDynamicValue()`
   // 3. Store the returned `DataSubscription` objects.
   // 4. Combine all observables into a single stateful stream.
   // 5. Return a ComponentBinding whose `dispose()` method unsubscribes all stored subscriptions.
@@ -512,21 +527,35 @@ function createReactComponent(binder, RenderComponent) {
 ```typescript
 // Pseudo-code concept for an Angular adapter
 @Component({
-  template: `<ng-container *ngIf="props$ | async as props">
-               <!-- Render specific component here -->
-             </ng-container>`
+  selector: 'app-angular-wrapper',
+  imports: [MatButtonModule],
+  template: `
+    @if (props(); as props) {
+      <button mat-button>{{ props.label }}</button>
+    }
+  `
 })
-class AngularWrapper implements OnDestroy, OnInit {
-  binding: ComponentBinding;
-  props$: Observable<any>;
-  
-  ngOnInit() {
-    this.binding = this.binder.bind(this.context);
-    this.props$ = this.binding.propsStream;
-  }
-  
-  ngOnDestroy() {
-    this.binding.dispose(); // Crucial cleanup
+export class AngularWrapper {
+  private binder = inject(BinderService);
+  private context = inject(ComponentContext);
+
+  private bindingResource = resource({
+    loader: async () => {
+      const binding = this.binder.bind(this.context);
+
+      return {
+        instance: binding,
+        props: toSignal(binding.propsStream) // Convert Observable to Signal
+      };
+    },
+  });
+
+  props = computed(() => this.bindingResource.value()?.props() ?? null);
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.bindingResource.value()?.instance.dispose();
+    });
   }
 }
 ```
@@ -645,7 +674,7 @@ Implement the framework-agnostic Data Layer (Section 1).
 ### 4. Framework-Specific Layer
 Implement the bridge between the agnostic models and the native UI (Section 3).
 *   Define the `ComponentAdapter` API (how the core library hands off a component to the framework).
-*   Implement the mechanism that binds a `ComponentBinding` stream to the native UI state (e.g., a wrapper wrapper view/widget).
+*   Implement the mechanism that binds a `ComponentBinding` stream to the native UI state (e.g., a wrapper view/widget).
 *   Implement the recursive `Surface` builder that takes a `surfaceId`, finds the "root" component, and recursively calls `buildChild`.
 *   **Crucial**: Ensure the unmount/dispose lifecycle hook calls `binding.dispose()`.
 
@@ -654,7 +683,7 @@ Do not start with the full Basic Catalog. Target the `minimal_catalog.json` firs
 *   **Core Library**: Create definitions/binders for `Text`, `Row`, `Column`, `Button`, and `TextField`.
 *   **Core Library**: Implement the `capitalize` function.
 *   **Framework Library**: Implement the actual native UI widgets for these 5 components.
-*   Write a `createMinimalCatalog()` function that bundles these together.
+*   Design a mechanism (e.g., a factory function or class) to bundle these together into a Catalog.
 
 ### 6. Demo Application (Milestone)
 Build a self-contained application to prove the architecture works before scaling.
@@ -664,12 +693,12 @@ Build a self-contained application to prove the architecture works before scalin
 *   When an example is selected, it should pipe the messages into the `MessageProcessor` and render the surface.
 *   **Reactivity Test**: Add a mechanism to simulate delayed `updateDataModel` messages (e.g., waiting 2 seconds before sending data) to prove that the UI progressively renders and reacts to changes.
 
-**STOP HERE. Ask the human user for approval of the architecture and demo application before proceeding to step 7.**
+**STOP HERE. Ask the user for approval of the architecture and demo application before proceeding to step 7.**
 
 ### 7. Basic Catalog Support
 Once the minimal architecture is proven robust:
-*   **Core Library**: Implement the full suite of basic functions (including the complex `formatString` parser).
+*   **Core Library**: Implement the full suite of basic functions. It is crucial to note that string interpolation and expression parsing should ONLY happen within the `formatString` function. Do not attempt to add global string interpolation to all strings.
 *   **Core Library**: Create definitions/binders for the remaining Basic Catalog components.
 *   **Framework Library**: Implement all remaining UI widgets.
-*   **Tests**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive test cases for data coercion and function logic. 
+*   **Tests**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive unit and integration test cases for data coercion and function logic. 
 *   Update the Demo App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.
