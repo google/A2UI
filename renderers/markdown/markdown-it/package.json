@@ -15,9 +15,12 @@
   "license": "Apache-2.0",
   "author": "Google",
   "type": "module",
+  "main": "dist/src/markdown.js",
   "exports": {
     ".": {
       "types": "./dist/src/markdown.d.ts",
+      "import": "./dist/src/markdown.js",
+      "require": "./dist/src/markdown.js",
       "default": "./dist/src/markdown.js"
     }
   },
