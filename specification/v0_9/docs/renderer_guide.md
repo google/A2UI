@@ -92,18 +92,18 @@ The model is designed to support high-performance rendering through granular upd
 *   **`SurfaceComponentsModel`**: A flat collection of component configurations.
 *   **`ComponentModel`**: A specific component's raw configuration.
 *   **`DataModel`**: A dedicated store for application data.
-*   **`DataContext`**: A scoped window into the `DataModel`. Used by functions and components to resolve dependencies and mutate state. The window is specifically a view of the data model that has some defined base path, so that relative path references are resolved against this. This is typically just the root `/`, except for cases where we are using the "template" pattern to build a `ChildList` of Components. When this occurs, the parent component will generally call some function to build each child, specifying the same component ID but a different base path for each child so that the same template can be rendered with different data.
+*   **`DataContext`**: An abstraction around the data model, available functions, and the base path of a Component, which allows Component implementations to fetch and subscribe to dynamic values via a simple API. Different Component instances instantiated from the same Component ID, but with different base paths (e.g. because they are different instances of a *template*) can have a different `DataContext` instance.
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
 ### The Models
-These classes are designed to be "simple containers" for data. They hold the state of the UI but contain minimal logic (i.e. they do not handle side effects, layout algorithms, or framework integration). 
+These classes are designed to be "simple containers" for data. They hold a snapshot of the A2UI state and contain logic to implement observability. They may validate changes to prevent the system entering inconsistent states. Logic to decode A2UI messages and update the model layer should be within MessageProcessor. Logic to unwrap data model and function references should be within the context layer.
 
 **Key Characteristics:**
 *   **Mutable**: Their properties can be updated over time.
 *   **Observable**: They provide mechanisms to listen for those updates.
 *   **Encapsulated Composition**: Parent models hold references to children, but do not construct them.
 
-They are organized hierarchically based on the structure of the data and component tree.
+They are organized hierarchically based on the structure of the data and component tree in A2UI e.g. SurfaceGroup, Surface, Component. Within each SurfaceModel, ComponentModels are represented as a flat list, with view hierarchy construction handled in the Surface rendering logic for each UI framework.
 
 #### SurfaceGroupModel & SurfaceModel
 The root containers for active surfaces and their catalogs, data, and components.
@@ -146,7 +146,7 @@ class SurfaceModel<T> {
 }
 ```
 #### `SurfaceComponentsModel` & `ComponentModel`
-Manages the raw JSON configuration of components in a flat map.
+Manages the raw JSON configuration of components in a flat map which includes one entry per component ID. This represents the raw Component data *before* ChildList templates are resolved, which can instantiate multiple instances of a single Component with the same ID.
 
 ```typescript
 class SurfaceComponentsModel {
@@ -207,15 +207,15 @@ A change at a specific path must trigger notifications for related paths to ensu
 #### Type Coercion Standards
 To ensure the Data Layer behaves identically across all platforms (e.g., TypeScript, Swift, Kotlin), the following coercion rules MUST be followed when resolving dynamic values:
 
-| Input Type                 | Target Type | Result                               |
-| :------------------------- | :---------- | :----------------------------------- |
+| Input Type                 | Target Type | Result                                                                  |
+| :------------------------- | :---------- | :---------------------------------------------------------------------- |
 | `String` ("true", "false") | `Boolean`   | `true` or `false` (case-insensitive). Any other string maps to `false`. |
-| `Number` (non-zero)        | `Boolean`   | `true`                               |
-| `Number` (0)               | `Boolean`   | `false`                              |
-| `Any`                      | `String`    | Locale-neutral string representation |
-| `null` / `undefined`       | `String`    | `""` (empty string)                  |
-| `null` / `undefined`       | `Number`    | `0`                                  |
-| `String` (numeric)         | `Number`    | Parsed numeric value or `0`          |
+| `Number` (non-zero)        | `Boolean`   | `true`                                                                  |
+| `Number` (0)               | `Boolean`   | `false`                                                                 |
+| `Any`                      | `String`    | Locale-neutral string representation                                    |
+| `null` / `undefined`       | `String`    | `""` (empty string)                                                     |
+| `null` / `undefined`       | `Number`    | `0`                                                                     |
+| `String` (numeric)         | `Number`    | Parsed numeric value or `0`                                             |
 
 
 ### The Context Layer (Transient Windows)
