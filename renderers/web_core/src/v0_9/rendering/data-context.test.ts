@@ -170,7 +170,7 @@ describe("DataContext", () => {
     );
   });
 
-  it("subscribes to function call returning an observable", () => {
+  it("subscribes to function call returning a signal", () => {
     const fnInvoker = (name: string) => {
       if (name === "obs") return signal("hello");
       return null;

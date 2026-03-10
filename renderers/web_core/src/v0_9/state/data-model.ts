@@ -242,17 +242,10 @@ export class DataModel {
   private updateSignal(path: string): void {
     const sig = this.signals.get(path);
     if (sig) {
-      // Signals use strict equality. To force array/object updates we assign the reference again 
-      // but if the reference didn't change (because we mutated it), we must trick it or create a new reference.
-      // Easiest is to force notify in Preact signals if mutating, but A2UI gets away with object equality checks.
-      // Wait, Preact signals track object mutation only if the reference changes or if we force it.
-      // Let's copy arrays/objects at read time? No, get() returns the same reference. 
-      // To force Preact signal to update, we can re-assign a shallow clone, or since A2UI paths are often primitives it might be ok. 
-      // Let's just assign the value. If it's the exact same object reference, Preact signal won't trigger effects.
-      // To fix this, we can trick Preact by assigning undefined then the value, or just use a wrapper.
-      // Wait, for DataModel.get(path), if it's an object, it mutated.
-      // We will assign a new wrapper object to force update, or just use `sig.value = Array.isArray(val) ? [...val] : (typeof val === 'object' && val !== null ? {...val} : val)`
-      // Let's just shallow clone to ensure reference change.
+      // Signals trigger updates based on strict equality checks. If an object or array
+      // in the data model is mutated, its reference doesn't change, and the signal
+      // won't update. By creating a shallow copy, we ensure a new reference is
+      // assigned, which correctly triggers dependent effects.
       const val = this.get(path);
       if (Array.isArray(val)) {
         sig.value = [...val];
