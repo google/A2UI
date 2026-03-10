@@ -24,6 +24,7 @@ import { Signal } from "@preact/signals-core";
 export type FunctionImplementation = (
   args: Record<string, unknown>,
   context: DataContext,
+  abortSignal?: AbortSignal,
 ) => unknown | Signal<unknown>;
 
 /**

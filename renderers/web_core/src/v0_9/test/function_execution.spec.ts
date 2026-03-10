@@ -11,7 +11,7 @@ describe("Function Execution in DataContext", () => {
 
     const functions = new Map<string, Function>();
     // mimic metronome: returns a stream of ticks
-    functions.set("metronome", (args: Record<string, any>) => {
+    functions.set("metronome", (args: Record<string, any>, abortSignal?: AbortSignal) => {
       const interval = Number(args["interval"]) || 100;
       const subj = signal<string>("tick 0");
       let i = 1;
@@ -19,16 +19,16 @@ describe("Function Execution in DataContext", () => {
         subj.value = `tick ${i++}`;
       }, interval);
       
-      // Note: we're hacking cleanup here for test only because signals don't inherently have teardowns unless tied to an effect lifecycle
-      (subj as any).unsubscribe = () => {
-          clearInterval(timerId);
-      };
+      abortSignal?.addEventListener("abort", () => {
+        clearInterval(timerId);
+      });
+      
       return subj;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args) => {
+    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
       const fn = functions.get(name);
-      return fn ? fn(args) : undefined;
+      return fn ? fn(args, abortSignal) : undefined;
     });
 
     // DynamicValue representing: metronome(interval: 50)
@@ -68,9 +68,9 @@ describe("Function Execution in DataContext", () => {
       return `echo: ${args["val"]}`;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args) => {
+    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
       const fn = functions.get(name);
-      return fn ? fn(args) : undefined;
+      return fn ? fn(args, abortSignal) : undefined;
     });
     dataModel.set("/msg", "hello");
 

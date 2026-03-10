@@ -28,6 +28,7 @@ export type FunctionInvoker = (
   name: string,
   args: Record<string, any>,
   context: DataContext,
+  abortSignal?: AbortSignal,
 ) => any;
 
 /**
@@ -104,7 +105,11 @@ export class DataContext {
         );
       }
 
-      const result = this.functionInvoker(call.call, args, this);
+      // Synchronous resolution should not spawn long-running resources.
+      const abortController = new AbortController();
+      abortController.abort();
+      
+      const result = this.functionInvoker(call.call, args, this, abortController.signal);
       return (result instanceof Signal ? result.peek() : result) as V;
     }
 
@@ -181,37 +186,31 @@ export class DataContext {
       }
 
       if (Object.keys(argSignals).length === 0) {
-        const result = this.evaluateFunctionReactive<V>(call.call, {});
+        const abortController = new AbortController();
+        const result = this.evaluateFunctionReactive<V>(call.call, {}, abortController.signal);
         const sig = result instanceof Signal ? result : signal(result);
-        if (result instanceof Signal && (result as any).unsubscribe) {
-          (sig as any).unsubscribe = (result as any).unsubscribe;
-        }
+        (sig as any).unsubscribe = () => abortController.abort();
         return sig;
       }
 
       const keys = Object.keys(argSignals);
-      let innerUnsubscribe: (() => void) | undefined;
+      let abortController: AbortController | undefined;
       
       const sig = computed(() => {
-        if (innerUnsubscribe) innerUnsubscribe();
+        if (abortController) abortController.abort();
+        abortController = new AbortController();
         
         const argsRecord: Record<string, any> = {};
         for (let i = 0; i < keys.length; i++) {
           argsRecord[keys[i]] = argSignals[keys[i]].value;
         }
         
-        const result = this.evaluateFunctionReactive<V>(call.call, argsRecord);
-        // Track inner signal if the function returns one
-        if (result instanceof Signal) {
-          innerUnsubscribe = (result as any).unsubscribe;
-          return result.value;
-        }
-        innerUnsubscribe = undefined;
-        return result;
+        const result = this.evaluateFunctionReactive<V>(call.call, argsRecord, abortController.signal);
+        return result instanceof Signal ? result.value : result;
       });
 
       (sig as any).unsubscribe = () => {
-        if (innerUnsubscribe) innerUnsubscribe();
+        if (abortController) abortController.abort();
         for (let i = 0; i < keys.length; i++) {
           const argSig = argSignals[keys[i]];
           if ((argSig as any).unsubscribe) {
@@ -229,13 +228,14 @@ export class DataContext {
   private evaluateFunctionReactive<V>(
     name: string,
     args: Record<string, any>,
+    abortSignal?: AbortSignal,
   ): Signal<V> | V {
     if (!this.functionInvoker) {
       throw new A2uiExpressionError(
         `Failed to resolve dynamic value: Function invoker is not configured for call '${name}'.`,
       );
     }
-    return this.functionInvoker(name, args, this);
+    return this.functionInvoker(name, args, this, abortSignal);
   }
 
   /**
