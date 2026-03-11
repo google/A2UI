@@ -1,0 +1,11 @@
+{
+  "title": "Mock Basic Catalog",
+  "components": {
+    "Text": {
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" }
+      }
+    }
+  }
+}
