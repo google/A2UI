@@ -16,3 +16,4 @@
 
 export * from "./expressions/expression_parser.js";
 export * from "./functions/basic_functions.js";
+export * from "./components/basic_components.js";
