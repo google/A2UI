@@ -45,7 +45,8 @@ export class MessageProcessor extends A2uiMessageProcessor {
 
   dispatch(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
     const completion = new Subject<Types.ServerToClientMessage[]>();
+    const promise = firstValueFrom(completion);
     this.events.next({ message, completion });
-    return firstValueFrom(completion);
+    return promise;
   }
 }
