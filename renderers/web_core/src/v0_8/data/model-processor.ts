@@ -31,7 +31,7 @@ import {
   MessageProcessor,
 } from "../types/types.js";
 import { A2uiMessageSchema } from "../schema/server-to-client.js";
-import { A2uiStateError, A2uiValidationError } from "../../v0_9/errors.js";
+import { A2uiStateError, A2uiValidationError } from "../errors.js";
 import {
   isComponentArrayReference,
   isObject,

@@ -1,66 +1,42 @@
-# Agent UI Ecosystem
+# How Does A2UI Compare?
 
-The agentic UI space is evolving rapidly. This page helps you understand where A2UI fits relative to other approaches.
+The agentic UI space is evolving rapidly. Here's how A2UI relates to the other major approaches.
 
-## Comparison
+## At a Glance
 
 | | **A2UI** | **MCP Apps** | **AG UI** |
 |---|---|---|---|
-| **Approach** | Agent sends declarative component blueprints | Server provides pre-built HTML via `ui://` URIs | High-bandwidth protocol connecting any agent backend to any frontend |
+| **Approach** | Declarative component blueprints | Pre-built HTML via `ui://` URIs | High-bandwidth protocol connecting backends to frontends |
 | **Rendering** | Native components (Angular, Flutter, Lit, etc.) | Sandboxed `iframe` | Developer-defined (any framework) |
-| **Styling** | Client controls — inherits host design system | Isolated — server controls appearance | Developer controls — part of the host app |
+| **Styling** | Host app controls — inherits design system | Isolated — remote server controls appearance | Developer controls — part of the host app |
 | **Security** | Declarative data, no code execution | Sandboxed iframe isolation | Trusted code within your own app |
-| **Multi-agent** | ✅ Agents across trust boundaries | ✅ Multiple MCP servers can each provide UI | ⚠️ Primarily for apps where you build both agent and frontend |
+| **Multi-agent** | ✅ Across trust boundaries | ✅ Multiple MCP servers | ⚠️ Primarily single-agent |
 | **Cross-platform** | ✅ Web, mobile, desktop, native | ⚠️ Web-focused (iframe) | ✅ Protocol is framework-agnostic |
-| **LLM generation** | ✅ Designed for streaming LLM output | ❌ Pre-built by server | ✅ Via A2UI integration |
-| **Spec** | Open protocol (Apache 2.0) | Part of MCP specification | Open source protocol (by CopilotKit) |
+| **LLM generation** | ✅ Designed for streaming output | ❌ Pre-built by server | ✅ Via A2UI integration |
+| **Spec** | Open protocol (Apache 2.0) | [MCP extension](https://modelcontextprotocol.io/docs/extensions/apps) (SEP-1865) | Open source (by CopilotKit) |
 
-## A2UI Integrations
+## A2UI vs MCP Apps
 
-Several projects have built A2UI renderers and integrations:
+[MCP Apps](https://blog.modelcontextprotocol.io/posts/2025-11-21-mcp-apps/) treat UI as a **resource** — servers provide pre-built HTML via `ui://` URIs, rendered in sandboxed iframes. The remote integration controls all content and appearance, with configuration happening through tool calling. A2UI takes a **declarative UI** approach — agents send component blueprints, but the host application controls styling, theming, and how those components are configured and rendered. Choose MCP Apps when the server should own the full UI experience; choose A2UI when you want dynamic, cross-platform UI that fits naturally into your app.
 
-- **[json-render](https://json-render.dev/docs/a2ui)** — Vercel's React library for rendering A2UI component catalogs via Zod schemas. Maps A2UI's declarative JSON to React components. See [json-render vs. A2UI comparison](https://dipjyotimetia.medium.com/vercels-json-render-vs-google-s-a2ui-the-head-to-head-6f213cf1a23b) for an in-depth technical breakdown of the "monolith vs. protocol" tradeoff.
-- **[OpenClaw Canvas](https://docs.openclaw.ai/platforms/mac/canvas)** — OpenClaw uses A2UI to render agent-generated UI on connected devices (Mac, iOS, Android) via its canvas system and native node apps. See [OpenClaw architecture overview](https://ppaolo.substack.com/p/openclaw-system-architecture-overview) for how A2UI fits into their agent runtime.
+## A2UI vs AG UI / CopilotKit
 
-!!! tip "A2UI + MCP Apps Bridge"
-    We are actively working on bridging A2UI and MCP Apps, enabling MCP servers to provide A2UI component blueprints as an alternative to HTML resources. This would let MCP tools return native, styled UI that renders in any A2UI-capable client. Follow progress on [GitHub](https://github.com/google/A2UI).
+[AG UI](https://ag-ui.com/) is a **transport protocol** connecting agent backends to frontends with real-time state sync. A2UI is a **UI format** — the payload that describes what to render. They're complementary: use AG UI as the pipe, A2UI as the content. AG UI is a project by the [CopilotKit](https://copilotkit.ai) team, who also contributed the [A2UI Composer](../composer.md). AG UI has day-zero A2UI compatibility.
 
-## When to Use Each
+## A2UI vs ChatKit (OpenAI)
 
-**Choose A2UI when:**
-
-- Agents generate UI dynamically (forms, dashboards, workflows)
-- You need cross-platform rendering (web + mobile + desktop)
-- Multiple agents from different providers need to render UI in your app
-- Brand consistency matters — the client must control styling
-- Security is critical — no code execution from untrusted agents
-
-**Choose MCP Apps when:**
-
-- The server owns the full UI experience (self-contained widgets)
-- You want iframe isolation with minimal client integration
-- UI is a pre-built resource, not dynamically generated by an LLM
-- Multiple MCP servers each provide their own isolated UI surfaces
-
-**Choose AG UI when:**
-
-- You're building both the agent backend and the frontend together
-- You need high-bandwidth, real-time state synchronization between agent and client
-- You want a flexible transport layer that works with any frontend framework
-
-!!! note "AG UI vs. CopilotKit"
-    AG UI is the open protocol for connecting agent backends to frontends — it's framework-agnostic. [CopilotKit](https://copilotkit.ai) is a React-specific frontend framework built by the same team that also created AG UI. You can use AG UI without CopilotKit.
+[ChatKit](https://platform.openai.com/docs/guides/chatkit) offers a tightly integrated experience within the OpenAI ecosystem. A2UI shares some design philosophy with ChatKit — both define a set of basic components and use a configurable, declarative abstraction layer. A2UI is **platform-agnostic** — designed for developers building their own agentic surfaces across web, mobile, and desktop, or for multi-agent systems where agents need to render UI across trust boundaries.
 
 ## Using Them Together
 
 These approaches are complementary, not competing:
 
-- **A2UI + AG UI**: Use AG UI as the transport layer connecting your agent backend to your frontend, and A2UI as the format for generative UI payloads — especially from remote or third-party agents.
-- **A2UI + A2A**: Send A2UI messages via the [A2A protocol](../transports.md) for multi-agent systems where agents communicate across trust boundaries.
-- **A2UI + MCP**: With the upcoming bridge, MCP servers will be able to provide A2UI blueprints alongside HTML resources, giving clients a choice of rendering approach.
+- **A2UI + AG UI** — AG UI as transport, A2UI as the generative UI format
+- **A2UI + A2A** — A2UI messages sent via the [A2A protocol](../concepts/transports.md) for multi-agent systems
+- **A2UI + MCP** — Upcoming bridge lets MCP servers provide A2UI blueprints alongside HTML resources
 
 ## Further Reading
 
 - [What is A2UI?](what-is-a2ui.md) — Protocol overview
-- [Who is it For?](who-is-it-for.md) — Use cases by audience
-- [Transports](../transports.md) — How A2UI messages travel between agents and clients
+- [Transports](../concepts/transports.md) — How A2UI messages travel between agents and clients
+- [Where is A2UI Used?](../ecosystem/a2ui-in-the-world.md) — Case studies and adopters

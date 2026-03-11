@@ -16,7 +16,7 @@
 
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
-import { of } from "rxjs";
+import { signal } from "@preact/signals-core";
 import { DataModel } from "../state/data-model.js";
 import { DataContext } from "./data-context.js";
 
@@ -170,9 +170,9 @@ describe("DataContext", () => {
     );
   });
 
-  it("subscribes to function call returning an observable", () => {
+  it("subscribes to function call returning a signal", () => {
     const fnInvoker = (name: string) => {
-      if (name === "obs") return of("hello");
+      if (name === "obs") return signal("hello");
       return null;
     };
     const ctx = new DataContext(model, "/", fnInvoker);

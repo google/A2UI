@@ -46,7 +46,7 @@ Do you ship your agent into other apps you don't necessarily control?
 - Extensible: custom component catalogs
 - Open source (Apache 2.0)
 
-**Get started:** [Community](../community.md) | [Roadmap](../roadmap.md)
+**Get started:** [Community](../ecosystem/community.md) | [Roadmap](../roadmap.md)
 
 ---
 
