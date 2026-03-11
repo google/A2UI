@@ -1,3 +1,17 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import unittest
 from unittest.mock import patch, MagicMock
 import json
@@ -21,17 +35,17 @@ class TestAssembleCatalog(unittest.TestCase):
         # Assemble component1 and component2, intercepting basic_catalog locally
         assembler = CatalogAssembler(version="0.9", local_basic_catalog_path=str(self.basic_catalog_path))
         result = assembler.assemble("TestCatalog", [str(self.component1_path), str(self.component2_path)])
-        
+
         self.assertEqual(result["$id"], "TestCatalog.json")
         self.assertEqual(result["catalogId"], "TestCatalog.json")
         self.assertEqual(result["title"], "TestCatalog A2UI Catalog")
         self.assertEqual(result["description"], f"TestCatalog A2UI catalog, including {self.component1_path.stem}, {self.component2_path.stem}.")
         self.assertIn("CustomHeader", result["components"])
         self.assertIn("Page", result["components"])
-        
+
         # Verify the $refs were translated into internal $defs correctly
         self.assertIn("$defs", result)
-        
+
         # We expect a definition for basic_catalog's Text component and component1's CustomHeader
         defs_keys = list(result["$defs"].keys())
         self.assertTrue(any("basic_catalog_Text" in k for k in defs_keys))
@@ -52,11 +66,11 @@ class TestAssembleCatalog(unittest.TestCase):
         # Assemble without a local basic_catalog_path, it MUST fetch from HTTP
         assembler = CatalogAssembler(version="0.10", local_basic_catalog_path=None)
         result = assembler.assemble("RemoteTest", [str(self.component1_path)])
-        
+
         # Assert urlopen was called with the 0.10 URL
         called_req = mock_urlopen.call_args[0][0]
         self.assertEqual(called_req.full_url, BASIC_CATALOG_URLS["0.10"])
-        
+
         self.assertIn("$defs", result)
         defs_keys = list(result["$defs"].keys())
         # The key should contain basic_catalog since we intercepted the target pointer path
@@ -67,10 +81,10 @@ class TestAssembleCatalog(unittest.TestCase):
         # But we pass extend_basic=True, so basic_catalog's entirety should be dumped into components
         assembler = CatalogAssembler(version="0.9", local_basic_catalog_path=str(self.basic_catalog_path))
         result = assembler.assemble("ExtendedCatalog", [str(self.component1_path)], extend_basic=True)
-        
+
         self.assertEqual(result["title"], "ExtendedCatalog A2UI Catalog")
         self.assertIn("CustomHeader", result["components"])
-        
+
         # Because we merged basic_catalog implicitly, Text should be directly in the top-level components
         self.assertIn("Text", result["components"])
 
@@ -91,13 +105,13 @@ class TestAssembleCatalog(unittest.TestCase):
 
         assembler = CatalogAssembler(version="0.9", local_basic_catalog_path=str(self.basic_catalog_path))
         result = assembler.assemble("CloudCatalog", ["https://example.com/widget_catalog.json"])
-        
+
         # Assert urlopen was called for the input catalog
         self.assertEqual(mock_urlopen.call_count, 1)
         self.assertEqual(mock_urlopen.call_args[0][0].full_url, "https://example.com/widget_catalog.json")
-        
+
         self.assertIn("CloudWidget", result["components"])
-        
+
         # Assert the inner basic_catalog.json ref correctly routed locally
         self.assertIn("$defs", result)
         defs_keys = list(result["$defs"].keys())
@@ -108,10 +122,10 @@ class TestAssembleCatalog(unittest.TestCase):
         # This test ensures we properly intercept that reference if passed locally.
         common_types_path = self.fixtures_dir / "common_types.json"
         component3_path = self.fixtures_dir / "component3.json"
-        
+
         assembler = CatalogAssembler(version="0.9", local_common_types_path=str(common_types_path))
         result = assembler.assemble("CommonTextCatalog", [str(component3_path)])
-        
+
         self.assertIn("$defs", result)
         defs_keys = list(result["$defs"].keys())
         # The key should contain common_types since we intercepted the target pointer path
@@ -133,12 +147,12 @@ class TestAssembleCatalog(unittest.TestCase):
         # Assemble without a local common_types_path, it MUST fetch from HTTP
         assembler = CatalogAssembler(version="0.10", local_common_types_path=None)
         result = assembler.assemble("RemoteCommonTypes", [str(component3_path)])
-        
+
         # Assert urlopen was called with the 0.10 URL for common_types.json
         called_req = mock_urlopen.call_args[0][0]
         from assemble_catalog import COMMON_TYPES_URLS
         self.assertEqual(called_req.full_url, COMMON_TYPES_URLS["0.10"])
-        
+
         self.assertIn("$defs", result)
         defs_keys = list(result["$defs"].keys())
         # The key should contain common_types since we intercepted the target pointer path
@@ -153,46 +167,46 @@ class TestAssembleCatalog(unittest.TestCase):
                 }
             }
         }
-        
+
         assembler = CatalogAssembler(version="0.9", max_depth=5)
-        
+
         # We manually call process_schema to trigger the recursion check
         # and mock fetch_json to always return the loop schema so it infinitely evaluates
         with patch.object(assembler, 'fetch_json', return_value=schema_with_loop):
             with self.assertRaises(CatalogError) as context:
                 assembler.process_schema(schema_with_loop, "memory://test")
-            
+
         self.assertIn("Max recursion depth reached", str(context.exception))
 
     @patch('assemble_catalog.logger')
     def test_collision_warning_on_merge(self, mock_logger):
         assembler = CatalogAssembler(version="0.9")
-        
+
         # component1 and component2 do not collide. Let's merge component1 with ITSELF to force a collision.
         assembler.assemble("CollisionCatalog", [str(self.component1_path), str(self.component1_path)])
-        
+
         # We should see a warning about 'CustomHeader' colliding
         mock_logger.warning.assert_called_with("Component collision: 'CustomHeader' already exists. Overwriting.")
 
     def test_missing_local_file(self):
         assembler = CatalogAssembler(version="0.9")
         missing_path = self.fixtures_dir / "does_not_exist.json"
-        
+
         with self.assertRaises(CatalogError) as context:
             assembler.assemble("MissingCatalog", [str(missing_path)])
-            
+
         self.assertIn("File not found:", str(context.exception))
 
     @patch('assemble_catalog.urllib.request.urlopen')
     def test_network_timeout(self, mock_urlopen):
         # URLError simulating a timeout
         mock_urlopen.side_effect = urllib.error.URLError("timeout")
-        
+
         assembler = CatalogAssembler(version="0.9")
-        
+
         with self.assertRaises(CatalogError) as context:
             assembler.fetch_json("https://example.com/slow_catalog.json")
-            
+
         self.assertIn("Network error fetching", str(context.exception))
         self.assertIn("timeout", str(context.exception))
 
@@ -202,21 +216,21 @@ class TestAssembleCatalog(unittest.TestCase):
         mock_assemble.return_value = {}
         import tempfile
         import assemble_catalog
-        
+
         with tempfile.TemporaryDirectory() as temp_dir:
             mock_cwd.return_value = Path(temp_dir)
-            
+
             # Test without .json provided
             with patch('sys.argv', ['assemble_catalog.py', '--name', 'MyCatalog', str(self.component1_path)]):
                 assemble_catalog.main()
-                
+
             out_file = Path(temp_dir) / "dist" / "MyCatalog.json"
             self.assertTrue(out_file.exists())
-            
+
             # Test with .json provided
             with patch('sys.argv', ['assemble_catalog.py', '--name', 'MyCatalogWithExt.json', str(self.component1_path)]):
                 assemble_catalog.main()
-                
+
             out_file2 = Path(temp_dir) / "dist" / "MyCatalogWithExt.json"
             self.assertTrue(out_file2.exists())
             # Ensure it did not double append the extension
