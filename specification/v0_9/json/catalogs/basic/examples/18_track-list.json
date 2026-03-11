@@ -38,7 +38,7 @@
         {
           "id": "playlist-icon",
           "component": "Icon",
-          "name": "queue_music"
+          "name": "play"
         },
         {
           "id": "playlist-name",

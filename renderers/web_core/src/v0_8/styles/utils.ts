@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { ColorPalettes } from "../types/colors.js";
@@ -22,7 +22,7 @@ export function merge(...classes: Array<Record<string, boolean>>) {
     for (const [key, val] of Object.entries(clazz)) {
       const prefix = key.split("-").with(-1, "").join("-");
       const existingKeys = Object.keys(styles).filter((key) =>
-        key.startsWith(prefix)
+        key.startsWith(prefix),
       );
 
       for (const existingKey of existingKeys) {
@@ -82,7 +82,7 @@ export function appendToAll(
 }
 
 export function createThemeStyles(
-  palettes: ColorPalettes
+  palettes: ColorPalettes,
 ): Record<string, string> {
   const styles: Record<string, string> = {};
   for (const palette of Object.values(palettes)) {

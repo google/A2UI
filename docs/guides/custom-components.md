@@ -23,22 +23,25 @@ You register entire catalogs with your client application, not individual compon
 2.  **Client Registers Catalog**: You register the catalog (and its component implementations) with your client app.
 3.  **Client Announces Support**: The client informs the agent which catalogs it supports.
 4.  **Agent Selects Catalog**: The agent chooses a catalog for a given UI surface.
-5.  **Agent Generates UI**: The agent generates `surfaceUpdate` messages using components from that catalog by name.
+5.  **Agent Generates UI**: The agent generates component messages (`surfaceUpdate` in v0.8, `updateComponents` in v0.9) using components from that catalog by name.
 
 ## Defining Custom Catalogs
 
 TODO: Add detailed guide for defining custom catalogs for each platform.
 
 **Web (Lit / Angular):**
+
 - How to define a catalog with both standard and custom components
 - How to register the catalog with the A2UI client
 - How to implement custom component classes
 
 **Flutter:**
+
 - How to define custom catalogs using GenUI
 - How to register custom component renderers
 
 **See working examples:**
+
 - [Lit samples](https://github.com/google/a2ui/tree/main/samples/client/lit)
 - [Angular samples](https://github.com/google/a2ui/tree/main/samples/client/angular)
 - [Flutter GenUI docs](https://docs.flutter.dev/ai/genui)
@@ -50,6 +53,7 @@ Once a catalog is registered on the client, agents can use components from it in
 The agent specifies which catalog to use via the `catalogId` in the `beginRendering` message.
 
 TODO: Add examples of:
+
 - How agents select catalogs
 - How agents reference custom components from catalogs
 - How catalog versioning works

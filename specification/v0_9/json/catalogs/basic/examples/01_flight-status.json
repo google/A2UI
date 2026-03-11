@@ -50,7 +50,7 @@
         {
           "id": "flight-indicator",
           "component": "Icon",
-          "name": "flight"
+          "name": "send"
         },
         {
           "id": "flight-number",
@@ -89,7 +89,7 @@
         {
           "id": "arrow",
           "component": "Text",
-          "text": "→",
+          "text": "\u2192",
           "variant": "h2"
         },
         {

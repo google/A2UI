@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import {
@@ -29,9 +29,9 @@ import {
   SurfaceID,
   SurfaceUpdateMessage,
   MessageProcessor,
-  ValueMap,
-  DataObject,
-} from "../types/types";
+} from "../types/types.js";
+import { A2uiMessageSchema } from "../schema/server-to-client.js";
+import { A2uiStateError, A2uiValidationError } from "../errors.js";
 import {
   isComponentArrayReference,
   isObject,
@@ -54,7 +54,6 @@ import {
   isResolvedText,
   isResolvedTextField,
   isResolvedVideo,
-  isValueMap,
 } from "./guards.js";
 
 /**
@@ -76,7 +75,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
       arrayCtor: ArrayConstructor;
       setCtor: SetConstructor;
       objCtor: ObjectConstructor;
-    } = { mapCtor: Map, arrayCtor: Array, setCtor: Set, objCtor: Object }
+    } = { mapCtor: Map, arrayCtor: Array, setCtor: Set, objCtor: Object },
   ) {
     this.arrayCtor = opts.arrayCtor;
     this.mapCtor = opts.mapCtor;
@@ -95,25 +94,27 @@ export class A2uiMessageProcessor implements MessageProcessor {
   }
 
   processMessages(messages: ServerToClientMessage[]): void {
-    for (const message of messages) {
+    for (const rawMessage of messages) {
+      const message = A2uiMessageSchema.parse(rawMessage);
+
       if (message.beginRendering) {
         this.handleBeginRendering(
           message.beginRendering,
-          message.beginRendering.surfaceId
+          message.beginRendering.surfaceId,
         );
       }
 
       if (message.surfaceUpdate) {
         this.handleSurfaceUpdate(
           message.surfaceUpdate,
-          message.surfaceUpdate.surfaceId
+          message.surfaceUpdate.surfaceId,
         );
       }
 
       if (message.dataModelUpdate) {
         this.handleDataModelUpdate(
           message.dataModelUpdate,
-          message.dataModelUpdate.surfaceId
+          message.dataModelUpdate.surfaceId,
         );
       }
 
@@ -131,7 +132,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
   getData(
     node: AnyComponentNode,
     relativePath: string,
-    surfaceId = A2uiMessageProcessor.DEFAULT_SURFACE_ID
+    surfaceId = A2uiMessageProcessor.DEFAULT_SURFACE_ID,
   ): DataValue | null {
     const surface = this.getOrCreateSurface(surfaceId);
     if (!surface) return null;
@@ -154,7 +155,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
     node: AnyComponentNode | null,
     relativePath: string,
     value: DataValue,
-    surfaceId = A2uiMessageProcessor.DEFAULT_SURFACE_ID
+    surfaceId = A2uiMessageProcessor.DEFAULT_SURFACE_ID,
   ): void {
     if (!node) {
       console.warn("No component node set");
@@ -213,9 +214,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
         console.warn(
           `Failed to parse potential JSON string: "${value.substring(
             0,
-            50
+            50,
           )}..."`,
-          e
+          e,
         );
         return value; // Return original string
       }
@@ -404,7 +405,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
   private handleBeginRendering(
     message: BeginRenderingMessage,
-    surfaceId: SurfaceID
+    surfaceId: SurfaceID,
   ): void {
     const surface = this.getOrCreateSurface(surfaceId);
     surface.rootComponentId = message.root;
@@ -414,7 +415,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
   private handleSurfaceUpdate(
     message: SurfaceUpdateMessage,
-    surfaceId: SurfaceID
+    surfaceId: SurfaceID,
   ): void {
     const surface = this.getOrCreateSurface(surfaceId);
     for (const component of message.components) {
@@ -423,14 +424,13 @@ export class A2uiMessageProcessor implements MessageProcessor {
     this.rebuildComponentTree(surface);
   }
 
-  private handleDataModelUpdate(message: DataModelUpdate, surfaceId: SurfaceID): void {
+  private handleDataModelUpdate(
+    message: DataModelUpdate,
+    surfaceId: SurfaceID,
+  ): void {
     const surface = this.getOrCreateSurface(surfaceId);
     const path = message.path ?? "/";
-    this.setDataByPath(
-      surface.dataModel,
-      path,
-      message.contents
-    );
+    this.setDataByPath(surface.dataModel, path, message.contents);
     this.rebuildComponentTree(surface);
   }
 
@@ -459,7 +459,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
       surface,
       visited,
       "/",
-      "" // Initial idSuffix.
+      "", // Initial idSuffix.
     );
   }
 
@@ -476,7 +476,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
     surface: Surface,
     visited: Set<string>,
     dataContextPath: string,
-    idSuffix = ""
+    idSuffix = "",
   ): AnyComponentNode | null {
     const fullId = `${baseComponentId}${idSuffix}`; // Construct the full ID
     const { components } = surface;
@@ -486,7 +486,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
     }
 
     if (visited.has(fullId)) {
-      throw new Error(`Circular dependency for component "${fullId}".`);
+      throw new A2uiStateError(
+        `Circular dependency for component "${fullId}".`,
+      );
     }
 
     visited.add(fullId);
@@ -507,7 +509,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
           surface,
           visited,
           dataContextPath,
-          idSuffix
+          idSuffix,
         );
       }
     }
@@ -525,7 +527,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
     switch (componentType) {
       case "Text":
         if (!isResolvedText(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -535,7 +539,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Image":
         if (!isResolvedImage(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -545,7 +551,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Icon":
         if (!isResolvedIcon(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -555,7 +563,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Video":
         if (!isResolvedVideo(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -565,7 +575,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "AudioPlayer":
         if (!isResolvedAudioPlayer(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -575,7 +587,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Row":
         if (!isResolvedRow(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
 
         return new this.objCtor({
@@ -586,7 +600,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Column":
         if (!isResolvedColumn(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
 
         return new this.objCtor({
@@ -597,7 +613,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "List":
         if (!isResolvedList(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -607,7 +625,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Card":
         if (!isResolvedCard(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -617,7 +637,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Tabs":
         if (!isResolvedTabs(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -627,7 +649,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Divider":
         if (!isResolvedDivider(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -637,7 +661,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Modal":
         if (!isResolvedModal(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -647,7 +673,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Button":
         if (!isResolvedButton(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -657,7 +685,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "CheckBox":
         if (!isResolvedCheckbox(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -667,7 +697,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "TextField":
         if (!isResolvedTextField(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -677,7 +709,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "DateTimeInput":
         if (!isResolvedDateTimeInput(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -687,7 +721,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "MultipleChoice":
         if (!isResolvedMultipleChoice(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -697,7 +733,9 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
       case "Slider":
         if (!isResolvedSlider(resolvedProperties)) {
-          throw new Error(`Invalid data; expected ${componentType}`);
+          throw new A2uiValidationError(
+            `Invalid data; expected ${componentType}`,
+          );
         }
         return new this.objCtor({
           ...baseNode,
@@ -725,7 +763,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
     surface: Surface,
     visited: Set<string>,
     dataContextPath: string,
-    idSuffix = ""
+    idSuffix = "",
   ): ResolvedValue {
     // 1. If it's a string that matches a component ID, build that node.
     if (typeof value === "string" && surface.components.has(value)) {
@@ -734,7 +772,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
         surface,
         visited,
         dataContextPath,
-        idSuffix
+        idSuffix,
       );
     }
 
@@ -748,19 +786,19 @@ export class A2uiMessageProcessor implements MessageProcessor {
             surface,
             visited,
             dataContextPath,
-            idSuffix
-          )
+            idSuffix,
+          ),
         );
       }
 
       if (value.template) {
         const fullDataPath = this.resolvePath(
           value.template.dataBinding,
-          dataContextPath
+          dataContextPath,
         );
         const data = this.getDataByPath(surface.dataModel, fullDataPath);
-
         const template = value.template;
+
         // Handle Array data.
         if (Array.isArray(data)) {
           return data.map((_, index) => {
@@ -779,7 +817,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
               surface,
               visited,
               childDataContextPath,
-              newSuffix // new suffix
+              newSuffix, // new suffix
             );
           });
         }
@@ -796,7 +834,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
               surface,
               visited,
               childDataContextPath,
-              newSuffix // new suffix
+              newSuffix, // new suffix
             );
           });
         }
@@ -814,8 +852,8 @@ export class A2uiMessageProcessor implements MessageProcessor {
           surface,
           visited,
           dataContextPath,
-          idSuffix
-        )
+          idSuffix,
+        ),
       );
     }
 
@@ -843,7 +881,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
           surface,
           visited,
           dataContextPath,
-          idSuffix
+          idSuffix,
         );
       }
       return newObj;

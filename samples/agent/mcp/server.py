@@ -27,7 +27,7 @@ from a2ui.core.schema.utils import wrap_as_json_array
 
 def load_a2ui_schema() -> dict[str, Any]:
   current_dir = pathlib.Path(__file__).resolve().parent
-  spec_root = current_dir / "../../../../specification/v0_8/json"
+  spec_root = current_dir / "../../../specification/v0_8/json"
 
   server_to_client_content = (spec_root / "server_to_client.json").read_text()
   server_to_client_json = json.loads(server_to_client_content)
@@ -46,7 +46,7 @@ def load_a2ui_schema() -> dict[str, Any]:
 
 def load_a2ui_client_to_server_schema() -> dict[str, Any]:
   current_dir = pathlib.Path(__file__).resolve().parent
-  spec_root = current_dir / "../../../../specification/v0_8/json"
+  spec_root = current_dir / "../../../specification/v0_8/json"
 
   client_to_server_content = (spec_root / "client_to_server.json").read_text()
   client_to_server_json = json.loads(client_to_server_content)
@@ -89,6 +89,23 @@ def main(port: int, transport: str) -> int:
       return {"response": f"Received A2UI error", "args": arguments}
 
     raise ValueError(f"Unknown tool: {name}")
+
+  @app.list_resources()
+  async def list_resources() -> list[types.Resource]:
+    return [
+        types.Resource(
+            uri="ui://calculator/app",
+            name="Calculator App",
+            mimeType="text/html;profile=mcp-app",
+            description="A simple calculator application",
+        )
+    ]
+
+  @app.read_resource()
+  async def read_resource(uri: Any) -> str | bytes:
+    if str(uri) == "ui://calculator/app":
+      return (pathlib.Path(__file__).parent / "apps" / "calculator.html").read_text()
+    raise ValueError(f"Unknown resource: {uri}")
 
   @app.list_tools()
   async def list_tools() -> list[types.Tool]:

@@ -40,7 +40,7 @@
         {
           "id": "package-icon",
           "component": "Icon",
-          "name": "package_2"
+          "name": "info"
         },
         {
           "id": "title",
@@ -82,7 +82,7 @@
         {
           "id": "step1-icon",
           "component": "Icon",
-          "name": "check_circle"
+          "name": "check"
         },
         {
           "id": "step1-text",
@@ -102,7 +102,7 @@
         {
           "id": "step2-icon",
           "component": "Icon",
-          "name": "check_circle"
+          "name": "check"
         },
         {
           "id": "step2-text",
@@ -144,7 +144,7 @@
         {
           "id": "step4-icon",
           "component": "Icon",
-          "name": "circle"
+          "name": "check"
         },
         {
           "id": "step4-text",
@@ -164,7 +164,7 @@
         {
           "id": "eta-icon",
           "component": "Icon",
-          "name": "schedule"
+          "name": "calendarToday"
         },
         {
           "id": "eta-text",
@@ -183,7 +183,7 @@
       "surfaceId": "gallery-shipping-status",
       "value": {
         "trackingNumber": "Tracking: 1Z999AA10123456784",
-        "currentStepIcon": "local_shipping",
+        "currentStepIcon": "send",
         "eta": "Estimated delivery: Today by 8 PM"
       }
     }

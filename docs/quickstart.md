@@ -15,8 +15,9 @@ By the end of this quickstart, you'll have:
 
 Before you begin, make sure you have:
 
-- **Node.js** (v18 or later) - [Download here](https://nodejs.org/)
-- **A Gemini API key** - [Get one free from Google AI Studio](https://aistudio.google.com/apikey)
+- **Node.js** (v18 or later) — [Download here](https://nodejs.org/)
+- **uv** (Python package manager) — [Install here](https://docs.astral.sh/uv/getting-started/installation/) (used to run the Python agent backend)
+- **A Gemini API key** — [Get one free from Google AI Studio](https://aistudio.google.com/apikey)
 
 > ⚠️ **Security Notice**
 >
@@ -109,83 +110,63 @@ In the web app, try these prompts:
 
 Let's peek at what the agent is sending. Here's a simplified example of the JSON messages:
 
-### Defining the UI
+=== "v0.8 (Stable)"
 
-```json
-{
-  "surfaceUpdate": {
-    "surfaceId": "main",
-    "components": [
-      {
-        "id": "header",
-        "component": {
-          "Text": {
-            "text": {"literalString": "Book Your Table"},
-            "usageHint": "h1"
-          }
-        }
-      },
-      {
-        "id": "date-picker",
-        "component": {
-          "DateTimeInput": {
-            "label": {"literalString": "Select Date"},
-            "value": {"path": "/reservation/date"},
-            "enableDate": true
-          }
-        }
-      },
-      {
-        "id": "submit-btn",
-        "component": {
-          "Button": {
-            "child": "submit-text",
-            "action": {"name": "confirm_booking"}
-          }
-        }
-      },
-      {
-        "id": "submit-text",
-        "component": {
-          "Text": {"text": {"literalString": "Confirm Reservation"}}
-        }
-      }
-    ]
-  }
-}
-```
+    **Defining the UI:**
 
-This defines the UI components for the surface: a text header, a date picker, and a button.
+    ```json
+    {"surfaceUpdate": {"surfaceId": "main", "components": [
+      {"id": "header", "component": {"Text": {"text": {"literalString": "Book Your Table"}, "usageHint": "h1"}}},
+      {"id": "date-picker", "component": {"DateTimeInput": {"label": {"literalString": "Select Date"}, "value": {"path": "/reservation/date"}, "enableDate": true}}},
+      {"id": "submit-text", "component": {"Text": {"text": {"literalString": "Confirm Reservation"}}}},
+      {"id": "submit-btn", "component": {"Button": {"child": "submit-text", "action": {"name": "confirm_booking"}}}}
+    ]}}
+    ```
 
-### Populating Data
+    **Populating data:**
 
-```json
-{
-  "dataModelUpdate": {
-    "surfaceId": "main",
-    "contents": [
-      {
-        "key": "reservation",
-        "valueMap": [
-          {"key": "date", "valueString": "2025-12-15"},
-          {"key": "time", "valueString": "19:00"},
-          {"key": "guests", "valueInt": 2}
-        ]
-      }
-    ]
-  }
-}
-```
+    ```json
+    {"dataModelUpdate": {"surfaceId": "main", "contents": [
+      {"key": "reservation", "valueMap": [
+        {"key": "date", "valueString": "2025-12-15"},
+        {"key": "time", "valueString": "19:00"},
+        {"key": "guests", "valueInt": 2}
+      ]}
+    ]}}
+    ```
 
-This populates the data model that components can bind to.
+    **Signaling render:**
 
-### Signaling Render
+    ```json
+    {"beginRendering": {"surfaceId": "main", "root": "header"}}
+    ```
 
-```json
-{"beginRendering": {"surfaceId": "main", "root": "header"}}
-```
+=== "v0.9 (Draft)"
 
-This tells the client it has enough information to render the UI.
+    **Creating the surface:**
+
+    ```json
+    {"version": "v0.9", "createSurface": {"surfaceId": "main", "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"}}
+    ```
+
+    **Defining the UI:**
+
+    ```json
+    {"version": "v0.9", "updateComponents": {"surfaceId": "main", "components": [
+      {"id": "header", "component": "Text", "text": "# Book Your Table", "variant": "h1"},
+      {"id": "date-picker", "component": "DateTimeInput", "label": "Select Date", "value": {"path": "/reservation/date"}, "enableDate": true},
+      {"id": "submit-text", "component": "Text", "text": "Confirm Reservation"},
+      {"id": "submit-btn", "component": "Button", "child": "submit-text", "variant": "primary", "action": {"event": {"name": "confirm_booking"}}}
+    ]}}
+    ```
+
+    **Populating data:**
+
+    ```json
+    {"version": "v0.9", "updateDataModel": {"surfaceId": "main", "path": "/reservation", "value": {"date": "2025-12-15", "time": "19:00", "guests": 2}}}
+    ```
+
+    Note: In v0.9, `createSurface` replaces `beginRendering`, components use a flatter format, and the data model uses plain JSON values instead of typed adjacency lists.
 
 > 💡 **It's Just JSON**
 >
@@ -238,18 +219,31 @@ If you see errors about missing API keys:
 2. Make sure it's a valid Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
 3. Try re-exporting: `export GEMINI_API_KEY="your_key"`
 
-### Python Dependencies
+### Connection Errors on Startup
 
-The demo uses Python for the A2A agent. If you encounter Python errors:
+If you see `ERR_CONNECTION_REFUSED` errors when the browser opens, **don't worry** — this is a known race condition ([#587](https://github.com/google/A2UI/issues/587)). The web app starts faster than the Python agent backend. Just wait a few seconds and refresh the page.
+
+### Python / uv Issues
+
+The demo agents require [uv](https://docs.astral.sh/uv/) to run. If you see `uv: command not found`:
 
 ```bash
-# Make sure Python 3.10+ is installed
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Verify
+uv --version
+```
+
+If you encounter other Python errors:
+
+```bash
+# Make sure Python 3.10+ is available
 python3 --version
 
-# The demo should auto-install dependencies via the npm script
-# If not, manually install them:
-cd ../../agent/adk/restaurant_finder
-pip install .
+# Try running the agent manually
+cd samples/agent/adk/restaurant_finder
+uv run .
 ```
 
 ### Still Having Issues?
@@ -262,9 +256,9 @@ pip install .
 
 Want to see how it works? Check out:
 
-- **Agent Code**: `samples/agent/adk/restaurant_finder/` - The Python A2A agent
-- **Client Code**: `samples/client/lit/` - The Lit web client with A2UI renderer
-- **A2UI Renderer**: `web-lib/` - The web renderer implementation
+- **Agent Code**: `samples/agent/adk/restaurant_finder/` — The Python A2A agent
+- **Client Code**: `samples/client/lit/` — The Lit web client with A2UI renderer
+- **A2UI Renderers**: `renderers/lit/` (Lit) and `renderers/web_core/` (framework-agnostic core)
 
 Each directory has its own README with detailed documentation.
 

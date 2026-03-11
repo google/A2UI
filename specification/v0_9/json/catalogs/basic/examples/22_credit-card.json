@@ -39,7 +39,7 @@
         {
           "id": "card-icon",
           "component": "Icon",
-          "name": "credit_card"
+          "name": "payment"
         },
         {
           "id": "card-type",
@@ -120,7 +120,7 @@
       "surfaceId": "gallery-credit-card",
       "value": {
         "cardType": "VISA",
-        "cardNumber": "•••• •••• •••• 4242",
+        "cardNumber": "\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 4242",
         "holderName": "SARAH JOHNSON",
         "expiryDate": "09/27"
       }

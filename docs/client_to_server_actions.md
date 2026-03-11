@@ -29,6 +29,7 @@ Components like `Button` expose an `action` property. Here is how a server event
   }
 }
 ```
+
 - **`name`**: A stable identifier for the agent to switch on.
 - **`context`**: A map of key-value pairs. Values can be literal or use a `path` to pull from the current state of the data model. 
 

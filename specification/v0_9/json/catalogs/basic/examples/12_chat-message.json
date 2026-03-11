@@ -38,7 +38,7 @@
         {
           "id": "channel-icon",
           "component": "Icon",
-          "name": "tag"
+          "name": "info"
         },
         {
           "id": "channel-name",

@@ -33,7 +33,7 @@
         {
           "id": "success-icon",
           "component": "Icon",
-          "name": "check_circle"
+          "name": "check"
         },
         {
           "id": "title",
@@ -106,7 +106,7 @@
         {
           "id": "delivery-icon",
           "component": "Icon",
-          "name": "local_shipping"
+          "name": "arrowForward"
         },
         {
           "id": "delivery-text",

@@ -102,7 +102,7 @@
         {
           "id": "prep-icon",
           "component": "Icon",
-          "name": "timer"
+          "name": "calendarToday"
         },
         {
           "id": "prep-text",
@@ -124,7 +124,7 @@
         {
           "id": "cook-icon",
           "component": "Icon",
-          "name": "local_fire_department"
+          "name": "warning"
         },
         {
           "id": "cook-text",
