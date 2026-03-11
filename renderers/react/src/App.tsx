@@ -1,13 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore, useCallback } from 'react';
 import { MessageProcessor, SurfaceModel } from '@a2ui/web_core/v0_9';
 import { minimalCatalog } from './catalog';
 import { A2uiSurface } from './A2uiSurface';
+
+const DataModelViewer = ({ surface }: { surface: SurfaceModel<any> }) => {
+  const subscribe = useCallback((callback: () => void) => {
+    const bound = surface.dataModel.addListener('/', callback);
+    return () => bound.removeListener();
+  }, [surface]);
+
+  const getSnapshot = useCallback(() => {
+    return JSON.stringify(surface.dataModel.get('/'), null, 2);
+  }, [surface]);
+
+  const dataString = useSyncExternalStore(subscribe, getSnapshot);
+
+  return (
+    <div style={{ marginBottom: '1rem' }}>
+      <strong>{surface.id}</strong>
+      <pre style={{ fontSize: '12px', margin: 0, whiteSpace: 'pre-wrap' }}>
+        {dataString}
+      </pre>
+    </div>
+  );
+};
 
 import ex1 from '../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json';
 import ex2 from '../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json';
 import ex3 from '../../../specification/v0_9/json/catalogs/minimal/examples/3_interactive_button.json';
 import ex4 from '../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json';
 import ex5 from '../../../specification/v0_9/json/catalogs/minimal/examples/5_complex_layout.json';
+import ex6 from '../../../specification/v0_9/json/catalogs/minimal/examples/6_capitalized_text.json';
 
 const examples: Record<string, any[]> = {
   '1_simple_text': ex1 as any[],
@@ -15,6 +38,7 @@ const examples: Record<string, any[]> = {
   '3_interactive_button': ex3 as any[],
   '4_login_form': ex4 as any[],
   '5_complex_layout': ex5 as any[],
+  '6_capitalized_text': ex6 as any[],
 };
 
 export default function App() {
@@ -128,6 +152,15 @@ export default function App() {
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{JSON.stringify(log.action, null, 2)}</pre>
             </div>
           ))}
+        </div>
+
+        <h3>Data Model</h3>
+        <div style={{ border: '1px solid #ccc', padding: '8px', height: '300px', overflowY: 'auto', background: '#f9f9f9', color: '#333' }}>
+          {surfaces.map((surfaceId) => {
+            const surface = processor?.model.getSurface(surfaceId);
+            if (!surface) return null;
+            return <DataModelViewer key={surfaceId} surface={surface} />;
+          })}
         </div>
       </div>
 

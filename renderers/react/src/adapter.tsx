@@ -1,26 +1,50 @@
-import React, { useRef, useSyncExternalStore, useEffect, useState } from "react";
+import React, { useRef, useSyncExternalStore, useCallback } from "react";
 import { ComponentContext } from "@a2ui/web_core/v0_9";
 
 export class ComponentBinding<T> {
-  private listeners: (() => void)[] = [];
+  private dataListeners: (() => void)[] = [];
   private propsListeners: ((props: T) => void)[] = [];
   private currentProps: Partial<T> = {};
   private compUnsub?: () => void;
-  private isDisposed = false;
+  private isConnected = false;
 
-  constructor(private context: ComponentContext, private structuralKeys: string[]) {
-    this.bindProps();
-    this.compUnsub = this.context.componentModel.addUpdatedListener(() => {
-       if (!this.isDisposed) {
-          this.bindProps();
-       }
-    });
+  private context: ComponentContext;
+  private structuralKeys: string[];
+
+  constructor(context: ComponentContext, structuralKeys: string[]) {
+    this.context = context;
+    this.structuralKeys = structuralKeys;
+    // Resolve initial synchronous props so the first render has data
+    this.resolveInitialProps();
   }
 
-  private bindProps() {
-    // Clean up old listeners
-    this.listeners.forEach(l => l());
-    this.listeners = [];
+  private resolveInitialProps() {
+    const props = this.context.componentModel.properties;
+    const newProps: Partial<T> = {};
+    for (const key of Object.keys(props)) {
+      if (key === 'component' || key === 'id') continue;
+      if (this.structuralKeys.includes(key)) {
+         newProps[key as keyof T] = props[key];
+      } else {
+         newProps[key as keyof T] = this.context.dataContext.resolveDynamicValue(props[key]) as any;
+      }
+    }
+    this.currentProps = newProps;
+  }
+
+  private connect() {
+    if (this.isConnected) return;
+    this.isConnected = true;
+    console.log(`[Adapter] ${this.context.componentModel.id} CONNECTING`);
+    this.compUnsub = this.context.componentModel.addUpdatedListener(() => {
+       this.bindDataListeners();
+    });
+    this.bindDataListeners();
+  }
+
+  private bindDataListeners() {
+    this.dataListeners.forEach(l => l());
+    this.dataListeners = [];
     
     const props = this.context.componentModel.properties;
     const newProps: Partial<T> = {};
@@ -32,13 +56,12 @@ export class ComponentBinding<T> {
          newProps[key as keyof T] = props[key];
       } else {
          const bound = this.context.dataContext.addDynamicValueListener(props[key], (val: any) => {
-            if (!this.isDisposed) {
-               this.currentProps = { ...this.currentProps, [key]: val };
-               this.notify();
-            }
+            console.log(`[Adapter] ${this.context.componentModel.id} PROPERTY CHANGED: ${key} =`, val);
+            this.currentProps = { ...this.currentProps, [key]: val };
+            this.notify();
          });
          newProps[key as keyof T] = bound.value as any;
-         this.listeners.push(() => bound.removeListener());
+         this.dataListeners.push(() => bound.removeListener());
       }
     }
     
@@ -46,34 +69,41 @@ export class ComponentBinding<T> {
     this.notify();
   }
 
+  private disconnect() {
+    if (!this.isConnected) return;
+    console.log(`[Adapter] ${this.context.componentModel.id} DISCONNECTING`);
+    this.isConnected = false;
+    this.dataListeners.forEach(l => l());
+    this.dataListeners = [];
+    if (this.compUnsub) {
+      this.compUnsub();
+      this.compUnsub = undefined;
+    }
+  }
+
   private notify() {
-    if (this.isDisposed) return;
-    this.propsListeners.forEach((l: (props: T) => void) => l(this.currentProps as T));
+    this.propsListeners.forEach(l => l(this.currentProps as T));
   }
 
   addPropsListener(listener: (props: T) => void) {
+    if (this.propsListeners.length === 0) {
+      this.connect();
+    }
     this.propsListeners.push(listener);
+    
     return {
        value: this.currentProps as T,
        removeListener: () => {
-         this.propsListeners = this.propsListeners.filter((l: (props: T) => void) => l !== listener);
+         this.propsListeners = this.propsListeners.filter(l => l !== listener);
+         if (this.propsListeners.length === 0) {
+           this.disconnect();
+         }
        }
     };
   }
 
   get snapshot() {
     return this.currentProps as T;
-  }
-
-  dispose() {
-    this.isDisposed = true;
-    this.listeners.forEach(l => l());
-    this.listeners = [];
-    this.propsListeners = [];
-    if (this.compUnsub) {
-      this.compUnsub();
-      this.compUnsub = undefined;
-    }
   }
 }
 
@@ -94,26 +124,19 @@ export function createReactComponent<T>(
   return function ReactWrapper({ context, buildChild }: { context: ComponentContext, buildChild: (id: string, basePath?: string) => React.ReactNode }) {
     const bindingRef = useRef<ComponentBinding<T>>(null);
 
-    // If remounting in strict mode after an unmount, the old binding is disposed.
-    // We must recreate it synchronously during render.
-    if (!bindingRef.current || (bindingRef.current as any).isDisposed) {
+    if (!bindingRef.current) {
       bindingRef.current = binderFactory(context);
     }
     const binding = bindingRef.current;
 
-    const props = useSyncExternalStore(
-      (callback) => {
-        const bound = binding.addPropsListener(callback);
-        return () => bound.removeListener();
-      },
-      () => binding.snapshot
-    );
-
-    useEffect(() => {
-      return () => {
-        binding.dispose();
-      };
+    const subscribe = useCallback((callback: () => void) => {
+      const bound = binding.addPropsListener(callback);
+      return () => bound.removeListener();
     }, [binding]);
+
+    const getSnapshot = useCallback(() => binding.snapshot, [binding]);
+
+    const props = useSyncExternalStore(subscribe, getSnapshot);
 
     return <RenderComponent props={props || ({} as T)} buildChild={buildChild} context={context} />;
   };

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { createReactComponent, createGenericBinding } from './adapter';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog } from '@a2ui/web_core/v0_9';
 
