@@ -35,10 +35,10 @@ export class ComponentBinding<T> {
   private connect() {
     if (this.isConnected) return;
     this.isConnected = true;
-    console.log(`[Adapter] ${this.context.componentModel.id} CONNECTING`);
-    this.compUnsub = this.context.componentModel.addUpdatedListener(() => {
+    const sub = this.context.componentModel.onUpdated.subscribe(() => {
        this.bindDataListeners();
     });
+    this.compUnsub = () => sub.unsubscribe();
     this.bindDataListeners();
   }
 
@@ -55,13 +55,12 @@ export class ComponentBinding<T> {
       if (this.structuralKeys.includes(key)) {
          newProps[key as keyof T] = props[key];
       } else {
-         const bound = this.context.dataContext.addDynamicValueListener(props[key], (val: any) => {
-            console.log(`[Adapter] ${this.context.componentModel.id} PROPERTY CHANGED: ${key} =`, val);
+         const bound = this.context.dataContext.subscribeDynamicValue(props[key], (val: any) => {
             this.currentProps = { ...this.currentProps, [key]: val };
             this.notify();
          });
          newProps[key as keyof T] = bound.value as any;
-         this.dataListeners.push(() => bound.removeListener());
+         this.dataListeners.push(() => bound.unsubscribe());
       }
     }
     
@@ -71,7 +70,6 @@ export class ComponentBinding<T> {
 
   private disconnect() {
     if (!this.isConnected) return;
-    console.log(`[Adapter] ${this.context.componentModel.id} DISCONNECTING`);
     this.isConnected = false;
     this.dataListeners.forEach(l => l());
     this.dataListeners = [];

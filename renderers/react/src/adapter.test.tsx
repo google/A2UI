@@ -76,7 +76,7 @@ describe('adapter', () => {
     
     const context = new ComponentContext(surface, 'c1', '/');
 
-    const spyAddListener = vi.spyOn(context.dataContext, 'addDynamicValueListener');
+    const spyAddListener = vi.spyOn(context.dataContext, 'subscribeDynamicValue');
 
     type TestProps = { text?: string };
 

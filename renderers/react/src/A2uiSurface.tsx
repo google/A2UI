@@ -17,13 +17,13 @@ const componentRegistry: Record<string, React.FC<any>> = {
 export const A2uiSurface: React.FC<{ surface: SurfaceModel<any>, basePath?: string }> = ({ surface, basePath = '/' }) => {
   const hasRoot = useSyncExternalStore(
     (cb) => {
-      const unsub1 = surface.componentsModel.addComponentCreatedListener((_c) => {
+      const unsub1 = surface.componentsModel.onCreated.subscribe((_c: any) => {
         if (_c.id === 'root') cb();
       });
-      const unsub2 = surface.componentsModel.addComponentDeletedListener((id: string) => {
+      const unsub2 = surface.componentsModel.onDeleted.subscribe((id: string) => {
         if (id === 'root') cb();
       });
-      return () => { unsub1(); unsub2(); };
+      return () => { unsub1.unsubscribe(); unsub2.unsubscribe(); };
     },
     () => surface.componentsModel.get('root') !== undefined
   );

@@ -17,7 +17,7 @@ export const ReactChildList: React.FC<{
       const bindingRef = useRef<{ 
         currentVal: any[], 
         listeners: ((v: any[]) => void)[], 
-        dataSub?: { removeListener: () => void },
+        dataSub?: { unsubscribe: () => void },
         connect: () => void,
         disconnect: () => void
       } | null>(null);
@@ -28,7 +28,7 @@ export const ReactChildList: React.FC<{
           listeners: [],
           connect() {
             if (this.dataSub) return;
-            this.dataSub = context.dataContext.addDynamicValueListener({ path: childList.path }, (v: any) => {
+            this.dataSub = context.dataContext.subscribeDynamicValue({ path: childList.path }, (v: any) => {
               this.currentVal = Array.isArray(v) ? v : EMPTY_ARRAY;
               this.listeners.forEach(l => l(this.currentVal));
             });
@@ -36,7 +36,7 @@ export const ReactChildList: React.FC<{
           },
           disconnect() {
             if (this.dataSub) {
-              this.dataSub.removeListener();
+              this.dataSub.unsubscribe();
               this.dataSub = undefined;
             }
           }

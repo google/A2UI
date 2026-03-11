@@ -4,16 +4,16 @@ import { minimalCatalog } from './catalog';
 import { A2uiSurface } from './A2uiSurface';
 
 const DataModelViewer = ({ surface }: { surface: SurfaceModel<any> }) => {
-  const subscribe = useCallback((callback: () => void) => {
-    const bound = surface.dataModel.addListener('/', callback);
-    return () => bound.removeListener();
+  const subscribeHook = useCallback((callback: () => void) => {
+    const bound = surface.dataModel.subscribe('/', callback);
+    return () => bound.unsubscribe();
   }, [surface]);
 
   const getSnapshot = useCallback(() => {
     return JSON.stringify(surface.dataModel.get('/'), null, 2);
   }, [surface]);
 
-  const dataString = useSyncExternalStore(subscribe, getSnapshot);
+  const dataString = useSyncExternalStore(subscribeHook, getSnapshot);
 
   return (
     <div style={{ marginBottom: '1rem' }}>
@@ -101,14 +101,14 @@ export default function App() {
     const s = Array.from(processor.model.surfacesMap.values()).map((s: any) => s.id as string);
     setSurfaces(s);
     
-    const unsub1 = processor.addSurfaceCreatedListener((_s: SurfaceModel<any>) => {
+    const unsub1 = processor.model.onSurfaceCreated.subscribe((_s: SurfaceModel<any>) => {
       setSurfaces(Array.from(processor.model.surfacesMap.values()).map((s: any) => s.id as string));
     });
-    const unsub2 = processor.addSurfaceDeletedListener((_id: string) => {
+    const unsub2 = processor.model.onSurfaceDeleted.subscribe((_id: string) => {
       setSurfaces(Array.from(processor.model.surfacesMap.values()).map((s: any) => s.id as string));
     });
 
-    return () => { unsub1(); unsub2(); };
+    return () => { unsub1.unsubscribe(); unsub2.unsubscribe(); };
   }, [processor]);
 
   return (

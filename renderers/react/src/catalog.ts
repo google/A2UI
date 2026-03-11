@@ -21,7 +21,7 @@ export const minimalCatalog = new Catalog(
     capitalize: (args: Record<string, any>) => {
       const val = args["value"];
       if (typeof val === "string") {
-        return val.charAt(0).toUpperCase() + val.slice(1);
+        return val.toUpperCase();
       }
       return val;
     }
