@@ -203,7 +203,7 @@ export class Chart extends DynamicComponent<Types.CustomNode> {
         const valuePath: Primitives.NumberValue = { path: `${itemPrefix}.value` };
         const label = super.resolvePrimitive(labelPath);
         const value = super.resolvePrimitive(valuePath);
-        if (label === null || value === null) {
+        if (label == null || value == null) {
           break;
         }
         labels.push(label);
@@ -222,7 +222,7 @@ export class Chart extends DynamicComponent<Types.CustomNode> {
           };
           const drilldownLabel = super.resolvePrimitive(drilldownLabelPath);
           const drilldownValue = super.resolvePrimitive(drilldownValuePath);
-          if (drilldownLabel === null || drilldownValue === null) {
+          if (drilldownLabel == null || drilldownValue == null) {
             break;
           }
           drilldownLabels.push(drilldownLabel);
