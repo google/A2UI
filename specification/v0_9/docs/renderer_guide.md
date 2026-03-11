@@ -75,9 +75,9 @@ The models must provide a mechanism for the rendering layer to observe changes.
 **Principles:**
 1.  **Low Dependency**: Prefer "lowest common denominator" mechanisms over complex reactive libraries.
 2.  **Multi-Cast**: The mechanism must support multiple listeners registered simultaneously.
-3.  **Unsubscribe Pattern**: There MUST be a clear way to stop listening and prevent memory leaks.
-4.  **Payload Support**: The mechanism must communicate specific data updates and lifecycle events.
-5.  **Consistency**: This pattern is used uniformly across the whole state model.
+3.  **Unsubscribe Pattern**: There MUST be a clear way (e.g., returning an "unsubscribe" callback) to stop listening and prevent memory leaks.
+4.  **Payload Support**: The mechanism must communicate specific data updates (e.g., passing the updated instance) and lifecycle events.
+5.  **Consistency**: This pattern is used uniformly across `SurfaceGroupModel` (lifecycle), `SurfaceModel` (actions), `SurfaceComponentsModel` (lifecycle), `ComponentModel` (updates), and `DataModel` (data changes).
 
 #### 3. Granular Reactivity
 The model is designed to support high-performance rendering through granular updates rather than full-surface refreshes.
@@ -92,7 +92,7 @@ The model is designed to support high-performance rendering through granular upd
 *   **`SurfaceComponentsModel`**: A flat collection of component configurations.
 *   **`ComponentModel`**: A specific component's raw configuration.
 *   **`DataModel`**: A dedicated store for application data.
-*   **`DataContext`**: An abstraction around the data model, available functions, and the base path of a Component, which allows Component implementations to fetch and subscribe to dynamic values via a simple API. Different Component instances instantiated from the same Component ID, but with different base paths (e.g. because they are different instances of a *template*) can have a different `DataContext` instance.
+*   **`DataContext`**: An abstraction around the data model, available functions, and the base path of a Component, which allows Component implementations to fetch and subscribe to dynamic values via a simple API. Different Component instances instantiated from the same Component ID, but with different base paths (e.g. because they are different instances of a *template*) can have a different `DataContext` instance. *Note: It is the responsibility of the system instantiating the DataContext to extract available functions from the Catalog and provide them as a `FunctionInvoker`.*
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
 ### The Models
@@ -277,16 +277,34 @@ When processing `updateComponents`, the processor must handle existing IDs caref
 
 #### Generating Client Capabilities and Schema Types
 
-To dynamically generate the `a2uiClientCapabilities` payload (specifically the `inlineCatalogs` array), the renderer needs to convert its internal component and theme schemas into valid JSON Schemas that adhere to the A2UI protocol.
+To dynamically generate the `a2uiClientCapabilities` payload (specifically the `inlineCatalogs` array), the renderer needs to convert its internal component schemas into valid JSON Schemas that adhere to the A2UI protocol.
 
+**Schema Types Location**
+The foundational schema types for A2UI components are defined in the `schema` directory (e.g., `renderers/web_core/src/v0_9/schema/common-types.ts`). This is where reusable validation schemas (like Zod definitions) reside.
+
+**Detectable Common Types**
 A2UI heavily relies on shared schema definitions (like `DynamicString`, `DataBinding`, and `Action` from `common_types.json`). However, most schema validation libraries (such as Zod) do not natively support emitting external JSON Schema `$ref` pointers out-of-the-box.
 
-To solve this, common types must be **detectable** during the JSON Schema conversion process. This is often achieved by "tagging" the schemas using their `description` property (e.g., `REF:common_types.json#/$defs/DynamicString`). 
+To solve this, common types must be **detectable** during the JSON Schema conversion process. This is achieved by "tagging" the schemas using their `description` property (e.g., `REF:common_types.json#/$defs/DynamicString`). 
 
 When `getClientCapabilities()` converts the internal schemas:
 1. It translates the definition into a raw JSON Schema.
 2. It traverses the schema tree looking for string descriptions starting with the `REF:` tag.
-3. It strips the tag and replaces the entire node with a valid JSON Schema `$ref` object.
+3. It strips the tag and replaces the entire node with a valid JSON Schema `$ref` object, preserving any actual developer descriptions using a separator token.
+4. It wraps the resulting property schemas in the standard A2UI component envelope (`allOf` containing `ComponentCommon` and the component's `const` type identifier).
+
+**The Inline Catalogs API**
+By passing `{ inlineCatalogs: [myCatalog] }` to `getClientCapabilities()`, the processor:
+* Iterates over all the components defined in the provided `catalog`.
+* Translates their schemas into the structured format required by the A2UI specification.
+* Returns a configuration object ready to be sent in the transport metadata (populating `supportedCatalogIds` and `inlineCatalogs`).
+
+**Test Cases to Include**
+When implementing or modifying the capabilities generator, you must include test cases that verify:
+* **Capabilities Generation:** The output successfully includes the `inlineCatalogs` list when requested.
+* **Component Envelope:** Generated schemas correctly wrap component properties in an `allOf` block referencing `common_types.json#/$defs/ComponentCommon` and correctly assert the `component` property `const` value.
+* **Reference Resolution:** Properties tagged with `REF:` successfully resolve to `$ref` objects instead of expanding the inline schema definition (e.g., a `title` property correctly emits `"$ref": "common_types.json#/$defs/DynamicString"`).
+* **Description Preservation:** Additional descriptions appended to tagged types are preserved and properly formatted alongside the reference pointer.
 
 ---
 
@@ -633,6 +651,18 @@ interface FunctionImplementation {
 }
 ```
 
+#### Function Implementation Rationale
+A2UI categorizes client-side functions to balance performance and reactivity. 
+
+**Observability Consistency**: Like the "Dumb Models," functions MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+
+**API Documentation**: Every function MUST include a schema using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities for the AI model.
+
+**Function Categories**:
+1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. While they return observable streams for consistency, their logic is immediate and depends only on their inputs.
+2.  **External State (Reactive)**: Functions like `clock()` or `networkStatus()`. These return long-lived streams that push updates to the UI independently of data model changes.
+3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`, `closeModal`) that return `void`. These are typically triggered by user actions rather than interpolation.
+
 #### Expression Resolution Logic (`formatString`)
 The standard `formatString` function is uniquely complex. It is responsible for interpreting the `${expression}` syntax within string properties.
 
@@ -644,7 +674,36 @@ The standard `formatString` function is uniquely complex. It is responsible for 
 
 ---
 
-## 5. Agent Implementation Guide
+## 5. The Gallery App
+
+The Gallery App is a comprehensive development and debugging tool that serves as the reference environment for an A2UI renderer. It allows developers to visualize components, inspect the live data model, step through progressive rendering, and verify interaction logic.
+
+### UX Architecture
+The Gallery App must implement a three-column layout to provide a high-density information environment for debugging:
+
+1.  **Left Column (Sample Navigation)**: A list of available A2UI samples (conforming to the `sample.json` schema) that the user can select.
+2.  **Center Column (Rendering & Messages)**:
+    *   **Surface Preview**: The top half renders the active A2UI surface.
+    *   **JSON Message Stream**: The bottom half displays the list of A2UI JSON messages that constitute the sample.
+    *   **Interactive Stepper**: Below the preview, a **"Reset"** button clears the surface. Next to each JSON message in the list, an **"Advance"** button allows the user to process messages one by one up to that point. This is essential for verifying progressive rendering and state transitions.
+3.  **Right Column (Live Inspection)**:
+    *   **Data Model Pane**: A live-updating view of the surface's full Data Model.
+    *   **Action Logs Pane**: A log of all actions triggered by user interactions (e.g., button clicks), including the action name and context.
+
+### Integration Testing Requirements
+Every renderer implementation must include a suite of automated integration tests (e.g., using ` @testing-library/react` or equivalent) that utilize the Gallery App's logic to verify the following scenarios:
+
+*   **Static Rendering**: Opening the "Simple Text" sample must result in "Hello Minimal Catalog" appearing on screen.
+*   **Layout Integrity**: Opening the "Row Layout" sample must result in both "Left Content" and "Right Content" being visible in their respective positions.
+*   **Two-Way Binding**: Opening the "Login Form" sample and typing into the "username" field must:
+    1.  Update the text visible in the text field.
+    2.  Automatically update the corresponding path in the Data Model viewer.
+*   **Reactive Logic**: Opening the "Capitalize Text" sample and typing into the input must result in the upper-case version of the text appearing dynamically in the associated output component.
+*   **Action Context Scoping**: Opening the "Incremental List" sample and clicking a "Book now" button must emit an action containing the correctly resolved restaurant name (e.g., "The Golden Fork") in its context, proving that dynamic values within actions are correctly scoped to their containing list item.
+
+---
+
+## 6. Agent Implementation Guide
 
 If you are an AI Agent tasked with building a new renderer for A2UI, you MUST follow this strict, phased sequence of operations. Do not attempt to implement the entire architecture at once.
 
@@ -685,15 +744,14 @@ Do not start with the full Basic Catalog. Target the `minimal_catalog.json` firs
 *   **Framework Library**: Implement the actual native UI widgets for these 5 components.
 *   Design a mechanism (e.g., a factory function or class) to bundle these together into a Catalog.
 
-### 6. Demo Application (Milestone)
-Build a self-contained application to prove the architecture works before scaling.
-*   The app should run entirely locally (no server required).
-*   It should load the JSON message arrays from `specification/v0_9/json/catalogs/minimal/examples/`.
-*   It should display a list of these examples.
-*   When an example is selected, it should pipe the messages into the `MessageProcessor` and render the surface.
-*   **Reactivity Test**: Add a mechanism to simulate delayed `updateDataModel` messages (e.g., waiting 2 seconds before sending data) to prove that the UI progressively renders and reacts to changes.
+### 6. Gallery Application (Milestone)
+Build a self-contained application to prove the architecture works before scaling, following the requirements in **Section 5**.
+*   The app should be separated from the renderer codebase so the library can be published independently.
+*   It should load the JSON samples from `specification/v0_9/json/catalogs/minimal/examples/`.
+*   It must implement the 3-column layout and progressive rendering stepper.
+*   **Reactivity Test**: Verify that the UI progressively renders and reacts to data changes as messages are advanced.
 
-**STOP HERE. Ask the user for approval of the architecture and demo application before proceeding to step 7.**
+**STOP HERE. Ask the user for approval of the architecture and gallery application before proceeding to step 7.**
 
 ### 7. Basic Catalog Support
 Once the minimal architecture is proven robust:
@@ -701,4 +759,4 @@ Once the minimal architecture is proven robust:
 *   **Core Library**: Create definitions/binders for the remaining Basic Catalog components.
 *   **Framework Library**: Implement all remaining UI widgets.
 *   **Tests**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive unit and integration test cases for data coercion and function logic. 
-*   Update the Demo App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.
+*   Update the Gallery App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.
