@@ -160,7 +160,7 @@ The A2UI community is building exciting projects:
 
 ### Community Contributions
 
-Have you built something with A2UI? [Share it with the community!](../ecosystem/community.md)
+Have you built something with A2UI? [Share it with the community!](community.md)
 
 ---
 

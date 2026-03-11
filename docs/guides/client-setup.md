@@ -79,7 +79,7 @@ The React renderer provides:
 - **`useA2UI()` hook**: Accesses the message processor from any component
 - **`MessageProcessor` class**: Handles incoming A2UI messages (shared with other web renderers)
 
-**See working example:** [React sample](https://github.com/google/A2UI/tree/main/samples/client/react) *(coming soon)*
+**See working example:** [React shell](https://github.com/google/A2UI/tree/main/samples/client/react/shell)
 
 ## Flutter (GenUI SDK)
 
