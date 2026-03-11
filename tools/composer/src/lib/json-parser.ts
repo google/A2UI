@@ -1,4 +1,20 @@
 /**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
  * Robust JSON parsing utilities for handling malformed JSON strings,
  * particularly useful when dealing with AI-generated JSON that may not be properly escaped.
  */
@@ -38,7 +54,20 @@ export function parseRobustJSON(input: string | unknown): unknown {
 
   // Strategy 1: Try standard JSON.parse
   try {
-    return JSON.parse(trimmed);
+    const result = JSON.parse(trimmed);
+    // If the result is a string that looks like JSON, try parsing it again
+    if (
+      typeof result === "string" &&
+      (result.trim().startsWith("{") || result.trim().startsWith("["))
+    ) {
+      try {
+        return parseRobustJSON(result);
+      } catch {
+        // If recursive call fails, return the first result
+        return result;
+      }
+    }
+    return result;
   } catch (firstError) {
     // Strategy 2: Check if it's a malformed string that looks like JSON but has unescaped quotes
     // This happens when AI sends: "{ "foo": "bar" }" instead of '{ "foo": "bar" }' or "{ \"foo\": \"bar\" }"

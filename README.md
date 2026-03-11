@@ -1,7 +1,7 @@
 # A2UI: Agent-to-User Interface
 
 A2UI is an open-source project, complete with a format
-optimized for representing updateable agent-generated
+optimized for representing updatable agent-generated
 UIs and an initial set of renderers, that allows agents
 to generate or populate rich user interfaces.
 
@@ -42,7 +42,7 @@ security risk. A2UI is a declarative data format, not executable
 code. Your client application maintains a "catalog" of trusted, pre-approved
 UI components (e.g., Card, Button, TextField), and the agent can only request
 to render components from that catalog.
-* **LLM-friendly and incrementally updateable**: The UI is represented as a flat
+* **LLM-friendly and incrementally updatable**: The UI is represented as a flat
 list of components with ID references which is easy for LLMs to generate
 incrementally, allowing for progressive rendering and a responsive user
 experience. An agent can efficiently make incremental changes to the UI based
@@ -134,8 +134,13 @@ The best way to understand A2UI is to run the samples.
     Open a new terminal window:
 
     ```bash
+    # Install and build the Markdown renderer
+    cd renderers/markdown/markdown-it
+    npm install
+    npm run build
+
     # Install and build the Web Core library
-    cd renderers/web_core
+    cd ../../web_core
     npm install
     npm run build
 
