@@ -36,8 +36,9 @@ The models must provide a mechanism for the rendering layer to observe changes. 
 3.  **Unsubscribe Pattern**: There MUST be a clear way (e.g., returning an "unsubscribe" callback) to stop listening and prevent memory leaks.
 4.  **Payload Support**: The mechanism must communicate specific data updates (e.g., passing the updated instance) and lifecycle events.
 5.  **Consistency**: This pattern is used uniformly across `SurfaceGroupModel` (lifecycle), `SurfaceModel` (actions), `SurfaceComponentsModel` (lifecycle), `ComponentModel` (updates), and `DataModel` (data changes).
+6.  **Synchronous State**: To support modern declarative frameworks (like React, SwiftUI, or Compose) that require immediate data for their first render pass, reactive subscriptions should act like "Signals" or `BehaviorSubject`s. The subscription method should return the currently resolved value synchronously alongside the unsubscribe callback.
 
-In the TypeScript examples, we use a simple `EventSource` pattern with vanilla callbacks. However, other idiomatic approaches—such as `Listenable` properties, `Signals`, or `Streams`—are perfectly acceptable as long as they meet the requirements above.
+In the TypeScript examples (such as in `web_core`), we now use `Signals`. However, other idiomatic approaches—such as `Listenable` properties, `EventSource` with vanilla callbacks, or `Streams`—are perfectly acceptable as long as they meet the requirements above.
 
 #### 3. Granular Reactivity
 The model is designed to support high-performance rendering through granular updates rather than full-surface refreshes.
@@ -61,7 +62,7 @@ To represent and validate component and function APIs, the Data Layer requires a
 *   **`SurfaceComponentsModel`**: A flat collection of component configurations.
 *   **`ComponentModel`**: A specific component's raw configuration.
 *   **`DataModel`**: A dedicated store for application data.
-*   **`DataContext`**: A scoped window into the `DataModel`.
+*   **`DataContext`**: A scoped window into the `DataModel` and an abstraction around available functions and the base path of a Component, which allows Component implementations to fetch and subscribe to dynamic values via a simple API. Different Component instances instantiated from the same Component ID, but with different base paths (e.g. because they are different instances of a *template*) can have a different `DataContext` instance. *Note: It is the responsibility of the system instantiating the DataContext to extract available functions from the Catalog and provide them as a `FunctionInvoker`.*
 *   **`ComponentContext`**: A binding object pairing a component with its data scope.
 
 ### The Catalog and Component API
@@ -350,9 +351,152 @@ While A2UI components are designed to be self-contained, certain rendering logic
 
 ```
 
-## 2. Framework Binding Layer
+## 2. Catalog API & Bindings (Framework Agnostic)
+
+Components and functions in A2UI are organized into **Catalogs**. A catalog defines what components are available to be rendered and what client-side logic can be executed.
+
+### The Catalog API
+A catalog groups component definitions (and optionally function definitions) together so the `MessageProcessor` can validate messages and provide capabilities back to the server.
+
+```typescript
+class Catalog<T> {
+  readonly id: string; // Unique catalog URI (e.g., "https://mycompany.com/catalog.json")
+  readonly components: ReadonlyMap<string, T>;
+  readonly functions?: ReadonlyMap<string, FunctionImplementation>;
+  readonly theme?: Schema; // Schema for theme parameters (e.g. Zod object)
+
+  constructor(id: string, components: T[], functions?: FunctionImplementation[], theme?: Schema) {
+    // Initializes the properties
+  }
+}
+```
+
+### Creating Custom Catalogs
+Extensibility is a core feature of A2UI. It should be trivial to create a new catalog by extending an existing one, combining custom components with the standard set.
+
+*Example of composing a custom catalog:*
+```python
+# Pseudocode
+myCustomCatalog = Catalog(
+  id="https://mycompany.com/catalogs/custom_catalog.json",
+  functions=basicCatalog.functions,
+  components=basicCatalog.components + [MyCompanyLogoComponent()],
+  theme=basicCatalog.theme # Inherit theme schema
+)
+```
+
+### Layer 1: Component Schema (API Definition)
+This layer defines the exact JSON footprint of a component without any rendering logic. It acts as the single source of truth for the component's contract. 
+
+In a statically typed language without an advanced schema reflection library, this might simply be defined as basic interfaces or classes:
+
+```kotlin
+// Simple static definition (Kotlin example)
+interface ComponentApi {
+    val name: String
+    val schema: Schema // Representing the formal property definition
+}
+
+// In the Core Library, defining the standard component API
+abstract class ButtonApi : ComponentApi {
+    override val name = "Button"
+    override val schema = ButtonSchema // A constant representing the definition
+}
+```
+
+#### Dynamic Language Optimization (e.g. Zod)
+In dynamic languages like TypeScript, we can use tools like Zod to represent the schema and infer types directly from it.
+
+```typescript
+// basic_catalog_api/schemas.ts
+export interface ComponentDefinition<PropsSchema extends z.ZodTypeAny> {
+  name: string;
+  schema: PropsSchema;
+}
+
+const ButtonSchema = z.object({
+  label: DynamicStringSchema,
+  action: ActionSchema,
+});
+
+export const ButtonDef = {
+  name: "Button" as const,
+  schema: ButtonSchema
+} satisfies ComponentDefinition<typeof ButtonSchema>;
+```
+
+### Layer 2: The Binder Layer
+A2UI components are heavily reliant on `DynamicValue` bindings, which must be resolved into reactive streams. 
+
+The **Binder Layer** is a framework-agnostic layer that absorbs this responsibility. It takes the raw component properties and the `ComponentContext`, and transforms the reactive A2UI bindings into a single, cohesive stream of strongly-typed `ResolvedProps`.
+
+#### Subscription Lifecycle and Cleanup
+A critical responsibility of the Binding is tracking all subscriptions it creates against the underlying data model. The framework adapter (Layer 3) manages the lifecycle of the Binding. When a component is removed from the UI, the framework adapter must call the Binding's `dispose()` method. The Binding then iterates through its internally tracked subscription list and severs them, ensuring no dangling listeners remain attached to the global `DataModel`.
+
+#### Generic Interface Concept
+
+```typescript
+// The generic Binding interface representing an active connection
+export interface ComponentBinding<ResolvedProps> {
+  // A stateful stream of fully resolved, ready-to-render props.
+  // It must hold the current value so frameworks can read the initial state synchronously.
+  readonly propsStream: StatefulStream<ResolvedProps>; // e.g. BehaviorSubject, StateFlow
+  
+  // Cleans up all underlying data model subscriptions
+  dispose(): void;
+}
+
+// The Binder definition combining Schema + Binding Logic
+export interface ComponentBinder<ResolvedProps> {
+  readonly name: string;
+  readonly schema: Schema; // Formal schema for validation and capabilities
+  bind(context: ComponentContext): ComponentBinding<ResolvedProps>;
+}
+```
+
+#### Dynamic Language Optimization: Generic Binders
+For dynamic languages, you can write a generic factory that automatically inspects the schema and creates all the necessary subscriptions, avoiding the need to write manual binding logic for every single component.
+
+```typescript
+// Illustrative Generic Binder Factory
+export function createGenericBinding<T>(schema: Schema, context: ComponentContext): ComponentBinding<T> {
+  // 1. Walk the schema to find all DynamicValue properties.
+  // 2. Map them to `context.dataContext.subscribeDynamicValue()`
+  // 3. Store the returned `DataSubscription` objects.
+  // 4. Combine all observables into a single stateful stream.
+  // 5. Return a ComponentBinding whose `dispose()` method unsubscribes all stored subscriptions.
+}
+```
+
+#### Alternative: Binderless Implementation (Direct Binding)
+For frameworks that are less dynamic, lack codegen systems, or for developers who simply want to implement a single, one-off component quickly, it is perfectly valid to skip the formal binder layer and implement the component directly inside the framework adapter.
+
+*Dart/Flutter Illustrative Example:*
+```dart
+// The render function handles reading from context and building the widget manually.
+Widget renderButton(ComponentContext context, Widget Function(String) buildChild) {
+  // Manually observe the dynamic value and manage the stream
+  return StreamBuilder(
+    stream: context.dataContext.observeDynamicValue(context.componentModel.properties['label']),
+    builder: (context, snapshot) {
+      return ElevatedButton(
+        onPressed: () {
+          context.dispatchAction(context.componentModel.properties['action']);
+        },
+        child: Text(snapshot.data?.toString() ?? ''),
+      );
+    }
+  );
+}
+```
+
+---
+
+## 3. Framework Binding Layer (Framework Specific)
 
 The Framework Binding Layer takes the structured state provided by the Data Layer and translates it into actual UI elements (DOM nodes, Flutter widgets, etc.). This layer provides framework-specific component implementations that extend the data layer's `ComponentApi` to include actual rendering logic.
+
+Framework developers should not interact with raw `ComponentContext` or `ComponentBinding` directly when writing the actual UI views. Instead, the architecture provides framework-specific adapters that bridge the `Binding`'s stream to the framework's native reactivity.
 
 ### Key Interfaces and Classes
 *   **`FrameworkSurface`**: The entrypoint widget for a specific framework.
@@ -380,6 +524,29 @@ interface MyFrameworkComponent extends ComponentApi {
 
 #### 2. Stateful / Imperative Frameworks (e.g., Vanilla DOM, Android Views)
 In stateful frameworks, a parent component instance might persist even as its configuration changes. In these cases, the `FrameworkComponent` might maintain a reference to its native element and provide an `update()` method to apply new properties without re-creating the entire child tree.
+
+### Contract of Ownership
+A crucial part of A2UI's architecture is understanding who "owns" the data layers.
+*   **The Data Layer (Message Processor) owns the `ComponentModel`**. It creates, updates, and destroys the component's raw data state based on the incoming JSON stream.
+*   **The Framework Adapter owns the `ComponentContext` and `ComponentBinding`**. When the native framework decides to mount a component onto the screen (e.g., React runs `render`), the Framework Adapter creates the `ComponentContext` and passes it to the Binder. When the native framework unmounts the component, the Framework Adapter MUST call `binding.dispose()`.
+
+### Data Props vs. Structural Props
+It's important to distinguish between Data Props (like `label` or `value`) and Structural Props (like `child` or `children`).
+*   **Data Props:** Handled entirely by the Binder. The adapter receives a stream of fully resolved values (e.g., `"Submit"` instead of a `DynamicString` path). Whenever a data value updates, the binder should emit a *new reference* (e.g. a shallow copy of the props object) to ensure declarative frameworks that rely on strict equality (like React) correctly detect the change and trigger a re-render.
+*   **Structural Props:** The Binder does not attempt to resolve component IDs into actual UI trees. Instead, it outputs metadata for the children that need to be rendered.
+    *   For a simple `ComponentId` (e.g., `Card.child`), it emits an object like `{ id: string, basePath: string }`.
+    *   For a `ChildList` (e.g., `Column.children`), it evaluates the array. If the array is driven by a dynamic template bound to the data model, the binder must iterate over the array, using `context.dataContext.nested()` to generate a specific context for each index, and output a list of `ChildNode` streams. 
+*   The framework adapter is then responsible for taking these node definitions and calling a framework-native `buildChild(id, basePath)` method recursively.
+
+> **Implementation Tip: Context Propagation**
+> When implementing the recursive `buildChild` helper, ensure that it correctly inherits the *current* component's data context path by default. If a nested component (like a Text field inside a List template) uses a relative path, it must resolve against the scoped path provided by its immediate structural parent (e.g., `/restaurants/0`), not the root path. Failing to propagate this context is a common cause of "empty" data in nested components.
+
+### Component Subscription Lifecycle Rules
+To ensure performance and prevent memory leaks, framework adapters MUST strictly manage their subscriptions:
+1.  **Lazy Subscription**: Only bind and subscribe to data paths or property updates when the component is actually mounted/attached to the UI.
+2.  **Path Stability**: If a component's property changes via an `updateComponents` message, the adapter/binder MUST unsubscribe from the old path before subscribing to the new one.
+3.  **Destruction / Cleanup**: When a component is removed from the UI (e.g., via a `deleteSurface` message), the framework binding MUST hook into its native lifecycle to trigger `binding.dispose()`.
+4.  **Remount Resilience**: Many declarative frameworks (e.g., React Strict Mode, virtualized lists in mobile) frequently unmount and immediately remount UI components. The binding architecture should support re-establishing severed data subscriptions (e.g. using a connect/disconnect pattern) if a component is remounted after being disposed.
 
 ### Component Traits
 
@@ -411,3 +578,94 @@ The standard `formatString` function is responsible for interpreting the `${expr
     *   **FunctionCall**: Identified by parentheses (e.g., `${now()}`).
 3.  **Escaping**: Literal `${` sequences must be handled (typically by escaping as `\${`).
 4.  **Reactive Coercion**: Results are transformed into strings using the **Type Coercion Standards** defined in the Data Layer section.
+
+---
+
+## 5. The Gallery App
+
+The Gallery App is a comprehensive development and debugging tool that serves as the reference environment for an A2UI renderer. It allows developers to visualize components, inspect the live data model, step through progressive rendering, and verify interaction logic.
+
+### UX Architecture
+The Gallery App must implement a three-column layout to provide a high-density information environment for debugging:
+
+1.  **Left Column (Sample Navigation)**: A list of available A2UI samples (conforming to the `sample.json` schema) that the user can select.
+2.  **Center Column (Rendering & Messages)**:
+    *   **Surface Preview**: The top half renders the active A2UI surface.
+    *   **JSON Message Stream**: The bottom half displays the list of A2UI JSON messages that constitute the sample.
+    *   **Interactive Stepper**: Below the preview, a **"Reset"** button clears the surface. Next to each JSON message in the list, an **"Advance"** button allows the user to process messages one by one up to that point. This is essential for verifying progressive rendering and state transitions.
+3.  **Right Column (Live Inspection)**:
+    *   **Data Model Pane**: A live-updating view of the surface's full Data Model.
+    *   **Action Logs Pane**: A log of all actions triggered by user interactions (e.g., button clicks), including the action name and context.
+
+### Integration Testing Requirements
+Every renderer implementation must include a suite of automated integration tests (e.g., using `@testing-library/react` or equivalent) that utilize the Gallery App's logic to verify the following scenarios:
+
+*   **Static Rendering**: Opening the "Simple Text" sample must result in "Hello Minimal Catalog" appearing on screen.
+*   **Layout Integrity**: Opening the "Row Layout" sample must result in both "Left Content" and "Right Content" being visible in their respective positions.
+*   **Two-Way Binding**: Opening the "Login Form" sample and typing into the "username" field must:
+    1.  Update the text visible in the text field.
+    2.  Automatically update the corresponding path in the Data Model viewer.
+*   **Reactive Logic**: Opening the "Capitalize Text" sample and typing into the input must result in the upper-case version of the text appearing dynamically in the associated output component.
+*   **Action Context Scoping**: Opening the "Incremental List" sample and clicking a "Book now" button must emit an action containing the correctly resolved restaurant name (e.g., "The Golden Fork") in its context, proving that dynamic values within actions are correctly scoped to their containing list item.
+
+---
+
+## 6. Agent Implementation Guide
+
+If you are an AI Agent tasked with building a new renderer for A2UI, you MUST follow this strict, phased sequence of operations. Do not attempt to implement the entire architecture at once.
+
+### 1. Context to Ingest
+Before writing any code, thoroughly review:
+*   `specification/v0_9/docs/a2ui_protocol.md` (for protocol rules)
+*   `specification/v0_9/json/common_types.json` (for dynamic binding types)
+*   `specification/v0_9/json/server_to_client.json` (for message envelopes)
+*   `specification/v0_9/json/sample.json` (for sample application structure)
+*   `specification/v0_9/json/catalogs/minimal/minimal_catalog.json` (your initial target)
+
+### 2. Key Dependency Decisions
+Create a plan document explicitly stating:
+*   Which **Schema Library** you will use (or if you will use raw language constructs like `structs`/`data classes`).
+*   Which **Observable/Reactive Library** you will use (must support multi-cast and clear unsubscription).
+*   Which native UI framework you are targeting.
+
+### 3. Core Model Layer
+Implement the framework-agnostic Data Layer (Section 1).
+*   Implement standard listener patterns (`EventSource`/`EventEmitter`).
+*   Implement `DataModel`, ensuring correct JSON pointer resolution and the cascade/bubble notification strategy.
+*   Implement `ComponentModel`, `SurfaceComponentsModel`, `SurfaceModel`, and `SurfaceGroupModel`.
+*   Implement `DataContext` and `ComponentContext`.
+*   Implement `MessageProcessor`. Include logic for detecting schema references to generate `ClientCapabilities`.
+*   Define the `Catalog`, `ComponentApi`, and `FunctionImplementation` interfaces.
+*   Define the `ComponentBinding` interface.
+
+### 4. Framework-Specific Layer
+Implement the bridge between the agnostic models and the native UI (Section 3).
+*   Define the `ComponentAdapter` API (how the core library hands off a component to the framework).
+*   Implement the mechanism that binds a `ComponentBinding` stream to the native UI state (e.g., a wrapper view/widget).
+*   Implement the recursive `Surface` builder that takes a `surfaceId`, finds the "root" component, and recursively calls `buildChild`.
+*   **Crucial**: Ensure the unmount/dispose lifecycle hook calls `binding.dispose()`.
+
+### 5. Minimal Catalog Support
+Do not start with the full Basic Catalog. Target the `minimal_catalog.json` first.
+*   **Core Library**: Create definitions/binders for `Text`, `Row`, `Column`, `Button`, and `TextField`.
+*   **Core Library**: Implement the `capitalize` function.
+*   **Framework Library**: Implement the actual native UI widgets for these 5 components.
+*   Design a mechanism (e.g., a factory function or class) to bundle these together into a Catalog.
+
+### 6. Gallery Application (Milestone)
+Build a self-contained application to prove the architecture works before scaling, following the requirements in **Section 5**.
+*   The app should be separated from the renderer codebase so the library can be published independently.
+*   It should load the JSON samples from `specification/v0_9/json/catalogs/minimal/examples/`.
+*   It must implement the 3-column layout and progressive rendering stepper.
+*   **Reactivity Test**: Verify that the UI progressively renders and reacts to data changes as messages are advanced.
+
+**STOP HERE. Ask the user for approval of the architecture and gallery application before proceeding to step 7.**
+
+### 7. Basic Catalog Support
+Once the minimal architecture is proven robust:
+*   **Core Library**: Implement the full suite of basic functions. It is crucial to note that string interpolation and expression parsing should ONLY happen within the `formatString` function. Do not attempt to add global string interpolation to all strings.
+*   **Core Library**: Create definitions/binders for the remaining Basic Catalog components.
+*   **Framework Library**: Implement all remaining UI widgets.
+*   **Tests**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive unit and integration test cases for data coercion and function logic. 
+*   Update the Gallery App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.
+
