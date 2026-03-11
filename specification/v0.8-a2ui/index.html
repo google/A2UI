@@ -11,7 +11,7 @@
 <link href="../../agents/" rel="prev"/>
 <link href="../v0.8-a2a-extension/" rel="next"/>
 <link href="../../assets/A2UI_dark.svg" rel="icon"/>
-<meta content="mkdocs-1.6.1, mkdocs-material-9.7.4" name="generator"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.5" name="generator"/>
 <title>A2UI Protocol - A2UI</title>
 <link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
@@ -1652,7 +1652,7 @@ Updated: Nov 12, 2025</p>
 <li><strong>User Interaction and Event Handling:</strong> The user interacts with a rendered widget (e.g., taps a button). The client constructs a <code>userAction</code> JSON payload, resolving any data bindings from the component's <code>action.context</code>. It sends this payload to the server via an A2A message.</li>
 <li><strong>Dynamic Updates:</strong> The server processes the <code>userAction</code>. If the UI needs to change in response, the server sends new <code>surfaceUpdate</code> and <code>dataModelUpdate</code> messages over the original SSE stream. As these arrive, the client updates its component buffer and data model, and the UI re-renders to reflect the changes. The server can also send <code>deleteSurface</code> to remove a UI region.</li>
 </ol>
-<div class="mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant Server
     participant Client
 
@@ -1679,8 +1679,7 @@ Updated: Nov 12, 2025</p>
         Client-&gt;&gt;Client: Update component map, data model, or remove surface
         Note right of Client: Triggers UI rebuild
         Client--&gt;&gt;-Server: (UI is updated)
-    end
-</div>
+    end</code></pre>
 <h3 id="15-full-stream-example">1.5. Full Stream Example<a class="headerlink" href="#15-full-stream-example" title="Permanent link">¶</a></h3>
 <p>The following is a complete, minimal example of a JSONL stream that renders a user profile card.</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a>{"surfaceUpdate": {"components": [{"id": "root", "component": {"Column": {"children": {"explicitList": ["profile_card"]}}}}]}}
@@ -1846,10 +1845,10 @@ schema which has the components substituted in.</p>
 <p>The A2UI protocol defines the UI as a flat list of components. The tree structure is built implicitly using ID references. This is known as an adjacency list model.</p>
 <p>Container components (like <code>Row</code>, <code>Column</code>, <code>List</code>, <code>Card</code>) have properties that reference the <code>id</code> of their child component(s). The client is responsible for storing all components in a map (e.g., <code>Map&lt;String, Component&gt;</code>) and recreating the tree structure at render time.</p>
 <p>This model allows the server to send component definitions in any order, as long as all necessary components are present by the time <code>beginRendering</code> is sent.</p>
-<div class="mermaid">flowchart TD
+<pre class="mermaid"><code>flowchart TD
     subgraph "Server Stream (JSONL)"
-        A("<b>surfaceUpdate</b><br/>components: [root, title, button, button_text]")
-        B("<b>beginRendering</b><br/>root: 'root'")
+        A("&lt;b&gt;surfaceUpdate&lt;/b&gt;&lt;br&gt;components: [root, title, button, button_text]")
+        B("&lt;b&gt;beginRendering&lt;/b&gt;&lt;br&gt;root: 'root'")
     end
 
     subgraph "Client-Side Buffer (Map)"
@@ -1870,8 +1869,7 @@ schema which has the components substituted in.</p>
     A -- "Parsed and stored" --&gt; E
     A -- "Parsed and stored" --&gt; E_TEXT
 
-    B -- "Triggers build from buffer" --&gt; F
-</div>
+    B -- "Triggers build from buffer" --&gt; F</code></pre>
 <h3 id="32-container-children-explicitlist-vs-template">3.2. Container Children: <code>explicitList</code> vs. <code>template</code><a class="headerlink" href="#32-container-children-explicitlist-vs-template" title="Permanent link">¶</a></h3>
 <p>Container components (<code>Row</code>, <code>Column</code>, <code>List</code>) define their children using a <code>children</code> object, which must contain <em>either</em> <code>explicitList</code> or <code>template</code>.</p>
 <ul>
@@ -2193,6 +2191,5 @@ schema which has the components substituted in.</p>
 <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
 <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
 <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
-<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
-mermaid.initialize({});</script></body>
+</body>
 </html>

@@ -9,7 +9,7 @@
 <meta content="Google" name="author"/>
 <link href="https://a2ui.org/specification/v0_9/docs/a2ui_protocol/" rel="canonical"/>
 <link href="../../../../assets/A2UI_dark.svg" rel="icon"/>
-<meta content="mkdocs-1.6.1, mkdocs-material-9.7.4" name="generator"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.5" name="generator"/>
 <title>A2ui protocol - A2UI</title>
 <link href="../../../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
 <link href="../../../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
@@ -1450,7 +1450,7 @@
 <li><strong>Dynamic updates:</strong> As the user interacts with the application or as new information becomes available, the server can send additional <code>updateComponents</code> and <code>updateDataModel</code> messages to dynamically change the UI.</li>
 <li><strong>Delete Surface:</strong> When a UI region is no longer needed, the server sends a <code>deleteSurface</code> message to remove it.</li>
 </ol>
-<div class="mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant Server
     participant Client
 
@@ -1469,8 +1469,7 @@
 
     Server-&gt;&gt;+Client: 5. deleteSurface(surfaceId: "main")
     Note right of Client: Client removes the UI for the "main" surface
-    Client--&gt;&gt;-Server: (UI is gone)
-</div>
+    Client--&gt;&gt;-Server: (UI is gone)</code></pre>
 <h2 id="transport-decoupling">Transport decoupling<a class="headerlink" href="#transport-decoupling" title="Permanent link">¶</a></h2>
 <p>The A2UI protocol is designed to be transport-agnostic. It defines the JSON message structure and the semantic contract between the server (Agent) and the client (Renderer), but it does not mandate a specific transport layer.</p>
 <h3 id="the-transport-contract">The transport contract<a class="headerlink" href="#the-transport-contract" title="Permanent link">¶</a></h3>
@@ -1666,9 +1665,9 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <p>Container components (like <code>Row</code>, <code>Column</code>, <code>List</code>, and <code>Card</code>) have properties that reference the <code>id</code> of their child component(s). The client is responsible for storing all components in a map (e.g., <code>Map&lt;String, Component&gt;</code>) and recreating the tree structure at render time.</p>
 <p>This model allows the server to send component definitions in any order. Rendering can begin as soon as the <code>root</code> component is defined, with the client filling in or updating the rest of the tree progressively as additional definitions arrive.</p>
 <p>There must be exactly one component with the ID <code>root</code> in the component tree, acting as the root of the component tree. Until that component is defined, other component updates will have no visible effect, and they will be buffered until a root component is defined. Once a root component is defined, the client is responsible for rendering the tree in the best way possible based on the available data, skipping invalid references.</p>
-<div class="mermaid">flowchart TD
+<pre class="mermaid"><code>flowchart TD
     subgraph "Server Stream"
-        A("<b>updateComponents</b><br/>components: [root, title, button]")
+        A("&lt;b&gt;updateComponents&lt;/b&gt;&lt;br&gt;components: [root, title, button]")
     end
 
     subgraph "Client-Side Buffer (Map)"
@@ -1685,8 +1684,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
     A -- "Parsed and stored" --&gt; C
     A -- "Parsed and stored" --&gt; D
     A -- "Parsed and stored" --&gt; E
-
-</div>
+</code></pre>
 <h3 id="defining-actions">Defining actions<a class="headerlink" href="#defining-actions" title="Permanent link">¶</a></h3>
 <p>Interactive components (like <code>Button</code>) use an <code>action</code> property to define what happens when the user interacts with them. Actions can either trigger an event sent to the server or execute a local client-side function.</p>
 <h4 id="server-actions">Server actions<a class="headerlink" href="#server-actions" title="Permanent link">¶</a></h4>
@@ -2305,6 +2303,5 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
 <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
 <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
-<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
-mermaid.initialize({});</script></body>
+</body>
 </html>

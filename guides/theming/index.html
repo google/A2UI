@@ -11,7 +11,7 @@
 <link href="../custom-components/" rel="prev"/>
 <link href="../../reference/components/" rel="next"/>
 <link href="../../assets/A2UI_dark.svg" rel="icon"/>
-<meta content="mkdocs-1.6.1, mkdocs-material-9.7.4" name="generator"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.7.5" name="generator"/>
 <title>Theming &amp; Styling - A2UI</title>
 <link href="../../assets/stylesheets/main.484c7ddc.min.css" rel="stylesheet"/>
 <link href="../../assets/stylesheets/palette.ab4e12ef.min.css" rel="stylesheet"/>
@@ -1105,14 +1105,13 @@
 </ul>
 <h2 id="styling-layers">Styling Layers<a class="headerlink" href="#styling-layers" title="Permanent link">¶</a></h2>
 <p>A2UI styling works in layers:</p>
-<div class="mermaid">flowchart TD
-    A["1. Semantic Hints<br/>Agent provides hints<br/>(e.g., usageHint: 'h1')"]
-    B["2. Theme Configuration<br/>You configure<br/>(colors, fonts, spacing)"]
-    C["3. Component Overrides<br/>You customize<br/>(CSS/styles for specific components)"]
-    D["4. Rendered Output<br/>Native platform widgets"]
+<pre class="mermaid"><code>flowchart TD
+    A["1. Semantic Hints&lt;br/&gt;Agent provides hints&lt;br/&gt;(e.g., usageHint: 'h1')"]
+    B["2. Theme Configuration&lt;br/&gt;You configure&lt;br/&gt;(colors, fonts, spacing)"]
+    C["3. Component Overrides&lt;br/&gt;You customize&lt;br/&gt;(CSS/styles for specific components)"]
+    D["4. Rendered Output&lt;br/&gt;Native platform widgets"]
 
-    A --&gt; B --&gt; C --&gt; D
-</div>
+    A --&gt; B --&gt; C --&gt; D</code></pre>
 <h2 id="layer-1-semantic-hints">Layer 1: Semantic Hints<a class="headerlink" href="#layer-1-semantic-hints" title="Permanent link">¶</a></h2>
 <p>Agents provide semantic hints (not visual styles) to guide client rendering:</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a href="#__codelineno-0-1" id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p">{</span>
@@ -1340,6 +1339,5 @@
 <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
 <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
 <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
-<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
-mermaid.initialize({});</script></body>
+</body>
 </html>
