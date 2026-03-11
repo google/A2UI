@@ -105,7 +105,7 @@ export class Text extends DynamicComponent {
       return Promise.resolve('(empty)');
     }
 
-    let markdown = String(this.resolvePrimitive(value));
+    let markdown = String(this.resolvePrimitive(value) ?? '');
     switch (variant) {
       case 'h1':
         markdown = `# ${markdown}`;
