@@ -19,8 +19,7 @@ import assert from "node:assert";
 import { DataModel } from "../state/data-model.js";
 import { DataContext } from "../rendering/data-context.js";
 
-import { timer } from "rxjs";
-import { map } from "rxjs/operators";
+import { signal } from "@preact/signals-core";
 
 describe("Function Execution in DataContext", () => {
   it("resolves and subscribes to metronome function", (_t, done) => {
@@ -28,14 +27,24 @@ describe("Function Execution in DataContext", () => {
 
     const functions = new Map<string, Function>();
     // mimic metronome: returns a stream of ticks
-    functions.set("metronome", (args: Record<string, any>) => {
+    functions.set("metronome", (args: Record<string, any>, abortSignal?: AbortSignal) => {
       const interval = Number(args["interval"]) || 100;
-      return timer(0, interval).pipe(map((i) => `tick ${i}`));
+      const subj = signal<string>("tick 0");
+      let i = 1;
+      const timerId = setInterval(() => {
+        subj.value = `tick ${i++}`;
+      }, interval);
+      
+      abortSignal?.addEventListener("abort", () => {
+        clearInterval(timerId);
+      });
+      
+      return subj;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args) => {
+    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
       const fn = functions.get(name);
-      return fn ? fn(args) : undefined;
+      return fn ? fn(args, abortSignal) : undefined;
     });
 
     // DynamicValue representing: metronome(interval: 50)
@@ -75,9 +84,9 @@ describe("Function Execution in DataContext", () => {
       return `echo: ${args["val"]}`;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args) => {
+    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
       const fn = functions.get(name);
-      return fn ? fn(args) : undefined;
+      return fn ? fn(args, abortSignal) : undefined;
     });
     dataModel.set("/msg", "hello");
 
