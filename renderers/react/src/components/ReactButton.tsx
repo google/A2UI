@@ -19,7 +19,28 @@ export type ButtonProps = {
 const RenderButton: React.FC<ReactA2uiComponentProps<ButtonProps>> = ({ props, buildChild, context }) => {
   const onClick = () => {
     if (props.action) {
-      context.dispatchAction(props.action);
+      // Helper to recursively resolve dynamic values in objects/arrays
+      const resolveDeep = (val: any): any => {
+        if (typeof val !== 'object' || val === null) return val;
+        
+        // If it's a dynamic value (path or call), resolve it
+        if ('path' in val || 'call' in val) {
+          return context.dataContext.resolveDynamicValue(val);
+        }
+
+        if (Array.isArray(val)) {
+          return val.map(resolveDeep);
+        }
+
+        const resolved: any = {};
+        for (const [k, v] of Object.entries(val)) {
+          resolved[k] = resolveDeep(v);
+        }
+        return resolved;
+      };
+
+      const resolvedAction = resolveDeep(props.action);
+      context.dispatchAction(resolvedAction);
     }
   };
 

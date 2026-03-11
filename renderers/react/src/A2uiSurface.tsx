@@ -27,23 +27,25 @@ export const A2uiSurface: React.FC<{ surface: SurfaceModel<any>, basePath?: stri
     };
   }, [surface]);
 
-  const version = useSyncExternalStore(store.subscribe, store.getSnapshot);
+  useSyncExternalStore(store.subscribe, store.getSnapshot);
 
-  const buildChild = (id: string, path?: string) => {
+  const renderComponent = (id: string, currentBasePath: string) => {
     try {
       const componentModel = surface.componentsModel.get(id);
       if (!componentModel) {
         return <div key={`loading-${id}`} style={{ color: 'gray', padding: '4px' }}>[Loading {id}...]</div>;
       }
       
-      const context = new ComponentContext(surface, id, path || basePath);
+      const context = new ComponentContext(surface, id, currentBasePath);
       const ComponentToRender = componentRegistry[componentModel.type];
       
       if (!ComponentToRender) {
         return <div key={`error-${id}`} style={{ color: 'red' }}>Unknown component: {componentModel.type}</div>;
       }
       
-      return <ComponentToRender key={`${id}-${path || basePath}`} context={context} buildChild={buildChild} />;
+      const buildChild = (childId: string, specificPath?: string) => renderComponent(childId, specificPath || context.dataContext.path);
+
+      return <ComponentToRender key={`${id}-${currentBasePath}`} context={context} buildChild={buildChild} />;
     } catch (e: any) {
       return <div key={`error-${id}`} style={{ color: 'red' }}>Error rendering {id}: {e.message}</div>;
     }
@@ -55,5 +57,5 @@ export const A2uiSurface: React.FC<{ surface: SurfaceModel<any>, basePath?: stri
     return <div>Waiting for root component...</div>;
   }
 
-  return <>{buildChild("root", basePath)}</>;
+  return <>{renderComponent("root", basePath)}</>;
 };
