@@ -26,6 +26,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   inject,
   input,
@@ -64,7 +65,7 @@ import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-brows
     }
   `,
   template: `
-    @if (resolvedContent(); as content) {
+    @if (resolvedContent()) {
       <iframe #iframe [src]="iframeSrc()" [title]="resolvedTitle() || 'MCP App'"></iframe>
     }
   `,
@@ -76,11 +77,23 @@ export class McpApp
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly content = input.required<Primitives.StringValue | null>();
-  protected readonly resolvedContent: Signal<SafeHtml | null> = computed(() => {
-    const rawContent = super.resolvePrimitive(this.content() ?? null);
-    return rawContent
-      ? this.sanitizer.bypassSecurityTrustHtml(rawContent)
-      : null;
+  protected readonly resolvedContent: Signal<string | null> = computed(() => {
+    let rawContent = super.resolvePrimitive(this.content() ?? null);
+    if (rawContent && rawContent.startsWith('url_encoded:')) {
+      rawContent = decodeURIComponent(rawContent.substring(12));
+    }
+    return rawContent;
+  });
+
+  private readonly contentUpdateEffect = effect(() => {
+    const rawContent = this.resolvedContent();
+    const bridge = this.appBridge();
+    if (bridge && rawContent) {
+      bridge.sendSandboxResourceReady({
+        html: rawContent,
+        sandbox: 'allow-scripts allow-forms allow-popups',
+      }).catch(err => console.error('Failed to update sandbox content:', err));
+    }
   });
 
   readonly allowedTools = input<string[]>([]);
@@ -94,7 +107,7 @@ export class McpApp
   );
 
   private iframe = viewChild.required<ElementRef<HTMLIFrameElement>>('iframe');
-  private appBridge: AppBridge | null = null;
+  private appBridge = signal<AppBridge | null>(null);
   private messageHandler: ((event: MessageEvent) => void) | null = null;
 
   ngOnInit() {
@@ -145,7 +158,7 @@ export class McpApp
     // The app bridge is initialized without a direct connection to MCP server.
     // Communication with MCP server is expected to be handled by the sandbox iframe.
     const emptyMcpClient = null;
-    this.appBridge = new AppBridge(
+    const bridge = new AppBridge(
       emptyMcpClient,
       { name: 'A2UI Orchestrator', version: '1.0.0' },
       {
@@ -155,15 +168,15 @@ export class McpApp
       },
     );
 
-    this.appBridge.onloggingmessage = (params) => {
+    bridge.onloggingmessage = (params) => {
       console.log(`[MCP App Log] ${params.level}:`, params.data);
     };
 
-    this.appBridge.oninitialized = () => {
+    bridge.oninitialized = () => {
       console.log('MCP App Initialized');
     };
 
-    this.appBridge.onsizechange = ({ width, height }) => {
+    bridge.onsizechange = ({ width, height }) => {
       // TODO: Implement dynamic resizing
       // Reference implementation in mcp-apps-custom-component.ts:
       // - Listen for size changes from the embedded app
@@ -177,7 +190,7 @@ export class McpApp
       console.log(`[MCP App] Resize requested: ${width}x${height}`);
     };
 
-    this.appBridge.oncalltool = async (params) => {
+    bridge.oncalltool = async (params) => {
       // TODO: Implement tool execution security and dispatch
       // Reference implementation in mcp-apps-custom-component.ts:
       // 1. Check if params.name is in this.allowedTools()
@@ -208,15 +221,8 @@ export class McpApp
       iframe.contentWindow!,
       iframe.contentWindow!,
     );
-    await this.appBridge.connect(transport);
+    await bridge.connect(transport);
 
-    // Send the resource ready message to the sandbox iframe.
-    const rawContent = super.resolvePrimitive(this.content() ?? null);
-    if (rawContent) {
-      await this.appBridge.sendSandboxResourceReady({
-        html: rawContent,
-        sandbox: 'allow-scripts allow-forms allow-popups',
-      });
-    }
+    this.appBridge.set(bridge);
   }
 }
