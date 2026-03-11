@@ -637,8 +637,8 @@ const catalog = new Catalog("id", [
 ### Basic Catalog Core Functions
 The Standard A2UI Catalog requires a shared logic layer for standard function definitions (like `length`, `formatDate`, etc.). 
 
-#### Function Definitions
-Client-side functions operate similarly to components. They require a definition (schema) and an implementation.
+### Layer 3: Function Implementation
+Client-side functions operate similarly to components. They require an implementation and optionally a definition (schema).
 
 ```typescript
 interface FunctionImplementation {
@@ -646,22 +646,22 @@ interface FunctionImplementation {
   readonly returnType: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
   readonly schema: Schema; // The expected arguments
   
-  // Executes the function logic. Returns a value or a reactive stream.
+  // Executes the function logic. Accepts static inputs, returns a value or a reactive stream.
   execute(args: Record<string, any>, context: DataContext): unknown | Observable<unknown>;
 }
 ```
 
-#### Function Implementation Rationale
-A2UI categorizes client-side functions to balance performance and reactivity. 
+Functions in A2UI accept statically resolved values as input arguments (not observable streams). However, they can return an observable stream (or Signal) to provide reactive updates to the UI, or they can simply return a static value synchronously.
 
-**Observability Consistency**: Like the "Dumb Models," functions MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+To balance performance and reactivity, functions generally fall into a few common patterns:
 
-**API Documentation**: Every function MUST include a schema using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities for the AI model.
-
-**Function Categories**:
-1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. While they return observable streams for consistency, their logic is immediate and depends only on their inputs.
+1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. Their logic is immediate and depends only on their inputs. They typically return a static value.
 2.  **External State (Reactive)**: Functions like `clock()` or `networkStatus()`. These return long-lived streams that push updates to the UI independently of data model changes.
 3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`, `closeModal`) that return `void`. These are typically triggered by user actions rather than interpolation.
+
+**Observability Consistency**: If a function returns a reactive stream, it MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+
+**API Documentation**: To properly support an AI agent, functions SHOULD include a schema using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities.
 
 #### Expression Resolution Logic (`formatString`)
 The standard `formatString` function is uniquely complex. It is responsible for interpreting the `${expression}` syntax within string properties.
