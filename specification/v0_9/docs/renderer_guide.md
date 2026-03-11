@@ -280,7 +280,7 @@ When processing `updateComponents`, the processor must handle existing IDs caref
 To dynamically generate the `a2uiClientCapabilities` payload (specifically the `inlineCatalogs` array), the renderer needs to convert its internal component schemas into valid JSON Schemas that adhere to the A2UI protocol.
 
 **Schema Types Location**
-The foundational schema types for A2UI components are defined in the `schema` directory (e.g., `renderers/web_core/src/v0_9/schema/common-types.ts`). This is where reusable validation schemas (like Zod definitions) reside.
+The foundational schema types for A2UI components *should* be defined in a dedicated directory like `schema`. You can see the `renderers/web_core/src/v0_9/schema/common-types.ts` file in the reference web implementation as an example of where these reusable validation schemas (like Zod definitions) reside.
 
 **Detectable Common Types**
 A2UI heavily relies on shared schema definitions (like `DynamicString`, `DataBinding`, and `Action` from `common_types.json`). However, most schema validation libraries (such as Zod) do not natively support emitting external JSON Schema `$ref` pointers out-of-the-box.
