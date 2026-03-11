@@ -6,9 +6,9 @@ This guide defines the A2UI Catalog architecture and provides a roadmap for impl
 
 ## Catalog Definition
 
-A catalog is a [JSON Schema file](../specification/v0_9/json/a2ui_client_capabilities.json#L62C5-L95C6) outlining the components, functions, and themes that agents can use to define A2UI surfaces using server-driven UI. All A2UI JSON sent from the agent is validated against the chosen catalog.
+A catalog is a [JSON Schema file](../specification/v0_9/json/client_capabilities.json#L62C5-L95C6) outlining the components, functions, and themes that agents can use to define A2UI surfaces using server-driven UI. All A2UI JSON sent from the agent is validated against the chosen catalog.
 
-[Catalog JSON Schema](../specification/v0_9/json/a2ui_client_capabilities.json#L62C5-L95C6) is below
+[Catalog JSON Schema](../specification/v0_9/json/client_capabilities.json#L62C5-L95C6) is below
 
 ```json
 {
@@ -81,14 +81,14 @@ For simplicity we recommend building catalogs that directly reflect a client's d
 
 ### Recommendations
 
-| Usecase | Recommendation | Effort |
-| :--- | :--- | :--- |
-| Adding A2UI to a mature frontend | Define a catalog that mirrors your existing design system. | Medium |
+| Usecase                             | Recommendation                                                                 | Effort                         |
+| :---------------------------------- | :----------------------------------------------------------------------------- | :----------------------------- |
+| Adding A2UI to a mature frontend    | Define a catalog that mirrors your existing design system.                     | Medium                         |
 | Adding A2UI to a new/greenfield app | Start with Basic Catalog, then evolve into your own catalog as the app evolves | Low (assuming renderer exists) |
 
 ## Building a Catalog
 
-A catalog is a JSON Schema file that conforms to the [Catalog schema](../specification/v0_9/json/a2ui_client_capabilities.json#L62C5-L95C6) that defines the components, themes and functions an agent can use when building a surface.
+A catalog is a JSON Schema file that conforms to the [Catalog schema](../specification/v0_9/json/client_capabilities.json#L62C5-L95C6) that defines the components, themes and functions an agent can use when building a surface.
 
 ### Example: A Minimal Catalog
 
@@ -365,9 +365,9 @@ We recommend including the version in the catalogId. This allows using A2UI cata
 
 **Recommended Pattern:**
 
-| Change Type | URI Example | Description |
-| :--- | :--- | :--- |
-| **Current** | .../rizzcharts/v1/catalog.json | The stable, production schema. |
+| Change Type  | URI Example                    | Description                                                        |
+| :----------- | :----------------------------- | :----------------------------------------------------------------- |
+| **Current**  | .../rizzcharts/v1/catalog.json | The stable, production schema.                                     |
 | **Breaking** | .../rizzcharts/v2/catalog.json | A new schema introducing renamed components or structural changes. |
 
 ### Handling Migrations
