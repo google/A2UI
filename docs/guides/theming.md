@@ -329,8 +329,7 @@ Provide the theme to the specific A2UI Renderer you are using in your
 application.
 
 **For Angular:**
-Pass the theme object in the [
-`provideA2UI`](https://github.com/google/A2UI/tree/main/renderers/angular/src/lib/config.ts)
+Pass the theme object in the [`provideA2UI`](https://github.com/google/A2UI/tree/main/renderers/angular/src/lib/config.ts)
 function along with your custom catalog.
 
 ```typescript
@@ -376,16 +375,14 @@ dictionary to a web context.
 
 The core A2UI library provides a default set of styling "levers" (utility CSS
 classes) that you can use when defining your `Types.Theme` object. These are
-defined in the [
-`web_core` renderer package](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/index.ts).
+defined in the [`web_core` renderer package](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/index.ts).
 
 If your application includes the default A2UI CSS, you can map components to
 these pre-existing utility classes.
 
 ### Layout (`layout-`)
 
-**Source:** [
-`styles/layout.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/layout.ts)
+**Source:** [`styles/layout.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/layout.ts)
 
 | Category        | Prefix        | Scale/Values                                | Examples                                                    |
 |:----------------|:--------------|:--------------------------------------------|:------------------------------------------------------------|
@@ -404,8 +401,7 @@ these pre-existing utility classes.
 
 ### Colors (`color-`)
 
-**Source:** [
-`styles/colors.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/colors.ts)
+**Source:** [`styles/colors.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/colors.ts)
 
 | Category         | Prefix       | Scale/Values        | Examples                                                              |
 |:-----------------|:-------------|:--------------------|:----------------------------------------------------------------------|
@@ -419,8 +415,7 @@ _Shades:_ 0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100
 
 ### Typography (`typography-`)
 
-**Source:** [
-`styles/type.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/type.ts)
+**Source:** [`styles/type.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/type.ts)
 
 | Category            | Prefix           | Scale/Values                              | Examples                                                                             |
 |:--------------------|:-----------------|:------------------------------------------|:-------------------------------------------------------------------------------------|
@@ -434,8 +429,7 @@ _Shades:_ 0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100
 
 ### Borders (`border-`)
 
-**Source:** [
-`styles/border.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/border.ts)
+**Source:** [`styles/border.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/border.ts)
 
 | Category   | Prefix       | Scale/Values   | Examples                                              |
 |:-----------|:-------------|:---------------|:------------------------------------------------------|
@@ -445,9 +439,8 @@ _Shades:_ 0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100
 
 ### Behavior & Opacity
 
-**Source:** [
-`styles/behavior.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/behavior.ts), [
-`styles/opacity.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/opacity.ts)
+**Source:** [`styles/behavior.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/behavior.ts), 
+[`styles/opacity.ts`](https://github.com/google/A2UI/tree/main/renderers/web_core/src/v0_8/styles/opacity.ts)
 
 | Category          | Prefix         | Scale/Values                           | Examples                                |
 |:------------------|:---------------|:---------------------------------------|:----------------------------------------|
