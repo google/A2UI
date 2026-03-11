@@ -30,12 +30,60 @@ describe("BASIC_FUNCTIONS", () => {
     it("add", () => {
       assert.strictEqual(BASIC_FUNCTIONS.add({ a: 1, b: 2 }, context), 3);
       assert.strictEqual(BASIC_FUNCTIONS.add({ a: "1", b: "2" }, context), 3);
+      assert.throws(
+        () => BASIC_FUNCTIONS.add({ a: 10, b: undefined }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.add({ a: undefined, b: 10 }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.add({ a: 10, b: null }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.add({ a: 10, b: "invalid" }, context),
+        A2uiExpressionError,
+      );
     });
     it("subtract", () => {
       assert.strictEqual(BASIC_FUNCTIONS.subtract({ a: 5, b: 3 }, context), 2);
+      assert.throws(
+        () => BASIC_FUNCTIONS.subtract({ a: 10, b: undefined }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.subtract({ a: undefined, b: 10 }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.subtract({ a: 10, b: null }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.subtract({ a: 10, b: "invalid" }, context),
+        A2uiExpressionError,
+      );
     });
     it("multiply", () => {
       assert.strictEqual(BASIC_FUNCTIONS.multiply({ a: 4, b: 2 }, context), 8);
+      assert.throws(
+        () => BASIC_FUNCTIONS.multiply({ a: 10, b: undefined }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.multiply({ a: undefined, b: 10 }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.multiply({ a: 10, b: null }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.multiply({ a: 10, b: "invalid" }, context),
+        A2uiExpressionError,
+      );
     });
     it("divide", () => {
       assert.strictEqual(BASIC_FUNCTIONS.divide({ a: 10, b: 2 }, context), 5);
@@ -94,11 +142,35 @@ describe("BASIC_FUNCTIONS", () => {
         BASIC_FUNCTIONS.greater_than({ a: 3, b: 5 }, context),
         false,
       );
+      assert.throws(
+        () => BASIC_FUNCTIONS.greater_than({ a: 10, b: undefined }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.greater_than({ a: 10, b: null }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.greater_than({ a: 10, b: "invalid" }, context),
+        A2uiExpressionError,
+      );
     });
     it("less_than", () => {
       assert.strictEqual(
         BASIC_FUNCTIONS.less_than({ a: 3, b: 5 }, context),
         true,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.less_than({ a: 3, b: undefined }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.less_than({ a: 3, b: null }, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => BASIC_FUNCTIONS.less_than({ a: 3, b: "invalid" }, context),
+        A2uiExpressionError,
       );
     });
   });

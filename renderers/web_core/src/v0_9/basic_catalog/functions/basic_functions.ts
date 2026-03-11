@@ -32,12 +32,21 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
    * Throws A2uiExpressionError if either `a` or `b` is undefined.
    */
   add: (args) => {
-    if (args["a"] === undefined || args["b"] === undefined) {
+    const a = args["a"];
+    const b = args["b"];
+    if (a === undefined || a === null || b === undefined || b === null) {
       throw new A2uiExpressionError(
-        "Function 'add' requires arguments 'a' and 'b'.",
+        `Function 'add' requires non-null arguments 'a' and 'b'. Got a=${a}, b=${b}`,
       );
     }
-    return (Number(args["a"]) || 0) + (Number(args["b"]) || 0);
+    const numA = Number(a);
+    const numB = Number(b);
+    if (Number.isNaN(numA) || Number.isNaN(numB)) {
+      throw new A2uiExpressionError(
+        `Function 'add' requires numeric arguments 'a' and 'b'. Got a=${a}, b=${b}`,
+      );
+    }
+    return numA + numB;
   },
   /**
    * Subtracts `b` from `a`.
@@ -45,12 +54,21 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
    * Throws A2uiExpressionError if either `a` or `b` is undefined.
    */
   subtract: (args) => {
-    if (args["a"] === undefined || args["b"] === undefined) {
+    const a = args["a"];
+    const b = args["b"];
+    if (a === undefined || a === null || b === undefined || b === null) {
       throw new A2uiExpressionError(
-        "Function 'subtract' requires arguments 'a' and 'b'.",
+        `Function 'subtract' requires non-null arguments 'a' and 'b'. Got a=${a}, b=${b}`,
       );
     }
-    return (Number(args["a"]) || 0) - (Number(args["b"]) || 0);
+    const numA = Number(a);
+    const numB = Number(b);
+    if (Number.isNaN(numA) || Number.isNaN(numB)) {
+      throw new A2uiExpressionError(
+        `Function 'subtract' requires numeric arguments 'a' and 'b'. Got a=${a}, b=${b}`,
+      );
+    }
+    return numA - numB;
   },
   /**
    * Multiplies `a` by `b`.
@@ -58,12 +76,21 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
    * Throws A2uiExpressionError if either `a` or `b` is undefined.
    */
   multiply: (args) => {
-    if (args["a"] === undefined || args["b"] === undefined) {
+    const a = args["a"];
+    const b = args["b"];
+    if (a === undefined || a === null || b === undefined || b === null) {
       throw new A2uiExpressionError(
-        "Function 'multiply' requires arguments 'a' and 'b'.",
+        `Function 'multiply' requires non-null arguments 'a' and 'b'. Got a=${a}, b=${b}`,
       );
     }
-    return (Number(args["a"]) || 0) * (Number(args["b"]) || 0);
+    const numA = Number(a);
+    const numB = Number(b);
+    if (Number.isNaN(numA) || Number.isNaN(numB)) {
+      throw new A2uiExpressionError(
+        `Function 'multiply' requires numeric arguments 'a' and 'b'. Got a=${a}, b=${b}`,
+      );
+    }
+    return numA * numB;
   },
   /**
    * Divides a by b.
@@ -127,7 +154,21 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
         "Function 'greater_than' requires arguments 'a' and 'b'.",
       );
     }
-    return (Number(args["a"]) || 0) > (Number(args["b"]) || 0);
+    const a = args["a"];
+    const b = args["b"];
+    if (a === undefined || a === null || b === undefined || b === null) {
+      throw new A2uiExpressionError(
+        `Function 'greater_than' requires non-null arguments 'a' and 'b'. Got a=${a}, b=${b}`,
+      );
+    }
+    const numA = Number(a);
+    const numB = Number(b);
+    if (Number.isNaN(numA) || Number.isNaN(numB)) {
+      throw new A2uiExpressionError(
+        `Function 'greater_than' requires numeric arguments 'a' and 'b'. Got a=${a}, b=${b}`,
+      );
+    }
+    return numA > numB;
   },
   /**
    * Checks if numeric value of `a` is less than `b`.
@@ -139,7 +180,21 @@ export const BASIC_FUNCTIONS: Record<string, FunctionImplementation> = {
         "Function 'less_than' requires arguments 'a' and 'b'.",
       );
     }
-    return (Number(args["a"]) || 0) < (Number(args["b"]) || 0);
+    const a = args["a"];
+    const b = args["b"];
+    if (a === undefined || a === null || b === undefined || b === null) {
+      throw new A2uiExpressionError(
+        `Function 'less_than' requires non-null arguments 'a' and 'b'. Got a=${a}, b=${b}`,
+      );
+    }
+    const numA = Number(a);
+    const numB = Number(b);
+    if (Number.isNaN(numA) || Number.isNaN(numB)) {
+      throw new A2uiExpressionError(
+        `Function 'less_than' requires numeric arguments 'a' and 'b'. Got a=${a}, b=${b}`,
+      );
+    }
+    return numA < numB;
   },
 
   // Logical

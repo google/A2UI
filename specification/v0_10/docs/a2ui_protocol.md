@@ -568,7 +568,7 @@ _Replace the entire data model:_
 
 ### Client to server updates
 
-When `sendDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every message (such as `action` or user query) sent to the server that created the surface. The data model is included using the transport's metadata facility (e.g., the `metadata` field in A2A or a header in HTTP). The payload follows the schema in [`a2ui_client_data_model.json`](../json/a2ui_client_data_model.json).
+When `sendDataModel` is set to `true` for a surface, the client automatically appends the **entire data model** of that surface to the metadata of every message (such as `action` or user query) sent to the server that created the surface. The data model is included using the transport's metadata facility (e.g., the `metadata` field in A2A or a header in HTTP). The payload follows the schema in [`client_data_model.json`](../json/client_data_model.json).
 
 - **Targeted Delivery**: The data model is sent exclusively to the server that created the surface. Data cannot leak to other agents or servers.
 - **Trigger:** Data is sent only when a client-to-server message is triggered (e.g., by a user action like a button click). Passive data changes (like typing in a text field) do not trigger a network request on their own; they simply update the local state, which will be sent with the next action.
@@ -824,7 +824,7 @@ A server (or agent) advertises its capabilities using the [`server_capabilities.
 
 #### Client capabilities
 
-The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_capabilities.json`] schema.
+The `a2uiClientCapabilities` object in the metadata follows the [`client_capabilities.json`] schema.
 
 **Properties:**
 
@@ -833,7 +833,7 @@ The `a2uiClientCapabilities` object in the metadata follows the [`a2ui_client_ca
 
 #### Client data model
 
-When `sendDataModel` is enabled for a surface, the client includes the `a2uiClientDataModel` object in the metadata, following the [`a2ui_client_data_model.json`] schema.
+When `sendDataModel` is enabled for a surface, the client includes the `a2uiClientDataModel` object in the metadata, following the [`client_data_model.json`] schema.
 
 **Properties:**
 
@@ -848,7 +848,7 @@ This message is used to report a client-side error to the server.
 [`server_to_client.json`]: ../json/server_to_client.json
 [`client_to_server.json`]: ../json/client_to_server.json
 [`server_capabilities.json`]: ../json/server_capabilities.json
-[`a2ui_client_capabilities.json`]: ../json/a2ui_client_capabilities.json
-[`a2ui_client_data_model.json`]: ../json/a2ui_client_data_model.json
+[`client_capabilities.json`]: ../json/client_capabilities.json
+[`client_data_model.json`]: ../json/client_data_model.json
 [JSON Pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [RFC 6901]: https://datatracker.ietf.org/doc/html/rfc6901
