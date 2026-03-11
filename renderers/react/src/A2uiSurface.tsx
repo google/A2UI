@@ -15,18 +15,19 @@ const componentRegistry: Record<string, React.FC<any>> = {
 };
 
 export const A2uiSurface: React.FC<{ surface: SurfaceModel<any>, basePath?: string }> = ({ surface, basePath = '/' }) => {
-  const hasRoot = useSyncExternalStore(
-    (cb) => {
-      const unsub1 = surface.componentsModel.onCreated.subscribe((_c: any) => {
-        if (_c.id === 'root') cb();
-      });
-      const unsub2 = surface.componentsModel.onDeleted.subscribe((id: string) => {
-        if (id === 'root') cb();
-      });
-      return () => { unsub1.unsubscribe(); unsub2.unsubscribe(); };
-    },
-    () => surface.componentsModel.get('root') !== undefined
-  );
+  const store = React.useMemo(() => {
+    let version = 0;
+    return {
+      subscribe: (cb: () => void) => {
+        const unsub1 = surface.componentsModel.onCreated.subscribe(() => { version++; cb(); });
+        const unsub2 = surface.componentsModel.onDeleted.subscribe(() => { version++; cb(); });
+        return () => { unsub1.unsubscribe(); unsub2.unsubscribe(); };
+      },
+      getSnapshot: () => version
+    };
+  }, [surface]);
+
+  const version = useSyncExternalStore(store.subscribe, store.getSnapshot);
 
   const buildChild = (id: string, path?: string) => {
     try {
@@ -47,6 +48,8 @@ export const A2uiSurface: React.FC<{ surface: SurfaceModel<any>, basePath?: stri
       return <div key={`error-${id}`} style={{ color: 'red' }}>Error rendering {id}: {e.message}</div>;
     }
   };
+
+  const hasRoot = surface.componentsModel.get('root') !== undefined;
 
   if (!hasRoot) {
     return <div>Waiting for root component...</div>;
