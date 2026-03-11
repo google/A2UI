@@ -32,26 +32,18 @@ const SPEC_DIR_V0_9 = resolve(
 
 function getZodShape(zodObj: any): any {
   let current = zodObj;
-  while (current && current._def) {
-    if (current._def.typeName === "ZodObject") return current._def.shape();
-    if (current._def.innerType) {
-      current = current._def.innerType;
-    } else {
-      break;
-    }
+  while (current?._def) {
+    if (current._def.typeName === "ZodObject") return current.shape || current._def.shape();
+    current = current._def.innerType ?? current._def.schema;
   }
   return undefined;
 }
 
 function getZodArrayElement(zodObj: any): any {
   let current = zodObj;
-  while (current && current._def) {
+  while (current?._def) {
     if (current._def.typeName === "ZodArray") return current._def.type;
-    if (current._def.innerType) {
-      current = current._def.innerType;
-    } else {
-      break;
-    }
+    current = current._def.innerType ?? current._def.schema;
   }
   return undefined;
 }
@@ -95,13 +87,16 @@ describe("Basic Components Schema Verification", () => {
       
       // Check CatalogComponentCommon properties which are not in specificPropsDef but in allOf
       const catalogCommonDef = officialSchema.$defs.CatalogComponentCommon;
-      if (catalogCommonDef && catalogCommonDef.properties && catalogCommonDef.properties.weight) {
-        if (catalogCommonDef.properties.weight.description) {
-           assert.strictEqual(
-             zodShape.weight.description, 
-             catalogCommonDef.properties.weight.description, 
-             `Description mismatch for property 'weight' of component '${componentName}'`
-           );
+      if (catalogCommonDef?.properties) {
+        for (const propName in catalogCommonDef.properties) {
+          const jsonProp = catalogCommonDef.properties[propName];
+          if (zodShape[propName] && jsonProp.description) {
+            assert.strictEqual(
+              zodShape[propName].description,
+              jsonProp.description,
+              `Description mismatch for common property '${propName}' of component '${componentName}'`
+            );
+          }
         }
       }
 

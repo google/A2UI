@@ -59,24 +59,26 @@ export const ImageApi: ComponentApi = {
   }).strict(),
 };
 
+const ICON_NAMES = [
+  "accountCircle", "add", "arrowBack", "arrowForward", "attachFile",
+  "calendarToday", "call", "camera", "check", "close", "delete",
+  "download", "edit", "event", "error", "fastForward", "favorite",
+  "favoriteOff", "folder", "help", "home", "info", "locationOn",
+  "lock", "lockOpen", "mail", "menu", "moreVert", "moreHoriz",
+  "notificationsOff", "notifications", "pause", "payment", "person",
+  "phone", "photo", "play", "print", "refresh", "rewind", "search",
+  "send", "settings", "share", "shoppingCart", "skipNext",
+  "skipPrevious", "star", "starHalf", "starOff", "stop", "upload",
+  "visibility", "visibilityOff", "volumeDown", "volumeMute",
+  "volumeOff", "volumeUp", "warning"
+] as const;
+
 export const IconApi: ComponentApi = {
   name: "Icon",
   schema: z.object({
     ...CommonProps,
     name: z.union([
-      z.enum([
-        "accountCircle", "add", "arrowBack", "arrowForward", "attachFile",
-        "calendarToday", "call", "camera", "check", "close", "delete",
-        "download", "edit", "event", "error", "fastForward", "favorite",
-        "favoriteOff", "folder", "help", "home", "info", "locationOn",
-        "lock", "lockOpen", "mail", "menu", "moreVert", "moreHoriz",
-        "notificationsOff", "notifications", "pause", "payment", "person",
-        "phone", "photo", "play", "print", "refresh", "rewind", "search",
-        "send", "settings", "share", "shoppingCart", "skipNext",
-        "skipPrevious", "star", "starHalf", "starOff", "stop", "upload",
-        "visibility", "visibilityOff", "volumeDown", "volumeMute",
-        "volumeOff", "volumeUp", "warning"
-      ]),
+      z.enum(ICON_NAMES),
       z.object({
         path: z.string(),
       }).strict(),
