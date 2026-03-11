@@ -103,7 +103,7 @@ export class Surface {
         styles['--p-15'] = `color-mix(in srgb, ${value} 30%, black 70%)`;
         styles['--p-10'] = `color-mix(in srgb, ${value} 20%, black 80%)`;
         styles['--p-5'] = `color-mix(in srgb, ${value} 10%, black 90%)`;
-        styles['--0'] = '#000000'; // Fixed typo #00000 -> #000000
+        styles['--p-0'] = '#000000';
       }
       if (theme.fontFamily) {
         styles['--font-family'] = theme.fontFamily;
