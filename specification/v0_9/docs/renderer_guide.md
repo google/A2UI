@@ -669,3 +669,19 @@ Once the minimal architecture is proven robust:
 *   **Tests**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive unit and integration test cases for data coercion and function logic. 
 *   Update the Gallery App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.
 
+### 8. Documentation (README.md)
+Finally, create a comprehensive `README.md` file for your renderer. This documentation serves as the entry point for other developers adopting your implementation. 
+
+The README must encompass the following code examples and instructions:
+
+*   **Running the Sample App**: Provide clear, step-by-step instructions on how to build and launch the sample application.
+*   **Integrating with a Chat Interface**: Include a complete code example showing how to initialize the renderer using the basic catalog and integrate it into a chat application, specifically demonstrating how to handle new `createSurface` messages by dynamically inserting surfaces into the chat UI.
+*   **Catalog Composition and Extension**: Show practical code examples for common catalog customization scenarios:
+    *   **Adding a New Component**: Define a new catalog that inherits all components from the basic catalog but adds one new custom component. Include the code that implements the rendering logic for this new component.
+    *   **Overriding an Existing Component**: Define a new catalog that inherits the basic catalog's API, but swaps out the implementation of a specific component (e.g., overriding the default `Button` with an alternative native widget) while retaining its exact protocol API.
+    *   **Creating a Custom Catalog**: Demonstrate how to define and initialize a completely new, bespoke catalog from scratch.
+*   **Implementing Client Logic (Functions)**: Provide code examples illustrating how to register custom client-side functions:
+    *   **Synchronous Function**: Show how to define a pure logic function (like data transformation or validation) that executes immediately based on its inputs.
+    *   **Reactive Function**: Show how to define a function that acts as a data source, returning an observable stream that updates reactively based on client-side state (such as sensor data, a timer, or network status).
+
+
