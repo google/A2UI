@@ -148,10 +148,10 @@ class TestAssembleCatalog(unittest.TestCase):
         assembler = CatalogAssembler(version="0.10", local_common_types_path=None)
         result = assembler.assemble("RemoteCommonTypes", [str(component3_path)])
 
-        # Assert urlopen was called with the 0.10 URL for common_types.json
-        called_req = mock_urlopen.call_args[0][0]
+        # Assert urlopen was called with the 0.10 URL for common_types.json at least once
         from assemble_catalog import COMMON_TYPES_URLS
-        self.assertEqual(called_req.full_url, COMMON_TYPES_URLS["0.10"])
+        called_urls = [call.args[0].full_url for call in mock_urlopen.call_args_list]
+        self.assertIn(COMMON_TYPES_URLS["0.10"], called_urls)
 
         self.assertIn("$defs", result)
         defs_keys = list(result["$defs"].keys())
@@ -178,13 +178,22 @@ class TestAssembleCatalog(unittest.TestCase):
 
         self.assertIn("Max recursion depth reached", str(context.exception))
 
+    @patch.object(CatalogAssembler, 'fetch_json')
     @patch('assemble_catalog.logger')
-    def test_collision_warning_on_merge(self, mock_logger):
+    def test_collision_warning_on_merge(self, mock_logger, mock_fetch_json):
         assembler = CatalogAssembler(version="0.9")
+        
+        # component1 and component2 do not collide. Provide two distinct URIs that return
+        # the exact same schema to ensure the collision logic fires and they aren't deduplicated.
+        mock_schema = {
+            "components": {
+                "CustomHeader": {"type": "object"}
+            }
+        }
+        mock_fetch_json.return_value = mock_schema
 
-        # component1 and component2 do not collide. Let's merge component1 with ITSELF to force a collision.
-        assembler.assemble("CollisionCatalog", [str(self.component1_path), str(self.component1_path)])
-
+        assembler.assemble("CollisionCatalog", ["memory://file1.json", "memory://file2.json"])
+        
         # We should see a warning about 'CustomHeader' colliding
         mock_logger.warning.assert_called_with("Component collision: 'CustomHeader' already exists. Overwriting.")
 
@@ -205,10 +214,11 @@ class TestAssembleCatalog(unittest.TestCase):
         assembler = CatalogAssembler(version="0.9")
 
         with self.assertRaises(CatalogError) as context:
-            assembler.fetch_json("https://example.com/slow_catalog.json")
+            assembler.fetch_json("https://example.com/slow_catalog.json", referrer="memory://component.json")
 
         self.assertIn("Network error fetching", str(context.exception))
         self.assertIn("timeout", str(context.exception))
+        self.assertIn("referenced from memory://component", str(context.exception))
 
     @patch('assemble_catalog.Path.cwd')
     @patch('assemble_catalog.CatalogAssembler.assemble')
@@ -221,20 +231,138 @@ class TestAssembleCatalog(unittest.TestCase):
             mock_cwd.return_value = Path(temp_dir)
 
             # Test without .json provided
-            with patch('sys.argv', ['assemble_catalog.py', '--name', 'MyCatalog', str(self.component1_path)]):
+            with patch('sys.argv', ['assemble_catalog.py', '--output-name', 'MyCatalog', str(self.component1_path)]):
                 assemble_catalog.main()
 
             out_file = Path(temp_dir) / "dist" / "MyCatalog.json"
             self.assertTrue(out_file.exists())
 
             # Test with .json provided
-            with patch('sys.argv', ['assemble_catalog.py', '--name', 'MyCatalogWithExt.json', str(self.component1_path)]):
+            with patch('sys.argv', ['assemble_catalog.py', '--output-name', 'MyCatalogWithExt.json', str(self.component1_path)]):
                 assemble_catalog.main()
 
             out_file2 = Path(temp_dir) / "dist" / "MyCatalogWithExt.json"
             self.assertTrue(out_file2.exists())
             # Ensure it did not double append the extension
             self.assertFalse((Path(temp_dir) / "dist" / "MyCatalogWithExt.json.json").exists())
+
+    @patch.object(CatalogAssembler, 'fetch_json')
+    def test_catalog_json_resolution(self, mock_fetch_json):
+        # common_types.json typically contains a reference to `catalog.json#/$defs/anyFunction`
+        mock_schema = {
+            "components": {
+                "TestComp": {
+                    "properties": {
+                        "func": {
+                            "$ref": "catalog.json#/$defs/anyFunction"
+                        }
+                    }
+                }
+            }
+        }
+        mock_fetch_json.return_value = mock_schema
+
+        assembler = CatalogAssembler(version="0.9")
+        result = assembler.assemble("TestCatalog", ["memory://test.json"])
+        
+        # The reference should be transformed from 'catalog.json#/$defs/anyFunction' 
+        # to just '#/$defs/anyFunction' internally.
+        self.assertEqual(
+            result["components"]["TestComp"]["properties"]["func"]["$ref"],
+            "#/$defs/anyFunction"
+        )
+
+    def test_synthesized_defs(self):
+        assembler = CatalogAssembler(version="0.9", local_basic_catalog_path=str(self.basic_catalog_path))
+        result = assembler.assemble("SynthesizedCatalog", [str(self.component1_path), str(self.component2_path)])
+        
+        self.assertIn("$defs", result)
+        
+        # anyComponent MUST be populated with a oneOf of all merged components
+        self.assertIn("anyComponent", result["$defs"])
+        self.assertEqual(result["$defs"]["anyComponent"]["discriminator"]["propertyName"], "component")
+        any_comp_refs = [item["$ref"] for item in result["$defs"]["anyComponent"]["oneOf"]]
+        self.assertIn("#/components/CustomHeader", any_comp_refs)
+        self.assertIn("#/components/Page", any_comp_refs)
+        
+        # anyFunction MUST be populated
+        self.assertIn("anyFunction", result["$defs"])
+        
+        # theme MUST be extracted from the basic catalog
+        self.assertIn("theme", result["$defs"])
+        self.assertEqual(result["$defs"]["theme"]["type"], "object")
+
+    @patch.object(CatalogAssembler, 'fetch_json')
+    def test_theme_property_override_and_clash(self, mock_fetch_json):
+        basic_schema = {
+            "$id": "basic_catalog.json",
+            "$defs": {
+                "theme": {
+                    "type": "object",
+                    "properties": {
+                        "primaryColor": {"type": "string", "default": "#000000"},
+                        "iconUrl": {"type": "string"}
+                    }
+                }
+            }
+        }
+        
+        custom_schema_1 = {
+            "$id": "custom1.json",
+            "components": {},
+            "$defs": {
+                "theme": {
+                    "type": "object",
+                    "properties": {
+                        "primaryColor": {"type": "string", "default": "#FF0000"},
+                        "customProp": {"type": "number"}
+                    }
+                }
+            }
+        }
+        
+        custom_schema_2 = {
+            "$id": "custom2.json",
+            "components": {},
+            "$defs": {
+                "theme": {
+                    "type": "object",
+                    "properties": {
+                        "customProp": {"type": "boolean"}
+                    }
+                }
+            }
+        }
+
+        def mock_fetch_json_side_effect(uri):
+            if "basic_catalog" in uri:
+                return json.loads(json.dumps(basic_schema))
+            elif "custom1" in uri:
+                return json.loads(json.dumps(custom_schema_1))
+            elif "custom2" in uri:
+                return json.loads(json.dumps(custom_schema_2))
+            return {"components": {}}
+            
+        mock_fetch_json.side_effect = mock_fetch_json_side_effect
+        
+        assembler = CatalogAssembler(version="0.9", local_basic_catalog_path="memory://basic_catalog.json")
+        
+        # Test override: basic + custom1
+        result = assembler.assemble("TestTheme", ["memory://custom1.json"])
+        theme_props = result["$defs"]["theme"]["properties"]
+        
+        # basic loses, custom1 wins
+        self.assertEqual(theme_props["primaryColor"]["default"], "#FF0000")
+        self.assertIn("iconUrl", theme_props)
+        self.assertIn("customProp", theme_props)
+        self.assertEqual(theme_props["customProp"]["type"], "number")
+        
+        # Test clash: custom1 + custom2
+        with self.assertRaises(CatalogError) as context:
+            assembler.assemble("TestThemeClash", ["memory://custom1.json", "memory://custom2.json"])
+            
+        self.assertIn("Theme property clash", str(context.exception))
+        self.assertIn("customProp", str(context.exception))
 
 if __name__ == '__main__':
     unittest.main()

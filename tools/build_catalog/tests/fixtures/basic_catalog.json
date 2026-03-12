@@ -7,5 +7,13 @@
         "text": { "type": "string" }
       }
     }
+  },
+  "$defs": {
+    "theme": {
+      "type": "object",
+      "properties": {
+        "primaryColor": { "type": "string" }
+      }
+    }
   }
 }
