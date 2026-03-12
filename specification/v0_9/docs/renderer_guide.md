@@ -17,6 +17,26 @@ This establishes a fundamental split:
 *   **The Framework-Agnostic Layer (Data Layer)**: Handles JSON parsing, state management, JSON pointers, and schemas. This logic is identical across all UI frameworks within a given language.
 *   **The Framework-Specific Layer (View Layer)**: Handles turning the structured state into actual pixels (React Nodes, Flutter Widgets, iOS Views).
 
+### Implementation Topologies
+Because A2UI spans multiple languages and UI paradigms, the strictness and location of these architectural boundaries will vary depending on the target ecosystem.
+
+#### Dynamic Languages (e.g., TypeScript / JavaScript)
+In highly dynamic ecosystems like the web, the architecture is typically split across multiple packages to maximize code reuse across diverse UI frameworks (React, Angular, Vue, Lit).
+*   **Core Library (`web_core`)**: Implements the Core Data Layer, Component Schemas, and a Generic Binder Layer. Because TS/JS has powerful runtime reflection, the core library can provide a generic binder that automatically handles all data binding without framework-specific code. 
+*   **Framework Library (`react_renderer`, `angular_renderer`)**: Implements the Framework-Specific Adapters and the actual view implementations (the React `Button`, `Text`, etc.).
+
+#### Static Languages (e.g., Kotlin, Swift, Dart)
+In statically typed languages (and AOT-compiled languages like Dart), runtime reflection is often limited or discouraged for performance reasons.
+*   **Core Library (e.g., `kotlin_core`)**: Implements the Core Data Layer and Component Schemas. The core library typically provides a manually implemented **Binder Layer** for the standard Basic Catalog components. This ensures that even in static environments, basic components have a standardized, framework-agnostic reactive state definition.
+*   **Code Generation (Future/Optional)**: While the core library starts with manual binders, it may eventually offer Code Generation (e.g., KSP, Swift Macros) to automate the creation of Binders for custom components.
+*   **Custom Components**: In the absence of code generation, developers implementing new, ad-hoc components typically utilize a **"Binderless" Implementation** flow, which allows for direct binding to the data model without intermediate boilerplate.
+*   **Framework Library (e.g., `compose_renderer`)**: Uses the predefined Binders to connect to native UI state and implements the actual visual components.
+
+#### Combined Core + Framework Libraries (e.g., Swift + SwiftUI)
+In ecosystems dominated by a single UI framework (like iOS with SwiftUI), developers often build a single, unified library rather than splitting Core and Framework into separate packages.
+*   **Relaxed Boundaries**: The strict separation between Core and Framework libraries can be relaxed. The generic `ComponentContext` and the framework-specific adapter logic are often tightly integrated.
+*   **Why Keep the Binder Layer?**: Even in a combined library, defining the intermediate Binder Layer remains highly recommended. It standardizes how A2UI data resolves into reactive state. This allows developers adopting the library to easily write alternative implementations of well-known components without having to rewrite the complex, boilerplate-heavy A2UI data subscription logic.
+
 ## 2. The Core Interfaces
 
 At the heart of the A2UI architecture are five key interfaces that connect the data to the screen.
@@ -311,6 +331,20 @@ Functions generally fall into a few common patterns:
 
 If a function returns a reactive stream, it MUST use an idiomatic listening mechanism that supports standard unsubscription. To properly support an AI agent, functions SHOULD include a schema to generate accurate client capabilities.
 
+### Creating Custom Catalogs
+Extensibility is a core feature of A2UI. It should be trivial to create a new catalog by extending an existing one, combining custom components with the standard set.
+
+*Example of composing a custom catalog:*
+```python
+# Pseudocode
+myCustomCatalog = Catalog(
+  id="https://mycompany.com/catalogs/custom_catalog.json",
+  functions=basicCatalog.functions,
+  components=basicCatalog.components + [MyCompanyLogoComponent()],
+  theme=basicCatalog.theme # Inherit theme schema
+)
+```
+
 ---
 
 ## THE FRAMEWORK-SPECIFIC LAYER
@@ -361,7 +395,18 @@ In languages with powerful runtime reflection (like TypeScript/Zod), the Binder 
 This provides the ultimate "happy path" developer experience. The developer writes a simple, stateless UI component that receives native types, completely abstracted from A2UI's internals.
 
 ```typescript
-// The developer writes a simple, stateless UI component.
+// 1. The framework adapter infers the prop types from the Binder's Schema.
+// The raw `DynamicString` label and `Action` object have been automatically 
+// resolved into a static `string` and a callable `() => void` function.
+
+// Conceptually, the inferred type looks like this:
+interface ButtonResolvedProps {
+  label?: string;      // Resolved from DynamicString
+  action: () => void;  // Resolved from Action
+  child?: string;      // Resolved structural ComponentId
+}
+
+// 2. The developer writes a simple, stateless UI component.
 // The `props` argument is strictly inferred from the ButtonSchema.
 const ReactButton = createReactComponent(ButtonBinder, ({ props, buildChild }) => {
   return (
@@ -372,9 +417,94 @@ const ReactButton = createReactComponent(ButtonBinder, ({ props, buildChild }) =
 });
 ```
 
+Because of the generic types flowing through the adapter, if the developer typos `props.action` as `props.onClick`, or treats `props.label` as an object instead of a string, the compiler will immediately flag a type error.
+
+### Example: Framework-Specific Adapters
+The adapter acts as a wrapper that instantiates the binder, binds its output stream to the framework's state mechanism, injects structural rendering helpers (`buildChild`), and hooks into the native destruction lifecycle to call `dispose()`.
+
+#### React Pseudo-Adapter
+```typescript
+// Pseudo-code concept for a React adapter
+function createReactComponent(binder, RenderComponent) {
+  return function ReactWrapper({ context, buildChild }) {
+    // Hook into component mount
+    const [props, setProps] = useState(binder.initialProps);
+    
+    useEffect(() => {
+      // Create binding on mount
+      const binding = binder.bind(context);
+      
+      // Subscribe to updates
+      const sub = binding.propsStream.subscribe(newProps => setProps(newProps));
+      
+      // Cleanup on unmount
+      return () => {
+        sub.unsubscribe();
+        binding.dispose(); 
+      };
+    }, [context]);
+
+    return <RenderComponent props={props} buildChild={buildChild} />;
+  }
+}
+```
+
+#### Angular Pseudo-Adapter
+```typescript
+// Pseudo-code concept for an Angular adapter
+@Component({
+  selector: 'app-angular-wrapper',
+  imports: [MatButtonModule],
+  template: `
+    @if (props(); as props) {
+      <button mat-button>{{ props.label }}</button>
+    }
+  `
+})
+export class AngularWrapper {
+  private binder = inject(BinderService);
+  private context = inject(ComponentContext);
+
+  private bindingResource = resource({
+    loader: async () => {
+      const binding = this.binder.bind(this.context);
+
+      return {
+        instance: binding,
+        props: toSignal(binding.propsStream) // Convert Observable to Signal
+      };
+    },
+  });
+
+  props = computed(() => this.bindingResource.value()?.props() ?? null);
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.bindingResource.value()?.instance.dispose();
+    });
+  }
+}
+```
+
 ## 6. Framework Binding Lifecycles & Traits
 
 Regardless of the implementation strategy chosen, the framework adapter or `ComponentImplementation` MUST strictly manage subscriptions to ensure performance and prevent memory leaks.
+
+### Contract of Ownership
+A crucial part of A2UI's architecture is understanding who "owns" the data layers.
+*   **The Data Layer (Message Processor) owns the `ComponentModel`**. It creates, updates, and destroys the component's raw data state based on the incoming JSON stream.
+*   **The Framework Adapter owns the `ComponentContext` and `ComponentBinding`**. When the native framework decides to mount a component onto the screen (e.g., React runs `render`), the Framework Adapter creates the `ComponentContext` and passes it to the Binder. When the native framework unmounts the component, the Framework Adapter MUST call `binding.dispose()`.
+
+### Data Props vs. Structural Props
+It's important to distinguish between Data Props (like `label` or `value`) and Structural Props (like `child` or `children`).
+*   **Data Props:** Handled entirely by the Binder. The adapter receives a stream of fully resolved values (e.g., `"Submit"` instead of a `DynamicString` path). Whenever a data value updates, the binder should emit a *new reference* (e.g. a shallow copy of the props object) to ensure declarative frameworks that rely on strict equality (like React) correctly detect the change and trigger a re-render.
+*   **Structural Props:** The Binder does not attempt to resolve component IDs into actual UI trees. Instead, it outputs metadata for the children that need to be rendered.
+    *   For a simple `ComponentId` (e.g., `Card.child`), it emits an object like `{ id: string, basePath: string }`.
+    *   For a `ChildList` (e.g., `Column.children`), it evaluates the array. If the array is driven by a dynamic template bound to the data model, the binder must iterate over the array, using `context.dataContext.nested()` to generate a specific context for each index, and output a list of `ChildNode` streams. 
+*   The framework adapter is then responsible for taking these node definitions and calling a framework-native `buildChild(id, basePath)` method recursively.
+
+> **Implementation Tip: Context Propagation**
+> When implementing the recursive `buildChild` helper, ensure that it correctly inherits the *current* component's data context path by default. If a nested component (like a Text field inside a List template) uses a relative path, it must resolve against the scoped path provided by its immediate structural parent (e.g., `/restaurants/0`), not the root path. Failing to propagate this context is a common cause of "empty" data in nested components.
 
 ### Component Subscription Lifecycle Rules
 1.  **Lazy Subscription**: Only bind and subscribe to data paths or property updates when the component is actually mounted/attached to the UI.
@@ -400,6 +530,56 @@ When building libraries that provide the Basic Catalog, it is **crucial** to sep
 
 *   **Multi-Framework Code Reuse**: In ecosystems like the Web, this allows a shared `web_core` library to define the Basic Catalog API and Binders once, while separate packages (`react_renderer`, `angular_renderer`) provide the native view implementations.
 *   **Developer Overrides**: By exposing the standard API definitions, developers adopting A2UI can easily swap in custom UI implementations (e.g., replacing the default `Button` with their company's internal Design System `Button`) without having to rewrite the complex A2UI validation, data binding, and capability generation logic. 
+
+### Strongly-Typed Catalog Implementations
+To ensure all components are properly implemented and match the exact API signature, platforms with strong type systems should utilize their advanced typing features. This ensures that a provided renderer not only exists, but its `name` and `schema` strictly match the official Catalog Definition, catching mismatches at compile time rather than runtime.
+
+#### Statically Typed Languages (e.g. Kotlin/Swift)
+In languages like Kotlin, you can define a strict interface or class that demands concrete instances of the specific component APIs defined by the Core Library.
+
+```kotlin
+// The Core Library defines the exact shape of the catalog
+class BasicCatalogImplementations(
+    val button: ButtonApi, // Must be an instance of the ButtonApi class
+    val text: TextApi,
+    val row: RowApi
+    // ...
+)
+
+// The Framework Adapter implements the native views extending the base APIs
+class ComposeButton : ButtonApi() {
+    // Framework specific render logic
+}
+
+// The compiler forces all required components to be provided
+val implementations = BasicCatalogImplementations(
+    button = ComposeButton(),
+    text = ComposeText(),
+    row = ComposeRow()
+)
+
+val catalog = Catalog("id", listOf(implementations.button, implementations.text, implementations.row))
+```
+
+#### Dynamic Languages (e.g. TypeScript)
+In TypeScript, we can use intersection types to force the framework renderer to intersect with the exact definition.
+
+```typescript
+// Concept: Forcing implementations to match the spec
+type BasicCatalogImplementations = {
+  Button: ComponentImplementation & { name: "Button", schema: Schema },
+  Text: ComponentImplementation & { name: "Text", schema: Schema },
+  Row: ComponentImplementation & { name: "Row", schema: Schema },
+  // ...
+};
+
+// If a developer forgets 'Row' or spells it wrong, the compiler throws an error.
+const catalog = new Catalog("id", [
+  implementations.Button,
+  implementations.Text,
+  implementations.Row
+]);
+```
 
 ### Expression Resolution Logic (`formatString`)
 The Basic Catalog requires a `formatString` function capable of interpreting `${expression}` syntax within string properties.
