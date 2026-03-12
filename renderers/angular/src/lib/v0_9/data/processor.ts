@@ -102,15 +102,5 @@ export class MessageProcessor extends A2uiMessageProcessor<any> {
     this.events.next({ message, completion });
     return firstValueFrom(completion);
   }
-
-  setData(node: any, path: string, value: any, surfaceId: string) {
-    const surface = this.model.getSurface(surfaceId);
-    if (surface) {
-      const resolvedPath = this.resolvePath(path, node?.dataContextPath);
-      surface.dataModel.set(resolvedPath, value);
-    } else {
-      console.warn(`[MessageProcessor] Cannot set data: Surface ${surfaceId} not found.`);
-    }
-  }
 }
 
