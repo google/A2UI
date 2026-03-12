@@ -18,6 +18,7 @@ import { html, css, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Root } from "./root.js";
 import { A2uiMessageProcessor } from "@a2ui/web_core/data/model-processor";
+import { toMaterialSymbolLigature } from "@a2ui/web_core/styles/icons";
 import * as Primitives from "@a2ui/web_core/types/primitives";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
@@ -68,7 +69,7 @@ export class Icon extends Root {
     }
 
     const render = (url: string) => {
-      url = url.replace(/([A-Z])/gm, "_$1").toLocaleLowerCase();
+      url = toMaterialSymbolLigature(url);
       return html`<span class="g-icon">${url}</span>`;
     };
 

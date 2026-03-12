@@ -15,6 +15,7 @@
  */
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { toMaterialSymbolLigature } from '@a2ui/web_core/styles/icons';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 
@@ -45,5 +46,8 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 })
 export class Icon extends DynamicComponent {
   readonly name = input.required<Primitives.StringValue | null>();
-  protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
+  protected readonly resolvedName = computed(() => {
+    const resolvedName = this.resolvePrimitive(this.name());
+    return resolvedName ? toMaterialSymbolLigature(resolvedName) : null;
+  });
 }
