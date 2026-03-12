@@ -1,0 +1,7 @@
+[codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = .git*,*.svg,package-lock.json,*-lock.yaml,*.lock,*.css,.codespellrc,.cache,.npm
+check-hidden = true
+# Ignore embedded base64 images in notebooks and camelCase/PascalCase identifiers
+ignore-regex = ^\s*"image/\S+": ".*|\b[a-z]+[A-Z]\w*\b|\b[A-Z][a-z]+[A-Z]\w*\b
+ignore-words-list = ser,cyclin
