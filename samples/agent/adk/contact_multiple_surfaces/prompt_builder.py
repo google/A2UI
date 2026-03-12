@@ -39,7 +39,7 @@ def get_ui_description() -> str:
     a.  You MUST call the `get_contact_info` tool.
     b.  If the tool returns a **single contact**, you MUST use the `MULTI_SURFACE_EXAMPLE` template. Provide BOTH the Contact Card and the Org Chart in a single response.
     c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
-    d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.{{A2UI_OPEN_TAG}}[]{{A2UI_CLOSE_TAG}}"
+    d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.{A2UI_OPEN_TAG}[]{A2UI_CLOSE_TAG}"
 
 -   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
     a.  You MUST call the `get_contact_info` tool with the specific name.
