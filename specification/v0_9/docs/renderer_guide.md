@@ -109,12 +109,12 @@ They are organized hierarchically based on the structure of the data and compone
 The root containers for active surfaces and their catalogs, data, and components.
 
 ```typescript
-interface SurfaceLifecycleListener<T> {
+interface SurfaceLifecycleListener<T extends ComponentApi> {
   onSurfaceCreated?: (s: SurfaceModel<T>) => void; // Called when a new surface is registered
   onSurfaceDeleted?: (id: string) => void; // Called when a surface is removed
 }
 
-class SurfaceGroupModel<T> {
+class SurfaceGroupModel<T extends ComponentApi> {
   addSurface(surface: SurfaceModel<T>): void;
   deleteSurface(id: string): void;
   getSurface(id: string): SurfaceModel<T> | undefined;
@@ -133,7 +133,7 @@ interface ActionEvent {
 
 type ActionListener = (action: ActionEvent) => void | Promise<void>; // Handler for user interactions
 
-class SurfaceModel<T> {
+class SurfaceModel<T extends ComponentApi> {
   readonly id: string;
 ...
   readonly catalog: Catalog<T>; // Catalog containing component implementations
@@ -235,7 +235,7 @@ class DataContext {
   nested(relativePath: string): DataContext;
 }
 
-class ComponentContext {
+class ComponentContext<T extends ComponentApi> {
   constructor(surface: SurfaceModel<T>, componentId: string, basePath?: string);
   readonly componentModel: ComponentModel; // The instance configuration
   readonly dataContext: DataContext; // The instance's data scope
@@ -259,7 +259,7 @@ The **Processing Layer** acts as the "Controller." It accepts the raw stream of 
 It also handles generating the client capabilities payload via `getClientCapabilities()`.
 
 ```typescript
-class MessageProcessor<T> {
+class MessageProcessor<T extends ComponentApi> {
   readonly model: SurfaceGroupModel<T>; // Root state container for all surfaces
   
   constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
@@ -312,11 +312,14 @@ When implementing or modifying the capabilities generator, you must include test
 
 Components and functions in A2UI are organized into **Catalogs**. A catalog defines what components are available to be rendered and what client-side logic can be executed.
 
-### The Catalog API
-A catalog groups component definitions (and optionally function definitions) together so the `MessageProcessor` can validate messages and provide capabilities back to the server.
+### Models
+
+#### Catalog
+
+A catalog groups component definitions and function definitions together so that the `MessageProcessor` can validate messages and provide capabilities back to the server, and the framework-specific `Surface` implementation can render content. Catalogs are templated according to the ComponentImplementation type so that we can use the same Catalog object for different rendering frameworks. The `MessageProcessor` only needs to use the `ComponentApi` interface.
 
 ```typescript
-class Catalog<T> {
+class Catalog<T extends ComponentApi> {
   readonly id: string; // Unique catalog URI (e.g., "https://mycompany.com/catalog.json")
   readonly components: ReadonlyMap<string, T>;
   readonly functions?: ReadonlyMap<string, FunctionImplementation>;
@@ -327,6 +330,49 @@ class Catalog<T> {
   }
 }
 ```
+
+#### Components
+
+```typescript
+interface ComponentApi {
+    readonly name: String
+    readonly schema: Schema // Representing the formal property definition
+}
+```
+
+#### Functions
+
+```typescript
+interface FunctionApi {
+  readonly name: string;
+  readonly returnType: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
+  readonly schema: Schema; // The expected arguments
+}
+```
+
+Splitting API from Implementation is less critical than for components because functions are framework-agnostic, but it allows for re-using API definitions across different implementation providers.
+
+```typescript
+/**
+ * A function implementation.
+ */
+interface FunctionImplementation extends FunctionApi {
+  // Executes the function logic. Accepts static inputs, returns a value or a reactive stream.
+  execute(args: Record<string, any>, context: DataContext): unknown | Observable<unknown>;
+}
+```
+
+Functions in A2UI accept statically resolved values as input arguments (not observable streams). However, they can return an observable stream (or Signal) to provide reactive updates to the UI, or they can simply return a static value synchronously.
+
+To balance performance and reactivity, functions generally fall into a few common patterns:
+
+1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. Their logic is immediate and depends only on their inputs. They typically return a static value.
+2.  **External State (Reactive)**: Functions like `clock()` or `networkStatus()`. These return long-lived streams that push updates to the UI independently of data model changes.
+3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`, `closeModal`) that return `void`. These are typically triggered by user actions rather than interpolation.
+
+**Observability Consistency**: If a function returns a reactive stream, it MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.
+
+**API Documentation**: To properly support an AI agent, functions SHOULD include a schema using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities.
 
 ### Creating Custom Catalogs
 Extensibility is a core feature of A2UI. It should be trivial to create a new catalog by extending an existing one, combining custom components with the standard set.
@@ -348,12 +394,6 @@ This layer defines the exact JSON footprint of a component without any rendering
 In a statically typed language without an advanced schema reflection library, this might simply be defined as basic interfaces or classes:
 
 ```kotlin
-// Simple static definition (Kotlin example)
-interface ComponentApi {
-    val name: String
-    val schema: Schema // Representing the formal property definition
-}
-
 // In the Core Library, defining the standard component API
 abstract class ButtonApi : ComponentApi {
     override val name = "Button"
@@ -407,7 +447,7 @@ export interface ComponentBinding<ResolvedProps> {
 export interface ComponentBinder<ResolvedProps> {
   readonly name: string;
   readonly schema: Schema; // Formal schema for validation and capabilities
-  bind(context: ComponentContext): ComponentBinding<ResolvedProps>;
+  bind(context: ComponentContext<any>): ComponentBinding<ResolvedProps>;
 }
 ```
 
@@ -416,7 +456,7 @@ For dynamic languages, you can write a generic factory that automatically inspec
 
 ```typescript
 // Illustrative Generic Binder Factory
-export function createGenericBinding<T>(schema: Schema, context: ComponentContext): ComponentBinding<T> {
+export function createGenericBinding<T>(schema: Schema, context: ComponentContext<any>): ComponentBinding<T> {
   // 1. Walk the schema to find all DynamicValue properties.
   // 2. Map them to `context.dataContext.subscribeDynamicValue()`
   // 3. Store the returned `DataSubscription` objects.
@@ -636,32 +676,6 @@ const catalog = new Catalog("id", [
 
 ### Basic Catalog Core Functions
 The Standard A2UI Catalog requires a shared logic layer for standard function definitions (like `length`, `formatDate`, etc.). 
-
-### Layer 3: Function Implementation
-Client-side functions operate similarly to components. They require an implementation and optionally a definition (schema).
-
-```typescript
-interface FunctionImplementation {
-  readonly name: string;
-  readonly returnType: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
-  readonly schema: Schema; // The expected arguments
-  
-  // Executes the function logic. Accepts static inputs, returns a value or a reactive stream.
-  execute(args: Record<string, any>, context: DataContext): unknown | Observable<unknown>;
-}
-```
-
-Functions in A2UI accept statically resolved values as input arguments (not observable streams). However, they can return an observable stream (or Signal) to provide reactive updates to the UI, or they can simply return a static value synchronously.
-
-To balance performance and reactivity, functions generally fall into a few common patterns:
-
-1.  **Pure Logic (Synchronous)**: Functions like `add` or `concat`. Their logic is immediate and depends only on their inputs. They typically return a static value.
-2.  **External State (Reactive)**: Functions like `clock()` or `networkStatus()`. These return long-lived streams that push updates to the UI independently of data model changes.
-3.  **Effect Functions**: Side-effect handlers (e.g., `openUrl`, `closeModal`) that return `void`. These are typically triggered by user actions rather than interpolation.
-
-**Observability Consistency**: If a function returns a reactive stream, it MUST use a listening mechanism (streams, callbacks, or listenable properties) that is idiomatic to the language but follows "lowest common denominator" principles: low dependency, multi-cast support, and a standard unsubscription pattern.
-
-**API Documentation**: To properly support an AI agent, functions SHOULD include a schema using the same schema library selected for the Data Layer. This allows the renderer to validate function arguments at runtime and generate accurate client capabilities.
 
 #### Expression Resolution Logic (`formatString`)
 The standard `formatString` function is uniquely complex. It is responsible for interpreting the `${expression}` syntax within string properties.
