@@ -260,14 +260,15 @@ class CatalogAssembler:
             logger.warning(f"{label} collision: '{k}' already exists. Overwriting.")
           target[category][k] = v
 
-  def _init_combined_catalog(self, base_name: str, file_name: str, input_uris: list[str]) -> dict[str, Any]:
-    """Initializes the skeleton of the combined catalog."""
+  def _init_combined_catalog(self, base_name: str, file_name: str, input_uris: list[str], custom_catalog_id: Optional[str] = None) -> dict[str, Any]:
+    """Initializes the skeleton for the newly combined catalog."""
+    catalog_id = custom_catalog_id if custom_catalog_id else f"urn:a2ui:catalog:{base_name}"
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": file_name,
         "title": f"{base_name} A2UI Catalog",
         "description": f"{base_name} A2UI catalog, including {', '.join(Path(uri).stem for uri in input_uris)}.",
-        "catalogId": file_name,
+        "catalogId": catalog_id,
         "components": {},
         "functions": {},
     }
@@ -310,10 +311,13 @@ class CatalogAssembler:
       if synthesized_name == "anyComponent":
         self.definitions[synthesized_name]["discriminator"] = {"propertyName": "component"}
 
-  def assemble(self, name: str, input_uris: list[str], extend_basic: bool = False) -> dict[str, Any]:
-    """Assembles multiple catalogs into one."""
+  def assemble(self, name: str, input_uris: list[str], extend_basic: bool = False, catalog_id: Optional[str] = None) -> dict[str, Any]:
+    """Assembles a list of catalog URIs into a single, unified catalog JSON."""
+    if not input_uris:
+      return {}
+
     file_path = Path(name).with_suffix(".json")
-    combined_catalog = self._init_combined_catalog(file_path.stem, file_path.name, input_uris)
+    combined_catalog = self._init_combined_catalog(file_path.stem, file_path.name, input_uris, custom_catalog_id=catalog_id)
 
     basic_uri = self._normalize_uri(self.local_basic_catalog_path or BASIC_CATALOG_URLS[self.version])
     merged_theme, theme_sources = self._load_initial_theme(basic_uri)
@@ -373,6 +377,7 @@ def main():
   parser = argparse.ArgumentParser(description="Assemble multiple A2UI Catalogs into a single file.")
   parser.add_argument("inputs", nargs="+", help="Input paths or URLs to A2UI component catalog JSONs")
   parser.add_argument("--output-name", required=True, help="Name of the combined catalog")
+  parser.add_argument("--catalog-id", type=str, help="Custom catalogId for the output. Defaults to urn:a2ui:catalog:<base_name>")
   parser.add_argument("--version", choices=["0.9", "0.10"], default="0.9", help="A2UI basic_catalog version to use if remote")
   parser.add_argument("--extend-basic-catalog", action="store_true", help="Always include the entire basic_catalog.json in the output")
   parser.add_argument("--out-dir", "-o", type=Path, default="dist", help="Output directory (default: dist)")
@@ -397,7 +402,7 @@ def main():
         local_basic_catalog_path=local_basic,
         local_common_types_path=local_common,
     )
-    final_schema = assembler.assemble(output_filename, args.inputs, extend_basic=args.extend_basic_catalog)
+    final_schema = assembler.assemble(output_filename, args.inputs, extend_basic=args.extend_basic_catalog, catalog_id=args.catalog_id)
 
     validate_catalog(final_schema)
 

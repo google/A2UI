@@ -37,7 +37,7 @@ class TestAssembleCatalog(unittest.TestCase):
         result = assembler.assemble("TestCatalog", [str(self.component1_path), str(self.component2_path)])
 
         self.assertEqual(result["$id"], "TestCatalog.json")
-        self.assertEqual(result["catalogId"], "TestCatalog.json")
+        self.assertEqual(result["catalogId"], "urn:a2ui:catalog:TestCatalog")
         self.assertEqual(result["title"], "TestCatalog A2UI Catalog")
         self.assertEqual(result["description"], f"TestCatalog A2UI catalog, including {self.component1_path.stem}, {self.component2_path.stem}.")
         self.assertIn("CustomHeader", result["components"])
@@ -50,6 +50,20 @@ class TestAssembleCatalog(unittest.TestCase):
         defs_keys = list(result["$defs"].keys())
         self.assertTrue(any("basic_catalog_Text" in k for k in defs_keys))
         self.assertTrue(any("component1_CustomHeader" in k for k in defs_keys))
+
+    def test_custom_catalog_id(self):
+        assembler = CatalogAssembler(version="0.9", local_basic_catalog_path=str(self.basic_catalog_path))
+        
+        # Pass a custom catalog_id to assemble()
+        custom_id = "my:custom:catalog:identifier"
+        result = assembler.assemble(
+            "TestCatalog", 
+            [str(self.component1_path)], 
+            catalog_id=custom_id
+        )
+
+        self.assertEqual(result["$id"], "TestCatalog.json")
+        self.assertEqual(result["catalogId"], custom_id)
 
     @patch('assemble_catalog.urllib.request.urlopen')
     def test_remote_basic_catalog_fallback(self, mock_urlopen):
