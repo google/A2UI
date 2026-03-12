@@ -566,6 +566,8 @@ export class AngularWrapper {
 
 Once the core architecture and adapters are built, the actual catalogs can be implemented.
 
+For a detailed walkthrough on how to visually and functionally implement each basic component and function, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md).
+
 ### Strongly-Typed Catalog Implementations
 To ensure all components are properly implemented and match the exact API signature, platforms with strong type systems should utilize their advanced typing features. This ensures that a provided renderer not only exists, but its `name` and `schema` strictly match the official Catalog Definition, catching mismatches at compile time rather than runtime.
 
@@ -651,6 +653,7 @@ If you are an AI Agent tasked with building a new renderer for A2UI, you MUST fo
 ### 1. Context to Ingest
 Before writing any code, thoroughly review:
 *   `specification/v0_9/docs/a2ui_protocol.md` (for protocol rules)
+*   `specification/v0_9/docs/basic_catalog_implementation_guide.md` (for rendering and spacing rules)
 *   `specification/v0_9/json/common_types.json` (for dynamic binding types)
 *   `specification/v0_9/json/server_to_client.json` (for message envelopes)
 *   `specification/v0_9/json/catalogs/minimal/minimal_catalog.json` (your initial target)
@@ -696,7 +699,7 @@ Build a self-contained application to prove the architecture works before scalin
 **STOP HERE. Ask the user for approval of the architecture and demo application before proceeding to step 7.**
 
 ### 7. Basic Catalog Support
-Once the minimal architecture is proven robust:
+Once the minimal architecture is proven robust, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) and:
 *   **Core Library**: Implement the full suite of basic functions. It is crucial to note that string interpolation and expression parsing should ONLY happen within the `formatString` function. Do not attempt to add global string interpolation to all strings.
 *   **Core Library**: Create definitions/binders for the remaining Basic Catalog components.
 *   **Framework Library**: Implement all remaining UI widgets.
