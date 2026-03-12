@@ -1,3 +1,19 @@
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { z } from "zod";
 import {
   AudioPlayerSchema,
@@ -18,6 +34,7 @@ import {
   TextFieldSchema,
   TextSchema,
   VideoSchema,
+  DataValueSchema,
 } from "./common-types.js";
 
 
@@ -35,35 +52,9 @@ const validateValueProperty = (val: any, ctx: z.RefinementCtx) => {
   }
 };
 
-const ValueMapItemSchema = z
-  .object({
-    key: z.string(),
-    valueString: z.string().optional(),
-    valueNumber: z.number().optional(),
-    valueBoolean: z.boolean().optional(),
-  })
-  .strict()
-  .superRefine(validateValueProperty)
-  .describe(
-    "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
-  );
-
-export const ValueMapSchema = z
-  .object({
-    key: z.string().describe("The key for this data entry."),
-    valueString: z.string().optional(),
-    valueNumber: z.number().optional(),
-    valueBoolean: z.boolean().optional(),
-    valueMap: z
-      .array(ValueMapItemSchema)
-      .optional()
-      .describe("Represents a map as an adjacency list."),
-  })
-  .strict()
-  .superRefine(validateValueProperty)
-  .describe(
-    "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
-  );
+export const ValueMapSchema = DataValueSchema.describe(
+  "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
+);
 
 export const AnyComponentSchema = z
   .object({

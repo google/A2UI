@@ -37,8 +37,7 @@ nav:
       - What is A2UI?: introduction/what-is-a2ui.md
       - Who is it For?: introduction/who-is-it-for.md
       - How Can I Use It?: introduction/how-to-use.md
-      - Where is it Used?: introduction/where-is-it-used.md
-      - Agent UI Ecosystem: introduction/agent-ui-ecosystem.md
+      - How Does A2UI Compare?: introduction/agent-ui-ecosystem.md
   - Quickstart: quickstart.md
   - A2UI Composer ⭐: composer.md
   - Concepts:
@@ -46,9 +45,9 @@ nav:
       - Data Flow: concepts/data-flow.md
       - Components & Structure: concepts/components.md
       - Data Binding: concepts/data-binding.md
-      - Catalogs: catalogs.md
-      - Transports: transports.md
-      - Client-to-Server Actions: client_to_server_actions.md
+      - Catalogs: concepts/catalogs.md
+      - Transports: concepts/transports.md
+      - Client-to-Server Actions: concepts/client_to_server_actions.md
   - Guides:
       - Client Setup: guides/client-setup.md
       - Agent Development: guides/agent-development.md
@@ -58,8 +57,8 @@ nav:
   - Reference:
       - Component Gallery: reference/components.md
       - Message Reference: reference/messages.md
-      - Renderers (Clients): renderers.md
-      - Agents (Server-side): agents.md
+      - Renderers (Clients): reference/renderers.md
+      - Agents (Server-side): reference/agents.md
   - Specifications:
       - v0.8 (Stable):
           - A2UI Protocol: specification/v0.8-a2ui.md
@@ -68,10 +67,9 @@ nav:
           - A2UI Protocol: specification/v0.9-a2ui.md
           - Evolution Guide: specification/v0.9-evolution-guide.md
   - Ecosystem:
-      - Agent UI Ecosystem: introduction/agent-ui-ecosystem.md
+      - A2UI in the World: ecosystem/a2ui-in-the-world.md
       - Community Renderers: ecosystem/renderers.md
-      - Where is it Used?: introduction/where-is-it-used.md
-      - Community: community.md
+      - Community: ecosystem/community.md
   - Roadmap: roadmap.md
 
 exclude_docs: |
@@ -168,7 +166,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:mermaid2.fence_mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
@@ -186,7 +184,15 @@ plugins:
   # - include-markdown
   - mermaid2
   - redirects:
-      redirect_maps: {}
+      redirect_maps:
+        # Files moved in docs-file-org reorganization
+        'catalogs.md': 'concepts/catalogs.md'
+        'transports.md': 'concepts/transports.md'
+        'client_to_server_actions.md': 'concepts/client_to_server_actions.md'
+        'renderers.md': 'reference/renderers.md'
+        'agents.md': 'reference/agents.md'
+        'community.md': 'ecosystem/community.md'
+        'introduction/where-is-it-used.md': 'ecosystem/a2ui-in-the-world.md'
   # - llmstxt:
   #     full_output: llms-full.txt
   #     sections:

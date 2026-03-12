@@ -1,3 +1,19 @@
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { z } from "zod";
 
 /**
@@ -21,27 +37,30 @@ export const StringValueSchema = z.object({
 }).strict().superRefine(exactlyOneKey);
 export type StringValue = z.infer<typeof StringValueSchema>;
 
-const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() => z
-  .object({
-    key: z.string(),
-    valueString: z.string().optional(),
-    valueNumber: z.number().optional(),
-    valueBoolean: z.boolean().optional(),
-    valueMap: z.array(DataValueMapItemSchema).optional(),
-  })
-  .strict().superRefine((val: any, ctx: z.RefinementCtx) => {
-    let count = 0;
-    if (val.valueString !== undefined) count++;
-    if (val.valueNumber !== undefined) count++;
-    if (val.valueBoolean !== undefined) count++;
-    if (val.valueMap !== undefined) count++;
-    if (count !== 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Value map item must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
-      });
-    }
-  }));
+const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() =>
+  z
+    .object({
+      key: z.string(),
+      valueString: z.string().optional(),
+      valueNumber: z.number().optional(),
+      valueBoolean: z.boolean().optional(),
+      valueMap: z.array(DataValueMapItemSchema).optional(),
+    })
+    .strict()
+    .superRefine((val: any, ctx: z.RefinementCtx) => {
+      let count = 0;
+      if (val.valueString !== undefined) count++;
+      if (val.valueNumber !== undefined) count++;
+      if (val.valueBoolean !== undefined) count++;
+      if (val.valueMap !== undefined) count++;
+      if (count !== 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Value map item must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
+        });
+      }
+    }),
+);
 
 export const DataValueSchema = z
   .object({
@@ -63,6 +82,22 @@ export const DataValueSchema = z
         message: `Value must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
       });
     }
+  }).superRefine((val: any, ctx: z.RefinementCtx) => {
+    const checkDepth = (v: any, currentDepth: number) => {
+      if (currentDepth > 5) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "valueMap recursion exceeded maximum depth of 5.",
+        });
+        return;
+      }
+      if (v.valueMap && Array.isArray(v.valueMap)) {
+        for (const item of v.valueMap) {
+          checkDepth(item, currentDepth + 1);
+        }
+      }
+    };
+    checkDepth(val, 1);
   });
 
 export const NumberValueSchema = z.object({
@@ -122,19 +157,23 @@ export const ActionSchema = z.object({
 
 export const TextSchema = z.object({
   text: StringValueSchema,
-  usageHint: z.enum(["h1", "h2", "h3", "h4", "h5", "caption", "body"]),
+  usageHint: z
+    .enum(["h1", "h2", "h3", "h4", "h5", "caption", "body"])
+    .optional(),
 });
 
 export const ImageSchema = z.object({
   url: StringValueSchema,
-  usageHint: z.enum([
-    "icon",
-    "avatar",
-    "smallFeature",
-    "mediumFeature",
-    "largeFeature",
-    "header",
-  ]),
+  usageHint: z
+    .enum([
+      "icon",
+      "avatar",
+      "smallFeature",
+      "mediumFeature",
+      "largeFeature",
+      "header",
+    ])
+    .optional(),
   fit: z.enum(["contain", "cover", "fill", "none", "scale-down"]).optional(),
   altText: StringValueSchema.optional(),
 });
@@ -216,6 +255,12 @@ export const ButtonSchema = z.object({
     .string()
     .describe("The ID of the component to display as the button's content."),
   action: ActionSchema.describe("Represents a user-initiated action."),
+  primary: z
+    .boolean()
+    .optional()
+    .describe(
+      "Indicates if this button should be styled as the primary action."
+    ),
 });
 
 export const CheckboxSchema = z.object({
@@ -234,7 +279,7 @@ export const CheckboxSchema = z.object({
 export const TextFieldSchema = z.object({
   text: StringValueSchema.optional(),
   label: StringValueSchema.describe("A label, title, or placeholder text."),
-  type: z.enum(["shortText", "number", "date", "longText"]).optional(),
+  textFieldType: z.enum(["shortText", "number", "date", "longText"]).optional(),
   validationRegexp: z
     .string()
     .optional()

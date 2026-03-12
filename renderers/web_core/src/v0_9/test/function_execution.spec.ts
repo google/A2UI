@@ -1,10 +1,25 @@
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import { DataModel } from "../state/data-model.js";
 import { DataContext } from "../rendering/data-context.js";
 
-import { timer } from "rxjs";
-import { map } from "rxjs/operators";
+import { signal } from "@preact/signals-core";
 
 describe("Function Execution in DataContext", () => {
   it("resolves and subscribes to metronome function", (_t, done) => {
@@ -12,14 +27,24 @@ describe("Function Execution in DataContext", () => {
 
     const functions = new Map<string, Function>();
     // mimic metronome: returns a stream of ticks
-    functions.set("metronome", (args: Record<string, any>) => {
+    functions.set("metronome", (args: Record<string, any>, abortSignal?: AbortSignal) => {
       const interval = Number(args["interval"]) || 100;
-      return timer(0, interval).pipe(map((i) => `tick ${i}`));
+      const subj = signal<string>("tick 0");
+      let i = 1;
+      const timerId = setInterval(() => {
+        subj.value = `tick ${i++}`;
+      }, interval);
+      
+      abortSignal?.addEventListener("abort", () => {
+        clearInterval(timerId);
+      });
+      
+      return subj;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args) => {
+    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
       const fn = functions.get(name);
-      return fn ? fn(args) : undefined;
+      return fn ? fn(args, abortSignal) : undefined;
     });
 
     // DynamicValue representing: metronome(interval: 50)
@@ -59,9 +84,9 @@ describe("Function Execution in DataContext", () => {
       return `echo: ${args["val"]}`;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args) => {
+    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
       const fn = functions.get(name);
-      return fn ? fn(args) : undefined;
+      return fn ? fn(args, abortSignal) : undefined;
     });
     dataModel.set("/msg", "hello");
 

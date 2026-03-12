@@ -16,6 +16,7 @@
 
 import { describe, it } from "node:test";
 import * as assert from "node:assert";
+import { effect } from "@preact/signals-core";
 import { BASIC_FUNCTIONS } from "./basic_functions.js";
 import { DataModel } from "../../state/data-model.js";
 import { DataContext } from "../../rendering/data-context.js";
@@ -238,11 +239,16 @@ describe("BASIC_FUNCTIONS", () => {
       const result = BASIC_FUNCTIONS.formatString(
         { value: "hello world" },
         context,
-      ) as import("rxjs").Observable<string>;
+      ) as import("@preact/signals-core").Signal<string>;
 
-      result.subscribe((val) => {
-        assert.strictEqual(val, "hello world");
-        done();
+      let cleanup: (() => void) | undefined;
+      cleanup = effect(() => {
+        const val = result.value;
+        if (val) {
+          assert.strictEqual(val, "hello world");
+          if (cleanup) cleanup();
+          done();
+        }
       });
     });
 
@@ -251,32 +257,30 @@ describe("BASIC_FUNCTIONS", () => {
       const result = BASIC_FUNCTIONS.formatString(
         { value: "Value: ${a}" },
         context,
-      ) as import("rxjs").Observable<string>;
+      ) as import("@preact/signals-core").Signal<string>;
 
       let emitCount = 0;
-      const sub = result.subscribe({
-        next: (val) => {
-          try {
-            if (emitCount === 0) {
-              assert.strictEqual(val, "Value: 10");
-              emitCount++;
-              // Trigger a change in the next tick to avoid uninitialized sub
-              setTimeout(() => {
-                dataModel.set("/a", 42);
-              }, 0);
-            } else if (emitCount === 1) {
-              assert.strictEqual(val, "Value: 42");
-              emitCount++;
-              sub.unsubscribe();
-              done();
-            }
-          } catch (e) {
-            done(e);
+      let cleanup: (() => void) | undefined;
+      cleanup = effect(() => {
+        const val = result.value;
+        try {
+          if (emitCount === 0) {
+            assert.strictEqual(val, "Value: 10");
+            emitCount++;
+            // Trigger a change in the next tick to avoid uninitialized sub
+            setTimeout(() => {
+              dataModel.set("/a", 42);
+            }, 0);
+          } else if (emitCount === 1) {
+            assert.strictEqual(val, "Value: 42");
+            emitCount++;
+            if (cleanup) cleanup();
+            done();
           }
-        },
-        error: (e) => {
+        } catch (e) {
+          if (cleanup) cleanup();
           done(e);
-        },
+        }
       });
     });
 
@@ -292,11 +296,16 @@ describe("BASIC_FUNCTIONS", () => {
       const result = BASIC_FUNCTIONS.formatString(
         { value: "Result: ${add(a: 5, b: 7)}" },
         ctxWithInvoker,
-      ) as import("rxjs").Observable<string>;
+      ) as import("@preact/signals-core").Signal<string>;
 
-      result.subscribe((val) => {
-        assert.strictEqual(val, "Result: 12");
-        done();
+      let cleanup: (() => void) | undefined;
+      cleanup = effect(() => {
+        const val = result.value;
+        if (val) {
+          assert.strictEqual(val, "Result: 12");
+          if (cleanup) cleanup();
+          done();
+        }
       });
     });
 

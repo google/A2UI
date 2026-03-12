@@ -16,7 +16,7 @@
 
 import { z } from "zod";
 import { DataContext } from "../rendering/data-context.js";
-import { Observable } from "rxjs";
+import { Signal } from "@preact/signals-core";
 
 /**
  * A function implementation that can be registered with the evaluator or basic catalog.
@@ -24,7 +24,8 @@ import { Observable } from "rxjs";
 export type FunctionImplementation = (
   args: Record<string, unknown>,
   context: DataContext,
-) => unknown | Observable<unknown>;
+  abortSignal?: AbortSignal,
+) => unknown | Signal<unknown>;
 
 /**
  * A definition of a UI component's API.
