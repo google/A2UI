@@ -1,25 +1,87 @@
 import { useState, useEffect, useSyncExternalStore, useCallback } from 'react';
 import { MessageProcessor, SurfaceModel } from '@a2ui/web_core/v0_9';
-import { minimalCatalog, A2uiSurface } from '@a2ui/react_prototype';
+import { minimalCatalog, basicCatalog, A2uiSurface } from '@a2ui/react_prototype';
 
-// Import JSON examples
-import ex1 from "../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json";
-import ex2 from "../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json";
-import ex3 from "../../../../specification/v0_9/json/catalogs/minimal/examples/3_interactive_button.json";
-import ex4 from "../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json";
-import ex5 from "../../../../specification/v0_9/json/catalogs/minimal/examples/5_complex_layout.json";
-import ex6 from "../../../../specification/v0_9/json/catalogs/minimal/examples/6_capitalized_text.json";
-import ex7 from "../../../../specification/v0_9/json/catalogs/minimal/examples/7_incremental.json";
+// Import Minimal examples
+import min1 from "../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json";
+import min2 from "../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json";
+import min3 from "../../../../specification/v0_9/json/catalogs/minimal/examples/3_interactive_button.json";
+import min4 from "../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json";
+import min5 from "../../../../specification/v0_9/json/catalogs/minimal/examples/5_complex_layout.json";
+import min6 from "../../../../specification/v0_9/json/catalogs/minimal/examples/6_capitalized_text.json";
+import min7 from "../../../../specification/v0_9/json/catalogs/minimal/examples/7_incremental.json";
+
+// Import Basic examples
+import b01 from "../../../../specification/v0_9/json/catalogs/basic/examples/01_flight-status.json";
+import b02 from "../../../../specification/v0_9/json/catalogs/basic/examples/02_email-compose.json";
+import b03 from "../../../../specification/v0_9/json/catalogs/basic/examples/03_calendar-day.json";
+import b04 from "../../../../specification/v0_9/json/catalogs/basic/examples/04_weather-current.json";
+import b05 from "../../../../specification/v0_9/json/catalogs/basic/examples/05_product-card.json";
+import b06 from "../../../../specification/v0_9/json/catalogs/basic/examples/06_music-player.json";
+import b07 from "../../../../specification/v0_9/json/catalogs/basic/examples/07_task-card.json";
+import b08 from "../../../../specification/v0_9/json/catalogs/basic/examples/08_user-profile.json";
+import b09 from "../../../../specification/v0_9/json/catalogs/basic/examples/09_login-form.json";
+import b10 from "../../../../specification/v0_9/json/catalogs/basic/examples/10_notification-permission.json";
+import b11 from "../../../../specification/v0_9/json/catalogs/basic/examples/11_purchase-complete.json";
+import b12 from "../../../../specification/v0_9/json/catalogs/basic/examples/12_chat-message.json";
+import b13 from "../../../../specification/v0_9/json/catalogs/basic/examples/13_coffee-order.json";
+import b14 from "../../../../specification/v0_9/json/catalogs/basic/examples/14_sports-player.json";
+import b15 from "../../../../specification/v0_9/json/catalogs/basic/examples/15_account-balance.json";
+import b16 from "../../../../specification/v0_9/json/catalogs/basic/examples/16_workout-summary.json";
+import b17 from "../../../../specification/v0_9/json/catalogs/basic/examples/17_event-detail.json";
+import b18 from "../../../../specification/v0_9/json/catalogs/basic/examples/18_track-list.json";
+import b19 from "../../../../specification/v0_9/json/catalogs/basic/examples/19_software-purchase.json";
+import b20 from "../../../../specification/v0_9/json/catalogs/basic/examples/20_restaurant-card.json";
+import b21 from "../../../../specification/v0_9/json/catalogs/basic/examples/21_shipping-status.json";
+import b22 from "../../../../specification/v0_9/json/catalogs/basic/examples/22_credit-card.json";
+import b23 from "../../../../specification/v0_9/json/catalogs/basic/examples/23_step-counter.json";
+import b24 from "../../../../specification/v0_9/json/catalogs/basic/examples/24_recipe-card.json";
+import b25 from "../../../../specification/v0_9/json/catalogs/basic/examples/25_contact-card.json";
+import b26 from "../../../../specification/v0_9/json/catalogs/basic/examples/26_podcast-episode.json";
+import b27 from "../../../../specification/v0_9/json/catalogs/basic/examples/27_stats-card.json";
+import b28 from "../../../../specification/v0_9/json/catalogs/basic/examples/28_countdown-timer.json";
+import b29 from "../../../../specification/v0_9/json/catalogs/basic/examples/29_movie-card.json";
 
 const exampleFiles = [
-  { key: '1_simple_text', data: ex1 },
-  { key: '2_row_layout', data: ex2 },
-  { key: '3_interactive_button', data: ex3 },
-  { key: '4_login_form', data: ex4 },
-  { key: '5_complex_layout', data: ex5 },
-  { key: '6_capitalized_text', data: ex6 },
-  { key: '7_incremental', data: ex7 },
+  { key: 'min1', data: min1, catalog: 'Minimal' },
+  { key: 'min2', data: min2, catalog: 'Minimal' },
+  { key: 'min3', data: min3, catalog: 'Minimal' },
+  { key: 'min4', data: min4, catalog: 'Minimal' },
+  { key: 'min5', data: min5, catalog: 'Minimal' },
+  { key: 'min6', data: min6, catalog: 'Minimal' },
+  { key: 'min7', data: min7, catalog: 'Minimal' },
+  { key: 'b01', data: b01, catalog: 'Basic' },
+  { key: 'b02', data: b02, catalog: 'Basic' },
+  { key: 'b03', data: b03, catalog: 'Basic' },
+  { key: 'b04', data: b04, catalog: 'Basic' },
+  { key: 'b05', data: b05, catalog: 'Basic' },
+  { key: 'b06', data: b06, catalog: 'Basic' },
+  { key: 'b07', data: b07, catalog: 'Basic' },
+  { key: 'b08', data: b08, catalog: 'Basic' },
+  { key: 'b09', data: b09, catalog: 'Basic' },
+  { key: 'b10', data: b10, catalog: 'Basic' },
+  { key: 'b11', data: b11, catalog: 'Basic' },
+  { key: 'b12', data: b12, catalog: 'Basic' },
+  { key: 'b13', data: b13, catalog: 'Basic' },
+  { key: 'b14', data: b14, catalog: 'Basic' },
+  { key: 'b15', data: b15, catalog: 'Basic' },
+  { key: 'b16', data: b16, catalog: 'Basic' },
+  { key: 'b17', data: b17, catalog: 'Basic' },
+  { key: 'b18', data: b18, catalog: 'Basic' },
+  { key: 'b19', data: b19, catalog: 'Basic' },
+  { key: 'b20', data: b20, catalog: 'Basic' },
+  { key: 'b21', data: b21, catalog: 'Basic' },
+  { key: 'b22', data: b22, catalog: 'Basic' },
+  { key: 'b23', data: b23, catalog: 'Basic' },
+  { key: 'b24', data: b24, catalog: 'Basic' },
+  { key: 'b25', data: b25, catalog: 'Basic' },
+  { key: 'b26', data: b26, catalog: 'Basic' },
+  { key: 'b27', data: b27, catalog: 'Basic' },
+  { key: 'b28', data: b28, catalog: 'Basic' },
+  { key: 'b29', data: b29, catalog: 'Basic' },
 ];
+
+const getMessages = (ex: any) => Array.isArray(ex) ? ex : ex?.messages;
 
 const DataModelViewer = ({ surface }: { surface: SurfaceModel<any> }) => {
   const subscribeHook = useCallback((callback: () => void) => {
@@ -58,12 +120,13 @@ export default function App() {
       if (prevProcessor) {
         prevProcessor.model.dispose();
       }
-      const newProcessor = new MessageProcessor([minimalCatalog as any], async (action: any) => {
+      const newProcessor = new MessageProcessor([minimalCatalog as any, basicCatalog as any], async (action: any) => {
         setLogs((l) => [...l, { time: new Date().toLocaleTimeString(), action }]);
       });
       
-      if (advanceToEnd && selectedExample?.messages) {
-        newProcessor.processMessages(selectedExample.messages);
+      const msgs = getMessages(selectedExample);
+      if (advanceToEnd && msgs) {
+        newProcessor.processMessages(msgs);
       }
       return newProcessor;
     });
@@ -71,8 +134,9 @@ export default function App() {
     setLogs([]);
     setSurfaces([]);
     
-    if (advanceToEnd && selectedExample?.messages) {
-      setCurrentMessageIndex(selectedExample.messages.length - 1);
+    const msgs = getMessages(selectedExample);
+    if (advanceToEnd && msgs) {
+      setCurrentMessageIndex(msgs.length - 1);
     } else {
       setCurrentMessageIndex(-1);
     }
@@ -113,10 +177,11 @@ export default function App() {
   }, [processor]);
 
   const advanceToMessage = (index: number) => {
-    if (!processor || !selectedExample?.messages) return;
+    const msgs = getMessages(selectedExample);
+    if (!processor || !msgs) return;
     
     // Process messages from currentMessageIndex + 1 to index
-    const messagesToProcess = selectedExample.messages.slice(currentMessageIndex + 1, index + 1);
+    const messagesToProcess = msgs.slice(currentMessageIndex + 1, index + 1);
     if (messagesToProcess.length > 0) {
       processor.processMessages(messagesToProcess);
       setCurrentMessageIndex(index);
@@ -127,7 +192,7 @@ export default function App() {
     resetProcessor(false);
   };
 
-  const messages = selectedExample?.messages || [];
+  const messages = getMessages(selectedExample) || [];
 
   return (
     <div style={{ display: 'flex', gap: '2rem', padding: '2rem', height: '100vh', boxSizing: 'border-box', textAlign: 'left', backgroundColor: '#fff', color: '#000' }}>
@@ -152,6 +217,7 @@ export default function App() {
                   cursor: 'pointer'
                 }}
               >
+                <div style={{ fontSize: '10px', color: '#666' }}>{ex.catalog}</div>
                 {(ex.data as any).name || ex.key}
               </button>
             </li>

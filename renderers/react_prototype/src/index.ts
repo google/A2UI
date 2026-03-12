@@ -1,9 +1,11 @@
 export * from './A2uiSurface';
 export * from './adapter';
 export * from './catalog';
-export * from './components/ReactButton';
+export * from './basic_catalog';
+// Minimal catalog components are exported from here for backwards compatibility or specific use.
+export { ReactButton as MinimalButton } from './components/ReactButton';
+export { ReactColumn as MinimalColumn } from './components/ReactColumn';
+export { ReactRow as MinimalRow } from './components/ReactRow';
+export { ReactText as MinimalText } from './components/ReactText';
+export { ReactTextField as MinimalTextField } from './components/ReactTextField';
 export * from './components/ReactChildList';
-export * from './components/ReactColumn';
-export * from './components/ReactRow';
-export * from './components/ReactText';
-export * from './components/ReactTextField';
