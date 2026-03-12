@@ -13,6 +13,9 @@ The A2UI Standard Catalog covers common UI elements (text, buttons, inputs, layo
 
 Custom components let agents generate UI that includes **any** component your app supports — not just what's in the standard catalog.
 
+!!! tip "Already have a component library?"
+    If you're adding A2UI to an existing app with its own design system (Material, Ant Design, PrimeNG, etc.), start with the [Design System Integration](design-system-integration.md) guide first — it walks through wiring A2UI into your app before adding custom components.
+
 ## How It Works
 
 ```
