@@ -566,6 +566,8 @@ export class AngularWrapper {
 
 Once the core architecture and adapters are built, the actual catalogs can be implemented.
 
+For a detailed walkthrough on how to visually and functionally implement each basic component and function, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md).
+
 ### Strongly-Typed Catalog Implementations
 To ensure all components are properly implemented and match the exact API signature, platforms with strong type systems should utilize their advanced typing features. This ensures that a provided renderer not only exists, but its `name` and `schema` strictly match the official Catalog Definition, catching mismatches at compile time rather than runtime.
 
@@ -651,6 +653,7 @@ If you are an AI Agent tasked with building a new renderer for A2UI, you MUST fo
 ### 1. Context to Ingest
 Before writing any code, thoroughly review:
 *   `specification/v0_9/docs/a2ui_protocol.md` (for protocol rules)
+*   `specification/v0_9/docs/basic_catalog_implementation_guide.md` (for rendering and spacing rules)
 *   `specification/v0_9/json/common_types.json` (for dynamic binding types)
 *   `specification/v0_9/json/server_to_client.json` (for message envelopes)
 *   `specification/v0_9/json/catalogs/minimal/minimal_catalog.json` (your initial target)

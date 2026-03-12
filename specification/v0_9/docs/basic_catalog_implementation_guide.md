@@ -154,34 +154,105 @@ An input for date and/or time.
 
 ## 2. Client-Side Functions
 
-Functions provide client-side logic for validation, interpolation, and operations.
+Functions provide client-side logic for validation, interpolation, and operations. As defined in the Architecture Guide, the reactivity of function arguments is generally handled by the Core Data Layer (specifically the Binder/Context layer). 
 
-### Validation Functions (Return Boolean)
+When a function is called, the system resolves its arguments. If an argument is a static value, it is passed directly. If it is a dynamic binding, the Context layer handles the subscription. For most standard functions, the `execute` implementation simply receives a dictionary of static `args` and returns a static value. The Context layer wraps this execution in a reactive stream (e.g., a `computed` signal) so that the function re-runs whenever any of its dynamic arguments change.
 
-*   `required`: Return `true` if the argument `value` is strictly not `null`, not `undefined`, not an empty string `""`, and not an empty array `[]`. Otherwise `false`.
-*   `regex`: Instantiate a regular expression using `args.pattern`. Test the `args.value` string against it. Return the boolean result.
-*   `length`: Ensure the `args.value` string length is `>= args.min` (if `min` is provided) and `<= args.max` (if `max` is provided).
-*   `numeric`: Parse `args.value` as a number. Ensure it is `>= args.min` (if provided) and `<= args.max` (if provided).
-*   `email`: Test `args.value` against a standard email regex pattern.
+However, complex functions like `formatString` must manually interact with the Context to parse and subscribe to nested dynamic dependencies.
 
-### Formatting & Interpolation Functions (Return String)
+### `formatString`
+**Description:** The core interpolation engine. Parses the `args.value` string for `${expression}` blocks, combining literal strings, data paths, and other client-side function results.
 
-*   `formatString`: The core interpolation engine. Parses the `args.value` string for `${expression}` blocks.
-    *   If the expression is a data path (starts with `/` or is relative), resolve it from the `DataContext`.
-    *   If it is a function call (e.g., `now()`), execute the registered function.
-    *   Escape sequences (`\${`) must be replaced with a literal `${`.
-    *   Convert all resolved values to strings before substitution (following type coercion standards).
-*   `formatNumber`: Format `args.value` as a number. Use native locale formatting (e.g., `Intl.NumberFormat` on the web or `NumberFormatter` natively). If `args.decimals` is provided, force the minimum and maximum fraction digits to that value. Enable grouping (e.g., thousands separators) unless `args.grouping` is explicitly `false`.
-*   `formatCurrency`: Similar to `formatNumber`, but use the currency style formatting and apply `args.currency` (e.g., 'USD').
-*   `formatDate`: Parse `args.value` into a Date/Time object. Interpret the Unicode TR35 `args.format` string (e.g., `yyyy-MM-dd`, `HH:mm`) and construct the formatted date string using platform-specific date formatting libraries.
-*   `pluralize`: Resolve the plural category for the numeric `args.value` based on the current locale. Map the resulting category (`zero`, `one`, `two`, `few`, `many`, `other`) to the corresponding string provided in `args`. If a specific category string is missing, fallback to `args.other`.
+**Architecture & Logic:**
+Because `formatString` contains dynamic expressions embedded *within* a string literal, the Context layer cannot pre-resolve them. The implementation must parse the string and manually create a reactive output.
 
-### Operational Functions
+1.  **Parser/Scanner:** Implement a parser that scans the input string (`args.value`) for `${...}` blocks. It must properly handle escaped markers (`\${`) which resolve to a literal `${`.
+2.  **Expression Evaluation:** Inside the interpolation block, the parser must differentiate between:
+    - **Literals:** Quoted strings (`'...'` or `"..."`), numbers, and keywords (`true`, `false`, `null`).
+    - **Data Paths:** Identifiers starting with a slash (`/absolute/path`) or relative identifiers (`relative/path`).
+    - **Function Calls:** Identifiers followed by parentheses, e.g., `funcName(argName: value)`.
+3.  **Context Resolution:** For every parsed `DataPath` or `FunctionCall` token, use the `DataContext` (e.g., `context.resolveSignal(token)`) to turn it into a reactive stream/signal.
+4.  **Reactive Return:** The function MUST return a computed reactive stream (e.g., a `computed(() => ...)` signal). Inside this computed stream, unwrap all the resolved signals, convert them to strings, and concatenate them with the literal string parts.
 
-*   `openUrl`: Open the `args.url` using the native platform's URL handler (e.g., opening in the system browser or deep-linking to an app). Returns `void`.
+### `required`
+**Description:** Validates that a given value is present.
 
-### Logical Operations (Return Boolean)
+**Logic:** Return `true` if `args.value` is strictly not `null`, not `undefined`, not an empty string `""`, and not an empty array `[]`. Otherwise, return `false`.
 
-*   `and`: Iterate through the boolean array `args.values`. Return `true` only if all values are true. Short-circuit evaluation is encouraged.
-*   `or`: Iterate through the boolean array `args.values`. Return `true` if at least one value is true.
-*   `not`: Return the strict boolean negation of `args.value`.
+### `regex`
+**Description:** Validates a value against a regular expression.
+
+**Logic:** Instantiate a regular expression using `args.pattern`. Test the `args.value` string against it. Return `true` if it matches, `false` otherwise.
+
+### `length`
+**Description:** Validates string length constraints.
+
+**Logic:** Ensure the length of the string `args.value` is `>= args.min` (if `min` is provided) and `<= args.max` (if `max` is provided).
+
+### `numeric`
+**Description:** Validates numeric range constraints.
+
+**Logic:** Parse `args.value` as a number. Ensure it is `>= args.min` (if `min` is provided) and `<= args.max` (if `max` is provided). Return `true` if valid, `false` if invalid or if it cannot be parsed as a number.
+
+### `email`
+**Description:** Validates an email address.
+
+**Logic:** Test `args.value` against a standard email regex pattern (e.g., `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`).
+
+### `formatNumber`
+**Description:** Formats a numeric value.
+
+**Logic:** Use the platform's native locale formatting (e.g., `Intl.NumberFormat` on the web or `NumberFormatter` natively) on `args.value`. 
+- If `args.decimals` is provided, force both the minimum and maximum fraction digits to that value. 
+- Enable grouping (e.g., thousands separators) unless `args.grouping` is explicitly set to `false`.
+
+### `formatCurrency`
+**Description:** Formats a number as a currency string.
+
+**Logic:** Similar to `formatNumber`, but configured for currency style formatting. Apply the ISO 4217 currency code provided in `args.currency` (e.g., 'USD', 'EUR').
+
+### `formatDate`
+**Description:** Formats a timestamp into a date string.
+
+**Logic:** Parse `args.value` into a native Date/Time object. Interpret the Unicode TR35 `args.format` string (e.g., `yyyy-MM-dd`, `HH:mm`) and construct the formatted date string. You will likely need a platform-specific date formatting library to parse the TR35 pattern.
+
+### `pluralize`
+**Description:** Returns a localized pluralized string.
+
+**Logic:** Resolve the plural category for the numeric `args.value` based on the current locale (e.g., using `Intl.PluralRules` on the web). Map the resulting category (`zero`, `one`, `two`, `few`, `many`, `other`) to the corresponding string provided in the `args` object. If the specific category string is missing from `args`, fallback to `args.other`.
+
+### `openUrl`
+**Description:** Opens a URL.
+
+**Logic:** Open `args.url` using the native platform's URL handler (e.g., opening in the system browser or deep-linking to an app). This function returns `void` and is executed as a side-effect.
+
+### `and`
+**Description:** Logical AND operator.
+
+**Logic:** Iterate through the boolean array `args.values`. Return `true` only if all values are true. Short-circuit evaluation is encouraged.
+
+### `or`
+**Description:** Logical OR operator.
+
+**Logic:** Iterate through the boolean array `args.values`. Return `true` if at least one value is true. Short-circuit evaluation is encouraged.
+
+### `not`
+**Description:** Logical NOT operator.
+
+**Logic:** Return the strict boolean negation of `args.value`.
+
+---
+
+## 3. Layout Spacing: Margins and Padding
+
+A common challenge in dynamic UI frameworks is preventing "spacing multiplication," where nested containers (e.g., a `Text` inside a `Row` inside a `Column`) result in accumulated empty space that throws off the design. 
+
+To achieve a clean, consistent default spacing where elements feel naturally separated without stacking empty space, implementers should follow a **Leaf-Margin Strategy**:
+
+1. **Invisible Containers have ZERO Spacing**: Structural, invisible layout containers (`Row`, `Column`, `List`) should have **no internal padding** and **no external margins**. They act purely as structural boundaries. This guarantees that wrapping an element in a `Row` or `Column` does not alter its spacing.
+2. **Leaf Components carry the Margin**: All non-container, visual "leaf" elements (`Text`, `Image`, `Icon`, `Video`, `AudioPlayer`, `Slider`, etc.) should have a uniform default **external margin** applied to them (e.g., `8dp` on all sides).
+3. **Visually Outlined Containers carry the Margin**: Containers and inputs that have a visible boundary (`Card`, `Button`, `TextField`, `CheckBox`, `ChoicePicker`) should also apply this same uniform default **external margin**. 
+   - *Note:* These elements will naturally also need internal *padding* to keep their content away from their own visible borders, but this padding is localized and does not affect the external layout.
+
+**Why use Margins on Leaves?**
+Applying margins directly to the visual elements—rather than relying on padding or gap properties on the parent containers—ensures predictable spacing. For example, if you have `Row(Item1, Item2)`, using margins on the items guarantees that there is space to the left of `Item1`, space to the right of `Item2`, and space between them. Because the invisible containers themselves contribute zero extra spacing, you can deeply nest your structural rows and columns without the spacing unexpectedly multiplying.
