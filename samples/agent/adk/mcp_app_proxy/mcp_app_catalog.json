@@ -1,5 +1,5 @@
 {
-  "catalogId": "https://github.com/google/A2UI/samples/agent/adk/mcp_app_proxy/mcp_app_catalog.json",
+  "catalogId": "a2ui.org:a2ui/v0.8/mcp_app_catalog.json",
   "components": {
     "McpApp": {
       "type": "object",
