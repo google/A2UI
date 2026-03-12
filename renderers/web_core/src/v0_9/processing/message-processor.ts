@@ -19,6 +19,7 @@ import { Catalog, ComponentApi } from "../catalog/types.js";
 import { SurfaceGroupModel } from "../state/surface-group-model.js";
 import { ComponentModel } from "../state/component-model.js";
 import { Subscription } from "../common/events.js";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 import {
   A2uiMessage,
@@ -28,6 +29,14 @@ import {
   DeleteSurfaceMessage,
 } from "../schema/server-to-client.js";
 import { A2uiStateError, A2uiValidationError } from "../errors.js";
+
+/**
+ * Options for generating client capabilities.
+ */
+export interface CapabilitiesOptions {
+  /** If true, the full definition of all catalogs will be included. */
+  includeInlineCatalogs?: boolean;
+}
 
 /**
  * The central processor for A2UI messages.
@@ -49,6 +58,100 @@ export class MessageProcessor<T extends ComponentApi> {
     this.model = new SurfaceGroupModel<T>();
     if (this.actionHandler) {
       this.model.onAction.subscribe(this.actionHandler);
+    }
+  }
+
+  /**
+   * Generates the a2uiClientCapabilities object for the current processor.
+   *
+   * @param options Configuration for capability generation.
+   * @returns The capabilities object.
+   */
+  getClientCapabilities(options?: CapabilitiesOptions): any {
+    const capabilities: any = {
+      "v0.9": {
+        supportedCatalogIds: this.catalogs.map((c) => c.id),
+      },
+    };
+
+    if (options?.includeInlineCatalogs) {
+      capabilities["v0.9"].inlineCatalogs = this.catalogs.map((c) =>
+        this.generateInlineCatalog(c),
+      );
+    }
+
+    return capabilities;
+  }
+
+  private generateInlineCatalog(catalog: Catalog<T>): any {
+    const components: Record<string, any> = {};
+
+    for (const [name, api] of catalog.components.entries()) {
+      const zodSchema = zodToJsonSchema(api.schema, {
+        target: "jsonSchema2019-09",
+      }) as any;
+
+      // Clean up Zod-specific artifacts and process REF: tags
+      this.processRefs(zodSchema);
+
+      // Wrap in standard A2UI component envelope (ComponentCommon)
+      components[name] = {
+        allOf: [
+          { $ref: "common_types.json#/$defs/ComponentCommon" },
+          {
+            properties: {
+              component: { const: name },
+              ...zodSchema.properties,
+            },
+            required: ["component", ...(zodSchema.required || [])],
+          },
+        ],
+      };
+    }
+
+    return {
+      catalogId: catalog.id,
+      components,
+    };
+  }
+
+  private processRefs(node: any): void {
+    if (typeof node !== "object" || node === null) return;
+
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        this.processRefs(item);
+      }
+      return;
+    }
+
+    for (const key of Object.keys(node)) {
+      const val = node[key];
+
+      if (key === "description" && typeof val === "string") {
+        if (val.startsWith("REF:")) {
+          const parts = val.substring(4).split("|");
+          const ref = parts[0];
+          const desc = parts[1] || "";
+
+          // Mutate the parent node to be a $ref
+          // We remove other validation keywords that Zod might have added (like type: string)
+          // but keep the description.
+          for (const k of Object.keys(node)) {
+            if (k !== "description") {
+              delete node[k];
+            }
+          }
+          node["$ref"] = ref;
+          if (desc) {
+            node["description"] = desc;
+          } else {
+            delete node["description"];
+          }
+        }
+      } else {
+        this.processRefs(val);
+      }
     }
   }
 
