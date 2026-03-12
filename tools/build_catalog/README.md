@@ -38,13 +38,13 @@ official catalogs, and multi-file merging.
 ### Usage
 
 ```bash
-uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --name <OUTPUT_NAME> [--version <VERSION>] [--extend-basic-catalog] [--out-dir <DIR>] [--verbose]
+uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPUT_NAME> [--version <VERSION>] [--extend-basic-catalog] [--out-dir <DIR>] [--verbose]
 ```
 
 ### Arguments
 
 - `inputs`: One or more paths or URLs to A2UI component catalog JSONs.
-- `--name`: (Required) The desired name of the combined catalog (e.g.
+- `--output-name`: (Required) The desired name of the combined catalog (e.g.
   `my_merged_catalog`). The `.json` extension is appended automatically if
   omitted.
 - `--version`: The A2UI specification version to use for official catalog
@@ -60,21 +60,61 @@ uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --name <OUTPUT_NAME>
 **Combine two local catalogs:**
 
 ```bash
-uv run tools/build_catalog/assemble_catalog.py component1.json component2.json --name merged_catalog
+uv run tools/build_catalog/assemble_catalog.py component1.json component2.json --output-name merged_catalog
 ```
 
 **Combine a local catalog with an external URL, enforcing v0.10:**
 
 ```bash
-uv run tools/build_catalog/assemble_catalog.py local_catalog.json https://example.com/remote_catalog.json --name hybrid_catalog --version 0.10
+uv run tools/build_catalog/assemble_catalog.py local_catalog.json https://example.com/remote_catalog.json --output-name hybrid_catalog --version 0.10
 ```
 
 **Build a catalog and explicitly inject all `basic_catalog.json` properties:**
 
 ```bash
-uv run tools/build_catalog/assemble_catalog.py my_catalog.json --name extended_catalog --extend-basic-catalog
+uv run tools/build_catalog/assemble_catalog.py my_catalog.json --output-name extended_catalog --extend-basic-catalog
 ```
 
-Outputs are written to `dist/<OUTPUT_NAME>.json` from your current working
-directory.
+**Author and assemble a local catalog with external references:**
+
+1. Author a catalog that imports Text from the Basic Catalog to build a simple Popup surface (e.g., `sample_popup_catalog.json`):
+
+```json
+{
+  "$id": "sample_popup_catalog",
+  "components": {
+    "allOf": [
+      {
+        "$ref": "basic_catalog.json#/components/Text"
+      },
+      {
+        "Popup": {
+          "type": "object",
+          "description": "A modal overlay that displays an icon and text.",
+          "properties": {
+            "text": {
+              "$ref": "common_types.json#/$defs/ComponentId"
+            }
+          },
+          "required": [
+            "text"
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
+2. Run `assemble_catalog.py` to bundle all those external file references into a single, independent JSON Schema file:
+
+```bash
+$ uv run tools/build_catalog/assemble_catalog.py sample_popup_catalog.json --output-name sample_popup_catalog
+
+📦 Assembling 1 catalogs into 'sample_popup_catalog.json' (Version: 0.9)
+✅ Created: dist/sample_popup_catalog.json
+```
+
+3. Your bundled catalog containing the fully synthesized `basic_catalog` and
+`common_types` requirements will be mapped out to `dist/sample_popup_catalog.json`.
 
