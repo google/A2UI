@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen, act, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { MessageProcessor } from '@a2ui/web_core/v0_9';
-import { A2uiSurface, minimalCatalog } from '@a2ui/react';
+import { A2uiSurface, minimalCatalog } from '@a2ui/react_prototype';
 
 import ex1 from "../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json";
 import ex2 from "../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json";
@@ -18,7 +18,7 @@ describe('Gallery Integration Tests', () => {
 
     render(
       <React.StrictMode>
-        <A2uiSurface surface={surface!} />
+        <A2uiSurface surface={surface as any} />
       </React.StrictMode>
     );
 
@@ -34,7 +34,7 @@ describe('Gallery Integration Tests', () => {
 
     render(
       <React.StrictMode>
-        <A2uiSurface surface={surface!} />
+        <A2uiSurface surface={surface as any} />
       </React.StrictMode>
     );
 
@@ -51,7 +51,7 @@ describe('Gallery Integration Tests', () => {
 
     render(
       <React.StrictMode>
-        <A2uiSurface surface={surface!} />
+        <A2uiSurface surface={surface as any} />
       </React.StrictMode>
     );
 

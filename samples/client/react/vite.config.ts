@@ -10,7 +10,7 @@ export default defineConfig({
     alias: {
       'react': resolve(__dirname, 'node_modules/react'),
       'react-dom': resolve(__dirname, 'node_modules/react-dom'),
-      '@a2ui/react': resolve(__dirname, '../../../renderers/react/src/index.ts')
+      '@a2ui/react_prototype': resolve(__dirname, '../../../renderers/react_prototype/src/index.ts')
     }
   },
   test: {

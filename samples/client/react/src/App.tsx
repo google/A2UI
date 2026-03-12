@@ -1,6 +1,6 @@
 import { useState, useEffect, useSyncExternalStore, useCallback } from 'react';
 import { MessageProcessor, SurfaceModel } from '@a2ui/web_core/v0_9';
-import { minimalCatalog, A2uiSurface } from '@a2ui/react';
+import { minimalCatalog, A2uiSurface } from '@a2ui/react_prototype';
 
 // Import JSON examples
 import ex1 from "../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json";
@@ -148,7 +148,7 @@ export default function App() {
                   cursor: 'pointer'
                 }}
               >
-                {ex.data.name || ex.key}
+                {(ex.data as any).name || ex.key}
               </button>
             </li>
           ))}

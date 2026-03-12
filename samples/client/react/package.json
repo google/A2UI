@@ -11,7 +11,7 @@
     "test": "vitest run src"
   },
   "dependencies": {
-    "@a2ui/react": "file:../../../renderers/react",
+    "@a2ui/react_prototype": "file:../../../renderers/react_prototype",
     "@a2ui/web_core": "file:../../../renderers/web_core",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

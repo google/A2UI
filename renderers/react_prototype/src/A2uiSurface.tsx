@@ -1,6 +1,6 @@
 import React, { useSyncExternalStore } from 'react';
 import { SurfaceModel, ComponentContext } from '@a2ui/web_core/v0_9';
-import { ReactComponentImplementation } from './adapter';
+import type { ReactComponentImplementation } from './adapter';
 
 export const A2uiSurface: React.FC<{ surface: SurfaceModel<ReactComponentImplementation> }> = ({ surface }) => {
   const store = React.useMemo(() => {

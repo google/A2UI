@@ -1,6 +1,7 @@
 import React, { useRef, useSyncExternalStore, useCallback } from "react";
 import { z } from "zod";
-import { ComponentContext, ComponentApi, CommonSchemas } from "@a2ui/web_core/v0_9";
+import { ComponentContext, CommonSchemas } from "@a2ui/web_core/v0_9";
+import type { ComponentApi } from "@a2ui/web_core/v0_9";
 
 export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
