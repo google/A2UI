@@ -1,8 +1,8 @@
 import React from "react";
-import { createReactComponent, createGenericBinding } from "../adapter";
+import { createReactComponent } from "../adapter";
 import type { ReactA2uiComponentProps } from "../adapter";
 import { z } from "zod";
-import { ComponentContext, CommonSchemas } from "@a2ui/web_core/v0_9";
+import { CommonSchemas } from "@a2ui/web_core/v0_9";
 import { ReactChildList } from "./ReactChildList";
 
 export const RowSchema = z.object({
@@ -48,12 +48,12 @@ const RenderRow: React.FC<ReactA2uiComponentProps<RowProps>> = ({ props, buildCh
   );
 };
 
-export const ReactRow = createReactComponent<RowProps>(
-  (ctx: ComponentContext) => createGenericBinding<RowProps>(ctx, ["children", "justify", "align"]),
-  RenderRow
-);
-
 export const RowApiDef = {
   name: "Row",
   schema: RowSchema
 };
+
+export const ReactRow = createReactComponent<RowProps>(
+  RowApiDef,
+  RenderRow
+);

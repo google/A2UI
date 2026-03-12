@@ -1,20 +1,20 @@
 import { Catalog } from "@a2ui/web_core/v0_9";
-import type { ComponentApi } from "@a2ui/web_core/v0_9";
-import { TextApiDef } from "./components/ReactText";
-import { ButtonApiDef } from "./components/ReactButton";
-import { RowApiDef } from "./components/ReactRow";
-import { ColumnApiDef } from "./components/ReactColumn";
-import { TextFieldApiDef } from "./components/ReactTextField";
+import { ReactText } from "./components/ReactText";
+import { ReactButton } from "./components/ReactButton";
+import { ReactRow } from "./components/ReactRow";
+import { ReactColumn } from "./components/ReactColumn";
+import { ReactTextField } from "./components/ReactTextField";
+import { ReactComponentImplementation } from "./adapter";
 
-const minimalComponents: ComponentApi[] = [
-  TextApiDef,
-  ButtonApiDef,
-  RowApiDef,
-  ColumnApiDef,
-  TextFieldApiDef
+const minimalComponents: ReactComponentImplementation[] = [
+  ReactText,
+  ReactButton,
+  ReactRow,
+  ReactColumn,
+  ReactTextField
 ];
 
-export const minimalCatalog = new Catalog(
+export const minimalCatalog = new Catalog<ReactComponentImplementation>(
   "https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json",
   minimalComponents,
   {

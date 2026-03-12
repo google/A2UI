@@ -20,7 +20,7 @@ function createContext(type: string, properties: any) {
 describe('ReactText', () => {
   it('renders text and variant correctly', () => {
     const ctx = createContext('Text', { text: 'Hello', variant: 'h1' });
-    const { container } = render(<ReactText context={ctx} buildChild={() => null} />);
+    const { container } = render(<ReactText.render context={ctx} buildChild={() => null} />);
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
     expect(h1?.textContent).toBe('Hello');
@@ -28,7 +28,7 @@ describe('ReactText', () => {
 
   it('renders default variant', () => {
     const ctx = createContext('Text', { text: 'Hello' });
-    const { container } = render(<ReactText context={ctx} buildChild={() => null} />);
+    const { container } = render(<ReactText.render context={ctx} buildChild={() => null} />);
     const span = container.querySelector('span');
     expect(span).not.toBeNull();
     expect(span?.textContent).toBe('Hello');
@@ -47,7 +47,7 @@ describe('ReactButton', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <span data-testid="child">{id}</span>);
 
-    render(<ReactButton context={ctx} buildChild={buildChild} />);
+    render(<ReactButton.render context={ctx} buildChild={buildChild} />);
 
     const button = screen.getByRole('button');
     expect(button).not.toBeNull();
@@ -71,7 +71,7 @@ describe('ReactRow', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>{id}</div>);
 
-    const { container } = render(<ReactRow context={ctx} buildChild={buildChild} />);
+    const { container } = render(<ReactRow.render context={ctx} buildChild={buildChild} />);
     const rowDiv = container.firstChild as HTMLElement;
     expect(rowDiv.style.display).toBe('flex');
     expect(rowDiv.style.flexDirection).toBe('row');
@@ -93,7 +93,7 @@ describe('ReactColumn', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>{id}</div>);
 
-    const { container } = render(<ReactColumn context={ctx} buildChild={buildChild} />);
+    const { container } = render(<ReactColumn.render context={ctx} buildChild={buildChild} />);
     const colDiv = container.firstChild as HTMLElement;
     expect(colDiv.style.display).toBe('flex');
     expect(colDiv.style.flexDirection).toBe('column');
@@ -112,7 +112,7 @@ describe('ReactTextField', () => {
       variant: 'shortText'
     });
 
-    const { container } = render(<ReactTextField context={ctx} buildChild={() => null} />);
+    const { container } = render(<ReactTextField.render context={ctx} buildChild={() => null} />);
     const label = container.querySelector('label');
     expect(label?.textContent).toBe('Username');
 
@@ -128,7 +128,7 @@ describe('ReactTextField', () => {
       variant: 'longText'
     });
 
-    const { container } = render(<ReactTextField context={ctx} buildChild={() => null} />);
+    const { container } = render(<ReactTextField.render context={ctx} buildChild={() => null} />);
     const textarea = container.querySelector('textarea');
     expect(textarea).not.toBeNull();
     expect(textarea?.value).toBe('lots of text');
@@ -142,7 +142,7 @@ describe('ReactTextField', () => {
 
     const spySet = vi.spyOn(ctx.dataContext, 'set');
 
-    const { container } = render(<ReactTextField context={ctx} buildChild={() => null} />);
+    const { container } = render(<ReactTextField.render context={ctx} buildChild={() => null} />);
     const input = container.querySelector('input');
     
     fireEvent.change(input!, { target: { value: 'bob' } });

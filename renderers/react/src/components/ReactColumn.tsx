@@ -1,8 +1,8 @@
 import React from "react";
-import { createReactComponent, createGenericBinding } from "../adapter";
+import { createReactComponent } from "../adapter";
 import type { ReactA2uiComponentProps } from "../adapter";
 import { z } from "zod";
-import { ComponentContext, CommonSchemas } from "@a2ui/web_core/v0_9";
+import { CommonSchemas } from "@a2ui/web_core/v0_9";
 import { ReactChildList } from "./ReactChildList";
 
 export const ColumnSchema = z.object({
@@ -48,12 +48,12 @@ const RenderColumn: React.FC<ReactA2uiComponentProps<ColumnProps>> = ({ props, b
   );
 };
 
-export const ReactColumn = createReactComponent<ColumnProps>(
-  (ctx: ComponentContext) => createGenericBinding<ColumnProps>(ctx, ["children", "justify", "align"]),
-  RenderColumn
-);
-
 export const ColumnApiDef = {
   name: "Column",
   schema: ColumnSchema
 };
+
+export const ReactColumn = createReactComponent<ColumnProps>(
+  ColumnApiDef,
+  RenderColumn
+);

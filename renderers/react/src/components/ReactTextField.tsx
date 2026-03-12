@@ -1,8 +1,8 @@
 import React from "react";
-import { createReactComponent, createGenericBinding } from "../adapter";
+import { createReactComponent } from "../adapter";
 import type { ReactA2uiComponentProps } from "../adapter";
 import { z } from "zod";
-import { ComponentContext, CommonSchemas } from "@a2ui/web_core/v0_9";
+import { CommonSchemas } from "@a2ui/web_core/v0_9";
 
 export const TextFieldSchema = z.object({
   label: CommonSchemas.DynamicString,
@@ -20,6 +20,8 @@ export type TextFieldProps = {
 
 const RenderTextField: React.FC<ReactA2uiComponentProps<TextFieldProps>> = ({ props, context }) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // In a reactive framework, we still update the DataModel directly for two-way binding.
+    // We look up the path from the un-resolved properties of the component model.
     const valueProp = context.componentModel.properties.value;
     if (valueProp && typeof valueProp === 'object' && valueProp.path) {
        context.dataContext.set(valueProp.path, e.target.value);
@@ -51,12 +53,12 @@ const RenderTextField: React.FC<ReactA2uiComponentProps<TextFieldProps>> = ({ pr
   );
 };
 
-export const ReactTextField = createReactComponent<TextFieldProps>(
-  (ctx: ComponentContext) => createGenericBinding<TextFieldProps>(ctx, ["variant", "validationRegexp"]),
-  RenderTextField
-);
-
 export const TextFieldApiDef = {
   name: "TextField",
   schema: TextFieldSchema
 };
+
+export const ReactTextField = createReactComponent<TextFieldProps>(
+  TextFieldApiDef,
+  RenderTextField
+);

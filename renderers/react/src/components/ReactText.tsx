@@ -1,7 +1,7 @@
 import React from "react";
-import { createReactComponent, createGenericBinding } from "../adapter";
+import { createReactComponent } from "../adapter";
 import { z } from "zod";
-import { ComponentContext, CommonSchemas } from "@a2ui/web_core/v0_9";
+import { CommonSchemas } from "@a2ui/web_core/v0_9";
 
 export const TextSchema = z.object({
   text: CommonSchemas.DynamicString,
@@ -27,12 +27,12 @@ const RenderText: React.FC<{ props: TextProps }> = ({ props }) => {
   }
 };
 
-export const ReactText = createReactComponent<TextProps>(
-  (ctx: ComponentContext) => createGenericBinding<TextProps>(ctx, []),
-  RenderText as any
-);
-
 export const TextApiDef = {
   name: "Text",
   schema: TextSchema
 };
+
+export const ReactText = createReactComponent<TextProps>(
+  TextApiDef,
+  RenderText as any
+);

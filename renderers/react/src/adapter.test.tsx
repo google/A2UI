@@ -1,8 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import React from 'react';
-import { createReactComponent, createGenericBinding } from './adapter';
-import { ComponentContext, ComponentModel, SurfaceModel, Catalog } from '@a2ui/web_core/v0_9';
+import { createReactComponent } from './adapter';
+import { ComponentContext, ComponentModel, SurfaceModel, Catalog, CommonSchemas } from '@a2ui/web_core/v0_9';
+import { z } from 'zod';
 
 const mockCatalog = new Catalog('test', [], {});
 
@@ -23,14 +24,22 @@ describe('adapter', () => {
       </div>;
     };
 
+    const TestApiDef = {
+      name: 'TestComp',
+      schema: z.object({
+        text: CommonSchemas.DynamicString,
+        child: CommonSchemas.ComponentId
+      })
+    };
+
     const TestComponent = createReactComponent<TestProps>(
-      (ctx) => createGenericBinding<TestProps>(ctx, ['child']),
+      TestApiDef,
       RenderTest as any
     );
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>Child</div>);
 
-    render(<TestComponent context={context} buildChild={buildChild} />);
+    render(<TestComponent.render context={context} buildChild={buildChild} />);
 
     expect(screen.getByText('Hello World')).toBeDefined();
     expect(screen.getByTestId('child1')).toBeDefined();
@@ -52,12 +61,19 @@ describe('adapter', () => {
       return <div data-testid="msg">{props.text}</div>;
     };
 
+    const TestApiDef = {
+      name: 'TestComp',
+      schema: z.object({
+        text: CommonSchemas.DynamicString
+      })
+    };
+
     const TestComponent = createReactComponent<TestProps>(
-      (ctx) => createGenericBinding<TestProps>(ctx, []),
+      TestApiDef,
       RenderTest as any
     );
 
-    const { getByTestId } = render(<TestComponent context={context} buildChild={() => null} />);
+    const { getByTestId } = render(<TestComponent.render context={context} buildChild={() => null} />);
 
     expect(getByTestId('msg').textContent).toBe('Hello Reactive');
 
@@ -84,12 +100,19 @@ describe('adapter', () => {
       return <div>{props.text}</div>;
     };
 
+    const TestApiDef = {
+      name: 'TestComp',
+      schema: z.object({
+        text: CommonSchemas.DynamicString
+      })
+    };
+
     const TestComponent = createReactComponent<TestProps>(
-      (ctx) => createGenericBinding<TestProps>(ctx, []),
+      TestApiDef,
       RenderTest as any
     );
 
-    const { unmount } = render(<TestComponent context={context} buildChild={() => null} />);
+    const { unmount } = render(<TestComponent.render context={context} buildChild={() => null} />);
 
     expect(spyAddListener).toHaveBeenCalled();
     // One listener added
