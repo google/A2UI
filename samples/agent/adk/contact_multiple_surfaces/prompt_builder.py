@@ -51,6 +51,11 @@ def get_ui_description() -> str:
 
 -   **For generating the Org Chart (`org-chart-view` dataModelUpdate or title Text):**
     a.  You MUST set any title referring to the Organizational Chart to exactly "Organizational Chart {title_suffix}".
+    
+-   **For handling a chart node click (e.g., "ACTION: chart_node_click..." with context):**
+    a.  Extract the `clickedNodeName` from the context JSON.
+    b.  You MUST call the `get_contact_info` tool with that name.
+    c.  Use the `MULTI_SURFACE_EXAMPLE` template or `CHART_NODE_CLICK_EXAMPLE` to update the UI with the newly selected contact's details.
 """
 
 
