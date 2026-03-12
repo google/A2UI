@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
   client_ui_capabilities_str = (
       '{"inlineCatalogs":[{"catalogId": "inline_catalog",'
-      ' "components":{"OrgChart":{"type":"object","properties":{"chain":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"name":{"type":"string"}},"required":["title","name"]}},"action":{"$ref":"#/definitions/Action"}},"required":["chain"]},"WebFrame":{"type":"object","properties":{"url":{"type":"string"},"html":{"type":"string"},"height":{"type":"number"},"interactionMode":{"type":"string","enum":["readOnly","interactive"]},"allowedEvents":{"type":"array","items":{"type":"string"}}}}}}]}'
+      ' "components":{"OrgChart":{"type":"object","properties":{"chain":{"oneOf":[{"type":"object","properties":{"path":{"type":"string"}},"required":["path"]},{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"name":{"type":"string"}},"required":["title","name"]}}]},"action":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"array","items":{"type":"object","properties":{"key":{"type":"string"},"value":{"type":"object","properties":{"path":{"type":"string"},"literalString":{"type":"string"},"literalNumber":{"type":"number"},"literalBoolean":{"type":"boolean"}}}},"required":["key","value"]}}},"required":["name"]}},"required":["chain"]},"WebFrame":{"type":"object","properties":{"url":{"type":"string"},"html":{"type":"string"},"height":{"type":"number"},"interactionMode":{"type":"string","enum":["readOnly","interactive"]},"allowedEvents":{"type":"array","items":{"type":"string"}}}}}}]}'
   )
   client_ui_capabilities = json.loads(client_ui_capabilities_str)
   inline_catalog = schema_manager.get_selected_catalog(

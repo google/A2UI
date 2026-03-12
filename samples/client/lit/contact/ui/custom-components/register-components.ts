@@ -25,17 +25,53 @@ export function registerContactComponents() {
     type: "object",
     properties: {
       chain: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            title: { type: "string" },
-            name: { type: "string" },
+        oneOf: [
+          {
+            type: "object",
+            description: "A path reference to an array in the data model.",
+            properties: { path: { type: "string" } },
+            required: ["path"],
           },
-          required: ["title", "name"],
-        },
+          {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                title: { type: "string" },
+                name: { type: "string" },
+              },
+              required: ["title", "name"],
+            },
+          },
+        ],
       },
-      action: { $ref: "#/definitions/Action" },
+      action: {
+        type: "object",
+        description: "The client-side action to be dispatched when a node is clicked.",
+        properties: {
+          name: { type: "string" },
+          context: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                key: { type: "string" },
+                value: {
+                  type: "object",
+                  properties: {
+                    path: { type: "string" },
+                    literalString: { type: "string" },
+                    literalNumber: { type: "number" },
+                    literalBoolean: { type: "boolean" },
+                  },
+                },
+              },
+              required: ["key", "value"],
+            },
+          },
+        },
+        required: ["name"],
+      },
     },
     required: ["chain"],
   });

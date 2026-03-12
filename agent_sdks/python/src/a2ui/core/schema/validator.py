@@ -274,51 +274,78 @@ class A2uiValidator:
           msg += f"\n  - {sub_error.message}"
       raise ValueError(msg)
 
-    root_id = _find_root_id(messages)
+    root_ids, initial_surfaces = _find_root_ids(messages)
+    ref_map = _extract_component_ref_fields(self._catalog)
 
     for message in messages:
       if not isinstance(message, dict):
         continue
 
       components = None
+      surface_id = None
       if "surfaceUpdate" in message:  # v0.8
         components = message["surfaceUpdate"].get(COMPONENTS)
+        surface_id = message["surfaceUpdate"].get("surfaceId")
       elif "updateComponents" in message and isinstance(
           message["updateComponents"], dict
       ):  # v0.9
         components = message["updateComponents"].get(COMPONENTS)
+        surface_id = message["updateComponents"].get("surfaceId")
 
       if components:
-        ref_map = _extract_component_ref_fields(self._catalog)
-        _validate_component_integrity(root_id, components, ref_map)
-        _validate_topology(root_id, components, ref_map)
+        root_id = root_ids.get(surface_id, root_ids.get(None, ROOT))
+        is_initial = surface_id in initial_surfaces
+        _validate_component_integrity(root_id, components, ref_map, is_initial)
+        _validate_topology(root_id, components, ref_map, is_initial)
 
       _validate_recursion_and_paths(message)
 
 
-def _find_root_id(messages: List[Dict[str, Any]]) -> str:
+def _find_root_ids(
+    messages: List[Dict[str, Any]],
+) -> Tuple[Dict[Optional[str], str], Set[str]]:
   """
-  Finds the root id from a list of A2UI messages.
-  - For v0.8, the root id is in the beginRendering message.
-  - For v0.9+, the root id is 'root'.
+  Finds root ids and initial surfaces from a list of A2UI messages.
+  - For v0.8, root ids come from beginRendering messages (surfaceId → root).
+  - For v0.9+, the root id is always 'root'; initial surfaces come from createSurface.
+
+  Returns:
+    A tuple of:
+    - root_ids: dict mapping surfaceId → root_id (None key = default fallback).
+    - initial_surfaces: set of surfaceIds that have an initial render in this batch.
   """
+  root_ids: Dict[Optional[str], str] = {None: ROOT}
+  initial_surfaces: Set[str] = set()
   for message in messages:
     if not isinstance(message, dict):
       continue
-    if "beginRendering" in message:
-      return message["beginRendering"].get(ROOT, ROOT)
-  return ROOT
+    if "beginRendering" in message:  # v0.8
+      begin = message["beginRendering"]
+      surface_id = begin.get("surfaceId")
+      root_id = begin.get(ROOT, ROOT)
+      root_ids[surface_id] = root_id
+      if surface_id:
+        initial_surfaces.add(surface_id)
+      # Set the first beginRendering as the default fallback
+      if root_ids[None] == ROOT:
+        root_ids[None] = root_id
+    elif "createSurface" in message:  # v0.9
+      surface_id = message["createSurface"].get("surfaceId")
+      if surface_id:
+        initial_surfaces.add(surface_id)
+  return root_ids, initial_surfaces
 
 
 def _validate_component_integrity(
     root_id: str,
     components: List[Dict[str, Any]],
     ref_fields_map: Dict[str, tuple[Set[str], Set[str]]],
+    is_initial_render: bool = True,
 ) -> None:
   """
   Validates that:
   1. All component IDs are unique.
-  2. A 'root' component exists.
+  2. A 'root' component exists (initial renders only).
   3. All references point to existing IDs.
   """
   ids: Set[str] = set()
@@ -333,8 +360,8 @@ def _validate_component_integrity(
       raise ValueError(f"Duplicate component ID: {comp_id}")
     ids.add(comp_id)
 
-  # 2. Check for root component
-  if root_id not in ids:
+  # 2. Check for root component (only on initial renders)
+  if is_initial_render and root_id not in ids:
     raise ValueError(f"Missing root component: No component has id='{root_id}'")
 
   # 3. Check for dangling references using helper
@@ -351,11 +378,12 @@ def _validate_topology(
     root_id: str,
     components: List[Dict[str, Any]],
     ref_fields_map: Dict[str, tuple[Set[str], Set[str]]],
+    is_initial_render: bool = True,
 ) -> None:
   """
   Validates the topology of the component tree:
   1. No circular references (including self-references).
-  2. No orphaned components (all components must be reachable from 'root').
+  2. No orphaned components (initial renders only).
   """
   adj_list: Dict[str, List[str]] = {}
   all_ids: Set[str] = set()
@@ -401,16 +429,22 @@ def _validate_topology(
 
     recursion_stack.remove(node_id)
 
-  if root_id in all_ids:
-    dfs(root_id, 0)
-
-  # Check for Orphans
-  orphans = all_ids - visited
-  if orphans:
-    sorted_orphans = sorted(list(orphans))
-    raise ValueError(
-        f"Component '{sorted_orphans[0]}' is not reachable from '{root_id}'"
-    )
+  if is_initial_render:
+    # Initial render: DFS from root, then check for orphans
+    if root_id in all_ids:
+      dfs(root_id, 0)
+    orphans = all_ids - visited
+    if orphans:
+      sorted_orphans = sorted(list(orphans))
+      raise ValueError(
+          f"Component '{sorted_orphans[0]}' is not reachable from '{root_id}'"
+      )
+  else:
+    # Incremental update: DFS from all nodes to detect cycles,
+    # but skip orphan check (partial trees are expected)
+    for node_id in all_ids:
+      if node_id not in visited:
+        dfs(node_id, 0)
 
 
 def _extract_component_ref_fields(
