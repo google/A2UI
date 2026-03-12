@@ -137,7 +137,7 @@ import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular';
 import { inputBinding } from '@angular/core';
 
 export const MY_CATALOG = {
-  ...DEFAULT_CATALOG,  // Include all standard components
+  ...DEFAULT_CATALOG,  // Optionally include A2UI basic catalog components
 
   YouTube: {
     type: () => import('./youtube').then((r) => r.YouTube),
