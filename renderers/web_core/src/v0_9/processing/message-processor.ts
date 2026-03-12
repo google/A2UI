@@ -38,6 +38,18 @@ export interface CapabilitiesOptions {
   includeInlineCatalogs?: boolean;
 }
 
+export interface InlineCatalog {
+  catalogId: string;
+  components: Record<string, any>;
+}
+
+export interface A2uiClientCapabilities {
+  "v0.9": {
+    supportedCatalogIds: string[];
+    inlineCatalogs?: InlineCatalog[];
+  };
+}
+
 /**
  * The central processor for A2UI messages.
  * @template T The concrete type of the ComponentApi.
@@ -67,8 +79,8 @@ export class MessageProcessor<T extends ComponentApi> {
    * @param options Configuration for capability generation.
    * @returns The capabilities object.
    */
-  getClientCapabilities(options?: CapabilitiesOptions): any {
-    const capabilities: any = {
+  getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities {
+    const capabilities: A2uiClientCapabilities = {
       "v0.9": {
         supportedCatalogIds: this.catalogs.map((c) => c.id),
       },
@@ -83,7 +95,7 @@ export class MessageProcessor<T extends ComponentApi> {
     return capabilities;
   }
 
-  private generateInlineCatalog(catalog: Catalog<T>): any {
+  private generateInlineCatalog(catalog: Catalog<T>): InlineCatalog {
     const components: Record<string, any> = {};
 
     for (const [name, api] of catalog.components.entries()) {
@@ -118,39 +130,33 @@ export class MessageProcessor<T extends ComponentApi> {
   private processRefs(node: any): void {
     if (typeof node !== "object" || node === null) return;
 
-    if (Array.isArray(node)) {
-      for (const item of node) {
-        this.processRefs(item);
+    // If the node itself is a REF target, transform it and stop recursion.
+    if (typeof node.description === "string" && node.description.startsWith("REF:")) {
+      const parts = node.description.substring(4).split("|");
+      const ref = parts[0];
+      const desc = parts[1] || "";
+
+      // Clear the node of all other properties.
+      for (const k of Object.keys(node)) {
+        delete node[k];
+      }
+
+      // Re-add only the $ref and an optional description.
+      node["$ref"] = ref;
+      if (desc) {
+        node["description"] = desc;
       }
       return;
     }
 
-    for (const key of Object.keys(node)) {
-      const val = node[key];
-
-      if (key === "description" && typeof val === "string") {
-        if (val.startsWith("REF:")) {
-          const parts = val.substring(4).split("|");
-          const ref = parts[0];
-          const desc = parts[1] || "";
-
-          // Mutate the parent node to be a $ref
-          // We remove other validation keywords that Zod might have added (like type: string)
-          // but keep the description.
-          for (const k of Object.keys(node)) {
-            if (k !== "description") {
-              delete node[k];
-            }
-          }
-          node["$ref"] = ref;
-          if (desc) {
-            node["description"] = desc;
-          } else {
-            delete node["description"];
-          }
-        }
-      } else {
-        this.processRefs(val);
+    // If not a REF target, recurse into its children.
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        this.processRefs(item);
+      }
+    } else {
+      for (const key of Object.keys(node)) {
+        this.processRefs(node[key]);
       }
     }
   }

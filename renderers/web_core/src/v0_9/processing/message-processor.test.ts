@@ -55,7 +55,7 @@ describe("MessageProcessor", () => {
       const proc = new MessageProcessor([cat]);
 
       const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
-      const inlineCat = caps["v0.9"].inlineCatalogs[0];
+      const inlineCat = caps["v0.9"].inlineCatalogs![0];
 
       assert.strictEqual(inlineCat.catalogId, "cat-1");
       const buttonSchema = inlineCat.components.Button;
@@ -87,7 +87,7 @@ describe("MessageProcessor", () => {
 
       const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
       const titleSchema =
-        caps["v0.9"].inlineCatalogs[0].components.Custom.allOf[1].properties.title;
+        caps["v0.9"].inlineCatalogs![0].components.Custom.allOf[1].properties.title;
 
       assert.strictEqual(titleSchema.$ref, "common_types.json#/$defs/DynamicString");
       assert.strictEqual(titleSchema.description, "The title");
