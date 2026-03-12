@@ -1,3 +1,7 @@
+---
+render_macros: false
+---
+
 # Integrating A2UI into an Existing Design System
 
 This guide walks through adding A2UI to an **existing** Angular application that already uses a component library (like Angular Material). Instead of using the A2UI basic catalog, you'll wrap your own Material components as A2UI components — so agents generate UI that matches your design system.
