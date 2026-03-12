@@ -6,10 +6,10 @@ Integrate A2UI into your application using the renderer for your platform.
 
 | Renderer                 | Platform           | v0.8 | v0.9 | Status            |
 | ------------------------ | ------------------ | ---- | ---- | ----------------- |
-| **React**                | Web                | ✅    | ❌    | ✅ Stable          |
-| **Lit (Web Components)** | Web                | ✅    | ✅    | ✅ Stable          |
-| **Angular**              | Web                | ✅    | ✅    | ✅ Stable          |
-| **Flutter (GenUI SDK)**  | Mobile/Desktop/Web | ✅    | ✅    | ✅ Stable          |
+| **[React](https://github.com/google/A2UI/tree/main/renderers/react)** | Web | ✅ | ❌ | ✅ Stable |
+| **[Lit (Web Components)](https://github.com/google/A2UI/tree/main/renderers/lit)** | Web | ✅ | ✅ | ✅ Stable |
+| **[Angular](https://github.com/google/A2UI/tree/main/renderers/angular)** | Web | ✅ | ✅ | ✅ Stable |
+| **[Flutter (GenUI SDK)](https://docs.flutter.dev/ai/genui)** | Mobile/Desktop/Web | ✅ | ✅ | ✅ Stable |
 | **SwiftUI**              | iOS/macOS          | —    | —    | 🚧 Planned Q2 2026 |
 | **Jetpack Compose**      | Android            | —    | —    | 🚧 Planned Q2 2026 |
 
@@ -67,6 +67,20 @@ TODO: Add verified setup example.
 
 **See working example:** [Angular restaurant sample](https://github.com/google/a2ui/tree/main/samples/client/angular/projects/restaurant)
 
+## React
+
+```bash
+npm install @a2ui/react @a2ui/web-lib
+```
+
+The React renderer provides:
+
+- **`<A2UISurface>` component**: Renders A2UI surfaces in your React app
+- **`useA2UI()` hook**: Accesses the message processor from any component
+- **`MessageProcessor` class**: Handles incoming A2UI messages (shared with other web renderers)
+
+**See working example:** [React shell](https://github.com/google/A2UI/tree/main/samples/client/react/shell)
+
 ## Flutter (GenUI SDK)
 
 ```bash
@@ -93,7 +107,7 @@ Common transport options:
 
 TODO: Add transport implementation examples.
 
-**See:** [Transports guide](../transports.md)
+**See:** [Transports guide](../concepts/transports.md)
 
 ## Handling User Actions
 

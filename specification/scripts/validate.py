@@ -58,7 +58,9 @@ def validate_messages(root_schema, example_files, refs=None, temp_dir="temp_val"
                 success = False
                 continue
         
-        if not isinstance(messages, list):
+        if isinstance(messages, dict) and "messages" in messages and isinstance(messages["messages"], list):
+            messages = messages["messages"]
+        elif not isinstance(messages, list):
              messages = [messages]
 
         temp_data_paths = []

@@ -38,8 +38,8 @@ Instead of text-only responses or risky code execution, A2UI lets agents send **
 In this repo you will find
 [A2UI specifications](specification/v0.8-a2ui.md) (v0.8 stable, v0.9 draft),
 implementations for
-[renderers](renderers.md) (Angular, Flutter, Lit, Markdown, etc.) on the client side,
-and [transports](transports.md) (A2A, etc.) which communicate A2UI messages between agents and clients.
+[renderers](reference/renderers.md) (Angular, Flutter, Lit, Markdown, etc.) on the client side,
+and [transports](concepts/transports.md) (A2A, etc.) which communicate A2UI messages between agents and clients.
 
 <div class="grid cards" markdown>
 

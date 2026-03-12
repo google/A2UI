@@ -2,8 +2,8 @@
 
 Transports deliver A2UI messages from agents to clients. A2UI is transport-agnostic—use any method that can send JSON.
 
-The actual component rendering is done by the [renderer](renderers.md),
-and the [agents](agents.md) are responsible for generating the A2UI messages.
+The actual component rendering is done by the [renderer](../reference/renderers.md),
+and the [agents](../reference/agents.md) are responsible for generating the A2UI messages.
 Getting the messages from the agent to the client is the job of the transport.
 
 ## How It Works
@@ -39,7 +39,7 @@ If you are using A2A, this should be nearly automatic.
 
 TODO: Add a detailed guide.
 
-**See:** [A2A Extension Specification](specification/v0.8-a2a-extension.md)
+**See:** [A2A Extension Specification](../specification/v0.8-a2a-extension.md)
 
 ## AG UI
 
@@ -74,4 +74,4 @@ You can use any transport that sends JSON:
 ## Next Steps
 
 - **[A2A Protocol Docs](https://a2a-protocol.org)**: Learn about A2A
-- **[A2A Extension Spec](specification/v0.8-a2a-extension.md)**: A2UI + A2A details
+- **[A2A Extension Spec](../specification/v0.8-a2a-extension.md)**: A2UI + A2A details

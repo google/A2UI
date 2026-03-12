@@ -3,7 +3,7 @@
 Renderers convert A2UI JSON messages into native UI components for different platforms.
 
 The [agents](agents.md) are responsible for generating the A2UI messages,
-and the [transports](transports.md) are responsible for delivering the messages to the client.
+and the [transports](../concepts/transports.md) are responsible for delivering the messages to the client.
 The client renderer library must buffer and handle A2UI messages, implement the A2UI lifecycle, and render surfaces (widgets).
 
 You have a lot of flexibility, to bring custom components to a renderer, or build your own renderer to support your UI component framework.
@@ -12,14 +12,14 @@ You have a lot of flexibility, to bring custom components to a renderer, or buil
 
 | Renderer | Platform | v0.8 | v0.9 | Links |
 |----------|----------|------|------|-------|
-| **React** | Web | ✅ Stable | ❌ | Coming soon |
+| **React** | Web | ✅ Stable | ❌ | [Code](https://github.com/google/A2UI/tree/main/renderers/react) |
 | **Lit (Web Components)** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/lit) |
 | **Angular** | Web | ✅ Stable | ✅ Stable | [Code](https://github.com/google/A2UI/tree/main/renderers/angular) |
 | **Flutter (GenUI SDK)** | Mobile/Desktop/Web | ✅ Stable | ✅ Stable | [Docs](https://docs.flutter.dev/ai/genui) · [Code](https://github.com/flutter/genui) |
 | **SwiftUI** | iOS/macOS | — | 🚧 Planned Q2 | — |
 | **Jetpack Compose** | Android | — | 🚧 Planned Q2 | — |
 
-Check the [Roadmap](roadmap.md) for more.
+Check the [Roadmap](../roadmap.md) for more.
 
 ## Ecosystem Renderers
 
@@ -29,7 +29,7 @@ The community is building A2UI renderers for additional platforms:
 - **[A2UI-Android](https://github.com/lmee/A2UI-Android)** — Community Jetpack Compose renderer, 20+ components (~15 ⭐, v0.8)
 - **[a2ui-react-native](https://github.com/sivamrudram-eng/a2ui-react-native)** — React Native renderer for iOS/Android (~9 ⭐, v0.8)
 
-See the **[full ecosystem renderers list](ecosystem/renderers.md)** for more community projects and how to submit your own.
+See the **[full ecosystem renderers list](../ecosystem/renderers.md)** for more community projects and how to submit your own.
 
 ## How Renderers Work
 
@@ -46,17 +46,18 @@ A2UI JSON → Renderer → Native Components → Your App
 
 Get started integrating A2UI into your application by following the setup guide for your chosen renderer:
 
-- **[Lit (Web Components)](guides/client-setup.md#web-components-lit)**
-- **[Angular](guides/client-setup.md#angular)**
-- **[Flutter (GenUI SDK)](guides/client-setup.md#flutter-genui-sdk)**
+- **[React](../guides/client-setup.md#react)**
+- **[Lit (Web Components)](../guides/client-setup.md#web-components-lit)**
+- **[Angular](../guides/client-setup.md#angular)**
+- **[Flutter (GenUI SDK)](../guides/client-setup.md#flutter-genui-sdk)**
 
 ## Building a Renderer
 
 Want to build a renderer for your platform?
 
-- See the [Roadmap](roadmap.md) for planned frameworks.
+- See the [Roadmap](../roadmap.md) for planned frameworks.
 - Review existing renderers for patterns.
-- Check out our [Renderer Development Guide](guides/renderer-development.md) for details on implementing a renderer.
+- Check out our [Renderer Development Guide](../guides/renderer-development.md) for details on implementing a renderer.
 
 ### Key requirements:
 
@@ -69,6 +70,6 @@ Want to build a renderer for your platform?
 
 ### Next Steps
 
-- **[Client Setup Guide](guides/client-setup.md)**: Integration instructions
-- **[Quickstart](quickstart.md)**: Try the Lit renderer
-- **[Component Reference](reference/components.md)**: What components to support
+- **[Client Setup Guide](../guides/client-setup.md)**: Integration instructions
+- **[Quickstart](../quickstart.md)**: Try the Lit renderer
+- **[Component Reference](components.md)**: What components to support

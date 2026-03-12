@@ -1,4 +1,4 @@
-# Where is A2UI Used?
+# A2UI in the World
 
 A2UI is being adopted by teams at Google and partner organizations to build the next generation of agent-driven applications. Here are real-world examples of where A2UI is making an impact.
 
@@ -70,6 +70,25 @@ GenUI SDK uses **A2UI as the underlying protocol** for communication between ser
 
 ---
 
+### Google ADK: Agent Development Kit
+
+The [Agent Development Kit](https://google.github.io/adk-docs/) (ADK) is Google's open-source framework for building and deploying AI agents. The built-in developer UI, [ADK Web](https://github.com/google/adk-web), includes native A2UI rendering.
+
+**How ADK uses A2UI:**
+
+ADK integrated the A2UI v0.8 standard catalog to automatically render spec-compliant agent parts as native UI components directly in the chat. ADK also handles A2UI↔A2A message conversion, so agents built with ADK can send rich UI to any A2UI-capable client.
+
+- **Built-in rendering**: ADK Web renders A2UI components natively in the dev UI
+- **A2A integration**: A2UI messages are converted between A2A DataPart metadata and ADK events
+- **Agent SDK**: The [A2UI Python agent SDK](https://github.com/google/A2UI/tree/main/agent_sdks/python) provides an ADK extension for generating A2UI from agents
+
+**Try it:**
+- [ADK Documentation](https://google.github.io/adk-docs/)
+- [ADK Web](https://github.com/google/adk-web) (developer UI with A2UI support)
+- [Agent Development Guide](../guides/agent-development.md) (building A2UI agents with ADK)
+
+---
+
 ## Partner Integrations
 
 ### AG UI / CopilotKit: Full-Stack Agentic Framework
@@ -134,9 +153,14 @@ The A2UI community is building exciting projects:
     - Live examples with code
     - Great for learning
 
+### Third-Party Integrations
+
+- **[json-render](https://json-render.dev/docs/a2ui)** — Vercel's React library for rendering A2UI component catalogs via Zod schemas. See [json-render vs. A2UI comparison](https://dipjyotimetia.medium.com/vercels-json-render-vs-google-s-a2ui-the-head-to-head-6f213cf1a23b).
+- **[OpenClaw Canvas](https://docs.openclaw.ai/platforms/mac/canvas)** — OpenClaw uses A2UI to render agent-generated UI on connected devices via its canvas system. See [architecture overview](https://ppaolo.substack.com/p/openclaw-system-architecture-overview).
+
 ### Community Contributions
 
-Have you built something with A2UI? [Share it with the community!](../community.md)
+Have you built something with A2UI? [Share it with the community!](community.md)
 
 ---
 
@@ -145,7 +169,7 @@ Have you built something with A2UI? [Share it with the community!](../community.
 - [Quickstart Guide](../quickstart.md) - Try the demo
 - [Agent Development](../guides/agent-development.md) - Build an agent
 - [Client Setup](../guides/client-setup.md) - Integrate a renderer
-- [Community](../community.md) - Join the community
+- [Community](community.md) - Join the community
 
 ---
 
