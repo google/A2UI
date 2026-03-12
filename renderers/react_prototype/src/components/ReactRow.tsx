@@ -1,6 +1,4 @@
-import React from "react";
 import { createReactComponent } from "../adapter";
-import type { ReactA2uiComponentProps } from "../adapter";
 import { z } from "zod";
 import { CommonSchemas } from "@a2ui/web_core/v0_9";
 import { ReactChildList } from "./ReactChildList";
@@ -10,12 +8,6 @@ export const RowSchema = z.object({
   justify: z.enum(["center", "end", "spaceAround", "spaceBetween", "spaceEvenly", "start", "stretch"]).optional(),
   align: z.enum(["start", "center", "end", "stretch"]).optional()
 });
-
-export type RowProps = {
-  children?: any;
-  justify?: string;
-  align?: string;
-};
 
 const mapJustify = (j?: string) => {
   switch(j) {
@@ -40,20 +32,18 @@ const mapAlign = (a?: string) => {
   }
 }
 
-const RenderRow: React.FC<ReactA2uiComponentProps<RowProps>> = ({ props, buildChild, context }) => {
-  return (
-    <div style={{ display: "flex", flexDirection: "row", justifyContent: mapJustify(props.justify), alignItems: mapAlign(props.align) }}>
-      <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
-    </div>
-  );
-};
-
 export const RowApiDef = {
   name: "Row",
   schema: RowSchema
 };
 
-export const ReactRow = createReactComponent<RowProps>(
+export const ReactRow = createReactComponent(
   RowApiDef,
-  RenderRow
+  ({ props, buildChild, context }) => {
+    return (
+      <div style={{ display: "flex", flexDirection: "row", justifyContent: mapJustify(props.justify), alignItems: mapAlign(props.align) }}>
+        <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
+      </div>
+    );
+  }
 );

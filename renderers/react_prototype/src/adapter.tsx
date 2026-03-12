@@ -1,7 +1,16 @@
 import React, { useRef, useSyncExternalStore, useCallback } from "react";
 import { z } from "zod";
 import { ComponentContext, CommonSchemas } from "@a2ui/web_core/v0_9";
-import type { ComponentApi } from "@a2ui/web_core/v0_9";
+import type { ComponentApi, DataBinding, FunctionCall, Action, ChildList } from "@a2ui/web_core/v0_9";
+
+export type ResolveA2uiProp<T> =
+  [NonNullable<T>] extends [Action] ? (() => void) | Extract<T, undefined> :
+  [NonNullable<T>] extends [ChildList] ? any | Extract<T, undefined> :
+  Exclude<T, DataBinding | FunctionCall> extends never ? any : Exclude<T, DataBinding | FunctionCall>;
+
+export type ResolveA2uiProps<T> = T extends object ? {
+  [K in keyof T]: ResolveA2uiProp<T[K]>
+} : T;
 
 export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
@@ -244,15 +253,17 @@ export class ComponentBinding<T> {
 /**
  * Creates a React component implementation using the deep generic binder.
  */
-export function createReactComponent<T>(
-  api: ComponentApi,
-  RenderComponent: React.FC<ReactA2uiComponentProps<T>>
+export function createReactComponent<Schema extends z.ZodTypeAny>(
+  api: { name: string; schema: Schema },
+  RenderComponent: React.FC<ReactA2uiComponentProps<ResolveA2uiProps<z.infer<Schema>>>>
 ): ReactComponentImplementation {
+  type Props = ResolveA2uiProps<z.infer<Schema>>;
+  
   const ReactWrapper: React.FC<{ context: ComponentContext, buildChild: any }> = ({ context, buildChild }) => {
-    const bindingRef = useRef<ComponentBinding<T>>(null);
+    const bindingRef = useRef<ComponentBinding<Props>>(null);
 
     if (!bindingRef.current) {
-      bindingRef.current = new ComponentBinding<T>(context, api.schema);
+      bindingRef.current = new ComponentBinding<Props>(context, api.schema);
     }
     const binding = bindingRef.current;
 
@@ -264,7 +275,7 @@ export function createReactComponent<T>(
     const getSnapshot = useCallback(() => binding.snapshot, [binding]);
     const props = useSyncExternalStore(subscribe, getSnapshot);
 
-    return <RenderComponent props={props || ({} as T)} buildChild={buildChild} context={context} />;
+    return <RenderComponent props={props || ({} as Props)} buildChild={buildChild} context={context} />;
   };
 
   return {

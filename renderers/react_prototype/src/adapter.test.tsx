@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import React from 'react';
 import { createReactComponent } from './adapter';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog, CommonSchemas } from '@a2ui/web_core/v0_9';
 import { z } from 'zod';
@@ -15,15 +14,6 @@ describe('adapter', () => {
 
     const context = new ComponentContext(surface, 'c1', '/');
 
-    type TestProps = { text?: string; child?: string };
-
-    const RenderTest: React.FC<{ props: TestProps, buildChild: any }> = ({ props, buildChild }) => {
-      return <div>
-        <span>{props.text}</span>
-        {props.child && buildChild(props.child)}
-      </div>;
-    };
-
     const TestApiDef = {
       name: 'TestComp',
       schema: z.object({
@@ -32,9 +22,14 @@ describe('adapter', () => {
       })
     };
 
-    const TestComponent = createReactComponent<TestProps>(
+    const TestComponent = createReactComponent(
       TestApiDef,
-      RenderTest as any
+      ({ props, buildChild }) => {
+        return <div>
+          <span>{props.text}</span>
+          {props.child && buildChild(props.child)}
+        </div>;
+      }
     );
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>Child</div>);
@@ -55,12 +50,6 @@ describe('adapter', () => {
 
     const context = new ComponentContext(surface, 'c1', '/');
 
-    type TestProps = { text?: string };
-
-    const RenderTest: React.FC<{ props: TestProps }> = ({ props }) => {
-      return <div data-testid="msg">{props.text}</div>;
-    };
-
     const TestApiDef = {
       name: 'TestComp',
       schema: z.object({
@@ -68,9 +57,11 @@ describe('adapter', () => {
       })
     };
 
-    const TestComponent = createReactComponent<TestProps>(
+    const TestComponent = createReactComponent(
       TestApiDef,
-      RenderTest as any
+      ({ props }) => {
+        return <div data-testid="msg">{props.text}</div>;
+      }
     );
 
     const { getByTestId } = render(<TestComponent.render context={context} buildChild={() => null} />);
@@ -94,12 +85,6 @@ describe('adapter', () => {
 
     const spyAddListener = vi.spyOn(context.dataContext, 'subscribeDynamicValue');
 
-    type TestProps = { text?: string };
-
-    const RenderTest: React.FC<{ props: TestProps }> = ({ props }) => {
-      return <div>{props.text}</div>;
-    };
-
     const TestApiDef = {
       name: 'TestComp',
       schema: z.object({
@@ -107,9 +92,11 @@ describe('adapter', () => {
       })
     };
 
-    const TestComponent = createReactComponent<TestProps>(
+    const TestComponent = createReactComponent(
       TestApiDef,
-      RenderTest as any
+      ({ props }) => {
+        return <div>{props.text}</div>;
+      }
     );
 
     const { unmount } = render(<TestComponent.render context={context} buildChild={() => null} />);

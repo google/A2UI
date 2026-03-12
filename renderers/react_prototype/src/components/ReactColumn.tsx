@@ -1,6 +1,4 @@
-import React from "react";
 import { createReactComponent } from "../adapter";
-import type { ReactA2uiComponentProps } from "../adapter";
 import { z } from "zod";
 import { CommonSchemas } from "@a2ui/web_core/v0_9";
 import { ReactChildList } from "./ReactChildList";
@@ -10,12 +8,6 @@ export const ColumnSchema = z.object({
   justify: z.enum(["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly", "stretch"]).optional(),
   align: z.enum(["center", "end", "start", "stretch"]).optional()
 });
-
-export type ColumnProps = {
-  children?: any;
-  justify?: string;
-  align?: string;
-};
 
 const mapJustify = (j?: string) => {
   switch(j) {
@@ -40,20 +32,18 @@ const mapAlign = (a?: string) => {
   }
 }
 
-const RenderColumn: React.FC<ReactA2uiComponentProps<ColumnProps>> = ({ props, buildChild, context }) => {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", justifyContent: mapJustify(props.justify), alignItems: mapAlign(props.align), gap: "8px" }}>
-      <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
-    </div>
-  );
-};
-
 export const ColumnApiDef = {
   name: "Column",
   schema: ColumnSchema
 };
 
-export const ReactColumn = createReactComponent<ColumnProps>(
+export const ReactColumn = createReactComponent(
   ColumnApiDef,
-  RenderColumn
+  ({ props, buildChild, context }) => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: mapJustify(props.justify), alignItems: mapAlign(props.align), gap: "8px" }}>
+        <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
+      </div>
+    );
+  }
 );
