@@ -11,7 +11,7 @@ import ex4 from "../../../../specification/v0_9/json/catalogs/minimal/examples/4
 describe('Gallery Integration Tests', () => {
   it('renders Simple Text -> "Hello Minimal Catalog"', async () => {
     const processor = new MessageProcessor([minimalCatalog as any], async () => {});
-    processor.processMessages(ex1 as any[]);
+    processor.processMessages(ex1.messages as any[]);
     
     const surface = processor.model.getSurface("example_1");
     expect(surface).toBeDefined();
@@ -27,7 +27,7 @@ describe('Gallery Integration Tests', () => {
 
   it('renders Row layout -> content visibility', async () => {
     const processor = new MessageProcessor([minimalCatalog as any], async () => {});
-    processor.processMessages(ex2 as any[]);
+    processor.processMessages(ex2.messages as any[]);
     
     const surface = processor.model.getSurface("example_2");
     expect(surface).toBeDefined();
@@ -44,7 +44,7 @@ describe('Gallery Integration Tests', () => {
 
   it('handles Login form -> input updates data model', async () => {
     const processor = new MessageProcessor([minimalCatalog as any], async () => {});
-    processor.processMessages(ex4 as any[]);
+    processor.processMessages(ex4.messages as any[]);
     
     const surface = processor.model.getSurface("example_4");
     expect(surface).toBeDefined();

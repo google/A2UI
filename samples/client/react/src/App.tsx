@@ -8,6 +8,8 @@ import ex2 from "../../../../specification/v0_9/json/catalogs/minimal/examples/2
 import ex3 from "../../../../specification/v0_9/json/catalogs/minimal/examples/3_interactive_button.json";
 import ex4 from "../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json";
 import ex5 from "../../../../specification/v0_9/json/catalogs/minimal/examples/5_complex_layout.json";
+import ex6 from "../../../../specification/v0_9/json/catalogs/minimal/examples/6_capitalized_text.json";
+import ex7 from "../../../../specification/v0_9/json/catalogs/minimal/examples/7_incremental.json";
 
 const exampleFiles = [
   { key: '1_simple_text', data: ex1 },
@@ -15,6 +17,8 @@ const exampleFiles = [
   { key: '3_interactive_button', data: ex3 },
   { key: '4_login_form', data: ex4 },
   { key: '5_complex_layout', data: ex5 },
+  { key: '6_capitalized_text', data: ex6 },
+  { key: '7_incremental', data: ex7 },
 ];
 
 const DataModelViewer = ({ surface }: { surface: SurfaceModel<any> }) => {
@@ -58,8 +62,8 @@ export default function App() {
         setLogs((l) => [...l, { time: new Date().toLocaleTimeString(), action }]);
       });
       
-      if (advanceToEnd && selectedExample) {
-        newProcessor.processMessages(selectedExample);
+      if (advanceToEnd && selectedExample?.messages) {
+        newProcessor.processMessages(selectedExample.messages);
       }
       return newProcessor;
     });
@@ -67,8 +71,8 @@ export default function App() {
     setLogs([]);
     setSurfaces([]);
     
-    if (advanceToEnd && selectedExample) {
-      setCurrentMessageIndex(selectedExample.length - 1);
+    if (advanceToEnd && selectedExample?.messages) {
+      setCurrentMessageIndex(selectedExample.messages.length - 1);
     } else {
       setCurrentMessageIndex(-1);
     }
@@ -109,10 +113,10 @@ export default function App() {
   }, [processor]);
 
   const advanceToMessage = (index: number) => {
-    if (!processor || !selectedExample) return;
+    if (!processor || !selectedExample?.messages) return;
     
     // Process messages from currentMessageIndex + 1 to index
-    const messagesToProcess = selectedExample.slice(currentMessageIndex + 1, index + 1);
+    const messagesToProcess = selectedExample.messages.slice(currentMessageIndex + 1, index + 1);
     if (messagesToProcess.length > 0) {
       processor.processMessages(messagesToProcess);
       setCurrentMessageIndex(index);
@@ -123,7 +127,7 @@ export default function App() {
     resetProcessor(false);
   };
 
-  const messages = selectedExample || [];
+  const messages = selectedExample?.messages || [];
 
   return (
     <div style={{ display: 'flex', gap: '2rem', padding: '2rem', height: '100vh', boxSizing: 'border-box', textAlign: 'left', backgroundColor: '#fff', color: '#000' }}>
