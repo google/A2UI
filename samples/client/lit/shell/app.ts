@@ -429,7 +429,10 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   #maybeRenderData() {
     if (this.#requesting) {
-      let text = "Awaiting an answer...";
+      let text =
+        this.#lastMessages.length === 0
+          ? "Waiting for the agent to start..."
+          : "Awaiting an answer...";
       if (this.config.loadingText) {
         if (Array.isArray(this.config.loadingText)) {
           text = this.config.loadingText[this.#loadingTextIndex];
