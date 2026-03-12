@@ -256,3 +256,32 @@ To achieve a clean, consistent default spacing where elements feel naturally sep
 
 **Why use Margins on Leaves?**
 Applying margins directly to the visual elements—rather than relying on padding or gap properties on the parent containers—ensures predictable spacing. For example, if you have `Row(Item1, Item2)`, using margins on the items guarantees that there is space to the left of `Item1`, space to the right of `Item2`, and space between them. Because the invisible containers themselves contribute zero extra spacing, you can deeply nest your structural rows and columns without the spacing unexpectedly multiplying.
+
+---
+
+## 4. Color, Contrast, and Nesting
+
+A common challenge in dynamically generated UI is ensuring proper contrast and visual hierarchy when components are nested. For example:
+- A `Text` or `Icon` nested inside a `primary` `Button` must change its color to contrast with the button's background.
+- A `Card` nested inside another `Card` should remain visually distinct.
+
+To keep the A2UI rendering layer simple and performant, **do not manually calculate or pass color properties down the A2UI component tree**. Instead, rely entirely on the native context and theme inheritance mechanisms provided by your target UI framework.
+
+### Text and Icon Contrast
+When an element defines a strong background color (like a `primary` `Button` using the theme's `primaryColor`), it must also define the expected text color for its content. It should propagate this expectation implicitly.
+
+- **Web (CSS):** The `Button` wrapper sets the standard CSS `color` property. Because `color` is inherited in CSS, any `Text` or `Icon` component rendered inside the button will automatically adapt.
+- **Compose (Android):** The button wrapper should use `CompositionLocalProvider(LocalContentColor provides ...)`. Any nested `Text` and `Icon` components will automatically pick up this color without needing it explicitly passed to their A2UI classes.
+- **SwiftUI (iOS):** Apply `.foregroundColor(...)` or `.environment(\.colorScheme, ...)` to the button wrapper.
+- **Flutter:** Use `DefaultTextStyle.merge()` and `IconTheme.merge()` within the button wrapper. If using standard Material buttons (like `ElevatedButton`), this is often handled for you automatically.
+
+*Rule of Thumb:* Leaf components like `Text` and `Icon` should **never** hardcode their colors unless explicitly instructed by a property. They must always inherit from their environment.
+
+### Nesting Containers (Cards)
+When a `Card` is nested within another `Card`, or placed on different background surfaces, it needs to remain distinct. Attempting to alternate surface colors based on depth adds significant complexity to the renderer.
+
+**Recommended Approach: Outlines and Transparent Surfaces**
+The simplest, most robust starting approach is to give `Card` components a **transparent background** and a **visible outline/border** (e.g., a 1dp outline matching the theme's outline/border color). 
+- By using borders instead of opaque surface colors, nested cards will simply draw an inner boundary within the parent card. 
+- This guarantees a clear visual hierarchy regardless of how deeply they are nested, and it requires zero context-passing or depth-tracking in your code.
+- If your design system requires opaque cards, consider using a framework-specific elevation system (e.g., standard Material elevation) which often handles shadow and surface tinting automatically, rather than building custom color-alternation logic into the A2UI adapters.

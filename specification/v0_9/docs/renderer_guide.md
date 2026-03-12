@@ -699,7 +699,7 @@ Build a self-contained application to prove the architecture works before scalin
 **STOP HERE. Ask the user for approval of the architecture and demo application before proceeding to step 7.**
 
 ### 7. Basic Catalog Support
-Once the minimal architecture is proven robust:
+Once the minimal architecture is proven robust, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) and:
 *   **Core Library**: Implement the full suite of basic functions. It is crucial to note that string interpolation and expression parsing should ONLY happen within the `formatString` function. Do not attempt to add global string interpolation to all strings.
 *   **Core Library**: Create definitions/binders for the remaining Basic Catalog components.
 *   **Framework Library**: Implement all remaining UI widgets.
