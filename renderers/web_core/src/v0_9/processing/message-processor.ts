@@ -68,13 +68,67 @@ export class MessageProcessor<T extends ComponentApi> {
 
   /**
    * Processes a list of messages.
+   * When multiple messages are provided, data model updates are batched
+   * to reduce redundant notifications and re-renders.
    *
    * @param messages The messages to process.
    */
   processMessages(messages: A2uiMessage[]): void {
-    for (const message of messages) {
-      this.processMessage(message);
+    if (messages.length <= 1) {
+      // Single message: process directly without batch overhead
+      for (const message of messages) {
+        this.processMessage(message);
+      }
+      return;
     }
+
+    // Collect all surfaces that will be affected by these messages
+    const surfaces = new Set<SurfaceModel<T>>();
+    for (const msg of messages) {
+      const surfaceId = this.extractSurfaceId(msg);
+      if (surfaceId) {
+        const surface = this.model.getSurface(surfaceId);
+        if (surface) {
+          surfaces.add(surface);
+        }
+      }
+    }
+
+    // Enter batch mode for all affected surfaces
+    for (const surface of surfaces) {
+      surface.dataModel.beginBatch();
+    }
+
+    try {
+      // Process all messages (writes are batched, notifications are deferred)
+      for (const message of messages) {
+        this.processMessage(message);
+      }
+    } catch (e) {
+      // On error, clear pending notifications to avoid inconsistent state
+      for (const surface of surfaces) {
+        surface.dataModel.clearPending();
+      }
+      throw e;
+    } finally {
+      // Always exit batch mode and trigger notifications
+      for (const surface of surfaces) {
+        surface.dataModel.endBatch();
+      }
+    }
+  }
+
+  /**
+   * Extracts the surface ID from a message.
+   * @param msg The message to extract from.
+   * @returns The surface ID or undefined if not applicable.
+   */
+  private extractSurfaceId(msg: A2uiMessage): string | undefined {
+    if ("createSurface" in msg) return msg.createSurface.surfaceId;
+    if ("updateComponents" in msg) return msg.updateComponents.surfaceId;
+    if ("updateDataModel" in msg) return msg.updateDataModel.surfaceId;
+    if ("deleteSurface" in msg) return msg.deleteSurface.surfaceId;
+    return undefined;
   }
 
   private processMessage(message: A2uiMessage): void {

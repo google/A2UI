@@ -335,4 +335,103 @@ describe("DataModel", () => {
     assert.strictEqual(isDescendant("/user", "/"), true);
     assert.strictEqual(isDescendant("/", "/"), false);
   });
+
+  // --- Batch Processing ---
+
+  describe("Batch Processing", () => {
+    it("batches notifications when in batch mode", () => {
+      const batchModel = new DataModel({});
+      const notifications: string[] = [];
+
+      batchModel.subscribe("/user/name", () => notifications.push("name"));
+      batchModel.subscribe("/user/age", () => notifications.push("age"));
+      batchModel.subscribe("/user", () => notifications.push("user"));
+      batchModel.subscribe("/", () => notifications.push("root"));
+
+      batchModel.beginBatch();
+      batchModel.set("/user/name", "Alice");
+      batchModel.set("/user/age", 30);
+      batchModel.set("/user/email", "alice@example.com");
+
+      assert.strictEqual(notifications.length, 0, "No notifications during batch");
+
+      batchModel.endBatch();
+
+      assert.ok(notifications.includes("name"), "name path notified");
+      assert.ok(notifications.includes("age"), "age path notified");
+      assert.ok(notifications.includes("user"), "user path notified");
+      assert.ok(notifications.includes("root"), "root path notified");
+
+      const nameCount = notifications.filter((n) => n === "name").length;
+      assert.strictEqual(nameCount, 1, "name notified exactly once");
+    });
+
+    it("notifies immediately when not in batch mode", () => {
+      const batchModel = new DataModel({});
+      const notifications: string[] = [];
+
+      batchModel.subscribe("/user/name", () => notifications.push("name"));
+      batchModel.set("/user/name", "Alice");
+
+      assert.strictEqual(notifications.length, 1, "Immediate notification");
+    });
+
+    it("clears pending notifications on clearPending", () => {
+      const batchModel = new DataModel({});
+      const notifications: string[] = [];
+
+      batchModel.subscribe("/user/name", () => notifications.push("name"));
+      batchModel.beginBatch();
+      batchModel.set("/user/name", "Alice");
+      batchModel.clearPending();
+      batchModel.endBatch();
+
+      assert.strictEqual(notifications.length, 0, "Notifications cleared");
+    });
+
+    it("handles nested batch calls", () => {
+      const batchModel = new DataModel({});
+      const notifications: string[] = [];
+
+      batchModel.subscribe("/user/name", () => notifications.push("name"));
+
+      batchModel.beginBatch();
+      batchModel.set("/user/name", "Alice");
+      batchModel.beginBatch(); // nested
+      batchModel.set("/user/name", "Bob");
+      batchModel.endBatch(); // outer batch still active
+      assert.strictEqual(notifications.length, 0, "Still in batch after first endBatch");
+      batchModel.endBatch(); // now notifications should fire
+      assert.strictEqual(notifications.length, 1, "Notified after second endBatch");
+    });
+
+    it("deduplicates same path updates in batch", () => {
+      const batchModel = new DataModel({});
+      let callCount = 0;
+
+      batchModel.subscribe("/counter", () => callCount++);
+      batchModel.beginBatch();
+      batchModel.set("/counter", 1);
+      batchModel.set("/counter", 2);
+      batchModel.set("/counter", 3);
+      batchModel.endBatch();
+
+      assert.strictEqual(callCount, 1, "Same path deduplicated");
+    });
+
+    it("receives correct final values after batch", () => {
+      const batchModel = new DataModel({});
+      const values: (number | undefined)[] = [];
+
+      batchModel.subscribe<number>("/counter", (val) => values.push(val));
+      batchModel.beginBatch();
+      batchModel.set("/counter", 1);
+      batchModel.set("/counter", 2);
+      batchModel.set("/counter", 3);
+      batchModel.endBatch();
+
+      assert.strictEqual(values.length, 1);
+      assert.strictEqual(values[0], 3);
+    });
+  });
 });

@@ -41,6 +41,10 @@ export class DataModel {
   private readonly signals: Map<string, Signal<any>> = new Map();
   private readonly subscriptions: Set<() => void> = new Set(); // To track direct subscriptions for dispose
 
+  // Batch processing state
+  private _batchDepth = 0;
+  private _pendingPaths = new Set<string>();
+
   /**
    * Creates a new data model.
    *
@@ -132,8 +136,81 @@ export class DataModel {
       current[lastSegment] = value;
     }
 
-    this.notifySignals(path);
+    if (this._batchDepth > 0) {
+      this._pendingPaths.add(path);
+    } else {
+      this.notifySignals(path);
+    }
     return this;
+  }
+
+  /**
+   * Enters batch mode. Notifications will be deferred until endBatch() is called.
+   * Supports nested batch calls - only the outermost endBatch() triggers notifications.
+   */
+  beginBatch(): void {
+    this._batchDepth++;
+  }
+
+  /**
+   * Exits batch mode and triggers all pending notifications.
+   * Only triggers when the outermost batch ends (nested batch support).
+   */
+  endBatch(): void {
+    this._batchDepth--;
+    if (this._batchDepth > 0) {
+      return; // Still in a nested batch
+    }
+
+    // Step 1: Collect all pending paths and their ancestors into a Set.
+    // This gives us O(1) lookups for descendant checking in Step 2.
+    const modifiedPaths = new Set<string>();
+    for (const path of this._pendingPaths) {
+      const normalizedPath = this.normalizePath(path);
+      modifiedPaths.add(normalizedPath);
+
+      // Walk up the ancestor chain
+      let parentPath = normalizedPath;
+      while (parentPath !== "/" && parentPath !== "") {
+        parentPath =
+          parentPath.substring(0, parentPath.lastIndexOf("/")) || "/";
+        modifiedPaths.add(parentPath);
+      }
+    }
+
+    // Step 2: Find descendant subscriptions in a single pass over subscriptions.
+    // For each subscription, walk up its hierarchy to check if any ancestor
+    // is a pending path. This is O(S * D) instead of O(P * S).
+    const pathsToNotify = new Set<string>(modifiedPaths);
+    for (const subPath of this.subscriptions.keys()) {
+      if (pathsToNotify.has(subPath)) {
+        continue; // Already included
+      }
+      // Walk up from subscription path to check if any ancestor was modified
+      let ancestor = subPath;
+      while (ancestor !== "/" && ancestor !== "") {
+        ancestor = ancestor.substring(0, ancestor.lastIndexOf("/")) || "/";
+        if (this._pendingPaths.has(ancestor)) {
+          pathsToNotify.add(subPath);
+          break;
+        }
+      }
+    }
+
+    this._pendingPaths.clear();
+
+    // Notify all collected paths
+    for (const path of pathsToNotify) {
+      this.notify(path);
+    }
+  }
+
+  /**
+   * Clears all pending notifications without triggering them.
+   * Useful when an error occurs during batch processing.
+   */
+  clearPending(): void {
+    this._pendingPaths.clear();
   }
 
   /**
