@@ -32,6 +32,11 @@ type A2AServerPayload =
 
 import { componentRegistry } from "@a2ui/lit/ui";
 
+export interface A2UIClientResponse {
+  messages: v0_8.Types.ServerToClientMessage[];
+  fallbackText: string | null;
+}
+
 export class A2UIClient {
   #ready: Promise<void> = Promise.resolve();
   get ready() {
@@ -40,7 +45,7 @@ export class A2UIClient {
 
   async send(
     message: v0_8.Types.A2UIClientEventMessage
-  ): Promise<v0_8.Types.ServerToClientMessage[]> {
+  ): Promise<A2UIClientResponse> {
     const catalog = componentRegistry.getInlineCatalog();
     const finalMessage = {
       ...message,
@@ -59,15 +64,24 @@ export class A2UIClient {
     if (response.ok) {
       const data = (await response.json()) as A2AServerPayload;
       const messages: v0_8.Types.ServerToClientMessage[] = [];
+      const textParts: string[] = [];
       if ("error" in data) {
         throw new Error(data.error);
       } else {
         for (const item of data) {
-          if (item.kind === "text") continue;
-          messages.push(item.data);
+          if (item.kind === "text") {
+            textParts.push(item.text);
+          } else {
+            messages.push(item.data);
+          }
         }
       }
-      return messages;
+      return {
+        messages,
+        fallbackText: messages.length === 0 && textParts.length > 0
+          ? textParts.join('\n')
+          : null,
+      };
     }
 
     const error = (await response.json()) as { error: string };

@@ -26,7 +26,7 @@ import {
 } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { theme as uiTheme } from "./theme/theme.js";
-import { A2UIClient } from "./client.js";
+import { A2UIClient, type A2UIClientResponse } from "./client.js";
 import {
   SnackbarAction,
   SnackbarMessage,
@@ -369,9 +369,11 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
   async #sendAndProcessMessage(request: v0_8.Types.A2UIClientEventMessage) {
     this.#requesting = true;
-    const messages = await this.#sendMessage(request);
+    this.#error = null;
+    const { messages, fallbackText } = await this.#sendMessage(request);
 
     this.#lastMessages = messages;
+    this.#error = fallbackText;
 
     // this.#processor.clearSurfaces(); // Removed to allow partial updates
     this.#processor.processMessages(messages);
@@ -385,7 +387,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
   async #sendMessage(
     message: v0_8.Types.A2UIClientEventMessage
-  ): Promise<v0_8.Types.ServerToClientMessage[]> {
+  ): Promise<A2UIClientResponse> {
     try {
       this.#requesting = true;
       const response = await this.#a2uiClient.send(message);
@@ -399,7 +401,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
       this.#requesting = false;
     }
 
-    return [];
+    return { messages: [], fallbackText: null };
   }
 
   snackbar(
