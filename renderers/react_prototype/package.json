@@ -1,0 +1,33 @@
+{
+  "name": "@a2ui/react_prototype",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.lib.json"
+  },
+  "dependencies": {
+    "@a2ui/web_core": "file:../web_core"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1",
+    "@vitejs/plugin-react": "^5.1.1",
+    "rxjs": "^7.8.1",
+    "zod": "^3.23.8",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "vitest": "^4.0.18",
+    "jsdom": "^28.1.0"
+  }
+}

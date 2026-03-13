@@ -28,9 +28,12 @@ In ecosystems dominated by a single UI framework (like iOS with SwiftUI), develo
 
 ## 1. The Core Data Layer (Framework Agnostic)
 
-The Data Layer is responsible for receiving the wire protocol (JSON messages), parsing them, and maintaining a long-lived, mutable state object. This layer follows the exact same design in all programming languages (with minor syntactical variations) and **does not require design work when porting to a new framework**. 
+The A2UI client architecture follows a strict, unidirectional data flow that bridges language-agnostic data structures with native UI frameworks. 
 
-> **Note on Language & Frameworks**: While the examples in this document are provided in TypeScript for clarity, the A2UI Data Layer is intended to be implemented in any language (e.g., Java, Python, Swift, Kotlin, Rust) and remain completely independent of any specific UI framework.
+1. **A2UI Messages** arrive from the server (JSON).
+2. The **`MessageProcessor`** parses these and updates the **`SurfaceModel`** (Agnostic State).
+3. The **`Surface`** (Framework Entry View) listens to the `SurfaceModel` and begins rendering.
+4. The `Surface` instantiates and renders individual **`ComponentImplementation`** nodes to build the UI tree.
 
 It consists of three sub-components: the Processing Layer, the Models, and the Context Layer.
 
@@ -57,8 +60,6 @@ A2UI relies on a standard observer pattern to reactively update the UI when data
 
 ### Design Principles
 
-To ensure consistency and portability, the Data Layer implementation relies on standard patterns rather than framework-specific libraries.
-
 #### 1. The "Add" Pattern for Composition
 We strictly separate **construction** from **composition**. Parent containers do not act as factories for their children. This decoupling allows child classes to evolve their constructor signatures without breaking the parent. It also simplifies testing by allowing mock children to be injected easily.
 
@@ -80,7 +81,7 @@ The models must provide a mechanism for the rendering layer to observe changes.
 5.  **Consistency**: This pattern is used uniformly across the whole state model.
 
 #### 3. Granular Reactivity
-The model is designed to support high-performance rendering through granular updates rather than full-surface refreshes.
+The model is designed to support high-performance rendering through granular updates.
 *   **Structure Changes**: The `SurfaceComponentsModel` notifies when items are added/removed.
 *   **Property Changes**: The `ComponentModel` notifies when its specific configuration changes.
 *   **Data Changes**: The `DataModel` notifies only subscribers to the specific path that changed.
@@ -145,6 +146,7 @@ class SurfaceModel<T> {
   dispatchAction(action: ActionEvent): Promise<void>;
 }
 ```
+
 #### `SurfaceComponentsModel` & `ComponentModel`
 Manages the raw JSON configuration of components in a flat map which includes one entry per component ID. This represents the raw Component data *before* ChildList templates are resolved, which can instantiate multiple instances of a single Component with the same ID.
 
@@ -161,38 +163,45 @@ class ComponentModel {
   readonly id: string;
   readonly type: string; // Component name (e.g. 'Button')
   
-  get properties(): Record<string, any>; // Current raw JSON configuration
+  get properties(): Record<string, any>;
   set properties(newProps: Record<string, any>);
   
   readonly onUpdated: EventSource<ComponentModel>; // Invoked when any property changes
 }
 ```
+
 #### `DataModel`
-A dedicated store for the surface's application data (the "Model" in MVVM).
+A dedicated store for application data.
 
 ```typescript
 interface Subscription<T> {
   readonly value: T | undefined; // Latest evaluated value
-  unsubscribe(): void; // Stop listening
+  unsubscribe(): void;
 }
 
 class DataModel {
   get(path: string): any; // Resolve JSON Pointer to value
   set(path: string, value: any): void; // Atomic update at path
   subscribe<T>(path: string, onChange: (v: T | undefined) => void): Subscription<T>; // Reactive path monitoring
-  dispose(): void; // Lifecycle cleanup
+  dispose(): void;
 }
 ```
 
-#### JSON Pointer Implementation Rules
-To ensure parity across implementations, the `DataModel` must follow these rules:
+**JSON Pointer Implementation Rules**:
+1.  **Auto-typing (Auto-vivification)**: When setting a value at a nested path (e.g., `/a/b/0/c`), create intermediate segments. If the next segment is numeric (`0`), initialize as an Array `[]`, otherwise an Object `{}`.
+2.  **Notification Strategy (Bubble & Cascade)**: Notify exact matches, bubble up to all parent paths, and cascade down to all nested descendant paths.
+3.  **Undefined Handling**: Setting an object key to `undefined` removes the key. Setting an array index to `undefined` preserves length but empties the index (sparse array).
 
-**1. Auto-typing (Auto-vivification)**
-When setting a value at a nested path (e.g., `/a/b/0/c`), if intermediate segments do not exist, the model must create them:
-*   Look at the *next* segment in the path.
-*   If the next segment is numeric (e.g., `0`, `12`), initialize the current segment as an **Array** `[]`.
-*   Otherwise, initialize it as an **Object** `{}`.
-*   **Error Case**: Throw an exception if an update attempts to traverse through a primitive value (e.g., setting `/a/b` when `/a` is already a string).
+**Type Coercion Standards**:
+| Input Type                 | Target Type | Result                                                                  |
+| :------------------------- | :---------- | :---------------------------------------------------------------------- |
+| `String` ("true", "false") | `Boolean`   | `true` or `false` (case-insensitive). Any other string maps to `false`. |
+| `Number` (non-zero)        | `Boolean`   | `true`                                                                  |
+| `Number` (0)               | `Boolean`   | `false`                                                                 |
+| `Any`                      | `String`    | Locale-neutral string representation                                    |
+| `null` / `undefined`       | `String`    | `""` (empty string)                                                     |
+| `null` / `undefined`       | `Number`    | `0`                                                                     |
+| `String` (numeric)         | `Number`    | Parsed numeric value or `0`                                             |
 
 **2. Notification Strategy (The Bubble & Cascade)**
 A change at a specific path must trigger notifications for related paths to ensure UI consistency:
@@ -235,12 +244,12 @@ class DataContext {
   nested(relativePath: string): DataContext;
 }
 
-class ComponentContext {
+class ComponentContext<T extends ComponentApi> {
   constructor(surface: SurfaceModel<T>, componentId: string, basePath?: string);
-  readonly componentModel: ComponentModel; // The instance configuration
-  readonly dataContext: DataContext; // The instance's data scope
+  readonly componentModel: ComponentModel;
+  readonly dataContext: DataContext;
   readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
-  dispatchAction(action: any): Promise<void>; // Propagate action to surface
+  dispatchAction(action: any): Promise<void>;
 }
 ```
 
