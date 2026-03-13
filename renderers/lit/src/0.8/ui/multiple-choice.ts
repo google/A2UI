@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 
@@ -238,7 +238,7 @@ export class MultipleChoice extends Root {
         color: var(--md-sys-color-on-secondary-container);
         border-color: var(--md-sys-color-secondary-container);
       }
-      
+
       .chip.selected:hover {
          background: var(--md-sys-color-secondary-container-high);
       }
@@ -248,7 +248,7 @@ export class MultipleChoice extends Root {
         width: 18px;
         height: 18px;
       }
-      
+
       .chip.selected .chip-icon {
         display: block;
         fill: currentColor;
@@ -319,10 +319,10 @@ export class MultipleChoice extends Root {
   #renderFilter() {
     return html`
       <div class="filter-container">
-        <input 
-          type="text" 
-          class="filter-input" 
-          placeholder="Filter options..." 
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="Filter options..."
           .value=${this.filterText}
           @input=${(e: Event) => {
         const target = e.target as HTMLInputElement;
@@ -365,7 +365,7 @@ export class MultipleChoice extends Root {
         );
         const isSelected = currentSelections.includes(option.value);
         return html`
-                  <div 
+                  <div
                     class="chip ${isSelected ? "selected" : ""}"
                     @click=${(e: Event) => {
             e.stopPropagation();
@@ -389,8 +389,8 @@ export class MultipleChoice extends Root {
 
     return html`
       <div class="container">
-        <div 
-          class="dropdown-header" 
+        <div
+          class="dropdown-header"
           @click=${() => this.isOpen = !this.isOpen}
         >
           <span class="header-text">${headerText}</span>
@@ -414,7 +414,7 @@ export class MultipleChoice extends Root {
               const isSelected = currentSelections.includes(option.value);
 
               return html`
-                <div 
+                <div
                   class="option-item ${isSelected ? "selected" : ""}"
                   @click=${(e: Event) => {
                   e.stopPropagation();

@@ -1,20 +1,20 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-import { noChange } from "lit";
+import { html, noChange } from "lit";
 import {
   Directive,
   DirectiveParameters,
@@ -22,131 +22,53 @@ import {
   directive,
 } from "lit/directive.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import MarkdownIt from "markdown-it";
-import { RenderRule } from "markdown-it/lib/renderer.mjs";
-import * as Sanitizer from "./sanitizer.js";
+import { until } from "lit/directives/until.js";
+import * as Types from "@a2ui/web_core/types/types";
 
 class MarkdownDirective extends Directive {
-  #markdownIt = MarkdownIt({
-    highlight: (str, lang) => {
-      switch (lang) {
-        case "html": {
-          const iframe = document.createElement("iframe");
-          iframe.classList.add("html-view");
-          iframe.srcdoc = str;
-          iframe.sandbox = "";
-          return iframe.innerHTML;
-        }
-
-        default:
-          return Sanitizer.escapeNodeText(str);
-      }
-    },
-  });
   #lastValue: string | null = null;
   #lastTagClassMap: string | null = null;
 
-  update(_part: Part, [value, tagClassMap]: DirectiveParameters<this>) {
+  update(_part: Part, [value, markdownRenderer, markdownOptions]: DirectiveParameters<this>) {
+    const jsonTagClassMap = JSON.stringify(markdownOptions?.tagClassMap);
     if (
       this.#lastValue === value &&
-      JSON.stringify(tagClassMap) === this.#lastTagClassMap
+      jsonTagClassMap === this.#lastTagClassMap
     ) {
       return noChange;
     }
 
     this.#lastValue = value;
-    this.#lastTagClassMap = JSON.stringify(tagClassMap);
-    return this.render(value, tagClassMap);
+    this.#lastTagClassMap = jsonTagClassMap;
+    return this.render(value, markdownRenderer, markdownOptions);
   }
 
-  #originalClassMap = new Map<string, RenderRule | undefined>();
-  #applyTagClassMap(tagClassMap: Record<string, string[]>) {
-    Object.entries(tagClassMap).forEach(([tag]) => {
-      let tokenName;
-      switch (tag) {
-        case "p":
-          tokenName = "paragraph";
-          break;
-        case "h1":
-        case "h2":
-        case "h3":
-        case "h4":
-        case "h5":
-        case "h6":
-          tokenName = "heading";
-          break;
-        case "ul":
-          tokenName = "bullet_list";
-          break;
-        case "ol":
-          tokenName = "ordered_list";
-          break;
-        case "li":
-          tokenName = "list_item";
-          break;
-        case "a":
-          tokenName = "link";
-          break;
-        case "strong":
-          tokenName = "strong";
-          break;
-        case "em":
-          tokenName = "em";
-          break;
-      }
-
-      if (!tokenName) {
-        return;
-      }
-
-      const key = `${tokenName}_open`;
-      this.#markdownIt.renderer.rules[key] = (
-        tokens,
-        idx,
-        options,
-        _env,
-        self
-      ) => {
-        const token = tokens[idx];
-        const tokenClasses = tagClassMap[token.tag] ?? [];
-        for (const clazz of tokenClasses) {
-          token.attrJoin("class", clazz);
-        }
-
-        return self.renderToken(tokens, idx, options);
-      };
-    });
-  }
-
-  #unapplyTagClassMap() {
-    for (const [key] of this.#originalClassMap) {
-      delete this.#markdownIt.renderer.rules[key];
-    }
-
-    this.#originalClassMap.clear();
-  }
-
+  private static defaultMarkdownWarningLogged = false;
   /**
-   * Renders the markdown string to HTML using MarkdownIt.
-   *
-   * Note: MarkdownIt doesn't enable HTML in its output, so we render the
-   * value directly without further sanitization.
-   * @see https://github.com/markdown-it/markdown-it/blob/master/docs/security.md
+   * Renders the markdown string to HTML using the injected markdown renderer,
+   * if present. Otherwise, it returns the value wrapped in a span.
    */
-  render(value: string, tagClassMap?: Record<string, string[]>) {
-    if (tagClassMap) {
-      this.#applyTagClassMap(tagClassMap);
+  render(value: string, markdownRenderer?: Types.MarkdownRenderer, markdownOptions?: Types.MarkdownRendererOptions) {
+    if (markdownRenderer) {
+      const rendered = markdownRenderer(value, markdownOptions).then((value) => {
+        // `value` is a plain string, which we need to convert to a template
+        // with the `unsafeHTML` directive.
+        // It is the responsibility of the markdown renderer to sanitize the HTML.
+        return unsafeHTML(value);
+      })
+      // The until directive lets us render a placeholder *until* the rendered
+      // content resolves.
+      return until(rendered, html`<span class="no-markdown-renderer">${value}</span>`);
     }
-    const htmlString = this.#markdownIt.render(value);
-    this.#unapplyTagClassMap();
 
-    return unsafeHTML(htmlString);
+    if (!MarkdownDirective.defaultMarkdownWarningLogged) {
+      console.warn("[MarkdownDirective]",
+        "can't render markdown because no markdown renderer is configured.\n",
+        "Use `@a2ui/markdown-it`, or your own markdown renderer.");
+      MarkdownDirective.defaultMarkdownWarningLogged = true;
+    }
+    return html`<span class="no-markdown-renderer">${value}</span>`;
   }
 }
 
 export const markdown = directive(MarkdownDirective);
-
-const markdownItStandalone = MarkdownIt();
-export function renderMarkdownToHtmlString(value: string): string {
-  return markdownItStandalone.render(value);
-}

@@ -27,12 +27,23 @@ from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
+from a2a.types import (
+    AgentCapabilities,
+    AgentCard,
+    AgentSkill,
+    DataPart,
+    Part,
+    TextPart,
+)
 
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.core.schema.constants import VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.core.parser.parser import parse_response, ResponsePart
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +57,14 @@ class ContactAgent:
     self.base_url = base_url
     self.use_ui = use_ui
     self._schema_manager = (
-        A2uiSchemaManager("0.8", basic_examples_path="examples") if use_ui else None
+        A2uiSchemaManager(
+            version=VERSION_0_8,
+            catalogs=[
+                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+            ],
+        )
+        if use_ui
+        else None
     )
     self._agent = self._build_agent(use_ui)
     self._user_id = "remote_agent"
@@ -61,7 +79,12 @@ class ContactAgent:
   def get_agent_card(self) -> AgentCard:
     capabilities = AgentCapabilities(
         streaming=True,
-        extensions=[self._schema_manager.get_agent_extension()],
+        extensions=[
+            get_a2ui_agent_extension(
+                self._schema_manager.accepts_inline_catalogs,
+                self._schema_manager.supported_catalog_ids,
+            )
+        ],
     )
     skill = AgentSkill(
         id="find_contact",
@@ -150,10 +173,16 @@ class ContactAgent:
       )
       yield {
           "is_task_complete": True,
-          "content": (
-              "I'm sorry, I'm facing an internal configuration error with my UI"
-              " components. Please contact support."
-          ),
+          "parts": [
+              Part(
+                  root=TextPart(
+                      text=(
+                          "I'm sorry, I'm facing an internal configuration error with"
+                          " my UI components. Please contact support."
+                      )
+                  )
+              )
+          ],
       }
       return
 
@@ -216,44 +245,36 @@ class ContactAgent:
             f" {attempt})... ---"
         )
         try:
-          if "---a2ui_JSON---" not in final_response_content:
-            raise ValueError("Delimiter '---a2ui_JSON---' not found.")
+          response_parts = parse_response(final_response_content)
 
-          text_part, json_string = final_response_content.split("---a2ui_JSON---", 1)
+          for part in response_parts:
+            if not part.a2ui_json:
+              continue
 
-          # Handle the "no results found" case
-          json_string_cleaned = (
-              json_string.strip().lstrip("```json").rstrip("```").strip()
-          )
-          if not json_string.strip() or json_string_cleaned == "[]":
-            logger.info(
-                "--- ContactAgent.stream: Empty JSON list found. Assuming valid (e.g.,"
-                " 'no results'). ---"
-            )
-            is_valid = True
+            parsed_json_data = part.a2ui_json
 
-          else:
-            if not json_string_cleaned:
-              raise ValueError("Cleaned JSON string is empty.")
+            # Handle the "no results found" or empty JSON case
+            if parsed_json_data == []:
+              logger.info(
+                  "--- ContactAgent.stream: Empty JSON list found. "
+                  "Assuming valid (e.g., 'no results'). ---"
+              )
+              is_valid = True
+            else:
+              # --- Validation Steps ---
+              # Check if it validates against the A2UI_SCHEMA
+              # This will raise jsonschema.exceptions.ValidationError if it fails
+              logger.info(
+                  "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
+              )
+              selected_catalog.validator.validate(parsed_json_data)
+              # --- End Validation Steps ---
 
-            # --- New Validation Steps ---
-            # 1. Check if it's parsable JSON
-            parsed_json_data = json.loads(json_string_cleaned)
-
-            # 2. Check if it validates against the A2UI_SCHEMA
-            # This will raise jsonschema.exceptions.ValidationError if it fails
-            logger.info(
-                "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
-            )
-            selected_catalog.validator.validate(parsed_json_data)
-            # --- End New Validation Steps ---
-
-            logger.info(
-                "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
-                f" against schema. Validation OK (Attempt {attempt}). ---"
-            )
-            is_valid = True
-
+              logger.info(
+                  "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
+                  f" against schema. Validation OK (Attempt {attempt}). ---"
+              )
+              is_valid = True
         except (
             ValueError,
             json.JSONDecodeError,
@@ -276,10 +297,13 @@ class ContactAgent:
             "--- ContactAgent.stream: Response is valid. Sending final response"
             f" (Attempt {attempt}). ---"
         )
-        logger.info(f"Final response: {final_response_content}")
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
+        )
+
         yield {
             "is_task_complete": True,
-            "content": final_response_content,
+            "parts": final_parts,
         }
         return  # We're done, exit the generator
 
@@ -293,8 +317,8 @@ class ContactAgent:
         current_query_text = (
             f"Your previous response was invalid. {error_message} You MUST generate a"
             " valid response that strictly follows the A2UI JSON SCHEMA. The response"
-            " MUST be a JSON list of A2UI messages. Ensure the response is split by"
-            " '---a2ui_JSON---' and the JSON part is well-formed. Please retry the"
+            " MUST be a JSON list of A2UI messages. Ensure each JSON part is wrapped in"
+            f" '{A2UI_OPEN_TAG}' and '{A2UI_CLOSE_TAG}' tags. Please retry the"
             f" original request: '{query}'"
         )
         # Loop continues...
@@ -305,9 +329,15 @@ class ContactAgent:
     )
     yield {
         "is_task_complete": True,
-        "content": (
-            "I'm sorry, I'm having trouble generating the interface for that request"
-            " right now. Please try again in a moment."
-        ),
+        "parts": [
+            Part(
+                root=TextPart(
+                    text=(
+                        "I'm sorry, I'm having trouble generating the interface for"
+                        " that request right now. Please try again in a moment."
+                    )
+                )
+            )
+        ],
     }
     # --- End: UI Validation and Retry Logic ---

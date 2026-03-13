@@ -2,7 +2,7 @@
 
 Tool to generate a standalone catalog that bundles all JSON Schema `$ref` from external files into a single JSON Schema file. 
 
-A2UI v0.9+ requires catalogs be free standing, except for references to `common_types` and `basic_catalog` which are automatically resolved by the A2UI SDK, to simplify LLM inference and dependency management.
+A2UI v0.9+ requires catalogs be free standing, except for references to `common_types` which are automatically resolved by the A2UI SDK, to simplify LLM inference and dependency management.
 
 ## Use
 

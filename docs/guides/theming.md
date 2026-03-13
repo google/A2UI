@@ -47,6 +47,7 @@ Agents provide semantic hints (not visual styles) to guide client rendering:
 ```
 
 **Common `usageHint` values:**
+
 - Text: `h1`, `h2`, `h3`, `h4`, `h5`, `body`, `caption`
 - Other components have their own hints (see [Component Reference](../reference/components.md))
 
@@ -65,18 +66,22 @@ Each renderer provides a way to configure your design system globally, including
 TODO: Add platform-specific theming guides:
 
 **Web (Lit):**
+
 - How to configure theme via renderer initialization
 - Available theme properties
 
 **Angular:**
+
 - Integration with Angular Material theming
 - Standalone A2UI theme configuration
 
 **Flutter:**
+
 - How A2UI uses Flutter's `ThemeData`
 - Custom theme properties
 
 **See working examples:**
+
 - [Lit samples](https://github.com/google/a2ui/tree/main/samples/client/lit)
 - [Angular samples](https://github.com/google/a2ui/tree/main/samples/client/angular)
 - [Flutter GenUI docs](https://docs.flutter.dev/ai/genui)
@@ -86,10 +91,12 @@ TODO: Add platform-specific theming guides:
 Beyond global theming, you can override styles for specific components:
 
 **Web renderers:**
+
 - CSS custom properties (CSS variables) for fine-grained control
 - Standard CSS selectors for component-specific overrides
 
 **Flutter:**
+
 - Widget-specific theme overrides via `ThemeData`
 
 TODO: Add detailed component override examples for each platform.

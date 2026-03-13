@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { Part } from '@a2a-js/sdk';
@@ -21,7 +21,7 @@ import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
 import { isA2aDataPart } from '@a2a_chat_canvas/utils/type-guards';
 import { Surface } from '@a2ui/angular';
 import * as Types from '@a2ui/web_core/types/types';
-import { Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 
 /**
  * Component responsible for rendering an A2UI surface embedded within an A2A message part.
@@ -32,6 +32,7 @@ import { Component, computed, inject, input } from '@angular/core';
   templateUrl: './a2ui-data-part.html',
   styleUrl: './a2ui-data-part.scss',
   imports: [Surface],
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class A2uiDataPart implements RendererComponent {
   /** The UiMessageContent containing the A2A data part with the embedded A2UI message. */
