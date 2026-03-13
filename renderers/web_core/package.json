@@ -40,9 +40,16 @@
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
+    "copy-spec": "wireit",
     "test": "wireit"
   },
   "wireit": {
+    "test": {
+      "command": "find dist -name '*.test.js' | xargs node --test --enable-source-maps --test-reporter spec",
+      "dependencies": [
+        "build"
+      ]
+    },
     "copy-spec": {
       "command": "node scripts/copy-spec.js",
       "files": [
@@ -75,12 +82,6 @@
         "!dist/**/*.min.js{,.map}"
       ],
       "clean": "if-file-deleted"
-    },
-    "test": {
-      "command": "node --test dist",
-      "dependencies": [
-        "build"
-      ]
     }
   },
   "author": "Google",
