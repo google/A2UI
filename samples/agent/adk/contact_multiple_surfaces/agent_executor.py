@@ -53,6 +53,7 @@ class ContactAgentExecutor(AgentExecutor):
     query = ""
     ui_event_part = None
     action = None
+    client_ui_capabilities = None
 
     logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
     use_ui = try_activate_a2ui_extension(context)
@@ -74,6 +75,17 @@ class ContactAgentExecutor(AgentExecutor):
       )
       for i, part in enumerate(context.message.parts):
         if isinstance(part.root, DataPart):
+          # Extract client UI capabilities from any DataPart that has them
+          if (
+              agent.schema_manager.accepts_inline_catalogs
+              and "metadata" in part.root.data
+              and "a2uiClientCapabilities" in part.root.data["metadata"]
+          ):
+            logger.info(f"  Part {i}: Found 'a2uiClientCapabilities' in DataPart.")
+            client_ui_capabilities = part.root.data["metadata"][
+                "a2uiClientCapabilities"
+            ]
+
           if "userAction" in part.root.data:
             logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
             ui_event_part = part.root.data["userAction"]
@@ -81,16 +93,7 @@ class ContactAgentExecutor(AgentExecutor):
             logger.info(f"  Part {i}: Found 'request' in DataPart.")
             query = part.root.data["request"]
 
-            # Check for inline catalog
-            if (
-                agent.schema_manager.accepts_inline_catalogs
-                and "metadata" in part.root.data
-                and "a2uiClientCapabilities" in part.root.data["metadata"]
-            ):
-              logger.info(f"  Part {i}: Found 'a2uiClientCapabilities' in DataPart.")
-              client_ui_capabilities = part.root.data["metadata"][
-                  "a2uiClientCapabilities"
-              ]
+            if client_ui_capabilities:
               catalog = agent.schema_manager.get_selected_catalog(
                   client_ui_capabilities=client_ui_capabilities
               )
@@ -164,7 +167,7 @@ class ContactAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in agent.stream(query, task.context_id):
+    async for item in agent.stream(query, task.context_id, client_ui_capabilities=client_ui_capabilities):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
         await updater.update_status(
