@@ -6,7 +6,7 @@ Both the core data structures and the rendering components interact with **Catal
 
 ## 1. Unified Architecture Overview
 
-The A2UI client architecture follows a strict, unidirectional data flow that bridges language-agnostic data structures with native UI frameworks. 
+The A2UI client architecture has a well-defined data flow that bridges language-agnostic data structures with native UI frameworks.
 
 1. **A2UI Messages** arrive from the server (JSON).
 2. The **`MessageProcessor`** parses these and updates the **`SurfaceModel`** (Agnostic State).
