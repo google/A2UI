@@ -7,7 +7,7 @@ export const ReactCheckBox = createReactComponent(
   CheckBoxApi,
   ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.setValue?.(e.target.checked);
+      props.setValue(e.target.checked);
     };
 
     const uniqueId = React.useId();

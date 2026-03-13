@@ -7,7 +7,7 @@ export const ReactSlider = createReactComponent(
   SliderApi,
   ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.setValue?.(Number(e.target.value));
+      props.setValue(Number(e.target.value));
     };
 
     const uniqueId = React.useId();

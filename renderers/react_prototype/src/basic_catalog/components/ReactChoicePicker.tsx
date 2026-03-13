@@ -13,12 +13,12 @@ export const ReactChoicePicker = createReactComponent(
 
     const onToggle = (val: string) => {
       if (isMutuallyExclusive) {
-        props.setValue?.([val]);
+        props.setValue([val]);
       } else {
         const newValues = values.includes(val) 
           ? values.filter((v: string) => v !== val)
           : [...values, val];
-        props.setValue?.(newValues);
+        props.setValue(newValues);
       }
     };
 

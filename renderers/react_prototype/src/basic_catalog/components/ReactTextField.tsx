@@ -7,7 +7,7 @@ export const ReactTextField = createReactComponent(
   TextFieldApi,
   ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      props.setValue?.(e.target.value);
+      props.setValue(e.target.value);
     };
 
     const isLong = props.variant === "longText";

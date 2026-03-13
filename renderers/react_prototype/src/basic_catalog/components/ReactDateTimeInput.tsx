@@ -7,7 +7,7 @@ export const ReactDateTimeInput = createReactComponent(
   DateTimeInputApi,
   ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.setValue?.(e.target.value);
+      props.setValue(e.target.value);
     };
 
     const uniqueId = React.useId();

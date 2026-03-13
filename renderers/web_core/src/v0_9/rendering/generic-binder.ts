@@ -85,7 +85,7 @@ export type ResolveA2uiProp<T> =
   Exclude<T, DynamicTypes> extends never ? any : Exclude<T, DynamicTypes>;
 
 export type GenerateSetters<T> = {
-  [K in keyof T as IsDynamic<T[K]> extends true ? `set${Capitalize<string & K>}` : never]: 
+  [K in keyof T as IsDynamic<T[K]> extends true ? `set${Capitalize<string & K>}` : never]-?: 
     (value: Exclude<NonNullable<T[K]>, DynamicTypes>) => void; 
 };
 
@@ -214,19 +214,26 @@ export class GenericBinder<T> {
       case 'OBJECT': {
         if (typeof value !== 'object') return value;
         const result: any = {};
+        
+        // 1. Resolve all provided properties
         for (const [k, v] of Object.entries(value)) {
           const childBehavior = behavior.shape[k] || { type: 'STATIC' };
           result[k] = this.resolveAndBind(v, childBehavior, [...path, k], isSync);
-          
+        }
+
+        // 2. Ensure all dynamic setters exist, even if the property wasn't provided in the payload
+        for (const [k, childBehavior] of Object.entries(behavior.shape)) {
           if (childBehavior.type === 'DYNAMIC') {
             const setterName = `set${k.charAt(0).toUpperCase() + k.slice(1)}`;
+            const rawPropValue = value[k];
             result[setterName] = (newValue: any) => {
-               if (v && typeof v === 'object' && 'path' in v) {
-                 this.context.dataContext.set((v as any).path, newValue);
+               if (rawPropValue && typeof rawPropValue === 'object' && 'path' in rawPropValue) {
+                 this.context.dataContext.set((rawPropValue as any).path, newValue);
                }
             };
           }
         }
+        
         return result;
       }
     }
