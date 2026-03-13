@@ -16,7 +16,8 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@a2ui/web_core/styles/icons": ["../web_core/src/v0_8/styles/icons.ts"]
     }
   },
   "include": ["src/**/*", "tests/**/*"],

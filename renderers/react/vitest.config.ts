@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
+
+const webCoreIconsPath = fileURLToPath(
+  new URL('../web_core/src/v0_8/styles/icons.ts', import.meta.url)
+);
 
 export default defineConfig({
   test: {
@@ -30,8 +35,15 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      '@': './src',
-    },
+    alias: [
+      {
+        find: '@a2ui/web_core/styles/icons',
+        replacement: webCoreIconsPath,
+      },
+      {
+        find: '@',
+        replacement: './src',
+      },
+    ],
   },
 });

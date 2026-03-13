@@ -16,18 +16,10 @@
 
 import {memo} from 'react';
 import type * as Types from '@a2ui/web_core/types/types';
+import {toMaterialSymbolLigature} from '@a2ui/web_core/styles/icons';
 import type {A2UIComponentProps} from '../../types';
 import {useA2UIComponent} from '../../hooks/useA2UIComponent';
 import {classMapToString, stylesToObject} from '../../lib/utils';
-
-/**
- * Convert camelCase to snake_case for Material Symbols font.
- * e.g., "shoppingCart" -> "shopping_cart"
- * This matches the Lit renderer's approach.
- */
-function toSnakeCase(str: string): string {
-  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
-}
 
 /**
  * Icon component - renders an icon using Material Symbols Outlined font.
@@ -51,7 +43,7 @@ export const Icon = memo(function Icon({node, surfaceId}: A2UIComponentProps<Typ
   }
 
   // Convert camelCase to snake_case for Material Symbols
-  const snakeCaseName = toSnakeCase(iconName);
+  const snakeCaseName = toMaterialSymbolLigature(iconName);
 
   // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
   const hostStyle: React.CSSProperties =
