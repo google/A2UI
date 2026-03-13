@@ -32,10 +32,10 @@ UI_DESCRIPTION = """
 
 
 def get_text_prompt() -> str:
-  """
-  Constructs the prompt for a text-only agent.
-  """
-  return """
+    """
+    Constructs the prompt for a text-only agent.
+    """
+    return """
     You are a helpful restaurant finding assistant. Your final output MUST be a text response.
 
     To generate the response, you MUST follow these rules:
@@ -52,27 +52,29 @@ def get_text_prompt() -> str:
 
 
 if __name__ == "__main__":
-  # Example of how to use the A2UI Schema Manager to generate a system prompt
-  # In your actual application, you would call this from your main agent logic.
+    # Example of how to use the A2UI Schema Manager to generate a system prompt
+    # In your actual application, you would call this from your main agent logic.
 
-  # You can now easily construct a prompt with the relevant examples.
-  # For a different agent (e.g., a flight booker), you would pass in
-  # different examples but use the same `get_ui_prompt` function.
-  restaurant_prompt = A2uiSchemaManager(
-      VERSION_0_8,
-      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
-      schema_modifiers=[remove_strict_validation],
-  ).generate_system_prompt(
-      role_description=ROLE_DESCRIPTION,
-      ui_description=UI_DESCRIPTION,
-      include_schema=True,
-      include_examples=True,
-      validate_examples=True,
-  )
+    # You can now easily construct a prompt with the relevant examples.
+    # For a different agent (e.g., a flight booker), you would pass in
+    # different examples but use the same `get_ui_prompt` function.
+    restaurant_prompt = A2uiSchemaManager(
+        VERSION_0_8,
+        catalogs=[
+            BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
+        ],
+        schema_modifiers=[remove_strict_validation],
+    ).generate_system_prompt(
+        role_description=ROLE_DESCRIPTION,
+        ui_description=UI_DESCRIPTION,
+        include_schema=True,
+        include_examples=True,
+        validate_examples=True,
+    )
 
-  print(restaurant_prompt)
+    print(restaurant_prompt)
 
-  # This demonstrates how you could save the prompt to a file for inspection
-  with open("generated_prompt.txt", "w") as f:
-    f.write(restaurant_prompt)
-  print("\nGenerated prompt saved to generated_prompt.txt")
+    # This demonstrates how you could save the prompt to a file for inspection
+    with open("generated_prompt.txt", "w") as f:
+        f.write(restaurant_prompt)
+    print("\nGenerated prompt saved to generated_prompt.txt")

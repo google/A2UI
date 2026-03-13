@@ -38,7 +38,12 @@ LOCATION_SURFACE_ID = "location-surface"
 def load_floor_plan_example(html_content: str = "") -> list[dict]:
   """Constructs the JSON for the location surface displaying the floor plan."""
   import os
-  title_suffix = "(MCP Apps)" if os.environ.get("USE_MCP_SANDBOX", "true").lower() == "true" else "(iFrame)"
+
+  title_suffix = (
+      "(MCP Apps)"
+      if os.environ.get("USE_MCP_SANDBOX", "true").lower() == "true"
+      else "(iFrame)"
+  )
   return [
       {
           "beginRendering": {
@@ -73,32 +78,36 @@ def load_floor_plan_example(html_content: str = "") -> list[dict]:
                       "component": {
                           "Text": {
                               "usageHint": "h2",
-                              "text": {"literalString": f"Office Floor Plan {title_suffix}"},
+                              "text": {
+                                  "literalString": f"Office Floor Plan {title_suffix}"
+                              },
                           }
                       },
                   },
                   {
                       "id": "floor-plan-comp",
-                      "component": {
-                          "McpApp": {
-                              "htmlContent": html_content,
-                              "height": 400,
-                              "allowedTools": ["chart_node_click"],
+                      "component": (
+                          {
+                              "McpApp": {
+                                  "htmlContent": html_content,
+                                  "height": 400,
+                                  "allowedTools": ["chart_node_click"],
+                              }
                           }
-                      } if os.environ.get("USE_MCP_SANDBOX", "true").lower() == "true" else {
-                          "WebFrame": {
-                              "html": html_content,
-                              "height": 400,
-                              "interactionMode": "interactive",
-                              "allowedEvents": ["chart_node_click"],
+                          if os.environ.get("USE_MCP_SANDBOX", "true").lower() == "true"
+                          else {
+                              "WebFrame": {
+                                  "html": html_content,
+                                  "height": 400,
+                                  "interactionMode": "interactive",
+                                  "allowedEvents": ["chart_node_click"],
+                              }
                           }
-                      },
+                      ),
                   },
                   {
                       "id": "dismiss-fp-text",
-                      "component": {
-                          "Text": {"text": {"literalString": "Close Map"}}
-                      },
+                      "component": {"Text": {"text": {"literalString": "Close Map"}}},
                   },
                   {
                       "id": "dismiss-fp",
@@ -115,16 +124,19 @@ def load_floor_plan_example(html_content: str = "") -> list[dict]:
       },
   ]
 
+
 def load_close_modal_example() -> list[dict]:
   """Constructs the JSON for closing the floor plan modal."""
   return [{"deleteSurface": {"surfaceId": LOCATION_SURFACE_ID}}]
 
+
 def load_send_message_example(contact_name: str) -> str:
   """Constructs the JSON string for the send message confirmation."""
   from pathlib import Path
+
   examples_dir = Path(os.path.dirname(__file__)) / "examples"
   action_file = examples_dir / "action_confirmation.json"
-  
+
   if action_file.exists():
     json_content = action_file.read_text(encoding="utf-8").strip()
     if contact_name != "Unknown":

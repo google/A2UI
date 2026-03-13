@@ -1,3 +1,17 @@
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import asyncio
 from mcp.server import Server
 from mcp.types import Resource, TextContent
@@ -30,6 +44,7 @@ async def read_resource(uri: str) -> str | bytes:
   agent_static_url = os.environ.get("AGENT_STATIC_URL", "http://localhost:10004")
 
   from pathlib import Path
+
   template_path = Path(__file__).parent / "floor_plan_template.html"
   html = template_path.read_text(encoding="utf-8")
   html = html.replace("__AGENT_STATIC_URL__", agent_static_url)

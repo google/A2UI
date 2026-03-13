@@ -101,7 +101,10 @@ class ContactAgent:
             " team)."
         ),
         tags=["contact", "directory", "people", "finder"],
-        examples=["Who is David Chen in marketing?", "Find Sarah Lee from engineering"],
+        examples=[
+            "Who is David Chen in marketing?",
+            "Find Sarah Lee from engineering",
+        ],
     )
 
     return AgentCard(
@@ -151,7 +154,7 @@ class ContactAgent:
       return None
 
     from a2ui_examples import load_floor_plan_example, load_close_modal_example, load_send_message_example
-    
+
     if "send_message" in query:
       logger.info("--- ContactAgent.stream: Detected send_message ACTION ---")
       contact_name = "Unknown"
@@ -165,7 +168,7 @@ class ContactAgent:
           f"Message sent to {contact_name}\n"
           f"{A2UI_OPEN_TAG}\n{json_content}\n{A2UI_CLOSE_TAG}"
       )
-      
+
       return {
           "is_task_complete": True,
           "parts": parse_response_to_parts(final_response_content),
@@ -183,7 +186,10 @@ class ContactAgent:
         async with sse_client(sse_url) as (read, write):
           async with ClientSession(read, write) as mcp_session:
             await mcp_session.initialize()
-            logger.info("--- ContactAgent: Fetching ui://floor-plan-server/map from persistent SSE server ---")
+            logger.info(
+                "--- ContactAgent: Fetching ui://floor-plan-server/map from persistent"
+                " SSE server ---"
+            )
             result = await mcp_session.read_resource("ui://floor-plan-server/map")
 
             if not result.contents or len(result.contents) == 0:
@@ -192,41 +198,43 @@ class ContactAgent:
       except Exception as e:
         logger.error(f"Failed to fetch floor plan: {e}")
         return {
-            "is_task_complete": True, 
-            "parts": parse_response_to_parts(f"Failed to load floor plan data: {str(e)}")
+            "is_task_complete": True,
+            "parts": parse_response_to_parts(
+                f"Failed to load floor plan data: {str(e)}"
+            ),
         }
 
       json_content = json.dumps(load_floor_plan_example(html_content))
       logger.info(f"--- ContactAgent.stream: Sending Floor Plan ---")
-      
+
       final_response_content = (
-          "Here is the floor plan.\n"
-          f"{A2UI_OPEN_TAG}\n{json_content}\n{A2UI_CLOSE_TAG}"
+          f"Here is the floor plan.\n{A2UI_OPEN_TAG}\n{json_content}\n{A2UI_CLOSE_TAG}"
       )
 
       return {
-          "is_task_complete": True, 
-          "parts": parse_response_to_parts(final_response_content)
+          "is_task_complete": True,
+          "parts": parse_response_to_parts(final_response_content),
       }
 
     elif "close_modal" in query:
       logger.info("--- ContactAgent.stream: Handling close_modal ACTION ---")
       # Action maps to closing the FloorPlan overlay
       json_content = json.dumps(load_close_modal_example())
-      
+
       final_response_content = (
-          "Modal closed.\n"
-          f"{A2UI_OPEN_TAG}\n{json_content}\n{A2UI_CLOSE_TAG}"
+          f"Modal closed.\n{A2UI_OPEN_TAG}\n{json_content}\n{A2UI_CLOSE_TAG}"
       )
 
       return {
-          "is_task_complete": True, 
-          "parts": parse_response_to_parts(final_response_content)
+          "is_task_complete": True,
+          "parts": parse_response_to_parts(final_response_content),
       }
-      
+
     return None
 
-  async def stream(self, query, session_id, client_ui_capabilities: dict[str, Any] | None = None) -> AsyncIterable[dict[str, Any]]:
+  async def stream(
+      self, query, session_id, client_ui_capabilities: dict[str, Any] | None = None
+  ) -> AsyncIterable[dict[str, Any]]:
     session_state = {"base_url": self.base_url}
 
     session = await self._runner.session_service.get_session(

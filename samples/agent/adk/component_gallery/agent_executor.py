@@ -29,47 +29,47 @@ logger = logging.getLogger(__name__)
 
 class ComponentGalleryExecutor(AgentExecutor):
 
-  def __init__(self, base_url: str):
-    self.agent = ComponentGalleryAgent(base_url=base_url)
+    def __init__(self, base_url: str):
+        self.agent = ComponentGalleryAgent(base_url=base_url)
 
-  async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
-    query = "START"  # Default start
-    ui_event_part = None
+    async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
+        query = "START"  # Default start
+        ui_event_part = None
 
-    try_activate_a2ui_extension(context)
+        try_activate_a2ui_extension(context)
 
-    if context.message and context.message.parts:
-      for part in context.message.parts:
-        if isinstance(part.root, DataPart):
-          if "userAction" in part.root.data:
-            ui_event_part = part.root.data["userAction"]
-          elif "request" in part.root.data:
-            query = part.root.data["request"]
-        elif isinstance(part.root, TextPart):
-          # If user says something, might want to handle it, but for now defaults to START usually for initial connection
-          if part.root.text:
-            query = part.root.text
+        if context.message and context.message.parts:
+            for part in context.message.parts:
+                if isinstance(part.root, DataPart):
+                    if "userAction" in part.root.data:
+                        ui_event_part = part.root.data["userAction"]
+                    elif "request" in part.root.data:
+                        query = part.root.data["request"]
+                elif isinstance(part.root, TextPart):
+                    # If user says something, might want to handle it, but for now defaults to START usually for initial connection
+                    if part.root.text:
+                        query = part.root.text
 
-    if ui_event_part:
-      action = ui_event_part.get("name")
-      ctx = ui_event_part.get("context", {})
-      query = f"ACTION: {action} with {ctx}"
+        if ui_event_part:
+            action = ui_event_part.get("name")
+            ctx = ui_event_part.get("context", {})
+            query = f"ACTION: {action} with {ctx}"
 
-    task = context.current_task
-    if not task:
-      task = new_task(context.message)
-      await event_queue.enqueue_event(task)
+        task = context.current_task
+        if not task:
+            task = new_task(context.message)
+            await event_queue.enqueue_event(task)
 
-    updater = TaskUpdater(event_queue, task.id, task.context_id)
+        updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in self.agent.stream(query, task.context_id):
-      final_parts = item["parts"]
+        async for item in self.agent.stream(query, task.context_id):
+            final_parts = item["parts"]
 
-      await updater.update_status(
-          TaskState.completed,
-          new_agent_parts_message(final_parts, task.context_id, task.id),
-          final=True,
-      )
+            await updater.update_status(
+                TaskState.completed,
+                new_agent_parts_message(final_parts, task.context_id, task.id),
+                final=True,
+            )
 
-  async def cancel(self, request, event_queue):
-    pass
+    async def cancel(self, request, event_queue):
+        pass

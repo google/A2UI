@@ -41,93 +41,93 @@ logger = logging.getLogger(__name__)
 
 
 class MissingAPIKeyError(Exception):
-  """Exception for missing API key."""
+    """Exception for missing API key."""
 
 
 @click.command()
 @click.option("--host", default="localhost")
 @click.option("--port", default=10002)
 def main(host, port):
-  try:
-    # Check for API key only if Vertex AI is not configured
-    if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
-      if not os.getenv("GEMINI_API_KEY"):
-        raise MissingAPIKeyError(
-            "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI"
-            " is not TRUE."
+    try:
+        # Check for API key only if Vertex AI is not configured
+        if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
+            if not os.getenv("GEMINI_API_KEY"):
+                raise MissingAPIKeyError(
+                    "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI"
+                    " is not TRUE."
+                )
+
+        lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+
+        base_url = f"http://{host}:{port}"
+
+        schema_manager = A2uiSchemaManager(
+            VERSION_0_8,
+            catalogs=[
+                CatalogConfig.from_path(
+                    name="rizzcharts",
+                    catalog_path="rizzcharts_catalog_definition.json",
+                    examples_path="examples/rizzcharts_catalog",
+                ),
+                BasicCatalog.get_config(
+                    version=VERSION_0_8,
+                    examples_path="examples/standard_catalog",
+                ),
+            ],
+            accepts_inline_catalogs=True,
         )
 
-    lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+        agent = RizzchartsAgent(
+            base_url=base_url,
+            model=LiteLlm(model=lite_llm_model),
+            schema_manager=schema_manager,
+            a2ui_enabled_provider=get_a2ui_enabled,
+            a2ui_catalog_provider=get_a2ui_catalog,
+            a2ui_examples_provider=get_a2ui_examples,
+        )
+        runner = Runner(
+            app_name=agent.name,
+            agent=agent,
+            artifact_service=InMemoryArtifactService(),
+            session_service=InMemorySessionService(),
+            memory_service=InMemoryMemoryService(),
+        )
 
-    base_url = f"http://{host}:{port}"
+        agent_executor = RizzchartsAgentExecutor(
+            base_url=base_url,
+            runner=runner,
+            schema_manager=schema_manager,
+        )
 
-    schema_manager = A2uiSchemaManager(
-        VERSION_0_8,
-        catalogs=[
-            CatalogConfig.from_path(
-                name="rizzcharts",
-                catalog_path="rizzcharts_catalog_definition.json",
-                examples_path="examples/rizzcharts_catalog",
-            ),
-            BasicCatalog.get_config(
-                version=VERSION_0_8,
-                examples_path="examples/standard_catalog",
-            ),
-        ],
-        accepts_inline_catalogs=True,
-    )
+        request_handler = DefaultRequestHandler(
+            agent_executor=agent_executor,
+            task_store=InMemoryTaskStore(),
+        )
+        server = A2AStarletteApplication(
+            agent_card=agent.get_agent_card(), http_handler=request_handler
+        )
+        import uvicorn
 
-    agent = RizzchartsAgent(
-        base_url=base_url,
-        model=LiteLlm(model=lite_llm_model),
-        schema_manager=schema_manager,
-        a2ui_enabled_provider=get_a2ui_enabled,
-        a2ui_catalog_provider=get_a2ui_catalog,
-        a2ui_examples_provider=get_a2ui_examples,
-    )
-    runner = Runner(
-        app_name=agent.name,
-        agent=agent,
-        artifact_service=InMemoryArtifactService(),
-        session_service=InMemorySessionService(),
-        memory_service=InMemoryMemoryService(),
-    )
+        app = server.build()
 
-    agent_executor = RizzchartsAgentExecutor(
-        base_url=base_url,
-        runner=runner,
-        schema_manager=schema_manager,
-    )
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["http://localhost:5173"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
-    request_handler = DefaultRequestHandler(
-        agent_executor=agent_executor,
-        task_store=InMemoryTaskStore(),
-    )
-    server = A2AStarletteApplication(
-        agent_card=agent.get_agent_card(), http_handler=request_handler
-    )
-    import uvicorn
-
-    app = server.build()
-
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["http://localhost:5173"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
-    uvicorn.run(app, host=host, port=port)
-  except MissingAPIKeyError as e:
-    logger.error(f"Error: {e} {traceback.format_exc()}")
-    exit(1)
-  except Exception as e:
-    logger.error(
-        f"An error occurred during server startup: {e} {traceback.format_exc()}"
-    )
-    exit(1)
+        uvicorn.run(app, host=host, port=port)
+    except MissingAPIKeyError as e:
+        logger.error(f"Error: {e} {traceback.format_exc()}")
+        exit(1)
+    except Exception as e:
+        logger.error(
+            f"An error occurred during server startup: {e} {traceback.format_exc()}"
+        )
+        exit(1)
 
 
 if __name__ == "__main__":
-  main()
+    main()

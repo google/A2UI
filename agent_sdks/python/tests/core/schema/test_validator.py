@@ -48,7 +48,10 @@ class TestValidator:
                             "catalogId": {
                                 "type": "string",
                             },
-                            "theme": {"type": "object", "additionalProperties": True},
+                            "theme": {
+                                "type": "object",
+                                "additionalProperties": True,
+                            },
                         },
                         "required": ["surfaceId", "catalogId"],
                         "additionalProperties": False,
@@ -495,7 +498,10 @@ class TestValidator:
                 "children": {
                     "type": "object",
                     "properties": {
-                        "explicitList": {"type": "array", "items": {"type": "string"}}
+                        "explicitList": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        }
                     },
                     "required": ["explicitList"],
                 }
@@ -724,23 +730,35 @@ class TestValidator:
 
       if catalog.version == VERSION_0_8:
         payload = {
-            "surfaceUpdate": {"surfaceId": "test-surface", "components": processed}
+            "surfaceUpdate": {
+                "surfaceId": "test-surface",
+                "components": processed,
+            }
         }
       else:
         payload = {
             "version": "v0.9",
-            "updateComponents": {"surfaceId": "test-surface", "components": processed},
+            "updateComponents": {
+                "surfaceId": "test-surface",
+                "components": processed,
+            },
         }
 
     elif data_model:
       if catalog.version == VERSION_0_8:
         payload = {
-            "dataModelUpdate": {"surfaceId": "test-surface", "contents": data_model}
+            "dataModelUpdate": {
+                "surfaceId": "test-surface",
+                "contents": data_model,
+            }
         }
       else:
         payload = {
             "version": "v0.9",
-            "updateDataModel": {"surfaceId": "test-surface", "value": data_model},
+            "updateDataModel": {
+                "surfaceId": "test-surface",
+                "value": data_model,
+            },
         }
 
     if payload is None:

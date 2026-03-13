@@ -146,7 +146,7 @@ class A2uiSchemaManager(InferenceStrategy):
       # Load the first inline catalog schema.
       inline_catalog_schema = inline_catalogs[0]
       inline_catalog_schema = self._apply_modifiers(inline_catalog_schema)
-      
+
       # Deep merge the standard catalog properties with the inline catalog
       merged_schema = copy.deepcopy(self._supported_catalogs[0].catalog_schema)
       deep_update(merged_schema, inline_catalog_schema)

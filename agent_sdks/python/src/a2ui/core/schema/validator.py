@@ -298,7 +298,9 @@ class A2uiValidator:
       _validate_recursion_and_paths(message)
 
 
-def _find_root_id(messages: List[Dict[str, Any]], surface_id: Optional[str] = None) -> Optional[str]:
+def _find_root_id(
+    messages: List[Dict[str, Any]], surface_id: Optional[str] = None
+) -> Optional[str]:
   """
   Finds the root id from a list of A2UI messages for a given surface.
   - For v0.8, the root id is in the beginRendering message.

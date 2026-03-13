@@ -44,96 +44,96 @@ _A2UI_EXAMPLES_KEY = "system:a2ui_examples"
 
 
 def get_a2ui_catalog(ctx: ReadonlyContext):
-  """Retrieves the A2UI catalog from the session state.
+    """Retrieves the A2UI catalog from the session state.
 
-  Args:
-      ctx: The ReadonlyContext for resolving the catalog.
+    Args:
+        ctx: The ReadonlyContext for resolving the catalog.
 
-  Returns:
-      The A2UI catalog or None if not found.
-  """
-  return ctx.state.get(_A2UI_CATALOG_KEY)
+    Returns:
+        The A2UI catalog or None if not found.
+    """
+    return ctx.state.get(_A2UI_CATALOG_KEY)
 
 
 def get_a2ui_examples(ctx: ReadonlyContext):
-  """Retrieves the A2UI examples from the session state.
+    """Retrieves the A2UI examples from the session state.
 
-  Args:
-      ctx: The ReadonlyContext for resolving the examples.
+    Args:
+        ctx: The ReadonlyContext for resolving the examples.
 
-  Returns:
-      The A2UI examples or None if not found.
-  """
-  return ctx.state.get(_A2UI_EXAMPLES_KEY)
+    Returns:
+        The A2UI examples or None if not found.
+    """
+    return ctx.state.get(_A2UI_EXAMPLES_KEY)
 
 
 def get_a2ui_enabled(ctx: ReadonlyContext):
-  """Checks if A2UI is enabled in the current session.
+    """Checks if A2UI is enabled in the current session.
 
-  Args:
-      ctx: The ReadonlyContext for resolving enablement.
+    Args:
+        ctx: The ReadonlyContext for resolving enablement.
 
-  Returns:
-      True if A2UI is enabled, False otherwise.
-  """
-  return ctx.state.get(_A2UI_ENABLED_KEY, False)
+    Returns:
+        True if A2UI is enabled, False otherwise.
+    """
+    return ctx.state.get(_A2UI_ENABLED_KEY, False)
 
 
 class RizzchartsAgentExecutor(A2aAgentExecutor):
-  """Executor for the Rizzcharts agent that handles A2UI session setup."""
+    """Executor for the Rizzcharts agent that handles A2UI session setup."""
 
-  def __init__(
-      self,
-      base_url: str,
-      runner: Runner,
-      schema_manager: A2uiSchemaManager,
-  ):
-    self._base_url = base_url
-    self.schema_manager = schema_manager
+    def __init__(
+        self,
+        base_url: str,
+        runner: Runner,
+        schema_manager: A2uiSchemaManager,
+    ):
+        self._base_url = base_url
+        self.schema_manager = schema_manager
 
-    config = A2aAgentExecutorConfig(event_converter=A2uiEventConverter())
-    super().__init__(runner=runner, config=config)
+        config = A2aAgentExecutorConfig(event_converter=A2uiEventConverter())
+        super().__init__(runner=runner, config=config)
 
-  @override
-  async def _prepare_session(
-      self,
-      context: RequestContext,
-      run_request: AgentRunRequest,
-      runner: Runner,
-  ):
-    logger.info(f"Loading session for message {context.message}")
+    @override
+    async def _prepare_session(
+        self,
+        context: RequestContext,
+        run_request: AgentRunRequest,
+        runner: Runner,
+    ):
+        logger.info(f"Loading session for message {context.message}")
 
-    session = await super()._prepare_session(context, run_request, runner)
+        session = await super()._prepare_session(context, run_request, runner)
 
-    if "base_url" not in session.state:
-      session.state["base_url"] = self._base_url
+        if "base_url" not in session.state:
+            session.state["base_url"] = self._base_url
 
-    use_ui = try_activate_a2ui_extension(context)
-    if use_ui:
-      capabilities = (
-          context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY)
-          if context.message and context.message.metadata
-          else None
-      )
-      a2ui_catalog = self.schema_manager.get_selected_catalog(
-          client_ui_capabilities=capabilities
-      )
+        use_ui = try_activate_a2ui_extension(context)
+        if use_ui:
+            capabilities = (
+                context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY)
+                if context.message and context.message.metadata
+                else None
+            )
+            a2ui_catalog = self.schema_manager.get_selected_catalog(
+                client_ui_capabilities=capabilities
+            )
 
-      examples = self.schema_manager.load_examples(a2ui_catalog, validate=True)
+            examples = self.schema_manager.load_examples(a2ui_catalog, validate=True)
 
-      await runner.session_service.append_event(
-          session,
-          Event(
-              invocation_id=new_invocation_context_id(),
-              author="system",
-              actions=EventActions(
-                  state_delta={
-                      _A2UI_ENABLED_KEY: True,
-                      _A2UI_CATALOG_KEY: a2ui_catalog,
-                      _A2UI_EXAMPLES_KEY: examples,
-                  }
-              ),
-          ),
-      )
+            await runner.session_service.append_event(
+                session,
+                Event(
+                    invocation_id=new_invocation_context_id(),
+                    author="system",
+                    actions=EventActions(
+                        state_delta={
+                            _A2UI_ENABLED_KEY: True,
+                            _A2UI_CATALOG_KEY: a2ui_catalog,
+                            _A2UI_EXAMPLES_KEY: examples,
+                        }
+                    ),
+                ),
+            )
 
-    return session
+        return session

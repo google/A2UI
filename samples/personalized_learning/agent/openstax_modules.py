@@ -284,215 +284,1035 @@ MODULE_TO_CHAPTER_SLUG = {
 # Complete module index with titles, units, and chapters
 # Generated from the collection XML
 MODULE_INDEX = {
-    "m45849": {"title": "The Periodic Table of Elements", "unit": "Front Matter", "chapter": "Front Matter"},
-    "m60107": {"title": "Geological Time", "unit": "Front Matter", "chapter": "Front Matter"},
-    "m62716": {"title": "Introduction", "unit": "The Chemistry of Life", "chapter": "The Study of Life"},
-    "m62717": {"title": "The Science of Biology", "unit": "The Chemistry of Life", "chapter": "The Study of Life"},
-    "m62718": {"title": "Themes and Concepts of Biology", "unit": "The Chemistry of Life", "chapter": "The Study of Life"},
-    "m62719": {"title": "Introduction", "unit": "The Chemistry of Life", "chapter": "The Chemical Foundation of Life"},
-    "m62720": {"title": "Atoms, Isotopes, Ions, and Molecules: The Building Blocks", "unit": "The Chemistry of Life", "chapter": "The Chemical Foundation of Life"},
-    "m62721": {"title": "Water", "unit": "The Chemistry of Life", "chapter": "The Chemical Foundation of Life"},
-    "m62722": {"title": "Carbon", "unit": "The Chemistry of Life", "chapter": "The Chemical Foundation of Life"},
-    "m62723": {"title": "Introduction", "unit": "The Chemistry of Life", "chapter": "Biological Macromolecules"},
-    "m62724": {"title": "Synthesis of Biological Macromolecules", "unit": "The Chemistry of Life", "chapter": "Biological Macromolecules"},
-    "m62726": {"title": "Carbohydrates", "unit": "The Chemistry of Life", "chapter": "Biological Macromolecules"},
-    "m62730": {"title": "Lipids", "unit": "The Chemistry of Life", "chapter": "Biological Macromolecules"},
-    "m62733": {"title": "Proteins", "unit": "The Chemistry of Life", "chapter": "Biological Macromolecules"},
-    "m62735": {"title": "Nucleic Acids", "unit": "The Chemistry of Life", "chapter": "Biological Macromolecules"},
-    "m62736": {"title": "Introduction", "unit": "The Cell", "chapter": "Cell Structure"},
-    "m62738": {"title": "Studying Cells", "unit": "The Cell", "chapter": "Cell Structure"},
-    "m62740": {"title": "Prokaryotic Cells", "unit": "The Cell", "chapter": "Cell Structure"},
-    "m62742": {"title": "Eukaryotic Cells", "unit": "The Cell", "chapter": "Cell Structure"},
-    "m62743": {"title": "The Endomembrane System and Proteins", "unit": "The Cell", "chapter": "Cell Structure"},
-    "m62744": {"title": "Cytoskeleton", "unit": "The Cell", "chapter": "Cell Structure"},
-    "m62746": {"title": "Connections between Cells and Cellular Activities", "unit": "The Cell", "chapter": "Cell Structure"},
-    "m62753": {"title": "Passive Transport", "unit": "The Cell", "chapter": "Structure and Function of Plasma Membranes"},
+    "m45849": {
+        "title": "The Periodic Table of Elements",
+        "unit": "Front Matter",
+        "chapter": "Front Matter",
+    },
+    "m60107": {
+        "title": "Geological Time",
+        "unit": "Front Matter",
+        "chapter": "Front Matter",
+    },
+    "m62716": {
+        "title": "Introduction",
+        "unit": "The Chemistry of Life",
+        "chapter": "The Study of Life",
+    },
+    "m62717": {
+        "title": "The Science of Biology",
+        "unit": "The Chemistry of Life",
+        "chapter": "The Study of Life",
+    },
+    "m62718": {
+        "title": "Themes and Concepts of Biology",
+        "unit": "The Chemistry of Life",
+        "chapter": "The Study of Life",
+    },
+    "m62719": {
+        "title": "Introduction",
+        "unit": "The Chemistry of Life",
+        "chapter": "The Chemical Foundation of Life",
+    },
+    "m62720": {
+        "title": "Atoms, Isotopes, Ions, and Molecules: The Building Blocks",
+        "unit": "The Chemistry of Life",
+        "chapter": "The Chemical Foundation of Life",
+    },
+    "m62721": {
+        "title": "Water",
+        "unit": "The Chemistry of Life",
+        "chapter": "The Chemical Foundation of Life",
+    },
+    "m62722": {
+        "title": "Carbon",
+        "unit": "The Chemistry of Life",
+        "chapter": "The Chemical Foundation of Life",
+    },
+    "m62723": {
+        "title": "Introduction",
+        "unit": "The Chemistry of Life",
+        "chapter": "Biological Macromolecules",
+    },
+    "m62724": {
+        "title": "Synthesis of Biological Macromolecules",
+        "unit": "The Chemistry of Life",
+        "chapter": "Biological Macromolecules",
+    },
+    "m62726": {
+        "title": "Carbohydrates",
+        "unit": "The Chemistry of Life",
+        "chapter": "Biological Macromolecules",
+    },
+    "m62730": {
+        "title": "Lipids",
+        "unit": "The Chemistry of Life",
+        "chapter": "Biological Macromolecules",
+    },
+    "m62733": {
+        "title": "Proteins",
+        "unit": "The Chemistry of Life",
+        "chapter": "Biological Macromolecules",
+    },
+    "m62735": {
+        "title": "Nucleic Acids",
+        "unit": "The Chemistry of Life",
+        "chapter": "Biological Macromolecules",
+    },
+    "m62736": {
+        "title": "Introduction",
+        "unit": "The Cell",
+        "chapter": "Cell Structure",
+    },
+    "m62738": {
+        "title": "Studying Cells",
+        "unit": "The Cell",
+        "chapter": "Cell Structure",
+    },
+    "m62740": {
+        "title": "Prokaryotic Cells",
+        "unit": "The Cell",
+        "chapter": "Cell Structure",
+    },
+    "m62742": {
+        "title": "Eukaryotic Cells",
+        "unit": "The Cell",
+        "chapter": "Cell Structure",
+    },
+    "m62743": {
+        "title": "The Endomembrane System and Proteins",
+        "unit": "The Cell",
+        "chapter": "Cell Structure",
+    },
+    "m62744": {
+        "title": "Cytoskeleton",
+        "unit": "The Cell",
+        "chapter": "Cell Structure",
+    },
+    "m62746": {
+        "title": "Connections between Cells and Cellular Activities",
+        "unit": "The Cell",
+        "chapter": "Cell Structure",
+    },
+    "m62753": {
+        "title": "Passive Transport",
+        "unit": "The Cell",
+        "chapter": "Structure and Function of Plasma Membranes",
+    },
     "m62761": {"title": "Introduction", "unit": "The Cell", "chapter": "Metabolism"},
-    "m62763": {"title": "Energy and Metabolism", "unit": "The Cell", "chapter": "Metabolism"},
-    "m62764": {"title": "Potential, Kinetic, Free, and Activation Energy", "unit": "The Cell", "chapter": "Metabolism"},
-    "m62767": {"title": "The Laws of Thermodynamics", "unit": "The Cell", "chapter": "Metabolism"},
-    "m62768": {"title": "ATP: Adenosine Triphosphate", "unit": "The Cell", "chapter": "Metabolism"},
-    "m62770": {"title": "Active Transport", "unit": "The Cell", "chapter": "Structure and Function of Plasma Membranes"},
-    "m62772": {"title": "Bulk Transport", "unit": "The Cell", "chapter": "Structure and Function of Plasma Membranes"},
-    "m62773": {"title": "Components and Structure", "unit": "The Cell", "chapter": "Structure and Function of Plasma Membranes"},
+    "m62763": {
+        "title": "Energy and Metabolism",
+        "unit": "The Cell",
+        "chapter": "Metabolism",
+    },
+    "m62764": {
+        "title": "Potential, Kinetic, Free, and Activation Energy",
+        "unit": "The Cell",
+        "chapter": "Metabolism",
+    },
+    "m62767": {
+        "title": "The Laws of Thermodynamics",
+        "unit": "The Cell",
+        "chapter": "Metabolism",
+    },
+    "m62768": {
+        "title": "ATP: Adenosine Triphosphate",
+        "unit": "The Cell",
+        "chapter": "Metabolism",
+    },
+    "m62770": {
+        "title": "Active Transport",
+        "unit": "The Cell",
+        "chapter": "Structure and Function of Plasma Membranes",
+    },
+    "m62772": {
+        "title": "Bulk Transport",
+        "unit": "The Cell",
+        "chapter": "Structure and Function of Plasma Membranes",
+    },
+    "m62773": {
+        "title": "Components and Structure",
+        "unit": "The Cell",
+        "chapter": "Structure and Function of Plasma Membranes",
+    },
     "m62778": {"title": "Enzymes", "unit": "The Cell", "chapter": "Metabolism"},
-    "m62780": {"title": "Introduction", "unit": "The Cell", "chapter": "Structure and Function of Plasma Membranes"},
-    "m62784": {"title": "Introduction", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62786": {"title": "Energy in Living Systems", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62787": {"title": "Glycolysis", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62788": {"title": "Oxidation of Pyruvate and the Citric Acid Cycle", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62789": {"title": "Oxidative Phosphorylation", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62790": {"title": "Metabolism without Oxygen", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62791": {"title": "Connections of Carbohydrate, Protein, and Lipid Metabolic Pathways", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62792": {"title": "Regulation of Cellular Respiration", "unit": "The Cell", "chapter": "Cellular Respiration"},
-    "m62793": {"title": "Introduction", "unit": "The Cell", "chapter": "Photosynthesis"},
-    "m62794": {"title": "Overview of Photosynthesis", "unit": "The Cell", "chapter": "Photosynthesis"},
-    "m62795": {"title": "The Light-Dependent Reaction of Photosynthesis", "unit": "The Cell", "chapter": "Photosynthesis"},
-    "m62796": {"title": "Using Light to Make Organic Molecules", "unit": "The Cell", "chapter": "Photosynthesis"},
-    "m62797": {"title": "Introduction", "unit": "The Cell", "chapter": "Cell Communication"},
-    "m62798": {"title": "Signaling Molecules and Cellular Receptors", "unit": "The Cell", "chapter": "Cell Communication"},
-    "m62799": {"title": "Propagation of the Signal", "unit": "The Cell", "chapter": "Cell Communication"},
-    "m62800": {"title": "Response to the Signal", "unit": "The Cell", "chapter": "Cell Communication"},
-    "m62801": {"title": "Signaling in Single-Celled Organisms", "unit": "The Cell", "chapter": "Cell Communication"},
-    "m62802": {"title": "Introduction", "unit": "The Cell", "chapter": "Cell Reproduction"},
-    "m62803": {"title": "Cell Division", "unit": "The Cell", "chapter": "Cell Reproduction"},
-    "m62804": {"title": "The Cell Cycle", "unit": "The Cell", "chapter": "Cell Reproduction"},
-    "m62805": {"title": "Control of the Cell Cycle", "unit": "The Cell", "chapter": "Cell Reproduction"},
-    "m62806": {"title": "Cancer and the Cell Cycle", "unit": "The Cell", "chapter": "Cell Reproduction"},
-    "m62808": {"title": "Prokaryotic Cell Division", "unit": "The Cell", "chapter": "Cell Reproduction"},
-    "m62809": {"title": "Introduction", "unit": "Genetics", "chapter": "Meiosis and Sexual Reproduction"},
-    "m62810": {"title": "The Process of Meiosis", "unit": "Genetics", "chapter": "Meiosis and Sexual Reproduction"},
-    "m62811": {"title": "Sexual Reproduction", "unit": "Genetics", "chapter": "Meiosis and Sexual Reproduction"},
-    "m62812": {"title": "Introduction", "unit": "Genetics", "chapter": "Mendel's Experiments and Heredity"},
-    "m62813": {"title": "Mendel's Experiments and the Laws of Probability", "unit": "Genetics", "chapter": "Mendel's Experiments and Heredity"},
-    "m62817": {"title": "Characteristics and Traits", "unit": "Genetics", "chapter": "Mendel's Experiments and Heredity"},
-    "m62819": {"title": "Laws of Inheritance", "unit": "Genetics", "chapter": "Mendel's Experiments and Heredity"},
-    "m62820": {"title": "Introduction", "unit": "Genetics", "chapter": "Modern Understandings of Inheritance"},
-    "m62821": {"title": "Chromosomal Theory and Genetic Linkages", "unit": "Genetics", "chapter": "Modern Understandings of Inheritance"},
-    "m62822": {"title": "Chromosomal Basis of Inherited Disorders", "unit": "Genetics", "chapter": "Modern Understandings of Inheritance"},
-    "m62823": {"title": "Introduction", "unit": "Genetics", "chapter": "DNA Structure and Function"},
-    "m62824": {"title": "Historical Basis of Modern Understanding", "unit": "Genetics", "chapter": "DNA Structure and Function"},
-    "m62825": {"title": "DNA Structure and Sequencing", "unit": "Genetics", "chapter": "DNA Structure and Function"},
-    "m62826": {"title": "Basics of DNA Replication", "unit": "Genetics", "chapter": "DNA Structure and Function"},
-    "m62828": {"title": "DNA Replication in Prokaryotes", "unit": "Genetics", "chapter": "DNA Structure and Function"},
-    "m62829": {"title": "DNA Replication in Eukaryotes", "unit": "Genetics", "chapter": "DNA Structure and Function"},
-    "m62830": {"title": "DNA Repair", "unit": "Genetics", "chapter": "DNA Structure and Function"},
-    "m62833": {"title": "Introduction", "unit": "Genetics", "chapter": "Genes and Proteins"},
-    "m62837": {"title": "The Genetic Code", "unit": "Genetics", "chapter": "Genes and Proteins"},
-    "m62838": {"title": "Prokaryotic Transcription", "unit": "Genetics", "chapter": "Genes and Proteins"},
-    "m62840": {"title": "Eukaryotic Transcription", "unit": "Genetics", "chapter": "Genes and Proteins"},
-    "m62842": {"title": "RNA Processing in Eukaryotes", "unit": "Genetics", "chapter": "Genes and Proteins"},
-    "m62843": {"title": "Ribosomes and Protein Synthesis", "unit": "Genetics", "chapter": "Genes and Proteins"},
-    "m62844": {"title": "Introduction", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62845": {"title": "Regulation of Gene Expression", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62846": {"title": "Prokaryotic Gene Regulation", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62847": {"title": "Eukaryotic Epigenetic Gene Regulation", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62848": {"title": "Eukaryotic Transcriptional Gene Regulation", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62849": {"title": "Eukaryotic Post-transcriptional Gene Regulation", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62850": {"title": "Eukaryotic Translational and Post-translational Gene Regulation", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62851": {"title": "Cancer and Gene Regulation", "unit": "Genetics", "chapter": "Gene Regulation"},
-    "m62852": {"title": "Introduction", "unit": "Genetics", "chapter": "Biotechnology and Genomics"},
-    "m62853": {"title": "Biotechnology", "unit": "Genetics", "chapter": "Biotechnology and Genomics"},
-    "m62855": {"title": "Mapping Genomes", "unit": "Genetics", "chapter": "Biotechnology and Genomics"},
-    "m62857": {"title": "Whole-Genome Sequencing", "unit": "Genetics", "chapter": "Biotechnology and Genomics"},
-    "m62860": {"title": "Applying Genomics", "unit": "Genetics", "chapter": "Biotechnology and Genomics"},
-    "m62861": {"title": "Genomics and Proteomics", "unit": "Genetics", "chapter": "Biotechnology and Genomics"},
-    "m62862": {"title": "Introduction", "unit": "Evolutionary Processes", "chapter": "Evolution and Origin of Species"},
-    "m62863": {"title": "Understanding Evolution", "unit": "Evolutionary Processes", "chapter": "Evolution and Origin of Species"},
-    "m62864": {"title": "Formation of New Species", "unit": "Evolutionary Processes", "chapter": "Evolution and Origin of Species"},
-    "m62865": {"title": "Reconnection and Rates of Speciation", "unit": "Evolutionary Processes", "chapter": "Evolution and Origin of Species"},
-    "m62866": {"title": "Introduction", "unit": "Evolutionary Processes", "chapter": "The Evolution of Populations"},
-    "m62868": {"title": "Population Evolution", "unit": "Evolutionary Processes", "chapter": "The Evolution of Populations"},
-    "m62870": {"title": "Population Genetics", "unit": "Evolutionary Processes", "chapter": "The Evolution of Populations"},
-    "m62871": {"title": "Adaptive Evolution", "unit": "Evolutionary Processes", "chapter": "The Evolution of Populations"},
-    "m62873": {"title": "Introduction", "unit": "Evolutionary Processes", "chapter": "Phylogenies and the History of Life"},
-    "m62874": {"title": "Organizing Life on Earth", "unit": "Evolutionary Processes", "chapter": "Phylogenies and the History of Life"},
-    "m62876": {"title": "Perspectives on the Phylogenetic Tree", "unit": "Evolutionary Processes", "chapter": "Phylogenies and the History of Life"},
-    "m62877": {"title": "Introduction", "unit": "Biological Diversity", "chapter": "Viruses"},
-    "m62881": {"title": "Viral Evolution, Morphology, and Classification", "unit": "Biological Diversity", "chapter": "Viruses"},
-    "m62882": {"title": "Virus Infection and Hosts", "unit": "Biological Diversity", "chapter": "Viruses"},
-    "m62887": {"title": "Other Acellular Entities: Prions and Viroids", "unit": "Biological Diversity", "chapter": "Viruses"},
-    "m62889": {"title": "Introduction", "unit": "Biological Diversity", "chapter": "Prokaryotes: Bacteria and Archaea"},
-    "m62891": {"title": "Prokaryotic Diversity", "unit": "Biological Diversity", "chapter": "Prokaryotes: Bacteria and Archaea"},
-    "m62893": {"title": "Structure of Prokaryotes", "unit": "Biological Diversity", "chapter": "Prokaryotes: Bacteria and Archaea"},
-    "m62894": {"title": "Prokaryotic Metabolism", "unit": "Biological Diversity", "chapter": "Prokaryotes: Bacteria and Archaea"},
-    "m62896": {"title": "Bacterial Diseases in Humans", "unit": "Biological Diversity", "chapter": "Prokaryotes: Bacteria and Archaea"},
-    "m62897": {"title": "Beneficial Prokaryotes", "unit": "Biological Diversity", "chapter": "Prokaryotes: Bacteria and Archaea"},
-    "m62899": {"title": "Introduction", "unit": "Plant Structure and Function", "chapter": "Plant Form and Physiology"},
-    "m62903": {"title": "Determining Evolutionary Relationships", "unit": "Evolutionary Processes", "chapter": "Phylogenies and the History of Life"},
-    "m62904": {"title": "Prevention and Treatment of Viral Infections", "unit": "Biological Diversity", "chapter": "Viruses"},
-    "m62905": {"title": "Stems", "unit": "Plant Structure and Function", "chapter": "Plant Form and Physiology"},
-    "m62906": {"title": "Roots", "unit": "Plant Structure and Function", "chapter": "Plant Form and Physiology"},
-    "m62908": {"title": "Leaves", "unit": "Plant Structure and Function", "chapter": "Plant Form and Physiology"},
-    "m62912": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "The Animal Body: Basic Form and Function"},
-    "m62916": {"title": "Animal Form and Function", "unit": "Animal Structure and Function", "chapter": "The Animal Body: Basic Form and Function"},
-    "m62918": {"title": "Animal Primary Tissues", "unit": "Animal Structure and Function", "chapter": "The Animal Body: Basic Form and Function"},
-    "m62919": {"title": "Digestive Systems", "unit": "Animal Structure and Function", "chapter": "Animal Nutrition and the Digestive System"},
-    "m62920": {"title": "Nutrition and Energy Production", "unit": "Animal Structure and Function", "chapter": "Animal Nutrition and the Digestive System"},
-    "m62921": {"title": "Digestive System Processes", "unit": "Animal Structure and Function", "chapter": "Animal Nutrition and the Digestive System"},
-    "m62922": {"title": "Digestive System Regulation", "unit": "Animal Structure and Function", "chapter": "Animal Nutrition and the Digestive System"},
-    "m62923": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "The Nervous System"},
-    "m62924": {"title": "Neurons and Glial Cells", "unit": "Animal Structure and Function", "chapter": "The Nervous System"},
-    "m62925": {"title": "How Neurons Communicate", "unit": "Animal Structure and Function", "chapter": "The Nervous System"},
-    "m62926": {"title": "The Central Nervous System", "unit": "Animal Structure and Function", "chapter": "The Nervous System"},
-    "m62928": {"title": "The Peripheral Nervous System", "unit": "Animal Structure and Function", "chapter": "The Nervous System"},
-    "m62929": {"title": "Nervous System Disorders", "unit": "Animal Structure and Function", "chapter": "The Nervous System"},
-    "m62930": {"title": "Plant Sensory Systems and Responses", "unit": "Plant Structure and Function", "chapter": "Plant Form and Physiology"},
-    "m62931": {"title": "Homeostasis", "unit": "Animal Structure and Function", "chapter": "The Animal Body: Basic Form and Function"},
-    "m62933": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "Animal Nutrition and the Digestive System"},
-    "m62937": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "Sensory Systems"},
-    "m62946": {"title": "Somatosensation", "unit": "Animal Structure and Function", "chapter": "Sensory Systems"},
-    "m62947": {"title": "Taste and Smell", "unit": "Animal Structure and Function", "chapter": "Sensory Systems"},
-    "m62951": {"title": "The Plant Body", "unit": "Plant Structure and Function", "chapter": "Plant Form and Physiology"},
-    "m62954": {"title": "Hearing and Vestibular Sensation", "unit": "Animal Structure and Function", "chapter": "Sensory Systems"},
-    "m62957": {"title": "Vision", "unit": "Animal Structure and Function", "chapter": "Sensory Systems"},
-    "m62959": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "The Endocrine System"},
-    "m62961": {"title": "Types of Hormones", "unit": "Animal Structure and Function", "chapter": "The Endocrine System"},
-    "m62963": {"title": "How Hormones Work", "unit": "Animal Structure and Function", "chapter": "The Endocrine System"},
-    "m62969": {"title": "Transport of Water and Solutes in Plants", "unit": "Plant Structure and Function", "chapter": "Plant Form and Physiology"},
-    "m62971": {"title": "Regulation of Hormone Production", "unit": "Animal Structure and Function", "chapter": "The Endocrine System"},
-    "m62976": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "The Musculoskeletal System"},
-    "m62977": {"title": "Types of Skeletal Systems", "unit": "Animal Structure and Function", "chapter": "The Musculoskeletal System"},
-    "m62978": {"title": "Bone", "unit": "Animal Structure and Function", "chapter": "The Musculoskeletal System"},
-    "m62979": {"title": "Joints and Skeletal Movement", "unit": "Animal Structure and Function", "chapter": "The Musculoskeletal System"},
-    "m62980": {"title": "Muscle Contraction and Locomotion", "unit": "Animal Structure and Function", "chapter": "The Musculoskeletal System"},
-    "m62981": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "The Respiratory System"},
-    "m62982": {"title": "Systems of Gas Exchange", "unit": "Animal Structure and Function", "chapter": "The Respiratory System"},
-    "m62987": {"title": "Breathing", "unit": "Animal Structure and Function", "chapter": "The Respiratory System"},
-    "m62988": {"title": "Transport of Gases in Human Bodily Fluids", "unit": "Animal Structure and Function", "chapter": "The Respiratory System"},
-    "m62989": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "The Circulatory System"},
-    "m62990": {"title": "Overview of the Circulatory System", "unit": "Animal Structure and Function", "chapter": "The Circulatory System"},
-    "m62991": {"title": "Components of the Blood", "unit": "Animal Structure and Function", "chapter": "The Circulatory System"},
-    "m62992": {"title": "Mammalian Heart and Blood Vessels", "unit": "Animal Structure and Function", "chapter": "The Circulatory System"},
-    "m62993": {"title": "Blood Flow and Blood Pressure Regulation", "unit": "Animal Structure and Function", "chapter": "The Circulatory System"},
-    "m62994": {"title": "Sensory Processes", "unit": "Animal Structure and Function", "chapter": "Sensory Systems"},
-    "m62995": {"title": "Endocrine Glands", "unit": "Animal Structure and Function", "chapter": "The Endocrine System"},
-    "m62996": {"title": "Regulation of Body Processes", "unit": "Animal Structure and Function", "chapter": "The Endocrine System"},
-    "m62997": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "Osmotic Regulation and Excretion"},
-    "m62998": {"title": "Gas Exchange across Respiratory Surfaces", "unit": "Animal Structure and Function", "chapter": "The Respiratory System"},
-    "m63000": {"title": "Osmoregulation and Osmotic Balance", "unit": "Animal Structure and Function", "chapter": "Osmotic Regulation and Excretion"},
-    "m63001": {"title": "The Kidneys and Osmoregulatory Organs", "unit": "Animal Structure and Function", "chapter": "Osmotic Regulation and Excretion"},
-    "m63002": {"title": "Excretion Systems", "unit": "Animal Structure and Function", "chapter": "Osmotic Regulation and Excretion"},
-    "m63003": {"title": "Nitrogenous Wastes", "unit": "Animal Structure and Function", "chapter": "Osmotic Regulation and Excretion"},
-    "m63004": {"title": "Hormonal Control of Osmoregulatory Functions", "unit": "Animal Structure and Function", "chapter": "Osmotic Regulation and Excretion"},
-    "m63005": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "The Immune System"},
-    "m63006": {"title": "Innate Immune Response", "unit": "Animal Structure and Function", "chapter": "The Immune System"},
-    "m63007": {"title": "Adaptive Immune Response", "unit": "Animal Structure and Function", "chapter": "The Immune System"},
-    "m63008": {"title": "Antibodies", "unit": "Animal Structure and Function", "chapter": "The Immune System"},
-    "m63009": {"title": "Disruptions in the Immune System", "unit": "Animal Structure and Function", "chapter": "The Immune System"},
-    "m63010": {"title": "Introduction", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63011": {"title": "Reproduction Methods", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63012": {"title": "Fertilization", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63013": {"title": "Human Reproductive Anatomy and Gametogenesis", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63014": {"title": "Hormonal Control of Human Reproduction", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63016": {"title": "Fertilization and Early Embryonic Development", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63018": {"title": "Human Pregnancy and Birth", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63019": {"title": "Introduction", "unit": "Ecology", "chapter": "Ecology and the Biosphere"},
-    "m63021": {"title": "The Scope of Ecology", "unit": "Ecology", "chapter": "Ecology and the Biosphere"},
-    "m63023": {"title": "Biogeography", "unit": "Ecology", "chapter": "Ecology and the Biosphere"},
-    "m63024": {"title": "Terrestrial Biomes", "unit": "Ecology", "chapter": "Ecology and the Biosphere"},
-    "m63025": {"title": "Aquatic Biomes", "unit": "Ecology", "chapter": "Ecology and the Biosphere"},
-    "m63026": {"title": "Climate and the Effects of Global Climate Change", "unit": "Ecology", "chapter": "Ecology and the Biosphere"},
-    "m63027": {"title": "Introduction", "unit": "Ecology", "chapter": "Population and Community Ecology"},
-    "m63028": {"title": "Population Demography", "unit": "Ecology", "chapter": "Population and Community Ecology"},
-    "m63029": {"title": "Life Histories and Natural Selection", "unit": "Ecology", "chapter": "Population and Community Ecology"},
-    "m63030": {"title": "Environmental Limits to Population Growth", "unit": "Ecology", "chapter": "Population and Community Ecology"},
-    "m63031": {"title": "Population Dynamics and Regulation", "unit": "Ecology", "chapter": "Population and Community Ecology"},
-    "m63032": {"title": "Human Population Growth", "unit": "Ecology", "chapter": "Population and Community Ecology"},
-    "m63033": {"title": "Community Ecology", "unit": "Ecology", "chapter": "Population and Community Ecology"},
-    "m63034": {"title": "Behavioral Biology: Proximate and Ultimate Causes of Behavior", "unit": "Ecology", "chapter": "Population and Community Ecology"},
+    "m62780": {
+        "title": "Introduction",
+        "unit": "The Cell",
+        "chapter": "Structure and Function of Plasma Membranes",
+    },
+    "m62784": {
+        "title": "Introduction",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62786": {
+        "title": "Energy in Living Systems",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62787": {
+        "title": "Glycolysis",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62788": {
+        "title": "Oxidation of Pyruvate and the Citric Acid Cycle",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62789": {
+        "title": "Oxidative Phosphorylation",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62790": {
+        "title": "Metabolism without Oxygen",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62791": {
+        "title": "Connections of Carbohydrate, Protein, and Lipid Metabolic Pathways",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62792": {
+        "title": "Regulation of Cellular Respiration",
+        "unit": "The Cell",
+        "chapter": "Cellular Respiration",
+    },
+    "m62793": {
+        "title": "Introduction",
+        "unit": "The Cell",
+        "chapter": "Photosynthesis",
+    },
+    "m62794": {
+        "title": "Overview of Photosynthesis",
+        "unit": "The Cell",
+        "chapter": "Photosynthesis",
+    },
+    "m62795": {
+        "title": "The Light-Dependent Reaction of Photosynthesis",
+        "unit": "The Cell",
+        "chapter": "Photosynthesis",
+    },
+    "m62796": {
+        "title": "Using Light to Make Organic Molecules",
+        "unit": "The Cell",
+        "chapter": "Photosynthesis",
+    },
+    "m62797": {
+        "title": "Introduction",
+        "unit": "The Cell",
+        "chapter": "Cell Communication",
+    },
+    "m62798": {
+        "title": "Signaling Molecules and Cellular Receptors",
+        "unit": "The Cell",
+        "chapter": "Cell Communication",
+    },
+    "m62799": {
+        "title": "Propagation of the Signal",
+        "unit": "The Cell",
+        "chapter": "Cell Communication",
+    },
+    "m62800": {
+        "title": "Response to the Signal",
+        "unit": "The Cell",
+        "chapter": "Cell Communication",
+    },
+    "m62801": {
+        "title": "Signaling in Single-Celled Organisms",
+        "unit": "The Cell",
+        "chapter": "Cell Communication",
+    },
+    "m62802": {
+        "title": "Introduction",
+        "unit": "The Cell",
+        "chapter": "Cell Reproduction",
+    },
+    "m62803": {
+        "title": "Cell Division",
+        "unit": "The Cell",
+        "chapter": "Cell Reproduction",
+    },
+    "m62804": {
+        "title": "The Cell Cycle",
+        "unit": "The Cell",
+        "chapter": "Cell Reproduction",
+    },
+    "m62805": {
+        "title": "Control of the Cell Cycle",
+        "unit": "The Cell",
+        "chapter": "Cell Reproduction",
+    },
+    "m62806": {
+        "title": "Cancer and the Cell Cycle",
+        "unit": "The Cell",
+        "chapter": "Cell Reproduction",
+    },
+    "m62808": {
+        "title": "Prokaryotic Cell Division",
+        "unit": "The Cell",
+        "chapter": "Cell Reproduction",
+    },
+    "m62809": {
+        "title": "Introduction",
+        "unit": "Genetics",
+        "chapter": "Meiosis and Sexual Reproduction",
+    },
+    "m62810": {
+        "title": "The Process of Meiosis",
+        "unit": "Genetics",
+        "chapter": "Meiosis and Sexual Reproduction",
+    },
+    "m62811": {
+        "title": "Sexual Reproduction",
+        "unit": "Genetics",
+        "chapter": "Meiosis and Sexual Reproduction",
+    },
+    "m62812": {
+        "title": "Introduction",
+        "unit": "Genetics",
+        "chapter": "Mendel's Experiments and Heredity",
+    },
+    "m62813": {
+        "title": "Mendel's Experiments and the Laws of Probability",
+        "unit": "Genetics",
+        "chapter": "Mendel's Experiments and Heredity",
+    },
+    "m62817": {
+        "title": "Characteristics and Traits",
+        "unit": "Genetics",
+        "chapter": "Mendel's Experiments and Heredity",
+    },
+    "m62819": {
+        "title": "Laws of Inheritance",
+        "unit": "Genetics",
+        "chapter": "Mendel's Experiments and Heredity",
+    },
+    "m62820": {
+        "title": "Introduction",
+        "unit": "Genetics",
+        "chapter": "Modern Understandings of Inheritance",
+    },
+    "m62821": {
+        "title": "Chromosomal Theory and Genetic Linkages",
+        "unit": "Genetics",
+        "chapter": "Modern Understandings of Inheritance",
+    },
+    "m62822": {
+        "title": "Chromosomal Basis of Inherited Disorders",
+        "unit": "Genetics",
+        "chapter": "Modern Understandings of Inheritance",
+    },
+    "m62823": {
+        "title": "Introduction",
+        "unit": "Genetics",
+        "chapter": "DNA Structure and Function",
+    },
+    "m62824": {
+        "title": "Historical Basis of Modern Understanding",
+        "unit": "Genetics",
+        "chapter": "DNA Structure and Function",
+    },
+    "m62825": {
+        "title": "DNA Structure and Sequencing",
+        "unit": "Genetics",
+        "chapter": "DNA Structure and Function",
+    },
+    "m62826": {
+        "title": "Basics of DNA Replication",
+        "unit": "Genetics",
+        "chapter": "DNA Structure and Function",
+    },
+    "m62828": {
+        "title": "DNA Replication in Prokaryotes",
+        "unit": "Genetics",
+        "chapter": "DNA Structure and Function",
+    },
+    "m62829": {
+        "title": "DNA Replication in Eukaryotes",
+        "unit": "Genetics",
+        "chapter": "DNA Structure and Function",
+    },
+    "m62830": {
+        "title": "DNA Repair",
+        "unit": "Genetics",
+        "chapter": "DNA Structure and Function",
+    },
+    "m62833": {
+        "title": "Introduction",
+        "unit": "Genetics",
+        "chapter": "Genes and Proteins",
+    },
+    "m62837": {
+        "title": "The Genetic Code",
+        "unit": "Genetics",
+        "chapter": "Genes and Proteins",
+    },
+    "m62838": {
+        "title": "Prokaryotic Transcription",
+        "unit": "Genetics",
+        "chapter": "Genes and Proteins",
+    },
+    "m62840": {
+        "title": "Eukaryotic Transcription",
+        "unit": "Genetics",
+        "chapter": "Genes and Proteins",
+    },
+    "m62842": {
+        "title": "RNA Processing in Eukaryotes",
+        "unit": "Genetics",
+        "chapter": "Genes and Proteins",
+    },
+    "m62843": {
+        "title": "Ribosomes and Protein Synthesis",
+        "unit": "Genetics",
+        "chapter": "Genes and Proteins",
+    },
+    "m62844": {
+        "title": "Introduction",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62845": {
+        "title": "Regulation of Gene Expression",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62846": {
+        "title": "Prokaryotic Gene Regulation",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62847": {
+        "title": "Eukaryotic Epigenetic Gene Regulation",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62848": {
+        "title": "Eukaryotic Transcriptional Gene Regulation",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62849": {
+        "title": "Eukaryotic Post-transcriptional Gene Regulation",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62850": {
+        "title": "Eukaryotic Translational and Post-translational Gene Regulation",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62851": {
+        "title": "Cancer and Gene Regulation",
+        "unit": "Genetics",
+        "chapter": "Gene Regulation",
+    },
+    "m62852": {
+        "title": "Introduction",
+        "unit": "Genetics",
+        "chapter": "Biotechnology and Genomics",
+    },
+    "m62853": {
+        "title": "Biotechnology",
+        "unit": "Genetics",
+        "chapter": "Biotechnology and Genomics",
+    },
+    "m62855": {
+        "title": "Mapping Genomes",
+        "unit": "Genetics",
+        "chapter": "Biotechnology and Genomics",
+    },
+    "m62857": {
+        "title": "Whole-Genome Sequencing",
+        "unit": "Genetics",
+        "chapter": "Biotechnology and Genomics",
+    },
+    "m62860": {
+        "title": "Applying Genomics",
+        "unit": "Genetics",
+        "chapter": "Biotechnology and Genomics",
+    },
+    "m62861": {
+        "title": "Genomics and Proteomics",
+        "unit": "Genetics",
+        "chapter": "Biotechnology and Genomics",
+    },
+    "m62862": {
+        "title": "Introduction",
+        "unit": "Evolutionary Processes",
+        "chapter": "Evolution and Origin of Species",
+    },
+    "m62863": {
+        "title": "Understanding Evolution",
+        "unit": "Evolutionary Processes",
+        "chapter": "Evolution and Origin of Species",
+    },
+    "m62864": {
+        "title": "Formation of New Species",
+        "unit": "Evolutionary Processes",
+        "chapter": "Evolution and Origin of Species",
+    },
+    "m62865": {
+        "title": "Reconnection and Rates of Speciation",
+        "unit": "Evolutionary Processes",
+        "chapter": "Evolution and Origin of Species",
+    },
+    "m62866": {
+        "title": "Introduction",
+        "unit": "Evolutionary Processes",
+        "chapter": "The Evolution of Populations",
+    },
+    "m62868": {
+        "title": "Population Evolution",
+        "unit": "Evolutionary Processes",
+        "chapter": "The Evolution of Populations",
+    },
+    "m62870": {
+        "title": "Population Genetics",
+        "unit": "Evolutionary Processes",
+        "chapter": "The Evolution of Populations",
+    },
+    "m62871": {
+        "title": "Adaptive Evolution",
+        "unit": "Evolutionary Processes",
+        "chapter": "The Evolution of Populations",
+    },
+    "m62873": {
+        "title": "Introduction",
+        "unit": "Evolutionary Processes",
+        "chapter": "Phylogenies and the History of Life",
+    },
+    "m62874": {
+        "title": "Organizing Life on Earth",
+        "unit": "Evolutionary Processes",
+        "chapter": "Phylogenies and the History of Life",
+    },
+    "m62876": {
+        "title": "Perspectives on the Phylogenetic Tree",
+        "unit": "Evolutionary Processes",
+        "chapter": "Phylogenies and the History of Life",
+    },
+    "m62877": {
+        "title": "Introduction",
+        "unit": "Biological Diversity",
+        "chapter": "Viruses",
+    },
+    "m62881": {
+        "title": "Viral Evolution, Morphology, and Classification",
+        "unit": "Biological Diversity",
+        "chapter": "Viruses",
+    },
+    "m62882": {
+        "title": "Virus Infection and Hosts",
+        "unit": "Biological Diversity",
+        "chapter": "Viruses",
+    },
+    "m62887": {
+        "title": "Other Acellular Entities: Prions and Viroids",
+        "unit": "Biological Diversity",
+        "chapter": "Viruses",
+    },
+    "m62889": {
+        "title": "Introduction",
+        "unit": "Biological Diversity",
+        "chapter": "Prokaryotes: Bacteria and Archaea",
+    },
+    "m62891": {
+        "title": "Prokaryotic Diversity",
+        "unit": "Biological Diversity",
+        "chapter": "Prokaryotes: Bacteria and Archaea",
+    },
+    "m62893": {
+        "title": "Structure of Prokaryotes",
+        "unit": "Biological Diversity",
+        "chapter": "Prokaryotes: Bacteria and Archaea",
+    },
+    "m62894": {
+        "title": "Prokaryotic Metabolism",
+        "unit": "Biological Diversity",
+        "chapter": "Prokaryotes: Bacteria and Archaea",
+    },
+    "m62896": {
+        "title": "Bacterial Diseases in Humans",
+        "unit": "Biological Diversity",
+        "chapter": "Prokaryotes: Bacteria and Archaea",
+    },
+    "m62897": {
+        "title": "Beneficial Prokaryotes",
+        "unit": "Biological Diversity",
+        "chapter": "Prokaryotes: Bacteria and Archaea",
+    },
+    "m62899": {
+        "title": "Introduction",
+        "unit": "Plant Structure and Function",
+        "chapter": "Plant Form and Physiology",
+    },
+    "m62903": {
+        "title": "Determining Evolutionary Relationships",
+        "unit": "Evolutionary Processes",
+        "chapter": "Phylogenies and the History of Life",
+    },
+    "m62904": {
+        "title": "Prevention and Treatment of Viral Infections",
+        "unit": "Biological Diversity",
+        "chapter": "Viruses",
+    },
+    "m62905": {
+        "title": "Stems",
+        "unit": "Plant Structure and Function",
+        "chapter": "Plant Form and Physiology",
+    },
+    "m62906": {
+        "title": "Roots",
+        "unit": "Plant Structure and Function",
+        "chapter": "Plant Form and Physiology",
+    },
+    "m62908": {
+        "title": "Leaves",
+        "unit": "Plant Structure and Function",
+        "chapter": "Plant Form and Physiology",
+    },
+    "m62912": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Animal Body: Basic Form and Function",
+    },
+    "m62916": {
+        "title": "Animal Form and Function",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Animal Body: Basic Form and Function",
+    },
+    "m62918": {
+        "title": "Animal Primary Tissues",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Animal Body: Basic Form and Function",
+    },
+    "m62919": {
+        "title": "Digestive Systems",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Nutrition and the Digestive System",
+    },
+    "m62920": {
+        "title": "Nutrition and Energy Production",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Nutrition and the Digestive System",
+    },
+    "m62921": {
+        "title": "Digestive System Processes",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Nutrition and the Digestive System",
+    },
+    "m62922": {
+        "title": "Digestive System Regulation",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Nutrition and the Digestive System",
+    },
+    "m62923": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Nervous System",
+    },
+    "m62924": {
+        "title": "Neurons and Glial Cells",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Nervous System",
+    },
+    "m62925": {
+        "title": "How Neurons Communicate",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Nervous System",
+    },
+    "m62926": {
+        "title": "The Central Nervous System",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Nervous System",
+    },
+    "m62928": {
+        "title": "The Peripheral Nervous System",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Nervous System",
+    },
+    "m62929": {
+        "title": "Nervous System Disorders",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Nervous System",
+    },
+    "m62930": {
+        "title": "Plant Sensory Systems and Responses",
+        "unit": "Plant Structure and Function",
+        "chapter": "Plant Form and Physiology",
+    },
+    "m62931": {
+        "title": "Homeostasis",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Animal Body: Basic Form and Function",
+    },
+    "m62933": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Nutrition and the Digestive System",
+    },
+    "m62937": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "Sensory Systems",
+    },
+    "m62946": {
+        "title": "Somatosensation",
+        "unit": "Animal Structure and Function",
+        "chapter": "Sensory Systems",
+    },
+    "m62947": {
+        "title": "Taste and Smell",
+        "unit": "Animal Structure and Function",
+        "chapter": "Sensory Systems",
+    },
+    "m62951": {
+        "title": "The Plant Body",
+        "unit": "Plant Structure and Function",
+        "chapter": "Plant Form and Physiology",
+    },
+    "m62954": {
+        "title": "Hearing and Vestibular Sensation",
+        "unit": "Animal Structure and Function",
+        "chapter": "Sensory Systems",
+    },
+    "m62957": {
+        "title": "Vision",
+        "unit": "Animal Structure and Function",
+        "chapter": "Sensory Systems",
+    },
+    "m62959": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Endocrine System",
+    },
+    "m62961": {
+        "title": "Types of Hormones",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Endocrine System",
+    },
+    "m62963": {
+        "title": "How Hormones Work",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Endocrine System",
+    },
+    "m62969": {
+        "title": "Transport of Water and Solutes in Plants",
+        "unit": "Plant Structure and Function",
+        "chapter": "Plant Form and Physiology",
+    },
+    "m62971": {
+        "title": "Regulation of Hormone Production",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Endocrine System",
+    },
+    "m62976": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Musculoskeletal System",
+    },
+    "m62977": {
+        "title": "Types of Skeletal Systems",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Musculoskeletal System",
+    },
+    "m62978": {
+        "title": "Bone",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Musculoskeletal System",
+    },
+    "m62979": {
+        "title": "Joints and Skeletal Movement",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Musculoskeletal System",
+    },
+    "m62980": {
+        "title": "Muscle Contraction and Locomotion",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Musculoskeletal System",
+    },
+    "m62981": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Respiratory System",
+    },
+    "m62982": {
+        "title": "Systems of Gas Exchange",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Respiratory System",
+    },
+    "m62987": {
+        "title": "Breathing",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Respiratory System",
+    },
+    "m62988": {
+        "title": "Transport of Gases in Human Bodily Fluids",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Respiratory System",
+    },
+    "m62989": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Circulatory System",
+    },
+    "m62990": {
+        "title": "Overview of the Circulatory System",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Circulatory System",
+    },
+    "m62991": {
+        "title": "Components of the Blood",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Circulatory System",
+    },
+    "m62992": {
+        "title": "Mammalian Heart and Blood Vessels",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Circulatory System",
+    },
+    "m62993": {
+        "title": "Blood Flow and Blood Pressure Regulation",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Circulatory System",
+    },
+    "m62994": {
+        "title": "Sensory Processes",
+        "unit": "Animal Structure and Function",
+        "chapter": "Sensory Systems",
+    },
+    "m62995": {
+        "title": "Endocrine Glands",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Endocrine System",
+    },
+    "m62996": {
+        "title": "Regulation of Body Processes",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Endocrine System",
+    },
+    "m62997": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "Osmotic Regulation and Excretion",
+    },
+    "m62998": {
+        "title": "Gas Exchange across Respiratory Surfaces",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Respiratory System",
+    },
+    "m63000": {
+        "title": "Osmoregulation and Osmotic Balance",
+        "unit": "Animal Structure and Function",
+        "chapter": "Osmotic Regulation and Excretion",
+    },
+    "m63001": {
+        "title": "The Kidneys and Osmoregulatory Organs",
+        "unit": "Animal Structure and Function",
+        "chapter": "Osmotic Regulation and Excretion",
+    },
+    "m63002": {
+        "title": "Excretion Systems",
+        "unit": "Animal Structure and Function",
+        "chapter": "Osmotic Regulation and Excretion",
+    },
+    "m63003": {
+        "title": "Nitrogenous Wastes",
+        "unit": "Animal Structure and Function",
+        "chapter": "Osmotic Regulation and Excretion",
+    },
+    "m63004": {
+        "title": "Hormonal Control of Osmoregulatory Functions",
+        "unit": "Animal Structure and Function",
+        "chapter": "Osmotic Regulation and Excretion",
+    },
+    "m63005": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Immune System",
+    },
+    "m63006": {
+        "title": "Innate Immune Response",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Immune System",
+    },
+    "m63007": {
+        "title": "Adaptive Immune Response",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Immune System",
+    },
+    "m63008": {
+        "title": "Antibodies",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Immune System",
+    },
+    "m63009": {
+        "title": "Disruptions in the Immune System",
+        "unit": "Animal Structure and Function",
+        "chapter": "The Immune System",
+    },
+    "m63010": {
+        "title": "Introduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63011": {
+        "title": "Reproduction Methods",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63012": {
+        "title": "Fertilization",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63013": {
+        "title": "Human Reproductive Anatomy and Gametogenesis",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63014": {
+        "title": "Hormonal Control of Human Reproduction",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63016": {
+        "title": "Fertilization and Early Embryonic Development",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63018": {
+        "title": "Human Pregnancy and Birth",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63019": {
+        "title": "Introduction",
+        "unit": "Ecology",
+        "chapter": "Ecology and the Biosphere",
+    },
+    "m63021": {
+        "title": "The Scope of Ecology",
+        "unit": "Ecology",
+        "chapter": "Ecology and the Biosphere",
+    },
+    "m63023": {
+        "title": "Biogeography",
+        "unit": "Ecology",
+        "chapter": "Ecology and the Biosphere",
+    },
+    "m63024": {
+        "title": "Terrestrial Biomes",
+        "unit": "Ecology",
+        "chapter": "Ecology and the Biosphere",
+    },
+    "m63025": {
+        "title": "Aquatic Biomes",
+        "unit": "Ecology",
+        "chapter": "Ecology and the Biosphere",
+    },
+    "m63026": {
+        "title": "Climate and the Effects of Global Climate Change",
+        "unit": "Ecology",
+        "chapter": "Ecology and the Biosphere",
+    },
+    "m63027": {
+        "title": "Introduction",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
+    "m63028": {
+        "title": "Population Demography",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
+    "m63029": {
+        "title": "Life Histories and Natural Selection",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
+    "m63030": {
+        "title": "Environmental Limits to Population Growth",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
+    "m63031": {
+        "title": "Population Dynamics and Regulation",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
+    "m63032": {
+        "title": "Human Population Growth",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
+    "m63033": {
+        "title": "Community Ecology",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
+    "m63034": {
+        "title": "Behavioral Biology: Proximate and Ultimate Causes of Behavior",
+        "unit": "Ecology",
+        "chapter": "Population and Community Ecology",
+    },
     "m63035": {"title": "Introduction", "unit": "Ecology", "chapter": "Ecosystems"},
-    "m63036": {"title": "Ecology for Ecosystems", "unit": "Ecology", "chapter": "Ecosystems"},
-    "m63037": {"title": "Energy Flow through Ecosystems", "unit": "Ecology", "chapter": "Ecosystems"},
-    "m63040": {"title": "Biogeochemical Cycles", "unit": "Ecology", "chapter": "Ecosystems"},
-    "m63043": {"title": "Organogenesis and Vertebrate Axis Formation", "unit": "Animal Structure and Function", "chapter": "Animal Reproduction and Development"},
-    "m63047": {"title": "Introduction", "unit": "Ecology", "chapter": "Conservation Biology and Biodiversity"},
-    "m63048": {"title": "The Biodiversity Crisis", "unit": "Ecology", "chapter": "Conservation Biology and Biodiversity"},
-    "m63049": {"title": "The Importance of Biodiversity to Human Life", "unit": "Ecology", "chapter": "Conservation Biology and Biodiversity"},
-    "m63050": {"title": "Threats to Biodiversity", "unit": "Ecology", "chapter": "Conservation Biology and Biodiversity"},
-    "m63051": {"title": "Preserving Biodiversity", "unit": "Ecology", "chapter": "Conservation Biology and Biodiversity"},
+    "m63036": {
+        "title": "Ecology for Ecosystems",
+        "unit": "Ecology",
+        "chapter": "Ecosystems",
+    },
+    "m63037": {
+        "title": "Energy Flow through Ecosystems",
+        "unit": "Ecology",
+        "chapter": "Ecosystems",
+    },
+    "m63040": {
+        "title": "Biogeochemical Cycles",
+        "unit": "Ecology",
+        "chapter": "Ecosystems",
+    },
+    "m63043": {
+        "title": "Organogenesis and Vertebrate Axis Formation",
+        "unit": "Animal Structure and Function",
+        "chapter": "Animal Reproduction and Development",
+    },
+    "m63047": {
+        "title": "Introduction",
+        "unit": "Ecology",
+        "chapter": "Conservation Biology and Biodiversity",
+    },
+    "m63048": {
+        "title": "The Biodiversity Crisis",
+        "unit": "Ecology",
+        "chapter": "Conservation Biology and Biodiversity",
+    },
+    "m63049": {
+        "title": "The Importance of Biodiversity to Human Life",
+        "unit": "Ecology",
+        "chapter": "Conservation Biology and Biodiversity",
+    },
+    "m63050": {
+        "title": "Threats to Biodiversity",
+        "unit": "Ecology",
+        "chapter": "Conservation Biology and Biodiversity",
+    },
+    "m63051": {
+        "title": "Preserving Biodiversity",
+        "unit": "Ecology",
+        "chapter": "Conservation Biology and Biodiversity",
+    },
     "m64279": {"title": "Preface", "unit": "Front Matter", "chapter": "Front Matter"},
-    "m66717": {"title": "Measurements and the Metric System", "unit": "Front Matter", "chapter": "Front Matter"},
+    "m66717": {
+        "title": "Measurements and the Metric System",
+        "unit": "Front Matter",
+        "chapter": "Front Matter",
+    },
 }
 
 # Expanded keyword mappings to module IDs
@@ -509,7 +1329,6 @@ KEYWORD_TO_MODULES = {
     "life": ["m62718"],
     "living things": ["m62718"],
     "characteristics of life": ["m62718"],
-
     # ==========================================================================
     # CHAPTER 2: THE CHEMICAL FOUNDATION OF LIFE
     # ==========================================================================
@@ -541,7 +1360,6 @@ KEYWORD_TO_MODULES = {
     "organic molecule": ["m62722"],
     "hydrocarbon": ["m62722"],
     "functional group": ["m62722"],
-
     # ==========================================================================
     # CHAPTER 3: BIOLOGICAL MACROMOLECULES
     # ==========================================================================
@@ -587,7 +1405,6 @@ KEYWORD_TO_MODULES = {
     "nucleic acids": ["m62735"],
     "nucleotide": ["m62735"],
     "nucleotides": ["m62735"],
-
     # ==========================================================================
     # CHAPTER 4: CELL STRUCTURE
     # ==========================================================================
@@ -636,7 +1453,6 @@ KEYWORD_TO_MODULES = {
     "tight junction": ["m62746"],
     "gap junction": ["m62746"],
     "plasmodesmata": ["m62746"],
-
     # ==========================================================================
     # CHAPTER 5: STRUCTURE AND FUNCTION OF PLASMA MEMBRANES
     # ==========================================================================
@@ -662,7 +1478,6 @@ KEYWORD_TO_MODULES = {
     "phagocytosis": ["m62772"],
     "pinocytosis": ["m62772"],
     "bulk transport": ["m62772"],
-
     # ==========================================================================
     # CHAPTER 6: METABOLISM
     # ==========================================================================
@@ -696,7 +1511,6 @@ KEYWORD_TO_MODULES = {
     "noncompetitive inhibition": ["m62778"],
     "allosteric": ["m62778"],
     "feedback inhibition": ["m62778"],
-
     # ==========================================================================
     # CHAPTER 7: CELLULAR RESPIRATION
     # ==========================================================================
@@ -724,7 +1538,6 @@ KEYWORD_TO_MODULES = {
     "anaerobic respiration": ["m62790"],
     "lactic acid fermentation": ["m62790"],
     "alcohol fermentation": ["m62790"],
-
     # ==========================================================================
     # CHAPTER 8: PHOTOSYNTHESIS
     # ==========================================================================
@@ -744,7 +1557,6 @@ KEYWORD_TO_MODULES = {
     "c3 plant": ["m62796"],
     "c4 plant": ["m62796"],
     "cam plant": ["m62796"],
-
     # ==========================================================================
     # CHAPTER 9: CELL COMMUNICATION
     # ==========================================================================
@@ -763,7 +1575,6 @@ KEYWORD_TO_MODULES = {
     "phosphatase": ["m62799"],
     "apoptosis": ["m62800"],
     "programmed cell death": ["m62800"],
-
     # ==========================================================================
     # CHAPTER 10: CELL REPRODUCTION
     # ==========================================================================
@@ -791,7 +1602,6 @@ KEYWORD_TO_MODULES = {
     "tumor suppressor": ["m62806"],
     "p53": ["m62806"],
     "binary fission": ["m62808"],
-
     # ==========================================================================
     # CHAPTER 11: MEIOSIS AND SEXUAL REPRODUCTION
     # ==========================================================================
@@ -812,7 +1622,6 @@ KEYWORD_TO_MODULES = {
     "sexual reproduction": ["m62811"],
     "asexual reproduction": ["m62811"],
     "genetic variation": ["m62811"],
-
     # ==========================================================================
     # CHAPTER 12: MENDEL'S EXPERIMENTS AND HEREDITY
     # ==========================================================================
@@ -836,7 +1645,6 @@ KEYWORD_TO_MODULES = {
     "monohybrid cross": ["m62813"],
     "dihybrid cross": ["m62819"],
     "test cross": ["m62813"],
-
     # ==========================================================================
     # CHAPTER 13: MODERN UNDERSTANDINGS OF INHERITANCE
     # ==========================================================================
@@ -861,7 +1669,6 @@ KEYWORD_TO_MODULES = {
     "duplication": ["m62822"],
     "inversion": ["m62822"],
     "translocation": ["m62822"],
-
     # ==========================================================================
     # CHAPTER 14: DNA STRUCTURE AND FUNCTION
     # ==========================================================================
@@ -892,7 +1699,6 @@ KEYWORD_TO_MODULES = {
     "dna repair": ["m62830"],
     "mismatch repair": ["m62830"],
     "mutation": ["m62830"],
-
     # ==========================================================================
     # CHAPTER 15: GENES AND PROTEINS
     # ==========================================================================
@@ -921,7 +1727,6 @@ KEYWORD_TO_MODULES = {
     "transfer rna": ["m62843"],
     "rrna": ["m62843"],
     "ribosomal rna": ["m62843"],
-
     # ==========================================================================
     # CHAPTER 16: GENE EXPRESSION
     # ==========================================================================
@@ -946,7 +1751,6 @@ KEYWORD_TO_MODULES = {
     "microrna": ["m62849"],
     "sirna": ["m62849"],
     "rna interference": ["m62849"],
-
     # ==========================================================================
     # CHAPTER 17: BIOTECHNOLOGY AND GENOMICS
     # ==========================================================================
@@ -975,7 +1779,6 @@ KEYWORD_TO_MODULES = {
     "human genome project": ["m62857"],
     "proteomics": ["m62861"],
     "bioinformatics": ["m62860"],
-
     # ==========================================================================
     # CHAPTER 18: EVOLUTION AND THE ORIGIN OF SPECIES
     # ==========================================================================
@@ -997,7 +1800,6 @@ KEYWORD_TO_MODULES = {
     "convergent evolution": ["m62865"],
     "divergent evolution": ["m62865"],
     "coevolution": ["m62865"],
-
     # ==========================================================================
     # CHAPTER 19: THE EVOLUTION OF POPULATIONS
     # ==========================================================================
@@ -1017,7 +1819,6 @@ KEYWORD_TO_MODULES = {
     "stabilizing selection": ["m62871"],
     "disruptive selection": ["m62871"],
     "balancing selection": ["m62871"],
-
     # ==========================================================================
     # CHAPTER 20: PHYLOGENIES AND THE HISTORY OF LIFE
     # ==========================================================================
@@ -1039,7 +1840,6 @@ KEYWORD_TO_MODULES = {
     "homology": ["m62903"],
     "analogy": ["m62903"],
     "molecular clock": ["m62903"],
-
     # ==========================================================================
     # CHAPTER 21: VIRUSES
     # ==========================================================================
@@ -1060,7 +1860,6 @@ KEYWORD_TO_MODULES = {
     "antiviral": ["m62904"],
     "prion": ["m62887"],
     "viroid": ["m62887"],
-
     # ==========================================================================
     # CHAPTER 22: PROKARYOTES: BACTERIA AND ARCHAEA
     # ==========================================================================
@@ -1079,7 +1878,6 @@ KEYWORD_TO_MODULES = {
     "bacterial disease": ["m62896"],
     "antibiotic": ["m62896"],
     "antibiotic resistance": ["m62896"],
-
     # ==========================================================================
     # CHAPTER 23: PLANT FORM AND PHYSIOLOGY
     # ==========================================================================
@@ -1113,7 +1911,6 @@ KEYWORD_TO_MODULES = {
     "phototropism": ["m62930"],
     "gravitropism": ["m62930"],
     "photoperiodism": ["m62930"],
-
     # ==========================================================================
     # CHAPTER 24: THE ANIMAL BODY
     # ==========================================================================
@@ -1132,7 +1929,6 @@ KEYWORD_TO_MODULES = {
     "negative feedback": ["m62931"],
     "positive feedback": ["m62931"],
     "thermoregulation": ["m62931"],
-
     # ==========================================================================
     # CHAPTER 25: NUTRITION AND THE DIGESTIVE SYSTEM
     # ==========================================================================
@@ -1157,7 +1953,6 @@ KEYWORD_TO_MODULES = {
     "peristalsis": ["m62921"],
     "absorption": ["m62921"],
     "villi": ["m62921"],
-
     # ==========================================================================
     # CHAPTER 26: THE NERVOUS SYSTEM
     # ==========================================================================
@@ -1190,7 +1985,6 @@ KEYWORD_TO_MODULES = {
     "parasympathetic": ["m62928"],
     "somatic nervous system": ["m62928"],
     "reflex": ["m62928"],
-
     # ==========================================================================
     # CHAPTER 27: SENSORY SYSTEMS
     # ==========================================================================
@@ -1220,7 +2014,6 @@ KEYWORD_TO_MODULES = {
     "lens": ["m62957"],
     "cornea": ["m62957"],
     "photoreceptor": ["m62957"],
-
     # ==========================================================================
     # CHAPTER 28: THE ENDOCRINE SYSTEM
     # ==========================================================================
@@ -1251,7 +2044,6 @@ KEYWORD_TO_MODULES = {
     "estrogen": ["m62995"],
     "progesterone": ["m62995"],
     "feedback loop": ["m62971"],
-
     # ==========================================================================
     # CHAPTER 29: THE MUSCULOSKELETAL SYSTEM
     # ==========================================================================
@@ -1276,7 +2068,6 @@ KEYWORD_TO_MODULES = {
     "actin": ["m62980"],
     "myosin": ["m62980"],
     "sliding filament": ["m62980"],
-
     # ==========================================================================
     # CHAPTER 30: THE RESPIRATORY SYSTEM
     # ==========================================================================
@@ -1298,7 +2089,6 @@ KEYWORD_TO_MODULES = {
     "hemoglobin": ["m62988"],
     "oxygen transport": ["m62988"],
     "carbon dioxide transport": ["m62988"],
-
     # ==========================================================================
     # CHAPTER 31: THE CIRCULATORY SYSTEM
     # ==========================================================================
@@ -1322,7 +2112,6 @@ KEYWORD_TO_MODULES = {
     "diastole": ["m62992"],
     "atrium": ["m62992"],
     "ventricle": ["m62992"],
-
     # ==========================================================================
     # CHAPTER 32: OSMOTIC REGULATION AND EXCRETION
     # ==========================================================================
@@ -1346,7 +2135,6 @@ KEYWORD_TO_MODULES = {
     "antidiuretic hormone": ["m63004"],
     "adh": ["m63004"],
     "aldosterone": ["m63004"],
-
     # ==========================================================================
     # CHAPTER 33: THE IMMUNE SYSTEM
     # ==========================================================================
@@ -1378,7 +2166,6 @@ KEYWORD_TO_MODULES = {
     "autoimmune": ["m63009"],
     "autoimmune disease": ["m63009"],
     "immunodeficiency": ["m63009"],
-
     # ==========================================================================
     # CHAPTER 34: ANIMAL REPRODUCTION AND DEVELOPMENT
     # ==========================================================================
@@ -1417,7 +2204,6 @@ KEYWORD_TO_MODULES = {
     "fetus": ["m63018"],
     "labor": ["m63018"],
     "birth": ["m63018"],
-
     # ==========================================================================
     # CHAPTER 35: ECOLOGY AND THE BIOSPHERE
     # ==========================================================================
@@ -1446,7 +2232,6 @@ KEYWORD_TO_MODULES = {
     "global warming": ["m63026"],
     "greenhouse effect": ["m63026"],
     "greenhouse gas": ["m63026"],
-
     # ==========================================================================
     # CHAPTER 36: POPULATION AND COMMUNITY ECOLOGY
     # ==========================================================================
@@ -1483,7 +2268,6 @@ KEYWORD_TO_MODULES = {
     "animal behavior": ["m63034"],
     "innate behavior": ["m63034"],
     "learned behavior": ["m63034"],
-
     # ==========================================================================
     # CHAPTER 37: ECOSYSTEMS
     # ==========================================================================
@@ -1510,7 +2294,6 @@ KEYWORD_TO_MODULES = {
     "phosphorus cycle": ["m63040"],
     "water cycle": ["m63040"],
     "hydrologic cycle": ["m63040"],
-
     # ==========================================================================
     # CHAPTER 38: CONSERVATION BIOLOGY AND BIODIVERSITY
     # ==========================================================================
@@ -1558,12 +2341,12 @@ def get_module_url(module_id: str) -> str:
     title = info["title"]
 
     # Generate slug from title as last resort
-    slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+    slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
 
     # For introduction pages, use chapter name
     if title == "Introduction":
         chapter = info["chapter"]
-        slug = re.sub(r'[^a-z0-9]+', '-', chapter.lower()).strip('-')
+        slug = re.sub(r"[^a-z0-9]+", "-", chapter.lower()).strip("-")
 
     return f"{OPENSTAX_BASE_URL}/{slug}"
 
@@ -1580,6 +2363,7 @@ def search_modules(topic: str, max_results: int = 3) -> list[dict]:
         List of module info dicts with id, title, unit, chapter, and url
     """
     import logging
+
     logger = logging.getLogger(__name__)
 
     logger.info("=" * 50)
@@ -1597,21 +2381,23 @@ def search_modules(topic: str, max_results: int = 3) -> list[dict]:
     for keyword, module_ids in KEYWORD_TO_MODULES.items():
         # Use word boundary matching for single-word keywords
         # For multi-word keywords, require exact substring match
-        if ' ' in keyword:
+        if " " in keyword:
             # Multi-word keyword - exact substring match is fine
             if keyword in topic_lower:
                 matched_ids.update(module_ids)
                 matched_keywords.append(keyword)
         else:
             # Single-word keyword - require word boundaries
-            pattern = r'\b' + re.escape(keyword) + r'\b'
+            pattern = r"\b" + re.escape(keyword) + r"\b"
             if re.search(pattern, topic_lower):
                 matched_ids.update(module_ids)
                 matched_keywords.append(keyword)
 
     if matched_keywords:
         logger.info(f"KEYWORD MATCHES FOUND: {matched_keywords}")
-        logger.info(f"Matched module IDs: {list(matched_ids)[:10]}{'...' if len(matched_ids) > 10 else ''}")
+        logger.info(
+            f"Matched module IDs: {list(matched_ids)[:10]}{'...' if len(matched_ids) > 10 else ''}"
+        )
     else:
         logger.info("No keyword matches found, falling back to title search...")
 
@@ -1622,9 +2408,9 @@ def search_modules(topic: str, max_results: int = 3) -> list[dict]:
             chapter_lower = info["chapter"].lower()
 
             # Check if any word from topic is in title or chapter
-            topic_words = set(re.findall(r'\b\w+\b', topic_lower))
-            title_words = set(re.findall(r'\b\w+\b', title_lower))
-            chapter_words = set(re.findall(r'\b\w+\b', chapter_lower))
+            topic_words = set(re.findall(r"\b\w+\b", topic_lower))
+            title_words = set(re.findall(r"\b\w+\b", title_lower))
+            chapter_words = set(re.findall(r"\b\w+\b", chapter_lower))
 
             if topic_words & title_words or topic_words & chapter_words:
                 matched_ids.add(module_id)
@@ -1642,13 +2428,15 @@ def search_modules(topic: str, max_results: int = 3) -> list[dict]:
             # Skip introduction modules unless specifically requested
             if info["title"] == "Introduction" and "introduction" not in topic_lower:
                 continue
-            results.append({
-                "id": mid,
-                "title": info["title"],
-                "unit": info["unit"],
-                "chapter": info["chapter"],
-                "url": get_module_url(mid),
-            })
+            results.append(
+                {
+                    "id": mid,
+                    "title": info["title"],
+                    "unit": info["unit"],
+                    "chapter": info["chapter"],
+                    "url": get_module_url(mid),
+                }
+            )
 
     logger.info(f"Returning {len(results)} results: {[r['id'] for r in results]}")
     return results[:max_results]

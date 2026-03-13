@@ -35,22 +35,27 @@ from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
+
 # SSL context for GitHub fetches - uses certifi CA bundle if available
 def _get_ssl_context() -> ssl.SSLContext:
     """Get SSL context with proper CA certificates."""
     try:
         import certifi
+
         return ssl.create_default_context(cafile=certifi.where())
     except ImportError:
         # certifi not available, use system defaults
         return ssl.create_default_context()
+
 
 # GCS configuration
 GCS_OPENSTAX_BUCKET = os.getenv("GCS_OPENSTAX_BUCKET", "")
 GCS_OPENSTAX_PREFIX = os.getenv("GCS_OPENSTAX_PREFIX", "openstax_modules/")
 
 # GitHub configuration
-GITHUB_RAW_BASE = "https://raw.githubusercontent.com/openstax/osbooks-biology-bundle/main/modules"
+GITHUB_RAW_BASE = (
+    "https://raw.githubusercontent.com/openstax/osbooks-biology-bundle/main/modules"
+)
 
 # CNXML namespace
 CNXML_NS = {"cnxml": "http://cnx.rice.edu/cnxml"}
@@ -147,15 +152,15 @@ def parse_cnxml_to_text(cnxml_content: str) -> str:
         full_text = "\n".join(text_parts)
 
         # Clean up excessive whitespace
-        full_text = re.sub(r'\n{3,}', '\n\n', full_text)
-        full_text = re.sub(r' {2,}', ' ', full_text)
+        full_text = re.sub(r"\n{3,}", "\n\n", full_text)
+        full_text = re.sub(r" {2,}", " ", full_text)
 
         return full_text.strip()
 
     except ET.ParseError as e:
         logger.error(f"Failed to parse CNXML: {e}")
         # Return raw content as fallback (stripped of XML tags)
-        return re.sub(r'<[^>]+>', ' ', cnxml_content).strip()
+        return re.sub(r"<[^>]+>", " ", cnxml_content).strip()
 
 
 def _extract_text_from_element(elem) -> str:
@@ -219,8 +224,10 @@ def fetch_module_from_github(module_id: str) -> Optional[str]:
     url = f"{GITHUB_RAW_BASE}/{module_id}/index.cnxml"
 
     try:
-        with urllib.request.urlopen(url, timeout=10, context=_get_ssl_context()) as response:
-            content = response.read().decode('utf-8')
+        with urllib.request.urlopen(
+            url, timeout=10, context=_get_ssl_context()
+        ) as response:
+            content = response.read().decode("utf-8")
             logger.info(f"Fetched module {module_id} from GitHub")
             return content
     except urllib.error.HTTPError as e:
@@ -323,8 +330,10 @@ def fetch_chapter_content(chapter_slug: str) -> Optional[dict]:
     if len(module_ids) > 1:
         # Use parallel fetching for multiple modules
         with ThreadPoolExecutor(max_workers=min(len(module_ids), 5)) as executor:
-            futures = {executor.submit(fetch_module_content_cached, mid): mid
-                       for mid in module_ids}
+            futures = {
+                executor.submit(fetch_module_content_cached, mid): mid
+                for mid in module_ids
+            }
             for future in futures:
                 try:
                     result = future.result()
@@ -373,8 +382,9 @@ def fetch_multiple_chapters(chapter_slugs: list[str]) -> list[dict]:
     # Parallel fetch for multiple chapters
     results = []
     with ThreadPoolExecutor(max_workers=min(len(chapter_slugs), 3)) as executor:
-        futures = {executor.submit(fetch_chapter_content, slug): slug
-                   for slug in chapter_slugs}
+        futures = {
+            executor.submit(fetch_chapter_content, slug): slug for slug in chapter_slugs
+        }
         for future in futures:
             try:
                 result = future.result()
@@ -430,7 +440,9 @@ async def fetch_modules_for_topic(topic: str, max_modules: int = 3) -> dict:
     # Search for matching modules using keyword matching
     logger.info("Step 1: Searching for modules using keyword matching...")
     matched_modules = search_modules(topic, max_results=max_modules)
-    logger.info(f"Keyword matching found {len(matched_modules)} modules: {[m.get('id', m.get('title', 'unknown')) for m in matched_modules]}")
+    logger.info(
+        f"Keyword matching found {len(matched_modules)} modules: {[m.get('id', m.get('title', 'unknown')) for m in matched_modules]}"
+    )
 
     if not matched_modules:
         # Fall back to LLM matching for chapter, then get first module
@@ -440,21 +452,26 @@ async def fetch_modules_for_topic(topic: str, max_modules: int = 3) -> dict:
         if chapter_slugs:
             # Import chapter-to-module mapping as fallback
             from .openstax_chapters import CHAPTER_TO_MODULES
+
             if chapter_slugs[0] in CHAPTER_TO_MODULES:
                 module_ids = CHAPTER_TO_MODULES[chapter_slugs[0]][:max_modules]
                 logger.info(f"Found modules from chapter mapping: {module_ids}")
                 for mid in module_ids:
                     if mid in MODULE_INDEX:
                         info = MODULE_INDEX[mid]
-                        matched_modules.append({
-                            "id": mid,
-                            "title": info["title"],
-                            "unit": info["unit"],
-                            "chapter": info["chapter"],
-                            "url": get_module_url(mid),
-                        })
+                        matched_modules.append(
+                            {
+                                "id": mid,
+                                "title": info["title"],
+                                "unit": info["unit"],
+                                "chapter": info["chapter"],
+                                "url": get_module_url(mid),
+                            }
+                        )
             else:
-                logger.warning(f"Chapter {chapter_slugs[0]} not found in CHAPTER_TO_MODULES mapping")
+                logger.warning(
+                    f"Chapter {chapter_slugs[0]} not found in CHAPTER_TO_MODULES mapping"
+                )
         else:
             logger.warning("LLM matching also returned no chapters!")
 
@@ -477,8 +494,10 @@ async def fetch_modules_for_topic(topic: str, max_modules: int = 3) -> dict:
         # Parallel fetch for multiple modules
         contents = []
         with ThreadPoolExecutor(max_workers=min(len(module_ids), 5)) as executor:
-            futures = {executor.submit(fetch_module_content_cached, mid): mid
-                       for mid in module_ids}
+            futures = {
+                executor.submit(fetch_module_content_cached, mid): mid
+                for mid in module_ids
+            }
             for future in futures:
                 try:
                     result = future.result()
@@ -544,7 +563,11 @@ async def fetch_content_for_topic(topic: str, max_chapters: int = 3) -> dict:
     return {
         "topic": result["topic"],
         "matched_chapters": [
-            {"slug": m.get("id", ""), "title": m.get("title", ""), "url": m.get("url", "")}
+            {
+                "slug": m.get("id", ""),
+                "title": m.get("title", ""),
+                "url": m.get("url", ""),
+            }
             for m in result.get("matched_modules", [])
         ],
         "combined_content": result.get("combined_content", ""),
