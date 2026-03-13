@@ -24,16 +24,11 @@ import {
   Task,
 } from "@a2a-js/sdk";
 import { v4 as uuidv4 } from "uuid";
+import { createA2AClientWithRetry, createA2UIFetch } from "../a2a-client-factory.js";
 
 const A2UI_MIME_TYPE = "application/json+a2ui";
 
-const fetchWithCustomHeader: typeof fetch = async (url, init) => {
-  const headers = new Headers(init?.headers);
-  headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.8");
-
-  const newInit = { ...init, headers };
-  return fetch(url, newInit);
-};
+const fetchWithCustomHeader = createA2UIFetch();
 
 const isJson = (str: string) => {
   try {
@@ -51,7 +46,7 @@ let client: A2AClient | null = null;
 const createOrGetClient = async () => {
   if (!client) {
     // Create a client pointing to the agent's Agent Card URL.
-    client = await A2AClient.fromCardUrl(
+    client = await createA2AClientWithRetry(
       "http://localhost:10002/.well-known/agent-card.json",
       { fetchImpl: fetchWithCustomHeader }
     );
