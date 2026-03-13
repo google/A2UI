@@ -220,7 +220,7 @@ export class DataContext {
     args: Record<string, any>,
     abortSignal?: AbortSignal,
   ): Signal<V> | V {
-    return this.functionInvoker(name, args, this, abortSignal);
+    return this.functionInvoker(name, args, this, abortSignal) as Signal<V> | V;
   }
 
   /**

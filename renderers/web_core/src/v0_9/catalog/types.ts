@@ -76,7 +76,7 @@ export type FunctionInvoker = (
   args: Record<string, any>,
   context: DataContext,
   abortSignal?: AbortSignal,
-) => any;
+) => unknown | Signal<unknown>;
 
 /**
  * A definition of a UI component's API.
