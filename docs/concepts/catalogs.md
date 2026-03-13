@@ -229,7 +229,7 @@ This catalog imports only `Text` from the Basic Catalog to build a simple Popup 
 }
 ```
 
-**Make sure to run `tools/assemble_catalog.py` to resolve the external $ref before publishing.**
+**Make sure to run `tools/build_catalog/assemble_catalog.py` to resolve the external $ref before publishing.**
 
 ### Implementing Renderers
 
