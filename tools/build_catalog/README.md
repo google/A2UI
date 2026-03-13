@@ -38,7 +38,7 @@ official catalogs, and multi-file merging.
 ### Usage
 
 ```bash
-uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPUT_NAME> [--version <VERSION>] [--extend-basic-catalog] [--out-dir <DIR>] [--verbose]
+uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPUT_NAME> [--catalog-id <ID>] [--version <VERSION>] [--extend-basic-catalog] [--out-dir <DIR>] [--verbose]
 ```
 
 ### Arguments
@@ -47,6 +47,7 @@ uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPU
 - `--output-name`: (Required) The desired name of the combined catalog (e.g.
   `my_merged_catalog`). The `.json` extension is appended automatically if
   omitted.
+- `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
 - `--version`: The A2UI specification version to use for official catalog
   fallbacks. Choices are `0.9` or `0.10`. Defaults to `0.9`.
 - `--extend-basic-catalog`: If passed, automatically includes the entirety of
