@@ -177,8 +177,8 @@ yield {
 For agents with a fixed set of UI capabilities, simply use the `schema_manager`
 to generate the system instruction.
 
-**Example Samples:
-** [contact_lookup](../../../samples/agent/adk/contact_lookup), [restaurant_finder](../../../samples/agent/adk/restaurant_finder)
+**Example Samples:**
+[contact_lookup](../../../samples/agent/adk/contact_lookup), [restaurant_finder](../../../samples/agent/adk/restaurant_finder)
 
 ```python
 # Generate system prompt
