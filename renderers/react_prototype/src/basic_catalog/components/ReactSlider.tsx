@@ -5,21 +5,21 @@ import { LEAF_MARGIN } from "../utils";
 
 export const ReactSlider = createReactComponent(
   SliderApi,
-  ({ props, context }) => {
+  ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.setValue('value', Number(e.target.value));
+      props.setValue?.(Number(e.target.value));
     };
 
-    const id = `slider-${context.componentModel.id}`;
+    const uniqueId = React.useId();
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', margin: LEAF_MARGIN, width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {props.label && <label htmlFor={id} style={{ fontSize: '14px', fontWeight: 'bold' }}>{props.label}</label>}
+          {props.label && <label htmlFor={uniqueId} style={{ fontSize: '14px', fontWeight: 'bold' }}>{props.label}</label>}
           <span style={{ fontSize: '12px', color: '#666' }}>{props.value}</span>
         </div>
         <input 
-          id={id}
+          id={uniqueId}
           type="range" 
           min={props.min ?? 0} 
           max={props.max} 

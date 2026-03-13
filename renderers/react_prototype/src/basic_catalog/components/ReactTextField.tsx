@@ -5,9 +5,9 @@ import { LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS } from "../utils";
 
 export const ReactTextField = createReactComponent(
   TextFieldApi,
-  ({ props, context }) => {
+  ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      props.setValue('value', e.target.value);
+      props.setValue?.(e.target.value);
     };
 
     const isLong = props.variant === "longText";
@@ -21,15 +21,18 @@ export const ReactTextField = createReactComponent(
       boxSizing: "border-box"
     };
 
-    const id = `textfield-${context.componentModel.id}`;
+    // Note: To have a unique id without passing context we can use a random or provided id,
+    // but the simplest is just relying on React's useId if we really need it.
+    // For now, we'll omit the `id` from the label connection since we removed context.
+    const uniqueId = React.useId();
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%", margin: LEAF_MARGIN }}>
-        {props.label && <label htmlFor={id} style={{ fontSize: "14px", fontWeight: "bold" }}>{props.label}</label>}
+        {props.label && <label htmlFor={uniqueId} style={{ fontSize: "14px", fontWeight: "bold" }}>{props.label}</label>}
         {isLong ? (
-          <textarea id={id} style={style} value={props.value || ""} onChange={onChange} />
+          <textarea id={uniqueId} style={style} value={props.value || ""} onChange={onChange} />
         ) : (
-          <input id={id} type={type} style={style} value={props.value || ""} onChange={onChange} />
+          <input id={uniqueId} type={type} style={style} value={props.value || ""} onChange={onChange} />
         )}
       </div>
     );

@@ -5,12 +5,12 @@ import { LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS } from "../utils";
 
 export const ReactDateTimeInput = createReactComponent(
   DateTimeInputApi,
-  ({ props, context }) => {
+  ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.setValue('value', e.target.value);
+      props.setValue?.(e.target.value);
     };
 
-    const id = `datetime-${context.componentModel.id}`;
+    const uniqueId = React.useId();
     
     // Map enableDate/enableTime to input type
     let type = 'datetime-local';
@@ -27,9 +27,9 @@ export const ReactDateTimeInput = createReactComponent(
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "100%", margin: LEAF_MARGIN }}>
-        {props.label && <label htmlFor={id} style={{ fontSize: "14px", fontWeight: "bold" }}>{props.label}</label>}
+        {props.label && <label htmlFor={uniqueId} style={{ fontSize: "14px", fontWeight: "bold" }}>{props.label}</label>}
         <input 
-          id={id} 
+          id={uniqueId} 
           type={type} 
           style={style} 
           value={props.value || ""} 

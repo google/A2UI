@@ -76,21 +76,27 @@ function getFieldBehavior(type: z.ZodTypeAny): BehaviorNode {
 
 // --- Generic Binder ---
 
+type DynamicTypes = DataBinding | FunctionCall;
+type IsDynamic<T> = DataBinding extends NonNullable<T> ? true : false;
+
 export type ResolveA2uiProp<T> =
   [NonNullable<T>] extends [Action] ? (() => void) | Extract<T, undefined> :
   [NonNullable<T>] extends [ChildList] ? any | Extract<T, undefined> :
-  Exclude<T, DataBinding | FunctionCall> extends never ? any : Exclude<T, DataBinding | FunctionCall>;
+  Exclude<T, DynamicTypes> extends never ? any : Exclude<T, DynamicTypes>;
 
-export type ResolveA2uiProps<T> = T extends object ? {
+export type GenerateSetters<T> = {
+  [K in keyof T as IsDynamic<T[K]> extends true ? `set${Capitalize<string & K>}` : never]: 
+    (value: Exclude<NonNullable<T[K]>, DynamicTypes>) => void; 
+};
+
+export type ResolveA2uiProps<T> = (T extends object ? {
   [K in keyof T]: ResolveA2uiProp<T[K]>
-} & {
-  setValue: (propName: keyof T, newValue: any) => void;
-} : T;
+} : T) & GenerateSetters<T>;
 
 export class GenericBinder<T> {
   private dataListeners: (() => void)[] = [];
   private propsListeners: ((props: T) => void)[] = [];
-  public currentProps: Partial<T> & { setValue: (propName: keyof T, newValue: any) => void };
+  public currentProps: Partial<T> = {};
   private compUnsub?: () => void;
   private isConnected = false;
 
@@ -105,22 +111,12 @@ export class GenericBinder<T> {
       this.behaviorTree = { type: 'OBJECT', shape: {} };
     }
 
-    this.currentProps = {
-      setValue: (propName: keyof T, newValue: any) => {
-        const rawProps = this.context.componentModel.properties;
-        const propConfig = rawProps[propName as string];
-        if (propConfig && typeof propConfig === 'object' && propConfig.path) {
-          this.context.dataContext.set(propConfig.path, newValue);
-        }
-      }
-    } as any;
-
     this.resolveInitialProps();
   }
 
   private resolveInitialProps() {
     const props = this.context.componentModel.properties;
-    Object.assign(this.currentProps, this.resolveAndBind(props, this.behaviorTree, [], true));
+    this.currentProps = this.resolveAndBind(props, this.behaviorTree, [], true) as Partial<T>;
   }
 
   private connect() {
@@ -139,10 +135,7 @@ export class GenericBinder<T> {
 
     const props = this.context.componentModel.properties;
     
-    // We must preserve setValue
-    const nextProps = this.resolveAndBind(props, this.behaviorTree, [], false);
-    nextProps.setValue = this.currentProps.setValue;
-    this.currentProps = nextProps;
+    this.currentProps = this.resolveAndBind(props, this.behaviorTree, [], false) as Partial<T>;
 
     this.notify();
   }
@@ -160,7 +153,6 @@ export class GenericBinder<T> {
         if (!isSync) {
           this.dataListeners.push(() => bound.unsubscribe());
         } else {
-          // If called during init, unsubscribe immediately so we don't leak before mount.
           bound.unsubscribe();
         }
         return bound.value;
@@ -182,7 +174,6 @@ export class GenericBinder<T> {
 
       case 'STRUCTURAL': {
         if (value && typeof value === 'object' && value.path && value.componentId) {
-          // It's a dynamic child list template
           const bound = this.context.dataContext.subscribeDynamicValue({ path: value.path }, (newVal) => {
             const arr = Array.isArray(newVal) ? newVal : [];
             const listContext = this.context.dataContext.nested(value.path);
@@ -207,7 +198,6 @@ export class GenericBinder<T> {
             basePath: listContext.nested(String(i)).path
           }));
         }
-        // Fallthrough for static component id string or array of strings
         return value;
       }
 
@@ -227,6 +217,15 @@ export class GenericBinder<T> {
         for (const [k, v] of Object.entries(value)) {
           const childBehavior = behavior.shape[k] || { type: 'STATIC' };
           result[k] = this.resolveAndBind(v, childBehavior, [...path, k], isSync);
+          
+          if (childBehavior.type === 'DYNAMIC') {
+            const setterName = `set${k.charAt(0).toUpperCase() + k.slice(1)}`;
+            result[setterName] = (newValue: any) => {
+               if (v && typeof v === 'object' && 'path' in v) {
+                 this.context.dataContext.set((v as any).path, newValue);
+               }
+            };
+          }
         }
         return result;
       }

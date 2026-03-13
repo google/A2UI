@@ -5,23 +5,23 @@ import { LEAF_MARGIN } from "../utils";
 
 export const ReactCheckBox = createReactComponent(
   CheckBoxApi,
-  ({ props, context }) => {
+  ({ props }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.setValue('value', e.target.checked);
+      props.setValue?.(e.target.checked);
     };
 
-    const id = `checkbox-${context.componentModel.id}`;
+    const uniqueId = React.useId();
 
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: LEAF_MARGIN }}>
         <input 
-          id={id}
+          id={uniqueId}
           type="checkbox" 
           checked={!!props.value} 
           onChange={onChange}
           style={{ cursor: 'pointer' }}
         />
-        {props.label && <label htmlFor={id} style={{ cursor: 'pointer' }}>{props.label}</label>}
+        {props.label && <label htmlFor={uniqueId} style={{ cursor: 'pointer' }}>{props.label}</label>}
       </div>
     );
   }
