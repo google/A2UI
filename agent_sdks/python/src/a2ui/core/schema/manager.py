@@ -19,7 +19,7 @@ import os
 import importlib.resources
 from typing import List, Dict, Any, Optional, Callable
 from dataclasses import dataclass, field
-from .utils import load_from_bundled_resource
+from .utils import load_from_bundled_resource, deep_update
 from ..inference_strategy import InferenceStrategy
 from .constants import *
 from .catalog import CatalogConfig, A2uiCatalog
@@ -146,10 +146,15 @@ class A2uiSchemaManager(InferenceStrategy):
       # Load the first inline catalog schema.
       inline_catalog_schema = inline_catalogs[0]
       inline_catalog_schema = self._apply_modifiers(inline_catalog_schema)
+
+      # Deep merge the standard catalog properties with the inline catalog
+      merged_schema = copy.deepcopy(self._supported_catalogs[0].catalog_schema)
+      deep_update(merged_schema, inline_catalog_schema)
+
       return A2uiCatalog(
           version=self._version,
           name=INLINE_CATALOG_NAME,
-          catalog_schema=inline_catalog_schema,
+          catalog_schema=merged_schema,
           s2c_schema=self._server_to_client_schema,
           common_types_schema=self._common_types_schema,
       )

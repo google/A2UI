@@ -54,10 +54,7 @@ def get_gallery_json() -> str:
 
     # Inject data model for this surface
     messages.append({
-        "dataModelUpdate": {
-            "surfaceId": surface_id,
-            "contents": [gallery_data_content],
-        }
+        "dataModelUpdate": {"surfaceId": surface_id, "contents": [gallery_data_content]}
     })
 
   # 1. TextField
@@ -307,11 +304,7 @@ def get_gallery_json() -> str:
                   "component": {
                       "Column": {
                           "children": {
-                              "explicitList": [
-                                  "div-text-1",
-                                  "div-horiz",
-                                  "div-text-2",
-                              ]
+                              "explicitList": ["div-text-1", "div-horiz", "div-text-2"]
                           },
                           "distribution": "start",
                           "alignment": "stretch",
@@ -322,10 +315,7 @@ def get_gallery_json() -> str:
                   "id": "div-text-1",
                   "component": {"Text": {"text": {"literalString": "Above Divider"}}},
               },
-              {
-                  "id": "div-horiz",
-                  "component": {"Divider": {"axis": "horizontal"}},
-              },
+              {"id": "div-horiz", "component": {"Divider": {"axis": "horizontal"}}},
               {
                   "id": "div-text-2",
                   "component": {"Text": {"text": {"literalString": "Below Divider"}}},

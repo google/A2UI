@@ -36,8 +36,8 @@ try:
     # Try multiple possible .env locations
     env_paths = [
         Path(__file__).parent.parent / ".env",  # samples/personalized_learning/.env
-        Path(__file__).parent / ".env",  # agent/.env
-        Path.cwd() / ".env",  # current working directory
+        Path(__file__).parent / ".env",          # agent/.env
+        Path.cwd() / ".env",                     # current working directory
     ]
     for env_path in env_paths:
         if env_path.exists():
@@ -63,7 +63,6 @@ try:
     from .context_loader import get_combined_context, load_context_file
     from .a2ui_templates import get_system_prompt, SURFACE_ID as _IMPORTED_SURFACE_ID
     from .openstax_content import fetch_content_for_topic
-
     _HAS_EXTERNAL_MODULES = True
     _HAS_OPENSTAX = True
 except Exception as e:
@@ -79,7 +78,7 @@ if not _HAS_EXTERNAL_MODULES:
     logger.error(
         "Required modules (context_loader, a2ui_templates) not available. "
         "Import error: %s",
-        _IMPORT_ERROR if "_IMPORT_ERROR" in globals() else "unknown",
+        _IMPORT_ERROR if '_IMPORT_ERROR' in globals() else "unknown"
     )
 
 if not _HAS_OPENSTAX:
@@ -96,6 +95,7 @@ SUPPORTED_FORMATS = ["flashcards", "audio", "podcast", "video", "quiz"]
 
 # Surface ID for A2UI rendering (use imported value if available, else fallback)
 SURFACE_ID = _IMPORTED_SURFACE_ID if _HAS_EXTERNAL_MODULES else "learningContent"
+
 
 
 # Context cache with TTL for performance
@@ -216,15 +216,12 @@ async def generate_flashcards(
             openstax_content = content_result.get("combined_content", "")
             sources = content_result.get("sources", [])
             matched_chapters = content_result.get("matched_chapters", [])
-            logger.info(
-                f"OpenStax: matched {len(matched_chapters)} chapters, {len(openstax_content)} chars"
-            )
+            logger.info(f"OpenStax: matched {len(matched_chapters)} chapters, {len(openstax_content)} chars")
             if not openstax_content:
                 logger.warning("NO CONTENT RETURNED from OpenStax fetch!")
         except Exception as e:
             logger.error(f"FAILED to fetch OpenStax content: {e}")
             import traceback
-
             logger.error(traceback.format_exc())
 
     # Combine learner context with OpenStax source material
@@ -372,7 +369,9 @@ async def get_audio_content(
                     },
                     {
                         "id": "audioIcon",
-                        "component": {"Icon": {"name": {"literalString": "podcasts"}}},
+                        "component": {
+                            "Icon": {"name": {"literalString": "podcasts"}}
+                        },
                     },
                     {
                         "id": "audioTitle",
@@ -587,9 +586,7 @@ async def _generate_a2ui_content(
 
     if not project:
         logger.error("GOOGLE_CLOUD_PROJECT not configured")
-        return {
-            "error": "GOOGLE_CLOUD_PROJECT not configured. Set it in environment or deploy.py."
-        }
+        return {"error": "GOOGLE_CLOUD_PROJECT not configured. Set it in environment or deploy.py."}
 
     client = genai.Client(
         vertexai=True,
@@ -703,7 +700,6 @@ You don't need to understand the A2UI format in detail - just use the tools
 and explain the content to the learner.
 """
 
-
 def create_agent() -> Agent:
     """Create the ADK agent with all tools."""
     return Agent(
@@ -723,3 +719,5 @@ def create_agent() -> Agent:
 
 # Module-level agent for local development with `adk web`
 root_agent = create_agent()
+
+

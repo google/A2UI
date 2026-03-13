@@ -140,9 +140,7 @@ def upload_modules_to_gcs(
 
     # Use thread pool for parallel uploads
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {
-            executor.submit(upload_module, mid): mid for mid in sorted(module_ids)
-        }
+        futures = {executor.submit(upload_module, mid): mid for mid in sorted(module_ids)}
 
         for future in as_completed(futures):
             module_id, success, message = future.result()
@@ -304,9 +302,7 @@ def main():
             local_success, local_fail = copy_modules_locally(
                 modules_dir, local_dir, needed_modules
             )
-            print(
-                f"Local copy complete: {local_success} succeeded, {local_fail} failed"
-            )
+            print(f"Local copy complete: {local_success} succeeded, {local_fail} failed")
 
         # Upload to GCS if not local-only
         if not args.local_only and args.bucket:

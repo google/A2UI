@@ -38,7 +38,6 @@ import logging
 
 try:
     import certifi
-
     _HAS_CERTIFI = True
 except ImportError:
     _HAS_CERTIFI = False
@@ -82,9 +81,7 @@ def main():
     args = parser.parse_args()
 
     if not args.project:
-        print(
-            "ERROR: --project flag or GOOGLE_CLOUD_PROJECT environment variable is required"
-        )
+        print("ERROR: --project flag or GOOGLE_CLOUD_PROJECT environment variable is required")
         sys.exit(1)
 
     # Set context bucket (default to {project}-learner-context)
@@ -122,7 +119,7 @@ def main():
     # =========================================================================
     # CREATE THE ADK AGENT
     # =========================================================================
-    # Create an Agent, wrap it in AdkApp, and deploy the AdkApp directly.
+    # Create an Agent, wrap it in AdkApp, and deploy the AdkApp directly. 
     # AdkApp is designed to be picklable.
     # =========================================================================
 
@@ -356,9 +353,7 @@ def main():
         "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle": ["m62788"],
         "7-4-oxidative-phosphorylation": ["m62789"],
         "7-5-metabolism-without-oxygen": ["m62790"],
-        "7-6-connections-of-carbohydrate-protein-and-lipid-metabolic-pathways": [
-            "m62791"
-        ],
+        "7-6-connections-of-carbohydrate-protein-and-lipid-metabolic-pathways": ["m62791"],
         "7-7-regulation-of-cellular-respiration": ["m62792"],
         "8-1-overview-of-photosynthesis": ["m62794"],
         "8-2-the-light-dependent-reaction-of-photosynthesis": ["m62795"],
@@ -395,9 +390,7 @@ def main():
         "16-3-eukaryotic-epigenetic-gene-regulation": ["m62847"],
         "16-4-eukaryotic-transcriptional-gene-regulation": ["m62848"],
         "16-5-eukaryotic-post-transcriptional-gene-regulation": ["m62849"],
-        "16-6-eukaryotic-translational-and-post-translational-gene-regulation": [
-            "m62850"
-        ],
+        "16-6-eukaryotic-translational-and-post-translational-gene-regulation": ["m62850"],
         "16-7-cancer-and-gene-regulation": ["m62851"],
         "17-1-biotechnology": ["m62853"],
         "17-2-mapping-genomes": ["m62855"],
@@ -512,24 +505,12 @@ def main():
         "oxidative phosphorylation": ["7-4-oxidative-phosphorylation"],
         "fermentation": ["7-5-metabolism-without-oxygen"],
         "anaerobic": ["7-5-metabolism-without-oxygen"],
-        "cellular respiration": [
-            "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle",
-            "7-4-oxidative-phosphorylation",
-        ],
-        "mitochondria": [
-            "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle",
-            "7-4-oxidative-phosphorylation",
-        ],
-        "mitochondrion": [
-            "7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle",
-            "7-4-oxidative-phosphorylation",
-        ],
+        "cellular respiration": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", "7-4-oxidative-phosphorylation"],
+        "mitochondria": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", "7-4-oxidative-phosphorylation"],
+        "mitochondrion": ["7-3-oxidation-of-pyruvate-and-the-citric-acid-cycle", "7-4-oxidative-phosphorylation"],
         "atp": ["6-4-atp-adenosine-triphosphate", "7-4-oxidative-phosphorylation"],
         "adenosine triphosphate": ["6-4-atp-adenosine-triphosphate"],
-        "photosynthesis": [
-            "8-1-overview-of-photosynthesis",
-            "8-2-the-light-dependent-reaction-of-photosynthesis",
-        ],
+        "photosynthesis": ["8-1-overview-of-photosynthesis", "8-2-the-light-dependent-reaction-of-photosynthesis"],
         "plants make food": ["8-1-overview-of-photosynthesis"],
         "chloroplast": ["8-1-overview-of-photosynthesis", "4-3-eukaryotic-cells"],
         "chlorophyll": ["8-2-the-light-dependent-reaction-of-photosynthesis"],
@@ -544,33 +525,21 @@ def main():
         # Molecular Biology
         "dna": ["14-2-dna-structure-and-sequencing", "14-3-basics-of-dna-replication"],
         "rna": ["15-4-rna-processing-in-eukaryotes", "3-5-nucleic-acids"],
-        "mrna": [
-            "15-4-rna-processing-in-eukaryotes",
-            "15-5-ribosomes-and-protein-synthesis",
-        ],
+        "mrna": ["15-4-rna-processing-in-eukaryotes", "15-5-ribosomes-and-protein-synthesis"],
         "trna": ["15-5-ribosomes-and-protein-synthesis"],
         "rrna": ["15-5-ribosomes-and-protein-synthesis"],
-        "transcription": [
-            "15-2-prokaryotic-transcription",
-            "15-3-eukaryotic-transcription",
-        ],
+        "transcription": ["15-2-prokaryotic-transcription", "15-3-eukaryotic-transcription"],
         "translation": ["15-5-ribosomes-and-protein-synthesis"],
         "protein synthesis": ["15-5-ribosomes-and-protein-synthesis"],
         "protein": ["3-4-proteins", "15-5-ribosomes-and-protein-synthesis"],
         "enzyme": ["6-5-enzymes"],
         "gene expression": ["16-1-regulation-of-gene-expression"],
         "genetic code": ["15-1-the-genetic-code"],
-        "central dogma": [
-            "15-1-the-genetic-code",
-            "15-5-ribosomes-and-protein-synthesis",
-        ],
+        "central dogma": ["15-1-the-genetic-code", "15-5-ribosomes-and-protein-synthesis"],
         "codon": ["15-1-the-genetic-code"],
         "anticodon": ["15-5-ribosomes-and-protein-synthesis"],
         "ribosome": ["15-5-ribosomes-and-protein-synthesis", "4-3-eukaryotic-cells"],
-        "replication": [
-            "14-3-basics-of-dna-replication",
-            "14-4-dna-replication-in-prokaryotes",
-        ],
+        "replication": ["14-3-basics-of-dna-replication", "14-4-dna-replication-in-prokaryotes"],
         # Cell Structure
         "cell membrane": ["5-1-components-and-structure"],
         "plasma membrane": ["5-1-components-and-structure"],
@@ -580,10 +549,7 @@ def main():
         "diffusion": ["5-2-passive-transport"],
         "active transport": ["5-3-active-transport"],
         "cytoskeleton": ["4-5-cytoskeleton"],
-        "organelle": [
-            "4-3-eukaryotic-cells",
-            "4-4-the-endomembrane-system-and-proteins",
-        ],
+        "organelle": ["4-3-eukaryotic-cells", "4-4-the-endomembrane-system-and-proteins"],
         "nucleus": ["4-3-eukaryotic-cells"],
         "endoplasmic reticulum": ["4-4-the-endomembrane-system-and-proteins"],
         "golgi": ["4-4-the-endomembrane-system-and-proteins"],
@@ -591,17 +557,11 @@ def main():
         "vesicle": ["5-4-bulk-transport", "4-4-the-endomembrane-system-and-proteins"],
         "endocytosis": ["5-4-bulk-transport"],
         "exocytosis": ["5-4-bulk-transport"],
-        "signal transduction": [
-            "9-1-signaling-molecules-and-cellular-receptors",
-            "9-2-propagation-of-the-signal",
-        ],
+        "signal transduction": ["9-1-signaling-molecules-and-cellular-receptors", "9-2-propagation-of-the-signal"],
         "cell signaling": ["9-1-signaling-molecules-and-cellular-receptors"],
         # Nervous System
         "neuron": ["26-1-neurons-and-glial-cells", "26-2-how-neurons-communicate"],
-        "nervous system": [
-            "26-1-neurons-and-glial-cells",
-            "26-3-the-central-nervous-system",
-        ],
+        "nervous system": ["26-1-neurons-and-glial-cells", "26-3-the-central-nervous-system"],
         "brain": ["26-3-the-central-nervous-system"],
         "action potential": ["26-2-how-neurons-communicate"],
         "synapse": ["26-2-how-neurons-communicate"],
@@ -609,14 +569,8 @@ def main():
         "vision": ["27-5-vision"],
         "hearing": ["27-4-hearing-and-vestibular-sensation"],
         # Circulatory System
-        "heart": [
-            "31-1-overview-of-the-circulatory-system",
-            "31-3-mammalian-heart-and-blood-vessels",
-        ],
-        "blood": [
-            "31-2-components-of-the-blood",
-            "31-1-overview-of-the-circulatory-system",
-        ],
+        "heart": ["31-1-overview-of-the-circulatory-system", "31-3-mammalian-heart-and-blood-vessels"],
+        "blood": ["31-2-components-of-the-blood", "31-1-overview-of-the-circulatory-system"],
         "circulatory": ["31-1-overview-of-the-circulatory-system"],
         "cardiovascular": ["31-1-overview-of-the-circulatory-system"],
         # Immune System
@@ -632,58 +586,31 @@ def main():
         "stomach": ["25-1-digestive-systems"],
         "intestine": ["25-3-digestive-system-processes"],
         "hormone": ["28-1-types-of-hormones", "28-2-how-hormones-work"],
-        "endocrine": [
-            "28-5-endocrine-glands",
-            "28-1-types-of-hormones",
-            "28-2-how-hormones-work",
-        ],
-        "endocrine system": [
-            "28-5-endocrine-glands",
-            "28-1-types-of-hormones",
-            "28-2-how-hormones-work",
-        ],
+        "endocrine": ["28-5-endocrine-glands", "28-1-types-of-hormones", "28-2-how-hormones-work"],
+        "endocrine system": ["28-5-endocrine-glands", "28-1-types-of-hormones", "28-2-how-hormones-work"],
         "muscle": ["29-4-muscle-contraction-and-locomotion"],
         "bone": ["29-2-bone"],
         "skeleton": ["29-1-types-of-skeletal-systems"],
         "kidney": ["32-2-the-kidneys-and-osmoregulatory-organs"],
         "excretion": ["32-3-excretion-systems"],
-        "reproduction": [
-            "34-1-reproduction-methods",
-            "34-3-human-reproductive-anatomy-and-gametogenesis",
-        ],
-        "reproductive": [
-            "34-1-reproduction-methods",
-            "34-3-human-reproductive-anatomy-and-gametogenesis",
-        ],
-        "reproductive system": [
-            "34-1-reproduction-methods",
-            "34-3-human-reproductive-anatomy-and-gametogenesis",
-            "34-4-hormonal-control-of-human-reproduction",
-        ],
+        "reproduction": ["34-1-reproduction-methods", "34-3-human-reproductive-anatomy-and-gametogenesis"],
+        "reproductive": ["34-1-reproduction-methods", "34-3-human-reproductive-anatomy-and-gametogenesis"],
+        "reproductive system": ["34-1-reproduction-methods", "34-3-human-reproductive-anatomy-and-gametogenesis", "34-4-hormonal-control-of-human-reproduction"],
         "pregnancy": ["34-7-human-pregnancy-and-birth"],
         "embryo": ["34-5-fertilization-and-early-embryonic-development"],
         # Evolution & Genetics
         "evolution": ["18-1-understanding-evolution", "19-1-population-evolution"],
         "darwin": ["18-1-understanding-evolution"],
-        "natural selection": [
-            "19-3-adaptive-evolution",
-            "36-2-life-histories-and-natural-selection",
-        ],
+        "natural selection": ["19-3-adaptive-evolution", "36-2-life-histories-and-natural-selection"],
         "speciation": ["18-2-formation-of-new-species"],
-        "genetics": [
-            "12-1-mendels-experiments-and-the-laws-of-probability",
-            "12-3-laws-of-inheritance",
-        ],
+        "genetics": ["12-1-mendels-experiments-and-the-laws-of-probability", "12-3-laws-of-inheritance"],
         "mendel": ["12-1-mendels-experiments-and-the-laws-of-probability"],
         "inheritance": ["12-3-laws-of-inheritance"],
         "heredity": ["12-3-laws-of-inheritance"],
         "mutation": ["14-6-dna-repair"],
         "phylogen": ["20-2-determining-evolutionary-relationships"],
         # Microorganisms
-        "virus": [
-            "21-1-viral-evolution-morphology-and-classification",
-            "21-2-virus-infection-and-hosts",
-        ],
+        "virus": ["21-1-viral-evolution-morphology-and-classification", "21-2-virus-infection-and-hosts"],
         "bacteria": ["22-1-prokaryotic-diversity", "22-4-bacterial-diseases-in-humans"],
         "prokaryote": ["4-2-prokaryotic-cells", "22-1-prokaryotic-diversity"],
         "eukaryote": ["4-3-eukaryotic-cells"],
@@ -696,23 +623,14 @@ def main():
         "phloem": ["23-5-transport-of-water-and-solutes-in-plants"],
         # Ecology
         "ecology": ["35-1-the-scope-of-ecology", "36-6-community-ecology"],
-        "ecosystem": [
-            "37-1-ecology-for-ecosystems",
-            "37-2-energy-flow-through-ecosystems",
-        ],
+        "ecosystem": ["37-1-ecology-for-ecosystems", "37-2-energy-flow-through-ecosystems"],
         "food chain": ["37-2-energy-flow-through-ecosystems"],
         "food web": ["37-2-energy-flow-through-ecosystems"],
         "biome": ["35-3-terrestrial-biomes", "35-4-aquatic-biomes"],
-        "population": [
-            "36-1-population-demography",
-            "36-3-environmental-limits-to-population-growth",
-        ],
+        "population": ["36-1-population-demography", "36-3-environmental-limits-to-population-growth"],
         "climate": ["35-5-climate-and-the-effects-of-global-climate-change"],
         "climate change": ["35-5-climate-and-the-effects-of-global-climate-change"],
-        "biodiversity": [
-            "38-1-the-biodiversity-crisis",
-            "38-4-preserving-biodiversity",
-        ],
+        "biodiversity": ["38-1-the-biodiversity-crisis", "38-4-preserving-biodiversity"],
         "carbon cycle": ["37-3-biogeochemical-cycles"],
         "nitrogen cycle": ["37-3-biogeochemical-cycles"],
         # Chemistry Basics
@@ -763,10 +681,10 @@ def main():
                         text_parts.append(para_text.strip())
 
             full_text = "\n".join(text_parts)
-            full_text = re.sub(r"\n{3,}", "\n\n", full_text)
+            full_text = re.sub(r'\n{3,}', '\n\n', full_text)
             return full_text.strip()
         except Exception:
-            return re.sub(r"<[^>]+>", " ", cnxml_content).strip()
+            return re.sub(r'<[^>]+>', ' ', cnxml_content).strip()
 
     def get_chapter_list_for_llm() -> str:
         """Return a formatted list of all chapters for LLM context.
@@ -849,16 +767,14 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
         import urllib.error
 
         topic_lower = topic.lower()
-        matched_slugs = (
-            []
-        )  # Use list to preserve order (first match = highest priority)
+        matched_slugs = []  # Use list to preserve order (first match = highest priority)
 
         # First try keyword matching (fast path)
         # Use word boundary matching to avoid false positives like "vision" in "cell division"
         for keyword, slugs in KEYWORD_HINTS.items():
             # Check for word boundary match using regex
             # This ensures "vision" doesn't match "cell division"
-            pattern = r"\b" + re.escape(keyword) + r"\b"
+            pattern = r'\b' + re.escape(keyword) + r'\b'
             if re.search(pattern, topic_lower):
                 for slug in slugs:
                     if slug not in matched_slugs:
@@ -877,7 +793,7 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
             return {
                 "content": "",
                 "sources": [],
-                "note": f"I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum.",
+                "note": f"I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum."
             }
 
         chapter_slugs = list(matched_slugs)[:2]
@@ -903,10 +819,8 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
             for module_id in module_ids:
                 github_url = f"https://raw.githubusercontent.com/openstax/osbooks-biology-bundle/main/modules/{module_id}/index.cnxml"
                 try:
-                    with urllib.request.urlopen(
-                        github_url, timeout=10, context=ssl_ctx
-                    ) as response:
-                        cnxml = response.read().decode("utf-8")
+                    with urllib.request.urlopen(github_url, timeout=10, context=ssl_ctx) as response:
+                        cnxml = response.read().decode('utf-8')
                         text = parse_cnxml_to_text(cnxml)
                         if text:
                             content_parts.append(f"## {title}\n\n{text}")
@@ -916,13 +830,7 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
 
             # Only add source if we actually got content for this chapter
             if chapter_content_found:
-                sources.append(
-                    {
-                        "title": title,
-                        "url": url,
-                        "provider": "OpenStax Biology for AP Courses",
-                    }
-                )
+                sources.append({"title": title, "url": url, "provider": "OpenStax Biology for AP Courses"})
 
         return {
             "content": "\n\n---\n\n".join(content_parts) if content_parts else "",
@@ -963,77 +871,31 @@ Return ONLY a JSON array with exactly {max_chapters} slugs (or [] for non-biolog
         # If no OpenStax content found, return an error message instead of making up content
         if not textbook_context or not sources:
             components = [
-                {
-                    "id": "mainColumn",
-                    "component": {
-                        "Column": {
-                            "children": {"explicitList": ["header", "message"]},
-                            "distribution": "start",
-                            "alignment": "stretch",
-                        }
-                    },
-                },
-                {
-                    "id": "header",
-                    "component": {
-                        "Text": {
-                            "text": {"literalString": f"No Content Available: {topic}"},
-                            "usageHint": "h3",
-                        }
-                    },
-                },
-                {
-                    "id": "message",
-                    "component": {
-                        "Text": {
-                            "text": {
-                                "literalString": f"Sorry, I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum, or try rephrasing your request with more specific biology terms."
-                            }
-                        }
-                    },
-                },
+                {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "message"]}, "distribution": "start", "alignment": "stretch"}}},
+                {"id": "header", "component": {"Text": {"text": {"literalString": f"No Content Available: {topic}"}, "usageHint": "h3"}}},
+                {"id": "message", "component": {"Text": {"text": {"literalString": f"Sorry, I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum, or try rephrasing your request with more specific biology terms."}}}},
             ]
             a2ui = [
                 {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
                 {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
             ]
-            return json.dumps(
-                {
-                    "format": "flashcards",
-                    "a2ui": a2ui,
-                    "surfaceId": SURFACE_ID,
-                    "source": {
-                        "title": "No content found",
-                        "url": "",
-                        "provider": "OpenStax Biology for AP Courses",
-                    },
-                }
-            )
+            return json.dumps({"format": "flashcards", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": {"title": "No content found", "url": "", "provider": "OpenStax Biology for AP Courses"}})
 
-        prompt = f"""Create 4 MCAT study flashcards about "{topic}" for Maria (pre-med, loves gym analogies).
+        prompt = f'''Create 4 MCAT study flashcards about "{topic}" for Maria (pre-med, loves gym analogies).
 Use gym/sports analogies in the answers where appropriate.
 IMPORTANT: Base all content ONLY on the textbook content provided below. Do not add information not present in the source.
 
 Textbook source content:
-{textbook_context[:4000]}"""
+{textbook_context[:4000]}'''
 
         flashcard_schema = {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "front": {
-                        "type": "string",
-                        "description": "The question on the front of the flashcard",
-                    },
-                    "back": {
-                        "type": "string",
-                        "description": "The answer on the back, using gym analogies",
-                    },
-                    "category": {
-                        "type": "string",
-                        "description": "Category like Biochemistry",
-                    },
+                    "front": {"type": "string", "description": "The question on the front of the flashcard"},
+                    "back": {"type": "string", "description": "The answer on the back, using gym analogies"},
+                    "category": {"type": "string", "description": "Category like Biochemistry"},
                 },
                 "required": ["front", "back", "category"],
             },
@@ -1051,72 +913,40 @@ Textbook source content:
 
         # Handle case where LLM returns empty or invalid response
         if not cards or not isinstance(cards, list) or len(cards) == 0:
-            logger.warning(
-                f"LLM returned empty flashcards for topic: {topic}, sources: {[s.get('title') for s in sources]}"
-            )
+            logger.warning(f"LLM returned empty flashcards for topic: {topic}, sources: {[s.get('title') for s in sources]}")
             # Create fallback flashcards - this usually means content mismatch
-            source_title = sources[0].get("title", topic) if sources else topic
+            source_title = sources[0].get('title', topic) if sources else topic
             cards = [
                 {
                     "front": f"What are the key concepts in {source_title}?",
                     "back": f"Review the OpenStax chapter on {source_title} for detailed information about {topic}.",
-                    "category": "Biology",
+                    "category": "Biology"
                 },
                 {
                     "front": f"Why is {topic} important in biology?",
                     "back": f"Understanding {topic} is fundamental to biology. Check the source material for specific details.",
-                    "category": "Biology",
+                    "category": "Biology"
                 },
             ]
 
         # Build proper A2UI structure programmatically
         card_ids = [f"c{i+1}" for i in range(len(cards))]
         components = [
-            {
-                "id": "mainColumn",
-                "component": {
-                    "Column": {
-                        "children": {"explicitList": ["header", "row"]},
-                        "distribution": "start",
-                        "alignment": "stretch",
-                    }
-                },
-            },
-            {
-                "id": "header",
-                "component": {
-                    "Text": {
-                        "text": {"literalString": f"Study Flashcards: {topic}"},
-                        "usageHint": "h3",
-                    }
-                },
-            },
-            {
-                "id": "row",
-                "component": {
-                    "Row": {
-                        "children": {"explicitList": card_ids},
-                        "distribution": "start",
-                        "alignment": "stretch",
-                    }
-                },
-            },
+            {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "row"]}, "distribution": "start", "alignment": "stretch"}}},
+            {"id": "header", "component": {"Text": {"text": {"literalString": f"Study Flashcards: {topic}"}, "usageHint": "h3"}}},
+            {"id": "row", "component": {"Row": {"children": {"explicitList": card_ids}, "distribution": "start", "alignment": "stretch"}}},
         ]
         for i, card in enumerate(cards):
-            components.append(
-                {
-                    "id": card_ids[i],
-                    "component": {
-                        "Flashcard": {
-                            "front": {"literalString": card.get("front", "")},
-                            "back": {"literalString": card.get("back", "")},
-                            "category": {
-                                "literalString": card.get("category", "Biochemistry")
-                            },
-                        }
-                    },
+            components.append({
+                "id": card_ids[i],
+                "component": {
+                    "Flashcard": {
+                        "front": {"literalString": card.get("front", "")},
+                        "back": {"literalString": card.get("back", "")},
+                        "category": {"literalString": card.get("category", "Biochemistry")},
+                    }
                 }
-            )
+            })
 
         a2ui = [
             {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
@@ -1130,14 +960,7 @@ Textbook source content:
             "provider": sources[0].get("provider", "OpenStax Biology for AP Courses"),
         }
 
-        return json.dumps(
-            {
-                "format": "flashcards",
-                "a2ui": a2ui,
-                "surfaceId": SURFACE_ID,
-                "source": source_info,
-            }
-        )
+        return json.dumps({"format": "flashcards", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": source_info})
 
     async def generate_quiz(
         tool_context: ToolContext,
@@ -1169,99 +992,44 @@ Textbook source content:
         # If no OpenStax content found, return an error message instead of making up content
         if not textbook_context or not sources:
             components = [
-                {
-                    "id": "mainColumn",
-                    "component": {
-                        "Column": {
-                            "children": {"explicitList": ["header", "message"]},
-                            "distribution": "start",
-                            "alignment": "stretch",
-                        }
-                    },
-                },
-                {
-                    "id": "header",
-                    "component": {
-                        "Text": {
-                            "text": {"literalString": f"No Content Available: {topic}"},
-                            "usageHint": "h3",
-                        }
-                    },
-                },
-                {
-                    "id": "message",
-                    "component": {
-                        "Text": {
-                            "text": {
-                                "literalString": f"Sorry, I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum, or try rephrasing your request with more specific biology terms."
-                            }
-                        }
-                    },
-                },
+                {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "message"]}, "distribution": "start", "alignment": "stretch"}}},
+                {"id": "header", "component": {"Text": {"text": {"literalString": f"No Content Available: {topic}"}, "usageHint": "h3"}}},
+                {"id": "message", "component": {"Text": {"text": {"literalString": f"Sorry, I couldn't find any OpenStax Biology content related to '{topic}'. This topic may not be covered in the AP Biology curriculum, or try rephrasing your request with more specific biology terms."}}}},
             ]
             a2ui = [
                 {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
                 {"surfaceUpdate": {"surfaceId": SURFACE_ID, "components": components}},
             ]
-            return json.dumps(
-                {
-                    "format": "quiz",
-                    "a2ui": a2ui,
-                    "surfaceId": SURFACE_ID,
-                    "source": {
-                        "title": "No content found",
-                        "url": "",
-                        "provider": "OpenStax Biology for AP Courses",
-                    },
-                }
-            )
+            return json.dumps({"format": "quiz", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": {"title": "No content found", "url": "", "provider": "OpenStax Biology for AP Courses"}})
 
-        prompt = f"""Create 2 MCAT quiz questions about "{topic}" for Maria (pre-med, loves gym analogies).
+        prompt = f'''Create 2 MCAT quiz questions about "{topic}" for Maria (pre-med, loves gym analogies).
 Each question should have 4 options (a, b, c, d) with exactly one correct answer.
 Use gym/sports analogies in explanations where appropriate.
 IMPORTANT: Base all content ONLY on the textbook content provided below. Do not add information not present in the source.
 
 Textbook source content:
-{textbook_context[:4000]}"""
+{textbook_context[:4000]}'''
 
         quiz_schema = {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "question": {
-                        "type": "string",
-                        "description": "The MCAT-style question",
-                    },
+                    "question": {"type": "string", "description": "The MCAT-style question"},
                     "options": {
                         "type": "array",
                         "items": {
                             "type": "object",
                             "properties": {
-                                "label": {
-                                    "type": "string",
-                                    "description": "The option text",
-                                },
-                                "value": {
-                                    "type": "string",
-                                    "description": "Option identifier (a, b, c, or d)",
-                                },
-                                "isCorrect": {
-                                    "type": "boolean",
-                                    "description": "True if this is the correct answer",
-                                },
+                                "label": {"type": "string", "description": "The option text"},
+                                "value": {"type": "string", "description": "Option identifier (a, b, c, or d)"},
+                                "isCorrect": {"type": "boolean", "description": "True if this is the correct answer"},
                             },
                             "required": ["label", "value", "isCorrect"],
                         },
                     },
-                    "explanation": {
-                        "type": "string",
-                        "description": "Detailed explanation with gym analogy",
-                    },
-                    "category": {
-                        "type": "string",
-                        "description": "Category like Biochemistry",
-                    },
+                    "explanation": {"type": "string", "description": "Detailed explanation with gym analogy"},
+                    "category": {"type": "string", "description": "Category like Biochemistry"},
                 },
                 "required": ["question", "options", "explanation", "category"],
             },
@@ -1281,97 +1049,45 @@ Textbook source content:
         if not quizzes or not isinstance(quizzes, list) or len(quizzes) == 0:
             logger.warning(f"LLM returned empty quiz for topic: {topic}")
             # Create a default quiz question based on the source content
-            quizzes = [
-                {
-                    "question": f"Which of the following best describes {topic}?",
-                    "options": [
-                        {
-                            "label": f"A key concept in {sources[0].get('title', 'biology')}",
-                            "value": "a",
-                            "isCorrect": True,
-                        },
-                        {
-                            "label": "A topic not covered in AP Biology",
-                            "value": "b",
-                            "isCorrect": False,
-                        },
-                        {
-                            "label": "An unrelated scientific concept",
-                            "value": "c",
-                            "isCorrect": False,
-                        },
-                        {
-                            "label": "None of the above",
-                            "value": "d",
-                            "isCorrect": False,
-                        },
-                    ],
-                    "explanation": f"Review the OpenStax chapter on {sources[0].get('title', topic)} for more details.",
-                    "category": "Biology",
-                }
-            ]
+            quizzes = [{
+                "question": f"Which of the following best describes {topic}?",
+                "options": [
+                    {"label": f"A key concept in {sources[0].get('title', 'biology')}", "value": "a", "isCorrect": True},
+                    {"label": "A topic not covered in AP Biology", "value": "b", "isCorrect": False},
+                    {"label": "An unrelated scientific concept", "value": "c", "isCorrect": False},
+                    {"label": "None of the above", "value": "d", "isCorrect": False},
+                ],
+                "explanation": f"Review the OpenStax chapter on {sources[0].get('title', topic)} for more details.",
+                "category": "Biology"
+            }]
 
         # Build proper A2UI structure programmatically
         quiz_ids = [f"q{i+1}" for i in range(len(quizzes))]
         components = [
-            {
-                "id": "mainColumn",
-                "component": {
-                    "Column": {
-                        "children": {"explicitList": ["header", "row"]},
-                        "distribution": "start",
-                        "alignment": "stretch",
-                    }
-                },
-            },
-            {
-                "id": "header",
-                "component": {
-                    "Text": {
-                        "text": {"literalString": f"Quick Quiz: {topic}"},
-                        "usageHint": "h3",
-                    }
-                },
-            },
-            {
-                "id": "row",
-                "component": {
-                    "Row": {
-                        "children": {"explicitList": quiz_ids},
-                        "distribution": "start",
-                        "alignment": "stretch",
-                    }
-                },
-            },
+            {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "row"]}, "distribution": "start", "alignment": "stretch"}}},
+            {"id": "header", "component": {"Text": {"text": {"literalString": f"Quick Quiz: {topic}"}, "usageHint": "h3"}}},
+            {"id": "row", "component": {"Row": {"children": {"explicitList": quiz_ids}, "distribution": "start", "alignment": "stretch"}}},
         ]
         for i, quiz in enumerate(quizzes):
             # Transform options to A2UI format
             options = []
             for opt in quiz.get("options", []):
-                options.append(
-                    {
-                        "label": {"literalString": opt.get("label", "")},
-                        "value": opt.get("value", ""),
-                        "isCorrect": opt.get("isCorrect", False),
+                options.append({
+                    "label": {"literalString": opt.get("label", "")},
+                    "value": opt.get("value", ""),
+                    "isCorrect": opt.get("isCorrect", False),
+                })
+            components.append({
+                "id": quiz_ids[i],
+                "component": {
+                    "QuizCard": {
+                        "question": {"literalString": quiz.get("question", "")},
+                        "options": options,
+                        "explanation": {"literalString": quiz.get("explanation", "")},
+                        "category": {"literalString": quiz.get("category", "Biochemistry")},
                     }
-                )
-            components.append(
-                {
-                    "id": quiz_ids[i],
-                    "component": {
-                        "QuizCard": {
-                            "question": {"literalString": quiz.get("question", "")},
-                            "options": options,
-                            "explanation": {
-                                "literalString": quiz.get("explanation", "")
-                            },
-                            "category": {
-                                "literalString": quiz.get("category", "Biochemistry")
-                            },
-                        }
-                    },
                 }
-            )
+            })
 
         a2ui = [
             {"beginRendering": {"surfaceId": SURFACE_ID, "root": "mainColumn"}},
@@ -1385,14 +1101,7 @@ Textbook source content:
             "provider": sources[0].get("provider", "OpenStax Biology for AP Courses"),
         }
 
-        return json.dumps(
-            {
-                "format": "quiz",
-                "a2ui": a2ui,
-                "surfaceId": SURFACE_ID,
-                "source": source_info,
-            }
-        )
+        return json.dumps({"format": "quiz", "a2ui": a2ui, "surfaceId": SURFACE_ID, "source": source_info})
 
     async def get_textbook_content(
         tool_context: ToolContext,
@@ -1412,31 +1121,25 @@ Textbook source content:
         sources = openstax_data.get("sources", [])
 
         if not content:
-            return json.dumps(
-                {
-                    "content": f"No specific textbook content found for '{topic}'. Please use general biology knowledge.",
-                    "sources": [],
-                }
-            )
+            return json.dumps({
+                "content": f"No specific textbook content found for '{topic}'. Please use general biology knowledge.",
+                "sources": []
+            })
 
         # Format source citations
         source_citations = []
         for src in sources:
-            source_citations.append(
-                {
-                    "title": src.get("title", ""),
-                    "url": src.get("url", ""),
-                    "provider": src.get("provider", "OpenStax Biology for AP Courses"),
-                }
-            )
+            source_citations.append({
+                "title": src.get("title", ""),
+                "url": src.get("url", ""),
+                "provider": src.get("provider", "OpenStax Biology for AP Courses"),
+            })
 
-        return json.dumps(
-            {
-                # Limit content length. Okay for a demo but could be improved
-                "content": content[:4000],
-                "sources": source_citations,
-            }
-        )
+        return json.dumps({
+            # Limit content length. Okay for a demo but could be improved
+            "content": content[:4000],  
+            "sources": source_citations
+        })
 
     # GCS media URLs (publicly accessible)
     # Media bucket follows pattern: {PROJECT_ID}-media
@@ -1455,46 +1158,10 @@ Textbook source content:
             A2UI JSON string for AudioPlayer component
         """
         components = [
-            {
-                "id": "mainColumn",
-                "component": {
-                    "Column": {
-                        "children": {"explicitList": ["header", "descText", "player"]},
-                        "distribution": "start",
-                        "alignment": "stretch",
-                    }
-                },
-            },
-            {
-                "id": "header",
-                "component": {
-                    "Text": {
-                        "text": {"literalString": "Personalized Learning Podcast"},
-                        "usageHint": "h3",
-                    }
-                },
-            },
-            {
-                "id": "descText",
-                "component": {
-                    "Text": {
-                        "text": {
-                            "literalString": "A podcast tailored for Maria covering ATP, bond energy, and common MCAT misconceptions. Uses gym and sports analogies to explain complex biochemistry concepts."
-                        }
-                    }
-                },
-            },
-            {
-                "id": "player",
-                "component": {
-                    "AudioPlayer": {
-                        "url": {"literalString": PODCAST_URL},
-                        "description": {
-                            "literalString": "ATP & Bond Energy - MCAT Review"
-                        },
-                    }
-                },
-            },
+            {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "descText", "player"]}, "distribution": "start", "alignment": "stretch"}}},
+            {"id": "header", "component": {"Text": {"text": {"literalString": "Personalized Learning Podcast"}, "usageHint": "h3"}}},
+            {"id": "descText", "component": {"Text": {"text": {"literalString": "A podcast tailored for Maria covering ATP, bond energy, and common MCAT misconceptions. Uses gym and sports analogies to explain complex biochemistry concepts."}}}},
+            {"id": "player", "component": {"AudioPlayer": {"url": {"literalString": PODCAST_URL}, "description": {"literalString": "ATP & Bond Energy - MCAT Review"}}}},
         ]
 
         a2ui = [
@@ -1512,41 +1179,10 @@ Textbook source content:
             A2UI JSON string for Video component
         """
         components = [
-            {
-                "id": "mainColumn",
-                "component": {
-                    "Column": {
-                        "children": {
-                            "explicitList": ["header", "descText", "videoPlayer"]
-                        },
-                        "distribution": "start",
-                        "alignment": "stretch",
-                    }
-                },
-            },
-            {
-                "id": "header",
-                "component": {
-                    "Text": {
-                        "text": {"literalString": "Video Lesson"},
-                        "usageHint": "h3",
-                    }
-                },
-            },
-            {
-                "id": "descText",
-                "component": {
-                    "Text": {
-                        "text": {
-                            "literalString": "A visual explanation of ATP hydrolysis and bond energy concepts, designed for visual learners preparing for the MCAT."
-                        }
-                    }
-                },
-            },
-            {
-                "id": "videoPlayer",
-                "component": {"Video": {"url": {"literalString": VIDEO_URL}}},
-            },
+            {"id": "mainColumn", "component": {"Column": {"children": {"explicitList": ["header", "descText", "videoPlayer"]}, "distribution": "start", "alignment": "stretch"}}},
+            {"id": "header", "component": {"Text": {"text": {"literalString": "Video Lesson"}, "usageHint": "h3"}}},
+            {"id": "descText", "component": {"Text": {"text": {"literalString": "A visual explanation of ATP hydrolysis and bond energy concepts, designed for visual learners preparing for the MCAT."}}}},
+            {"id": "videoPlayer", "component": {"Video": {"url": {"literalString": VIDEO_URL}}}},
         ]
 
         a2ui = [
@@ -1587,13 +1223,7 @@ LEARNER PROFILE (Maria):
 - Visual-kinesthetic learner
 
 Always use gym/sports analogies where appropriate. Be encouraging and supportive.""",
-        tools=[
-            generate_flashcards,
-            generate_quiz,
-            get_textbook_content,
-            get_audio_content,
-            get_video_content,
-        ],
+        tools=[generate_flashcards, generate_quiz, get_textbook_content, get_audio_content, get_video_content],
     )
 
     # Wrap agent in AdkApp for deployment (skip App wrapper to avoid version issues)
@@ -1622,9 +1252,7 @@ Always use gym/sports analogies where appropriate. Be encouraging and supportive
     print("Next steps:")
     print("  1. Copy the Resource ID above")
     print("  2. Paste it into the notebook's AGENT_RESOURCE_ID variable")
-    print(
-        f"  3. Upload learner context files to gs://{context_bucket}/learner_context/"
-    )
+    print(f"  3. Upload learner context files to gs://{context_bucket}/learner_context/")
     print("  4. Run the remaining notebook cells to configure and start the demo")
 
 

@@ -58,10 +58,7 @@ class MarkdownDirective extends Directive {
       })
       // The until directive lets us render a placeholder *until* the rendered
       // content resolves.
-      return until(
-        rendered,
-        html`<span class="no-markdown-renderer">${value}</span>`
-      );
+      return until(rendered, html`<span class="no-markdown-renderer">${value}</span>`);
     }
 
     if (!MarkdownDirective.defaultMarkdownWarningLogged) {
