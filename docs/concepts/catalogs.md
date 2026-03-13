@@ -202,7 +202,7 @@ This catalog imports all elements from the Basic Catalog and adds a new `Suggest
 }
 ```
 
-**Make sure to run `tools/assemble_catalog.py` to resolve the external $ref before publishing.**
+**Make sure to run `tools/build_catalog/assemble_catalog.py` to resolve the external $ref before publishing.**
 
 #### Example: Cherry-picking Components
 
