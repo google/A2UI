@@ -21,47 +21,53 @@ import { BASIC_FUNCTIONS } from "./basic_functions.js";
 import { DataModel } from "../../state/data-model.js";
 import { DataContext } from "../../rendering/data-context.js";
 
+function invoke(name: string, args: Record<string, any>, context: DataContext) {
+  const fn = BASIC_FUNCTIONS.find(f => f.name === name);
+  if (!fn) throw new Error(`Function ${name} not found`);
+  return fn.execute(fn.schema.parse(args), context);
+}
+
 describe("BASIC_FUNCTIONS", () => {
   const dataModel = new DataModel({ a: 10, b: 20 });
-  const context = new DataContext(dataModel, "/");
+  const context = new DataContext(dataModel, "/", () => null);
 
   describe("Arithmetic", () => {
     it("add", () => {
-      assert.strictEqual(BASIC_FUNCTIONS.add({ a: 1, b: 2 }, context), 3);
-      assert.strictEqual(BASIC_FUNCTIONS.add({ a: "1", b: "2" }, context), 3);
+      assert.strictEqual(invoke("add", { a: 1, b: 2 }, context), 3);
+      assert.strictEqual(invoke("add", { a: "1", b: "2" }, context), 3);
     });
     it("subtract", () => {
-      assert.strictEqual(BASIC_FUNCTIONS.subtract({ a: 5, b: 3 }, context), 2);
+      assert.strictEqual(invoke("subtract", { a: 5, b: 3 }, context), 2);
     });
     it("multiply", () => {
-      assert.strictEqual(BASIC_FUNCTIONS.multiply({ a: 4, b: 2 }, context), 8);
+      assert.strictEqual(invoke("multiply", { a: 4, b: 2 }, context), 8);
     });
     it("divide", () => {
-      assert.strictEqual(BASIC_FUNCTIONS.divide({ a: 10, b: 2 }, context), 5);
+      assert.strictEqual(invoke("divide", { a: 10, b: 2 }, context), 5);
       assert.strictEqual(
-        BASIC_FUNCTIONS.divide({ a: 10, b: 0 }, context),
+        invoke("divide", { a: 10, b: 0 }, context),
         Infinity,
       );
       assert.ok(
-        Number.isNaN(BASIC_FUNCTIONS.divide({ a: 10, b: undefined }, context)),
+        Number.isNaN(invoke("divide", { a: 10, b: undefined }, context)),
       );
       assert.ok(
-        Number.isNaN(BASIC_FUNCTIONS.divide({ a: undefined, b: 10 }, context)),
+        Number.isNaN(invoke("divide", { a: undefined, b: 10 }, context)),
       );
       assert.ok(
         Number.isNaN(
-          BASIC_FUNCTIONS.divide({ a: undefined, b: undefined }, context),
+          invoke("divide", { a: undefined, b: undefined }, context),
         ),
       );
       assert.ok(
-        Number.isNaN(BASIC_FUNCTIONS.divide({ a: 10, b: null }, context)),
+        Number.isNaN(invoke("divide", { a: 10, b: null }, context)),
       );
       assert.ok(
-        Number.isNaN(BASIC_FUNCTIONS.divide({ a: 10, b: "invalid" }, context)),
+        Number.isNaN(invoke("divide", { a: 10, b: "invalid" }, context)),
       );
-      assert.strictEqual(BASIC_FUNCTIONS.divide({ a: 10, b: "2" }, context), 5);
+      assert.strictEqual(invoke("divide", { a: 10, b: "2" }, context), 5);
       assert.strictEqual(
-        BASIC_FUNCTIONS.divide({ a: "10", b: "2" }, context),
+        invoke("divide", { a: "10", b: "2" }, context),
         5,
       );
     });
@@ -69,31 +75,31 @@ describe("BASIC_FUNCTIONS", () => {
 
   describe("Comparison", () => {
     it("equals", () => {
-      assert.strictEqual(BASIC_FUNCTIONS.equals({ a: 1, b: 1 }, context), true);
+      assert.strictEqual(invoke("equals", { a: 1, b: 1 }, context), true);
       assert.strictEqual(
-        BASIC_FUNCTIONS.equals({ a: 1, b: 2 }, context),
+        invoke("equals", { a: 1, b: 2 }, context),
         false,
       );
     });
     it("not_equals", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.not_equals({ a: 1, b: 2 }, context),
+        invoke("not_equals", { a: 1, b: 2 }, context),
         true,
       );
     });
     it("greater_than", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.greater_than({ a: 5, b: 3 }, context),
+        invoke("greater_than", { a: 5, b: 3 }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.greater_than({ a: 3, b: 5 }, context),
+        invoke("greater_than", { a: 3, b: 5 }, context),
         false,
       );
     });
     it("less_than", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.less_than({ a: 3, b: 5 }, context),
+        invoke("less_than", { a: 3, b: 5 }, context),
         true,
       );
     });
@@ -103,49 +109,49 @@ describe("BASIC_FUNCTIONS", () => {
     it("and", () => {
       // Checks args['values'] array OR args['a'] && args['b'].
       assert.strictEqual(
-        BASIC_FUNCTIONS.and({ values: [true, true] }, context),
+        invoke("and", { values: [true, true] }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.and({ values: [true, false] }, context),
+        invoke("and", { values: [true, false] }, context),
         false,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.and({ a: true, b: true }, context),
+        invoke("and", { a: true, b: true }, context),
         true,
       );
     });
     it("or", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.or({ values: [false, true] }, context),
+        invoke("or", { values: [false, true] }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.or({ values: [false, false] }, context),
+        invoke("or", { values: [false, false] }, context),
         false,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.or({ a: false, b: true }, context),
+        invoke("or", { a: false, b: true }, context),
         true,
       );
     });
     it("not", () => {
-      assert.strictEqual(BASIC_FUNCTIONS.not({ value: false }, context), true);
-      assert.strictEqual(BASIC_FUNCTIONS.not({ value: true }, context), false);
+      assert.strictEqual(invoke("not", { value: false }, context), true);
+      assert.strictEqual(invoke("not", { value: true }, context), false);
     });
   });
 
   describe("String", () => {
     it("contains", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.contains(
+        invoke("contains", 
           { string: "hello world", substring: "world" },
           context,
         ),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.contains(
+        invoke("contains", 
           { string: "hello world", substring: "foo" },
           context,
         ),
@@ -154,13 +160,13 @@ describe("BASIC_FUNCTIONS", () => {
     });
     it("starts_with", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.starts_with({ string: "hello", prefix: "he" }, context),
+        invoke("starts_with", { string: "hello", prefix: "he" }, context),
         true,
       );
     });
     it("ends_with", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.ends_with({ string: "hello", suffix: "lo" }, context),
+        invoke("ends_with", { string: "hello", suffix: "lo" }, context),
         true,
       );
     });
@@ -169,66 +175,66 @@ describe("BASIC_FUNCTIONS", () => {
   describe("Validation", () => {
     it("required", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.required({ value: "a" }, context),
+        invoke("required", { value: "a" }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.required({ value: "" }, context),
+        invoke("required", { value: "" }, context),
         false,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.required({ value: null }, context),
+        invoke("required", { value: null }, context),
         false,
       );
     });
 
     it("length", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.length({ value: "abc", min: 2 }, context),
+        invoke("length", { value: "abc", min: 2 }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.length({ value: "abc", max: 2 }, context),
+        invoke("length", { value: "abc", max: 2 }, context),
         false,
       );
     });
 
     it("numeric", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.numeric({ value: 10, min: 5, max: 15 }, context),
+        invoke("numeric", { value: 10, min: 5, max: 15 }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.numeric({ value: 3, min: 5 }, context),
+        invoke("numeric", { value: 3, min: 5 }, context),
         false,
       );
     });
 
     it("email", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.email({ value: "test@example.com" }, context),
+        invoke("email", { value: "test@example.com" }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.email({ value: "invalid" }, context),
+        invoke("email", { value: "invalid" }, context),
         false,
       );
     });
 
     it("regex", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.regex({ value: "abc", pattern: "^[a-z]+$" }, context),
+        invoke("regex", { value: "abc", pattern: "^[a-z]+$" }, context),
         true,
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.regex({ value: "123", pattern: "^[a-z]+$" }, context),
+        invoke("regex", { value: "123", pattern: "^[a-z]+$" }, context),
         false,
       );
     });
 
     it("regex handles invalid pattern", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.regex({ value: "abc", pattern: "[" }, context),
+        invoke("regex", { value: "abc", pattern: "[" }, context),
         false, // fallback when regex throws
       );
     });
@@ -236,7 +242,7 @@ describe("BASIC_FUNCTIONS", () => {
 
   describe("Formatting", () => {
     it("formatString (static literal)", (_, done) => {
-      const result = BASIC_FUNCTIONS.formatString(
+      const result = invoke("formatString", 
         { value: "hello world" },
         context,
       ) as import("@preact/signals-core").Signal<string>;
@@ -254,7 +260,7 @@ describe("BASIC_FUNCTIONS", () => {
 
     it("formatString (with data binding)", (_, done) => {
       // Assuming dataModel has { "a": 10 } from setup
-      const result = BASIC_FUNCTIONS.formatString(
+      const result = invoke("formatString", 
         { value: "Value: ${a}" },
         context,
       ) as import("@preact/signals-core").Signal<string>;
@@ -293,7 +299,7 @@ describe("BASIC_FUNCTIONS", () => {
         return null;
       });
 
-      const result = BASIC_FUNCTIONS.formatString(
+      const result = invoke("formatString", 
         { value: "Result: ${add(a: 5, b: 7)}" },
         ctxWithInvoker,
       ) as import("@preact/signals-core").Signal<string>;
@@ -311,7 +317,7 @@ describe("BASIC_FUNCTIONS", () => {
 
     it("formatNumber", () => {
       // Test basic output as Intl behavior varies by environment.
-      const result = BASIC_FUNCTIONS.formatNumber(
+      const result = invoke("formatNumber", 
         { value: 1234.56, decimals: 1 },
         context,
       );
@@ -324,7 +330,7 @@ describe("BASIC_FUNCTIONS", () => {
     });
 
     it("formatCurrency", () => {
-      const result = BASIC_FUNCTIONS.formatCurrency(
+      const result = invoke("formatCurrency", 
         { value: 1234.56, currency: "USD" },
         context,
       );
@@ -334,14 +340,14 @@ describe("BASIC_FUNCTIONS", () => {
     });
 
     it("formatDate", () => {
-      const result = BASIC_FUNCTIONS.formatDate(
+      const result = invoke("formatDate", 
         { value: "2025-01-01T00:00:00Z" },
         context,
       );
       assert.ok(typeof result === "string");
       assert.ok(result.length > 0);
 
-      const resultISO = BASIC_FUNCTIONS.formatDate(
+      const resultISO = invoke("formatDate", 
         { value: "2025-01-01T00:00:00Z", format: "ISO" },
         context,
       );
@@ -349,7 +355,7 @@ describe("BASIC_FUNCTIONS", () => {
     });
 
     it("formatDate handles invalid dates", () => {
-      const result = BASIC_FUNCTIONS.formatDate(
+      const result = invoke("formatDate", 
         { value: "invalid-date" },
         context,
       );
@@ -357,7 +363,7 @@ describe("BASIC_FUNCTIONS", () => {
     });
 
     it("formatDate uses options properly", () => {
-      const result = BASIC_FUNCTIONS.formatDate(
+      const result = invoke("formatDate", 
         {
           value: "2025-01-01T00:00:00Z",
           options: { year: "numeric", timeZone: "UTC" },
@@ -369,7 +375,7 @@ describe("BASIC_FUNCTIONS", () => {
     });
 
     it("formatDate fallback on formatting error", () => {
-      const result = BASIC_FUNCTIONS.formatDate(
+      const result = invoke("formatDate", 
         { value: "2025-01-01T00:00:00Z", locale: "invalid-locale-!!!11123" },
         context,
       );
@@ -378,7 +384,7 @@ describe("BASIC_FUNCTIONS", () => {
     });
 
     it("formatCurrency fallback on formatting error", () => {
-      const result = BASIC_FUNCTIONS.formatCurrency(
+      const result = invoke("formatCurrency", 
         { value: 1234.56, currency: "INVALID-CURRENCY", decimals: 2 },
         context,
       );
@@ -388,14 +394,14 @@ describe("BASIC_FUNCTIONS", () => {
 
     it("pluralize", () => {
       assert.strictEqual(
-        BASIC_FUNCTIONS.pluralize(
+        invoke("pluralize", 
           { value: 1, one: "apple", other: "apples" },
           context,
         ),
         "apple",
       );
       assert.strictEqual(
-        BASIC_FUNCTIONS.pluralize(
+        invoke("pluralize", 
           { value: 2, one: "apple", other: "apples" },
           context,
         ),
@@ -416,7 +422,7 @@ describe("BASIC_FUNCTIONS", () => {
       };
 
       try {
-        BASIC_FUNCTIONS.openUrl({ url: "https://google.com" }, context);
+        invoke("openUrl", { url: "https://google.com" }, context);
         assert.strictEqual(openedUrl, "https://google.com");
       } finally {
         (global as any).window = originalWindow;
