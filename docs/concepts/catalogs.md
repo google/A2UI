@@ -151,7 +151,7 @@ When the agent uses that catalog, it generates a payload strictly conforming to 
 
 A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management. 
 
-While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. Run  `toosl/assemble_catalog.py` before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:
+While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. Run  `tools/build_catalog/assemble_catalog.py` before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:
 
 ```bash
 uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPUT_NAME> [--version <VERSION>] [--extend-basic-catalog] [--out-dir <DIR>] [--verbose]
