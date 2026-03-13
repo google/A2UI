@@ -22,14 +22,7 @@ import type {
   FunctionCall,
 } from "../schema/common-types.js";
 import { A2uiExpressionError } from "../errors.js";
-
-/** A function that invokes a catalog function by name and returns its result synchronously or as a Signal. */
-export type FunctionInvoker = (
-  name: string,
-  args: Record<string, any>,
-  context: DataContext,
-  abortSignal?: AbortSignal,
-) => any;
+import type { FunctionInvoker } from "../catalog/types.js";
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving
@@ -46,11 +39,14 @@ export class DataContext {
    * @param dataModel The shared, global DataModel instance for the entire UI surface.
    * @param path The absolute path in the DataModel that this context is scoped to (its "current working directory").
    * @param functionInvoker An optional callback for executing function calls defined in the A2UI component tree against a UI catalog.
+   *        Architectural Note: We use a callback instead of passing the Catalog directly 
+   *        to prevent a circular dependency between DataContext and Catalog types.
+   *        Pass `undefined` if this context does not need to evaluate functions.
    */
   constructor(
     readonly dataModel: DataModel,
     readonly path: string,
-    readonly functionInvoker?: FunctionInvoker,
+    readonly functionInvoker: FunctionInvoker,
   ) {}
 
   /**
@@ -97,12 +93,6 @@ export class DataContext {
 
       for (const [key, argVal] of Object.entries(call.args)) {
         args[key] = this.resolveDynamicValue(argVal);
-      }
-
-      if (!this.functionInvoker) {
-        throw new A2uiExpressionError(
-          `Failed to resolve dynamic value: Function invoker is not configured for call '${call.call}'.`,
-        );
       }
 
       // Synchronous resolution should not spawn long-running resources.
@@ -230,11 +220,6 @@ export class DataContext {
     args: Record<string, any>,
     abortSignal?: AbortSignal,
   ): Signal<V> | V {
-    if (!this.functionInvoker) {
-      throw new A2uiExpressionError(
-        `Failed to resolve dynamic value: Function invoker is not configured for call '${name}'.`,
-      );
-    }
     return this.functionInvoker(name, args, this, abortSignal);
   }
 

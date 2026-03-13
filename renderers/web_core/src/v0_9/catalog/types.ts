@@ -18,14 +18,65 @@ import { z } from "zod";
 import { DataContext } from "../rendering/data-context.js";
 import { Signal } from "@preact/signals-core";
 
+export type A2uiReturnType = 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
+
+export type InferA2uiReturnType<T extends A2uiReturnType> = 
+  T extends 'string' ? string :
+  T extends 'number' ? number :
+  T extends 'boolean' ? boolean :
+  T extends 'array' ? any[] :
+  T extends 'object' ? Record<string, any> :
+  T extends 'void' ? void :
+  any;
+
+/**
+ * A definition of a UI function's API.
+ */
+export interface FunctionApi {
+  readonly name: string;
+  readonly returnType: A2uiReturnType;
+  readonly schema: z.ZodTypeAny;
+}
+
 /**
  * A function implementation that can be registered with the evaluator or basic catalog.
  */
-export type FunctionImplementation = (
-  args: Record<string, unknown>,
+export interface FunctionImplementation extends FunctionApi {
+  execute(
+    args: Record<string, any>,
+    context: DataContext,
+    abortSignal?: AbortSignal
+  ): unknown | Signal<unknown>;
+}
+
+export function createFunctionImplementation<
+  Schema extends z.ZodTypeAny,
+  TReturn extends A2uiReturnType
+>(
+  api: { name: string; returnType: TReturn; schema: Schema },
+  execute: (
+    args: z.infer<Schema>,
+    context: DataContext,
+    abortSignal?: AbortSignal
+  ) => InferA2uiReturnType<TReturn> | Signal<InferA2uiReturnType<TReturn>>
+): FunctionImplementation {
+  return {
+    name: api.name,
+    returnType: api.returnType,
+    schema: api.schema,
+    execute: execute as (args: Record<string, any>, ctx: DataContext, ab?: AbortSignal) => unknown
+  };
+}
+
+/**
+ * A function that invokes a catalog function by name and returns its result synchronously or as a Signal.
+ */
+export type FunctionInvoker = (
+  name: string,
+  args: Record<string, any>,
   context: DataContext,
   abortSignal?: AbortSignal,
-) => unknown | Signal<unknown>;
+) => any;
 
 /**
  * A definition of a UI component's API.
@@ -58,24 +109,40 @@ export class Catalog<T extends ComponentApi> {
   readonly components: ReadonlyMap<string, T>;
 
   /**
-   * Optional map of functions provided by this catalog.
+   * Map of functions provided by this catalog.
    */
-  readonly functions?: ReadonlyMap<string, FunctionImplementation>;
+  readonly functions: ReadonlyMap<string, FunctionImplementation>;
 
-  constructor(id: string, components: T[], functions?: Record<string, any>) {
+  /**
+   * A ready-to-use FunctionInvoker callback that delegates to this catalog's functions.
+   * Can be passed directly to a DataContext.
+   */
+  readonly invoker: FunctionInvoker;
+
+  constructor(id: string, components: T[], functions: FunctionImplementation[] = []) {
     this.id = id;
-    const map = new Map<string, T>();
+    
+    const compMap = new Map<string, T>();
     for (const comp of components) {
-      map.set(comp.name, comp);
+      compMap.set(comp.name, comp);
     }
-    this.components = map;
+    this.components = compMap;
 
-    if (functions) {
-      const funcMap = new Map<string, any>();
-      for (const [name, fn] of Object.entries(functions)) {
-        funcMap.set(name, fn);
-      }
-      this.functions = funcMap;
+    const funcMap = new Map<string, FunctionImplementation>();
+    for (const fn of functions) {
+      funcMap.set(fn.name, fn);
     }
+    this.functions = funcMap;
+
+    this.invoker = (name, rawArgs, ctx, abortSignal) => {
+      const fn = this.functions.get(name);
+      if (!fn) {
+        throw new Error(`Function not found in catalog '${this.id}': ${name}`);
+      }
+      
+      // Provides runtime safety: Coerces and strips invalid arguments before execute()
+      const safeArgs = fn.schema.parse(rawArgs); 
+      return fn.execute(safeArgs, ctx, abortSignal);
+    };
   }
 }

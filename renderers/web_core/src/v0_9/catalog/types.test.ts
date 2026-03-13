@@ -16,7 +16,7 @@
 
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { Catalog, ComponentApi, FunctionImplementation } from "./types.js";
+import { Catalog, ComponentApi, createFunctionImplementation } from "./types.js";
 import { z } from "zod";
 
 describe("Catalog Types", () => {
@@ -26,12 +26,19 @@ describe("Catalog Types", () => {
       schema: z.object({}),
     };
 
-    const mockFunc: FunctionImplementation = () => "result";
+    const mockFunc = createFunctionImplementation(
+      {
+        name: "mockFunc",
+        returnType: "string",
+        schema: z.object({})
+      },
+      () => "result"
+    );
 
     const catalog = new Catalog(
       "test-cat",
       [mockComponent],
-      { mockFunc }
+      [mockFunc]
     );
 
     assert.strictEqual(catalog.id, "test-cat");
@@ -39,7 +46,7 @@ describe("Catalog Types", () => {
     assert.strictEqual(catalog.components.get("MockComp"), mockComponent);
 
     assert.ok(catalog.functions);
-    assert.strictEqual(catalog.functions?.size, 1);
-    assert.strictEqual(catalog.functions?.get("mockFunc"), mockFunc);
+    assert.strictEqual(catalog.functions.size, 1);
+    assert.strictEqual(catalog.functions.get("mockFunc"), mockFunc);
   });
 });

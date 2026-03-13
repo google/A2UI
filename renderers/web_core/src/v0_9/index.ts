@@ -19,6 +19,7 @@ export * from "./common/events.js";
 export * from "./processing/message-processor.js";
 export * from "./rendering/component-context.js";
 export * from "./rendering/data-context.js";
+export * from "./rendering/generic-binder.js";
 export * from "./schema/index.js";
 export * from "./state/component-model.js";
 export * from "./state/data-model.js";
