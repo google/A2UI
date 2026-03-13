@@ -1,0 +1,128 @@
+{
+  "name": "Form Inputs",
+  "description": "TextField, CheckBox, Slider, DateTimeInput, ChoicePicker",
+  "scenarios": [
+    {
+      "name": "TextField Short",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "TextField", "label": "Name", "value": { "path": "/name" }, "variant": "shortText" }
+        ]}}
+      ]
+    },
+    {
+      "name": "TextField Long",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "TextField", "label": "Description", "value": { "path": "/desc" }, "variant": "longText" }
+        ]}}
+      ]
+    },
+    {
+      "name": "CheckBox Unchecked",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "CheckBox", "label": "Accept terms", "value": { "path": "/terms" } }
+        ]}}
+      ]
+    },
+    {
+      "name": "CheckBox Checked",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "CheckBox", "label": "Accept terms", "value": { "path": "/terms" } }
+        ]}},
+        { "updateDataModel": { "surfaceId": "s1", "path": "/terms", "value": true } }
+      ]
+    },
+    {
+      "name": "Slider Basic",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Slider", "label": "Volume", "value": { "path": "/volume" } }
+        ]}}
+      ]
+    },
+    {
+      "name": "Slider Custom Range",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Slider", "label": "Temperature", "value": { "path": "/temp" }, "min": 0, "max": 100, "step": 5 }
+        ]}},
+        { "updateDataModel": { "surfaceId": "s1", "path": "/temp", "value": 50 } }
+      ]
+    },
+    {
+      "name": "DateTimeInput Date",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "DateTimeInput", "label": "Birthday", "value": { "path": "/birthday" }, "variant": "date" }
+        ]}}
+      ]
+    },
+    {
+      "name": "DateTimeInput Time",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "DateTimeInput", "label": "Alarm", "value": { "path": "/alarm" }, "variant": "time" }
+        ]}}
+      ]
+    },
+    {
+      "name": "DateTimeInput DateTime",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "DateTimeInput", "label": "Meeting", "value": { "path": "/meeting" }, "variant": "dateTime" }
+        ]}}
+      ]
+    },
+    {
+      "name": "ChoicePicker MutuallyExclusive",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "ChoicePicker", "variant": "mutuallyExclusive", "options": [
+            { "label": "Option A", "value": "a" },
+            { "label": "Option B", "value": "b" },
+            { "label": "Option C", "value": "c" }
+          ], "value": { "path": "/choice" } }
+        ]}}
+      ]
+    },
+    {
+      "name": "ChoicePicker MultiSelect",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "ChoicePicker", "variant": "multiSelect", "options": [
+            { "label": "Red", "value": "red" },
+            { "label": "Blue", "value": "blue" },
+            { "label": "Green", "value": "green" }
+          ], "value": { "path": "/colors" } }
+        ]}}
+      ]
+    },
+    {
+      "name": "ChoicePicker Chips",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "ChoicePicker", "variant": "chips", "options": [
+            { "label": "Small", "value": "s" },
+            { "label": "Medium", "value": "m" },
+            { "label": "Large", "value": "l" }
+          ], "value": { "path": "/size" } }
+        ]}}
+      ]
+    }
+  ]
+}

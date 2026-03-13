@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="terminal" baseProfile="full" viewBox="0 0 800 597" width="800" version="1.1">
+    <defs>
+        <termtosvg:template_settings xmlns:termtosvg="https://github.com/nbedos/termtosvg">
+            <termtosvg:screen_geometry columns="100" rows="35"/>
+            <termtosvg:animation type="css"/>
+        </termtosvg:template_settings>
+        <style type="text/css" id="generated-style"><![CDATA[#screen {
+                font-family: 'DejaVu Sans Mono', monospace;
+                font-style: normal;
+                font-size: 14px;
+            }
+
+        text {
+            dominant-baseline: text-before-edge;
+            white-space: pre;
+        }
+    
+            :root {
+                --animation-duration: 1006ms;
+            }
+
+            @keyframes roll {
+                0.000%{transform:translateY(0px)}
+0.099%{transform:translateY(-612px)}
+0.398%{transform:translateY(-1224px)}
+0.596%{transform:translateY(-1836px)}
+100.000%{transform:translateY(-1836px)}
+            }
+
+            #screen_view {
+                animation-duration: 1006ms;
+                animation-iteration-count:infinite;
+                animation-name:roll;
+                animation-timing-function: steps(1,end);
+                animation-fill-mode: forwards;
+            }
+        ]]></style>
+        <style type="text/css" id="user-style">
+            /* The colors defined below are the default 16 colors used for rendering text of the terminal. Adjust
+               them as needed.
+               PowerShell colors based on https://en.wikipedia.org/wiki/ANSI_escape_code#Colors */
+            .foreground {fill: #cccccc;}
+            .background {fill: #0c0c0c;}
+            .color0 {fill: #0c0c0c;}
+            .color1 {fill: #c50f1f;}
+            .color2 {fill: #13a10e;}
+            .color3 {fill: #c19c00;}
+            .color4 {fill: #0037da;}
+            .color5 {fill: #881798;}
+            .color6 {fill: #3a96dd;}
+            .color7 {fill: #cccccc;}
+            .color8 {fill: #767676;}
+            .color9 {fill: #e74856;}
+            .color10 {fill: #16c60c;}
+            .color11 {fill: #f9f1a5;}
+            .color12 {fill: #3b78ff;}
+            .color13 {fill: #b4009e;}
+            .color14 {fill: #61d6d6;}
+            .color15 {fill: #f2f2f2;}
+        </style>
+    </defs>
+    <svg id="screen" width="800" height="595" viewBox="0 0 800 595" preserveAspectRatio="xMidYMin slice">
+    <rect class="background" height="100%" width="100%" x="0" y="0"/><defs><g id="g1"><text x="0" textLength="496" class="foreground">&#9556;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9574;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9574;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9574;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9574;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9559;</text></g><g id="g2"><text x="0" textLength="496" class="foreground">&#9553; Component        &#9553; v0.10   &#9553; Lit     &#9553; Angular   &#9553; Parity  &#9553;</text></g><g id="g3"><text x="0" textLength="496" class="foreground">&#9568;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9580;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9580;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9580;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9580;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9571;</text></g><g id="g4"><text x="0" textLength="464" class="foreground">&#9553; AudioPlayer      &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g5"><text x="0" textLength="464" class="foreground">&#9553; Button           &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g6"><text x="0" textLength="464" class="foreground">&#9553; Card             &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g7"><text x="0" textLength="464" class="foreground">&#9553; CheckBox         &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g8"><text x="0" textLength="472" class="foreground">&#9553; ChoicePicker     &#9553;  &#9989;   &#9553;  &#10060;   &#9553;  &#10060;      &#9553; &#9888; renamed &#9553;</text></g><g id="g9"><text x="0" textLength="464" class="foreground">&#9553; Column           &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g10"><text x="0" textLength="464" class="foreground">&#9553; DateTimeInput    &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g11"><text x="0" textLength="8" class="background"> </text></g><g id="g12"><text x="0" textLength="464" class="foreground">&#9553; Divider          &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g13"><text x="0" textLength="464" class="foreground">&#9553; Icon             &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g14"><text x="0" textLength="464" class="foreground">&#9553; Image            &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g15"><text x="0" textLength="464" class="foreground">&#9553; List             &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g16"><text x="0" textLength="464" class="foreground">&#9553; Modal            &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g17"><text x="0" textLength="488" class="foreground">&#9553; MultipleChoice   &#9553;  &#10060;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9888; v0.8 name &#9553;</text></g><g id="g18"><text x="0" textLength="464" class="foreground">&#9553; Row              &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g19"><text x="0" textLength="464" class="foreground">&#9553; Slider           &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g20"><text x="0" textLength="464" class="foreground">&#9553; Tabs             &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g21"><text x="0" textLength="464" class="foreground">&#9553; Text             &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g22"><text x="0" textLength="464" class="foreground">&#9553; TextField        &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g23"><text x="0" textLength="464" class="foreground">&#9553; Video            &#9553;  &#9989;   &#9553;  &#9989;   &#9553;  &#9989;      &#9553; &#9989;       &#9553;</text></g><g id="g24"><text x="0" textLength="480" class="foreground">&#9562;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;</text><text x="480" textLength="8" class="background"> </text></g><g id="g25"><text x="0" textLength="496" class="foreground">&#9562;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9577;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9565;</text></g><g id="g26"><text x="0" textLength="216" class="foreground">Spec components (v0.10): 18</text></g><g id="g27"><text x="0" textLength="216" class="foreground">Lit components:          18</text></g><g id="g28"><text x="0" textLength="216" class="foreground">Angular components:      18</text></g><g id="g29"><text x="0" textLength="208" class="foreground">--- Naming Differences ---</text></g><g id="g30"><text x="0" textLength="600" class="foreground">v0.10 "ChoicePicker" = v0.8 "MultipleChoice" (both renderers use v0.8 name)</text></g><g id="g31"><text x="0" textLength="672" class="foreground">&#9989; PASS: All spec components covered (with ChoicePicker/MultipleChoice rename noted)</text></g></defs><g id="screen_view"><g><use xlink:href="#g1" y="17"/><use xlink:href="#g2" y="34"/><use xlink:href="#g3" y="51"/><use xlink:href="#g4" y="68"/><use xlink:href="#g5" y="85"/><use xlink:href="#g6" y="102"/><use xlink:href="#g7" y="119"/><use xlink:href="#g8" y="136"/><use xlink:href="#g9" y="153"/><use xlink:href="#g10" y="170"/><rect x="0" y="187" width="8" height="17" class="foreground"/><use xlink:href="#g11" y="187"/></g><g><use xlink:href="#g1" y="629"/><use xlink:href="#g2" y="646"/><use xlink:href="#g3" y="663"/><use xlink:href="#g4" y="680"/><use xlink:href="#g5" y="697"/><use xlink:href="#g6" y="714"/><use xlink:href="#g7" y="731"/><use xlink:href="#g8" y="748"/><use xlink:href="#g9" y="765"/><use xlink:href="#g10" y="782"/><use xlink:href="#g12" y="799"/><rect x="0" y="816" width="8" height="17" class="foreground"/><use xlink:href="#g11" y="816"/></g><g><use xlink:href="#g1" y="1241"/><use xlink:href="#g2" y="1258"/><use xlink:href="#g3" y="1275"/><use xlink:href="#g4" y="1292"/><use xlink:href="#g5" y="1309"/><use xlink:href="#g6" y="1326"/><use xlink:href="#g7" y="1343"/><use xlink:href="#g8" y="1360"/><use xlink:href="#g9" y="1377"/><use xlink:href="#g10" y="1394"/><use xlink:href="#g12" y="1411"/><use xlink:href="#g13" y="1428"/><use xlink:href="#g14" y="1445"/><use xlink:href="#g15" y="1462"/><use xlink:href="#g16" y="1479"/><use xlink:href="#g17" y="1496"/><use xlink:href="#g18" y="1513"/><use xlink:href="#g19" y="1530"/><use xlink:href="#g20" y="1547"/><use xlink:href="#g21" y="1564"/><use xlink:href="#g22" y="1581"/><use xlink:href="#g23" y="1598"/><rect x="480" y="1615" width="8" height="17" class="foreground"/><use xlink:href="#g24" y="1615"/></g><g><use xlink:href="#g1" y="1853"/><use xlink:href="#g2" y="1870"/><use xlink:href="#g3" y="1887"/><use xlink:href="#g4" y="1904"/><use xlink:href="#g5" y="1921"/><use xlink:href="#g6" y="1938"/><use xlink:href="#g7" y="1955"/><use xlink:href="#g8" y="1972"/><use xlink:href="#g9" y="1989"/><use xlink:href="#g10" y="2006"/><use xlink:href="#g12" y="2023"/><use xlink:href="#g13" y="2040"/><use xlink:href="#g14" y="2057"/><use xlink:href="#g15" y="2074"/><use xlink:href="#g16" y="2091"/><use xlink:href="#g17" y="2108"/><use xlink:href="#g18" y="2125"/><use xlink:href="#g19" y="2142"/><use xlink:href="#g20" y="2159"/><use xlink:href="#g21" y="2176"/><use xlink:href="#g22" y="2193"/><use xlink:href="#g23" y="2210"/><use xlink:href="#g25" y="2227"/><use xlink:href="#g26" y="2261"/><use xlink:href="#g27" y="2278"/><use xlink:href="#g28" y="2295"/><use xlink:href="#g29" y="2329"/><use xlink:href="#g30" y="2346"/><use xlink:href="#g31" y="2380"/><rect x="0" y="2397" width="8" height="17" class="foreground"/><use xlink:href="#g11" y="2397"/></g></g></svg>
+</svg>

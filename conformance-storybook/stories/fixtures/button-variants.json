@@ -1,0 +1,46 @@
+{
+  "name": "Button Variants",
+  "description": "All button variant types",
+  "scenarios": [
+    {
+      "name": "Primary",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Button", "child": "txt1", "variant": "primary", "action": { "event": { "name": "click" } } },
+          { "id": "txt1", "component": "Text", "text": "Primary Button" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Outlined",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Button", "child": "txt1", "variant": "outlined", "action": { "event": { "name": "click" } } },
+          { "id": "txt1", "component": "Text", "text": "Outlined Button" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Text",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Button", "child": "txt1", "variant": "text", "action": { "event": { "name": "click" } } },
+          { "id": "txt1", "component": "Text", "text": "Text Button" }
+        ]}}
+      ]
+    },
+    {
+      "name": "Icon",
+      "messages": [
+        { "createSurface": { "surfaceId": "s1", "catalogId": "https://a2ui.org/specification/v0_10/standard_catalog.json" } },
+        { "updateComponents": { "surfaceId": "s1", "components": [
+          { "id": "root", "component": "Button", "child": "ico1", "variant": "icon", "action": { "event": { "name": "click" } } },
+          { "id": "ico1", "component": "Icon", "name": "favorite" }
+        ]}}
+      ]
+    }
+  ]
+}
