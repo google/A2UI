@@ -7,10 +7,7 @@ export const ReactSlider = createReactComponent(
   SliderApi,
   ({ props, context }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const valueProp = context.componentModel.properties.value;
-      if (valueProp && typeof valueProp === 'object' && 'path' in valueProp) {
-        context.dataContext.set(valueProp.path, Number(e.target.value));
-      }
+      props.setValue('value', Number(e.target.value));
     };
 
     const id = `slider-${context.componentModel.id}`;

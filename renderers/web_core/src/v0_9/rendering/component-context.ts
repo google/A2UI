@@ -51,15 +51,11 @@ export class ComponentContext {
     this.componentModel = model;
     this.surfaceComponents = surface.componentsModel;
 
-    const functionInvoker = (name: string, args: Record<string, any>, ctx: DataContext, abortSignal?: AbortSignal) => {
-      const fn = surface.catalog.functions?.get(name);
-      if (!fn) {
-        throw new Error(`Function not found in catalog: ${name}`);
-      }
-      return fn(args, ctx, abortSignal);
-    };
-
-    this.dataContext = new DataContext(surface.dataModel, dataModelBasePath, functionInvoker);
+    this.dataContext = new DataContext(
+      surface.dataModel, 
+      dataModelBasePath, 
+      surface.catalog.invoker
+    );
     this._actionDispatcher = (action) => surface.dispatchAction(action);
   }
 

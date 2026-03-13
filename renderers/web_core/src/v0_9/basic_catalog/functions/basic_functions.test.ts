@@ -23,7 +23,7 @@ import { DataContext } from "../../rendering/data-context.js";
 
 describe("BASIC_FUNCTIONS", () => {
   const dataModel = new DataModel({ a: 10, b: 20 });
-  const context = new DataContext(dataModel, "/");
+  const context = new DataContext(dataModel, "/", undefined);
 
   describe("Arithmetic", () => {
     it("add", () => {

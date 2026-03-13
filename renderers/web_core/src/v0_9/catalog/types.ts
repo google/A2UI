@@ -28,6 +28,16 @@ export type FunctionImplementation = (
 ) => unknown | Signal<unknown>;
 
 /**
+ * A function that invokes a catalog function by name and returns its result synchronously or as a Signal.
+ */
+export type FunctionInvoker = (
+  name: string,
+  args: Record<string, any>,
+  context: DataContext,
+  abortSignal?: AbortSignal,
+) => any;
+
+/**
  * A definition of a UI component's API.
  * This interface defines the contract for a component's capabilities and properties,
  * independent of any specific rendering implementation.
@@ -62,6 +72,12 @@ export class Catalog<T extends ComponentApi> {
    */
   readonly functions?: ReadonlyMap<string, FunctionImplementation>;
 
+  /**
+   * A ready-to-use FunctionInvoker callback that delegates to this catalog's functions.
+   * Can be passed directly to a DataContext.
+   */
+  readonly invoker: FunctionInvoker;
+
   constructor(id: string, components: T[], functions?: Record<string, any>) {
     this.id = id;
     const map = new Map<string, T>();
@@ -77,5 +93,13 @@ export class Catalog<T extends ComponentApi> {
       }
       this.functions = funcMap;
     }
+
+    this.invoker = (name, args, ctx, abortSignal) => {
+      const fn = this.functions?.get(name);
+      if (!fn) {
+        throw new Error(`Function not found in catalog '${this.id}': ${name}`);
+      }
+      return fn(args, ctx, abortSignal);
+    };
   }
 }

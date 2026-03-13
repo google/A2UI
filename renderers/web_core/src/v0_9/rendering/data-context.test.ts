@@ -34,7 +34,7 @@ describe("DataContext", () => {
       },
       list: ["a", "b"],
     });
-    context = new DataContext(model, "/user");
+    context = new DataContext(model, "/user", undefined);
   });
 
   it("resolves relative paths", () => {
@@ -67,7 +67,7 @@ describe("DataContext", () => {
   });
 
   it("handles root context", () => {
-    const rootContext = new DataContext(model, "/");
+    const rootContext = new DataContext(model, "/", undefined);
     assert.strictEqual(
       rootContext.resolveDynamicValue({ path: "user/name" }),
       "Alice",
@@ -129,7 +129,7 @@ describe("DataContext", () => {
   });
 
   it("throws on function call without invoker synchronously", () => {
-    const ctx = new DataContext(model, "/user");
+    const ctx = new DataContext(model, "/user", undefined);
     assert.throws(
       () =>
         ctx.resolveDynamicValue({ call: "add", args: {}, returnType: "any" }),
@@ -159,7 +159,7 @@ describe("DataContext", () => {
   });
 
   it("throws on function call without invoker reactively", () => {
-    const ctx = new DataContext(model, "/user");
+    const ctx = new DataContext(model, "/user", undefined);
     assert.throws(
       () =>
         ctx.subscribeDynamicValue(
@@ -201,9 +201,9 @@ describe("DataContext", () => {
     assert.strictEqual(context.nested("").path, "/user");
     assert.strictEqual(context.nested(".").path, "/user");
     // Ensure trailing slash removal logic is hit
-    const rootCtx = new DataContext(model, "/");
+    const rootCtx = new DataContext(model, "/", undefined);
     assert.strictEqual(rootCtx.nested("test").path, "/test");
-    const trailingCtx = new DataContext(model, "/user/");
+    const trailingCtx = new DataContext(model, "/user/", undefined);
     assert.strictEqual(trailingCtx.nested("test").path, "/user/test");
   });
 });

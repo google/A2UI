@@ -12,16 +12,13 @@ export const ReactChoicePicker = createReactComponent(
     const isMutuallyExclusive = props.variant === 'mutuallyExclusive';
 
     const onToggle = (val: string) => {
-      const valueProp = context.componentModel.properties.value;
-      if (valueProp && typeof valueProp === 'object' && 'path' in valueProp) {
-        if (isMutuallyExclusive) {
-          context.dataContext.set(valueProp.path, [val]);
-        } else {
-          const newValues = values.includes(val) 
-            ? values.filter((v: string) => v !== val)
-            : [...values, val];
-          context.dataContext.set(valueProp.path, newValues);
-        }
+      if (isMutuallyExclusive) {
+        props.setValue('value', [val]);
+      } else {
+        const newValues = values.includes(val) 
+          ? values.filter((v: string) => v !== val)
+          : [...values, val];
+        props.setValue('value', newValues);
       }
     };
 

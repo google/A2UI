@@ -83,12 +83,14 @@ export type ResolveA2uiProp<T> =
 
 export type ResolveA2uiProps<T> = T extends object ? {
   [K in keyof T]: ResolveA2uiProp<T[K]>
+} & {
+  setValue: (propName: keyof T, newValue: any) => void;
 } : T;
 
 export class GenericBinder<T> {
   private dataListeners: (() => void)[] = [];
   private propsListeners: ((props: T) => void)[] = [];
-  public currentProps: Partial<T> = {};
+  public currentProps: Partial<T> & { setValue: (propName: keyof T, newValue: any) => void };
   private compUnsub?: () => void;
   private isConnected = false;
 
@@ -100,17 +102,25 @@ export class GenericBinder<T> {
     this.behaviorTree = scrapeSchemaBehavior(schema);
 
     if (this.behaviorTree.type !== 'OBJECT') {
-      // Components might not have schemas (e.g. if poorly defined), fallback to empty object shape
       this.behaviorTree = { type: 'OBJECT', shape: {} };
     }
+
+    this.currentProps = {
+      setValue: (propName: keyof T, newValue: any) => {
+        const rawProps = this.context.componentModel.properties;
+        const propConfig = rawProps[propName as string];
+        if (propConfig && typeof propConfig === 'object' && propConfig.path) {
+          this.context.dataContext.set(propConfig.path, newValue);
+        }
+      }
+    } as any;
 
     this.resolveInitialProps();
   }
 
   private resolveInitialProps() {
     const props = this.context.componentModel.properties;
-    // We pass isSync=true to avoid saving listeners before we are connected
-    this.currentProps = this.resolveAndBind(props, this.behaviorTree, [], true) as Partial<T>;
+    Object.assign(this.currentProps, this.resolveAndBind(props, this.behaviorTree, [], true));
   }
 
   private connect() {
@@ -128,7 +138,11 @@ export class GenericBinder<T> {
     this.dataListeners = [];
 
     const props = this.context.componentModel.properties;
-    this.currentProps = this.resolveAndBind(props, this.behaviorTree, [], false) as Partial<T>;
+    
+    // We must preserve setValue
+    const nextProps = this.resolveAndBind(props, this.behaviorTree, [], false);
+    nextProps.setValue = this.currentProps.setValue;
+    this.currentProps = nextProps;
 
     this.notify();
   }
@@ -166,7 +180,37 @@ export class GenericBinder<T> {
         };
       }
 
-      case 'STRUCTURAL':
+      case 'STRUCTURAL': {
+        if (value && typeof value === 'object' && value.path && value.componentId) {
+          // It's a dynamic child list template
+          const bound = this.context.dataContext.subscribeDynamicValue({ path: value.path }, (newVal) => {
+            const arr = Array.isArray(newVal) ? newVal : [];
+            const listContext = this.context.dataContext.nested(value.path);
+            const resolvedChildren = arr.map((_, i) => ({
+              id: value.componentId,
+              basePath: listContext.nested(String(i)).path
+            }));
+            this.updateDeepValue(path, resolvedChildren);
+            this.notify();
+          });
+
+          if (!isSync) {
+            this.dataListeners.push(() => bound.unsubscribe());
+          } else {
+            bound.unsubscribe();
+          }
+
+          const currentArr = Array.isArray(bound.value) ? bound.value : [];
+          const listContext = this.context.dataContext.nested(value.path);
+          return currentArr.map((_, i) => ({
+            id: value.componentId,
+            basePath: listContext.nested(String(i)).path
+          }));
+        }
+        // Fallthrough for static component id string or array of strings
+        return value;
+      }
+
       case 'STATIC':
         return value;
 

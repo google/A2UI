@@ -7,10 +7,7 @@ export const ReactDateTimeInput = createReactComponent(
   DateTimeInputApi,
   ({ props, context }) => {
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const valueProp = context.componentModel.properties.value;
-      if (valueProp && typeof valueProp === 'object' && 'path' in valueProp) {
-        context.dataContext.set(valueProp.path, e.target.value);
-      }
+      props.setValue('value', e.target.value);
     };
 
     const id = `datetime-${context.componentModel.id}`;
