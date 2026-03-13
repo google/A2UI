@@ -1,3 +1,19 @@
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { z } from "zod";
 import { ComponentContext } from "./component-context.js";
 import { 
@@ -13,6 +29,7 @@ export type BehaviorNode =
   | { type: 'DYNAMIC' }
   | { type: 'ACTION' }
   | { type: 'STRUCTURAL' }
+  | { type: 'CHECKABLE' }
   | { type: 'STATIC' }
   | { type: 'OBJECT'; shape: Record<string, BehaviorNode> }
   | { type: 'ARRAY'; element: BehaviorNode };
@@ -21,7 +38,7 @@ export function scrapeSchemaBehavior(schema: z.ZodTypeAny): BehaviorNode {
   return getFieldBehavior(schema);
 }
 
-function getFieldBehavior(type: z.ZodTypeAny): BehaviorNode {
+function getFieldBehavior(type: z.ZodTypeAny, propertyName?: string): BehaviorNode {
   let current = type;
   
   // Unwrap optionals/nullables/defaults
@@ -31,6 +48,10 @@ function getFieldBehavior(type: z.ZodTypeAny): BehaviorNode {
     current._def.typeName === "ZodDefault"
   ) {
     current = current._def.innerType;
+  }
+
+  if (propertyName === 'checks') {
+    return { type: 'CHECKABLE' };
   }
 
   // Structural matching for A2UI primitives using typeName to avoid dual-module instanceof issues
@@ -65,7 +86,7 @@ function getFieldBehavior(type: z.ZodTypeAny): BehaviorNode {
     const shape: Record<string, BehaviorNode> = {};
     const objShape = current._def.shape();
     for (const [key, value] of Object.entries(objShape)) {
-      shape[key] = getFieldBehavior(value as z.ZodTypeAny);
+      shape[key] = getFieldBehavior(value as z.ZodTypeAny, key);
     }
     return { type: 'OBJECT', shape };
   }
@@ -91,7 +112,10 @@ export type GenerateSetters<T> = {
 
 export type ResolveA2uiProps<T> = (T extends object ? {
   [K in keyof T]: ResolveA2uiProp<T[K]>
-} : T) & GenerateSetters<T>;
+} : T) & GenerateSetters<T> & {
+  isValid?: boolean;
+  validationErrors?: string[];
+};
 
 export class GenericBinder<T> {
   private dataListeners: (() => void)[] = [];
@@ -116,7 +140,8 @@ export class GenericBinder<T> {
 
   private resolveInitialProps() {
     const props = this.context.componentModel.properties;
-    this.currentProps = this.resolveAndBind(props, this.behaviorTree, [], true) as Partial<T>;
+    const resolved = this.resolveAndBind(props, this.behaviorTree, [], true);
+    this.currentProps = { ...this.currentProps, ...resolved } as Partial<T>;
   }
 
   private connect() {
@@ -135,7 +160,8 @@ export class GenericBinder<T> {
 
     const props = this.context.componentModel.properties;
     
-    this.currentProps = this.resolveAndBind(props, this.behaviorTree, [], false) as Partial<T>;
+    const resolved = this.resolveAndBind(props, this.behaviorTree, [], false);
+    this.currentProps = { ...this.currentProps, ...resolved } as Partial<T>;
 
     this.notify();
   }
@@ -199,6 +225,44 @@ export class GenericBinder<T> {
           }));
         }
         return value;
+      }
+
+      case 'CHECKABLE': {
+        const rules = Array.isArray(value) ? value : [];
+        const ruleResults: { valid: boolean; message: string }[] = rules.map(() => ({ valid: true, message: '' }));
+        
+        const parentPath = path.slice(0, -1);
+        const updateValidationState = () => {
+          const errors = ruleResults.filter(r => !r.valid).map(r => r.message);
+          this.updateDeepValue([...parentPath, 'isValid' as any], errors.length === 0);
+          this.updateDeepValue([...parentPath, 'validationErrors' as any], errors);
+          this.notify();
+        };
+
+        rules.forEach((rule: any, index: number) => {
+          const condition = rule.condition || rule; // Support both {condition, message} and direct logic expr if message is missing
+          const message = rule.message || 'Validation failed';
+          ruleResults[index].message = message;
+
+          const bound = this.context.dataContext.subscribeDynamicValue(condition, (newVal) => {
+            ruleResults[index].valid = !!newVal;
+            updateValidationState();
+          });
+
+          if (!isSync) {
+            this.dataListeners.push(() => bound.unsubscribe());
+          } else {
+            bound.unsubscribe();
+          }
+          ruleResults[index].valid = !!bound.value;
+        });
+
+        // Set initial state
+        const initialErrors = ruleResults.filter(r => !r.valid).map(r => r.message);
+        this.updateDeepValue([...parentPath, 'isValid' as any], initialErrors.length === 0);
+        this.updateDeepValue([...parentPath, 'validationErrors' as any], initialErrors);
+        
+        return value; // The 'checks' property itself remains as the original rules array
       }
 
       case 'STATIC':

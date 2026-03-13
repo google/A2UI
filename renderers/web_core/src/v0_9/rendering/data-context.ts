@@ -46,7 +46,7 @@ export class DataContext {
   constructor(
     readonly dataModel: DataModel,
     readonly path: string,
-    readonly functionInvoker: FunctionInvoker | undefined,
+    readonly functionInvoker: FunctionInvoker,
   ) {}
 
   /**
@@ -93,12 +93,6 @@ export class DataContext {
 
       for (const [key, argVal] of Object.entries(call.args)) {
         args[key] = this.resolveDynamicValue(argVal);
-      }
-
-      if (!this.functionInvoker) {
-        throw new A2uiExpressionError(
-          `Failed to resolve dynamic value: Function invoker is not configured for call '${call.call}'.`,
-        );
       }
 
       // Synchronous resolution should not spawn long-running resources.
@@ -226,11 +220,6 @@ export class DataContext {
     args: Record<string, any>,
     abortSignal?: AbortSignal,
   ): Signal<V> | V {
-    if (!this.functionInvoker) {
-      throw new A2uiExpressionError(
-        `Failed to resolve dynamic value: Function invoker is not configured for call '${name}'.`,
-      );
-    }
     return this.functionInvoker(name, args, this, abortSignal);
   }
 
