@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A2H Prototype 4 — Progress with Intervention (INFORM + AUTHORIZE)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f5f5f5;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 2rem; gap: 1.5rem;
+    }
+    h1 { font-size: 1.2rem; color: #444; }
+    .surface { max-width: 480px; width: 100%; }
+
+    .c-Card {
+      background: #fff; border-radius: 12px; padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .c-Card .c-Card {
+      background: #fff8e1; box-shadow: none;
+      border: 1px solid #ffe082; border-radius: 8px;
+    }
+    .c-Column { display: flex; flex-direction: column; gap: 0.6rem; }
+    .c-Row { display: flex; flex-direction: row; gap: 0.75rem; align-items: center; }
+    .c-Row[data-justify="end"] { justify-content: flex-end; }
+    .c-Divider { border: none; border-top: 1px solid #e0e0e0; margin: 0.15rem 0; }
+    .c-Text { color: #202124; }
+    .c-Text[data-variant="h3"] { font-size: 1.1rem; font-weight: 500; }
+    .c-Text[data-variant="body"] { font-size: 0.9rem; color: #5f6368; }
+    .c-Text[data-variant="caption"] { font-size: 0.8rem; color: #80868b; font-family: monospace; }
+    .c-Button {
+      border: 1px solid #dadce0; border-radius: 20px;
+      padding: 0.5rem 1.25rem; font-family: inherit;
+      font-size: 0.875rem; font-weight: 500; cursor: pointer;
+      background: #fff; color: #202124; transition: background 0.15s;
+    }
+    .c-Button:hover { background: #f1f3f4; }
+    .c-Button[data-variant="primary"] {
+      background: #1a73e8; color: #fff; border-color: #1a73e8;
+    }
+    .c-Button[data-variant="primary"]:hover { background: #1557b0; }
+
+    #status { max-width: 480px; width: 100%; font-size: 0.85rem; color: #666; text-align: center; }
+    #event-log {
+      max-width: 480px; width: 100%;
+      background: #263238; color: #aed581;
+      border-radius: 8px; padding: 1rem;
+      font-family: monospace; font-size: 0.8rem;
+      max-height: 300px; overflow-y: auto; white-space: pre-wrap;
+    }
+    #event-log:empty::before {
+      content: '// Events will appear here…';
+      color: #607d8b;
+    }
+  </style>
+</head>
+<body>
+  <h1>A2H × A2UI — Prototype 4: Progress + Intervention</h1>
+  <div id="status">Loading pipeline…</div>
+  <div class="surface" id="surface"></div>
+  <h1>Event Log</h1>
+  <div id="event-log"></div>
+
+  <script type="module">
+    const response = await fetch('./deploy-pipeline.json');
+    const messages = await response.json();
+
+    let surfaceConfig = null;
+    let components = {};
+    let dataModel = {};
+
+    function resolve(val) {
+      if (val && typeof val === 'object' && val.path) {
+        const parts = val.path.split('/').filter(Boolean);
+        let cur = dataModel;
+        for (const p of parts) cur = cur?.[p];
+        return cur ?? val.path;
+      }
+      return val;
+    }
+
+    function render(id) {
+      const comp = components[id];
+      if (!comp) return document.createTextNode(`[missing: ${id}]`);
+
+      switch (comp.component) {
+        case 'Card': {
+          const el = document.createElement('div');
+          el.className = 'c-Card';
+          if (comp.child) el.appendChild(render(comp.child));
+          return el;
+        }
+        case 'Column': {
+          const el = document.createElement('div');
+          el.className = 'c-Column';
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Row': {
+          const el = document.createElement('div');
+          el.className = 'c-Row';
+          if (comp.justify) el.dataset.justify = comp.justify;
+          for (const cid of (comp.children || [])) el.appendChild(render(cid));
+          return el;
+        }
+        case 'Divider': return document.createElement('hr');
+        case 'Text': {
+          const el = document.createElement('span');
+          el.className = 'c-Text';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          el.textContent = resolve(comp.text);
+          return el;
+        }
+        case 'Button': {
+          const el = document.createElement('button');
+          el.className = 'c-Button';
+          if (comp.variant) el.dataset.variant = comp.variant;
+          if (comp.child) {
+            const ch = components[comp.child];
+            el.textContent = ch ? resolve(ch.text) : comp.child;
+          }
+          if (comp.action?.event) {
+            el.addEventListener('click', () => {
+              const evt = comp.action.event;
+              const ctx = {};
+              for (const [k, v] of Object.entries(evt.context || {})) ctx[k] = resolve(v);
+              const payload = { eventName: evt.name, context: ctx, timestamp: new Date().toISOString() };
+              const log = document.getElementById('event-log');
+              log.textContent += `→ ${payload.eventName}\n${JSON.stringify(payload, null, 2)}\n\n`;
+              log.scrollTop = log.scrollHeight;
+            });
+          }
+          return el;
+        }
+        default: return document.createTextNode(`[unknown: ${comp.component}]`);
+      }
+    }
+
+    function applyMessage(msg) {
+      if (msg.createSurface) surfaceConfig = msg.createSurface;
+      if (msg.updateDataModel) dataModel = msg.updateDataModel.value;
+      if (msg.updateComponents) {
+        for (const c of msg.updateComponents.components) components[c.id] = c;
+      }
+    }
+
+    function rerender() {
+      const el = document.getElementById('surface');
+      el.innerHTML = '';
+      el.appendChild(render('root'));
+    }
+
+    // 9 messages: [createSurface, dataModel, components, dataModel, components, dataModel, components, dataModel, components]
+    // Grouped as: init(0-2), step2(3-4), step3(5-6), step4(7-8)
+    const delays = [0, 0, 500, 2000, 200, 2500, 200, 3000, 200];
+    const statusEl = document.getElementById('status');
+    const labels = [
+      'Pipeline started — building…',
+      '', '',
+      'Build complete — running tests…', '',
+      'Tests passed — staging…', '',
+      'Staged — awaiting deploy approval', ''
+    ];
+
+    for (let i = 0; i < messages.length; i++) {
+      await new Promise(r => setTimeout(r, delays[i] || 0));
+      applyMessage(messages[i]);
+      rerender();
+      if (labels[i]) statusEl.textContent = labels[i];
+    }
+  </script>
+</body>
+</html>
