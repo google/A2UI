@@ -28,9 +28,9 @@ from google.genai import types
 from pydantic import PrivateAttr
 
 try:
-    from .tools import get_sales_data, get_store_sales
+  from .tools import get_sales_data, get_store_sales
 except ImportError:
-    from tools import get_sales_data, get_store_sales
+  from tools import get_sales_data, get_store_sales
 
 logger = logging.getLogger(__name__)
 
@@ -83,129 +83,129 @@ You will also use layout components like `Column` (as the `root`) and `Text` (to
 
 
 class RizzchartsAgent(LlmAgent):
-    """An agent that runs an ecommerce dashboard"""
+  """An agent that runs an ecommerce dashboard"""
 
-    SUPPORTED_CONTENT_TYPES: ClassVar[list[str]] = ["text", "text/plain"]
-    base_url: str = ""
-    schema_manager: A2uiSchemaManager = None
-    _a2ui_enabled_provider: A2uiEnabledProvider = PrivateAttr()
-    _a2ui_catalog_provider: A2uiCatalogProvider = PrivateAttr()
-    _a2ui_examples_provider: A2uiExamplesProvider = PrivateAttr()
+  SUPPORTED_CONTENT_TYPES: ClassVar[list[str]] = ["text", "text/plain"]
+  base_url: str = ""
+  schema_manager: A2uiSchemaManager = None
+  _a2ui_enabled_provider: A2uiEnabledProvider = PrivateAttr()
+  _a2ui_catalog_provider: A2uiCatalogProvider = PrivateAttr()
+  _a2ui_examples_provider: A2uiExamplesProvider = PrivateAttr()
 
-    def __init__(
-        self,
-        model: Any,
-        base_url: str,
-        schema_manager: A2uiSchemaManager,
-        a2ui_enabled_provider: A2uiEnabledProvider,
-        a2ui_catalog_provider: A2uiCatalogProvider,
-        a2ui_examples_provider: A2uiExamplesProvider,
-    ):
-        """Initializes the RizzchartsAgent.
+  def __init__(
+      self,
+      model: Any,
+      base_url: str,
+      schema_manager: A2uiSchemaManager,
+      a2ui_enabled_provider: A2uiEnabledProvider,
+      a2ui_catalog_provider: A2uiCatalogProvider,
+      a2ui_examples_provider: A2uiExamplesProvider,
+  ):
+    """Initializes the RizzchartsAgent.
 
-        Args:
-            model: The LLM model to use.
-            base_url: The base URL for the agent.
-            schema_manager: The A2UI schema manager.
-            a2ui_enabled_provider: A provider to check if A2UI is enabled.
-            a2ui_catalog_provider: A provider to retrieve the A2UI catalog (A2uiCatalog object).
-            a2ui_examples_provider: A provider to retrieve the A2UI examples (str).
-        """
+    Args:
+        model: The LLM model to use.
+        base_url: The base URL for the agent.
+        schema_manager: The A2UI schema manager.
+        a2ui_enabled_provider: A provider to check if A2UI is enabled.
+        a2ui_catalog_provider: A provider to retrieve the A2UI catalog (A2uiCatalog object).
+        a2ui_examples_provider: A provider to retrieve the A2UI examples (str).
+    """
 
-        system_instructions = schema_manager.generate_system_prompt(
-            role_description=ROLE_DESCRIPTION,
-            workflow_description=WORKFLOW_DESCRIPTION,
-            ui_description=UI_DESCRIPTION,
-            include_schema=False,
-            include_examples=False,
-            validate_examples=False,
-        )
-        super().__init__(
-            model=model,
-            name="rizzcharts_agent",
-            description="An agent that lets sales managers request sales data.",
-            instruction=system_instructions,
-            tools=[
-                get_store_sales,
-                get_sales_data,
-                SendA2uiToClientToolset(
-                    a2ui_catalog=a2ui_catalog_provider,
-                    a2ui_enabled=a2ui_enabled_provider,
-                    a2ui_examples=a2ui_examples_provider,
-                ),
-            ],
-            planner=BuiltInPlanner(
-                thinking_config=types.ThinkingConfig(
-                    include_thoughts=True,
+    system_instructions = schema_manager.generate_system_prompt(
+        role_description=ROLE_DESCRIPTION,
+        workflow_description=WORKFLOW_DESCRIPTION,
+        ui_description=UI_DESCRIPTION,
+        include_schema=False,
+        include_examples=False,
+        validate_examples=False,
+    )
+    super().__init__(
+        model=model,
+        name="rizzcharts_agent",
+        description="An agent that lets sales managers request sales data.",
+        instruction=system_instructions,
+        tools=[
+            get_store_sales,
+            get_sales_data,
+            SendA2uiToClientToolset(
+                a2ui_catalog=a2ui_catalog_provider,
+                a2ui_enabled=a2ui_enabled_provider,
+                a2ui_examples=a2ui_examples_provider,
+            ),
+        ],
+        planner=BuiltInPlanner(
+            thinking_config=types.ThinkingConfig(
+                include_thoughts=True,
+            )
+        ),
+        disallow_transfer_to_peers=True,
+        base_url=base_url,
+        schema_manager=schema_manager,
+    )
+
+    self._a2ui_enabled_provider = a2ui_enabled_provider
+    self._a2ui_catalog_provider = a2ui_catalog_provider
+    self._a2ui_examples_provider = a2ui_examples_provider
+
+  def get_agent_card(self) -> AgentCard:
+    """Returns the AgentCard defining this agent's metadata and skills.
+
+    Returns:
+        An AgentCard object.
+    """
+    return AgentCard(
+        name="Ecommerce Dashboard Agent",
+        description=(
+            "This agent visualizes ecommerce data, showing sales breakdowns, YOY"
+            " revenue performance, and regional sales outliers."
+        ),
+        url=self.base_url,
+        version="1.0.0",
+        default_input_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
+        default_output_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
+        capabilities=AgentCapabilities(
+            streaming=True,
+            extensions=[
+                get_a2ui_agent_extension(
+                    self.schema_manager.accepts_inline_catalogs,
+                    self.schema_manager.supported_catalog_ids,
                 )
-            ),
-            disallow_transfer_to_peers=True,
-            base_url=base_url,
-            schema_manager=schema_manager,
-        )
-
-        self._a2ui_enabled_provider = a2ui_enabled_provider
-        self._a2ui_catalog_provider = a2ui_catalog_provider
-        self._a2ui_examples_provider = a2ui_examples_provider
-
-    def get_agent_card(self) -> AgentCard:
-        """Returns the AgentCard defining this agent's metadata and skills.
-
-        Returns:
-            An AgentCard object.
-        """
-        return AgentCard(
-            name="Ecommerce Dashboard Agent",
-            description=(
-                "This agent visualizes ecommerce data, showing sales breakdowns, YOY"
-                " revenue performance, and regional sales outliers."
-            ),
-            url=self.base_url,
-            version="1.0.0",
-            default_input_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
-            default_output_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
-            capabilities=AgentCapabilities(
-                streaming=True,
-                extensions=[
-                    get_a2ui_agent_extension(
-                        self.schema_manager.accepts_inline_catalogs,
-                        self.schema_manager.supported_catalog_ids,
-                    )
+            ],
+        ),
+        skills=[
+            AgentSkill(
+                id="view_sales_by_category",
+                name="View Sales by Category",
+                description=(
+                    "Displays a pie chart of sales broken down by product category for"
+                    " a given time period."
+                ),
+                tags=["sales", "breakdown", "category", "pie chart", "revenue"],
+                examples=[
+                    "show my sales breakdown by product category for q3",
+                    "What's the sales breakdown for last month?",
                 ],
             ),
-            skills=[
-                AgentSkill(
-                    id="view_sales_by_category",
-                    name="View Sales by Category",
-                    description=(
-                        "Displays a pie chart of sales broken down by product category for"
-                        " a given time period."
-                    ),
-                    tags=["sales", "breakdown", "category", "pie chart", "revenue"],
-                    examples=[
-                        "show my sales breakdown by product category for q3",
-                        "What's the sales breakdown for last month?",
-                    ],
+            AgentSkill(
+                id="view_regional_outliers",
+                name="View Regional Sales Outliers",
+                description=(
+                    "Displays a map showing regional sales outliers or store-level"
+                    " performance."
                 ),
-                AgentSkill(
-                    id="view_regional_outliers",
-                    name="View Regional Sales Outliers",
-                    description=(
-                        "Displays a map showing regional sales outliers or store-level"
-                        " performance."
-                    ),
-                    tags=[
-                        "sales",
-                        "regional",
-                        "outliers",
-                        "stores",
-                        "map",
-                        "performance",
-                    ],
-                    examples=[
-                        "interesting. were there any outlier stores",
-                        "show me a map of store performance",
-                    ],
-                ),
-            ],
-        )
+                tags=[
+                    "sales",
+                    "regional",
+                    "outliers",
+                    "stores",
+                    "map",
+                    "performance",
+                ],
+                examples=[
+                    "interesting. were there any outlier stores",
+                    "show me a map of store performance",
+                ],
+            ),
+        ],
+    )

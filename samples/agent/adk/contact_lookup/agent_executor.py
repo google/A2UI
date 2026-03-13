@@ -38,131 +38,127 @@ logger = logging.getLogger(__name__)
 
 
 class ContactAgentExecutor(AgentExecutor):
-    """Contact AgentExecutor Example."""
+  """Contact AgentExecutor Example."""
 
-    def __init__(self, ui_agent: ContactAgent, text_agent: ContactAgent):
-        # Instantiate two agents: one for UI and one for text-only.
-        # The appropriate one will be chosen at execution time.
-        self.ui_agent = ui_agent
-        self.text_agent = text_agent
+  def __init__(self, ui_agent: ContactAgent, text_agent: ContactAgent):
+    # Instantiate two agents: one for UI and one for text-only.
+    # The appropriate one will be chosen at execution time.
+    self.ui_agent = ui_agent
+    self.text_agent = text_agent
 
-    async def execute(
-        self,
-        context: RequestContext,
-        event_queue: EventQueue,
-    ) -> None:
-        query = ""
-        ui_event_part = None
-        action = None
+  async def execute(
+      self,
+      context: RequestContext,
+      event_queue: EventQueue,
+  ) -> None:
+    query = ""
+    ui_event_part = None
+    action = None
 
-        logger.info(
-            f"--- Client requested extensions: {context.requested_extensions} ---"
+    logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
+    use_ui = try_activate_a2ui_extension(context)
+
+    # Determine which agent to use based on whether the a2ui extension is active.
+    if use_ui:
+      agent = self.ui_agent
+      logger.info("--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---")
+    else:
+      agent = self.text_agent
+      logger.info(
+          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
+      )
+
+    if context.message and context.message.parts:
+      logger.info(
+          f"--- AGENT_EXECUTOR: Processing {len(context.message.parts)} message"
+          " parts ---"
+      )
+      for i, part in enumerate(context.message.parts):
+        if isinstance(part.root, DataPart):
+          if "userAction" in part.root.data:
+            logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
+            ui_event_part = part.root.data["userAction"]
+          else:
+            logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
+        elif isinstance(part.root, TextPart):
+          logger.info(f"  Part {i}: TextPart (text: {part.root.text})")
+        else:
+          logger.info(f"  Part {i}: Unknown part type ({type(part.root)})")
+
+    if ui_event_part:
+      logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
+      # Fix: Check both 'actionName' and 'name'
+      action = ui_event_part.get("name")
+      ctx = ui_event_part.get("context", {})
+
+      if action == "view_profile":
+        contact_name = ctx.get("contactName", "Unknown")
+        department = ctx.get("department", "")
+        query = f"WHO_IS: {contact_name} from {department}"
+
+      elif action == "send_email":
+        contact_name = ctx.get("contactName", "Unknown")
+        email = ctx.get("email", "Unknown")
+        query = f"USER_WANTS_TO_EMAIL: {contact_name} at {email}"
+
+      elif action == "send_message":
+        contact_name = ctx.get("contactName", "Unknown")
+        query = f"USER_WANTS_TO_MESSAGE: {contact_name}"
+
+      elif action == "follow_contact":
+        query = "ACTION: follow_contact"
+
+      elif action == "view_full_profile":
+        contact_name = ctx.get("contactName", "Unknown")
+        query = f"USER_WANTS_FULL_PROFILE: {contact_name}"
+
+      else:
+        query = f"User submitted an event: {action} with data: {ctx}"
+    else:
+      logger.info("No a2ui UI event part found. Falling back to text input.")
+      query = context.get_user_input()
+
+    logger.info(f"--- AGENT_EXECUTOR: Final query for LLM: '{query}' ---")
+
+    task = context.current_task
+
+    if not task:
+      task = new_task(context.message)
+      await event_queue.enqueue_event(task)
+    updater = TaskUpdater(event_queue, task.id, task.context_id)
+
+    async for item in agent.stream(query, task.context_id):
+      is_task_complete = item["is_task_complete"]
+      if not is_task_complete:
+        await updater.update_status(
+            TaskState.working,
+            new_agent_text_message(item["updates"], task.context_id, task.id),
         )
-        use_ui = try_activate_a2ui_extension(context)
+        continue
 
-        # Determine which agent to use based on whether the a2ui extension is active.
-        if use_ui:
-            agent = self.ui_agent
-            logger.info(
-                "--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---"
-            )
-        else:
-            agent = self.text_agent
-            logger.info(
-                "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
-            )
+      final_state = TaskState.input_required  # Default
+      if action in ["send_email", "send_message", "view_full_profile"]:
+        final_state = TaskState.completed
 
-        if context.message and context.message.parts:
-            logger.info(
-                f"--- AGENT_EXECUTOR: Processing {len(context.message.parts)} message"
-                " parts ---"
-            )
-            for i, part in enumerate(context.message.parts):
-                if isinstance(part.root, DataPart):
-                    if "userAction" in part.root.data:
-                        logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
-                        ui_event_part = part.root.data["userAction"]
-                    else:
-                        logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
-                elif isinstance(part.root, TextPart):
-                    logger.info(f"  Part {i}: TextPart (text: {part.root.text})")
-                else:
-                    logger.info(f"  Part {i}: Unknown part type ({type(part.root)})")
+      final_parts = item["parts"]
 
-        if ui_event_part:
-            logger.info(f"Received a2ui ClientEvent: {ui_event_part}")
-            # Fix: Check both 'actionName' and 'name'
-            action = ui_event_part.get("name")
-            ctx = ui_event_part.get("context", {})
+      logger.info("--- FINAL PARTS TO BE SENT ---")
+      for i, part in enumerate(final_parts):
+        logger.info(f"  - Part {i}: Type = {type(part.root)}")
+        if isinstance(part.root, TextPart):
+          logger.info(f"    - Text: {part.root.text[:200]}...")
+        elif isinstance(part.root, DataPart):
+          logger.info(f"    - Data: {str(part.root.data)[:200]}...")
+      logger.info("-----------------------------")
 
-            if action == "view_profile":
-                contact_name = ctx.get("contactName", "Unknown")
-                department = ctx.get("department", "")
-                query = f"WHO_IS: {contact_name} from {department}"
+      await updater.update_status(
+          final_state,
+          new_agent_parts_message(final_parts, task.context_id, task.id),
+          final=(final_state == TaskState.completed),
+      )
+      break
 
-            elif action == "send_email":
-                contact_name = ctx.get("contactName", "Unknown")
-                email = ctx.get("email", "Unknown")
-                query = f"USER_WANTS_TO_EMAIL: {contact_name} at {email}"
-
-            elif action == "send_message":
-                contact_name = ctx.get("contactName", "Unknown")
-                query = f"USER_WANTS_TO_MESSAGE: {contact_name}"
-
-            elif action == "follow_contact":
-                query = "ACTION: follow_contact"
-
-            elif action == "view_full_profile":
-                contact_name = ctx.get("contactName", "Unknown")
-                query = f"USER_WANTS_FULL_PROFILE: {contact_name}"
-
-            else:
-                query = f"User submitted an event: {action} with data: {ctx}"
-        else:
-            logger.info("No a2ui UI event part found. Falling back to text input.")
-            query = context.get_user_input()
-
-        logger.info(f"--- AGENT_EXECUTOR: Final query for LLM: '{query}' ---")
-
-        task = context.current_task
-
-        if not task:
-            task = new_task(context.message)
-            await event_queue.enqueue_event(task)
-        updater = TaskUpdater(event_queue, task.id, task.context_id)
-
-        async for item in agent.stream(query, task.context_id):
-            is_task_complete = item["is_task_complete"]
-            if not is_task_complete:
-                await updater.update_status(
-                    TaskState.working,
-                    new_agent_text_message(item["updates"], task.context_id, task.id),
-                )
-                continue
-
-            final_state = TaskState.input_required  # Default
-            if action in ["send_email", "send_message", "view_full_profile"]:
-                final_state = TaskState.completed
-
-            final_parts = item["parts"]
-
-            logger.info("--- FINAL PARTS TO BE SENT ---")
-            for i, part in enumerate(final_parts):
-                logger.info(f"  - Part {i}: Type = {type(part.root)}")
-                if isinstance(part.root, TextPart):
-                    logger.info(f"    - Text: {part.root.text[:200]}...")
-                elif isinstance(part.root, DataPart):
-                    logger.info(f"    - Data: {str(part.root.data)[:200]}...")
-            logger.info("-----------------------------")
-
-            await updater.update_status(
-                final_state,
-                new_agent_parts_message(final_parts, task.context_id, task.id),
-                final=(final_state == TaskState.completed),
-            )
-            break
-
-    async def cancel(
-        self, request: RequestContext, event_queue: EventQueue
-    ) -> Task | None:
-        raise ServerError(error=UnsupportedOperationError())
+  async def cancel(
+      self, request: RequestContext, event_queue: EventQueue
+  ) -> Task | None:
+    raise ServerError(error=UnsupportedOperationError())

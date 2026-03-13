@@ -44,10 +44,10 @@ UI_DESCRIPTION = f"""
 
 
 def get_text_prompt() -> str:
-    """
-    Constructs the prompt for a text-only agent.
-    """
-    return """
+  """
+  Constructs the prompt for a text-only agent.
+  """
+  return """
     You are a helpful contact lookup assistant. Your final output MUST be a text response.
 
     To generate the response, you MUST follow these rules:
@@ -63,21 +63,19 @@ def get_text_prompt() -> str:
 
 
 if __name__ == "__main__":
-    # Example of how to use the A2UI Schema Manager to generate a system prompt
-    contact_prompt = A2uiSchemaManager(
-        VERSION_0_8,
-        catalogs=[
-            BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
-        ],
-    ).generate_system_prompt(
-        role_description=ROLE_DESCRIPTION,
-        workflow_description=WORKFLOW_DESCRIPTION,
-        ui_description=UI_DESCRIPTION,
-        include_schema=True,
-        include_examples=True,
-        validate_examples=False,
-    )
-    print(contact_prompt)
-    with open("generated_prompt.txt", "w") as f:
-        f.write(contact_prompt)
-    print("\nGenerated prompt saved to generated_prompt.txt")
+  # Example of how to use the A2UI Schema Manager to generate a system prompt
+  contact_prompt = A2uiSchemaManager(
+      VERSION_0_8,
+      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
+  ).generate_system_prompt(
+      role_description=ROLE_DESCRIPTION,
+      workflow_description=WORKFLOW_DESCRIPTION,
+      ui_description=UI_DESCRIPTION,
+      include_schema=True,
+      include_examples=True,
+      validate_examples=False,
+  )
+  print(contact_prompt)
+  with open("generated_prompt.txt", "w") as f:
+    f.write(contact_prompt)
+  print("\nGenerated prompt saved to generated_prompt.txt")

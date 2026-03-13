@@ -17,10 +17,10 @@ def remove_strict_validation(schema):
   if isinstance(schema, dict):
     new_schema = {k: remove_strict_validation(v) for k, v in schema.items()}
     if (
-        "additionalProperties" in new_schema
-        and new_schema["additionalProperties"] is False
+        'additionalProperties' in new_schema
+        and new_schema['additionalProperties'] is False
     ):
-      del new_schema["additionalProperties"]
+      del new_schema['additionalProperties']
     return new_schema
   elif isinstance(schema, list):
     return [remove_strict_validation(item) for item in schema]

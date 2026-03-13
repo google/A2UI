@@ -274,35 +274,31 @@ class A2uiValidator:
           msg += f"\n  - {sub_error.message}"
       raise ValueError(msg)
 
+    root_id = _find_root_id(messages)
+
     for message in messages:
       if not isinstance(message, dict):
         continue
 
       components = None
-      surface_id = None
       if "surfaceUpdate" in message:  # v0.8
         components = message["surfaceUpdate"].get(COMPONENTS)
-        surface_id = message["surfaceUpdate"].get("surfaceId")
       elif "updateComponents" in message and isinstance(
           message["updateComponents"], dict
       ):  # v0.9
         components = message["updateComponents"].get(COMPONENTS)
-        surface_id = message["updateComponents"].get("surfaceId")
 
       if components:
         ref_map = _extract_component_ref_fields(self._catalog)
-        root_id = _find_root_id(messages, surface_id)
         _validate_component_integrity(root_id, components, ref_map)
         _validate_topology(root_id, components, ref_map)
 
       _validate_recursion_and_paths(message)
 
 
-def _find_root_id(
-    messages: List[Dict[str, Any]], surface_id: Optional[str] = None
-) -> Optional[str]:
+def _find_root_id(messages: List[Dict[str, Any]]) -> str:
   """
-  Finds the root id from a list of A2UI messages for a given surface.
+  Finds the root id from a list of A2UI messages.
   - For v0.8, the root id is in the beginRendering message.
   - For v0.9+, the root id is 'root'.
   """
@@ -310,14 +306,12 @@ def _find_root_id(
     if not isinstance(message, dict):
       continue
     if "beginRendering" in message:
-      if surface_id and message["beginRendering"].get("surfaceId") != surface_id:
-        continue
       return message["beginRendering"].get(ROOT, ROOT)
-  return None
+  return ROOT
 
 
 def _validate_component_integrity(
-    root_id: Optional[str],
+    root_id: str,
     components: List[Dict[str, Any]],
     ref_fields_map: Dict[str, tuple[Set[str], Set[str]]],
 ) -> None:
@@ -340,23 +334,21 @@ def _validate_component_integrity(
     ids.add(comp_id)
 
   # 2. Check for root component
-  if root_id is not None and root_id not in ids:
+  if root_id not in ids:
     raise ValueError(f"Missing root component: No component has id='{root_id}'")
 
   # 3. Check for dangling references using helper
-  # In an incremental update (root_id is None), components may reference IDs already on the client.
-  if root_id is not None:
-    for comp in components:
-      for ref_id, field_name in _get_component_references(comp, ref_fields_map):
-        if ref_id not in ids:
-          raise ValueError(
-              f"Component '{comp.get(ID)}' references non-existent component '{ref_id}'"
-              f" in field '{field_name}'"
-          )
+  for comp in components:
+    for ref_id, field_name in _get_component_references(comp, ref_fields_map):
+      if ref_id not in ids:
+        raise ValueError(
+            f"Component '{comp.get(ID)}' references non-existent component '{ref_id}'"
+            f" in field '{field_name}'"
+        )
 
 
 def _validate_topology(
-    root_id: Optional[str],
+    root_id: str,
     components: List[Dict[str, Any]],
     ref_fields_map: Dict[str, tuple[Set[str], Set[str]]],
 ) -> None:
@@ -409,22 +401,16 @@ def _validate_topology(
 
     recursion_stack.remove(node_id)
 
-  if root_id is not None:
-    if root_id in all_ids:
-      dfs(root_id, 0)
+  if root_id in all_ids:
+    dfs(root_id, 0)
 
-    # Check for Orphans
-    orphans = all_ids - visited
-    if orphans:
-      sorted_orphans = sorted(list(orphans))
-      raise ValueError(
-          f"Component '{sorted_orphans[0]}' is not reachable from '{root_id}'"
-      )
-  else:
-    # Partial update: we cannot check root reachability, but we still check for cycles
-    for node_id in all_ids:
-      if node_id not in visited:
-        dfs(node_id, 0)
+  # Check for Orphans
+  orphans = all_ids - visited
+  if orphans:
+    sorted_orphans = sorted(list(orphans))
+    raise ValueError(
+        f"Component '{sorted_orphans[0]}' is not reachable from '{root_id}'"
+    )
 
 
 def _extract_component_ref_fields(
