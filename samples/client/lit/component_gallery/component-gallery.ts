@@ -53,6 +53,10 @@ const DEMO_ITEMS: DemoItem[] = [
   { id: "demo-modal", title: "Modal", description: "Overlay dialog." },
   { id: "demo-list", title: "List", description: "Vertical or horizontal list." },
   { id: "demo-audio", title: "AudioPlayer", description: "Play audio content." },
+  { id: "demo-chart-pie", title: "Chart (Pie)", description: "Pie chart with drill-down." },
+  { id: "demo-chart-bar", title: "Chart (Bar)", description: "Bar chart." },
+  { id: "demo-chart-doughnut", title: "Chart (Doughnut)", description: "Doughnut chart with drill-down." },
+  { id: "demo-org-chart", title: "OrgChart", description: "Organizational hierarchy." },
 ];
 
 @customElement("a2ui-component-gallery")
@@ -292,6 +296,7 @@ export class A2UIComponentGallery extends SignalWatcher(LitElement) {
             .surface=${{ ...surface }}
             .surfaceId=${surfaceId}
             .processor=${this.#processor}
+            .enableCustomElements=${true}
             @a2uiaction=${(evt: any) => this.#handleAction(evt, surfaceId)}
         ></a2ui-surface>
       `;

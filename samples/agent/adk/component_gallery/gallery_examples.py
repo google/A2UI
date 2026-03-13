@@ -17,6 +17,31 @@
 import json
 
 
+def _to_value_map(items: list[dict]) -> list[dict]:
+  """Converts a list of plain dicts into indexed A2UI valueMap entries.
+
+  Each dict's values are mapped to the appropriate A2UI type
+  (valueString, valueNumber, valueBoolean). Lists of dicts are
+  recursively converted to nested valueMaps.
+  """
+  result = []
+  for i, item in enumerate(items):
+    entries = []
+    for k, v in item.items():
+      if isinstance(v, str):
+        entries.append({"key": k, "valueString": v})
+      elif isinstance(v, bool):
+        entries.append({"key": k, "valueBoolean": v})
+      elif isinstance(v, (int, float)):
+        entries.append({"key": k, "valueNumber": v})
+      elif isinstance(v, list):
+        entries.append({"key": k, "valueMap": _to_value_map(v)})
+      else:
+        entries.append({"key": k, "valueString": str(v)})
+    result.append({"key": str(i), "valueMap": entries})
+  return result
+
+
 def get_gallery_json() -> str:
   """Returns the JSON structure for the Component Gallery surfaces."""
 
@@ -37,6 +62,88 @@ def get_gallery_json() -> str:
           {"key": "favorites", "valueMap": [{"key": "0", "valueString": "A"}]},
           {"key": "favoritesChips", "valueMap": []},
           {"key": "favoritesFilter", "valueMap": []},
+          # Chart demo data
+          {
+              "key": "pieChartData",
+              "valueMap": _to_value_map([
+                  {
+                      "label": "Apparel",
+                      "value": 41,
+                      "drillDown": [
+                          {"label": "Tops", "value": 31},
+                          {"label": "Bottoms", "value": 38},
+                          {"label": "Outerwear", "value": 20},
+                          {"label": "Footwear", "value": 11},
+                      ],
+                  },
+                  {
+                      "label": "Electronics",
+                      "value": 28,
+                      "drillDown": [
+                          {"label": "Phones", "value": 25},
+                          {"label": "Laptops", "value": 27},
+                          {"label": "TVs", "value": 21},
+                      ],
+                  },
+                  {
+                      "label": "Home Goods",
+                      "value": 15,
+                      "drillDown": [
+                          {"label": "Furniture", "value": 8},
+                          {"label": "Kitchen", "value": 16},
+                          {"label": "Decor", "value": 3},
+                      ],
+                  },
+                  {"label": "Health", "value": 10},
+                  {"label": "Other", "value": 6},
+              ]),
+          },
+          {
+              "key": "barChartData",
+              "valueMap": _to_value_map([
+                  {"label": "Jan", "value": 12},
+                  {"label": "Feb", "value": 19},
+                  {"label": "Mar", "value": 15},
+                  {"label": "Apr", "value": 22},
+                  {"label": "May", "value": 30},
+                  {"label": "Jun", "value": 28},
+              ]),
+          },
+          # OrgChart demo data
+          {
+              "key": "orgChartChain",
+              "valueMap": _to_value_map([
+                  {"title": "CEO", "name": "Alice Johnson"},
+                  {"title": "SVP Engineering", "name": "Bob Smith"},
+                  {"title": "VP Product", "name": "Charlie Brown"},
+                  {"title": "Director", "name": "Diana Prince"},
+                  {"title": "Software Engineer", "name": "Evan Wright"},
+              ]),
+          },
+          {
+              "key": "doughnutChartData",
+              "valueMap": _to_value_map([
+                  {
+                      "label": "Engineering",
+                      "value": 45,
+                      "drillDown": [
+                          {"label": "Frontend", "value": 18},
+                          {"label": "Backend", "value": 15},
+                          {"label": "Infra", "value": 12},
+                      ],
+                  },
+                  {
+                      "label": "Marketing",
+                      "value": 20,
+                      "drillDown": [
+                          {"label": "Digital", "value": 12},
+                          {"label": "Brand", "value": 8},
+                      ],
+                  },
+                  {"label": "Operations", "value": 20},
+                  {"label": "Sales", "value": 15},
+              ]),
+          },
       ],
   }
 
@@ -450,6 +557,56 @@ def get_gallery_json() -> str:
           "AudioPlayer": {
               "url": {"literalString": "http://localhost:10005/assets/audio.mp3"},
               "description": {"literalString": "Local Audio Sample"},
+          }
+      },
+  )
+
+  # 16. Chart (Pie) — with drill-down data
+  add_demo_surface(
+      "demo-chart-pie",
+      {
+          "Chart": {
+              "chartType": "pie",
+              "chartTitle": {"literalString": "Sales by Category"},
+              "chartData": {"path": "galleryData/pieChartData"},
+          }
+      },
+  )
+
+  # 17. Chart (Bar) — flat data, no drill-down
+  add_demo_surface(
+      "demo-chart-bar",
+      {
+          "Chart": {
+              "chartType": "bar",
+              "chartTitle": {"literalString": "Monthly Revenue"},
+              "chartData": {"path": "galleryData/barChartData"},
+          }
+      },
+  )
+
+  # 18. Chart (Doughnut) — with drill-down data
+  add_demo_surface(
+      "demo-chart-doughnut",
+      {
+          "Chart": {
+              "chartType": "doughnut",
+              "chartTitle": {"literalString": "Budget Allocation"},
+              "chartData": {"path": "galleryData/doughnutChartData"},
+          }
+      },
+  )
+
+  # 19. OrgChart — custom component showing organizational hierarchy
+  add_demo_surface(
+      "demo-org-chart",
+      {
+          "OrgChart": {
+              "chain": {"path": "galleryData/orgChartChain"},
+              "action": {
+                  "name": "org_chart_click",
+                  "context": [],
+              },
           }
       },
   )
