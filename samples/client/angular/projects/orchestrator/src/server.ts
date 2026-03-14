@@ -63,6 +63,7 @@ app.post('/a2a', (req, res) => {
           a2uiClientCapabilities: {
             supportedCatalogIds: [
               'https://a2ui.org/specification/v0_8/standard_catalog_definition.json',
+              'a2ui.org:a2ui/v0.8/mcp_app_catalog.json',
             ],
           },
         },
