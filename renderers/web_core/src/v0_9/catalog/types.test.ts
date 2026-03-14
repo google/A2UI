@@ -35,11 +35,7 @@ describe("Catalog Types", () => {
       () => "result"
     );
 
-    const catalog = new Catalog(
-      "test-cat",
-      [mockComponent],
-      [mockFunc]
-    );
+    const catalog = new Catalog("test-cat", [mockComponent], [mockFunc]);
 
     assert.strictEqual(catalog.id, "test-cat");
     assert.strictEqual(catalog.components.size, 1);

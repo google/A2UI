@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
+/**
+ * Core rendering and state management logic for A2UI v0.9.
+ *
+ * This module exports the fundamental building blocks for building web-based A2UI renderers,
+ * including the data model, component model, and expression parsing logic.
+ */
+
+export * from "./catalog/function_invoker.js";
 export * from "./catalog/types.js";
 export * from "./common/events.js";
 export * from "./processing/message-processor.js";
