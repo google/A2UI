@@ -48,6 +48,7 @@ describe('ComponentHostComponent', () => {
       componentsModel: new Map([
         ['comp1', { id: 'comp1', type: 'TestType', properties: { text: 'Hello' } }],
       ]),
+      catalog: { invoker: jasmine.createSpy('invoker').and.returnValue('result') },
     };
 
     mockSurfaceGroup = {
@@ -64,7 +65,7 @@ describe('ComponentHostComponent', () => {
     };
 
     mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
-    mockBinder.bind.and.returnValue({ text: 'bound-hello' });
+    mockBinder.bind.and.returnValue({ text: { value: () => 'bound-hello', onUpdate: () => {} } as any });
 
     await TestBed.configureTestingModule({
       imports: [ComponentHostComponent],
@@ -92,7 +93,7 @@ describe('ComponentHostComponent', () => {
       // @ts-ignore - Accessing protected property
       expect(component.componentType).toBe(TestChildComponent);
       // @ts-ignore - Accessing protected property
-      expect(component.props).toEqual({ text: 'bound-hello' });
+      expect(component.props).toEqual({ text: jasmine.objectContaining({ value: jasmine.any(Function) }) as any });
 
       expect(mockSurfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
       expect(mockBinder.bind).toHaveBeenCalled();

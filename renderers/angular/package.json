@@ -5,7 +5,7 @@
   "scripts": {
     "build": "ng build && node postprocess-build.mjs",
     "demo": "ng serve demo-app",
-    "regression-test": "node verify_capitalization.js"
+    "test": "ng test lib --watch=false"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",

@@ -15,7 +15,7 @@
  */
 
 import { DestroyRef, Signal, signal as angularSignal } from '@angular/core';
-import { Signal as PreactSignal, effect } from '@preact/signals-core';
+import { Signal as PreactSignal, effect } from '@a2ui/web_core/v0_9';
 
 /**
  * Bridges a Preact Signal to an Angular Signal.
@@ -27,8 +27,6 @@ import { Signal as PreactSignal, effect } from '@preact/signals-core';
  */
 import { NgZone } from '@angular/core';
 
-const preactEffect = (window as any).webCoreSignals?.effect || effect;
-
 export function toAngularSignal<T>(
   preactSignal: PreactSignal<T>,
   destroyRef: DestroyRef,
@@ -36,7 +34,7 @@ export function toAngularSignal<T>(
 ): Signal<T> {
   const s = angularSignal(preactSignal.peek());
   
-  const dispose = preactEffect(() => {
+  const dispose = effect(() => {
     if (ngZone) {
       ngZone.run(() => s.set(preactSignal.value));
     } else {

@@ -81,9 +81,8 @@ export class ButtonComponent {
       const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId);
       if (surface) {
         const dataContext = new DataContext(
-          surface.dataModel,
+          surface,
           this.dataContextPath,
-          surface.catalog.invoker,
         );
         const resolvedAction = dataContext.resolveAction(action);
         surface.dispatchAction(resolvedAction);

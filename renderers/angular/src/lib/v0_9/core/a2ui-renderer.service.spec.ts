@@ -26,6 +26,14 @@ describe('A2uiRendererService', () => {
     mockCatalog = {
       components: new Map(),
       functions: new Map(),
+      get invoker() {
+        return (name: string, args: any, ctx: any, ab?: any) => {
+          const fn = mockCatalog.functions.get(name);
+          if (fn) return fn(args, ctx, ab);
+          console.warn(`Function "${name}" not found in catalog`);
+          return undefined;
+        };
+      }
     };
 
     TestBed.configureTestingModule({

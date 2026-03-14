@@ -54,12 +54,13 @@ export class DemoCatalog extends MinimalCatalog {
     const components = Array.from(this.components.values());
     components.push(customSliderApi, cardApi);
 
-    const functions = {
+    const functions = [
       ...BASIC_FUNCTIONS,
-      ...Object.fromEntries(this.functions?.entries() || []),
-    };
+      ...Array.from(this.functions?.values() || []),
+    ];
+
     (this as any).components = new Map(components.map((c) => [c.name, c]));
-    (this as any).functions = new Map(Object.entries(functions));
+    (this as any).functions = new Map(functions.map((f) => [f.name, f]));
     (this as any).id = 'https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json';
   }
 }

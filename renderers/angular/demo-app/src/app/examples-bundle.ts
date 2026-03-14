@@ -295,7 +295,7 @@ export const EXAMPLES = [
             {
               id: 'root',
               component: 'Column',
-              children: ['input_field', 'result_label', 'result_text'],
+              children: ['input_field', 'result_label', 'result_text', 'submit_button'],
               justify: 'start',
               align: 'stretch',
             },
@@ -327,6 +327,32 @@ export const EXAMPLES = [
                 returnType: 'string',
               },
               variant: 'h2',
+            },
+            {
+              id: 'submit_button',
+              component: 'Button',
+              child: 'submit_label',
+              variant: 'primary',
+              action: {
+                event: {
+                  name: 'capitalized_submit',
+                  context: {
+                    value: {
+                      call: 'capitalize',
+                      args: {
+                        value: {
+                          path: '/inputValue',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            {
+              id: 'submit_label',
+              component: 'Text',
+              text: 'Submit',
             },
           ],
         },

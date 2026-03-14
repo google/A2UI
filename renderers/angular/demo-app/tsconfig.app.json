@@ -10,6 +10,6 @@
     "rootDir": "../"
   },
   "include": ["src/**/*.ts", "../src/lib/v0_9/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts"]
+  "exclude": ["src/**/*.spec.ts", "../src/**/*.spec.ts"]
 }
 
