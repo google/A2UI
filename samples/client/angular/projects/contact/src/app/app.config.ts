@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DEFAULT_CATALOG, provideA2UI, provideMarkdownRenderer } from '@a2ui/angular';
+import { V0_8_CATALOG, provideA2UI, provideMarkdownRenderer } from '@a2ui/angular';
 import { renderMarkdown } from '@a2ui/markdown-it';
 import { IMAGE_CONFIG } from '@angular/common';
 import {
@@ -31,7 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
     provideA2UI({
-      catalog: DEFAULT_CATALOG,
+      catalog: V0_8_CATALOG,
       theme: theme,
     }),
     provideMarkdownRenderer(renderMarkdown),

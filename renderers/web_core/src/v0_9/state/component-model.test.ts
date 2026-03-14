@@ -62,8 +62,6 @@ describe("ComponentModel", () => {
     sub.unsubscribe();
     component.properties = { label: "2" };
     assert.strictEqual(callCount, 1);
-    component.properties = { label: "2" };
-    assert.strictEqual(callCount, 1);
   });
 
   it("returns component tree representation", () => {

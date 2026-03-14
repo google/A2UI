@@ -16,11 +16,13 @@
 
 import { AgentCard, Part, SendMessageSuccessResponse } from '@a2a-js/sdk';
 import { A2aService as A2aServiceInterface } from '@a2a_chat_canvas/interfaces/a2a-service';
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { CatalogService } from './catalog_service';
 
 @Injectable({ providedIn: 'root' })
 export class A2aService implements A2aServiceInterface {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private contextId?: string;
 
   constructor(private catalogService: CatalogService) { }
@@ -55,11 +57,17 @@ export class A2aService implements A2aServiceInterface {
   }
 
   async getAgentCard(): Promise<AgentCard> {
+    if (!this.isBrowser) {
+      return {
+        name: 'Rizz Agent',
+        iconUrl: 'rizz-agent.png',
+      } as AgentCard;
+    }
     const response = await fetch('/a2a/agent-card');
     if (!response.ok) {
       throw new Error('Failed to fetch agent card');
     }
-    const card = await response.json() as AgentCard;
+    const card = (await response.json()) as AgentCard;
     // Override iconUrl to use local asset
     card.iconUrl = 'rizz-agent.png';
     return card;

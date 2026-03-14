@@ -17,10 +17,11 @@
 import { z } from "zod";
 import { DataContext } from "../rendering/data-context.js";
 import { Signal } from "@preact/signals-core";
+import { A2uiExpressionError } from "../errors.js";
 
 export type A2uiReturnType = 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
 
-export type InferA2uiReturnType<T extends A2uiReturnType> = 
+export type InferA2uiReturnType<T extends A2uiReturnType> =
   T extends 'string' ? string :
   T extends 'number' ? number :
   T extends 'boolean' ? boolean :
@@ -68,15 +69,7 @@ export function createFunctionImplementation<
   };
 }
 
-/**
- * A function that invokes a catalog function by name and returns its result synchronously or as a Signal.
- */
-export type FunctionInvoker = (
-  name: string,
-  args: Record<string, any>,
-  context: DataContext,
-  abortSignal?: AbortSignal,
-) => any;
+import { FunctionInvoker } from "./function_invoker.js";
 
 /**
  * A definition of a UI component's API.
@@ -121,7 +114,7 @@ export class Catalog<T extends ComponentApi> {
 
   constructor(id: string, components: T[], functions: FunctionImplementation[] = []) {
     this.id = id;
-    
+
     const compMap = new Map<string, T>();
     for (const comp of components) {
       compMap.set(comp.name, comp);
@@ -139,10 +132,21 @@ export class Catalog<T extends ComponentApi> {
       if (!fn) {
         throw new Error(`Function not found in catalog '${this.id}': ${name}`);
       }
-      
+
       // Provides runtime safety: Coerces and strips invalid arguments before execute()
-      const safeArgs = fn.schema.parse(rawArgs); 
-      return fn.execute(safeArgs, ctx, abortSignal);
+      try {
+        const safeArgs = fn.schema.parse(rawArgs);
+        return fn.execute(safeArgs, ctx, abortSignal);
+      } catch (e: any) {
+        if (e?.name === "ZodError" || e instanceof z.ZodError) {
+          throw new A2uiExpressionError(
+            `Validation failed for function '${name}': ${e.message}`,
+            name,
+            e.errors ?? e.issues
+          );
+        }
+        throw e;
+      }
     };
   }
 }
