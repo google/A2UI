@@ -33,7 +33,7 @@ const packageJson = parsePackageJson(packageJsonPath);
 if (!packageJson.dependencies['@a2ui/web_core']) {
   throw new Error(
     'Angular package does not depend on the Core library. ' +
-    'Either update the package.json or remove this script.',
+      'Either update the package.json or remove this script.',
   );
 }
 

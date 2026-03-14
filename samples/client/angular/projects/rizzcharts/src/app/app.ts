@@ -22,8 +22,9 @@ import {
   Renderer2,
   inject,
   signal,
+  PLATFORM_ID,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { A2aChatCanvas } from '@a2a_chat_canvas/a2a-chat-canvas';
@@ -40,6 +41,7 @@ import { A2aService } from '@rizzcharts/services/a2a_service';
   changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class App implements OnInit {
+  private readonly _platformId = inject(PLATFORM_ID);
   protected readonly agentName = signal('');
   readonly chatService = inject(ChatService);
   private readonly a2aService = inject(A2aService);
@@ -50,14 +52,23 @@ export class App implements OnInit {
   ) {}
 
   ngOnInit() {
-    const script = this._renderer2.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&callback=initMap&libraries=marker`;
-    script.async = true;
-    script.defer = true;
-    this._renderer2.appendChild(this._document.body, script);
-    this.a2aService.getAgentCard().then((card) => {
-      this.agentName.set(card.name);
-    });
+    const isBrowser = isPlatformBrowser(this._platformId);
+    if (isBrowser) {
+      const script = this._renderer2.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&callback=initMap&libraries=marker`;
+      script.async = true;
+      script.defer = true;
+      this._renderer2.appendChild(this._document.body, script);
+
+      this.a2aService
+        .getAgentCard()
+        .then((card) => {
+          this.agentName.set(card.name);
+        })
+        .catch((err) => {
+          console.error('Failed to get agent card:', err);
+        });
+    }
   }
 
   sendMessage(text: string) {

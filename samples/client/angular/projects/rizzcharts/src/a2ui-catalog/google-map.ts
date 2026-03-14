@@ -146,7 +146,7 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
   protected resolvedTitle = computed(() => super.resolvePrimitive(this.title() ?? null));
 
   readonly zoom = input.required<Primitives.NumberValue | null>();
-  protected resolvedZoom = computed(() => super.resolvePrimitive(this.zoom()));
+  protected resolvedZoom = computed(() => super.resolvePrimitive(this.zoom()) as number | null);
 
   readonly center = input.required<CustomProperties | null>();
   protected resolvedCenter = computed(() => this.resolveLatLng(this.center()));
@@ -187,8 +187,8 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
     const borderColorValue: Primitives.StringValue = { path: `${value}.borderColor` };
     const glyphColorValue: Primitives.StringValue = { path: `${value}.glyphColor` };
 
-    const lat = this.resolvePrimitive(latValue);
-    const lng = this.resolvePrimitive(lngValue);
+    const lat = this.resolvePrimitive(latValue) as number | null;
+    const lng = this.resolvePrimitive(lngValue) as number | null;
     const name = this.resolvePrimitive(nameValue);
     const description = this.resolvePrimitive(descriptionValue);
     const background = this.resolvePrimitive(backgroundValue);
@@ -219,8 +219,8 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
     if (value?.path) {
       const latValue: Primitives.NumberValue = { path: `${value.path}.lat` };
       const lngValue: Primitives.NumberValue = { path: `${value.path}.lng` };
-      const lat = this.resolvePrimitive(latValue)!;
-      const lng = this.resolvePrimitive(lngValue)!;
+      const lat = this.resolvePrimitive(latValue) as unknown as number;
+      const lng = this.resolvePrimitive(lngValue) as unknown as number;
       return {
         lat,
         lng,

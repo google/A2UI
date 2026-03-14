@@ -14,15 +14,38 @@
  * limitations under the License.
  */
 
-import { provideZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
+import { ChatService } from '@a2a_chat_canvas/services/chat-service';
+import { A2aService } from '../services/a2a_service';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideZonelessChangeDetection()],
+      providers: [
+        provideZonelessChangeDetection(),
+        {
+          provide: ChatService,
+          useValue: {
+            sendMessage: jasmine.createSpy('sendMessage'),
+            history: signal([]),
+            isA2aStreamOpen: signal(false),
+          },
+        },
+        {
+          provide: A2aService,
+          useValue: {
+            getAgentCard: jasmine.createSpy('getAgentCard').and.returnValue(
+              Promise.resolve({
+                name: 'Rizz Agent',
+                iconUrl: 'rizz-agent.png',
+              }),
+            ),
+          },
+        },
+      ],
     }).compileComponents();
   });
 
@@ -32,10 +55,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', () => {
+  it('should render agent name', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, chat_canvas');
+    expect(compiled.querySelector('.agent-name strong')?.textContent).toContain('Rizz Agent');
   });
 });

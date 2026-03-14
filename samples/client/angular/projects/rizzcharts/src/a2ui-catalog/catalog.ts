@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Catalog, DEFAULT_CATALOG } from '@a2ui/angular';
+import { Catalog, V0_8_CATALOG } from '@a2ui/angular';
 import { inputBinding } from '@angular/core';
 
 export const RIZZ_CHARTS_CATALOG = {
-  ...DEFAULT_CATALOG,
+  ...V0_8_CATALOG,
   Canvas: () => import('./canvas').then((r) => r.Canvas),
   Chart: {
     type: () => import('./chart').then((r) => r.Chart),
-    bindings: ({ properties }) => [
+    bindings: ({ properties }: { properties: Record<string, unknown> }) => [
       inputBinding('type', () => ('type' in properties && properties['type']) || undefined),
       inputBinding('title', () => ('title' in properties && properties['title']) || undefined),
       inputBinding(
@@ -33,7 +33,7 @@ export const RIZZ_CHARTS_CATALOG = {
   },
   GoogleMap: {
     type: () => import('./google-map').then((r) => r.GoogleMap),
-    bindings: ({ properties }) => [
+    bindings: ({ properties }: { properties: Record<string, unknown> }) => [
       inputBinding('zoom', () => ('zoom' in properties && properties['zoom']) || 8),
       inputBinding('center', () => ('center' in properties && properties['center']) || undefined),
       inputBinding('pins', () => ('pins' in properties && properties['pins']) || undefined),

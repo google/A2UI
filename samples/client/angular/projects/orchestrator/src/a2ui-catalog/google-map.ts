@@ -146,7 +146,7 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
   protected resolvedTitle = computed(() => super.resolvePrimitive(this.title() ?? null));
 
   readonly zoom = input.required<Primitives.NumberValue | null>();
-  protected resolvedZoom = computed(() => super.resolvePrimitive(this.zoom()));
+  protected resolvedZoom = computed(() => super.resolvePrimitive(this.zoom()) as number | null);
 
   readonly center = input.required<CustomProperties | null>();
   protected resolvedCenter = computed(() => this.resolveLatLng(this.center()));
@@ -187,13 +187,13 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
     const borderColorValue: Primitives.StringValue = { path: `${value}.borderColor` };
     const glyphColorValue: Primitives.StringValue = { path: `${value}.glyphColor` };
 
-    const lat = this.resolvePrimitive(latValue);
-    const lng = this.resolvePrimitive(lngValue);
-    const name = this.resolvePrimitive(nameValue);
-    const description = this.resolvePrimitive(descriptionValue);
-    const background = this.resolvePrimitive(backgroundValue);
-    const borderColor = this.resolvePrimitive(borderColorValue);
-    const glyphColor = this.resolvePrimitive(glyphColorValue);
+    const lat = super.resolvePrimitive(latValue) as number | null;
+    const lng = super.resolvePrimitive(lngValue) as number | null;
+    const name = super.resolvePrimitive(nameValue);
+    const description = super.resolvePrimitive(descriptionValue);
+    const background = super.resolvePrimitive(backgroundValue);
+    const borderColor = super.resolvePrimitive(borderColorValue);
+    const glyphColor = super.resolvePrimitive(glyphColorValue);
 
     // TODO: This logic should be implemented in the `guard.ts` by making the data model typed upstream.
     if (lat === null || lng === null || name === null) {
@@ -219,8 +219,8 @@ export class GoogleMap extends DynamicComponent<Types.CustomNode> {
     if (value?.path) {
       const latValue: Primitives.NumberValue = { path: `${value.path}.lat` };
       const lngValue: Primitives.NumberValue = { path: `${value.path}.lng` };
-      const lat = this.resolvePrimitive(latValue)!;
-      const lng = this.resolvePrimitive(lngValue)!;
+      const lat = super.resolvePrimitive(latValue) as unknown as number;
+      const lng = super.resolvePrimitive(lngValue) as unknown as number;
       return {
         lat,
         lng,
