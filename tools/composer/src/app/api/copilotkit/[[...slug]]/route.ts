@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 /**
  * Copyright 2026 Google LLC
  *
@@ -54,13 +55,13 @@ const agent = new BuiltInAgent({
   temperature: 0.7,
 });
 
-const runtime = new CopilotRuntime({
+const copilotRuntime = new CopilotRuntime({
   agents: { default: agent },
   runner: new InMemoryAgentRunner(),
 });
 
 const app = createCopilotEndpoint({
-  runtime,
+  runtime: copilotRuntime,
   basePath: "/api/copilotkit",
 });
 
