@@ -28,6 +28,12 @@ This sample uses the Agent Development Kit (ADK) along with the A2A protocol to 
    uv run .
    ```
 
+4. (Optional) Run the server with standard `WebFrame` instead of the custom `McpAppsCustomComponent`:
+
+   ```bash
+   USE_MCP_SANDBOX=false uv run .
+   ```
+
 
 ## Disclaimer
 

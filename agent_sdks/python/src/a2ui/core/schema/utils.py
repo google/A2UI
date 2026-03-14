@@ -117,3 +117,13 @@ def wrap_as_json_array(a2ui_schema: dict[str, Any]) -> dict[str, Any]:
   if not a2ui_schema:
     raise ValueError("A2UI schema is empty")
   return {"type": "array", "items": a2ui_schema}
+
+
+def deep_update(d: dict, u: dict) -> dict:
+  """Recursively update a dict with another dict."""
+  for k, v in u.items():
+    if isinstance(v, dict):
+      d[k] = deep_update(d.get(k, {}), v)
+    else:
+      d[k] = v
+  return d
