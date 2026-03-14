@@ -21,6 +21,19 @@ import { DataContext } from "../rendering/data-context.js";
 
 import { signal } from "@preact/signals-core";
 
+const createTestDataContext = (
+  model: DataModel,
+  path: string,
+  functionInvoker: any = () => null,
+) => {
+  const mockSurface = {
+    dataModel: model,
+    catalog: { invoker: functionInvoker },
+    dispatchError: () => {},
+  } as any;
+  return new DataContext(mockSurface, path);
+};
+
 describe("Function Execution in DataContext", () => {
   it("resolves and subscribes to metronome function", (_t) => {
     const dataModel = new DataModel();
@@ -42,7 +55,7 @@ describe("Function Execution in DataContext", () => {
       return subj;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
+    const context = createTestDataContext(dataModel, "/", (name: string, args: any, _ctx: any, abortSignal?: AbortSignal) => {
       const fn = functions.get(name);
       return fn ? fn(args, abortSignal) : undefined;
     });
@@ -89,7 +102,7 @@ describe("Function Execution in DataContext", () => {
       return `echo: ${args["val"]}`;
     });
 
-    const context = new DataContext(dataModel, "/", (name, args, _ctx, abortSignal) => {
+    const context = createTestDataContext(dataModel, "/", (name: string, args: any, _ctx: any, abortSignal?: AbortSignal) => {
       const fn = functions.get(name);
       return fn ? fn(args, abortSignal) : undefined;
     });

@@ -26,6 +26,7 @@ import type {
 import { A2uiExpressionError } from "../errors.js";
 
 import { FunctionInvoker } from "../catalog/function_invoker.js";
+import { SurfaceModel } from "../state/surface-model.js";
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving
@@ -36,21 +37,24 @@ import { FunctionInvoker } from "../catalog/function_invoker.js";
  * and provides tools for evaluating complex, reactive expressions.
  */
 export class DataContext {
+  /** The shared, global DataModel instance for the entire UI surface. */
+  readonly dataModel: DataModel;
+  /** A callback for executing function calls defined in the A2UI component tree. */
+  readonly functionInvoker: FunctionInvoker;
+
   /**
    * Initializes a new DataContext.
    *
-   * @param dataModel The shared, global DataModel instance for the entire UI surface.
+   * @param surface The surface model this context belongs to.
    * @param path The absolute path in the DataModel that this context is scoped to (its "current working directory").
-   * @param functionInvoker An optional callback for executing function calls defined in the A2UI component tree against a UI catalog.
-   *        Architectural Note: We use a callback instead of passing the Catalog directly
-   *        to prevent a circular dependency between DataContext and Catalog types.
-   *        Pass `undefined` if this context does not need to evaluate functions.
    */
   constructor(
-    readonly dataModel: DataModel,
+    readonly surface: SurfaceModel<any>,
     readonly path: string,
-    readonly functionInvoker: FunctionInvoker,
-  ) {}
+  ) {
+    this.dataModel = surface.dataModel;
+    this.functionInvoker = surface.catalog.invoker;
+  }
 
   /**
    * Mutates the underlying DataModel at the specified path.
@@ -110,13 +114,26 @@ export class DataContext {
         return (result instanceof Signal ? result.peek() : result) as V;
       } catch (e: any) {
         if (e?.name === "ZodError" || e instanceof z.ZodError) {
-          throw new A2uiExpressionError(
+          const err = new A2uiExpressionError(
             `Validation failed for function '${call.call}': ${e.message}`,
             call.call,
             e.errors ?? e.issues,
           );
+          this.surface.dispatchError({
+            code: "EXPRESSION_ERROR",
+            message: err.message,
+            expression: call.call,
+            details: err.details,
+          });
         }
-        throw e;
+        if (e instanceof A2uiExpressionError) {
+          this.surface.dispatchError({
+            code: "EXPRESSION_ERROR",
+            message: e.message,
+            expression: e.expression,
+            details: e.details,
+          });
+        }
       }
     }
 
@@ -309,13 +326,27 @@ export class DataContext {
       return this.functionInvoker(name, args, this, abortSignal);
     } catch (e: any) {
       if (e?.name === "ZodError" || e instanceof z.ZodError) {
-        throw new A2uiExpressionError(
+        const err = new A2uiExpressionError(
           `Validation failed for function '${name}': ${e.message}`,
           name,
           e.errors ?? e.issues,
         );
+        this.surface.dispatchError({
+          code: "EXPRESSION_ERROR",
+          message: err.message,
+          expression: name,
+          details: err.details,
+        });
       }
-      throw e;
+      if (e instanceof A2uiExpressionError) {
+        this.surface.dispatchError({
+          code: "EXPRESSION_ERROR",
+          message: e.message,
+          expression: e.expression,
+          details: e.details,
+        });
+      }
+      return undefined as any;
     }
   }
 
@@ -330,7 +361,7 @@ export class DataContext {
    */
   nested(relativePath: string): DataContext {
     const newPath = this.resolvePath(relativePath);
-    return new DataContext(this.dataModel, newPath, this.functionInvoker);
+    return new DataContext(this.surface, newPath);
   }
 
   private resolvePath(path: string): string {
