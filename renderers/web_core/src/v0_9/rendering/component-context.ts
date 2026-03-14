@@ -56,9 +56,8 @@ export class ComponentContext {
     this.surfaceComponents = surface.componentsModel;
 
     this.dataContext = new DataContext(
-      surface.dataModel,
-      dataModelBasePath,
-      surface.catalog.invoker
+      surface,
+      dataModelBasePath
     );
     this._actionDispatcher = (action) => surface.dispatchAction(action);
   }

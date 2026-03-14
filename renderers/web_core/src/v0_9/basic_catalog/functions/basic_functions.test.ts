@@ -38,9 +38,22 @@ function invoke(name: string, args: Record<string, any>, context: DataContext) {
   }
 }
 
+const createTestDataContext = (
+  model: DataModel,
+  path: string,
+  functionInvoker: any = () => null,
+) => {
+  const mockSurface = {
+    dataModel: model,
+    catalog: { invoker: functionInvoker },
+    dispatchError: () => {},
+  } as any;
+  return new DataContext(mockSurface, path);
+};
+
 describe("BASIC_FUNCTIONS", () => {
   const dataModel = new DataModel({ a: 10, b: 20 });
-  const context = new DataContext(dataModel, "/", () => null);
+  const context = createTestDataContext(dataModel, "/");
 
   describe("Arithmetic", () => {
     it("add", () => {
@@ -405,7 +418,7 @@ describe("BASIC_FUNCTIONS", () => {
 
     it("formatString (with function call)", (_, done) => {
       // Need a functionInvoker for function calls
-      const ctxWithInvoker = new DataContext(dataModel, "/", (name, args) => {
+      const ctxWithInvoker = createTestDataContext(dataModel, "/", (name: string, args: any) => {
         if (name === "add") {
           return Number(args["a"]) + Number(args["b"]);
         }
