@@ -28,7 +28,7 @@
 /**
  * Coerces any value to a string following A2UI protocol rules:
  * - null/undefined → ""
- * - objects → localized string representation (not "[object Object]")
+ * - objects → JSON string representation (avoids "[object Object]")
  * - other types → String(value)
  */
 export function coerceToString(value: unknown): string {
@@ -36,18 +36,21 @@ export function coerceToString(value: unknown): string {
     return "";
   }
   if (typeof value === "object") {
-    // Avoid "[object Object]" by using JSON.stringify for plain objects
-    // or calling toString for objects with custom implementations
     if (Array.isArray(value)) {
       return value.map(coerceToString).join(", ");
     }
     if (value instanceof Error) {
       return value.message;
     }
+    // Handle objects with custom toString (e.g., Date)
+    const str = String(value);
+    if (str !== "[object Object]") {
+      return str;
+    }
     try {
       return JSON.stringify(value);
     } catch {
-      return String(value);
+      return "";
     }
   }
   return String(value);
@@ -79,29 +82,32 @@ export function coerceToNumber(value: unknown): number {
  * Coerces any value to a boolean following A2UI protocol rules:
  * - "true" (case-insensitive) → true
  * - non-zero numbers → true
- * - null/undefined → false
- * - other types → Boolean(value)
+ * - null/undefined/empty string → false
+ * - all other values → false
  */
 export function coerceToBoolean(value: unknown): boolean {
   if (value === null || value === undefined) {
     return false;
   }
   if (typeof value === "string") {
-    return value.toLowerCase() === "true" || value !== "";
+    return value.toLowerCase() === "true";
   }
   if (typeof value === "number") {
     return value !== 0;
   }
-  return Boolean(value);
+  if (typeof value === "boolean") {
+    return value;
+  }
+  return false;
 }
 
 /**
  * Coerces a value to a specific target type.
  */
-export function coerceValue<T>(value: unknown, targetType: "string"): string;
-export function coerceValue<T>(value: unknown, targetType: "number"): number;
-export function coerceValue<T>(value: unknown, targetType: "boolean"): boolean;
-export function coerceValue<T>(value: unknown, targetType: string): unknown {
+export function coerceValue(value: unknown, targetType: "string"): string;
+export function coerceValue(value: unknown, targetType: "number"): number;
+export function coerceValue(value: unknown, targetType: "boolean"): boolean;
+export function coerceValue(value: unknown, targetType: string): unknown {
   switch (targetType) {
     case "string":
       return coerceToString(value);
