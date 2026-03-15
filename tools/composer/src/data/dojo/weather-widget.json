@@ -1,0 +1,72 @@
+[
+  {
+    "createSurface": {
+      "surfaceId": "weather-1",
+      "catalogId": "core-v0.9"
+    }
+  },
+  {
+    "updateComponents": {
+      "surfaceId": "weather-1",
+      "components": [
+        {
+          "id": "root",
+          "type": "Card",
+          "props": {
+            "title": "Current Weather",
+            "children": ["main-col"]
+          }
+        },
+        {
+          "id": "main-col",
+          "type": "Column",
+          "props": {
+            "spacing": "medium",
+            "align": "center",
+            "children": ["temp-row", "desc-text", "forecast-list"]
+          }
+        },
+        {
+          "id": "temp-row",
+          "type": "Row",
+          "props": {
+            "spacing": "small",
+            "align": "center",
+            "children": ["icon", "temp"]
+          }
+        },
+        {
+          "id": "icon",
+          "type": "Icon",
+          "props": {
+            "name": "sunny"
+          }
+        },
+        {
+          "id": "temp",
+          "type": "Text",
+          "props": {
+            "text": "72°F",
+            "size": "xlarge",
+            "weight": "bold"
+          }
+        },
+        {
+          "id": "desc-text",
+          "type": "Text",
+          "props": {
+            "text": "Sunny and clear in San Francisco.",
+            "color": "secondary"
+          }
+        },
+        {
+          "id": "forecast-list",
+          "type": "List",
+          "props": {
+            "items": ["Mon: 70°F", "Tue: 68°F", "Wed: 65°F"]
+          }
+        }
+      ]
+    }
+  }
+]
