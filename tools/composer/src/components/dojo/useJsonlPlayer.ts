@@ -16,14 +16,15 @@ export function useJsonlPlayer<T>({
   const [playbackState, setPlaybackState] = useState<PlaybackState>(
     autoPlay ? 'playing' : 'stopped'
   );
-  const [progress, setProgress] = useState(0); // Index of the last applied message
+  // progress represents the *number of messages* currently active (0 to totalMessages)
+  const [progress, setProgress] = useState(0); 
   const [speed, setSpeed] = useState(1);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const totalMessages = messages.length;
 
   const play = useCallback(() => {
-    if (progress >= totalMessages - 1) {
+    if (progress >= totalMessages) {
       setProgress(0); // Loop or restart
     }
     setPlaybackState('playing');
@@ -39,7 +40,7 @@ export function useJsonlPlayer<T>({
   }, []);
 
   const seek = useCallback((index: number) => {
-    if (index >= 0 && index < totalMessages) {
+    if (index >= 0 && index <= totalMessages) {
       setProgress(index);
     }
   }, [totalMessages]);
@@ -49,7 +50,7 @@ export function useJsonlPlayer<T>({
       const ms = baseIntervalMs / speed;
       timerRef.current = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= totalMessages - 1) {
+          if (prev >= totalMessages) {
             setPlaybackState('paused');
             return prev;
           }
@@ -65,7 +66,7 @@ export function useJsonlPlayer<T>({
     };
   }, [playbackState, speed, totalMessages, baseIntervalMs]);
 
-  const activeMessages = messages.slice(0, progress + 1);
+  const activeMessages = messages.slice(0, progress);
 
   return {
     playbackState,
