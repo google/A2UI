@@ -1,3 +1,4 @@
+import componentGalleryStream from './component-gallery-stream.json';
 import kitchenSink from './kitchen-sink.json';
 import contactLookup from './contact-lookup.json';
 import restaurantFinder from './restaurant-finder.json';
@@ -17,7 +18,8 @@ export const scenarios = {
   'floor-plan': floorPlan,
   'org-chart': orgChart,
   'booking-form': bookingForm,
-  'rizzcharts-chart': rizzchartsChart
+  'rizzcharts-chart': rizzchartsChart,
+  'component-gallery-stream': componentGalleryStream
 };
 
 export type ScenarioId = keyof typeof scenarios;

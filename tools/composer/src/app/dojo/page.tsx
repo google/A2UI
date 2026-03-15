@@ -7,6 +7,8 @@ import {
   MessageSquare, Zap, LayoutTemplate
 } from 'lucide-react';
 import { useJsonlPlayer } from '@/components/dojo/useJsonlPlayer';
+import { useA2UISurface } from '@/components/dojo/useA2UISurface';
+import { A2UIViewer } from '@copilotkit/a2ui-renderer';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Separator } from '@/components/ui/separator';
@@ -23,17 +25,6 @@ export default function DojoPage() {
   const [mobileView, setMobileView] = useState<'data' | 'config' | 'renderers'>('renderers');
   const [renderers, setRenderers] = useState({ react: true, lit: false, discord: true });
   const [selectedScenario, setSelectedScenario] = useState<ScenarioId>('kitchen-sink');
-
-  // Read URL params initially
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const scenarioParam = params.get('scenario');
-      if (scenarioParam && Object.keys(scenarios).includes(scenarioParam)) {
-        setSelectedScenario(scenarioParam as ScenarioId);
-      }
-    }
-  }, []);
 
   const {
     playbackState,
@@ -52,19 +43,15 @@ export default function DojoPage() {
     baseIntervalMs: 1000
   });
 
-  // Read ?step=N from URL on mount
+  const surfaceState = useA2UISurface(activeMessages);
+
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const stepParam = params.get('step');
-      if (stepParam) {
-        const step = parseInt(stepParam, 10);
-        if (!isNaN(step)) {
-          seek(step);
-        }
-      }
+    const params = new URLSearchParams(window.location.search);
+    const step = params.get('step');
+    if (step) {
+      seek(parseInt(step, 10));
     }
-  }, [seek]);
+  }, []);
 
   // Auto-scroll logic for the JSONL pane
   const streamEndRef = useRef<HTMLDivElement>(null);
@@ -124,12 +111,12 @@ export default function DojoPage() {
 
           {/* Timeline Scrubber */}
           <div className="flex-1 flex items-center gap-4 group">
-            <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress}</span>
+            <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress + 1}</span>
             <div className="relative flex-1 flex items-center h-5">
               <input
                 type="range"
                 min="0"
-                max={Math.max(0, totalMessages)}
+                max={Math.max(0, totalMessages - 1)}
                 value={progress}
                 onChange={(e) => seek(parseInt(e.target.value, 10))}
                 className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
@@ -214,8 +201,8 @@ export default function DojoPage() {
               {activeTab === 'data' ? (
                 <div className="flex flex-col gap-3 pb-8">
                   {(scenarios[selectedScenario] as any)?.map((msg: any, index: number) => {
-                    const isActive = index === progress - 1;
-                    const isPast = index < progress - 1;
+                    const isActive = index === progress;
+                    const isPast = index < progress;
                     
                     return (
                       <div 
@@ -323,27 +310,24 @@ export default function DojoPage() {
                       </span>
                       <div className="w-10" /> {/* Balancer */}
                     </div>
-                    <div className="flex-1 p-8 flex flex-col items-center justify-center bg-dot-pattern">
-                      {activeMessages.length === 0 ? (
-                        <div className="text-center text-muted-foreground flex flex-col items-center animate-pulse">
-                          <Activity className="h-8 w-8 mb-2 opacity-50" />
-                          <p className="text-sm font-medium">Awaiting events...</p>
+                    <div className="flex-1 p-4 overflow-auto bg-dot-pattern custom-scrollbar">
+                      {activeMessages.length > 0 ? (
+                        <div className="w-full min-h-full flex items-start justify-center">
+                          <A2UIViewer
+                            root={surfaceState.root}
+                            components={surfaceState.components}
+                            data={surfaceState.data}
+                            onAction={(action) => console.log('Dojo Action:', action)}
+                          />
                         </div>
                       ) : (
-                        <div className="w-full max-w-md bg-card border border-border/50 rounded-xl shadow-sm p-8 text-center space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                        <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
                             <Code2 className="h-6 w-6 text-primary" />
                           </div>
                           <div>
                             <p className="font-mono text-sm text-foreground mb-1">{'<A2UIRenderer />'}</p>
-                            <p className="text-xs text-muted-foreground">Rendering components via React Adapter</p>
-                          </div>
-                          <div className="pt-4 border-t border-border/50 mt-4 flex justify-between text-xs text-muted-foreground">
-                            <span>State elements:</span>
-                            <span className="font-mono font-medium text-foreground">{activeMessages.length}</span>
-                          </div>
-                          <div className="w-full bg-muted rounded-full h-1.5 mt-2 overflow-hidden">
-                            <div className="bg-primary h-full animate-pulse w-full rounded-full" />
+                            <p className="text-xs text-muted-foreground">Waiting for event stream...</p>
                           </div>
                         </div>
                       )}
@@ -381,51 +365,40 @@ export default function DojoPage() {
                       <Separator className="bg-white/5" />
 
                       {/* Bot Response Mock */}
-                      {activeMessages.length === 0 ? (
-                        <div className="flex gap-4 opacity-50">
-                           <div className="w-10 h-10 rounded-full bg-[#5865F2]/20 flex items-center justify-center" />
-                           <div className="flex-1 space-y-2 mt-2">
-                              <div className="flex gap-1 items-center">
-                                <span className="w-2 h-2 rounded-full bg-white/20 animate-bounce" style={{animationDelay: '0ms'}}/>
-                                <span className="w-2 h-2 rounded-full bg-white/20 animate-bounce" style={{animationDelay: '150ms'}}/>
-                                <span className="w-2 h-2 rounded-full bg-white/20 animate-bounce" style={{animationDelay: '300ms'}}/>
-                              </div>
-                           </div>
+                      <div className="flex gap-4">
+                        <div className="w-10 h-10 rounded-full bg-[#5865F2] flex-shrink-0 flex items-center justify-center shadow-lg">
+                          <Activity className="h-5 w-5 text-white" />
                         </div>
-                      ) : (
-                        <div className="flex gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                          <div className="w-10 h-10 rounded-full bg-[#5865F2] flex-shrink-0 flex items-center justify-center shadow-lg">
-                            <Activity className="h-5 w-5 text-white" />
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-semibold text-[15px] text-[#5865F2] hover:underline cursor-pointer">Agent Bot</span>
+                            <span className="bg-[#5865F2] text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Bot</span>
+                            <span className="text-xs text-white/40 ml-1">Today at 4:20 PM</span>
                           </div>
-                          <div className="flex-1 space-y-2">
-                            <div className="flex items-baseline gap-2">
-                              <span className="font-semibold text-[15px] text-[#5865F2] hover:underline cursor-pointer">Agent Bot</span>
-                              <span className="bg-[#5865F2] text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Bot</span>
-                              <span className="text-xs text-white/40 ml-1">Today at 4:20 PM</span>
+                          
+                          {/* Discord Embed Mock representing active state */}
+                          <div className="bg-[#2B2D31] border-l-4 border-[#5865F2] rounded-r-md p-4 text-sm shadow-md mt-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="font-bold text-white/90">A2UI Surface Rendered</span>
                             </div>
+                            <p className="text-white/70 mb-4">Simulated embed updating from event stream.</p>
                             
-                            {/* Discord Embed Mock representing active state */}
-                            <div className="bg-[#2B2D31] border-l-4 border-[#5865F2] rounded-r-md p-4 text-sm shadow-md mt-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="font-bold text-white/90">A2UI Surface Rendered</span>
+                            <div className="bg-[#1E1F22] rounded border border-white/5 p-3 font-mono text-xs text-white/60">
+                              <div className="flex justify-between mb-1">
+                                <span>Total events received:</span>
+                                <span className="text-white font-bold">{activeMessages.length}</span>
                               </div>
-                              <p className="text-white/70 mb-4">Simulated embed updating from event stream.</p>
-                              
-                              <div className="bg-[#1E1F22] rounded border border-white/5 p-3 font-mono text-xs text-white/60">
-                                <div className="flex justify-between mb-1">
-                                  <span>Total events received:</span>
-                                  <span className="text-white font-bold">{activeMessages.length}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Status:</span>
-                                  <span className={playbackState === 'playing' ? 'text-green-400' : 'text-amber-400'}>
-                                    {playbackState === 'playing' ? 'Receiving...' : 'Idle'}
-                                  </span>
-                                </div>
+                              <div className="flex justify-between">
+                                <span>Status:</span>
+                                <span className={playbackState === 'playing' ? 'text-green-400' : 'text-amber-400'}>
+                                  {playbackState === 'playing' ? 'Receiving...' : 'Idle'}
+                                </span>
                               </div>
                             </div>
-                            
-                            {/* Mock Discord Buttons */}
+                          </div>
+                          
+                          {/* Mock Discord Buttons */}
+                          {activeMessages.length > 0 && (
                             <div className="flex gap-2 mt-2">
                               <button className="bg-[#2B2D31] hover:bg-[#3F4147] transition-colors text-white text-sm font-medium px-4 py-2 rounded shadow-sm border border-transparent">
                                 View Details
@@ -434,9 +407,9 @@ export default function DojoPage() {
                                 Cancel
                               </button>
                             </div>
-                          </div>
+                          )}
                         </div>
-                      )}
+                      </div>
 
                     </div>
                   </div>
@@ -454,27 +427,20 @@ export default function DojoPage() {
                       <div className="w-10" />
                     </div>
                     <div className="flex-1 p-8 flex flex-col items-center justify-center bg-blue-50/30 dark:bg-blue-900/10">
-                      {activeMessages.length === 0 ? (
-                        <div className="text-center text-blue-500/50 flex flex-col items-center animate-pulse">
-                          <Activity className="h-8 w-8 mb-2" />
-                          <p className="text-sm font-medium">Awaiting events...</p>
+                       <div className="w-full max-w-md bg-card border border-blue-500/20 rounded-xl shadow-sm p-8 text-center space-y-4 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600" />
+                        <div className="mx-auto w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-2">
+                          <LayoutTemplate className="h-6 w-6 text-blue-500" />
                         </div>
-                      ) : (
-                        <div className="w-full max-w-md bg-card border border-blue-500/20 rounded-xl shadow-sm p-8 text-center space-y-4 relative overflow-hidden animate-in fade-in zoom-in-95 duration-300">
-                          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600" />
-                          <div className="mx-auto w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-2">
-                            <LayoutTemplate className="h-6 w-6 text-blue-500" />
-                          </div>
-                          <div>
-                            <p className="font-mono text-sm text-foreground mb-1">{'<a2ui-surface />'}</p>
-                            <p className="text-xs text-muted-foreground">Framework-agnostic rendering</p>
-                          </div>
-                          <div className="pt-4 border-t border-border/50 mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${playbackState === 'playing' ? 'bg-green-500 animate-pulse' : 'bg-muted-foreground'}`} />
-                            {activeMessages.length} states synced
-                          </div>
+                        <div>
+                          <p className="font-mono text-sm text-foreground mb-1">{'<a2ui-surface />'}</p>
+                          <p className="text-xs text-muted-foreground">Framework-agnostic rendering</p>
                         </div>
-                      )}
+                        <div className="pt-4 border-t border-border/50 mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${playbackState === 'playing' ? 'bg-green-500 animate-pulse' : 'bg-muted-foreground'}`} />
+                          {activeMessages.length} states synced
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
