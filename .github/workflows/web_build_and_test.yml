@@ -41,7 +41,7 @@ jobs:
 
       - name: Install web_core dependencies
         working-directory: ./renderers/web_core
-        run: npm i
+        run: npm ci
 
       - name: Build web_core
         working-directory: ./renderers/web_core
@@ -49,7 +49,7 @@ jobs:
 
       - name: Install Lit renderer dependencies
         working-directory: ./renderers/lit
-        run: npm i
+        run: npm ci
 
       - name: Build Lit renderer
         working-directory: ./renderers/lit
@@ -58,3 +58,31 @@ jobs:
       - name: Run Lit renderer tests
         working-directory: ./renderers/lit
         run: npm test
+
+
+  windows-build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install web_core dependencies
+        working-directory: ./renderers/web_core
+        run: npm ci
+
+      - name: Build web_core
+        working-directory: ./renderers/web_core
+        run: npm run build
+
+      - name: Install Lit renderer dependencies
+        working-directory: ./renderers/lit
+        run: npm ci
+
+      - name: Build Lit renderer
+        working-directory: ./renderers/lit
+        run: npm run build
