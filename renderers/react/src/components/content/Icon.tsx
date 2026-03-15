@@ -19,15 +19,7 @@ import type * as Types from '@a2ui/web_core/types/types';
 import type {A2UIComponentProps} from '../../types';
 import {useA2UIComponent} from '../../hooks/useA2UIComponent';
 import {classMapToString, stylesToObject} from '../../lib/utils';
-
-/**
- * Convert camelCase to snake_case for Material Symbols font.
- * e.g., "shoppingCart" -> "shopping_cart"
- * This matches the Lit renderer's approach.
- */
-function toSnakeCase(str: string): string {
-  return str.replace(/([A-Z])/g, '_$1').toLowerCase();
-}
+import {toSnakeCase} from '@a2ui/web_core/styles/icons';
 
 /**
  * Icon component - renders an icon using Material Symbols Outlined font.

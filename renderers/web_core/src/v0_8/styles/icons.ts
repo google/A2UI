@@ -15,6 +15,21 @@
  */
 
 /**
+ * Converts a camelCase icon name to snake_case for use with Material Symbols.
+ *
+ * The Material Symbols font uses snake_case names (e.g., "shopping_cart"),
+ * but A2UI icon names may be provided in camelCase (e.g., "shoppingCart").
+ * This utility normalizes them so all renderers behave consistently.
+ *
+ * @example
+ * toSnakeCase('shoppingCart') // -> 'shopping_cart'
+ * toSnakeCase('home')         // -> 'home'
+ */
+export function toSnakeCase(str: string): string {
+  return str.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '');
+}
+
+/**
  * CSS classes for Google Symbols.
  *
  * Usage:

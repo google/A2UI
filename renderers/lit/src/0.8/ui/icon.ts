@@ -22,6 +22,7 @@ import * as Primitives from "@a2ui/web_core/types/primitives";
 import { classMap } from "lit/directives/class-map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { structuralStyles } from "./styles.js";
+import { toSnakeCase } from "@a2ui/web_core/styles/icons";
 
 @customElement("a2ui-icon")
 export class Icon extends Root {
@@ -68,8 +69,7 @@ export class Icon extends Root {
     }
 
     const render = (url: string) => {
-      url = url.replace(/([A-Z])/gm, "_$1").toLocaleLowerCase();
-      return html`<span class="g-icon">${url}</span>`;
+      return html`<span class="g-icon">${toSnakeCase(url)}</span>`;
     };
 
     if (this.name && typeof this.name === "object") {
