@@ -203,21 +203,29 @@ export default function DojoPage() {
                   {(scenarios[selectedScenario] as any)?.map((msg: any, index: number) => {
                     const isActive = index === progress;
                     const isPast = index < progress;
+                    const isClient = !!msg.action || !!msg.clientEvent;
                     
                     return (
                       <div 
                         key={msg.id || index} 
                         className={`relative p-3.5 rounded-xl text-[11px] font-mono leading-relaxed transition-all duration-300 ease-out border ${
                           isActive 
-                            ? 'border-primary/50 bg-primary/5 shadow-[0_0_15px_-3px_rgba(var(--primary),0.1)] ring-1 ring-primary/20 scale-[1.02]' 
+                            ? isClient 
+                              ? 'border-purple-500/50 bg-purple-500/5 shadow-[0_0_15px_-3px_rgba(168,85,247,0.1)] ring-1 ring-purple-500/20 scale-[1.02]' 
+                              : 'border-primary/50 bg-primary/5 shadow-[0_0_15px_-3px_rgba(var(--primary),0.1)] ring-1 ring-primary/20 scale-[1.02]' 
                             : isPast
-                            ? 'bg-card border-border/50 text-foreground shadow-sm'
+                            ? isClient
+                              ? 'bg-purple-500/5 border-purple-500/20 text-foreground shadow-sm'
+                              : 'bg-card border-border/50 text-foreground shadow-sm'
                             : 'bg-card/50 border-transparent text-muted-foreground opacity-50'
                         }`}
                       >
                         {isActive && (
-                          <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full animate-pulse" />
+                          <div className={`absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-6 ${isClient ? 'bg-purple-500' : 'bg-primary'} rounded-r-full animate-pulse`} />
                         )}
+                        <div className={`text-[9px] font-bold mb-1.5 ${isClient ? 'text-purple-500' : 'text-primary/70'}`}>
+                          {isClient ? '↑ OUTBOUND (CLIENT)' : '↓ INBOUND (SERVER)'}
+                        </div>
                         <pre className="whitespace-pre-wrap overflow-x-auto custom-scrollbar-sm">
                           {JSON.stringify(msg, null, 2)}
                         </pre>
