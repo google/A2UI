@@ -21,3 +21,5 @@ site/
 a2a_agents/python/a2ui_agent/src/a2ui/assets/**/*.json
 ## new agent SDK path
 agent_sdks/python/src/a2ui/assets/**/*.json
+## Generated JS file from the strictly-typed `sandbox.ts`. 
+samples/client/angular/projects/orchestrator/public/sandbox_iframe/sandbox.js

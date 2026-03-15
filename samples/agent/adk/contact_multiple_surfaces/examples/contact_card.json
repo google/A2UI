@@ -442,6 +442,10 @@
       "path": "/",
       "contents": [
         {
+          "key": "id",
+          "valueString": "1"
+        },
+        {
           "key": "name",
           "valueString": ""
         },

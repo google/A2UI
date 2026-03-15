@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { Observable, of, combineLatest, isObservable } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { signal, computed, Signal, effect } from "@preact/signals-core";
 import { DataModel, DataSubscription } from "../state/data-model.js";
 import type {
   DynamicValue,
@@ -23,13 +22,7 @@ import type {
   FunctionCall,
 } from "../schema/common-types.js";
 import { A2uiExpressionError } from "../errors.js";
-
-/** A function that invokes a catalog function by name and returns its result synchronously or as an Observable. */
-export type FunctionInvoker = (
-  name: string,
-  args: Record<string, any>,
-  context: DataContext,
-) => any;
+import type { FunctionInvoker } from "../catalog/types.js";
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving
@@ -46,11 +39,14 @@ export class DataContext {
    * @param dataModel The shared, global DataModel instance for the entire UI surface.
    * @param path The absolute path in the DataModel that this context is scoped to (its "current working directory").
    * @param functionInvoker An optional callback for executing function calls defined in the A2UI component tree against a UI catalog.
+   *        Architectural Note: We use a callback instead of passing the Catalog directly 
+   *        to prevent a circular dependency between DataContext and Catalog types.
+   *        Pass `undefined` if this context does not need to evaluate functions.
    */
   constructor(
     readonly dataModel: DataModel,
     readonly path: string,
-    readonly functionInvoker?: FunctionInvoker,
+    readonly functionInvoker: FunctionInvoker,
   ) {}
 
   /**
@@ -81,8 +77,6 @@ export class DataContext {
   resolveDynamicValue<V>(value: DynamicValue): V {
     // 1. Literal Check
     if (typeof value !== "object" || value === null || Array.isArray(value)) {
-      // TypeScript erases types at runtime, so we return the literal as V.
-      // Schema validation handles strict type checking.
       return value as V;
     }
 
@@ -97,21 +91,16 @@ export class DataContext {
       const call = value as FunctionCall;
       const args: Record<string, any> = {};
 
-      // Resolve arguments recursively
       for (const [key, argVal] of Object.entries(call.args)) {
         args[key] = this.resolveDynamicValue(argVal);
       }
 
-      // Evaluate function
-      // Note: sync resolution of async functions returns the Observable itself
-      if (!this.functionInvoker) {
-        throw new A2uiExpressionError(
-          `Failed to resolve dynamic value: Function invoker is not configured for call '${call.call}'.`,
-        );
-      }
-
-      const result = this.functionInvoker(call.call, args, this);
-      return result as V;
+      // Synchronous resolution should not spawn long-running resources.
+      const abortController = new AbortController();
+      abortController.abort();
+      
+      const result = this.functionInvoker(call.call, args, this, abortController.signal);
+      return (result instanceof Signal ? result.peek() : result) as V;
     }
 
     throw new A2uiExpressionError(
@@ -135,82 +124,103 @@ export class DataContext {
     value: DynamicValue,
     onChange: (value: V | undefined) => void,
   ): DataSubscription<V> {
-    let initialValue: V | undefined;
+    const sig = this.resolveSignal<V>(value);
+    
     let isSync = true;
+    let currentValue = sig.peek();
 
-    const observable = this.toObservable<V>(value);
-    const sub = observable.subscribe((val) => {
-      if (isSync) {
-        initialValue = val;
-      } else {
+    const dispose = effect(() => {
+      const val = sig.value;
+      currentValue = val;
+      if (!isSync) {
         onChange(val);
       }
     });
     isSync = false;
 
     return {
-      value: initialValue as unknown as V,
-      unsubscribe: () => sub.unsubscribe(),
+      get value() {
+        return currentValue;
+      },
+      unsubscribe: () => {
+        dispose();
+        if ((sig as any).unsubscribe) {
+          (sig as any).unsubscribe();
+        }
+      },
     };
   }
 
-  private toObservable<V>(value: DynamicValue): Observable<V> {
+  /**
+   * Returns a Preact Signal representing the reactive dynamic value.
+   */
+  resolveSignal<V>(value: DynamicValue): Signal<V> {
     // 1. Literal
     if (typeof value !== "object" || value === null || Array.isArray(value)) {
-      return of(value as V);
+      return signal(value as V);
     }
 
     // 2. Path Check
     if ("path" in value) {
       const absolutePath = this.resolvePath((value as DataBinding).path);
-      // Create an observable from the data model subscription
-      return new Observable<V>((subscriber) => {
-        const sub = this.dataModel.subscribe<V>(absolutePath, (val) => {
-          subscriber.next(val as V);
-        });
-        // Emit initial value immediately
-        subscriber.next(this.dataModel.get(absolutePath));
-        return () => sub.unsubscribe();
-      });
+      return this.dataModel.getSignal<V>(absolutePath) as Signal<V>;
     }
 
     // 3. Function Call
     if ("call" in value) {
       const call = value as FunctionCall;
-      const argObservables: Record<string, Observable<any>> = {};
+      const argSignals: Record<string, Signal<any>> = {};
 
       for (const [key, argVal] of Object.entries(call.args)) {
-        argObservables[key] = this.toObservable(argVal);
+        argSignals[key] = this.resolveSignal(argVal);
       }
 
-      // If no args, just call directly
-      if (Object.keys(argObservables).length === 0) {
-        return this.evaluateFunctionReactive(call.call, {});
+      if (Object.keys(argSignals).length === 0) {
+        const abortController = new AbortController();
+        const result = this.evaluateFunctionReactive<V>(call.call, {}, abortController.signal);
+        const sig = result instanceof Signal ? result : signal(result);
+        (sig as any).unsubscribe = () => abortController.abort();
+        return sig;
       }
 
-      return combineLatest(argObservables).pipe(
-        switchMap((args) => this.evaluateFunctionReactive<V>(call.call, args)),
-      );
+      const keys = Object.keys(argSignals);
+      let abortController: AbortController | undefined;
+      
+      const sig = computed(() => {
+        if (abortController) abortController.abort();
+        abortController = new AbortController();
+        
+        const argsRecord: Record<string, any> = {};
+        for (let i = 0; i < keys.length; i++) {
+          argsRecord[keys[i]] = argSignals[keys[i]].value;
+        }
+        
+        const result = this.evaluateFunctionReactive<V>(call.call, argsRecord, abortController.signal);
+        return result instanceof Signal ? result.value : result;
+      });
+
+      (sig as any).unsubscribe = () => {
+        if (abortController) abortController.abort();
+        for (let i = 0; i < keys.length; i++) {
+          const argSig = argSignals[keys[i]];
+          if ((argSig as any).unsubscribe) {
+            (argSig as any).unsubscribe();
+          }
+        }
+      };
+
+      return sig;
     }
 
-    return of(value as V);
+    return signal(value as unknown as V);
   }
 
   private evaluateFunctionReactive<V>(
     name: string,
     args: Record<string, any>,
-  ): Observable<V> {
-    if (!this.functionInvoker) {
-      throw new A2uiExpressionError(
-        `Failed to resolve dynamic value: Function invoker is not configured for call '${name}'.`,
-      );
-    }
-    const result = this.functionInvoker(name, args, this);
-
-    if (isObservable(result)) {
-      return result as Observable<V>;
-    }
-    return of(result as V);
+    abortSignal?: AbortSignal,
+  ): Signal<V> | V {
+    return this.functionInvoker(name, args, this, abortSignal);
   }
 
   /**
@@ -228,16 +238,13 @@ export class DataContext {
   }
 
   private resolvePath(path: string): string {
-    // Absolute path - no resolution required.
     if (path.startsWith("/")) {
       return path;
     }
-    // Handle specific cases like '.' or empty
     if (path === "" || path === ".") {
       return this.path;
     }
 
-    // Normalize current path (remove trailing slash if exists, unless root)
     let base = this.path;
     if (base.endsWith("/") && base.length > 1) {
       base = base.slice(0, -1);

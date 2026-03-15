@@ -13,7 +13,8 @@
     "serve:ssr:contact": "node dist/contact/server/server.mjs",
     "build:renderer": "cd ../../../renderers && for dir in 'web_core' 'markdown/markdown-it'; do (cd \"$dir\" && npm install && npm run build); done",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
-    "demo:restaurant": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\""
+    "demo:restaurant": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
+    "build:sandbox": "esbuild projects/orchestrator/public/sandbox_iframe/sandbox.ts --bundle --outfile=projects/orchestrator/public/sandbox_iframe/sandbox.js --format=esm --platform=browser"
   },
   "prettier": {
     "printWidth": 100,
@@ -30,6 +31,7 @@
   "private": true,
   "dependencies": {
     "@a2a-js/sdk": "^0.3.4",
+    "@modelcontextprotocol/ext-apps": "^1.2.0",
     "@a2ui/web_core": "file:../../../renderers/web_core",
     "@a2ui/markdown-it": "file:../../../renderers/markdown/markdown-it",
     "@angular/cdk": "^20.2.10",
@@ -83,6 +85,7 @@
   },
   "workspaces": [
     "projects/*",
-    "../../../renderers/web_core"
+    "../../../renderers/web_core",
+    "../../../renderers/markdown/markdown-it"
   ]
 }

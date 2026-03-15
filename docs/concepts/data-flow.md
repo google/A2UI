@@ -301,7 +301,7 @@ A2UI is transport-agnostic — any mechanism that can deliver JSON messages work
 - **WebSocket**: Persistent bidirectional connection, ideal for real-time updates and user actions
 - **Any other transport**: gRPC, message queues, custom protocols — if it can carry JSON, it works
 
-See [transports](../transports.md) for implementation details.
+See [transports](transports.md) for implementation details.
 
 ## Progressive Rendering
 
