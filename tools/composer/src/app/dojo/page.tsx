@@ -24,7 +24,7 @@ export default function DojoPage() {
   const [activeTab, setActiveTab] = useState<'data' | 'config'>('data');
   const [mobileView, setMobileView] = useState<'data' | 'config' | 'renderers'>('renderers');
   const [renderers, setRenderers] = useState({ react: true, lit: false, discord: true });
-  const [selectedScenario, setSelectedScenario] = useState<ScenarioId>('kitchen-sink');
+  const [selectedScenario, setSelectedScenario] = useState<ScenarioId>('northstar-tour');
 
   const {
     playbackState,
