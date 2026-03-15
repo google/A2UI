@@ -20,7 +20,7 @@ jobs:
       # --- Build web_core first ---
       - name: Install web_core deps
         working-directory: renderers/web_core
-        run: npm install
+        run: npm ci
 
       - name: Build web_core
         working-directory: renderers/web_core
@@ -29,7 +29,7 @@ jobs:
       # --- Then build lit ---
       - name: Install lit deps
         working-directory: renderers/lit
-        run: npm install
+        run: npm ci
 
       - name: Build lit
         working-directory: renderers/lit
