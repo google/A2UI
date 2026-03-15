@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { useJsonlPlayer } from '@/components/dojo/useJsonlPlayer';
 import { useA2UISurface } from '@/components/dojo/useA2UISurface';
-import { A2UIViewer } from '@copilotkit/a2ui-renderer';
+import { A2UIViewer } from '@a2ui/react';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Separator } from '@/components/ui/separator';
@@ -111,12 +111,12 @@ export default function DojoPage() {
 
           {/* Timeline Scrubber */}
           <div className="flex-1 flex items-center gap-4 group">
-            <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress + 1}</span>
+            <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress}</span>
             <div className="relative flex-1 flex items-center h-5">
               <input
                 type="range"
                 min="0"
-                max={Math.max(0, totalMessages - 1)}
+                max={totalMessages}
                 value={progress}
                 onChange={(e) => seek(parseInt(e.target.value, 10))}
                 className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
@@ -125,14 +125,14 @@ export default function DojoPage() {
               <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-primary transition-all duration-200 ease-out"
-                  style={{ width: `${totalMessages > 1 ? (progress / (totalMessages - 1)) * 100 : 0}%` }}
+                  style={{ width: `${totalMessages > 0 ? (progress / totalMessages) * 100 : 0}%` }}
                 />
               </div>
               {/* Custom Range Thumb */}
               <div 
                 className="absolute h-3 w-3 bg-primary rounded-full shadow-sm shadow-primary/40 border border-background transition-transform group-hover:scale-125 duration-200 ease-out pointer-events-none"
                 style={{ 
-                  left: `calc(${totalMessages > 1 ? (progress / (totalMessages - 1)) * 100 : 0}% - 6px)`
+                  left: `calc(${totalMessages > 0 ? (progress / totalMessages) * 100 : 0}% - 6px)`
                 }}
               />
             </div>
