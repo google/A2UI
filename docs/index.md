@@ -89,6 +89,14 @@ and [transports](concepts/transports.md) (A2A, etc.) which communicate A2UI mess
 
     [:octicons-arrow-right-24: Learn concepts](concepts/overview.md)
 
+- :material-account-group:{ .lg .middle } **[Contributor Onboarding](guides/onboarding.md)**
+
+    ---
+
+    A short, practical path for first-time contributors, students, and hackathon teams.
+
+    [:octicons-arrow-right-24: Start contributing](guides/onboarding.md)
+
 - :material-code-braces:{ .lg .middle } **[Developer Guides](guides/client-setup.md)**
 
     ---

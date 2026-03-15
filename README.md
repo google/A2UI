@@ -176,3 +176,4 @@ A2UI is an **Apache 2.0** licensed project. We believe the future of UI is agent
 and we want to work with you to help build it.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to get started.
+New here? Start with the [Contributor Onboarding](docs/guides/onboarding.md) guide.
