@@ -8,8 +8,10 @@ import floorPlan from './floor-plan.json';
 import orgChart from './org-chart.json';
 import bookingForm from './booking-form.json';
 import rizzchartsChart from './rizzcharts-chart.json';
+import northstarTour from './northstar-tour.json';
 
 export const scenarios = {
+  'northstar-tour': northstarTour,
   'kitchen-sink': kitchenSink,
   'contact-lookup': contactLookup,
   'restaurant-finder': restaurantFinder,

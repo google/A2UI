@@ -25,5 +25,12 @@ export function transpileToV0_8(msg: any): any {
       }
     };
   }
+  if (msg.deleteSurface) {
+    return {
+      deleteSurface: {
+        surfaceId: msg.deleteSurface.surfaceId
+      }
+    };
+  }
   return msg;
 }
