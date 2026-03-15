@@ -23,6 +23,7 @@ import type {
 } from "../schema/common-types.js";
 import { A2uiExpressionError } from "../errors.js";
 import type { FunctionInvoker } from "../catalog/types.js";
+import { coerceToString, coerceToNumber, coerceToBoolean } from "./coercion.js";
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving
