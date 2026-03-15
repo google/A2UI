@@ -43,18 +43,14 @@ jobs:
         working-directory: ./samples/client/angular
         run: npm run build:renderer
 
-      - name: Build contact sample
+      - name: Build all Angular projects
         working-directory: ./samples/client/angular
-        run: npm run build contact
+        run: |
+          for project in gallery contact restaurant rizzcharts orchestrator; do
+            echo "Building $project..."
+            npm run build $project
+          done
 
-      - name: Build restaurant sample
+      - name: Run Angular tests
         working-directory: ./samples/client/angular
-        run: npm run build restaurant
-
-      - name: Build Rizzchart sample
-        working-directory: ./samples/client/angular
-        run: npm run build rizzcharts
-
-      - name: Build Orchestrator
-        working-directory: ./samples/client/angular
-        run: npm run build orchestrator
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
