@@ -17,6 +17,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
+import { toSnakeCase } from '@a2ui/web_core/styles/icons';
 
 @Component({
   selector: 'a2ui-icon',
@@ -45,5 +46,8 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 })
 export class Icon extends DynamicComponent {
   readonly name = input.required<Primitives.StringValue | null>();
-  protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
+  protected readonly resolvedName = computed(() => {
+    const name = this.resolvePrimitive(this.name());
+    return name ? toSnakeCase(name) : name;
+  });
 }
