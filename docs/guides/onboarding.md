@@ -18,11 +18,16 @@ This guide helps first-time contributors, students, and hackathon teams get from
 
 If you only want to contribute docs, you do not need Python or an API key.
 
-## 3. Run something locally (fast path)
+## 3. Fork and clone (fast path)
 
 ```bash
-git clone https://github.com/google/A2UI.git
+# 1) Fork https://github.com/google/A2UI on GitHub
+# 2) Clone your fork
+git clone https://github.com/<your-username>/A2UI.git
 cd A2UI
+
+# 3) (Optional) Add upstream for syncing
+git remote add upstream https://github.com/google/A2UI.git
 ```
 
 Then follow the [Quickstart](../quickstart.md) for the one-command demo.
