@@ -25,6 +25,11 @@ export function useJsonlPlayer<T>({
 
   const totalMessages = messages.length;
 
+  // Reset progress when messages change
+  useEffect(() => {
+    setProgress(Math.min(initialProgress, messages.length));
+  }, [messages, initialProgress]);
+
   const play = useCallback(() => {
     if (progress >= totalMessages) {
       setProgress(0); // Loop or restart

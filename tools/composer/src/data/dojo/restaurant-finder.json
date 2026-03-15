@@ -2,7 +2,7 @@
   {
     "beginRendering": {
       "surfaceId": "default",
-      "root": "root-column",
+      "root": "root",
       "styles": {
         "primaryColor": "#FF0000",
         "font": "Roboto"
@@ -14,7 +14,7 @@
       "surfaceId": "default",
       "components": [
         {
-          "id": "root-column",
+          "id": "root",
           "component": {
             "Column": {
               "children": {

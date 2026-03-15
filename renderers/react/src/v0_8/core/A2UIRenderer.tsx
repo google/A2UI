@@ -72,6 +72,7 @@ export const A2UIRenderer = memo(function A2UIRenderer({
 
   // Get surface - this will re-render when version changes
   const surface = getSurface(surfaceId);
+  console.log('A2UIRenderer: surfaceId=', surfaceId, 'surface=', surface, 'version=', version);
 
   // Memoize surface styles to prevent object recreation
   // Matches Lit renderer's transformation logic in surface.ts

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { transpileToV0_8 } from '@/lib/transcoder';
 
 export interface ComponentInstance {
   id: string;
@@ -21,16 +22,16 @@ export function useA2UISurface(messages: any[]): A2UISurfaceState {
 
     for (const msg of messages) {
       if (!msg) continue;
+      const v0_8msg = transpileToV0_8(msg);
 
-      // Handle createSurface
-      if (msg.createSurface) {
-        // v0.9 requirement: root is "root"
-        root = "root";
+      // Handle beginRendering
+      if (v0_8msg.beginRendering) {
+        root = v0_8msg.beginRendering.root || "root";
       }
 
-      // Handle updateComponents
-      if (msg.updateComponents) {
-        const newComponents = msg.updateComponents.components || [];
+      // Handle surfaceUpdate
+      if (v0_8msg.surfaceUpdate) {
+        const newComponents = v0_8msg.surfaceUpdate.components || [];
         for (const comp of newComponents) {
           if (comp.id) {
             componentsMap.set(comp.id, comp);
@@ -38,35 +39,23 @@ export function useA2UISurface(messages: any[]): A2UISurfaceState {
         }
       }
 
-      // Handle updateDataModel
-      if (msg.updateDataModel) {
-        const updates = msg.updateDataModel.updates || [];
+      // Handle dataModelUpdate
+      if (v0_8msg.dataModelUpdate) {
+        const updates = v0_8msg.dataModelUpdate.contents || [];
         for (const update of updates) {
-          if (update.path === "/" || !update.path) {
-            data = { ...data, ...update.value };
+          const path = v0_8msg.dataModelUpdate.path || "/";
+          if (path === "/" || !path) {
+            data = { ...data, ...update };
           } else {
             // Simple path handling: "foo/bar" -> data.foo.bar
-            const parts = update.path.split('/').filter(Boolean);
+            const parts = path.split('/').filter(Boolean);
             let current = data;
             for (let i = 0; i < parts.length - 1; i++) {
               const part = parts[i];
               if (!current[part]) current[part] = {};
               current = current[part];
             }
-            current[parts[parts.length - 1]] = update.value;
-          }
-        }
-      }
-
-      // Support for older "beginRendering" / "surfaceUpdate" if encountered
-      if (msg.beginRendering) {
-        root = msg.beginRendering.root || "root";
-      }
-      if (msg.surfaceUpdate) {
-        const newComponents = msg.surfaceUpdate.components || [];
-        for (const comp of newComponents) {
-          if (comp.id) {
-            componentsMap.set(comp.id, comp);
+            current[parts[parts.length - 1]] = update;
           }
         }
       }
