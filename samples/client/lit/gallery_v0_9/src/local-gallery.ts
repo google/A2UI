@@ -1,7 +1,7 @@
 import { LitElement, html, css, nothing, PropertyValues } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { MessageProcessor } from "@a2ui/web_core/v0_9";
-import { minimalCatalog } from "@a2ui/lit/v0_9";
+import { minimalCatalog, basicCatalog } from "@a2ui/lit/v0_9";
 // Try avoiding direct deep import if A2uiMessage is not exported at the top level, using any for now as this is just a type for the array of messages
 interface DemoItem {
   id: string;
@@ -9,6 +9,7 @@ interface DemoItem {
   filename: string;
   description: string;
   messages: any[];
+  isBasic?: boolean;
 }
 
 @customElement("local-gallery")
@@ -19,9 +20,10 @@ export class LocalGallery extends LitElement {
   @state() accessor processedMessageCount = 0;
   @state() accessor currentDataModelText = "{}";
 
-  private processor = new MessageProcessor([minimalCatalog], (action: any) => {
+  private processor = new MessageProcessor([minimalCatalog, basicCatalog], (action: any) => {
       this.log(`Action dispatched: ${action.surfaceId}`, action);
   });
+
   
   private dataModelSubscription?: { unsubscribe: () => void };
 
@@ -197,14 +199,28 @@ export class LocalGallery extends LitElement {
 
   async loadExamples() {
     try {
-      const indexResp = await fetch('./specs/v0_9/minimal/examples/index.json');
-      if (!indexResp.ok) throw new Error(`Could not load manifest (HTTP ${indexResp.status})`);
+      const items: DemoItem[] = [];
+      await this.fetchExamplesFrom('./specs/v0_9/minimal/examples', items, false);
+      await this.fetchExamplesFrom('./specs/v0_9/basic/examples', items, true);
+      
+      this.demoItems = items;
+      if (items.length > 0) {
+        this.selectItem(0);
+      }
+    } catch (err) {
+      console.error(`Failed to initiate gallery:`, err);
+    }
+  }
+
+  async fetchExamplesFrom(dir: string, items: DemoItem[], isBasic: boolean) {
+    try {
+      const indexResp = await fetch(`${dir}/index.json`);
+      if (!indexResp.ok) throw new Error(`Could not load manifest from ${dir}`);
       const filenames = await indexResp.json() as string[];
 
-      const items: DemoItem[] = [];
       for (const filename of filenames) {
         try {
-          const response = await fetch(`./specs/v0_9/minimal/examples/${filename}`);
+          const response = await fetch(`${dir}/${filename}`);
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const data = await response.json();
           const messages = Array.isArray(data) ? data : (data.messages || []);
@@ -218,7 +234,7 @@ export class LocalGallery extends LitElement {
                version: "v0.9",
                createSurface: {
                  surfaceId,
-                 catalogId: minimalCatalog.id
+                 catalogId: isBasic ? basicCatalog.id : minimalCatalog.id
                }
              });
           }
@@ -228,20 +244,16 @@ export class LocalGallery extends LitElement {
             title: filename.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ').replace('.json', ''),
             filename: filename,
             description: data.description || `Source: ${filename}`,
-            messages: messages
+            messages: messages,
+            isBasic
           });
 
         } catch (err) {
           console.error(`Error loading ${filename}:`, err);
         }
       }
-      
-      this.demoItems = items;
-      if (items.length > 0) {
-        this.selectItem(0);
-      }
-    } catch (err) {
-      console.error(`Failed to initiate gallery:`, err);
+    } catch (e) {
+      console.warn(`Could not load ${dir}`, e);
     }
   }
 
