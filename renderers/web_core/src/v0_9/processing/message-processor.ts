@@ -28,6 +28,10 @@ import {
   UpdateDataModelMessage,
   DeleteSurfaceMessage,
 } from "../schema/server-to-client.js";
+import {
+  A2uiClientCapabilities,
+  InlineCatalog,
+} from "../schema/client-capabilities.js";
 import { A2uiStateError, A2uiValidationError } from "../errors.js";
 
 /**
@@ -36,20 +40,6 @@ import { A2uiStateError, A2uiValidationError } from "../errors.js";
 export interface CapabilitiesOptions {
   /** If true, the full definition of all catalogs will be included. */
   includeInlineCatalogs?: boolean;
-}
-
-export interface InlineCatalog {
-  catalogId: string;
-  components: Record<string, any>;
-  functions?: any[];
-  theme?: Record<string, any>;
-}
-
-export interface A2uiClientCapabilities {
-  "v0.9": {
-    supportedCatalogIds: string[];
-    inlineCatalogs?: InlineCatalog[];
-  };
 }
 
 /**

@@ -58,7 +58,7 @@ describe("MessageProcessor", () => {
       const inlineCat = caps["v0.9"].inlineCatalogs![0];
 
       assert.strictEqual(inlineCat.catalogId, "cat-1");
-      const buttonSchema = inlineCat.components.Button;
+      const buttonSchema = inlineCat.components!.Button;
 
       assert.ok(buttonSchema.allOf);
       assert.strictEqual(
@@ -87,7 +87,7 @@ describe("MessageProcessor", () => {
 
       const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
       const titleSchema =
-        caps["v0.9"].inlineCatalogs![0].components.Custom.allOf[1].properties.title;
+        caps["v0.9"].inlineCatalogs![0].components!.Custom.allOf[1].properties.title;
 
       assert.strictEqual(titleSchema.$ref, "common_types.json#/$defs/DynamicString");
       assert.strictEqual(titleSchema.description, "The title");
@@ -164,7 +164,7 @@ describe("MessageProcessor", () => {
       const proc = new MessageProcessor([cat]);
       const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
       
-      const properties = caps["v0.9"].inlineCatalogs![0].components.DeepComp.allOf[1].properties;
+      const properties = caps["v0.9"].inlineCatalogs![0].components!.DeepComp.allOf[1].properties;
       const actionSchema = properties.items.items.properties.action;
       
       assert.strictEqual(actionSchema.$ref, "common_types.json#/$defs/Action");
@@ -184,7 +184,7 @@ describe("MessageProcessor", () => {
       const proc = new MessageProcessor([cat]);
       const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
       
-      const properties = caps["v0.9"].inlineCatalogs![0].components.EdgeComp.allOf[1].properties;
+      const properties = caps["v0.9"].inlineCatalogs![0].components!.EdgeComp.allOf[1].properties;
       
       assert.strictEqual(properties.noPipe.$ref, "common_types.json#/$defs/NoPipe");
       assert.strictEqual(properties.noPipe.description, undefined);
