@@ -355,7 +355,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   currentDataModel: Record<string, unknown> = {};
   eventsLog: Array<{ timestamp: Date; action: SurfaceGroupAction }> = [];
 
-  private actionSub?: () => void;
+  private actionSub?: { unsubscribe: () => void };
   private dataModelSub?: { unsubscribe: () => void };
 
   ngOnInit(): void {
@@ -405,13 +405,12 @@ export class DemoComponent implements OnInit, OnDestroy {
     // Subscribe to Actions for Events log
     if (this.rendererService.surfaceGroup) {
       if (this.actionSub) {
-        this.actionSub();
+        this.actionSub.unsubscribe();
       }
-      const sub = this.rendererService.surfaceGroup.onAction.subscribe((action) => {
+      this.actionSub = this.rendererService.surfaceGroup.onAction.subscribe((action) => {
         this.eventsLog.unshift({ timestamp: new Date(), action });
         this.cdr.detectChanges();
       });
-      this.actionSub = () => sub.unsubscribe();
     }
   }
 
@@ -431,7 +430,7 @@ export class DemoComponent implements OnInit, OnDestroy {
       this.dataModelSub.unsubscribe();
     }
     if (this.actionSub) {
-      this.actionSub();
+      this.actionSub.unsubscribe();
     }
   }
 }
