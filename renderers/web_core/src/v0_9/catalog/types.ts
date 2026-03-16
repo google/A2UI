@@ -130,7 +130,7 @@ export class Catalog<T extends ComponentApi> {
     this.invoker = (name, rawArgs, ctx, abortSignal) => {
       const fn = this.functions.get(name);
       if (!fn) {
-        throw new Error(`Function not found in catalog '${this.id}': ${name}`);
+        throw new A2uiExpressionError(`Function not found in catalog '${this.id}': ${name}`, name);
       }
 
       // Provides runtime safety: Coerces and strips invalid arguments before execute()

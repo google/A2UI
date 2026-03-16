@@ -17,31 +17,23 @@
 import { describe, it } from "node:test";
 import * as assert from "node:assert";
 import { effect } from "@preact/signals-core";
-import { ZodError } from "zod";
+
 import { BASIC_FUNCTIONS } from "./basic_functions.js";
 import { DataModel } from "../../state/data-model.js";
 import { DataContext } from "../../rendering/data-context.js";
 import { A2uiExpressionError } from "../../errors.js";
+import { Catalog, ComponentApi } from "../../catalog/types.js";
+
+const testCatalog = new Catalog<ComponentApi>("test", [], BASIC_FUNCTIONS);
 
 function invoke(name: string, args: Record<string, any>, context: DataContext) {
-  const fn = BASIC_FUNCTIONS.find((f) => f.name === name);
-  if (!fn) throw new Error(`Function ${name} not found`);
-
-  try {
-    const rawArgs = fn.schema.parse(args);
-    return fn.execute(rawArgs, context);
-  } catch (e: any) {
-    if (e?.name === "ZodError" || e instanceof ZodError) {
-      throw new A2uiExpressionError(e.message, e);
-    }
-    throw e;
-  }
+  return testCatalog.invoker(name, args, context);
 }
 
 const createTestDataContext = (
   model: DataModel,
   path: string,
-  functionInvoker: any = () => null,
+  functionInvoker: any = testCatalog.invoker,
 ) => {
   const mockSurface = {
     dataModel: model,
