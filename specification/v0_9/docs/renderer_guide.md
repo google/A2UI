@@ -135,7 +135,22 @@ The model is designed to support high-performance rendering through granular upd
 *   **Property Changes**: The `ComponentModel` notifies when its specific configuration changes.
 *   **Data Changes**: The `DataModel` notifies only subscribers to the specific path that changed.
 
-### The Models
+### Protocol Models & Serialization
+
+The framework-agnostic layer is responsible for defining strict, native type representations of the A2UI JSON schemas. Renderers should not pass raw generic dictionaries (like `Map<String, Any>` or `Record<string, any>`) directly into the state layer. 
+
+Developers must create data classes, structs, or interfaces (e.g., `data class` in Kotlin, `Codable struct` in Swift, or Zod-validated `interface` in TypeScript) that perfectly mirror the official JSON specifications. This creates a safe boundary between the raw network stream and the internal state models.
+
+**Required Data Structures:**
+*   **Server-to-Client Messages:** `A2uiMessage` (a union/protocol type), `CreateSurfaceMessage`, `UpdateComponentsMessage`, `UpdateDataModelMessage`, `DeleteSurfaceMessage`.
+*   **Client-to-Server Events:** `ClientEvent` (a union/protocol type), `ActionMessage`, `ErrorMessage`.
+*   **Client Metadata:** `A2uiClientCapabilities`, `InlineCatalog`, `FunctionDefinition`, `ClientDataModel`.
+
+**JSON Serialization & Validation:**
+*   **Inbound (Parsing)**: The core library must provide a mechanism to deserialize a raw JSON string into a strongly-typed `A2uiMessage`. If the payload violates the A2UI JSON schema, this layer must throw an `A2uiValidationError` *before* the message reaches the state models.
+*   **Outbound (Stringifying)**: The core library must serialize client-to-server events and capabilities from their strict native types back into valid JSON strings to hand off to the transport layer.
+
+### The State Models
 
 #### SurfaceGroupModel & SurfaceModel
 The root containers for active surfaces and their catalogs, data, and components.
@@ -267,9 +282,12 @@ class MessageProcessor<T extends ComponentApi> {
   
   constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
 
-  processMessages(messages: any[]): void;
+  // Accepts validated, strongly-typed message objects, not raw JSON
+  processMessages(messages: A2uiMessage[]): void;
   addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
-  getClientCapabilities(options?: CapabilitiesOptions): any;
+  
+  // Returns a strictly typed capabilities object ready for JSON serialization
+  getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities;
 }
 ```
 
@@ -635,11 +653,12 @@ Create a comprehensive design document detailing:
 ### 3. Core Model Layer
 Implement the framework-agnostic Data Layer (Section 3).
 *   Implement event streams and stateful signals.
+*   Implement strict Protocol Models (`A2uiMessage`, `A2uiClientCapabilities`, etc.) with JSON serialization/deserialization and schema validation logic.
 *   Implement `DataModel`, ensuring correct JSON pointer resolution and the cascade/bubble notification strategy.
 *   Implement `ComponentModel`, `SurfaceComponentsModel`, `SurfaceModel`, and `SurfaceGroupModel`.
 *   Implement `DataContext` and `ComponentContext`.
 *   Implement `MessageProcessor` and ClientCapabilities generation.
-*   **Action**: Write unit tests for the `DataModel` (especially pointer resolution/cascade logic) and `MessageProcessor`. Ensure they pass before continuing.
+*   **Action**: Write unit tests for JSON validation, the `DataModel` (especially pointer resolution/cascade logic), and `MessageProcessor`. Ensure they pass before continuing.
 
 ### 4. Framework-Specific Layer
 Implement the bridge between models and native UI (Section 5 & 6).
