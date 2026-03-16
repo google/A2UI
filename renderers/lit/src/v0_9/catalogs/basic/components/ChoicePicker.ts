@@ -9,7 +9,7 @@ export const A2uiChoicePicker = createLitComponent(ChoicePickerApi, ({ props }) 
   const toggle = (val: string) => {
     if (!props.setValue) return;
     if (isMulti) {
-      if (selected.includes(val)) props.setValue(selected.filter(v => v !== val));
+      if (selected.includes(val)) props.setValue(selected.filter((v: string) => v !== val));
       else props.setValue([...selected, val]);
     } else {
       props.setValue([val]);

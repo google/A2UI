@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * @fileoverview Synchronizes minimal v0.8 examples from the specification folder
- * into the local gallery's public assets and generates a manifest index.
- */
-
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -26,27 +21,31 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const TARGET_DIR = path.resolve(process.cwd(), 'public/specs/v0_9/minimal/examples');
-const SOURCE_DIR = path.resolve(process.cwd(), '../../../../specification/v0_9/json/catalogs/minimal/examples');
+function syncDir(sourceDir, targetDir) {
+  console.log(`Syncing specs from ${sourceDir} to ${targetDir}...`);
+  fs.mkdirSync(targetDir, { recursive: true });
 
-console.log(`Syncing specs from ${SOURCE_DIR} to ${TARGET_DIR}...`);
+  const files = fs.readdirSync(sourceDir).filter(f => f.endsWith('.json'));
 
-// Ensure target directory exists
-fs.mkdirSync(TARGET_DIR, { recursive: true });
+  files.forEach(f => {
+    const sourcePath = path.join(sourceDir, f);
+    const targetPath = path.join(targetDir, f);
+    fs.copyFileSync(sourcePath, targetPath);
+    console.log(`  Copied ${f}`);
+  });
 
-// Read source files
-const files = fs.readdirSync(SOURCE_DIR).filter(f => f.endsWith('.json'));
+  const indexFiles = fs.readdirSync(targetDir).filter(f => f.endsWith('.json') && f !== 'index.json');
+  fs.writeFileSync(path.join(targetDir, 'index.json'), JSON.stringify(indexFiles, null, 2));
 
-// Copy files
-files.forEach(f => {
-  const sourcePath = path.join(SOURCE_DIR, f);
-  const targetPath = path.join(TARGET_DIR, f);
-  fs.copyFileSync(sourcePath, targetPath);
-  console.log(`  Copied ${f}`);
-});
+  console.log(`Generated manifest for ${indexFiles.length} files.`);
+}
 
-// Generate index.json (excluding itself)
-const indexFiles = fs.readdirSync(TARGET_DIR).filter(f => f.endsWith('.json') && f !== 'index.json');
-fs.writeFileSync(path.join(TARGET_DIR, 'index.json'), JSON.stringify(indexFiles, null, 2));
+syncDir(
+  path.resolve(process.cwd(), '../../../../specification/v0_9/json/catalogs/minimal/examples'),
+  path.resolve(process.cwd(), 'public/specs/v0_9/minimal/examples')
+);
 
-console.log(`Generated manifest for ${indexFiles.length} files.`);
+syncDir(
+  path.resolve(process.cwd(), '../../../../specification/v0_9/json/catalogs/basic/examples'),
+  path.resolve(process.cwd(), 'public/specs/v0_9/basic/examples')
+);
