@@ -49,6 +49,7 @@ export class A2uiNode extends LitElement {
     if (!this.controller || !this.implementation || !this.context) return nothing;
     
     const buildChild: ChildBuilder = (id: string, overrideBasePath?: string) => {
+        if (!id) return nothing;
         const surface = this.context.dataContext.surface;
         const basePath = overrideBasePath ?? this.context.dataContext.path;
         
