@@ -175,7 +175,7 @@ class SurfaceModel<T extends ComponentApi> {
   readonly catalog: Catalog<T>;
   readonly dataModel: DataModel;
   readonly componentsModel: SurfaceComponentsModel;
-  readonly theme?: any;
+  readonly theme?: Record<string, any>;
   /** If true, the client should send the full data model with actions. */
   readonly sendDataModel: boolean;
 
@@ -185,7 +185,7 @@ class SurfaceModel<T extends ComponentApi> {
    * @param payload The raw action event from the component.
    * @param sourceComponentId The ID of the component that triggered the action.
    */
-  dispatchAction(payload: any, sourceComponentId: string): Promise<void>;
+  dispatchAction(payload: Record<string, any>, sourceComponentId: string): Promise<void>;
 }
 ```
 
@@ -252,9 +252,9 @@ Transient objects created on-demand during rendering to solve "scope" and bindin
 class DataContext {
   constructor(dataModel: DataModel, path: string);
   readonly path: string;
-  set(path: string, value: any): void;
-  resolveDynamicValue<V>(v: any): V;
-  subscribeDynamicValue<V>(v: any, onChange: (v: V | undefined) => void): Subscription<V>;
+  set(path: string, value: unknown): void;
+  resolveDynamicValue<V>(v: DynamicValue): V;
+  subscribeDynamicValue<V>(v: DynamicValue, onChange: (v: V | undefined) => void): Subscription<V>;
   nested(relativePath: string): DataContext;
 }
 
@@ -263,7 +263,7 @@ class ComponentContext<T extends ComponentApi> {
   readonly componentModel: ComponentModel;
   readonly dataContext: DataContext;
   readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
-  dispatchAction(action: any): Promise<void>;
+  dispatchAction(action: Record<string, any>): Promise<void>;
 }
 ```
 
@@ -278,9 +278,9 @@ class MessageProcessor<T extends ComponentApi> {
   
   constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
 
-  processMessages(messages: any[]): void;
+  processMessages(messages: A2uiMessage[]): void;
   addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
-  getClientCapabilities(options?: CapabilitiesOptions): any;
+  getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities;
   
   /**
    * Returns the aggregated data model for all surfaces that have 'sendDataModel' enabled.
