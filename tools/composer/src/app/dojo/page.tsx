@@ -4,82 +4,28 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Play, Pause, SkipBack, Settings, FileJson, 
   ChevronDown, Activity, Code2,
-  Zap, LayoutTemplate, Monitor
+  Zap, LayoutTemplate, Monitor, Database
 } from 'lucide-react';
-import { useJsonlPlayer } from '@/components/dojo/useJsonlPlayer';
+import { useStreamingPlayer } from '@/components/dojo/useStreamingPlayer';
 import { useA2UISurface } from '@/components/dojo/useA2UISurface';
 import { A2UIViewer } from '@copilotkit/a2ui-renderer';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { scenarios, ScenarioId } from '@/data/dojo';
 
 const RENDERERS = ['Lit (Web Components)', 'React', 'Angular'] as const;
 type RendererType = typeof RENDERERS[number];
+type LeftTab = 'events' | 'data' | 'config';
 
-/** Generate a human-readable summary for an A2UI message */
-function summarizeMessage(msg: any, index: number): string {
-  if (msg.beginRendering) {
-    const sid = msg.beginRendering.surfaceId || 'default';
-    const root = msg.beginRendering.root || 'root';
-    return `Create surface "${sid}" with root "${root}"`;
-  }
-  if (msg.createSurface) {
-    return `Create surface "${msg.createSurface.surfaceId || 'default'}" (v0.9)`;
-  }
-  if (msg.surfaceUpdate) {
-    const count = msg.surfaceUpdate.components?.length || 0;
-    const types = msg.surfaceUpdate.components
-      ?.map((c: any) => c.component ? Object.keys(c.component)[0] : c.type || '?')
-      .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i)
-      .join(', ');
-    return `Update ${count} components: ${types}`;
-  }
-  if (msg.updateComponents) {
-    const count = msg.updateComponents.components?.length || 0;
-    const types = msg.updateComponents.components
-      ?.map((c: any) => c.type || '?')
-      .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i)
-      .join(', ');
-    return `Update ${count} components: ${types}`;
-  }
-  if (msg.dataModelUpdate) {
-    const keys = msg.dataModelUpdate.contents?.map((c: any) => c.key).filter(Boolean).join(', ');
-    return `Set data: ${keys}`;
-  }
-  if (msg.updateDataModel) {
-    const keys = msg.updateDataModel.contents?.map((c: any) => c.key).filter(Boolean).join(', ');
-    return `Set data: ${keys}`;
-  }
-  if (msg.clientEvent) {
-    return `User action: ${msg.clientEvent.name || 'event'}`;
-  }
-  if (msg.action) {
-    return `User action: ${msg.action.name || 'action'}`;
-  }
-  if (msg.deleteSurface) {
-    return `Delete surface "${msg.deleteSurface.surfaceId}"`;
-  }
-  return `Step ${index + 1}`;
-}
-
-/** Sync state to URL query params */
 function updateURL(scenario: string, step: number, renderer: string) {
   if (typeof window === 'undefined') return;
   const params = new URLSearchParams();
   params.set('scenario', scenario);
   if (step > 0) params.set('step', String(step));
   if (renderer !== RENDERERS[0]) params.set('renderer', renderer);
-  const newURL = `${window.location.pathname}?${params.toString()}`;
-  window.history.replaceState({}, '', newURL);
+  window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
 }
 
-/** Read initial state from URL */
 function readURL(): { scenario?: string; step?: number; renderer?: string } {
   if (typeof window === 'undefined') return {};
   const params = new URLSearchParams(window.location.search);
@@ -91,11 +37,9 @@ function readURL(): { scenario?: string; step?: number; renderer?: string } {
 }
 
 export default function DojoPage() {
-  const [activeTab, setActiveTab] = useState<'data' | 'config'>('data');
-  const [mobileView, setMobileView] = useState<'data' | 'config' | 'renderers'>('renderers');
+  const [leftTab, setLeftTab] = useState<LeftTab>('events');
+  const [mobileView, setMobileView] = useState<'left' | 'renderer'>('renderer');
   const [renderer, setRenderer] = useState<RendererType>(RENDERERS[0]);
-  
-  // Initialize from URL
   const [selectedScenario, setSelectedScenario] = useState<ScenarioId>(() => {
     const url = readURL();
     return (url.scenario && url.scenario in scenarios) ? url.scenario as ScenarioId : 'restaurant-booking';
@@ -103,223 +47,239 @@ export default function DojoPage() {
 
   const {
     playbackState,
-    progress,
-    totalMessages,
+    streamProgress,
+    totalStreamLines,
     speed,
+    visibleLines,
     activeMessages,
+    visibleEvents,
+    completedMessageCount,
+    currentStreamingMessage,
     play,
     pause,
     stop,
     seek,
-    setSpeed
-  } = useJsonlPlayer({
-    messages: (scenarios[selectedScenario] as any) || [],
-    autoPlay: false,
-    baseIntervalMs: 1000
-  });
+    seekToMessageEnd,
+    setSpeed,
+  } = useStreamingPlayer((scenarios[selectedScenario] as any) || [], 60);
 
   const surfaceState = useA2UISurface(activeMessages);
 
-  // Read URL params on mount
   useEffect(() => {
     const url = readURL();
-    if (url.renderer && RENDERERS.includes(url.renderer as RendererType)) {
-      setRenderer(url.renderer as RendererType);
-    }
-    if (url.step !== undefined) {
-      seek(url.step);
-    }
+    if (url.renderer && RENDERERS.includes(url.renderer as RendererType)) setRenderer(url.renderer as RendererType);
+    if (url.step !== undefined) seek(url.step);
   }, []);
 
-  // Sync state to URL
   useEffect(() => {
-    updateURL(selectedScenario, progress, renderer);
-  }, [selectedScenario, progress, renderer]);
+    updateURL(selectedScenario, streamProgress, renderer);
+  }, [selectedScenario, streamProgress, renderer]);
 
   const handleScenarioChange = useCallback((id: ScenarioId) => {
     setSelectedScenario(id);
     stop();
   }, [stop]);
 
-  // Auto-scroll logic for the JSONL pane
-  const streamEndRef = useRef<HTMLDivElement>(null);
+  // Auto-scroll
+  const dataEndRef = useRef<HTMLDivElement>(null);
+  const eventsEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (playbackState === 'playing' && streamEndRef.current) {
-      streamEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (playbackState === 'playing') {
+      dataEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      eventsEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
-  }, [progress, playbackState]);
+  }, [streamProgress, playbackState]);
+
+  // Group visible lines by message direction sections
+  const groupedLines = (() => {
+    const groups: { isClient: boolean; messageIndex: number; lines: typeof visibleLines }[] = [];
+    let current: typeof groups[0] | null = null;
+    for (const line of visibleLines) {
+      if (!current || current.messageIndex !== line.messageIndex) {
+        current = { isClient: line.isClient, messageIndex: line.messageIndex, lines: [] };
+        groups.push(current);
+      }
+      current.lines.push(line);
+    }
+    return groups;
+  })();
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
-      {/* Top Header / Command Center */}
-      <header className="relative z-10 flex h-auto md:h-16 flex-col md:flex-row items-center justify-between gap-3 border-b bg-background/80 px-4 py-3 md:px-6 md:py-0 backdrop-blur-md">
-        
-        {/* Left Section: Tab Toggle */}
-        <div className="hidden md:flex w-64 items-center gap-1 rounded-xl bg-muted/50 p-1 shadow-inner border border-border/50">
-          <Button variant="ghost" size="sm"
-            className={`flex-1 h-8 text-xs font-medium px-3 gap-2 rounded-lg transition-all ${activeTab === 'data' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-            onClick={() => setActiveTab('data')}
-          >
-            <FileJson className="h-4 w-4" /> Stream Data
-          </Button>
-          <Button variant="ghost" size="sm"
-            className={`flex-1 h-8 text-xs font-medium px-3 gap-2 rounded-lg transition-all ${activeTab === 'config' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-            onClick={() => setActiveTab('config')}
-          >
-            <Settings className="h-4 w-4" /> Config
-          </Button>
+      {/* Header — playback controls only, no scenario */}
+      <header className="relative z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 md:px-6 backdrop-blur-md">
+        {/* Left: Tab toggle */}
+        <div className="hidden md:flex items-center gap-1 rounded-xl bg-muted/50 p-1 shadow-inner border border-border/50">
+          {([
+            { id: 'events' as LeftTab, icon: Activity, label: 'Events' },
+            { id: 'data' as LeftTab, icon: Database, label: 'Data' },
+            { id: 'config' as LeftTab, icon: Settings, label: 'Config' },
+          ]).map(tab => (
+            <Button key={tab.id} variant="ghost" size="sm"
+              className={`h-8 text-xs font-medium px-3 gap-1.5 rounded-lg transition-all ${leftTab === tab.id ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              onClick={() => setLeftTab(tab.id)}
+            >
+              <tab.icon className="h-3.5 w-3.5" /> {tab.label}
+            </Button>
+          ))}
         </div>
 
-        {/* Center Section: Playback Controls */}
-        <div className="flex flex-1 w-full md:w-auto max-w-2xl items-center justify-between md:justify-center gap-3 md:gap-6 px-0 md:px-4">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-9 w-9 rounded-full border-border/50 shadow-sm" onClick={stop}>
-              <SkipBack className="h-4 w-4 text-muted-foreground" />
+        {/* Center: Playback */}
+        <div className="flex flex-1 max-w-2xl items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-1.5">
+            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full border-border/50" onClick={stop}>
+              <SkipBack className="h-3.5 w-3.5 text-muted-foreground" />
             </Button>
             {playbackState === 'playing' ? (
-              <Button variant="default" size="icon" className="h-10 w-10 rounded-full shadow-md hover:scale-105 transition-transform" onClick={pause}>
-                <Pause className="h-5 w-5" />
+              <Button variant="default" size="icon" className="h-9 w-9 rounded-full shadow-md" onClick={pause}>
+                <Pause className="h-4 w-4" />
               </Button>
             ) : (
-              <Button variant="default" size="icon" className="h-10 w-10 rounded-full shadow-md hover:scale-105 transition-transform bg-primary" onClick={play}>
-                <Play className="h-5 w-5 ml-1" />
+              <Button variant="default" size="icon" className="h-9 w-9 rounded-full shadow-md bg-primary" onClick={play}>
+                <Play className="h-4 w-4 ml-0.5" />
               </Button>
             )}
           </div>
-
-          {/* Timeline Scrubber */}
-          <div className="flex-1 flex items-center gap-4 group">
-            <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress}</span>
+          <div className="flex-1 flex items-center gap-3 group">
+            <span className="text-[10px] font-mono text-muted-foreground w-8 text-right tabular-nums">{streamProgress}</span>
             <div className="relative flex-1 flex items-center h-5">
-              <input type="range" min="0" max={totalMessages} value={progress}
+              <input type="range" min="0" max={totalStreamLines} value={streamProgress}
                 onChange={(e) => seek(parseInt(e.target.value, 10))}
                 className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
               />
-              <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
-                <div className="h-full bg-primary transition-all duration-200 ease-out"
-                  style={{ width: `${totalMessages > 0 ? (progress / totalMessages) * 100 : 0}%` }}
+              <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
+                <div className="h-full bg-primary transition-all duration-100 ease-out"
+                  style={{ width: `${totalStreamLines > 0 ? (streamProgress / totalStreamLines) * 100 : 0}%` }}
                 />
               </div>
-              <div className="absolute h-3 w-3 bg-primary rounded-full shadow-sm shadow-primary/40 border border-background transition-transform group-hover:scale-125 duration-200 ease-out pointer-events-none"
-                style={{ left: `calc(${totalMessages > 0 ? (progress / totalMessages) * 100 : 0}% - 6px)` }}
+              <div className="absolute h-2.5 w-2.5 bg-primary rounded-full shadow-sm border border-background pointer-events-none"
+                style={{ left: `calc(${totalStreamLines > 0 ? (streamProgress / totalStreamLines) * 100 : 0}% - 5px)` }}
               />
             </div>
-            <span className="text-xs font-medium text-muted-foreground w-6 tabular-nums">{totalMessages}</span>
+            <span className="text-[10px] font-mono text-muted-foreground w-8 tabular-nums">{totalStreamLines}</span>
           </div>
-
           <Button variant="outline" size="sm"
-            className="h-8 w-14 text-xs font-mono font-medium rounded-full border-border/50 shadow-sm"
-            onClick={() => setSpeed(speed === 1 ? 2 : speed === 2 ? 0.5 : 1)}
+            className="h-7 w-12 text-[10px] font-mono font-medium rounded-full border-border/50"
+            onClick={() => setSpeed(speed === 1 ? 2 : speed === 2 ? 4 : speed === 4 ? 0.5 : 1)}
           >
             {speed}x
           </Button>
         </div>
 
-        {/* Right Section: Scenario Selection */}
-        <div className="flex w-full md:w-64 items-center justify-end mt-1 md:mt-0">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-9 w-full justify-between border-border/50 bg-background shadow-sm hover:bg-accent hover:text-accent-foreground font-medium">
-                <div className="flex items-center gap-2 truncate">
-                  <Activity className="h-4 w-4 text-primary" />
-                  <span className="truncate">{selectedScenario}</span>
-                </div>
-                <ChevronDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[240px] shadow-lg rounded-xl border-border/50">
-              {Object.keys(scenarios).map(id => (
-                <DropdownMenuItem key={id}
-                  onClick={() => handleScenarioChange(id as ScenarioId)}
-                  className={`text-sm py-2 cursor-pointer ${selectedScenario === id ? 'bg-primary/10 text-primary font-medium' : ''}`}
-                >
-                  {id}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Right: streaming status */}
+        <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
+          {currentStreamingMessage !== null && (
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Streaming...
+            </span>
+          )}
+          <span className="font-mono tabular-nums">{completedMessageCount}/{(scenarios[selectedScenario] as any)?.length || 0}</span>
         </div>
       </header>
 
-      {/* Main Split Layout */}
+      {/* Main Layout */}
       <ResizablePanelGroup direction="horizontal" className="flex-1">
-        
         {/* Left Pane */}
-        <ResizablePanel defaultSize={35} minSize={25} maxSize={50}
-          className={`bg-muted/20 border-r border-border/50 ${mobileView === "data" || mobileView === "config" ? "flex" : "hidden md:flex"} flex-col`}
+        <ResizablePanel defaultSize={38} minSize={25} maxSize={55}
+          className={`bg-muted/20 border-r border-border/50 ${mobileView === 'left' ? 'flex' : 'hidden md:flex'} flex-col`}
         >
           <div className="h-full flex flex-col relative">
-            <div className="absolute inset-0 overflow-y-auto p-5 custom-scrollbar">
-              <div className="sticky top-0 z-10 pb-4 bg-gradient-to-b from-muted/20 to-transparent">
-                <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                  {activeTab === 'data' ? (
-                    <><Zap className="h-3.5 w-3.5 text-amber-500" /> Event Stream</>
-                  ) : (
-                    <><Settings className="h-3.5 w-3.5" /> Config</>
+            <div className="absolute inset-0 overflow-y-auto p-4 custom-scrollbar">
+
+              {leftTab === 'events' ? (
+                /* EVENTS TAB — lifecycle summaries */
+                <div className="flex flex-col gap-2 pb-8">
+                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
+                    <Activity className="h-3 w-3 text-primary" /> Lifecycle Events
+                  </h2>
+                  {visibleEvents.length === 0 && (
+                    <p className="text-xs text-muted-foreground italic">Press play to see events...</p>
                   )}
-                </h2>
-              </div>
-              
-              {activeTab === 'data' ? (
-                <div className="flex flex-col gap-3 pb-8">
-                  {(scenarios[selectedScenario] as any)?.map((msg: any, index: number) => {
-                    const isActive = index === progress;
-                    const isPast = index < progress;
-                    const isClient = !!msg.action || !!msg.clientEvent;
-                    const summary = summarizeMessage(msg, index);
-                    
-                    return (
-                      <div key={index} onClick={() => seek(index)}
-                        className={`relative p-3.5 rounded-xl text-[11px] font-mono leading-relaxed transition-all duration-300 ease-out border cursor-pointer ${
-                          isActive 
-                            ? isClient 
-                              ? 'border-purple-500/50 bg-purple-500/5 ring-1 ring-purple-500/20 scale-[1.02]' 
-                              : 'border-primary/50 bg-primary/5 ring-1 ring-primary/20 scale-[1.02]' 
-                            : isPast
-                            ? isClient
-                              ? 'bg-purple-500/5 border-purple-500/20 text-foreground shadow-sm'
-                              : 'bg-card border-border/50 text-foreground shadow-sm'
-                            : 'bg-card/50 border-transparent text-muted-foreground opacity-50 hover:opacity-75'
-                        }`}
-                      >
-                        {isActive && (
-                          <div className={`absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-6 ${isClient ? 'bg-purple-500' : 'bg-primary'} rounded-r-full animate-pulse`} />
-                        )}
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[10px] font-bold bg-muted/50 rounded px-1.5 py-0.5 tabular-nums">{index + 1}</span>
-                          <span className={`text-[9px] font-bold ${isClient ? 'text-purple-500' : 'text-primary/70'}`}>
-                            {isClient ? '↑ CLIENT' : '↓ SERVER'}
-                          </span>
-                        </div>
-                        <div className={`text-xs font-sans font-medium mb-2 ${isActive ? 'text-foreground' : isPast ? 'text-foreground/80' : 'text-muted-foreground'}`}>
-                          {summary}
-                        </div>
-                        <details className="group">
-                          <summary className="text-[9px] text-muted-foreground cursor-pointer hover:text-foreground select-none">
-                            Raw JSON ▸
-                          </summary>
-                          <pre className="mt-2 whitespace-pre-wrap overflow-x-auto custom-scrollbar-sm text-[10px]">
-                            {JSON.stringify(msg, null, 2)}
-                          </pre>
-                        </details>
+                  {visibleEvents.map((evt, i) => (
+                    <div key={i}
+                      onClick={() => seekToMessageEnd(evt.messageIndex)}
+                      className={`p-3 rounded-lg border cursor-pointer transition-all hover:scale-[1.01] ${
+                        evt.type === 'surface' ? 'border-blue-500/30 bg-blue-500/5' :
+                        evt.type === 'components' ? 'border-emerald-500/30 bg-emerald-500/5' :
+                        evt.type === 'data' ? 'border-amber-500/30 bg-amber-500/5' :
+                        evt.type === 'action' ? 'border-purple-500/30 bg-purple-500/5' :
+                        'border-red-500/30 bg-red-500/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-[9px] font-bold uppercase ${
+                          evt.type === 'surface' ? 'text-blue-500' :
+                          evt.type === 'components' ? 'text-emerald-500' :
+                          evt.type === 'data' ? 'text-amber-500' :
+                          evt.type === 'action' ? 'text-purple-500' :
+                          'text-red-500'
+                        }`}>
+                          {evt.type === 'action' ? '↑' : '↓'} {evt.type}
+                        </span>
                       </div>
-                    );
-                  })}
-                  <div ref={streamEndRef} className="h-2" />
+                      <p className="text-xs font-medium text-foreground/90">{evt.summary}</p>
+                    </div>
+                  ))}
+                  <div ref={eventsEndRef} className="h-2" />
                 </div>
+
+              ) : leftTab === 'data' ? (
+                /* DATA TAB — raw streaming lines */
+                <div className="flex flex-col gap-0 pb-8">
+                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-3">
+                    <Database className="h-3 w-3 text-amber-500" /> Raw Stream
+                  </h2>
+                  {groupedLines.length === 0 && (
+                    <p className="text-xs text-muted-foreground italic">Press play to see streaming data...</p>
+                  )}
+                  {groupedLines.map((group, gi) => (
+                    <div key={gi} className="mb-3">
+                      {/* Section header */}
+                      <div className={`text-[9px] font-bold mb-1 ${group.isClient ? 'text-purple-500' : 'text-primary/70'}`}>
+                        {group.isClient ? '↑ CLIENT' : '↓ SERVER'} — message {group.messageIndex + 1}
+                      </div>
+                      {/* Streaming lines */}
+                      <div className={`rounded-lg border p-2 font-mono text-[10px] leading-relaxed ${
+                        group.isClient 
+                          ? 'border-purple-500/20 bg-purple-500/5' 
+                          : 'border-primary/20 bg-card'
+                      }`}>
+                        {group.lines.map((line, li) => (
+                          <div key={li}
+                            onClick={() => seek(visibleLines.indexOf(line) + 1)}
+                            className={`cursor-pointer hover:bg-primary/5 px-1 rounded transition-colors ${
+                              line === visibleLines[visibleLines.length - 1] ? 'bg-primary/10 font-semibold' : ''
+                            }`}
+                          >
+                            {line.text}
+                          </div>
+                        ))}
+                        {/* Show streaming cursor if this message is currently being streamed */}
+                        {currentStreamingMessage === group.messageIndex && (
+                          <span className="inline-block w-1.5 h-3.5 bg-primary animate-pulse ml-1" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={dataEndRef} className="h-2" />
+                </div>
+
               ) : (
-                /* Config Panel */
-                <div className="space-y-6">
-                  {/* Scenario selector (synced with header) */}
-                  <div className="rounded-xl border border-border/50 bg-card p-5 shadow-sm space-y-3">
+                /* CONFIG TAB */
+                <div className="space-y-5">
+                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
+                    <Settings className="h-3 w-3" /> Configuration
+                  </h2>
+                  {/* Scenario */}
+                  <div className="rounded-lg border border-border/50 bg-card p-4 shadow-sm space-y-2">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
                       <Activity className="h-4 w-4 text-primary" /> Scenario
                     </h3>
                     <div className="relative">
-                      <select
-                        value={selectedScenario}
+                      <select value={selectedScenario}
                         onChange={(e) => handleScenarioChange(e.target.value as ScenarioId)}
-                        className="w-full text-sm p-2.5 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                        className="w-full text-sm p-2 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                       >
                         {Object.keys(scenarios).map(id => (
                           <option key={id} value={id}>{id}</option>
@@ -327,42 +287,32 @@ export default function DojoPage() {
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {(scenarios[selectedScenario] as any)?.length || 0} events in this scenario
+                    <p className="text-[11px] text-muted-foreground">
+                      {(scenarios[selectedScenario] as any)?.length || 0} messages • {totalStreamLines} stream lines
                     </p>
                   </div>
-
-                  {/* Renderer selector */}
-                  <div className="rounded-xl border border-border/50 bg-card p-5 shadow-sm space-y-3">
+                  {/* Renderer */}
+                  <div className="rounded-lg border border-border/50 bg-card p-4 shadow-sm space-y-2">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
                       <Monitor className="h-4 w-4 text-primary" /> Renderer
                     </h3>
                     <div className="relative">
-                      <select
-                        value={renderer}
+                      <select value={renderer}
                         onChange={(e) => setRenderer(e.target.value as RendererType)}
-                        className="w-full text-sm p-2.5 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer"
+                        className="w-full text-sm p-2 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                       >
-                        {RENDERERS.map(r => (
-                          <option key={r} value={r}>{r}</option>
-                        ))}
+                        {RENDERERS.map(r => <option key={r} value={r}>{r}</option>)}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {renderer === RENDERERS[0] ? 'Default — uses @a2ui/lit web components' :
-                       renderer === 'React' ? 'Uses @a2ui/react (requires local build)' :
-                       'Uses @a2ui/angular (requires local build)'}
-                    </p>
                   </div>
-
-                  {/* Transport Config */}
-                  <div className="rounded-xl border border-border/50 bg-card p-5 shadow-sm space-y-3">
+                  {/* Transport */}
+                  <div className="rounded-lg border border-border/50 bg-card p-4 shadow-sm space-y-2">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
-                      <Activity className="h-4 w-4 text-primary" /> Transport
+                      <Zap className="h-4 w-4 text-primary" /> Transport
                     </h3>
                     <div className="relative">
-                      <select className="w-full text-sm p-2.5 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer">
+                      <select className="w-full text-sm p-2 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm cursor-pointer">
                         <option>A2A (Server Sent Events)</option>
                         <option>AG UI (Stream)</option>
                         <option>WebSocket</option>
@@ -370,9 +320,7 @@ export default function DojoPage() {
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Simulated in-memory. Future: connect to live agents.
-                    </p>
+                    <p className="text-[11px] text-muted-foreground">Simulated in-memory playback.</p>
                   </div>
                 </div>
               )}
@@ -383,21 +331,21 @@ export default function DojoPage() {
         <ResizableHandle withHandle className="hidden md:flex bg-border/50 hover:bg-primary/50 transition-colors" />
 
         {/* Right Pane: Renderer */}
-        <ResizablePanel defaultSize={65} className={`${mobileView === "renderers" ? "flex" : "hidden md:flex"} flex-col`}>
+        <ResizablePanel defaultSize={62} className={`${mobileView === 'renderer' ? 'flex' : 'hidden md:flex'} flex-col`}>
           <div className="h-full bg-muted/10 relative overflow-hidden flex flex-col">
             <div className="absolute inset-0 p-6 overflow-y-auto custom-scrollbar">
-              <div className="max-w-4xl mx-auto min-h-full">
-                <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-xl overflow-hidden min-h-[500px] transition-all duration-300 hover:shadow-2xl">
-                  <div className="h-11 bg-muted/30 border-b flex items-center px-4 justify-between backdrop-blur-sm">
-                    <div className="hidden sm:flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+              <div className="max-w-4xl mx-auto">
+                <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-xl overflow-hidden min-h-[500px]">
+                  <div className="h-10 bg-muted/30 border-b flex items-center px-4 justify-between">
+                    <div className="hidden sm:flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-red-400/80" />
+                      <div className="w-2 h-2 rounded-full bg-amber-400/80" />
+                      <div className="w-2 h-2 rounded-full bg-green-400/80" />
                     </div>
-                    <span className="text-xs font-semibold text-muted-foreground tracking-wide flex items-center gap-1.5">
-                      <Code2 className="h-3.5 w-3.5" /> {renderer}
+                    <span className="text-[10px] font-semibold text-muted-foreground tracking-wide flex items-center gap-1.5">
+                      <Code2 className="h-3 w-3" /> {renderer}
                     </span>
-                    <div className="w-10" />
+                    <span className="text-[10px] text-muted-foreground font-mono">{selectedScenario}</span>
                   </div>
                   <div className="p-4 bg-dot-pattern">
                     {activeMessages.length > 0 ? (
@@ -410,13 +358,13 @@ export default function DojoPage() {
                         />
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-24 text-center space-y-4">
-                        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                          <Code2 className="h-6 w-6 text-primary" />
+                      <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Code2 className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <p className="font-mono text-sm text-foreground mb-1">{'<A2UIRenderer />'}</p>
-                          <p className="text-xs text-muted-foreground">Press play to start the scenario</p>
+                          <p className="font-mono text-sm text-foreground mb-0.5">{'<A2UIRenderer />'}</p>
+                          <p className="text-xs text-muted-foreground">Press play to start streaming</p>
                         </div>
                       </div>
                     )}
@@ -430,32 +378,30 @@ export default function DojoPage() {
 
       {/* Mobile Nav */}
       <div className="flex md:hidden w-full items-center gap-1 bg-background/95 backdrop-blur-md p-2 border-t border-border/50 z-50">
-        <Button variant="ghost" size="sm" className={`flex-1 h-12 flex-col gap-1 text-[10px] font-medium ${mobileView === 'data' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}
-          onClick={() => { setMobileView('data'); setActiveTab('data'); }}>
-          <Zap className="h-4 w-4" /> Data
-        </Button>
-        <Button variant="ghost" size="sm" className={`flex-1 h-12 flex-col gap-1 text-[10px] font-medium ${mobileView === 'renderers' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}
-          onClick={() => setMobileView('renderers')}>
-          <LayoutTemplate className="h-4 w-4" /> Render
-        </Button>
-        <Button variant="ghost" size="sm" className={`flex-1 h-12 flex-col gap-1 text-[10px] font-medium ${mobileView === 'config' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}
-          onClick={() => { setMobileView('config'); setActiveTab('config'); }}>
-          <Settings className="h-4 w-4" /> Config
-        </Button>
+        {([
+          { view: 'left' as const, tab: 'events' as LeftTab, icon: Activity, label: 'Events' },
+          { view: 'renderer' as const, tab: null, icon: LayoutTemplate, label: 'Render' },
+          { view: 'left' as const, tab: 'data' as LeftTab, icon: Database, label: 'Data' },
+          { view: 'left' as const, tab: 'config' as LeftTab, icon: Settings, label: 'Config' },
+        ]).map(item => (
+          <Button key={item.label} variant="ghost" size="sm"
+            className={`flex-1 h-11 flex-col gap-0.5 text-[9px] font-medium ${
+              (item.tab ? mobileView === 'left' && leftTab === item.tab : mobileView === 'renderer')
+                ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'
+            }`}
+            onClick={() => { setMobileView(item.view); if (item.tab) setLeftTab(item.tab); }}
+          >
+            <item.icon className="h-3.5 w-3.5" /> {item.label}
+          </Button>
+        ))}
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.5); }
-        .custom-scrollbar-sm::-webkit-scrollbar { height: 4px; }
-        .custom-scrollbar-sm::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar-sm::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
-        .bg-dot-pattern {
-          background-image: radial-gradient(rgba(156, 163, 175, 0.2) 1px, transparent 1px);
-          background-size: 20px 20px;
-        }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156,163,175,0.3); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156,163,175,0.5); }
+        .bg-dot-pattern { background-image: radial-gradient(rgba(156,163,175,0.15) 1px, transparent 1px); background-size: 16px 16px; }
       `}} />
     </div>
   );
