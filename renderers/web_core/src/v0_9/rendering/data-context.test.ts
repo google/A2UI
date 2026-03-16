@@ -16,7 +16,7 @@
 
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
-import { signal } from "@preact/signals-core";
+import { signal, computed } from "@preact/signals-core";
 import { z } from "zod";
 import { DataModel } from "../state/data-model.js";
 import { DataContext } from "./data-context.js";
@@ -394,6 +394,44 @@ describe("DataContext", () => {
       assert.ok(dispatchedError);
       assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
       assert.strictEqual(dispatchedError.expression, "custom_func");
+    });
+
+    it("handles errors thrown during reactive argument resolution", () => {
+      const trigger = signal(false);
+      const fnInvoker = (name: string) => {
+        if (name === "inner") {
+          return computed(() => {
+            if (trigger.value) throw new A2uiExpressionError("Inner failure", "inner_func");
+            return "ok";
+          });
+        }
+        return "outer-result";
+      };
+
+      let dispatchedError: any = null;
+      const ctx = createTestDataContext(model, "/", fnInvoker, (err) => {
+        dispatchedError = err;
+      });
+
+      const sub = ctx.subscribeDynamicValue(
+        {
+          call: "outer",
+          args: {
+            arg: { call: "inner", args: {} },
+          },
+          returnType: "any",
+        },
+        () => {},
+      );
+
+      assert.strictEqual(sub.value, "outer-result");
+      assert.strictEqual(dispatchedError, null);
+
+      trigger.value = true;
+      // Accessing sub.value or the effect running triggers the catch.
+      assert.strictEqual(sub.value, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual((dispatchedError as any).message, "Inner failure");
     });
   });
 });
