@@ -38,7 +38,7 @@ import { A2aService } from '@rizzcharts/services/a2a_service';
   imports: [A2aChatCanvas, RouterOutlet, Toolbar, MatButtonModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
   private readonly _platformId = inject(PLATFORM_ID);

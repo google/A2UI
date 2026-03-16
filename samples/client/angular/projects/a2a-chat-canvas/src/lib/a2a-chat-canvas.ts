@@ -36,7 +36,7 @@ import { CanvasService } from './services/canvas-service';
   templateUrl: './a2a-chat-canvas.html',
   styleUrl: './a2a-chat-canvas.scss',
   imports: [Canvas, Chat],
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class A2aChatCanvas {
   readonly emptyHistoryTemplate = input<TemplateRef<unknown>>();
