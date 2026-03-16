@@ -1,5 +1,5 @@
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 /**
  * Copyright 2026 Google LLC
  *
