@@ -286,7 +286,7 @@ class MessageProcessor<T extends ComponentApi> {
    * Returns the aggregated data model for all surfaces that have 'sendDataModel' enabled.
    * This should be used by the transport layer to populate metadata (e.g., 'a2uiClientDataModel').
    */
-  getClientDataModel(): any;
+  getClientDataModel(): A2uiClientDataModel | undefined;
 }
 ```
 
