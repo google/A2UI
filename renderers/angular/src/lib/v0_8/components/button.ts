@@ -54,7 +54,7 @@ export class Button extends DynamicComponent<Types.ButtonNode> {
     const action = this.action();
 
     if (action) {
-      super.sendAction(action as any);
+      super.sendAction(action);
     }
   }
 }
