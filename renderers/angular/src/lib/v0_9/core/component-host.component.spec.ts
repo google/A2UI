@@ -62,7 +62,6 @@ describe('ComponentHostComponent', () => {
 
     mockRendererService = {
       surfaceGroup: mockSurfaceGroup,
-      getFunctionInvoker: jasmine.createSpy('getFunctionInvoker').and.returnValue(() => {}),
     };
 
     mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);

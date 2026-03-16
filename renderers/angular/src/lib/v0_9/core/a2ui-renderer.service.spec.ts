@@ -52,34 +52,6 @@ describe('A2uiRendererService', () => {
       service.initialize({ catalogs: [mockCatalog] });
       expect(service.surfaceGroup).toBeDefined();
     });
-
-    it('should configure functionInvoker that delegates to catalog', () => {
-      const mockFn = jasmine.createSpy('mockFn').and.returnValue('result');
-      mockCatalog.functions.set('testFn', mockFn);
-
-      service.initialize({ catalogs: [mockCatalog] });
-
-      const invoker = service.getFunctionInvoker();
-      expect(invoker).toBeDefined();
-
-      const result = invoker('testFn', { arg: 1 }, { ctx: 'test' });
-
-      expect(mockFn).toHaveBeenCalledWith({ arg: 1 }, { ctx: 'test' }, undefined);
-      expect(result).toBe('result');
-    });
-
-    it('should return undefined and warn if function not found', () => {
-      // Catalog.invoker itself throws A2uiExpressionError now, but the service's mockCatalog
-      // followed the old pattern. Let's keep it consistent with what's in the spec file's beforeEach.
-      const consoleWarnSpy = spyOn(console, 'warn');
-      service.initialize({ catalogs: [mockCatalog] });
-
-      const invoker = service.getFunctionInvoker();
-      const result = invoker('unknownFn', {}, {});
-
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Function "unknownFn" not found in catalog');
-      expect(result).toBeUndefined();
-    });
   });
 
   describe('processMessages', () => {

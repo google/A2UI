@@ -57,14 +57,6 @@ export class A2uiRendererService implements OnDestroy {
   }
 
   /**
-   * Returns a function invoker that uses the currently configured catalogs.
-   * If multiple catalogs are configured, it uses the first one.
-   */
-  getFunctionInvoker(): any {
-    return this._catalogs[0]?.invoker;
-  }
-
-  /**
    * Processes a list of messages.
    */
   processMessages(messages: A2uiMessage[]): void {
