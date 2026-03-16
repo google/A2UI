@@ -5,7 +5,7 @@ export const CapitalizeApi = {
   name: "capitalize" as const,
   returnType: "string" as const,
   schema: z.object({
-    value: z.string()
+    value: z.preprocess(v => v === undefined ? undefined : String(v), z.string()).optional()
   }) as z.ZodType<any, any, any>
 };
 
