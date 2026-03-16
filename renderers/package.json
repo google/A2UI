@@ -1,0 +1,8 @@
+{
+  "name": "renderers-workspace",
+  "private": true,
+  "workspaces": [
+    "web_core",
+    "angular"
+  ]
+}

@@ -9,6 +9,7 @@
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "../../../../../renderers/angular/src/lib/v0_8/**/*.ts"
   ]
 }

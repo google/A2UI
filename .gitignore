@@ -15,6 +15,7 @@ site/
 
 # Python virtual environment
 .venv/
+coverage/
 
 # Generated spec assets in the agent SDK
 ## old agent SDK path

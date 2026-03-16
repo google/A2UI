@@ -73,7 +73,7 @@
           "component": {
             "Icon": {
               "name": {
-                "literalString": "calendar_today"
+                "literalString": "calendarToday"
               }
             }
           }
@@ -134,7 +134,7 @@
           "component": {
             "Icon": {
               "name": {
-                "literalString": "location_on"
+                "literalString": "locationOn"
               }
             }
           }

@@ -16,7 +16,6 @@
 
 <main class="main">
   <app-toolbar></app-toolbar>
-  <a2a-chat-canvas [emptyHistoryTemplate]="welcomeMessage"></a2a-chat-canvas>
   <ng-template #welcomeMessage>
     <div class="empty-history">
         <div class="agent-header">
@@ -50,6 +49,8 @@
         </div>
     </div>
   </ng-template>
+
+  <a2a-chat-canvas [emptyHistoryTemplate]="welcomeMessage"></a2a-chat-canvas>
 </main>
 
 <router-outlet />

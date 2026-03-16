@@ -6,7 +6,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
       "@a2ui/angular": [
-        "./projects/lib/src/public-api.ts"
+        "./projects/lib/src/lib/v0_8/public-api.ts"
       ],
       "@a2a_chat_canvas/*": [
         "./projects/a2a-chat-canvas/src/lib/*"
@@ -59,6 +59,9 @@
     },
     {
       "path": "./projects/gallery/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/orchestrator/tsconfig.app.json"
     }
   ]
 }

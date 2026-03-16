@@ -28,6 +28,14 @@ import {
 import { provideRouter } from '@angular/router';
 import { RIZZ_CHARTS_CATALOG } from '@rizzcharts/a2ui-catalog/catalog';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideMarkdownRenderer } from '@a2ui/angular';
+import markdownit from 'markdown-it';
+
+const md = markdownit({
+  html: false,
+  linkify: true,
+  typographer: true,
+});
 import { A2aService } from '../services/a2a_service';
 import { RizzchartsMarkdownRendererService } from '../services/markdown-renderer.service';
 import { theme } from './theme';
@@ -42,6 +50,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
     provideCharts(withDefaultRegisterables()),
+    provideMarkdownRenderer((value: string) => Promise.resolve(md.render(value))),
     configureChatCanvasFeatures(
       usingA2aService(A2aService),
       usingA2uiRenderers(RIZZ_CHARTS_CATALOG, theme),

@@ -11,7 +11,14 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@a2ui/angular": ["src/public-api.ts"],
+      "@preact/signals-core": [
+        "../node_modules/@preact/signals-core"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -19,5 +26,13 @@
     "strictInputAccessModifiers": true,
     "typeCheckHostBindings": true,
     "strictTemplates": true
-  }
+  },
+  "references": [
+    {
+      "path": "./demo-app/tsconfig.app.json"
+    },
+    {
+      "path": "./demo-app/tsconfig.spec.json"
+    }
+  ]
 }

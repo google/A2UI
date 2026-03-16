@@ -53,6 +53,7 @@ app.post('/a2a', (req, res) => {
 
     const parts: Part[] = data['parts'];
 
+    const metadata = data['metadata'] || {};
     const sendParams: MessageSendParams = {
       message: {
         messageId: uuidv4(),
@@ -60,7 +61,8 @@ app.post('/a2a', (req, res) => {
         parts,
         kind: 'message',
         metadata: {
-          a2uiClientCapabilities: {
+          ...metadata,
+          a2uiClientCapabilities: metadata.a2uiClientCapabilities || {
             supportedCatalogIds: [
               'https://a2ui.org/specification/v0_8/standard_catalog_definition.json',
               'a2ui.org:a2ui/v0.8/mcp_app_catalog.json',

@@ -46,13 +46,13 @@ export class Toolbar {
 
   catalogs = [
     {
-      value: 'https://a2ui.org/specification/v0_8/standard_catalog_definition.json',
-      viewValue: 'Standard',
-    },
-    {
       value:
         'https://github.com/google/A2UI/blob/main/samples/agent/adk/rizzcharts/rizzcharts_catalog_definition.json',
       viewValue: 'Rizzcharts Custom',
+    },
+    {
+      value: 'https://a2ui.org/specification/v0_8/standard_catalog_definition.json',
+      viewValue: 'Standard',
     },
   ];
 
