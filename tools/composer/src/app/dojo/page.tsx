@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { useJsonlPlayer } from '@/components/dojo/useJsonlPlayer';
 import { useA2UISurface } from '@/components/dojo/useA2UISurface';
-import { A2UIViewer } from '@a2ui/react';
+import { A2UIViewer } from '@copilotkit/a2ui-renderer';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Separator } from '@/components/ui/separator';
