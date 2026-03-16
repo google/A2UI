@@ -16,7 +16,7 @@
 
 import { ExpressionParser } from "../expressions/expression_parser.js";
 import { computed, Signal } from "@preact/signals-core";
-import { createFunctionImplementation, FunctionImplementation } from "../../catalog/types.js";
+import { createFunctionImplementation, FunctionImplementation, isSignal } from "../../catalog/types.js";
 import { format } from "date-fns";
 import {
   AddApi,
@@ -145,7 +145,7 @@ export const FormatStringImplementation = createFunctionImplementation(FormatStr
   return computed(() => {
     return dynamicParts
       .map((p) => {
-        if (p instanceof Signal) {
+        if (isSignal(p)) {
            return p.value;
         }
         return p;

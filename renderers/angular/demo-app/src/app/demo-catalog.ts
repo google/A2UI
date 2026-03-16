@@ -16,7 +16,11 @@
 
 import { Injectable } from '@angular/core';
 import { z } from 'zod';
-import { MinimalCatalog } from '../../../src/lib/v0_9/catalog/minimal/minimal-catalog';
+import {
+  BaseMinimalCatalog,
+  MINIMAL_COMPONENTS,
+  MINIMAL_FUNCTIONS,
+} from '../../../src/lib/v0_9/catalog/minimal/minimal-catalog';
 import { CustomSliderComponent } from './custom-slider.component';
 import { CardComponent } from './card.component';
 import { AngularComponentApi } from '../../../src/lib/v0_9/catalog/types';
@@ -28,10 +32,8 @@ import { BASIC_FUNCTIONS } from '@a2ui/web_core/v0_9/basic_catalog';
 @Injectable({
   providedIn: 'root',
 })
-export class DemoCatalog extends MinimalCatalog {
+export class DemoCatalog extends BaseMinimalCatalog {
   constructor() {
-    super();
-    // Re-initialize with merged components since base class components map is readonly
     const customSliderApi: AngularComponentApi = {
       name: 'CustomSlider',
       schema: z.object({
@@ -51,13 +53,13 @@ export class DemoCatalog extends MinimalCatalog {
       component: CardComponent,
     };
 
-    const components = Array.from(this.components.values());
-    components.push(customSliderApi, cardApi);
+    const components = [...MINIMAL_COMPONENTS, customSliderApi, cardApi];
+    const functions = [...BASIC_FUNCTIONS, ...MINIMAL_FUNCTIONS];
 
-    const functions = [...BASIC_FUNCTIONS, ...Array.from(this.functions?.values() || [])];
-
-    (this as any).components = new Map(components.map((c) => [c.name, c]));
-    (this as any).functions = new Map(functions.map((f) => [f.name, f]));
-    (this as any).id = 'https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json';
+    super(
+      'https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json',
+      components,
+      functions,
+    );
   }
 }

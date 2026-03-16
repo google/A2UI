@@ -30,6 +30,47 @@ import {
   ButtonApi,
   TextFieldApi,
 } from '@a2ui/web_core/v0_9/basic_catalog';
+import { FunctionImplementation } from '@a2ui/web_core/v0_9';
+import { FormatStringImplementation } from '@a2ui/web_core/v0_9/basic_catalog';
+
+export const MINIMAL_COMPONENTS: AngularComponentApi[] = [
+  { ...TextApi, component: TextComponent },
+  { ...RowApi, component: RowComponent },
+  { ...ColumnApi, component: ColumnComponent },
+  { ...ButtonApi, component: ButtonComponent },
+  { ...TextFieldApi, component: TextFieldComponent },
+];
+
+export const MINIMAL_FUNCTIONS: FunctionImplementation[] = [
+  createFunctionImplementation(
+    {
+      name: 'capitalize',
+      returnType: 'string',
+      schema: z.object({ value: z.string().optional() }),
+    },
+    (args) => {
+      console.log('[MinimalCatalog] capitalize called with args:', args);
+      const value = String(args.value || '');
+      const res = value.charAt(0).toUpperCase() + value.slice(1);
+      console.log('[MinimalCatalog] capitalize result:', res);
+      return res;
+    },
+  ),
+  FormatStringImplementation,
+];
+
+/**
+ * A base class for minimal catalogs, providing extensibility for non-DI use cases.
+ */
+export class BaseMinimalCatalog extends AngularCatalog {
+  constructor(
+    id: string = 'minimal',
+    components: AngularComponentApi[] = MINIMAL_COMPONENTS,
+    functions: FunctionImplementation[] = MINIMAL_FUNCTIONS,
+  ) {
+    super(id, components, functions);
+  }
+}
 
 /**
  * A minimal catalog of components and functions for v0.9 verification.
@@ -37,33 +78,8 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class MinimalCatalog extends AngularCatalog {
+export class MinimalCatalog extends BaseMinimalCatalog {
   constructor() {
-    const components: AngularComponentApi[] = [
-      { ...TextApi, component: TextComponent },
-      { ...RowApi, component: RowComponent },
-      { ...ColumnApi, component: ColumnComponent },
-      { ...ButtonApi, component: ButtonComponent },
-      { ...TextFieldApi, component: TextFieldComponent },
-    ];
-
-    const functions = [
-      createFunctionImplementation(
-        {
-          name: 'capitalize',
-          returnType: 'string',
-          schema: z.object({ value: z.string().optional() }),
-        },
-        (args) => {
-          console.log('[MinimalCatalog] capitalize called with args:', args);
-          const value = String(args.value || '');
-          const res = value.charAt(0).toUpperCase() + value.slice(1);
-          console.log('[MinimalCatalog] capitalize result:', res);
-          return res;
-        },
-      ),
-    ];
-
-    super('minimal', components, functions);
+    super();
   }
 }

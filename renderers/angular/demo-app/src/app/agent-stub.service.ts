@@ -20,6 +20,23 @@ import { AngularCatalog } from '../../../src/lib/v0_9/catalog/types';
 import { SurfaceGroupAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 
 /**
+ * Context for the 'update_property' event.
+ */
+interface UpdatePropertyContext {
+  path: string;
+  value: any;
+  surfaceId?: string;
+}
+
+/**
+ * Context for the 'submit_form' event.
+ */
+interface SubmitFormContext {
+  [key: string]: any;
+  name?: string;
+}
+
+/**
  * A stub service that simulates an A2UI agent.
  * It listens for actions and responds with data model updates or new surfaces.
  */
@@ -50,7 +67,7 @@ export class AgentStubService {
       if ('event' in action) {
         const { name, context } = action.event;
         if (name === 'update_property' && context) {
-          const { path, value, surfaceId } = context as any;
+          const { path, value, surfaceId } = (context as unknown) as UpdatePropertyContext;
           console.log(
             '[AgentStub] update_property path:',
             path,
@@ -63,14 +80,14 @@ export class AgentStubService {
             {
               version: 'v0.9',
               updateDataModel: {
-                surfaceId: (surfaceId as string) || action.surfaceId,
-                path: path as string,
+                surfaceId: surfaceId || action.surfaceId,
+                path: path,
                 value: value,
               },
             },
           ]);
         } else if (name === 'submit_form' && context) {
-          const formData = context as any;
+          const formData = (context as unknown) as SubmitFormContext;
           const nameValue = formData.name || 'Anonymous';
 
           // Respond with an update to the data model in v0.9 layout

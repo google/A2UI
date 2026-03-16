@@ -24,6 +24,7 @@ import type {
   Action,
 } from "../schema/common-types.js";
 import { A2uiExpressionError } from "../errors.js";
+import { isSignal } from "../catalog/types.js";
 
 import { FunctionInvoker } from "../catalog/function_invoker.js";
 import { SurfaceModel } from "../state/surface-model.js";
@@ -111,7 +112,7 @@ export class DataContext {
           this,
           abortController.signal,
         );
-        return (result instanceof Signal ? result.peek() : result) as V;
+        return (isSignal(result) ? result.peek() : result) as V;
       } catch (e: any) {
         if (e?.name === "ZodError" || e instanceof z.ZodError) {
           const err = new A2uiExpressionError(
@@ -255,7 +256,7 @@ export class DataContext {
             abortController.signal,
           );
 
-          if (res instanceof Signal) {
+          if (isSignal(res)) {
             innerUnsubscribe = effect(() => {
               resultSig.value = res.value;
             });

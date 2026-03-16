@@ -496,4 +496,54 @@ export const EXAMPLES: Example[] = [
       },
     ],
   },
+  {
+    name: 'Custom Price Slider',
+    description: 'Interactive price selection using a custom slider component',
+    messages: [
+      {
+        version: 'v0.9',
+        createSurface: {
+          surfaceId: 'example_8',
+          catalogId: 'https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json',
+        },
+      },
+      {
+        version: 'v0.9',
+        updateDataModel: {
+          surfaceId: 'example_8',
+          path: '/price',
+          value: 75,
+        },
+      },
+      {
+        version: 'v0.9',
+        updateComponents: {
+          surfaceId: 'example_8',
+          components: [
+            {
+              id: 'root',
+              component: 'Column',
+              children: ['price_slider', 'price_field'],
+            },
+            {
+              id: 'price_slider',
+              component: 'CustomSlider',
+              label: 'Dollars',
+              value: { path: '/price' },
+              min: 0,
+              max: 200,
+            },
+            {
+              id: 'price_field',
+              component: 'Text',
+              text: {
+                call: 'formatString',
+                args: { value: 'Price: $${/price}' },
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
 ];

@@ -19,6 +19,13 @@ import { DataContext } from "../rendering/data-context.js";
 import { Signal } from "@preact/signals-core";
 import { A2uiExpressionError } from "../errors.js";
 
+/**
+ * Robust check for a Preact Signal that works across package boundaries.
+ */
+export function isSignal(val: any): val is Signal<any> {
+  return val && typeof val === "object" && "value" in val && "peek" in val;
+}
+
 export type A2uiReturnType = 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
 
 export type InferA2uiReturnType<T extends A2uiReturnType> =
