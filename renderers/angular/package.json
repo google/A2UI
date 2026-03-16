@@ -10,12 +10,14 @@
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
     "@preact/signals-core": "^1.13.0",
+    "rxjs": "^7.8.2",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
     "@angular/common": "^21.2.0",
     "@angular/core": "^21.2.0",
-    "@angular/platform-browser": "^21.2.0"
+    "@angular/platform-browser": "^21.2.0",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@angular/build": "^21.2.0",

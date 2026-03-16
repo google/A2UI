@@ -19,7 +19,10 @@
       ],
       "@rizzcharts/*": [
         "./projects/rizzcharts/src/*"
-      ]
+      ],
+      "tslib": ["./node_modules/tslib"],
+      "rxjs": ["./node_modules/rxjs"],
+      "rxjs/*": ["./node_modules/rxjs/*"]
     },
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { A2AServerPayload, MessageProcessor } from '@a2ui/angular/v0_8';
+import { A2AServerPayload, MessageProcessor, DispatchedEvent } from '@a2ui/angular/v0_8';
 import * as Types from '@a2ui/web_core/types/types';
 import { Injectable, inject, signal } from '@angular/core';
 
@@ -25,7 +25,7 @@ export class Client {
   readonly isLoading = signal(false);
 
   constructor() {
-    this.processor.events.subscribe(async (event) => {
+    this.processor.events.subscribe(async (event: DispatchedEvent) => {
       try {
         const messages = await this.makeRequest(event.message);
         event.completion.next(messages);

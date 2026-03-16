@@ -4,5 +4,5 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": ["@a2ui/web_core", "@preact/signals-core"]
+  "allowedNonPeerDependencies": ["@a2ui/web_core", "@preact/signals-core", "rxjs"]
 }
