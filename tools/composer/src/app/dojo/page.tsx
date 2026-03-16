@@ -332,7 +332,7 @@ export default function DojoPage() {
           <div className="h-full bg-muted/10 relative overflow-hidden flex flex-col">
             <div className="absolute inset-0 p-6 overflow-y-auto custom-scrollbar">
               <div className="max-w-4xl mx-auto min-h-full">
-                <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-xl overflow-hidden h-full min-h-[500px] transition-all duration-300 hover:shadow-2xl">
+                <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-xl overflow-hidden min-h-[500px] transition-all duration-300 hover:shadow-2xl">
                   <div className="h-11 bg-muted/30 border-b flex items-center px-4 justify-between backdrop-blur-sm">
                     <div className="flex items-center gap-2">
                       <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
@@ -344,9 +344,9 @@ export default function DojoPage() {
                     </span>
                     <div className="w-10" />
                   </div>
-                  <div className="flex-1 p-4 overflow-auto bg-dot-pattern custom-scrollbar">
+                  <div className="p-4 bg-dot-pattern">
                     {activeMessages.length > 0 ? (
-                      <div className="w-full min-h-full flex items-start justify-center">
+                      <div className="w-full flex items-start justify-center">
                         <A2UIViewer
                           root={surfaceState.root}
                           components={surfaceState.components}
