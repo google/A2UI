@@ -41,6 +41,9 @@ import * as UI from "@a2ui/lit/ui";
 // Demo elements.
 import "./ui/ui.js";
 import { registerContactComponents } from "./ui/custom-components/register-components.js";
+import { Context } from "@a2ui/lit/ui";
+// @ts-ignore
+import { renderMarkdown } from "@a2ui/markdown-it";
 
 // Register custom components for the contact app
 registerContactComponents();
@@ -53,6 +56,11 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
   @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
+
+  @provide({ context: UI.Context.markdown })
+  accessor markdownRenderer: v0_8.Types.MarkdownRenderer = async (text, options) => {
+    return renderMarkdown(text, options);
+  };
 
   @state()
   accessor #requesting = false;
@@ -268,7 +276,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
       </div>`;
     }
 
-    const surfacesMap = this.#processor.getSurfaces();
+    const surfacesMap = new Map(this.#processor.getSurfaces());
     const surfaces = Array.from(surfacesMap.entries()).sort(([a], [b]) => {
       // "org-chart-view" comes first (left), "contact-card" second (right)
       if (a === 'org-chart-view') return -1;
@@ -345,7 +353,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
             const message: v0_8.Types.A2UIClientEventMessage = {
               userAction: {
                 surfaceId: surfaceId,
-                name: evt.detail.action.name,
+                name: "ACTION: " + evt.detail.action.name,
                 sourceComponentId: target.id,
                 timestamp: new Date().toISOString(),
                 context,
@@ -376,6 +384,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
     // this.#processor.clearSurfaces(); // Removed to allow partial updates
     this.#processor.processMessages(messages);
     this.renderVersion++; // Force re-render of surfaces
+    this.requestUpdate();
 
     const cardSurface = this.#processor.getSurfaces().get('contact-card');
     if (cardSurface) {

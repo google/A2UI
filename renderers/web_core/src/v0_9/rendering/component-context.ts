@@ -50,7 +50,12 @@ export class ComponentContext {
     }
     this.componentModel = model;
     this.surfaceComponents = surface.componentsModel;
-    this.dataContext = new DataContext(surface.dataModel, dataModelBasePath);
+
+    this.dataContext = new DataContext(
+      surface.dataModel, 
+      dataModelBasePath, 
+      surface.catalog.invoker
+    );
     this._actionDispatcher = (action) => surface.dispatchAction(action);
   }
 

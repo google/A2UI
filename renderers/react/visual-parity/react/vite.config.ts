@@ -28,6 +28,12 @@ export default defineConfig({
   optimizeDeps: {
     // Always re-optimize on startup so rebuilds of file: deps don't cause 504s
     force: true,
+    // Pre-bundle web_core subpath imports so Vite doesn't discover them lazily
+    // (which causes "optimized dependencies changed. reloading" mid-page-load)
+    include: [
+      '@a2ui/web_core/styles/index',
+      '@a2ui/web_core/data/model-processor',
+    ],
     exclude: [
       '@a2ui/react',
       '@a2ui/lit',

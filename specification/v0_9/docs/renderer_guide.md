@@ -6,7 +6,7 @@ Both the core data structures and the rendering components interact with **Catal
 
 ## 1. Unified Architecture Overview
 
-The A2UI client architecture follows a strict, unidirectional data flow that bridges language-agnostic data structures with native UI frameworks. 
+The A2UI client architecture has a well-defined data flow that bridges language-agnostic data structures with native UI frameworks.
 
 1. **A2UI Messages** arrive from the server (JSON).
 2. The **`MessageProcessor`** parses these and updates the **`SurfaceModel`** (Agnostic State).
@@ -142,8 +142,8 @@ The root containers for active surfaces and their catalogs, data, and components
 
 ```typescript
 interface SurfaceLifecycleListener<T extends ComponentApi> {
-  onSurfaceCreated?: (s: SurfaceModel<T>) => void; // Called when a new surface is registered
-  onSurfaceDeleted?: (id: string) => void; // Called when a surface is removed
+  onSurfaceCreated?: (s: SurfaceModel<T>) => void;
+  onSurfaceDeleted?: (id: string) => void;
 }
 
 class SurfaceGroupModel<T extends ComponentApi> {
@@ -163,15 +163,15 @@ interface ActionEvent {
   context: Record<string, any>;
 }
 
-type ActionListener = (action: ActionEvent) => void | Promise<void>; // Handler for user interactions
+type ActionListener = (action: ActionEvent) => void | Promise<void>;
 
 class SurfaceModel<T extends ComponentApi> {
   readonly id: string;
 ...
-  readonly catalog: Catalog<T>; // Catalog containing component implementations
-  readonly dataModel: DataModel; // Scoped application data
-  readonly componentsModel: SurfaceComponentsModel; // Flat component map
-  readonly theme?: any; // Theme parameters (validated against catalog.theme)
+  readonly catalog: Catalog<T>;
+  readonly dataModel: DataModel;
+  readonly componentsModel: SurfaceComponentsModel;
+  readonly theme?: any;
 
   readonly onAction: EventSource<ActionEvent>;
   dispatchAction(action: ActionEvent): Promise<void>;
@@ -194,10 +194,10 @@ class ComponentModel {
   readonly id: string;
   readonly type: string; // Component name (e.g. 'Button')
   
-  get properties(): Record<string, any>; // Current raw JSON configuration
+  get properties(): Record<string, any>;
   set properties(newProps: Record<string, any>);
   
-  readonly onUpdated: EventSource<ComponentModel>; // Invoked when any property changes
+  readonly onUpdated: EventSource<ComponentModel>;
 }
 ```
 
@@ -207,14 +207,14 @@ A dedicated store for application data.
 ```typescript
 interface Subscription<T> {
   readonly value: T | undefined; // Latest evaluated value
-  unsubscribe(): void; // Stop listening
+  unsubscribe(): void;
 }
 
 class DataModel {
   get(path: string): any; // Resolve JSON Pointer to value
   set(path: string, value: any): void; // Atomic update at path
   subscribe<T>(path: string, onChange: (v: T | undefined) => void): Subscription<T>; // Reactive path monitoring
-  dispose(): void; // Lifecycle cleanup
+  dispose(): void;
 }
 ```
 
@@ -249,10 +249,10 @@ class DataContext {
 
 class ComponentContext<T extends ComponentApi> {
   constructor(surface: SurfaceModel<T>, componentId: string, basePath?: string);
-  readonly componentModel: ComponentModel; // The instance configuration
-  readonly dataContext: DataContext; // The instance's data scope
+  readonly componentModel: ComponentModel;
+  readonly dataContext: DataContext;
   readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
-  dispatchAction(action: any): Promise<void>; // Propagate action to surface
+  dispatchAction(action: any): Promise<void>;
 }
 ```
 
@@ -263,13 +263,13 @@ The "Controller" that accepts the raw stream of A2UI messages, parses them, and 
 
 ```typescript
 class MessageProcessor<T extends ComponentApi> {
-  readonly model: SurfaceGroupModel<T>; // Root state container for all surfaces
+  readonly model: SurfaceGroupModel<T>;
   
   constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
 
-  processMessages(messages: any[]): void; // Ingests raw JSON message stream
-  addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void; // Watch for surface lifecycle
-  getClientCapabilities(options?: CapabilitiesOptions): any; // Generate advertising payload
+  processMessages(messages: any[]): void;
+  addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
+  getClientCapabilities(options?: CapabilitiesOptions): any;
 }
 ```
 
