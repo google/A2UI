@@ -22,6 +22,24 @@
           }
         },
         {
+          "id": "confirmation-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "confirm-title",
+                  "confirm-image",
+                  "confirm-details",
+                  "confirm-dietary",
+                  "divider1",
+                  "confirm-text",
+                  "divider2"
+                ]
+              }
+            }
+          }
+        },
+        {
           "id": "confirm-title",
           "component": {
             "Text": {
@@ -81,12 +99,6 @@
         },
         {
           "id": "divider2",
-          "component": {
-            "Divider": {}
-          }
-        },
-        {
-          "id": "divider3",
           "component": {
             "Divider": {}
           }
