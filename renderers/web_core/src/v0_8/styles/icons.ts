@@ -15,6 +15,14 @@
  */
 
 /**
+ * Convert an A2UI camelCase icon name into the snake_case ligature used by
+ * Material Symbols.
+ */
+export function toMaterialSymbolLigature(iconName: string): string {
+  return iconName.replace(/([A-Z])/g, '_$1').toLowerCase();
+}
+
+/**
  * CSS classes for Google Symbols.
  *
  * Usage:
