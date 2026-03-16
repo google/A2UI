@@ -7,8 +7,6 @@ import {
   MessageSquare, Zap, LayoutTemplate
 } from 'lucide-react';
 import { useJsonlPlayer } from '@/components/dojo/useJsonlPlayer';
-import { useA2UISurface } from '@/components/dojo/useA2UISurface';
-import { A2UIViewer } from '@a2ui/react';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Separator } from '@/components/ui/separator';
@@ -24,7 +22,7 @@ export default function DojoPage() {
   const [activeTab, setActiveTab] = useState<'data' | 'config'>('data');
   const [mobileView, setMobileView] = useState<'data' | 'config' | 'renderers'>('renderers');
   const [renderers, setRenderers] = useState({ react: true, lit: false, discord: true });
-  const [selectedScenario, setSelectedScenario] = useState<ScenarioId>('restaurant-booking');
+  const [selectedScenario, setSelectedScenario] = useState<ScenarioId>('kitchen-sink');
 
   const {
     playbackState,
@@ -42,16 +40,6 @@ export default function DojoPage() {
     autoPlay: false,
     baseIntervalMs: 1000
   });
-
-  const surfaceState = useA2UISurface(activeMessages);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const step = params.get('step');
-    if (step) {
-      seek(parseInt(step, 10));
-    }
-  }, []);
 
   // Auto-scroll logic for the JSONL pane
   const streamEndRef = useRef<HTMLDivElement>(null);
@@ -111,12 +99,12 @@ export default function DojoPage() {
 
           {/* Timeline Scrubber */}
           <div className="flex-1 flex items-center gap-4 group">
-            <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress}</span>
+            <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress + 1}</span>
             <div className="relative flex-1 flex items-center h-5">
               <input
                 type="range"
                 min="0"
-                max={totalMessages}
+                max={Math.max(0, totalMessages - 1)}
                 value={progress}
                 onChange={(e) => seek(parseInt(e.target.value, 10))}
                 className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
@@ -125,14 +113,14 @@ export default function DojoPage() {
               <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-primary transition-all duration-200 ease-out"
-                  style={{ width: `${totalMessages > 0 ? (progress / totalMessages) * 100 : 0}%` }}
+                  style={{ width: `${totalMessages > 1 ? (progress / (totalMessages - 1)) * 100 : 0}%` }}
                 />
               </div>
               {/* Custom Range Thumb */}
               <div 
                 className="absolute h-3 w-3 bg-primary rounded-full shadow-sm shadow-primary/40 border border-background transition-transform group-hover:scale-125 duration-200 ease-out pointer-events-none"
                 style={{ 
-                  left: `calc(${totalMessages > 0 ? (progress / totalMessages) * 100 : 0}% - 6px)`
+                  left: `calc(${totalMessages > 1 ? (progress / (totalMessages - 1)) * 100 : 0}% - 6px)`
                 }}
               />
             </div>
@@ -203,29 +191,21 @@ export default function DojoPage() {
                   {(scenarios[selectedScenario] as any)?.map((msg: any, index: number) => {
                     const isActive = index === progress;
                     const isPast = index < progress;
-                    const isClient = !!msg.action || !!msg.clientEvent;
                     
                     return (
                       <div 
                         key={msg.id || index} 
                         className={`relative p-3.5 rounded-xl text-[11px] font-mono leading-relaxed transition-all duration-300 ease-out border ${
                           isActive 
-                            ? isClient 
-                              ? 'border-purple-500/50 bg-purple-500/5 shadow-[0_0_15px_-3px_rgba(168,85,247,0.1)] ring-1 ring-purple-500/20 scale-[1.02]' 
-                              : 'border-primary/50 bg-primary/5 shadow-[0_0_15px_-3px_rgba(var(--primary),0.1)] ring-1 ring-primary/20 scale-[1.02]' 
+                            ? 'border-primary/50 bg-primary/5 shadow-[0_0_15px_-3px_rgba(var(--primary),0.1)] ring-1 ring-primary/20 scale-[1.02]' 
                             : isPast
-                            ? isClient
-                              ? 'bg-purple-500/5 border-purple-500/20 text-foreground shadow-sm'
-                              : 'bg-card border-border/50 text-foreground shadow-sm'
+                            ? 'bg-card border-border/50 text-foreground shadow-sm'
                             : 'bg-card/50 border-transparent text-muted-foreground opacity-50'
                         }`}
                       >
                         {isActive && (
-                          <div className={`absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-6 ${isClient ? 'bg-purple-500' : 'bg-primary'} rounded-r-full animate-pulse`} />
+                          <div className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full animate-pulse" />
                         )}
-                        <div className={`text-[9px] font-bold mb-1.5 ${isClient ? 'text-purple-500' : 'text-primary/70'}`}>
-                          {isClient ? '↑ OUTBOUND (CLIENT)' : '↓ INBOUND (SERVER)'}
-                        </div>
                         <pre className="whitespace-pre-wrap overflow-x-auto custom-scrollbar-sm">
                           {JSON.stringify(msg, null, 2)}
                         </pre>
@@ -318,27 +298,25 @@ export default function DojoPage() {
                       </span>
                       <div className="w-10" /> {/* Balancer */}
                     </div>
-                    <div className="flex-1 p-4 overflow-auto bg-dot-pattern custom-scrollbar">
-                      {activeMessages.length > 0 ? (
-                        <div className="w-full min-h-full flex items-start justify-center">
-                          <A2UIViewer
-                            root={surfaceState.root}
-                            components={surfaceState.components}
-                            data={surfaceState.data}
-                            onAction={(action) => console.log('Dojo Action:', action)}
-                          />
+                    <div className="flex-1 p-8 flex flex-col items-center justify-center bg-dot-pattern">
+                      <div className="w-full max-w-md bg-card border border-border/50 rounded-xl shadow-sm p-8 text-center space-y-4">
+                        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                          <Code2 className="h-6 w-6 text-primary" />
                         </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                            <Code2 className="h-6 w-6 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-mono text-sm text-foreground mb-1">{'<A2UIRenderer />'}</p>
-                            <p className="text-xs text-muted-foreground">Waiting for event stream...</p>
-                          </div>
+                        <div>
+                          <p className="font-mono text-sm text-foreground mb-1">{'<A2UIRenderer />'}</p>
+                          <p className="text-xs text-muted-foreground">Rendering components via React Adapter</p>
                         </div>
-                      )}
+                        <div className="pt-4 border-t border-border/50 mt-4 flex justify-between text-xs text-muted-foreground">
+                          <span>State elements:</span>
+                          <span className="font-mono font-medium text-foreground">{activeMessages.length}</span>
+                        </div>
+                        {activeMessages.length > 0 && (
+                          <div className="w-full bg-muted rounded-full h-1.5 mt-2 overflow-hidden">
+                            <div className="bg-primary h-full animate-pulse w-full rounded-full" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}

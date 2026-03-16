@@ -1,18 +1,66 @@
+/**
+ * Transpile A2UI messages to v0.8 format that the React renderer understands.
+ * 
+ * v0.8 messages (beginRendering, surfaceUpdate, dataModelUpdate) pass through as-is.
+ * v0.9 messages (createSurface, updateComponents, updateDataModel) get converted.
+ */
 export function transpileToV0_8(msg: any): any {
+  // v0.9 -> v0.8 conversions
   if (msg.createSurface) {
     return {
       beginRendering: {
         surfaceId: msg.createSurface.surfaceId,
-        root: "root",
-        styles: {}
+        root: msg.createSurface.root || "root",
+        styles: msg.createSurface.styles || {}
       }
     };
   }
   if (msg.updateComponents) {
+    // Convert v0.9 type/props format to v0.8 component format
+    const components = (msg.updateComponents.components || []).map((comp: any) => {
+      if (comp.component) {
+        // Already v0.8 format
+        return comp;
+      }
+      if (comp.type) {
+        // v0.9 format: convert type/props to v0.8 component map
+        const props = comp.props || {};
+        const v08Props: Record<string, any> = {};
+        
+        for (const [key, value] of Object.entries(props)) {
+          if (key === 'children' && Array.isArray(value)) {
+            // v0.9 children: ["id1", "id2"] -> v0.8 children: { explicitList: ["id1", "id2"] }
+            v08Props.children = { explicitList: value };
+          } else if (key === 'variant') {
+            // v0.9 variant -> v0.8 usageHint
+            v08Props.usageHint = value;
+          } else if (key === 'text' && typeof value === 'string') {
+            // v0.9 text: "Hello" -> v0.8 text: { stringValue: "Hello" }
+            v08Props.text = { stringValue: value };
+          } else if (key === 'url' && typeof value === 'string') {
+            v08Props.url = { stringValue: value };
+          } else if (key === 'label' && typeof value === 'string') {
+            v08Props.label = { stringValue: value };
+          } else if (key === 'child' && typeof value === 'string') {
+            // Single child ref
+            v08Props.child = value;
+          } else {
+            v08Props[key] = value;
+          }
+        }
+        
+        return {
+          id: comp.id,
+          component: { [comp.type]: v08Props }
+        };
+      }
+      return comp;
+    });
+    
     return {
       surfaceUpdate: {
         surfaceId: msg.updateComponents.surfaceId,
-        components: msg.updateComponents.components
+        components
       }
     };
   }
@@ -32,5 +80,7 @@ export function transpileToV0_8(msg: any): any {
       }
     };
   }
+  
+  // v0.8 messages pass through as-is
   return msg;
 }
