@@ -18,6 +18,7 @@ import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
 import { MessageProcessor } from "./message-processor.js";
 import { Catalog, ComponentApi } from "../catalog/types.js";
+import { z } from "zod";
 
 describe("MessageProcessor", () => {
   let processor: MessageProcessor<ComponentApi>;
@@ -29,6 +30,69 @@ describe("MessageProcessor", () => {
     testCatalog = new Catalog("test-catalog", []);
     processor = new MessageProcessor<ComponentApi>([testCatalog], async (a) => {
       actions.push(a);
+    });
+  });
+
+  describe("getClientCapabilities", () => {
+    it("generates basic client capabilities with supportedCatalogIds", () => {
+      const caps: any = processor.getClientCapabilities();
+      assert.strictEqual((caps["v0.9"] as any).inlineCatalogs, undefined);
+      assert.deepStrictEqual(caps, {
+        "v0.9": {
+          supportedCatalogIds: ["test-catalog"],
+        },
+      });
+    });
+
+    it("generates inline catalogs when requested", () => {
+      const buttonApi: ComponentApi = {
+        name: "Button",
+        schema: z.object({
+          label: z.string().describe("The button label"),
+        }),
+      };
+      const cat = new Catalog("cat-1", [buttonApi]);
+      const proc = new MessageProcessor([cat]);
+
+      const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
+      const inlineCat = caps["v0.9"].inlineCatalogs![0];
+
+      assert.strictEqual(inlineCat.catalogId, "cat-1");
+      const buttonSchema = inlineCat.components.Button;
+
+      assert.ok(buttonSchema.allOf);
+      assert.strictEqual(
+        buttonSchema.allOf[0].$ref,
+        "common_types.json#/$defs/ComponentCommon",
+      );
+      assert.strictEqual(buttonSchema.allOf[1].properties.component.const, "Button");
+      assert.strictEqual(
+        buttonSchema.allOf[1].properties.label.description,
+        "The button label",
+      );
+      assert.deepStrictEqual(buttonSchema.allOf[1].required, ["component", "label"]);
+    });
+
+    it("transforms REF: descriptions into valid $ref nodes", () => {
+      const customApi: ComponentApi = {
+        name: "Custom",
+        schema: z.object({
+          title: z
+            .string()
+            .describe("REF:common_types.json#/$defs/DynamicString|The title"),
+        }),
+      };
+      const cat = new Catalog("cat-ref", [customApi]);
+      const proc = new MessageProcessor([cat]);
+
+      const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
+      const titleSchema =
+        caps["v0.9"].inlineCatalogs![0].components.Custom.allOf[1].properties.title;
+
+      assert.strictEqual(titleSchema.$ref, "common_types.json#/$defs/DynamicString");
+      assert.strictEqual(titleSchema.description, "The title");
+      // Ensure Zod's 'type: string' was removed
+      assert.strictEqual(titleSchema.type, undefined);
     });
   });
 
