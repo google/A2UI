@@ -18,7 +18,10 @@ import { DataModel } from "./data-model.js";
 import { Catalog, ComponentApi } from "../catalog/types.js";
 import { SurfaceComponentsModel } from "./surface-components-model.js";
 import { EventEmitter, EventSource } from "../common/events.js";
-import { A2uiClientAction } from "../schema/client-to-server.js";
+import {
+  A2uiClientAction,
+  A2uiClientActionSchema,
+} from "../schema/client-to-server.js";
 
 /** A function that listens for actions emitted from a surface. */
 export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
@@ -66,15 +69,30 @@ export class SurfaceModel<T extends ComponentApi> {
     payload: any,
     sourceComponentId: string,
   ): Promise<void> {
-    if (payload && typeof payload === "object" && "event" in payload) {
-      const action: A2uiClientAction = {
+    if (
+      payload &&
+      typeof payload === "object" &&
+      "event" in payload &&
+      payload.event
+    ) {
+      const actionToValidate = {
         name: payload.event.name,
         surfaceId: this.id,
         sourceComponentId,
         timestamp: new Date().toISOString(),
         context: payload.event.context || {},
       };
-      await this._onAction.emit(action);
+
+      const validationResult =
+        A2uiClientActionSchema.safeParse(actionToValidate);
+      if (validationResult.success) {
+        await this._onAction.emit(validationResult.data);
+      } else {
+        console.error(
+          "A2UI: Invalid action payload dispatched.",
+          validationResult.error.format(),
+        );
+      }
     }
     // Note: local functionCall actions are currently handled by the renderer or binder 
     // and do not necessarily need to be emitted here if they are not intended for the server.

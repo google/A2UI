@@ -58,16 +58,14 @@ export class MessageProcessor<T extends ComponentApi> {
    */
   getClientDataModel(): A2uiClientDataModel | undefined {
     const surfaces: Record<string, any> = {};
-    let hasAny = false;
 
     for (const surface of this.model.surfacesMap.values()) {
       if (surface.sendDataModel) {
         surfaces[surface.id] = surface.dataModel.get("/");
-        hasAny = true;
       }
     }
 
-    if (!hasAny) {
+    if (Object.keys(surfaces).length === 0) {
       return undefined;
     }
 
