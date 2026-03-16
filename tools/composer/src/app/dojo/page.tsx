@@ -116,9 +116,9 @@ export default function DojoPage() {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
       {/* Top Header / Command Center */}
-      <header className="relative z-10 flex h-auto md:h-16 flex-col md:flex-row items-center justify-between gap-3 border-b bg-background/80 px-4 py-3 md:px-6 md:py-0 backdrop-blur-md">
+      <header className="relative z-10 flex h-12 md:h-16 flex-row items-center justify-between gap-1.5 md:gap-3 border-b bg-background/80 px-2 md:px-6 backdrop-blur-md">
         
-        {/* Left Section: Tab Toggle */}
+        {/* Left Section: Tab Toggle (desktop only) */}
         <div className="hidden md:flex w-64 items-center gap-1 rounded-xl bg-muted/50 p-1 shadow-inner border border-border/50">
           <Button
             variant="ghost"
@@ -145,24 +145,24 @@ export default function DojoPage() {
         </div>
 
         {/* Center Section: Playback Controls */}
-        <div className="flex flex-1 w-full md:w-auto max-w-2xl items-center justify-between md:justify-center gap-3 md:gap-6 px-0 md:px-4">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-9 w-9 rounded-full border-border/50 shadow-sm" onClick={stop}>
-              <SkipBack className="h-4 w-4 text-muted-foreground" />
+        <div className="flex flex-1 items-center justify-center gap-1.5 md:gap-6 md:max-w-2xl md:px-4">
+          <div className="flex items-center gap-1 md:gap-2">
+            <Button variant="outline" size="icon" className="h-8 w-8 md:h-9 md:w-9 rounded-full border-border/50 shadow-sm" onClick={stop}>
+              <SkipBack className="h-3.5 w-3.5 md:h-4 md:w-4 text-muted-foreground" />
             </Button>
             {playbackState === 'playing' ? (
-              <Button variant="default" size="icon" className="h-10 w-10 rounded-full shadow-md hover:scale-105 transition-transform" onClick={pause}>
-                <Pause className="h-5 w-5" />
+              <Button variant="default" size="icon" className="h-9 w-9 md:h-10 md:w-10 rounded-full shadow-md hover:scale-105 transition-transform" onClick={pause}>
+                <Pause className="h-4 w-4 md:h-5 md:w-5" />
               </Button>
             ) : (
-              <Button variant="default" size="icon" className="h-10 w-10 rounded-full shadow-md hover:scale-105 transition-transform bg-primary" onClick={play}>
-                <Play className="h-5 w-5 ml-1" />
+              <Button variant="default" size="icon" className="h-9 w-9 md:h-10 md:w-10 rounded-full shadow-md hover:scale-105 transition-transform bg-primary" onClick={play}>
+                <Play className="h-4 w-4 md:h-5 md:w-5 ml-0.5" />
               </Button>
             )}
           </div>
 
-          {/* Timeline Scrubber */}
-          <div className="flex-1 flex items-center gap-4 group">
+          {/* Timeline Scrubber (desktop only) */}
+          <div className="hidden md:flex flex-1 items-center gap-4 group">
             <span className="text-xs font-medium text-muted-foreground w-6 text-right tabular-nums">{progress}</span>
             <div className="relative flex-1 flex items-center h-5">
               <input
@@ -189,11 +189,14 @@ export default function DojoPage() {
             <span className="text-xs font-medium text-muted-foreground w-6 tabular-nums">{totalMessages}</span>
           </div>
 
+          {/* Mobile step counter */}
+          <span className="md:hidden text-[10px] font-mono text-muted-foreground tabular-nums whitespace-nowrap">{progress}/{totalMessages}</span>
+
           {/* Speed Toggle */}
           <Button
             variant="outline"
             size="sm"
-            className="h-8 w-14 text-xs font-mono font-medium rounded-full border-border/50 shadow-sm"
+            className="h-7 w-11 md:h-8 md:w-14 text-[10px] md:text-xs font-mono font-medium rounded-full border-border/50 shadow-sm"
             onClick={() => setSpeed(speed === 1 ? 2 : speed === 2 ? 0.5 : 1)}
           >
             {speed}x
@@ -201,15 +204,13 @@ export default function DojoPage() {
         </div>
 
         {/* Right Section: Scenario Selection */}
-        <div className="flex w-full md:w-64 items-center justify-end mt-1 md:mt-0">
+        <div className="flex items-center justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-9 w-full justify-between border-border/50 bg-background shadow-sm hover:bg-accent hover:text-accent-foreground font-medium">
-                <div className="flex items-center gap-2 truncate">
-                  <Activity className="h-4 w-4 text-primary" />
-                  <span className="truncate">{selectedScenario}</span>
-                </div>
-                <ChevronDown className="h-4 w-4 opacity-50" />
+              <Button variant="outline" className="h-8 md:h-9 w-8 md:w-64 justify-center md:justify-between border-border/50 bg-background shadow-sm hover:bg-accent hover:text-accent-foreground font-medium px-2 md:px-3">
+                <Activity className="h-4 w-4 text-primary shrink-0" />
+                <span className="hidden md:inline truncate ml-2">{selectedScenario}</span>
+                <ChevronDown className="hidden md:inline h-4 w-4 opacity-50 ml-auto" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[240px] shadow-lg rounded-xl border-border/50">
