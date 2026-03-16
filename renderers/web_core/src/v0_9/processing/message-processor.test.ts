@@ -94,6 +94,133 @@ describe("MessageProcessor", () => {
       // Ensure Zod's 'type: string' was removed
       assert.strictEqual(titleSchema.type, undefined);
     });
+
+    it("generates inline catalogs with functions and theme schema", () => {
+      const buttonApi: ComponentApi = {
+        name: "Button",
+        schema: z.object({
+          label: z.string(),
+        }),
+      };
+      const addFn = {
+        name: "add",
+        returnType: "number" as const,
+        schema: z.object({
+          a: z.number().describe("First number"),
+          b: z.number().describe("Second number"),
+        }),
+        execute: (args: any) => args.a + args.b,
+      };
+
+      const themeSchema = z.object({
+        primaryColor: z.string().describe("REF:common_types.json#/$defs/Color|The main color"),
+      });
+
+      const cat = new Catalog("cat-full", [buttonApi], [addFn], themeSchema);
+      const proc = new MessageProcessor([cat]);
+
+      const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
+      const inlineCat = caps["v0.9"].inlineCatalogs![0];
+
+      assert.strictEqual(inlineCat.catalogId, "cat-full");
+
+      // Verify Functions
+      assert.ok(inlineCat.functions);
+      assert.strictEqual(inlineCat.functions.length, 1);
+      const fn = inlineCat.functions[0];
+      assert.strictEqual(fn.name, "add");
+      assert.strictEqual(fn.returnType, "number");
+      assert.strictEqual(fn.parameters.properties.a.description, "First number");
+
+      // Verify Theme
+      assert.ok(inlineCat.theme);
+      assert.ok(inlineCat.theme.primaryColor);
+      assert.strictEqual(inlineCat.theme.primaryColor.$ref, "common_types.json#/$defs/Color");
+      assert.strictEqual(inlineCat.theme.primaryColor.description, "The main color");
+    });
+
+    it("omits functions and theme when catalog has none", () => {
+      const compApi: ComponentApi = { name: "EmptyComp", schema: z.object({}) };
+      const cat = new Catalog("cat-empty", [compApi]);
+      const proc = new MessageProcessor([cat]);
+      const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
+      const inlineCat = caps["v0.9"].inlineCatalogs![0];
+      
+      assert.strictEqual(inlineCat.catalogId, "cat-empty");
+      assert.strictEqual(inlineCat.functions, undefined);
+      assert.strictEqual(inlineCat.theme, undefined);
+    });
+
+    it("processes REF: tags deeply nested in schema arrays and objects", () => {
+      const deepApi: ComponentApi = {
+        name: "DeepComp",
+        schema: z.object({
+          items: z.array(z.object({
+            action: z.string().describe("REF:common_types.json#/$defs/Action|The action to perform")
+          }))
+        })
+      };
+      const cat = new Catalog("cat-deep", [deepApi]);
+      const proc = new MessageProcessor([cat]);
+      const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
+      
+      const properties = caps["v0.9"].inlineCatalogs![0].components.DeepComp.allOf[1].properties;
+      const actionSchema = properties.items.items.properties.action;
+      
+      assert.strictEqual(actionSchema.$ref, "common_types.json#/$defs/Action");
+      assert.strictEqual(actionSchema.description, "The action to perform");
+      assert.strictEqual(actionSchema.type, undefined);
+    });
+
+    it("handles REF: tags without pipes or with multiple pipes", () => {
+      const edgeApi: ComponentApi = {
+        name: "EdgeComp",
+        schema: z.object({
+          noPipe: z.string().describe("REF:common_types.json#/$defs/NoPipe"),
+          multiPipe: z.string().describe("REF:common_types.json#/$defs/MultiPipe|First|Second"),
+        })
+      };
+      const cat = new Catalog("cat-edge", [edgeApi]);
+      const proc = new MessageProcessor([cat]);
+      const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
+      
+      const properties = caps["v0.9"].inlineCatalogs![0].components.EdgeComp.allOf[1].properties;
+      
+      assert.strictEqual(properties.noPipe.$ref, "common_types.json#/$defs/NoPipe");
+      assert.strictEqual(properties.noPipe.description, undefined);
+      
+      assert.strictEqual(properties.multiPipe.$ref, "common_types.json#/$defs/MultiPipe");
+      assert.strictEqual(properties.multiPipe.description, "First");
+    });
+
+    it("handles multiple catalogs correctly", () => {
+      const compApi: ComponentApi = { name: "C1", schema: z.object({}) };
+      const cat1 = new Catalog("cat-1", [compApi]);
+      
+      const addFn = {
+        name: "add",
+        returnType: "number" as const,
+        schema: z.object({}),
+        execute: () => 0,
+      };
+      const themeSchema = z.object({ color: z.string() });
+      const cat2 = new Catalog("cat-2", [], [addFn], themeSchema);
+      
+      const proc = new MessageProcessor([cat1, cat2]);
+      const caps = proc.getClientCapabilities({ includeInlineCatalogs: true });
+      
+      assert.strictEqual(caps["v0.9"].inlineCatalogs!.length, 2);
+      
+      const inlineCat1 = caps["v0.9"].inlineCatalogs![0];
+      assert.strictEqual(inlineCat1.catalogId, "cat-1");
+      assert.strictEqual(inlineCat1.functions, undefined);
+      assert.strictEqual(inlineCat1.theme, undefined);
+      
+      const inlineCat2 = caps["v0.9"].inlineCatalogs![1];
+      assert.strictEqual(inlineCat2.catalogId, "cat-2");
+      assert.strictEqual(inlineCat2.functions!.length, 1);
+      assert.ok(inlineCat2.theme);
+    });
   });
 
   it("creates surface", () => {

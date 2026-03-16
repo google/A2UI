@@ -41,6 +41,8 @@ export interface CapabilitiesOptions {
 export interface InlineCatalog {
   catalogId: string;
   components: Record<string, any>;
+  functions?: any[];
+  theme?: Record<string, any>;
 }
 
 export interface A2uiClientCapabilities {
@@ -121,9 +123,37 @@ export class MessageProcessor<T extends ComponentApi> {
       };
     }
 
+    const functions: any[] = [];
+    for (const api of catalog.functions.values()) {
+      const zodSchema = zodToJsonSchema(api.schema, {
+        target: "jsonSchema2019-09",
+      }) as any;
+
+      this.processRefs(zodSchema);
+
+      functions.push({
+        name: api.name,
+        description: api.schema.description,
+        returnType: api.returnType,
+        parameters: zodSchema,
+      });
+    }
+
+    let theme: Record<string, any> | undefined;
+    if (catalog.themeSchema) {
+      const zodSchema = zodToJsonSchema(catalog.themeSchema, {
+        target: "jsonSchema2019-09",
+      }) as any;
+
+      this.processRefs(zodSchema);
+      theme = zodSchema.properties;
+    }
+
     return {
       catalogId: catalog.id,
       components,
+      functions: functions.length > 0 ? functions : undefined,
+      theme,
     };
   }
 
