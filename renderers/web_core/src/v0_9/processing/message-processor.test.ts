@@ -356,4 +356,146 @@ describe("MessageProcessor", () => {
     assert.strictEqual(processor.resolvePath("foo", "/bar/"), "/bar/foo");
     assert.strictEqual(processor.resolvePath("foo"), "/foo");
   });
+
+  describe("Batch Processing", () => {
+    it("batches multiple updateDataModel messages into single notification cycle", () => {
+      processor.processMessages([
+        {
+          version: "v0.9",
+          createSurface: { surfaceId: "s1", catalogId: "test-catalog" },
+        },
+      ]);
+
+      const surface = processor.model.getSurface("s1")!;
+      const notifications: string[] = [];
+
+      surface.dataModel.subscribe("/user/name", () => notifications.push("name"));
+      surface.dataModel.subscribe("/user/age", () => notifications.push("age"));
+      surface.dataModel.subscribe("/user", () => notifications.push("user"));
+
+      // Process multiple updates in one batch
+      processor.processMessages([
+        {
+          version: "v0.9",
+          updateDataModel: { surfaceId: "s1", path: "/user/name", value: "Alice" },
+        },
+        {
+          version: "v0.9",
+          updateDataModel: { surfaceId: "s1", path: "/user/age", value: 30 },
+        },
+        {
+          version: "v0.9",
+          updateDataModel: { surfaceId: "s1", path: "/user/email", value: "alice@example.com" },
+        },
+      ]);
+
+      // All paths should be notified
+      assert.ok(notifications.includes("name"), "name path notified");
+      assert.ok(notifications.includes("age"), "age path notified");
+      assert.ok(notifications.includes("user"), "user path notified");
+
+      // Each path should only be notified once (deduplication)
+      assert.strictEqual(
+        notifications.filter((n) => n === "name").length,
+        1,
+        "name notified exactly once"
+      );
+    });
+
+    it("does not batch single message", () => {
+      processor.processMessages([
+        {
+          version: "v0.9",
+          createSurface: { surfaceId: "s1", catalogId: "test-catalog" },
+        },
+      ]);
+
+      const surface = processor.model.getSurface("s1")!;
+      let notificationCount = 0;
+
+      surface.dataModel.subscribe("/value", () => notificationCount++);
+
+      // Single message - should not use batch mode
+      processor.processMessages([
+        {
+          version: "v0.9",
+          updateDataModel: { surfaceId: "s1", path: "/value", value: "test" },
+        },
+      ]);
+
+      assert.strictEqual(notificationCount, 1, "Single message notified immediately");
+    });
+
+    it("handles multiple surfaces in one batch", () => {
+      processor.processMessages([
+        {
+          version: "v0.9",
+          createSurface: { surfaceId: "s1", catalogId: "test-catalog" },
+        },
+        {
+          version: "v0.9",
+          createSurface: { surfaceId: "s2", catalogId: "test-catalog" },
+        },
+      ]);
+
+      const surface1 = processor.model.getSurface("s1")!;
+      const surface2 = processor.model.getSurface("s2")!;
+
+      let count1 = 0;
+      let count2 = 0;
+
+      surface1.dataModel.subscribe("/value", () => count1++);
+      surface2.dataModel.subscribe("/value", () => count2++);
+
+      // Update both surfaces in one batch
+      processor.processMessages([
+        {
+          version: "v0.9",
+          updateDataModel: { surfaceId: "s1", path: "/value", value: "a" },
+        },
+        {
+          version: "v0.9",
+          updateDataModel: { surfaceId: "s2", path: "/value", value: "b" },
+        },
+      ]);
+
+      assert.strictEqual(count1, 1, "surface-1 notified once");
+      assert.strictEqual(count2, 1, "surface-2 notified once");
+    });
+
+    it("clears pending notifications on error", () => {
+      processor.processMessages([
+        {
+          version: "v0.9",
+          createSurface: { surfaceId: "s1", catalogId: "test-catalog" },
+        },
+      ]);
+
+      const surface = processor.model.getSurface("s1")!;
+      let notificationCount = 0;
+
+      surface.dataModel.subscribe("/value", () => notificationCount++);
+
+      // Try to process messages that will cause an error
+      try {
+        processor.processMessages([
+          {
+            version: "v0.9",
+            updateDataModel: { surfaceId: "s1", path: "/value", value: "updated" },
+          },
+          {
+            version: "v0.9",
+            updateDataModel: { surfaceId: "non-existent", path: "/value", value: "error" },
+          },
+        ]);
+      } catch (e) {
+        // Expected error
+      }
+
+      // Data was written before the error
+      assert.strictEqual(surface.dataModel.get("/value"), "updated");
+      // Pending notifications should have been cleared, not fired
+      assert.strictEqual(notificationCount, 0, "No notifications fired due to error");
+    });
+  });
 });
