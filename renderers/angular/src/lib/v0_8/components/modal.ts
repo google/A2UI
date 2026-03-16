@@ -29,7 +29,7 @@ import { Renderer } from '../rendering/renderer';
 @Component({
   selector: 'a2ui-modal',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (showDialog()) {
       <dialog #dialog [class]="theme.components.Modal.backdrop" (click)="handleDialogClick($event)">

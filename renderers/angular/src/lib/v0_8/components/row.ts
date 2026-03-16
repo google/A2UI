@@ -22,7 +22,7 @@ import * as Types from '@a2ui/web_core/types/types';
 @Component({
   selector: 'a2ui-row',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[attr.alignment]': 'alignment()',
     '[attr.distribution]': 'distribution()',

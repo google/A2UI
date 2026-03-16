@@ -21,7 +21,7 @@ import { Renderer } from '../rendering/renderer';
 @Component({
   selector: 'a2ui-surface',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let surfaceId = this.surfaceId();
     @let surface = this.surface();

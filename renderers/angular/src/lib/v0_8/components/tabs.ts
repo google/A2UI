@@ -23,7 +23,7 @@ import * as Types from '@a2ui/web_core/types/types';
 @Component({
   selector: 'a2ui-tabs',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let tabs = this.tabs();
     @let selectedIndex = this.selectedIndex();

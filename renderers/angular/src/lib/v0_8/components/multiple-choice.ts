@@ -20,7 +20,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-multiple-choice',
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section [class]="theme.components.MultipleChoice.container">
       <label [class]="theme.components.MultipleChoice.label" [for]="selectId">{{

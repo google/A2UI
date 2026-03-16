@@ -20,7 +20,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-audio',
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let resolvedUrl = this.resolvedUrl();
 

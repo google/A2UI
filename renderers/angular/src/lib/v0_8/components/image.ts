@@ -22,7 +22,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-image',
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
       display: block;

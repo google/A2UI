@@ -41,7 +41,7 @@ interface HintedStyles {
 
 @Component({
   selector: 'a2ui-text',
-  changeDetection: ChangeDetectionStrategy.onPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
       [class]="classes()"
