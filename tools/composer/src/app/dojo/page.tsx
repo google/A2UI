@@ -4,14 +4,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Play, Pause, SkipBack, Settings, FileJson, 
   ChevronDown, Activity, Code2, CheckSquare,
-  MessageSquare, Zap, LayoutTemplate
+  Zap, LayoutTemplate
 } from 'lucide-react';
 import { useJsonlPlayer } from '@/components/dojo/useJsonlPlayer';
 import { useA2UISurface } from '@/components/dojo/useA2UISurface';
 import { A2UIViewer } from '@copilotkit/a2ui-renderer';
 import { Button } from '@/components/ui/button';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,10 +19,63 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { scenarios, ScenarioId } from '@/data/dojo';
 
+/** Generate a human-readable summary for an A2UI message */
+function summarizeMessage(msg: any, index: number): string {
+  if (msg.beginRendering) {
+    const sid = msg.beginRendering.surfaceId || 'default';
+    const root = msg.beginRendering.root || 'root';
+    return `Create surface "${sid}" with root component "${root}"`;
+  }
+  if (msg.createSurface) {
+    const sid = msg.createSurface.surfaceId || 'default';
+    return `Create surface "${sid}" (v0.9)`;
+  }
+  if (msg.surfaceUpdate) {
+    const count = msg.surfaceUpdate.components?.length || 0;
+    const types = msg.surfaceUpdate.components
+      ?.map((c: any) => {
+        if (c.component) return Object.keys(c.component)[0];
+        if (c.type) return c.type;
+        return '?';
+      })
+      .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i)
+      .join(', ');
+    return `Update ${count} components: ${types}`;
+  }
+  if (msg.updateComponents) {
+    const count = msg.updateComponents.components?.length || 0;
+    const types = msg.updateComponents.components
+      ?.map((c: any) => c.type || '?')
+      .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i)
+      .join(', ');
+    return `Update ${count} components: ${types}`;
+  }
+  if (msg.dataModelUpdate) {
+    const keys = msg.dataModelUpdate.contents
+      ?.map((c: any) => c.key)
+      .filter(Boolean)
+      .join(', ');
+    return `Set data: ${keys}`;
+  }
+  if (msg.updateDataModel) {
+    const keys = msg.updateDataModel.contents
+      ?.map((c: any) => c.key)
+      .filter(Boolean)
+      .join(', ');
+    return `Set data: ${keys}`;
+  }
+  if (msg.clientEvent) {
+    return `User action: ${msg.clientEvent.name || 'event'}`;
+  }
+  if (msg.deleteSurface) {
+    return `Delete surface "${msg.deleteSurface.surfaceId}"`;
+  }
+  return `Step ${index + 1}`;
+}
+
 export default function DojoPage() {
   const [activeTab, setActiveTab] = useState<'data' | 'config'>('data');
   const [mobileView, setMobileView] = useState<'data' | 'config' | 'renderers'>('renderers');
-  const [renderers, setRenderers] = useState({ react: true, lit: false, discord: true });
   const [selectedScenario, setSelectedScenario] = useState<ScenarioId>('restaurant-booking');
 
   const {
@@ -121,14 +173,12 @@ export default function DojoPage() {
                 onChange={(e) => seek(parseInt(e.target.value, 10))}
                 className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
               />
-              {/* Custom Range Track */}
               <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-primary transition-all duration-200 ease-out"
                   style={{ width: `${totalMessages > 0 ? (progress / totalMessages) * 100 : 0}%` }}
                 />
               </div>
-              {/* Custom Range Thumb */}
               <div 
                 className="absolute h-3 w-3 bg-primary rounded-full shadow-sm shadow-primary/40 border border-background transition-transform group-hover:scale-125 duration-200 ease-out pointer-events-none"
                 style={{ 
@@ -178,13 +228,10 @@ export default function DojoPage() {
       </header>
 
       {/* Main Split Layout */}
-      
-
-
       <ResizablePanelGroup direction="horizontal" className="flex-1">
         
-        {/* Left Pane: JSONL Source or Configuration */}
-        <ResizablePanel defaultSize={28} minSize={20} maxSize={40} className={`bg-muted/20 border-r border-border/50 ${mobileView === "data" || mobileView === "config" ? "flex" : "hidden md:flex"} flex-col`}>
+        {/* Left Pane: JSONL Source + Step Summaries */}
+        <ResizablePanel defaultSize={35} minSize={25} maxSize={50} className={`bg-muted/20 border-r border-border/50 ${mobileView === "data" || mobileView === "config" ? "flex" : "hidden md:flex"} flex-col`}>
           <div className="h-full flex flex-col relative">
             <div className="absolute inset-0 overflow-y-auto p-5 custom-scrollbar">
               
@@ -204,11 +251,13 @@ export default function DojoPage() {
                     const isActive = index === progress;
                     const isPast = index < progress;
                     const isClient = !!msg.action || !!msg.clientEvent;
+                    const summary = summarizeMessage(msg, index);
                     
                     return (
                       <div 
-                        key={msg.id || index} 
-                        className={`relative p-3.5 rounded-xl text-[11px] font-mono leading-relaxed transition-all duration-300 ease-out border ${
+                        key={msg.id || index}
+                        onClick={() => seek(index)}
+                        className={`relative p-3.5 rounded-xl text-[11px] font-mono leading-relaxed transition-all duration-300 ease-out border cursor-pointer ${
                           isActive 
                             ? isClient 
                               ? 'border-purple-500/50 bg-purple-500/5 shadow-[0_0_15px_-3px_rgba(168,85,247,0.1)] ring-1 ring-purple-500/20 scale-[1.02]' 
@@ -217,18 +266,34 @@ export default function DojoPage() {
                             ? isClient
                               ? 'bg-purple-500/5 border-purple-500/20 text-foreground shadow-sm'
                               : 'bg-card border-border/50 text-foreground shadow-sm'
-                            : 'bg-card/50 border-transparent text-muted-foreground opacity-50'
+                            : 'bg-card/50 border-transparent text-muted-foreground opacity-50 hover:opacity-75'
                         }`}
                       >
                         {isActive && (
                           <div className={`absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-6 ${isClient ? 'bg-purple-500' : 'bg-primary'} rounded-r-full animate-pulse`} />
                         )}
-                        <div className={`text-[9px] font-bold mb-1.5 ${isClient ? 'text-purple-500' : 'text-primary/70'}`}>
-                          {isClient ? '↑ OUTBOUND (CLIENT)' : '↓ INBOUND (SERVER)'}
+                        {/* Step number + direction badge */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-[10px] font-bold bg-muted/50 rounded px-1.5 py-0.5 tabular-nums">
+                            {index + 1}
+                          </span>
+                          <span className={`text-[9px] font-bold ${isClient ? 'text-purple-500' : 'text-primary/70'}`}>
+                            {isClient ? '↑ CLIENT' : '↓ SERVER'}
+                          </span>
                         </div>
-                        <pre className="whitespace-pre-wrap overflow-x-auto custom-scrollbar-sm">
-                          {JSON.stringify(msg, null, 2)}
-                        </pre>
+                        {/* Human-readable summary */}
+                        <div className={`text-xs font-sans font-medium mb-2 ${isActive ? 'text-foreground' : isPast ? 'text-foreground/80' : 'text-muted-foreground'}`}>
+                          {summary}
+                        </div>
+                        {/* Collapsible raw JSON */}
+                        <details className="group">
+                          <summary className="text-[9px] text-muted-foreground cursor-pointer hover:text-foreground select-none">
+                            Raw JSON ▸
+                          </summary>
+                          <pre className="mt-2 whitespace-pre-wrap overflow-x-auto custom-scrollbar-sm text-[10px]">
+                            {JSON.stringify(msg, null, 2)}
+                          </pre>
+                        </details>
                       </div>
                     );
                   })}
@@ -236,37 +301,6 @@ export default function DojoPage() {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {/* Surfaces Config */}
-                  <div className="rounded-xl border border-border/50 bg-card p-5 shadow-sm space-y-4">
-                    <h3 className="text-sm font-semibold flex items-center gap-2">
-                      <LayoutTemplate className="h-4 w-4 text-primary" /> Active Surfaces
-                    </h3>
-                    
-                    <div className="space-y-3">
-                      {[
-                        { id: 'react', label: 'React Adapter (Web)', icon: Code2 },
-                        { id: 'discord', label: 'Discord Mock', icon: MessageSquare },
-                        { id: 'lit', label: 'Lit Components', icon: CheckSquare }
-                      ].map(surface => (
-                        <label key={surface.id} className="flex items-center gap-3 p-2.5 rounded-lg border border-transparent hover:bg-muted/50 hover:border-border/50 cursor-pointer transition-all group">
-                          <div className="relative flex items-center justify-center w-5 h-5">
-                            <input 
-                              type="checkbox" 
-                              className="peer appearance-none w-5 h-5 border-2 border-muted-foreground/30 rounded focus:ring-2 focus:ring-primary/20 focus:outline-none checked:bg-primary checked:border-primary transition-all cursor-pointer"
-                              checked={(renderers as any)[surface.id]} 
-                              onChange={e => setRenderers(r => ({...r, [surface.id]: e.target.checked}))} 
-                            />
-                            <CheckSquare className="absolute inset-0 h-5 w-5 text-primary-foreground opacity-0 peer-checked:opacity-100 pointer-events-none p-0.5" strokeWidth={3} />
-                          </div>
-                          <div className="flex items-center gap-2 text-sm font-medium text-foreground/90 group-hover:text-foreground">
-                            <surface.icon className="h-4 w-4 text-muted-foreground" />
-                            {surface.label}
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Transport Config */}
                   <div className="rounded-xl border border-border/50 bg-card p-5 shadow-sm space-y-4">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -293,173 +327,53 @@ export default function DojoPage() {
 
         <ResizableHandle withHandle className="hidden md:flex bg-border/50 hover:bg-primary/50 transition-colors" />
 
-        {/* Right Pane: Active Renderers */}
-        <ResizablePanel defaultSize={72} className={`${mobileView === "renderers" ? "flex" : "hidden md:flex"} flex-col`}>
+        {/* Right Pane: Single Renderer */}
+        <ResizablePanel defaultSize={65} className={`${mobileView === "renderers" ? "flex" : "hidden md:flex"} flex-col`}>
           <div className="h-full bg-muted/10 relative overflow-hidden flex flex-col">
             <div className="absolute inset-0 p-6 overflow-y-auto custom-scrollbar">
-              <div className={`grid gap-6 min-h-full ${
-                Object.values(renderers).filter(Boolean).length === 1 
-                  ? 'md:grid-cols-1 md:max-w-4xl md:mx-auto' 
-                  : Object.values(renderers).filter(Boolean).length === 2 
-                  ? 'md:grid-cols-2' 
-                  : 'md:grid-cols-3'
-              }`}>
-                
-                {renderers.react && (
-                  <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-xl overflow-hidden h-full min-h-[500px] transition-all duration-300 hover:shadow-2xl">
-                    <div className="h-11 bg-muted/30 border-b flex items-center px-4 justify-between backdrop-blur-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                      </div>
-                      <span className="text-xs font-semibold text-muted-foreground tracking-wide flex items-center gap-1.5">
-                        <Code2 className="h-3.5 w-3.5" /> React Web
-                      </span>
-                      <div className="w-10" /> {/* Balancer */}
+              <div className="max-w-4xl mx-auto min-h-full">
+                <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-xl overflow-hidden h-full min-h-[500px] transition-all duration-300 hover:shadow-2xl">
+                  <div className="h-11 bg-muted/30 border-b flex items-center px-4 justify-between backdrop-blur-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
                     </div>
-                    <div className="flex-1 p-4 overflow-auto bg-dot-pattern custom-scrollbar">
-                      {activeMessages.length > 0 ? (
-                        <div className="w-full min-h-full flex items-start justify-center">
-                          <A2UIViewer
-                            root={surfaceState.root}
-                            components={surfaceState.components}
-                            data={surfaceState.data}
-                            onAction={(action) => console.log('Dojo Action:', action)}
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                            <Code2 className="h-6 w-6 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-mono text-sm text-foreground mb-1">{'<A2UIRenderer />'}</p>
-                            <p className="text-xs text-muted-foreground">Waiting for event stream...</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <span className="text-xs font-semibold text-muted-foreground tracking-wide flex items-center gap-1.5">
+                      <Code2 className="h-3.5 w-3.5" /> A2UI Renderer
+                    </span>
+                    <div className="w-10" />
                   </div>
-                )}
-
-                {renderers.discord && (
-                  <div className="flex flex-col rounded-2xl border border-border/60 bg-[#313338] text-white shadow-xl overflow-hidden h-full min-h-[500px] transition-all duration-300 hover:shadow-2xl">
-                    <div className="h-11 bg-[#2B2D31] border-b border-black/20 flex items-center px-4 justify-between">
-                      <div className="flex items-center gap-2 text-white/50">
-                        <MessageSquare className="h-4 w-4" />
+                  <div className="flex-1 p-4 overflow-auto bg-dot-pattern custom-scrollbar">
+                    {activeMessages.length > 0 ? (
+                      <div className="w-full min-h-full flex items-start justify-center">
+                        <A2UIViewer
+                          root={surfaceState.root}
+                          components={surfaceState.components}
+                          data={surfaceState.data}
+                          onAction={(action) => console.log('Dojo Action:', action)}
+                        />
                       </div>
-                      <span className="text-xs font-semibold text-white/70 tracking-wide">
-                        # a2ui-demo
-                      </span>
-                      <div className="w-4" /> {/* Balancer */}
-                    </div>
-                    <div className="flex-1 p-6 flex flex-col gap-6 overflow-y-auto custom-scrollbar-discord">
-                      
-                      {/* Mock Discord UI - Start of conversation */}
-                      <div className="flex gap-4 opacity-60">
-                        <div className="w-10 h-10 rounded-full bg-[#1E1F22] flex-shrink-0 flex items-center justify-center">
-                          <span className="text-white/40 text-xs font-bold">U</span>
-                        </div>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-baseline gap-2">
-                            <span className="font-semibold text-[15px] hover:underline cursor-pointer">User</span>
-                            <span className="text-xs text-white/40">Today at 4:20 PM</span>
-                          </div>
-                          <p className="text-white/90 text-[15px] leading-relaxed">Run the {selectedScenario} scenario.</p>
-                        </div>
-                      </div>
-
-                      <Separator className="bg-white/5" />
-
-                      {/* Bot Response Mock */}
-                      <div className="flex gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#5865F2] flex-shrink-0 flex items-center justify-center shadow-lg">
-                          <Activity className="h-5 w-5 text-white" />
-                        </div>
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-baseline gap-2">
-                            <span className="font-semibold text-[15px] text-[#5865F2] hover:underline cursor-pointer">Agent Bot</span>
-                            <span className="bg-[#5865F2] text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">Bot</span>
-                            <span className="text-xs text-white/40 ml-1">Today at 4:20 PM</span>
-                          </div>
-                          
-                          {/* Discord Embed Mock representing active state */}
-                          <div className="bg-[#2B2D31] border-l-4 border-[#5865F2] rounded-r-md p-4 text-sm shadow-md mt-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="font-bold text-white/90">A2UI Surface Rendered</span>
-                            </div>
-                            <p className="text-white/70 mb-4">Simulated embed updating from event stream.</p>
-                            
-                            <div className="bg-[#1E1F22] rounded border border-white/5 p-3 font-mono text-xs text-white/60">
-                              <div className="flex justify-between mb-1">
-                                <span>Total events received:</span>
-                                <span className="text-white font-bold">{activeMessages.length}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Status:</span>
-                                <span className={playbackState === 'playing' ? 'text-green-400' : 'text-amber-400'}>
-                                  {playbackState === 'playing' ? 'Receiving...' : 'Idle'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Mock Discord Buttons */}
-                          {activeMessages.length > 0 && (
-                            <div className="flex gap-2 mt-2">
-                              <button className="bg-[#2B2D31] hover:bg-[#3F4147] transition-colors text-white text-sm font-medium px-4 py-2 rounded shadow-sm border border-transparent">
-                                View Details
-                              </button>
-                              <button className="bg-[#DA373C] hover:bg-[#A12828] transition-colors text-white text-sm font-medium px-4 py-2 rounded shadow-sm border border-transparent">
-                                Cancel
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                    </div>
-                  </div>
-                )}
-
-                {renderers.lit && (
-                  <div className="flex flex-col rounded-2xl border border-border/60 bg-background shadow-xl overflow-hidden h-full min-h-[500px] transition-all duration-300 hover:shadow-2xl">
-                    <div className="h-11 bg-blue-500/10 border-b border-blue-500/20 flex items-center px-4 justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2.5 h-2.5 rounded-full bg-blue-400/80" />
-                      </div>
-                      <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 tracking-wide flex items-center gap-1.5">
-                        <LayoutTemplate className="h-3.5 w-3.5" /> Web Components
-                      </span>
-                      <div className="w-10" />
-                    </div>
-                    <div className="flex-1 p-8 flex flex-col items-center justify-center bg-blue-50/30 dark:bg-blue-900/10">
-                       <div className="w-full max-w-md bg-card border border-blue-500/20 rounded-xl shadow-sm p-8 text-center space-y-4 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-blue-600" />
-                        <div className="mx-auto w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-2">
-                          <LayoutTemplate className="h-6 w-6 text-blue-500" />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                          <Code2 className="h-6 w-6 text-primary" />
                         </div>
                         <div>
-                          <p className="font-mono text-sm text-foreground mb-1">{'<a2ui-surface />'}</p>
-                          <p className="text-xs text-muted-foreground">Framework-agnostic rendering</p>
-                        </div>
-                        <div className="pt-4 border-t border-border/50 mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${playbackState === 'playing' ? 'bg-green-500 animate-pulse' : 'bg-muted-foreground'}`} />
-                          {activeMessages.length} states synced
+                          <p className="font-mono text-sm text-foreground mb-1">{'<A2UIRenderer />'}</p>
+                          <p className="text-xs text-muted-foreground">Press play to start the scenario</p>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                )}
-
+                </div>
               </div>
             </div>
           </div>
         </ResizablePanel>
       </ResizablePanelGroup>
 
-            {/* Mobile Nav Tabs */}
+      {/* Mobile Nav Tabs */}
       <div className="flex md:hidden w-full items-center gap-1 bg-background/95 backdrop-blur-md p-2 border-t border-border/50 z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
         <Button variant="ghost" size="sm" className={`flex-1 h-12 flex-col gap-1 text-[10px] font-medium ${mobileView === 'data' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`} onClick={() => { setMobileView('data'); setActiveTab('data'); }}>
           <Zap className="h-4 w-4 mb-0" /> Data
@@ -472,21 +386,14 @@ export default function DojoPage() {
         </Button>
       </div>
 
-      {/* Global styles for custom scrollbars */}
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.5); }
-        
         .custom-scrollbar-sm::-webkit-scrollbar { height: 4px; }
         .custom-scrollbar-sm::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar-sm::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
-        
-        .custom-scrollbar-discord::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar-discord::-webkit-scrollbar-track { background: #2B2D31; border-radius: 4px; }
-        .custom-scrollbar-discord::-webkit-scrollbar-thumb { background: #1A1B1E; border-radius: 4px; }
-        
         .bg-dot-pattern {
           background-image: radial-gradient(rgba(156, 163, 175, 0.2) 1px, transparent 1px);
           background-size: 20px 20px;
