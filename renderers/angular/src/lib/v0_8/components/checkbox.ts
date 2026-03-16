@@ -69,7 +69,6 @@ export class Checkbox extends DynamicComponent {
       return;
     }
 
-    const surfaceId = this.surfaceId();
-    this.processor.setData(this.component(), path, event.target.checked, surfaceId);
+    this.processor.setData(this.component(), path, event.target.checked, this.surfaceId());
   }
 }
