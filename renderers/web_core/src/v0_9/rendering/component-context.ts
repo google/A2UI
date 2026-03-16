@@ -56,7 +56,7 @@ export class ComponentContext {
       dataModelBasePath, 
       surface.catalog.invoker
     );
-    this._actionDispatcher = (action) => surface.dispatchAction(action);
+    this._actionDispatcher = (action) => surface.dispatchAction(action, this.componentModel.id);
   }
 
   private _actionDispatcher: (action: any) => Promise<void>;

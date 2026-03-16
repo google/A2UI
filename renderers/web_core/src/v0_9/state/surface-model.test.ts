@@ -46,10 +46,28 @@ describe("SurfaceModel", () => {
     assert.ok(surface.componentsModel.get("c1"));
   });
 
-  it("dispatches actions", async () => {
-    await surface.dispatchAction({ type: "click" });
+  it("dispatches actions with metadata", async () => {
+    await surface.dispatchAction(
+      { event: { name: "click", context: { foo: "bar" } } },
+      "comp-1"
+    );
     assert.strictEqual(actions.length, 1);
-    assert.strictEqual(actions[0].type, "click");
+    const action = actions[0];
+    assert.strictEqual(action.name, "click");
+    assert.strictEqual(action.surfaceId, "surface-1");
+    assert.strictEqual(action.sourceComponentId, "comp-1");
+    assert.deepStrictEqual(action.context, { foo: "bar" });
+    assert.ok(action.timestamp);
+    assert.doesNotThrow(() => new Date(action.timestamp));
+  });
+
+  it("dispatches actions with default context", async () => {
+    await surface.dispatchAction(
+      { event: { name: "click" } },
+      "comp-1"
+    );
+    assert.strictEqual(actions.length, 1);
+    assert.deepStrictEqual(actions[0].context, {});
   });
 
   it("creates a component context", () => {
@@ -73,7 +91,7 @@ describe("SurfaceModel", () => {
 
     // After dispose, no more actions should be emitted.
     // The EventEmitter.dispose method clears all listeners.
-    surface.dispatchAction({ type: "click" });
+    surface.dispatchAction({ event: { name: "click" } }, "c1");
     assert.strictEqual(
       actionReceived,
       false,
