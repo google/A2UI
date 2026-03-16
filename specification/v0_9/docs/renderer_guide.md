@@ -282,15 +282,15 @@ To dynamically generate the `a2uiClientCapabilities` payload (specifically `inli
 
 **Detectable Common Types**: Shared definitions (like `DynamicString`) must emit external JSON Schema `$ref` pointers. This is achieved by "tagging" the schemas using their `description` property (e.g., `REF:common_types.json#/$defs/DynamicString`). 
 
-When `getClientCapabilities()` converts internal schemas:
-1. Translate the definition into a raw JSON Schema.
-2. Traverse the tree looking for descriptions starting with `REF:`.
-3. Strip the tag and replace the node with a valid JSON Schema `$ref` object.
-4. Wrap property schemas in the standard A2UI component envelope (`allOf` containing `ComponentCommon`).
+When `getClientCapabilities()` converts internal schemas to generate `inlineCatalogs`:
+1. **Components**: Translate each component schema into a raw JSON Schema. Wrap it in the standard A2UI component envelope (`allOf` containing `ComponentCommon`).
+2. **Functions**: Map each function in the catalog to a `FunctionDefinition` object, converting its argument schema to JSON Schema.
+3. **Theme**: Convert the catalog's theme schema into a JSON Schema representation.
+4. **Reference Processing**: For all generated schemas (components, functions, and themes), traverse the tree looking for descriptions starting with `REF:`. Strip the tag and replace the node with a valid JSON Schema `$ref` object.
 
 ## 4. The Catalog API & Functions
 
-A catalog groups component definitions and function definitions together.
+A catalog groups component definitions and function definitions together, along with an optional theme schema.
 
 ```typescript
 interface FunctionApi {
@@ -313,9 +313,9 @@ class Catalog<T extends ComponentApi> {
   readonly id: string; // Unique catalog URI
   readonly components: ReadonlyMap<string, T>;
   readonly functions?: ReadonlyMap<string, FunctionImplementation>;
-  readonly theme?: Schema;
+  readonly themeSchema?: Schema;
 
-  constructor(id: string, components: T[], functions?: FunctionImplementation[], theme?: Schema) {
+  constructor(id: string, components: T[], functions?: FunctionImplementation[], themeSchema?: Schema) {
     // Initializes the properties
   }
 }
@@ -341,7 +341,7 @@ myCustomCatalog = Catalog(
   id="https://mycompany.com/catalogs/custom_catalog.json",
   functions=basicCatalog.functions,
   components=basicCatalog.components + [MyCompanyLogoComponent()],
-  theme=basicCatalog.theme # Inherit theme schema
+  themeSchema=basicCatalog.themeSchema # Inherit theme schema
 )
 ```
 
