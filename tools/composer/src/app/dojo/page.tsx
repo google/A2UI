@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-  Play, Pause, SkipBack, Settings, FileJson, 
+  Play, Pause, SkipBack, Settings,
   ChevronDown, Activity, Code2,
   Zap, LayoutTemplate, Monitor, Database
 } from 'lucide-react';
@@ -36,8 +36,13 @@ function readURL(): { scenario?: string; step?: number; renderer?: string } {
   };
 }
 
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  return `${(bytes / 1024).toFixed(1)} KB`;
+}
+
 export default function DojoPage() {
-  const [leftTab, setLeftTab] = useState<LeftTab>('events');
+  const [leftTab, setLeftTab] = useState<LeftTab>('data');
   const [mobileView, setMobileView] = useState<'left' | 'renderer'>('renderer');
   const [renderer, setRenderer] = useState<RendererType>(RENDERERS[0]);
   const [selectedScenario, setSelectedScenario] = useState<ScenarioId>(() => {
@@ -47,21 +52,20 @@ export default function DojoPage() {
 
   const {
     playbackState,
-    streamProgress,
-    totalStreamLines,
+    progress,
+    totalChunks,
     speed,
-    visibleLines,
+    receivedChunks,
     activeMessages,
     visibleEvents,
-    completedMessageCount,
-    currentStreamingMessage,
+    bytesReceived,
+    totalBytes,
     play,
     pause,
     stop,
     seek,
-    seekToMessageEnd,
     setSpeed,
-  } = useStreamingPlayer((scenarios[selectedScenario] as any) || [], 60);
+  } = useStreamingPlayer((scenarios[selectedScenario] as any) || [], 1200);
 
   const surfaceState = useA2UISurface(activeMessages);
 
@@ -72,15 +76,14 @@ export default function DojoPage() {
   }, []);
 
   useEffect(() => {
-    updateURL(selectedScenario, streamProgress, renderer);
-  }, [selectedScenario, streamProgress, renderer]);
+    updateURL(selectedScenario, progress, renderer);
+  }, [selectedScenario, progress, renderer]);
 
   const handleScenarioChange = useCallback((id: ScenarioId) => {
     setSelectedScenario(id);
     stop();
   }, [stop]);
 
-  // Auto-scroll
   const dataEndRef = useRef<HTMLDivElement>(null);
   const eventsEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -88,27 +91,12 @@ export default function DojoPage() {
       dataEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
       eventsEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
-  }, [streamProgress, playbackState]);
-
-  // Group visible lines by message direction sections
-  const groupedLines = (() => {
-    const groups: { isClient: boolean; messageIndex: number; lines: typeof visibleLines }[] = [];
-    let current: typeof groups[0] | null = null;
-    for (const line of visibleLines) {
-      if (!current || current.messageIndex !== line.messageIndex) {
-        current = { isClient: line.isClient, messageIndex: line.messageIndex, lines: [] };
-        groups.push(current);
-      }
-      current.lines.push(line);
-    }
-    return groups;
-  })();
+  }, [progress, playbackState]);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
-      {/* Header — playback controls only, no scenario */}
+      {/* Header */}
       <header className="relative z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 md:px-6 backdrop-blur-md">
-        {/* Left: Tab toggle */}
         <div className="hidden md:flex items-center gap-1 rounded-xl bg-muted/50 p-1 shadow-inner border border-border/50">
           {([
             { id: 'events' as LeftTab, icon: Activity, label: 'Events' },
@@ -124,7 +112,7 @@ export default function DojoPage() {
           ))}
         </div>
 
-        {/* Center: Playback */}
+        {/* Playback */}
         <div className="flex flex-1 max-w-2xl items-center gap-3 md:gap-5">
           <div className="flex items-center gap-1.5">
             <Button variant="outline" size="icon" className="h-8 w-8 rounded-full border-border/50" onClick={stop}>
@@ -141,22 +129,22 @@ export default function DojoPage() {
             )}
           </div>
           <div className="flex-1 flex items-center gap-3 group">
-            <span className="text-[10px] font-mono text-muted-foreground w-8 text-right tabular-nums">{streamProgress}</span>
+            <span className="text-[10px] font-mono text-muted-foreground w-6 text-right tabular-nums">{progress}</span>
             <div className="relative flex-1 flex items-center h-5">
-              <input type="range" min="0" max={totalStreamLines} value={streamProgress}
+              <input type="range" min="0" max={totalChunks} value={progress}
                 onChange={(e) => seek(parseInt(e.target.value, 10))}
                 className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
               />
               <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
-                <div className="h-full bg-primary transition-all duration-100 ease-out"
-                  style={{ width: `${totalStreamLines > 0 ? (streamProgress / totalStreamLines) * 100 : 0}%` }}
+                <div className="h-full bg-primary transition-all duration-200 ease-out"
+                  style={{ width: `${totalChunks > 0 ? (progress / totalChunks) * 100 : 0}%` }}
                 />
               </div>
               <div className="absolute h-2.5 w-2.5 bg-primary rounded-full shadow-sm border border-background pointer-events-none"
-                style={{ left: `calc(${totalStreamLines > 0 ? (streamProgress / totalStreamLines) * 100 : 0}% - 5px)` }}
+                style={{ left: `calc(${totalChunks > 0 ? (progress / totalChunks) * 100 : 0}% - 5px)` }}
               />
             </div>
-            <span className="text-[10px] font-mono text-muted-foreground w-8 tabular-nums">{totalStreamLines}</span>
+            <span className="text-[10px] font-mono text-muted-foreground w-6 tabular-nums">{totalChunks}</span>
           </div>
           <Button variant="outline" size="sm"
             className="h-7 w-12 text-[10px] font-mono font-medium rounded-full border-border/50"
@@ -166,19 +154,18 @@ export default function DojoPage() {
           </Button>
         </div>
 
-        {/* Right: streaming status */}
-        <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
-          {currentStreamingMessage !== null && (
+        {/* Status */}
+        <div className="hidden md:flex items-center gap-3 text-xs text-muted-foreground">
+          {playbackState === 'playing' && (
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              Streaming...
+              Streaming
             </span>
           )}
-          <span className="font-mono tabular-nums">{completedMessageCount}/{(scenarios[selectedScenario] as any)?.length || 0}</span>
+          <span className="font-mono tabular-nums">{formatBytes(bytesReceived)}</span>
         </div>
       </header>
 
-      {/* Main Layout */}
       <ResizablePanelGroup direction="horizontal" className="flex-1">
         {/* Left Pane */}
         <ResizablePanel defaultSize={38} minSize={25} maxSize={55}
@@ -188,7 +175,6 @@ export default function DojoPage() {
             <div className="absolute inset-0 overflow-y-auto p-4 custom-scrollbar">
 
               {leftTab === 'events' ? (
-                /* EVENTS TAB — lifecycle summaries */
                 <div className="flex flex-col gap-2 pb-8">
                   <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
                     <Activity className="h-3 w-3 text-primary" /> Lifecycle Events
@@ -198,7 +184,7 @@ export default function DojoPage() {
                   )}
                   {visibleEvents.map((evt, i) => (
                     <div key={i}
-                      onClick={() => seekToMessageEnd(evt.messageIndex)}
+                      onClick={() => seek(evt.chunkIndex + 1)}
                       className={`p-3 rounded-lg border cursor-pointer transition-all hover:scale-[1.01] ${
                         evt.type === 'surface' ? 'border-blue-500/30 bg-blue-500/5' :
                         evt.type === 'components' ? 'border-emerald-500/30 bg-emerald-500/5' :
@@ -225,43 +211,54 @@ export default function DojoPage() {
                 </div>
 
               ) : leftTab === 'data' ? (
-                /* DATA TAB — raw streaming lines */
-                <div className="flex flex-col gap-0 pb-8">
-                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-3">
-                    <Database className="h-3 w-3 text-amber-500" /> Raw Stream
+                /* DATA TAB — real JSONL chunks as they arrive over the wire */
+                <div className="flex flex-col gap-2 pb-8">
+                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
+                    <Database className="h-3 w-3 text-amber-500" /> JSONL Stream
                   </h2>
-                  {groupedLines.length === 0 && (
-                    <p className="text-xs text-muted-foreground italic">Press play to see streaming data...</p>
+                  {receivedChunks.length === 0 && (
+                    <p className="text-xs text-muted-foreground italic">Press play to stream JSONL chunks...</p>
                   )}
-                  {groupedLines.map((group, gi) => (
-                    <div key={gi} className="mb-3">
-                      {/* Section header */}
-                      <div className={`text-[9px] font-bold mb-1 ${group.isClient ? 'text-purple-500' : 'text-primary/70'}`}>
-                        {group.isClient ? '↑ CLIENT' : '↓ SERVER'} — message {group.messageIndex + 1}
-                      </div>
-                      {/* Streaming lines */}
-                      <div className={`rounded-lg border p-2 font-mono text-[10px] leading-relaxed ${
-                        group.isClient 
-                          ? 'border-purple-500/20 bg-purple-500/5' 
-                          : 'border-primary/20 bg-card'
+                  {receivedChunks.map((chunk, i) => (
+                    <div key={i}
+                      onClick={() => seek(chunk.index + 1)}
+                      className={`rounded-lg border overflow-hidden cursor-pointer transition-all ${
+                        chunk.index === progress - 1
+                          ? chunk.isClient
+                            ? 'border-purple-500/50 ring-1 ring-purple-500/20 scale-[1.01]'
+                            : 'border-primary/50 ring-1 ring-primary/20 scale-[1.01]'
+                          : chunk.isClient
+                            ? 'border-purple-500/20 hover:border-purple-500/40'
+                            : 'border-border/50 hover:border-primary/30'
+                      }`}
+                    >
+                      {/* Chunk header */}
+                      <div className={`flex items-center justify-between px-3 py-1.5 ${
+                        chunk.isClient ? 'bg-purple-500/10' : 'bg-muted/30'
                       }`}>
-                        {group.lines.map((line, li) => (
-                          <div key={li}
-                            onClick={() => seek(visibleLines.indexOf(line) + 1)}
-                            className={`cursor-pointer hover:bg-primary/5 px-1 rounded transition-colors ${
-                              line === visibleLines[visibleLines.length - 1] ? 'bg-primary/10 font-semibold' : ''
-                            }`}
-                          >
-                            {line.text}
-                          </div>
-                        ))}
-                        {/* Show streaming cursor if this message is currently being streamed */}
-                        {currentStreamingMessage === group.messageIndex && (
-                          <span className="inline-block w-1.5 h-3.5 bg-primary animate-pulse ml-1" />
-                        )}
+                        <div className="flex items-center gap-2">
+                          <span className="text-[9px] font-bold tabular-nums bg-muted/50 rounded px-1.5 py-0.5">
+                            #{chunk.index + 1}
+                          </span>
+                          <span className={`text-[9px] font-bold ${chunk.isClient ? 'text-purple-500' : 'text-primary/70'}`}>
+                            {chunk.isClient ? '↑ CLIENT' : '↓ SERVER'}
+                          </span>
+                        </div>
+                        <span className="text-[9px] text-muted-foreground font-mono">{formatBytes(chunk.bytes)}</span>
+                      </div>
+                      {/* Wire content — single JSONL line */}
+                      <div className="px-3 py-2 font-mono text-[10px] leading-relaxed overflow-x-auto custom-scrollbar-sm bg-card/50">
+                        <code className="text-foreground/80 break-all">{chunk.wire}</code>
                       </div>
                     </div>
                   ))}
+                  {/* Streaming cursor */}
+                  {playbackState === 'playing' && progress < totalChunks && (
+                    <div className="flex items-center gap-2 py-2 text-xs text-muted-foreground">
+                      <span className="w-1.5 h-3 bg-primary animate-pulse rounded-sm" />
+                      <span>Waiting for next chunk...</span>
+                    </div>
+                  )}
                   <div ref={dataEndRef} className="h-2" />
                 </div>
 
@@ -271,7 +268,6 @@ export default function DojoPage() {
                   <h2 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5 mb-2">
                     <Settings className="h-3 w-3" /> Configuration
                   </h2>
-                  {/* Scenario */}
                   <div className="rounded-lg border border-border/50 bg-card p-4 shadow-sm space-y-2">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
                       <Activity className="h-4 w-4 text-primary" /> Scenario
@@ -281,17 +277,14 @@ export default function DojoPage() {
                         onChange={(e) => handleScenarioChange(e.target.value as ScenarioId)}
                         className="w-full text-sm p-2 pl-3 pr-8 border border-border/50 rounded-lg bg-background appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                       >
-                        {Object.keys(scenarios).map(id => (
-                          <option key={id} value={id}>{id}</option>
-                        ))}
+                        {Object.keys(scenarios).map(id => <option key={id} value={id}>{id}</option>)}
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     </div>
                     <p className="text-[11px] text-muted-foreground">
-                      {(scenarios[selectedScenario] as any)?.length || 0} messages • {totalStreamLines} stream lines
+                      {totalChunks} chunks • {formatBytes(totalBytes)}
                     </p>
                   </div>
-                  {/* Renderer */}
                   <div className="rounded-lg border border-border/50 bg-card p-4 shadow-sm space-y-2">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
                       <Monitor className="h-4 w-4 text-primary" /> Renderer
@@ -306,7 +299,6 @@ export default function DojoPage() {
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                     </div>
                   </div>
-                  {/* Transport */}
                   <div className="rounded-lg border border-border/50 bg-card p-4 shadow-sm space-y-2">
                     <h3 className="text-sm font-semibold flex items-center gap-2">
                       <Zap className="h-4 w-4 text-primary" /> Transport
@@ -400,7 +392,9 @@ export default function DojoPage() {
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156,163,175,0.3); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(156,163,175,0.5); }
+        .custom-scrollbar-sm::-webkit-scrollbar { height: 4px; }
+        .custom-scrollbar-sm::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar-sm::-webkit-scrollbar-thumb { background: rgba(156,163,175,0.3); border-radius: 10px; }
         .bg-dot-pattern { background-image: radial-gradient(rgba(156,163,175,0.15) 1px, transparent 1px); background-size: 16px 16px; }
       `}} />
     </div>

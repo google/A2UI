@@ -2,163 +2,122 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
 export type PlaybackState = 'playing' | 'paused' | 'stopped';
 
-export interface StreamLine {
-  /** Index of the parent message in the scenario */
-  messageIndex: number;
-  /** The line number within the stringified JSON (0-based) */
-  lineIndex: number;
-  /** The actual text content of this line */
-  text: string;
+export interface StreamChunk {
+  /** Index in the scenario message array */
+  index: number;
+  /** The raw JSONL line (compact JSON, as it goes over the wire) */
+  wire: string;
+  /** The parsed message object */
+  message: any;
   /** Whether this is a client event (↑) or server event (↓) */
   isClient: boolean;
-  /** Whether this is the first line of a new message */
-  isFirstLine: boolean;
-  /** Whether this is the last line of a message */
-  isLastLine: boolean;
+  /** Byte size of the wire representation */
+  bytes: number;
 }
 
 export interface LifecycleEvent {
-  /** Which stream line triggered this */
-  streamLineIndex: number;
-  /** The parent message index */
-  messageIndex: number;
+  /** Which chunk triggered this */
+  chunkIndex: number;
   /** Human-readable description */
   summary: string;
   /** Event category */
   type: 'surface' | 'components' | 'data' | 'action' | 'delete';
 }
 
-/** Explode scenario messages into individual streamable lines */
-function explodeToStreamLines(messages: any[]): StreamLine[] {
-  const lines: StreamLine[] = [];
-  for (let mi = 0; mi < messages.length; mi++) {
-    const msg = messages[mi];
-    const isClient = !!msg.action || !!msg.clientEvent;
-    const jsonStr = JSON.stringify(msg, null, 2);
-    const jsonLines = jsonStr.split('\n');
-    for (let li = 0; li < jsonLines.length; li++) {
-      lines.push({
-        messageIndex: mi,
-        lineIndex: li,
-        text: jsonLines[li] ?? '',
-        isClient,
-        isFirstLine: li === 0,
-        isLastLine: li === jsonLines.length - 1,
-      });
-    }
-  }
-  return lines;
+/** Convert scenario messages into stream chunks (real JSONL lines) */
+function toStreamChunks(messages: any[]): StreamChunk[] {
+  return messages.map((msg, i) => {
+    const wire = JSON.stringify(msg);
+    return {
+      index: i,
+      wire,
+      message: msg,
+      isClient: !!msg.action || !!msg.clientEvent,
+      bytes: new TextEncoder().encode(wire).length,
+    };
+  });
 }
 
 /** Generate lifecycle events from messages */
-function generateLifecycleEvents(messages: any[], streamLines: StreamLine[]): LifecycleEvent[] {
+function toLifecycleEvents(messages: any[]): LifecycleEvent[] {
   const events: LifecycleEvent[] = [];
-  // Find stream line index for the last line of each message
-  const messageEndLines = new Map<number, number>();
-  for (let i = 0; i < streamLines.length; i++) {
-    const sl = streamLines[i];
-    if (sl && sl.isLastLine) {
-      messageEndLines.set(sl.messageIndex, i);
-    }
-  }
-
-  for (let mi = 0; mi < messages.length; mi++) {
-    const msg = messages[mi];
-    const streamIdx = messageEndLines.get(mi) ?? 0;
-
+  for (let i = 0; i < messages.length; i++) {
+    const msg = messages[i];
     if (msg.beginRendering) {
-      const sid = msg.beginRendering.surfaceId || 'default';
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `Surface "${sid}" created`, type: 'surface' });
+      events.push({ chunkIndex: i, summary: `Surface "${msg.beginRendering.surfaceId || 'default'}" created`, type: 'surface' });
     }
     if (msg.createSurface) {
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `Surface "${msg.createSurface.surfaceId}" created (v0.9)`, type: 'surface' });
+      events.push({ chunkIndex: i, summary: `Surface "${msg.createSurface.surfaceId}" created`, type: 'surface' });
     }
     if (msg.surfaceUpdate) {
       const count = msg.surfaceUpdate.components?.length || 0;
       const types = msg.surfaceUpdate.components
         ?.map((c: any) => c.component ? Object.keys(c.component)[0] : c.type || '?')
-        .filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `${count} components registered: ${types?.join(', ')}`, type: 'components' });
+        .filter((v: string, j: number, a: string[]) => a.indexOf(v) === j);
+      events.push({ chunkIndex: i, summary: `${count} components registered: ${types?.join(', ')}`, type: 'components' });
     }
     if (msg.updateComponents) {
       const count = msg.updateComponents.components?.length || 0;
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `${count} components updated`, type: 'components' });
+      events.push({ chunkIndex: i, summary: `${count} components updated`, type: 'components' });
     }
     if (msg.dataModelUpdate) {
       const keys = msg.dataModelUpdate.contents?.map((c: any) => c.key).filter(Boolean) || [];
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `Data model updated: ${keys.join(', ')}`, type: 'data' });
+      events.push({ chunkIndex: i, summary: `Data model: ${keys.join(', ')}`, type: 'data' });
     }
     if (msg.updateDataModel) {
       const keys = msg.updateDataModel.contents?.map((c: any) => c.key).filter(Boolean) || [];
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `Data model updated: ${keys.join(', ')}`, type: 'data' });
+      events.push({ chunkIndex: i, summary: `Data model: ${keys.join(', ')}`, type: 'data' });
     }
     if (msg.clientEvent || msg.action) {
       const name = msg.clientEvent?.name || msg.action?.name || 'action';
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `User action: ${name}`, type: 'action' });
+      events.push({ chunkIndex: i, summary: `User action: ${name}`, type: 'action' });
     }
     if (msg.deleteSurface) {
-      events.push({ streamLineIndex: streamIdx, messageIndex: mi, summary: `Surface "${msg.deleteSurface.surfaceId}" deleted`, type: 'delete' });
+      events.push({ chunkIndex: i, summary: `Surface "${msg.deleteSurface.surfaceId}" deleted`, type: 'delete' });
     }
   }
   return events;
 }
 
-export function useStreamingPlayer(messages: any[], baseIntervalMs = 80) {
-  const streamLines = useMemo(() => explodeToStreamLines(messages), [messages]);
-  const lifecycleEvents = useMemo(() => generateLifecycleEvents(messages, streamLines), [messages, streamLines]);
+export function useStreamingPlayer(messages: any[], baseIntervalMs = 800) {
+  const chunks = useMemo(() => toStreamChunks(messages), [messages]);
+  const lifecycleEvents = useMemo(() => toLifecycleEvents(messages), [messages]);
 
   const [playbackState, setPlaybackState] = useState<PlaybackState>('stopped');
-  const [streamProgress, setStreamProgress] = useState(0); // index into streamLines
+  const [progress, setProgress] = useState(0); // 0 to chunks.length
   const [speed, setSpeed] = useState(1);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const totalStreamLines = streamLines.length;
+  const totalChunks = chunks.length;
 
-  // Reset on messages change
   useEffect(() => {
-    setStreamProgress(0);
+    setProgress(0);
     setPlaybackState('stopped');
   }, [messages]);
 
   const play = useCallback(() => {
-    if (streamProgress >= totalStreamLines) setStreamProgress(0);
+    if (progress >= totalChunks) setProgress(0);
     setPlaybackState('playing');
-  }, [streamProgress, totalStreamLines]);
+  }, [progress, totalChunks]);
 
   const pause = useCallback(() => setPlaybackState('paused'), []);
 
   const stop = useCallback(() => {
     setPlaybackState('stopped');
-    setStreamProgress(0);
+    setProgress(0);
   }, []);
 
   const seek = useCallback((index: number) => {
-    setStreamProgress(Math.max(0, Math.min(index, totalStreamLines)));
-  }, [totalStreamLines]);
+    setProgress(Math.max(0, Math.min(index, totalChunks)));
+  }, [totalChunks]);
 
-  /** Seek to the start of a specific message */
-  const seekToMessage = useCallback((messageIndex: number) => {
-    const idx = streamLines.findIndex(l => l.messageIndex === messageIndex);
-    if (idx >= 0) setStreamProgress(idx);
-  }, [streamLines]);
-
-  /** Seek to the end of a specific message (fully delivered) */
-  const seekToMessageEnd = useCallback((messageIndex: number) => {
-    let lastIdx = 0;
-    for (let i = 0; i < streamLines.length; i++) {
-      const sl = streamLines[i];
-      if (sl && sl.messageIndex === messageIndex) lastIdx = i;
-    }
-    setStreamProgress(lastIdx + 1);
-  }, [streamLines]);
-
-  // Playback timer
+  // Playback timer — one chunk per tick
   useEffect(() => {
     if (playbackState === 'playing') {
       const ms = baseIntervalMs / speed;
       timerRef.current = setInterval(() => {
-        setStreamProgress(prev => {
-          if (prev >= totalStreamLines) {
+        setProgress(prev => {
+          if (prev >= totalChunks) {
             setPlaybackState('paused');
             return prev;
           }
@@ -169,53 +128,37 @@ export function useStreamingPlayer(messages: any[], baseIntervalMs = 80) {
       clearInterval(timerRef.current);
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [playbackState, speed, totalStreamLines, baseIntervalMs]);
+  }, [playbackState, speed, totalChunks, baseIntervalMs]);
 
-  // Visible stream lines (up to current progress)
-  const visibleLines = streamLines.slice(0, streamProgress);
+  // Chunks received so far
+  const receivedChunks = chunks.slice(0, progress);
 
-  // Which full messages have been completely delivered
-  const completedMessageCount = useMemo(() => {
-    if (streamProgress === 0) return 0;
-    const lastVisible = streamLines[streamProgress - 1];
-    if (!lastVisible) return 0;
-    // A message is complete if its last line has been shown
-    if (lastVisible.isLastLine) return lastVisible.messageIndex + 1;
-    return lastVisible.messageIndex;
-  }, [streamProgress, streamLines]);
+  // Messages for the renderer (fully received)
+  const activeMessages = messages.slice(0, progress);
 
-  // Active messages for the renderer (only fully delivered ones)
-  const activeMessages = messages.slice(0, completedMessageCount);
+  // Visible lifecycle events
+  const visibleEvents = lifecycleEvents.filter(e => e.chunkIndex < progress);
 
-  // Which lifecycle events are visible
-  const visibleEvents = lifecycleEvents.filter(e => e.streamLineIndex < streamProgress);
-
-  // Current message being streamed
-  const currentStreamingMessage = useMemo(() => {
-    if (streamProgress === 0) return null;
-    const line = streamLines[streamProgress - 1];
-    if (!line) return null;
-    if (line.isLastLine) return null; // fully delivered, not "streaming"
-    return line.messageIndex;
-  }, [streamProgress, streamLines]);
+  // Total bytes received
+  const bytesReceived = receivedChunks.reduce((sum, c) => sum + c.bytes, 0);
+  const totalBytes = chunks.reduce((sum, c) => sum + c.bytes, 0);
 
   return {
     playbackState,
-    streamProgress,
-    totalStreamLines,
+    progress,
+    totalChunks,
     speed,
-    visibleLines,
+    chunks,
+    receivedChunks,
     activeMessages,
     visibleEvents,
     lifecycleEvents,
-    completedMessageCount,
-    currentStreamingMessage,
+    bytesReceived,
+    totalBytes,
     play,
     pause,
     stop,
     seek,
-    seekToMessage,
-    seekToMessageEnd,
     setSpeed,
   };
 }
