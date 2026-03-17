@@ -17,7 +17,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Styles from '@a2ui/web_core/styles/index';
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
@@ -49,7 +49,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
     }
   `,
 })
-export class Image extends DynamicComponent {
+export class Image extends DynamicComponent<Types.ImageNode> {
   readonly url = input.required<Primitives.StringValue | null>();
   readonly usageHint = input.required<Types.ResolvedImage['usageHint'] | null>();
   readonly altText = input.required<Primitives.StringValue | null>();

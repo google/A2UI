@@ -16,63 +16,53 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as Primitives from '@a2ui/web_core/types/primitives';
+import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-multiple-choice',
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <section [class]="theme.components.MultipleChoice.container">
-      <label [class]="theme.components.MultipleChoice.label" [for]="selectId">{{
-        description()
-      }}</label>
-
+    <div [class]="theme.components.MultipleChoice.container" [style]="theme.additionalStyles?.MultipleChoice">
+      <label [class]="theme.components.MultipleChoice.label" [for]="selectId">
+        {{ label() }}
+      </label>
       <select
-        (change)="handleChange($event)"
-        [id]="selectId"
-        [value]="selectValue()"
         [class]="theme.components.MultipleChoice.element"
-        [style]="theme.additionalStyles?.MultipleChoice"
+        [id]="selectId"
+        [value]="value() ?? ''"
+        (change)="onChange($event)"
       >
         @for (option of options(); track option.value) {
-          <option [value]="option.value">{{ resolvePrimitive(option.label) }}</option>
+          <option [value]="option.value">{{ option.label }}</option>
         }
       </select>
-    </section>
+    </div>
   `,
   styles: `
     :host {
       display: block;
-      flex: var(--weight);
-      min-height: 0;
-      overflow: auto;
-    }
-
-    select {
-      width: 100%;
-      box-sizing: border-box;
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MultipleChoice extends DynamicComponent {
-  readonly options = input.required<{ label: Primitives.StringValue; value: string }[]>();
-  readonly value = input.required<Primitives.StringValue | null>();
-  readonly description = input.required<string>();
+export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
+  readonly label = input.required<Types.StringValue | null>();
+  readonly options = input.required<{ label: Types.StringValue; value: string }[]>();
+  readonly value = input.required<Types.StringValue | null>();
 
   protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
-  protected selectValue = computed(() => super.resolvePrimitive(this.value()));
 
-  protected handleChange(event: Event) {
-    const path = this.value()?.path;
+  onChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.handleAction('change', { value });
+  }
 
-    if (!(event.target instanceof HTMLSelectElement) || !event.target.value || !path) {
-      return;
-    }
-
-    this.processor.setData(
-      this.component(),
-      this.processor.resolvePath(path, this.component().dataContextPath),
-      event.target.value,
-    );
+  private handleAction(name: string, context: Record<string, unknown>) {
+    super.sendAction({
+      name,
+      context: Object.entries(context).map(([key, val]) => ({
+        key,
+        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
+      }))
+    });
   }
 }

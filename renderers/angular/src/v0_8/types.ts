@@ -16,54 +16,37 @@
 
 import * as WebCore from '@a2ui/web_core/v0_8';
 
+/**
+ * Centralized namespace for v0.8 renderer types.
+ * Standardizes on the `...Node` suffix for component types and provides
+ * resolved variants for property binding.
+ */
 export namespace Types {
+  // Messages & Infrastructure
   export type Action = WebCore.Action;
   export type FunctionCall = unknown; // v0.8 might not have FunctionCall or structure differs
   export type SurfaceID = string;
+  export type StringValue = WebCore.StringValue;
+  export type BooleanValue = WebCore.BooleanValue;
+  export type NumberValue = WebCore.NumberValue;
 
-  export interface ClientToServerMessage {
-    action: Action;
-    version: string;
-    surfaceId?: string;
-  }
-  export type A2UIClientEventMessage = ClientToServerMessage;
+  export type A2UIClientEventMessage = WebCore.A2UIClientEventMessage;
+  export type ClientToServerMessage = A2UIClientEventMessage;
+  export type ServerToClientMessage = WebCore.ServerToClientMessage;
 
+  // Components & Interfaces
   export interface Component<P = Record<string, unknown>> {
     id: string;
     type: string;
     properties: P;
   }
 
-  export type AnyComponentNode = Component<any>;
-  export type CustomNode = AnyComponentNode;
+  export type AnyComponentNode = WebCore.AnyComponentNode;
+  export type CustomNode = WebCore.CustomNode;
 
-  export type ServerToClientMessage = WebCore.ServerToClientMessage;
+  export type Theme = WebCore.Theme;
 
-  export interface Theme {
-    components?: Record<string, unknown>;
-    additionalStyles?: string[];
-  }
-
-  // Aliases
-  export type Row = WebCore.RowNode;
-  export type Column = WebCore.ColumnNode;
-  export type Text = WebCore.TextNode;
-  export type List = WebCore.ListNode;
-  export type Image = WebCore.ImageNode;
-  export type Icon = WebCore.IconNode;
-  export type Video = WebCore.VideoNode;
-  export type Audio = WebCore.AudioPlayerNode;
-  export type Button = WebCore.ButtonNode;
-  export type Divider = WebCore.DividerNode;
-  export type MultipleChoice = WebCore.MultipleChoiceNode;
-  export type TextField = WebCore.TextFieldNode;
-  export type Checkbox = WebCore.CheckboxNode;
-  export type Slider = WebCore.SliderNode;
-  export type DateTimeInput = WebCore.DateTimeInputNode;
-  export type Tabs = WebCore.TabsNode;
-  export type Modal = WebCore.ModalNode;
-
-  // Explicit Node exports
+  // Node Types (Explicit suffix)
   export type RowNode = WebCore.RowNode;
   export type ColumnNode = WebCore.ColumnNode;
   export type TextNode = WebCore.TextNode;
@@ -81,6 +64,29 @@ export namespace Types {
   export type DateTimeInputNode = WebCore.DateTimeInputNode;
   export type TabsNode = WebCore.TabsNode;
   export type ModalNode = WebCore.ModalNode;
-
   export type CardNode = WebCore.CardNode;
+
+  // Resolved Property Types
+  export type ResolvedRow = WebCore.ResolvedRow;
+  export type ResolvedColumn = WebCore.ResolvedColumn;
+  export type ResolvedText = WebCore.ResolvedText;
+  export type ResolvedList = WebCore.ResolvedList;
+  export type ResolvedImage = WebCore.ResolvedImage;
+  export type ResolvedIcon = WebCore.ResolvedIcon;
+  export type ResolvedVideo = WebCore.ResolvedVideo;
+  export type ResolvedAudioPlayer = WebCore.ResolvedAudioPlayer;
+  export type ResolvedButton = WebCore.ResolvedButton;
+  export type ResolvedDivider = WebCore.ResolvedDivider;
+  export type ResolvedMultipleChoice = WebCore.ResolvedMultipleChoice;
+  export type ResolvedTextField = WebCore.ResolvedTextField;
+  export type ResolvedCheckbox = WebCore.ResolvedCheckbox;
+  export type ResolvedSlider = WebCore.ResolvedSlider;
+  export type ResolvedDateTimeInput = WebCore.ResolvedDateTimeInput;
+  export type ResolvedTabs = WebCore.ResolvedTabs;
+  export type ResolvedModal = WebCore.ResolvedModal;
+  export type ResolvedCard = WebCore.ResolvedCard;
+
+  // Markdown
+  export type MarkdownRenderer = WebCore.MarkdownRenderer;
+  export type MarkdownRendererOptions = WebCore.MarkdownRendererOptions;
 }

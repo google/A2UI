@@ -16,36 +16,24 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as Primitives from '@a2ui/web_core/types/primitives';
+import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-audio',
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    @let resolvedUrl = this.resolvedUrl();
-
-    @if (resolvedUrl) {
-      <section [class]="theme.components.AudioPlayer" [style]="theme.additionalStyles?.AudioPlayer">
-        <audio controls [src]="resolvedUrl"></audio>
-      </section>
-    }
+    <audio controls [src]="resolvedUrl()" [style]="theme.additionalStyles?.AudioPlayer"></audio>
   `,
   styles: `
     :host {
-      display: block;
-      flex: var(--weight);
-      min-height: 0;
-      overflow: auto;
+      display: flex;
     }
-
     audio {
-      display: block;
       width: 100%;
-      box-sizing: border-box;
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Audio extends DynamicComponent {
-  readonly url = input.required<Primitives.StringValue | null>();
+export class AudioPlayer extends DynamicComponent<Types.AudioPlayerNode> {
+  readonly url = input.required<Types.StringValue | null>();
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 }

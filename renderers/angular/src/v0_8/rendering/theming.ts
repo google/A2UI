@@ -14,9 +14,35 @@
  * limitations under the License.
  */
 
-import * as Types from '@a2ui/web_core/types/types';
-import { InjectionToken } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Types } from '../types';
 
-export const Theme = new InjectionToken<Theme>('Theme');
+@Injectable({
+  providedIn: 'root',
+})
+export class Theme {
+  components: Types.Theme['components'] = {} as Types.Theme['components'];
+  elements: Types.Theme['elements'] = {} as Types.Theme['elements'];
+  markdown: Types.Theme['markdown'] = {
+    p: [],
+    h1: [],
+    h2: [],
+    h3: [],
+    h4: [],
+    h5: [],
+    ul: [],
+    ol: [],
+    li: [],
+    a: [],
+    strong: [],
+    em: [],
+  };
+  additionalStyles?: Types.Theme['additionalStyles'];
 
-export type Theme = Types.Theme;
+  update(theme: Types.Theme) {
+    this.components = theme.components;
+    this.elements = theme.elements;
+    this.markdown = theme.markdown;
+    this.additionalStyles = theme.additionalStyles;
+  }
+}

@@ -16,7 +16,7 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as Primitives from '@a2ui/web_core/types/primitives';
+import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-video',
@@ -45,7 +45,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
     }
   `,
 })
-export class Video extends DynamicComponent {
-  readonly url = input.required<Primitives.StringValue | null>();
+export class Video extends DynamicComponent<Types.VideoNode> {
+  readonly url = input.required<Types.StringValue | null>();
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
 }

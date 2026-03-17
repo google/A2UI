@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import * as Primitives from '@a2ui/web_core/types/primitives';
-import * as Types from '@a2ui/web_core/types/types';
 import { Directive, inject, input } from '@angular/core';
 import { MessageProcessor } from '../data';
 import { Theme } from './theming';
+import { Types } from '../types';
 
 let idCounter = 0;
 
@@ -42,11 +41,11 @@ export abstract class DynamicComponent<T extends Types.AnyComponentNode = Types.
 
     if (action.context) {
       for (const item of action.context) {
-        if (item.value.literalBoolean) {
+        if (item.value.literalBoolean !== undefined) {
           context[item.key] = item.value.literalBoolean;
-        } else if (item.value.literalNumber) {
+        } else if (item.value.literalNumber !== undefined) {
           context[item.key] = item.value.literalNumber;
-        } else if (item.value.literalString) {
+        } else if (item.value.literalString !== undefined) {
           context[item.key] = item.value.literalString;
         } else if (item.value.path) {
           const path = this.processor.resolvePath(item.value.path, component.dataContextPath);
@@ -69,21 +68,21 @@ export abstract class DynamicComponent<T extends Types.AnyComponentNode = Types.
     return this.processor.dispatch(message);
   }
 
-  protected resolvePrimitive(value: Primitives.StringValue | null): string | null;
-  protected resolvePrimitive(value: Primitives.BooleanValue | null): boolean | null;
-  protected resolvePrimitive(value: Primitives.NumberValue | null): number | null;
+  protected resolvePrimitive(value: Types.StringValue | null): string | null;
+  protected resolvePrimitive(value: Types.BooleanValue | null): boolean | null;
+  protected resolvePrimitive(value: Types.NumberValue | null): number | null;
   protected resolvePrimitive(
-    value: Primitives.StringValue | Primitives.BooleanValue | Primitives.NumberValue | null,
+    value: Types.StringValue | Types.BooleanValue | Types.NumberValue | null,
   ) {
     const component = this.component();
     const surfaceId = this.surfaceId();
 
     if (!value || typeof value !== 'object') {
       return null;
-    } else if (value.literal != null) {
+    } else if ('literal' in value && value.literal != null) {
       return value.literal;
     } else if (value.path) {
-      return this.processor.getData(component, value.path, surfaceId ?? undefined);
+      return this.processor.getData(component, value.path, surfaceId ?? undefined) as any;
     } else if ('literalString' in value) {
       return value.literalString;
     } else if ('literalNumber' in value) {

@@ -14,115 +14,61 @@
  * limitations under the License.
  */
 
-import { computed, Component, input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as Primitives from '@a2ui/web_core/types/primitives';
+import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-datetime-input',
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <section [class]="theme.components.DateTimeInput.container">
-      <label [for]="inputId" [class]="theme.components.DateTimeInput.label">{{ label() }}</label>
-
+    <div [class]="theme.components.DateTimeInput.container" [style]="theme.additionalStyles?.DateTimeInput">
+      <label [class]="theme.components.DateTimeInput.label" [for]="inputId">
+        {{ label() }}
+      </label>
       <input
-        autocomplete="off"
-        [attr.type]="inputType()"
-        [id]="inputId"
+        [type]="inputType()"
         [class]="theme.components.DateTimeInput.element"
-        [style]="theme.additionalStyles?.DateTimeInput"
-        [value]="inputValue()"
-        (input)="handleInput($event)"
+        [id]="inputId"
+        [value]="resolvedValue() ?? ''"
+        (change)="onChange($event)"
       />
-    </section>
+    </div>
   `,
   styles: `
     :host {
       display: block;
-      flex: var(--weight);
-      min-height: 0;
-      overflow: auto;
-    }
-
-    input {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatetimeInput extends DynamicComponent {
-  readonly value = input.required<Primitives.StringValue | null>();
-  readonly enableDate = input.required<boolean>();
-  readonly enableTime = input.required<boolean>();
+export class DateTimeInput extends DynamicComponent<Types.DateTimeInputNode> {
+  readonly label = input<string>('');
+  readonly value = input.required<Types.StringValue | null>();
+  readonly enableDate = input<boolean>(true);
+  readonly enableTime = input<boolean>(false);
+
   protected readonly inputId = super.getUniqueId('a2ui-datetime-input');
 
   protected inputType = computed(() => {
-    const enableDate = this.enableDate();
-    const enableTime = this.enableTime();
-
-    if (enableDate && enableTime) {
-      return 'datetime-local';
-    } else if (enableDate) {
-      return 'date';
-    } else if (enableTime) {
-      return 'time';
-    }
-
-    return 'datetime-local';
+    if (this.enableDate() && this.enableTime()) return 'datetime-local';
+    if (this.enableTime()) return 'time';
+    return 'date';
   });
 
-  protected label = computed(() => {
-    // TODO: this should likely be passed from the model.
-    const inputType = this.inputType();
+  protected resolvedValue = computed(() => super.resolvePrimitive(this.value()));
 
-    if (inputType === 'date') {
-      return 'Date';
-    } else if (inputType === 'time') {
-      return 'Time';
-    }
-
-    return 'Date & Time';
-  });
-
-  protected inputValue = computed(() => {
-    const inputType = this.inputType();
-    const parsed = super.resolvePrimitive(this.value()) || '';
-    const date = parsed ? new Date(parsed) : null;
-
-    if (!date || isNaN(date.getTime())) {
-      return '';
-    }
-
-    const year = this.padNumber(date.getFullYear());
-    const month = this.padNumber(date.getMonth());
-    const day = this.padNumber(date.getDate());
-    const hours = this.padNumber(date.getHours());
-    const minutes = this.padNumber(date.getMinutes());
-
-    // Browsers are picky with what format they allow for the `value` attribute of date/time inputs.
-    // We need to parse it out of the provided value. Note that we don't use `toISOString`,
-    // because the resulting value is relative to UTC.
-    if (inputType === 'date') {
-      return `${year}-${month}-${day}`;
-    } else if (inputType === 'time') {
-      return `${hours}:${minutes}`;
-    }
-
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  });
-
-  protected handleInput(event: Event) {
-    const path = this.value()?.path;
-
-    if (!(event.target instanceof HTMLInputElement) || !path) {
-      return;
-    }
-
-    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
+  onChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.handleAction('change', { value });
   }
 
-  private padNumber(value: number) {
-    return value.toString().padStart(2, '0');
+  private handleAction(name: string, context: Record<string, unknown>) {
+    super.sendAction({
+      name,
+      context: Object.entries(context).map(([key, val]) => ({
+        key,
+        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
+      }))
+    });
   }
 }

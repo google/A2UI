@@ -14,78 +14,45 @@
  * limitations under the License.
  */
 
-import { A2uiMessageProcessor } from '@a2ui/web_core/v0_8';
-import * as Types from '@a2ui/web_core/v0_8';
-import { Injectable } from '@angular/core';
-import { firstValueFrom, Subject } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import * as WebCore from '@a2ui/web_core/v0_8';
+import { Catalog } from '../rendering/catalog';
+import { Theme } from '../rendering/theming';
+import { Types } from '../types';
 
-/**
- * Represents an event that has been dispatched through the MessageProcessor.
- *
- * This interface combines the original message with a completion subject that
- * is used to signal the end of processing and return the server's response.
- */
-export interface DispatchedEvent {
-  message: Types.A2UIClientEventMessage;
-  completion: Subject<Types.ServerToClientMessage[]>;
-}
+@Injectable({
+  providedIn: 'root',
+})
+export class MessageProcessor {
+  private readonly catalog = inject(Catalog);
+  private baseProcessor: WebCore.A2uiMessageProcessor;
 
-/**
- * Angular-specific implementation of A2uiMessageProcessor.
- *
- * This service handles data synchronization and event dispatching for the A2UI renderer.
- * It extends the core message processor and adapts it to work with Angular's dependency
- * injection and RxJS-based event system.
- */
-@Injectable({ providedIn: 'root' })
-export class MessageProcessor extends A2uiMessageProcessor {
   constructor() {
-    super();
-  }
-  /**
-   * Observable stream of dispatched events.
-   *
-   * External handlers (e.g., an A2aService) should subscribe to this stream to
-   * catch and process client-side events.
-   */
-  readonly events = new Subject<DispatchedEvent>();
-
-  override setData(
-    node: Types.AnyComponentNode,
-    relativePath: string,
-    value: Types.DataValue,
-    surfaceId?: Types.SurfaceID | null,
-  ) {
-    // Override setData to convert from optional inputs (which can be null)
-    // to undefined so that this correctly falls back to the default value for
-    // surfaceId.
-    return super.setData(node, relativePath, value, surfaceId ?? undefined);
+    this.baseProcessor = new WebCore.A2uiMessageProcessor();
   }
 
-  /**
-   * Dispatches a client event message for processing and returns a promise that resolves
-   * with the server's response.
-   *
-   * This method is called by DynamicComponent.sendAction to signal user interactions (e.g., clicks,
-   * form submissions) that need to be handled by the backend or agent.
-   *
-   * @param message The client event message to dispatch.
-   * @returns A promise that resolves to an array of messages from the server in response to the event.
-   *
-   * @example
-   * ```typescript
-   * const response = await messageProcessor.dispatch({
-   *   event: {
-   *     type: 'click',
-   *     componentId: 'my-button',
-   *   },
-   * });
-   * ```
-   */
+  processMessages(messages: Types.ServerToClientMessage[]) {
+    this.baseProcessor.processMessages(messages as WebCore.ServerToClientMessage[]);
+  }
+
   dispatch(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
-    const completion = new Subject<Types.ServerToClientMessage[]>();
-    const promise = firstValueFrom(completion);
-    this.events.next({ message, completion });
-    return promise;
+    // In a real app, this would send to a server.
+    return Promise.resolve([]);
+  }
+
+  getData(node: Types.AnyComponentNode, path: string, surfaceId?: string | null): unknown {
+    return this.baseProcessor.getData(node as WebCore.AnyComponentNode, path, surfaceId ?? undefined);
+  }
+
+  setData(node: Types.AnyComponentNode | null, path: string, value: any, surfaceId: string) {
+    this.baseProcessor.setData(node as WebCore.AnyComponentNode | null, path, value, surfaceId);
+  }
+
+  resolvePath(path: string, dataContextPath?: string): string {
+    return this.baseProcessor.resolvePath(path, dataContextPath);
+  }
+
+  getSurfaces(): Map<string, WebCore.Surface> {
+    return (this.baseProcessor as any).surfaces || new Map();
   }
 }

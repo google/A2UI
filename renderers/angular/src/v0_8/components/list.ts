@@ -15,7 +15,7 @@
  */
 
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 
@@ -65,5 +65,6 @@ import { Renderer } from '../rendering/renderer';
   `,
 })
 export class List extends DynamicComponent<Types.ListNode> {
-  readonly direction = input<'vertical' | 'horizontal'>('vertical');
+  readonly alignment = input<Types.ResolvedList['alignment']>('stretch');
+  readonly direction = input<Types.ResolvedList['direction']>('vertical');
 }

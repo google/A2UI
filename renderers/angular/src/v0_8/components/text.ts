@@ -26,7 +26,7 @@ import { AsyncPipe } from '@angular/common';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Primitives from '@a2ui/web_core/types/primitives';
 import * as Styles from '@a2ui/web_core/styles/index';
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 import { MarkdownRenderer } from '../data/markdown';
 
 interface HintedStyles {
@@ -67,7 +67,7 @@ interface HintedStyles {
     }
   `,
 })
-export class Text extends DynamicComponent {
+export class Text extends DynamicComponent<Types.TextNode> {
   private markdownRenderer = inject(MarkdownRenderer);
   readonly text = input.required<Primitives.StringValue | null>();
   readonly usageHint = input.required<Types.ResolvedText['usageHint'] | null>();
@@ -131,9 +131,9 @@ export class Text extends DynamicComponent {
     let additionalStyles: Record<string, string> = {};
 
     if (this.areHintedStyles(styles)) {
-      additionalStyles = styles[usageHint ?? 'body'];
-    } else {
-      additionalStyles = styles;
+      additionalStyles = (styles as any)[usageHint ?? 'body'] || {};
+    } else if (typeof styles === 'object' && styles !== null) {
+      additionalStyles = styles as Record<string, string>;
     }
 
     return additionalStyles;

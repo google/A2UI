@@ -14,45 +14,41 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-card',
   imports: [Renderer],
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.Eager,
-  styles: `
-    a2ui-card {
-      display: block;
-      flex: var(--weight);
-      min-height: 0;
-      overflow: auto;
-    }
-
-    a2ui-card > section {
-      height: 100%;
-      width: 100%;
-      min-height: 0;
-      overflow: auto;
-    }
-
-    a2ui-card > section > * {
-      height: 100%;
-      width: 100%;
-    }
-  `,
   template: `
-    @let properties = component().properties;
-    @let children = properties.children || [properties.child];
-
-    <section [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
-      @for (child of children; track child) {
-        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+    <div [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
+      @if (child()) {
+        <ng-container
+          a2ui-renderer
+          [surfaceId]="surfaceId()!"
+          [component]="child()!"
+        />
       }
-    </section>
+
+      @for (comp of children(); track comp.id) {
+        <ng-container
+          a2ui-renderer
+          [surfaceId]="surfaceId()!"
+          [component]="comp"
+        />
+      }
+    </div>
   `,
+  styles: `
+    :host {
+      display: block;
+    }
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Card extends DynamicComponent<Types.CardNode> {}
+export class Card extends DynamicComponent<Types.CardNode> {
+  readonly child = input<Types.AnyComponentNode | null>(null);
+  readonly children = input<Types.AnyComponentNode[]>([]);
+}

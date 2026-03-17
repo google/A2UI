@@ -14,23 +14,33 @@
  * limitations under the License.
  */
 
-import { Binding, InjectionToken, Type } from '@angular/core';
-import { DynamicComponent } from './dynamic-component';
-import * as Types from '@a2ui/web_core/types/types';
+import { Injectable, Type } from '@angular/core';
+import { Types } from '../types';
 
-export type CatalogLoader = () =>
-  | Promise<Type<DynamicComponent<any>>>
-  | Type<DynamicComponent<any>>;
+@Injectable({
+  providedIn: 'root',
+})
+export class Catalog {
+  private readonly components = new Map<string, Type<unknown>>();
+  private readonly instances = new Map<string, Types.AnyComponentNode>();
 
-export type CatalogEntry<T extends Types.AnyComponentNode> =
-  | CatalogLoader
-  | {
-    type: CatalogLoader;
-    bindings: (data: T) => Binding[];
-  };
+  registerComponent(type: string, component: Type<unknown>) {
+    this.components.set(type, component);
+  }
 
-export interface Catalog {
-  [key: string]: CatalogEntry<Types.AnyComponentNode>;
+  getComponentConfig(type: string): Type<unknown> | undefined {
+    return this.components.get(type);
+  }
+
+  registerInstance(id: string, node: Types.AnyComponentNode) {
+    this.instances.set(id, node);
+  }
+
+  getComponent(id: string): Types.AnyComponentNode | undefined {
+    return this.instances.get(id);
+  }
+
+  clear() {
+    this.instances.clear();
+  }
 }
-
-export const Catalog = new InjectionToken<Catalog>('Catalog');

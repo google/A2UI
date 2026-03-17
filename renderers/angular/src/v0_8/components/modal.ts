@@ -14,110 +14,57 @@
  * limitations under the License.
  */
 
-import {
-  Component,
-  signal,
-  viewChild,
-  ElementRef,
-  effect,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import * as Types from '@a2ui/web_core/types/types';
-import { Renderer } from '../rendering';
+import { Renderer } from '../rendering/renderer';
+import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-modal',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    @if (showDialog()) {
-      <dialog #dialog [class]="theme.components.Modal.backdrop" (click)="handleDialogClick($event)">
-        <section [class]="theme.components.Modal.element" [style]="theme.additionalStyles?.Modal">
-          <div class="controls">
-            <button (click)="closeDialog()">
-              <span class="g-icon">close</span>
-            </button>
-          </div>
+    <div class="a2ui-modal-entry-point">
+      <ng-container
+        a2ui-renderer
+        [surfaceId]="surfaceId()!"
+        [component]="entryPointChild()"
+        (click)="openModal()"
+      />
+    </div>
 
+    @if (isOpen()) {
+      <div [class]="theme.components.Modal.backdrop" (click)="closeModal()">
+        <div [class]="theme.components.Modal.element" (click)="$event.stopPropagation()">
           <ng-container
             a2ui-renderer
             [surfaceId]="surfaceId()!"
-            [component]="component().properties.contentChild"
+            [component]="contentChild()"
           />
-        </section>
-      </dialog>
-    } @else {
-      <section (click)="showDialog.set(true)">
-        <ng-container
-          a2ui-renderer
-          [surfaceId]="surfaceId()!"
-          [component]="component().properties.entryPointChild"
-        />
-      </section>
+        </div>
+      </div>
     }
   `,
   styles: `
-    dialog {
-      padding: 0;
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      overflow: visible;
-
-      & section {
-        & .controls {
-          display: flex;
-          justify-content: end;
-          margin-bottom: 4px;
-
-          & button {
-            padding: 0;
-            background: none;
-            width: 20px;
-            height: 20px;
-            pointer: cursor;
-            border: none;
-            cursor: pointer;
-          }
-        }
-      }
+    :host {
+      display: inline-block;
+    }
+    .a2ui-modal-entry-point {
+      cursor: pointer;
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Modal extends DynamicComponent<Types.ModalNode> {
-  protected readonly showDialog = signal(false);
-  protected readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('dialog');
+  readonly entryPointChild = input.required<Types.AnyComponentNode>();
+  readonly contentChild = input.required<Types.AnyComponentNode>();
 
-  constructor() {
-    super();
+  protected readonly isOpen = signal(false);
 
-    effect(() => {
-      const dialog = this.dialog();
-
-      if (dialog && !dialog.nativeElement.open) {
-        dialog.nativeElement.showModal();
-      }
-    });
+  protected openModal() {
+    this.isOpen.set(true);
   }
 
-  protected handleDialogClick(event: MouseEvent) {
-    if (event.target instanceof HTMLDialogElement) {
-      this.closeDialog();
-    }
-  }
-
-  protected closeDialog() {
-    const dialog = this.dialog();
-
-    if (!dialog) {
-      return;
-    }
-
-    if (!dialog.nativeElement.open) {
-      dialog.nativeElement.close();
-    }
-
-    this.showDialog.set(false);
+  protected closeModal() {
+    this.isOpen.set(false);
   }
 }

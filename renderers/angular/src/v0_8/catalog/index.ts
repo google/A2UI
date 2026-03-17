@@ -14,176 +14,53 @@
  * limitations under the License.
  */
 
-import { inputBinding } from '@angular/core';
-import * as Types from '@a2ui/web_core/types/types';
+import { Injectable, inject } from '@angular/core';
 import { Catalog } from '../rendering/catalog';
-import { Row } from '../components/row';
+
+// Components
+import { AudioPlayer } from '../components/audio';
+import { Button } from '../components/button';
+import { Card } from '../components/card';
+import { Checkbox } from '../components/checkbox';
 import { Column } from '../components/column';
+import { DateTimeInput } from '../components/datetime-input';
+import { Divider } from '../components/divider';
+import { Icon } from '../components/icon';
+import { Image } from '../components/image';
+import { List } from '../components/list';
+import { Modal } from '../components/modal';
+import { MultipleChoice } from '../components/multiple-choice';
+import { Row } from '../components/row';
+import { Slider } from '../components/slider';
+import { Tabs } from '../components/tabs';
 import { Text } from '../components/text';
+import { TextField } from '../components/text-field';
+import { Video } from '../components/video';
 
-export const DEFAULT_CATALOG: Catalog = {
-  Row: {
-    type: () => Row,
-    bindings: (node) => {
-      const properties = (node as Types.RowNode).properties;
-      return [
-        inputBinding('alignment', () => properties.alignment ?? 'stretch'),
-        inputBinding('distribution', () => properties.distribution ?? 'start'),
-      ];
-    },
-  },
+@Injectable({
+  providedIn: 'root',
+})
+export class StandardCatalog {
+  private readonly catalog = inject(Catalog);
 
-  Column: {
-    type: () => Column,
-    bindings: (node) => {
-      const properties = (node as Types.ColumnNode).properties;
-      return [
-        inputBinding('alignment', () => properties.alignment ?? 'stretch'),
-        inputBinding('distribution', () => properties.distribution ?? 'start'),
-      ];
-    },
-  },
-
-  List: {
-    type: () => import('../components/list').then((r) => r.List),
-    bindings: (node) => {
-      const properties = (node as Types.ListNode).properties;
-      return [inputBinding('direction', () => properties.direction ?? 'vertical')];
-    },
-  },
-
-  Card: () => import('../components/card').then((r) => r.Card),
-
-  Image: {
-    type: () => import('../components/image').then((r) => r.Image),
-    bindings: (node) => {
-      const properties = (node as Types.ImageNode).properties;
-      return [
-        inputBinding('url', () => properties.url),
-        inputBinding('usageHint', () => properties.usageHint),
-        inputBinding('altText', () => properties.altText ?? null),
-      ];
-    },
-  },
-
-  Icon: {
-    type: () => import('../components/icon').then((r) => r.Icon),
-    bindings: (node) => {
-      const properties = (node as Types.IconNode).properties;
-      return [inputBinding('name', () => properties.name)];
-    },
-  },
-
-  Video: {
-    type: () => import('../components/video').then((r) => r.Video),
-    bindings: (node) => {
-      const properties = (node as Types.VideoNode).properties;
-      return [inputBinding('url', () => properties.url)];
-    },
-  },
-
-  AudioPlayer: {
-    type: () => import('../components/audio').then((r) => r.Audio),
-    bindings: (node) => {
-      const properties = (node as Types.AudioPlayerNode).properties;
-      return [inputBinding('url', () => properties.url)];
-    },
-  },
-
-  Text: {
-    type: () => Text,
-    bindings: (node) => {
-      const properties = (node as Types.TextNode).properties;
-      return [
-        inputBinding('text', () => properties.text),
-        inputBinding('usageHint', () => properties.usageHint || null),
-      ];
-    },
-  },
-
-  Button: {
-    type: () => import('../components/button').then((r) => r.Button),
-    bindings: (node) => {
-      const properties = (node as Types.ButtonNode).properties;
-      return [
-        inputBinding('action', () => properties.action),
-        inputBinding('primary', () => properties.primary),
-      ];
-    },
-  },
-
-  Divider: () => import('../components/divider').then((r) => r.Divider),
-
-  MultipleChoice: {
-    type: () => import('../components/multiple-choice').then((r) => r.MultipleChoice),
-    bindings: (node) => {
-      const properties = (node as Types.MultipleChoiceNode).properties;
-      return [
-        inputBinding('options', () => properties.options || []),
-        inputBinding('value', () => properties.selections),
-        inputBinding('description', () => 'Select an item'), // TODO: this should be defined in the properties
-      ];
-    },
-  },
-
-  TextField: {
-    type: () => import('../components/text-field').then((r) => r.TextField),
-    bindings: (node) => {
-      const properties = (node as Types.TextFieldNode).properties;
-      return [
-        inputBinding('text', () => properties.text ?? null),
-        inputBinding('label', () => properties.label),
-        inputBinding('textFieldType', () => properties.textFieldType),
-      ];
-    },
-  },
-
-  DateTimeInput: {
-    type: () => import('../components/datetime-input').then((r) => r.DatetimeInput),
-    bindings: (node) => {
-      const properties = (node as Types.DateTimeInputNode).properties;
-      return [
-        inputBinding('enableDate', () => properties.enableDate),
-        inputBinding('enableTime', () => properties.enableTime),
-        inputBinding('value', () => properties.value),
-      ];
-    },
-  },
-
-  CheckBox: {
-    type: () => import('../components/checkbox').then((r) => r.Checkbox),
-    bindings: (node) => {
-      const properties = (node as Types.CheckboxNode).properties;
-      return [
-        inputBinding('label', () => properties.label),
-        inputBinding('value', () => properties.value),
-      ];
-    },
-  },
-
-  Slider: {
-    type: () => import('../components/slider').then((r) => r.Slider),
-    bindings: (node) => {
-      const properties = (node as Types.SliderNode).properties;
-      return [
-        inputBinding('value', () => properties.value),
-        inputBinding('minValue', () => properties.minValue),
-        inputBinding('maxValue', () => properties.maxValue),
-        inputBinding('label', () => ''), // TODO: this should be defined in the properties
-      ];
-    },
-  },
-
-  Tabs: {
-    type: () => import('../components/tabs').then((r) => r.Tabs),
-    bindings: (node) => {
-      const properties = (node as Types.TabsNode).properties;
-      return [inputBinding('tabs', () => properties.tabItems)];
-    },
-  },
-
-  Modal: {
-    type: () => import('../components/modal').then((r) => r.Modal),
-    bindings: () => [],
-  },
-};
+  register() {
+    this.catalog.registerComponent('AudioPlayer', AudioPlayer);
+    this.catalog.registerComponent('Button', Button);
+    this.catalog.registerComponent('Card', Card);
+    this.catalog.registerComponent('CheckBox', Checkbox);
+    this.catalog.registerComponent('Column', Column);
+    this.catalog.registerComponent('DateTimeInput', DateTimeInput);
+    this.catalog.registerComponent('Divider', Divider);
+    this.catalog.registerComponent('Icon', Icon);
+    this.catalog.registerComponent('Image', Image);
+    this.catalog.registerComponent('List', List);
+    this.catalog.registerComponent('Modal', Modal);
+    this.catalog.registerComponent('MultipleChoice', MultipleChoice);
+    this.catalog.registerComponent('Row', Row);
+    this.catalog.registerComponent('Slider', Slider);
+    this.catalog.registerComponent('Tabs', Tabs);
+    this.catalog.registerComponent('Text', Text);
+    this.catalog.registerComponent('TextField', TextField);
+    this.catalog.registerComponent('Video', Video);
+  }
+}

@@ -15,7 +15,7 @@
  */
 
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 

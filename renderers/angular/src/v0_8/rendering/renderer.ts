@@ -14,97 +14,63 @@
  * limitations under the License.
  */
 
-import {
-  Binding,
-  ComponentRef,
-  Directive,
-  DOCUMENT,
-  effect,
-  inject,
-  input,
-  inputBinding,
-  OnDestroy,
-  PLATFORM_ID,
-  Type,
-  untracked,
-  ViewContainerRef,
-} from '@angular/core';
-import * as Styles from '@a2ui/web_core/styles/index';
-import * as Types from '@a2ui/web_core/types/types';
+import { Component, effect, inject, input, viewChild, ViewContainerRef } from '@angular/core';
 import { Catalog } from './catalog';
-import { isPlatformBrowser } from '@angular/common';
+import { Types } from '../types';
 
-@Directive({
-  selector: 'ng-container[a2ui-renderer]',
+@Component({
+  selector: '[a2ui-renderer]',
+  template: `
+    <ng-template #container />
+  `,
+  styles: `
+    :host {
+      display: contents;
+    }
+  `,
 })
-export class Renderer implements OnDestroy {
-  private viewContainerRef = inject(ViewContainerRef);
-  private catalog = inject(Catalog);
-  private static hasInsertedStyles = false;
-
-  private currentRef: ComponentRef<unknown> | null = null;
-  private isDestroyed = false;
+export class Renderer {
+  private readonly catalog = inject(Catalog);
+  private readonly container = viewChild('container', { read: ViewContainerRef });
 
   readonly surfaceId = input.required<Types.SurfaceID>();
-  readonly component = input.required<Types.AnyComponentNode>();
+  readonly component = input.required<Types.AnyComponentNode | string>();
 
   constructor() {
     effect(() => {
-      const surfaceId = this.surfaceId();
-      const component = this.component();
-      untracked(() => this.render(surfaceId, component));
-    });
+      const container = this.container();
+      if (!container) return;
 
-    const platformId = inject(PLATFORM_ID);
-    const document = inject(DOCUMENT);
+      container.clear();
 
-    if (!Renderer.hasInsertedStyles && isPlatformBrowser(platformId)) {
-      const styles = document.createElement('style');
-      styles.textContent = Styles.structuralStyles;
-      document.head.appendChild(styles);
-      Renderer.hasInsertedStyles = true;
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.isDestroyed = true;
-    this.clear();
-  }
-
-  private async render(surfaceId: Types.SurfaceID, component: Types.AnyComponentNode) {
-    const config = this.catalog[component.type];
-    let newComponent: Type<unknown> | null = null;
-    let componentBindings: Binding[] | null = null;
-
-    if (typeof config === 'function') {
-      newComponent = await config();
-    } else if (typeof config === 'object') {
-      newComponent = await config.type();
-      componentBindings = config.bindings(component as any);
-    }
-
-    this.clear();
-
-    if (newComponent && !this.isDestroyed) {
-      const bindings = [
-        inputBinding('surfaceId', () => surfaceId),
-        inputBinding('component', () => component),
-        inputBinding('weight', () => component.weight ?? 'initial'),
-      ];
-
-      if (componentBindings) {
-        bindings.push(...componentBindings);
+      const nodeOrId = this.component();
+      let node: Types.AnyComponentNode;
+      if (typeof nodeOrId === 'string') {
+        const catalogNode = this.catalog.getComponent(nodeOrId);
+        if (!catalogNode) {
+          console.error(`Component not found: ${nodeOrId}`);
+          return;
+        }
+        node = catalogNode;
+      } else {
+        node = nodeOrId;
       }
 
-      this.currentRef = this.viewContainerRef.createComponent(newComponent, {
-        bindings,
-        injector: this.viewContainerRef.injector,
-      });
-    }
-  }
+      const componentType = this.catalog.getComponentConfig(node.type);
+      if (!componentType) {
+        console.error(`Unknown component type: ${node.type}`);
+        return;
+      }
 
-  private clear() {
-    this.currentRef?.destroy();
-    this.currentRef = null;
+      const componentRef = container.createComponent(componentType);
+      componentRef.setInput('surfaceId', this.surfaceId());
+      componentRef.setInput('component', node);
+      componentRef.setInput('weight', node.weight ?? 0);
+
+      const props = node.properties as Record<string, unknown>;
+      for (const [key, value] of Object.entries(props)) {
+        componentRef.setInput(key, value);
+      }
+    });
   }
 }

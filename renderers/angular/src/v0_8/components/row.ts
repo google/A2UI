@@ -17,7 +17,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-row',

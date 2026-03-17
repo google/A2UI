@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 
 export interface A2TextPayload {
   kind: 'text';
