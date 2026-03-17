@@ -14,7 +14,9 @@ Community and third-party A2UI renderer implementations.
 | **A2UI-Android** | Android (Compose) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/lmee/A2UI-Android?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/lmee/A2UI-Android?style=flat-square&label=updated) | [GitHub](https://github.com/lmee/A2UI-Android) |
 | **a2ui-react-native** | React Native | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/sivamrudram-eng/a2ui-react-native?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/sivamrudram-eng/a2ui-react-native?style=flat-square&label=updated) | [GitHub](https://github.com/sivamrudram-eng/a2ui-react-native) |
 | **@zhama/a2ui** | React (Web) | ✅ | ❌ | — | [npm](https://www.npmjs.com/package/@zhama/a2ui) |
-| **A2UI-react** | React (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/jem-computer/A2UI-react?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/jem-computer/A2UI-react?style=flat-square&label=updated) | [GitHub](https://github.com/jem-computer/A2UI-react) |
+| **A2UI-react** | React (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/jem-computer/A2UI-react?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/jem-computer/A2UI-react?style=flat-square&label=updated) | [GitHub](https://github.com/jem-computer/A2UI-react) |  
+| **a2ui-vue** | Vue (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/shawnwang15/a2ui-vue?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/shawnwang15/a2ui-vue?style=flat-square&label=updated) | [GitHub](https://github.com/shawnwang15/a2ui-vue)· [npm](https://www.npmjs.com/package/a2ui-vue) · [Docs](http://localhost:5173/a2ui-vue/en/) |
+
 
 ### Notable Mentions
 
