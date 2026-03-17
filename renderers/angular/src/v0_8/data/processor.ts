@@ -15,10 +15,16 @@
  */
 
 import { Injectable, inject } from '@angular/core';
+import { Subject, Observable } from 'rxjs';
 import * as WebCore from '@a2ui/web_core/v0_8';
 import { Catalog } from '../rendering/catalog';
 import { Theme } from '../rendering/theming';
 import { Types } from '../types';
+
+export interface A2UIClientEvent {
+  message: Types.A2UIClientEventMessage;
+  completion: Subject<Types.ServerToClientMessage[]>;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +32,9 @@ import { Types } from '../types';
 export class MessageProcessor {
   private readonly catalog = inject(Catalog);
   private baseProcessor: WebCore.A2uiMessageProcessor;
+
+  private readonly eventsSubject = new Subject<A2UIClientEvent>();
+  readonly events: Observable<A2UIClientEvent> = this.eventsSubject.asObservable();
 
   constructor() {
     this.baseProcessor = new WebCore.A2uiMessageProcessor();
@@ -36,8 +45,16 @@ export class MessageProcessor {
   }
 
   dispatch(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
-    // In a real app, this would send to a server.
-    return Promise.resolve([]);
+    const completion = new Subject<Types.ServerToClientMessage[]>();
+    const promise = new Promise<Types.ServerToClientMessage[]>((resolve, reject) => {
+      completion.subscribe({
+        next: (msgs) => resolve(msgs),
+        error: (err) => reject(err),
+      });
+    });
+
+    this.eventsSubject.next({ message, completion });
+    return promise;
   }
 
   getData(node: Types.AnyComponentNode, path: string, surfaceId?: string | null): unknown {
@@ -54,5 +71,9 @@ export class MessageProcessor {
 
   getSurfaces(): Map<string, WebCore.Surface> {
     return (this.baseProcessor as any).surfaces || new Map();
+  }
+
+  clearSurfaces() {
+    this.baseProcessor.clearSurfaces();
   }
 }

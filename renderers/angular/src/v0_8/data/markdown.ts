@@ -34,6 +34,14 @@ export class DefaultMarkdownRenderer extends MarkdownRenderer {
   }
 }
 
-export function provideMarkdownRenderer() {
+export function provideMarkdownRenderer(renderFn?: Types.MarkdownRenderer) {
+  if (renderFn) {
+    return {
+      provide: MarkdownRenderer,
+      useValue: {
+        render: renderFn,
+      },
+    };
+  }
   return { provide: MarkdownRenderer, useClass: DefaultMarkdownRenderer };
 }

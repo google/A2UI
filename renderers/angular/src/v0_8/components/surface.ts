@@ -42,11 +42,12 @@ import { Types } from '../types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SurfaceHost {
+export class Surface {
   private readonly processor = inject(MessageProcessor);
   readonly surfaceId = input.required<Types.SurfaceID>();
+  readonly surfaceInput = input<Types.Surface | null>(null, { alias: 'surface' });
 
   protected readonly surface = computed(() => {
-    return this.processor.getSurfaces().get(this.surfaceId());
+    return this.surfaceInput() ?? this.processor.getSurfaces().get(this.surfaceId()) ?? null;
   });
 }

@@ -29,6 +29,7 @@ export namespace Types {
   export type StringValue = WebCore.StringValue;
   export type BooleanValue = WebCore.BooleanValue;
   export type NumberValue = WebCore.NumberValue;
+  export type Surface = WebCore.Surface;
 
   export type A2UIClientEventMessage = WebCore.A2UIClientEventMessage;
   export type ClientToServerMessage = A2UIClientEventMessage;

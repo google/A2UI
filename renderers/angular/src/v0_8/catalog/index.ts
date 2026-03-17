@@ -37,6 +37,30 @@ import { Text } from '../components/text';
 import { TextField } from '../components/text-field';
 import { Video } from '../components/video';
 
+export function registerStandardComponents(catalog: Catalog) {
+  catalog.registerComponent('AudioPlayer', AudioPlayer);
+  catalog.registerComponent('Button', Button);
+  catalog.registerComponent('Card', Card);
+  catalog.registerComponent('CheckBox', Checkbox);
+  catalog.registerComponent('Column', Column);
+  catalog.registerComponent('DateTimeInput', DateTimeInput);
+  catalog.registerComponent('Divider', Divider);
+  catalog.registerComponent('Icon', Icon);
+  catalog.registerComponent('Image', Image);
+  catalog.registerComponent('List', List);
+  catalog.registerComponent('Modal', Modal);
+  catalog.registerComponent('MultipleChoice', MultipleChoice);
+  catalog.registerComponent('Row', Row);
+  catalog.registerComponent('Slider', Slider);
+  catalog.registerComponent('Tabs', Tabs);
+  catalog.registerComponent('Text', Text);
+  catalog.registerComponent('TextField', TextField);
+  catalog.registerComponent('Video', Video);
+}
+
+export const DEFAULT_CATALOG = new Catalog();
+registerStandardComponents(DEFAULT_CATALOG);
+
 @Injectable({
   providedIn: 'root',
 })
@@ -44,23 +68,6 @@ export class StandardCatalog {
   private readonly catalog = inject(Catalog);
 
   register() {
-    this.catalog.registerComponent('AudioPlayer', AudioPlayer);
-    this.catalog.registerComponent('Button', Button);
-    this.catalog.registerComponent('Card', Card);
-    this.catalog.registerComponent('CheckBox', Checkbox);
-    this.catalog.registerComponent('Column', Column);
-    this.catalog.registerComponent('DateTimeInput', DateTimeInput);
-    this.catalog.registerComponent('Divider', Divider);
-    this.catalog.registerComponent('Icon', Icon);
-    this.catalog.registerComponent('Image', Image);
-    this.catalog.registerComponent('List', List);
-    this.catalog.registerComponent('Modal', Modal);
-    this.catalog.registerComponent('MultipleChoice', MultipleChoice);
-    this.catalog.registerComponent('Row', Row);
-    this.catalog.registerComponent('Slider', Slider);
-    this.catalog.registerComponent('Tabs', Tabs);
-    this.catalog.registerComponent('Text', Text);
-    this.catalog.registerComponent('TextField', TextField);
-    this.catalog.registerComponent('Video', Video);
+    registerStandardComponents(this.catalog);
   }
 }
