@@ -9,19 +9,8 @@
       "description": "The unique identifier for a component, used for both definitions and references within the same surface."
     },
     "CallId": {
-      "type": "object",
-      "description": "The unique identifier for a server initiated function call.",
-      "properties": {
-        "agentId": {
-          "type": "string",
-          "description": "Identifies the agent initiating the function call."
-        },
-        "callId": {
-          "type": "string",
-          "description": "Uniquely identifies this instance of the function call."
-        }
-      },
-      "required": ["callId"]
+      "type": "string",
+      "description": "The unique identifier for a server initiated function call."
     },
     "AccessibilityAttributes": {
       "type": "object",
