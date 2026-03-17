@@ -1,11 +1,11 @@
-/**
- * Copyright 2026 Google LLC
+/*
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,4 +14,16 @@
  * limitations under the License.
  */
 
-export * from './v0_8/public-api';
+import { Types } from '../types';
+
+export interface A2TextPayload {
+  kind: 'text';
+  text: string;
+}
+
+export interface A2DataPayload {
+  kind: 'data';
+  data: Types.ServerToClientMessage;
+}
+
+export type A2AServerPayload = Array<A2DataPayload | A2TextPayload> | { error: string };
