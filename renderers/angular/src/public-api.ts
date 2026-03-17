@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export * from '../v0_8/public-api';
+export * from './v0_8/public-api';

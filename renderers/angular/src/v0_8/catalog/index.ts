@@ -17,9 +17,9 @@
 import { inputBinding } from '@angular/core';
 import * as Types from '@a2ui/web_core/types/types';
 import { Catalog } from '../rendering/catalog';
-import { Row } from './row';
-import { Column } from './column';
-import { Text } from './text';
+import { Row } from '../components/row';
+import { Column } from '../components/column';
+import { Text } from '../components/text';
 
 export const DEFAULT_CATALOG: Catalog = {
   Row: {
@@ -45,17 +45,17 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   List: {
-    type: () => import('./list').then((r) => r.List),
+    type: () => import('../components/list').then((r) => r.List),
     bindings: (node) => {
       const properties = (node as Types.ListNode).properties;
       return [inputBinding('direction', () => properties.direction ?? 'vertical')];
     },
   },
 
-  Card: () => import('./card').then((r) => r.Card),
+  Card: () => import('../components/card').then((r) => r.Card),
 
   Image: {
-    type: () => import('./image').then((r) => r.Image),
+    type: () => import('../components/image').then((r) => r.Image),
     bindings: (node) => {
       const properties = (node as Types.ImageNode).properties;
       return [
@@ -67,7 +67,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Icon: {
-    type: () => import('./icon').then((r) => r.Icon),
+    type: () => import('../components/icon').then((r) => r.Icon),
     bindings: (node) => {
       const properties = (node as Types.IconNode).properties;
       return [inputBinding('name', () => properties.name)];
@@ -75,7 +75,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Video: {
-    type: () => import('./video').then((r) => r.Video),
+    type: () => import('../components/video').then((r) => r.Video),
     bindings: (node) => {
       const properties = (node as Types.VideoNode).properties;
       return [inputBinding('url', () => properties.url)];
@@ -83,7 +83,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   AudioPlayer: {
-    type: () => import('./audio').then((r) => r.Audio),
+    type: () => import('../components/audio').then((r) => r.Audio),
     bindings: (node) => {
       const properties = (node as Types.AudioPlayerNode).properties;
       return [inputBinding('url', () => properties.url)];
@@ -102,7 +102,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Button: {
-    type: () => import('./button').then((r) => r.Button),
+    type: () => import('../components/button').then((r) => r.Button),
     bindings: (node) => {
       const properties = (node as Types.ButtonNode).properties;
       return [
@@ -112,10 +112,10 @@ export const DEFAULT_CATALOG: Catalog = {
     },
   },
 
-  Divider: () => import('./divider').then((r) => r.Divider),
+  Divider: () => import('../components/divider').then((r) => r.Divider),
 
   MultipleChoice: {
-    type: () => import('./multiple-choice').then((r) => r.MultipleChoice),
+    type: () => import('../components/multiple-choice').then((r) => r.MultipleChoice),
     bindings: (node) => {
       const properties = (node as Types.MultipleChoiceNode).properties;
       return [
@@ -127,7 +127,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   TextField: {
-    type: () => import('./text-field').then((r) => r.TextField),
+    type: () => import('../components/text-field').then((r) => r.TextField),
     bindings: (node) => {
       const properties = (node as Types.TextFieldNode).properties;
       return [
@@ -139,7 +139,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   DateTimeInput: {
-    type: () => import('./datetime-input').then((r) => r.DatetimeInput),
+    type: () => import('../components/datetime-input').then((r) => r.DatetimeInput),
     bindings: (node) => {
       const properties = (node as Types.DateTimeInputNode).properties;
       return [
@@ -151,7 +151,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   CheckBox: {
-    type: () => import('./checkbox').then((r) => r.Checkbox),
+    type: () => import('../components/checkbox').then((r) => r.Checkbox),
     bindings: (node) => {
       const properties = (node as Types.CheckboxNode).properties;
       return [
@@ -162,7 +162,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Slider: {
-    type: () => import('./slider').then((r) => r.Slider),
+    type: () => import('../components/slider').then((r) => r.Slider),
     bindings: (node) => {
       const properties = (node as Types.SliderNode).properties;
       return [
@@ -175,7 +175,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Tabs: {
-    type: () => import('./tabs').then((r) => r.Tabs),
+    type: () => import('../components/tabs').then((r) => r.Tabs),
     bindings: (node) => {
       const properties = (node as Types.TabsNode).properties;
       return [inputBinding('tabs', () => properties.tabItems)];
@@ -183,7 +183,7 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Modal: {
-    type: () => import('./modal').then((r) => r.Modal),
+    type: () => import('../components/modal').then((r) => r.Modal),
     bindings: () => [],
   },
 };
