@@ -21,6 +21,6 @@ import type {
   BooleanValueSchema,
 } from "../schema/common-types.js";
 
-export type StringValue = z.infer<typeof StringValueSchema>;
-export type NumberValue = z.infer<typeof NumberValueSchema>;
-export type BooleanValue = z.infer<typeof BooleanValueSchema>;
+export declare interface StringValue extends z.infer<typeof StringValueSchema> {}
+export declare interface NumberValue extends z.infer<typeof NumberValueSchema> {}
+export declare interface BooleanValue extends z.infer<typeof BooleanValueSchema> {}

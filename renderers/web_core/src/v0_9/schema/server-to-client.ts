@@ -91,14 +91,38 @@ export const DeleteSurfaceMessageSchema = z
   })
   .strict();
 
-export type CreateSurfaceMessage = z.infer<typeof CreateSurfaceMessageSchema>;
-export type UpdateComponentsMessage = z.infer<
-  typeof UpdateComponentsMessageSchema
->;
-export type UpdateDataModelMessage = z.infer<
-  typeof UpdateDataModelMessageSchema
->;
-export type DeleteSurfaceMessage = z.infer<typeof DeleteSurfaceMessageSchema>;
+export declare interface CreateSurfaceMessage extends z.infer<typeof CreateSurfaceMessageSchema> {
+  version: "v0.9";
+  createSurface: {
+    surfaceId: string;
+    catalogId: string;
+    theme?: any;
+    sendDataModel?: boolean;
+  };
+}
+export declare interface UpdateComponentsMessage
+  extends z.infer<typeof UpdateComponentsMessageSchema> {
+  version: "v0.9";
+  updateComponents: {
+    surfaceId: string;
+    components: any[];
+  };
+}
+export declare interface UpdateDataModelMessage
+  extends z.infer<typeof UpdateDataModelMessageSchema> {
+  version: "v0.9";
+  updateDataModel: {
+    surfaceId: string;
+    path?: string;
+    value?: any;
+  };
+}
+export declare interface DeleteSurfaceMessage extends z.infer<typeof DeleteSurfaceMessageSchema> {
+  version: "v0.9";
+  deleteSurface: {
+    surfaceId: string;
+  };
+}
 
 export const A2uiMessageSchema = z.union([
   CreateSurfaceMessageSchema,
@@ -108,4 +132,8 @@ export const A2uiMessageSchema = z.union([
 ]);
 
 /** A message sent from the A2UI server to the client. */
-export type A2uiMessage = z.infer<typeof A2uiMessageSchema>;
+export type A2uiMessage =
+  | CreateSurfaceMessage
+  | UpdateComponentsMessage
+  | UpdateDataModelMessage
+  | DeleteSurfaceMessage;
