@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export * from './components/surface';
+export * from './catalog/index';
 export * from './components/audio';
 export * from './components/button';
 export * from './components/card';
@@ -29,12 +29,12 @@ export * from './components/modal';
 export * from './components/multiple-choice';
 export * from './components/row';
 export * from './components/slider';
+export * from './components/surface';
 export * from './components/tabs';
 export * from './components/text-field';
 export * from './components/text';
 export * from './components/video';
-export * from './types';
-export * from './catalog/index';
+export * from './config';
 export * from './data/index';
 export * from './rendering/index';
-export * from './config';
+export * from './types';
