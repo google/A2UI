@@ -18,13 +18,18 @@ import { DataModel } from "./data-model.js";
 import { Catalog, ComponentApi } from "../catalog/types.js";
 import { SurfaceComponentsModel } from "./surface-components-model.js";
 import { EventEmitter, EventSource } from "../common/events.js";
+import { Action } from "../schema/common-types.js";
 
 /** A function that listens for actions emitted from a surface. */
-export type ActionListener = (action: any) => void | Promise<void>;
+export type ActionListener = (action: Action) => void | Promise<void>;
 
 /**
- * The state model for a single surface.
- * @template T The concrete type of the ComponentApi.
+ * The state model for a single UI surface.
+ * 
+ * A surface is the root container for a set of components and their associated data.
+ * It coordinates data binding, component state, and action dispatching.
+ * 
+ * @template T The concrete type of the ComponentApi from the catalog.
  */
 export class SurfaceModel<T extends ComponentApi> {
   /** The data model for this surface. */
@@ -32,10 +37,14 @@ export class SurfaceModel<T extends ComponentApi> {
   /** The collection of component models for this surface. */
   readonly componentsModel: SurfaceComponentsModel;
 
-  private readonly _onAction = new EventEmitter<any>();
+  private readonly _onAction = new EventEmitter<Action>();
+  private readonly _onError = new EventEmitter<any>();
 
   /** Fires whenever an action is dispatched from this surface. */
-  readonly onAction: EventSource<any> = this._onAction;
+  readonly onAction: EventSource<Action> = this._onAction;
+
+  /** Fires whenever an error occurs on this surface. */
+  readonly onError: EventSource<any> = this._onError;
 
   /**
    * Creates a new surface model.
@@ -58,8 +67,20 @@ export class SurfaceModel<T extends ComponentApi> {
    *
    * @param action The action object to dispatch.
    */
-  async dispatchAction(action: any): Promise<void> {
+  async dispatchAction(action: Action): Promise<void> {
     await this._onAction.emit(action);
+  }
+
+  /**
+   * Dispatches an error from this surface to listeners.
+   *
+   * @param error The error object to dispatch, conforming to client_to_server schema.
+   */
+  async dispatchError(error: { code: string; message: string; [key: string]: any }): Promise<void> {
+    await this._onError.emit({
+      ...error,
+      surfaceId: this.id,
+    });
   }
 
   /**

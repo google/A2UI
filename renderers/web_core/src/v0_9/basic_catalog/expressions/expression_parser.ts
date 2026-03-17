@@ -17,7 +17,15 @@
 import { DynamicValue } from "../../schema/common-types.js";
 import { A2uiExpressionError } from "../../errors.js";
 
+/**
+ * A parser for A2UI expressions, supporting string interpolation and functional calls.
+ * 
+ * The parser converts strings with `${...}` placeholders into arrays of `DynamicValue`s.
+ * It supports literals (strings, numbers, booleans), path-based data bindings, and
+ * nested function calls with named arguments.
+ */
 export class ExpressionParser {
+  /** The maximum allowed recursion depth for nested expressions to prevent stack overflows. */
   private static readonly MAX_DEPTH = 10;
 
   /**
@@ -104,6 +112,13 @@ export class ExpressionParser {
 
   /**
    * Parses a single expression string into a DynamicValue.
+   * 
+   * Unlike `parse()`, which handles mixed literal text and interpolations,
+   * this assumes the entire string is a single expression (e.g., as found inside `${...}`).
+   * 
+   * @param expr The expression string to parse.
+   * @param depth The current recursion depth.
+   * @returns The resolved DynamicValue.
    */
   public parseExpression(expr: string, depth = 0): DynamicValue {
     expr = expr.trim();
