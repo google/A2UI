@@ -23,7 +23,7 @@ import * as Types from '@a2ui/web_core/types/types';
   selector: 'a2ui-card',
   imports: [Renderer],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     a2ui-card {
       display: block;

@@ -19,14 +19,14 @@ import {
   ComponentRef,
   Directive,
   DOCUMENT,
-  effect,
   inject,
-  input,
+  Input,
   inputBinding,
+  OnChanges,
   OnDestroy,
   PLATFORM_ID,
+  SimpleChanges,
   Type,
-  untracked,
   ViewContainerRef,
 } from '@angular/core';
 import * as Styles from '@a2ui/web_core/styles/index';
@@ -35,9 +35,10 @@ import { Catalog } from './catalog';
 import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
-  selector: 'ng-container[a2ui-renderer]',
+  selector: '[a2ui-renderer]',
+  standalone: true,
 })
-export class Renderer implements OnDestroy {
+export class Renderer implements OnChanges, OnDestroy {
   private viewContainerRef = inject(ViewContainerRef);
   private catalog = inject(Catalog);
   private static hasInsertedStyles = false;
@@ -45,16 +46,10 @@ export class Renderer implements OnDestroy {
   private currentRef: ComponentRef<unknown> | null = null;
   private isDestroyed = false;
 
-  readonly surfaceId = input.required<Types.SurfaceID>();
-  readonly component = input.required<Types.AnyComponentNode>();
+  @Input({ required: true }) surfaceId!: Types.SurfaceID;
+  @Input({ required: true }) component!: Types.AnyComponentNode;
 
   constructor() {
-    effect(() => {
-      const surfaceId = this.surfaceId();
-      const component = this.component();
-      untracked(() => this.render(surfaceId, component));
-    });
-
     const platformId = inject(PLATFORM_ID);
     const document = inject(DOCUMENT);
 
@@ -66,40 +61,50 @@ export class Renderer implements OnDestroy {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['surfaceId'] || changes['component']) {
+      this.render(this.surfaceId, this.component);
+    }
+  }
+
   ngOnDestroy(): void {
     this.isDestroyed = true;
     this.clear();
   }
 
   private async render(surfaceId: Types.SurfaceID, component: Types.AnyComponentNode) {
-    const config = this.catalog[component.type];
-    let newComponent: Type<unknown> | null = null;
-    let componentBindings: Binding[] | null = null;
+    try {
+      const config = this.catalog[component.type];
+      let newComponent: Type<unknown> | null = null;
+      let componentBindings: Binding[] | null = null;
 
-    if (typeof config === 'function') {
-      newComponent = await config();
-    } else if (typeof config === 'object') {
-      newComponent = await config.type();
-      componentBindings = config.bindings(component as any);
-    }
-
-    this.clear();
-
-    if (newComponent && !this.isDestroyed) {
-      const bindings = [
-        inputBinding('surfaceId', () => surfaceId),
-        inputBinding('component', () => component),
-        inputBinding('weight', () => component.weight ?? 'initial'),
-      ];
-
-      if (componentBindings) {
-        bindings.push(...componentBindings);
+      if (typeof config === 'function') {
+        newComponent = await config();
+      } else if (typeof config === 'object') {
+        newComponent = await config.type();
+        componentBindings = config.bindings(component);
       }
 
-      this.currentRef = this.viewContainerRef.createComponent(newComponent, {
-        bindings,
-        injector: this.viewContainerRef.injector,
-      });
+      this.clear();
+
+      if (newComponent && !this.isDestroyed) {
+        const bindings = [
+          inputBinding('surfaceId', () => surfaceId),
+          inputBinding('component', () => component),
+          inputBinding('weight', () => component.weight ?? 'initial'),
+        ];
+
+        if (componentBindings) {
+          bindings.push(...componentBindings);
+        }
+
+        this.currentRef = this.viewContainerRef.createComponent(newComponent, {
+          bindings,
+          injector: this.viewContainerRef.injector,
+        });
+      }
+    } catch (e) {
+      console.error('Renderer.render error:', e);
     }
   }
 

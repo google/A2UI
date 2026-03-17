@@ -24,7 +24,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
     'aria-hidden': 'true',
     tabindex: '-1',
   },
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
       display: block;
@@ -45,5 +45,13 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 })
 export class Icon extends DynamicComponent {
   readonly name = input.required<Primitives.StringValue | null>();
-  protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
+  protected readonly resolvedName = computed(() => {
+    const rawName = this.resolvePrimitive(this.name());
+    if (!rawName) return null;
+    // Material Symbols ligatures require snake_case and must not have whitespace.
+    return String(rawName)
+      .trim()
+      .replace(/([A-Z])/g, (match) => `_${match.toLowerCase()}`)
+      .replace(/^_/, '');
+  });
 }

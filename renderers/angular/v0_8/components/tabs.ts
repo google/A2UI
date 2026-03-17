@@ -23,7 +23,7 @@ import * as Types from '@a2ui/web_core/types/types';
 @Component({
   selector: 'a2ui-tabs',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let tabs = this.tabs();
     @let selectedIndex = this.selectedIndex();
@@ -65,11 +65,11 @@ export class Tabs extends DynamicComponent {
 
     return this.tabs().map((_, index) => {
       return index === selectedIndex
-          ? Styles.merge(
-              this.theme.components.Tabs.controls.all,
-              this.theme.components.Tabs.controls.selected,
+        ? Styles.merge(
+            this.theme.components.Tabs.controls.all,
+            this.theme.components.Tabs.controls.selected,
           )
-          : this.theme.components.Tabs.controls.all;
+        : this.theme.components.Tabs.controls.all;
     });
   });
 }

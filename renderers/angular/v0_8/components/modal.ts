@@ -24,12 +24,12 @@ import {
 } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import * as Types from '@a2ui/web_core/types/types';
-import { Renderer } from '../rendering';
+import { Renderer } from '../rendering/renderer';
 
 @Component({
   selector: 'a2ui-modal',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (showDialog()) {
       <dialog #dialog [class]="theme.components.Modal.backdrop" (click)="handleDialogClick($event)">

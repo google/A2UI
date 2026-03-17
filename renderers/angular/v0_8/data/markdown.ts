@@ -23,7 +23,6 @@ const MARKDOWN_RENDERER_TOKEN = new InjectionToken<Types.MarkdownRenderer>('MARK
 
 @Injectable({ providedIn: 'root' })
 export class MarkdownRenderer {
-
   private markdownRenderer = inject(MARKDOWN_RENDERER_TOKEN, { optional: true });
   private sanitizer = inject(DomSanitizer);
   private static defaultMarkdownWarningLogged = false;
@@ -35,9 +34,11 @@ export class MarkdownRenderer {
     }
 
     if (!MarkdownRenderer.defaultMarkdownWarningLogged) {
-      console.warn("[MarkdownRenderer]",
+      console.warn(
+        '[MarkdownRenderer]',
         "can't render markdown because no markdown renderer is configured.\n",
-        "Use `@a2ui/markdown-it`, or your own markdown renderer.");
+        'Use `@a2ui/markdown-it`, or your own markdown renderer.',
+      );
       MarkdownRenderer.defaultMarkdownWarningLogged = true;
     }
 

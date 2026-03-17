@@ -25,9 +25,9 @@ export type CatalogLoader = () =>
 export type CatalogEntry<T extends Types.AnyComponentNode> =
   | CatalogLoader
   | {
-    type: CatalogLoader;
-    bindings: (data: T) => Binding[];
-  };
+      type: CatalogLoader;
+      bindings: (data: T) => Binding[];
+    };
 
 export interface Catalog {
   [key: string]: CatalogEntry<Types.AnyComponentNode>;

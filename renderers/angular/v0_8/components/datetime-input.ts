@@ -20,7 +20,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-datetime-input',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section [class]="theme.components.DateTimeInput.container">
       <label [for]="inputId" [class]="theme.components.DateTimeInput.label">{{ label() }}</label>
@@ -119,7 +119,8 @@ export class DatetimeInput extends DynamicComponent {
       return;
     }
 
-    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
+    const surfaceId = this.surfaceId();
+    this.processor.setData(this.component(), path, event.target.value, surfaceId);
   }
 
   private padNumber(value: number) {

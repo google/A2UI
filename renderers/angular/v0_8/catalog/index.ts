@@ -15,16 +15,13 @@
  */
 
 import { inputBinding } from '@angular/core';
-import * as Types from '@a2ui/web_core/types/types';
+import { Types } from '../types';
 import { Catalog } from '../rendering/catalog';
-import { Row } from './row';
-import { Column } from './column';
-import { Text } from './text';
 
-export const DEFAULT_CATALOG: Catalog = {
+export const CATALOG: Catalog = {
   Row: {
-    type: () => Row,
-    bindings: (node) => {
+    type: () => import('../components/row').then((r) => r.Row),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.RowNode).properties;
       return [
         inputBinding('alignment', () => properties.alignment ?? 'stretch'),
@@ -34,8 +31,8 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Column: {
-    type: () => Column,
-    bindings: (node) => {
+    type: () => import('../components/column').then((r) => r.Column),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.ColumnNode).properties;
       return [
         inputBinding('alignment', () => properties.alignment ?? 'stretch'),
@@ -45,18 +42,18 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   List: {
-    type: () => import('./list').then((r) => r.List),
-    bindings: (node) => {
+    type: () => import('../components/list').then((r) => r.List),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.ListNode).properties;
       return [inputBinding('direction', () => properties.direction ?? 'vertical')];
     },
   },
 
-  Card: () => import('./card').then((r) => r.Card),
+  Card: () => import('../components/card').then((r) => r.Card),
 
   Image: {
-    type: () => import('./image').then((r) => r.Image),
-    bindings: (node) => {
+    type: () => import('../components/image').then((r) => r.Image),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.ImageNode).properties;
       return [
         inputBinding('url', () => properties.url),
@@ -67,80 +64,77 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Icon: {
-    type: () => import('./icon').then((r) => r.Icon),
-    bindings: (node) => {
+    type: () => import('../components/icon').then((r) => r.Icon),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.IconNode).properties;
       return [inputBinding('name', () => properties.name)];
     },
   },
 
   Video: {
-    type: () => import('./video').then((r) => r.Video),
-    bindings: (node) => {
+    type: () => import('../components/video').then((r) => r.Video),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.VideoNode).properties;
       return [inputBinding('url', () => properties.url)];
     },
   },
 
   AudioPlayer: {
-    type: () => import('./audio').then((r) => r.Audio),
-    bindings: (node) => {
+    type: () => import('../components/audio').then((r) => r.Audio),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.AudioPlayerNode).properties;
       return [inputBinding('url', () => properties.url)];
     },
   },
 
   Text: {
-    type: () => Text,
-    bindings: (node) => {
+    type: () => import('../components/text').then((r) => r.Text),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.TextNode).properties;
       return [
         inputBinding('text', () => properties.text),
-        inputBinding('usageHint', () => properties.usageHint || null),
+        inputBinding('usageHint', () => properties.usageHint),
       ];
     },
   },
 
   Button: {
-    type: () => import('./button').then((r) => r.Button),
-    bindings: (node) => {
+    type: () => import('../components/button').then((r) => r.Button),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.ButtonNode).properties;
-      return [
-        inputBinding('action', () => properties.action),
-        inputBinding('primary', () => properties.primary),
-      ];
+      return [inputBinding('action', () => properties.action)];
     },
   },
 
-  Divider: () => import('./divider').then((r) => r.Divider),
+  Divider: () => import('../components/divider').then((r) => r.Divider),
 
   MultipleChoice: {
-    type: () => import('./multiple-choice').then((r) => r.MultipleChoice),
-    bindings: (node) => {
+    type: () => import('../components/multiple-choice').then((r) => r.MultipleChoice),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.MultipleChoiceNode).properties;
       return [
         inputBinding('options', () => properties.options || []),
         inputBinding('value', () => properties.selections),
-        inputBinding('description', () => 'Select an item'), // TODO: this should be defined in the properties
+        inputBinding('description', () => 'Select an item'),
       ];
     },
   },
 
   TextField: {
-    type: () => import('./text-field').then((r) => r.TextField),
-    bindings: (node) => {
+    type: () => import('../components/text-field').then((r) => r.TextField),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.TextFieldNode).properties;
       return [
         inputBinding('text', () => properties.text ?? null),
         inputBinding('label', () => properties.label),
-        inputBinding('textFieldType', () => properties.textFieldType),
+        inputBinding('inputType', () => properties.textFieldType),
       ];
     },
   },
 
   DateTimeInput: {
-    type: () => import('./datetime-input').then((r) => r.DatetimeInput),
-    bindings: (node) => {
+    type: () => import('../components/datetime-input').then((r) => r.DatetimeInput),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.DateTimeInputNode).properties;
       return [
         inputBinding('enableDate', () => properties.enableDate),
@@ -151,8 +145,8 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   CheckBox: {
-    type: () => import('./checkbox').then((r) => r.Checkbox),
-    bindings: (node) => {
+    type: () => import('../components/checkbox').then((r) => r.Checkbox),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.CheckboxNode).properties;
       return [
         inputBinding('label', () => properties.label),
@@ -162,28 +156,30 @@ export const DEFAULT_CATALOG: Catalog = {
   },
 
   Slider: {
-    type: () => import('./slider').then((r) => r.Slider),
-    bindings: (node) => {
+    type: () => import('../components/slider').then((r) => r.Slider),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.SliderNode).properties;
       return [
         inputBinding('value', () => properties.value),
         inputBinding('minValue', () => properties.minValue),
         inputBinding('maxValue', () => properties.maxValue),
-        inputBinding('label', () => ''), // TODO: this should be defined in the properties
+        inputBinding('label', () => ''),
       ];
     },
   },
 
   Tabs: {
-    type: () => import('./tabs').then((r) => r.Tabs),
-    bindings: (node) => {
+    type: () => import('../components/tabs').then((r) => r.Tabs),
+    bindings: (node: Types.AnyComponentNode) => {
       const properties = (node as Types.TabsNode).properties;
       return [inputBinding('tabs', () => properties.tabItems)];
     },
   },
 
   Modal: {
-    type: () => import('./modal').then((r) => r.Modal),
+    type: () => import('../components/modal').then((r) => r.Modal),
     bindings: () => [],
   },
 };
+
+export const V0_8_CATALOG = CATALOG;

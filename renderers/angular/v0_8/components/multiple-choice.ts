@@ -20,7 +20,7 @@ import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-multiple-choice',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section [class]="theme.components.MultipleChoice.container">
       <label [class]="theme.components.MultipleChoice.label" [for]="selectId">{{
@@ -69,10 +69,6 @@ export class MultipleChoice extends DynamicComponent {
       return;
     }
 
-    this.processor.setData(
-      this.component(),
-      this.processor.resolvePath(path, this.component().dataContextPath),
-      event.target.value,
-    );
+    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
   }
 }

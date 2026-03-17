@@ -41,7 +41,7 @@ interface HintedStyles {
 
 @Component({
   selector: 'a2ui-text',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
       [class]="classes()"
@@ -104,19 +104,17 @@ export class Text extends DynamicComponent {
         break;
     }
 
-    return this.markdownRenderer.render(
-      value, {
-        tagClassMap: Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
-      },
-    );
+    return this.markdownRenderer.render(value, {
+      tagClassMap: Styles.appendToAll(this.theme['markdown'], ['ol', 'ul', 'li'], {}),
+    });
   });
 
   protected classes = computed(() => {
     const usageHint = this.usageHint();
-
+    const textTheme = this.theme.components.Text;
     return Styles.merge(
-      this.theme.components.Text.all,
-      usageHint ? this.theme.components.Text[usageHint] : {},
+      textTheme.all,
+      usageHint && usageHint in textTheme ? textTheme[usageHint as keyof typeof textTheme] : {},
     );
   });
 
@@ -131,7 +129,7 @@ export class Text extends DynamicComponent {
     let additionalStyles: Record<string, string> = {};
 
     if (this.areHintedStyles(styles)) {
-      additionalStyles = styles[usageHint ?? 'body'];
+      additionalStyles = (styles as any)[usageHint ?? 'body'];
     } else {
       additionalStyles = styles;
     }

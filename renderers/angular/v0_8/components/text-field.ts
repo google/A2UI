@@ -21,7 +21,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-text-field',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
       display: flex;
@@ -70,7 +70,6 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 export class TextField extends DynamicComponent {
   readonly text = input.required<Primitives.StringValue | null>();
   readonly label = input.required<Primitives.StringValue | null>();
-  // The template does not respect all the poosible textFieldType values, like "date" or "longText".
   readonly textFieldType = input.required<Types.ResolvedTextField['textFieldType'] | null>();
 
   protected inputValue = computed(() => super.resolvePrimitive(this.text()) || '');
@@ -84,6 +83,7 @@ export class TextField extends DynamicComponent {
       return;
     }
 
-    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
+    const surfaceId = this.surfaceId();
+    this.processor.setData(this.component(), path, event.target.value, surfaceId);
   }
 }

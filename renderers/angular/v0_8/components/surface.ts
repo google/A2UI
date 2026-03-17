@@ -21,7 +21,7 @@ import { Renderer } from '../rendering/renderer';
 @Component({
   selector: 'a2ui-surface',
   imports: [Renderer],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @let surfaceId = this.surfaceId();
     @let surface = this.surface();
@@ -82,7 +82,7 @@ export class Surface {
             styles['--p-15'] = `color-mix(in srgb, ${value} 30%, black 70%)`;
             styles['--p-10'] = `color-mix(in srgb, ${value} 20%, black 80%)`;
             styles['--p-5'] = `color-mix(in srgb, ${value} 10%, black 90%)`;
-            styles['--0'] = '#00000';
+            styles['--p-0'] = '#000000';
             break;
           }
 
