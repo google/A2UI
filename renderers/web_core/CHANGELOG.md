@@ -1,3 +1,8 @@
+## 0.8.7
+
+- Adds `catalogId` to v0.8 schemas (was removed by mistake earlier)
+- Tweak schema definitions so they survive minification.
+
 ## 0.8.6
 
 - Update logical functions (`and`, `or`) to require a `values` array argument, removing deprecated individual arguments.

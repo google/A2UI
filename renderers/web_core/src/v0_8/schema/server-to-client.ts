@@ -103,6 +103,12 @@ export const BeginRenderingMessageSchema = z
     surfaceId: z
       .string()
       .describe("The unique identifier for the UI surface to be rendered."),
+    catalogId: z
+      .string()
+      .optional()
+      .describe(
+        "The identifier of the component catalog to use for this surface. If omitted, the client MUST default to the standard catalog for this A2UI version (https://a2ui.org/specification/v0_8/standard_catalog_definition.json).",
+      ),
     root: z.string().describe("The ID of the root component to render."),
     styles: z
       .object({
