@@ -1,4 +1,4 @@
-# A2UI over MCP Demo
+# A2UI over MCP Demo - Recipe Tool
 
 A demo of A2UI running over MCP, exposing a tool that returns a recipe UI.
 
@@ -11,7 +11,7 @@ A demo of A2UI running over MCP, exposing a tool that returns a recipe UI.
 uv run .
 ```
 
-The server exposes a tool named "get_recipe_ui" that accepts no arguments.
+The server exposes a tool named "get_recipe_a2ui" that accepts no arguments.
 
 2. Inspect the server using the [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
 
