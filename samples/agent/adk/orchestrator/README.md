@@ -34,7 +34,7 @@ Subagents are configured using RemoteA2aAgent which translates ADK events to A2A
 
 
    ```bash
-   cd samples/agent/adk/rizzcharts
+   cd samples/agent/adk/rizzcharts/python
    uv run . --port=10005
    ```
 
