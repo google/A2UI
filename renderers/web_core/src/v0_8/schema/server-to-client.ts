@@ -37,7 +37,6 @@ import {
   DataValueSchema,
 } from "./common-types.js";
 
-
 const validateValueProperty = (val: any, ctx: z.RefinementCtx) => {
   let count = 0;
   if (val.valueString !== undefined) count++;
@@ -104,6 +103,12 @@ export const BeginRenderingMessageSchema = z
     surfaceId: z
       .string()
       .describe("The unique identifier for the UI surface to be rendered."),
+    catalogId: z
+      .string()
+      .optional()
+      .describe(
+        "The identifier of the component catalog to use for this surface. If omitted, the client MUST default to the standard catalog for this A2UI version (https://a2ui.org/specification/v0_8/standard_catalog_definition.json).",
+      ),
     root: z.string().describe("The ID of the root component to render."),
     styles: z
       .object({
@@ -180,14 +185,22 @@ export const SurfaceUpdateMessageSchema = z
           if (properties.children && !Array.isArray(properties.children)) {
             const hasExplicit = !!properties.children.explicitList;
             const hasTemplate = !!properties.children.template;
-            if ((hasExplicit && hasTemplate) || (!hasExplicit && !hasTemplate)) {
+            if (
+              (hasExplicit && hasTemplate) ||
+              (!hasExplicit && !hasTemplate)
+            ) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: `Component '${component.id}' must have either 'explicitList' or 'template' in children, but not both or neither.`,
               });
             }
-            if (hasExplicit) checkRefs(properties.children.explicitList, component.id);
-            if (hasTemplate) checkRefs([properties.children.template?.componentId], component.id);
+            if (hasExplicit)
+              checkRefs(properties.children.explicitList, component.id);
+            if (hasTemplate)
+              checkRefs(
+                [properties.children.template?.componentId],
+                component.id,
+              );
           }
           break;
         case "Card":
@@ -201,7 +214,10 @@ export const SurfaceUpdateMessageSchema = z
           }
           break;
         case "Modal":
-          checkRefs([properties.entryPointChild, properties.contentChild], component.id);
+          checkRefs(
+            [properties.entryPointChild, properties.contentChild],
+            component.id,
+          );
           break;
         case "Button":
           if (properties.child) checkRefs([properties.child], component.id);
@@ -253,11 +269,19 @@ export const A2uiMessageSchema = z
   })
   .strict()
   .superRefine((data, ctx) => {
-    const keys = Object.keys(data).filter(k => ["beginRendering", "surfaceUpdate", "dataModelUpdate", "deleteSurface"].includes(k));
+    const keys = Object.keys(data).filter((k) =>
+      [
+        "beginRendering",
+        "surfaceUpdate",
+        "dataModelUpdate",
+        "deleteSurface",
+      ].includes(k),
+    );
     if (keys.length !== 1) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "A2UI Protocol message must have exactly one of: surfaceUpdate, dataModelUpdate, beginRendering, deleteSurface.",
+        message:
+          "A2UI Protocol message must have exactly one of: surfaceUpdate, dataModelUpdate, beginRendering, deleteSurface.",
       });
     }
   })

@@ -53,6 +53,7 @@ class ContactAgentExecutor(AgentExecutor):
     query = ""
     ui_event_part = None
     action = None
+    client_ui_capabilities = None
 
     logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
     use_ui = try_activate_a2ui_extension(context)
@@ -91,15 +92,6 @@ class ContactAgentExecutor(AgentExecutor):
               client_ui_capabilities = part.root.data["metadata"][
                   "a2uiClientCapabilities"
               ]
-              catalog = agent.schema_manager.get_selected_catalog(
-                  client_ui_capabilities=client_ui_capabilities
-              )
-              catalog_schema_str = catalog.render_as_llm_instructions()
-              # Append to query so the agent sees it (simple injection)
-              query += (
-                  "\n\n[SYSTEM: The client supports the following custom components:"
-                  f" {catalog_schema_str}]"
-              )
           else:
             logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
         elif isinstance(part.root, TextPart):
@@ -155,6 +147,17 @@ class ContactAgentExecutor(AgentExecutor):
         logger.info("No a2ui UI event part found. Falling back to text input.")
         query = context.get_user_input()
 
+    # Inject client UI capabilities into the query if found
+    if client_ui_capabilities is not None and "query" in locals() and query:
+      catalog = agent.schema_manager.get_selected_catalog(
+          client_ui_capabilities=client_ui_capabilities
+      )
+      catalog_schema_str = catalog.render_as_llm_instructions()
+      query += (
+          "\n\n[SYSTEM: The client supports the following custom components:"
+          f" {catalog_schema_str}]"
+      )
+
     logger.info(f"--- AGENT_EXECUTOR: Final query for LLM: '{query}' ---")
 
     task = context.current_task
@@ -164,7 +167,7 @@ class ContactAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in agent.stream(query, task.context_id):
+    async for item in agent.stream(query, task.context_id, client_ui_capabilities):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
         await updater.update_status(

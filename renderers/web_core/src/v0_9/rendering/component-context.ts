@@ -25,11 +25,14 @@ import { A2uiStateError } from "../errors.js";
  * It provides access to the component's model, the data context, and a way to dispatch actions.
  */
 export class ComponentContext {
-  /** The state model for this specific component. */
+  /** The state model for this specific component, providing access to its properties and state. */
   readonly componentModel: ComponentModel;
-  /** The data context scoped to this component's position in the visual hierarchy. */
+  /**
+   * The data context scoped to this component's position in the visual hierarchy.
+   * Uses the `dataModelBasePath` to resolve relative data paths.
+   */
   readonly dataContext: DataContext;
-  /** The collection of all component models for the current surface. */
+  /** The collection of all component models for the current surface, allowing lookups by ID. */
   readonly surfaceComponents: SurfaceComponentsModel;
 
   /**
@@ -52,9 +55,8 @@ export class ComponentContext {
     this.surfaceComponents = surface.componentsModel;
 
     this.dataContext = new DataContext(
-      surface.dataModel, 
-      dataModelBasePath, 
-      surface.catalog.invoker
+      surface,
+      dataModelBasePath
     );
     this._actionDispatcher = (action) => surface.dispatchAction(action);
   }

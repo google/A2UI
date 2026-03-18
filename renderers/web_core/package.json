@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.8.5",
+  "version": "0.8.7",
   "description": "A2UI Core Library",
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
@@ -40,7 +40,8 @@
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "test": "wireit"
+    "test": "wireit",
+    "test:coverage": "c8 node --test \"dist/**/*.test.js\""
   },
   "wireit": {
     "copy-spec": {
@@ -77,7 +78,7 @@
       "clean": "if-file-deleted"
     },
     "test": {
-      "command": "node --test dist",
+      "command": "node --test \"dist/**/*.test.js\"",
       "dependencies": [
         "build"
       ]
@@ -87,12 +88,14 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/node": "^24.11.0",
+    "c8": "^11.0.0",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2",
     "zod-to-json-schema": "^3.25.1"
   },
   "dependencies": {
     "@preact/signals-core": "^1.13.0",
+    "date-fns": "^4.1.0",
     "zod": "^3.25.76"
   }
 }

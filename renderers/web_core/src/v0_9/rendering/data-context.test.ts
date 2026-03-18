@@ -16,9 +16,25 @@
 
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
-import { signal } from "@preact/signals-core";
+import { signal, computed } from "@preact/signals-core";
+import { z } from "zod";
 import { DataModel } from "../state/data-model.js";
 import { DataContext } from "./data-context.js";
+import { A2uiExpressionError } from "../errors.js";
+
+const createTestDataContext = (
+  model: DataModel,
+  path: string,
+  functionInvoker: any = () => null,
+  dispatchError: (err: any) => void = () => {},
+) => {
+  const mockSurface = {
+    dataModel: model,
+    catalog: { invoker: functionInvoker },
+    dispatchError,
+  } as any;
+  return new DataContext(mockSurface, path);
+};
 
 describe("DataContext", () => {
   let model: DataModel;
@@ -34,7 +50,7 @@ describe("DataContext", () => {
       },
       list: ["a", "b"],
     });
-    context = new DataContext(model, "/user", () => null);
+    context = createTestDataContext(model, "/user");
   });
 
   it("resolves relative paths", () => {
@@ -67,7 +83,7 @@ describe("DataContext", () => {
   });
 
   it("handles root context", () => {
-    const rootContext = new DataContext(model, "/", () => null);
+    const rootContext = createTestDataContext(model, "/");
     assert.strictEqual(
       rootContext.resolveDynamicValue({ path: "user/name" }),
       "Alice",
@@ -119,7 +135,7 @@ describe("DataContext", () => {
       if (name === "add") return args.a + args.b;
       return null;
     };
-    const ctx = new DataContext(model, "/user", fnInvoker);
+    const ctx = createTestDataContext(model, "/user", fnInvoker);
     const result = ctx.resolveDynamicValue({
       call: "add",
       args: { a: 1, b: 2 },
@@ -128,27 +144,44 @@ describe("DataContext", () => {
     assert.strictEqual(result, 3);
   });
 
-  it("throws on function call without invoker synchronously", () => {
-    const ctx = new DataContext(model, "/user", () => {
+  it("dispatches generic error on function call without invoker synchronously", () => {
+    let dispatchedError: any = null;
+    const ctx = createTestDataContext(model, "/user", () => {
       throw new Error("Function invoker is not configured");
-    });
-    assert.throws(
-      () =>
-        ctx.resolveDynamicValue({ call: "add", args: {}, returnType: "any" }),
-      /Function invoker is not configured/,
-    );
+    }, (err) => { dispatchedError = err; });
+
+    const result = ctx.resolveDynamicValue({ call: "add", args: {}, returnType: "any" });
+    assert.strictEqual(result, undefined);
+    assert.ok(dispatchedError);
+    assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
   });
 
-  it("throws on invalid dynamic value format synchronously", () => {
-    assert.throws(
-      () => context.resolveDynamicValue({ foo: "bar" } as any),
-      /Invalid DynamicValue format/,
-    );
+  it("does not resolve arbitrary objects recursively", () => {
+    const obj = {
+      foo: "bar",
+      nested: { path: "name" },
+      list: [{ path: "address/city" }, "literal"],
+    };
+
+    const resolved = context.resolveDynamicValue(obj as any);
+    assert.deepStrictEqual(resolved, obj);
+  });
+
+  it("subscribes to literal objects as signals without resolution", () => {
+    const obj = { foo: "bar", nested: { path: "name" } };
+    const sig = context.resolveSignal(obj as any);
+
+    // It should be a literal signal containing the object
+    assert.deepStrictEqual(sig.peek(), obj);
+
+    // Updating the path should NOT affect it
+    context.set("name", "Bob");
+    assert.deepStrictEqual(sig.peek(), obj);
   });
 
   it("subscribes to function calls with no args", () => {
     const fnInvoker = (name: string) => (name === "getPi" ? Math.PI : 0);
-    const ctx = new DataContext(model, "/", fnInvoker);
+    const ctx = createTestDataContext(model, "/", fnInvoker);
 
     let called = false;
     ctx.subscribeDynamicValue(
@@ -160,18 +193,15 @@ describe("DataContext", () => {
     assert.strictEqual(called, false);
   });
 
-  it("throws on function call without invoker reactively", () => {
-    const ctx = new DataContext(model, "/user", () => {
+  it("returns undefined on function call without invoker reactively", () => {
+    const ctx = createTestDataContext(model, "/user", () => {
       throw new Error("Function invoker is not configured");
     });
-    assert.throws(
-      () =>
-        ctx.subscribeDynamicValue(
-          { call: "add", args: {}, returnType: "any" },
-          () => {},
-        ),
-      /Function invoker is not configured/,
+    const sub = ctx.subscribeDynamicValue(
+      { call: "add", args: {}, returnType: "any" },
+      () => {},
     );
+    assert.strictEqual(sub.value, undefined);
   });
 
   it("subscribes to function call returning a signal", () => {
@@ -179,7 +209,7 @@ describe("DataContext", () => {
       if (name === "obs") return signal("hello");
       return null;
     };
-    const ctx = new DataContext(model, "/", fnInvoker);
+    const ctx = createTestDataContext(model, "/", fnInvoker);
     let val: any;
     ctx.subscribeDynamicValue(
       { call: "obs", args: {}, returnType: "any" },
@@ -190,24 +220,251 @@ describe("DataContext", () => {
     assert.ok(true); // Verification occurs by absence of crash, and coverage hits the switch
   });
 
-  it("subscribes to invalid dynamic value reactively (falls back to literal)", () => {
-    let val: any;
-    const sub = context.subscribeDynamicValue(
-      { unknown: "thing" } as any,
-      (v) => {
-        val = v;
-      },
-    );
-    assert.deepStrictEqual(sub.value, { unknown: "thing" });
+  it("subscribes to invalid dynamic value reactively (falls back to literal signal)", () => {
+    const obj = { unknown: "thing" };
+    const sub = context.subscribeDynamicValue(obj as any, () => {});
+    assert.deepStrictEqual(sub.value, obj);
   });
 
   it("handles path resolution edge cases", () => {
     assert.strictEqual(context.nested("").path, "/user");
     assert.strictEqual(context.nested(".").path, "/user");
     // Ensure trailing slash removal logic is hit
-    const rootCtx = new DataContext(model, "/", () => null);
+    const rootCtx = createTestDataContext(model, "/");
     assert.strictEqual(rootCtx.nested("test").path, "/test");
-    const trailingCtx = new DataContext(model, "/user/", () => null);
+    const trailingCtx = createTestDataContext(model, "/user/");
     assert.strictEqual(trailingCtx.nested("test").path, "/user/test");
+  });
+  it("subscribes to function call with arguments reactively", () => {
+    const fnInvoker = (name: string, args: any) => {
+      if (name === "greet") return `Hello ${args.name}`;
+      return null;
+    };
+    const ctx = createTestDataContext(model, "/user", fnInvoker);
+
+    const sub = ctx.subscribeDynamicValue(
+      { call: "greet", args: { name: { path: "name" } }, returnType: "any" },
+      () => {},
+    );
+
+    assert.strictEqual(sub.value, "Hello Alice");
+
+    // Update inner path
+    ctx.set("name", "Bob");
+    assert.strictEqual(sub.value, "Hello Bob");
+
+    sub.unsubscribe();
+  });
+
+  describe("resolveAction", () => {
+    it("resolves event actions non-recursively", () => {
+      const action = {
+        event: {
+          name: "save",
+          context: {
+            id: { path: "name" },
+            metadata: { nested: { path: "something" } },
+          },
+        },
+      };
+
+      const resolved = context.resolveAction(action as any);
+
+      assert.deepStrictEqual(resolved, {
+        event: {
+          name: "save",
+          context: {
+            id: "Alice",
+            metadata: { nested: { path: "something" } }, // Literal, NOT resolved
+          },
+        },
+      });
+    });
+
+    it("resolves functionCall actions", () => {
+      const fnInvoker = (name: string, args: any) => {
+        if (name === "greet") return `Hello ${args.name}`;
+        return null;
+      };
+      const ctx = createTestDataContext(model, "/user", fnInvoker);
+
+      const action = {
+        functionCall: {
+          call: "greet",
+          args: { name: { path: "name" } },
+        },
+      };
+
+      const resolved = ctx.resolveAction(action as any);
+      assert.strictEqual(resolved, "Hello Alice");
+    });
+  });
+
+  describe("Error Handling", () => {
+    it("translates ZodError into A2uiExpressionError and dispatches error", () => {
+      const invokerWithZodError = () => {
+        throw new z.ZodError([
+          {
+            code: "invalid_type",
+            expected: "string",
+            received: "number",
+            path: ["foo"],
+            message: "Expected string, received number",
+          },
+        ]);
+      };
+      let dispatchedError: any = null;
+      const ctx = createTestDataContext(
+        model,
+        "/",
+        invokerWithZodError,
+        (err) => {
+          dispatchedError = err;
+        },
+      );
+
+      const result = ctx.resolveDynamicValue({
+        call: "fail",
+        args: {},
+        returnType: "any",
+      });
+
+      assert.strictEqual(result, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
+      assert.strictEqual(dispatchedError.expression, "fail");
+    });
+
+    it("dispatches generic Error as EXPRESSION_ERROR to surface", () => {
+      const invokerWithRegularError = () => {
+        const err = new Error("Generic failure");
+        err.stack = "Mock stack trace";
+        throw err;
+      };
+      let dispatchedError: any = null;
+      const ctx = createTestDataContext(
+        model,
+        "/",
+        invokerWithRegularError,
+        (err) => {
+          dispatchedError = err;
+        },
+      );
+
+      const result = ctx.resolveDynamicValue({
+        call: "fail",
+        args: {},
+        returnType: "any",
+      });
+
+      assert.strictEqual(result, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
+      assert.strictEqual(dispatchedError.expression, "fail");
+      assert.strictEqual(dispatchedError.message, "Generic failure");
+      assert.deepStrictEqual(dispatchedError.details, { stack: "Mock stack trace" });
+    });
+
+    it("dispatches A2uiExpressionError to surface", () => {
+      const invokerWithExpressionError = () => {
+        throw new A2uiExpressionError("Custom expr error", "custom_func");
+      };
+      let dispatchedError: any = null;
+      const ctx = createTestDataContext(
+        model,
+        "/",
+        invokerWithExpressionError,
+        (err) => {
+          dispatchedError = err;
+        },
+      );
+
+      const result = ctx.resolveDynamicValue({
+        call: "fail",
+        args: {},
+        returnType: "any",
+      });
+
+      assert.strictEqual(result, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
+      assert.strictEqual(dispatchedError.expression, "custom_func");
+    });
+
+    it("handles errors thrown during reactive argument resolution", () => {
+      const trigger = signal(false);
+      const fnInvoker = (name: string) => {
+        if (name === "inner") {
+          return computed(() => {
+            if (trigger.value) throw new A2uiExpressionError("Inner failure", "inner_func");
+            return "ok";
+          });
+        }
+        return "outer-result";
+      };
+
+      let dispatchedError: any = null;
+      const ctx = createTestDataContext(model, "/", fnInvoker, (err) => {
+        dispatchedError = err;
+      });
+
+      const sub = ctx.subscribeDynamicValue(
+        {
+          call: "outer",
+          args: {
+            arg: { call: "inner", args: {} },
+          },
+          returnType: "any",
+        },
+        () => {},
+      );
+
+      assert.strictEqual(sub.value, "outer-result");
+      assert.strictEqual(dispatchedError, null);
+
+      trigger.value = true;
+      // Accessing sub.value or the effect running triggers the catch.
+      assert.strictEqual(sub.value, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual((dispatchedError as any).message, "Inner failure");
+    });
+
+    it("handles generic errors thrown during reactive execution", () => {
+      const trigger = signal(false);
+      const fnInvoker = (name: string) => {
+        if (name === "inner") {
+          return computed(() => {
+            if (trigger.value) throw new Error("Generic inner failure");
+            return "ok";
+          });
+        }
+        return "outer-result";
+      };
+
+      let dispatchedError: any = null;
+      const ctx = createTestDataContext(model, "/", fnInvoker, (err) => {
+        dispatchedError = err;
+      });
+
+      const sub = ctx.subscribeDynamicValue(
+        {
+          call: "outer",
+          args: {
+            arg: { call: "inner", args: {} },
+          },
+          returnType: "any",
+        },
+        () => {},
+      );
+
+      assert.strictEqual(sub.value, "outer-result");
+      assert.strictEqual(dispatchedError, null);
+
+      trigger.value = true;
+      assert.strictEqual(sub.value, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual((dispatchedError as any).code, "EXPRESSION_ERROR");
+      assert.strictEqual((dispatchedError as any).message, "Generic inner failure");
+    });
   });
 });

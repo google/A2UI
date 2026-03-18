@@ -48,7 +48,10 @@ class TestValidator:
                             "catalogId": {
                                 "type": "string",
                             },
-                            "theme": {"type": "object", "additionalProperties": True},
+                            "theme": {
+                                "type": "object",
+                                "additionalProperties": True,
+                            },
                         },
                         "required": ["surfaceId", "catalogId"],
                         "additionalProperties": False,
@@ -495,7 +498,10 @@ class TestValidator:
                 "children": {
                     "type": "object",
                     "properties": {
-                        "explicitList": {"type": "array", "items": {"type": "string"}}
+                        "explicitList": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        }
                     },
                     "required": ["explicitList"],
                 }
@@ -723,30 +729,53 @@ class TestValidator:
             processed.append(comp)
 
       if catalog.version == VERSION_0_8:
-        payload = {
-            "surfaceUpdate": {"surfaceId": "test-surface", "components": processed}
-        }
+        payload = [
+            {"beginRendering": {"surfaceId": "test-surface", "root": "root"}},
+            {
+                "surfaceUpdate": {
+                    "surfaceId": "test-surface",
+                    "components": processed,
+                }
+            },
+        ]
       else:
-        payload = {
-            "version": "v0.9",
-            "updateComponents": {"surfaceId": "test-surface", "components": processed},
-        }
+        payload = [
+            {
+                "version": "v0.9",
+                "createSurface": {"surfaceId": "test-surface", "catalogId": "std"},
+            },
+            {
+                "version": "v0.9",
+                "updateComponents": {
+                    "surfaceId": "test-surface",
+                    "components": processed,
+                },
+            },
+        ]
 
     elif data_model:
       if catalog.version == VERSION_0_8:
-        payload = {
-            "dataModelUpdate": {"surfaceId": "test-surface", "contents": data_model}
-        }
+        payload = [
+            {
+                "dataModelUpdate": {
+                    "surfaceId": "test-surface",
+                    "contents": data_model,
+                }
+            }
+        ]
       else:
-        payload = {
+        payload = [{
             "version": "v0.9",
-            "updateDataModel": {"surfaceId": "test-surface", "value": data_model},
-        }
+            "updateDataModel": {
+                "surfaceId": "test-surface",
+                "value": data_model,
+            },
+        }]
 
     if payload is None:
-      return [] if catalog.version == VERSION_0_9 else {}
+      return []
 
-    return [payload] if catalog.version == VERSION_0_9 else payload
+    return payload
 
   def test_validate_duplicate_ids(self, test_catalog):
     components = [
@@ -762,20 +791,29 @@ class TestValidator:
     # This payload has components but none are 'root'
     # bypass make_payload as it adds root if missing
     if test_catalog.version == VERSION_0_8:
-      payload = {
-          "surfaceUpdate": {
-              "surfaceId": "test",
-              "components": [{"id": "c1", "component": {"Text": {"text": "hi"}}}],
-          }
-      }
-    else:
-      payload = [{
-          "version": "v0.9",
-          "updateComponents": {
-              "surfaceId": "test",
-              "components": [{"id": "c1", "component": "Text", "text": "hi"}],
+      payload = [
+          {"beginRendering": {"surfaceId": "test", "root": "root"}},
+          {
+              "surfaceUpdate": {
+                  "surfaceId": "test",
+                  "components": [{"id": "c1", "component": {"Text": {"text": "hi"}}}],
+              }
           },
-      }]
+      ]
+    else:
+      payload = [
+          {
+              "version": "v0.9",
+              "createSurface": {"surfaceId": "test", "catalogId": "std"},
+          },
+          {
+              "version": "v0.9",
+              "updateComponents": {
+                  "surfaceId": "test",
+                  "components": [{"id": "c1", "component": "Text", "text": "hi"}],
+              },
+          },
+      ]
 
     with pytest.raises(ValueError, match="Missing root component"):
       test_catalog.validator.validate(payload)
@@ -915,12 +953,9 @@ class TestValidator:
         {"id": "custom-root", "component": "Text", "text": "I am the root"},
         {"id": "orphan", "component": "Text", "text": "I am an orphan"},
     ]
-    # make_payload only gives us surfaceUpdate, we need to wrap it with beginRendering
-    surface_update = self.make_payload(test_catalog, components=components)
-    payload = [
-        {"beginRendering": {"surfaceId": "test-surface", "root": "custom-root"}},
-        surface_update,
-    ]
+    # make_payload gives us both beginRendering and surfaceUpdate. We just need to change root.
+    payload = self.make_payload(test_catalog, components=components)
+    payload[0]["beginRendering"]["root"] = "custom-root"
 
     # This should fail because 'orphan' is not reachable from 'custom-root'
     with pytest.raises(
@@ -933,13 +968,8 @@ class TestValidator:
         {"id": "custom-root", "component": "Card", "child": "orphan"},
         {"id": "orphan", "component": "Text", "text": "I am no longer an orphan"},
     ]
-    surface_update_connected = self.make_payload(
-        test_catalog, components=components_connected
-    )
-    payload_connected = [
-        {"beginRendering": {"surfaceId": "test-surface", "root": "custom-root"}},
-        surface_update_connected,
-    ]
+    payload_connected = self.make_payload(test_catalog, components=components_connected)
+    payload_connected[0]["beginRendering"]["root"] = "custom-root"
     test_catalog.validator.validate(payload_connected)
 
   @pytest.mark.parametrize(
@@ -985,8 +1015,8 @@ class TestValidator:
         p[0]["updateDataModel"]["path"] = data.get("path")
         p[0]["updateDataModel"]["surfaceId"] = data.get("surfaceId", "surface1")
       else:
-        p["dataModelUpdate"]["path"] = data.get("path")
-        p["dataModelUpdate"]["surfaceId"] = data.get("surfaceId", "surface1")
+        p[0]["dataModelUpdate"]["path"] = data.get("path")
+        p[0]["dataModelUpdate"]["surfaceId"] = data.get("surfaceId", "surface1")
 
     with pytest.raises(
         ValueError,
