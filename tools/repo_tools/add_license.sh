@@ -13,7 +13,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# This script automatically adds Apache 2.0 license headers to source files.
+# It is designed to be run from the repository root.
+#
+# Usage:
+#   ./tools/repo_tools/add_license.sh [directory]
+#
+# If [directory] is omitted, the script starts from the current directory.
+#
+# Supported file extensions:
+#   - .ts, .tsx, .js, .jsx, .java, .css, .scss
+#   - .py, .sh, .yaml, .yml
+#   - .html
+#
+# Files already containing "Copyright" are skipped.
+# Shebang lines (#!...) are preserved at the top of the file.
+
 set -e
+
+# Error handling: check if run from repo root
+if [ ! -f "LICENSE" ] && [ ! -d ".git" ]; then
+  echo "Error: This script should be run from the repository root."
+  echo "Example: ./tools/repo_tools/add_license.sh ."
+  exit 1
+fi
 
 get_block_license() {
   cat << 'EOF'
