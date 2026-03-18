@@ -16,6 +16,7 @@
 
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { Types } from '../types';
+
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
 

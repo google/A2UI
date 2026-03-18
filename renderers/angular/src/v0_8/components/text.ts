@@ -104,19 +104,17 @@ export class Text extends DynamicComponent<Types.TextNode> {
         break;
     }
 
-    return this.markdownRenderer.render(
-      value, {
-        tagClassMap: Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
-      },
-    );
+    return this.markdownRenderer.render(value, {
+      tagClassMap: Styles.appendToAll(this.theme['markdown'], ['ol', 'ul', 'li'], {}),
+    });
   });
 
   protected classes = computed(() => {
     const usageHint = this.usageHint();
-
+    const textTheme = this.theme.components.Text;
     return Styles.merge(
-      this.theme.components.Text.all,
-      usageHint ? this.theme.components.Text[usageHint] : {},
+      textTheme.all,
+      usageHint && usageHint in textTheme ? textTheme[usageHint as keyof typeof textTheme] : {},
     );
   });
 
@@ -134,6 +132,7 @@ export class Text extends DynamicComponent<Types.TextNode> {
       additionalStyles = (styles as any)[usageHint ?? 'body'] || {};
     } else if (typeof styles === 'object' && styles !== null) {
       additionalStyles = styles as Record<string, string>;
+
     }
 
     return additionalStyles;

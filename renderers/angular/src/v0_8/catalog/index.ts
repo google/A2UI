@@ -14,51 +14,173 @@
  * limitations under the License.
  */
 
+import { inputBinding } from '@angular/core';
+import { Types } from '../types';
 import { Catalog } from '../rendering/catalog';
 
-// Components
-import { AudioPlayer } from '../components/audio';
-import { Button } from '../components/button';
-import { Card } from '../components/card';
-import { Checkbox } from '../components/checkbox';
-import { Column } from '../components/column';
-import { DateTimeInput } from '../components/datetime-input';
-import { Divider } from '../components/divider';
-import { Icon } from '../components/icon';
-import { Image } from '../components/image';
-import { List } from '../components/list';
-import { Modal } from '../components/modal';
-import { MultipleChoice } from '../components/multiple-choice';
-import { Row } from '../components/row';
-import { Slider } from '../components/slider';
-import { Tabs } from '../components/tabs';
-import { Text } from '../components/text';
-import { TextField } from '../components/text-field';
-import { Video } from '../components/video';
+export const CATALOG: Catalog = {
+  Row: {
+    type: () => import('../components/row').then((r) => r.Row),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.RowNode).properties;
+      return [
+        inputBinding('alignment', () => properties.alignment ?? 'stretch'),
+        inputBinding('distribution', () => properties.distribution ?? 'start'),
+      ];
+    },
+  },
 
-export const DEFAULT_CATALOG: Catalog = {
-  AudioPlayer: () => AudioPlayer,
-  Button: () => Button,
-  Card: () => Card,
-  CheckBox: () => Checkbox,
-  Column: () => Column,
-  DateTimeInput: () => DateTimeInput,
-  Divider: () => Divider,
-  Icon: () => Icon,
-  Image: () => Image,
-  List: () => List,
-  Modal: () => Modal,
-  MultipleChoice: () => MultipleChoice,
-  Row: () => Row,
-  Slider: () => Slider,
-  Tabs: () => Tabs,
-  Text: () => Text,
-  TextField: () => TextField,
-  Video: () => Video,
+  Column: {
+    type: () => import('../components/column').then((r) => r.Column),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.ColumnNode).properties;
+      return [
+        inputBinding('alignment', () => properties.alignment ?? 'stretch'),
+        inputBinding('distribution', () => properties.distribution ?? 'start'),
+      ];
+    },
+  },
+
+  List: {
+    type: () => import('../components/list').then((r) => r.List),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.ListNode).properties;
+      return [inputBinding('direction', () => properties.direction ?? 'vertical')];
+    },
+  },
+
+  Card: () => import('../components/card').then((r) => r.Card),
+
+  Image: {
+    type: () => import('../components/image').then((r) => r.Image),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.ImageNode).properties;
+      return [
+        inputBinding('url', () => properties.url),
+        inputBinding('usageHint', () => properties.usageHint),
+        inputBinding('altText', () => properties.altText ?? null),
+      ];
+    },
+  },
+
+  Icon: {
+    type: () => import('../components/icon').then((r) => r.Icon),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.IconNode).properties;
+      return [inputBinding('name', () => properties.name)];
+    },
+  },
+
+  Video: {
+    type: () => import('../components/video').then((r) => r.Video),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.VideoNode).properties;
+      return [inputBinding('url', () => properties.url)];
+    },
+  },
+
+  AudioPlayer: {
+    type: () => import('../components/audio').then((r) => r.AudioPlayer),
+
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.AudioPlayerNode).properties;
+      return [inputBinding('url', () => properties.url)];
+    },
+  },
+
+  Text: {
+    type: () => import('../components/text').then((r) => r.Text),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.TextNode).properties;
+      return [
+        inputBinding('text', () => properties.text),
+        inputBinding('usageHint', () => properties.usageHint),
+      ];
+    },
+  },
+
+  Button: {
+    type: () => import('../components/button').then((r) => r.Button),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.ButtonNode).properties;
+      return [inputBinding('action', () => properties.action)];
+    },
+  },
+
+  Divider: () => import('../components/divider').then((r) => r.Divider),
+
+  MultipleChoice: {
+    type: () => import('../components/multiple-choice').then((r) => r.MultipleChoice),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.MultipleChoiceNode).properties;
+      return [
+        inputBinding('options', () => properties.options || []),
+        inputBinding('value', () => properties.selections),
+        inputBinding('description', () => 'Select an item'),
+      ];
+    },
+  },
+
+  TextField: {
+    type: () => import('../components/text-field').then((r) => r.TextField),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.TextFieldNode).properties;
+      return [
+        inputBinding('text', () => properties.text ?? null),
+        inputBinding('label', () => properties.label),
+        inputBinding('inputType', () => properties.textFieldType),
+      ];
+    },
+  },
+
+  DateTimeInput: {
+    type: () => import('../components/datetime-input').then((r) => r.DatetimeInput),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.DateTimeInputNode).properties;
+      return [
+        inputBinding('enableDate', () => properties.enableDate),
+        inputBinding('enableTime', () => properties.enableTime),
+        inputBinding('value', () => properties.value),
+      ];
+    },
+  },
+
+  CheckBox: {
+    type: () => import('../components/checkbox').then((r) => r.Checkbox),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.CheckboxNode).properties;
+      return [
+        inputBinding('label', () => properties.label),
+        inputBinding('value', () => properties.value),
+      ];
+    },
+  },
+
+  Slider: {
+    type: () => import('../components/slider').then((r) => r.Slider),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.SliderNode).properties;
+      return [
+        inputBinding('value', () => properties.value),
+        inputBinding('minValue', () => properties.minValue),
+        inputBinding('maxValue', () => properties.maxValue),
+        inputBinding('label', () => ''),
+      ];
+    },
+  },
+
+  Tabs: {
+    type: () => import('../components/tabs').then((r) => r.Tabs),
+    bindings: (node: Types.AnyComponentNode) => {
+      const properties = (node as Types.TabsNode).properties;
+      return [inputBinding('tabs', () => properties.tabItems)];
+    },
+  },
+
+  Modal: {
+    type: () => import('../components/modal').then((r) => r.Modal),
+    bindings: () => [],
+  },
 };
 
-export function registerStandardComponents(catalog: Catalog) {
-  for (const [key, value] of Object.entries(DEFAULT_CATALOG)) {
-    catalog[key] = value;
-  }
-}
+export const V0_8_CATALOG = CATALOG;

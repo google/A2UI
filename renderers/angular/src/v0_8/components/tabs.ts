@@ -14,53 +14,62 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
+import * as Styles from '@a2ui/web_core/styles/index';
+import * as Types from '@a2ui/web_core/types/types';
 
 @Component({
   selector: 'a2ui-tabs',
   imports: [Renderer],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <div [class]="theme.components.Tabs.container" [style]="theme.additionalStyles?.Tabs">
-      <div [class]="theme.components.Tabs.controls.all">
-        @for (item of tabItems(); track item.child; let i = $index) {
+    @let tabs = this.tabs();
+    @let selectedIndex = this.selectedIndex();
+
+    <section [class]="theme.components.Tabs.container" [style]="theme.additionalStyles?.Tabs">
+      <div [class]="theme.components.Tabs.element">
+        @for (tab of tabs; track tab) {
           <button
-            [class]="selectedIndex() === i ? theme.components.Tabs.controls.selected : {}"
-            (click)="selectTab(i)"
+            (click)="this.selectedIndex.set($index)"
+            [disabled]="selectedIndex === $index"
+            [class]="buttonClasses()[$index]"
           >
-            {{ resolvePrimitive(item.title) }}
+            {{ resolvePrimitive(tab.title) }}
           </button>
         }
       </div>
-      <div class="a2ui-tabs-content">
-        @if (tabItems()[selectedIndex()]; as selectedTab) {
-          <ng-container
-            a2ui-renderer
-            [surfaceId]="surfaceId()!"
-            [component]="selectedTab.child"
-          />
-        }
-      </div>
-    </div>
+
+      <ng-container
+        a2ui-renderer
+        [surfaceId]="surfaceId()!"
+        [component]="tabs[selectedIndex].child"
+      />
+    </section>
   `,
   styles: `
     :host {
       display: block;
-    }
-    .a2ui-tabs-content {
-      flex: 1;
-      min-height: 0;
+      flex: var(--weight);
+      width: 100%;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Tabs extends DynamicComponent<Types.TabsNode> {
-  readonly tabItems = input.required<Types.ResolvedTabs['tabItems']>();
-  protected readonly selectedIndex = signal(0);
+export class Tabs extends DynamicComponent {
+  protected selectedIndex = signal(0);
+  readonly tabs = input.required<Types.ResolvedTabItem[]>();
 
-  protected selectTab(index: number) {
-    this.selectedIndex.set(index);
-  }
+  protected readonly buttonClasses = computed(() => {
+    const selectedIndex = this.selectedIndex();
+
+    return this.tabs().map((_, index) => {
+      return index === selectedIndex
+        ? Styles.merge(
+            this.theme.components.Tabs.controls.all,
+            this.theme.components.Tabs.controls.selected,
+          )
+        : this.theme.components.Tabs.controls.all;
+    });
+  });
 }

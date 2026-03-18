@@ -90,4 +90,23 @@ export namespace Types {
   // Markdown
   export type MarkdownRenderer = WebCore.MarkdownRenderer;
   export type MarkdownRendererOptions = WebCore.MarkdownRendererOptions;
+
+  // Legacy Aliases for backward compatibility
+  export type Row = RowNode;
+  export type Column = ColumnNode;
+  export type Text = TextNode;
+  export type List = ListNode;
+  export type Image = ImageNode;
+  export type Icon = IconNode;
+  export type Video = VideoNode;
+  export type Audio = AudioPlayerNode;
+  export type Button = ButtonNode;
+  export type Divider = DividerNode;
+  export type MultipleChoice = MultipleChoiceNode;
+  export type TextField = TextFieldNode;
+  export type Checkbox = CheckboxNode;
+  export type Slider = SliderNode;
+  export type DateTimeInput = DateTimeInputNode;
+  export type Tabs = TabsNode;
+  export type Modal = ModalNode;
 }

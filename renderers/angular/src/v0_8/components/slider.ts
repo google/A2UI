@@ -15,57 +15,75 @@
  */
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { Types } from '../types';
+import * as Primitives from '@a2ui/web_core/types/primitives';
 import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
-  selector: 'a2ui-slider',
+  selector: '[a2ui-slider]',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <div [class]="theme.components.Slider.container" [style]="theme.additionalStyles?.Slider">
-      <label [class]="theme.components.Slider.label" [id]="labelId">{{ resolvedLabel() }}</label>
+    <section [class]="theme.components.Slider.container">
+      <label [class]="theme.components.Slider.label" [for]="inputId">
+        {{ label() }}
+      </label>
+
       <input
+        autocomplete="off"
         type="range"
-        [class]="theme.components.Slider.element"
-        [id]="inputId"
-        [attr.aria-labelledby]="labelId"
+        [value]="resolvedValue()"
         [min]="minValue()"
         [max]="maxValue()"
-        [value]="resolvedValue() ?? 0"
-        (input)="onInput($event)"
+        [id]="inputId"
+        (input)="handleInput($event)"
+        [class]="theme.components.Slider.element"
+        [style]="theme.additionalStyles?.Slider"
+        [style.--slider-percent]="percentComplete() + '%'"
       />
-    </div>
+    </section>
   `,
   styles: `
     :host {
       display: block;
+      flex: var(--weight);
+      width: 100%;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Slider extends DynamicComponent<Types.SliderNode> {
-  readonly label = input.required<Types.StringValue | null>();
-  readonly value = input.required<Types.NumberValue | null>();
-  readonly minValue = input<number>(0);
-  readonly maxValue = input<number>(100);
+export class Slider extends DynamicComponent {
+  readonly value = input.required<Primitives.NumberValue | null>();
+  readonly label = input('');
+  readonly minValue = input.required<number | undefined>();
+  readonly maxValue = input.required<number | undefined>();
 
-  protected readonly inputId = super.getUniqueId('a2ui-slider-input');
-  protected readonly labelId = super.getUniqueId('a2ui-slider-label');
+  protected readonly inputId = super.getUniqueId('a2ui-slider');
+  protected resolvedValue = computed(() => super.resolvePrimitive(this.value()) ?? 0);
 
-  protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
-  protected resolvedValue = computed(() => super.resolvePrimitive(this.value()));
+  protected percentComplete = computed(() => {
+    return this.computePercentage(this.resolvedValue() as number);
+  });
 
-  onInput(event: Event) {
-    const value = Number((event.target as HTMLInputElement).value);
-    this.handleAction('change', { value });
+  protected handleInput(event: Event) {
+    const path = this.value()?.path;
+
+    if (!(event.target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const newValue = event.target.valueAsNumber;
+    const percent = this.computePercentage(newValue);
+
+    // Inject CSS variable directly to avoid Angular change detection lag/snapback
+    event.target.style.setProperty('--slider-percent', percent + '%');
+
+    if (path) {
+      this.processor.setData(this.component(), path, newValue, this.surfaceId());
+    }
   }
 
-  private handleAction(name: string, context: Record<string, unknown>) {
-    super.sendAction({
-      name,
-      context: Object.entries(context).map(([key, val]) => ({
-        key,
-        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
-      }))
-    });
+  private computePercentage(value: number): number {
+    const min = this.minValue() ?? 0;
+    const max = this.maxValue() ?? 100;
+    const range = max - min;
+    return range > 0 ? Math.max(0, Math.min(100, ((value - min) / range) * 100)) : 0;
   }
 }

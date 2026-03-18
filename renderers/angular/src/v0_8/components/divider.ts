@@ -20,7 +20,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
 
 @Component({
   selector: 'a2ui-divider',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '<hr [class]="theme.components.Divider" [style]="theme.additionalStyles?.Divider"/>',
   styles: `
     :host {

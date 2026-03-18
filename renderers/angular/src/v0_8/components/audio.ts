@@ -20,8 +20,15 @@ import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-audio',
+
   template: `
-    <audio controls [src]="resolvedUrl()" [style]="theme.additionalStyles?.AudioPlayer"></audio>
+    @let resolvedUrl = this.resolvedUrl();
+
+    @if (resolvedUrl) {
+      <section [class]="theme.components.AudioPlayer" [style]="theme.additionalStyles?.AudioPlayer">
+        <audio controls [src]="resolvedUrl"></audio>
+      </section>
+    }
   `,
   styles: `
     :host {
@@ -31,7 +38,7 @@ import { Types } from '../types';
       width: 100%;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class AudioPlayer extends DynamicComponent<Types.AudioPlayerNode> {
   readonly url = input.required<Types.StringValue | null>();

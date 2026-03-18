@@ -16,43 +16,59 @@
 
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
+import * as Primitives from '@a2ui/web_core/types/primitives';
 
 @Component({
   selector: 'a2ui-checkbox',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <label>
+    <section
+      [class]="theme.components.CheckBox.container"
+      [style]="theme.additionalStyles?.CheckBox"
+    >
       <input
+        autocomplete="off"
         type="checkbox"
         [id]="inputId"
         [checked]="inputChecked()"
-        (change)="onToggle($event)"
+        [class]="theme.components.CheckBox.element"
+        (change)="handleChange($event)"
       />
-      {{ resolvedLabel() }}
-    </label>
+
+      <label [htmlFor]="inputId" [class]="theme.components.CheckBox.label">{{
+        resolvedLabel()
+      }}</label>
+    </section>
   `,
   styles: `
     :host {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    input {
+      display: block;
+      width: 100%;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Checkbox extends DynamicComponent<Types.CheckboxNode> {
-  readonly label = input.required<Types.StringValue | null>();
-  readonly value = input.required<Types.BooleanValue | null>();
+export class Checkbox extends DynamicComponent {
+  readonly value = input.required<Primitives.BooleanValue | null>();
+  readonly label = input.required<Primitives.StringValue | null>();
 
   protected inputChecked = computed(() => super.resolvePrimitive(this.value()) ?? false);
   protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
-  protected readonly inputId = super.getUniqueId('a2ui-checkbox');
+  protected inputId = super.getUniqueId('a2ui-checkbox');
 
-  onToggle(event: Event) {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.sendAction({
-      name: 'toggle',
-      context: [{ key: 'checked', value: { literalBoolean: checked } }]
-    });
+  protected handleChange(event: Event) {
+    const path = this.value()?.path;
+
+    if (!(event.target instanceof HTMLInputElement) || !path) {
+      return;
+    }
+
+    this.processor.setData(this.component(), path, event.target.checked, this.surfaceId());
   }
 }

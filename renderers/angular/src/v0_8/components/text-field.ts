@@ -14,63 +14,76 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { computed, Component, input, ChangeDetectionStrategy } from '@angular/core';
+import * as Primitives from '@a2ui/web_core/types/primitives';
+import * as Types from '@a2ui/web_core/types/types';
 import { DynamicComponent } from '../rendering/dynamic-component';
-import { Types } from '../types';
 
 @Component({
   selector: 'a2ui-text-field',
-  template: `
-    <div [class]="theme.components.TextField.container" [style]="theme.additionalStyles?.TextField">
-      <label [class]="theme.components.TextField.label" [for]="inputId">
-        {{ resolvedLabel() }}
-      </label>
-      <input
-        [type]="htmlInputType()"
-        [class]="theme.components.TextField.element"
-        [id]="inputId"
-        [value]="resolvedText() ?? ''"
-        (input)="onInput($event)"
-      />
-    </div>
-  `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     :host {
+      display: flex;
+      flex: var(--weight);
+    }
+
+    section,
+    input,
+    label {
+      box-sizing: border-box;
+    }
+
+    input {
       display: block;
+      width: 100%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @let resolvedLabel = this.resolvedLabel();
+
+    <section [class]="theme.components.TextField.container">
+      @if (resolvedLabel) {
+        <label [for]="inputId" [class]="theme.components.TextField.label">{{
+          resolvedLabel
+        }}</label>
+      }
+
+      <input
+        autocomplete="off"
+        [class]="theme.components.TextField.element"
+        [style]="theme.additionalStyles?.TextField"
+        (input)="handleInput($event)"
+        [id]="inputId"
+        [value]="inputValue()"
+        placeholder="Please enter a value"
+        [type]="textFieldType() === 'number' ? 'number' : 'text'"
+      />
+    </section>
+  `,
 })
-export class TextField extends DynamicComponent<Types.TextFieldNode> {
-  readonly label = input.required<Types.StringValue | null>();
-  readonly text = input<Types.StringValue | null>(null);
-  readonly textFieldType = input<Types.ResolvedTextField['textFieldType']>('shortText');
+export class TextField extends DynamicComponent {
+  readonly text = input.required<Primitives.StringValue | null>();
+  readonly label = input.required<Primitives.StringValue | null>();
+  readonly textFieldType = input.required<Types.ResolvedTextField['textFieldType'] | null>();
 
-  protected readonly inputId = super.getUniqueId('a2ui-text-field');
-
+  protected inputValue = computed(() => super.resolvePrimitive(this.text()) || '');
   protected resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
-  protected resolvedText = computed(() => super.resolvePrimitive(this.text()));
+  protected inputId = super.getUniqueId('a2ui-input');
 
-  protected htmlInputType = computed(() => {
-    switch (this.textFieldType()) {
-      case 'number': return 'number';
-      case 'date': return 'date';
-      default: return 'text';
+  protected handleInput(event: Event) {
+    const path = this.text()?.path;
+
+    if (!(event.target instanceof HTMLInputElement) || !path) {
+      return;
     }
-  });
 
-  onInput(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.handleAction('input', { value });
-  }
-
-  private handleAction(name: string, context: Record<string, unknown>) {
-    super.sendAction({
-      name,
-      context: Object.entries(context).map(([key, val]) => ({
-        key,
-        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
-      }))
-    });
+    const surfaceId = this.surfaceId();
+    this.processor.setData(this.component(), path, event.target.value, surfaceId);
   }
 }

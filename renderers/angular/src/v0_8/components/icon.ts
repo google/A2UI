@@ -45,5 +45,15 @@ import { Types } from '../types';
 })
 export class Icon extends DynamicComponent<Types.IconNode> {
   readonly name = input.required<Types.StringValue | null>();
-  protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
+  protected readonly resolvedName = computed(() => {
+    const rawName = this.resolvePrimitive(this.name());
+    if (!rawName) return null;
+    // Material Symbols ligatures require snake_case and must not have whitespace.
+    return String(rawName)
+      .trim()
+      .replace(/([A-Z])/g, (match) => `_${match.toLowerCase()}`)
+      .replace(/^_/, '');
+  });
 }
+
+

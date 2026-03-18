@@ -14,41 +14,45 @@
  * limitations under the License.
  */
 
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { DynamicComponent } from '../rendering/dynamic-component';
 import { Renderer } from '../rendering/renderer';
-import { Types } from '../types';
+import * as Types from '@a2ui/web_core/types/types';
 
 @Component({
   selector: 'a2ui-card',
   imports: [Renderer],
-  template: `
-    <div [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
-      @if (child()) {
-        <ng-container
-          a2ui-renderer
-          [surfaceId]="surfaceId()!"
-          [component]="child()!"
-        />
-      }
-
-      @for (comp of children(); track comp.id) {
-        <ng-container
-          a2ui-renderer
-          [surfaceId]="surfaceId()!"
-          [component]="comp"
-        />
-      }
-    </div>
-  `,
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
-    :host {
+    a2ui-card {
       display: block;
+      flex: var(--weight);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    a2ui-card > section {
+      height: 100%;
+      width: 100%;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    a2ui-card > section > * {
+      height: 100%;
+      width: 100%;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @let properties = component().properties;
+    @let children = properties.children || [properties.child];
+
+    <section [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
+      @for (child of children; track child) {
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      }
+    </section>
+  `,
 })
-export class Card extends DynamicComponent<Types.CardNode> {
-  readonly child = input<Types.AnyComponentNode | null>(null);
-  readonly children = input<Types.AnyComponentNode[]>([]);
-}
+export class Card extends DynamicComponent<Types.CardNode> {}
