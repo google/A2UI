@@ -42,6 +42,7 @@
     "build:tsc": "wireit",
     "test": "wireit",
     "test:coverage": "c8 node --test \"dist/**/*.test.js\""
+
   },
   "wireit": {
     "copy-spec": {

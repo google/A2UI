@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import * as WebCore from '@a2ui/web_core/v0_8';
-import { Catalog } from '../rendering/catalog';
-import { Theme } from '../rendering/theming';
+
 import { Types } from '../types';
 
 export interface A2UIClientEvent {
@@ -32,7 +31,7 @@ export type DispatchedEvent = A2UIClientEvent;
   providedIn: 'root',
 })
 export class MessageProcessor {
-  private readonly catalog = inject(Catalog);
+
   private baseProcessor: WebCore.A2uiMessageProcessor;
 
   private readonly eventsSubject = new Subject<A2UIClientEvent>();
