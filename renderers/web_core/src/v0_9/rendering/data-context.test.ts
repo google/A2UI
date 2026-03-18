@@ -144,12 +144,16 @@ describe("DataContext", () => {
     assert.strictEqual(result, 3);
   });
 
-  it("returns FunctionCall on function call without invoker synchronously", () => {
+  it("dispatches generic error on function call without invoker synchronously", () => {
+    let dispatchedError: any = null;
     const ctx = createTestDataContext(model, "/user", () => {
       throw new Error("Function invoker is not configured");
-    });
+    }, (err) => { dispatchedError = err; });
+
     const result = ctx.resolveDynamicValue({ call: "add", args: {}, returnType: "any" });
-    assert.deepStrictEqual(result, { call: "add", args: {}, returnType: "any" });
+    assert.strictEqual(result, undefined);
+    assert.ok(dispatchedError);
+    assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
   });
 
   it("does not resolve arbitrary objects recursively", () => {
@@ -325,20 +329,17 @@ describe("DataContext", () => {
         returnType: "any",
       });
 
-      assert.deepStrictEqual(result, {
-        call: "fail",
-        args: {},
-        returnType: "any",
-      });
-
+      assert.strictEqual(result, undefined);
       assert.ok(dispatchedError);
       assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
       assert.strictEqual(dispatchedError.expression, "fail");
     });
 
-    it("does not translate other errors but returns object", () => {
+    it("dispatches generic Error as EXPRESSION_ERROR to surface", () => {
       const invokerWithRegularError = () => {
-        throw new Error("Generic failure");
+        const err = new Error("Generic failure");
+        err.stack = "Mock stack trace";
+        throw err;
       };
       let dispatchedError: any = null;
       const ctx = createTestDataContext(
@@ -356,13 +357,12 @@ describe("DataContext", () => {
         returnType: "any",
       });
 
-      assert.deepStrictEqual(result, {
-        call: "fail",
-        args: {},
-        returnType: "any",
-      });
-
-      assert.strictEqual(dispatchedError, null);
+      assert.strictEqual(result, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
+      assert.strictEqual(dispatchedError.expression, "fail");
+      assert.strictEqual(dispatchedError.message, "Generic failure");
+      assert.deepStrictEqual(dispatchedError.details, { stack: "Mock stack trace" });
     });
 
     it("dispatches A2uiExpressionError to surface", () => {
@@ -385,12 +385,7 @@ describe("DataContext", () => {
         returnType: "any",
       });
 
-      assert.deepStrictEqual(result, {
-        call: "fail",
-        args: {},
-        returnType: "any",
-      });
-
+      assert.strictEqual(result, undefined);
       assert.ok(dispatchedError);
       assert.strictEqual(dispatchedError.code, "EXPRESSION_ERROR");
       assert.strictEqual(dispatchedError.expression, "custom_func");
@@ -432,6 +427,44 @@ describe("DataContext", () => {
       assert.strictEqual(sub.value, undefined);
       assert.ok(dispatchedError);
       assert.strictEqual((dispatchedError as any).message, "Inner failure");
+    });
+
+    it("handles generic errors thrown during reactive execution", () => {
+      const trigger = signal(false);
+      const fnInvoker = (name: string) => {
+        if (name === "inner") {
+          return computed(() => {
+            if (trigger.value) throw new Error("Generic inner failure");
+            return "ok";
+          });
+        }
+        return "outer-result";
+      };
+
+      let dispatchedError: any = null;
+      const ctx = createTestDataContext(model, "/", fnInvoker, (err) => {
+        dispatchedError = err;
+      });
+
+      const sub = ctx.subscribeDynamicValue(
+        {
+          call: "outer",
+          args: {
+            arg: { call: "inner", args: {} },
+          },
+          returnType: "any",
+        },
+        () => {},
+      );
+
+      assert.strictEqual(sub.value, "outer-result");
+      assert.strictEqual(dispatchedError, null);
+
+      trigger.value = true;
+      assert.strictEqual(sub.value, undefined);
+      assert.ok(dispatchedError);
+      assert.strictEqual((dispatchedError as any).code, "EXPRESSION_ERROR");
+      assert.strictEqual((dispatchedError as any).message, "Generic inner failure");
     });
   });
 });

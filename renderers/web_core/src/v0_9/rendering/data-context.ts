@@ -105,37 +105,17 @@ export class DataContext {
 
       const abortController = new AbortController();
 
-      try {
-        const result = this.functionInvoker(
-          call.call,
-          args,
-          this,
-          abortController.signal,
-        );
-        return (isSignal(result) ? result.peek() : result) as V;
-      } catch (e: any) {
-        if (e?.name === "ZodError" || e instanceof z.ZodError) {
-          const err = new A2uiExpressionError(
-            `Validation failed for function '${call.call}': ${e.message}`,
-            call.call,
-            e.errors ?? e.issues,
-          );
-          this.surface.dispatchError({
-            code: "EXPRESSION_ERROR",
-            message: err.message,
-            expression: call.call,
-            details: err.details,
-          });
-        }
-        if (e instanceof A2uiExpressionError) {
-          this.surface.dispatchError({
-            code: "EXPRESSION_ERROR",
-            message: e.message,
-            expression: e.expression,
-            details: e.details,
-          });
-        }
+      const result = this.evaluateFunctionReactive<V>(
+        call.call,
+        args,
+        abortController.signal,
+      );
+
+      if (result === undefined) {
+        return undefined as any;
       }
+
+      return (isSignal(result) ? result.peek() : result) as V;
     }
 
     return value as V;
@@ -264,14 +244,7 @@ export class DataContext {
             resultSig.value = res;
           }
         } catch (e: any) {
-          if (e instanceof A2uiExpressionError) {
-            this.surface.dispatchError({
-              code: "EXPRESSION_ERROR",
-              message: e.message,
-              expression: e.expression,
-              details: e.details,
-            });
-          }
+          this.dispatchExpressionError(e, call.call);
           // In reactive mode, we should not throw. Instead, reset the signal value.
           resultSig.value = undefined;
         }
@@ -334,28 +307,38 @@ export class DataContext {
     try {
       return this.functionInvoker(name, args, this, abortSignal);
     } catch (e: any) {
-      if (e?.name === "ZodError" || e instanceof z.ZodError) {
-        const err = new A2uiExpressionError(
-          `Validation failed for function '${name}': ${e.message}`,
-          name,
-          e.errors ?? e.issues,
-        );
-        this.surface.dispatchError({
-          code: "EXPRESSION_ERROR",
-          message: err.message,
-          expression: name,
-          details: err.details,
-        });
-      }
-      if (e instanceof A2uiExpressionError) {
-        this.surface.dispatchError({
-          code: "EXPRESSION_ERROR",
-          message: e.message,
-          expression: e.expression,
-          details: e.details,
-        });
-      }
+      this.dispatchExpressionError(e, name);
       return undefined as any;
+    }
+  }
+
+  private dispatchExpressionError(e: any, name: string): void {
+    if (e?.name === "ZodError" || e instanceof z.ZodError) {
+      const err = new A2uiExpressionError(
+        `Validation failed for function '${name}': ${e.message}`,
+        name,
+        e.errors ?? e.issues,
+      );
+      this.surface.dispatchError({
+        code: "EXPRESSION_ERROR",
+        message: err.message,
+        expression: name,
+        details: err.details,
+      });
+    } else if (e instanceof A2uiExpressionError) {
+      this.surface.dispatchError({
+        code: "EXPRESSION_ERROR",
+        message: e.message,
+        expression: e.expression,
+        details: e.details,
+      });
+    } else {
+      this.surface.dispatchError({
+        code: "EXPRESSION_ERROR",
+        message: e.message ?? `An unexpected error occurred in function ${name}.`,
+        expression: name,
+        details: { stack: e.stack },
+      });
     }
   }
 
