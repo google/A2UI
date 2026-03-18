@@ -17,7 +17,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
-import { A2UIProvider, useA2UI } from '../../../src';
+import { A2UIProvider, useA2UI } from '../../../src/v0_8';
 import { getElement } from '../utils';
 
 /**

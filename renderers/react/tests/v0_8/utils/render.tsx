@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, type ReactNode } from 'react';
-import { A2UIProvider, A2UIRenderer, useA2UI } from '../../../src';
+import { A2UIProvider, A2UIRenderer, useA2UI } from '../../../src/v0_8';
 import type * as Types from '@a2ui/web_core/types/types';
 
 /**

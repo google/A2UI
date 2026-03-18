@@ -17,7 +17,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
-import { A2UIProvider, A2UIRenderer, useA2UI } from '../../../src';
+import { A2UIProvider, A2UIRenderer, useA2UI } from '../../../src/v0_8';
 import type * as Types from '@a2ui/web_core/types/types';
 import {
   TestWrapper,
