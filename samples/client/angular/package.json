@@ -14,11 +14,7 @@
     "build:renderer": "cd ../../../renderers && for dir in 'web_core' 'markdown/markdown-it'; do (cd \"$dir\" && npm install && npm run build); done",
     "serve:agent:restaurant": "cd ../../agent/adk/restaurant_finder && uv run .",
     "demo:restaurant": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:restaurant\" \"npm start -- restaurant\"",
-    "serve:agent:contact": "cd ../../agent/adk/contact_lookup && uv run .",
-    "demo:contact": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:contact\" \"npm start -- contact\"",
-    "serve:agent:rizzcharts": "cd ../../agent/adk/rizzcharts && uv run .",
-    "demo:rizzcharts": "npm run build:renderer && concurrently -k -n \"AGENT,WEB\" -c \"magenta,blue\" \"npm run serve:agent:rizzcharts\" \"npm start -- rizzcharts\"",
-    "build:sandbox": "esbuild projects/orchestrator/public/sandbox_iframe/sandbox.ts --bundle --outfile=projects/orchestrator/public/sandbox_iframe/sandbox.js --format=esm --platform=browser"
+    "build:sandbox": "esbuild projects/mcp_calculator/public/sandbox_iframe/sandbox.ts --bundle --outfile=projects/mcp_calculator/public/sandbox_iframe/sandbox.js --format=esm --platform=browser"
   },
   "prettier": {
     "printWidth": 100,

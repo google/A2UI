@@ -145,7 +145,7 @@ export class McpApp
 
     // Set src to trigger load AFTER listener is ready
     // TODO: Make the sandbox URL configurable. To ensure CORS encapsulation, the sandbox
-    // should be served from a different origin than the orchestrator.
+    // should be served from a different origin than the host app.
     const sandboxUrl = 'sandbox_iframe/sandbox.html';
     this.iframeSrc.set(
       this.sanitizer.bypassSecurityTrustResourceUrl(sandboxUrl),
@@ -164,7 +164,7 @@ export class McpApp
     const emptyMcpClient = null;
     const bridge = new AppBridge(
       emptyMcpClient,
-      { name: 'A2UI Orchestrator', version: '1.0.0' },
+      { name: 'MCP Calculator', version: '1.0.0' },
       {
         openLinks: {},
         logging: {},
@@ -206,8 +206,8 @@ export class McpApp
       // Pseudo-code for dispatch:
       // const actionName = params.name;
       // if (this.allowedTools().includes(actionName)) {
-      //   // Dispatch action to A2UI orchestrator/store
-      //   // events.dispatch('a2ui.action', { name: actionName, ... });
+      //   // Dispatch action to host store
+      //   // events.dispatch('host.action', { name: actionName, ... });
       //   return { content: [{ type: "text", text: "Action dispatched" }] };
       // } else {
       //   console.warn(`Tool '${actionName}' blocked.`);

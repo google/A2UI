@@ -37,6 +37,7 @@ Here are the instructions if you want to do each step manually.
   * `npm start -- contact`
   * `npm start -- rizzcharts`
   * `npm start -- orchestrator`
+  * `npm run build:sandbox && npm start -- mcp_calculator`
   * `npm start -- gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
 
