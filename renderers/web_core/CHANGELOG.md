@@ -1,3 +1,6 @@
+## 0.8.8
+- Remove schema definition tweaks from 0.8.7
+
 ## 0.8.7
 
 - Adds `catalogId` to v0.8 schemas (was removed by mistake earlier)

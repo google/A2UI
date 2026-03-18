@@ -23,19 +23,13 @@ export { type Action } from "./components.js";
 import {
   AudioPlayer,
   Button,
-  Card,
   Checkbox,
-  Column,
   DateTimeInput,
   Divider,
   Icon,
   Image,
-  List,
-  Modal,
   MultipleChoice,
-  Row,
   Slider,
-  Tabs,
   Text,
   TextField,
   Video,
@@ -256,87 +250,33 @@ export declare type DataMap = Map<string, DataValue>;
 export declare type DataArray = DataValue[];
 
 /** A template for creating components from a list in the data model. */
-export declare interface ComponentArrayTemplate
-  extends z.infer<typeof ComponentArrayTemplateSchema> {
-  componentId: string;
-  dataBinding: string;
-}
+export type ComponentArrayTemplate = z.infer<
+  typeof ComponentArrayTemplateSchema
+>;
 
 /** Defines a list of child components, either explicitly or via a template. */
-export declare interface ComponentArrayReference
-  extends z.infer<typeof ComponentArrayReferenceSchema> {
-  explicitList?: string[];
-  template?: ComponentArrayTemplate;
-}
+export type ComponentArrayReference = z.infer<
+  typeof ComponentArrayReferenceSchema
+>;
 
 /** Represents the general shape of a component's properties. */
-export declare interface ComponentProperties extends z.infer<typeof ComponentPropertiesSchema> {
-  Text?: Text;
-  Image?: Image;
-  Icon?: Icon;
-  Video?: Video;
-  AudioPlayer?: AudioPlayer;
-  Row?: Row;
-  Column?: Column;
-  List?: List;
-  Card?: Card;
-  Tabs?: Tabs;
-  Divider?: Divider;
-  Modal?: Modal;
-  Button?: Button;
-  Checkbox?: Checkbox;
-  TextField?: TextField;
-  DateTimeInput?: DateTimeInput;
-  MultipleChoice?: MultipleChoice;
-  Slider?: Slider;
-}
+export type ComponentProperties = z.infer<typeof ComponentPropertiesSchema>;
 
 /** A raw component instance from a SurfaceUpdate message. */
-export declare interface ComponentInstance extends z.infer<typeof ComponentInstanceSchema> {
-  id: string;
-  weight?: number;
-  component: ComponentProperties;
-}
+export type ComponentInstance = z.infer<typeof ComponentInstanceSchema>;
 
-export declare interface BeginRenderingMessage extends z.infer<typeof BeginRenderingMessageSchema> {
-  surfaceId: string;
-  root: string;
-  styles?: {
-    font?: string;
-    primaryColor?: string;
-  };
-}
+export type BeginRenderingMessage = z.infer<typeof BeginRenderingMessageSchema>;
 
-export declare interface SurfaceUpdateMessage extends z.infer<typeof SurfaceUpdateMessageSchema> {
-  surfaceId: string;
-  components: ComponentInstance[];
-}
+export type SurfaceUpdateMessage = z.infer<typeof SurfaceUpdateMessageSchema>;
 
-export declare interface DataModelUpdate extends z.infer<typeof DataModelUpdateMessageSchema> {
-  surfaceId: string;
-  path?: string;
-  contents: ValueMap[];
-}
+export type DataModelUpdate = z.infer<typeof DataModelUpdateMessageSchema>;
 
 // ValueMap is a type of DataObject for passing to the data model.
-export declare interface ValueMap extends z.infer<typeof ValueMapSchema> {
-  key: string;
-  valueString?: string;
-  valueNumber?: number;
-  valueBoolean?: boolean;
-  valueMap?: ValueMap[];
-}
+export type ValueMap = z.infer<typeof ValueMapSchema>;
 
-export declare interface DeleteSurfaceMessage extends z.infer<typeof DeleteSurfaceMessageSchema> {
-  surfaceId: string;
-}
+export type DeleteSurfaceMessage = z.infer<typeof DeleteSurfaceMessageSchema>;
 
-export declare interface ServerToClientMessage extends z.infer<typeof A2uiMessageSchema> {
-  beginRendering?: BeginRenderingMessage;
-  surfaceUpdate?: SurfaceUpdateMessage;
-  dataModelUpdate?: DataModelUpdate;
-  deleteSurface?: DeleteSurfaceMessage;
-}
+export type ServerToClientMessage = z.infer<typeof A2uiMessageSchema>;
 
 /**
  * A recursive type for any value that can appear within a resolved component
