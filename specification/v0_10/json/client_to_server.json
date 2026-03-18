@@ -35,6 +35,10 @@
           "type": "object",
           "description": "A JSON object containing the key-value pairs from the component's action.event.context, after resolving all data bindings.",
           "additionalProperties": true
+        },
+        "actionId": {
+          "type": "string",
+          "description": "Unique ID for this action call. Only needed if wantResponse is true."
         }
       },
       "required": [
