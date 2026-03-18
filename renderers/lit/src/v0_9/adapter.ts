@@ -29,8 +29,6 @@ export class A2uiController<T> implements ReactiveController {
   }
 }
 
-import { z } from "zod";
-
 export function createLitComponent<T = any>(
   api: ComponentApi,
   renderFn: (args: { props: ResolveA2uiProps<T>; buildChild: ChildBuilder; context: ComponentContext }) => unknown
