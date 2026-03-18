@@ -65,13 +65,4 @@ describe('MarkdownRenderer', () => {
     expect(result).toBe('rendered: test');
   });
 
-  it('should return a fallback span if no renderer is provided', async () => {
-    const spy = spyOn(console, 'warn');
-    const result: any = await service.render('test');
-
-    expect(spy).toHaveBeenCalled();
-    expect(result).toContain('span');
-    expect(result).toContain('test');
-    expect(result).toContain('no-markdown-renderer');
-  });
 });

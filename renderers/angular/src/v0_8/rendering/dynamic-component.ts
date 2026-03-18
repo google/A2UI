@@ -30,7 +30,7 @@ export abstract class DynamicComponent<T extends Types.AnyComponentNode = Types.
   protected readonly processor = inject(MessageProcessor);
   protected readonly theme = inject(Theme);
 
-  readonly surfaceId = input.required<Types.SurfaceID>();
+  readonly surfaceId = input.required<Types.SurfaceID | null>();
   readonly component = input.required<T>();
   readonly weight = input.required<string | number>();
 

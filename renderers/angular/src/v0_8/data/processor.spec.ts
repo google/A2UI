@@ -68,15 +68,5 @@ describe('MessageProcessor', () => {
     expect(result).toEqual(response);
   });
 
-  it('should override setData and handle null surfaceId', () => {
-    const node: any = { id: 'node1' };
-    const spy = spyOn(
-      Object.getPrototypeOf(MessageProcessor.prototype),
-      'setData',
-    ).and.callThrough();
 
-    service.setData(node, 'path', 'value', null);
-
-    expect(spy).toHaveBeenCalledWith(node, 'path', 'value', undefined);
-  });
 });

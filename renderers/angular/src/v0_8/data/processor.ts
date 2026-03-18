@@ -32,7 +32,6 @@ export type DispatchedEvent = A2UIClientEvent;
   providedIn: 'root',
 })
 export class MessageProcessor {
-  private readonly catalog = inject(Catalog);
   private baseProcessor: WebCore.A2uiMessageProcessor;
 
   private readonly eventsSubject = new Subject<A2UIClientEvent>();

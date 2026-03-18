@@ -27,7 +27,7 @@ import { Renderer } from '../rendering/renderer';
     @let surface = this.surface();
 
     @if (surfaceId && surface) {
-      <ng-container a2ui-renderer [surfaceId]="surfaceId" [component]="surface.componentTree!" />
+      <div a2ui-renderer style="display: contents" [surfaceId]="surfaceId" [component]="surface.componentTree!"></div>
     }
   `,
   styles: `

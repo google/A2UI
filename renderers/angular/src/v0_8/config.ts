@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-import { EnvironmentProviders, Provider, makeEnvironmentProviders } from '@angular/core';
+import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { Catalog, Theme } from './rendering';
-import { provideMarkdownRenderer } from './data/markdown';
+import { Types } from './types';
 
-export function provideA2UI(config: {
-  catalog: Catalog;
-  theme: Theme;
-  markdownRenderer?: any;
-}): EnvironmentProviders {
-  const providers: Provider[] = [
+export function provideA2UI(config: { catalog: Catalog; theme: Types.Theme }): EnvironmentProviders {
+  return makeEnvironmentProviders([
     { provide: Catalog, useValue: config.catalog },
-    { provide: Theme, useValue: config.theme },
-  ];
-
-  if (config.markdownRenderer) {
-    providers.push(provideMarkdownRenderer(config.markdownRenderer));
-  }
-
-  return makeEnvironmentProviders(providers);
-
+    {
+      provide: Theme,
+      useFactory: () => {
+        const theme = new Theme();
+        theme.update(config.theme);
+        return theme;
+      },
+    },
+  ]);
 }

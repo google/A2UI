@@ -278,12 +278,12 @@ describe('Catalog Components', () => {
             {
               id: '1',
               type: 'Text',
-              properties: { text: { literal: 'Item 1' }, variant: { literal: 'body' } },
+              properties: { text: { literal: 'Item 1' }, usageHint: 'body' },
             },
             {
               id: '2',
               type: 'Text',
-              properties: { text: { literal: 'Item 2' }, variant: { literal: 'body' } },
+              properties: { text: { literal: 'Item 2' }, usageHint: 'body' },
             },
           ],
         },

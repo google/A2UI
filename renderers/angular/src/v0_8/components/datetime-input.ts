@@ -119,7 +119,7 @@ export class DatetimeInput extends DynamicComponent {
       return;
     }
 
-    const surfaceId = this.surfaceId();
+    const surfaceId = this.surfaceId()!;
     this.processor.setData(this.component(), path, event.target.value, surfaceId);
   }
 

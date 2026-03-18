@@ -84,7 +84,7 @@ import { Types } from '../types';
   template: `
     <section [class]="classes()" [style]="theme.additionalStyles?.Row">
       @for (child of component().properties.children; track child) {
-        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+        <div a2ui-renderer style="display: contents" [surfaceId]="surfaceId()!" [component]="child"></div>
       }
     </section>
   `,

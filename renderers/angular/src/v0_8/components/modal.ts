@@ -40,20 +40,20 @@ import { Renderer } from '../rendering/renderer';
             </button>
           </div>
 
-          <ng-container
-            a2ui-renderer
+          <div
+            a2ui-renderer style="display: contents"
             [surfaceId]="surfaceId()!"
             [component]="component().properties.contentChild"
-          />
+          ></div>
         </section>
       </dialog>
     } @else {
       <section (click)="showDialog.set(true)">
-        <ng-container
-          a2ui-renderer
+        <div
+          a2ui-renderer style="display: contents"
           [surfaceId]="surfaceId()!"
           [component]="component().properties.entryPointChild"
-        />
+        ></div>
       </section>
     }
   `,

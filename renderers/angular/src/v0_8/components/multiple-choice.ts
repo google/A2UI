@@ -69,6 +69,6 @@ export class MultipleChoice extends DynamicComponent {
       return;
     }
 
-    this.processor.setData(this.component(), path, event.target.value, this.surfaceId());
+    this.processor.setData(this.component(), path, event.target.value, this.surfaceId()!);
   }
 }

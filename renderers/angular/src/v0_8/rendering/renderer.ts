@@ -97,7 +97,7 @@ export class Renderer {
       componentRef.setInput('component', node);
       componentRef.setInput('weight', node.weight ?? 0);
 
-      const props = node.properties as Record<string, unknown>;
+      const props = (node.properties || {}) as Record<string, unknown>;
       for (const [key, value] of Object.entries(props)) {
         componentRef.setInput(key, value);
       }

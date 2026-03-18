@@ -41,11 +41,11 @@ import * as Types from '@a2ui/web_core/types/types';
         }
       </div>
 
-      <ng-container
-        a2ui-renderer
+      <div
+        a2ui-renderer style="display: contents"
         [surfaceId]="surfaceId()!"
         [component]="tabs[selectedIndex].child"
-      />
+      ></div>
     </section>
   `,
   styles: `

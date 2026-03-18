@@ -30,11 +30,11 @@ import { Renderer } from '../rendering/renderer';
       [style]="theme.additionalStyles?.Button"
       (click)="handleClick()"
     >
-      <ng-container
-        a2ui-renderer
+      <div
+        a2ui-renderer style="display: contents"
         [surfaceId]="surfaceId()!"
         [component]="component().properties.child"
-      />
+      ></div>
     </button>
   `,
   styles: `

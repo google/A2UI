@@ -34,7 +34,7 @@ class MockComponent {
 
 @Component({
   template: `
-    <ng-container a2ui-renderer [surfaceId]="surfaceId" [component]="componentNode"></ng-container>
+    <div a2ui-renderer style="display: contents" [surfaceId]="surfaceId" [component]="componentNode"></div>
   `,
   imports: [A2uiRenderer],
   standalone: true,
