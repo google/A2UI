@@ -373,7 +373,6 @@ Interactive components (like `Button`) use an `action` property to define what h
 To send an event to the server, use the `event` property within the `action` object. It requires a `name` and supports an optional `context`, `wantResponse`, and `responsePath`.
 
 - `wantResponse` (boolean, optional): If true, the client expects an `actionResponse` from the server. Defaults to false.
-- `responsePath` (string, optional): A JSON Pointer path in the local data model where the response `value` should be saved.
 
 ```json
 {
