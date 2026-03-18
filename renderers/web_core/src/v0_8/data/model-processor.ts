@@ -29,7 +29,6 @@ import {
   SurfaceID,
   SurfaceUpdateMessage,
   MessageProcessor,
-  ValueMap,
 } from "../types/types.js";
 import { A2uiMessageSchema } from "../schema/server-to-client.js";
 import { A2uiStateError, A2uiValidationError } from "../errors.js";
@@ -256,7 +255,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
     return map;
   }
 
-  private setDataByPath(root: DataMap, path: string, value: DataValue | ValueMap[]): void {
+  private setDataByPath(root: DataMap, path: string, value: DataValue): void {
     // Check if the incoming value is the special key-value array format.
     if (
       Array.isArray(value) &&
@@ -270,12 +269,12 @@ export class A2uiMessageProcessor implements MessageProcessor {
 
         if (valueKey) {
           // Extract the primitive value
-          value = item[valueKey] as DataValue | ValueMap[];
+          value = item[valueKey];
 
           // We must still process this value in case it's a valueMap or
           // a JSON string.
           if (valueKey === "valueMap" && Array.isArray(value)) {
-            value = this.convertKeyValueArrayToMap(value as DataArray);
+            value = this.convertKeyValueArrayToMap(value);
           } else if (typeof value === "string") {
             value = this.parseIfJsonString(value);
           }
@@ -283,10 +282,10 @@ export class A2uiMessageProcessor implements MessageProcessor {
           // the function.
         } else {
           // Malformed, but fall back to existing behavior.
-          value = this.convertKeyValueArrayToMap(value as DataArray);
+          value = this.convertKeyValueArrayToMap(value);
         }
       } else {
-        value = this.convertKeyValueArrayToMap(value as DataArray);
+        value = this.convertKeyValueArrayToMap(value);
       }
     }
 
@@ -339,7 +338,7 @@ export class A2uiMessageProcessor implements MessageProcessor {
     }
 
     const finalSegment = segments[segments.length - 1];
-    const storedValue = value as DataValue;
+    const storedValue = value;
     if (current instanceof this.mapCtor) {
       current.set(finalSegment, storedValue);
     } else if (Array.isArray(current) && /^\d+$/.test(finalSegment)) {
