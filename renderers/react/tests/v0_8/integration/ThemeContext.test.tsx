@@ -19,7 +19,7 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { TestWrapper, TestRenderer, createSurfaceUpdate, createBeginRendering } from '../utils';
 import type * as Types from '@a2ui/web_core/types/types';
-import { litTheme } from '../../src/theme/litTheme';
+import { litTheme } from '../../../src/v0_8/theme/litTheme';
 
 /**
  * Theme Context tests - verify components respect the theme from context.

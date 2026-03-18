@@ -17,7 +17,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
-import { A2UIProvider, A2UIRenderer, useA2UI } from '../../src';
+import { A2UIProvider, A2UIRenderer, useA2UI } from '../../../src';
 import { createSurfaceUpdate, createBeginRendering } from '../utils';
 
 /**

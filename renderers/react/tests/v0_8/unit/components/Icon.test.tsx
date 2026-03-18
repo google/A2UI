@@ -18,7 +18,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { TestWrapper, TestRenderer, createSimpleMessages } from '../../utils';
-import { litTheme, defaultTheme } from '../../../src';
+import { litTheme, defaultTheme } from '../../../../src';
 
 describe('Icon Component', () => {
   describe('Basic Rendering', () => {

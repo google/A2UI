@@ -18,7 +18,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { TestWrapper, TestRenderer, createSimpleMessages } from '../../utils';
-import { litTheme, defaultTheme } from '../../../src';
+import { litTheme, defaultTheme } from '../../../../src';
 
 describe('Text Component', () => {
   describe('Basic Rendering', () => {
