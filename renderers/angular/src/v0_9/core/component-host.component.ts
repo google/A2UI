@@ -51,7 +51,7 @@ import { ComponentBinder } from './component-binder.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComponentHostComponent implements OnInit {
-  componentId = input.required<string>();
+  componentId = input<string>('root');
   surfaceId = input.required<string>();
   dataContextPath = input<string>('/');
 

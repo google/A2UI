@@ -18,7 +18,7 @@ import { ChangeDetectorRef, Component, OnInit, inject, OnDestroy } from '@angula
 import { CommonModule } from '@angular/common';
 import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '@a2ui/angular/v0_9';
 import { AgentStubService } from './agent-stub.service';
-import { ComponentHostComponent } from '@a2ui/angular/v0_9';
+import { ComponentHostComponent, SurfaceComponent } from '@a2ui/angular/v0_9';
 import { AngularCatalog } from '@a2ui/angular/v0_9';
 import { DemoCatalog } from './demo-catalog';
 import { SurfaceGroupAction, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
@@ -34,7 +34,7 @@ import { ActionDispatcher } from './action-dispatcher.service';
 @Component({
   selector: 'a2ui-v0-9-demo',
   standalone: true,
-  imports: [CommonModule, ComponentHostComponent],
+  imports: [CommonModule, ComponentHostComponent, SurfaceComponent],
   template: `
     <!-- template omitted for brevity, keeping same -->
     <div class="dashboard">
@@ -63,8 +63,8 @@ import { ActionDispatcher } from './action-dispatcher.service';
         </div>
         <div class="canvas-frame">
           <div *ngIf="surfaceId" class="rendered-content">
-            <a2ui-v09-component-host [surfaceId]="surfaceId" componentId="root">
-            </a2ui-v09-component-host>
+            <a2ui-v09-surface [surfaceId]="surfaceId">
+            </a2ui-v09-surface>
           </div>
           <div *ngIf="!surfaceId" class="empty-canvas">
             Select an example from the sidebar to view.

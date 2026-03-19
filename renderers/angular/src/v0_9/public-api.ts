@@ -17,6 +17,7 @@
 // Core Services and Components
 export * from './core/a2ui-renderer.service';
 export * from './core/component-host.component';
+export * from './core/surface.component';
 export * from './core/component-binder.service';
 export * from './core/types';
 export * from './core/utils';
