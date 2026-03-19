@@ -24,8 +24,6 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'react': resolve(__dirname, 'node_modules/react'),
-      'react-dom': resolve(__dirname, 'node_modules/react-dom'),
       '@a2ui/react/v0_9': resolve(__dirname, '../src/v0_9/index.ts'),
       '@a2ui/react/v0_8': resolve(__dirname, '../src/v0_8/index.ts'),
       '@a2ui/react/styles': resolve(__dirname, '../src/styles/index.ts'),
