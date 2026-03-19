@@ -1,9 +1,5 @@
 # Catalog Build Tools
 
-A2UI v0.9+ requires catalogs be free standing, except for references to
-`common_types` which are automatically resolved by the A2UI SDK, to simplify LLM
-inference and dependency management.
-
 This directory contains a tool for managing and bundling A2UI catalogs.
 
 ## assemble_catalog.py
@@ -12,6 +8,10 @@ This directory contains a tool for managing and bundling A2UI catalogs.
 A2UI component and function catalogs into a single unified JSON Schema file. It
 natively supports external HTTP refs, automatic GitHub version resolution for
 official catalogs, and multi-file merging.
+
+Furthermore, A2UI v0.9+ requires catalogs be freestanding, except for references
+to `common_types` which are automatically resolved by the A2UI SDK, to simplify
+LLM inference and dependency management.
 
 ### Key Features
 
