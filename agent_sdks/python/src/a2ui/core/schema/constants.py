@@ -50,6 +50,9 @@ ENCODING = "utf-8"
 A2UI_OPEN_TAG = "<a2ui-json>"
 A2UI_CLOSE_TAG = "</a2ui-json>"
 
+A2UI_SCHEMA_BLOCK_START = "---BEGIN A2UI JSON SCHEMA---"
+A2UI_SCHEMA_BLOCK_END = "---END A2UI JSON SCHEMA---"
+
 DEFAULT_WORKFLOW_RULES = f"""
 The generated response MUST follow these rules:
 1.  The response can contain one or more A2UI JSON blocks.

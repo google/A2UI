@@ -18,13 +18,17 @@ from a2ui.core.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConf
 from a2ui.basic_catalog import BasicCatalog
 from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME
 from a2ui.core.schema.constants import (
-    CATALOG_COMPONENTS_KEY,
     DEFAULT_WORKFLOW_RULES,
     INLINE_CATALOG_NAME,
     VERSION_0_8,
     VERSION_0_9,
 )
-from a2ui.core.schema.constants import INLINE_CATALOGS_KEY, SUPPORTED_CATALOG_IDS_KEY
+from a2ui.core.schema.constants import (
+    A2UI_SCHEMA_BLOCK_START,
+    A2UI_SCHEMA_BLOCK_END,
+    INLINE_CATALOGS_KEY,
+    SUPPORTED_CATALOG_IDS_KEY,
+)
 
 
 @pytest.fixture
@@ -214,10 +218,10 @@ def test_generate_system_prompt(mock_importlib_resources):
   assert "Manage workflow." in prompt
   assert "## UI Description:" in prompt
   assert "RENDERUI." in prompt.replace(" ", "").upper()
-  assert "---BEGIN A2UI JSON SCHEMA---" in prompt
+  assert A2UI_SCHEMA_BLOCK_START in prompt
   assert "### Server To Client Schema:" in prompt
   assert "### Catalog Schema" in prompt
-  assert "---END A2UI JSON SCHEMA---" in prompt
+  assert A2UI_SCHEMA_BLOCK_END in prompt
   assert '"Text":{}' in prompt.replace(" ", "")
 
 
@@ -336,7 +340,7 @@ def test_generate_system_prompt_minimal_args(mock_importlib_resources):
   assert "## UI Description:" not in prompt
   assert "## Examples:" not in prompt
   assert "Just Role" in prompt
-  assert "---BEGIN A2UI JSON SCHEMA---" not in prompt
+  assert A2UI_SCHEMA_BLOCK_START not in prompt
 
 
 def test_generate_system_prompt_custom_workflow_appending(mock_importlib_resources):
@@ -411,7 +415,7 @@ def test_generate_system_prompt_with_inline_catalog(mock_importlib_resources):
   )
 
   assert "Role" in prompt
-  assert "---BEGIN A2UI JSON SCHEMA---" in prompt
+  assert A2UI_SCHEMA_BLOCK_START in prompt
   # Inline catalog is merged onto the base catalog (catalogId: "basic")
   assert "### Catalog Schema:" in prompt
   assert '"catalogId": "basic"' in prompt
