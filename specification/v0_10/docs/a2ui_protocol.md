@@ -277,7 +277,7 @@ This message instructs the client to remove a surface and all its associated com
 
 ### `actionResponse`
 
-This message is sent by the server to respond to a client-initiated action that requested a response via `wantResponse: true`.
+This message is sent by the server to respond to a client-initiated `action` that requested a response via `wantResponse: true`.
 
 **Properties:**
 
@@ -292,10 +292,28 @@ Exactly one of `value` or `error` must be present.
 
 **Example:**
 
+Client sends this to the server:
 ```json
 {
   "version": "v0.10",
-  "actionId": "req_abc123",
+  "action": {
+    "name": "get_typeahead_suggestions",
+    "surfaceId": "mysurface",
+    "sourceComponentId": "myinput",
+    "context": {
+      "prefix": "app"
+    },
+    "wantResponse": true,
+    "actionId": "get_typeahead_suggestions_1"
+  }
+}
+```
+
+Server responds with:
+```json
+{
+  "version": "v0.10",
+  "actionId": "get_typeahead_suggestions_1",
   "actionResponse": {
     "value": ["apple", "application", "approved"]
   }
