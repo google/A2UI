@@ -24,17 +24,46 @@ interface DiagramSpec {
   edges: DiagramEdge[];
 }
 
-interface FlowDiagramNodeProps {
-  spec?: string | {path?: string; literalString?: string};
+interface SpecBinding {
+  path?: string;
+  literal?: unknown;
+  literalString?: string;
+  valueString?: string;
 }
 
-function parseSpec(raw: string | null): DiagramSpec | null {
+interface FlowDiagramNodeProps {
+  spec?: string | DiagramSpec | SpecBinding;
+}
+
+function isDiagramSpec(value: unknown): value is DiagramSpec {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<DiagramSpec>;
+  return typeof candidate.title === 'string' && Array.isArray(candidate.nodes) && Array.isArray(candidate.edges);
+}
+
+function extractSpecCandidate(value: unknown): string | DiagramSpec | null {
+  if (value == null) return null;
+  if (typeof value === 'string') return value;
+  if (isDiagramSpec(value)) return value;
+  if (typeof value !== 'object') return String(value);
+
+  const binding = value as SpecBinding;
+  if (typeof binding.literalString === 'string') return binding.literalString;
+  if (typeof binding.valueString === 'string') return binding.valueString;
+  if (binding.literal != null) return extractSpecCandidate(binding.literal);
+
+  return null;
+}
+
+function parseSpec(raw: string | DiagramSpec | null): DiagramSpec | null {
   if (!raw) return null;
+  if (isDiagramSpec(raw)) return raw;
+
   try {
-    const parsed = JSON.parse(raw) as DiagramSpec;
-    if (!parsed.nodes || !parsed.edges) return null;
-    return parsed;
-  } catch {
+    const parsed = JSON.parse(raw) as unknown;
+    return isDiagramSpec(parsed) ? parsed : null;
+  } catch (error) {
+    console.warn('[FlowDiagram] Failed to parse spec payload:', error, raw);
     return null;
   }
 }
@@ -45,10 +74,11 @@ export const FlowDiagram = memo(function FlowDiagram({
 }: A2UIComponentProps<any>) {
   const {getValue} = useA2UIComponent(node, surfaceId);
   const props = node.properties as FlowDiagramNodeProps;
-  const specSource =
-    typeof props.spec === 'string'
-      ? props.spec
-      : props.spec?.literalString ?? (props.spec?.path ? String(getValue(props.spec.path) ?? '') : null);
+  const rawSpecValue =
+    props.spec && typeof props.spec === 'object' && 'path' in props.spec && props.spec.path
+      ? getValue(props.spec.path)
+      : props.spec;
+  const specSource = extractSpecCandidate(rawSpecValue);
   const spec = parseSpec(specSource);
 
   const layout = useMemo(() => {
