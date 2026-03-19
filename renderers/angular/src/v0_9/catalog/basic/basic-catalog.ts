@@ -15,8 +15,6 @@
  */
 
 import { Injectable } from '@angular/core';
-import { z } from 'zod';
-import { createFunctionImplementation } from '@a2ui/web_core/v0_9';
 import { AngularCatalog, AngularComponentImplementation } from '../types';
 import { TextComponent } from './text.component';
 import { RowComponent } from './row.component';
@@ -38,6 +36,7 @@ import { SliderComponent } from './slider.component';
 import { DateTimeInputComponent } from './date-time-input.component';
 
 import {
+  BASIC_FUNCTIONS,
   TextApi,
   RowApi,
   ColumnApi,
@@ -56,7 +55,6 @@ import {
   ChoicePickerApi,
   SliderApi,
   DateTimeInputApi,
-  FormatStringImplementation,
 } from '@a2ui/web_core/v0_9/basic_catalog';
 import { FunctionImplementation } from '@a2ui/web_core/v0_9';
 
@@ -87,23 +85,9 @@ export const BASIC_COMPONENTS: AngularComponentImplementation[] = [
 /**
  * The set of client-side functions provided by the basic catalog.
  */
-export const BASIC_FUNCTIONS: FunctionImplementation[] = [
-  createFunctionImplementation(
-    {
-      name: 'capitalize',
-      returnType: 'string',
-      schema: z.object({ value: z.string().optional() }),
-    },
-    (args) => {
-      console.log('[BasicCatalog] capitalize called with args:', args);
-      const value = String(args.value || '');
-      const res = value.charAt(0).toUpperCase() + value.slice(1);
-      console.log('[BasicCatalog] capitalize result:', res);
-      return res;
-    },
-  ),
-  FormatStringImplementation,
-];
+export { BASIC_FUNCTIONS };
+
+
 
 /**
  * A base class for basic catalogs, providing extensibility for non-DI use cases.

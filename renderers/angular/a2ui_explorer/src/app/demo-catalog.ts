@@ -20,7 +20,7 @@ import { BaseBasicCatalog, BASIC_COMPONENTS, BASIC_FUNCTIONS } from '@a2ui/angul
 import { CustomSliderComponent } from './custom-slider.component';
 import { CardComponent } from './card.component';
 import { AngularComponentImplementation } from '@a2ui/angular/v0_9';
-import { BASIC_FUNCTIONS as CORE_BASIC_FUNCTIONS } from '@a2ui/web_core/v0_9/basic_catalog';
+import { createFunctionImplementation, FunctionImplementation } from '@a2ui/web_core/v0_9';
 
 /**
  * A catalog specific to the demo, extending the basic catalog with custom components.
@@ -50,8 +50,21 @@ export class DemoCatalog extends BaseBasicCatalog {
     };
 
     const components = [...BASIC_COMPONENTS, customSliderApi, cardApi];
-    // Unify functions from both core and angular libraries
-    const functions = [...CORE_BASIC_FUNCTIONS, ...BASIC_FUNCTIONS];
+
+    const capitalizeImplementation: FunctionImplementation = createFunctionImplementation(
+      {
+        name: 'capitalize',
+        returnType: 'string',
+        schema: z.object({ value: z.string().optional() }),
+      },
+      (args) => {
+        const value = String(args.value || '');
+        return value.charAt(0).toUpperCase() + value.slice(1);
+      },
+    );
+
+    // Unify functions from both core and angular libraries, plus local demo functions
+    const functions = [...BASIC_FUNCTIONS, capitalizeImplementation];
 
     super('https://a2ui.org/specification/v0_9/basic_catalog.json', components, functions);
   }
