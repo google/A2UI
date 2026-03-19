@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -18,6 +19,8 @@ from models import (
     InitSurfaceDelta,
 )
 
+logger = logging.getLogger(__name__)
+
 
 @dataclass
 class ContainerState:
@@ -28,14 +31,16 @@ class ContainerState:
 
 class FrameCompiler:
   def __init__(self) -> None:
-    self.surface_id = "main"
-    self.root_id = "root"
+    self.surface_id = 'main'
+    self.root_id = 'root'
     self.initialized = False
     self.containers: dict[str, ContainerState] = {}
-    self.children: dict[str, list[str]] = {}
     self.list_item_counts: dict[str, int] = {}
+    self.used_ids: set[str] = set()
+    self.aliases: dict[str, str] = {}
 
   def apply(self, delta: Any) -> list[A2UIFrame]:
+    logger.info('Compiling delta type=%s payload=%s', type(delta).__name__, delta.model_dump())
     if isinstance(delta, InitSurfaceDelta):
       return self._init_surface(delta)
     if isinstance(delta, AddSectionDelta):
@@ -56,44 +61,82 @@ class FrameCompiler:
       return self._append_list_item(delta)
     return []
 
+  def _resolve_parent_id(self, parent_id: str) -> str:
+    return self.aliases.get(parent_id, parent_id)
+
   def _ensure_container(self, parent_id: str) -> ContainerState:
-    if parent_id not in self.containers:
-      raise ValueError(f"Unknown parent/container id: {parent_id}")
-    return self.containers[parent_id]
+    canonical_parent_id = self._resolve_parent_id(parent_id)
+    if canonical_parent_id not in self.containers:
+      raise ValueError(f'Unknown parent/container id: {parent_id}')
+    return self.containers[canonical_parent_id]
+
+  def _register_id(self, requested_id: str) -> str:
+    base = requested_id.strip() or 'node'
+    if base not in self.used_ids:
+      self.used_ids.add(base)
+      self.aliases.setdefault(requested_id, base)
+      return base
+
+    suffix = 2
+    while f'{base}_{suffix}' in self.used_ids:
+      suffix += 1
+    canonical = f'{base}_{suffix}'
+    logger.warning('Duplicate component id detected: %s -> %s', requested_id, canonical)
+    self.used_ids.add(canonical)
+    return canonical
+
+  def _helper_id(self, base: str, suffix: str) -> str:
+    candidate = f'{base}__{suffix}'
+    if candidate not in self.used_ids:
+      self.used_ids.add(candidate)
+      return candidate
+    counter = 2
+    while f'{candidate}_{counter}' in self.used_ids:
+      counter += 1
+    resolved = f'{candidate}_{counter}'
+    self.used_ids.add(resolved)
+    return resolved
 
   def _append_child(self, parent_id: str, child_id: str) -> None:
-    container = self._ensure_container(parent_id)
-    container.child_ids.append(child_id)
+    parent = self._ensure_container(parent_id)
+    if parent.component_id == child_id:
+      raise ValueError(f'Child id {child_id} cannot equal parent id {parent.component_id}')
+    if child_id not in parent.child_ids:
+      parent.child_ids.append(child_id)
 
   def _surface_update(self, components: list[ComponentNode]) -> A2UIFrame:
-    return A2UIFrame(surfaceUpdate={"surfaceId": self.surface_id, "components": components})
+    frame = A2UIFrame(surfaceUpdate={'surfaceId': self.surface_id, 'components': components})
+    logger.debug('Compiled surfaceUpdate frame=%s', frame.model_dump(exclude_none=True))
+    return frame
 
   def _data_update(self, path: str, contents: list[DataMapEntry]) -> A2UIFrame:
-    return A2UIFrame(dataModelUpdate={"surfaceId": self.surface_id, "path": path, "contents": contents})
+    frame = A2UIFrame(dataModelUpdate={'surfaceId': self.surface_id, 'path': path, 'contents': contents})
+    logger.debug('Compiled dataModelUpdate frame=%s', frame.model_dump(exclude_none=True))
+    return frame
 
   def _container_component(self, container: ContainerState) -> ComponentNode:
-    if container.container_type == "Row":
+    if container.container_type == 'Row':
       component = {
-          "Row": {
-              "children": {"explicitList": container.child_ids},
-              "alignment": "center",
-              "distribution": "start",
+          'Row': {
+              'children': {'explicitList': container.child_ids},
+              'alignment': 'center',
+              'distribution': 'start',
           }
       }
-    elif container.container_type == "List":
+    elif container.container_type == 'List':
       component = {
-          "List": {
-              "children": {"explicitList": container.child_ids},
-              "direction": "vertical",
-              "alignment": "stretch",
+          'List': {
+              'children': {'explicitList': container.child_ids},
+              'direction': 'vertical',
+              'alignment': 'stretch',
           }
       }
     else:
       component = {
-          "Column": {
-              "children": {"explicitList": container.child_ids},
-              "alignment": "stretch",
-              "distribution": "start",
+          'Column': {
+              'children': {'explicitList': container.child_ids},
+              'alignment': 'stretch',
+              'distribution': 'start',
           }
       }
     return ComponentNode(id=container.component_id, component=component)
@@ -101,219 +144,350 @@ class FrameCompiler:
   def _init_surface(self, delta: InitSurfaceDelta) -> list[A2UIFrame]:
     self.surface_id = delta.surface_id
     self.initialized = True
+    self.used_ids = {self.root_id}
+    self.aliases = {self.root_id: self.root_id}
     self.containers = {
-        self.root_id: ContainerState(component_id=self.root_id, container_type="Column")
+        self.root_id: ContainerState(component_id=self.root_id, container_type='Column')
     }
+
+    title_id = self._helper_id('surface', 'title')
+    root_children = [title_id]
     components = [
         ComponentNode(
             id=self.root_id,
-            component={"Column": {"children": {"explicitList": []}, "alignment": "stretch", "distribution": "start"}},
-        )
+            component={
+                'Column': {
+                    'children': {'explicitList': root_children},
+                    'alignment': 'stretch',
+                    'distribution': 'start',
+                }
+            },
+        ),
+        ComponentNode(id=title_id, component={'Text': {'text': {'path': '/title'}, 'usageHint': 'h1'}}),
     ]
-    data_entries = [DataMapEntry(key="title", valueString=delta.title)]
-    if delta.summary:
-      data_entries.append(DataMapEntry(key="summary", valueString=delta.summary))
-      summary_id = "surface_summary"
-      title_id = "surface_title"
-      self.containers[self.root_id].child_ids.extend([title_id, summary_id])
-      components[0] = ComponentNode(
-          id=self.root_id,
-          component={"Column": {"children": {"explicitList": [title_id, summary_id]}, "alignment": "stretch", "distribution": "start"}},
-      )
-      components.extend(
-          [
-              ComponentNode(id=title_id, component={"Text": {"text": {"path": "/title"}, "usageHint": "h1"}}),
-              ComponentNode(id=summary_id, component={"Text": {"text": {"path": "/summary"}, "usageHint": "body"}}),
-          ]
-      )
-    else:
-      title_id = "surface_title"
-      self.containers[self.root_id].child_ids.append(title_id)
-      components[0] = ComponentNode(
-          id=self.root_id,
-          component={"Column": {"children": {"explicitList": [title_id]}, "alignment": "stretch", "distribution": "start"}},
-      )
-      components.append(ComponentNode(id=title_id, component={"Text": {"text": {"path": "/title"}, "usageHint": "h1"}}))
+    data_entries = [DataMapEntry(key='title', valueString=delta.title)]
 
-    return [
-        A2UIFrame(beginRendering={"surfaceId": self.surface_id, "root": self.root_id, "styles": delta.theme.model_dump(exclude_none=True) if delta.theme else None}),
-        self._surface_update(components),
-        self._data_update("/", data_entries),
-    ]
+    if delta.summary:
+      summary_id = self._helper_id('surface', 'summary')
+      self.containers[self.root_id].child_ids.extend([title_id, summary_id])
+      root_children.append(summary_id)
+      components[0] = ComponentNode(
+          id=self.root_id,
+          component={
+              'Column': {
+                  'children': {'explicitList': root_children},
+                  'alignment': 'stretch',
+                  'distribution': 'start',
+              }
+          },
+      )
+      components.append(
+          ComponentNode(id=summary_id, component={'Text': {'text': {'path': '/summary'}, 'usageHint': 'body'}})
+      )
+      data_entries.append(DataMapEntry(key='summary', valueString=delta.summary))
+    else:
+      self.containers[self.root_id].child_ids.append(title_id)
+
+    begin = A2UIFrame(
+        beginRendering={
+            'surfaceId': self.surface_id,
+            'root': self.root_id,
+            'styles': delta.theme.model_dump(exclude_none=True) if delta.theme else None,
+        }
+    )
+    logger.debug('Compiled beginRendering frame=%s', begin.model_dump(exclude_none=True))
+    return [begin, self._surface_update(components), self._data_update('/', data_entries)]
 
   def _add_section(self, delta: AddSectionDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
+    section_id = self._register_id(delta.id)
+    if section_id == parent.component_id:
+      raise ValueError(f'Section id {section_id} cannot equal parent id {parent.component_id}')
+
     components: list[ComponentNode] = []
     emitted_data: list[A2UIFrame] = []
 
-    if delta.layout == "Card":
-      content_id = f"{delta.id}__content"
-      self._append_child(delta.parent_id, delta.id)
-      self.containers[delta.id] = ContainerState(component_id=content_id, container_type="Column")
-      components.append(ComponentNode(id=delta.id, component={"Card": {"child": content_id}}))
+    if delta.layout == 'Card':
+      content_id = self._helper_id(section_id, 'content')
+      self._append_child(delta.parent_id, section_id)
+      self.containers[section_id] = ContainerState(component_id=content_id, container_type='Column')
+      components.append(ComponentNode(id=section_id, component={'Card': {'child': content_id}}))
       explicit_children: list[str] = []
       if delta.title:
-        title_id = f"{delta.id}__title"
+        title_id = self._helper_id(section_id, 'title')
         explicit_children.append(title_id)
-        components.append(ComponentNode(id=title_id, component={"Text": {"text": {"path": f"/sections/{delta.id}/title"}, "usageHint": "h2"}}))
+        components.append(
+            ComponentNode(
+                id=title_id,
+                component={'Text': {'text': {'path': f'/sections/{section_id}/title'}, 'usageHint': 'h2'}},
+            )
+        )
+        emitted_data.append(self._data_update(f'/sections/{section_id}', [DataMapEntry(key='title', valueString=delta.title)]))
       if delta.description:
-        desc_id = f"{delta.id}__description"
+        desc_id = self._helper_id(section_id, 'description')
         explicit_children.append(desc_id)
-        components.append(ComponentNode(id=desc_id, component={"Text": {"text": {"path": f"/sections/{delta.id}/description"}, "usageHint": "body"}}))
-      components.append(ComponentNode(id=content_id, component={"Column": {"children": {"explicitList": explicit_children}, "alignment": "stretch", "distribution": "start"}}))
-      if delta.title:
-        emitted_data.append(self._data_update(f"/sections/{delta.id}", [DataMapEntry(key="title", valueString=delta.title)]))
-      if delta.description:
-        emitted_data.append(self._data_update(f"/sections/{delta.id}", [DataMapEntry(key="description", valueString=delta.description)]))
+        components.append(
+            ComponentNode(
+                id=desc_id,
+                component={'Text': {'text': {'path': f'/sections/{section_id}/description'}, 'usageHint': 'body'}},
+            )
+        )
+        emitted_data.append(
+            self._data_update(f'/sections/{section_id}', [DataMapEntry(key='description', valueString=delta.description)])
+        )
+      components.append(
+          ComponentNode(
+              id=content_id,
+              component={
+                  'Column': {
+                      'children': {'explicitList': explicit_children},
+                      'alignment': 'stretch',
+                      'distribution': 'start',
+                  }
+              },
+          )
+      )
     else:
-      self._append_child(delta.parent_id, delta.id)
-      self.containers[delta.id] = ContainerState(component_id=delta.id, container_type=delta.layout)
+      self._append_child(delta.parent_id, section_id)
+      self.containers[section_id] = ContainerState(component_id=section_id, container_type=delta.layout)
       explicit_children: list[str] = []
       if delta.title:
-        title_id = f"{delta.id}__title"
+        title_id = self._helper_id(section_id, 'title')
         explicit_children.append(title_id)
-        components.append(ComponentNode(id=title_id, component={"Text": {"text": {"path": f"/sections/{delta.id}/title"}, "usageHint": "h2"}}))
-        emitted_data.append(self._data_update(f"/sections/{delta.id}", [DataMapEntry(key="title", valueString=delta.title)]))
+        components.append(
+            ComponentNode(
+                id=title_id,
+                component={'Text': {'text': {'path': f'/sections/{section_id}/title'}, 'usageHint': 'h2'}},
+            )
+        )
+        emitted_data.append(self._data_update(f'/sections/{section_id}', [DataMapEntry(key='title', valueString=delta.title)]))
       if delta.description:
-        desc_id = f"{delta.id}__description"
+        desc_id = self._helper_id(section_id, 'description')
         explicit_children.append(desc_id)
-        components.append(ComponentNode(id=desc_id, component={"Text": {"text": {"path": f"/sections/{delta.id}/description"}, "usageHint": "body"}}))
-        emitted_data.append(self._data_update(f"/sections/{delta.id}", [DataMapEntry(key="description", valueString=delta.description)]))
-      section_state = self.containers[delta.id]
-      section_state.child_ids = explicit_children
-      components.append(self._container_component(section_state))
+        components.append(
+            ComponentNode(
+                id=desc_id,
+                component={'Text': {'text': {'path': f'/sections/{section_id}/description'}, 'usageHint': 'body'}},
+            )
+        )
+        emitted_data.append(
+            self._data_update(f'/sections/{section_id}', [DataMapEntry(key='description', valueString=delta.description)])
+        )
+      self.containers[section_id].child_ids = explicit_children
+      components.append(self._container_component(self.containers[section_id]))
 
     parent_component = self._container_component(parent)
     return [self._surface_update([parent_component] + components)] + emitted_data
 
   def _add_text(self, delta: AddTextDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
-    self._append_child(delta.parent_id, delta.id)
+    text_id = self._register_id(delta.id)
+    if text_id == parent.component_id:
+      raise ValueError(f'Text id {text_id} cannot equal parent id {parent.component_id}')
+    self._append_child(delta.parent_id, text_id)
     parent_update = self._container_component(parent)
-    text_component = ComponentNode(id=delta.id, component={"Text": {"text": {"path": f"/content/{delta.id}/text"}, "usageHint": delta.usage_hint}})
-    return [self._surface_update([parent_update, text_component]), self._data_update(f"/content/{delta.id}", [DataMapEntry(key="text", valueString=delta.text)])]
+    text_component = ComponentNode(
+        id=text_id,
+        component={'Text': {'text': {'path': f'/content/{text_id}/text'}, 'usageHint': delta.usage_hint}},
+    )
+    return [
+        self._surface_update([parent_update, text_component]),
+        self._data_update(f'/content/{text_id}', [DataMapEntry(key='text', valueString=delta.text)]),
+    ]
 
   def _add_key_value(self, delta: AddKeyValueDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
-    row_id = delta.id
-    label_id = f"{delta.id}__label"
-    value_id = f"{delta.id}__value"
+    row_id = self._register_id(delta.id)
+    if row_id == parent.component_id:
+      raise ValueError(f'Key/value id {row_id} cannot equal parent id {parent.component_id}')
+    label_id = self._helper_id(row_id, 'label')
+    value_id = self._helper_id(row_id, 'value')
     self._append_child(delta.parent_id, row_id)
     parent_update = self._container_component(parent)
-    row = ComponentNode(id=row_id, component={"Row": {"children": {"explicitList": [label_id, value_id]}, "alignment": "center", "distribution": "spaceBetween"}})
-    label = ComponentNode(id=label_id, component={"Text": {"text": {"path": f"/content/{delta.id}/label"}, "usageHint": "caption"}})
-    value = ComponentNode(id=value_id, component={"Text": {"text": {"path": f"/content/{delta.id}/value"}, "usageHint": "body"}})
+    row = ComponentNode(
+        id=row_id,
+        component={
+            'Row': {
+                'children': {'explicitList': [label_id, value_id]},
+                'alignment': 'center',
+                'distribution': 'spaceBetween',
+            }
+        },
+    )
+    label = ComponentNode(id=label_id, component={'Text': {'text': {'path': f'/content/{row_id}/label'}, 'usageHint': 'caption'}})
+    value = ComponentNode(id=value_id, component={'Text': {'text': {'path': f'/content/{row_id}/value'}, 'usageHint': 'body'}})
     return [
         self._surface_update([parent_update, row, label, value]),
-        self._data_update(f"/content/{delta.id}", [DataMapEntry(key="label", valueString=delta.label), DataMapEntry(key="value", valueString=delta.value)]),
+        self._data_update(
+            f'/content/{row_id}',
+            [
+                DataMapEntry(key='label', valueString=delta.label),
+                DataMapEntry(key='value', valueString=delta.value),
+            ],
+        ),
     ]
 
   def _add_image(self, delta: AddImageDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
-    self._append_child(delta.parent_id, delta.id)
+    image_id = self._register_id(delta.id)
+    if image_id == parent.component_id:
+      raise ValueError(f'Image id {image_id} cannot equal parent id {parent.component_id}')
+    self._append_child(delta.parent_id, image_id)
     parent_update = self._container_component(parent)
-    image_props: dict[str, Any] = {"url": {"path": f"/content/{delta.id}/url"}}
+    image_props: dict[str, Any] = {'url': {'path': f'/content/{image_id}/url'}}
     if delta.usage_hint:
-      image_props["usageHint"] = delta.usage_hint
-    image = ComponentNode(id=delta.id, component={"Image": image_props})
-    return [self._surface_update([parent_update, image]), self._data_update(f"/content/{delta.id}", [DataMapEntry(key="url", valueString=delta.url)])]
+      image_props['usageHint'] = delta.usage_hint
+    image = ComponentNode(id=image_id, component={'Image': image_props})
+    return [
+        self._surface_update([parent_update, image]),
+        self._data_update(f'/content/{image_id}', [DataMapEntry(key='url', valueString=delta.url)]),
+    ]
 
   def _add_button(self, delta: AddButtonDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
-    text_id = f"{delta.id}__label"
-    self._append_child(delta.parent_id, delta.id)
+    button_id = self._register_id(delta.id)
+    if button_id == parent.component_id:
+      raise ValueError(f'Button id {button_id} cannot equal parent id {parent.component_id}')
+    text_id = self._helper_id(button_id, 'label')
+    self._append_child(delta.parent_id, button_id)
     parent_update = self._container_component(parent)
     button = ComponentNode(
-        id=delta.id,
+        id=button_id,
         component={
-            "Button": {
-                "child": text_id,
-                "primary": delta.primary,
-                "action": {"name": delta.action_name},
+            'Button': {
+                'child': text_id,
+                'primary': delta.primary,
+                'action': {'name': delta.action_name},
             }
         },
     )
-    label = ComponentNode(id=text_id, component={"Text": {"text": {"path": f"/content/{delta.id}/label"}, "usageHint": "body"}})
-    return [self._surface_update([parent_update, button, label]), self._data_update(f"/content/{delta.id}", [DataMapEntry(key="label", valueString=delta.label)])]
+    label = ComponentNode(id=text_id, component={'Text': {'text': {'path': f'/content/{button_id}/label'}, 'usageHint': 'body'}})
+    return [
+        self._surface_update([parent_update, button, label]),
+        self._data_update(f'/content/{button_id}', [DataMapEntry(key='label', valueString=delta.label)]),
+    ]
 
   def _add_input(self, delta: AddInputDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
-    self._append_child(delta.parent_id, delta.id)
+    input_id = self._register_id(delta.id)
+    if input_id == parent.component_id:
+      raise ValueError(f'Input id {input_id} cannot equal parent id {parent.component_id}')
+    self._append_child(delta.parent_id, input_id)
     parent_update = self._container_component(parent)
-    props: dict[str, Any] = {"label": {"literalString": delta.label}}
+    props: dict[str, Any] = {'label': {'literalString': delta.label}}
     payload: DataMapEntry | None = None
 
-    if delta.component == "TextField":
-      props["text"] = {"path": delta.path}
+    if delta.component == 'TextField':
+      props['text'] = {'path': delta.path}
       if delta.text_field_type:
-        props["textFieldType"] = delta.text_field_type
+        props['textFieldType'] = delta.text_field_type
       if delta.value is not None:
-        payload = DataMapEntry(key=delta.path.split("/")[-1], valueString=str(delta.value))
-    elif delta.component == "CheckBox":
-      props["value"] = {"path": delta.path}
+        payload = DataMapEntry(key=delta.path.split('/')[-1], valueString=str(delta.value))
+    elif delta.component == 'CheckBox':
+      props['value'] = {'path': delta.path}
       if delta.value is not None:
-        payload = DataMapEntry(key=delta.path.split("/")[-1], valueBoolean=bool(delta.value))
-    elif delta.component == "Slider":
-      props["value"] = {"path": delta.path}
+        payload = DataMapEntry(key=delta.path.split('/')[-1], valueBoolean=bool(delta.value))
+    elif delta.component == 'Slider':
+      props['value'] = {'path': delta.path}
       if delta.min_value is not None:
-        props["minValue"] = delta.min_value
+        props['minValue'] = delta.min_value
       if delta.max_value is not None:
-        props["maxValue"] = delta.max_value
+        props['maxValue'] = delta.max_value
       if delta.value is not None:
-        payload = DataMapEntry(key=delta.path.split("/")[-1], valueNumber=float(delta.value))
-    elif delta.component == "MultipleChoice":
-      props["selections"] = {"path": delta.path}
-      props["options"] = [{"label": {"literalString": option.label}, "value": option.value} for option in (delta.options or [])]
+        payload = DataMapEntry(key=delta.path.split('/')[-1], valueNumber=float(delta.value))
+    elif delta.component == 'MultipleChoice':
+      props['selections'] = {'path': delta.path}
+      props['options'] = [
+          {'label': {'literalString': option.label}, 'value': option.value}
+          for option in (delta.options or [])
+      ]
       if delta.value is not None:
         values = [str(v) for v in (delta.value if isinstance(delta.value, list) else [delta.value])]
         payload = DataMapEntry(
-            key=delta.path.split("/")[-1],
+            key=delta.path.split('/')[-1],
             valueMap=[DataMapEntry(key=str(i), valueString=value) for i, value in enumerate(values)],
         )
-    elif delta.component == "DateTimeInput":
+    elif delta.component == 'DateTimeInput':
       props = {
-          "label": {"literalString": delta.label},
-          "value": {"path": delta.path},
-          "enableDate": bool(delta.enable_date if delta.enable_date is not None else True),
-          "enableTime": bool(delta.enable_time if delta.enable_time is not None else True),
+          'label': {'literalString': delta.label},
+          'value': {'path': delta.path},
+          'enableDate': bool(delta.enable_date if delta.enable_date is not None else True),
+          'enableTime': bool(delta.enable_time if delta.enable_time is not None else True),
       }
       if delta.value is not None:
-        payload = DataMapEntry(key=delta.path.split("/")[-1], valueString=str(delta.value))
+        payload = DataMapEntry(key=delta.path.split('/')[-1], valueString=str(delta.value))
 
-    component = ComponentNode(id=delta.id, component={delta.component: props})
+    component = ComponentNode(id=input_id, component={delta.component: props})
     frames = [self._surface_update([parent_update, component])]
     if payload:
-      parent_path, leaf = delta.path.rsplit("/", 1)
+      parent_path, leaf = delta.path.rsplit('/', 1)
       frames.append(
           self._data_update(
-              parent_path or "/",
-              [DataMapEntry(key=leaf, **payload.model_dump(exclude_none=True, exclude={"key"}))],
+              parent_path or '/',
+              [DataMapEntry(key=leaf, **payload.model_dump(exclude_none=True, exclude={'key'}))],
           )
       )
     return frames
 
   def _add_divider(self, delta: AddDividerDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
-    self._append_child(delta.parent_id, delta.id)
+    divider_id = self._register_id(delta.id)
+    if divider_id == parent.component_id:
+      raise ValueError(f'Divider id {divider_id} cannot equal parent id {parent.component_id}')
+    self._append_child(delta.parent_id, divider_id)
     parent_update = self._container_component(parent)
-    divider = ComponentNode(id=delta.id, component={"Divider": {"axis": "horizontal"}})
+    divider = ComponentNode(id=divider_id, component={'Divider': {'axis': 'horizontal'}})
     return [self._surface_update([parent_update, divider])]
 
   def _append_list_item(self, delta: AppendListItemDelta) -> list[A2UIFrame]:
     parent = self._ensure_container(delta.parent_id)
-    item_index = self.list_item_counts.get(delta.parent_id, 0) + 1
-    self.list_item_counts[delta.parent_id] = item_index
-    wrapper_id = f"{delta.id}__item_{item_index}"
-    title_id = f"{wrapper_id}__title"
-    detail_id = f"{wrapper_id}__detail"
+    item_index = self.list_item_counts.get(parent.component_id, 0) + 1
+    self.list_item_counts[parent.component_id] = item_index
+    item_prefix = self._register_id(f'{delta.id}_{item_index}')
+    wrapper_id = self._helper_id(item_prefix, 'wrapper')
+    title_id = self._helper_id(item_prefix, 'title')
+    detail_id = self._helper_id(item_prefix, 'detail')
+
+    if wrapper_id == parent.component_id:
+      raise ValueError(f'List item wrapper id {wrapper_id} cannot equal parent id {parent.component_id}')
+
     self._append_child(delta.parent_id, wrapper_id)
     parent_update = self._container_component(parent)
     wrapper_children = [title_id] + ([detail_id] if delta.detail else [])
-    wrapper = ComponentNode(id=wrapper_id, component={"Column": {"children": {"explicitList": wrapper_children}, "alignment": "stretch", "distribution": "start"}})
-    title = ComponentNode(id=title_id, component={"Text": {"text": {"path": f"/lists/{delta.parent_id}/{wrapper_id}/title"}, "usageHint": "body"}})
-    components = [parent_update, wrapper, title]
-    contents = [DataMapEntry(key="title", valueString=delta.title)]
+    wrapper = ComponentNode(
+        id=wrapper_id,
+        component={
+            'Card': {
+                'child': self._helper_id(item_prefix, 'content')
+            }
+        },
+    )
+    content_id = wrapper.component['Card']['child']
+    content = ComponentNode(
+        id=content_id,
+        component={
+            'Column': {
+                'children': {'explicitList': wrapper_children},
+                'alignment': 'stretch',
+                'distribution': 'start',
+            }
+        },
+    )
+    title = ComponentNode(
+        id=title_id,
+        component={'Text': {'text': {'path': f'/lists/{parent.component_id}/{item_prefix}/title'}, 'usageHint': 'body'}},
+    )
+    components = [parent_update, wrapper, content, title]
+    contents = [DataMapEntry(key='title', valueString=delta.title)]
     if delta.detail:
-      components.append(ComponentNode(id=detail_id, component={"Text": {"text": {"path": f"/lists/{delta.parent_id}/{wrapper_id}/detail"}, "usageHint": "caption"}}))
-      contents.append(DataMapEntry(key="detail", valueString=delta.detail))
-    return [self._surface_update(components), self._data_update(f"/lists/{delta.parent_id}/{wrapper_id}", contents)]
+      components.append(
+          ComponentNode(
+              id=detail_id,
+              component={'Text': {'text': {'path': f'/lists/{parent.component_id}/{item_prefix}/detail'}, 'usageHint': 'caption'}},
+          )
+      )
+      contents.append(DataMapEntry(key='detail', valueString=delta.detail))
+    return [
+        self._surface_update(components),
+        self._data_update(f'/lists/{parent.component_id}/{item_prefix}', contents),
+    ]

@@ -11,8 +11,12 @@ class Settings:
   openai_api_base: str = os.getenv("OPENAI_API_BASE", "http://10.50.95.196:8000/v1")
   openai_api_key: str = os.getenv("OPENAI_API_KEY", "sk-1234")
   local_model_name: str = os.getenv("LOCAL_MODEL_NAME", "qwen3.5")
-  litellm_model: str = os.getenv("LITELLM_MODEL", f"openai/{os.getenv('LOCAL_MODEL_NAME', 'qwen3.5')}")
+  litellm_model: str = os.getenv(
+      "LITELLM_MODEL", f"openai/{os.getenv('LOCAL_MODEL_NAME', 'qwen3.5')}"
+  )
   temperature: float = float(os.getenv("TEMPERATURE", "0.2"))
+  log_level: str = os.getenv("LOG_LEVEL", "INFO").upper()
+  max_log_chars: int = int(os.getenv("MAX_LOG_CHARS", "1200"))
 
 
 settings = Settings()
