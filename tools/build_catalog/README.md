@@ -20,10 +20,11 @@ official catalogs, and multi-file merging.
 - **Smart `$ref` Resolution**: Automatically fetches external URLs and
   accurately resolves relative local paths.
 - **Official Catalog Interception**: By default, it intercepts references to
-  `basic_catalog.json` and `common_types.json` and auto-downloads the official
-  A2UI specification from GitHub based on the `--version` provided (defaults to
-  `0.9`). If you provide your own local versions in the input list, it will
-  intelligently use those instead!
+  `basic_catalog.json` (or `standard_catalog_definition.json` for v0.8) and
+  `common_types.json` and auto-downloads the official A2UI specification from
+  GitHub based on the `--version` provided (defaults to `0.9`). If you provide
+  your own local versions in the input list, it will intelligently use those
+  instead!
 - **Circular Dependency Protection**: Detects and aborts on infinite `$ref`
   loops.
 - **Resilient Remote Fetching**: Employs timeouts for network requests and
@@ -49,7 +50,7 @@ uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPU
   omitted.
 - `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
 - `--version`: The A2UI specification version to use for official catalog
-  fallbacks. Choices are `0.9` or `0.10`. Defaults to `0.9`.
+  fallbacks. Choices are `0.8`, `0.9` or `0.10`. Defaults to `0.9`.
 - `--extend-basic-catalog`: If passed, automatically includes the entirety of
   `basic_catalog.json` in the root output regardless of whether the input
   catalogs explicitly reference it.
