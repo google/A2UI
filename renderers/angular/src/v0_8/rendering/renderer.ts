@@ -56,7 +56,20 @@ export class Renderer {
       const container = this.container;
       container.clear();
 
-      const node = this.component();
+      let node = this.component();
+      // Handle v0.8 wrapped component format
+      if (!node.type && (node as any).component) {
+        const wrapped = (node as any).component;
+        const type = Object.keys(wrapped)[0];
+        if (type) {
+          node = {
+            ...node,
+            type: type as any,
+            properties: wrapped[type],
+          };
+        }
+      }
+
       const config = this.catalog[node.type];
 
       if (!config) {
