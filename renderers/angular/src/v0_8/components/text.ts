@@ -70,7 +70,7 @@ interface HintedStyles {
 export class Text extends DynamicComponent<Types.TextNode> {
   private markdownRenderer = inject(MarkdownRenderer);
   readonly text = input.required<Primitives.StringValue | null>();
-  readonly usageHint = input.required<Types.ResolvedText['usageHint'] | null>();
+  readonly usageHint = input<Types.ResolvedText['usageHint'] | null>(null);
 
   protected resolvedText = computed(() => {
     const usageHint = this.usageHint();

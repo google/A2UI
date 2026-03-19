@@ -70,7 +70,7 @@ describe('DateTimeInput Component', () => {
     fixture.componentRef.setInput('component', mockDatetimeNode);
     fixture.componentRef.setInput('weight', 1);
     fixture.componentRef.setInput('value', mockDatetimeNode.properties.value);
-    fixture.componentRef.setInput('label', 'Select Date');
+    fixture.componentRef.setInput('label', { literalString: 'Select Date' });
 
     fixture.detectChanges();
   });

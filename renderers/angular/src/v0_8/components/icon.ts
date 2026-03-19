@@ -44,6 +44,6 @@ import { Types } from '../types';
   `,
 })
 export class Icon extends DynamicComponent<Types.IconNode> {
-  readonly name = input.required<Types.StringValue | null>();
+  readonly name = input<Types.StringValue | null>(null);
   protected readonly resolvedName = computed(() => this.resolvePrimitive(this.name()));
 }

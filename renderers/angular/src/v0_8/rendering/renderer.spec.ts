@@ -21,7 +21,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'test-comp',
-  template: '<div>{{text}}</div>',
+  template: '<div>{{ text }}</div>',
   standalone: true,
 })
 class TestComp {
@@ -31,9 +31,22 @@ class TestComp {
   @Input() text?: string;
 }
 
+@Component({
+  template: `<ng-container
+    a2ui-renderer
+    [surfaceId]="surfaceId"
+    [component]="component"
+  ></ng-container>`,
+  standalone: true,
+  imports: [Renderer],
+})
+class TestHost {
+  surfaceId = '';
+  component: any = null;
+}
+
 describe('v0.8 Renderer', () => {
-  let component: Renderer;
-  let fixture: ComponentFixture<Renderer>;
+  let fixture: ComponentFixture<TestHost>;
   let mockCatalog: any;
 
   beforeEach(async () => {
@@ -42,25 +55,20 @@ describe('v0.8 Renderer', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [Renderer],
+      imports: [TestHost],
       providers: [{ provide: Catalog, useValue: mockCatalog }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Renderer);
-    component = fixture.componentInstance;
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    fixture = TestBed.createComponent(TestHost);
   });
 
   it('should render component from catalog', async () => {
-    fixture.componentRef.setInput('surfaceId', 'surf-1');
-    fixture.componentRef.setInput('component', {
+    fixture.componentInstance.surfaceId = 'surf-1';
+    fixture.componentInstance.component = {
       type: 'TestComp',
       properties: { text: 'Hello v0.8' },
       weight: 10,
-    });
+    };
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -73,11 +81,11 @@ describe('v0.8 Renderer', () => {
   it('should handle async component resolution', async () => {
     mockCatalog['TestComp'] = () => Promise.resolve(TestComp);
 
-    fixture.componentRef.setInput('surfaceId', 'surf-1');
-    fixture.componentRef.setInput('component', {
+    fixture.componentInstance.surfaceId = 'surf-1';
+    fixture.componentInstance.component = {
       type: 'TestComp',
       properties: { text: 'Async Hello' },
-    });
+    };
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -89,11 +97,11 @@ describe('v0.8 Renderer', () => {
 
   it('should error if component type not found', () => {
     const consoleSpy = spyOn(console, 'error');
-    fixture.componentRef.setInput('surfaceId', 'surf-1');
-    fixture.componentRef.setInput('component', {
+    fixture.componentInstance.surfaceId = 'surf-1';
+    fixture.componentInstance.component = {
       type: 'UnknownComp',
       properties: {},
-    });
+    };
 
     fixture.detectChanges();
     expect(consoleSpy).toHaveBeenCalledWith('Unknown component type: UnknownComp');
@@ -102,11 +110,11 @@ describe('v0.8 Renderer', () => {
   it('should handle direct function config in catalog', async () => {
     mockCatalog['TestComp'] = () => TestComp;
 
-    fixture.componentRef.setInput('surfaceId', 'surf-1');
-    fixture.componentRef.setInput('component', {
+    fixture.componentInstance.surfaceId = 'surf-1';
+    fixture.componentInstance.component = {
       type: 'TestComp',
       properties: { text: 'Function Hello' },
-    });
+    };
 
     fixture.detectChanges();
     await fixture.whenStable();
@@ -114,5 +122,113 @@ describe('v0.8 Renderer', () => {
 
     const compiled = fixture.nativeElement;
     expect(compiled.textContent).toContain('Function Hello');
+  });
+
+  it('should inject structural styles into the document head', () => {
+    // Check if a style tag with structuralStyles content exists in the head
+    const styleTags = document.getElementsByTagName('style');
+    let found = false;
+    for (let i = 0; i < styleTags.length; i++) {
+      // Check for a representative class from structuralStyles
+      if (styleTags[i].textContent?.includes('.layout-p-')) {
+        found = true;
+        break;
+      }
+    }
+    expect(found).toBeTrue();
+  });
+});
+
+@Component({
+  selector: 'comp-with-inputs',
+  template: '',
+  standalone: true,
+})
+class CompWithInputs {
+  @Input() surfaceId?: string;
+  @Input() component?: any;
+  @Input() weight?: number;
+  @Input() text?: string;
+  // Note: No 'children' or 'child' inputs here.
+}
+
+describe('v0.8 Renderer Regression Tests', () => {
+  let fixture: ComponentFixture<TestHost>;
+  let mockCatalog: any;
+
+  beforeEach(async () => {
+    mockCatalog = {
+      CompWithInputs: { type: () => CompWithInputs },
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [TestHost],
+      providers: [{ provide: Catalog, useValue: mockCatalog }],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TestHost);
+  });
+
+  it('should gracefully handle missing inputs and log a warning', async () => {
+    // This test ensures that when a property is present in the node but NOT declared
+    // as an input on the component, the Renderer logs a warning rather than throwing NG0303.
+    fixture.componentInstance.surfaceId = 'surf-1';
+    fixture.componentInstance.component = {
+      type: 'CompWithInputs',
+      properties: {
+        text: 'Hello',
+        nonExistentInput: 'should-warn',
+      },
+    };
+
+    const warnSpy = spyOn(console, 'warn');
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      jasmine.stringMatching(
+        /Property "nonExistentInput" could not be set on component CompWithInputs/,
+      ),
+    );
+  });
+
+  it('should pass children and child properties as inputs if supported', async () => {
+    const setCapture: any = {};
+    @Component({
+      selector: 'comp-with-children',
+      template: '',
+      standalone: true,
+    })
+    class CompWithChildren {
+      @Input() surfaceId?: string;
+      @Input() component?: any;
+      @Input() weight?: number;
+      @Input() set children(v: any) {
+        setCapture.children = v;
+      }
+      @Input() set child(v: any) {
+        setCapture.child = v;
+      }
+    }
+
+    mockCatalog['CompWithChildren'] = { type: () => CompWithChildren };
+
+    fixture.componentInstance.surfaceId = 'surf-1';
+    fixture.componentInstance.component = {
+      type: 'CompWithChildren',
+      properties: {
+        children: [{ id: 'child-1' }],
+        child: { id: 'child-2' },
+      },
+    };
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(setCapture.children).toEqual([{ id: 'child-1' }]);
+    expect(setCapture.child).toEqual({ id: 'child-2' });
   });
 });

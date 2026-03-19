@@ -58,7 +58,7 @@ describe('Checkbox Component', () => {
     fixture.componentRef.setInput('component', mockNode);
     fixture.componentRef.setInput('weight', 1);
     fixture.componentRef.setInput('label', { literalString: 'Accept Terms' });
-    fixture.componentRef.setInput('value', { literalBoolean: false });
+    fixture.componentRef.setInput('checked', { literalBoolean: false });
 
     fixture.detectChanges();
   });
@@ -76,7 +76,7 @@ describe('Checkbox Component', () => {
     const inputEl = fixture.nativeElement.querySelector('input');
     expect(inputEl.checked).toBeFalse();
 
-    fixture.componentRef.setInput('value', { literalBoolean: true });
+    fixture.componentRef.setInput('checked', { literalBoolean: true });
     fixture.detectChanges();
     expect(inputEl.checked).toBeTrue();
   });
