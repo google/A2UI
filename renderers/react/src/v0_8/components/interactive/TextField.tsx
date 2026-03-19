@@ -17,6 +17,7 @@
 import {memo, useId, useState, useEffect} from 'react';
 import {useA2UIComponent} from '../../hooks/useA2UIComponent';
 import {type A2UIComponentProps, type Types} from '../../types';
+import {classMapToString} from '../../lib/utils';
 
 /**
  * A standard text input component.
@@ -70,9 +71,9 @@ export const TextField = memo(function TextField({
   const inputType = fieldType === 'longText' ? 'text' : fieldType || 'shortText';
 
   return (
-    <div className={theme.components.TextField?.container}>
+    <div className={classMapToString(theme.components.TextField?.container)}>
       {label && (
-        <label htmlFor={id} className={theme.components.TextField?.label}>
+        <label htmlFor={id} className={classMapToString(theme.components.TextField?.label)}>
           {label}
         </label>
       )}
@@ -81,7 +82,7 @@ export const TextField = memo(function TextField({
           id={id}
           value={value}
           onChange={handleChange}
-          className={theme.components.TextField?.element}
+          className={classMapToString(theme.components.TextField?.element)}
         />
       ) : (
         <input
@@ -89,7 +90,7 @@ export const TextField = memo(function TextField({
           type={inputType === 'shortText' ? 'text' : inputType}
           value={value}
           onChange={handleChange}
-          className={theme.components.TextField?.element}
+          className={classMapToString(theme.components.TextField?.element)}
         />
       )}
     </div>
