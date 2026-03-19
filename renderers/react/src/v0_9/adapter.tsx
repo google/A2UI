@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useRef, useSyncExternalStore, useCallback } from "react";
-import { z } from "zod";
-import { ComponentContext, GenericBinder } from "@a2ui/web_core/v0_9";
-import type { ComponentApi, ResolveA2uiProps } from "@a2ui/web_core/v0_9";
+import React, {useRef, useSyncExternalStore, useCallback} from 'react';
+import {type z} from 'zod';
+import {type ComponentContext, GenericBinder} from '@a2ui/web_core/v0_9';
+import type {ComponentApi, ResolveA2uiProps} from '@a2ui/web_core/v0_9';
 
 export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
@@ -39,12 +39,15 @@ export type ReactA2uiComponentProps<T> = {
  * Creates a React component implementation using the deep generic binder.
  */
 export function createReactComponent<Schema extends z.ZodTypeAny>(
-  api: { name: string; schema: Schema },
+  api: {name: string; schema: Schema},
   RenderComponent: React.FC<ReactA2uiComponentProps<ResolveA2uiProps<z.infer<Schema>>>>
 ): ReactComponentImplementation {
   type Props = ResolveA2uiProps<z.infer<Schema>>;
-  
-  const ReactWrapper: React.FC<{ context: ComponentContext, buildChild: any }> = ({ context, buildChild }) => {
+
+  const ReactWrapper: React.FC<{context: ComponentContext; buildChild: any}> = ({
+    context,
+    buildChild,
+  }) => {
     const bindingRef = useRef<GenericBinder<Props> | null>(null);
 
     if (!bindingRef.current) {
@@ -52,21 +55,26 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
     }
     const binding = bindingRef.current;
 
-    const subscribe = useCallback((callback: () => void) => {
-      const sub = binding.subscribe(callback);
-      return () => sub.unsubscribe();
-    }, [binding]);
+    const subscribe = useCallback(
+      (callback: () => void) => {
+        const sub = binding.subscribe(callback);
+        return () => sub.unsubscribe();
+      },
+      [binding]
+    );
 
     const getSnapshot = useCallback(() => binding.snapshot, [binding]);
     const props = useSyncExternalStore(subscribe, getSnapshot);
 
-    return <RenderComponent props={props || ({} as Props)} buildChild={buildChild} context={context} />;
+    return (
+      <RenderComponent props={props || ({} as Props)} buildChild={buildChild} context={context} />
+    );
   };
 
   return {
     name: api.name,
     schema: api.schema,
-    render: ReactWrapper
+    render: ReactWrapper,
   };
 }
 
@@ -83,6 +91,6 @@ export function createBinderlessComponent(
   return {
     name: api.name,
     schema: api.schema,
-    render: RenderComponent
+    render: RenderComponent,
   };
 }

@@ -14,42 +14,42 @@
  * limitations under the License.
  */
 
-import { Catalog, createFunctionImplementation } from "@a2ui/web_core/v0_9";
-import { ReactText } from "./components/ReactText";
-import { ReactButton } from "./components/ReactButton";
-import { ReactRow } from "./components/ReactRow";
-import { ReactColumn } from "./components/ReactColumn";
-import { ReactTextField } from "./components/ReactTextField";
-import type { ReactComponentImplementation } from "./adapter";
-import { z } from "zod";
+import {Catalog, createFunctionImplementation} from '@a2ui/web_core/v0_9';
+import {ReactText} from './components/ReactText';
+import {ReactButton} from './components/ReactButton';
+import {ReactRow} from './components/ReactRow';
+import {ReactColumn} from './components/ReactColumn';
+import {ReactTextField} from './components/ReactTextField';
+import type {ReactComponentImplementation} from './adapter';
+import {z} from 'zod';
 
 const minimalComponents: ReactComponentImplementation[] = [
   ReactText,
   ReactButton,
   ReactRow,
   ReactColumn,
-  ReactTextField
+  ReactTextField,
 ];
 
 export const minimalCatalog = new Catalog<ReactComponentImplementation>(
-  "https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json",
+  'https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json',
   minimalComponents,
   [
     createFunctionImplementation(
       {
-        name: "capitalize",
-        returnType: "string",
+        name: 'capitalize',
+        returnType: 'string',
         schema: z.object({
-          value: z.any()
-        })
+          value: z.any(),
+        }),
       },
       (args) => {
         const val = args.value;
-        if (typeof val === "string") {
+        if (typeof val === 'string') {
           return val.toUpperCase();
         }
         return val as string;
       }
-    )
+    ),
   ]
 );
