@@ -16,7 +16,7 @@
 
 import { useState, useEffect, useSyncExternalStore, useCallback } from 'react';
 import { MessageProcessor, SurfaceModel } from '@a2ui/web_core/v0_9';
-import { minimalCatalog, basicCatalog, A2uiSurface } from '@a2ui/react_prototype';
+import { minimalCatalog, basicCatalog, A2uiSurface } from '@a2ui/react/v0_9';
 
 // Import Minimal examples
 import min1 from "../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json";
