@@ -21,9 +21,10 @@ import { AgentStubService } from './agent-stub.service';
 import { ComponentHostComponent, SurfaceComponent } from '@a2ui/angular/v0_9';
 import { AngularCatalog } from '@a2ui/angular/v0_9';
 import { DemoCatalog } from './demo-catalog';
-import { SurfaceGroupAction, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
+import { SurfaceGroupAction, A2uiMessage, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
 import { EXAMPLES } from './examples-bundle';
 import { Example } from './types';
+import { Subscription } from 'rxjs';
 import { ActionDispatcher } from './action-dispatcher.service';
 
 /**
@@ -34,9 +35,8 @@ import { ActionDispatcher } from './action-dispatcher.service';
 @Component({
   selector: 'a2ui-v0-9-demo',
   standalone: true,
-  imports: [CommonModule, ComponentHostComponent, SurfaceComponent],
+  imports: [CommonModule, SurfaceComponent],
   template: `
-    <!-- template omitted for brevity, keeping same -->
     <div class="dashboard">
       <!-- Sidebar Navigation -->
       <div class="sidebar">
@@ -63,8 +63,7 @@ import { ActionDispatcher } from './action-dispatcher.service';
         </div>
         <div class="canvas-frame">
           <div *ngIf="surfaceId" class="rendered-content">
-            <a2ui-v09-surface [surfaceId]="surfaceId">
-            </a2ui-v09-surface>
+            <a2ui-v09-surface [surfaceId]="surfaceId"> </a2ui-v09-surface>
           </div>
           <div *ngIf="!surfaceId" class="empty-canvas">
             Select an example from the sidebar to view.
@@ -106,7 +105,6 @@ import { ActionDispatcher } from './action-dispatcher.service';
   `,
   styles: [
     `
-      /* styles omitted for brevity, keeping same */
       .dashboard {
         display: flex;
         height: 100vh;

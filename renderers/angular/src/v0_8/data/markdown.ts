@@ -28,7 +28,10 @@ export abstract class MarkdownRenderer {
   providedIn: 'root',
 })
 export class DefaultMarkdownRenderer extends MarkdownRenderer {
-  override async render(markdown: string, options?: Types.MarkdownRendererOptions): Promise<string> {
+  override async render(
+    markdown: string,
+    options?: Types.MarkdownRendererOptions,
+  ): Promise<string> {
     // Basic implementation for v0.8
     return markdown;
   }

@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy, inject, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { DataContext } from '@a2ui/web_core/v0_9';
+import { ComponentContext, DataContext } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { BoundProperty } from '../../core/types';
 
 /**
- * A standard button component providing primary, default, and borderless variants.
+ * Angular implementation of the A2UI Button component (v0.9).
  *
- * It supports child A2UI components (e.g., icons or text) and dispatches actions
- * when clicked.
+ * Renders a clickable button with a single child component (usually Text).
+ * Dispatches an action when clicked if an `action` property is provided.
  */
 @Component({
   selector: 'a2ui-v09-button',
+  standalone: true,
   imports: [ComponentHostComponent],
   template: `
     <button
@@ -70,7 +71,12 @@ import { BoundProperty } from '../../core/types';
 })
 export class ButtonComponent {
   /**
-   * Bound properties.
+   * Reactive properties resolved from the A2UI {@link ComponentModel}.
+   *
+   * Expected properties:
+   * - `child`: The ID of the component to render inside the button.
+   * - `variant`: Button style variant ('default', 'primary', 'borderless').
+   * - `action`: The A2UI action to dispatch on click.
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();

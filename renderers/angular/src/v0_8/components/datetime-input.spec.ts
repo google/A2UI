@@ -47,7 +47,7 @@ describe('DateTimeInput Component', () => {
         container: { 'dt-container': true },
         label: { 'dt-label': true },
         element: { 'dt-element': true },
-      }
+      },
     } as any;
 
     await TestBed.configureTestingModule({
@@ -58,14 +58,14 @@ describe('DateTimeInput Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(DateTimeInput, {
-      set: { changeDetection: ChangeDetectionStrategy.Default }
-    })
-    .compileComponents();
+      .overrideComponent(DateTimeInput, {
+        set: { changeDetection: ChangeDetectionStrategy.Default },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(DateTimeInput);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockDatetimeNode);
     fixture.componentRef.setInput('weight', 1);
@@ -91,7 +91,7 @@ describe('DateTimeInput Component', () => {
 
   it('should apply correct input type based on flags', () => {
     const inputEl = fixture.nativeElement.querySelector('input');
-    
+
     // Default is date (enableDate=true, enableTime=false)
     expect(inputEl.type).toBe('date');
 
@@ -114,9 +114,10 @@ describe('DateTimeInput Component', () => {
     inputEl.dispatchEvent(new Event('change'));
 
     expect(mockProcessor.dispatch).toHaveBeenCalled();
-    const message = mockProcessor.dispatch.calls.mostRecent().args[0] as Types.A2UIClientEventMessage;
+    const message = mockProcessor.dispatch.calls.mostRecent()
+      .args[0] as Types.A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('change');
-    
+
     // Verify context
     expect(message.userAction!.context).toEqual({ value: '2023-10-28' });
   });

@@ -44,8 +44,14 @@ describe('Tabs Component', () => {
   let mockTheme: Theme;
 
   const mockTabItems = [
-    { title: { literalString: 'Tab 1' } as any, child: { id: 'child-1', type: 'Text', properties: { text: 'Content 1' } } },
-    { title: { literalString: 'Tab 2' } as any, child: { id: 'child-2', type: 'Text', properties: { text: 'Content 2' } } },
+    {
+      title: { literalString: 'Tab 1' } as any,
+      child: { id: 'child-1', type: 'Text', properties: { text: 'Content 1' } },
+    },
+    {
+      title: { literalString: 'Tab 2' } as any,
+      child: { id: 'child-2', type: 'Text', properties: { text: 'Content 2' } },
+    },
   ];
 
   beforeEach(async () => {
@@ -63,24 +69,27 @@ describe('Tabs Component', () => {
     await TestBed.configureTestingModule({
       imports: [Tabs],
       providers: [
-        { provide: MessageProcessor, useValue: { resolvePrimitive: (p: any) => p?.literalString || p } },
+        {
+          provide: MessageProcessor,
+          useValue: { resolvePrimitive: (p: any) => p?.literalString || p },
+        },
         { provide: Theme, useValue: mockTheme },
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(Tabs, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-        imports: [MockRenderer],
-      }
-    })
-    .compileComponents();
+      .overrideComponent(Tabs, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+          imports: [MockRenderer],
+        },
+      })
+      .compileComponents();
 
     MockRenderer.instances = []; // Clear tracking
 
     fixture = TestBed.createComponent(Tabs);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', { id: 'tabs-1', type: 'Tabs', weight: 1 });
     fixture.componentRef.setInput('weight', 1);
@@ -102,7 +111,7 @@ describe('Tabs Component', () => {
 
   it('should initially select first tab and render its child', () => {
     expect((component as any).selectedIndex()).toBe(0);
-    
+
     expect(MockRenderer.instances.length).toBe(1);
     expect(MockRenderer.instances[0].component.id).toBe('child-1');
 
@@ -118,7 +127,7 @@ describe('Tabs Component', () => {
     fixture.detectChanges();
 
     expect((component as any).selectedIndex()).toBe(1);
-    
+
     expect(MockRenderer.instances.length).toBe(1); // Still 1 active at a time
     expect(MockRenderer.instances[0].component.id).toBe('child-2');
 

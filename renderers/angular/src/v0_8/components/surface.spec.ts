@@ -42,7 +42,11 @@ describe('Surface Component', () => {
   let mockProcessor: jasmine.SpyObj<MessageProcessor>;
   let surfacesMap: Map<string, Types.Surface>;
 
-  const mockRootComponent: Types.AnyComponentNode = { id: 'root-1', type: 'Column', properties: {} };
+  const mockRootComponent: Types.AnyComponentNode = {
+    id: 'root-1',
+    type: 'Column',
+    properties: {},
+  };
   const mockSurfaceData: Types.Surface = {
     id: 'surface-1',
     componentTree: mockRootComponent,
@@ -55,23 +59,21 @@ describe('Surface Component', () => {
 
     await TestBed.configureTestingModule({
       imports: [Surface],
-      providers: [
-        { provide: MessageProcessor, useValue: mockProcessor },
-      ],
+      providers: [{ provide: MessageProcessor, useValue: mockProcessor }],
     })
-    .overrideComponent(Surface, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-        imports: [MockRenderer],
-      }
-    })
-    .compileComponents();
+      .overrideComponent(Surface, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+          imports: [MockRenderer],
+        },
+      })
+      .compileComponents();
 
     MockRenderer.instances = []; // Clear tracking
 
     fixture = TestBed.createComponent(Surface);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
 
     // fixture.detectChanges(); // Removed to allow tests to set up state first

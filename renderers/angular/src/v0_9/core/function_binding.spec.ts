@@ -16,7 +16,7 @@
 
 import { DataContext, SurfaceModel } from '@a2ui/web_core/v0_9';
 import { DestroyRef } from '@angular/core';
-import { MinimalCatalog } from '../catalog/minimal/minimal-catalog';
+import { BasicCatalogBase } from '../catalog/basic/basic-catalog';
 import { toAngularSignal } from './utils';
 
 describe('Function Bindings', () => {
@@ -27,9 +27,9 @@ describe('Function Bindings', () => {
     mockDestroyRef.onDestroy.and.returnValue(() => {});
   });
 
-  describe('capitalize', () => {
+  describe('add', () => {
     it('should update output correctly when bound input updates using function call binding', () => {
-      const catalog = new MinimalCatalog();
+      const catalog = new BasicCatalogBase();
 
       // Create Surface Model and DataContext
       const surface = new SurfaceModel('surface_1', catalog);
@@ -37,39 +37,40 @@ describe('Function Bindings', () => {
       const context = new DataContext(surface, '/');
 
       const callValue = {
-        call: 'capitalize',
+        call: 'add',
         args: {
-          value: {
+          a: {
             path: '/inputValue',
           },
+          b: 1,
         },
-        returnType: 'string',
+        returnType: 'number',
       };
 
       // 1. Resolve Signal
-      const resSig = context.resolveSignal<string>(callValue as any);
+      const resSig = context.resolveSignal<number>(callValue as any);
 
       // 2. Convert to Angular Signal
       const angSig = toAngularSignal(resSig, mockDestroyRef);
 
       // 3. Initial state
-      expect(angSig()).toBe('');
+      expect(isNaN(angSig())).toBe(true);
 
       // 4. Update data model Simulation typing
-      dataModel.set('/inputValue', 'regression test');
+      dataModel.set('/inputValue', 5);
 
       // 5. Verify reactive updates
-      expect(angSig()).toBe('Regression test');
+      expect(angSig()).toBe(6);
 
       // 6. Update again to confirm reactive stream remains healthy
-      dataModel.set('/inputValue', 'another test');
-      expect(angSig()).toBe('Another test');
+      dataModel.set('/inputValue', 10);
+      expect(angSig()).toBe(11);
     });
   });
 
   describe('formatString', () => {
     it('should correctly format string with dynamic path and dollar sign', () => {
-      const catalog = new MinimalCatalog();
+      const catalog = new BasicCatalogBase();
 
       // Create Surface Model and DataContext
       const surface = new SurfaceModel('surface_1', catalog);
@@ -105,7 +106,7 @@ describe('Function Bindings', () => {
     });
 
     it('should handle multiple path interpolations correctly', () => {
-      const catalog = new MinimalCatalog();
+      const catalog = new BasicCatalogBase();
       const surface = new SurfaceModel('surface_1', catalog);
       const dataModel = surface.dataModel;
       const context = new DataContext(surface, '/');

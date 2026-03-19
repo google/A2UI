@@ -14,33 +14,23 @@
  * limitations under the License.
  */
 
-import { Component, effect, inject, input, viewChild, ViewContainerRef, Type } from '@angular/core';
+import { Directive, effect, inject, input, ViewContainerRef, Type } from '@angular/core';
 import { Catalog } from './catalog';
 import { Types } from '../types';
 
-@Component({
+@Directive({
   selector: '[a2ui-renderer]',
-  template: `
-    <ng-template #container />
-  `,
-  styles: `
-    :host {
-      display: contents;
-    }
-  `,
 })
 export class Renderer {
   private readonly catalog = inject(Catalog);
-  private readonly container = viewChild('container', { read: ViewContainerRef });
+  private readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly surfaceId = input.required<Types.SurfaceID>();
   readonly component = input.required<Types.AnyComponentNode>();
 
   constructor() {
     effect(() => {
-      const container = this.container();
-      if (!container) return;
-
+      const container = this.viewContainerRef;
       container.clear();
 
       const node = this.component();
@@ -58,7 +48,6 @@ export class Renderer {
   private async render(container: ViewContainerRef, node: Types.AnyComponentNode, config: any) {
     let componentType: Type<unknown> | null = null;
 
-
     if (typeof config === 'function') {
       const res = config();
       componentType = res instanceof Promise ? await res : res;
@@ -67,15 +56,11 @@ export class Renderer {
         const res = config.type();
         componentType = res instanceof Promise ? await res : res;
       } else {
-         componentType = config.type;
+        componentType = config.type;
       }
-      
-
     }
 
     if (componentType) {
-
-
       const componentRef = container.createComponent(componentType);
       componentRef.setInput('surfaceId', this.surfaceId());
       componentRef.setInput('component', node);

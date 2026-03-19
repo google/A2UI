@@ -24,21 +24,13 @@ import { Types } from '../types';
   imports: [Renderer],
   template: `
     <div class="a2ui-modal-entry-point" (click)="openModal()">
-      <ng-container
-        a2ui-renderer
-        [surfaceId]="surfaceId()!"
-        [component]="entryPointChild()"
-      />
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="entryPointChild()" />
     </div>
 
     @if (isOpen()) {
       <div [class]="theme.components.Modal.backdrop" (click)="closeModal()">
         <div [class]="theme.components.Modal.element" (click)="$event.stopPropagation()">
-          <ng-container
-            a2ui-renderer
-            [surfaceId]="surfaceId()!"
-            [component]="contentChild()"
-          />
+          <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="contentChild()" />
         </div>
       </div>
     }

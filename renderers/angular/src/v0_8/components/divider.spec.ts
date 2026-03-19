@@ -42,12 +42,11 @@ describe('Divider Component', () => {
         { provide: Theme, useValue: mockTheme },
         { provide: MessageProcessor, useValue: {} },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Divider);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockNode);
     fixture.componentRef.setInput('weight', 1);

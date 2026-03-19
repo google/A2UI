@@ -75,23 +75,23 @@ class ContactAgentExecutor(AgentExecutor):
       )
       for i, part in enumerate(context.message.parts):
         if isinstance(part.root, DataPart):
+          # Extract client UI capabilities from any DataPart that has them
+          if (
+              agent.schema_manager.accepts_inline_catalogs
+              and "metadata" in part.root.data
+              and "a2uiClientCapabilities" in part.root.data["metadata"]
+          ):
+            logger.info(f"  Part {i}: Found 'a2uiClientCapabilities' in DataPart.")
+            client_ui_capabilities = part.root.data["metadata"][
+                "a2uiClientCapabilities"
+            ]
+
           if "userAction" in part.root.data:
             logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
             ui_event_part = part.root.data["userAction"]
           elif "request" in part.root.data:
             logger.info(f"  Part {i}: Found 'request' in DataPart.")
             query = part.root.data["request"]
-
-            # Check for inline catalog
-            if (
-                agent.schema_manager.accepts_inline_catalogs
-                and "metadata" in part.root.data
-                and "a2uiClientCapabilities" in part.root.data["metadata"]
-            ):
-              logger.info(f"  Part {i}: Found 'a2uiClientCapabilities' in DataPart.")
-              client_ui_capabilities = part.root.data["metadata"][
-                  "a2uiClientCapabilities"
-              ]
           else:
             logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
         elif isinstance(part.root, TextPart):

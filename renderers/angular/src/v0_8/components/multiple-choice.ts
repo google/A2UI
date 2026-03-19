@@ -21,7 +21,10 @@ import { Types } from '../types';
 @Component({
   selector: 'a2ui-multiple-choice',
   template: `
-    <div [class]="theme.components.MultipleChoice.container" [style]="theme.additionalStyles?.MultipleChoice">
+    <div
+      [class]="theme.components.MultipleChoice.container"
+      [style]="theme.additionalStyles?.MultipleChoice"
+    >
       <label [class]="theme.components.MultipleChoice.label" [for]="selectId">
         {{ resolvedLabel() }}
       </label>
@@ -52,12 +55,12 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
   protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
 
   protected readonly resolvedLabel = computed(() => this.resolvePrimitive(this.label()));
-  
-  protected readonly resolvedOptions = computed(() => 
-    this.options().map(opt => ({
+
+  protected readonly resolvedOptions = computed(() =>
+    this.options().map((opt) => ({
       label: this.resolvePrimitive(opt.label),
-      value: opt.value
-    }))
+      value: opt.value,
+    })),
   );
 
   onChange(event: Event) {
@@ -70,8 +73,8 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
       name,
       context: Object.entries(context).map(([key, val]) => ({
         key,
-        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
-      }))
+        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) },
+      })),
     });
   }
 }

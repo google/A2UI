@@ -53,9 +53,12 @@ export class TextField extends DynamicComponent<Types.TextFieldNode> {
 
   protected htmlInputType = computed(() => {
     switch (this.textFieldType()) {
-      case 'number': return 'number';
-      case 'date': return 'date';
-      default: return 'text';
+      case 'number':
+        return 'number';
+      case 'date':
+        return 'date';
+      default:
+        return 'text';
     }
   });
 
@@ -69,8 +72,8 @@ export class TextField extends DynamicComponent<Types.TextFieldNode> {
       name,
       context: Object.entries(context).map(([key, val]) => ({
         key,
-        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
-      }))
+        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) },
+      })),
     });
   }
 }

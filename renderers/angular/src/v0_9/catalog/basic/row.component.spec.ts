@@ -97,6 +97,7 @@ describe('RowComponent', () => {
     const div = fixture.debugElement.query(By.css('.a2ui-row'));
     expect(div.styles['justify-content']).toBe('center');
     expect(div.styles['align-items']).toBe('baseline');
+    expect(div.styles['gap']).toBe('4px');
   });
 
   it('should render non-repeating children', () => {

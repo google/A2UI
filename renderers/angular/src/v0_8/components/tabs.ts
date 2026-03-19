@@ -36,11 +36,7 @@ import { Types } from '../types';
       </div>
       <div class="a2ui-tabs-content">
         @if (tabItems()[selectedIndex()]; as selectedTab) {
-          <ng-container
-            a2ui-renderer
-            [surfaceId]="surfaceId()!"
-            [component]="selectedTab.child"
-          />
+          <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="selectedTab.child" />
         }
       </div>
     </div>

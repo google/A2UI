@@ -38,7 +38,11 @@ describe('AudioPlayer Component', () => {
   };
 
   beforeEach(async () => {
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockTheme = new Theme();
     mockTheme.additionalStyles = { AudioPlayer: { backgroundColor: 'red' } } as any;
 
@@ -50,14 +54,14 @@ describe('AudioPlayer Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(AudioPlayer, {
-      set: { changeDetection: ChangeDetectionStrategy.Default }
-    })
-    .compileComponents();
+      .overrideComponent(AudioPlayer, {
+        set: { changeDetection: ChangeDetectionStrategy.Default },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(AudioPlayer);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockAudioNode);
     fixture.componentRef.setInput('weight', 1);

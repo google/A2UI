@@ -55,7 +55,11 @@ describe('Button Component', () => {
   };
 
   beforeEach(async () => {
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockProcessor.dispatch.and.returnValue(Promise.resolve([]));
 
     mockTheme = new Theme();
@@ -72,15 +76,15 @@ describe('Button Component', () => {
         { provide: Catalog, useValue: mockCatalog },
       ],
     })
-    .overrideComponent(Button, {
-      remove: { imports: [Renderer] },
-      add: { imports: [MockRenderer] },
-    })
-    .compileComponents();
+      .overrideComponent(Button, {
+        remove: { imports: [Renderer] },
+        add: { imports: [MockRenderer] },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(Button);
     component = fixture.componentInstance;
-    
+
     // Set inputs
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockButtonNode);
@@ -105,7 +109,8 @@ describe('Button Component', () => {
     buttonEl.click();
 
     expect(mockProcessor.dispatch).toHaveBeenCalled();
-    const message = mockProcessor.dispatch.calls.mostRecent().args[0] as Types.A2UIClientEventMessage;
+    const message = mockProcessor.dispatch.calls.mostRecent()
+      .args[0] as Types.A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('testAction');
     expect(message.userAction!.sourceComponentId).toBe('btn-1');
   });

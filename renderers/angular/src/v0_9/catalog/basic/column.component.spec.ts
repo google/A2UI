@@ -97,6 +97,7 @@ describe('ColumnComponent', () => {
     const div = fixture.debugElement.query(By.css('.a2ui-column'));
     expect(div.styles['justify-content']).toBe('start');
     expect(div.styles['align-items']).toBe('stretch');
+    expect(div.styles['gap']).toBe('4px');
   });
 
   it('should render non-repeating children', () => {
