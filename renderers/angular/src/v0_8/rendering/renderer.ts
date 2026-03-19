@@ -14,33 +14,23 @@
  * limitations under the License.
  */
 
-import { Component, effect, inject, input, viewChild, ViewContainerRef, Type } from '@angular/core';
+import { Directive, effect, inject, input, ViewContainerRef, Type } from '@angular/core';
 import { Catalog } from './catalog';
 import { Types } from '../types';
 
-@Component({
+@Directive({
   selector: '[a2ui-renderer]',
-  template: `
-    <ng-template #container />
-  `,
-  styles: `
-    :host {
-      display: contents;
-    }
-  `,
 })
 export class Renderer {
   private readonly catalog = inject(Catalog);
-  private readonly container = viewChild('container', { read: ViewContainerRef });
+  private readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly surfaceId = input.required<Types.SurfaceID>();
   readonly component = input.required<Types.AnyComponentNode>();
 
   constructor() {
     effect(() => {
-      const container = this.container();
-      if (!container) return;
-
+      const container = this.viewContainerRef;
       container.clear();
 
       const node = this.component();
