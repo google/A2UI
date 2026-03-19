@@ -83,7 +83,7 @@ import { Types } from '../types';
   `,
   template: `
     <section [class]="classes()" [style]="theme.additionalStyles?.Row">
-      @for (child of component().properties.children; track child) {
+      @for (child of children() ?? component().properties.children; track child) {
         <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
     </section>
@@ -92,6 +92,7 @@ import { Types } from '../types';
 export class Row extends DynamicComponent<Types.RowNode> {
   readonly alignment = input<Types.ResolvedRow['alignment']>('stretch');
   readonly distribution = input<Types.ResolvedRow['distribution']>('start');
+  readonly children = input<Types.AnyComponentNode[] | null>();
 
   protected readonly classes = computed(() => ({
     ...this.theme.components.Row,

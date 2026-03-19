@@ -79,7 +79,7 @@ import { Renderer } from '../rendering/renderer';
   `,
   template: `
     <section [class]="classes()" [style]="theme.additionalStyles?.Column">
-      @for (child of component().properties.children; track child) {
+      @for (child of children() ?? component().properties.children; track child) {
         <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
       }
     </section>
@@ -88,6 +88,7 @@ import { Renderer } from '../rendering/renderer';
 export class Column extends DynamicComponent<Types.ColumnNode> {
   readonly alignment = input<Types.ResolvedColumn['alignment']>('stretch');
   readonly distribution = input<Types.ResolvedColumn['distribution']>('start');
+  readonly children = input<Types.AnyComponentNode[] | null>();
 
   protected readonly classes = computed(() => ({
     ...this.theme.components.Column,

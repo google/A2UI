@@ -76,6 +76,23 @@ describe('toAngularSignal', () => {
 
     expect(unsubscribeSpy).toHaveBeenCalled();
   });
+
+  it('should run update within NgZone if provided', () => {
+    const pSig = preactSignal('initial');
+    const mockNgZone = jasmine.createSpyObj('NgZone', ['run']);
+    mockNgZone.run.and.callFake((fn: () => void) => fn());
+
+    const angSig = toAngularSignal(pSig, mockDestroyRef, mockNgZone);
+
+    expect(angSig()).toBe('initial');
+    expect(mockNgZone.run).toHaveBeenCalled();
+
+    mockNgZone.run.calls.reset();
+    pSig.value = 'updated';
+
+    expect(angSig()).toBe('updated');
+    expect(mockNgZone.run).toHaveBeenCalled();
+  });
 });
 
 describe('getNormalizedPath', () => {

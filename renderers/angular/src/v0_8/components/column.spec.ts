@@ -65,19 +65,19 @@ describe('Column Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(Column, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-        imports: [MockRenderer],
-      }
-    })
-    .compileComponents();
+      .overrideComponent(Column, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+          imports: [MockRenderer],
+        },
+      })
+      .compileComponents();
 
     MockRenderer.instances = []; // Clear tracking
 
     fixture = TestBed.createComponent(Column);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockNode);
     fixture.componentRef.setInput('weight', 1);

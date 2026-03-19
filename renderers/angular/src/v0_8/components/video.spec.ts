@@ -38,7 +38,11 @@ describe('Video Component', () => {
   };
 
   beforeEach(async () => {
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockTheme = new Theme();
     mockTheme.components = { Video: { 'vid-class': true } } as any;
     mockTheme.additionalStyles = { Video: { borderColor: 'blue' } } as any;
@@ -51,14 +55,14 @@ describe('Video Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(Video, {
-      set: { changeDetection: ChangeDetectionStrategy.Default }
-    })
-    .compileComponents();
+      .overrideComponent(Video, {
+        set: { changeDetection: ChangeDetectionStrategy.Default },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(Video);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockVideoNode);
     fixture.componentRef.setInput('weight', 1);

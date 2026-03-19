@@ -18,14 +18,17 @@ import { DestroyRef, Signal, signal as angularSignal } from '@angular/core';
 import { Signal as PreactSignal, effect } from '@a2ui/web_core/v0_9';
 
 /**
- * Bridges a Preact Signal to a reactive Angular Signal.
+ * Bridges a Preact Signal (from A2UI web_core) to a reactive Angular Signal.
  *
  * This utility handles the lifecycle mapping between Preact and Angular,
- * ensuring that updates are propagated correctly and resources are cleaned up.
+ * ensuring that updates from the A2UI data model are propagated correctly
+ * to Angular's change detection, and resources are cleaned up when the
+ * component is destroyed.
  *
  * @param preactSignal The source Preact Signal.
  * @param destroyRef Angular DestroyRef for lifecycle management.
- * @param ngZone Optional NgZone to ensure updates run within the Angular zone.
+ * @param ngZone Optional NgZone to ensure updates run within the Angular zone
+ *               (necessary for correct change detection in OnPush components).
  * @returns A read-only Angular Signal.
  */
 import { NgZone } from '@angular/core';

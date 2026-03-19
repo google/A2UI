@@ -42,30 +42,17 @@ Subagents are configured using RemoteA2aAgent which translates ADK events to A2A
    uv run . --port=10005
    ```
 
-   Optionally, run the MCP Server and MCP App Proxy Agent to MCP Apps in A2UI demo:
-
-   ```bash
-   cd samples/agent/mcp/calculator
-   uv run . --port=8000
-   ```
-
-   ```bash
-   cd samples/agent/adk/mcp_app_proxy
-   uv run . --port=10006
-   ```
-
 3. Run the orchestrator agent:
 
    ```bash
    cd samples/agent/adk/orchestrator
-   uv run . --port=10002 --subagent_urls=http://localhost:10003 --subagent_urls=http://localhost:10004 --subagent_urls=http://localhost:10005 --subagent_urls=http://localhost:10006
+   uv run . --port=10002 --subagent_urls=http://localhost:10003 --subagent_urls=http://localhost:10004 --subagent_urls=http://localhost:10005
    ```
 
 4. Try commands that work with any agent: 
    a. "Who is Alex Jordan?" (routed to contact lookup agent)
    b. "Show me chinese food restaurants in NYC" (routed to restaurant finder agent)
    c. "Show my sales data for Q4" (routed to rizzcharts)
-   d. "Open calculator" (routed to mcp app proxy)
 
 ## Disclaimer
 

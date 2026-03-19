@@ -66,19 +66,19 @@ describe('Card Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(Card, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-        imports: [MockRenderer],
-      }
-    })
-    .compileComponents();
+      .overrideComponent(Card, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+          imports: [MockRenderer],
+        },
+      })
+      .compileComponents();
 
     MockRenderer.instances = []; // Clear tracking
 
     fixture = TestBed.createComponent(Card);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockNode);
     fixture.componentRef.setInput('weight', 1);

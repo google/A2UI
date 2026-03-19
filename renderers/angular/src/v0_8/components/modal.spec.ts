@@ -43,8 +43,16 @@ describe('Modal Component', () => {
   let fixture: ComponentFixture<Modal>;
   let mockTheme: Theme;
 
-  const mockEntryPoint: Types.AnyComponentNode = { id: 'btn-1', type: 'Button', properties: { text: 'Open' } };
-  const mockContent: Types.AnyComponentNode = { id: 'text-1', type: 'Text', properties: { text: 'Hello' } };
+  const mockEntryPoint: Types.AnyComponentNode = {
+    id: 'btn-1',
+    type: 'Button',
+    properties: { text: 'Open' },
+  };
+  const mockContent: Types.AnyComponentNode = {
+    id: 'text-1',
+    type: 'Text',
+    properties: { text: 'Hello' },
+  };
 
   beforeEach(async () => {
     mockTheme = new Theme();
@@ -63,19 +71,19 @@ describe('Modal Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(Modal, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-        imports: [MockRenderer],
-      }
-    })
-    .compileComponents();
+      .overrideComponent(Modal, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+          imports: [MockRenderer],
+        },
+      })
+      .compileComponents();
 
     MockRenderer.instances = []; // Clear tracking
 
     fixture = TestBed.createComponent(Modal);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('entryPointChild', mockEntryPoint);
     fixture.componentRef.setInput('contentChild', mockContent);
@@ -92,10 +100,10 @@ describe('Modal Component', () => {
   it('should render entry point child initially', () => {
     // Should render 1 MockRenderer for the entry point
     expect(MockRenderer.instances.length).toBe(1);
-    
+
     // Check isOpen is false
     expect((component as any).isOpen()).toBeFalse();
-    
+
     // Backdrop should not exist
     const backdropEl = fixture.debugElement.query(By.css('.backdrop-class'));
     expect(backdropEl).toBeFalsy();
@@ -114,7 +122,7 @@ describe('Modal Component', () => {
     // Backdrop should exist
     const backdropEl = fixture.debugElement.query(By.css('.backdrop-class'));
     expect(backdropEl).toBeTruthy();
-    
+
     // Content should be rendered (total 2 MockRenderers now)
     expect(MockRenderer.instances.length).toBe(2);
   });

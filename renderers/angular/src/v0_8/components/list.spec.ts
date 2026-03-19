@@ -64,19 +64,19 @@ describe('List Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(List, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-        imports: [MockRenderer],
-      }
-    })
-    .compileComponents();
+      .overrideComponent(List, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+          imports: [MockRenderer],
+        },
+      })
+      .compileComponents();
 
     MockRenderer.instances = []; // Clear tracking
 
     fixture = TestBed.createComponent(List);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockNode);
     fixture.componentRef.setInput('weight', 1);
@@ -99,7 +99,7 @@ describe('List Component', () => {
 
   it('should render child components wrapped in list-item', () => {
     expect(MockRenderer.instances.length).toBe(1);
-    
+
     const itemEl = fixture.debugElement.query(By.css('.a2ui-list-item'));
     expect(itemEl).toBeTruthy();
   });

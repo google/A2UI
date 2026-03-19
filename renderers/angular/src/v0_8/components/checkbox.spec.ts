@@ -36,7 +36,11 @@ describe('Checkbox Component', () => {
   };
 
   beforeEach(async () => {
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockProcessor.dispatch.and.returnValue(Promise.resolve([]));
 
     await TestBed.configureTestingModule({
@@ -45,17 +49,16 @@ describe('Checkbox Component', () => {
         { provide: MessageProcessor, useValue: mockProcessor },
         { provide: Theme, useValue: new Theme() },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Checkbox);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockNode);
     fixture.componentRef.setInput('weight', 1);
     fixture.componentRef.setInput('label', { literalString: 'Accept Terms' });
-    fixture.componentRef.setInput('value', { literalBoolean: false });
+    fixture.componentRef.setInput('checked', { literalBoolean: false });
 
     fixture.detectChanges();
   });
@@ -73,7 +76,7 @@ describe('Checkbox Component', () => {
     const inputEl = fixture.nativeElement.querySelector('input');
     expect(inputEl.checked).toBeFalse();
 
-    fixture.componentRef.setInput('value', { literalBoolean: true });
+    fixture.componentRef.setInput('checked', { literalBoolean: true });
     fixture.detectChanges();
     expect(inputEl.checked).toBeTrue();
   });
@@ -84,7 +87,8 @@ describe('Checkbox Component', () => {
     inputEl.dispatchEvent(new Event('change'));
 
     expect(mockProcessor.dispatch).toHaveBeenCalled();
-    const message = mockProcessor.dispatch.calls.mostRecent().args[0] as Types.A2UIClientEventMessage;
+    const message = mockProcessor.dispatch.calls.mostRecent()
+      .args[0] as Types.A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('toggle');
     expect(message.userAction!.context!['checked']).toBeTrue();
   });

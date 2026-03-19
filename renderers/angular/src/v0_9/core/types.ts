@@ -18,12 +18,35 @@ import { Signal } from '@angular/core';
 
 /**
  * Represents a component property bound to an Angular Signal and update logic.
+ *
+ * This interface is used by {@link ComponentBinder} to expose properties to
+ * Angular components. It contains the current value as a Signal, the raw
+ * property definition, and an update function.
+ *
+ * @template T The type of the property value.
  */
 export interface BoundProperty<T = any> {
-  /** The reactive Angular Signal */
+  /**
+   * The reactive Angular Signal containing the current resolved value.
+   *
+   * This signal automatically updates whenever the underlying A2UI data
+   * model changes.
+   */
   readonly value: Signal<T>;
-  /** The raw value from the ComponentModel */
+
+  /**
+   * The raw value from the A2UI ComponentModel.
+   *
+   * This may be a literal value or a data binding path object.
+   */
   readonly raw: any;
-  /** Callback to update the value in the DataContext (if bound) */
+
+  /**
+   * Callback to update the value in the A2UI DataContext.
+   *
+   * If the property is bound to a path in the data model, calling this
+   * will update that path. If the property is a literal value, this
+   * is typically a no-op.
+   */
   readonly onUpdate: (newValue: T) => void;
 }

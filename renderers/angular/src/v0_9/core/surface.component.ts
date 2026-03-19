@@ -20,7 +20,9 @@ import { ComponentHostComponent } from './component-host.component';
 /**
  * High-level component for rendering an entire A2UI surface.
  *
- * It automatically renders the 'root' component of the specified surface.
+ * This component handles the boilerplate of setting up a {@link ComponentHostComponent}
+ * for the 'root' component of a surface. It is the recommended way to embed an
+ * A2UI surface in an Angular application.
  */
 @Component({
   selector: 'a2ui-v09-surface',
@@ -36,7 +38,7 @@ export class SurfaceComponent {
   /** The unique identifier of the surface to render. */
   surfaceId = input.required<string>();
 
-  /** 
+  /**
    * The path within the surface's data model that represents the current state.
    * Defaults to the root ('/').
    */

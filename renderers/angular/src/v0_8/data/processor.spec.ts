@@ -28,10 +28,7 @@ describe('MessageProcessor', () => {
     mockCatalog = {};
 
     TestBed.configureTestingModule({
-      providers: [
-        MessageProcessor,
-        { provide: Catalog, useValue: mockCatalog },
-      ],
+      providers: [MessageProcessor, { provide: Catalog, useValue: mockCatalog }],
     });
     service = TestBed.inject(MessageProcessor);
   });
@@ -57,7 +54,7 @@ describe('MessageProcessor', () => {
         sourceComponentId: 'btn-1',
         surfaceId: 'surf-1',
         timestamp: new Date().toISOString(),
-      }
+      },
     };
 
     service.events.subscribe((event: A2UIClientEvent) => {
@@ -71,7 +68,7 @@ describe('MessageProcessor', () => {
 
   it('should resolve dispatch promise when completion is triggered', async () => {
     const mockMessage: Types.A2UIClientEventMessage = {
-      userAction: { name: 'click', sourceComponentId: '1', surfaceId: '1', timestamp: '' }
+      userAction: { name: 'click', sourceComponentId: '1', surfaceId: '1', timestamp: '' },
     };
 
     const replyMessages: Types.ServerToClientMessage[] = [{ type: 'UpdateSurface' } as any];
