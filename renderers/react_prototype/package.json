@@ -6,7 +6,8 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "vite build && tsc -p tsconfig.lib.json"
+    "build": "vite build && tsc -p tsconfig.lib.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core"
