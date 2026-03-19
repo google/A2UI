@@ -45,3 +45,14 @@ SPEC_VERSION_MAP = {
 SPECIFICATION_DIR = "specification"
 
 ENCODING = "utf-8"
+
+A2UI_OPEN_TAG = "<a2ui-json>"
+A2UI_CLOSE_TAG = "</a2ui-json>"
+
+DEFAULT_WORKFLOW_RULES = f"""
+The generated response MUST follow these rules:
+1.  The response can contain one or more A2UI JSON blocks.
+2.  Each A2UI JSON block MUST be wrapped in `{A2UI_OPEN_TAG}` and `{A2UI_CLOSE_TAG}` tags.
+3.  Between or around these blocks, you can provide conversational text.
+4.  The JSON part MUST be a single, raw JSON object (usually a list of A2UI messages) and MUST validate against the provided A2UI JSON SCHEMA.
+"""

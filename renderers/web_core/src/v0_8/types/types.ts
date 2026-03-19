@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 export {
@@ -23,17 +23,39 @@ export { type Action } from "./components.js";
 import {
   AudioPlayer,
   Button,
+  Card,
   Checkbox,
+  Column,
   DateTimeInput,
   Divider,
   Icon,
   Image,
+  List,
+  Modal,
   MultipleChoice,
+  Row,
   Slider,
+  Tabs,
   Text,
   TextField,
   Video,
 } from "./components";
+
+import type { z } from "zod";
+import type {
+  A2uiMessageSchema,
+  BeginRenderingMessageSchema,
+  ComponentInstanceSchema,
+  ComponentPropertiesSchema,
+  DataModelUpdateMessageSchema,
+  DeleteSurfaceMessageSchema,
+  SurfaceUpdateMessageSchema,
+  ValueMapSchema,
+} from "../schema/server-to-client.js";
+import type {
+  ComponentArrayReferenceSchema,
+  ComponentArrayTemplateSchema,
+} from "../schema/common-types.js";
 import { StringValue } from "./primitives";
 
 export type MessageProcessor = {
@@ -49,14 +71,14 @@ export type MessageProcessor = {
   getData(
     node: AnyComponentNode,
     relativePath: string,
-    surfaceId: string
+    surfaceId: string,
   ): DataValue | null;
 
   setData(
     node: AnyComponentNode | null,
     relativePath: string,
     value: DataValue,
-    surfaceId: string
+    surfaceId: string,
   ): void;
 
   resolvePath(path: string, dataContextPath?: string): string;
@@ -234,64 +256,82 @@ export declare type DataMap = Map<string, DataValue>;
 export declare type DataArray = DataValue[];
 
 /** A template for creating components from a list in the data model. */
-export declare interface ComponentArrayTemplate {
+export declare interface ComponentArrayTemplate
+  extends z.infer<typeof ComponentArrayTemplateSchema> {
   componentId: string;
   dataBinding: string;
 }
 
 /** Defines a list of child components, either explicitly or via a template. */
-export declare interface ComponentArrayReference {
+export declare interface ComponentArrayReference
+  extends z.infer<typeof ComponentArrayReferenceSchema> {
   explicitList?: string[];
   template?: ComponentArrayTemplate;
 }
 
 /** Represents the general shape of a component's properties. */
-export declare type ComponentProperties = {
-  // Allow any property, but define known structural ones for type safety.
-  children?: ComponentArrayReference;
-  child?: string;
-  [k: string]: unknown;
-};
+export declare interface ComponentProperties extends z.infer<typeof ComponentPropertiesSchema> {
+  Text?: Text;
+  Image?: Image;
+  Icon?: Icon;
+  Video?: Video;
+  AudioPlayer?: AudioPlayer;
+  Row?: Row;
+  Column?: Column;
+  List?: List;
+  Card?: Card;
+  Tabs?: Tabs;
+  Divider?: Divider;
+  Modal?: Modal;
+  Button?: Button;
+  Checkbox?: Checkbox;
+  TextField?: TextField;
+  DateTimeInput?: DateTimeInput;
+  MultipleChoice?: MultipleChoice;
+  Slider?: Slider;
+}
 
 /** A raw component instance from a SurfaceUpdate message. */
-export declare interface ComponentInstance {
+export declare interface ComponentInstance extends z.infer<typeof ComponentInstanceSchema> {
   id: string;
   weight?: number;
-  component?: ComponentProperties;
+  component: ComponentProperties;
 }
 
-export declare interface BeginRenderingMessage {
+export declare interface BeginRenderingMessage extends z.infer<typeof BeginRenderingMessageSchema> {
   surfaceId: string;
   root: string;
-  styles?: Record<string, string>;
+  styles?: {
+    font?: string;
+    primaryColor?: string;
+  };
 }
 
-export declare interface SurfaceUpdateMessage {
+export declare interface SurfaceUpdateMessage extends z.infer<typeof SurfaceUpdateMessageSchema> {
   surfaceId: string;
   components: ComponentInstance[];
 }
 
-export declare interface DataModelUpdate {
+export declare interface DataModelUpdate extends z.infer<typeof DataModelUpdateMessageSchema> {
   surfaceId: string;
   path?: string;
   contents: ValueMap[];
 }
 
 // ValueMap is a type of DataObject for passing to the data model.
-export declare type ValueMap = DataObject & {
+export declare interface ValueMap extends z.infer<typeof ValueMapSchema> {
   key: string;
-  /** May be JSON */
   valueString?: string;
   valueNumber?: number;
   valueBoolean?: boolean;
   valueMap?: ValueMap[];
-};
+}
 
-export declare interface DeleteSurfaceMessage {
+export declare interface DeleteSurfaceMessage extends z.infer<typeof DeleteSurfaceMessageSchema> {
   surfaceId: string;
 }
 
-export declare interface ServerToClientMessage {
+export declare interface ServerToClientMessage extends z.infer<typeof A2uiMessageSchema> {
   beginRendering?: BeginRenderingMessage;
   surfaceUpdate?: SurfaceUpdateMessage;
   dataModelUpdate?: DataModelUpdate;
@@ -465,30 +505,31 @@ export declare type ResolvedSlider = Slider;
 export declare interface ResolvedRow {
   children: AnyComponentNode[];
   distribution?:
-  | "start"
-  | "center"
-  | "end"
-  | "spaceBetween"
-  | "spaceAround"
-  | "spaceEvenly";
+    | "start"
+    | "center"
+    | "end"
+    | "spaceBetween"
+    | "spaceAround"
+    | "spaceEvenly";
   alignment?: "start" | "center" | "end" | "stretch";
 }
 
 export declare interface ResolvedColumn {
   children: AnyComponentNode[];
   distribution?:
-  | "start"
-  | "center"
-  | "end"
-  | "spaceBetween"
-  | "spaceAround"
-  | "spaceEvenly";
+    | "start"
+    | "center"
+    | "end"
+    | "spaceBetween"
+    | "spaceAround"
+    | "spaceEvenly";
   alignment?: "start" | "center" | "end" | "stretch";
 }
 
 export declare interface ResolvedButton {
   child: AnyComponentNode;
   action: Button["action"];
+  primary?: boolean;
 }
 
 export declare interface ResolvedList {
@@ -534,9 +575,12 @@ export declare interface Surface {
 // Markdown rendering
 /**
  * Renders `markdown` using `options`.
- * @returns The rendered HTML as a string.
+ * @returns A promise that resolves to the rendered HTML as a string.
  */
-export declare type MarkdownRenderer = (markdown: string, options?: MarkdownRendererOptions) => string;
+export declare type MarkdownRenderer = (
+  markdown: string,
+  options?: MarkdownRendererOptions,
+) => Promise<string>;
 
 /**
  * A map of tag names to a list of classnames to be applied to a tag.
@@ -554,4 +598,4 @@ export declare type MarkdownRendererTagClassMap = Record<string, string[]>;
  */
 export declare type MarkdownRendererOptions = {
   tagClassMap?: MarkdownRendererTagClassMap;
-}
+};

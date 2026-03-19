@@ -344,6 +344,7 @@
             "tabs": {
               "type": "array",
               "description": "An array of objects, where each object defines a tab with a title and a child component.",
+              "minItems": 1,
               "items": {
                 "type": "object",
                 "properties": {
