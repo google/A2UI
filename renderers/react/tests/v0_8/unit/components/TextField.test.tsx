@@ -128,7 +128,7 @@ describe('TextField Component', () => {
     it('should render text input by default (shortText)', () => {
       const messages = createSimpleMessages('tf-1', 'TextField', {
         label: { literalString: 'Name' },
-        textFieldType: 'shortText',
+        type: 'shortText',
       });
 
       const { container } = render(
@@ -144,7 +144,7 @@ describe('TextField Component', () => {
     it('should render number input for type=number', () => {
       const messages = createSimpleMessages('tf-1', 'TextField', {
         label: { literalString: 'Age' },
-        textFieldType: 'number',
+        type: 'number',
       });
 
       const { container } = render(
@@ -160,7 +160,7 @@ describe('TextField Component', () => {
     it('should render date input for type=date', () => {
       const messages = createSimpleMessages('tf-1', 'TextField', {
         label: { literalString: 'Birth Date' },
-        textFieldType: 'date',
+        type: 'date',
       });
 
       const { container } = render(
@@ -176,7 +176,7 @@ describe('TextField Component', () => {
     it('should render textarea for type=longText', () => {
       const messages = createSimpleMessages('tf-1', 'TextField', {
         label: { literalString: 'Description' },
-        textFieldType: 'longText',
+        type: 'longText',
       });
 
       const { container } = render(
@@ -212,7 +212,7 @@ describe('TextField Component', () => {
     it('should update textarea value on change', () => {
       const messages = createSimpleMessages('tf-1', 'TextField', {
         label: { literalString: 'Comments' },
-        textFieldType: 'longText',
+        type: 'longText',
       });
 
       const { container } = render(

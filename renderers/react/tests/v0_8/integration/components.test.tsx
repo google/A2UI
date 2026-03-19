@@ -317,19 +317,13 @@ describe('Component Updates', () => {
   });
 
   it('should handle empty surfaceUpdate gracefully (no crash, no surface created)', () => {
-    // An empty surfaceUpdate is invalid per schema (min 1 component),
-    // so processMessages throws a validation error.
-    // We catch it to verify the surface remains empty/uncreated.
+    // An empty surfaceUpdate has no components to render.
+    // The processor should handle this without crashing.
     function EmptySurfaceRenderer() {
       const { processMessages } = useA2UI();
 
       useEffect(() => {
-        try {
-          // Cast to any to bypass TS complaining about empty array
-          processMessages([createSurfaceUpdate([]) as any]);
-        } catch (e) {
-          // Expected validation error
-        }
+        processMessages([createSurfaceUpdate([])]);
       }, [processMessages]);
 
       return <A2UIRenderer surfaceId="@default" />;
