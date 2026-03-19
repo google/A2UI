@@ -144,9 +144,7 @@ class A2uiSchemaManager(InferenceStrategy):
       # otherwise fall back to the agent's default catalog.
       base_catalog = self._supported_catalogs[0]
       if client_supported_catalog_ids:
-        agent_supported_catalogs = {
-            c.catalog_id: c for c in self._supported_catalogs
-        }
+        agent_supported_catalogs = {c.catalog_id: c for c in self._supported_catalogs}
         for cscid in client_supported_catalog_ids:
           if cscid in agent_supported_catalogs:
             base_catalog = agent_supported_catalogs[cscid]
