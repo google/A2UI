@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
+export const A2UI_ANGULAR_VERSION = '0.9.0';
 export * from './v0_8/public-api';

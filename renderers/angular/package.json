@@ -3,11 +3,15 @@
   "version": "0.8.5",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "ng build && node postprocess-build.mjs"
+    "build": "ng build && node postprocess-build.mjs",
+    "demo": "ng serve a2ui_explorer",
+    "test": "ng test",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^3.25.76"
   },
   "peerDependencies": {
     "@angular/common": "^21.2.0",

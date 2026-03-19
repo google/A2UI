@@ -31,7 +31,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': './src',
+      '@': './src/v0_8',
     },
   },
 });

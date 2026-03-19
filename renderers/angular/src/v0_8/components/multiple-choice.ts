@@ -23,7 +23,7 @@ import { Types } from '../types';
   template: `
     <div [class]="theme.components.MultipleChoice.container" [style]="theme.additionalStyles?.MultipleChoice">
       <label [class]="theme.components.MultipleChoice.label" [for]="selectId">
-        {{ label() }}
+        {{ resolvedLabel() }}
       </label>
       <select
         [class]="theme.components.MultipleChoice.element"
@@ -31,7 +31,7 @@ import { Types } from '../types';
         [value]="value() ?? ''"
         (change)="onChange($event)"
       >
-        @for (option of options(); track option.value) {
+        @for (option of resolvedOptions(); track option.value) {
           <option [value]="option.value">{{ option.label }}</option>
         }
       </select>
@@ -50,6 +50,15 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
   readonly value = input.required<Types.StringValue | null>();
 
   protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
+
+  protected readonly resolvedLabel = computed(() => this.resolvePrimitive(this.label()));
+  
+  protected readonly resolvedOptions = computed(() => 
+    this.options().map(opt => ({
+      label: this.resolvePrimitive(opt.label),
+      value: opt.value
+    }))
+  );
 
   onChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;

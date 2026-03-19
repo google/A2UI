@@ -45,7 +45,7 @@ Subagents are configured using RemoteA2aAgent which translates ADK events to A2A
    Optionally, run the MCP Server and MCP App Proxy Agent to MCP Apps in A2UI demo:
 
    ```bash
-   cd samples/agent/mcp
+   cd samples/agent/mcp/calculator
    uv run . --port=8000
    ```
 

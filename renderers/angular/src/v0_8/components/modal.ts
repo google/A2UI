@@ -23,12 +23,11 @@ import { Types } from '../types';
   selector: 'a2ui-modal',
   imports: [Renderer],
   template: `
-    <div class="a2ui-modal-entry-point">
+    <div class="a2ui-modal-entry-point" (click)="openModal()">
       <ng-container
         a2ui-renderer
         [surfaceId]="surfaceId()!"
         [component]="entryPointChild()"
-        (click)="openModal()"
       />
     </div>
 
