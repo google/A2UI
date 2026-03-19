@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { memo, useId, useState, useEffect } from 'react';
-import { useA2UIComponent } from '../../hooks/useA2UIComponent';
-import { A2UIComponentProps, Types } from '../../types';
-import { TextFieldType } from '../../types/Primitives';
+import {memo, useId, useState, useEffect} from 'react';
+import {useA2UIComponent} from '../../hooks/useA2UIComponent';
+import {type A2UIComponentProps, type Types} from '../../types';
 
 /**
  * A standard text input component.
@@ -68,7 +67,7 @@ export const TextField = memo(function TextField({
   };
 
   const isLongText = fieldType === 'longText';
-  const inputType = fieldType === 'longText' ? 'text' : (fieldType || 'shortText');
+  const inputType = fieldType === 'longText' ? 'text' : fieldType || 'shortText';
 
   return (
     <div className={theme.components.TextField?.container}>
