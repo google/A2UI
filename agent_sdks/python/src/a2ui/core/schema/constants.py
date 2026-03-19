@@ -19,6 +19,7 @@ CATALOG_SCHEMA_KEY = "catalog"
 CATALOG_COMPONENTS_KEY = "components"
 CATALOG_ID_KEY = "catalogId"
 CATALOG_STYLES_KEY = "styles"
+SURFACE_ID_KEY = "surfaceId"
 
 # Protocol constants
 SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"

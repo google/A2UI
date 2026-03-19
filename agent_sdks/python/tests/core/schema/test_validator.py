@@ -19,6 +19,12 @@ from unittest.mock import MagicMock
 from a2ui.core.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
 from a2ui.core.schema.common_modifiers import remove_strict_validation
 from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.core.schema.validator import (
+    _find_root_id as find_root_id,
+    extract_component_ref_fields,
+    analyze_topology,
+    get_component_references,
+)
 
 
 class TestValidator:
@@ -1037,6 +1043,105 @@ class TestValidator:
     payload = self.make_payload(test_catalog, data_model=deep_data)
     with pytest.raises(ValueError, match="Global recursion limit exceeded"):
       test_catalog.validator.validate(payload)
+
+  def test_find_root_id_v08(self):
+    messages = [
+        {"beginRendering": {"surfaceId": "s1", "root": "custom-root"}},
+        {"surfaceUpdate": {"surfaceId": "s1", "components": []}},
+    ]
+    assert find_root_id(messages) == "custom-root"
+
+  def test_find_root_id_v09(self):
+    # For v0.9, if createSurface is provided, the root is 'root'
+    messages = [
+        {"createSurface": {"surfaceId": "s1"}},
+        {"updateComponents": {"surfaceId": "s1", "components": []}},
+    ]
+    assert find_root_id(messages) == "root"
+
+    # For an incremental update, there is no root
+    messages = [{"updateComponents": {"surfaceId": "s1", "components": []}}]
+    assert find_root_id(messages) is None
+
+  def test_get_component_references(self):
+    # Mock ref_fields_map
+    ref_fields_map = {
+        "Container": ({"child"}, {"children"}),
+        "Text": (set(), set()),
+    }
+    comp = {
+        "id": "c1",
+        "component": "Container",
+        "child": "c2",
+        "children": ["c3", "c4"],
+    }
+    refs = list(get_component_references(comp, ref_fields_map))
+    assert ("c2", "child") in refs
+    assert ("c3", "children") in refs
+    assert ("c4", "children") in refs
+
+  def test_analyze_topology_circular(self):
+    ref_fields_map = {"Node": ({"next"}, set())}
+    components = [
+        {"id": "c1", "component": "Node", "next": "c2"},
+        {"id": "c2", "component": "Node", "next": "c1"},
+    ]
+    with pytest.raises(ValueError, match="Circular reference detected"):
+      analyze_topology("c1", components, ref_fields_map)
+
+  def test_analyze_topology_self_ref(self):
+    ref_fields_map = {"Node": ({"next"}, set())}
+    components = [{"id": "c1", "component": "Node", "next": "c1"}]
+    with pytest.raises(ValueError, match="Self-reference detected"):
+      analyze_topology("c1", components, ref_fields_map)
+
+  def test_analyze_topology_reachable(self):
+    ref_fields_map = {"Node": ({"next"}, set())}
+    components = [
+        {"id": "root", "component": "Node", "next": "c1"},
+        {"id": "c1", "component": "Node", "next": "c2"},
+        {"id": "c2", "component": "Node"},
+        {"id": "orphan", "component": "Node"},
+    ]
+    reachable = analyze_topology("root", components, ref_fields_map)
+    assert reachable == {"root", "c1", "c2"}
+
+  def test_extract_component_ref_fields_mock(self):
+    # Test with a mock catalog
+    catalog = MagicMock(spec=A2uiCatalog)
+    catalog.version = VERSION_0_9
+    catalog.common_types_schema = {
+        "$defs": {
+            "ComponentId": {"type": "string"},
+            "ChildList": {
+                "oneOf": [
+                    {"type": "array", "items": {"$ref": "#/$defs/ComponentId"}},
+                    {
+                        "type": "object",
+                        "properties": {"componentId": {"$ref": "#/$defs/ComponentId"}},
+                    },
+                ]
+            },
+        }
+    }
+    catalog.catalog_schema = {
+        "components": {
+            "MyComp": {
+                "properties": {
+                    "ref": {"$ref": "common_types.json#/$defs/ComponentId"},
+                    "multi": {"$ref": "common_types.json#/$defs/ChildList"},
+                }
+            }
+        }
+    }
+    # Mock s2c_schema to avoid errors in extraction
+    catalog.s2c_schema = {}
+
+    ref_map = extract_component_ref_fields(catalog)
+    assert "MyComp" in ref_map
+    single_refs, list_refs = ref_map["MyComp"]
+    assert "ref" in single_refs
+    assert "multi" in list_refs
 
   # --- Multi-surface tests ---
 
