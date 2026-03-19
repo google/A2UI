@@ -78,6 +78,7 @@ Embedded Resources allow a Tool to return the UI layout directly tied to that sp
 - **MIME Type**: Must use `application/json+a2ui`. This ensures the MCP client routes the payload to the A2UI renderer rather than displaying raw JSON to the user. 
 
 #### Python Implementation Example
+
 ```python
 import mcp.types as types
 
@@ -180,7 +181,6 @@ The MCP server receives the tool call and executes the corresponding handler.
 @self.tool()
 async def action(action_payload: Dict[str, Any]) -> Dict[str, Any]:
     if action_payload["name"] == "confirm_booking":
-        # TODO: Implement booking confirmation logic
         return {"response": f"Booking confirmed for {action_payload['context']['start']} to {action_payload['context']['end']}."}
     raise ValueError(f"Unknown action: {action_payload['name']}")
 ```
