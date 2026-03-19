@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-import {useState, useCallback, useEffect, useId, memo} from 'react';
-import type * as Types from '@a2ui/web_core/types/types';
-import type {A2UIComponentProps} from '../../types';
-import {useA2UIComponent} from '../../hooks/useA2UIComponent';
-import {classMapToString, stylesToObject} from '../../lib/utils';
-
-type TextFieldType = 'shortText' | 'longText' | 'number' | 'date';
+import { memo, useId, useState, useEffect } from 'react';
+import { useA2UIComponent } from '../../hooks/useA2UIComponent';
+import { A2UIComponentProps, Types } from '../../types';
+import { TextFieldType } from '../../types/Primitives';
 
 /**
- * TextField component - an input field for text entry.
+ * A standard text input component.
  *
- * Supports various input types and two-way data binding.
+ * Supports various input types (text, number, date, etc.) via the 'textFieldType' property.
+ * Synchronizes with the A2UI data model for two-way binding.
  */
 export const TextField = memo(function TextField({
   node,
   surfaceId,
 }: A2UIComponentProps<Types.TextFieldNode>) {
-  const {theme, resolveString, setValue, getValue} = useA2UIComponent(node, surfaceId);
+  const {theme, resolveString, setValue} = useA2UIComponent(node, surfaceId);
   const props = node.properties;
   const id = useId();
 
   const label = resolveString(props.label);
   const textPath = props.text?.path;
   const initialValue = resolveString(props.text) ?? '';
-  const fieldType = props.textFieldType as TextFieldType | undefined;
+  // Fallback to 'type' if 'textFieldType' is not present in the model version
+  const fieldType = (props as any).textFieldType || (props as any).type;
   const validationRegexp = props.validationRegexp;
 
   const [value, setLocalValue] = useState(initialValue);
@@ -48,77 +47,52 @@ export const TextField = memo(function TextField({
   // Sync with external data model changes
   useEffect(() => {
     if (textPath) {
-      const externalValue = getValue(textPath);
-      if (externalValue !== null && String(externalValue) !== value) {
-        setLocalValue(String(externalValue));
-      }
+      setLocalValue(initialValue);
     }
-  }, [textPath, getValue]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [initialValue, textPath]);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const newValue = e.target.value;
-      setLocalValue(newValue);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setLocalValue(newValue);
 
-      // Validate if pattern provided
-      if (validationRegexp) {
-        setIsValid(new RegExp(validationRegexp).test(newValue));
-      }
+    // Basic validation if regex is provided
+    if (validationRegexp) {
+      const regex = new RegExp(validationRegexp);
+      setIsValid(regex.test(newValue));
+    }
 
-      // Two-way binding: update data model
-      if (textPath) {
-        setValue(textPath, newValue);
-      }
-    },
-    [validationRegexp, textPath, setValue]
-  );
+    // Update global state
+    if (textPath) {
+      setValue(textPath, newValue);
+    }
+  };
 
-  const inputType = fieldType === 'number' ? 'number' : fieldType === 'date' ? 'date' : 'text';
-  const isTextArea = fieldType === 'longText';
-
-  // Structure mirrors Lit's TextField component:
-  //   <div class="a2ui-textfield">  ← :host equivalent
-  //     <section class="...">       ← container with theme classes
-  //       <label>...</label>
-  //       <input>...</input>
-  //     </section>
-  //   </div>
-
-  // Apply --weight CSS variable on root div (:host equivalent) for flex layouts
-  const hostStyle: React.CSSProperties =
-    node.weight !== undefined ? ({'--weight': node.weight} as React.CSSProperties) : {};
+  const isLongText = fieldType === 'longText';
+  const inputType = fieldType === 'longText' ? 'text' : (fieldType || 'shortText');
 
   return (
-    <div className="a2ui-textfield" style={hostStyle}>
-      <section className={classMapToString(theme.components.TextField.container)}>
-        {label && (
-          <label htmlFor={id} className={classMapToString(theme.components.TextField.label)}>
-            {label}
-          </label>
-        )}
-        {isTextArea ? (
-          <textarea
-            id={id}
-            value={value}
-            onChange={handleChange}
-            placeholder="Please enter a value"
-            className={classMapToString(theme.components.TextField.element)}
-            style={stylesToObject(theme.additionalStyles?.TextField)}
-          />
-        ) : (
-          <input
-            type={inputType}
-            id={id}
-            value={value}
-            onChange={handleChange}
-            placeholder="Please enter a value"
-            className={classMapToString(theme.components.TextField.element)}
-            style={stylesToObject(theme.additionalStyles?.TextField)}
-          />
-        )}
-      </section>
+    <div className={theme.components.TextField?.container}>
+      {label && (
+        <label htmlFor={id} className={theme.components.TextField?.label}>
+          {label}
+        </label>
+      )}
+      {isLongText ? (
+        <textarea
+          id={id}
+          value={value}
+          onChange={handleChange}
+          className={theme.components.TextField?.element}
+        />
+      ) : (
+        <input
+          id={id}
+          type={inputType === 'shortText' ? 'text' : inputType}
+          value={value}
+          onChange={handleChange}
+          className={theme.components.TextField?.element}
+        />
+      )}
     </div>
   );
 });
-
-export default TextField;
