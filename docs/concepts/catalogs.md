@@ -360,30 +360,26 @@ The `catalogId` is a unique text identifier used for negotiation between the cli
 
 ### Versioning Guidelines
 
-To support continuous evolution without breaking older clients, A2UI adopts **Semantic Versioning** principles for catalogs. 
+To support continuous evolution without breaking older clients, A2UI categorizes catalog updates based on whether the changes are **safe to ignore**.
 
-While traditional JSON parsers safely ignore unknown properties, A2UI components convey semantic meaning. If a client silently drops a new critical component (e.g., an "Itinerary" viewer), users miss information. However, forcing full version bumps for every additive change creates maintenance burden.
-
-To balance safety and flexibility, we distinguish between **Breaking** and **Non-Breaking** changes, supported by client-side **Graceful Degradation**.
+While standard JSON parsers ignore unknown fields, dropping a component in a Server-Driven UI can drop its entire view tree. To balance safety and flexibility, updates are split into **Breaking** and **Non-Breaking** categories, relying on **Graceful Degradation** to absorb version lags.
 
 *   **Breaking Changes (Major Version Bump Required)**  
     Any change that alters structure in a way that cannot be safely ignored by older clients requires incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
-    *   **Adding a container component:** (e.g., adding `Grid` or `Accordion`). If an older client ignores a container, it will drop all of its children, breaking the UI tree.
-    *   **Removing a container component:** (e.g., removing `Grid` or `Accordion`). If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
-    *   **Changing field types:** (e.g., changing a property from a `string` to an `object`). This will fail JSON Schema validation on older clients.
+    *   **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
+    *   **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
+    *   **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
     *   **Adding a required property:** without a default value, as older agents won't know to send it.
 
 *   **Non-Breaking Changes (Allowable under Major Version)**  
     Changes that can be safely ignored or degrade gracefully without breaking the layout or data model can stay at the current version.
-    *   **Adding a leaf component (non-container):** (e.g., adding `Badge` or `Tooltip`). If ignored, the layout remains intact.
-    *   **Adding an optional property:** (e.g., adding `subtitle` to a Card).
+    *   **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
+    *   **Adding an optional property:** e.g., adding `subtitle` to a Card.
     *   **Removing a property:** Safe for the client to ignore if the agent stops sending it.
-    *   **Adding new functions or styles.**
+    *   **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
     *   **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
-    *.  **Adding new styles:** These can generally be ignored without changing the semantic meaning of the component.
 
-
-### Graceful Degregation
+### Graceful Degradation
 
 **Non-Breaking changes rely on Graceful Degradation.** If an Agent uses a new component/property on an older client, the client **MUST** handle it gracefully (e.g., ignoring it or rendering a text fallback or a "Not Supported" placeholder) rather than crashing. The client may also report a validation error back to the agent, allowing the agent to self-correct and downgrade the UI automatically.
 
