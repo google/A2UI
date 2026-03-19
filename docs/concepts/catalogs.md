@@ -348,7 +348,7 @@ Example A2UI Message from the agent defining the catalog_id used in a surface
 
 ## Catalog Naming & Versioning
 
-A2UI component catalogs require versioning because catalog definitions are often built in at compile time, so any mismatch between what an agent generates and what a client can render can break the UI.
+A2UI component catalogs require versioning because catalog definitions are often built in at compile time, so any mismatch between what an agent generates and what a client can render can affect the UI.
 
 ### CatalogId Naming Convention
 
