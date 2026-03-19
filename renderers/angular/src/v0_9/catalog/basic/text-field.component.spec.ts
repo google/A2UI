@@ -76,7 +76,6 @@ describe('TextFieldComponent', () => {
   });
 
   it('should return correct input type based on variant', () => {
-    // inputType is now a computed signal
     expect(component.inputType()).toBe('text');
 
     fixture.componentRef.setInput('props', {

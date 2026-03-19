@@ -16,19 +16,19 @@
 
 import { Injectable } from '@angular/core';
 import { z } from 'zod';
-import { BaseMinimalCatalog, MINIMAL_COMPONENTS, MINIMAL_FUNCTIONS } from '@a2ui/angular/v0_9';
+import { BaseBasicCatalog, BASIC_COMPONENTS, BASIC_FUNCTIONS } from '@a2ui/angular/v0_9';
 import { CustomSliderComponent } from './custom-slider.component';
 import { CardComponent } from './card.component';
 import { AngularComponentImplementation } from '@a2ui/angular/v0_9';
-import { BASIC_FUNCTIONS } from '@a2ui/web_core/v0_9/basic_catalog';
+import { BASIC_FUNCTIONS as CORE_BASIC_FUNCTIONS } from '@a2ui/web_core/v0_9/basic_catalog';
 
 /**
- * A catalog specific to the demo, extending the minimal catalog with custom components.
+ * A catalog specific to the demo, extending the basic catalog with custom components.
  */
 @Injectable({
   providedIn: 'root',
 })
-export class DemoCatalog extends BaseMinimalCatalog {
+export class DemoCatalog extends BaseBasicCatalog {
   constructor() {
     const customSliderApi: AngularComponentImplementation = {
       name: 'CustomSlider',
@@ -49,13 +49,10 @@ export class DemoCatalog extends BaseMinimalCatalog {
       component: CardComponent,
     };
 
-    const components = [...MINIMAL_COMPONENTS, customSliderApi, cardApi];
-    const functions = [...BASIC_FUNCTIONS, ...MINIMAL_FUNCTIONS];
+    const components = [...BASIC_COMPONENTS, customSliderApi, cardApi];
+    // Unify functions from both core and angular libraries
+    const functions = [...CORE_BASIC_FUNCTIONS, ...BASIC_FUNCTIONS];
 
-    super(
-      'https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json',
-      components,
-      functions,
-    );
+    super('https://a2ui.org/specification/v0_9/basic_catalog.json', components, functions);
   }
 }

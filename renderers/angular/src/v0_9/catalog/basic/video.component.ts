@@ -14,26 +14,44 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { BoundProperty } from '../../core/types';
 
 /**
- * A basic text component that supports font weights and styles.
+ * Angular implementation of the A2UI Video component (v0.9).
  */
 @Component({
-  selector: 'a2ui-v09-text',
+  selector: 'a2ui-v09-video',
+  standalone: true,
   imports: [],
   template: `
-    <span
-      [style.font-weight]="fontWeight()"
-      [style.font-style]="fontStyle()"
-    >
-      {{ text() }}
-    </span>
+    <div class="a2ui-video-container">
+      <video
+        [src]="url()"
+        controls
+        [poster]="posterUrl()"
+        class="a2ui-video"
+      >
+        Your browser does not support the video tag.
+      </video>
+    </div>
   `,
+  styles: [
+    `
+      .a2ui-video-container {
+        width: 100%;
+        max-width: 100%;
+      }
+      .a2ui-video {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextComponent {
+export class VideoComponent {
   /**
    * Bound properties.
    */
@@ -42,7 +60,6 @@ export class TextComponent {
   componentId = input<string>();
   dataContextPath = input<string>();
 
-  text = computed(() => this.props()['text']?.value() ?? '');
-  fontWeight = computed(() => this.props()['weight']?.value());
-  fontStyle = computed(() => this.props()['style']?.value());
+  url = computed(() => this.props()['url']?.value());
+  posterUrl = computed(() => this.props()['posterUrl']?.value());
 }

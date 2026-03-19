@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy, inject, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
-import { DataContext } from '@a2ui/web_core/v0_9';
+import { ComponentContext, DataContext } from '@a2ui/web_core/v0_9';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { BoundProperty } from '../../core/types';
 
 /**
- * A standard button component providing primary, default, and borderless variants.
- *
- * It supports child A2UI components (e.g., icons or text) and dispatches actions
- * when clicked.
+ * Angular implementation of the A2UI Button component (v0.9).
  */
 @Component({
   selector: 'a2ui-v09-button',
+  standalone: true,
   imports: [ComponentHostComponent],
   template: `
     <button

@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy, computed, input } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
 import { getNormalizedPath } from '../../core/utils';
 
 /**
- * A horizontal layout container that aligns children in a flex row.
- *
- * It supports both static children and repeating templates bound to a data path.
+ * Angular implementation of the A2UI Row component (v0.9).
  */
 @Component({
   selector: 'a2ui-v09-row',
+  standalone: true,
   imports: [ComponentHostComponent],
   template: `
     <div
@@ -46,11 +45,11 @@ import { getNormalizedPath } from '../../core/utils';
       }
 
       @if (isRepeating()) {
-        @for (item of children(); track $index) {
+        @for (item of children(); track item; let i = $index) {
           <a2ui-v09-component-host
             [componentId]="templateId()!"
             [surfaceId]="surfaceId()"
-            [dataContextPath]="getNormalizedPath($index)"
+            [dataContextPath]="getNormalizedPath(i)"
           >
           </a2ui-v09-component-host>
         }

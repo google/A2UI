@@ -21,9 +21,10 @@ import { AgentStubService } from './agent-stub.service';
 import { ComponentHostComponent, SurfaceComponent } from '@a2ui/angular/v0_9';
 import { AngularCatalog } from '@a2ui/angular/v0_9';
 import { DemoCatalog } from './demo-catalog';
-import { SurfaceGroupAction, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
+import { SurfaceGroupAction, A2uiMessage, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
 import { EXAMPLES } from './examples-bundle';
 import { Example } from './types';
+import { Subscription } from 'rxjs';
 import { ActionDispatcher } from './action-dispatcher.service';
 
 /**
@@ -36,7 +37,6 @@ import { ActionDispatcher } from './action-dispatcher.service';
   standalone: true,
   imports: [CommonModule, ComponentHostComponent, SurfaceComponent],
   template: `
-    <!-- template omitted for brevity, keeping same -->
     <div class="dashboard">
       <!-- Sidebar Navigation -->
       <div class="sidebar">
@@ -106,7 +106,6 @@ import { ActionDispatcher } from './action-dispatcher.service';
   `,
   styles: [
     `
-      /* styles omitted for brevity, keeping same */
       .dashboard {
         display: flex;
         height: 100vh;

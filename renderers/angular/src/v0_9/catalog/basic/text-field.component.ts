@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { BoundProperty } from '../../core/types';
-
+import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 
 /**
- * An interactive text input component that supports labels, placeholders, and variants.
- *
- * It maps its value to a bound data path and supports 'obscured' (password) and
- * 'number' variants.
+ * Angular implementation of the A2UI TextField component (v0.9).
  */
 @Component({
   selector: 'a2ui-v09-text-field',
+  standalone: true,
   imports: [],
   template: `
     <div class="a2ui-text-field-container">
@@ -72,12 +70,12 @@ export class TextFieldComponent {
   componentId = input<string>();
   dataContextPath = input<string>();
 
+  private rendererService = inject(A2uiRendererService);
 
-
-  variant = computed(() => this.props()['variant']?.value());
   label = computed(() => this.props()['label']?.value());
-  value = computed(() => this.props()['value']?.value() ?? '');
-  placeholder = computed(() => this.props()['placeholder']?.value() ?? '');
+  value = computed(() => this.props()['value']?.value() || '');
+  placeholder = computed(() => this.props()['placeholder']?.value() || '');
+  variant = computed(() => this.props()['variant']?.value());
 
   inputType = computed(() => {
     switch (this.variant()) {

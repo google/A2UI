@@ -16,6 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { A2uiRendererService } from '@a2ui/angular/v0_9';
+
 import { SurfaceGroupAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 import { ActionDispatcher } from './action-dispatcher.service';
 
@@ -49,7 +50,7 @@ export class AgentStubService {
 
   constructor(
     private rendererService: A2uiRendererService,
-     private dispatcher: ActionDispatcher,
+    private dispatcher: ActionDispatcher,
   ) {
     // Subscribe to actions dispatched by the renderer
     this.dispatcher.actions.subscribe((action) => this.handleAction(action));

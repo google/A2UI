@@ -128,7 +128,7 @@ describe('ButtonComponent', () => {
     const button = fixture.debugElement.query(By.css('button'));
     button.triggerEventHandler('click', null);
 
-    expect(mockRendererService.surfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
+    expect(mockSurfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
     expect(mockSurface.dispatchAction).toHaveBeenCalled();
   });
 
@@ -136,7 +136,6 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
     const host = fixture.debugElement.query(By.css('a2ui-v09-component-host'));
     expect(host).toBeTruthy();
-    // componentId is now a signal, so we access it via ()
     expect(host.componentInstance.componentId()).toBe('child1');
   });
 
