@@ -2,222 +2,222 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://a2ui.org/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/composer/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/quickstart/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/roadmap/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/concepts/catalogs/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/concepts/client_to_server_actions/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/concepts/components/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/concepts/data-binding/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/concepts/data-flow/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/concepts/overview/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/concepts/transports/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/ecosystem/a2ui-in-the-world/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/ecosystem/community/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/ecosystem/renderers/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/guides/agent-development/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/guides/client-setup/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/guides/custom-components/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/guides/renderer-development/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/guides/theming/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/introduction/agent-ui-ecosystem/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/introduction/how-to-use/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/introduction/what-is-a2ui/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/introduction/who-is-it-for/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/reference/agents/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/reference/components/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/reference/messages/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/reference/renderers/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0.8-a2a-extension/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0.8-a2ui/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0.9-a2ui/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0.9-evolution-guide/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_10/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_10/docs/a2ui_custom_functions/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_10/docs/a2ui_extension_specification/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_10/docs/a2ui_protocol/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_10/docs/evolution_guide/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_10/eval/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_10/test/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/docs/a2ui_extension_specification/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/docs/a2ui_protocol/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/docs/custom_catalog_changes/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/eval/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/eval/GEMINI/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/json/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_8/json/catalogs/minimal/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/docs/a2ui_custom_functions/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/docs/a2ui_extension_specification/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/docs/a2ui_protocol/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/docs/evolution_guide/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/docs/renderer_guide/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/eval/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/json/catalogs/minimal/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
     <url>
          <loc>https://a2ui.org/specification/v0_9/test/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-19</lastmod>
     </url>
 </urlset>

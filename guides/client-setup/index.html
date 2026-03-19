@@ -1033,6 +1033,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Angular">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup-example-v09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup Example (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1951,6 +1968,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Angular">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup-example-v09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup Example (v0.9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2181,18 +2215,41 @@ coming days.</p>
 <p>The Angular client library is not yet published to NPM. Check back in the
 coming days.</p>
 </div>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/angular<span class="w"> </span>@a2ui/web-lib
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/angular<span class="w"> </span>@a2ui/web_core
 </span></code></pre></div>
 <p>The Angular renderer provides:</p>
 <ul>
-<li><strong><code>provideA2UI()</code> function</strong>: Configures A2UI in your app config</li>
-<li><strong><code>Surface</code> component</strong>: Renders A2UI surfaces</li>
-<li><strong><code>MessageProcessor</code> service</strong>: Handles incoming A2UI messages</li>
+<li><strong><code>A2uiRendererService</code></strong>: A service that manages the A2UI message processor and reactive model.</li>
+<li><strong><code>a2ui-v09-component-host</code> component</strong>: A dynamic component host that renders A2UI components from a surface.</li>
+<li><strong><code>A2UI_RENDERER_CONFIG</code> token</strong>: Used to configure the renderer with catalogs and action handlers.</li>
 </ul>
-<p>TODO: Add verified setup example.</p>
-<p><strong>See working example:</strong> <a href="https://github.com/google/a2ui/tree/main/samples/client/angular/projects/restaurant">Angular restaurant sample</a></p>
+<h3 id="setup-example-v09">Setup Example (v0.9)<a class="headerlink" href="#setup-example-v09" title="Permanent link">&para;</a></h3>
+<p>A2UI uses versioned imports for its protocol-specific implementations. For v0.9, configure your application providers as follows:</p>
+<div class="language-typescript highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ApplicationConfig</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@angular/core&#39;</span><span class="p">;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nx">A2UI_RENDERER_CONFIG</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nx">A2uiRendererService</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nx">minimalCatalog</span><span class="w"> </span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@a2ui/angular/v0_9&#39;</span><span class="p">;</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">appConfig</span><span class="o">:</span><span class="w"> </span><span class="kt">ApplicationConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="nx">providers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="nx">provide</span><span class="o">:</span><span class="w"> </span><span class="kt">A2UI_RENDERER_CONFIG</span><span class="p">,</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="nx">useValue</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="nx">catalogs</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="nx">minimalCatalog</span><span class="p">],</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="nx">actionHandler</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">action</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">          </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Action dispatched:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">action</span><span class="p">);</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">    </span><span class="nx">A2uiRendererService</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="p">};</span>
+</span></code></pre></div>
+<p><strong>See working example:</strong> <a href="https://github.com/google/a2ui/tree/main/renderers/angular/a2ui_explorer">Angular v0.9 Explorer</a></p>
 <h2 id="react">React<a class="headerlink" href="#react" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/react<span class="w"> </span>@a2ui/web-lib
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>npm<span class="w"> </span>install<span class="w"> </span>@a2ui/react<span class="w"> </span>@a2ui/web-lib
 </span></code></pre></div>
 <p>The React renderer provides:</p>
 <ul>
@@ -2202,7 +2259,7 @@ coming days.</p>
 </ul>
 <p><strong>See working example:</strong> <a href="https://github.com/google/A2UI/tree/main/samples/client/react/shell">React shell</a></p>
 <h2 id="flutter-genui-sdk">Flutter (GenUI SDK)<a class="headerlink" href="#flutter-genui-sdk" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>flutter<span class="w"> </span>pub<span class="w"> </span>add<span class="w"> </span>flutter_genui
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>flutter<span class="w"> </span>pub<span class="w"> </span>add<span class="w"> </span>flutter_genui
 </span></code></pre></div>
 <p>Flutter uses the GenUI SDK which provides native A2UI rendering.</p>
 <p><strong>Docs:</strong> <a href="https://docs.flutter.dev/ai/genui">GenUI SDK</a> | <a href="https://github.com/flutter/genui">GitHub</a> | <a href="https://github.com/flutter/genui/blob/main/packages/genui/README.md#getting-started-with-genui">README in GenUI Flutter Package</a></p>
