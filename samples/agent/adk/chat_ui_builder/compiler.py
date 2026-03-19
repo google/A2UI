@@ -215,7 +215,7 @@ class FrameCompiler:
       components.append(
           ComponentNode(id=summary_id, component={'Text': {'text': {'path': '/summary'}, 'usageHint': 'body'}})
       )
-      components[1] = ComponentNode(
+      components[2] = ComponentNode(
           id=intro_content_id,
           component={
               'Column': {
