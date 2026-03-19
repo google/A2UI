@@ -360,12 +360,12 @@ The `catalogId` is a unique text identifier used for negotiation between the cli
 
 ### Versioning Guidelines
 
-To support continuous evolution without breaking older clients, A2UI categorizes catalog updates based on whether the changes are **safe to ignore**.
+To support continuous evolution without breaking older clients or agents, A2UI categorizes catalog updates based on whether the changes are **safe to ignore**.
 
 While standard JSON parsers ignore unknown fields, dropping a component in a Server-Driven UI can drop its entire view tree. To balance safety and flexibility, updates are split into **Breaking** and **Non-Breaking** categories, relying on **Graceful Degradation** to absorb version lags.
 
 *   **Breaking Changes (Major Version Bump Required)**  
-    Any change that alters structure in a way that cannot be safely ignored by older clients requires incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
+    Any change that alters structure in a way that cannot be safely ignored by older clients incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
     *   **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
     *   **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
     *   **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
