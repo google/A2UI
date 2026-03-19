@@ -52,7 +52,7 @@ export class Checkbox extends DynamicComponent<Types.CheckboxNode> {
     const checked = (event.target as HTMLInputElement).checked;
     this.sendAction({
       name: 'toggle',
-      context: [{ key: 'checked', value: { literalBoolean: checked } }]
+      context: [{ key: 'checked', value: { literalBoolean: checked } }],
     });
   }
 }

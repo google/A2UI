@@ -18,14 +18,24 @@ import { Type } from '@angular/core';
 import { Catalog, ComponentApi } from '@a2ui/web_core/v0_9';
 
 /**
- * Extends the generic ComponentApi to include Angular-specific component types.
+ * Extends the generic {@link ComponentApi} to include Angular-specific component metadata.
  */
 export interface AngularComponentImplementation extends ComponentApi {
-  /** The Angular component class used to render this component. */
+  /**
+   * The Angular component class used to render this component.
+   *
+   * This class must be an Angular {@link Type} (e.g., a standalone component class)
+   * that accepts `props`, `surfaceId`, and `dataContextPath` as inputs.
+   */
   readonly component: Type<any>;
 }
 
 /**
- * Base class for Angular-specific component catalogs.
+ * A collection of Angular component and function implementations mapped to
+ * A2UI protocol types.
+ *
+ * Catalogs are used by the {@link MessageProcessor} to resolve component
+ * definitions and by {@link ComponentHostComponent} to instantiate the
+ * correct Angular components.
  */
 export class AngularCatalog extends Catalog<AngularComponentImplementation> {}

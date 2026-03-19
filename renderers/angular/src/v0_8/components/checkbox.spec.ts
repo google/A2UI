@@ -36,7 +36,11 @@ describe('Checkbox Component', () => {
   };
 
   beforeEach(async () => {
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockProcessor.dispatch.and.returnValue(Promise.resolve([]));
 
     await TestBed.configureTestingModule({
@@ -45,12 +49,11 @@ describe('Checkbox Component', () => {
         { provide: MessageProcessor, useValue: mockProcessor },
         { provide: Theme, useValue: new Theme() },
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Checkbox);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', mockNode);
     fixture.componentRef.setInput('weight', 1);
@@ -84,7 +87,8 @@ describe('Checkbox Component', () => {
     inputEl.dispatchEvent(new Event('change'));
 
     expect(mockProcessor.dispatch).toHaveBeenCalled();
-    const message = mockProcessor.dispatch.calls.mostRecent().args[0] as Types.A2UIClientEventMessage;
+    const message = mockProcessor.dispatch.calls.mostRecent()
+      .args[0] as Types.A2UIClientEventMessage;
     expect(message.userAction!.name).toBe('toggle');
     expect(message.userAction!.context!['checked']).toBeTrue();
   });

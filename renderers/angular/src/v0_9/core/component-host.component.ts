@@ -32,8 +32,12 @@ import { ComponentBinder } from './component-binder.service';
 /**
  * Dynamically renders an A2UI component as defined in the current surface model.
  *
- * This component acts as a bridge between the A2UI surface model and Angular components,
- * resolving the appropriate component from the catalog and binding its properties.
+ * This component acts as a bridge between the A2UI surface model and Angular components.
+ * It resolves the appropriate component from the catalog based on the component's type,
+ * and uses {@link ComponentBinder} to create reactive property bindings.
+ *
+ * Usually, you'll use the higher-level {@link SurfaceComponent} which automatically
+ * sets up a host for the 'root' component.
  */
 @Component({
   selector: 'a2ui-v09-component-host',
@@ -51,8 +55,16 @@ import { ComponentBinder } from './component-binder.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComponentHostComponent implements OnInit {
+  /** The ID of the component to render. Defaults to 'root'. */
   componentId = input<string>('root');
+
+  /** The unique identifier of the surface this component belongs to. */
   surfaceId = input.required<string>();
+
+  /**
+   * The path within the surface's data model that represents the current data state.
+   * Defaults to '/'.
+   */
   dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);

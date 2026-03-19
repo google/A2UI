@@ -34,7 +34,10 @@ describe('Icon Component', () => {
     await TestBed.configureTestingModule({
       imports: [Icon],
       providers: [
-        { provide: MessageProcessor, useValue: { resolvePrimitive: (p: any) => p?.literalString || p } },
+        {
+          provide: MessageProcessor,
+          useValue: { resolvePrimitive: (p: any) => p?.literalString || p },
+        },
         { provide: Theme, useValue: mockTheme },
         { provide: Catalog, useValue: {} },
       ],
@@ -42,7 +45,7 @@ describe('Icon Component', () => {
 
     fixture = TestBed.createComponent(Icon);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', { id: 'icon-1', type: 'Icon', weight: 1 });
     fixture.componentRef.setInput('weight', 1);
@@ -60,7 +63,7 @@ describe('Icon Component', () => {
     const spanEl = fixture.debugElement.query(By.css('.g-icon'));
     expect(spanEl).toBeTruthy();
     expect(spanEl.nativeElement.textContent).toBe('home');
-    
+
     const sectionEl = fixture.debugElement.query(By.css('section'));
     expect(sectionEl).toBeTruthy();
     expect(sectionEl.nativeElement.className).toBe('icon-class');
@@ -72,7 +75,7 @@ describe('Icon Component', () => {
 
     const spanEl = fixture.debugElement.query(By.css('.g-icon'));
     expect(spanEl).toBeFalsy();
-    
+
     const sectionEl = fixture.debugElement.query(By.css('section'));
     expect(sectionEl).toBeFalsy();
   });

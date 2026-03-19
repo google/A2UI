@@ -44,7 +44,11 @@ describe('MultipleChoice Component', () => {
       },
     } as any;
 
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockProcessor.dispatch.and.returnValue(Promise.resolve([]));
 
     await TestBed.configureTestingModule({
@@ -55,16 +59,16 @@ describe('MultipleChoice Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(MultipleChoice, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-      }
-    })
-    .compileComponents();
+      .overrideComponent(MultipleChoice, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(MultipleChoice);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', { id: 'mc-1', type: 'MultipleChoice', weight: 1 });
     fixture.componentRef.setInput('weight', 1);

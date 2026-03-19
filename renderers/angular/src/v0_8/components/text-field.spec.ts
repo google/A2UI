@@ -39,7 +39,11 @@ describe('TextField Component', () => {
       },
     } as any;
 
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockProcessor.dispatch.and.returnValue(Promise.resolve([]));
 
     await TestBed.configureTestingModule({
@@ -50,16 +54,16 @@ describe('TextField Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(TextField, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-      }
-    })
-    .compileComponents();
+      .overrideComponent(TextField, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(TextField);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', { id: 'tf-1', type: 'TextField', weight: 1 });
     fixture.componentRef.setInput('weight', 1);
@@ -87,7 +91,7 @@ describe('TextField Component', () => {
   it('should change input type based on textFieldType', () => {
     fixture.componentRef.setInput('textFieldType', 'number');
     fixture.detectChanges();
-    
+
     const inputEl = fixture.debugElement.query(By.css('input'));
     expect(inputEl.nativeElement.type).toBe('number');
 

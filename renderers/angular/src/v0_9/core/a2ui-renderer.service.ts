@@ -30,7 +30,12 @@ import { AngularComponentImplementation, AngularCatalog } from '../catalog/types
 export interface RendererConfiguration {
   /** The catalogs containing the available components and functions. */
   catalogs: AngularCatalog[];
-  /** Optional handler for actions dispatched from any surface. */
+  /**
+   * Optional handler for actions dispatched from any surface.
+   *
+   * This callback is invoked whenever a component in any surface triggers an action
+   * (e.g., clicking a button with an `onTap` property).
+   */
   actionHandler?: (action: SurfaceGroupAction) => void;
 }
 
@@ -44,8 +49,9 @@ export const A2UI_RENDERER_CONFIG = new InjectionToken<RendererConfiguration>(
 /**
  * Manages A2UI v0.9 rendering sessions by bridging the MessageProcessor to Angular.
  *
- * This service is responsible for processing incoming A2UI messages and making the
- * resulting surface models available to Angular components.
+ * This service is the central entry point for the A2UI renderer. It maintains a
+ * {@link MessageProcessor} that turns A2UI protocol messages into a reactive
+ * {@link SurfaceGroupModel}.
  */
 @Injectable()
 export class A2uiRendererService implements OnDestroy {
@@ -62,9 +68,11 @@ export class A2uiRendererService implements OnDestroy {
   }
 
   /**
-   * Processes a list of A2UI messages and updates the internal model.
+   * Processes a list of A2UI messages and updates the internal surface models.
    *
-   * @param messages The list of messages to process.
+   * This should be called whenever new messages arrive from an agent or orchestrator.
+   *
+   * @param messages The list of {@link A2uiMessage}s to process.
    */
   processMessages(messages: A2uiMessage[]): void {
     this._messageProcessor.processMessages(messages);
@@ -72,6 +80,8 @@ export class A2uiRendererService implements OnDestroy {
 
   /**
    * The current surface group model containing all active surfaces.
+   *
+   * Surfaces can be retrieved from this group using their `surfaceId`.
    */
   get surfaceGroup(): SurfaceGroupModel<AngularComponentImplementation> {
     return this._messageProcessor.model;

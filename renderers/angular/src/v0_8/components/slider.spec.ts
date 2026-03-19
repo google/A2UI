@@ -39,7 +39,11 @@ describe('Slider Component', () => {
       },
     } as any;
 
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['dispatch', 'resolvePath', 'getData']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', [
+      'dispatch',
+      'resolvePath',
+      'getData',
+    ]);
     mockProcessor.dispatch.and.returnValue(Promise.resolve([]));
 
     await TestBed.configureTestingModule({
@@ -50,16 +54,16 @@ describe('Slider Component', () => {
         { provide: Catalog, useValue: {} },
       ],
     })
-    .overrideComponent(Slider, {
-      set: {
-        changeDetection: ChangeDetectionStrategy.Default,
-      }
-    })
-    .compileComponents();
+      .overrideComponent(Slider, {
+        set: {
+          changeDetection: ChangeDetectionStrategy.Default,
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(Slider);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', { id: 'slider-1', type: 'Slider', weight: 1 });
     fixture.componentRef.setInput('weight', 1);

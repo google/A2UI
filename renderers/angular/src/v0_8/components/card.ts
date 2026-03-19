@@ -25,19 +25,11 @@ import { Types } from '../types';
   template: `
     <div [class]="theme.components.Card" [style]="theme.additionalStyles?.Card">
       @if (child()) {
-        <ng-container
-          a2ui-renderer
-          [surfaceId]="surfaceId()!"
-          [component]="child()!"
-        />
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child()!" />
       }
 
       @for (comp of children(); track comp.id) {
-        <ng-container
-          a2ui-renderer
-          [surfaceId]="surfaceId()!"
-          [component]="comp"
-        />
+        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="comp" />
       }
     </div>
   `,

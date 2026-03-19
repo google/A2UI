@@ -16,6 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { A2uiRendererService } from '@a2ui/angular/v0_9';
+
 import { SurfaceGroupAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 import { ActionDispatcher } from './action-dispatcher.service';
 
@@ -49,7 +50,7 @@ export class AgentStubService {
 
   constructor(
     private rendererService: A2uiRendererService,
-     private dispatcher: ActionDispatcher,
+    private dispatcher: ActionDispatcher,
   ) {
     // Subscribe to actions dispatched by the renderer
     this.dispatcher.actions.subscribe((action) => this.handleAction(action));
@@ -121,6 +122,21 @@ export class AgentStubService {
    * Initializes a demo session with an initial set of messages.
    */
   initializeDemo(initialMessages: A2uiMessage[]) {
+    // Before replaying initial messages (which contains createSurface),
+    // ensure any existing surface with the same ID is cleared.
+    for (const msg of initialMessages) {
+      if ('createSurface' in msg) {
+        const createSurface = msg.createSurface;
+        if (this.rendererService.surfaceGroup.getSurface(createSurface.surfaceId)) {
+          this.rendererService.processMessages([
+            {
+              version: 'v0.9',
+              deleteSurface: { surfaceId: createSurface.surfaceId },
+            },
+          ]);
+        }
+      }
+    }
     this.rendererService.processMessages(initialMessages);
   }
 }

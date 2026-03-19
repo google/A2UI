@@ -2,75 +2,108 @@
 
 The Angular implementation of the A2UI framework, providing seamless integration of agent-generated UI into Angular applications.
 
-## Getting Started
+## Features
 
-### Installation
+- **Reactive Rendering**: Uses Angular Signals for efficient, fine-grained UI updates.
+- **Dynamic Component Resolution**: Maps A2UI component types to Angular components via extensible catalogs.
+- **Surface Management**: Built-in support for multiple independent UI surfaces within a single session.
+- **Action Handling**: Simple callback-based integration for handling agent-dispatched actions.
+
+## Installation
 
 ```bash
 npm install @a2ui/angular @a2ui/web_core
 ```
 
-### Protocol Versioning
+## Protocol Versioning
 
-A2UI supports multiple protocol versions. To use a specific version, use the versioned import path:
+A2UI supports multiple protocol versions to ensure backward compatibility as the framework evolves. For new projects, it is recommended to use the **v0.9** protocol.
+
+To use the v0.9 implementation, import from the versioned path:
 
 ```typescript
-// Use the v0.9 implementation
 import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '@a2ui/angular/v0_9';
-import { minimalCatalog } from '@a2ui/angular/v0_9';
+import { BasicCatalog } from '@a2ui/angular/v0_9';
 ```
 
 ## Basic Setup
 
-Configure the renderer in your `app.config.ts` using the `A2UI_RENDERER_CONFIG` injection token:
+Configure the renderer in your `app.config.ts` using the `A2UI_RENDER_CONFIG` injection token:
 
 ```typescript
 import { ApplicationConfig } from '@angular/core';
-import { A2UI_RENDERER_CONFIG, A2uiRendererService, minimalCatalog } from '@a2ui/angular/v0_9';
+import { A2UI_RENDERER_CONFIG, A2uiRendererService, BasicCatalog } from '@a2ui/angular/v0_9';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     {
       provide: A2UI_RENDERER_CONFIG,
       useValue: {
-        catalogs: [minimalCatalog],
+        catalogs: [new BasicCatalog()],
         actionHandler: (action) => {
           console.log('Action received:', action);
-        }
-      }
+        },
+      },
     },
-    A2uiRendererService
-  ]
+    A2uiRendererService,
+  ],
 };
 ```
 
-## Rendering Surfaces
+## Usage
 
-Use the `a2ui-v09-component-host` component to render individual A2UI components within your application:
+### Rendering a Surface
+
+The simplest way to render an A2UI surface is using the `SurfaceComponent`. This component handles setting up the root `ComponentHost` for you.
+
+```typescript
+import { Component } from '@angular/core';
+import { SurfaceComponent } from '@a2ui/angular/v0_9';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [SurfaceComponent],
+  template: ` <a2ui-v09-surface surfaceId="main-surface" /> `,
+})
+export class AppComponent {}
+```
+
+### Dynamic Component Hosting
+
+For more fine-grained control, use the `ComponentHostComponent` to render specific components within a surface:
 
 ```typescript
 import { Component } from '@angular/core';
 import { ComponentHostComponent } from '@a2ui/angular/v0_9';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-custom-layout',
   standalone: true,
   imports: [ComponentHostComponent],
   template: `
-    <a2ui-v09-component-host
-      surfaceId="my-surface-id"
-      componentId="my-component-id"
-    />
-  `
+    <div class="user-sidebar">
+      <a2ui-v09-component-host surfaceId="main-surface" componentId="sidebar-config" />
+    </div>
+  `,
 })
-export class AppComponent {}
+export class CustomLayoutComponent {}
 ```
 
-## Core Concepts
+## Core Service: `A2uiRendererService`
 
-- **A2uiRendererService**: The central service that manages the connection to the A2UI Message Processor and tracks surface state.
-- **ComponentHostComponent**: A wrapper component that dynamically renders A2UI components based on the current surface model.
-- **Catalogs**: Collections of Angular components mapped to A2UI component types.
+The `A2uiRendererService` is the heart of the Angular renderer. It bridges the A2UI `MessageProcessor` to Angular's reactive system.
+
+- **`processMessages(messages: Message[])`**: Ingest messages from the agent to update the UI surfaces.
+- **`surfaceGroup()`**: Returns the `SurfaceGroupModel` containing the current state of all surfaces.
+
+## Basic Catalog Components
+
+The `@a2ui/angular/v0_9` package includes a `BasicCatalog` with the following standard components:
+
+- **Layout**: `Row`, `Column`, `List`, `Card`, `Tabs`, `Modal`, `Divider`
+- **Content**: `Text`, `Image`, `Icon`, `Video`, `AudioPlayer`
+- **Input**: `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider`, `DateTimeInput`
 
 ## Security
 

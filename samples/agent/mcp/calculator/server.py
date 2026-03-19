@@ -45,7 +45,7 @@ def main(port: int, transport: str) -> int:
     ]
 
   @app.read_resource()
-  async def read_resource(uri: types.ResourceIdentifier) -> str | bytes:
+  async def read_resource(uri: str) -> str | bytes:
     if str(uri) == "ui://calculator/app":
       try:
         return (pathlib.Path(__file__).parent / "apps" / "calculator.html").read_text()

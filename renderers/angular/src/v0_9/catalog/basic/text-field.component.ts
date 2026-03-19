@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { BoundProperty } from '../../core/types';
-
+import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 
 /**
- * An interactive text input component that supports labels, placeholders, and variants.
+ * Angular implementation of the A2UI TextField component (v0.9).
  *
- * It maps its value to a bound data path and supports 'obscured' (password) and
- * 'number' variants.
+ * Renders a text input field with an optional label and placeholder.
+ * Updates the bound data model property on every input change.
  */
 @Component({
   selector: 'a2ui-v09-text-field',
+  standalone: true,
   imports: [],
   template: `
     <div class="a2ui-text-field-container">
@@ -65,19 +66,25 @@ import { BoundProperty } from '../../core/types';
 })
 export class TextFieldComponent {
   /**
-   * Bound properties.
+   * Reactive properties resolved from the A2UI {@link ComponentModel}.
+   *
+   * Expected properties:
+   * - `value`: The current string value of the input.
+   * - `label`: Optional label text to display above the input.
+   * - `placeholder`: Hint text shown when the input is empty.
+   * - `variant`: Input type variant ('default', 'obscured' (password), 'number').
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input<string>();
   componentId = input<string>();
   dataContextPath = input<string>();
 
+  private rendererService = inject(A2uiRendererService);
 
-
-  variant = computed(() => this.props()['variant']?.value());
   label = computed(() => this.props()['label']?.value());
-  value = computed(() => this.props()['value']?.value() ?? '');
-  placeholder = computed(() => this.props()['placeholder']?.value() ?? '');
+  value = computed(() => this.props()['value']?.value() || '');
+  placeholder = computed(() => this.props()['placeholder']?.value() || '');
+  variant = computed(() => this.props()['variant']?.value());
 
   inputType = computed(() => {
     switch (this.variant()) {

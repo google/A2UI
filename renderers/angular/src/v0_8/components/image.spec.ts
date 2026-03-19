@@ -35,7 +35,7 @@ describe('Image Component', () => {
 
     fixture = TestBed.createComponent(Image);
     component = fixture.componentInstance;
-    
+
     // Set required inputs
     fixture.componentRef.setInput('surfaceId', 'surf-1');
     fixture.componentRef.setInput('component', { id: 'img-1', type: 'Image', weight: 1 });
@@ -57,7 +57,7 @@ describe('Image Component', () => {
     expect(imgEl).toBeTruthy();
     expect(imgEl.nativeElement.src).toBe('http://example.com/a.png');
     expect(imgEl.nativeElement.alt).toBe('Description');
-    
+
     const sectionEl = fixture.debugElement.query(By.css('section'));
     expect(sectionEl.nativeElement.className).toContain('image-all-class');
   });

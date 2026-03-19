@@ -43,7 +43,9 @@ describe('Text Component', () => {
     } as any;
 
     mockMarkdownRenderer = jasmine.createSpyObj('MarkdownRenderer', ['render']);
-    mockMarkdownRenderer.render.and.callFake((markdown: string) => Promise.resolve(`<div class="rendered">${markdown}</div>`));
+    mockMarkdownRenderer.render.and.callFake((markdown: string) =>
+      Promise.resolve(`<div class="rendered">${markdown}</div>`),
+    );
 
     await TestBed.configureTestingModule({
       imports: [Text],
@@ -54,12 +56,12 @@ describe('Text Component', () => {
         { provide: MarkdownRenderer, useValue: mockMarkdownRenderer },
       ],
     })
-    // Text component uses ChangeDetectionStrategy.Eager originally!
-    .compileComponents();
+      // Text component uses ChangeDetectionStrategy.Eager originally!
+      .compileComponents();
 
     fixture = TestBed.createComponent(Text);
     component = fixture.componentInstance;
-    
+
     fixture.componentRef.setInput('surfaceId', 'surface-1');
     fixture.componentRef.setInput('component', { id: 'text-1', type: 'Text', weight: 1 });
     fixture.componentRef.setInput('weight', 1);
