@@ -1,0 +1,19 @@
+[project]
+name = "a2ui-chat-ui-builder"
+version = "0.1.0"
+description = "Streaming chat-to-A2UI demo using a local OpenAI-compatible model and NDJSON deltas."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.116.0",
+  "uvicorn>=0.35.0",
+  "pydantic>=2.11.0",
+  "litellm>=1.75.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
