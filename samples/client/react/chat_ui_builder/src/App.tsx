@@ -1,6 +1,7 @@
 import {FormEvent, type Dispatch, type SetStateAction, useCallback, useMemo, useRef, useState} from 'react';
-import {A2UIProvider, A2UIRenderer, useA2UIActions} from '@a2ui/react';
+import {A2UIProvider, A2UIRenderer, ComponentRegistry, useA2UIActions} from '@a2ui/react';
 import type {Types} from '@a2ui/react';
+import {FlowDiagram} from './components/FlowDiagram';
 
 const DEFAULT_API_BASE = 'http://localhost:8010';
 const MAX_LOG_ENTRIES = 40;
@@ -9,7 +10,13 @@ const EXAMPLES = [
   '请生成一个客户概览卡片，包含姓名 Alice、客户等级 VIP、最近两笔订单，并提供一个“跟进客户”按钮。',
   '请生成一个缺陷分诊面板，包含标题“生产故障”、严重级别“高”、负责人“平台团队”，并添加“立即升级”和“记录备注”两个动作。',
   '请生成一个会议准备表单，包含参会人姓名、会议时间、议程、是否需要录屏，以及一个“提交准备信息”按钮。',
+  '请生成一个请假审批流程图，包含提交申请、主管审批、通过、驳回修改四个节点，并在下方放一个“发起审批”按钮。',
 ];
+
+const registry = ComponentRegistry.getInstance();
+if (!registry.has('FlowDiagram')) {
+  registry.register('FlowDiagram', {component: FlowDiagram});
+}
 
 interface ShellProps {
   onAction: (message: Types.A2UIClientEventMessage) => void;
@@ -258,7 +265,7 @@ function Shell({onAction}: ShellProps) {
             </button>
           </div>
           <div className="render-surface">
-            <A2UIRenderer surfaceId="main" />
+            <A2UIRenderer surfaceId="main" registry={registry} />
           </div>
         </div>
       </main>

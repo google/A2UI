@@ -60,6 +60,29 @@ class AddButtonDelta(BaseModel):
   primary: bool = False
 
 
+class FlowDiagramNode(BaseModel):
+  id: str
+  label: str
+  column: int
+  lane: int = 0
+  kind: Literal["start", "process", "decision", "end"] = "process"
+
+
+class FlowDiagramEdge(BaseModel):
+  from_id: str
+  to_id: str
+  label: str | None = None
+
+
+class AddFlowDiagramDelta(BaseModel):
+  event: Literal["add_flow_diagram"]
+  id: str
+  parent_id: str
+  title: str
+  nodes: list[FlowDiagramNode]
+  edges: list[FlowDiagramEdge]
+
+
 class ChoiceOption(BaseModel):
   label: str
   value: str
@@ -106,6 +129,7 @@ Delta = Annotated[
     | AddKeyValueDelta
     | AddImageDelta
     | AddButtonDelta
+    | AddFlowDiagramDelta
     | AddInputDelta
     | AddDividerDelta
     | AppendListItemDelta

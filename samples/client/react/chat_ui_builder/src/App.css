@@ -60,8 +60,9 @@ code {
 
 .preview-card {
   min-height: calc(100vh - 48px);
-  padding: 32px;
+  padding: 28px;
   overflow: auto;
+  background: rgba(255, 255, 255, 0.78);
 }
 
 .preview-header {
@@ -82,10 +83,28 @@ code {
 }
 
 .render-surface {
-  min-height: 320px;
-  padding: 16px;
-  border-radius: 20px;
-  background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.92));
+  min-height: 520px;
+  padding: 28px;
+  border-radius: 28px;
+  border: 1px dashed rgba(148, 163, 184, 0.45);
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.94)),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: auto, 24px 24px, 24px 24px;
+}
+
+.render-surface .a2ui-surface {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.render-surface .a2ui-card {
+  margin-bottom: 16px;
+}
+
+.render-surface .a2ui-card section {
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
 }
 
 .eyebrow,
@@ -264,6 +283,102 @@ button:disabled {
   bottom: 24px;
   padding: 14px 18px;
   font-weight: 700;
+}
+
+.flow-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flow-diagram__header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.flow-diagram__eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.flow-diagram__canvas {
+  position: relative;
+  overflow: auto;
+  padding: 12px 0;
+}
+
+.flow-diagram__edges {
+  width: 100%;
+  height: auto;
+  min-width: 100%;
+  overflow: visible;
+}
+
+.flow-diagram__edge-path {
+  fill: none;
+  stroke: #2563eb;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.flow-diagram__edge-label {
+  fill: #1e293b;
+  font-size: 12px;
+  text-anchor: middle;
+}
+
+.flow-diagram__node {
+  position: absolute;
+  width: 180px;
+  min-height: 104px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: white;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+
+.flow-diagram__node strong {
+  font-size: 0.98rem;
+  line-height: 1.4;
+}
+
+.flow-diagram__node-kind {
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(219, 234, 254, 0.9);
+  color: #1d4ed8;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.flow-diagram__node--decision {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(255, 251, 235, 0.96);
+}
+
+.flow-diagram__node--start,
+.flow-diagram__node--end {
+  border-color: rgba(52, 211, 153, 0.45);
+  background: rgba(236, 253, 245, 0.96);
+}
+
+.flow-diagram__empty {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.95);
+  color: #64748b;
 }
 
 @media (max-width: 1100px) {
