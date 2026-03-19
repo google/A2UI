@@ -10,23 +10,10 @@
       "surfaceId": "contact-card",
       "components": [
         {
-          "id": "success_icon",
+          "id": "success_card",
           "component": {
-            "Icon": {
-              "name": {
-                "literalString": "check"
-              }
-            }
-          }
-        },
-        {
-          "id": "success_text",
-          "component": {
-            "Text": {
-              "text": {
-                "literalString": "Successfully Followed"
-              },
-              "usageHint": "h2"
+            "Card": {
+              "child": "success_column"
             }
           }
         },
@@ -45,10 +32,23 @@
           }
         },
         {
-          "id": "success_card",
+          "id": "success_icon",
           "component": {
-            "Card": {
-              "child": "success_column"
+            "Icon": {
+              "name": {
+                "literalString": "check"
+              }
+            }
+          }
+        },
+        {
+          "id": "success_text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Successfully Followed"
+              },
+              "usageHint": "h2"
             }
           }
         }

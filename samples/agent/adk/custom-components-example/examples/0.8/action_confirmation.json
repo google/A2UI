@@ -69,16 +69,6 @@
           }
         },
         {
-          "id": "dismiss-button-text",
-          "component": {
-            "Text": {
-              "text": {
-                "literalString": "Dismiss"
-              }
-            }
-          }
-        },
-        {
           "id": "dismiss-button",
           "component": {
             "Button": {
@@ -86,6 +76,16 @@
               "primary": true,
               "action": {
                 "name": "dismiss_modal"
+              }
+            }
+          }
+        },
+        {
+          "id": "dismiss-button-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Dismiss"
               }
             }
           }

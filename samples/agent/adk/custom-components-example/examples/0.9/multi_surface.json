@@ -19,6 +19,23 @@
       "surfaceId": "contact-card",
       "components": [
         {
+          "id": "root",
+          "component": "Card",
+          "child": "main_column"
+        },
+        {
+          "id": "main_column",
+          "component": "Column",
+          "children": [
+            "profile_image",
+            "description_column",
+            "div",
+            "info_rows_column",
+            "action_buttons_row"
+          ],
+          "align": "stretch"
+        },
+        {
           "id": "profile_image",
           "component": "Image",
           "url": {
@@ -26,6 +43,16 @@
           },
           "variant": "avatar",
           "fit": "cover"
+        },
+        {
+          "id": "description_column",
+          "component": "Column",
+          "children": [
+            "user_heading",
+            "description_text_1",
+            "description_text_2"
+          ],
+          "align": "center"
         },
         {
           "id": "user_heading",
@@ -51,19 +78,45 @@
           }
         },
         {
-          "id": "description_column",
+          "id": "div",
+          "component": "Divider"
+        },
+        {
+          "id": "info_rows_column",
           "component": "Column",
+          "weight": 1,
           "children": [
-            "user_heading",
-            "description_text_1",
-            "description_text_2"
+            "info_row_1",
+            "info_row_2",
+            "info_row_3",
+            "info_row_4"
           ],
-          "align": "center"
+          "align": "stretch"
+        },
+        {
+          "id": "info_row_1",
+          "component": "Row",
+          "children": [
+            "calendar_icon",
+            "calendar_text_column"
+          ],
+          "justify": "start",
+          "align": "start"
         },
         {
           "id": "calendar_icon",
           "component": "Icon",
           "name": "calendarToday"
+        },
+        {
+          "id": "calendar_text_column",
+          "component": "Column",
+          "children": [
+            "calendar_primary_text",
+            "calendar_secondary_text"
+          ],
+          "justify": "start",
+          "align": "start"
         },
         {
           "id": "calendar_primary_text",
@@ -79,21 +132,11 @@
           "text": "Calendar"
         },
         {
-          "id": "calendar_text_column",
-          "component": "Column",
-          "children": [
-            "calendar_primary_text",
-            "calendar_secondary_text"
-          ],
-          "justify": "start",
-          "align": "start"
-        },
-        {
-          "id": "info_row_1",
+          "id": "info_row_2",
           "component": "Row",
           "children": [
-            "calendar_icon",
-            "calendar_text_column"
+            "location_icon",
+            "location_text_column"
           ],
           "justify": "start",
           "align": "start"
@@ -102,6 +145,16 @@
           "id": "location_icon",
           "component": "Icon",
           "name": "locationOn"
+        },
+        {
+          "id": "location_text_column",
+          "component": "Column",
+          "children": [
+            "location_primary_text",
+            "location_secondary_text"
+          ],
+          "justify": "start",
+          "align": "start"
         },
         {
           "id": "location_primary_text",
@@ -117,21 +170,11 @@
           "text": "Location"
         },
         {
-          "id": "location_text_column",
-          "component": "Column",
-          "children": [
-            "location_primary_text",
-            "location_secondary_text"
-          ],
-          "justify": "start",
-          "align": "start"
-        },
-        {
-          "id": "info_row_2",
+          "id": "info_row_3",
           "component": "Row",
           "children": [
-            "location_icon",
-            "location_text_column"
+            "mail_icon",
+            "mail_text_column"
           ],
           "justify": "start",
           "align": "start"
@@ -140,6 +183,16 @@
           "id": "mail_icon",
           "component": "Icon",
           "name": "mail"
+        },
+        {
+          "id": "mail_text_column",
+          "component": "Column",
+          "children": [
+            "mail_primary_text",
+            "mail_secondary_text"
+          ],
+          "justify": "start",
+          "align": "start"
         },
         {
           "id": "mail_primary_text",
@@ -155,33 +208,29 @@
           "text": "Email"
         },
         {
-          "id": "mail_text_column",
-          "component": "Column",
-          "children": [
-            "mail_primary_text",
-            "mail_secondary_text"
-          ],
-          "justify": "start",
-          "align": "start"
-        },
-        {
-          "id": "info_row_3",
+          "id": "info_row_4",
           "component": "Row",
           "children": [
-            "mail_icon",
-            "mail_text_column"
+            "call_icon",
+            "call_text_column"
           ],
           "justify": "start",
           "align": "start"
-        },
-        {
-          "id": "div",
-          "component": "Divider"
         },
         {
           "id": "call_icon",
           "component": "Icon",
           "name": "call"
+        },
+        {
+          "id": "call_text_column",
+          "component": "Column",
+          "children": [
+            "call_primary_text",
+            "call_secondary_text"
+          ],
+          "justify": "start",
+          "align": "start"
         },
         {
           "id": "call_primary_text",
@@ -197,41 +246,14 @@
           "text": "Mobile"
         },
         {
-          "id": "call_text_column",
-          "component": "Column",
-          "children": [
-            "call_primary_text",
-            "call_secondary_text"
-          ],
-          "justify": "start",
-          "align": "start"
-        },
-        {
-          "id": "info_row_4",
+          "id": "action_buttons_row",
           "component": "Row",
           "children": [
-            "call_icon",
-            "call_text_column"
+            "message-button",
+            "location-button"
           ],
-          "justify": "start",
-          "align": "start"
-        },
-        {
-          "id": "info_rows_column",
-          "component": "Column",
-          "weight": 1,
-          "children": [
-            "info_row_1",
-            "info_row_2",
-            "info_row_3",
-            "info_row_4"
-          ],
-          "align": "stretch"
-        },
-        {
-          "id": "message-button-text",
-          "component": "Text",
-          "text": "Message"
+          "justify": "center",
+          "align": "center"
         },
         {
           "id": "message-button",
@@ -249,9 +271,9 @@
           }
         },
         {
-          "id": "location-button-text",
+          "id": "message-button-text",
           "component": "Text",
-          "text": "Location"
+          "text": "Message"
         },
         {
           "id": "location-button",
@@ -269,31 +291,9 @@
           }
         },
         {
-          "id": "action_buttons_row",
-          "component": "Row",
-          "children": [
-            "message-button",
-            "location-button"
-          ],
-          "justify": "center",
-          "align": "center"
-        },
-        {
-          "id": "main_column",
-          "component": "Column",
-          "children": [
-            "profile_image",
-            "description_column",
-            "div",
-            "info_rows_column",
-            "action_buttons_row"
-          ],
-          "align": "stretch"
-        },
-        {
-          "id": "root",
-          "component": "Card",
-          "child": "main_column"
+          "id": "location-button-text",
+          "component": "Text",
+          "text": "Location"
         }
       ]
     }
