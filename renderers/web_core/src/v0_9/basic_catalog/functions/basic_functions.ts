@@ -15,7 +15,7 @@
  */
 
 import { ExpressionParser } from "../expressions/expression_parser.js";
-import { computed } from "@preact/signals-core";
+import { computed, Signal } from "@preact/signals-core";
 import { createFunctionImplementation, FunctionImplementation, isSignal } from "../../catalog/types.js";
 import { format } from "date-fns";
 import {

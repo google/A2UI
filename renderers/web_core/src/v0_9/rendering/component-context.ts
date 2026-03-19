@@ -15,6 +15,7 @@
  */
 
 import { DataContext } from "./data-context.js";
+import { FunctionInvoker } from "../catalog/function_invoker.js";
 import { ComponentModel } from "../state/component-model.js";
 import type { SurfaceModel } from "../state/surface-model.js";
 import type { SurfaceComponentsModel } from "../state/surface-components-model.js";

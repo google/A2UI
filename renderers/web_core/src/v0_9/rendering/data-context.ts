@@ -25,6 +25,7 @@ import type {
 } from "../schema/common-types.js";
 import { A2uiExpressionError } from "../errors.js";
 import { isSignal } from "../catalog/types.js";
+
 import { FunctionInvoker } from "../catalog/function_invoker.js";
 import { SurfaceModel } from "../state/surface-model.js";
 
@@ -304,7 +305,7 @@ export class DataContext {
     abortSignal?: AbortSignal,
   ): Signal<V> | V {
     try {
-      return this.functionInvoker(name, args, this, abortSignal) as Signal<V> | V;
+      return this.functionInvoker(name, args, this, abortSignal);
     } catch (e: any) {
       this.dispatchExpressionError(e, name);
       return undefined as any;

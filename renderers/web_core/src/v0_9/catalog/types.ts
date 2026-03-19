@@ -18,7 +18,6 @@ import { z } from "zod";
 import { DataContext } from "../rendering/data-context.js";
 import { Signal } from "@preact/signals-core";
 import { A2uiExpressionError } from "../errors.js";
-import { FunctionInvoker } from "./function_invoker.js";
 
 /**
  * Robust check for a Preact Signal that works across package boundaries.
@@ -76,6 +75,8 @@ export function createFunctionImplementation<
     execute: execute as (args: Record<string, any>, ctx: DataContext, ab?: AbortSignal) => unknown
   };
 }
+
+import { FunctionInvoker } from "./function_invoker.js";
 
 /**
  * A definition of a UI component's API.

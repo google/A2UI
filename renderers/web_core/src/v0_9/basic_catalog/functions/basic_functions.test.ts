@@ -17,7 +17,6 @@
 import { describe, it } from "node:test";
 import * as assert from "node:assert";
 import { effect } from "@preact/signals-core";
-import { z } from "zod";
 
 import { BASIC_FUNCTIONS } from "./basic_functions.js";
 import { DataModel } from "../../state/data-model.js";
@@ -26,6 +25,10 @@ import { A2uiExpressionError } from "../../errors.js";
 import { Catalog, ComponentApi } from "../../catalog/types.js";
 
 const testCatalog = new Catalog<ComponentApi>("test", [], BASIC_FUNCTIONS);
+
+function invoke(name: string, args: Record<string, any>, context: DataContext) {
+  return testCatalog.invoker(name, args, context);
+}
 
 const createTestDataContext = (
   model: DataModel,
@@ -39,23 +42,6 @@ const createTestDataContext = (
   } as any;
   return new DataContext(mockSurface, path);
 };
-
-function invoke(name: string, args: Record<string, any>, context: DataContext) {
-  const fn = BASIC_FUNCTIONS.find(f => f.name === name);
-  if (!fn) throw new Error(`Function ${name} not found`);
-  try {
-    return fn.execute(fn.schema.parse(args), context);
-  } catch (e: any) {
-    if (e.name === "ZodError" || e instanceof z.ZodError) {
-      throw new A2uiExpressionError(
-        `Validation failed for function '${name}': ${e.message}`,
-        name,
-        e.errors ?? e.issues,
-      );
-    }
-    throw e;
-  }
-}
 
 describe("BASIC_FUNCTIONS", () => {
   const dataModel = new DataModel({ a: 10, b: 20 });
