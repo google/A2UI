@@ -45,7 +45,7 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
   type Props = ResolveA2uiProps<z.infer<Schema>>;
   
   const ReactWrapper: React.FC<{ context: ComponentContext, buildChild: any }> = ({ context, buildChild }) => {
-    const bindingRef = useRef<GenericBinder<Props>>(null);
+    const bindingRef = useRef<GenericBinder<Props> | null>(null);
 
     if (!bindingRef.current) {
       bindingRef.current = new GenericBinder<Props>(context, api.schema);

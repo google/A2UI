@@ -38,7 +38,7 @@ import {
   ReactChoicePicker,
   ReactSlider,
   ReactDateTimeInput,
-} from './basic_catalog';
+} from '../../src/v0_9/basic_catalog';
 
 const mockCatalog = new Catalog('test', [], BASIC_FUNCTIONS);
 
@@ -91,7 +91,7 @@ describe('Basic Catalog Components', () => {
       const ctxWithAction = createContext('Button', { child: 'btn2', action: { event: { name: 'test' } } });
       const spy2 = vi.spyOn(ctxWithAction, 'dispatchAction').mockResolvedValue();
       render(<ReactButton.render context={ctxWithAction} buildChild={buildChild} />);
-      fireEvent.click(screen.getAllByRole('button')[1]);
+      fireEvent.click(screen.getAllByRole('button')[1]!);
       expect(spy2).toHaveBeenCalled();
     });
   });

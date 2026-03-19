@@ -16,7 +16,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import { createReactComponent } from './adapter';
+import { createReactComponent } from '../../src/v0_9/adapter';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog, CommonSchemas } from '@a2ui/web_core/v0_9';
 import { z } from 'zod';
 
