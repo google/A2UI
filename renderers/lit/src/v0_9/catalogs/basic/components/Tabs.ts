@@ -1,20 +1,47 @@
-import { LitElement, html } from "lit";
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { LitElement, html , nothing} from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { A2uiController } from "../../../adapter.js";
 import { ComponentContext } from "@a2ui/web_core/v0_9";
 import { TabsApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { ChildBuilder, LitComponentImplementation } from "../../../types.js";
+import { renderA2uiNode } from "../../../surface/render-node.js";
 
-@customElement("a2ui-lit-tabs")
+@customElement("a2ui-tabs")
 export class A2uiLitTabs extends LitElement {
+
   @property({ type: Object }) accessor context!: ComponentContext;
-  @property({ type: Function }) accessor buildChild!: ChildBuilder;
-  private a2ui = new A2uiController(this as any, TabsApi);
+  private controller!: A2uiController<typeof TabsApi>;
   @state() accessor activeIndex = 0;
 
+  willUpdate(changedProperties: Map<string, any>) {
+    super.willUpdate(changedProperties);
+    if (changedProperties.has('context') && this.context) {
+      if (this.controller) {
+        this.removeController(this.controller);
+        this.controller.dispose();
+      }
+      this.controller = new A2uiController(this, TabsApi);
+    }
+  }
+
   render() {
-    const props = this.a2ui.props as any;
-    if (!props.tabs) return html``;
+    const props = this.controller.props;
+    if (!props || !props.tabs) return nothing;
     return html`
       <div class="a2ui-tabs">
         <div class="a2ui-tab-headers" style="display:flex; gap: 8px; border-bottom: 1px solid #ccc; margin-bottom: 16px;">
@@ -25,15 +52,16 @@ export class A2uiLitTabs extends LitElement {
           `)}
         </div>
         <div class="a2ui-tab-content">
-          ${props.tabs[this.activeIndex] ? this.buildChild(props.tabs[this.activeIndex].child) : ''}
+          ${props.tabs[this.activeIndex] 
+            ? html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, props.tabs[this.activeIndex].child, this.context.dataContext.path))}` 
+            : ''}
         </div>
       </div>
     `;
   }
 }
 
-export const A2uiTabs: LitComponentImplementation = {
-  name: "Tabs",
-  schema: TabsApi.schema,
-  render: ({ context, buildChild }) => html`<a2ui-lit-tabs .context=${context} .buildChild=${buildChild}></a2ui-lit-tabs>`
+export const A2uiTabs = {
+  ...TabsApi,
+  tagName: "a2ui-tabs"
 };
