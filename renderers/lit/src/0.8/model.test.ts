@@ -17,9 +17,9 @@
 
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
-import { v0_8 } from "@a2ui/lit";
+import * as v0_8 from "@a2ui/lit/v0_8";
 import * as Types from "@a2ui/web_core/types/types";
-import { A2uiStateError } from "@a2ui/web_core/v0_9";
+import { A2uiStateError } from "@a2ui/web_core/v0_8";
 
 // Helper function to strip reactivity for clean comparisons.
 const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
