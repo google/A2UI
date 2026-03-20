@@ -25,6 +25,16 @@ describe('TextFieldComponent', () => {
   let fixture: ComponentFixture<TextFieldComponent>;
   let mockRendererService: any;
 
+  function createBoundProperty(val: any): any {
+    const sig = signal(val);
+    const prop = Object.assign(() => sig(), {
+      value: sig,
+      raw: val,
+      set: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
+    });
+    return prop as any;
+  }
+
   beforeEach(async () => {
     mockRendererService = {};
 
@@ -36,14 +46,10 @@ describe('TextFieldComponent', () => {
     fixture = TestBed.createComponent(TextFieldComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('props', {
-      label: { value: signal('Username'), raw: 'Username', onUpdate: () => {} },
-      value: {
-        value: signal('testuser'),
-        raw: 'testuser',
-        onUpdate: jasmine.createSpy('onUpdate'),
-      },
-      placeholder: { value: signal('Enter username'), raw: 'Enter username', onUpdate: () => {} },
-      variant: { value: signal('text'), raw: 'text', onUpdate: () => {} },
+      label: createBoundProperty('Username'),
+      value: createBoundProperty('testuser'),
+      placeholder: createBoundProperty('Enter username'),
+      variant: createBoundProperty('text'),
     });
   });
 
@@ -61,7 +67,7 @@ describe('TextFieldComponent', () => {
   it('should not render label if not provided', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      label: { value: signal(null), raw: null, onUpdate: () => {} },
+      label: createBoundProperty(null),
     });
     fixture.detectChanges();
     const label = fixture.debugElement.query(By.css('label'));
@@ -80,13 +86,13 @@ describe('TextFieldComponent', () => {
 
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      variant: { value: signal('obscured'), raw: 'obscured', onUpdate: () => {} },
+      variant: createBoundProperty('obscured'),
     });
     expect(component.inputType()).toBe('password');
 
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      variant: { value: signal('number'), raw: 'number', onUpdate: () => {} },
+      variant: createBoundProperty('number'),
     });
     expect(component.inputType()).toBe('number');
   });
@@ -97,6 +103,6 @@ describe('TextFieldComponent', () => {
     input.nativeElement.value = 'newuser';
     input.triggerEventHandler('input', { target: input.nativeElement });
 
-    expect(component.props()['value'].onUpdate).toHaveBeenCalledWith('newuser');
+    expect((component.props()['value'] as any).set).toHaveBeenCalledWith('newuser');
   });
 });

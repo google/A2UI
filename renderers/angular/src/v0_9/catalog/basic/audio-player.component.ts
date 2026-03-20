@@ -70,6 +70,6 @@ export class AudioPlayerComponent {
   componentId = input<string>();
   dataContextPath = input<string>();
 
-  description = computed(() => this.props()['description']?.value());
-  url = computed(() => this.props()['url']?.value());
+  description = computed(() => this.props()['description']?.());
+  url = computed(() => this.props()['url']?.());
 }

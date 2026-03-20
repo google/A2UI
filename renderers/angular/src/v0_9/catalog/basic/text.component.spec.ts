@@ -24,6 +24,16 @@ describe('TextComponent', () => {
   let fixture: ComponentFixture<TextComponent>;
 
   beforeEach(async () => {
+    function createBoundProperty(val: any): any {
+      const sig = signal(val);
+      const prop = Object.assign(() => sig(), {
+        value: sig,
+        raw: val,
+        set: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
+      });
+      return prop as any;
+    }
+
     await TestBed.configureTestingModule({
       imports: [TextComponent],
     }).compileComponents();
@@ -31,9 +41,9 @@ describe('TextComponent', () => {
     fixture = TestBed.createComponent(TextComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('props', {
-      text: { value: signal('Hello World'), raw: 'Hello World', onUpdate: () => {} },
-      weight: { value: signal('bold'), raw: 'bold', onUpdate: () => {} },
-      style: { value: signal('italic'), raw: 'italic', onUpdate: () => {} },
+      text: createBoundProperty('Hello World'),
+      weight: createBoundProperty('bold'),
+      style: createBoundProperty('italic'),
     });
   });
 

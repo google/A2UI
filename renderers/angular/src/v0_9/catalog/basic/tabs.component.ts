@@ -95,12 +95,12 @@ export class TabsComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
   activeTabIndex = signal(0);
 
-  tabs = computed(() => this.props()['tabs']?.value() || []);
+  tabs = computed(() => this.props()['tabs']?.() || []);
   activeTab = computed(() => this.tabs()[this.activeTabIndex()]);
 
   setActiveTab(index: number) {

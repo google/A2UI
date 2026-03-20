@@ -72,14 +72,14 @@ export class RowComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
-  protected justify = computed(() => this.props()['justify']?.value());
-  protected align = computed(() => this.props()['align']?.value());
+  protected justify = computed(() => this.props()['justify']?.());
+  protected align = computed(() => this.props()['align']?.());
 
   protected children = computed(() => {
-    const raw = this.props()['children']?.value() || [];
+    const raw = this.props()['children']?.() || [];
     return Array.isArray(raw) ? raw : [];
   });
 

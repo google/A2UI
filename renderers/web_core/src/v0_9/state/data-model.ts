@@ -16,7 +16,8 @@
 
 import { Subscription as BaseSubscription } from "../common/events.js";
 import { A2uiDataError } from "../errors.js";
-import { signal, Signal, batch, effect } from "@preact/signals-core";
+import { ReactiveProvider, GenericSignal } from "../common/reactive.js";
+import { PreactReactiveProvider } from "../common/preact-provider.js";
 
 /**
  * Represents a reactive connection to a specific path in the data model.
@@ -38,15 +39,19 @@ function isNumeric(value: string): boolean {
  */
 export class DataModel {
   private data: Record<string, unknown> = {};
-  private readonly signals: Map<string, Signal<any>> = new Map();
+  private readonly signals: Map<string, GenericSignal<any>> = new Map();
   private readonly subscriptions: Set<() => void> = new Set(); // To track direct subscriptions for dispose
 
   /**
    * Creates a new data model.
    *
    * @param initialData The initial data for the model. Defaults to an empty object.
+   * @param provider The reactive provider to use. Defaults to Preact.
    */
-  constructor(initialData: Record<string, unknown> = {}) {
+  constructor(
+    initialData: Record<string, unknown> = {},
+    private readonly provider: ReactiveProvider = new PreactReactiveProvider(),
+  ) {
     this.data = initialData;
   }
 
@@ -59,12 +64,12 @@ export class DataModel {
    * @param path The JSON pointer path to create or retrieve a signal for.
    * @returns A Preact Signal representing the value at the specified path.
    */
-  getSignal<T>(path: string): Signal<T | undefined> {
+  getSignal<T>(path: string): GenericSignal<T | undefined> {
     const normalizedPath = this.normalizePath(path);
     if (!this.signals.has(normalizedPath)) {
-      this.signals.set(normalizedPath, signal(this.get(normalizedPath)));
+      this.signals.set(normalizedPath, this.provider.signal(this.get(normalizedPath)));
     }
-    return this.signals.get(normalizedPath) as Signal<T | undefined>;
+    return this.signals.get(normalizedPath) as GenericSignal<T | undefined>;
   }
 
   /**
@@ -189,7 +194,7 @@ export class DataModel {
     let isSync = true;
     let currentValue = sig.peek();
 
-    const dispose = effect(() => {
+    const dispose = this.provider.effect(() => {
       const val = sig.value;
       currentValue = val;
       if (!isSync) {
@@ -236,7 +241,7 @@ export class DataModel {
   private notifySignals(path: string): void {
     const normalizedPath = this.normalizePath(path);
 
-    batch(() => {
+    this.provider.batch(() => {
       this.updateSignal(normalizedPath);
 
       // Notify Ancestors
@@ -270,7 +275,7 @@ export class DataModel {
   }
 
   private notifyAllSignals(): void {
-    batch(() => {
+    this.provider.batch(() => {
       for (const path of this.signals.keys()) {
         this.updateSignal(path);
       }

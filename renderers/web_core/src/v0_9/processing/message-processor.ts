@@ -19,6 +19,8 @@ import { Catalog, ComponentApi } from "../catalog/types.js";
 import { SurfaceGroupModel } from "../state/surface-group-model.js";
 import { ComponentModel } from "../state/component-model.js";
 import { Subscription } from "../common/events.js";
+import { ReactiveProvider } from "../common/reactive.js";
+import { PreactReactiveProvider } from "../common/preact-provider.js";
 
 import {
   A2uiMessage,
@@ -42,12 +44,14 @@ export class MessageProcessor<T extends ComponentApi> {
    *
    * @param catalogs A list of available catalogs.
    * @param actionHandler A global handler for actions from all surfaces.
+   * @param provider The reactive provider to use for signals and effects.
    */
   constructor(
     private catalogs: Catalog<T>[],
     private actionHandler?: ActionListener,
+    private provider: ReactiveProvider = new PreactReactiveProvider(),
   ) {
-    this.model = new SurfaceGroupModel<T>();
+    this.model = new SurfaceGroupModel<T>(this.provider);
     if (this.actionHandler) {
       this.model.onAction.subscribe(this.actionHandler);
     }
@@ -152,6 +156,7 @@ export class MessageProcessor<T extends ComponentApi> {
     const surface = new SurfaceModel<T>(
       surfaceId,
       catalog,
+      this.provider,
       theme,
       sendDataModel ?? false,
     );

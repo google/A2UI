@@ -31,7 +31,7 @@ describe("SurfaceModel", () => {
     actions = [];
     errors = [];
     catalog = new Catalog("test-catalog", []);
-    surface = new SurfaceModel<ComponentApi>("surface-1", catalog, {});
+    surface = new SurfaceModel<ComponentApi>("surface-1", catalog);
     surface.onAction.subscribe(async (action) => {
       actions.push(action);
     });

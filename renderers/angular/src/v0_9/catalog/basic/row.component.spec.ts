@@ -77,13 +77,21 @@ describe('RowComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('props', {
-      justify: { value: signal('center'), raw: 'center', onUpdate: () => {} },
-      align: { value: signal('baseline'), raw: 'baseline', onUpdate: () => {} },
-      children: {
-        value: signal(['child1', 'child2']),
+      justify: Object.assign(() => 'center', {
+        value: 'center',
+        raw: 'center',
+        set: jasmine.createSpy('set'),
+      }),
+      align: Object.assign(() => 'baseline', {
+        value: 'baseline',
+        raw: 'baseline',
+        set: jasmine.createSpy('set'),
+      }),
+      children: Object.assign(() => ['child1', 'child2'], {
+        value: ['child1', 'child2'],
         raw: ['child1', 'child2'],
-        onUpdate: () => {},
-      },
+        set: jasmine.createSpy('set'),
+      }),
     });
   });
 
@@ -111,14 +119,14 @@ describe('RowComponent', () => {
   it('should render repeating children', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      children: {
-        value: signal([{}, {}]), // two items
+      children: Object.assign(() => [{}, {}], {
+        value: [{}, {}],
         raw: {
           componentId: 'template1',
           path: 'items',
         },
-        onUpdate: () => {},
-      },
+        set: jasmine.createSpy('set'),
+      }),
     });
     fixture.detectChanges();
 

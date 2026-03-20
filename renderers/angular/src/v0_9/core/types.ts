@@ -14,39 +14,23 @@
  * limitations under the License.
  */
 
-import { Signal } from '@angular/core';
+import { Signal, WritableSignal } from '@angular/core';
+import { GenericSignal } from '@a2ui/web_core/v0_9';
 
 /**
- * Represents a component property bound to an Angular Signal and update logic.
+ * A BoundProperty is a reactive signal that represents a component property
+ * from the A2UI component tree.
  *
- * This interface is used by {@link ComponentBinder} to expose properties to
- * Angular components. It contains the current value as a Signal, the raw
- * property definition, and an update function.
+ * Components can read the current value by calling the property as a function: `props().key()`.
+ * If the property is bound to a data path, it also supports `.set(newValue)` to update the model.
  *
  * @template T The type of the property value.
  */
-export interface BoundProperty<T = any> {
-  /**
-   * The reactive Angular Signal containing the current resolved value.
-   *
-   * This signal automatically updates whenever the underlying A2UI data
-   * model changes.
-   */
-  readonly value: Signal<T>;
-
-  /**
-   * The raw value from the A2UI ComponentModel.
-   *
-   * This may be a literal value or a data binding path object.
-   */
+export type BoundProperty<T = any> = (Signal<T> | WritableSignal<T> | GenericSignal<T>) & {
+  /** The raw property definition from the component model (literal or binding). */
   readonly raw: any;
-
-  /**
-   * Callback to update the value in the A2UI DataContext.
-   *
-   * If the property is bound to a path in the data model, calling this
-   * will update that path. If the property is a literal value, this
-   * is typically a no-op.
-   */
-  readonly onUpdate: (newValue: T) => void;
-}
+  /** Direct access to the current value (same as calling the signal function). */
+  readonly value: Signal<T>;
+  /** Updates the underlying data model if the property is path-bound. */
+  readonly set: (value: T) => void;
+};

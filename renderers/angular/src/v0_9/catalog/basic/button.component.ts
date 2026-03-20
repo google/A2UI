@@ -85,9 +85,9 @@ export class ButtonComponent {
 
   private rendererService = inject(A2uiRendererService);
 
-  variant = computed(() => this.props()['variant']?.value() ?? 'default');
-  child = computed(() => this.props()['child']?.value());
-  action = computed(() => this.props()['action']?.value());
+  variant = computed(() => this.props()['variant']?.() ?? 'default');
+  child = computed(() => this.props()['child']?.());
+  action = computed(() => this.props()['action']?.());
 
   handleClick() {
     const action = this.action();

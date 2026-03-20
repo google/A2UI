@@ -16,14 +16,14 @@
 
 import { z } from "zod";
 import { DataContext } from "../rendering/data-context.js";
-import { Signal } from "@preact/signals-core";
+import { GenericSignal } from "../common/reactive.js";
 import { A2uiExpressionError } from "../errors.js";
 
 /**
- * Robust check for a Preact Signal that works across package boundaries.
+ * Robust check for a GenericSignal that works across package boundaries.
  */
-export function isSignal(val: any): val is Signal<any> {
-  return val && typeof val === "object" && "value" in val && "peek" in val;
+export function isSignal(val: any): val is GenericSignal<any> {
+  return val && (typeof val === "object" || typeof val === "function") && "value" in val && "peek" in val;
 }
 
 export type A2uiReturnType = 'string' | 'number' | 'boolean' | 'array' | 'object' | 'any' | 'void';
@@ -54,7 +54,7 @@ export interface FunctionImplementation extends FunctionApi {
     args: Record<string, any>,
     context: DataContext,
     abortSignal?: AbortSignal
-  ): unknown | Signal<unknown>;
+  ): unknown | GenericSignal<unknown>;
 }
 
 export function createFunctionImplementation<
@@ -66,7 +66,7 @@ export function createFunctionImplementation<
     args: z.infer<Schema>,
     context: DataContext,
     abortSignal?: AbortSignal
-  ) => InferA2uiReturnType<TReturn> | Signal<InferA2uiReturnType<TReturn>>
+  ) => InferA2uiReturnType<TReturn> | GenericSignal<InferA2uiReturnType<TReturn>>
 ): FunctionImplementation {
   return {
     name: api.name,

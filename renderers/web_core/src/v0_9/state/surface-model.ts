@@ -22,6 +22,8 @@ import {
   A2uiClientAction,
   A2uiClientActionSchema,
 } from "../schema/client-to-server.js";
+import { ReactiveProvider } from "../common/reactive.js";
+import { PreactReactiveProvider } from "../common/preact-provider.js";
 
 /** A function that listens for actions emitted from a surface. */
 export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
@@ -60,10 +62,11 @@ export class SurfaceModel<T extends ComponentApi> {
   constructor(
     readonly id: string,
     readonly catalog: Catalog<T>,
+    public readonly provider: ReactiveProvider = new PreactReactiveProvider(),
     readonly theme: any = {},
     readonly sendDataModel: boolean = false,
   ) {
-    this.dataModel = new DataModel({});
+    this.dataModel = new DataModel({}, provider);
     this.componentsModel = new SurfaceComponentsModel();
   }
 

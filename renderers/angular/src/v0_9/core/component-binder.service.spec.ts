@@ -57,9 +57,19 @@ describe('ComponentBinder', () => {
 
     const mockDataContext = {
       resolveSignal: jasmine.createSpy('resolveSignal').and.callFake((val: any) => {
-        if (val === 'Hello') return mockpSigText;
-        if (val === true) return mockpSigVisible;
-        return preactSignal(val);
+        let sig: any;
+        if (val === 'Hello') sig = mockpSigText;
+        else if (val === true) sig = mockpSigVisible;
+        else sig = preactSignal(val);
+        
+        const callableSig = () => sig.value;
+        Object.defineProperties(callableSig, {
+          value: { get: () => sig.value, set: (v) => sig.value = v },
+          peek: { value: () => sig.peek() },
+          set: { value: (v: any) => sig.value = v },
+        });
+        (callableSig as any).raw = val;
+        return callableSig as any;
       }),
       set: jasmine.createSpy('set'),
     };
@@ -73,8 +83,8 @@ describe('ComponentBinder', () => {
 
     expect(bound['text']).toBeDefined();
     expect(bound['visible']).toBeDefined();
-    expect(bound['text'].value()).toBe('Hello');
-    expect(bound['visible'].value()).toBe(true);
+    expect(bound['text']()).toBe('Hello');
+    expect(bound['visible']()).toBe(true);
 
     // Verify resolveSignal was called
     expect(mockDataContext.resolveSignal).toHaveBeenCalledWith('Hello');
@@ -90,7 +100,14 @@ describe('ComponentBinder', () => {
 
     const mockpSig = preactSignal('initial');
     const mockDataContext = {
-      resolveSignal: jasmine.createSpy('resolveSignal').and.returnValue(mockpSig),
+      resolveSignal: jasmine.createSpy('resolveSignal').and.callFake(() => {
+        const callableSig = () => mockpSig.value;
+        Object.defineProperties(callableSig, {
+          value: { get: () => mockpSig.value, set: (v) => mockpSig.value = v },
+          peek: { value: () => mockpSig.peek() },
+        });
+        return callableSig as any;
+      }),
       set: jasmine.createSpy('set'),
     };
 
@@ -102,11 +119,11 @@ describe('ComponentBinder', () => {
     const bound = binder.bind(mockContext);
 
     expect(bound['value']).toBeDefined();
-    expect(bound['value'].value()).toBe('initial');
-    expect(bound['value'].onUpdate).toBeDefined();
+    expect(bound['value']()).toBe('initial');
+    expect(bound['value'].set).toBeDefined();
 
-    // Call update
-    bound['value'].onUpdate('new-value');
+    // Call set
+    bound['value'].set('new-value');
 
     // Verify set was called on DataContext
     expect(mockDataContext.set).toHaveBeenCalledWith('/data/text', 'new-value');
@@ -121,7 +138,15 @@ describe('ComponentBinder', () => {
 
     const mockpSig = preactSignal('Literal String');
     const mockDataContext = {
-      resolveSignal: jasmine.createSpy('resolveSignal').and.returnValue(mockpSig),
+      resolveSignal: jasmine.createSpy('resolveSignal').and.callFake(() => {
+        const callableSig = () => mockpSig.value;
+        Object.defineProperties(callableSig, {
+          value: { get: () => mockpSig.value, set: (v) => mockpSig.value = v },
+          peek: { value: () => mockpSig.peek() },
+          set: { value: (v: any) => mockpSig.value = v },
+        });
+        return callableSig as any;
+      }),
       set: jasmine.createSpy('set'),
     };
 
@@ -133,11 +158,11 @@ describe('ComponentBinder', () => {
     const bound = binder.bind(mockContext);
 
     expect(bound['text']).toBeDefined();
-    expect(bound['text'].value()).toBe('Literal String');
-    expect(bound['text'].onUpdate).toBeDefined(); // No-op for literals
+    expect(bound['text']()).toBe('Literal String');
+    expect(bound['text'].set).toBeDefined(); // No-op for literals
 
-    // Call onUpdate on literal, should not crash or call set
-    bound['text'].onUpdate('new');
+    // Call set on literal, should not crash or call set
+    bound['text'].set('new');
     expect(mockDataContext.set).not.toHaveBeenCalled();
   });
 });

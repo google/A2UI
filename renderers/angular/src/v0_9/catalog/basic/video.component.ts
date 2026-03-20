@@ -66,6 +66,6 @@ export class VideoComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  url = computed(() => this.props()['url']?.value());
-  posterUrl = computed(() => this.props()['posterUrl']?.value());
+  url = computed(() => this.props()['url']?.());
+  posterUrl = computed(() => this.props()['posterUrl']?.());
 }

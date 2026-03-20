@@ -78,8 +78,8 @@ export class IconComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  color = computed(() => this.props()['color']?.value());
-  iconNameRaw = computed(() => this.props()['name']?.value());
+  color = computed(() => this.props()['color']?.());
+  iconNameRaw = computed(() => this.props()['name']?.());
 
   isPath = computed(() => {
     const name = this.iconNameRaw();

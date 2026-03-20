@@ -19,13 +19,15 @@ import { CommonModule } from '@angular/common';
 import { A2uiRendererService, A2UI_RENDERER_CONFIG } from '@a2ui/angular/v0_9';
 import { AgentStubService } from './agent-stub.service';
 import { ComponentHostComponent, SurfaceComponent } from '@a2ui/angular/v0_9';
-import { AngularCatalog } from '@a2ui/angular/v0_9';
+import { AngularCatalog, AngularComponentImplementation } from '@a2ui/angular/v0_9';
+import { createFunctionImplementation, FunctionImplementation } from '@a2ui/web_core/v0_9';
 import { DemoCatalog } from './demo-catalog';
-import { SurfaceGroupAction, A2uiMessage, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
+import { A2uiClientAction, A2uiMessage, CreateSurfaceMessage } from '@a2ui/web_core/v0_9';
 import { EXAMPLES } from './examples-bundle';
 import { Example } from './types';
 import { Subscription } from 'rxjs';
 import { ActionDispatcher } from './action-dispatcher.service';
+
 
 /**
  * Main dashboard component for A2UI v0.9 Angular Renderer.
@@ -339,7 +341,7 @@ import { ActionDispatcher } from './action-dispatcher.service';
       provide: A2UI_RENDERER_CONFIG,
       useFactory: (catalog: AngularCatalog, dispatcher: ActionDispatcher) => ({
         catalogs: [catalog],
-        actionHandler: (action: SurfaceGroupAction) => dispatcher.dispatch(action),
+        actionHandler: (action: A2uiClientAction) => dispatcher.dispatch(action),
       }),
       deps: [AngularCatalog, ActionDispatcher],
     },
@@ -356,7 +358,7 @@ export class DemoComponent implements OnInit, OnDestroy {
   inspectTab: 'data' | 'events' = 'data';
 
   currentDataModel: Record<string, unknown> = {};
-  eventsLog: Array<{ timestamp: Date; action: SurfaceGroupAction }> = [];
+  eventsLog: Array<{ timestamp: Date; action: A2uiClientAction }> = [];
 
   private actionSub?: { unsubscribe: () => void };
   private dataModelSub?: { unsubscribe: () => void };
@@ -418,14 +420,8 @@ export class DemoComponent implements OnInit, OnDestroy {
   }
 
   /** Gets a display string for the action type. */
-  getActionType(action: SurfaceGroupAction): string {
-    if ('event' in action) {
-      return action.event.name;
-    }
-    if ('functionCall' in action) {
-      return `Call: ${action.functionCall.call}`;
-    }
-    return 'Action';
+  getActionType(action: A2uiClientAction): string {
+    return action.name || 'Action';
   }
 
   ngOnDestroy(): void {

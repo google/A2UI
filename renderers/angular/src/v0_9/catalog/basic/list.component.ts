@@ -111,13 +111,13 @@ export class ListComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
-  listStyle = computed(() => this.props()['listStyle']?.value());
-  orientation = computed(() => this.props()['orientation']?.value() || 'vertical');
+  listStyle = computed(() => this.props()['listStyle']?.());
+  orientation = computed(() => this.props()['orientation']?.() || 'vertical');
   children = computed(() => {
-    const raw = this.props()['children']?.value();
+    const raw = this.props()['children']?.();
     return Array.isArray(raw) ? raw : [];
   });
 

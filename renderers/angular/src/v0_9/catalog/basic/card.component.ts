@@ -61,8 +61,8 @@ export class CardComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
-  child = computed(() => this.props()['child']?.value());
+  child = computed(() => this.props()['child']?.());
 }

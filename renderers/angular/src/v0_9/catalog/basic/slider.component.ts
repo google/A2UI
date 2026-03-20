@@ -78,19 +78,19 @@ export class SliderComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);
 
-  label = computed(() => this.props()['label']?.value());
-  value = computed(() => this.props()['value']?.value());
-  min = computed(() => this.props()['min']?.value() ?? 0);
-  max = computed(() => this.props()['max']?.value() ?? 100);
-  step = computed(() => this.props()['step']?.value() ?? 1);
+  label = computed(() => this.props()['label']?.());
+  value = computed(() => this.props()['value']?.());
+  min = computed(() => this.props()['min']?.() ?? 0);
+  max = computed(() => this.props()['max']?.() ?? 100);
+  step = computed(() => this.props()['step']?.() ?? 1);
 
   handleInput(event: Event) {
     const val = Number((event.target as HTMLInputElement).value);
-    this.props()['value']?.onUpdate(val);
+    this.props()['value']?.set(val);
   }
 }

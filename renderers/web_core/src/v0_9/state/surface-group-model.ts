@@ -18,6 +18,8 @@ import { SurfaceModel } from "./surface-model.js";
 import { ComponentApi } from "../catalog/types.js";
 import { EventEmitter, EventSource, Subscription } from "../common/events.js";
 import { A2uiClientAction } from "../schema/client-to-server.js";
+import { ReactiveProvider } from "../common/reactive.js";
+import { PreactReactiveProvider } from "../common/preact-provider.js";
 
 /**
  * The root state model for the A2UI system.
@@ -26,6 +28,10 @@ import { A2uiClientAction } from "../schema/client-to-server.js";
 export class SurfaceGroupModel<T extends ComponentApi> {
   private surfaces: Map<string, SurfaceModel<T>> = new Map();
   private surfaceUnsubscribers: Map<string, Subscription> = new Map();
+
+  constructor(
+    public readonly provider: ReactiveProvider = new PreactReactiveProvider(),
+  ) {}
 
   private readonly _onSurfaceCreated = new EventEmitter<SurfaceModel<T>>();
   private readonly _onSurfaceDeleted = new EventEmitter<string>();

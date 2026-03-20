@@ -67,8 +67,8 @@ export class ImageComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  url = computed(() => this.props()['url']?.value());
-  description = computed(() => this.props()['description']?.value() || '');
-  fit = computed(() => this.props()['fit']?.value() || 'cover');
-  variant = computed(() => this.props()['variant']?.value() || 'default');
+  url = computed(() => this.props()['url']?.());
+  description = computed(() => this.props()['description']?.() || '');
+  fit = computed(() => this.props()['fit']?.() || 'cover');
+  variant = computed(() => this.props()['variant']?.() || 'default');
 }

@@ -85,11 +85,13 @@ describe('Simple Components', () => {
   }
 
   function createBoundProperty(val: any): BoundProperty<any> {
-    return {
-      value: angularSignal(val),
+    const sig = angularSignal(val);
+    const prop = Object.assign(() => sig(), {
+      value: sig,
       raw: val,
-      onUpdate: jasmine.createSpy('onUpdate'),
-    };
+      set: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
+    });
+    return prop as any;
   }
 
   describe('DividerComponent', () => {

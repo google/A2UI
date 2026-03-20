@@ -95,14 +95,14 @@ export class DateTimeInputComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
-  label = computed(() => this.props()['label']?.value());
-  enableDate = computed(() => this.props()['enableDate']?.value() ?? true);
-  enableTime = computed(() => this.props()['enableTime']?.value() ?? false);
+  label = computed(() => this.props()['label']?.());
+  enableDate = computed(() => this.props()['enableDate']?.() ?? true);
+  enableTime = computed(() => this.props()['enableTime']?.() ?? false);
 
-  private rawValue = computed(() => this.props()['value']?.value() || '');
+  private rawValue = computed(() => this.props()['value']?.() || '');
 
   dateValue = computed(() => {
     const val = this.rawValue();
@@ -121,9 +121,9 @@ export class DateTimeInputComponent {
     const current = this.rawValue();
     if (this.enableTime()) {
       const time = current.includes('T') ? current.split('T')[1] : '00:00:00';
-      this.props()['value']?.onUpdate(`${date}T${time}`);
+      this.props()['value']?.set(`${date}T${time}`);
     } else {
-      this.props()['value']?.onUpdate(date);
+      this.props()['value']?.set(date);
     }
   }
 
@@ -133,6 +133,6 @@ export class DateTimeInputComponent {
     const date = current.includes('T')
       ? current.split('T')[0]
       : current || new Date().toISOString().split('T')[0];
-    this.props()['value']?.onUpdate(`${date}T${time}:00`);
+    this.props()['value']?.set(`${date}T${time}:00`);
   }
 }

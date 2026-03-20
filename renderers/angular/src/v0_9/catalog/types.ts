@@ -15,7 +15,7 @@
  */
 
 import { Type } from '@angular/core';
-import { Catalog, ComponentApi } from '@a2ui/web_core/v0_9';
+import { Catalog, ComponentApi, FunctionImplementation } from '@a2ui/web_core/v0_9';
 
 /**
  * Extends the generic {@link ComponentApi} to include Angular-specific component metadata.
@@ -38,4 +38,13 @@ export interface AngularComponentImplementation extends ComponentApi {
  * definitions and by {@link ComponentHostComponent} to instantiate the
  * correct Angular components.
  */
-export class AngularCatalog extends Catalog<AngularComponentImplementation> {}
+export class AngularCatalog extends Catalog<AngularComponentImplementation> {
+  constructor(
+    id: string,
+    components: AngularComponentImplementation[] | Record<string, AngularComponentImplementation>,
+    functions: FunctionImplementation[] = [],
+  ) {
+    const compArray = Array.isArray(components) ? components : Object.values(components);
+    super(id, compArray, functions);
+  }
+}

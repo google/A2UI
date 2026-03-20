@@ -81,10 +81,10 @@ export class TextFieldComponent {
 
   private rendererService = inject(A2uiRendererService);
 
-  label = computed(() => this.props()['label']?.value());
-  value = computed(() => this.props()['value']?.value() || '');
-  placeholder = computed(() => this.props()['placeholder']?.value() || '');
-  variant = computed(() => this.props()['variant']?.value());
+  label = computed(() => this.props()['label']?.());
+  value = computed(() => this.props()['value']?.() || '');
+  placeholder = computed(() => this.props()['placeholder']?.() || '');
+  variant = computed(() => this.props()['variant']?.());
 
   inputType = computed(() => {
     switch (this.variant()) {
@@ -101,6 +101,6 @@ export class TextFieldComponent {
     const value = (event.target as HTMLInputElement).value;
     // Update the data path.  If anything is listening to this path, it will be
     // notified.
-    this.props()['value']?.onUpdate(value);
+    this.props()['value']?.set(value);
   }
 }

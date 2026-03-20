@@ -77,13 +77,21 @@ describe('ColumnComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('props', {
-      justify: { value: signal('start'), raw: 'start', onUpdate: () => {} },
-      align: { value: signal('stretch'), raw: 'stretch', onUpdate: () => {} },
-      children: {
-        value: signal(['child1', 'child2']),
+      justify: Object.assign(() => 'start', {
+        value: 'start',
+        raw: 'start',
+        set: jasmine.createSpy('set'),
+      }),
+      align: Object.assign(() => 'stretch', {
+        value: 'stretch',
+        raw: 'stretch',
+        set: jasmine.createSpy('set'),
+      }),
+      children: Object.assign(() => ['child1', 'child2'], {
+        value: ['child1', 'child2'],
         raw: ['child1', 'child2'],
-        onUpdate: () => {},
-      },
+        set: jasmine.createSpy('set'),
+      }),
     });
   });
 
@@ -111,14 +119,14 @@ describe('ColumnComponent', () => {
   it('should render repeating children', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      children: {
-        value: signal([{}, {}]),
+      children: Object.assign(() => [{}, {}], {
+        value: [{}, {}],
         raw: {
           componentId: 'template1',
           path: 'items',
         },
-        onUpdate: () => {},
-      },
+        set: jasmine.createSpy('set'),
+      }),
     });
     fixture.detectChanges();
 

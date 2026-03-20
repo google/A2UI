@@ -70,16 +70,16 @@ export class CheckBoxComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);
 
-  value = computed(() => this.props()['value']?.value() === true);
-  label = computed(() => this.props()['label']?.value());
+  value = computed(() => this.props()['value']?.() === true);
+  label = computed(() => this.props()['label']?.());
 
   handleChange(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    this.props()['value']?.onUpdate(checked);
+    this.props()['value']?.set(checked);
   }
 }

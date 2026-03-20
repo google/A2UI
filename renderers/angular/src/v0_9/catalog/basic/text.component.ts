@@ -47,7 +47,7 @@ export class TextComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  weight = computed(() => this.props()['weight']?.value());
-  style = computed(() => this.props()['style']?.value());
-  text = computed(() => this.props()['text']?.value());
+  weight = computed(() => this.props()['weight']?.());
+  style = computed(() => this.props()['style']?.());
+  text = computed(() => this.props()['text']?.());
 }

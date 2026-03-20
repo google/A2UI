@@ -122,12 +122,12 @@ export class ChoicePickerComponent {
 
   private rendererService = inject(A2uiRendererService);
 
-  displayStyle = computed(() => this.props()['displayStyle']?.value());
+  displayStyle = computed(() => this.props()['displayStyle']?.());
   choices = computed(
-    () => this.props()['choices']?.value() || this.props()['options']?.value() || [],
+    () => this.props()['choices']?.() || this.props()['options']?.() || [],
   );
-  variant = computed(() => this.props()['variant']?.value());
-  selectedValue = computed(() => this.props()['value']?.value());
+  variant = computed(() => this.props()['variant']?.());
+  selectedValue = computed(() => this.props()['value']?.());
 
   isMultiple(): boolean {
     return this.variant() === 'multipleSelection';
@@ -160,10 +160,10 @@ export class ChoicePickerComponent {
       } else {
         next = next.filter((v: any) => v !== value);
       }
-      this.props()['value']?.onUpdate(next);
+      this.props()['value']?.set(next);
     } else {
       if (active) {
-        this.props()['value']?.onUpdate(value);
+        this.props()['value']?.set(value);
       }
     }
   }

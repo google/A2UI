@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { DestroyRef, Injectable, inject, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ComponentContext } from '@a2ui/web_core/v0_9';
-import { toAngularSignal } from './utils';
 import { BoundProperty } from './types';
 
 /**
@@ -31,8 +30,7 @@ import { BoundProperty } from './types';
   providedIn: 'root',
 })
 export class ComponentBinder {
-  private destroyRef = inject(DestroyRef);
-  private ngZone = inject(NgZone);
+  constructor() {}
 
   /**
    * Binds all properties of a component to an object of Angular Signals.
@@ -42,22 +40,48 @@ export class ComponentBinder {
    */
   bind(context: ComponentContext): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
-    const bound: Record<string, any> = {};
+    const bound: Record<string, BoundProperty> = {};
 
     for (const key of Object.keys(props)) {
       const value = props[key];
-      const preactSig = context.dataContext.resolveSignal(value);
-      const angSig = toAngularSignal(preactSig as any, this.destroyRef, this.ngZone);
+      const sig = context.dataContext.resolveSignal(value);
 
+      // Augment the signal into a BoundProperty
       const isBoundPath = value && typeof value === 'object' && 'path' in value;
-
-      bound[key] = {
-        value: angSig,
-        raw: value,
-        onUpdate: isBoundPath
-          ? (newValue: any) => context.dataContext.set(value.path, newValue)
-          : () => {}, // No-op for non-bound values
+      
+      const boundProp = sig as any as BoundProperty;
+      
+      // Defensively define properties only if they don't already exist or are configurable
+      const defineSafe = (obj: any, key: string, descriptor: PropertyDescriptor) => {
+        const existing = Object.getOwnPropertyDescriptor(obj, key);
+        if (!existing || existing.configurable) {
+          Object.defineProperty(obj, key, descriptor);
+        }
       };
+
+      defineSafe(boundProp, 'raw', { value: value, configurable: true });
+
+      // Defensively define properties to avoid "Cannot redefine property" errors
+      try {
+        Object.defineProperty(boundProp, 'name', {
+          value: key,
+          configurable: true,
+          writable: true,
+          enumerable: true
+        });
+      } catch (e) {
+         // Ignore if name cannot be redefined (it's mostly for debugging)
+      }
+      
+      // Only define 'set' if we have a path-bound property to handle
+      if (isBoundPath) {
+        defineSafe(boundProp, 'set', {
+          value: (newValue: any) => context.dataContext.set(value.path, newValue),
+          configurable: true
+        });
+      }
+
+      bound[key] = boundProp;
     }
 
     return bound;

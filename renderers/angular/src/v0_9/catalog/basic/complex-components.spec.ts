@@ -86,11 +86,13 @@ describe('Complex Components', () => {
   }
 
   function createBoundProperty(val: any): BoundProperty<any> {
-    return {
-      value: angularSignal(val),
+    const sig = angularSignal(val);
+    const prop = Object.assign(() => sig(), {
+      value: sig,
       raw: val,
-      onUpdate: jasmine.createSpy('onUpdate'),
-    };
+      set: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
+    });
+    return prop as any;
   }
 
   describe('CheckBoxComponent', () => {
@@ -128,16 +130,16 @@ describe('Complex Components', () => {
       expect(fixture.nativeElement.textContent).toContain('Check me');
     });
 
-    it('should call onUpdate when toggled', () => {
-      const onUpdateSpy = jasmine.createSpy('onUpdate');
+    it('should call set when toggled', () => {
+      const prop = createBoundProperty(false);
       fixture.componentRef.setInput('props', {
         label: createBoundProperty('Check me'),
-        value: { value: angularSignal(false), raw: false, onUpdate: onUpdateSpy },
+        value: prop,
       });
       fixture.detectChanges();
       const input = fixture.nativeElement.querySelector('input');
       input.click();
-      expect(onUpdateSpy).toHaveBeenCalledWith(true);
+      expect(prop.set).toHaveBeenCalledWith(true);
     });
   });
 
@@ -183,32 +185,32 @@ describe('Complex Components', () => {
       expect(options[0].textContent).toContain('Opt 1');
     });
 
-    it('should call onUpdate when option selected', () => {
-      const onUpdateSpy = jasmine.createSpy('onUpdate');
+    it('should call set when option selected', () => {
+      const prop = createBoundProperty('1');
       fixture.componentRef.setInput('props', {
         label: createBoundProperty('Pick one'),
         options: createBoundProperty([
           { label: 'Opt 1', value: '1' },
           { label: 'Opt 2', value: '2' },
         ]),
-        value: { value: angularSignal('1'), raw: '1', onUpdate: onUpdateSpy },
+        value: prop,
         variant: createBoundProperty('mutuallyExclusive'),
         displayStyle: createBoundProperty('checkbox'),
       });
       fixture.detectChanges();
       const inputs = fixture.nativeElement.querySelectorAll('input');
       inputs[1].click();
-      expect(onUpdateSpy).toHaveBeenCalledWith('2');
+      expect(prop.set).toHaveBeenCalledWith('2');
     });
 
     it('should render chips and toggle selection', () => {
-      const onUpdateSpy = jasmine.createSpy('onUpdate');
+      const prop = createBoundProperty(['c1']);
       fixture.componentRef.setInput('props', {
         choices: createBoundProperty([
           { label: 'Chip 1', value: 'c1' },
           { label: 'Chip 2', value: 'c2' },
         ]),
-        value: { value: angularSignal(['c1']), raw: ['c1'], onUpdate: onUpdateSpy },
+        value: prop,
         variant: createBoundProperty('multipleSelection'),
         displayStyle: createBoundProperty('chips'),
       });
@@ -219,10 +221,10 @@ describe('Complex Components', () => {
       expect(chips[1].classList.contains('active')).toBeFalse();
 
       chips[1].click();
-      expect(onUpdateSpy).toHaveBeenCalledWith(['c1', 'c2']);
+      expect(prop.set).toHaveBeenCalledWith(['c1', 'c2']);
 
       chips[0].click();
-      expect(onUpdateSpy).toHaveBeenCalledWith([]);
+      expect(prop.set).toHaveBeenCalledWith(['c2']);
     });
   });
 
@@ -263,16 +265,16 @@ describe('Complex Components', () => {
       expect(fixture.nativeElement.textContent).toContain('Brightness');
     });
 
-    it('should call onUpdate when slider value changes', () => {
-      const onUpdateSpy = jasmine.createSpy('onUpdate');
+    it('should call set when slider value changes', () => {
+      const prop = createBoundProperty(50);
       fixture.componentRef.setInput('props', {
-        value: { value: angularSignal(50), raw: 50, onUpdate: onUpdateSpy },
+        value: prop,
       });
       fixture.detectChanges();
       const input = fixture.nativeElement.querySelector('input');
       input.value = '75';
       input.dispatchEvent(new Event('input'));
-      expect(onUpdateSpy).toHaveBeenCalledWith(75);
+      expect(prop.set).toHaveBeenCalledWith(75);
     });
   });
 
@@ -313,14 +315,10 @@ describe('Complex Components', () => {
       expect(input.value).toBe('2026-03-16');
     });
 
-    it('should call onUpdate when date or time changes', () => {
-      const onUpdateSpy = jasmine.createSpy('onUpdate');
+    it('should call set when date or time changes', () => {
+      const prop = createBoundProperty('2026-03-16T10:00:00');
       fixture.componentRef.setInput('props', {
-        value: {
-          value: angularSignal('2026-03-16T10:00:00'),
-          raw: '2026-03-16T10:00:00',
-          onUpdate: onUpdateSpy,
-        },
+        value: prop,
         enableDate: createBoundProperty(true),
         enableTime: createBoundProperty(true),
       });
@@ -330,12 +328,12 @@ describe('Complex Components', () => {
 
       dateInput.value = '2026-03-17';
       dateInput.dispatchEvent(new Event('change'));
-      expect(onUpdateSpy).toHaveBeenCalled();
+      expect(prop.set).toHaveBeenCalled();
 
-      onUpdateSpy.calls.reset();
+      (prop.set as jasmine.Spy).calls.reset();
       timeInput.value = '11:00';
       timeInput.dispatchEvent(new Event('change'));
-      expect(onUpdateSpy).toHaveBeenCalled();
+      expect(prop.set).toHaveBeenCalled();
     });
   });
 

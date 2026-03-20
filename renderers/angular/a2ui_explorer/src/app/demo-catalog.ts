@@ -30,23 +30,15 @@ import { createFunctionImplementation, FunctionImplementation } from '@a2ui/web_
 })
 export class DemoCatalog extends BasicCatalogBase {
   constructor() {
-    const customSliderApi: AngularComponentImplementation = {
-      name: 'CustomSlider',
-      schema: z.object({
-        label: z.string().optional(),
-        value: z.number().optional(),
-        min: z.number().optional(),
-        max: z.number().optional(),
-      }) as any,
-      component: CustomSliderComponent,
-    };
-
     const cardApi: AngularComponentImplementation = {
       name: 'Card',
-      schema: z.object({
-        child: z.string().optional(),
-      }) as any,
+      schema: z.object({}).passthrough(),
       component: CardComponent,
+    };
+    const customSliderApi: AngularComponentImplementation = {
+      name: 'CustomSlider',
+      schema: z.object({}).passthrough(),
+      component: CustomSliderComponent,
     };
 
     const capitalizeImplementation: FunctionImplementation = createFunctionImplementation(

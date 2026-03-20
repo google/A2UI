@@ -21,7 +21,7 @@ import { ComponentModel } from "../state/component-model.js";
 
 export class TestSurfaceModel extends SurfaceModel<ComponentApi> {
   constructor(actionHandler: any = async () => {}) {
-    super("test", new Catalog("test-catalog", []), {});
+    super("test", new Catalog("test-catalog", []));
     this.onAction.subscribe(actionHandler);
   }
 }

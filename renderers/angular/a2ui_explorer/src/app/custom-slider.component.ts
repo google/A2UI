@@ -28,12 +28,12 @@ import { BoundProperty } from '@a2ui/angular/v0_9';
   imports: [CommonModule],
   template: `
     <div class="custom-slider-container">
-      <label>{{ props['label']?.value() || 'Value' }}: {{ props['value']?.value() }}</label>
+      <label>{{ props['label']?.() || 'Value' }}: {{ props['value']?.() }}</label>
       <input
         type="range"
-        [min]="props['min']?.value() || 0"
-        [max]="props['max']?.value() || 100"
-        [value]="props['value']?.value() || 0"
+        [min]="props['min']?.() || 0"
+        [max]="props['max']?.() || 100"
+        [value]="props['value']?.() || 0"
         (input)="handleInput($event)"
       />
     </div>
@@ -57,6 +57,6 @@ export class CustomSliderComponent {
 
   handleInput(event: Event) {
     const val = Number((event.target as HTMLInputElement).value);
-    this.props['value']?.onUpdate(val);
+    this.props['value']?.set(val);
   }
 }

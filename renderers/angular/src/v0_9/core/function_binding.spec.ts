@@ -14,17 +14,40 @@
  * limitations under the License.
  */
 
-import { DataContext, SurfaceModel } from '@a2ui/web_core/v0_9';
+import { DataContext, SurfaceModel, ReactiveProvider } from '@a2ui/web_core/v0_9';
 import { DestroyRef } from '@angular/core';
 import { BasicCatalogBase } from '../catalog/basic/basic-catalog';
-import { toAngularSignal } from './utils';
+import { signal as preactSignal, computed as preactComputed, effect as preactEffect, batch as preactBatch } from '@preact/signals-core';
 
 describe('Function Bindings', () => {
   let mockDestroyRef: jasmine.SpyObj<DestroyRef>;
 
+  let mockProvider: ReactiveProvider;
+  
   beforeEach(() => {
     mockDestroyRef = jasmine.createSpyObj('DestroyRef', ['onDestroy']);
     mockDestroyRef.onDestroy.and.returnValue(() => {});
+    
+    // Reactive mock provider using Preact
+    mockProvider = {
+      signal: (initial: any) => {
+        const s = preactSignal(initial);
+        const wrapper = () => s.value;
+        Object.defineProperty(wrapper, 'value', { get: () => s.value, set: (v) => s.value = v });
+        (wrapper as any).peek = () => s.peek();
+        (wrapper as any).set = (v: any) => s.value = v;
+        return wrapper as any;
+      },
+      computed: (fn: any) => {
+        const s = preactComputed(fn);
+        const wrapper = () => s.value;
+        Object.defineProperty(wrapper, 'value', { get: () => s.value });
+        (wrapper as any).peek = () => s.peek();
+        return wrapper as any;
+      },
+      effect: preactEffect,
+      batch: preactBatch,
+    };
   });
 
   describe('add', () => {
@@ -32,7 +55,7 @@ describe('Function Bindings', () => {
       const catalog = new BasicCatalogBase();
 
       // Create Surface Model and DataContext
-      const surface = new SurfaceModel('surface_1', catalog);
+      const surface = new SurfaceModel('surface_1', catalog, mockProvider);
       const dataModel = surface.dataModel;
       const context = new DataContext(surface, '/');
 
@@ -48,10 +71,7 @@ describe('Function Bindings', () => {
       };
 
       // 1. Resolve Signal
-      const resSig = context.resolveSignal<number>(callValue as any);
-
-      // 2. Convert to Angular Signal
-      const angSig = toAngularSignal(resSig, mockDestroyRef);
+      const angSig = context.resolveSignal<number>(callValue as any) as any;
 
       // 3. Initial state
       expect(isNaN(angSig())).toBe(true);
@@ -73,7 +93,7 @@ describe('Function Bindings', () => {
       const catalog = new BasicCatalogBase();
 
       // Create Surface Model and DataContext
-      const surface = new SurfaceModel('surface_1', catalog);
+      const surface = new SurfaceModel('surface_1', catalog, mockProvider);
       const dataModel = surface.dataModel;
       const context = new DataContext(surface, '/');
 
@@ -87,10 +107,7 @@ describe('Function Bindings', () => {
       };
 
       // 1. Resolve Signal (Preact)
-      const resSig = context.resolveSignal<string>(callValue as any);
-
-      // 2. Convert to Angular Signal
-      const angSig = toAngularSignal(resSig, mockDestroyRef);
+      const angSig = context.resolveSignal<string>(callValue as any) as any;
 
       // 3. Initial state (price is undefined, so should be '$')
       expect(angSig()).toBe('$');
@@ -107,7 +124,7 @@ describe('Function Bindings', () => {
 
     it('should handle multiple path interpolations correctly', () => {
       const catalog = new BasicCatalogBase();
-      const surface = new SurfaceModel('surface_1', catalog);
+      const surface = new SurfaceModel('surface_1', catalog, mockProvider);
       const dataModel = surface.dataModel;
       const context = new DataContext(surface, '/');
 
@@ -119,8 +136,7 @@ describe('Function Bindings', () => {
         returnType: 'string',
       };
 
-      const resSig = context.resolveSignal<string>(callValue as any);
-      const angSig = toAngularSignal(resSig, mockDestroyRef);
+      const angSig = context.resolveSignal<string>(callValue as any) as any;
 
       dataModel.set('/firstName', 'A2UI');
       dataModel.set('/lastName', 'Renderer');

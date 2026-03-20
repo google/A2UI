@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { signal, computed, Signal, effect } from "@preact/signals-core";
+import { GenericSignal } from "../common/reactive.js";
 import { z } from "zod";
 import { DataModel, DataSubscription } from "../state/data-model.js";
 import type {
@@ -142,7 +142,7 @@ export class DataContext {
     let isSync = true;
     let currentValue = sig.peek();
 
-    const dispose = effect(() => {
+    const dispose = this.surface.provider.effect(() => {
       const val = sig.value;
       currentValue = val;
       if (!isSync) {
@@ -174,22 +174,22 @@ export class DataContext {
    * @param value The DynamicValue to evaluate and observe.
    * @returns A Preact Signal containing the reactive result of the evaluation.
    */
-  resolveSignal<V>(value: DynamicValue): Signal<V> {
+  resolveSignal<V>(value: DynamicValue): GenericSignal<V> {
     // 1. Literal
     if (typeof value !== "object" || value === null || Array.isArray(value)) {
-      return signal(value as V);
+      return this.surface.provider.signal(value as V);
     }
 
     // 2. Path Check
     if ("path" in value) {
       const absolutePath = this.resolvePath((value as DataBinding).path);
-      return this.dataModel.getSignal<V>(absolutePath) as Signal<V>;
+      return this.dataModel.getSignal<V>(absolutePath) as GenericSignal<V>;
     }
 
     // 3. Function Call
     if ("call" in value) {
       const call = value as FunctionCall;
-      const argSignals: Record<string, Signal<any>> = {};
+      const argSignals: Record<string, GenericSignal<any>> = {};
 
       for (const [key, argVal] of Object.entries(call.args)) {
         argSignals[key] = this.resolveSignal(argVal);
@@ -202,25 +202,25 @@ export class DataContext {
           {},
           abortController.signal,
         );
-        const sig = result instanceof Signal ? result : signal(result);
+        const sig = isSignal(result) ? result : this.surface.provider.signal(result);
         (sig as any).unsubscribe = () => abortController.abort();
         return sig;
       }
 
       const keys = Object.keys(argSignals);
-      const resultSig = signal<V | undefined>(undefined);
+      const resultSig = this.surface.provider.signal<V | undefined>(undefined);
       let abortController: AbortController | undefined;
       let innerUnsubscribe: (() => void) | undefined;
 
-      const argsSig = computed(() => {
+      const argsSig = this.surface.provider.computed(() => {
         const argsRecord: Record<string, any> = {};
         for (let i = 0; i < keys.length; i++) {
-          argsRecord[keys[i]] = argSignals[keys[i]].value;
+          argsRecord[keys[i]] = argSignals[keys[i]]();
         }
         return argsRecord;
       });
 
-      const stopper = effect(() => {
+      const stopper = this.surface.provider.effect(() => {
         try {
           const args = argsSig.value;
           if (abortController) abortController.abort();
@@ -237,7 +237,7 @@ export class DataContext {
           );
 
           if (isSignal(res)) {
-            innerUnsubscribe = effect(() => {
+            innerUnsubscribe = this.surface.provider.effect(() => {
               resultSig.value = res.value;
             });
           } else {
@@ -262,10 +262,10 @@ export class DataContext {
         }
       };
 
-      return resultSig as unknown as Signal<V>;
+      return resultSig as unknown as GenericSignal<V>;
     }
 
-    return signal(value as unknown as V);
+    return this.surface.provider.signal(value as unknown as V);
   }
 
   /**
@@ -303,7 +303,7 @@ export class DataContext {
     name: string,
     args: Record<string, any>,
     abortSignal?: AbortSignal,
-  ): Signal<V> | V {
+  ): GenericSignal<V> | V {
     try {
       return this.functionInvoker(name, args, this, abortSignal);
     } catch (e: any) {

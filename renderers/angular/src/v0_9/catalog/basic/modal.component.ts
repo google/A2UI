@@ -115,13 +115,13 @@ export class ModalComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
-  componentId = input<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
   isOpen = signal(false);
 
-  trigger = computed(() => this.props()['trigger']?.value());
-  content = computed(() => this.props()['content']?.value());
+  trigger = computed(() => this.props()['trigger']?.());
+  content = computed(() => this.props()['content']?.());
 
   openModal() {
     this.isOpen.set(true);

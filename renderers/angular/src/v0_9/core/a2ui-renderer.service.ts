@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Injectable, OnDestroy, InjectionToken, Inject } from '@angular/core';
+import { Injectable, OnDestroy, InjectionToken, Inject, Injector } from '@angular/core';
+import { AngularReactiveProvider } from './angular-reactive-provider';
 import {
   MessageProcessor,
   SurfaceGroupModel,
@@ -58,12 +59,18 @@ export class A2uiRendererService implements OnDestroy {
   private _messageProcessor: MessageProcessor<AngularComponentImplementation>;
   private _catalogs: AngularCatalog[] = [];
 
-  constructor(@Inject(A2UI_RENDERER_CONFIG) private config: RendererConfiguration) {
+  constructor(
+    @Inject(A2UI_RENDERER_CONFIG) private config: RendererConfiguration,
+    private injector: Injector,
+  ) {
     this._catalogs = this.config.catalogs;
+
+    const provider = new AngularReactiveProvider(this.injector);
 
     this._messageProcessor = new MessageProcessor<AngularComponentImplementation>(
       this._catalogs,
       this.config.actionHandler as ActionHandler,
+      provider,
     );
   }
 
