@@ -94,6 +94,8 @@ The state containers.
 
 ---
 
+## THE FRAMEWORK-AGNOSTIC LAYER
+
 ## 3. The Core Data Layer (Detailed Specifications)
 
 The Data Layer maintains a long-lived, mutable state object. This layer follows the exact same design in all programming languages and **does not require design work when porting to a new framework**. 
@@ -165,6 +167,7 @@ type ActionListener = (action: ActionEvent) => void | Promise<void>;
 
 class SurfaceModel<T extends ComponentApi> {
   readonly id: string;
+...
   readonly catalog: Catalog<T>;
   readonly dataModel: DataModel;
   readonly componentsModel: SurfaceComponentsModel;
@@ -217,13 +220,8 @@ class DataModel {
 
 **JSON Pointer Implementation Rules**:
 1.  **Auto-typing (Auto-vivification)**: When setting a value at a nested path (e.g., `/a/b/0/c`), create intermediate segments. If the next segment is numeric (`0`), initialize as an Array `[]`, otherwise an Object `{}`.
-2.  **Notification Strategy (Bubble & Cascade)**: A change at a specific path must trigger notifications for related paths to ensure UI consistency:
-    *   **Exact Match**: Notify all subscribers to the modified path.
-    *   **Ancestor Notification (Bubble Up)**: Notify subscribers to all parent paths. For example, updating `/user/name` must notify subscribers to `/user` and `/`.
-    *   **Descendant Notification (Cascade Down)**: Notify subscribers to all paths nested *under* the modified path. For example, replacing the entire `/user` object must notify a subscriber to `/user/name`.
-3.  **Undefined Handling**:
-    *   **Objects**: Setting a key to `undefined` should remove that key from the object.
-    *   **Arrays**: Setting an index to `undefined` should preserve the array's length but set that specific index to `undefined` (sparse array support).
+2.  **Notification Strategy (Bubble & Cascade)**: Notify exact matches, bubble up to all parent paths, and cascade down to all nested descendant paths.
+3.  **Undefined Handling**: Setting an object key to `undefined` removes the key. Setting an array index to `undefined` preserves length but empties the index (sparse array).
 
 **Type Coercion Standards**:
 | Input Type                 | Target Type | Result                                                                  |
