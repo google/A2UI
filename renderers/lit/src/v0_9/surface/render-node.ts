@@ -1,71 +1,47 @@
-import { html, nothing, LitElement, PropertyValues } from "lit";
-import { customElement, property } from "lit/decorators.js";
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { nothing } from "lit";
+import { html, unsafeStatic } from "lit/static-html.js";
 import { ComponentContext } from "@a2ui/web_core/v0_9";
-import { A2uiController } from "../adapter.js";
-import { ChildBuilder, LitComponentImplementation } from "../types.js";
+import { LitComponentImplementation } from "../types.js";
 
-@customElement("a2ui-node")
-export class A2uiNode extends LitElement {
-  @property({ type: Object }) accessor context!: ComponentContext;
-  
-  private controller?: A2uiController<any>;
-  private implementation?: LitComponentImplementation;
+/**
+ * Pure function that acts as a generic container for A2UI components.
+ *
+ * It dynamically resolves and renders the specific Lit component implementation
+ * based on the component type provided in the context, returning a TemplateResult directly
+ * to avoid duplicate DOM node wrapping.
+ *
+ * @param context The component context defining the data model and type to render.
+ * @returns A Lit TemplateResult representing the resolved component, or `nothing` if the component is invalid or unresolvable.
+ *
+ * For examples on how to use `renderA2uiNode` when defining custom A2UI components that contain children,
+ * refer to the implementation of `A2uiSurface`, or structural catalog components like `Row` and `Column`.
+ */
+export function renderA2uiNode(context: ComponentContext) {
+  const type = context.componentModel.type;
+  const catalog = context.dataContext.surface.catalog;
+  const implementation = catalog.components.get(type) as LitComponentImplementation | undefined;
 
-  createRenderRoot() {
-    return this;
+  if (!implementation) {
+    console.warn(`Component implementation not found for type: ${type}`);
+    return nothing;
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    if (this.controller) {
-      this.controller.dispose();
-    }
-  }
-
-  protected willUpdate(changedProperties: PropertyValues) {
-    super.willUpdate(changedProperties);
-    if (changedProperties.has('context')) {
-      if (this.controller) {
-        this.removeController(this.controller);
-        this.controller.dispose();
-        this.controller = undefined;
-      }
-      
-      if (this.context) {
-        const type = this.context.componentModel.type;
-        const catalog = this.context.dataContext.surface.catalog;
-        this.implementation = catalog.components.get(type) as LitComponentImplementation | undefined;
-        
-        if (this.implementation) {
-          this.controller = new A2uiController(this, this.implementation);
-        } else {
-          console.warn(`Component implementation not found for type: ${type}`);
-        }
-      }
-    }
-  }
-
-  render() {
-    if (!this.controller || !this.implementation || !this.context) return nothing;
-    
-    const buildChild: ChildBuilder = (id: string, overrideBasePath?: string) => {
-        if (!id) return nothing;
-        const surface = this.context.dataContext.surface;
-        const basePath = overrideBasePath ?? this.context.dataContext.path;
-        
-        try {
-            const childContext = new ComponentContext(surface, id, basePath);
-            return html`<a2ui-node .context=${childContext}></a2ui-node>`;
-        } catch (e) {
-            console.error(`Error building child ${id}:`, e);
-            return nothing;
-        }
-    };
-    
-    return this.implementation.render({
-       props: this.controller.props,
-       buildChild,
-       context: this.context
-    });
-  }
+  const tag = unsafeStatic(implementation.tagName);
+  return html`<${tag} .context=${context}></${tag}>`;
 }
