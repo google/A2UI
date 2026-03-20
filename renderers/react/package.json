@@ -65,10 +65,7 @@
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
-    "clean": "rm -rf dist",
-    "demo": "cd a2ui_explorer && vite",
-    "build:demo": "cd a2ui_explorer && tsc -b && vite build",
-    "test:demo": "cd a2ui_explorer && vitest run src"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
