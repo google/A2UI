@@ -30,7 +30,6 @@ describe('ButtonComponent', () => {
   let mockSurface: any;
   let mockSurfaceGroup: any;
 
-
   beforeEach(async () => {
     mockSurface = {
       dispatchAction: jasmine.createSpy('dispatchAction'),

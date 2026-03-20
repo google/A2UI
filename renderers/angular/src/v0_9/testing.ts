@@ -55,10 +55,6 @@ export function createBoundProperty<T>(val: T, rawValue?: any, name = 'test-prop
       value: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
       configurable: true,
     },
-    update: {
-      value: jasmine.createSpy('update').and.callFake((fn: any) => sig.update(fn)),
-      configurable: true,
-    },
     raw: { value: rawValue !== undefined ? rawValue : val, configurable: true },
     name: { value: name, configurable: true },
   });
