@@ -15,23 +15,12 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, input, signal } from '@angular/core';
 import { RowComponent } from './row.component';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
+import { createBoundProperty, StubComponent, createMockA2uiRendererService, createMockComponentBinder } from '../../testing';
 
-@Component({
-  standalone: true,
-  selector: 'dummy-child',
-  template: 'Dummy Child',
-})
-class DummyChild {
-  props = input<any>();
-  surfaceId = input<string>();
-  componentId = input<string>();
-  dataContextPath = input<string>();
-}
 
 describe('RowComponent', () => {
   let component: RowComponent;
@@ -50,19 +39,14 @@ describe('RowComponent', () => {
       ]),
       catalog: {
         id: 'test-catalog',
-        components: new Map([['Child', { component: DummyChild }]]),
+        components: new Map([['Child', { component: StubComponent }]]),
       },
     };
 
-    mockSurfaceGroup = {
-      getSurface: jasmine.createSpy('getSurface').and.returnValue(mockSurface),
-    };
+    mockRendererService = createMockA2uiRendererService(mockSurface);
+    mockSurfaceGroup = mockRendererService.surfaceGroup;
 
-    mockRendererService = {
-      surfaceGroup: mockSurfaceGroup,
-    };
-
-    mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
+    mockBinder = createMockComponentBinder();
     mockBinder.bind.and.returnValue({ text: { value: () => 'bound' } });
 
     await TestBed.configureTestingModule({
@@ -77,21 +61,9 @@ describe('RowComponent', () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
     fixture.componentRef.setInput('props', {
-      justify: Object.assign(() => 'center', {
-        value: 'center',
-        raw: 'center',
-        set: jasmine.createSpy('set'),
-      }),
-      align: Object.assign(() => 'baseline', {
-        value: 'baseline',
-        raw: 'baseline',
-        set: jasmine.createSpy('set'),
-      }),
-      children: Object.assign(() => ['child1', 'child2'], {
-        value: ['child1', 'child2'],
-        raw: ['child1', 'child2'],
-        set: jasmine.createSpy('set'),
-      }),
+      justify: createBoundProperty('center'),
+      align: createBoundProperty('baseline'),
+      children: createBoundProperty(['child1', 'child2']),
     });
   });
 
@@ -119,13 +91,9 @@ describe('RowComponent', () => {
   it('should render repeating children', () => {
     fixture.componentRef.setInput('props', {
       ...component.props(),
-      children: Object.assign(() => [{}, {}], {
-        value: [{}, {}],
-        raw: {
-          componentId: 'template1',
-          path: 'items',
-        },
-        set: jasmine.createSpy('set'),
+      children: createBoundProperty([{}, {}], {
+        componentId: 'template1',
+        path: 'items',
       }),
     });
     fixture.detectChanges();

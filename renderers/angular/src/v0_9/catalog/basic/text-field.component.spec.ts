@@ -20,26 +20,14 @@ import { signal } from '@angular/core';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { By } from '@angular/platform-browser';
 import { BoundProperty } from '../../core/types';
+import { createBoundProperty } from '../../testing';
 
 describe('TextFieldComponent', () => {
   let component: TextFieldComponent;
   let fixture: ComponentFixture<TextFieldComponent>;
   let mockRendererService: any;
 
-  function createBoundProperty(val: any): BoundProperty<any> {
-    const sig = signal(val);
-    const prop = () => sig();
-    Object.defineProperties(prop, {
-      value: { get: () => sig(), configurable: true },
-      raw: { value: val, configurable: true },
-      set: {
-        value: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
-        configurable: true,
-      },
-      peek: { value: () => sig(), configurable: true },
-    });
-    return prop as any;
-  }
+  
 
   beforeEach(async () => {
     mockRendererService = {};

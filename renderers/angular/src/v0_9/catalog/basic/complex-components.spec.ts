@@ -15,7 +15,7 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, signal as angularSignal, input } from '@angular/core';
+import { Component, signal, input } from '@angular/core';
 import { CheckBoxComponent } from './check-box.component';
 import { ChoicePickerComponent } from './choice-picker.component';
 import { SliderComponent } from './slider.component';
@@ -24,6 +24,7 @@ import { ListComponent } from './list.component';
 import { TabsComponent } from './tabs.component';
 import { ModalComponent } from './modal.component';
 import { BoundProperty } from '../../core/types';
+import { createBoundProperty, StubComponent, createMockA2uiRendererService, createMockComponentBinder } from '../../testing';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
@@ -33,72 +34,23 @@ describe('Complex Components', () => {
   let mockBinder: any;
 
   beforeEach(() => {
-    mockRendererService = {
-      surfaceGroup: {
-        getSurface: jasmine.createSpy('getSurface').and.returnValue({
-          componentsModel: new Map([
-            [
-              'child-1',
-              { id: 'child-1', type: 'Text', properties: { text: { value: 'Child 1' } } },
-            ],
-            [
-              'child-2',
-              { id: 'child-2', type: 'Text', properties: { text: { value: 'Child 2' } } },
-            ],
-            [
-              'content-1',
-              { id: 'content-1', type: 'Text', properties: { text: { value: 'Content 1' } } },
-            ],
-            [
-              'content-2',
-              { id: 'content-2', type: 'Text', properties: { text: { value: 'Content 2' } } },
-            ],
-            [
-              'trigger-btn',
-              { id: 'trigger-btn', type: 'Text', properties: { text: { value: 'Open' } } },
-            ],
-            [
-              'modal-content',
-              { id: 'modal-content', type: 'Text', properties: { text: { value: 'Modal' } } },
-            ],
-          ]),
-          catalog: {
-            id: 'mock-catalog',
-            components: new Map([['Text', { type: 'Text', component: DummyTextComponent }]]),
-          },
-        }),
+    mockRendererService = createMockA2uiRendererService({
+      componentsModel: new Map([
+        ['child-1', { id: 'child-1', type: 'Text', properties: { text: { value: 'Child 1' } } }],
+        ['child-2', { id: 'child-2', type: 'Text', properties: { text: { value: 'Child 2' } } }],
+        ['content-1', { id: 'content-1', type: 'Text', properties: { text: { value: 'Content 1' } } }],
+        ['content-2', { id: 'content-2', type: 'Text', properties: { text: { value: 'Content 2' } } }],
+        ['trigger-btn', { id: 'trigger-btn', type: 'Text', properties: { text: { value: 'Open' } } }],
+        ['modal-content', { id: 'modal-content', type: 'Text', properties: { text: { value: 'Modal' } } }],
+      ]),
+      catalog: {
+        id: 'mock-catalog',
+        components: new Map([['Text', { type: 'Text', component: StubComponent }]]),
       },
-    };
-    mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
+    });
+    mockBinder = createMockComponentBinder();
   });
 
-  @Component({
-    selector: 'dummy-text',
-    template: '<div>{{text}}</div>',
-    standalone: true,
-  })
-  class DummyTextComponent {
-    text?: string;
-    props = input<any>();
-    surfaceId = input<string>();
-    componentId = input<string>();
-    dataContextPath = input<string>();
-  }
-
-  function createBoundProperty(val: any): BoundProperty<any> {
-    const sig = angularSignal(val);
-    const prop = () => sig();
-    Object.defineProperties(prop, {
-      value: { get: () => sig(), configurable: true },
-      raw: { value: val, configurable: true },
-      set: {
-        value: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
-        configurable: true,
-      },
-      peek: { value: () => sig(), configurable: true },
-    });
-    return prop as any;
-  }
 
   describe('CheckBoxComponent', () => {
     let component: CheckBoxComponent;

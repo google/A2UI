@@ -21,6 +21,7 @@ import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
 import { BoundProperty } from '../../core/types';
+import { createBoundProperty, StubComponent, createMockA2uiRendererService, createMockComponentBinder } from '../../testing';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -29,24 +30,6 @@ describe('ButtonComponent', () => {
   let mockSurface: any;
   let mockSurfaceGroup: any;
 
-  function createBoundProperty(val: any): BoundProperty<any> {
-    const sig = signal(val);
-    const prop = () => sig();
-    Object.defineProperties(prop, {
-      value: { get: () => sig(), configurable: true },
-      peek: { value: () => sig(), configurable: true },
-      set: {
-        value: jasmine.createSpy('set').and.callFake((v: any) => sig.set(v)),
-        configurable: true,
-      },
-      update: {
-        value: jasmine.createSpy('update').and.callFake((fn: any) => sig.update(fn)),
-        configurable: true,
-      },
-      raw: { value: val, configurable: true },
-    });
-    return prop as any;
-  }
 
   beforeEach(async () => {
     mockSurface = {
@@ -55,40 +38,14 @@ describe('ButtonComponent', () => {
         ['child1', { id: 'child1', type: 'Text', properties: { text: 'Child Content' } }],
       ]),
       catalog: {
-        id: 'test-catalog',
-        components: new Map([
-          [
-            'Text',
-            {
-              component: (() => {
-                @Component({
-                  standalone: true,
-                  selector: 'dummy-text',
-                  template: 'Dummy Text',
-                })
-                class DummyText {
-                  props = input<any>();
-                  surfaceId = input<string>();
-                  componentId = input<string>();
-                  dataContextPath = input<string>();
-                }
-                return DummyText;
-              })(),
-            },
-          ],
-        ]),
+        id: 'mock-catalog',
+        components: new Map([['Text', { type: 'Text', component: StubComponent }]]),
       },
     };
 
-    mockSurfaceGroup = {
-      getSurface: jasmine.createSpy('getSurface').and.returnValue(mockSurface),
-    };
-
-    mockRendererService = {
-      surfaceGroup: mockSurfaceGroup,
-    };
-
-    const mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
+    mockRendererService = createMockA2uiRendererService(mockSurface);
+    mockSurfaceGroup = mockRendererService.surfaceGroup;
+    const mockBinder = createMockComponentBinder();
     mockBinder.bind.and.returnValue({ text: { value: () => 'bound text' } });
 
     await TestBed.configureTestingModule({
