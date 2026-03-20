@@ -20,7 +20,7 @@ import {
   SurfaceGroupModel,
   ActionListener as ActionHandler,
   A2uiMessage,
-  SurfaceGroupAction,
+  A2uiClientAction as Action,
 } from '@a2ui/web_core/v0_9';
 import { AngularComponentImplementation, AngularCatalog } from '../catalog/types';
 
@@ -36,7 +36,7 @@ export interface RendererConfiguration {
    * This callback is invoked whenever a component in any surface triggers an action
    * (e.g., clicking a button with an `onTap` property).
    */
-  actionHandler?: (action: SurfaceGroupAction) => void;
+  actionHandler?: (action: Action) => void;
 }
 
 /**

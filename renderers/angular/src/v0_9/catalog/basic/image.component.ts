@@ -63,9 +63,9 @@ export class ImageComponent {
    * - `variant`: Style variant ('default', 'circle', 'rounded').
    */
   props = input<Record<string, BoundProperty>>({});
-  surfaceId = input<string>();
+  surfaceId = input.required<string>();
   componentId = input<string>();
-  dataContextPath = input<string>();
+  dataContextPath = input<string>('/');
 
   url = computed(() => this.props()['url']?.value());
   description = computed(() => this.props()['description']?.value() || '');

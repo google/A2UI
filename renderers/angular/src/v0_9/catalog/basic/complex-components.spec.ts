@@ -81,6 +81,7 @@ describe('Complex Components', () => {
     text?: string;
     props = input<any>();
     surfaceId = input<string>();
+    componentId = input<string>();
     dataContextPath = input<string>();
   }
 
