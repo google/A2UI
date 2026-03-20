@@ -81,6 +81,14 @@
   button.equals:hover {
     background-color: #2da84e;
   }
+  button.mcp-equals {
+    background-color: #5856d6;
+    color: white;
+    grid-column: span 2;
+  }
+  button.mcp-equals:hover {
+    background-color: #4342a1;
+  }
   button.clear {
     background-color: #ff3b30;
     color: white;
@@ -110,7 +118,8 @@
     <button onclick="appendNumber('1')">1</button>
     <button onclick="appendNumber('2')">2</button>
     <button onclick="appendNumber('3')">3</button>
-    <button class="equals" onclick="calculate()">=</button>
+    <button class="equals" title="Local JavaScript Calculation" onclick="calculateJavascript()">💻 =</button>
+    <button class="mcp-equals" title="MCP Agent Calculation" onclick="calculateToolCall()">🤖 =</button>
     <button onclick="appendNumber('0')">0</button>
     <button onclick="appendPoint()">.</button>
   </div>
@@ -145,7 +154,7 @@
   function appendOperator(op) {
     if (currentInput === '') return;
     if (previousInput !== '') {
-      calculate();
+      calculateJavascript();
     }
     operator = op;
     previousInput = currentInput;
@@ -159,7 +168,7 @@
     updateDisplay();
   }
 
-  function calculate() {
+  function calculateJavascript() {
     if (previousInput === '' || currentInput === '') return;
     let result;
     const prevVal = parseFloat(previousInput);
@@ -200,6 +209,41 @@
 
     operator = null;
     previousInput = '';
+  }
+
+  function calculateToolCall() {
+    if (previousInput === '' || currentInput === '') return;
+    const prevVal = parseFloat(previousInput);
+    const currentVal = parseFloat(currentInput);
+    if (isNaN(prevVal) || isNaN(currentVal)) return;
+
+    let opName = '';
+    switch (operator) {
+      case '+': opName = 'add'; break;
+      case '-': opName = 'subtract'; break;
+      case '*': opName = 'multiply'; break;
+      case '/': opName = 'divide'; break;
+      default: return;
+    }
+
+    sendRequest('tools/call', {
+      name: 'calculate',
+      arguments: {
+        operation: opName,
+        a: prevVal,
+        b: currentVal
+      }
+    }).then(result => {
+       console.log("Tool call result:", result);
+    }).catch(err => {
+       console.error("Tool call failed:", err);
+    });
+
+    // Reset state locally as per user requirement (UI can forget about it)
+    currentInput = '';
+    previousInput = '';
+    operator = null;
+    updateDisplay();
   }
 
   // MCP Communication

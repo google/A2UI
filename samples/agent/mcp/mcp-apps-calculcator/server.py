@@ -53,6 +53,79 @@ def main(port: int, transport: str) -> int:
         raise ValueError(f"Resource file not found for uri: {uri}")
     raise ValueError(f"Unknown resource: {uri}")
 
+  @app.call_tool()
+  async def handle_call_tool(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    if name == "calculate":
+      try:
+        operation = arguments.get("operation")
+        a = float(arguments.get("a"))
+        b = float(arguments.get("b"))
+        result = None
+        if operation == "add":
+          result = a + b
+        elif operation == "subtract":
+          result = a - b
+        elif operation == "multiply":
+          result = a * b
+        elif operation == "divide":
+          if b == 0:
+            raise ValueError("Division by zero")
+          result = a / b
+        else:
+          raise ValueError(f"Unknown operation: {operation}")
+        
+        symbols = {"add": "+", "subtract": "-", "multiply": "*", "divide": "/"}
+        symbol = symbols.get(operation, "?")
+        return {
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"The calculation of {a} {symbol} {b} is {result}"
+                }
+            ]
+        }
+      except Exception as e:
+        return {
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"Error: {str(e)}"
+                }
+            ],
+            "isError": True,
+        }
+
+    raise ValueError(f"Unknown tool: {name}")
+
+  @app.list_tools()
+  async def list_tools() -> list[types.Tool]:
+    return [
+        types.Tool(
+            name="calculate",
+            title="Calculate",
+            description="Performs a basic arithmetic calculation.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "operation": {
+                        "type": "string",
+                        "enum": ["add", "subtract", "multiply", "divide"],
+                        "description": "The math operation to perform."
+                    },
+                    "a": {
+                        "type": "number",
+                        "description": "The first operand."
+                    },
+                    "b": {
+                        "type": "number",
+                        "description": "The second operand."
+                    }
+                },
+                "required": ["operation", "a", "b"]
+            }
+        ),
+    ]
+
   if transport == "sse":
     from mcp.server.sse import SseServerTransport
     from starlette.applications import Starlette
