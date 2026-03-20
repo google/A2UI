@@ -32,12 +32,19 @@ export class DemoCatalog extends BasicCatalogBase {
   constructor() {
     const cardApi: AngularComponentImplementation = {
       name: 'Card',
-      schema: z.object({}).passthrough(),
+      schema: z.object({
+        child: z.string().optional(),
+      }) as any,
       component: CardComponent,
     };
     const customSliderApi: AngularComponentImplementation = {
       name: 'CustomSlider',
-      schema: z.object({}).passthrough(),
+      schema: z.object({
+        label: z.string().optional(),
+        value: z.number().optional(),
+        min: z.number().optional(),
+        max: z.number().optional(),
+      }) as any,
       component: CustomSliderComponent,
     };
 
