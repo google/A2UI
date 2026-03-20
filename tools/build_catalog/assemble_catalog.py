@@ -51,6 +51,7 @@ def is_remote_uri(uri: str) -> bool:
 
 
 BASIC_CATALOG_URLS = {
+    "0.8": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_8/json/standard_catalog_definition.json",
     "0.9": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_9/json/basic_catalog.json",
     "0.10": "https://raw.githubusercontent.com/google/A2UI/refs/heads/main/specification/v0_10/json/basic_catalog.json"
 }
@@ -68,6 +69,11 @@ class CatalogAssembler:
   # This allows developers to work with local files while the tool defaults to remote sources.
   INTERCEPT_MAP = {
       "basic_catalog.json": ("local_basic_catalog_path", BASIC_CATALOG_URLS, "basic_catalog"),
+      "standard_catalog_definition.json": (
+          "local_basic_catalog_path",
+          BASIC_CATALOG_URLS,
+          "basic_catalog",
+      ),
       "common_types.json": ("local_common_types_path", COMMON_TYPES_URLS, "common_types"),
   }
 
@@ -273,29 +279,58 @@ class CatalogAssembler:
         "functions": {},
     }
 
-  def _load_initial_theme(self, basic_catalog_uri: str) -> tuple[dict[str, Any], dict[str, str]]:
+  def _load_initial_theme(
+      self, basic_catalog_uri: str
+  ) -> tuple[dict[str, Any], dict[str, str]]:
     """Loads the initial theme from the basic catalog."""
     data = self.fetch_json(basic_catalog_uri)
     theme = {"type": "object", "properties": {}}
     sources = {}
+
+    # Version 0.9+ theme location
     if "$defs" in data and "theme" in data["$defs"]:
       theme = copy.deepcopy(data["$defs"]["theme"])
-      theme.setdefault("properties", {})
-      for k in theme["properties"]:
-        sources[k] = "basic_catalog"
+    # Version 0.8 theme location
+    elif "styles" in data:
+      theme = {"type": "object", "properties": copy.deepcopy(data["styles"])}
+
+    theme.setdefault("properties", {})
+    for k in theme["properties"]:
+      sources[k] = "basic_catalog"
     return theme, sources
 
-  def _merge_catalog_theme(self, processed_data: dict[str, Any], catalog_stem: str, merged_theme: dict[str, Any], theme_property_sources: dict[str, str], is_basic: bool) -> None:
+  def _merge_catalog_theme(
+      self,
+      processed_data: dict[str, Any],
+      catalog_stem: str,
+      merged_theme: dict[str, Any],
+      theme_property_sources: dict[str, str],
+      is_basic: bool,
+  ) -> None:
     """Merges theme properties from a processed catalog into the merged theme."""
-    if is_basic or "$defs" not in processed_data or "theme" not in processed_data["$defs"]:
+    if is_basic:
       return
 
-    cat_theme = processed_data["$defs"]["theme"]
+    cat_theme = {}
+    if "$defs" in processed_data and "theme" in processed_data["$defs"]:
+      cat_theme = processed_data["$defs"]["theme"]
+    elif "styles" in processed_data:
+      cat_theme = {"type": "object", "properties": processed_data["styles"]}
+
+    if not cat_theme:
+      return
+
     for prop_name, prop_def in cat_theme.get("properties", {}).items():
       # Collision Policy: Properties in basic_catalog can be overridden by any single catalog.
       # However, if two different custom catalogs define the same property, it is an error.
-      if prop_name in theme_property_sources and theme_property_sources[prop_name] != "basic_catalog":
-        raise CatalogError(f"Theme property clash: '{prop_name}' is defined in both '{theme_property_sources[prop_name]}' and '{catalog_stem}'")
+      if (
+          prop_name in theme_property_sources
+          and theme_property_sources[prop_name] != "basic_catalog"
+      ):
+        raise CatalogError(
+            f"Theme property clash: '{prop_name}' is defined in both"
+            f" '{theme_property_sources[prop_name]}' and '{catalog_stem}'"
+        )
       merged_theme["properties"][prop_name] = prop_def
       theme_property_sources[prop_name] = catalog_stem
 
@@ -366,7 +401,7 @@ def detect_local_overrides(inputs: list[str]) -> tuple[Optional[str], Optional[s
   local_common = None
   for inp in inputs:
     filename = Path(inp).name
-    if filename == "basic_catalog.json":
+    if filename in ["basic_catalog.json", "standard_catalog_definition.json"]:
       local_basic = inp
     elif filename == "common_types.json":
       local_common = inp
@@ -378,7 +413,7 @@ def main():
   parser.add_argument("inputs", nargs="+", help="Input paths or URLs to A2UI component catalog JSONs")
   parser.add_argument("--output-name", required=True, help="Name of the combined catalog")
   parser.add_argument("--catalog-id", type=str, help="Custom catalogId for the output. Defaults to urn:a2ui:catalog:<base_name>")
-  parser.add_argument("--version", choices=["0.9", "0.10"], default="0.9", help="A2UI basic_catalog version to use if remote")
+  parser.add_argument("--version", choices=["0.8", "0.9", "0.10"], default="0.9", help="A2UI basic_catalog version to use if remote")
   parser.add_argument("--extend-basic-catalog", action="store_true", help="Always include the entire basic_catalog.json in the output")
   parser.add_argument("--out-dir", "-o", type=Path, default="dist", help="Output directory (default: dist)")
   parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")

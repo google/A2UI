@@ -30,19 +30,11 @@ export const FunctionCallSchema = z.object({
     .default("boolean"),
 }).describe("REF:common_types.json#/$defs/FunctionCall|Invokes a named function on the client.");
 
-export const LogicExpressionSchema: z.ZodType<any> = z.lazy(() =>
-  z.union([
-    z.object({ and: z.array(LogicExpressionSchema).min(1) }),
-    z.object({ or: z.array(LogicExpressionSchema).min(1) }),
-    z.object({ not: LogicExpressionSchema }),
-    z.intersection(
-      FunctionCallSchema,
-      z.object({ returnType: z.literal("boolean").optional() }),
-    ), // FunctionCall returning boolean
-    z.object({ true: z.literal(true) }),
-    z.object({ false: z.literal(false) }),
-  ]),
-).describe("REF:common_types.json#/$defs/LogicExpression|A logical expression representation.");
+export const DynamicBooleanSchema = z.union([
+  z.boolean(),
+  DataBindingSchema,
+  FunctionCallSchema,
+]).describe("REF:common_types.json#/$defs/DynamicBoolean|A boolean value that can be a literal, a path, or a function call returning a boolean.");
 
 export const DynamicStringSchema = z.union([
   z.string(),
@@ -56,12 +48,6 @@ export const DynamicNumberSchema = z.union([
   DataBindingSchema,
   FunctionCallSchema,
 ]).describe("REF:common_types.json#/$defs/DynamicNumber|Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.");
-
-export const DynamicBooleanSchema = z.union([
-  z.boolean(),
-  DataBindingSchema,
-  LogicExpressionSchema,
-]).describe("REF:common_types.json#/$defs/DynamicBoolean|A boolean value that can be a literal, a path, or a function call returning a boolean.");
 
 export const DynamicStringListSchema = z.union([
   z.array(z.string()),
@@ -82,17 +68,15 @@ export const DynamicValueSchema = z.union([
 export type DataBinding = z.infer<typeof DataBindingSchema>;
 /** A function call representation. */
 export type FunctionCall = z.infer<typeof FunctionCallSchema>;
-/** A logical expression representation. */
-export type LogicExpression = z.infer<typeof LogicExpressionSchema>;
 /** A dynamic string that can be a literal, a data binding, or a function call. */
 export type DynamicString = z.infer<typeof DynamicStringSchema>;
 /** A dynamic number that can be a literal, a data binding, or a function call. */
 export type DynamicNumber = z.infer<typeof DynamicNumberSchema>;
-/** A dynamic boolean that can be a literal, a data binding, or a function call. */
+/** A dynamic boolean that can be a literal, a path, or a function call returning a boolean. */
 export type DynamicBoolean = z.infer<typeof DynamicBooleanSchema>;
 /** A dynamic list of strings that can be a literal array, a data binding, or a function call. */
 export type DynamicStringList = z.infer<typeof DynamicStringListSchema>;
-/** A dynamic value that can be a literal, a data binding, or a function call. */
+/** A dynamic value that can be a literal, a path, or a function call returning any type. */
 export type DynamicValue = z.infer<typeof DynamicValueSchema>;
 
 export const ComponentIdSchema = z
@@ -135,16 +119,13 @@ export const ActionSchema = z.union([
 /** Triggers a server-side event or a local client-side function. */
 export type Action = z.infer<typeof ActionSchema>;
 
-export const CheckRuleSchema = z.intersection(
-  LogicExpressionSchema,
-  z.object({
-    message: z
-      .string()
-      .describe("The error message to display if the check fails."),
-  }),
-).describe("REF:common_types.json#/$defs/CheckRule|A check rule consisting of a condition and an error message.");
+export const CheckRuleSchema = z.object({
+  condition: DynamicBooleanSchema,
+  message: z.string().describe("The error message to display if the check fails."),
+}).describe("REF:common_types.json#/$defs/CheckRule|A check rule consisting of a condition and an error message.");
 /** A check rule consisting of a condition and an error message. */
 export type CheckRule = z.infer<typeof CheckRuleSchema>;
+
 
 export const CheckableSchema = z.object({
   checks: z
@@ -195,7 +176,6 @@ export const CommonSchemas = {
   DynamicBoolean: DynamicBooleanSchema,
   DynamicStringList: DynamicStringListSchema,
   FunctionCall: FunctionCallSchema,
-  LogicExpression: LogicExpressionSchema,
   CheckRule: CheckRuleSchema,
   Checkable: CheckableSchema,
   Action: ActionSchema,
