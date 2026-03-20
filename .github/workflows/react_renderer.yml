@@ -58,6 +58,14 @@ jobs:
       - name: Test React renderer
         working-directory: ./renderers/react
         run: npm test
+
+      - name: Build React Demo
+        working-directory: ./renderers/react
+        run: npm run build:demo
+
+      - name: Test React Demo
+        working-directory: ./renderers/react
+        run: npm run test:demo
   lint:
     runs-on: ubuntu-latest
 
