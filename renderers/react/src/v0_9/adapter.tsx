@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, {useRef, useSyncExternalStore, useCallback} from 'react';
+import React, {useRef, useSyncExternalStore, useCallback, memo} from 'react';
 import {type z} from 'zod';
 import {type ComponentContext, GenericBinder} from '@a2ui/web_core/v0_9';
 import type {ComponentApi, ResolveA2uiProps} from '@a2ui/web_core/v0_9';
@@ -44,6 +44,24 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
 ): ReactComponentImplementation {
   type Props = ResolveA2uiProps<z.infer<Schema>>;
 
+  /**
+   * Memoized version of the user-provided component.
+   * We use a custom equality function because 'context' and 'buildChild' are recreated 
+   * on every surface render, but their functional identity is stable for a given component.
+   */
+  const MemoizedRender = memo(RenderComponent, (prev, next) => {
+    // 1. Check if the resolved A2UI props changed (Binder ensures reference equality if no data changed)
+    if (prev.props !== next.props) return false;
+
+    // 2. Check if the structural identity changed
+    if (prev.context.componentModel.id !== next.context.componentModel.id) return false;
+    if (prev.context.dataContext.path !== next.context.dataContext.path) return false;
+
+    // buildChild is a closure over renderComponent; if the above are the same, 
+    // it is functionally equivalent.
+    return true;
+  });
+
   const ReactWrapper: React.FC<{
     context: ComponentContext;
     buildChild: (id: string, basePath?: string) => React.ReactNode;
@@ -67,7 +85,7 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
     const props = useSyncExternalStore(subscribe, getSnapshot);
 
     return (
-      <RenderComponent props={props || ({} as Props)} buildChild={buildChild} context={context} />
+      <MemoizedRender props={props || ({} as Props)} buildChild={buildChild} context={context} />
     );
   };
 
