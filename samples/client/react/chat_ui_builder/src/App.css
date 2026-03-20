@@ -113,17 +113,14 @@ code {
 .render-surface .a2ui-card section {
   position: relative;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .render-surface > .a2ui-surface > .a2ui-column > section > .a2ui-card > section {
-  padding: 28px;
-  border-radius: 32px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
-  border: 1px solid rgba(191, 219, 254, 0.7);
-  box-shadow:
-    0 22px 55px rgba(15, 23, 42, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  padding: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #ebeef5;
 }
 
 .render-surface > .a2ui-surface > .a2ui-column > section > .a2ui-card > section::before,
@@ -132,20 +129,20 @@ code {
   position: absolute;
   inset: 0 auto auto 0;
   width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, rgba(37, 99, 235, 0.95), rgba(56, 189, 248, 0.7));
+  height: 1px;
+  background: rgba(235, 238, 245, 0.9);
 }
 
 .render-surface .a2ui-card .a2ui-card {
-  max-width: 880px;
-  margin: 0 auto 18px;
+  max-width: 920px;
+  margin: 0 auto 16px;
 }
 
 .render-surface .a2ui-card .a2ui-card > section {
-  padding: 24px;
-  border-radius: 24px;
-  background: linear-gradient(180deg, #ffffff, #f8fbff);
-  border: 1px solid rgba(148, 163, 184, 0.22);
+  padding: 20px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #ebeef5;
 }
 
 .render-surface .a2ui-column > section,
@@ -155,7 +152,7 @@ code {
 }
 
 .render-surface .a2ui-text > section {
-  color: #0f172a;
+  color: #303133;
   line-height: 1.6;
   display: flex;
   flex-direction: column;
@@ -170,23 +167,23 @@ code {
 }
 
 .render-surface .a2ui-text h1 {
-  font-size: 1.95rem;
+  font-size: 1.9rem;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .render-surface .a2ui-text h2 {
-  font-size: 1.2rem;
-  color: #0f172a;
+  font-size: 1.15rem;
+  color: #303133;
 }
 
 .render-surface .a2ui-text h3 {
   font-size: 1rem;
-  color: #0f172a;
+  color: #303133;
 }
 
 .render-surface .a2ui-text p {
-  color: #334155;
+  color: #606266;
 }
 
 .render-surface .a2ui-text p + p {
@@ -206,10 +203,11 @@ code {
   width: 100%;
   min-height: 48px;
   padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  background: rgba(248, 250, 252, 0.96);
-  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+  border-radius: 8px;
+  border: 1px solid #dcdfe6;
+  background: #ffffff;
+  color: #303133;
+  box-shadow: none;
 }
 
 .render-surface .a2ui-textfield input:focus,
@@ -218,26 +216,24 @@ code {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: rgba(37, 99, 235, 0.55);
-  box-shadow:
-    0 0 0 4px rgba(59, 130, 246, 0.12),
-    inset 0 1px 2px rgba(15, 23, 42, 0.05);
+  border-color: #409eff;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.16);
 }
 
 .render-surface .a2ui-button button {
   min-width: 140px;
   min-height: 44px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+  border-radius: 8px;
+  background: #409eff;
+  box-shadow: none;
   transition:
     transform 160ms ease,
-    box-shadow 160ms ease;
+    background-color 160ms ease;
 }
 
 .render-surface .a2ui-button button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.32);
+  background: #66b1ff;
 }
 
 .render-surface .a2ui-button .a2ui-text p {
@@ -432,6 +428,7 @@ button:disabled {
 .flow-diagram__header h3 {
   margin: 0;
   font-size: 1.08rem;
+  color: #303133;
 }
 
 .flow-diagram__eyebrow {
@@ -445,37 +442,38 @@ button:disabled {
 
 .flow-diagram__canvas {
   position: relative;
-  overflow: hidden;
+  overflow: auto;
   padding: 12px;
-  border-radius: 24px;
-  background:
-    radial-gradient(circle at top, rgba(191, 219, 254, 0.32), transparent 48%),
-    linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.98));
-  border: 1px solid rgba(191, 219, 254, 0.65);
+  border-radius: 10px;
+  background: #f5f7fa;
+  border: 1px solid #ebeef5;
+}
+
+.flow-diagram__stage {
+  position: relative;
 }
 
 .flow-diagram__edges {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   overflow: visible;
 }
 
 .flow-diagram__edge-path {
   fill: none;
-  stroke: #2563eb;
-  stroke-width: 3;
+  stroke: #409eff;
+  stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 8px 16px rgba(37, 99, 235, 0.18));
 }
 
 .flow-diagram__edge-label-bg {
-  fill: rgba(255, 255, 255, 0.98);
-  stroke: rgba(148, 163, 184, 0.28);
+  fill: #ffffff;
+  stroke: #dcdfe6;
 }
 
 .flow-diagram__edge-label {
-  fill: #1e293b;
+  fill: #606266;
   font-size: 12px;
   text-anchor: middle;
   font-weight: 700;
@@ -483,31 +481,29 @@ button:disabled {
 
 .flow-diagram__node {
   position: absolute;
-  padding: 16px;
-  border-radius: 22px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
-  box-shadow:
-    0 18px 32px rgba(15, 23, 42, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #dcdfe6;
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
 }
 
 .flow-diagram__node strong {
   font-size: 0.92rem;
   line-height: 1.45;
-  color: #0f172a;
+  color: #303133;
 }
 
 .flow-diagram__node-kind {
   width: fit-content;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(219, 234, 254, 0.9);
-  color: #1d4ed8;
+  background: #ecf5ff;
+  color: #409eff;
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -515,14 +511,14 @@ button:disabled {
 }
 
 .flow-diagram__node--decision {
-  border-color: rgba(251, 191, 36, 0.55);
-  background: linear-gradient(180deg, rgba(255, 251, 235, 0.98), rgba(254, 243, 199, 0.86));
+  border-color: #f3d19e;
+  background: #fdf6ec;
 }
 
 .flow-diagram__node--start,
 .flow-diagram__node--end {
-  border-color: rgba(52, 211, 153, 0.45);
-  background: linear-gradient(180deg, rgba(236, 253, 245, 0.98), rgba(209, 250, 229, 0.88));
+  border-color: #b3e19d;
+  background: #f0f9eb;
 }
 
 .flow-diagram__empty {
