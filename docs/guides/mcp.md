@@ -2,6 +2,8 @@
 
 This guide outlines how to use **A2UI** declarative syntax to build rich, interactive interfaces on top of **Model Context Protocol (MCP)** using Tools and Resources.
 
+See samples at [MCP Samples](../../samples/agent/mcp).
+
 ## Catalog Negotiation
 
 Before a server can send A2UI to a client, they must establish mutual support for the protocol and determine which catalogs are available. Depending on your system architecture, this capability negotiation can be handled in one of two ways: during the initial connection handshake or on a per-message basis.
@@ -24,8 +26,8 @@ Example Initialize Request:
       "version": "1.0.0"
     },
     "capabilities": {
-      "experimental": {
-        "a2ui": {
+      "a2ui": {
+        "clientCapabilities": {
           "v0.10": {
             "supportedCatalogIds": [
               "https://a2ui.org/specification/v0_10/basic_catalog.json"
@@ -56,12 +58,10 @@ Example Call Request Metadata:
       "a2ui": {
         "clientCapabilities": {
           "v0.10": {
-            "properties": {
-              "supportedCatalogIds": [
-                "https://a2ui.org/specification/v0_10/basic_catalog.json"
-              ],
-              "inlineCatalogs": []
-            }
+            "supportedCatalogIds": [
+              "https://a2ui.org/specification/v0_10/basic_catalog.json"
+            ],
+            "inlineCatalogs": []
           }
         }
       }
