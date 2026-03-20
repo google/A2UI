@@ -18,9 +18,18 @@ from typing import Any, Optional, List
 from a2a.server.agent_execution import RequestContext
 from a2a.types import AgentExtension, Part, DataPart, TextPart
 
+from a2ui.core.schema.constants import (
+    A2UI_V08_EXTENSION_URI,
+    A2UI_V09_EXTENSION_URI,
+    SUPPORTED_VERSIONS,
+    VERSION_0_9,
+    VERSION_TO_URI,
+    URI_TO_VERSION,
+)
+
 logger = logging.getLogger(__name__)
 
-A2UI_EXTENSION_URI = "https://a2ui.org/a2a-extension/a2ui/v0.9"
+A2UI_EXTENSION_URI = A2UI_V09_EXTENSION_URI
 AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY = "supportedCatalogIds"
 AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY = "acceptsInlineCatalogs"
 
@@ -80,30 +89,32 @@ def get_a2ui_datapart(part: Part) -> Optional[DataPart]:
 def get_a2ui_agent_extension(
     accepts_inline_catalogs: bool = False,
     supported_catalog_ids: List[str] = [],
+    version: str = VERSION_0_9,
 ) -> AgentExtension:
-  """Creates the A2UI AgentExtension configuration.
+    """Creates the A2UI AgentExtension configuration.
 
-  Args:
-      accepts_inline_catalogs: Whether the agent accepts inline catalogs.
-      supported_catalog_ids: All pre-defined catalogs the agent is known to support.
+    Args:
+        accepts_inline_catalogs: Whether the agent accepts inline catalogs.
+        supported_catalog_ids: All pre-defined catalogs the agent is known to support.
+        version: The A2UI version for this extension.
 
-  Returns:
-      The configured A2UI AgentExtension.
-  """
-  params = {}
-  if accepts_inline_catalogs:
-    params[AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY] = (
-        True  # Only set if not default of False
+    Returns:
+        The configured A2UI AgentExtension.
+    """
+    params = {}
+    if accepts_inline_catalogs:
+        params[AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY] = True
+
+    if supported_catalog_ids:
+        params[AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY] = supported_catalog_ids
+
+    uri = VERSION_TO_URI.get(version, A2UI_EXTENSION_URI)
+
+    return AgentExtension(
+        uri=uri,
+        description=f"Provides agent driven UI using the A2UI JSON {version} format.",
+        params=params if params else None,
     )
-
-  if supported_catalog_ids:
-    params[AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY] = supported_catalog_ids
-
-  return AgentExtension(
-      uri=A2UI_EXTENSION_URI,
-      description="Provides agent driven UI using the A2UI JSON format.",
-      params=params if params else None,
-  )
 
 
 def parse_response_to_parts(
@@ -151,20 +162,26 @@ def parse_response_to_parts(
   return parts
 
 
-def try_activate_a2ui_extension(context: RequestContext) -> bool:
-  """Activates the A2UI extension if requested.
+def try_activate_a2ui_extension(context: RequestContext) -> Optional[str]:
+    """Activates the A2UI extension if requested, negotiating the version.
 
-  Args:
-      context: The request context to check.
+    If multiple versions are requested, the latest supported version is chosen.
 
-  Returns:
-      True if activated, False otherwise.
-  """
-  if A2UI_EXTENSION_URI in context.requested_extensions or (
-      context.message
-      and context.message.extensions
-      and A2UI_EXTENSION_URI in context.message.extensions
-  ):
-    context.add_activated_extension(A2UI_EXTENSION_URI)
-    return True
-  return False
+    Args:
+        context: The request context to check.
+
+    Returns:
+        The negotiated version string (e.g., "0.9") if activated, None otherwise.
+    """
+    requested = set(context.requested_extensions)
+    if context.message and context.message.extensions:
+        requested.update(context.message.extensions)
+
+    # Check for supported versions in preference order
+    for version in SUPPORTED_VERSIONS:
+        uri = VERSION_TO_URI.get(version)
+        if uri and uri in requested:
+            context.add_activated_extension(uri)
+            return version
+
+    return None

@@ -32,6 +32,17 @@ INLINE_CATALOG_NAME = "inline"
 VERSION_0_8 = "0.8"
 VERSION_0_9 = "0.9"
 
+A2UI_V08_EXTENSION_URI = "https://a2ui.org/a2a-extension/a2ui/v0.8"
+A2UI_V09_EXTENSION_URI = "https://a2ui.org/a2a-extension/a2ui/v0.9"
+
+SUPPORTED_VERSIONS = [VERSION_0_9, VERSION_0_8]  # Preference order
+
+VERSION_TO_URI = {
+    VERSION_0_8: A2UI_V08_EXTENSION_URI,
+    VERSION_0_9: A2UI_V09_EXTENSION_URI,
+}
+URI_TO_VERSION = {v: k for k, v in VERSION_TO_URI.items()}
+
 SPEC_VERSION_MAP = {
     VERSION_0_8: {
         SERVER_TO_CLIENT_SCHEMA_KEY: "specification/v0_8/json/server_to_client.json",

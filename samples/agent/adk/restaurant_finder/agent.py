@@ -40,12 +40,21 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.core.schema.constants import VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.core.schema.constants import (
+    A2UI_OPEN_TAG,
+    A2UI_CLOSE_TAG,
+    SUPPORTED_VERSIONS,
+    VERSION_0_9,
+)
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
-from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
+from a2ui.a2a import (
+    create_a2ui_part,
+    get_a2ui_agent_extension,
+    parse_response_to_parts,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -55,17 +64,26 @@ class RestaurantAgent:
 
   SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
-  def __init__(self, base_url: str, use_ui: bool = False):
+  def __init__(
+      self,
+      base_url: str,
+      version: str,
+      examples_path: str,
+      ui_description: str,
+      use_ui: bool = False,
+  ):
+    super().__init__()
     self.base_url = base_url
+    self.version = version
+    self.ui_description = ui_description
     self.use_ui = use_ui
-    self.version = VERSION_0_9
     self._schema_manager = (
         A2uiSchemaManager(
             self.version,
             catalogs=[
                 BasicCatalog.get_config(
                     version=self.version,
-                    examples_path=f"examples/{self.version}",
+                    examples_path=examples_path,
                 )
             ],
             schema_modifiers=[remove_strict_validation],
@@ -84,14 +102,22 @@ class RestaurantAgent:
     )
 
   def get_agent_card(self) -> AgentCard:
+    # Advertise all supported versions in the AgentCard
+    extensions = [
+        get_a2ui_agent_extension(
+            accepts_inline_catalogs=self._schema_manager.accepts_inline_catalogs
+            if self.use_ui
+            else False,
+            supported_catalog_ids=self._schema_manager.supported_catalog_ids
+            if self.use_ui
+            else [],
+            version=v,
+        )
+        for v in SUPPORTED_VERSIONS
+    ]
     capabilities = AgentCapabilities(
         streaming=True,
-        extensions=[
-            get_a2ui_agent_extension(
-                self._schema_manager.accepts_inline_catalogs,
-                self._schema_manager.supported_catalog_ids,
-            )
-        ],
+        extensions=extensions,
     )
     skill = AgentSkill(
         id="find_restaurants",
@@ -124,7 +150,7 @@ class RestaurantAgent:
     instruction = (
         self._schema_manager.generate_system_prompt(
             role_description=ROLE_DESCRIPTION,
-            ui_description=UI_DESCRIPTION,
+            ui_description=self.ui_description,
             include_schema=True,
             include_examples=True,
             validate_examples=True,
@@ -335,3 +361,22 @@ class RestaurantAgent:
         ],
     }
     # --- End: UI Validation and Retry Logic ---
+
+
+class RestaurantAgentFactory:
+  """Factory for creating RestaurantAgent instances for specific versions."""
+
+  @staticmethod
+  def get_agent(base_url: str, version: str, use_ui: bool = False) -> RestaurantAgent:
+    """Returns a version-specific RestaurantAgent instance."""
+    # pylint: disable=import-outside-toplevel
+    from .v0_8.agent import RestaurantAgentV08
+    from .v0_9.agent import RestaurantAgentV09
+    from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
+
+    if version == VERSION_0_8:
+      return RestaurantAgentV08(base_url, use_ui)
+    if version == VERSION_0_9:
+      return RestaurantAgentV09(base_url, use_ui)
+
+    raise ValueError(f"No agent implementation for A2UI version: {version}")

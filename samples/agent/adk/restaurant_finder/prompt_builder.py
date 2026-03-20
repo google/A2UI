@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
@@ -22,8 +23,16 @@ ROLE_DESCRIPTION = (
     " UI JSON response."
 )
 
-UI_DESCRIPTION = """
+UI_DESCRIPTION_V0_9 = """
 -   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `updateDataModel.value` object (e.g., for the "items" key).
+-   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
+-   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
+-   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
+-   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
+"""
+
+UI_DESCRIPTION_V0_8 = """
+-   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array.
 -   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
 -   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
 -   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
@@ -52,33 +61,33 @@ def get_text_prompt() -> str:
 
 
 if __name__ == "__main__":
-  # Example of how to use the A2UI Schema Manager to generate a system prompt
-  # In your actual application, you would call this from your main agent logic.
+  from a2ui.core.schema.constants import VERSION_0_9, VERSION_0_8
+  
+  for version in [VERSION_0_8, VERSION_0_9]:
+    ui_desc = UI_DESCRIPTION_V0_8 if version == VERSION_0_8 else UI_DESCRIPTION_V0_9
+    examples_path = f"v{version.replace('.', '_')}/examples"
+    
+    # We must check if the path exists before running this (since it's relative)
+    # This is mainly for manual verification in the script
+    if not os.path.exists(examples_path):
+        examples_path = f"samples/agent/adk/restaurant_finder/{examples_path}"
 
-  # You can now easily construct a prompt with the relevant examples.
-  # For a different agent (e.g., a flight booker), you would pass in
-  # different examples but use the same `get_ui_prompt` function.
-  version = VERSION_0_9
-  restaurant_prompt = A2uiSchemaManager(
-      version,
-      catalogs=[
-          BasicCatalog.get_config(
-              version=version,
-              examples_path=f"examples/{version}",
-          )
-      ],
-      schema_modifiers=[remove_strict_validation],
-  ).generate_system_prompt(
-      role_description=ROLE_DESCRIPTION,
-      ui_description=UI_DESCRIPTION,
-      include_schema=True,
-      include_examples=True,
-      validate_examples=True,
-  )
+    restaurant_prompt = A2uiSchemaManager(
+        version,
+        catalogs=[
+            BasicCatalog.get_config(
+                version=version,
+                examples_path=examples_path,
+            )
+        ],
+        schema_modifiers=[remove_strict_validation],
+    ).generate_system_prompt(
+        role_description=ROLE_DESCRIPTION,
+        ui_description=ui_desc,
+        include_schema=True,
+        include_examples=True,
+        validate_examples=True,
+    )
 
-  print(restaurant_prompt)
-
-  # This demonstrates how you could save the prompt to a file for inspection
-  with open("generated_prompt.txt", "w") as f:
-    f.write(restaurant_prompt)
-  print("\nGenerated prompt saved to generated_prompt.txt")
+    print(f"\n--- GENERATED PROMPT FOR {version} ---\n")
+    print(restaurant_prompt[:500] + "...")

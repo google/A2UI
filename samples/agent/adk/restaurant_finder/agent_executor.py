@@ -32,7 +32,8 @@ from a2a.utils import (
 )
 from a2a.utils.errors import ServerError
 from a2ui.a2a import try_activate_a2ui_extension
-from agent import RestaurantAgent
+from a2ui.core.schema.constants import VERSION_0_9
+from agent import RestaurantAgent, RestaurantAgentFactory
 
 logger = logging.getLogger(__name__)
 
@@ -40,11 +41,21 @@ logger = logging.getLogger(__name__)
 class RestaurantAgentExecutor(AgentExecutor):
   """Restaurant AgentExecutor Example."""
 
-  def __init__(self, ui_agent: RestaurantAgent, text_agent: RestaurantAgent):
-    # Instantiate two agents: one for UI and one for text-only.
-    # The appropriate one will be chosen at execution time.
-    self.ui_agent = ui_agent
-    self.text_agent = text_agent
+  def __init__(self, base_url: str):
+    self.base_url = base_url
+    # We'll instantiate agents on demand via the factory.
+    self._agent_cache = {}
+    # text_agent is just a v0.9 agent with use_ui=False (actually version doesn't matter much for text)
+    self.text_agent = RestaurantAgentFactory.get_agent(
+        base_url, VERSION_0_9, use_ui=False
+    )
+
+  def _get_ui_agent(self, version: str) -> RestaurantAgent:
+    if version not in self._agent_cache:
+      self._agent_cache[version] = RestaurantAgentFactory.get_agent(
+          self.base_url, version, use_ui=True
+      )
+    return self._agent_cache[version]
 
   async def execute(
       self,
@@ -56,12 +67,15 @@ class RestaurantAgentExecutor(AgentExecutor):
     action = None
 
     logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
-    use_ui = try_activate_a2ui_extension(context)
+    negotiated_version = try_activate_a2ui_extension(context)
 
     # Determine which agent to use based on whether the a2ui extension is active.
-    if use_ui:
-      agent = self.ui_agent
-      logger.info("--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---")
+    if negotiated_version:
+      agent = self._get_ui_agent(negotiated_version)
+      logger.info(
+          f"--- AGENT_EXECUTOR: A2UI extension {negotiated_version} is active. Using UI"
+          " agent. ---"
+      )
     else:
       agent = self.text_agent
       logger.info(
