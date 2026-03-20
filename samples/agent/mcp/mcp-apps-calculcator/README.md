@@ -28,3 +28,4 @@ Connect to http://localhost:8000/sse using Transport Type SSE and fetch the reso
 ## Available Tools
 
 - **`calculate`**: Performs basic arithmetic calculations (`add`, `subtract`, `multiply`, `divide`). It takes `operation`, `a`, and `b` as arguments and returns the result.
+  - Used by the **"🤖 ="** button in the calculator app to delegate calculations to the MCP server via a `tools/call` request.
