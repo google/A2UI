@@ -41,7 +41,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install top-level deps
+      - name: Build web_core dependency
+        working-directory: ./renderers/web_core
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install React renderer deps
         working-directory: ./renderers/react
         run: npm ci
 
@@ -63,7 +69,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install top-level deps
+      - name: Build web_core dependency
+        working-directory: ./renderers/web_core
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install React renderer deps
         working-directory: ./renderers/react
         run: npm ci
 
