@@ -46,6 +46,61 @@ describe("MessageProcessor", () => {
     const surface = processor.model.getSurface("s1");
     assert.ok(surface);
     assert.strictEqual(surface.id, "s1");
+    assert.strictEqual(surface.sendDataModel, false);
+  });
+
+  it("creates surface with sendDataModel enabled", () => {
+    processor.processMessages([
+      {
+        version: "v0.9",
+        createSurface: {
+          surfaceId: "s1",
+          catalogId: "test-catalog",
+          sendDataModel: true,
+        },
+      },
+    ]);
+    const surface = processor.model.getSurface("s1");
+    assert.strictEqual(surface?.sendDataModel, true);
+  });
+
+  it("getClientDataModel filters surfaces correctly", () => {
+    processor.processMessages([
+      {
+        version: "v0.9",
+        createSurface: { surfaceId: "s1", catalogId: "test-catalog", sendDataModel: true },
+      },
+      {
+        version: "v0.9",
+        createSurface: { surfaceId: "s2", catalogId: "test-catalog", sendDataModel: false },
+      },
+      {
+        version: "v0.9",
+        updateDataModel: { surfaceId: "s1", value: { user: "Alice" } },
+      },
+      {
+        version: "v0.9",
+        updateDataModel: { surfaceId: "s2", value: { secret: "Bob" } },
+      },
+    ]);
+
+    const dataModel = processor.getClientDataModel();
+    assert.ok(dataModel);
+    assert.strictEqual(dataModel.version, "v0.9");
+    assert.deepStrictEqual(dataModel.surfaces, {
+      s1: { user: "Alice" },
+    });
+    assert.strictEqual((dataModel.surfaces as any).s2, undefined);
+  });
+
+  it("getClientDataModel returns undefined if no surfaces have sendDataModel enabled", () => {
+    processor.processMessages([
+      {
+        version: "v0.9",
+        createSurface: { surfaceId: "s1", catalogId: "test-catalog" },
+      },
+    ]);
+    assert.strictEqual(processor.getClientDataModel(), undefined);
   });
 
   it("updates components on correct surface", () => {

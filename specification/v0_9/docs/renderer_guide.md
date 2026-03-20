@@ -153,17 +153,21 @@ class SurfaceGroupModel<T extends ComponentApi> {
   
   readonly onSurfaceCreated: EventSource<SurfaceModel<T>>;
   readonly onSurfaceDeleted: EventSource<string>;
-  readonly onAction: EventSource<ActionEvent>;
+  readonly onAction: EventSource<A2uiClientAction>;
 }
 
-interface ActionEvent {
+/** 
+ * Matches 'action' in specification/v0_9/json/client_to_server.json.
+ */
+interface A2uiClientAction {
+  name: string;
   surfaceId: string;
   sourceComponentId: string;
-  name: string;
+  timestamp: string; // ISO 8601
   context: Record<string, any>;
 }
 
-type ActionListener = (action: ActionEvent) => void | Promise<void>;
+type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
 
 class SurfaceModel<T extends ComponentApi> {
   readonly id: string;
@@ -171,10 +175,17 @@ class SurfaceModel<T extends ComponentApi> {
   readonly catalog: Catalog<T>;
   readonly dataModel: DataModel;
   readonly componentsModel: SurfaceComponentsModel;
-  readonly theme?: any;
+  readonly theme?: Record<string, any>;
+  /** If true, the client should send the full data model with actions. */
+  readonly sendDataModel: boolean;
 
-  readonly onAction: EventSource<ActionEvent>;
-  dispatchAction(action: ActionEvent): Promise<void>;
+  readonly onAction: EventSource<A2uiClientAction>;
+  /**
+   * Dispatches an action from this surface.
+   * @param payload The raw action event from the component.
+   * @param sourceComponentId The ID of the component that triggered the action.
+   */
+  dispatchAction(payload: Record<string, any>, sourceComponentId: string): Promise<void>;
 }
 ```
 
@@ -241,9 +252,9 @@ Transient objects created on-demand during rendering to solve "scope" and bindin
 class DataContext {
   constructor(dataModel: DataModel, path: string);
   readonly path: string;
-  set(path: string, value: any): void;
-  resolveDynamicValue<V>(v: any): V;
-  subscribeDynamicValue<V>(v: any, onChange: (v: V | undefined) => void): Subscription<V>;
+  set(path: string, value: unknown): void;
+  resolveDynamicValue<V>(v: DynamicValue): V;
+  subscribeDynamicValue<V>(v: DynamicValue, onChange: (v: V | undefined) => void): Subscription<V>;
   nested(relativePath: string): DataContext;
 }
 
@@ -252,14 +263,14 @@ class ComponentContext<T extends ComponentApi> {
   readonly componentModel: ComponentModel;
   readonly dataContext: DataContext;
   readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
-  dispatchAction(action: any): Promise<void>;
+  dispatchAction(action: Record<string, any>): Promise<void>;
 }
 ```
 
 *Escape Hatch*: Component implementations can use `ctx.surfaceComponents` to inspect the metadata of other components in the same surface (e.g. a `Row` checking if children have a `weight` property). This is discouraged but necessary for some layout engines.
 
 ### The Processing Layer (`MessageProcessor`)
-The "Controller" that accepts the raw stream of A2UI messages, parses them, and mutates the Models.
+The "Controller" that accepts the raw stream of A2UI messages, parses them, and mutates the Models. It also handles the aggregation of client state for synchronization.
 
 ```typescript
 class MessageProcessor<T extends ComponentApi> {
@@ -267,11 +278,26 @@ class MessageProcessor<T extends ComponentApi> {
   
   constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
 
-  processMessages(messages: any[]): void;
+  processMessages(messages: A2uiMessage[]): void;
   addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
-  getClientCapabilities(options?: CapabilitiesOptions): any;
+  getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities;
+  
+  /**
+   * Returns the aggregated data model for all surfaces that have 'sendDataModel' enabled.
+   * This should be used by the transport layer to populate metadata (e.g., 'a2uiClientDataModel').
+   */
+  getClientDataModel(): A2uiClientDataModel | undefined;
 }
 ```
+
+#### Client Data Model Synchronization
+When a surface is created with `sendDataModel: true`, the client is responsible for sending the current state of that surface's data model back to the server whenever a client-to-server message (like an `action`) is sent.
+
+**Implementation Flow:**
+1.  The `MessageProcessor` tracks the `sendDataModel` flag for each surface.
+2.  The `getClientDataModel()` method iterates over all active surfaces and returns a map of data models for those where the flag is enabled.
+3.  The **Transport Layer** (e.g., A2A, MCP) calls `getClientDataModel()` before sending any message to the server.
+4.  If a non-empty data model map is returned, it is included in the transport's metadata field (e.g., `a2uiClientDataModel` in A2A metadata).
 
 *   **Component Lifecycle**: If an `updateComponents` message provides an existing `id` but a *different* `type`, the processor MUST remove the old component and create a fresh one to ensure framework renderers correctly reset their internal state.
 

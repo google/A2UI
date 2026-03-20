@@ -27,6 +27,7 @@ import {
   UpdateDataModelMessage,
   DeleteSurfaceMessage,
 } from "../schema/server-to-client.js";
+import { A2uiClientDataModel } from "../schema/client-to-server.js";
 import { A2uiStateError, A2uiValidationError } from "../errors.js";
 
 /**
@@ -50,6 +51,28 @@ export class MessageProcessor<T extends ComponentApi> {
     if (this.actionHandler) {
       this.model.onAction.subscribe(this.actionHandler);
     }
+  }
+
+  /**
+   * Returns the aggregated data model for all surfaces that have 'sendDataModel' enabled.
+   */
+  getClientDataModel(): A2uiClientDataModel | undefined {
+    const surfaces: Record<string, any> = {};
+
+    for (const surface of this.model.surfacesMap.values()) {
+      if (surface.sendDataModel) {
+        surfaces[surface.id] = surface.dataModel.get("/");
+      }
+    }
+
+    if (Object.keys(surfaces).length === 0) {
+      return undefined;
+    }
+
+    return {
+      version: "v0.9",
+      surfaces,
+    };
   }
 
   /**
@@ -114,7 +137,7 @@ export class MessageProcessor<T extends ComponentApi> {
 
   private processCreateSurfaceMessage(message: CreateSurfaceMessage): void {
     const payload = message.createSurface;
-    const { surfaceId, catalogId, theme } = payload;
+    const { surfaceId, catalogId, theme, sendDataModel } = payload;
 
     // Find catalog
     const catalog = this.catalogs.find((c) => c.id === catalogId);
@@ -126,7 +149,12 @@ export class MessageProcessor<T extends ComponentApi> {
       throw new A2uiStateError(`Surface ${surfaceId} already exists.`);
     }
 
-    const surface = new SurfaceModel<T>(surfaceId, catalog, theme);
+    const surface = new SurfaceModel<T>(
+      surfaceId,
+      catalog,
+      theme,
+      sendDataModel ?? false,
+    );
     this.model.addSurface(surface);
   }
 
