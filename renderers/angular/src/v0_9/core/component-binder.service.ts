@@ -70,7 +70,7 @@ export class ComponentBinder {
           enumerable: true
         });
       } catch (e) {
-         // Ignore if name cannot be redefined (it's mostly for debugging)
+        console.warn(`Failed to define "name" property on bound signal for "${key}":`, e);
       }
       
       // Only define 'set' if we have a path-bound property to handle
