@@ -15,9 +15,9 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { ComponentContext, ComponentModel, SurfaceModel, Catalog } from '@a2ui/web_core/v0_9';
-import { BASIC_FUNCTIONS } from '@a2ui/web_core/v0_9/basic_catalog';
+import { screen, fireEvent, act } from '@testing-library/react';
+import { ComponentModel } from '@a2ui/web_core/v0_9';
+import { renderA2uiComponent } from '../utils';
 
 import {
   ReactText,
@@ -40,219 +40,302 @@ import {
   ReactDateTimeInput,
 } from '../../src/v0_9/catalog/basic';
 
-const mockCatalog = new Catalog('test', [], BASIC_FUNCTIONS);
-
-function createContext(type: string, properties: any) {
-  const surface = new SurfaceModel<any>('test-surface', mockCatalog);
-  const compModel = new ComponentModel('test-id', type, properties);
-  surface.componentsModel.addComponent(compModel);
-  return new ComponentContext(surface, 'test-id', '/');
-}
-
 describe('Basic Catalog Components', () => {
   describe('ReactText', () => {
-    it('renders text correctly', () => {
-      const ctx = createContext('Text', { text: 'Hello Basic' });
-      render(<ReactText.render context={ctx} buildChild={() => null} />);
-      expect(screen.getByText('Hello Basic')).toBeDefined();
+    it('renders static text', () => {
+      renderA2uiComponent(ReactText, 't1', { text: 'Hello World' });
+      expect(screen.getByText('Hello World')).toBeDefined();
+    });
+
+    it('renders reactive text from data model', async () => {
+      const { updateData } = renderA2uiComponent(
+        ReactText, 
+        't1', 
+        { text: { path: '/msg' } },
+        { initialData: { msg: 'Initial' } }
+      );
+      
+      expect(screen.getByText('Initial')).toBeDefined();
+
+      await act(async () => {
+        await updateData('/msg', 'Updated');
+      });
+
+      expect(screen.getByText('Updated')).toBeDefined();
+    });
+
+    it('renders with correct heading tag based on variant', () => {
+      const { view } = renderA2uiComponent(ReactText, 't1', { text: 'Title', variant: 'h1' });
+      const h1 = view.container.querySelector('h1');
+      expect(h1).not.toBeNull();
+      expect(h1?.textContent).toBe('Title');
     });
   });
 
   describe('ReactImage', () => {
-    it('renders image with url', () => {
-      const ctx = createContext('Image', { url: 'https://example.com/img.png' });
-      const { container } = render(<ReactImage.render context={ctx} buildChild={() => null} />);
-      const img = container.querySelector('img') as HTMLImageElement;
+    it('renders image with url and object-fit', () => {
+      const { view } = renderA2uiComponent(ReactImage, 'i1', { 
+        url: 'https://example.com/img.png',
+        fit: 'cover'
+      });
+      const img = view.container.querySelector('img') as HTMLImageElement;
       expect(img.src).toBe('https://example.com/img.png');
+      expect(img.style.objectFit).toBe('cover');
+    });
+
+    it('applies variant-specific styling (avatar)', () => {
+      const { view } = renderA2uiComponent(ReactImage, 'i1', { 
+        url: 'url',
+        variant: 'avatar'
+      });
+      const img = view.container.querySelector('img') as HTMLImageElement;
+      expect(img.style.borderRadius).toBe('50%');
+      expect(img.style.width).toBe('40px');
     });
   });
 
   describe('ReactIcon', () => {
-    it('renders icon with name', () => {
-      const ctx = createContext('Icon', { name: 'search' });
-      const { container } = render(<ReactIcon.render context={ctx} buildChild={() => null} />);
-      expect(container.textContent).toContain('search');
+    it('renders material icon by name', () => {
+      const { view } = renderA2uiComponent(ReactIcon, 'ic1', { name: 'settings' });
+      expect(view.container.textContent).toContain('settings');
+      expect(view.container.querySelector('.material-symbols-outlined')).not.toBeNull();
+    });
+  });
+
+  describe('ReactVideo', () => {
+    it('renders video element with source and controls', () => {
+      const { view } = renderA2uiComponent(ReactVideo, 'v1', { url: 'vid.mp4' });
+      const video = view.container.querySelector('video') as HTMLVideoElement;
+      expect(video.src).toContain('vid.mp4');
+      expect(video.controls).toBe(true);
+    });
+  });
+
+  describe('ReactAudioPlayer', () => {
+    it('renders audio element and description', () => {
+      renderA2uiComponent(ReactAudioPlayer, 'a1', { 
+        url: 'audio.mp3',
+        description: 'Listen to this'
+      });
+      expect(screen.getByText('Listen to this')).toBeDefined();
+      const audio = document.querySelector('audio') as HTMLAudioElement;
+      expect(audio.src).toContain('audio.mp3');
     });
   });
 
   describe('ReactButton', () => {
-    it('renders and handles clicks', () => {
-      const ctx = createContext('Button', { child: 'btn-label' });
-      const spy = vi.spyOn(ctx, 'dispatchAction').mockResolvedValue();
-      const buildChild = (id: string) => <span key={id}>{id}</span>;
+    it('dispatches action on click', async () => {
+      const { surface } = renderA2uiComponent(ReactButton, 'b1', { 
+        action: { event: { name: 'submit_clicked' } },
+        child: 'label1'
+      });
 
-      render(<ReactButton.render context={ctx} buildChild={buildChild} />);
-      const button = screen.getByRole('button');
-      expect(screen.getByText('btn-label')).toBeDefined();
+      const actionSpy = vi.fn();
+      surface.onAction.subscribe(actionSpy);
+
+      fireEvent.click(screen.getByRole('button'));
       
-      fireEvent.click(button);
-      // Even if action is undefined in props, it shouldn't crash.
-      // But let's test with an action.
-      const ctxWithAction = createContext('Button', { child: 'btn2', action: { event: { name: 'test' } } });
-      const spy2 = vi.spyOn(ctxWithAction, 'dispatchAction').mockResolvedValue();
-      render(<ReactButton.render context={ctxWithAction} buildChild={buildChild} />);
-      fireEvent.click(screen.getAllByRole('button')[1]!);
-      expect(spy2).toHaveBeenCalled();
+      expect(actionSpy).toHaveBeenCalledWith({ event: { name: 'submit_clicked' } });
+    });
+
+    it('is disabled when isValid is false (via checks)', async () => {
+      const { updateData } = renderA2uiComponent(
+        ReactButton, 
+        'b1', 
+        { 
+          action: { event: { name: 'submit' } },
+          checks: [
+            {
+              call: 'required',
+              args: { value: { path: '/name' } },
+              message: 'Name is required'
+            }
+          ]
+        },
+        { initialData: { name: '' } }
+      );
+
+      const button = screen.getByRole('button') as HTMLButtonElement;
+      expect(button.disabled).toBe(true);
+
+      await act(async () => {
+        await updateData('/name', 'Alice');
+      });
+
+      expect(button.disabled).toBe(false);
+    });
+
+    it('delegates child rendering to buildChild', () => {
+      const { buildChild } = renderA2uiComponent(ReactButton, 'b1', { child: 'inner1' });
+      expect(buildChild).toHaveBeenCalledWith('inner1');
+      expect(screen.getByTestId('child-inner1')).toBeDefined();
     });
   });
 
   describe('ReactTextField', () => {
-    it('handles value changes', () => {
-      const ctx = createContext('TextField', { label: 'Name', value: { path: '/name' } });
-      const spySet = vi.spyOn(ctx.dataContext, 'set');
-      render(<ReactTextField.render context={ctx} buildChild={() => null} />);
-      
+    it('updates data model on change', () => {
+      const { surface } = renderA2uiComponent(ReactTextField, 'f1', { 
+        label: 'Name',
+        value: { path: '/user/name' }
+      });
+
       const input = screen.getByLabelText('Name');
       fireEvent.change(input, { target: { value: 'Bob' } });
-      expect(spySet).toHaveBeenCalledWith('/name', 'Bob');
+      
+      expect(surface.dataModel.get('/user/name')).toBe('Bob');
     });
 
-    it('displays validation errors', async () => {
-      const ctx = createContext('TextField', { 
-        label: 'Email', 
-        value: { path: '/email' },
-        checks: [
-          {
-            call: 'required',
-            args: { value: { path: '/email' } },
-            message: 'Email is required'
-          }
-        ]
-      });
-      
-      render(<ReactTextField.render context={ctx} buildChild={() => null} />);
-      
-      expect(screen.getByText('Email is required')).toBeDefined();
+    it('shows validation error message', async () => {
+      const { updateData } = renderA2uiComponent(
+        ReactTextField, 
+        'f1', 
+        { 
+          label: 'Email',
+          value: { path: '/email' },
+          checks: [{ call: 'required', args: { value: { path: '/email' } }, message: 'Required!' }]
+        },
+        { initialData: { email: '' } }
+      );
+
+      expect(screen.getByText('Required!')).toBeDefined();
 
       await act(async () => {
-        ctx.dataContext.set('/email', 'test@example.com');
+        await updateData('/email', 'test@test.com');
       });
 
-      expect(screen.queryByText('Email is required')).toBeNull();
+      expect(screen.queryByText('Required!')).toBeNull();
     });
   });
 
-  describe('ReactCheckBox', () => {
-    it('handles toggle', () => {
-      const ctx = createContext('CheckBox', { label: 'Accept', value: { path: '/accept' } });
-      const spySet = vi.spyOn(ctx.dataContext, 'set');
-      render(<ReactCheckBox.render context={ctx} buildChild={() => null} />);
-      
-      const checkbox = screen.getByLabelText('Accept');
-      fireEvent.click(checkbox);
-      expect(spySet).toHaveBeenCalledWith('/accept', true);
-    });
-  });
-
-  describe('ReactSlider', () => {
-    it('handles value change', () => {
-      const ctx = createContext('Slider', { label: 'Volume', value: { path: '/vol' }, max: 100 });
-      const spySet = vi.spyOn(ctx.dataContext, 'set');
-      render(<ReactSlider.render context={ctx} buildChild={() => null} />);
-      
-      const slider = screen.getByLabelText('Volume');
-      fireEvent.change(slider, { target: { value: '50' } });
-      expect(spySet).toHaveBeenCalledWith('/vol', 50);
-    });
-  });
-
-  describe('ReactChoicePicker', () => {
-    it('handles selection', () => {
-      const options = [
-        { label: 'One', value: '1' },
-        { label: 'Two', value: '2' }
-      ];
-      const ctx = createContext('ChoicePicker', { 
-        label: 'Choose', 
-        options, 
-        value: { path: '/choice' },
-        variant: 'mutuallyExclusive'
+  describe('Layout and Structural Components', () => {
+    it('ReactRow renders multiple children', () => {
+      const { buildChild } = renderA2uiComponent(ReactRow, 'r1', { 
+        children: ['c1', 'c2']
       });
-      const spySet = vi.spyOn(ctx.dataContext, 'set');
-      render(<ReactChoicePicker.render context={ctx} buildChild={() => null} />);
-      
-      const radio = screen.getByLabelText('One');
-      fireEvent.click(radio);
-      expect(spySet).toHaveBeenCalledWith('/choice', ['1']);
-    });
-  });
 
-  describe('ReactDateTimeInput', () => {
-    it('handles date change', () => {
-      const ctx = createContext('DateTimeInput', { 
-        label: 'Date', 
-        value: { path: '/date' },
-        enableDate: true 
+      expect(buildChild).toHaveBeenCalledWith('c1');
+      expect(buildChild).toHaveBeenCalledWith('c2');
+      expect(screen.getByTestId('child-c1')).toBeDefined();
+      expect(screen.getByTestId('child-c2')).toBeDefined();
+    });
+
+    it('ReactColumn renders children vertically', () => {
+      const { buildChild, view } = renderA2uiComponent(ReactColumn, 'col1', { 
+        children: ['c1']
       });
-      const spySet = vi.spyOn(ctx.dataContext, 'set');
-      render(<ReactDateTimeInput.render context={ctx} buildChild={() => null} />);
-      
-      const input = screen.getByLabelText('Date');
-      fireEvent.change(input, { target: { value: '2026-03-19' } });
-      expect(spySet).toHaveBeenCalledWith('/date', '2026-03-19');
-    });
-  });
-
-  describe('Layout and Containers', () => {
-    const buildChild = (id: string) => <div data-testid={id} key={id}>{id}</div>;
-
-    it('renders Row with children', () => {
-      const ctx = createContext('Row', { children: ['c1', 'c2'] });
-      render(<ReactRow.render context={ctx} buildChild={buildChild} />);
-      expect(screen.getByTestId('c1')).toBeDefined();
-      expect(screen.getByTestId('c2')).toBeDefined();
+      expect(buildChild).toHaveBeenCalledWith('c1');
+      expect(view.container.firstChild).toHaveStyle({ flexDirection: 'column' });
     });
 
-    it('renders Column with children', () => {
-      const ctx = createContext('Column', { children: ['c1'] });
-      render(<ReactColumn.render context={ctx} buildChild={buildChild} />);
-      expect(screen.getByTestId('c1')).toBeDefined();
+    it('ReactList supports dynamic templates with scoped data context', () => {
+      renderA2uiComponent(
+        ReactList, 
+        'list1', 
+        { 
+          children: { componentId: 'itemComp', path: '/items' } 
+        },
+        {
+          initialData: { items: [{ n: 'A' }, { n: 'B' }] },
+          additionalImpls: [ReactText],
+          additionalComponents: [
+            new ComponentModel('itemComp', 'Text', { text: { path: 'n' } })
+          ]
+        }
+      );
+
+      expect(screen.getByText('A')).toBeDefined();
+      expect(screen.getByText('B')).toBeDefined();
     });
 
-    it('renders List with children', () => {
-      const ctx = createContext('List', { children: ['c1', 'c2'] });
-      render(<ReactList.render context={ctx} buildChild={buildChild} />);
-      expect(screen.getByTestId('c1')).toBeDefined();
-      expect(screen.getByTestId('c2')).toBeDefined();
+    it('ReactCard renders its child', () => {
+      const { buildChild } = renderA2uiComponent(ReactCard, 'card1', { child: 'c1' });
+      expect(buildChild).toHaveBeenCalledWith('c1');
+      expect(screen.getByTestId('child-c1')).toBeDefined();
     });
 
-    it('renders Card with child', () => {
-      const ctx = createContext('Card', { child: 'c1' });
-      render(<ReactCard.render context={ctx} buildChild={buildChild} />);
-      expect(screen.getByTestId('c1')).toBeDefined();
-    });
-
-    it('renders Tabs with titles', () => {
-      const ctx = createContext('Tabs', { 
+    it('ReactTabs switches active tab content', () => {
+      renderA2uiComponent(ReactTabs, 'tabs1', {
         tabs: [
-          { title: 'Tab 1', child: 'c1' },
-          { title: 'Tab 2', child: 'c2' }
+          { title: 'Home', child: 'home_c' },
+          { title: 'Settings', child: 'settings_c' }
         ]
       });
-      render(<ReactTabs.render context={ctx} buildChild={buildChild} />);
-      expect(screen.getByText('Tab 1')).toBeDefined();
-      expect(screen.getByText('Tab 2')).toBeDefined();
-      expect(screen.getByTestId('c1')).toBeDefined();
-      
-      fireEvent.click(screen.getByText('Tab 2'));
-      expect(screen.getByTestId('c2')).toBeDefined();
+
+      expect(screen.getByTestId('child-home_c')).toBeDefined();
+      expect(screen.queryByTestId('child-settings_c')).toBeNull();
+
+      fireEvent.click(screen.getByText('Settings'));
+
+      expect(screen.queryByTestId('child-home_c')).toBeNull();
+      expect(screen.getByTestId('child-settings_c')).toBeDefined();
     });
 
-    it('renders Divider', () => {
-      const ctx = createContext('Divider', {});
-      const { container } = render(<ReactDivider.render context={ctx} buildChild={() => null} />);
-      expect(container.firstChild).toBeDefined();
+    it('ReactModal opens content on trigger click', () => {
+      renderA2uiComponent(ReactModal, 'm1', {
+        trigger: 't1',
+        content: 'c1'
+      });
+
+      expect(screen.getByTestId('child-t1')).toBeDefined();
+      expect(screen.queryByTestId('child-c1')).toBeNull();
+
+      fireEvent.click(screen.getByTestId('child-t1'));
+
+      expect(screen.getByTestId('child-c1')).toBeDefined();
     });
 
-    it('renders Modal and handles trigger', () => {
-      const ctx = createContext('Modal', { trigger: 't1', content: 'm1' });
-      render(<ReactModal.render context={ctx} buildChild={buildChild} />);
+    it('ReactDivider renders a themed line', () => {
+      const { view } = renderA2uiComponent(ReactDivider, 'd1', { axis: 'horizontal' });
+      expect(view.container.firstChild).toHaveStyle({ height: '1px' });
+    });
+  });
+
+  describe('Input Components', () => {
+    it('ReactCheckBox updates data', () => {
+      const { surface } = renderA2uiComponent(ReactCheckBox, 'cb1', {
+        label: 'Agree',
+        value: { path: '/agreed' }
+      });
+
+      fireEvent.click(screen.getByLabelText('Agree'));
+      expect(surface.dataModel.get('/agreed')).toBe(true);
+    });
+
+    it('ReactSlider updates data', () => {
+      const { surface } = renderA2uiComponent(ReactSlider, 's1', {
+        label: 'Volume',
+        value: { path: '/vol' },
+        max: 100
+      });
+
+      fireEvent.change(screen.getByLabelText('Volume'), { target: { value: '75' } });
+      expect(surface.dataModel.get('/vol')).toBe(75);
+    });
+
+    it('ReactChoicePicker mutuallyExclusive selection', () => {
+      const { surface } = renderA2uiComponent(ReactChoicePicker, 'cp1', {
+        label: 'Pick',
+        options: [{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }],
+        value: { path: '/picked' },
+        variant: 'mutuallyExclusive'
+      });
+
+      fireEvent.click(screen.getByLabelText('A'));
+      expect(surface.dataModel.get('/picked')).toEqual(['a']);
       
-      expect(screen.getByTestId('t1')).toBeDefined();
-      expect(screen.queryByTestId('m1')).toBeNull();
-      
-      fireEvent.click(screen.getByTestId('t1'));
-      expect(screen.getByTestId('m1')).toBeDefined();
+      fireEvent.click(screen.getByLabelText('B'));
+      expect(surface.dataModel.get('/picked')).toEqual(['b']);
+    });
+
+    it('ReactDateTimeInput handles date changes', () => {
+      const { surface } = renderA2uiComponent(ReactDateTimeInput, 'dt1', {
+        label: 'When',
+        value: { path: '/date' },
+        enableDate: true
+      });
+
+      fireEvent.change(screen.getByLabelText('When'), { target: { value: '2026-03-20' } });
+      expect(surface.dataModel.get('/date')).toBe('2026-03-20');
     });
   });
 });
