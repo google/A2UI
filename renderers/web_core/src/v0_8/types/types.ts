@@ -56,7 +56,8 @@ import type {
   ComponentArrayReferenceSchema,
   ComponentArrayTemplateSchema,
 } from "../schema/common-types.js";
-import { StringValue } from "./primitives";
+import { StringValue, NumberValue, BooleanValue } from "./primitives";
+export type { StringValue, NumberValue, BooleanValue };
 
 export type MessageProcessor = {
   getSurfaces(): ReadonlyMap<string, Surface>;
