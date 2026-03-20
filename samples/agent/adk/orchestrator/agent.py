@@ -63,8 +63,10 @@ class A2UIMetadataInterceptor(ClientCallInterceptor):
     )
 
     if context and context.state and context.state.get("use_ui"):
-      # Add A2UI extension header
-      http_kwargs["headers"] = {HTTP_EXTENSION_HEADER: A2UI_EXTENSION_URI}
+      # Add A2UI extension header using the negotiated version
+      version = context.state.get("negotiated_version", VERSION_0_8)
+      extension_uri = VERSION_TO_URI.get(version, A2UI_V09_EXTENSION_URI)
+      http_kwargs["headers"] = {HTTP_EXTENSION_HEADER: extension_uri}
 
       # Add A2UI client capabilities (supported catalogs, etc) to message metadata
       if (params := request_payload.get("params")) and (
@@ -163,7 +165,7 @@ class OrchestratorAgent:
 
         subagent_card = await resolver.get_agent_card()
         for extension in subagent_card.capabilities.extensions or []:
-          if extension.uri == A2UI_EXTENSION_URI and extension.params:
+          if extension.uri in [A2UI_V08_EXTENSION_URI, A2UI_V09_EXTENSION_URI] and extension.params:
             supported_catalog_ids.update(
                 extension.params.get(AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY) or []
             )
@@ -257,7 +259,13 @@ class OrchestratorAgent:
                 get_a2ui_agent_extension(
                     accepts_inline_catalogs=accepts_inline_catalogs,
                     supported_catalog_ids=list(supported_catalog_ids),
-                )
+                    version=VERSION_0_9,
+                ),
+                get_a2ui_agent_extension(
+                    accepts_inline_catalogs=accepts_inline_catalogs,
+                    supported_catalog_ids=list(supported_catalog_ids),
+                    version=VERSION_0_8,
+                ),
             ],
         ),
         skills=skills,

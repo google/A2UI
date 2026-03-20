@@ -134,7 +134,8 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
   ):
     session = await super()._prepare_session(context, run_request, runner)
 
-    if try_activate_a2ui_extension(context):
+    negotiated_version = try_activate_a2ui_extension(context)
+    if negotiated_version:
       client_capabilities = (
           context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY)
           if context.message and context.message.metadata
@@ -151,6 +152,7 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
                       # These values are used to configure A2UI messages to remote agent calls
                       "use_ui": True,
                       "client_capabilities": client_capabilities,
+                      "negotiated_version": negotiated_version,
                   }
               ),
           ),

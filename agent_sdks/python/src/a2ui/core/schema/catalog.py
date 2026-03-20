@@ -40,16 +40,22 @@ class CatalogConfig:
   name: str
   provider: A2uiCatalogProvider
   examples_path: Optional[str] = None
+  version: Optional[str] = None
 
   @classmethod
   def from_path(
-      cls, name: str, catalog_path: str, examples_path: Optional[str] = None
+      cls,
+      name: str,
+      catalog_path: str,
+      examples_path: Optional[str] = None,
+      version: Optional[str] = None,
   ) -> "CatalogConfig":
     """Returns a CatalogConfig that loads from a file path."""
     return cls(
         name=name,
         provider=FileSystemCatalogProvider(catalog_path),
         examples_path=examples_path,
+        version=version,
     )
 
 
@@ -181,6 +187,6 @@ class A2uiCatalog:
       json_data = json.loads(content)
       self.validator.validate(json_data)
     except Exception as e:
-      logging.warning(f"Failed to validate example {full_path}: {e}")
+      logging.warning(f"Failed to validate example {full_path}: {e}", exc_info=True)
       return False
     return True

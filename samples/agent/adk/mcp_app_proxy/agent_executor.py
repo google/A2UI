@@ -109,15 +109,16 @@ class McpAppProxyAgentExecutor(A2aAgentExecutor):
     if "base_url" not in session.state:
       session.state["base_url"] = self._base_url
 
-    use_ui = try_activate_a2ui_extension(context)
-    if use_ui:
+    negotiated_version = try_activate_a2ui_extension(context)
+    if negotiated_version:
       capabilities = (
           context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY)
           if context.message and context.message.metadata
           else None
       )
       a2ui_catalog = self.schema_manager.get_selected_catalog(
-          client_ui_capabilities=capabilities
+          client_ui_capabilities=capabilities,
+          version=negotiated_version,
       )
 
       # TODO: Load examples from files.
@@ -133,6 +134,7 @@ class McpAppProxyAgentExecutor(A2aAgentExecutor):
                       _A2UI_ENABLED_KEY: True,
                       _A2UI_CATALOG_KEY: a2ui_catalog,
                       _A2UI_EXAMPLES_KEY: examples,
+                      "negotiated_version": negotiated_version,
                   }
               ),
           ),

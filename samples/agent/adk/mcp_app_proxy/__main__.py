@@ -15,7 +15,7 @@
 from a2a.server.apps import A2AStarletteApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
 from agent import McpAppProxyAgent
 from agent_executor import McpAppProxyAgentExecutor, get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
@@ -63,11 +63,17 @@ def main(host, port):
     base_url = f"http://{host}:{port}"
 
     schema_manager = A2uiSchemaManager(
-        VERSION_0_8,
+        [VERSION_0_8, VERSION_0_9],
         catalogs=[
             CatalogConfig.from_path(
                 name="mcp_app_proxy",
                 catalog_path="mcp_app_catalog.json",
+                version=VERSION_0_8,
+            ),
+            CatalogConfig.from_path(
+                name="mcp_app_proxy_v09",
+                catalog_path="mcp_app_catalog_09.json",
+                version=VERSION_0_9,
             ),
         ],
         accepts_inline_catalogs=True,
@@ -93,28 +99,48 @@ def main(host, port):
             if result.contents and hasattr(result.contents[0], "text"):
               html_content = result.contents[0].text
               encoded_html = "url_encoded:" + urllib.parse.quote(html_content)
-              messages = [
-                  {
-                      "beginRendering": {
-                          "surfaceId": "calculator_surface",
-                          "root": "calculator_app_root",
-                      },
-                  },
-                  {
-                      "surfaceUpdate": {
-                          "surfaceId": "calculator_surface",
-                          "components": [{
-                              "id": "calculator_app_root",
-                              "component": {
-                                  "McpApp": {
-                                      "content": {"literalString": encoded_html},
-                                      "title": {"literalString": "Calculator"},
-                                  }
-                              },
-                          }],
-                      },
-                  },
-              ]
+              
+              negotiated_version = tool_context.state.get("negotiated_version", VERSION_0_8)
+              
+              if negotiated_version == VERSION_0_9:
+                messages = [
+                    {
+                        "createSurface": {
+                            "surfaceId": "calculator_surface",
+                            "components": [{
+                                "id": "root",
+                                "component": "McpApp",
+                                "properties": {
+                                    "content": encoded_html,
+                                    "title": "Calculator",
+                                }
+                            }],
+                        },
+                    },
+                ]
+              else:
+                messages = [
+                    {
+                        "beginRendering": {
+                            "surfaceId": "calculator_surface",
+                            "root": "calculator_app_root",
+                        },
+                    },
+                    {
+                        "surfaceUpdate": {
+                            "surfaceId": "calculator_surface",
+                            "components": [{
+                                "id": "calculator_app_root",
+                                "component": {
+                                    "McpApp": {
+                                        "content": {"literalString": encoded_html},
+                                        "title": {"literalString": "Calculator"},
+                                    }
+                                },
+                            }],
+                        },
+                    },
+                ]
               tool_context.actions.skip_summarization = True
               return {"validated_a2ui_json": messages}
             else:
