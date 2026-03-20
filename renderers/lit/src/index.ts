@@ -19,4 +19,3 @@
  * This entrypoint is maintained for backwards compatibility.
  */
 export * as v0_8 from "./0.8/index.js";
-export * as v0_9 from "./v0_9/index.js";
