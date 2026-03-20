@@ -26,7 +26,7 @@ import { Types } from '../types';
       [style]="theme.additionalStyles?.DateTimeInput"
     >
       <label [class]="theme.components.DateTimeInput.label" [for]="inputId">
-        {{ label() }}
+        {{ resolvedLabel() }}
       </label>
       <input
         [type]="inputType()"
@@ -45,7 +45,7 @@ import { Types } from '../types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateTimeInput extends DynamicComponent<Types.DateTimeInputNode> {
-  readonly label = input<string>('');
+  readonly label = input<Types.StringValue | null>(null);
   readonly value = input.required<Types.StringValue | null>();
   readonly enableDate = input<boolean>(true);
   readonly enableTime = input<boolean>(false);
@@ -58,6 +58,7 @@ export class DateTimeInput extends DynamicComponent<Types.DateTimeInputNode> {
     return 'date';
   });
 
+  protected readonly resolvedLabel = computed(() => super.resolvePrimitive(this.label()));
   protected resolvedValue = computed(() => super.resolvePrimitive(this.value()));
 
   onChange(event: Event) {

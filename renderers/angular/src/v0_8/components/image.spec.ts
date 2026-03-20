@@ -40,7 +40,6 @@ describe('Image Component', () => {
     fixture.componentRef.setInput('surfaceId', 'surf-1');
     fixture.componentRef.setInput('component', { id: 'img-1', type: 'Image', weight: 1 });
     fixture.componentRef.setInput('weight', 1);
-    fixture.componentRef.setInput('altText', null);
     fixture.componentRef.setInput('usageHint', null);
   });
 
@@ -50,21 +49,18 @@ describe('Image Component', () => {
 
   it('should render <img> if url is provided', () => {
     fixture.componentRef.setInput('url', { literalString: 'http://example.com/a.png' });
-    fixture.componentRef.setInput('altText', { literalString: 'Description' });
     fixture.detectChanges();
 
     const imgEl = fixture.debugElement.query(By.css('img'));
     expect(imgEl).toBeTruthy();
     expect(imgEl.nativeElement.src).toBe('http://example.com/a.png');
-    expect(imgEl.nativeElement.alt).toBe('Description');
+    expect(imgEl.nativeElement.alt).toBe('');
 
     const sectionEl = fixture.debugElement.query(By.css('section'));
     expect(sectionEl.nativeElement.className).toContain('image-all-class');
   });
 
   it('should NOT render <img> if url is null', () => {
-    fixture.componentRef.setInput('url', null);
-    fixture.componentRef.setInput('altText', null);
     fixture.componentRef.setInput('usageHint', null);
     fixture.detectChanges();
 

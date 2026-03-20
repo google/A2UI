@@ -14,26 +14,62 @@
  * limitations under the License.
  */
 
-import { Directive, effect, inject, input, ViewContainerRef, Type } from '@angular/core';
+import {
+  Directive,
+  effect,
+  inject,
+  input,
+  ViewContainerRef,
+  Type,
+  PLATFORM_ID,
+} from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { structuralStyles } from '@a2ui/web_core/styles/index';
 import { Catalog } from './catalog';
 import { Types } from '../types';
 
 @Directive({
   selector: '[a2ui-renderer]',
+  standalone: true,
 })
 export class Renderer {
+  private static hasInsertedStyles = false;
+
   private readonly catalog = inject(Catalog);
-  private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly container = inject(ViewContainerRef);
 
   readonly surfaceId = input.required<Types.SurfaceID>();
   readonly component = input.required<Types.AnyComponentNode>();
 
   constructor() {
+    const platformId = inject(PLATFORM_ID);
+    const document = inject(DOCUMENT);
+
+    if (!Renderer.hasInsertedStyles && isPlatformBrowser(platformId)) {
+      const styleElement = document.createElement('style');
+      styleElement.textContent = structuralStyles;
+      document.head.appendChild(styleElement);
+      Renderer.hasInsertedStyles = true;
+    }
+
     effect(() => {
-      const container = this.viewContainerRef;
+      const container = this.container;
       container.clear();
 
-      const node = this.component();
+      let node = this.component();
+      // Handle v0.8 wrapped component format
+      if (!node.type && (node as any).component) {
+        const wrapped = (node as any).component;
+        const type = Object.keys(wrapped)[0];
+        if (type) {
+          node = {
+            ...node,
+            type: type as any,
+            properties: wrapped[type],
+          };
+        }
+      }
+
       const config = this.catalog[node.type];
 
       if (!config) {
@@ -68,17 +104,14 @@ export class Renderer {
 
       const props = node.properties as Record<string, unknown>;
       for (const [key, value] of Object.entries(props)) {
-        componentRef.setInput(key, value);
+        try {
+          componentRef.setInput(key, value);
+        } catch (e) {
+          console.warn(
+            `[Renderer] Property "${key}" could not be set on component ${node.type}. If this property is required by the specification, ensure the component declares it as an input.`,
+          );
+        }
       }
-
-      // If we has custom bindings that evaluate to specific inputs, they take precedence or map it:
-      // For backwards-compatibility with older Angular inputBinding structure.
-      // But since createComponent in Angular takes standard DI bindings,
-      // evaluating input binding as pure properties is a bit of a workaround if we are using setInput().
-      // Wait, if it's already using setInput(), doing it for `props` is exactly what custom bindings were doing!
-      // The only custom bindings that are different are those that specify DEFAULTS or transform name.
-      // Let's proceed with evaluating them using direct binding object factories if we could,
-      // but if and only if they are strictly required.
     }
   }
 }

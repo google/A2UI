@@ -61,7 +61,7 @@ import { FunctionImplementation } from '@a2ui/web_core/v0_9';
 /**
  * The set of default Angular implementations for each component in the basic catalog.
  */
-const DEFAULT_COMPONENT_IMPLEMENTATIONS = {
+const DEFAULT_COMPONENT_IMPLEMENTATIONS: Record<string, AngularComponentImplementation> = {
   text: { ...TextApi, component: TextComponent },
   row: { ...RowApi, component: RowComponent },
   column: { ...ColumnApi, component: ColumnComponent },

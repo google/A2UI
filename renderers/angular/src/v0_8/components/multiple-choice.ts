@@ -31,7 +31,7 @@ import { Types } from '../types';
       <select
         [class]="theme.components.MultipleChoice.element"
         [id]="selectId"
-        [value]="value() ?? ''"
+        [value]="resolvedSelections()[0] ?? ''"
         (change)="onChange($event)"
       >
         @for (option of resolvedOptions(); track option.value) {
@@ -48,9 +48,9 @@ import { Types } from '../types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
-  readonly label = input.required<Types.StringValue | null>();
+  readonly label = input<Types.StringValue | null>(null);
   readonly options = input.required<{ label: Types.StringValue; value: string }[]>();
-  readonly value = input.required<Types.StringValue | null>();
+  readonly selections = input.required<Types.AnyComponentNode | null>();
 
   protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
 
@@ -62,6 +62,14 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
       value: opt.value,
     })),
   );
+
+  protected readonly resolvedSelections = computed(() => {
+    const s = this.selections();
+    if (s && typeof s === 'object' && 'literalArray' in s) {
+      return (s as any).literalArray as string[];
+    }
+    return [];
+  });
 
   onChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;

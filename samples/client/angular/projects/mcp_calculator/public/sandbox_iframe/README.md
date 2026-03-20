@@ -6,7 +6,7 @@ This directory contains the `sandbox.html` and its associated resources.
 
 `sandbox.html` is designed to be loaded into an `<iframe>` to provide a secure,
 isolated environment for running MCP (Model Context Protocol) applications. It
-acts as a bridge between the host application (Orchestrator) and the untrusted
+acts as a bridge between the host application (MCP Calculator) and the untrusted
 or external MCP apps, managing communication via `postMessage`.
 
 ## Development

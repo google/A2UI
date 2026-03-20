@@ -32,7 +32,7 @@ import { Renderer } from '../rendering/renderer';
       <ng-container
         a2ui-renderer
         [surfaceId]="surfaceId()!"
-        [component]="component().properties.child"
+        [component]="child() ?? component().properties.child"
       />
     </button>
   `,
@@ -45,7 +45,8 @@ import { Renderer } from '../rendering/renderer';
   `,
 })
 export class Button extends DynamicComponent<Types.ButtonNode> {
-  readonly action = input.required<Types.Action | null>();
+  readonly action = input<Types.Action | null>(null);
+  readonly child = input<Types.AnyComponentNode | null>(null);
   // This is currently not handled by the template.
   readonly primary = input<boolean | null>(false);
 

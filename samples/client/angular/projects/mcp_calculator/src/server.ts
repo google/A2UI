@@ -63,6 +63,7 @@ app.post('/a2a', (req, res) => {
           a2uiClientCapabilities: {
             supportedCatalogIds: [
               'https://a2ui.org/specification/v0_8/standard_catalog_definition.json',
+              'a2ui.org:a2ui/v0.8/mcp_app_catalog.json',
             ],
           },
         },
@@ -99,7 +100,7 @@ app.post('/a2a', (req, res) => {
 app.get('/a2a/agent-card', async (req, res) => {
   try {
     const response = await fetchWithCustomHeader(
-      'http://localhost:10002/.well-known/agent-card.json',
+      'http://localhost:10006/.well-known/agent-card.json',
     );
     if (!response.ok) {
       res.status(response.status).json({ error: 'Failed to fetch agent card' });
@@ -140,7 +141,7 @@ async function fetchWithCustomHeader(url: string | URL | Request, init?: Request
 
 async function createOrGetClient() {
   // Create a client pointing to the agent's Agent Card URL.
-  client ??= await A2AClient.fromCardUrl('http://localhost:10002/.well-known/agent-card.json', {
+  client ??= await A2AClient.fromCardUrl('http://localhost:10006/.well-known/agent-card.json', {
     fetchImpl: fetchWithCustomHeader,
   });
 

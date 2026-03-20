@@ -74,7 +74,7 @@ describe('MultipleChoice Component', () => {
     fixture.componentRef.setInput('weight', 1);
     fixture.componentRef.setInput('label', { literalString: 'Select an option' });
     fixture.componentRef.setInput('options', mockOptions);
-    fixture.componentRef.setInput('value', { literalString: 'opt1' });
+    fixture.componentRef.setInput('selections', { literalArray: ['opt1'] });
 
     fixture.detectChanges();
   });
