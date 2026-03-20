@@ -15,25 +15,16 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../adapter';
-import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {createReactComponent} from '../../../adapter';
+import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
-export const ReactIcon = createReactComponent(IconApi, ({props}) => {
-  const iconName = typeof props.name === 'string' ? props.name : (props.name as any)?.path;
+export const ReactVideo = createReactComponent(VideoApi, ({props}) => {
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
-    fontSize: '24px',
-    width: '24px',
-    height: '24px',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    aspectRatio: '16/9',
   };
 
-  return (
-    <span className="material-symbols-outlined" style={style}>
-      {iconName}
-    </span>
-  );
+  return <video src={props.url} controls style={style} />;
 });

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import {createReactComponent} from '../adapter';
+import {createReactComponent} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
 import {ReactChildList} from './ReactChildList';
 
-export const RowSchema = z.object({
+export const ColumnSchema = z.object({
   children: CommonSchemas.ChildList,
   justify: z
-    .enum(['center', 'end', 'spaceAround', 'spaceBetween', 'spaceEvenly', 'start', 'stretch'])
+    .enum(['start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly', 'stretch'])
     .optional(),
-  align: z.enum(['start', 'center', 'end', 'stretch']).optional(),
+  align: z.enum(['center', 'end', 'start', 'stretch']).optional(),
 });
 
 const mapJustify = (j?: string) => {
@@ -63,19 +63,20 @@ const mapAlign = (a?: string) => {
   }
 };
 
-export const RowApiDef = {
-  name: 'Row',
-  schema: RowSchema,
+export const ColumnApiDef = {
+  name: 'Column',
+  schema: ColumnSchema,
 };
 
-export const ReactRow = createReactComponent(RowApiDef, ({props, buildChild, context}) => {
+export const ReactColumn = createReactComponent(ColumnApiDef, ({props, buildChild, context}) => {
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: mapJustify(props.justify),
         alignItems: mapAlign(props.align),
+        gap: '8px',
       }}
     >
       <ReactChildList childList={props.children} buildChild={buildChild} context={context} />

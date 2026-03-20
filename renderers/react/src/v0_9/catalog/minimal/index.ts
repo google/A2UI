@@ -20,7 +20,7 @@ import {ReactButton} from './components/ReactButton';
 import {ReactRow} from './components/ReactRow';
 import {ReactColumn} from './components/ReactColumn';
 import {ReactTextField} from './components/ReactTextField';
-import type {ReactComponentImplementation} from './adapter';
+import type {ReactComponentImplementation} from '../../adapter';
 import {z} from 'zod';
 
 const minimalComponents: ReactComponentImplementation[] = [

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {createReactComponent} from '../../adapter';
+import {createReactComponent} from '../../../adapter';
 import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {ReactChildList} from './ReactChildList';
 import {mapJustify, mapAlign} from '../utils';

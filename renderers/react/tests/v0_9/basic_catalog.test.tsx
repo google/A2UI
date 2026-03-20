@@ -38,7 +38,7 @@ import {
   ReactChoicePicker,
   ReactSlider,
   ReactDateTimeInput,
-} from '../../src/v0_9/basic_catalog';
+} from '../../src/v0_9/catalog/basic';
 
 const mockCatalog = new Catalog('test', [], BASIC_FUNCTIONS);
 

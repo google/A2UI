@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../adapter';
+import {createReactComponent} from '../../../adapter';
 import {ImageApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 

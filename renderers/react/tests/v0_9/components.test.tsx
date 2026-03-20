@@ -18,11 +18,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog } from '@a2ui/web_core/v0_9';
 
-import { ReactText } from '../../src/v0_9/components/ReactText';
-import { ReactButton } from '../../src/v0_9/components/ReactButton';
-import { ReactRow } from '../../src/v0_9/components/ReactRow';
-import { ReactColumn } from '../../src/v0_9/components/ReactColumn';
-import { ReactTextField } from '../../src/v0_9/components/ReactTextField';
+import { ReactText } from '../../src/v0_9/catalog/minimal/components/ReactText';
+import { ReactButton } from '../../src/v0_9/catalog/minimal/components/ReactButton';
+import { ReactRow } from '../../src/v0_9/catalog/minimal/components/ReactRow';
+import { ReactColumn } from '../../src/v0_9/catalog/minimal/components/ReactColumn';
+import { ReactTextField } from '../../src/v0_9/catalog/minimal/components/ReactTextField';
 
 const mockCatalog = new Catalog('test', [], []);
 

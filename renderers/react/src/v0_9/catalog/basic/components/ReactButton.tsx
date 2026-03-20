@@ -15,33 +15,32 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../adapter';
-import {z} from 'zod';
-import {CommonSchemas} from '@a2ui/web_core/v0_9';
+import {createReactComponent} from '../../../adapter';
+import {ButtonApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {LEAF_MARGIN} from '../utils';
 
-export const ButtonSchema = z.object({
-  child: CommonSchemas.ComponentId,
-  action: CommonSchemas.Action,
-  variant: z.enum(['primary', 'borderless']).optional(),
-});
-
-export const ButtonApiDef = {
-  name: 'Button',
-  schema: ButtonSchema,
-};
-
-export const ReactButton = createReactComponent(ButtonApiDef, ({props, buildChild}) => {
+export const ReactButton = createReactComponent(ButtonApi, ({props, buildChild}) => {
   const style: React.CSSProperties = {
+    margin: LEAF_MARGIN,
     padding: '8px 16px',
     cursor: 'pointer',
     border: props.variant === 'borderless' ? 'none' : '1px solid #ccc',
-    backgroundColor: props.variant === 'primary' ? '#007bff' : 'transparent',
+    backgroundColor:
+      props.variant === 'primary'
+        ? 'var(--a2ui-primary-color, #007bff)'
+        : props.variant === 'borderless'
+          ? 'transparent'
+          : '#fff',
     color: props.variant === 'primary' ? '#fff' : 'inherit',
     borderRadius: '4px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
   };
 
   return (
-    <button style={style} onClick={props.action}>
+    <button style={style} onClick={props.action} disabled={props.isValid === false}>
       {props.child ? buildChild(props.child) : null}
     </button>
   );
