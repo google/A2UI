@@ -5,7 +5,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, model_validator
 
-from models import ChoiceOption, FlowDiagramEdge, FlowDiagramNode, Theme
+from models import ChoiceOption, FlowDiagramEdge, Theme
 
 
 def slugify(value: str, fallback: str) -> str:
@@ -63,8 +63,24 @@ class PlanInput(BaseModel):
 
 class PlanFlow(BaseModel):
   title: str
-  nodes: list[FlowDiagramNode]
+  nodes: list['PlanFlowNode']
   edges: list[FlowDiagramEdge]
+
+
+class PlanFlowNode(BaseModel):
+  id: str
+  label: str
+  column: int
+  lane: int = 0
+  kind: Literal['start', 'process', 'decision', 'end', 'action', 'task', 'terminal'] = 'process'
+
+  @model_validator(mode='after')
+  def normalize_kind(self) -> 'PlanFlowNode':
+    if self.kind in {'action', 'task'}:
+      self.kind = 'process'
+    elif self.kind == 'terminal':
+      self.kind = 'end'
+    return self
 
 
 class SectionIntent(BaseModel):

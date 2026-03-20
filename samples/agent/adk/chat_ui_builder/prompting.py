@@ -34,7 +34,7 @@ INTENT_PLAN_CONTRACT = {
             'actions': [{'id': 'optional string', 'label': 'string', 'action_name': 'optional string', 'primary': 'optional boolean'}],
             'flow': {
                 'title': 'string',
-                'nodes': 'list of {id,label,column,lane,kind}',
+                'nodes': 'list of {id,label,column,lane,kind(start|process|decision|end)}，表示动作步骤时也请优先使用 process',
                 'edges': 'list of {from_id,to_id,label?}',
             },
             'children': 'optional nested sections',

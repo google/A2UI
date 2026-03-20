@@ -13,7 +13,14 @@ from design_lint import DesignLint
 from intent_compiler import IntentFrameCompiler
 from intent_plan import INTENT_PLAN_ADAPTER, IntentPlan
 from layout_policy import LayoutPolicyEngine
-from models import A2UIFrame, DELTA_ADAPTER, FinalizeDelta, SKELETON_DELTA_ADAPTER
+from models import (
+    A2UIFrame,
+    AddTextDelta,
+    DELTA_ADAPTER,
+    FinalizeDelta,
+    InitSurfaceDelta,
+    SKELETON_DELTA_ADAPTER,
+)
 from prompting import build_messages
 from skeleton_compiler import SkeletonCompiler
 from settings import settings
@@ -56,6 +63,10 @@ class ChatUIService:
     messages = build_messages(user_message)
     raw_output = ''
 
+    for frame in self._loading_frames():
+      logger.info('[%s] Emitting loading frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
+      yield frame
+
     logger.info(
         '[%s] Starting LLM stream. endpoint=%s model=%s temperature=%s',
         request_id,
@@ -92,6 +103,13 @@ class ChatUIService:
       logger.info('[%s] Layout IR=%s', request_id, _truncate(self._layout_summary(layout)))
       for frame in self.intent_compiler.compile(layout):
         logger.info('[%s] Emitting intent A2UI frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
+        yield frame
+      return
+
+    if self._looks_like_intent_json(raw_output):
+      logger.warning('[%s] Intent-like JSON could not be parsed; emitting fallback error surface.', request_id)
+      for frame in self._error_frames():
+        logger.info('[%s] Emitting error frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
         yield frame
       return
 
@@ -176,3 +194,55 @@ class ChatUIService:
         'child_count': len(getattr(layout, 'children', [])),
         'child_types': [type(child).__name__ for child in getattr(layout, 'children', [])],
     }
+
+  def _looks_like_intent_json(self, raw_output: str) -> bool:
+    stripped = _strip_code_fences(raw_output).strip()
+    if not stripped.startswith('{'):
+      return False
+    return any(marker in stripped for marker in ('"sections"', '"page_kind"', '"primary_action"', '"layout_hint"'))
+
+  def _loading_frames(self) -> list[A2UIFrame]:
+    compiler = FrameCompiler()
+    frames = compiler.apply(
+        InitSurfaceDelta(
+            event='init_surface',
+            surface_id='main',
+            title='正在生成界面',
+            summary='后端正在等待模型输出 Intent Plan，并将其编译成 A2UI 骨架。',
+        )
+    )
+    frames.extend(
+        compiler.apply(
+            AddTextDelta(
+                event='add_text',
+                id='loading_status_text',
+                parent_id='root',
+                text='已启动流式生成，首个稳定骨架将在规划完成后立即替换当前占位界面。',
+                usage_hint='body',
+            )
+        )
+    )
+    return frames
+
+  def _error_frames(self) -> list[A2UIFrame]:
+    compiler = FrameCompiler()
+    frames = compiler.apply(
+        InitSurfaceDelta(
+            event='init_surface',
+            surface_id='main',
+            title='页面规划失败',
+            summary='模型返回了接近 Intent Plan 的 JSON，但未通过校验。',
+        )
+    )
+    frames.extend(
+        compiler.apply(
+            AddTextDelta(
+                event='add_text',
+                id='intent_plan_error_text',
+                parent_id='root',
+                text='请检查流程图节点 kind、字段命名或让模型重新生成更严格的 Intent Plan JSON。',
+                usage_hint='body',
+            )
+        )
+    )
+    return frames
