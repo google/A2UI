@@ -64,7 +64,7 @@ export class ComponentBinder {
       };
 
       defineSafe(boundProp, 'raw', { value: value, configurable: true });
-
+      defineSafe(boundProp, 'value', { get: () => sig(), configurable: true });
       defineSafe(boundProp, 'name', { value: key, configurable: true });
 
       // Only define 'set' if we have a path-bound property to handle
