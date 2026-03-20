@@ -83,7 +83,7 @@ import { FunctionInvoker } from "./function_invoker.js";
  * This interface defines the contract for a component's capabilities and properties,
  * independent of any specific rendering implementation.
  */
-export interface ComponentApi {
+export interface ComponentApi<Schema extends z.ZodTypeAny = z.ZodTypeAny> {
   /** The name of the component as it appears in the A2UI JSON (e.g., 'Button'). */
   name: string;
 
@@ -93,8 +93,10 @@ export interface ComponentApi {
    * - MUST include catalog-specific common properties (e.g. 'weight', 'accessibility').
    * - MUST NOT include 'component' or 'id' as those are handled by the framework/envelope.
    */
-  readonly schema: z.ZodType<any>;
+  readonly schema: Schema;
 }
+
+export type InferredComponentApiSchemaType<Api extends ComponentApi> = z.infer<Api["schema"]>;
 
 /**
  * A collection of available components and functions.

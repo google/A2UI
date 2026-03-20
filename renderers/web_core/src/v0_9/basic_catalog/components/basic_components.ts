@@ -33,16 +33,16 @@ const CommonProps = {
   weight: z.number().describe("The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column.").optional(),
 };
 
-export const TextApi: ComponentApi = {
+export const TextApi = {
   name: "Text",
   schema: z.object({
     ...CommonProps,
     text: DynamicStringSchema.describe("The text content to display. While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation."),
     variant: z.enum(["h1", "h2", "h3", "h4", "h5", "caption", "body"]).default("body").describe("A hint for the base text style.").optional(),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const ImageApi: ComponentApi = {
+export const ImageApi = {
   name: "Image",
   schema: z.object({
     ...CommonProps,
@@ -57,7 +57,7 @@ export const ImageApi: ComponentApi = {
       "header",
     ]).default("mediumFeature").describe("A hint for the image size and style.").optional(),
   }).strict(),
-};
+} satisfies ComponentApi;
 
 const ICON_NAMES = [
   "accountCircle", "add", "arrowBack", "arrowForward", "attachFile",
@@ -73,7 +73,7 @@ const ICON_NAMES = [
   "volumeOff", "volumeUp", "warning"
 ] as const;
 
-export const IconApi: ComponentApi = {
+export const IconApi = {
   name: "Icon",
   schema: z.object({
     ...CommonProps,
@@ -84,26 +84,26 @@ export const IconApi: ComponentApi = {
       }).strict(),
     ]).describe("The name of the icon to display."),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const VideoApi: ComponentApi = {
+export const VideoApi = {
   name: "Video",
   schema: z.object({
     ...CommonProps,
     url: DynamicStringSchema.describe("The URL of the video to display."),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const AudioPlayerApi: ComponentApi = {
+export const AudioPlayerApi = {
   name: "AudioPlayer",
   schema: z.object({
     ...CommonProps,
     url: DynamicStringSchema.describe("The URL of the audio to be played."),
     description: DynamicStringSchema.describe("A description of the audio, such as a title or summary.").optional(),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const RowApi: ComponentApi = {
+export const RowApi = {
   name: "Row",
   schema: z.object({
     ...CommonProps,
@@ -119,9 +119,9 @@ export const RowApi: ComponentApi = {
     ]).default("start").describe("Defines the arrangement of children along the main axis (horizontally). Use 'spaceBetween' to push items to the edges, or 'start'/'end'/'center' to pack them together.").optional(),
     align: z.enum(["start", "center", "end", "stretch"]).default("stretch").describe("Defines the alignment of children along the cross axis (vertically). This is similar to the CSS 'align-items' property, but uses camelCase values (e.g., 'start').").optional(),
   }).strict().describe("A layout component that arranges its children horizontally. To create a grid layout, nest Columns within this Row."),
-};
+} satisfies ComponentApi;
 
-export const ColumnApi: ComponentApi = {
+export const ColumnApi = {
   name: "Column",
   schema: z.object({
     ...CommonProps,
@@ -137,9 +137,9 @@ export const ColumnApi: ComponentApi = {
     ]).default("start").describe("Defines the arrangement of children along the main axis (vertically). Use 'spaceBetween' to push items to the edges (e.g. header at top, footer at bottom), or 'start'/'end'/'center' to pack them together.").optional(),
     align: z.enum(["center", "end", "start", "stretch"]).default("stretch").describe("Defines the alignment of children along the cross axis (horizontally). This is similar to the CSS 'align-items' property.").optional(),
   }).strict().describe("A layout component that arranges its children vertically. To create a grid layout, nest Rows within this Column."),
-};
+} satisfies ComponentApi;
 
-export const ListApi: ComponentApi = {
+export const ListApi = {
   name: "List",
   schema: z.object({
     ...CommonProps,
@@ -147,17 +147,17 @@ export const ListApi: ComponentApi = {
     direction: z.enum(["vertical", "horizontal"]).default("vertical").describe("The direction in which the list items are laid out.").optional(),
     align: z.enum(["start", "center", "end", "stretch"]).default("stretch").describe("Defines the alignment of children along the cross axis.").optional(),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const CardApi: ComponentApi = {
+export const CardApi = {
   name: "Card",
   schema: z.object({
     ...CommonProps,
     child: ComponentIdSchema.describe("The ID of the single child component to be rendered inside the card. To display multiple elements, you MUST wrap them in a layout component (like Column or Row) and pass that container's ID here. Do NOT pass multiple IDs or a non-existent ID. Do NOT define the child component inline."),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const TabsApi: ComponentApi = {
+export const TabsApi = {
   name: "Tabs",
   schema: z.object({
     ...CommonProps,
@@ -168,26 +168,26 @@ export const TabsApi: ComponentApi = {
       }).strict()
     ).min(1).describe("An array of objects, where each object defines a tab with a title and a child component."),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const ModalApi: ComponentApi = {
+export const ModalApi = {
   name: "Modal",
   schema: z.object({
     ...CommonProps,
     trigger: ComponentIdSchema.describe("The ID of the component that opens the modal when interacted with (e.g., a button). Do NOT define the component inline."),
     content: ComponentIdSchema.describe("The ID of the component to be displayed inside the modal. Do NOT define the component inline."),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const DividerApi: ComponentApi = {
+export const DividerApi = {
   name: "Divider",
   schema: z.object({
     ...CommonProps,
     axis: z.enum(["horizontal", "vertical"]).default("horizontal").describe("The orientation of the divider.").optional(),
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const ButtonApi: ComponentApi = {
+export const ButtonApi = {
   name: "Button",
   schema: z.object({
     ...CommonProps,
@@ -196,9 +196,9 @@ export const ButtonApi: ComponentApi = {
     action: ActionSchema,
     checks: CheckableSchema.shape.checks,
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const TextFieldApi: ComponentApi = {
+export const TextFieldApi = {
   name: "TextField",
   schema: z.object({
     ...CommonProps,
@@ -208,9 +208,9 @@ export const TextFieldApi: ComponentApi = {
     validationRegexp: z.string().describe("A regular expression used for client-side validation of the input.").optional(),
     checks: CheckableSchema.shape.checks,
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const CheckBoxApi: ComponentApi = {
+export const CheckBoxApi = {
   name: "CheckBox",
   schema: z.object({
     ...CommonProps,
@@ -218,9 +218,9 @@ export const CheckBoxApi: ComponentApi = {
     value: DynamicBooleanSchema.describe("The current state of the checkbox (true for checked, false for unchecked)."),
     checks: CheckableSchema.shape.checks,
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const ChoicePickerApi: ComponentApi = {
+export const ChoicePickerApi = {
   name: "ChoicePicker",
   schema: z.object({
     ...CommonProps,
@@ -237,9 +237,9 @@ export const ChoicePickerApi: ComponentApi = {
     filterable: z.boolean().default(false).describe("If true, displays a search input to filter the options.").optional(),
     checks: CheckableSchema.shape.checks,
   }).strict().describe("A component that allows selecting one or more options from a list."),
-};
+} satisfies ComponentApi;
 
-export const SliderApi: ComponentApi = {
+export const SliderApi = {
   name: "Slider",
   schema: z.object({
     ...CommonProps,
@@ -249,9 +249,9 @@ export const SliderApi: ComponentApi = {
     value: DynamicNumberSchema.describe("The current value of the slider."),
     checks: CheckableSchema.shape.checks,
   }).strict(),
-};
+} satisfies ComponentApi;
 
-export const DateTimeInputApi: ComponentApi = {
+export const DateTimeInputApi = {
   name: "DateTimeInput",
   schema: z.object({
     ...CommonProps,
@@ -273,7 +273,7 @@ export const DateTimeInputApi: ComponentApi = {
     label: DynamicStringSchema.describe("The text label for the input field.").optional(),
     checks: CheckableSchema.shape.checks,
   }).strict(),
-};
+} satisfies ComponentApi;
 
 export const BASIC_COMPONENTS: ComponentApi[] = [
   TextApi,
