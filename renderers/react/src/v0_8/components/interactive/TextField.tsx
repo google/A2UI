@@ -38,7 +38,7 @@ export const TextField = memo(function TextField({
   const label = resolveString(props.label);
   const textPath = props.text?.path;
   const initialValue = resolveString(props.text) ?? '';
-  const fieldType = (props as any).textFieldType || (props as any).type;
+  const fieldType = ((props as any).textFieldType || (props as any).type) as TextFieldType;
   const validationRegexp = props.validationRegexp;
 
   const [value, setLocalValue] = useState(initialValue);

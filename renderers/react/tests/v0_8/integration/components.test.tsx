@@ -316,29 +316,6 @@ describe('Component Updates', () => {
     expect(textElements[2]).toHaveTextContent('B');
   });
 
-  it('should handle empty surfaceUpdate gracefully (no crash, no surface created)', () => {
-    // An empty surfaceUpdate has no components to render.
-    // The processor should handle this without crashing.
-    function EmptySurfaceRenderer() {
-      const { processMessages } = useA2UI();
-
-      useEffect(() => {
-        processMessages([createSurfaceUpdate([])]);
-      }, [processMessages]);
-
-      return <A2UIRenderer surfaceId="@default" />;
-    }
-
-    const { container } = render(
-      <A2UIProvider>
-        <EmptySurfaceRenderer />
-      </A2UIProvider>
-    );
-
-    // No components should be rendered
-    expect(container.querySelector('.a2ui-surface')?.children.length ?? 0).toBe(0);
-  });
-
   it('should NOT empty the surface when invalid surfaceUpdate is rejected (requires deleteSurface)', async () => {
     // An empty surfaceUpdate is now rejected by schema validation (min 1 component).
     // This test verifies that a rejected message does not affect the existing surface.
