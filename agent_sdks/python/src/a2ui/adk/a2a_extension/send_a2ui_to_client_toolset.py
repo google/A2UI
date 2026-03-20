@@ -339,8 +339,9 @@ class A2uiPartConverter:
   catalog to validate and fix JSON payloads.
   """
 
-  def __init__(self, a2ui_catalog: A2uiCatalog):
+  def __init__(self, a2ui_catalog: A2uiCatalog, bypass_tool_check: bool = False):
     self._catalog = a2ui_catalog
+    self._bypass_tool_check = bypass_tool_check
 
   def convert(self, part: genai_types.Part) -> list[a2a_types.Part]:
     """Converts a GenAI part to A2A parts, with A2UI validation.
@@ -352,30 +353,39 @@ class A2uiPartConverter:
         A list of A2A parts.
     """
     # 1. Handle Tool Responses (FunctionResponse)
-    if (
-        (function_response := part.function_response)
-        and function_response.name
-        == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
-    ):
-      if (
-          SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_ERROR_KEY
-          in function_response.response
-      ):
-        logger.warning(
-            "A2UI tool call failed:"
-            f" {function_response.response[SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_ERROR_KEY]}"
-        )
-        return []
-
-      # The tool returns the list of messages directly on success
-      json_data = function_response.response.get(
-          SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY
+    if function_response := part.function_response:
+      is_send_a2ui_json_to_client_response = (
+          function_response.name
+          == SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_NAME
       )
-      if not json_data:
-        logger.info("No result in A2UI tool response")
-        return []
 
-      return [create_a2ui_part(message) for message in json_data]
+      if is_send_a2ui_json_to_client_response or self._bypass_tool_check:
+        response_dict = function_response.response or {}
+
+        if (
+            SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_ERROR_KEY
+            in response_dict
+        ):
+          logger.warning(
+              "A2UI tool call failed:"
+              f" {response_dict[SendA2uiToClientToolset._SendA2uiJsonToClientTool.TOOL_ERROR_KEY]}"
+          )
+          return []
+
+        if (
+            isinstance(response_dict, dict)
+            and SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY
+            in response_dict
+        ):
+          json_data = response_dict.get(
+              SendA2uiToClientToolset._SendA2uiJsonToClientTool.VALIDATED_A2UI_JSON_KEY
+          )
+          if json_data:
+            return [create_a2ui_part(message) for message in json_data]
+
+        if is_send_a2ui_json_to_client_response:
+          logger.info("No result in A2UI tool response")
+          return []
 
     # 2. Handle Tool Calls (FunctionCall) - Skip sending to client
     if (
@@ -403,8 +413,11 @@ class A2uiEventConverter:
   catalog is session-specific.
   """
 
-  def __init__(self, catalog_key: str = "system:a2ui_catalog"):
+  def __init__(
+      self, catalog_key: str = "system:a2ui_catalog", bypass_tool_check: bool = False
+  ):
     self._catalog_key = catalog_key
+    self._bypass_tool_check = bypass_tool_check
 
   def __call__(
       self,
@@ -420,7 +433,9 @@ class A2uiEventConverter:
     catalog = invocation_context.session.state.get(self._catalog_key)
     if catalog:
       # Use the catalog-aware part converter
-      effective_converter = A2uiPartConverter(catalog).convert
+      effective_converter = A2uiPartConverter(
+          catalog, bypass_tool_check=self._bypass_tool_check
+      ).convert
     else:
       effective_converter = part_converter_func
 

@@ -27,8 +27,12 @@ import {
 export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
 
 /**
- * The state model for a single surface.
- * @template T The concrete type of the ComponentApi.
+ * The state model for a single UI surface.
+ * 
+ * A surface is the root container for a set of components and their associated data.
+ * It coordinates data binding, component state, and action dispatching.
+ * 
+ * @template T The concrete type of the ComponentApi from the catalog.
  */
 export class SurfaceModel<T extends ComponentApi> {
   /** The data model for this surface. */
@@ -37,9 +41,13 @@ export class SurfaceModel<T extends ComponentApi> {
   readonly componentsModel: SurfaceComponentsModel;
 
   private readonly _onAction = new EventEmitter<A2uiClientAction>();
+  private readonly _onError = new EventEmitter<any>();
 
   /** Fires whenever an action is dispatched from this surface. */
   readonly onAction: EventSource<A2uiClientAction> = this._onAction;
+
+  /** Fires whenever an error occurs on this surface. */
+  readonly onError: EventSource<any> = this._onError;
 
   /**
    * Creates a new surface model.
@@ -99,11 +107,24 @@ export class SurfaceModel<T extends ComponentApi> {
   }
 
   /**
+   * Dispatches an error from this surface to listeners.
+   *
+   * @param error The error object to dispatch, conforming to client_to_server schema.
+   */
+  async dispatchError(error: { code: string; message: string; [key: string]: any }): Promise<void> {
+    await this._onError.emit({
+      ...error,
+      surfaceId: this.id,
+    });
+  }
+
+  /**
    * Disposes of the surface and its resources.
    */
   dispose(): void {
     this.dataModel.dispose();
     this.componentsModel.dispose();
     this._onAction.dispose();
+    this._onError.dispose();
   }
 }

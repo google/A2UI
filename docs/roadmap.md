@@ -9,7 +9,7 @@ This roadmap outlines the current state and future plans for the A2UI project. T
 | Version | Status | Notes |
 |---------|--------|-------|
 | **v0.8** | ✅ Stable | Initial public release |
-| **v0.9** | 🚧 In Progress | Draft specification improvements |
+| **v0.9** | 🚧 Draft | Prompt-First specification improvements |
 
 Key features:
 
@@ -225,6 +225,6 @@ Want to contribute to the roadmap?
 
 ---
 
-**Last Updated:** December 2025
+**Last Updated:** March 2026
 
 Have questions about the roadmap? [Start a discussion on GitHub](https://github.com/google/A2UI/discussions).

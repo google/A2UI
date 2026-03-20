@@ -25,13 +25,18 @@ describe("SurfaceModel", () => {
   let surface: SurfaceModel<ComponentApi>;
   let catalog: Catalog<ComponentApi>;
   let actions: any[] = [];
+  let errors: any[] = [];
 
   beforeEach(() => {
     actions = [];
+    errors = [];
     catalog = new Catalog("test-catalog", []);
     surface = new SurfaceModel<ComponentApi>("surface-1", catalog, {});
     surface.onAction.subscribe(async (action) => {
       actions.push(action);
+    });
+    surface.onError.subscribe(async (error) => {
+      errors.push(error);
     });
   });
 
@@ -68,6 +73,14 @@ describe("SurfaceModel", () => {
     );
     assert.strictEqual(actions.length, 1);
     assert.deepStrictEqual(actions[0].context, {});
+  });
+
+  it("dispatches errors", async () => {
+    await surface.dispatchError({ code: "TEST_ERROR", message: "Something failed" });
+    assert.strictEqual(errors.length, 1);
+    assert.strictEqual(errors[0].code, "TEST_ERROR");
+    assert.strictEqual(errors[0].message, "Something failed");
+    assert.strictEqual(errors[0].surfaceId, "surface-1");
   });
 
   it("creates a component context", () => {

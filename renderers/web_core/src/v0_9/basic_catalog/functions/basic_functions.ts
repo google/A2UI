@@ -16,7 +16,8 @@
 
 import { ExpressionParser } from "../expressions/expression_parser.js";
 import { computed, Signal } from "@preact/signals-core";
-import { createFunctionImplementation, FunctionImplementation } from "../../catalog/types.js";
+import { createFunctionImplementation, FunctionImplementation, isSignal } from "../../catalog/types.js";
+import { format } from "date-fns";
 import {
   AddApi,
   SubtractApi,
@@ -44,6 +45,7 @@ import {
   PluralizeApi,
   OpenUrlApi
 } from "./basic_functions_api.js";
+import { A2uiExpressionError } from "../../errors.js";
 
 // Arithmetic
 export const AddImplementation = createFunctionImplementation(AddApi, (args) => args.a + args.b);
@@ -74,16 +76,10 @@ export const LessThanImplementation = createFunctionImplementation(LessThanApi, 
 
 // Logical
 export const AndImplementation = createFunctionImplementation(AndApi, (args) => {
-  if (Array.isArray(args.values)) {
-    return args.values.every((v: unknown) => !!v);
-  }
-  return !!(args.a && args.b); // Fallback
+  return args.values.every((v: unknown) => !!v);
 });
 export const OrImplementation = createFunctionImplementation(OrApi, (args) => {
-  if (Array.isArray(args.values)) {
-    return args.values.some((v: unknown) => !!v);
-  }
-  return !!(args.a || args.b); // Fallback
+  return args.values.some((v: unknown) => !!v);
 });
 export const NotImplementation = createFunctionImplementation(NotApi, (args) => !args.value);
 
@@ -104,8 +100,7 @@ export const RegexImplementation = createFunctionImplementation(RegexApi, (args)
   try {
     return new RegExp(args.pattern).test(args.value);
   } catch (e) {
-    console.warn("Invalid regex pattern:", args.pattern);
-    return false;
+    throw new A2uiExpressionError(`Invalid regex pattern: ${args.pattern}`, "regex", e);
   }
 });
 export const LengthImplementation = createFunctionImplementation(LengthApi, (args) => {
@@ -125,7 +120,10 @@ export const NumericImplementation = createFunctionImplementation(NumericApi, (a
   return true;
 });
 export const EmailImplementation = createFunctionImplementation(EmailApi, (args) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(args.value);
+  // TODO(gspencergoog): Use a "real" email validation function, preferably
+  // from an existing package. This is woefully insufficient, real email
+  // validation can't be done with a regex.
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(args.value);
 });
 
 // Formatting
@@ -147,7 +145,7 @@ export const FormatStringImplementation = createFunctionImplementation(FormatStr
   return computed(() => {
     return dynamicParts
       .map((p) => {
-        if (p instanceof Signal) {
+        if (isSignal(p)) {
            return p.value;
         }
         return p;
@@ -183,12 +181,8 @@ export const FormatDateImplementation = createFunctionImplementation(FormatDateA
   if (isNaN(date.getTime())) return "";
 
   try {
-    if (args.options) {
-      return new Intl.DateTimeFormat(args.locale, args.options).format(date);
-    }
     if (args.format === "ISO") return date.toISOString();
-
-    return new Intl.DateTimeFormat(args.locale).format(date);
+    return format(date, args.format);
   } catch (e) {
     console.warn("Error formatting date:", e);
     return date.toISOString();
