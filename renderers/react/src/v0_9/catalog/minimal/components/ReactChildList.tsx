@@ -17,18 +17,19 @@
 import React from 'react';
 
 export const ReactChildList: React.FC<{
-  childList: any;
+  childList: unknown;
   buildChild: (id: string, basePath?: string) => React.ReactNode;
 }> = ({childList, buildChild}) => {
   if (Array.isArray(childList)) {
     return (
       <>
-        {childList.map((item: any, i: number) => {
+        {childList.map((item: unknown, i: number) => {
           // The new binder outputs objects like { id: string, basePath: string } for arrays of structural nodes
-          if (item && typeof item === 'object' && item.id) {
+          if (item && typeof item === 'object' && 'id' in item) {
+            const node = item as {id: string; basePath?: string};
             return (
-              <React.Fragment key={`${item.id}-${i}`}>
-                {buildChild(item.id, item.basePath)}
+              <React.Fragment key={`${node.id}-${i}`}>
+                {buildChild(node.id, node.basePath)}
               </React.Fragment>
             );
           }

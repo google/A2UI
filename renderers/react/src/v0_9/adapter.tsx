@@ -44,10 +44,10 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
 ): ReactComponentImplementation {
   type Props = ResolveA2uiProps<z.infer<Schema>>;
 
-  const ReactWrapper: React.FC<{context: ComponentContext; buildChild: any}> = ({
-    context,
-    buildChild,
-  }) => {
+  const ReactWrapper: React.FC<{
+    context: ComponentContext;
+    buildChild: (id: string, basePath?: string) => React.ReactNode;
+  }> = ({context, buildChild}) => {
     const bindingRef = useRef<GenericBinder<Props> | null>(null);
 
     if (!bindingRef.current) {

@@ -79,10 +79,10 @@ export const A2uiSurface: React.FC<{surface: SurfaceModel<ReactComponentImplemen
           buildChild={buildChild}
         />
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
       return (
         <div key={`error-${id}`} style={{color: 'red'}}>
-          Error rendering {id}: {e.message}
+          Error rendering {id}: {e instanceof Error ? e.message : String(e)}
         </div>
       );
     }

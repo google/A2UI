@@ -40,7 +40,7 @@ export const minimalCatalog = new Catalog<ReactComponentImplementation>(
         name: 'capitalize',
         returnType: 'string',
         schema: z.object({
-          value: z.any(),
+          value: z.unknown(),
         }),
       },
       (args) => {
