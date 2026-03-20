@@ -1,29 +1,27 @@
-import { html } from "lit";
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { html, LitElement , nothing} from "lit";
+import { customElement, property } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { createLitComponent } from "../../../adapter.js";
+import { A2uiController } from "../../../adapter.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
-
-export const A2uiRow = createLitComponent(RowApi, ({ props, buildChild }) => {
-  const childrenArray = Array.isArray(props.children) ? props.children : [];
-  
-  const styles = {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: mapJustify(props.justify),
-    alignItems: mapAlign(props.align),
-    flex: props.weight !== undefined ? String(props.weight) : "initial",
-  };
-
-  return html`
-    <div class="a2ui-row" style=${styleMap(styles as Record<string, string>)}>
-      ${map(childrenArray, (child: any) => {
-        if (typeof child === 'string') return buildChild(child);
-        return buildChild(child.id, child.basePath);
-      })}
-    </div>
-  `;
-});
+import { ComponentContext } from "@a2ui/web_core/v0_9";
+import { renderA2uiNode } from "../../../surface/render-node.js";
 
 function mapJustify(justify: string | undefined): string {
   switch (justify) {
@@ -47,3 +45,52 @@ function mapAlign(align: string | undefined): string {
     default: return "stretch";
   }
 }
+
+@customElement("a2ui-row")
+export class A2uiRowElement extends LitElement {
+
+  @property({ type: Object }) accessor context!: ComponentContext;
+  private controller!: A2uiController<typeof RowApi>;
+
+  willUpdate(changedProperties: Map<string, any>) {
+    super.willUpdate(changedProperties);
+    if (changedProperties.has('context') && this.context) {
+      if (this.controller) {
+        this.removeController(this.controller);
+        this.controller.dispose();
+      }
+      this.controller = new A2uiController(this, RowApi);
+    }
+  }
+
+  render() {
+    const props = this.controller.props;
+    if (!props) return nothing;
+
+    const childrenArray = Array.isArray(props.children) ? props.children : [];
+    
+    const styles = {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: mapJustify(props.justify),
+      alignItems: mapAlign(props.align),
+      flex: props.weight !== undefined ? String(props.weight) : "initial",
+    };
+
+    return html`
+      <div class="a2ui-row" style=${styleMap(styles as Record<string, string>)}>
+        ${map(childrenArray, (child: any) => {
+          if (typeof child === 'string') {
+             return html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, child, this.context.dataContext.path))}`;
+          }
+          return html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, child.id, child.basePath))}`;
+        })}
+      </div>
+    `;
+  }
+}
+
+export const A2uiRow = {
+  ...RowApi,
+  tagName: "a2ui-row"
+};

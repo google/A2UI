@@ -1,32 +1,61 @@
-import { html } from "lit";
-import { createLitComponent } from "../../../adapter.js";
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { html, LitElement , nothing} from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { A2uiController } from "../../../adapter.js";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { ComponentContext } from "@a2ui/web_core/v0_9";
 
-export const A2uiText = createLitComponent(TextApi, ({ props }) => {
-  const variant = props.variant ?? "body";
-  // Basic implementation without markdown parser for minimal catalog
-  // Basic catalog would add markdown support
-  
-  const tagMap: Record<string, string> = {
-    h1: "h1",
-    h2: "h2",
-    h3: "h3",
-    h4: "h4",
-    h5: "h5",
-    caption: "span",
-    body: "p"
-  };
-  const tag = tagMap[variant as string] || "p";
+@customElement("a2ui-text")
+export class A2uiTextElement extends LitElement {
 
-  // Note: Lit html doesn't allow dynamic tag names directly like html`<${tag}>`, 
-  // so we have to use static templates or unsafeHTML. Static templates are safer.
-  switch (variant) {
-    case "h1": return html`<h1>${props.text}</h1>`;
-    case "h2": return html`<h2>${props.text}</h2>`;
-    case "h3": return html`<h3>${props.text}</h3>`;
-    case "h4": return html`<h4>${props.text}</h4>`;
-    case "h5": return html`<h5>${props.text}</h5>`;
-    case "caption": return html`<span class="caption">${props.text}</span>`;
-    default: return html`<p>${props.text}</p>`;
+  @property({ type: Object }) accessor context!: ComponentContext;
+  private controller!: A2uiController<typeof TextApi>;
+
+  willUpdate(changedProperties: Map<string, any>) {
+    super.willUpdate(changedProperties);
+    if (changedProperties.has('context') && this.context) {
+      if (this.controller) {
+        this.removeController(this.controller);
+        this.controller.dispose();
+      }
+      this.controller = new A2uiController(this, TextApi);
+    }
   }
-});
+
+  render() {
+    const props = this.controller.props;
+    if (!props) return nothing;
+
+    const variant = props.variant ?? "body";
+    
+    switch (variant) {
+      case "h1": return html`<h1>${props.text}</h1>`;
+      case "h2": return html`<h2>${props.text}</h2>`;
+      case "h3": return html`<h3>${props.text}</h3>`;
+      case "h4": return html`<h4>${props.text}</h4>`;
+      case "h5": return html`<h5>${props.text}</h5>`;
+      case "caption": return html`<span class="caption">${props.text}</span>`;
+      default: return html`<p>${props.text}</p>`;
+    }
+  }
+}
+
+export const A2uiText = {
+  ...TextApi,
+  tagName: "a2ui-text"
+};
