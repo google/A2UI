@@ -53,3 +53,11 @@ export const minimalCatalog = new Catalog<ReactComponentImplementation>(
     ),
   ]
 );
+
+export {
+  ReactText,
+  ReactButton,
+  ReactRow,
+  ReactColumn,
+  ReactTextField,
+};
