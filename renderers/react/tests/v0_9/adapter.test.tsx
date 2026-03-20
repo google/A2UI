@@ -125,4 +125,60 @@ describe('adapter', () => {
     // We would need a way to check if removeListener was called, but checking that the binding logic doesn't crash on unmount is a good start.
     // If listeners aren't cleaned up, subsequent updates might throw if component is destroyed.
   });
+
+  it('preserves progressive rendering (avoids stale closures from over-memoization)', async () => {
+    const surface = new SurfaceModel<any>('test-surface', mockCatalog);
+    
+    // 1. Initial State: Parent component exists, but its child is missing from the surface.
+    const parentModel = new ComponentModel('parent', 'TestParent', { child: 'child1' });
+    surface.componentsModel.addComponent(parentModel);
+
+    const context = new ComponentContext(surface, 'parent', '/');
+
+    const TestParentDef = {
+      name: 'TestParent',
+      schema: z.object({ child: CommonSchemas.ComponentId })
+    };
+
+    const TestParent = createReactComponent(
+      TestParentDef,
+      ({ props, buildChild }) => {
+        return <div data-testid="parent">
+          {props.child && buildChild(props.child)}
+        </div>;
+      }
+    );
+
+    // Mock buildChild matching the logic in A2uiSurface.tsx:
+    // It looks up the child; if missing, returns a loading state.
+    const buildChild = vi.fn().mockImplementation((id) => {
+      const childModel = surface.componentsModel.get(id);
+      if (!childModel) return <span data-testid="loading">Loading {id}...</span>;
+      return <span data-testid="resolved">{childModel.properties.text}</span>;
+    });
+
+    const { getByTestId, rerender } = render(<TestParent.render context={context} buildChild={buildChild} />);
+
+    // Assert the missing child renders the fallback
+    expect(getByTestId('loading').textContent).toBe('Loading child1...');
+
+    // 2. Simulate streaming 'updateComponents' adding the missing child
+    await act(async () => {
+      surface.componentsModel.addComponent(new ComponentModel('child1', 'TestChild', { text: 'Loaded Data' }));
+    });
+
+    // 3. Simulate the top-down re-render triggered by A2uiSurface
+    const newContext = new ComponentContext(surface, 'parent', '/');
+    const newBuildChild = vi.fn().mockImplementation((id) => {
+      const childModel = surface.componentsModel.get(id);
+      if (!childModel) return <span data-testid="loading">Loading {id}...</span>;
+      return <span data-testid="resolved">{childModel.properties.text}</span>;
+    });
+
+    rerender(<TestParent.render context={newContext} buildChild={newBuildChild} />);
+
+    // By not memoizing the wrapper aggressively, we ensure the new child renders correctly during streaming.
+    expect(() => getByTestId('loading')).toThrow();
+    expect(getByTestId('resolved').textContent).toBe('Loaded Data');
+  });
 });
