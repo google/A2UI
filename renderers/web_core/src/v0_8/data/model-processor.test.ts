@@ -29,12 +29,12 @@ describe("A2uiMessageProcessor", () => {
   it("handles beginRendering", () => {
     processor.processMessages([
       {
-      beginRendering: {
+        beginRendering: {
           surfaceId: "s1",
           root: "root",
-        styles: { font: "Arial" },
+          styles: { font: "Arial" },
+        },
       },
-    },
     ]);
 
     const surfaces = processor.getSurfaces();

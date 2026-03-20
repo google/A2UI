@@ -134,7 +134,7 @@ describe('MessageProcessor', () => {
         id: readyComponentId,
         type: 'Text',
         properties: {
-          text: {literalString: 'Ready to render'},
+          text: { literalString: 'Ready to render' },
         }
       },
       dataModel: new Map(),
