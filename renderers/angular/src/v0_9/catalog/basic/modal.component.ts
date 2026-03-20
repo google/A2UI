@@ -115,6 +115,7 @@ export class ModalComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
+  componentId = input<string>();
   dataContextPath = input<string>('/');
 
   isOpen = signal(false);

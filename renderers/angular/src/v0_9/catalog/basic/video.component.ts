@@ -62,9 +62,9 @@ export class VideoComponent {
    * - `posterUrl`: The URL of an image to show before the video starts.
    */
   props = input<Record<string, BoundProperty>>({});
-  surfaceId = input<string>();
+  surfaceId = input.required<string>();
   componentId = input<string>();
-  dataContextPath = input<string>();
+  dataContextPath = input<string>('/');
 
   url = computed(() => this.props()['url']?.value());
   posterUrl = computed(() => this.props()['posterUrl']?.value());

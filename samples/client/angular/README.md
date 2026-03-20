@@ -41,6 +41,15 @@ Here are the instructions if you want to do each step manually.
   * `npm start -- gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
 
+## Streaming
+
+By default, the Angular client uses the non-streaming API to communicate with the agent. To enable streaming, set the `ENABLE_STREAMING` environment variable to `true`:
+
+```bash
+export ENABLE_STREAMING=true
+npm start -- contact
+```
+
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.
 
 All operational data received from an external agent—including its AgentCard, messages, artifacts, and task statuses—should be handled as untrusted input. For example, a malicious agent could provide crafted data in its fields (e.g., name, skills.description) that, if used without sanitization to construct prompts for a Large Language Model (LLM), could expose your application to prompt injection attacks.

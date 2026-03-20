@@ -43,9 +43,9 @@ export class TextComponent {
    * - `style`: Font style (e.g., 'italic', 'normal').
    */
   props = input<Record<string, BoundProperty>>({});
-  surfaceId = input<string>();
+  surfaceId = input.required<string>();
   componentId = input<string>();
-  dataContextPath = input<string>();
+  dataContextPath = input<string>('/');
 
   weight = computed(() => this.props()['weight']?.value());
   style = computed(() => this.props()['style']?.value());

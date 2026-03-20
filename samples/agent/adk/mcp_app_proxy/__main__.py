@@ -109,6 +109,7 @@ def main(host, port):
                                   "McpApp": {
                                       "content": {"literalString": encoded_html},
                                       "title": {"literalString": "Calculator"},
+                                      "allowedTools": ["calculate"],
                                   }
                               },
                           }],
@@ -125,7 +126,39 @@ def main(host, port):
         logger.error(f"Error fetching calculator app: {e} {traceback.format_exc()}")
         return {"error": f"Failed to connect to MCP server or fetch app. Details: {e}"}
 
-    tools = [get_calculator_app]
+    async def calculate_via_mcp(operation: str, a: float, b: float):
+      """Calculates via the MCP server's Calculate tool.
+
+      Args:
+          operation: The mathematical operation (e.g. 'add', 'subtract', 'multiply', 'divide').
+          a: First operand.
+          b: Second operand.
+      """
+      mcp_server_host = os.getenv("MCP_SERVER_HOST", "localhost")
+      mcp_server_port = os.getenv("MCP_SERVER_PORT", "8000")
+      sse_url = f"http://{mcp_server_host}:{mcp_server_port}/sse"
+
+      try:
+        async with sse_client(sse_url) as streams:
+          async with ClientSession(streams[0], streams[1]) as session:
+            await session.initialize()
+
+            result = await session.call_tool(
+                "calculate", arguments={"operation": operation, "a": a, "b": b}
+            )
+
+            if (
+                result.content
+                and len(result.content) > 0
+                and hasattr(result.content[0], "text")
+            ):
+              return result.content[0].text
+            return "No result text from MCP calculate tool."
+      except Exception as e:
+        logger.error(f"Error calling MCP calculate: {e} {traceback.format_exc()}")
+        return f"Error connecting to MCP server: {e}"
+
+    tools = [get_calculator_app, calculate_via_mcp]
 
     agent = McpAppProxyAgent(
         base_url=base_url,

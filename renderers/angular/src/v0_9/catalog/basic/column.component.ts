@@ -73,6 +73,7 @@ export class ColumnComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
+  componentId = input<string>();
   dataContextPath = input<string>('/');
 
   protected justify = computed(() => this.props()['justify']?.value());
