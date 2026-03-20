@@ -15,11 +15,9 @@
  */
 
 import React from 'react';
-import {type ComponentContext} from '@a2ui/web_core/v0_9';
 
 export const ReactChildList: React.FC<{
   childList: any;
-  context: ComponentContext;
   buildChild: (id: string, basePath?: string) => React.ReactNode;
 }> = ({childList, buildChild}) => {
   if (Array.isArray(childList)) {

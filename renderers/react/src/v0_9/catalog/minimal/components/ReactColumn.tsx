@@ -68,7 +68,7 @@ export const ColumnApiDef = {
   schema: ColumnSchema,
 };
 
-export const ReactColumn = createReactComponent(ColumnApiDef, ({props, buildChild, context}) => {
+export const ReactColumn = createReactComponent(ColumnApiDef, ({props, buildChild}) => {
   return (
     <div
       style={{
@@ -79,7 +79,7 @@ export const ReactColumn = createReactComponent(ColumnApiDef, ({props, buildChil
         gap: '8px',
       }}
     >
-      <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
+      <ReactChildList childList={props.children} buildChild={buildChild} />
     </div>
   );
 });

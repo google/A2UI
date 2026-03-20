@@ -68,7 +68,7 @@ export const RowApiDef = {
   schema: RowSchema,
 };
 
-export const ReactRow = createReactComponent(RowApiDef, ({props, buildChild, context}) => {
+export const ReactRow = createReactComponent(RowApiDef, ({props, buildChild}) => {
   return (
     <div
       style={{
@@ -78,7 +78,7 @@ export const ReactRow = createReactComponent(RowApiDef, ({props, buildChild, con
         alignItems: mapAlign(props.align),
       }}
     >
-      <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
+      <ReactChildList childList={props.children} buildChild={buildChild} />
     </div>
   );
 });
