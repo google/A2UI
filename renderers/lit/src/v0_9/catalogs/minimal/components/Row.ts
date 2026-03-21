@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { html, LitElement , nothing} from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, nothing} from "lit";
+import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { ComponentContext } from "@a2ui/web_core/v0_9";
@@ -47,21 +48,8 @@ function mapAlign(align: string | undefined): string {
 }
 
 @customElement("a2ui-row")
-export class A2uiRowElement extends LitElement {
-
-  @property({ type: Object }) accessor context!: ComponentContext;
-  private controller!: A2uiController<typeof RowApi>;
-
-  willUpdate(changedProperties: Map<string, any>) {
-    super.willUpdate(changedProperties);
-    if (changedProperties.has('context') && this.context) {
-      if (this.controller) {
-        this.removeController(this.controller);
-        this.controller.dispose();
-      }
-      this.controller = new A2uiController(this, RowApi);
-    }
-  }
+export class A2uiRowElement extends A2uiLitElement<typeof RowApi> {
+  protected createController() { return new A2uiController(this, RowApi); }
 
   render() {
     const props = this.controller.props;
