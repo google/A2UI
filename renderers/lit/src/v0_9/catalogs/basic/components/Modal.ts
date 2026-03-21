@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-import { LitElement, html , nothing} from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { html , nothing} from "lit";
+import { customElement, query } from "lit/decorators.js";
+import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
 import { ComponentContext } from "@a2ui/web_core/v0_9";
 import { ModalApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { renderA2uiNode } from "../../../surface/render-node.js";
 
 @customElement("a2ui-modal")
-export class A2uiLitModal extends LitElement {
-
-  @property({ type: Object }) accessor context!: ComponentContext;
-  private controller!: A2uiController<typeof ModalApi>;
+export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
+  protected createController() { return new A2uiController(this, ModalApi); }
   @query("dialog") accessor dialog!: HTMLDialogElement;
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.controller = new A2uiController(this, ModalApi);
-  }
 
   render() {
     const props = this.controller.props;

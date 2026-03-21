@@ -14,28 +14,15 @@
  * limitations under the License.
  */
 
-import { html, LitElement , nothing} from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, nothing} from "lit";
+import { customElement } from "lit/decorators.js";
+import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { ComponentContext } from "@a2ui/web_core/v0_9";
 
 @customElement("a2ui-basic-text")
-export class A2uiBasicTextElement extends LitElement {
-
-  @property({ type: Object }) accessor context!: ComponentContext;
-  private controller!: A2uiController<typeof TextApi>;
-
-  willUpdate(changedProperties: Map<string, any>) {
-    super.willUpdate(changedProperties);
-    if (changedProperties.has('context') && this.context) {
-      if (this.controller) {
-        this.removeController(this.controller);
-        this.controller.dispose();
-      }
-      this.controller = new A2uiController(this, TextApi);
-    }
-  }
+export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
+  protected createController() { return new A2uiController(this, TextApi); }
 
   render() {
     const props = this.controller.props;

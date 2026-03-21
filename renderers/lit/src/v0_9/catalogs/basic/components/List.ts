@@ -14,31 +14,19 @@
  * limitations under the License.
  */
 
-import { html, LitElement , nothing} from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { html, nothing} from "lit";
+import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
+import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
 import { ListApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import { ComponentContext } from "@a2ui/web_core/v0_9";
 import { renderA2uiNode } from "../../../surface/render-node.js";
 
 @customElement("a2ui-list")
-export class A2uiListElement extends LitElement {
-
-  @property({ type: Object }) accessor context!: ComponentContext;
-  private controller!: A2uiController<typeof ListApi>;
-
-  willUpdate(changedProperties: Map<string, any>) {
-    super.willUpdate(changedProperties);
-    if (changedProperties.has('context') && this.context) {
-      if (this.controller) {
-        this.removeController(this.controller);
-        this.controller.dispose();
-      }
-      this.controller = new A2uiController(this, ListApi);
-    }
-  }
+export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
+  protected createController() { return new A2uiController(this, ListApi); }
 
   render() {
     const props = this.controller.props;
