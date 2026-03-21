@@ -17,6 +17,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { createReactComponent } from '../../src/v0_9/adapter';
+import { A2uiSurface } from '../../src/v0_9/A2uiSurface';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog, CommonSchemas } from '@a2ui/web_core/v0_9';
 import { z } from 'zod';
 
@@ -127,58 +128,45 @@ describe('adapter', () => {
   });
 
   it('preserves progressive rendering (avoids stale closures from over-memoization)', async () => {
-    const surface = new SurfaceModel<any>('test-surface', mockCatalog);
+    const ParentApiDef = { name: 'TestParent', schema: z.object({ child: CommonSchemas.ComponentId }) };
+    const ChildApiDef = { name: 'TestChild', schema: z.object({ text: CommonSchemas.DynamicString }) };
     
-    // 1. Initial State: Parent component exists, but its child is missing from the surface.
-    const parentModel = new ComponentModel('parent', 'TestParent', { child: 'child1' });
-    surface.componentsModel.addComponent(parentModel);
+    let parentRenderCount = 0;
 
-    const context = new ComponentContext(surface, 'parent', '/');
-
-    const TestParentDef = {
-      name: 'TestParent',
-      schema: z.object({ child: CommonSchemas.ComponentId })
-    };
-
-    const TestParent = createReactComponent(
-      TestParentDef,
-      ({ props, buildChild }) => {
-        return <div data-testid="parent">
-          {props.child && buildChild(props.child)}
-        </div>;
-      }
-    );
-
-    // Mock buildChild matching the logic in A2uiSurface.tsx:
-    // It looks up the child; if missing, returns a loading state.
-    const buildChild = vi.fn().mockImplementation((id) => {
-      const childModel = surface.componentsModel.get(id);
-      if (!childModel) return <span data-testid="loading">Loading {id}...</span>;
-      return <span data-testid="resolved">{childModel.properties.text}</span>;
+    const TestParent = createReactComponent(ParentApiDef, ({ props, buildChild }) => {
+      parentRenderCount++;
+      return <div data-testid="parent">{props.child && buildChild(props.child)}</div>;
     });
 
-    const { getByTestId, rerender } = render(<TestParent.render context={context} buildChild={buildChild} />);
+    const TestChild = createReactComponent(ChildApiDef, ({ props }) => (
+      <span data-testid="resolved">{props.text}</span>
+    ));
+
+    const testCatalog = new Catalog('test', [TestParent, TestChild], []);
+    const surface = new SurfaceModel<any>('test-surface', testCatalog);
+    
+    // 1. Initial State: Parent component exists, but its child is missing from the surface.
+    const parentModel = new ComponentModel('root', 'TestParent', { child: 'child1' });
+    surface.componentsModel.addComponent(parentModel);
+
+    const { getByTestId, queryByTestId } = render(<A2uiSurface surface={surface} />);
 
     // Assert the missing child renders the fallback
-    expect(getByTestId('loading').textContent).toBe('Loading child1...');
+    expect(getByTestId('parent').textContent).toContain('[Loading child1...]');
+    
+    const countBeforeChild = parentRenderCount;
 
     // 2. Simulate streaming 'updateComponents' adding the missing child
     await act(async () => {
       surface.componentsModel.addComponent(new ComponentModel('child1', 'TestChild', { text: 'Loaded Data' }));
     });
 
-    // 3. Simulate the top-down re-render triggered by A2uiSurface
-    const newContext = new ComponentContext(surface, 'parent', '/');
-    const newBuildChild = vi.fn().mockImplementation((id) => {
-      const childModel = surface.componentsModel.get(id);
-      if (!childModel) return <span data-testid="loading">Loading {id}...</span>;
-      return <span data-testid="resolved">{childModel.properties.text}</span>;
-    });
-
-    rerender(<TestParent.render context={newContext} buildChild={newBuildChild} />);
-
-    // By not memoizing the wrapper aggressively, we ensure the new child renders correctly during streaming.
-    expect(() => getByTestId('loading')).toThrow();
+    // 3. Child should automatically resolve through DeferredChild's subscription
+    expect(queryByTestId('resolved')).not.toBeNull();
     expect(getByTestId('resolved').textContent).toBe('Loaded Data');
+    
+    // Crucially, the parent should NOT have re-rendered because of the child addition.
+    // The DeferredChild wrapper localized the update.
+    expect(parentRenderCount).toBe(countBeforeChild);
   });
 });
