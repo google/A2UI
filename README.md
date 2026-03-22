@@ -1,5 +1,7 @@
 # A2UI: Agent-to-User Interface
 
+[![gitcgr](https://gitcgr.com/badge/google/A2UI.svg)](https://gitcgr.com/google/A2UI)
+
 A2UI is an open-source project, complete with a format
 optimized for representing updatable agent-generated
 UIs and an initial set of renderers, that allows agents
