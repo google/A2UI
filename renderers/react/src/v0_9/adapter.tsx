@@ -57,12 +57,12 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
   }> = ({context, buildChild}) => {
     const bindingRef = useRef<GenericBinder<Props> | null>(null);
 
-    // Create or recreate the binder if the context object changes. 
-    // DeferredChild memoizes `context`, so reference changes strictly correspond 
+    // Create or recreate the binder if the context object changes.
+    // DeferredChild memoizes `context`, so reference changes strictly correspond
     // to ComponentModel updates (like type changes) or Base Path adjustments.
     if (!bindingRef.current) {
       bindingRef.current = new GenericBinder<Props>(context, api.schema);
-    } else if ((bindingRef.current as any).context !== context) {
+    } else if ((bindingRef.current as unknown as {context: ComponentContext}).context !== context) {
       bindingRef.current.dispose();
       bindingRef.current = new GenericBinder<Props>(context, api.schema);
     }
