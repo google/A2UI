@@ -17,7 +17,6 @@
 import {createReactComponent} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
-import React from 'react';
 
 export const TextSchema = z.object({
   text: CommonSchemas.DynamicString,

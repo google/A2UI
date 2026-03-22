@@ -18,7 +18,6 @@ import {createReactComponent} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
 import {ChildList} from './ChildList';
-import React from 'react';
 
 export const ColumnSchema = z.object({
   children: CommonSchemas.ChildList,
