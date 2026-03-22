@@ -74,6 +74,47 @@ def test_load_examples(tmp_path):
   assert "ignored" not in examples_str
 
 
+def test_load_examples_validation_fails_on_bad_json(tmp_path):
+  example_dir = tmp_path / "examples"
+  example_dir.mkdir()
+  (example_dir / "bad.json").write_text("{ this is bad json }")
+
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema={},
+      catalog_schema={"catalogId": "basic"},
+  )
+
+  with pytest.raises(ValueError, match="Failed to validate example.*bad.json"):
+    catalog.load_examples(str(example_dir), validate=True)
+
+
+def test_load_examples_validation_fails_on_schema_error(tmp_path):
+  example_dir = tmp_path / "examples"
+  example_dir.mkdir()
+  (example_dir / "invalid.json").write_text('{"myKey": "stringValue"}')
+
+  # A schema that expects myKey to be an integer
+  schema = {
+      "type": "object",
+      "properties": {"myKey": {"type": "integer"}},
+      "required": ["myKey"],
+  }
+
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema=schema,
+      common_types_schema={},
+      catalog_schema={"catalogId": "basic"},
+  )
+
+  with pytest.raises(ValueError, match="Failed to validate example.*invalid.json"):
+    catalog.load_examples(str(example_dir), validate=True)
+
+
 def test_load_examples_none_or_invalid_path():
   catalog = A2uiCatalog(
       version=VERSION_0_8,

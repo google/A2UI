@@ -74,9 +74,9 @@ export class IconComponent {
    * - `color`: The CSS color to apply to the icon.
    */
   props = input<Record<string, BoundProperty>>({});
-  surfaceId = input<string>();
+  surfaceId = input.required<string>();
   componentId = input<string>();
-  dataContextPath = input<string>();
+  dataContextPath = input<string>('/');
 
   color = computed(() => this.props()['color']?.value());
   iconNameRaw = computed(() => this.props()['name']?.value());

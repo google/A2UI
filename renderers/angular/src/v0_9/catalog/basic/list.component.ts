@@ -111,6 +111,7 @@ export class ListComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
+  componentId = input<string>();
   dataContextPath = input<string>('/');
 
   listStyle = computed(() => this.props()['listStyle']?.value());

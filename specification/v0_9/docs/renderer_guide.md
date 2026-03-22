@@ -135,7 +135,22 @@ The model is designed to support high-performance rendering through granular upd
 *   **Property Changes**: The `ComponentModel` notifies when its specific configuration changes.
 *   **Data Changes**: The `DataModel` notifies only subscribers to the specific path that changed.
 
-### The Models
+### Protocol Models & Serialization
+
+The framework-agnostic layer is responsible for defining strict, native type representations of the A2UI JSON schemas. Renderers should not pass raw generic dictionaries (like `Map<String, Any>` or `Record<string, any>`) directly into the state layer. 
+
+Developers must create data classes, structs, or interfaces (e.g., `data class` in Kotlin, `Codable struct` in Swift, or Zod-validated `interface` in TypeScript) that perfectly mirror the official JSON specifications. This creates a safe boundary between the raw network stream and the internal state models.
+
+**Required Data Structures:**
+*   **Server-to-Client Messages:** `A2uiMessage` (a union/protocol type), `CreateSurfaceMessage`, `UpdateComponentsMessage`, `UpdateDataModelMessage`, `DeleteSurfaceMessage`.
+*   **Client-to-Server Events:** `ClientEvent` (a union/protocol type), `ActionMessage`, `ErrorMessage`.
+*   **Client Metadata:** `A2uiClientCapabilities`, `InlineCatalog`, `FunctionDefinition`, `ClientDataModel`.
+
+**JSON Serialization & Validation:**
+*   **Inbound (Parsing)**: The core library must provide a mechanism to deserialize a raw JSON string into a strongly-typed `A2uiMessage`. If the payload violates the A2UI JSON schema, this layer must throw an `A2uiValidationError` *before* the message reaches the state models.
+*   **Outbound (Stringifying)**: The core library must serialize client-to-server events and capabilities from their strict native types back into valid JSON strings to hand off to the transport layer.
+
+### The State Models
 
 #### SurfaceGroupModel & SurfaceModel
 The root containers for active surfaces and their catalogs, data, and components.
@@ -153,17 +168,21 @@ class SurfaceGroupModel<T extends ComponentApi> {
   
   readonly onSurfaceCreated: EventSource<SurfaceModel<T>>;
   readonly onSurfaceDeleted: EventSource<string>;
-  readonly onAction: EventSource<ActionEvent>;
+  readonly onAction: EventSource<A2uiClientAction>;
 }
 
-interface ActionEvent {
+/** 
+ * Matches 'action' in specification/v0_9/json/client_to_server.json.
+ */
+interface A2uiClientAction {
+  name: string;
   surfaceId: string;
   sourceComponentId: string;
-  name: string;
+  timestamp: string; // ISO 8601
   context: Record<string, any>;
 }
 
-type ActionListener = (action: ActionEvent) => void | Promise<void>;
+type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
 
 class SurfaceModel<T extends ComponentApi> {
   readonly id: string;
@@ -171,10 +190,17 @@ class SurfaceModel<T extends ComponentApi> {
   readonly catalog: Catalog<T>;
   readonly dataModel: DataModel;
   readonly componentsModel: SurfaceComponentsModel;
-  readonly theme?: any;
+  readonly theme?: Record<string, any>;
+  /** If true, the client should send the full data model with actions. */
+  readonly sendDataModel: boolean;
 
-  readonly onAction: EventSource<ActionEvent>;
-  dispatchAction(action: ActionEvent): Promise<void>;
+  readonly onAction: EventSource<A2uiClientAction>;
+  /**
+   * Dispatches an action from this surface.
+   * @param payload The raw action event from the component.
+   * @param sourceComponentId The ID of the component that triggered the action.
+   */
+  dispatchAction(payload: Record<string, any>, sourceComponentId: string): Promise<void>;
 }
 ```
 
@@ -241,9 +267,9 @@ Transient objects created on-demand during rendering to solve "scope" and bindin
 class DataContext {
   constructor(dataModel: DataModel, path: string);
   readonly path: string;
-  set(path: string, value: any): void;
-  resolveDynamicValue<V>(v: any): V;
-  subscribeDynamicValue<V>(v: any, onChange: (v: V | undefined) => void): Subscription<V>;
+  set(path: string, value: unknown): void;
+  resolveDynamicValue<V>(v: DynamicValue): V;
+  subscribeDynamicValue<V>(v: DynamicValue, onChange: (v: V | undefined) => void): Subscription<V>;
   nested(relativePath: string): DataContext;
 }
 
@@ -252,14 +278,14 @@ class ComponentContext<T extends ComponentApi> {
   readonly componentModel: ComponentModel;
   readonly dataContext: DataContext;
   readonly surfaceComponents: SurfaceComponentsModel; // The escape hatch
-  dispatchAction(action: any): Promise<void>;
+  dispatchAction(action: Record<string, any>): Promise<void>;
 }
 ```
 
 *Escape Hatch*: Component implementations can use `ctx.surfaceComponents` to inspect the metadata of other components in the same surface (e.g. a `Row` checking if children have a `weight` property). This is discouraged but necessary for some layout engines.
 
 ### The Processing Layer (`MessageProcessor`)
-The "Controller" that accepts the raw stream of A2UI messages, parses them, and mutates the Models.
+The "Controller" that accepts the raw stream of A2UI messages, parses them, and mutates the Models. It also handles the aggregation of client state for synchronization.
 
 ```typescript
 class MessageProcessor<T extends ComponentApi> {
@@ -267,11 +293,29 @@ class MessageProcessor<T extends ComponentApi> {
   
   constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
 
-  processMessages(messages: any[]): void;
+  // Accepts validated, strongly-typed message objects, not raw JSON
+  processMessages(messages: A2uiMessage[]): void;
   addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
-  getClientCapabilities(options?: CapabilitiesOptions): any;
+  
+  // Returns a strictly typed capabilities object ready for JSON serialization
+  getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities;
+  
+  /**
+   * Returns the aggregated data model for all surfaces that have 'sendDataModel' enabled.
+   * This should be used by the transport layer to populate metadata (e.g., 'a2uiClientDataModel').
+   */
+  getClientDataModel(): A2uiClientDataModel | undefined;
 }
 ```
+
+#### Client Data Model Synchronization
+When a surface is created with `sendDataModel: true`, the client is responsible for sending the current state of that surface's data model back to the server whenever a client-to-server message (like an `action`) is sent.
+
+**Implementation Flow:**
+1.  The `MessageProcessor` tracks the `sendDataModel` flag for each surface.
+2.  The `getClientDataModel()` method iterates over all active surfaces and returns a map of data models for those where the flag is enabled.
+3.  The **Transport Layer** (e.g., A2A, MCP) calls `getClientDataModel()` before sending any message to the server.
+4.  If a non-empty data model map is returned, it is included in the transport's metadata field (e.g., `a2uiClientDataModel` in A2A metadata).
 
 *   **Component Lifecycle**: If an `updateComponents` message provides an existing `id` but a *different* `type`, the processor MUST remove the old component and create a fresh one to ensure framework renderers correctly reset their internal state.
 
@@ -282,15 +326,15 @@ To dynamically generate the `a2uiClientCapabilities` payload (specifically `inli
 
 **Detectable Common Types**: Shared definitions (like `DynamicString`) must emit external JSON Schema `$ref` pointers. This is achieved by "tagging" the schemas using their `description` property (e.g., `REF:common_types.json#/$defs/DynamicString`). 
 
-When `getClientCapabilities()` converts internal schemas:
-1. Translate the definition into a raw JSON Schema.
-2. Traverse the tree looking for descriptions starting with `REF:`.
-3. Strip the tag and replace the node with a valid JSON Schema `$ref` object.
-4. Wrap property schemas in the standard A2UI component envelope (`allOf` containing `ComponentCommon`).
+When `getClientCapabilities()` converts internal schemas to generate `inlineCatalogs`:
+1. **Components**: Translate each component schema into a raw JSON Schema. Wrap it in the standard A2UI component envelope (`allOf` containing `ComponentCommon`).
+2. **Functions**: Map each function in the catalog to a `FunctionDefinition` object, converting its argument schema to JSON Schema.
+3. **Theme**: Convert the catalog's theme schema into a JSON Schema representation.
+4. **Reference Processing**: For all generated schemas (components, functions, and themes), traverse the tree looking for descriptions starting with `REF:`. Strip the tag and replace the node with a valid JSON Schema `$ref` object.
 
 ## 4. The Catalog API & Functions
 
-A catalog groups component definitions and function definitions together.
+A catalog groups component definitions and function definitions together, along with an optional theme schema.
 
 ```typescript
 interface FunctionApi {
@@ -313,9 +357,9 @@ class Catalog<T extends ComponentApi> {
   readonly id: string; // Unique catalog URI
   readonly components: ReadonlyMap<string, T>;
   readonly functions?: ReadonlyMap<string, FunctionImplementation>;
-  readonly theme?: Schema;
+  readonly themeSchema?: Schema;
 
-  constructor(id: string, components: T[], functions?: FunctionImplementation[], theme?: Schema) {
+  constructor(id: string, components: T[], functions?: FunctionImplementation[], themeSchema?: Schema) {
     // Initializes the properties
   }
 }
@@ -341,7 +385,7 @@ myCustomCatalog = Catalog(
   id="https://mycompany.com/catalogs/custom_catalog.json",
   functions=basicCatalog.functions,
   components=basicCatalog.components + [MyCompanyLogoComponent()],
-  theme=basicCatalog.theme # Inherit theme schema
+  themeSchema=basicCatalog.themeSchema # Inherit theme schema
 )
 ```
 
@@ -635,11 +679,12 @@ Create a comprehensive design document detailing:
 ### 3. Core Model Layer
 Implement the framework-agnostic Data Layer (Section 3).
 *   Implement event streams and stateful signals.
+*   Implement strict Protocol Models (`A2uiMessage`, `A2uiClientCapabilities`, etc.) with JSON serialization/deserialization and schema validation logic.
 *   Implement `DataModel`, ensuring correct JSON pointer resolution and the cascade/bubble notification strategy.
 *   Implement `ComponentModel`, `SurfaceComponentsModel`, `SurfaceModel`, and `SurfaceGroupModel`.
 *   Implement `DataContext` and `ComponentContext`.
 *   Implement `MessageProcessor` and ClientCapabilities generation.
-*   **Action**: Write unit tests for the `DataModel` (especially pointer resolution/cascade logic) and `MessageProcessor`. Ensure they pass before continuing.
+*   **Action**: Write unit tests for JSON validation, the `DataModel` (especially pointer resolution/cascade logic), and `MessageProcessor`. Ensure they pass before continuing.
 
 ### 4. Framework-Specific Layer
 Implement the bridge between models and native UI (Section 5 & 6).

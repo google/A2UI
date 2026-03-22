@@ -29,11 +29,13 @@ import { Renderer } from '../rendering/renderer';
       [style]="theme.additionalStyles?.Button"
       (click)="handleClick()"
     >
-      <ng-container
-        a2ui-renderer
-        [surfaceId]="surfaceId()!"
-        [component]="child() ?? component().properties.child"
-      />
+      @if (child()) {
+        <ng-container
+          a2ui-renderer
+          [surfaceId]="surfaceId()!"
+          [component]="child() ?? component().properties.child"
+        />
+      }
     </button>
   `,
   styles: `

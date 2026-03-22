@@ -31,7 +31,7 @@ import { Types } from '../types';
       <select
         [class]="theme.components.MultipleChoice.element"
         [id]="selectId"
-        [value]="resolvedSelections()[0] ?? ''"
+        [value]="resolvedSelections()[0] || ''"
         (change)="onChange($event)"
       >
         @for (option of resolvedOptions(); track option.value) {

@@ -195,26 +195,41 @@ export class McpApp
     };
 
     bridge.oncalltool = async (params) => {
-      // TODO: Implement tool execution security and dispatch
-      // Reference implementation in mcp-apps-custom-component.ts:
-      // 1. Check if params.name is in this.allowedTools()
-      // 2. If allowed, dispatch an event (e.g. 'a2ui.action') to the host
-      // 3. If not allowed, throw an error or warn
-      //
-      // Current implementation is read-only/logging only.
-      //
-      // Pseudo-code for dispatch:
-      // const actionName = params.name;
-      // if (this.allowedTools().includes(actionName)) {
-      //   // Dispatch action to host store
-      //   // events.dispatch('host.action', { name: actionName, ... });
-      //   return { content: [{ type: "text", text: "Action dispatched" }] };
-      // } else {
-      //   console.warn(`Tool '${actionName}' blocked.`);
-      //   throw new Error("Tool not allowed");
-      // }
       console.log(`[MCP App] Tool call requested: ${params.name}`, params);
-      throw new Error('Tool execution not yet implemented');
+
+      if (!this.allowedTools().includes(params.name)) {
+        console.warn(`[MCP App] Tool '${params.name}' not allowed.`);
+        throw new Error(`Tool '${params.name}' not allowed`);
+      }
+
+      const args = params.arguments || {};
+      
+      // Map arguments to A2UI Action context
+      const context: any[] = [];
+      for (const [key, value] of Object.entries(args)) {
+        if (typeof value === 'number') {
+          context.push({ key, value: { literalNumber: value } });
+        } else if (typeof value === 'string') {
+          context.push({ key, value: { literalString: value } });
+        } else if (typeof value === 'boolean') {
+          context.push({ key, value: { literalBoolean: value } });
+        }
+      }
+
+      const action: Types.Action = {
+        name: params.name,
+        context: context.length > 0 ? context : undefined,
+      };
+
+      console.log('Sending action:', action);
+
+      // Dispatch action asynchronously to the host/agent
+      super.sendAction(action).catch((err) =>
+        console.error('Failed to send action:', err),
+      );
+
+      // Return empty result immediately (calculator UI can forget about it)
+      return { content: [] };
     };
 
     // Connect the bridge

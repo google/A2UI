@@ -80,6 +80,7 @@ export class ButtonComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
+  componentId = input.required<string>();
   dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);
@@ -95,7 +96,7 @@ export class ButtonComponent {
       if (surface) {
         const dataContext = new DataContext(surface, this.dataContextPath());
         const resolvedAction = dataContext.resolveAction(action);
-        surface.dispatchAction(resolvedAction);
+        surface.dispatchAction(resolvedAction, this.componentId());
       }
     }
   }

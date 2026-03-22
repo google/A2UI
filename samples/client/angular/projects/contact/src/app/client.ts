@@ -36,47 +36,109 @@ export class Client {
     });
   }
 
-  async makeRequest(request: Types.A2UIClientEventMessage | string) {
-    let messages: Types.ServerToClientMessage[];
-
+  async makeRequest(request: Types.A2UIClientEventMessage | string): Promise<Types.ServerToClientMessage[]> {
+    let messages: Types.ServerToClientMessage[] = [];
     try {
       this.isLoading.set(true);
-      const response = await this.send(request as Types.A2UIClientEventMessage);
-      messages = response;
+      // Clear surfaces at the start of a new request
+      this.processor.clearSurfaces();
+
+      const response = await fetch('/a2a', {
+        body: JSON.stringify(request as Types.A2UIClientEventMessage),
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        const error = (await response.json()) as { error: string };
+        throw new Error(error.error);
+      }
+
+      const contentType = response.headers.get('content-type');
+      console.log(`[client] Received response with content-type: ${contentType}`);
+      if (contentType?.includes('text/event-stream')) {
+        await this.handleStreamingResponse(response, messages);
+      } else {
+        await this.handleNonStreamingResponse(response, messages);
+      }
     } catch (err) {
       console.error(err);
       throw err;
     } finally {
       this.isLoading.set(false);
     }
-
-    this.processor.clearSurfaces();
-    this.processor.processMessages(messages);
     return messages;
   }
 
-  async send(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
-    const response = await fetch('/a2a', {
-      body: JSON.stringify(message),
-      method: 'POST',
-    });
-
-    if (response.ok) {
-      const data = (await response.json()) as A2AServerPayload;
-      const messages: Types.ServerToClientMessage[] = [];
-
-      if ('error' in data) {
-        throw new Error(data.error);
-      } else {
-        for (const item of data) {
-          if (item.kind === 'text') continue;
-          messages.push(item.data);
-        }
-      }
-      return messages;
+  private async handleStreamingResponse(
+    response: Response,
+    messages: Types.ServerToClientMessage[]
+  ): Promise<void> {
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('No response body');
     }
 
-    const error = (await response.json()) as { error: string };
-    throw new Error(error.error);
+    const decoder = new TextDecoder();
+      let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const now = performance.now();
+      buffer += decoder.decode(value, { stream: true });
+
+      // Parse SSE events. The server sends "data: <json>\n\n"
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop() || "";
+
+      for (const line of lines) {
+          if (line.startsWith("data: ")) {
+          const jsonStr = line.slice(6);
+          try {
+            const data = JSON.parse(jsonStr) as A2AServerPayload;
+            console.log(`[client] [${now.toFixed(2)}ms] Received SSE data:`, data);
+
+            if ('error' in data) {
+              throw new Error(data.error);
+            } else {
+              console.log(
+                `[client] [${performance.now().toFixed(2)}ms] Scheduling processing for ${data.length} parts`
+              );
+              // Use a microtask to ensure we don't block the stream reader
+              await Promise.resolve();
+              const newMessages = this.processParts(data as any[]);
+              messages.push(...newMessages);
+            }
+          } catch (e) {
+            console.error('Error parsing SSE data:', e, jsonStr);
+          }
+        }
+      }
+    }
+  }
+
+  private async handleNonStreamingResponse(
+    response: Response,
+    messages: Types.ServerToClientMessage[]
+  ): Promise<void> {
+    const data = (await response.json()) as any[];
+    console.log(`[client] Received JSON response:`, data);
+    const newMessages = this.processParts(data);
+    messages.push(...newMessages);
+  }
+
+  private processParts(parts: any[]): Types.ServerToClientMessage[] {
+    const messages: Types.ServerToClientMessage[] = [];
+    for (const item of parts) {
+      if (item.kind === 'text') continue;
+      if (item.data) {
+        messages.push(item.data);
+      }
+    }
+    if (messages.length > 0) {
+      this.processor.processMessages(messages);
+    }
+    return messages;
   }
 }

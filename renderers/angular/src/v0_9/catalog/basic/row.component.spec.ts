@@ -15,9 +15,8 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, Input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { RowComponent } from './row.component';
-import { signal } from '@angular/core';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
 import { By } from '@angular/platform-browser';
@@ -28,9 +27,10 @@ import { By } from '@angular/platform-browser';
   template: 'Dummy Child',
 })
 class DummyChild {
-  @Input() props: any;
-  @Input() surfaceId?: string;
-  @Input() dataContextPath?: string;
+  props = input<any>();
+  surfaceId = input<string>();
+  componentId = input<string>();
+  dataContextPath = input<string>();
 }
 
 describe('RowComponent', () => {

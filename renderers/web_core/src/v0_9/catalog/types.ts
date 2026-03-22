@@ -114,12 +114,22 @@ export class Catalog<T extends ComponentApi> {
   readonly functions: ReadonlyMap<string, FunctionImplementation>;
 
   /**
+   * The schema for theme parameters used by this catalog.
+   */
+  readonly themeSchema?: z.ZodObject<any>;
+
+  /**
    * A ready-to-use FunctionInvoker callback that delegates to this catalog's functions.
    * Can be passed directly to a DataContext.
    */
   readonly invoker: FunctionInvoker;
 
-  constructor(id: string, components: T[], functions: FunctionImplementation[] = []) {
+  constructor(
+    id: string,
+    components: T[],
+    functions: FunctionImplementation[] = [],
+    themeSchema?: z.ZodObject<any>,
+  ) {
     this.id = id;
 
     const compMap = new Map<string, T>();
@@ -133,6 +143,8 @@ export class Catalog<T extends ComponentApi> {
       funcMap.set(fn.name, fn);
     }
     this.functions = funcMap;
+
+    this.themeSchema = themeSchema;
 
     this.invoker = (name, rawArgs, ctx, abortSignal) => {
       const fn = this.functions.get(name);

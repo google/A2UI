@@ -30,6 +30,13 @@
               "type": "string"
             }
           }
+        },
+        "allowedTools": {
+          "type": "array",
+          "description": "List of tool names the app is allowed to call.",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [

@@ -61,6 +61,7 @@ export class DividerComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
+  componentId = input<string>();
   dataContextPath = input<string>('/');
 
   axis = computed(() => this.props()['axis']?.value() ?? 'horizontal');
