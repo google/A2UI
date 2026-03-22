@@ -30,7 +30,7 @@ export const ButtonApiDef = {
   schema: ButtonSchema,
 };
 
-export const ReactButton = createReactComponent(ButtonApiDef, ({props, buildChild}) => {
+export const Button = createReactComponent(ButtonApiDef, ({props, buildChild}) => {
   const style: React.CSSProperties = {
     padding: '8px 16px',
     cursor: 'pointer',

@@ -31,7 +31,7 @@ export const TextFieldApiDef = {
   schema: TextFieldSchema,
 };
 
-export const ReactTextField = createReactComponent(TextFieldApiDef, ({props, context}) => {
+export const TextField = createReactComponent(TextFieldApiDef, ({props, context}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (props.setValue) {
       props.setValue(e.target.value);

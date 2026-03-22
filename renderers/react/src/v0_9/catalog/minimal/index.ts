@@ -15,20 +15,20 @@
  */
 
 import {Catalog, createFunctionImplementation} from '@a2ui/web_core/v0_9';
-import {ReactText} from './components/ReactText';
-import {ReactButton} from './components/ReactButton';
-import {ReactRow} from './components/ReactRow';
-import {ReactColumn} from './components/ReactColumn';
-import {ReactTextField} from './components/ReactTextField';
+import {Text} from './components/Text';
+import {Button} from './components/Button';
+import {Row} from './components/Row';
+import {Column} from './components/Column';
+import {TextField} from './components/TextField';
 import type {ReactComponentImplementation} from '../../adapter';
 import {z} from 'zod';
 
 const minimalComponents: ReactComponentImplementation[] = [
-  ReactText,
-  ReactButton,
-  ReactRow,
-  ReactColumn,
-  ReactTextField,
+  Text,
+  Button,
+  Row,
+  Column,
+  TextField,
 ];
 
 export const minimalCatalog = new Catalog<ReactComponentImplementation>(

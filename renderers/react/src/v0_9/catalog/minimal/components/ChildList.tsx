@@ -16,7 +16,7 @@
 
 import React from 'react';
 
-export const ReactChildList: React.FC<{
+export const ChildList: React.FC<{
   childList: unknown;
   buildChild: (id: string, basePath?: string) => React.ReactNode;
 }> = ({childList, buildChild}) => {

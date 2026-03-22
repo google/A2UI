@@ -18,11 +18,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog } from '@a2ui/web_core/v0_9';
 
-import { ReactText } from '../../src/v0_9/catalog/minimal/components/ReactText';
-import { ReactButton } from '../../src/v0_9/catalog/minimal/components/ReactButton';
-import { ReactRow } from '../../src/v0_9/catalog/minimal/components/ReactRow';
-import { ReactColumn } from '../../src/v0_9/catalog/minimal/components/ReactColumn';
-import { ReactTextField } from '../../src/v0_9/catalog/minimal/components/ReactTextField';
+import { Text } from '../../src/v0_9/catalog/minimal/components/Text';
+import { Button } from '../../src/v0_9/catalog/minimal/components/Button';
+import { Row } from '../../src/v0_9/catalog/minimal/components/Row';
+import { Column } from '../../src/v0_9/catalog/minimal/components/Column';
+import { TextField } from '../../src/v0_9/catalog/minimal/components/TextField';
 
 const mockCatalog = new Catalog('test', [], []);
 
@@ -33,10 +33,10 @@ function createContext(type: string, properties: any) {
   return new ComponentContext(surface, 'test-id', '/');
 }
 
-describe('ReactText', () => {
+describe('Text', () => {
   it('renders text and variant correctly', () => {
     const ctx = createContext('Text', { text: 'Hello', variant: 'h1' });
-    const { container } = render(<ReactText.render context={ctx} buildChild={() => null} />);
+    const { container } = render(<Text.render context={ctx} buildChild={() => null} />);
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
     expect(h1?.textContent).toBe('Hello');
@@ -44,14 +44,14 @@ describe('ReactText', () => {
 
   it('renders default variant', () => {
     const ctx = createContext('Text', { text: 'Hello' });
-    const { container } = render(<ReactText.render context={ctx} buildChild={() => null} />);
+    const { container } = render(<Text.render context={ctx} buildChild={() => null} />);
     const span = container.querySelector('span');
     expect(span).not.toBeNull();
     expect(span?.textContent).toBe('Hello');
   });
 });
 
-describe('ReactButton', () => {
+describe('Button', () => {
   it('renders and dispatches action', () => {
     const ctx = createContext('Button', { 
       child: 'btn-child',
@@ -63,7 +63,7 @@ describe('ReactButton', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <span data-testid="child">{id}</span>);
 
-    render(<ReactButton.render context={ctx} buildChild={buildChild} />);
+    render(<Button.render context={ctx} buildChild={buildChild} />);
 
     const button = screen.getByRole('button');
     expect(button).not.toBeNull();
@@ -77,7 +77,7 @@ describe('ReactButton', () => {
   });
 });
 
-describe('ReactRow', () => {
+describe('Row', () => {
   it('renders children with correct flex styles', () => {
     const ctx = createContext('Row', {
       children: ['c1', 'c2'],
@@ -87,7 +87,7 @@ describe('ReactRow', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>{id}</div>);
 
-    const { container } = render(<ReactRow.render context={ctx} buildChild={buildChild} />);
+    const { container } = render(<Row.render context={ctx} buildChild={buildChild} />);
     const rowDiv = container.firstChild as HTMLElement;
     expect(rowDiv.style.display).toBe('flex');
     expect(rowDiv.style.flexDirection).toBe('row');
@@ -99,7 +99,7 @@ describe('ReactRow', () => {
   });
 });
 
-describe('ReactColumn', () => {
+describe('Column', () => {
   it('renders children with correct flex styles', () => {
     const ctx = createContext('Column', {
       children: ['c1'],
@@ -109,7 +109,7 @@ describe('ReactColumn', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>{id}</div>);
 
-    const { container } = render(<ReactColumn.render context={ctx} buildChild={buildChild} />);
+    const { container } = render(<Column.render context={ctx} buildChild={buildChild} />);
     const colDiv = container.firstChild as HTMLElement;
     expect(colDiv.style.display).toBe('flex');
     expect(colDiv.style.flexDirection).toBe('column');
@@ -120,7 +120,7 @@ describe('ReactColumn', () => {
   });
 });
 
-describe('ReactTextField', () => {
+describe('TextField', () => {
   it('renders label and text input', () => {
     const ctx = createContext('TextField', {
       label: 'Username',
@@ -128,7 +128,7 @@ describe('ReactTextField', () => {
       variant: 'shortText'
     });
 
-    const { container } = render(<ReactTextField.render context={ctx} buildChild={() => null} />);
+    const { container } = render(<TextField.render context={ctx} buildChild={() => null} />);
     const label = container.querySelector('label');
     expect(label?.textContent).toBe('Username');
 
@@ -144,7 +144,7 @@ describe('ReactTextField', () => {
       variant: 'longText'
     });
 
-    const { container } = render(<ReactTextField.render context={ctx} buildChild={() => null} />);
+    const { container } = render(<TextField.render context={ctx} buildChild={() => null} />);
     const textarea = container.querySelector('textarea');
     expect(textarea).not.toBeNull();
     expect(textarea?.value).toBe('lots of text');
@@ -158,7 +158,7 @@ describe('ReactTextField', () => {
 
     const spySet = vi.spyOn(ctx.dataContext, 'set');
 
-    const { container } = render(<ReactTextField.render context={ctx} buildChild={() => null} />);
+    const { container } = render(<TextField.render context={ctx} buildChild={() => null} />);
     const input = container.querySelector('input');
     
     fireEvent.change(input!, { target: { value: 'bob' } });
