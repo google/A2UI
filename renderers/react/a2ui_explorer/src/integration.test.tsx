@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import { describe, it, expect } from 'vitest';
-import { render, screen, act, fireEvent } from '@testing-library/react';
+import {describe, it, expect} from 'vitest';
+import {render, screen, act, fireEvent} from '@testing-library/react';
 import React from 'react';
-import { MessageProcessor } from '@a2ui/web_core/v0_9';
-import { A2uiSurface, minimalCatalog } from '@a2ui/react/v0_9';
+import {MessageProcessor} from '@a2ui/web_core/v0_9';
+import {A2uiSurface, minimalCatalog} from '@a2ui/react/v0_9';
 
-import ex1 from "../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json";
-import ex2 from "../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json";
-import ex4 from "../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json";
+import ex1 from '../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json';
+import ex2 from '../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json';
+import ex4 from '../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json';
 
 describe('Gallery Integration Tests', () => {
   it('renders Simple Text -> "Hello Minimal Catalog"', async () => {
     const processor = new MessageProcessor([minimalCatalog as any], async () => {});
     processor.processMessages(ex1.messages as any[]);
-    
-    const surface = processor.model.getSurface("example_1");
+
+    const surface = processor.model.getSurface('example_1');
     expect(surface).toBeDefined();
 
     render(
@@ -44,8 +44,8 @@ describe('Gallery Integration Tests', () => {
   it('renders Row layout -> content visibility', async () => {
     const processor = new MessageProcessor([minimalCatalog as any], async () => {});
     processor.processMessages(ex2.messages as any[]);
-    
-    const surface = processor.model.getSurface("example_2");
+
+    const surface = processor.model.getSurface('example_2');
     expect(surface).toBeDefined();
 
     render(
@@ -61,8 +61,8 @@ describe('Gallery Integration Tests', () => {
   it('handles Login form -> input updates data model', async () => {
     const processor = new MessageProcessor([minimalCatalog as any], async () => {});
     processor.processMessages(ex4.messages as any[]);
-    
-    const surface = processor.model.getSurface("example_4");
+
+    const surface = processor.model.getSurface('example_4');
     expect(surface).toBeDefined();
 
     render(
@@ -75,10 +75,9 @@ describe('Gallery Integration Tests', () => {
     expect(usernameInput).toBeDefined();
 
     await act(async () => {
-      fireEvent.change(usernameInput, { target: { value: 'alice' } });
+      fireEvent.change(usernameInput, {target: {value: 'alice'}});
     });
 
     expect(surface!.dataModel.get('/username')).toBe('alice');
   });
 });
-
