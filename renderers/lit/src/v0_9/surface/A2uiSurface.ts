@@ -21,19 +21,20 @@ import { renderA2uiNode } from "./render-node.js";
 
 @customElement("a2ui-surface")
 export class A2uiSurface extends LitElement {
-  @property({ type: Object }) accessor surface: SurfaceModel<any> | undefined = undefined;
-  
+  @property({ type: Object }) accessor surface: SurfaceModel<any> | undefined =
+    undefined;
+
   @state() accessor _hasRoot = false;
   private unsub?: () => void;
 
   protected willUpdate(changedProperties: PropertyValues) {
-    if (changedProperties.has('surface')) {
+    if (changedProperties.has("surface")) {
       if (this.unsub) {
         this.unsub();
         this.unsub = undefined;
       }
       this._hasRoot = !!this.surface?.componentsModel.get("root");
-      
+
       if (this.surface && !this._hasRoot) {
         const sub = this.surface.componentsModel.onCreated.subscribe((comp) => {
           if (comp.id === "root") {
@@ -60,13 +61,13 @@ export class A2uiSurface extends LitElement {
     if (!this._hasRoot) {
       return html`<slot name="loading"><div>Loading surface...</div></slot>`;
     }
-    
+
     try {
-        const rootContext = new ComponentContext(this.surface, "root", "/");
-        return html`${renderA2uiNode(rootContext)}`;
+      const rootContext = new ComponentContext(this.surface, "root", "/");
+      return html`${renderA2uiNode(rootContext)}`;
     } catch (e) {
-        console.error("Error creating root context:", e);
-        return html`<div>Error rendering surface</div>`;
+      console.error("Error creating root context:", e);
+      return html`<div>Error rendering surface</div>`;
     }
   }
 }
