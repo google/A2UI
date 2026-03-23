@@ -138,7 +138,7 @@ export default function App() {
         if (prevProcessor) {
           prevProcessor.model.dispose();
         }
-        const newProcessor = new MessageProcessor([minimalCatalog, basicCatalog as any], async (action: any) => {
+        const newProcessor = new MessageProcessor<ReactComponentImplementation>([minimalCatalog, basicCatalog], async (action: any) => {
           setLogs((l) => [...l, {time: new Date().toISOString(), action}]);
         });
 
