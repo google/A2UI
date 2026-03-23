@@ -26,7 +26,7 @@ async def main():
                         messages.append(p.root.data)
                     
     if messages:
-        out_path = "/home/node/.openclaw/projects/A2UI/tools/composer/src/data/dojo/restaurant-finder.json"
+        out_path = "../../../../tools/composer/src/data/dojo/restaurant-finder.json"
         with open(out_path, "w") as f:
             json.dump(messages, f, indent=2)
         print(f"Recorded {len(messages)} A2UI message parts to {out_path}")
