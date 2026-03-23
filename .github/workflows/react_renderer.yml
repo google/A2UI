@@ -59,8 +59,6 @@ jobs:
         working-directory: ./renderers/react
         run: npm test
 
-<<<<<<< HEAD
-=======
   build-and-test-demo:
     runs-on: ubuntu-latest
 
@@ -82,7 +80,6 @@ jobs:
         working-directory: ./renderers/react
         run: npm ci
 
->>>>>>> main
       - name: Build React Demo
         working-directory: ./renderers/react
         run: npm run build:demo
@@ -90,10 +87,7 @@ jobs:
       - name: Test React Demo
         working-directory: ./renderers/react
         run: npm run test:demo
-<<<<<<< HEAD
-=======
 
->>>>>>> main
   lint:
     runs-on: ubuntu-latest
 
