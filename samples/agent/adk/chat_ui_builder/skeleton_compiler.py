@@ -33,6 +33,18 @@ from region_archetypes import RegionArchetypeRegistry, RegionBuildContext
 
 logger = logging.getLogger(__name__)
 
+BUCKET_ORDER = {
+    'hero_bucket': 10,
+    'summary_bucket': 20,
+    'details_bucket': 30,
+    'workflow_bucket': 40,
+    'form_bucket': 50,
+    'list_bucket': 60,
+    'supporting_bucket': 70,
+    'actions_bucket': 80,
+    'layout_split_row': 90,
+}
+
 
 @dataclass
 class PendingRegionDelta:
@@ -228,7 +240,17 @@ class SkeletonCompiler:
     main_id = 'layout_main_column'
     side_id = 'layout_side_column'
     frames = []
-    frames.extend(self._apply_low_level(AddSectionDelta(event='add_section', id=row_id, parent_id='root', layout='Row')))
+    frames.extend(
+        self._apply_low_level(
+            AddSectionDelta(
+                event='add_section',
+                id=row_id,
+                parent_id='root',
+                layout='Row',
+                order=self._bucket_order(row_id),
+            )
+        )
+    )
     frames.extend(self._apply_low_level(AddSectionDelta(event='add_section', id=main_id, parent_id=row_id, layout='Column')))
     frames.extend(self._apply_low_level(AddSectionDelta(event='add_section', id=side_id, parent_id=row_id, layout='Column')))
 
@@ -270,9 +292,22 @@ class SkeletonCompiler:
     }
     frames: list[A2UIFrame] = []
     for bucket_id, parent_id in bucket_parents.items():
-      frames.extend(self._apply_low_level(AddSectionDelta(event='add_section', id=bucket_id, parent_id=parent_id, layout='Column')))
+      frames.extend(
+          self._apply_low_level(
+              AddSectionDelta(
+                  event='add_section',
+                  id=bucket_id,
+                  parent_id=parent_id,
+                  layout='Column',
+                  order=self._bucket_order(bucket_id),
+              )
+          )
+      )
     self.role_slots = role_map
     return frames
+
+  def _bucket_order(self, bucket_id: str) -> int:
+    return BUCKET_ORDER.get(bucket_id, 1000)
 
   def _add_region(self, delta: AddRegionDelta) -> list[A2UIFrame]:
     if not self.initialized:

@@ -108,6 +108,7 @@ class AddSectionDelta(BaseModel):
   layout: Literal["Card", "Column", "Row", "List"]
   title: str | None = None
   description: str | None = None
+  order: int | None = None
 
 
 class AddTextDelta(BaseModel):
