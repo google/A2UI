@@ -15,8 +15,8 @@
  */
 
 import {useState, useEffect, useSyncExternalStore, useCallback} from 'react';
-import {MessageProcessor, SurfaceModel} from '@a2ui/web_core/v0_9';
-import {minimalCatalog, A2uiSurface} from '@a2ui/react/v0_9';
+import {MessageProcessor, SurfaceModel, type A2uiMessage} from '@a2ui/web_core/v0_9';
+import {minimalCatalog, A2uiSurface, type ReactComponentImplementation} from '@a2ui/react/v0_9';
 
 // Import Minimal examples
 import min1 from '../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json';
@@ -37,7 +37,7 @@ const exampleFiles = [
   {key: 'min7', data: min7, catalog: 'Minimal'},
 ];
 
-const getMessages = (ex: any) => (Array.isArray(ex) ? ex : ex?.messages);
+const getMessages = (ex: { messages: A2uiMessage[] } | A2uiMessage[] | undefined) => (Array.isArray(ex) ? ex : ex?.messages);
 
 const DataModelViewer = ({surface}: {surface: SurfaceModel<any>}) => {
   const subscribeHook = useCallback(
@@ -67,7 +67,7 @@ export default function App() {
   const selectedExample = exampleFiles.find((e) => e.key === selectedExampleKey)?.data as any;
 
   const [logs, setLogs] = useState<any[]>([]);
-  const [processor, setProcessor] = useState<MessageProcessor<any> | null>(null);
+  const [processor, setProcessor] = useState<MessageProcessor<ReactComponentImplementation> | null>(null);
   const [surfaces, setSurfaces] = useState<string[]>([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(-1);
 
@@ -78,8 +78,8 @@ export default function App() {
         if (prevProcessor) {
           prevProcessor.model.dispose();
         }
-        const newProcessor = new MessageProcessor([minimalCatalog as any], async (action: any) => {
-          setLogs((l) => [...l, {time: new Date().toLocaleTimeString(), action}]);
+        const newProcessor = new MessageProcessor([minimalCatalog], async (action: any) => {
+          setLogs((l) => [...l, {time: new Date().toISOString(), action}]);
         });
 
         const msgs = getMessages(selectedExample);

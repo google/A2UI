@@ -24,6 +24,7 @@ const ResolvedChild = memo(
     id,
     basePath,
     compImpl,
+    componentModel,
   }: {
     surface: SurfaceModel<ReactComponentImplementation>;
     id: string;
@@ -36,7 +37,7 @@ const ResolvedChild = memo(
     // Create context. Recreate if the componentModel instance changes (e.g. type change recreation).
     const context = useMemo(
       () => new ComponentContext(surface, id, basePath),
-      [surface, id, basePath]
+      [surface, id, basePath, componentModel]
     );
 
     const buildChild = useCallback(

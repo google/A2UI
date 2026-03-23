@@ -100,7 +100,11 @@ describe('adapter', () => {
     
     const context = new ComponentContext(surface, 'c1', '/');
 
-    const spyAddListener = vi.spyOn(context.dataContext, 'subscribeDynamicValue');
+    const unsubscribeSpy = vi.fn();
+    const spyAddListener = vi.spyOn(context.dataContext, 'subscribeDynamicValue').mockReturnValue({
+      value: 'initial',
+      unsubscribe: unsubscribeSpy,
+    });
 
     const TestApiDef = {
       name: 'TestComp',
@@ -119,12 +123,10 @@ describe('adapter', () => {
     const { unmount } = render(<TestComponent.render context={context} buildChild={() => null} />);
 
     expect(spyAddListener).toHaveBeenCalled();
-    // One listener added
     
     unmount();
     
-    // We would need a way to check if removeListener was called, but checking that the binding logic doesn't crash on unmount is a good start.
-    // If listeners aren't cleaned up, subsequent updates might throw if component is destroyed.
+    expect(unsubscribeSpy).toHaveBeenCalled();
   });
 
   it('preserves progressive rendering (avoids stale closures from over-memoization)', async () => {
