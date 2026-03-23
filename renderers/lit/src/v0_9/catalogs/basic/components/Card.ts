@@ -19,8 +19,6 @@ import { customElement } from "lit/decorators.js";
 import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
 import { CardApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { ComponentContext } from "@a2ui/web_core/v0_9";
-import { renderA2uiNode } from "../../../surface/render-node.js";
 
 @customElement("a2ui-card")
 export class A2uiCardElement extends A2uiLitElement<typeof CardApi> {
@@ -32,7 +30,7 @@ export class A2uiCardElement extends A2uiLitElement<typeof CardApi> {
 
     return html`
       <div class="a2ui-card" style="border: 1px solid #ccc; border-radius: 8px; padding: 16px;">
-        ${props.child ? html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, props.child, this.context.dataContext.path))}` : ""}
+        ${props.child ? html`${this.renderNode(props.child)}` : nothing}
       </div>
     `;
   }

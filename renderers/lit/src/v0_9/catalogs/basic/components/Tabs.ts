@@ -18,9 +18,7 @@ import { html , nothing} from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
-import { ComponentContext } from "@a2ui/web_core/v0_9";
 import { TabsApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { renderA2uiNode } from "../../../surface/render-node.js";
 
 @customElement("a2ui-tabs")
 export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
@@ -41,8 +39,8 @@ export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
         </div>
         <div class="a2ui-tab-content">
           ${props.tabs[this.activeIndex] 
-            ? html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, props.tabs[this.activeIndex].child, this.context.dataContext.path))}` 
-            : ''}
+            ? html`${this.renderNode(props.tabs[this.activeIndex].child)}` 
+            : nothing}
         </div>
       </div>
     `;

@@ -49,7 +49,7 @@ export class A2uiTextFieldElement extends A2uiLitElement<typeof TextFieldApi> {
 
     return html`
       <div class="a2ui-textfield-container">
-        ${props.label ? html`<label>${props.label}</label>` : ""}
+        ${props.label ? html`<label>${props.label}</label>` : nothing}
         
         ${props.variant === "longText" 
           ? html`
@@ -71,7 +71,7 @@ export class A2uiTextFieldElement extends A2uiLitElement<typeof TextFieldApi> {
         
         ${isInvalid && props.validationErrors && props.validationErrors.length > 0
           ? html`<div class="a2ui-error-message">${props.validationErrors[0]}</div>`
-          : ""}
+          : nothing}
       </div>
     `;
   }

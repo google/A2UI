@@ -31,7 +31,7 @@ export class A2uiDateTimeInputElement extends A2uiLitElement<typeof DateTimeInpu
     const type = (props.enableDate && props.enableTime) ? "datetime-local" : (props.enableDate ? "date" : "time");
     return html`
       <div class="a2ui-datetime">
-        ${props.label ? html`<label>${props.label}</label>` : ""}
+        ${props.label ? html`<label>${props.label}</label>` : nothing}
         <input 
           type=${type} 
           .value=${props.value || ""} 

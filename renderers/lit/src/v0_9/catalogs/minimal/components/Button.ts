@@ -20,8 +20,6 @@ import { classMap } from "lit/directives/class-map.js";
 import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
 import { ButtonApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { ComponentContext } from "@a2ui/web_core/v0_9";
-import { renderA2uiNode } from "../../../surface/render-node.js";
 
 @customElement("a2ui-button")
 export class A2uiButtonElement extends A2uiLitElement<typeof ButtonApi> {
@@ -51,7 +49,7 @@ export class A2uiButtonElement extends A2uiLitElement<typeof ButtonApi> {
         @click=${onClick} 
         ?disabled=${isDisabled}
       >
-        ${props.child ? html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, props.child, this.context.dataContext.path))}` : ""}
+        ${props.child ? html`${this.renderNode(props.child)}` : nothing}
       </button>
     `;
   }

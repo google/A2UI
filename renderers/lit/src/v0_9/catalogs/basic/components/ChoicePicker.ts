@@ -43,7 +43,7 @@ export class A2uiChoicePickerElement extends A2uiLitElement<typeof ChoicePickerA
 
     return html`
       <div class="a2ui-choicepicker">
-        ${props.label ? html`<label>${props.label}</label>` : ""}
+        ${props.label ? html`<label>${props.label}</label>` : nothing}
         <div class="options">
           ${props.options?.map((opt: any) => html`
             <label>
