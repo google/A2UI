@@ -9,6 +9,7 @@
     componentId: string;
     dataContextPath: string;
     registry: ComponentRegistry;
+    theme?: any;
   }
 
   let { props, surface, dataContextPath, registry }: Props = $props();
@@ -17,28 +18,39 @@
   const content = $derived(props.content?.value);
 
   let isOpen = $state(false);
+  let dialogRef: HTMLDialogElement | undefined = $state();
 
   function openModal() {
     isOpen = true;
+    // Use the native <dialog> API for proper a11y (focus trapping, Escape key, etc.)
+    dialogRef?.showModal();
   }
 
   function closeModal() {
     isOpen = false;
+    dialogRef?.close();
   }
 
-  function onOverlayClick() {
-    closeModal();
+  function handleDialogClose() {
+    // Handles native Escape key close
+    isOpen = false;
   }
 
-  function onContentClick(event: MouseEvent) {
-    event.stopPropagation();
+  function handleBackdropClick(event: MouseEvent) {
+    // Only close if clicking the backdrop, not the content
+    if (event.target === dialogRef) {
+      closeModal();
+    }
   }
 </script>
 
-<div class="a2ui-modal-wrapper">
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="a2ui-modal-trigger" onclick={openModal}>
+<div class="a2ui-modal">
+  <button
+    type="button"
+    class="a2ui-modal-trigger"
+    onclick={openModal}
+    aria-haspopup="dialog"
+  >
     {#if trigger}
       <ComponentHost
         {surface}
@@ -47,25 +59,29 @@
         {registry}
       />
     {/if}
-  </div>
+  </button>
 
-  {#if isOpen}
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="a2ui-modal-overlay" onclick={onOverlayClick}>
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <!-- svelte-ignore a11y_no_static_element_interactions -->
-      <div class="a2ui-modal-content" onclick={onContentClick}>
-        <button class="a2ui-modal-close" onclick={closeModal}>&times;</button>
-        {#if content}
-          <ComponentHost
-            {surface}
-            componentId={content}
-            {dataContextPath}
-            {registry}
-          />
-        {/if}
-      </div>
+  <dialog
+    bind:this={dialogRef}
+    class="a2ui-modal-dialog"
+    onclose={handleDialogClose}
+    onclick={handleBackdropClick}
+  >
+    <div class="a2ui-modal-content">
+      <button
+        type="button"
+        class="a2ui-modal-close"
+        onclick={closeModal}
+        aria-label="Close"
+      >&times;</button>
+      {#if content && isOpen}
+        <ComponentHost
+          {surface}
+          componentId={content}
+          {dataContextPath}
+          {registry}
+        />
+      {/if}
     </div>
-  {/if}
+  </dialog>
 </div>

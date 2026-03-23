@@ -6,49 +6,46 @@ import {
 } from '@a2ui/web_core/v0_9';
 import type { SurfaceModel, ComponentApi } from '@a2ui/web_core/v0_9';
 import type { BoundProperty } from './types.js';
+import { disposeSignal } from './signal-bridge.svelte.js';
 
 /**
- * Binds all properties of an A2UI component to Svelte 5 reactive values.
+ * Creates a reactive binding for a single A2UI component.
  *
- * Follows the same pattern as Angular v0.9's ComponentBinder:
- * 1. Iterates over each raw property in the component model
- * 2. Resolves each via `DataContext.resolveSignal()` to get a Preact Signal
- * 3. Bridges each Signal to a Svelte `$state` reactive value
- * 4. Provides `onUpdate` callbacks for two-way binding
+ * This is the Svelte 5 equivalent of Angular's ComponentBinder service.
+ * It creates the ComponentContext ONCE and maintains stable signal subscriptions
+ * for the component's lifetime. Cleanup happens automatically via `$effect` teardown.
+ *
+ * MUST be called within a Svelte component's `<script>` block (needs rune context).
  *
  * @param surface The SurfaceModel this component belongs to.
  * @param componentId The unique ID of the component.
  * @param dataContextPath The data context scope path (default '/').
- * @returns A reactive record of bound properties.
+ * @returns A reactive record of bound properties, stable across re-renders.
  */
-export function bindComponentProps(
+export function createComponentBinding(
   surface: SurfaceModel<ComponentApi>,
   componentId: string,
   dataContextPath: string = '/',
-): Record<string, BoundProperty> {
+): { props: Record<string, BoundProperty>; context: ComponentContext } {
   const context = new ComponentContext(surface, componentId, dataContextPath);
-  const props = context.componentModel.properties;
+  const rawProps = context.componentModel.properties;
   const bound: Record<string, BoundProperty> = {};
+  const signals: PreactSignal<any>[] = [];
+  const disposers: (() => void)[] = [];
 
-  for (const key of Object.keys(props)) {
-    const rawValue = props[key];
+  for (const key of Object.keys(rawProps)) {
+    const rawValue = rawProps[key];
     const preactSignal: PreactSignal<any> = context.dataContext.resolveSignal(rawValue);
+    signals.push(preactSignal);
 
-    // Create reactive Svelte state from the Preact Signal
+    // Create Svelte $state for each prop — this is the reactive bridge
     let current = $state<any>(preactSignal.peek());
 
-    $effect(() => {
-      const dispose = effect(() => {
-        current = preactSignal.value;
-      });
-
-      return () => {
-        dispose();
-        if ((preactSignal as any).unsubscribe) {
-          (preactSignal as any).unsubscribe();
-        }
-      };
+    // Subscribe to Preact signal changes
+    const dispose = effect(() => {
+      current = preactSignal.value;
     });
+    disposers.push(dispose);
 
     const isBoundPath = rawValue && typeof rawValue === 'object' && 'path' in rawValue;
 
@@ -63,14 +60,26 @@ export function bindComponentProps(
     };
   }
 
-  return bound;
+  // Register cleanup to run when the host component is destroyed
+  $effect(() => {
+    return () => {
+      for (const dispose of disposers) dispose();
+      for (const sig of signals) disposeSignal(sig);
+    };
+  });
+
+  return { props: bound, context };
 }
 
 /**
- * Resolves an action from a bound property and dispatches it on the surface.
+ * Resolves an action and dispatches it on the surface.
+ *
+ * This is the component-facing version — takes the surface + component metadata
+ * that every component receives via props. The dispatch is async but fire-and-forget
+ * since click handlers should not block on server acknowledgment.
  *
  * @param surface The SurfaceModel to dispatch on.
- * @param action The raw action value from bound props.
+ * @param action The raw action value from bound props (props.action?.raw).
  * @param componentId The source component ID.
  * @param dataContextPath The current data context path.
  */
@@ -83,5 +92,34 @@ export function dispatchAction(
   if (!action) return;
   const dataContext = new DataContext(surface, dataContextPath);
   const resolved = dataContext.resolveAction(action);
-  surface.dispatchAction(resolved, componentId);
+  surface.dispatchAction(resolved, componentId).catch((err) => {
+    console.error('[a2ui/svelte] Action dispatch failed:', err);
+    surface.dispatchError({
+      code: 'ACTION_DISPATCH_ERROR',
+      message: err?.message ?? 'Action dispatch failed',
+    }).catch(() => {});
+  });
+}
+
+/**
+ * Normalizes a data model path for repeating template children.
+ *
+ * Used by layout components (Row, Column, List) when rendering children
+ * from a data-bound template (ChildList with componentId + path).
+ *
+ * @param path The relative or absolute path from the template definition.
+ * @param dataContextPath The current base data context path.
+ * @param index The index of the child in the repeating list.
+ * @returns A fully normalized absolute path for the indexed child.
+ */
+export function getNormalizedPath(path: string, dataContextPath: string, index: number): string {
+  let normalized = path || '';
+  if (!normalized.startsWith('/')) {
+    const base = dataContextPath === '/' ? '' : dataContextPath;
+    normalized = `${base}/${normalized}`;
+  }
+  if (normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+  return `${normalized}/${index}`;
 }

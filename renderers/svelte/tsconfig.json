@@ -1,5 +1,4 @@
 {
-  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
     "target": "es2022",
     "module": "esnext",
@@ -13,8 +12,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["svelte"]
   },
   "include": ["src/**/*.ts", "src/**/*.svelte"]
 }

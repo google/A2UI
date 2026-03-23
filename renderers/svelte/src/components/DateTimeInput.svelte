@@ -10,8 +10,9 @@
     registry: ComponentRegistry;
   }
 
-  let { props }: Props = $props();
+  let { props, componentId }: Props = $props();
 
+  const fieldId = $derived(`a2ui-dt-${componentId}`);
   const label = $derived(props.label?.value ?? '');
   const value = $derived(props.value?.value ?? '');
   const enableDate = $derived(props.enableDate?.value ?? false);
@@ -33,9 +34,10 @@
 
 <div class="a2ui-datetime-input">
   {#if label}
-    <label class="a2ui-datetime-label">{label}</label>
+    <label class="a2ui-datetime-label" for={fieldId}>{label}</label>
   {/if}
   <input
+    id={fieldId}
     class="a2ui-datetime-input-field"
     type={inputType}
     value={value}

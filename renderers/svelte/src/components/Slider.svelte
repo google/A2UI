@@ -10,8 +10,9 @@
     registry: ComponentRegistry;
   }
 
-  let { props }: Props = $props();
+  let { props, componentId }: Props = $props();
 
+  const fieldId = $derived(`a2ui-slider-${componentId}`);
   const label = $derived(props.label?.value ?? '');
   const min = $derived(props.min?.value ?? 0);
   const max = $derived(props.max?.value ?? 100);
@@ -25,9 +26,10 @@
 
 <div class="a2ui-slider">
   {#if label}
-    <label class="a2ui-slider-label">{label}</label>
+    <label class="a2ui-slider-label" for={fieldId}>{label}</label>
   {/if}
   <input
+    id={fieldId}
     type="range"
     class="a2ui-slider-input"
     min={min}

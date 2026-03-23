@@ -18,15 +18,18 @@ export interface BoundProperty<T = any> {
 }
 
 /**
- * A catalog entry mapping a component type name to a Svelte component.
+ * Standard props interface for all A2UI Svelte components.
+ *
+ * Every component in the registry receives these props from ComponentHost.
  */
-export interface ComponentEntry {
-  /** The A2UI component type name (e.g., 'Button', 'Text'). */
-  name: string;
-  /** The A2UI schema API definition for this component. */
-  api: ComponentApi;
-  /** The Svelte component to render for this type. */
-  component: SvelteComponent<any>;
+export interface A2UIComponentProps {
+  props: Record<string, BoundProperty>;
+  surface: import('@a2ui/web_core/v0_9').SurfaceModel<ComponentApi>;
+  componentId: string;
+  dataContextPath: string;
+  registry: ComponentRegistry;
+  /** The theme object from the surface, if any. */
+  theme: any;
 }
 
 /**
@@ -34,3 +37,14 @@ export interface ComponentEntry {
  * Users can override any entry to swap in their own design system components.
  */
 export type ComponentRegistry = Map<string, SvelteComponent<any>>;
+
+/**
+ * Preact Signal with optional unsubscribe for computed signals.
+ * This type exposes the `.unsubscribe()` method that web_core attaches
+ * to signals returned by `DataContext.resolveSignal()` for computed values.
+ */
+export interface DisposableSignal<T> {
+  readonly value: T;
+  peek(): T;
+  unsubscribe?: () => void;
+}
