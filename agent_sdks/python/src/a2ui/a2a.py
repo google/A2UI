@@ -200,6 +200,25 @@ def _requested_a2ui_extensions(context: RequestContext) -> List[str]:
   return requested_extensions
 
 
+def _select_newest_a2ui_extension(
+    requested_extensions: List[str], agent_advertised_extensions: List[str]
+) -> Optional[str]:
+  """Selects the newest A2UI extension URI from the matched extensions."""
+  matched_extensions = [
+      uri for uri in requested_extensions if uri in agent_advertised_extensions
+  ]
+  if not matched_extensions:
+    return None
+
+  def _version_key(uri: str) -> tuple:
+    version_str = uri.replace(f"{A2UI_EXTENSION_BASE_URI}/v", "")
+    from packaging.version import parse as parse_version
+
+    return parse_version(version_str)
+
+  return max(matched_extensions, key=_version_key)
+
+
 def try_activate_a2ui_extension(
     context: RequestContext, agent_card: AgentCard
 ) -> Optional[str]:
@@ -220,9 +239,11 @@ def try_activate_a2ui_extension(
   if not agent_advertised_extensions:
     return None
 
-  for req_uri in requested_extensions:
-    if req_uri in agent_advertised_extensions:
-      context.add_activated_extension(req_uri)
-      return req_uri.replace(f"{A2UI_EXTENSION_BASE_URI}/v", "")
+  selected_uri = _select_newest_a2ui_extension(
+      requested_extensions, agent_advertised_extensions
+  )
+  if selected_uri:
+    context.add_activated_extension(selected_uri)
+    return selected_uri.replace(f"{A2UI_EXTENSION_BASE_URI}/v", "")
 
   return None
