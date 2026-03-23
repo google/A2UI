@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Callable
 
-from models import A2UIFrame, AddDividerDelta, AddRegionDelta, AddSectionDelta
+from models import A2UIFrame, AddRegionDelta, AddSectionDelta
 
 
 EmitLowLevel = Callable[[object], list[A2UIFrame]]
@@ -37,9 +37,7 @@ class HeroArchetypeBuilder(RegionArchetypeBuilder):
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
-    body_id = f'{region_id}_hero_body'
     facts_id = f'{region_id}_hero_facts'
-    content_id = f'{region_id}_hero_content'
     actions_id = f'{region_id}_hero_actions'
     frames = []
     frames.extend(
@@ -54,23 +52,21 @@ class HeroArchetypeBuilder(RegionArchetypeBuilder):
             )
         )
     )
-    frames.extend(emit(AddSectionDelta(event='add_section', id=body_id, parent_id=region_id, layout='Column')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=facts_id, parent_id=body_id, layout='Row')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=content_id, parent_id=body_id, layout='Column')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=actions_id, parent_id=body_id, layout='Row')))
+    frames.extend(emit(AddSectionDelta(event='add_section', id=facts_id, parent_id=region_id, layout='Row')))
+    frames.extend(emit(AddSectionDelta(event='add_section', id=actions_id, parent_id=region_id, layout='Row')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': content_id,
+            'text': region_id,
             'fact': facts_id,
             'action_primary': actions_id,
             'action_secondary': actions_id,
-            'input': content_id,
-            'image': content_id,
-            'list_item': content_id,
-            'flow': content_id,
-            'divider': body_id,
+            'input': region_id,
+            'image': region_id,
+            'list_item': region_id,
+            'flow': region_id,
+            'divider': region_id,
         },
     )
 
@@ -80,9 +76,7 @@ class SummaryArchetypeBuilder(RegionArchetypeBuilder):
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
-    body_id = f'{region_id}_summary_body'
     facts_id = f'{region_id}_summary_facts'
-    notes_id = f'{region_id}_summary_notes'
     frames = []
     frames.extend(
         emit(
@@ -96,22 +90,20 @@ class SummaryArchetypeBuilder(RegionArchetypeBuilder):
             )
         )
     )
-    frames.extend(emit(AddSectionDelta(event='add_section', id=body_id, parent_id=region_id, layout='Column')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=facts_id, parent_id=body_id, layout='Row')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=notes_id, parent_id=body_id, layout='Column')))
+    frames.extend(emit(AddSectionDelta(event='add_section', id=facts_id, parent_id=region_id, layout='Row')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': notes_id,
+            'text': region_id,
             'fact': facts_id,
-            'action_primary': notes_id,
-            'action_secondary': notes_id,
-            'input': notes_id,
-            'image': notes_id,
-            'list_item': notes_id,
-            'flow': notes_id,
-            'divider': body_id,
+            'action_primary': region_id,
+            'action_secondary': region_id,
+            'input': region_id,
+            'image': region_id,
+            'list_item': region_id,
+            'flow': region_id,
+            'divider': region_id,
         },
     )
 
@@ -121,9 +113,7 @@ class DetailsArchetypeBuilder(RegionArchetypeBuilder):
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
-    prose_id = f'{region_id}_details_prose'
     facts_id = f'{region_id}_details_facts'
-    note_id = f'{region_id}_details_note'
     actions_id = f'{region_id}_details_actions'
     frames = []
     layout = 'Card' if context.delta.importance == 'high' and context.emphasis != 'content-first' else 'Column'
@@ -139,23 +129,21 @@ class DetailsArchetypeBuilder(RegionArchetypeBuilder):
             )
         )
     )
-    frames.extend(emit(AddSectionDelta(event='add_section', id=prose_id, parent_id=region_id, layout='Column')))
     frames.extend(emit(AddSectionDelta(event='add_section', id=facts_id, parent_id=region_id, layout='Row')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=note_id, parent_id=region_id, layout='Column')))
     frames.extend(emit(AddSectionDelta(event='add_section', id=actions_id, parent_id=region_id, layout='Row')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': prose_id,
+            'text': region_id,
             'fact': facts_id,
             'action_primary': actions_id,
             'action_secondary': actions_id,
-            'input': prose_id,
-            'image': note_id,
-            'list_item': prose_id,
-            'flow': note_id,
-            'divider': note_id,
+            'input': region_id,
+            'image': region_id,
+            'list_item': region_id,
+            'flow': region_id,
+            'divider': region_id,
         },
     )
 
@@ -167,7 +155,6 @@ class ActionsArchetypeBuilder(RegionArchetypeBuilder):
     region_id = context.delta.id
     primary_id = f'{region_id}_primary_actions'
     secondary_id = f'{region_id}_secondary_actions'
-    notes_id = f'{region_id}_action_notes'
     frames = []
     frames.extend(
         emit(
@@ -182,22 +169,20 @@ class ActionsArchetypeBuilder(RegionArchetypeBuilder):
         )
     )
     frames.extend(emit(AddSectionDelta(event='add_section', id=primary_id, parent_id=region_id, layout='Row')))
-    frames.extend(emit(AddDividerDelta(event='add_divider', id=f'{region_id}_action_divider', parent_id=region_id)))
     frames.extend(emit(AddSectionDelta(event='add_section', id=secondary_id, parent_id=region_id, layout='Row')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=notes_id, parent_id=region_id, layout='Column')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': notes_id,
-            'fact': notes_id,
+            'text': region_id,
+            'fact': region_id,
             'action_primary': primary_id,
             'action_secondary': secondary_id,
-            'input': notes_id,
-            'image': notes_id,
-            'list_item': notes_id,
-            'flow': notes_id,
-            'divider': notes_id,
+            'input': region_id,
+            'image': region_id,
+            'list_item': region_id,
+            'flow': region_id,
+            'divider': region_id,
         },
     )
 
@@ -207,7 +192,6 @@ class WorkflowArchetypeBuilder(RegionArchetypeBuilder):
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
-    intro_id = f'{region_id}_workflow_intro'
     flow_id = f'{region_id}_workflow_flow'
     actions_id = f'{region_id}_workflow_actions'
     frames = []
@@ -223,23 +207,21 @@ class WorkflowArchetypeBuilder(RegionArchetypeBuilder):
             )
         )
     )
-    frames.extend(emit(AddSectionDelta(event='add_section', id=intro_id, parent_id=region_id, layout='Column')))
-    frames.extend(emit(AddDividerDelta(event='add_divider', id=f'{region_id}_workflow_divider', parent_id=region_id)))
     frames.extend(emit(AddSectionDelta(event='add_section', id=flow_id, parent_id=region_id, layout='Column')))
     frames.extend(emit(AddSectionDelta(event='add_section', id=actions_id, parent_id=region_id, layout='Row')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': intro_id,
-            'fact': intro_id,
+            'text': region_id,
+            'fact': region_id,
             'action_primary': actions_id,
             'action_secondary': actions_id,
-            'input': intro_id,
-            'image': intro_id,
-            'list_item': intro_id,
+            'input': region_id,
+            'image': region_id,
+            'list_item': region_id,
             'flow': flow_id,
-            'divider': intro_id,
+            'divider': region_id,
         },
     )
 
@@ -249,7 +231,6 @@ class SupportingArchetypeBuilder(RegionArchetypeBuilder):
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
-    body_id = f'{region_id}_supporting_body'
     frames = []
     frames.extend(
         emit(
@@ -263,20 +244,19 @@ class SupportingArchetypeBuilder(RegionArchetypeBuilder):
             )
         )
     )
-    frames.extend(emit(AddSectionDelta(event='add_section', id=body_id, parent_id=region_id, layout='Column')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': body_id,
-            'fact': body_id,
-            'action_primary': body_id,
-            'action_secondary': body_id,
-            'input': body_id,
-            'image': body_id,
-            'list_item': body_id,
-            'flow': body_id,
-            'divider': body_id,
+            'text': region_id,
+            'fact': region_id,
+            'action_primary': region_id,
+            'action_secondary': region_id,
+            'input': region_id,
+            'image': region_id,
+            'list_item': region_id,
+            'flow': region_id,
+            'divider': region_id,
         },
     )
 
@@ -286,7 +266,6 @@ class ListArchetypeBuilder(RegionArchetypeBuilder):
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
-    body_id = f'{region_id}_list_body'
     list_id = f'{region_id}_list_items'
     frames = []
     frames.extend(
@@ -301,21 +280,20 @@ class ListArchetypeBuilder(RegionArchetypeBuilder):
             )
         )
     )
-    frames.extend(emit(AddSectionDelta(event='add_section', id=body_id, parent_id=region_id, layout='Column')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=list_id, parent_id=body_id, layout='List')))
+    frames.extend(emit(AddSectionDelta(event='add_section', id=list_id, parent_id=region_id, layout='List')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': body_id,
-            'fact': body_id,
-            'action_primary': body_id,
-            'action_secondary': body_id,
-            'input': body_id,
-            'image': body_id,
+            'text': region_id,
+            'fact': region_id,
+            'action_primary': region_id,
+            'action_secondary': region_id,
+            'input': region_id,
+            'image': region_id,
             'list_item': list_id,
-            'flow': body_id,
-            'divider': body_id,
+            'flow': region_id,
+            'divider': region_id,
         },
     )
 
@@ -326,7 +304,6 @@ class FormArchetypeBuilder(RegionArchetypeBuilder):
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
     inputs_id = f'{region_id}_form_inputs'
-    helper_id = f'{region_id}_form_helper'
     actions_id = f'{region_id}_form_actions'
     frames = []
     layout = 'Card' if context.delta.importance == 'high' and context.emphasis != 'action-first' else 'Column'
@@ -343,22 +320,20 @@ class FormArchetypeBuilder(RegionArchetypeBuilder):
         )
     )
     frames.extend(emit(AddSectionDelta(event='add_section', id=inputs_id, parent_id=region_id, layout='Column')))
-    frames.extend(emit(AddSectionDelta(event='add_section', id=helper_id, parent_id=region_id, layout='Column')))
-    frames.extend(emit(AddDividerDelta(event='add_divider', id=f'{region_id}_form_divider', parent_id=region_id)))
     frames.extend(emit(AddSectionDelta(event='add_section', id=actions_id, parent_id=region_id, layout='Row')))
     return RegionBuildResult(
         archetype=self.archetype_name,
         frames=frames,
         slot_parents={
-            'text': helper_id,
-            'fact': helper_id,
+            'text': region_id,
+            'fact': region_id,
             'action_primary': actions_id,
             'action_secondary': actions_id,
             'input': inputs_id,
-            'image': helper_id,
-            'list_item': helper_id,
-            'flow': helper_id,
-            'divider': helper_id,
+            'image': region_id,
+            'list_item': region_id,
+            'flow': region_id,
+            'divider': region_id,
         },
     )
 
