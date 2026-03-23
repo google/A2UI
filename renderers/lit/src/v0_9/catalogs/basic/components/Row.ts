@@ -21,8 +21,6 @@ import { styleMap } from "lit/directives/style-map.js";
 import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { ComponentContext } from "@a2ui/web_core/v0_9";
-import { renderA2uiNode } from "../../../surface/render-node.js";
 
 @customElement("a2ui-basic-row")
 export class A2uiBasicRowElement extends A2uiLitElement<typeof RowApi> {
@@ -37,12 +35,7 @@ export class A2uiBasicRowElement extends A2uiLitElement<typeof RowApi> {
     
     return html`
       <div class="a2ui-row" style=${styleMap(styles as Record<string, string>)}>
-        ${map(children, (child: any) => {
-          if (typeof child === 'string') {
-             return html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, child, this.context.dataContext.path))}`;
-          }
-          return html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, child.id, child.basePath))}`;
-        })}
+        ${map(children, (child: any) => html`${this.renderNode(child)}`)}
       </div>
     `;
   }

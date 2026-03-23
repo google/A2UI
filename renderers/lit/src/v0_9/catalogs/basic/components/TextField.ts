@@ -39,12 +39,12 @@ export class A2uiBasicTextFieldElement extends A2uiLitElement<typeof TextFieldAp
 
     return html`
       <div class="a2ui-textfield-container">
-        ${props.label ? html`<label>${props.label}</label>` : ""}
+        ${props.label ? html`<label>${props.label}</label>` : nothing}
         ${props.variant === "longText" 
           ? html`<textarea class=${classMap(classes)} .value=${props.value || ""} @input=${onInput}></textarea>`
           : html`<input type=${type} class=${classMap(classes)} .value=${props.value || ""} @input=${onInput} />`
         }
-        ${isInvalid && props.validationErrors?.length ? html`<div class="error">${props.validationErrors[0]}</div>` : ""}
+        ${isInvalid && props.validationErrors?.length ? html`<div class="error">${props.validationErrors[0]}</div>` : nothing}
       </div>
     `;
   }

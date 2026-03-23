@@ -18,9 +18,7 @@ import { html , nothing} from "lit";
 import { customElement, query } from "lit/decorators.js";
 import { A2uiLitElement } from "../../../base-element.js";
 import { A2uiController } from "../../../adapter.js";
-import { ComponentContext } from "@a2ui/web_core/v0_9";
 import { ModalApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { renderA2uiNode } from "../../../surface/render-node.js";
 
 @customElement("a2ui-modal")
 export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
@@ -33,11 +31,11 @@ export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
 
     return html`
       <div @click=${() => this.dialog?.showModal()}>
-        ${props.trigger ? html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, props.trigger, this.context.dataContext.path))}` : ''}
+        ${props.trigger ? html`${this.renderNode(props.trigger)}` : nothing}
       </div>
       <dialog class="a2ui-modal" style="border: 1px solid #ccc; border-radius: 8px; padding: 24px; min-width: 300px;">
         <form method="dialog" style="text-align: right;"><button>×</button></form>
-        ${props.content ? html`${renderA2uiNode(new ComponentContext(this.context.dataContext.surface, props.content, this.context.dataContext.path))}` : ''}
+        ${props.content ? html`${this.renderNode(props.content)}` : nothing}
       </dialog>
     `;
   }

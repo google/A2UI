@@ -30,7 +30,7 @@ export class A2uiSliderElement extends A2uiLitElement<typeof SliderApi> {
 
     return html`
       <div class="a2ui-slider">
-        ${props.label ? html`<label>${props.label}</label>` : ""}
+        ${props.label ? html`<label>${props.label}</label>` : nothing}
         <input 
           type="range" 
           min=${props.min ?? 0} 

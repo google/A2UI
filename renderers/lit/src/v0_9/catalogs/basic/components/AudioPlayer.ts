@@ -30,7 +30,7 @@ export class A2uiAudioPlayerElement extends A2uiLitElement<typeof AudioPlayerApi
 
     return html`
       <div class="a2ui-audioplayer">
-        ${props.description ? html`<p>${props.description}</p>` : ""}
+        ${props.description ? html`<p>${props.description}</p>` : nothing}
         <audio src=${props.url} controls></audio>
       </div>`;
   }
