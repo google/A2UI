@@ -35,7 +35,9 @@ import { LitComponentImplementation } from "../types.js";
 export function renderA2uiNode(context: ComponentContext) {
   const type = context.componentModel.type;
   const catalog = context.dataContext.surface.catalog;
-  const implementation = catalog.components.get(type) as LitComponentImplementation | undefined;
+  const implementation = catalog.components.get(type) as
+    | LitComponentImplementation
+    | undefined;
 
   if (!implementation) {
     console.warn(`Component implementation not found for type: ${type}`);
