@@ -37,6 +37,8 @@ const ResolvedChild = memo(
     // Create context. Recreate if the componentModel instance changes (e.g. type change recreation).
     const context = useMemo(
       () => new ComponentContext(surface, id, basePath),
+      // componentModel is used as a trigger for recreation even if not in the body
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [surface, id, basePath, componentModel]
     );
 
