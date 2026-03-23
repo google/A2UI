@@ -214,7 +214,7 @@ class AppendListItemDelta(BaseModel):
 
 
 class FinalizeDelta(BaseModel):
-  event: Literal["finalize"]
+  event: Literal["finalize", "finalize_plan"]
 
 
 SkeletonDelta = Annotated[

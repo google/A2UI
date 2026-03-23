@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-import re
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterable
 from typing import Any
 
 from litellm import acompletion
@@ -23,6 +22,7 @@ from models import (
     InitSurfaceDelta,
     SKELETON_DELTA_ADAPTER,
 )
+from planning_stream import PlanningDeltaRecord, PlanningDeltaStreamParser
 from prompting import build_messages
 from skeleton_compiler import SkeletonCompiler
 from settings import settings
@@ -67,8 +67,9 @@ class ChatUIService:
       self, user_message: str, request_id: str = 'unknown'
   ) -> AsyncIterator[A2UIFrame]:
     messages = build_messages(user_message)
-    raw_output = ''
-    emitted_progress_fingerprint: str | None = None
+    parser = PlanningDeltaStreamParser()
+    skeleton_compiler = SkeletonCompiler()
+    rejected_lines: list[str] = []
     chunk_count = 0
 
     for frame in self._loading_frames():
@@ -101,17 +102,28 @@ class ChatUIService:
         continue
       chunk_count += 1
       logger.info('[%s] LLM chunk=%s', request_id, _truncate(content))
-      raw_output += content
-      progress_frames, emitted_progress_fingerprint = self._stream_progress_frames(
-          raw_output,
-          chunk_count=chunk_count,
-          emitted_progress_fingerprint=emitted_progress_fingerprint,
-      )
-      for frame in progress_frames:
-        logger.info('[%s] Emitting progress frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
+      parsed_records, rejected = parser.feed(content)
+      rejected_lines.extend(rejected)
+      for frame in self._compile_planning_records(parsed_records, skeleton_compiler, request_id):
         yield frame
+      if not parser.seen_planning_delta:
+        for frame in self._planning_wait_frames(parser.raw_output, chunk_count):
+          logger.info('[%s] Emitting planning-wait frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
+          yield frame
 
+    parsed_records, trailing_rejected = parser.finish()
+    rejected_lines.extend(trailing_rejected)
+    for frame in self._compile_planning_records(parsed_records, skeleton_compiler, request_id):
+      yield frame
+
+    raw_output = parser.raw_output
     logger.info('[%s] Raw LLM output=%s', request_id, _truncate(raw_output))
+
+    if parser.seen_planning_delta:
+      for rejected_line in rejected_lines:
+        logger.info('[%s] Ignoring non-planning line during delta stream=%s', request_id, _truncate(rejected_line))
+      return
+
     intent_plan = self._parse_intent_plan(raw_output, request_id=request_id)
     if intent_plan is not None:
       normalized_plan = self.design_lint.normalize(intent_plan)
@@ -132,6 +144,21 @@ class ChatUIService:
 
     for frame in self._fallback_frames(raw_output, request_id=request_id):
       yield frame
+
+  def _compile_planning_records(
+      self,
+      records: Iterable[PlanningDeltaRecord],
+      skeleton_compiler: SkeletonCompiler,
+      request_id: str,
+  ) -> list[A2UIFrame]:
+    frames: list[A2UIFrame] = []
+    for record in records:
+      logger.info('[%s] Parsed planning delta=%s', request_id, _truncate(record.raw_line))
+      compiled = skeleton_compiler.apply(record.delta)
+      for frame in compiled:
+        logger.info('[%s] Emitting planning A2UI frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
+      frames.extend(compiled)
+    return frames
 
   def _parse_intent_plan(self, raw_output: str, request_id: str) -> IntentPlan | None:
     stripped = _extract_json_object(_strip_code_fences(raw_output))
@@ -170,7 +197,7 @@ class ChatUIService:
       skeleton_compiler: SkeletonCompiler,
       request_id: str,
   ) -> list[A2UIFrame]:
-    logger.info('[%s] Raw NDJSON line=%s', request_id, _truncate(line))
+    logger.info('[%s] Raw fallback line=%s', request_id, _truncate(line))
     try:
       payload = json.loads(line)
       try:
@@ -181,7 +208,7 @@ class ChatUIService:
         active_compiler = compiler
     except (json.JSONDecodeError, ValidationError, ValueError) as exc:
       logger.warning(
-          '[%s] Failed to parse/validate delta line=%s error=%s',
+          '[%s] Failed to parse/validate fallback line=%s error=%s',
           request_id,
           _truncate(line),
           exc,
@@ -189,16 +216,16 @@ class ChatUIService:
       return []
     if isinstance(parsed, FinalizeDelta):
       logger.info('[%s] Received finalize event.', request_id)
-      return []
-    logger.info('[%s] Parsed legacy delta=%s', request_id, _truncate(parsed.model_dump()))
+      return active_compiler.apply(parsed) if active_compiler is skeleton_compiler else []
+    logger.info('[%s] Parsed fallback delta=%s', request_id, _truncate(parsed.model_dump()))
     try:
       frames = active_compiler.apply(parsed)
       for frame in frames:
-        logger.info('[%s] Emitting legacy A2UI frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
+        logger.info('[%s] Emitting fallback A2UI frame=%s', request_id, _truncate(frame.model_dump(exclude_none=True)))
       return frames
     except Exception as exc:  # noqa: BLE001
       logger.exception(
-          '[%s] Compiler failed for legacy delta=%s error=%s',
+          '[%s] Compiler failed for fallback delta=%s error=%s',
           request_id,
           _truncate(parsed.model_dump()),
           exc,
@@ -218,89 +245,16 @@ class ChatUIService:
       return False
     return any(marker in stripped for marker in ('"sections"', '"page_kind"', '"primary_action"', '"layout_hint"'))
 
-  def _stream_progress_frames(
-      self,
-      raw_output: str,
-      chunk_count: int,
-      emitted_progress_fingerprint: str | None,
-  ) -> tuple[list[A2UIFrame], str | None]:
-    progress_snapshot = self._build_progress_snapshot(raw_output, chunk_count)
-    fingerprint = json.dumps(progress_snapshot, ensure_ascii=False, sort_keys=True)
-    if fingerprint == emitted_progress_fingerprint:
-      return [], emitted_progress_fingerprint
-    return self._progress_frames(progress_snapshot), fingerprint
-
-  def _build_progress_snapshot(self, raw_output: str, chunk_count: int) -> dict[str, str]:
-    compact_output = _strip_code_fences(raw_output).strip()
-    title = self._extract_first_string_field(compact_output, 'title')
-    page_kind = self._extract_first_string_field(compact_output, 'page_kind')
-    primary_action = self._extract_nested_action_label(compact_output, 'primary_action')
-    section_titles = self._extract_section_titles(compact_output)
-    section_summary = '、'.join(section_titles[:4]) if section_titles else '尚未解析到 section 标题'
-    if len(section_titles) > 4:
-      section_summary += f' 等 {len(section_titles)} 个 section'
-
-    status_parts = [f'已接收 {len(raw_output)} 个字符', f'{chunk_count} 个流式分片']
-    if title:
-      status_parts.append(f'页面标题候选：{title}')
-    elif '"sections"' in compact_output:
-      status_parts.append('已检测到 sections，正在补齐结构')
-    else:
-      status_parts.append('正在等待稳定的 Intent Plan JSON 闭合')
-
-    preview_lines = ['模型规划预览']
-    preview_lines.append(f'- 页面类型：{page_kind or "尚未识别"}')
-    preview_lines.append(f'- 页面标题：{title or "尚未识别"}')
-    preview_lines.append(f'- 主操作：{primary_action or "尚未识别"}')
-    preview_lines.append(f'- Section：{section_summary}')
-
-    return {
-        'status': '；'.join(status_parts),
-        'preview': '\n'.join(preview_lines),
-        'metrics': self._progress_metrics(compact_output, chunk_count, len(section_titles)),
-    }
-
-  def _progress_metrics(self, compact_output: str, chunk_count: int, section_count: int) -> str:
-    opening_braces = compact_output.count('{')
-    closing_braces = compact_output.count('}')
-    opening_brackets = compact_output.count('[')
-    closing_brackets = compact_output.count(']')
-    brace_state = f'花括号 {closing_braces}/{opening_braces}'
-    bracket_state = f'方括号 {closing_brackets}/{opening_brackets}'
-    return f'流式分片：{chunk_count} · 已识别 section：{section_count} · {brace_state} · {bracket_state}'
-
-  def _extract_first_string_field(self, raw_output: str, field_name: str) -> str | None:
-    pattern = rf'"{re.escape(field_name)}"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"'
-    match = re.search(pattern, raw_output)
-    if not match:
-      return None
-    return json.loads(f'"{match.group(1)}"')
-
-  def _extract_nested_action_label(self, raw_output: str, field_name: str) -> str | None:
-    block_pattern = rf'"{re.escape(field_name)}"\s*:\s*\{{(?P<body>.*?)\}}'
-    match = re.search(block_pattern, raw_output, re.DOTALL)
-    if not match:
-      return None
-    return self._extract_first_string_field(match.group('body'), 'label')
-
-  def _extract_section_titles(self, raw_output: str) -> list[str]:
-    titles = re.findall(r'"sections"\s*:\s*\[.*?"title"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"', raw_output, re.DOTALL)
-    if not titles:
-      titles = re.findall(r'"role"\s*:\s*"[^"]+"\s*,(?:.|\n){0,240}?"title"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)"', raw_output)
-    decoded: list[str] = []
-    seen: set[str] = set()
-    for title in titles:
-      value = json.loads(f'"{title}"')
-      if value not in seen:
-        seen.add(value)
-        decoded.append(value)
-    return decoded
-
-  def _progress_frames(self, snapshot: dict[str, str]) -> list[A2UIFrame]:
+  def _planning_wait_frames(self, raw_output: str, chunk_count: int) -> list[A2UIFrame]:
+    stripped = _strip_code_fences(raw_output).strip()
+    lines = [line.strip() for line in stripped.splitlines() if line.strip() and not line.startswith('```')]
+    preview = lines[-1][:140] if lines else '尚未接收到合法 planning delta，等待 init_plan...'
+    metrics = f'流式分片：{chunk_count} · 原始字符：{len(raw_output)} · 已完成行：{len(lines)}'
+    status = '等待首个 planning delta（期望先收到 init_plan，再逐步收到 region 与条目事件）。'
     return [
-        self._data_frame(f'/content/{STREAM_STATUS_TEXT_ID}', 'text', snapshot['status']),
-        self._data_frame(f'/content/{STREAM_PREVIEW_TEXT_ID}', 'text', snapshot['preview']),
-        self._data_frame(f'/content/{STREAM_METRICS_TEXT_ID}', 'text', snapshot['metrics']),
+        self._data_frame(f'/content/{STREAM_STATUS_TEXT_ID}', 'text', status),
+        self._data_frame(f'/content/{STREAM_PREVIEW_TEXT_ID}', 'text', f'模型输出预览\n{preview}'),
+        self._data_frame(f'/content/{STREAM_METRICS_TEXT_ID}', 'text', metrics),
     ]
 
   def _data_frame(self, path: str, key: str, value: str) -> A2UIFrame:
@@ -318,8 +272,8 @@ class ChatUIService:
         InitSurfaceDelta(
             event='init_surface',
             surface_id='main',
-            title='正在生成界面',
-            summary='后端正在等待模型输出 Intent Plan，并将其编译成 A2UI 骨架。',
+            title='正在建立规划流',
+            summary='后端正在等待模型输出 planning deltas，并将在收到 init_plan 后立即切到业务 UI。',
         )
     )
     frames.extend(
@@ -328,7 +282,7 @@ class ChatUIService:
                 event='add_text',
                 id=STREAM_STATUS_TEXT_ID,
                 parent_id='root',
-                text='已启动流式生成，正在等待模型逐步输出 Intent Plan JSON。',
+                text='已启动流式生成，等待首个 init_plan 事件。',
                 usage_hint='body',
             )
         )
@@ -339,7 +293,7 @@ class ChatUIService:
                 event='add_text',
                 id=STREAM_PREVIEW_TEXT_ID,
                 parent_id='root',
-                text='模型规划预览\n- 页面类型：尚未识别\n- 页面标题：尚未识别\n- 主操作：尚未识别\n- Section：尚未解析到 section 标题',
+                text='模型输出预览\n尚未接收到合法 planning delta，等待 init_plan...',
                 usage_hint='body',
             )
         )
@@ -350,7 +304,7 @@ class ChatUIService:
                 event='add_text',
                 id=STREAM_METRICS_TEXT_ID,
                 parent_id='root',
-                text='流式分片：0 · 已识别 section：0 · 花括号 0/0 · 方括号 0/0',
+                text='流式分片：0 · 原始字符：0 · 已完成行：0',
                 usage_hint='caption',
             )
         )
@@ -373,7 +327,7 @@ class ChatUIService:
                 event='add_text',
                 id='intent_plan_error_text',
                 parent_id='root',
-                text='请检查流程图节点 kind、字段命名或让模型重新生成更严格的 Intent Plan JSON。',
+                text='请检查 planning delta 或 Intent Plan 字段命名，并让模型重新生成更严格的输出。',
                 usage_hint='body',
             )
         )

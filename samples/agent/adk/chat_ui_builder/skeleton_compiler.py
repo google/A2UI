@@ -24,6 +24,7 @@ from models import (
     AddTextDelta,
     AppendListItemDelta,
     AppendRegionListItemDelta,
+    FinalizeDelta,
     InitPlanDelta,
     InitSurfaceDelta,
 )
@@ -46,6 +47,7 @@ class SkeletonCompiler:
     self.layout_hint = 'single_column'
     self.role_slots: dict[str, str] = {}
     self.regions: dict[str, RegionBinding] = {}
+    self.pending_region_deltas: dict[str, list[object]] = {}
 
   def apply(self, delta: object) -> list[A2UIFrame]:
     payload = delta.model_dump() if hasattr(delta, 'model_dump') else delta
@@ -55,52 +57,57 @@ class SkeletonCompiler:
     if isinstance(delta, AddRegionDelta):
       return self._add_region(delta)
     if isinstance(delta, AddRegionTextDelta):
-      return self._apply_low_level(
-          AddTextDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AddTextDelta(
               event='add_text',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
               text=delta.text,
               usage_hint=delta.usage_hint,
           )
       )
     if isinstance(delta, AddRegionFactDelta):
-      return self._apply_low_level(
-          AddKeyValueDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AddKeyValueDelta(
               event='add_key_value',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
               label=delta.label,
               value=delta.value,
           )
       )
     if isinstance(delta, AddRegionImageDelta):
-      return self._apply_low_level(
-          AddImageDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AddImageDelta(
               event='add_image',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
               url=delta.url,
               usage_hint=delta.usage_hint,
           )
       )
     if isinstance(delta, AddRegionActionDelta):
-      return self._apply_low_level(
-          AddButtonDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AddButtonDelta(
               event='add_button',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
               label=delta.label,
               action_name=delta.action_name,
               primary=delta.primary,
           )
       )
     if isinstance(delta, AddRegionInputDelta):
-      return self._apply_low_level(
-          AddInputDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AddInputDelta(
               event='add_input',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
               component=delta.component,
               label=delta.label,
               path=delta.path,
@@ -114,34 +121,39 @@ class SkeletonCompiler:
           )
       )
     if isinstance(delta, AddRegionDividerDelta):
-      return self._apply_low_level(
-          AddDividerDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AddDividerDelta(
               event='add_divider',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
           )
       )
     if isinstance(delta, AppendRegionListItemDelta):
-      return self._apply_low_level(
-          AppendListItemDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AppendListItemDelta(
               event='append_list_item',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
               title=delta.title,
               detail=delta.detail,
           )
       )
     if isinstance(delta, AddRegionFlowDiagramDelta):
-      return self._apply_low_level(
-          AddFlowDiagramDelta(
+      return self._apply_region_delta(
+          delta.region_id,
+          lambda parent_id: AddFlowDiagramDelta(
               event='add_flow_diagram',
               id=delta.id,
-              parent_id=self._resolve_region_parent(delta.region_id),
+              parent_id=parent_id,
               title=delta.title,
               nodes=delta.nodes,
               edges=delta.edges,
           )
       )
+    if isinstance(delta, FinalizeDelta):
+      return self._finalize()
     return []
 
   def _apply_low_level(self, delta: object) -> list[A2UIFrame]:
@@ -163,6 +175,7 @@ class SkeletonCompiler:
     self.layout_hint = self._resolve_layout(delta)
     self.role_slots = {}
     self.regions = {}
+    self.pending_region_deltas = {}
 
     frames = self._apply_low_level(
         InitSurfaceDelta(
@@ -276,6 +289,7 @@ class SkeletonCompiler:
         section_id=delta.id,
         content_parent_id=content_parent_id,
     )
+    frames.extend(self._flush_pending_region_deltas(delta.id))
     return frames
 
   def _resolve_region_parent(self, region_id: str) -> str:
@@ -283,3 +297,34 @@ class SkeletonCompiler:
     if not binding:
       raise ValueError(f'Unknown region id: {region_id}')
     return binding.content_parent_id
+
+  def _apply_region_delta(self, region_id: str, delta_builder: object) -> list[A2UIFrame]:
+    if region_id not in self.regions:
+      logger.info('Region %s not ready; queueing delta builder', region_id)
+      self.pending_region_deltas.setdefault(region_id, []).append(delta_builder)
+      return []
+    return self._apply_low_level(delta_builder(self._resolve_region_parent(region_id)))
+
+  def _flush_pending_region_deltas(self, region_id: str) -> list[A2UIFrame]:
+    queued = self.pending_region_deltas.pop(region_id, [])
+    frames: list[A2UIFrame] = []
+    for delta_builder in queued:
+      frames.extend(self._apply_low_level(delta_builder(self._resolve_region_parent(region_id))))
+    return frames
+
+  def _finalize(self) -> list[A2UIFrame]:
+    frames: list[A2UIFrame] = []
+    orphan_region_ids = list(self.pending_region_deltas.keys())
+    for region_id in orphan_region_ids:
+      frames.extend(
+          self._add_region(
+              AddRegionDelta(
+                  event='add_region',
+                  id=region_id,
+                  role='details',
+                  title='补建内容区',
+                  description='模型在 region 声明前先发送了条目，后端已自动兜底创建。',
+              )
+          )
+      )
+    return frames
