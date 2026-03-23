@@ -20,9 +20,14 @@ import {ImageApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
 export const Image = createReactComponent(ImageApi, ({props}) => {
+  const mapFit = (fit?: string): React.CSSProperties['objectFit'] => {
+    if (fit === 'scaleDown') return 'scale-down';
+    return (fit as React.CSSProperties['objectFit']) || 'fill';
+  };
+
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
-    objectFit: props.fit as any,
+    objectFit: mapFit(props.fit),
     width: '100%',
     height: 'auto',
     display: 'block',

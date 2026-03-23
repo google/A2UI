@@ -37,7 +37,7 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
   };
 
   const options = (props.options || []).filter(
-    (opt: any) =>
+    (opt: {label: string; value: string}) =>
       !props.filterable || filter === '' || opt.label.toLowerCase().includes(filter.toLowerCase())
   );
 
@@ -69,7 +69,7 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
         />
       )}
       <div style={listStyle}>
-        {options.map((opt: any, i: number) => {
+        {options.map((opt: {label: string; value: string}, i: number) => {
           const isSelected = values.includes(opt.value);
           if (props.displayStyle === 'chips') {
             return (

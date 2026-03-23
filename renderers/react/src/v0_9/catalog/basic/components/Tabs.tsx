@@ -28,7 +28,7 @@ export const Tabs = createReactComponent(TabsApi, ({props, buildChild}) => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: LEAF_MARGIN}}>
       <div style={{display: 'flex', borderBottom: '1px solid #ccc', marginBottom: '8px'}}>
-        {tabs.map((tab: any, i: number) => (
+        {tabs.map((tab: {title: string; child: string}, i: number) => (
           <button
             key={i}
             onClick={() => setSelectedIndex(i)}
