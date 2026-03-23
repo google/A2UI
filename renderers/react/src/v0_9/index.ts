@@ -16,12 +16,10 @@
 
 export * from './A2uiSurface';
 export * from './adapter';
-export * from './catalog/minimal';
+
+// Export basic catalog components directly for 3P developers
 export * from './catalog/basic';
-// Minimal catalog components are exported from here for backwards compatibility or specific use.
-export {Button as MinimalButton} from './catalog/minimal/components/Button';
-export {Column as MinimalColumn} from './catalog/minimal/components/Column';
-export {Row as MinimalRow} from './catalog/minimal/components/Row';
-export {Text as MinimalText} from './catalog/minimal/components/Text';
-export {TextField as MinimalTextField} from './catalog/minimal/components/TextField';
-export * from './catalog/minimal/components/ChildList';
+
+// Export minimal catalog under a namespace to avoid symbol conflicts
+export * as MinimalCatalog from './catalog/minimal';
+export { minimalCatalog } from './catalog/minimal';
