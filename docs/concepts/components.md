@@ -169,14 +169,11 @@ Every component has:
     }
     ```
 
-## The Standard Catalog
+## The Basic Catalog
 
-A2UI defines a standard catalog of components organized by purpose:
+To help developers get started quickly, the A2UI team maintains the [Basic Catalog](../specification/v0_9/json/basic_catalog.json).
 
-- **Layout**: Row, Column, List - arrange other components
-- **Display**: Text, Image, Icon, Video, Divider - show information
-- **Interactive**: Button, TextField, CheckBox, DateTimeInput, Slider - user input
-- **Container**: Card, Tabs, Modal - group and organize content
+This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards). It is not a special "type" of catalog; it is simply a version of a catalog that has open source renderers available.
 
 For the complete component gallery with examples, see [Component Reference](../reference/components.md).
 
@@ -242,17 +239,13 @@ A surface is a complete, cohesive UI (form, dashboard, chat, etc.).
 
 The flat structure makes all updates simple ID-based operations.
 
-## Custom Components
+## Defining Your Own Catalog
 
-Beyond the standard catalog, clients can define custom components for domain-specific needs:
+While the Basic Catalog is useful for starting out, most production applications will define their own catalog to reflect their specific design system.
 
-- **How**: Register custom component types in your renderer
-- **What**: Charts, maps, custom visualizations, specialized widgets
-- **Security**: Custom components still part of the client's trusted catalog
+By defining your own catalog, you restrict the agent to using exactly the components and visual language that exist in your application, rather than generic inputs or buttons.
 
-Custom components are _advertised_ from the client's renderer to the LLM. The LLM can then use them in addition to the standard catalog.
-
-See [Custom Components Guide](../guides/custom-components.md) for implementation details.
+See [Defining Your Own Catalog Guide](../guides/defining-your-own-catalog.md) for implementation details.
 
 ## Best Practices
 

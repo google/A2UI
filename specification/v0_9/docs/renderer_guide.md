@@ -375,10 +375,10 @@ Functions generally fall into a few common patterns:
 
 If a function returns a reactive stream, it MUST use an idiomatic listening mechanism that supports standard unsubscription. To properly support an AI agent, functions SHOULD include a schema to generate accurate client capabilities.
 
-### Creating Custom Catalogs
-Extensibility is a core feature of A2UI. It should be trivial to create a new catalog by extending an existing one, combining custom components with the standard set.
+### Composing Your Own Catalog
+You can define your own catalog by composing components and functions that reflect your design system. While you can build a catalog entirely from scratch, you can also import or combine definitions with the Basic Catalog to save time.
 
-*Example of composing a custom catalog:*
+*Example of composing a catalog:*
 ```python
 # Pseudocode
 myCustomCatalog = Catalog(
