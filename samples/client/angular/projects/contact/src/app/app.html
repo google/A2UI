@@ -14,37 +14,29 @@
  limitations under the License.
 -->
 
-@if (client.isLoading()) {
-  <div class="pending">
-    <span class="g-icon filled-heavy rotate">progress_activity</span>
-    Awaiting an answer...
-  </div>
-} @else if (!hasData()) {
+<div class="container">
+  @if (!hasData()) {
   <form (submit)="handleSubmit($event)">
     <h1>Contact Finder</h1>
     <div>
-      <input
-        required
-        value="Casey Smith"
-        autocomplete="off"
-        id="body"
-        name="body"
-        type="text"
-        [disabled]="client.isLoading()"
-      />
-
+      <input [value]="userInput()" (input)="userInput.set($any($event.target).value)"
+        placeholder="Search for a contact..." />
       <button type="submit" [disabled]="client.isLoading()">
         <span class="g-icon filled-heavy">send</span>
       </button>
     </div>
   </form>
-} @else {
+  } @else {
   <div class="surfaces">
-    @let surfaces = processor.getSurfaces();
-
-    @for (entry of surfaces; track $index) {
-      <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
+    @if (statusText(); as text) {
+    <div [class]="surfaces().length === 0 ? 'pending' : 'rendering-indicator'">
+      <span class="g-icon filled-heavy rotate">progress_activity</span>
+      {{ text }}
+    </div>
+    }
+    @for (entry of surfaces(); track entry[0]) {
+    <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]" />
     }
   </div>
-}
-
+  }
+</div>

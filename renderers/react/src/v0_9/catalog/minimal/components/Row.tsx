@@ -17,7 +17,7 @@
 import {createReactComponent} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
-import {ReactChildList} from './ReactChildList';
+import {ChildList} from './ChildList';
 
 export const RowSchema = z.object({
   children: CommonSchemas.ChildList,
@@ -68,7 +68,7 @@ export const RowApiDef = {
   schema: RowSchema,
 };
 
-export const ReactRow = createReactComponent(RowApiDef, ({props, buildChild, context}) => {
+export const Row = createReactComponent(RowApiDef, ({props, buildChild}) => {
   return (
     <div
       style={{
@@ -78,7 +78,7 @@ export const ReactRow = createReactComponent(RowApiDef, ({props, buildChild, con
         alignItems: mapAlign(props.align),
       }}
     >
-      <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
+      <ChildList childList={props.children} buildChild={buildChild} />
     </div>
   );
 });

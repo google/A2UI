@@ -19,7 +19,7 @@ import {createReactComponent} from '../../../adapter';
 import {CheckBoxApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN} from '../utils';
 
-export const ReactCheckBox = createReactComponent(CheckBoxApi, ({props}) => {
+export const CheckBox = createReactComponent(CheckBoxApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.setValue(e.target.checked);
   };

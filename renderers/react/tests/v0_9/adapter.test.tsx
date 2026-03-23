@@ -17,6 +17,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { createReactComponent } from '../../src/v0_9/adapter';
+import { A2uiSurface } from '../../src/v0_9/A2uiSurface';
 import { ComponentContext, ComponentModel, SurfaceModel, Catalog, CommonSchemas } from '@a2ui/web_core/v0_9';
 import { z } from 'zod';
 
@@ -99,7 +100,11 @@ describe('adapter', () => {
     
     const context = new ComponentContext(surface, 'c1', '/');
 
-    const spyAddListener = vi.spyOn(context.dataContext, 'subscribeDynamicValue');
+    const unsubscribeSpy = vi.fn();
+    const spyAddListener = vi.spyOn(context.dataContext, 'subscribeDynamicValue').mockReturnValue({
+      value: 'initial',
+      unsubscribe: unsubscribeSpy,
+    });
 
     const TestApiDef = {
       name: 'TestComp',
@@ -118,11 +123,52 @@ describe('adapter', () => {
     const { unmount } = render(<TestComponent.render context={context} buildChild={() => null} />);
 
     expect(spyAddListener).toHaveBeenCalled();
-    // One listener added
     
     unmount();
     
-    // We would need a way to check if removeListener was called, but checking that the binding logic doesn't crash on unmount is a good start.
-    // If listeners aren't cleaned up, subsequent updates might throw if component is destroyed.
+    expect(unsubscribeSpy).toHaveBeenCalled();
+  });
+
+  it('preserves progressive rendering (avoids stale closures from over-memoization)', async () => {
+    const ParentApiDef = { name: 'TestParent', schema: z.object({ child: CommonSchemas.ComponentId }) };
+    const ChildApiDef = { name: 'TestChild', schema: z.object({ text: CommonSchemas.DynamicString }) };
+    
+    let parentRenderCount = 0;
+
+    const TestParent = createReactComponent(ParentApiDef, ({ props, buildChild }) => {
+      parentRenderCount++;
+      return <div data-testid="parent">{props.child && buildChild(props.child)}</div>;
+    });
+
+    const TestChild = createReactComponent(ChildApiDef, ({ props }) => (
+      <span data-testid="resolved">{props.text}</span>
+    ));
+
+    const testCatalog = new Catalog('test', [TestParent, TestChild], []);
+    const surface = new SurfaceModel<any>('test-surface', testCatalog);
+    
+    // 1. Initial State: Parent component exists, but its child is missing from the surface.
+    const parentModel = new ComponentModel('root', 'TestParent', { child: 'child1' });
+    surface.componentsModel.addComponent(parentModel);
+
+    const { getByTestId, queryByTestId } = render(<A2uiSurface surface={surface} />);
+
+    // Assert the missing child renders the fallback
+    expect(getByTestId('parent').textContent).toContain('[Loading child1...]');
+    
+    const countBeforeChild = parentRenderCount;
+
+    // 2. Simulate streaming 'updateComponents' adding the missing child
+    await act(async () => {
+      surface.componentsModel.addComponent(new ComponentModel('child1', 'TestChild', { text: 'Loaded Data' }));
+    });
+
+    // 3. Child should automatically resolve through DeferredChild's subscription
+    expect(queryByTestId('resolved')).not.toBeNull();
+    expect(getByTestId('resolved').textContent).toBe('Loaded Data');
+    
+    // Crucially, the parent should NOT have re-rendered because of the child addition.
+    // The DeferredChild wrapper localized the update.
+    expect(parentRenderCount).toBe(countBeforeChild);
   });
 });

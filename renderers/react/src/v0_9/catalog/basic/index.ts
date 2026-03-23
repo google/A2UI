@@ -18,44 +18,44 @@ import {Catalog} from '@a2ui/web_core/v0_9';
 import {BASIC_FUNCTIONS} from '@a2ui/web_core/v0_9/basic_catalog';
 import type {ReactComponentImplementation} from '../../adapter';
 
-import {ReactText} from './components/ReactText';
-import {ReactImage} from './components/ReactImage';
-import {ReactIcon} from './components/ReactIcon';
-import {ReactVideo} from './components/ReactVideo';
-import {ReactAudioPlayer} from './components/ReactAudioPlayer';
-import {ReactRow} from './components/ReactRow';
-import {ReactColumn} from './components/ReactColumn';
-import {ReactList} from './components/ReactList';
-import {ReactCard} from './components/ReactCard';
-import {ReactTabs} from './components/ReactTabs';
-import {ReactDivider} from './components/ReactDivider';
-import {ReactModal} from './components/ReactModal';
-import {ReactButton} from './components/ReactButton';
-import {ReactTextField} from './components/ReactTextField';
-import {ReactCheckBox} from './components/ReactCheckBox';
-import {ReactChoicePicker} from './components/ReactChoicePicker';
-import {ReactSlider} from './components/ReactSlider';
-import {ReactDateTimeInput} from './components/ReactDateTimeInput';
+import {Text} from './components/Text';
+import {Image} from './components/Image';
+import {Icon} from './components/Icon';
+import {Video} from './components/Video';
+import {AudioPlayer} from './components/AudioPlayer';
+import {Row} from './components/Row';
+import {Column} from './components/Column';
+import {List} from './components/List';
+import {Card} from './components/Card';
+import {Tabs} from './components/Tabs';
+import {Divider} from './components/Divider';
+import {Modal} from './components/Modal';
+import {Button} from './components/Button';
+import {TextField} from './components/TextField';
+import {CheckBox} from './components/CheckBox';
+import {ChoicePicker} from './components/ChoicePicker';
+import {Slider} from './components/Slider';
+import {DateTimeInput} from './components/DateTimeInput';
 
 const basicComponents: ReactComponentImplementation[] = [
-  ReactText,
-  ReactImage,
-  ReactIcon,
-  ReactVideo,
-  ReactAudioPlayer,
-  ReactRow,
-  ReactColumn,
-  ReactList,
-  ReactCard,
-  ReactTabs,
-  ReactDivider,
-  ReactModal,
-  ReactButton,
-  ReactTextField,
-  ReactCheckBox,
-  ReactChoicePicker,
-  ReactSlider,
-  ReactDateTimeInput,
+  Text,
+  Image,
+  Icon,
+  Video,
+  AudioPlayer,
+  Row,
+  Column,
+  List,
+  Card,
+  Tabs,
+  Divider,
+  Modal,
+  Button,
+  TextField,
+  CheckBox,
+  ChoicePicker,
+  Slider,
+  DateTimeInput,
 ];
 
 export const basicCatalog = new Catalog<ReactComponentImplementation>(
@@ -65,22 +65,22 @@ export const basicCatalog = new Catalog<ReactComponentImplementation>(
 );
 
 export {
-  ReactText,
-  ReactImage,
-  ReactIcon,
-  ReactVideo,
-  ReactAudioPlayer,
-  ReactRow,
-  ReactColumn,
-  ReactList,
-  ReactCard,
-  ReactTabs,
-  ReactDivider,
-  ReactModal,
-  ReactButton,
-  ReactTextField,
-  ReactCheckBox,
-  ReactChoicePicker,
-  ReactSlider,
-  ReactDateTimeInput,
+  Text,
+  Image,
+  Icon,
+  Video,
+  AudioPlayer,
+  Row,
+  Column,
+  List,
+  Card,
+  Tabs,
+  Divider,
+  Modal,
+  Button,
+  TextField,
+  CheckBox,
+  ChoicePicker,
+  Slider,
+  DateTimeInput,
 };

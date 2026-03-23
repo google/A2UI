@@ -19,9 +19,9 @@ export * from './adapter';
 export * from './catalog/minimal';
 export * from './catalog/basic';
 // Minimal catalog components are exported from here for backwards compatibility or specific use.
-export {ReactButton as MinimalButton} from './catalog/minimal/components/ReactButton';
-export {ReactColumn as MinimalColumn} from './catalog/minimal/components/ReactColumn';
-export {ReactRow as MinimalRow} from './catalog/minimal/components/ReactRow';
-export {ReactText as MinimalText} from './catalog/minimal/components/ReactText';
-export {ReactTextField as MinimalTextField} from './catalog/minimal/components/ReactTextField';
-export * from './catalog/minimal/components/ReactChildList';
+export {Button as MinimalButton} from './catalog/minimal/components/Button';
+export {Column as MinimalColumn} from './catalog/minimal/components/Column';
+export {Row as MinimalRow} from './catalog/minimal/components/Row';
+export {Text as MinimalText} from './catalog/minimal/components/Text';
+export {TextField as MinimalTextField} from './catalog/minimal/components/TextField';
+export * from './catalog/minimal/components/ChildList';

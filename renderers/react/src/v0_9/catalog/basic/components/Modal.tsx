@@ -18,7 +18,7 @@ import {useState} from 'react';
 import {createReactComponent} from '../../../adapter';
 import {ModalApi} from '@a2ui/web_core/v0_9/basic_catalog';
 
-export const ReactModal = createReactComponent(ModalApi, ({props, buildChild}) => {
+export const Modal = createReactComponent(ModalApi, ({props, buildChild}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

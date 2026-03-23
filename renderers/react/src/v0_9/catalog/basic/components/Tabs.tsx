@@ -19,7 +19,7 @@ import {createReactComponent} from '../../../adapter';
 import {TabsApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN} from '../utils';
 
-export const ReactTabs = createReactComponent(TabsApi, ({props, buildChild}) => {
+export const Tabs = createReactComponent(TabsApi, ({props, buildChild}) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const tabs = props.tabs || [];

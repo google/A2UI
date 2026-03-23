@@ -37,15 +37,17 @@ describe("ComponentContext", () => {
 
   it("dispatches actions", async () => {
     const context = new ComponentContext(mockSurface, componentId);
-    let actionDispatched = null;
+    let actionDispatched: any = null;
 
     const subscription = mockSurface.onAction.subscribe((action: any) => {
       actionDispatched = action;
     });
 
-    await context.dispatchAction({ type: "test" });
+    await context.dispatchAction({ event: { name: "test", context: { a: 1 } } });
 
-    assert.deepStrictEqual(actionDispatched, { type: "test" });
+    assert.strictEqual(actionDispatched.name, "test");
+    assert.strictEqual(actionDispatched.sourceComponentId, componentId);
+    assert.deepStrictEqual(actionDispatched.context, { a: 1 });
     subscription.unsubscribe();
   });
 

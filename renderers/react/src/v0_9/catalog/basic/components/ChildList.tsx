@@ -17,7 +17,7 @@
 import React from 'react';
 import {type ComponentContext} from '@a2ui/web_core/v0_9';
 
-export const ReactChildList: React.FC<{
+export const ChildList: React.FC<{
   childList: any;
   context: ComponentContext;
   buildChild: (id: string, basePath?: string) => React.ReactNode;

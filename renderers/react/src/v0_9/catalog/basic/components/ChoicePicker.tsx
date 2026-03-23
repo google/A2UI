@@ -19,7 +19,7 @@ import {createReactComponent} from '../../../adapter';
 import {ChoicePickerApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 
-export const ReactChoicePicker = createReactComponent(ChoicePickerApi, ({props, context}) => {
+export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, context}) => {
   const [filter, setFilter] = useState('');
 
   const values = Array.isArray(props.value) ? props.value : [];

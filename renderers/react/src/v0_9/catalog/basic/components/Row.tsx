@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-import React from 'react';
 import {createReactComponent} from '../../../adapter';
-import {AudioPlayerApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseLeafStyle} from '../utils';
+import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {ChildList} from './ChildList';
+import {mapJustify, mapAlign} from '../utils';
 
-export const ReactAudioPlayer = createReactComponent(AudioPlayerApi, ({props}) => {
-  const style: React.CSSProperties = {
-    ...getBaseLeafStyle(),
-    width: '100%',
-  };
-
+export const Row = createReactComponent(RowApi, ({props, buildChild, context}) => {
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '4px', width: '100%'}}>
-      {props.description && (
-        <span style={{fontSize: '12px', color: '#666'}}>{props.description}</span>
-      )}
-      <audio src={props.url} controls style={style} />
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: mapJustify(props.justify),
+        alignItems: mapAlign(props.align),
+        width: '100%',
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      <ChildList childList={props.children} buildChild={buildChild} context={context} />
     </div>
   );
 });

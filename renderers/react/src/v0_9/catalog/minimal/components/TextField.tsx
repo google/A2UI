@@ -31,13 +31,10 @@ export const TextFieldApiDef = {
   schema: TextFieldSchema,
 };
 
-export const ReactTextField = createReactComponent(TextFieldApiDef, ({props, context}) => {
+export const TextField = createReactComponent(TextFieldApiDef, ({props, context}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    // In a reactive framework, we still update the DataModel directly for two-way binding.
-    // We look up the path from the un-resolved properties of the component model.
-    const valueProp = context.componentModel.properties.value;
-    if (valueProp && typeof valueProp === 'object' && valueProp.path) {
-      context.dataContext.set(valueProp.path, e.target.value);
+    if (props.setValue) {
+      props.setValue(e.target.value);
     }
   };
 

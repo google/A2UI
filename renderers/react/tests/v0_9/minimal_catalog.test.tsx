@@ -19,24 +19,24 @@ import { screen, fireEvent } from '@testing-library/react';
 import { renderA2uiComponent } from '../utils';
 
 import {
-  ReactText,
-  ReactButton,
-  ReactRow,
-  ReactColumn,
-  ReactTextField,
+  Text,
+  Button,
+  Row,
+  Column,
+  TextField,
 } from '../../src/v0_9/catalog/minimal';
 
 describe('Minimal Catalog Components', () => {
-  describe('ReactText', () => {
+  describe('Text', () => {
     it('renders text correctly', () => {
-      renderA2uiComponent(ReactText, 't1', { text: 'Minimal Text' });
+      renderA2uiComponent(Text, 't1', { text: 'Minimal Text' });
       expect(screen.getByText('Minimal Text')).toBeDefined();
     });
   });
 
-  describe('ReactButton', () => {
+  describe('Button', () => {
     it('handles click and renders child', () => {
-      const { surface, buildChild } = renderA2uiComponent(ReactButton, 'b1', {
+      const { surface, buildChild } = renderA2uiComponent(Button, 'b1', {
         action: { event: { name: 'click' } },
         child: 'label'
       });
@@ -44,14 +44,14 @@ describe('Minimal Catalog Components', () => {
       surface.onAction.subscribe(actionSpy);
 
       fireEvent.click(screen.getByRole('button'));
-      expect(actionSpy).toHaveBeenCalledWith({ event: { name: 'click' } });
+      expect(actionSpy).toHaveBeenCalledWith(expect.objectContaining({ name: 'click' }));
       expect(buildChild).toHaveBeenCalledWith('label');
     });
   });
 
-  describe('ReactTextField', () => {
+  describe('TextField', () => {
     it('updates data model on change', () => {
-      const { surface } = renderA2uiComponent(ReactTextField, 'f1', {
+      const { surface } = renderA2uiComponent(TextField, 'f1', {
         label: 'Name',
         value: { path: '/name' }
       });
@@ -63,16 +63,16 @@ describe('Minimal Catalog Components', () => {
   });
 
   describe('Layout', () => {
-    it('ReactRow renders children', () => {
-      const { buildChild } = renderA2uiComponent(ReactRow, 'r1', {
+    it('Row renders children', () => {
+      const { buildChild } = renderA2uiComponent(Row, 'r1', {
         children: ['c1', 'c2']
       });
       expect(buildChild).toHaveBeenCalledWith('c1');
       expect(buildChild).toHaveBeenCalledWith('c2');
     });
 
-    it('ReactColumn renders children', () => {
-      const { buildChild } = renderA2uiComponent(ReactColumn, 'col1', {
+    it('Column renders children', () => {
+      const { buildChild } = renderA2uiComponent(Column, 'col1', {
         children: ['c1']
       });
       expect(buildChild).toHaveBeenCalledWith('c1');

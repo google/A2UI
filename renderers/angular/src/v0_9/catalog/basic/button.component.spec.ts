@@ -15,7 +15,7 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, Input, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { ButtonComponent } from './button.component';
 import { A2uiRendererService } from '../../core/a2ui-renderer.service';
 import { ComponentBinder } from '../../core/component-binder.service';
@@ -47,9 +47,10 @@ describe('ButtonComponent', () => {
                   template: 'Dummy Text',
                 })
                 class DummyText {
-                  @Input() props: any;
-                  @Input() surfaceId?: string;
-                  @Input() dataContextPath?: string;
+                    props = input<any>();
+                    surfaceId = input<string>();
+                    componentId = input<string>();
+                    dataContextPath = input<string>();
                 }
                 return DummyText;
               })(),
@@ -81,6 +82,7 @@ describe('ButtonComponent', () => {
     fixture = TestBed.createComponent(ButtonComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('surfaceId', 'surf1');
+    fixture.componentRef.setInput('componentId', 'comp1');
     fixture.componentRef.setInput('props', {
       variant: { value: signal('primary'), raw: 'primary', onUpdate: () => {} },
       child: { value: signal('child1'), raw: 'child1', onUpdate: () => {} },
@@ -123,13 +125,13 @@ describe('ButtonComponent', () => {
     expect(button.nativeElement.classList).toContain('primary');
   });
 
-  it('should handle click and dispatch action', () => {
+  it('should handle click and dispatch action with sourceComponentId', () => {
     fixture.detectChanges();
     const button = fixture.debugElement.query(By.css('button'));
     button.triggerEventHandler('click', null);
 
     expect(mockSurfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
-    expect(mockSurface.dispatchAction).toHaveBeenCalled();
+    expect(mockSurface.dispatchAction).toHaveBeenCalledWith(jasmine.any(Object), 'comp1');
   });
 
   it('should show child component host if child prop is present', () => {

@@ -77,7 +77,7 @@ export class Text extends DynamicComponent<Types.TextNode> {
     let value = super.resolvePrimitive(this.text());
 
     if (value == null) {
-      return Promise.resolve('(empty)');
+      return Promise.resolve('');
     }
 
     switch (usageHint) {

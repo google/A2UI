@@ -78,6 +78,7 @@ export class SliderComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
+  componentId = input<string>();
   dataContextPath = input<string>('/');
 
   private rendererService = inject(A2uiRendererService);

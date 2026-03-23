@@ -1,0 +1,108 @@
+{
+  "path": "renderers/react/src/adapter.tsx",
+  "line": 123,
+  "position": 1,
+  "body": "![high](https://www.gstatic.com/codereviewagent/high-priority.svg)\n\nThe `useRef` is initialized with `null`, but its generic type `ComponentBinding<T>` does not include `null`. With strict null checks enabled in your `tsconfig.json`, this will cause a type error. The ref's type should be explicitly set to `ComponentBinding<T> | null` to reflect its possible null value.\n\n```suggestion\n    const bindingRef = useRef<ComponentBinding<T> | null>(null);\n```"
+}
+{
+  "path": "renderers/react/package.json",
+  "line": 17,
+  "position": 1,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\n`rxjs` and `zod` are used by the library but are not listed as `peerDependencies`. Based on the installation instructions in `README.md` and the externals in `vite.config.ts`, they should be declared as `peerDependencies` to ensure that the consuming application provides compatible versions.\n\n```json\n  \"peerDependencies\": {\n    \"react\": \"^19.2.0\",\n    \"react-dom\": \"^19.2.0\",\n    \"rxjs\": \"^7.8.1\",\n    \"zod\": \"^3.23.8\"\n  }\n```"
+}
+{
+  "path": "renderers/react_prototype/src/components/ReactChildList.tsx",
+  "line": 45,
+  "position": 1,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nThe dynamic value at `childList.path` is resolved twice in this line. You can store the result in a variable to avoid the redundant call and improve performance slightly.\n\n```\n        const initialValue = context.dataContext.resolveDynamicValue({ path: childList.path });\n        bindingRef.current.currentVal = Array.isArray(initialValue) ? initialValue as any[] : EMPTY_ARRAY;\n```"
+}
+{
+  "path": "renderers/react/tests/v0_9/adapter.test.tsx",
+  "line": 101,
+  "position": 128,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nThis test for cleanup on unmount can be made more robust. You can verify that the `unsubscribe` function is actually called by mocking the return value of `subscribeDynamicValue` and spying on its `unsubscribe` method. This provides a more direct confirmation that cleanup is happening correctly.\n\n```\n    const unsubscribeSpy = vi.fn();\n    const spyAddListener = vi.spyOn(context.dataContext, 'subscribeDynamicValue').mockReturnValue({\n      value: 'initial',\n      unsubscribe: unsubscribeSpy,\n    });\n\n    type TestProps = { text?: string };\n\n    const RenderTest: React.FC<{ props: TestProps }> = ({ props }) => {\n      return <div>{props.text}</div>;\n    };\n\n    const TestComponent = createReactComponent<TestProps>(\n      (ctx) => createGenericBinding<TestProps>(ctx, []),\n      RenderTest as any\n    );\n\n    const { unmount } = render(<TestComponent context={context} buildChild={() => null} />);\n\n    expect(spyAddListener).toHaveBeenCalled();\n    \n    unmount();\n    \n    expect(unsubscribeSpy).toHaveBeenCalled();\n```"
+}
+{
+  "path": "renderers/react/tests/v0_9/adapter.test.tsx",
+  "line": 101,
+  "position": 128,
+  "body": "Please fix this."
+}
+{
+  "path": ".github/workflows/react_renderer.yml",
+  "line": 68,
+  "position": 32,
+  "body": "Should we do this in a separate, parallel job?"
+}
+{
+  "path": "renderers/react/a2ui_explorer/src/App.css",
+  "line": 47,
+  "position": 1,
+  "body": "nth-of-type seems pretty brittle, could you apply a class to this or something instead?"
+}
+{
+  "path": "renderers/react/a2ui_explorer/src/index.css",
+  "line": 18,
+  "position": 1,
+  "body": "These are pretty tonally different fonts, with two different reasonable fallbacks...do we really need all of these?"
+}
+{
+  "path": "renderers/react/src/v0_9/adapter.tsx",
+  "line": 50,
+  "position": 57,
+  "body": "I think you're going to want to memoize these for performance, but I think if you do so, you'll need to provide a custom equality function since ReactWrapper() is dynamically generated and will always fail an equality test during memoization."
+}
+{
+  "path": "renderers/react/src/v0_9/catalog/minimal/components/Button.tsx",
+  "line": 1,
+  "position": 1,
+  "body": " Does it make sense to prefix all of these with \"React\"? It's already in a directory called react/ using React's `tsx` files."
+}
+{
+  "path": "renderers/react/a2ui_explorer/eslint.config.js",
+  "line": 1,
+  "position": 1,
+  "body": "Maybe extend [gts's eslint plugin](https://github.com/google/gts?tab=readme-ov-file#working-with-eslint)?"
+}
+{
+  "path": "renderers/react/src/v0_9/json.d.ts",
+  "line": 1,
+  "position": 1,
+  "body": "Hmm, usually a JS/TS compiler is smart enough to read the JSON itself to produce a schema. Is this needed?"
+}
+{
+  "path": "renderers/react/src/v0_9/A2uiSurface.tsx",
+  "line": 40,
+  "position": 40,
+  "body": "![high](https://www.gstatic.com/codereviewagent/high-priority.svg)\n\nThe `useMemo` hook for creating the `ComponentContext` is missing `componentModel` in its dependency array. The comment on line 36 correctly states that the context should be recreated when the `componentModel` instance changes (e.g., on a type change), but the current implementation will lead to a stale context being used. This can cause subtle bugs where components don't update correctly after their type has been changed.\n\n```suggestion\n    const context = useMemo(\n      () => new ComponentContext(surface, id, basePath),\n      [surface, id, basePath, componentModel]\n    );\n```"
+}
+{
+  "path": "renderers/react/a2ui_explorer/README.md",
+  "line": 9,
+  "position": 9,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nThe setup instructions in this README appear to contain outdated paths and package names from a previous prototype, which will prevent users from successfully building and running the explorer app.\n\n- The dependency should be `@a2ui/react` (in `renderers/react`), not `@a2ui/react_prototype`.\n- The `cd` command in \"Building Dependencies\" (line 17) should likely be `cd ../..` to navigate from `a2ui_explorer` to the `react` package root, or `cd renderers/react` if run from the repository root.\n- The `cd` command in \"Setup and Development\" (line 32) points to `samples/client/react`, but this explorer app is at `renderers/react/a2ui_explorer`."
+}
+{
+  "path": "renderers/react/a2ui_explorer/src/App.tsx",
+  "line": 40,
+  "position": 40,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nThe `ex` parameter is typed as `any`. Given the known structure of the example data, we can use a more specific type to improve type safety and code clarity.\n\n```suggestion\nconst getMessages = (ex: { messages: unknown[] } | unknown[] | undefined) => (Array.isArray(ex) ? ex : ex?.messages);\n```"
+}
+{
+  "path": "renderers/react/a2ui_explorer/src/App.tsx",
+  "line": 70,
+  "position": 70,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nTo improve type safety and avoid using `any`, let's specify the `ReactComponentImplementation` type for the message processor state. This will also allow removing a type assertion on line 81.\n\n```suggestion\n  const [processor, setProcessor] = useState<MessageProcessor<ReactComponentImplementation> | null>(null);\n```"
+}
+{
+  "path": "renderers/react/a2ui_explorer/src/App.tsx",
+  "line": 83,
+  "position": 83,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nWith the `processor` state now correctly typed, the `as any` type assertion is no longer necessary, which improves type safety.\n\n```suggestion\n        const newProcessor = new MessageProcessor([minimalCatalog], async (action: any) => {\n          setLogs((l) => [...l, {time: new Date().toLocaleTimeString(), action}]);\n        });\n```"
+}
+{
+  "path": "renderers/react/a2ui_explorer/src/App.tsx",
+  "line": 82,
+  "position": 82,
+  "body": "![medium](https://www.gstatic.com/codereviewagent/medium-priority.svg)\n\nUsing `toLocaleTimeString()` for log timestamps can lead to inconsistencies across different user environments and makes parsing logs harder. It's better to use a standardized format like ISO 8601.\n\n```suggestion\n          setLogs((l) => [...l, {time: new Date().toISOString(), action}]);\n```"
+}

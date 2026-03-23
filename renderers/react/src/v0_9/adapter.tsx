@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, {useRef, useSyncExternalStore, useCallback} from 'react';
+import React, {useRef, useSyncExternalStore, useCallback, memo, useEffect} from 'react';
 import {type z} from 'zod';
 import {type ComponentContext, GenericBinder} from '@a2ui/web_core/v0_9';
 import type {ComponentApi, ResolveA2uiProps} from '@a2ui/web_core/v0_9';
@@ -44,13 +44,26 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
 ): ReactComponentImplementation {
   type Props = ResolveA2uiProps<z.infer<Schema>>;
 
-  const ReactWrapper: React.FC<{context: ComponentContext; buildChild: any}> = ({
-    context,
-    buildChild,
-  }) => {
+  const MemoizedRender = memo(RenderComponent, (prev, next) => {
+    if (prev.props !== next.props) return false;
+    if (prev.context.componentModel.id !== next.context.componentModel.id) return false;
+    if (prev.context.dataContext.path !== next.context.dataContext.path) return false;
+    return true;
+  });
+
+  const ReactWrapper: React.FC<{
+    context: ComponentContext;
+    buildChild: (id: string, basePath?: string) => React.ReactNode;
+  }> = ({context, buildChild}) => {
     const bindingRef = useRef<GenericBinder<Props> | null>(null);
 
+    // Create or recreate the binder if the context object changes.
+    // DeferredChild memoizes `context`, so reference changes strictly correspond
+    // to ComponentModel updates (like type changes) or Base Path adjustments.
     if (!bindingRef.current) {
+      bindingRef.current = new GenericBinder<Props>(context, api.schema);
+    } else if ((bindingRef.current as unknown as {context: ComponentContext}).context !== context) {
+      bindingRef.current.dispose();
       bindingRef.current = new GenericBinder<Props>(context, api.schema);
     }
     const binding = bindingRef.current;
@@ -66,8 +79,13 @@ export function createReactComponent<Schema extends z.ZodTypeAny>(
     const getSnapshot = useCallback(() => binding.snapshot, [binding]);
     const props = useSyncExternalStore(subscribe, getSnapshot);
 
+    // Prevent DataModel subscription leaks on unmount
+    useEffect(() => {
+      return () => binding.dispose();
+    }, [binding]);
+
     return (
-      <RenderComponent props={props || ({} as Props)} buildChild={buildChild} context={context} />
+      <MemoizedRender props={props || ({} as Props)} buildChild={buildChild} context={context} />
     );
   };
 

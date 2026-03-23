@@ -15,16 +15,16 @@
  */
 
 import {createReactComponent} from '../../../adapter';
-import {RowApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {ReactChildList} from './ReactChildList';
+import {ColumnApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {ChildList} from './ChildList';
 import {mapJustify, mapAlign} from '../utils';
 
-export const ReactRow = createReactComponent(RowApi, ({props, buildChild, context}) => {
+export const Column = createReactComponent(ColumnApi, ({props, buildChild, context}) => {
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: mapJustify(props.justify),
         alignItems: mapAlign(props.align),
         width: '100%',
@@ -32,7 +32,7 @@ export const ReactRow = createReactComponent(RowApi, ({props, buildChild, contex
         padding: 0,
       }}
     >
-      <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
+      <ChildList childList={props.children} buildChild={buildChild} context={context} />
     </div>
   );
 });

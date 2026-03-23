@@ -16,16 +16,26 @@
 
 import React from 'react';
 import {createReactComponent} from '../../../adapter';
-import {CardApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {getBaseContainerStyle} from '../utils';
+import {ListApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {ChildList} from './ChildList';
+import {mapAlign} from '../utils';
 
-export const ReactCard = createReactComponent(CardApi, ({props, buildChild}) => {
+export const List = createReactComponent(ListApi, ({props, buildChild, context}) => {
+  const isHorizontal = props.direction === 'horizontal';
   const style: React.CSSProperties = {
-    ...getBaseContainerStyle(),
-    backgroundColor: '#fff',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    display: 'flex',
+    flexDirection: isHorizontal ? 'row' : 'column',
+    alignItems: mapAlign(props.align),
+    overflowX: isHorizontal ? 'auto' : 'hidden',
+    overflowY: isHorizontal ? 'hidden' : 'auto',
     width: '100%',
+    margin: 0,
+    padding: 0,
   };
 
-  return <div style={style}>{props.child ? buildChild(props.child) : null}</div>;
+  return (
+    <div style={style}>
+      <ChildList childList={props.children} buildChild={buildChild} context={context} />
+    </div>
+  );
 });

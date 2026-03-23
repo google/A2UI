@@ -79,8 +79,10 @@ import { Renderer } from '../rendering/renderer';
   `,
   template: `
     <section [class]="classes()" [style]="theme.additionalStyles?.Column">
-      @for (child of children() ?? component().properties.children; track child) {
-        <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+      @for (child of children() ?? component().properties.children; track child?.id ?? child) {
+        @if (child) {
+          <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+        }
       }
     </section>
   `,

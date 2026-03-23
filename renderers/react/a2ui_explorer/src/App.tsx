@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { useState, useEffect, useSyncExternalStore, useCallback } from 'react';
-import { MessageProcessor, SurfaceModel } from '@a2ui/web_core/v0_9';
-import { minimalCatalog, basicCatalog, A2uiSurface } from '@a2ui/react/v0_9';
+import {useState, useEffect, useSyncExternalStore, useCallback} from 'react';
+import {MessageProcessor, SurfaceModel, type A2uiMessage} from '@a2ui/web_core/v0_9';
+import {minimalCatalog, basicCatalog, A2uiSurface, type ReactComponentImplementation} from '@a2ui/react/v0_9';
 
 // Import Minimal examples
-import min1 from "../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json";
-import min2 from "../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json";
-import min3 from "../../../../specification/v0_9/json/catalogs/minimal/examples/3_interactive_button.json";
-import min4 from "../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json";
-import min5 from "../../../../specification/v0_9/json/catalogs/minimal/examples/5_complex_layout.json";
-import min6 from "../../../../specification/v0_9/json/catalogs/minimal/examples/6_capitalized_text.json";
-import min7 from "../../../../specification/v0_9/json/catalogs/minimal/examples/7_incremental.json";
+import min1 from '../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json';
+import min2 from '../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json';
+import min3 from '../../../../specification/v0_9/json/catalogs/minimal/examples/3_interactive_button.json';
+import min4 from '../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json';
+import min5 from '../../../../specification/v0_9/json/catalogs/minimal/examples/5_complex_layout.json';
+import min6 from '../../../../specification/v0_9/json/catalogs/minimal/examples/6_capitalized_text.json';
+import min7 from '../../../../specification/v0_9/json/catalogs/minimal/examples/7_incremental.json';
 
 // Import Basic examples
 import b01 from "../../../../specification/v0_9/json/catalogs/basic/examples/01_flight-status.json";
@@ -59,13 +59,13 @@ import b28 from "../../../../specification/v0_9/json/catalogs/basic/examples/28_
 import b29 from "../../../../specification/v0_9/json/catalogs/basic/examples/29_movie-card.json";
 
 const exampleFiles = [
-  { key: 'min1', data: min1, catalog: 'Minimal' },
-  { key: 'min2', data: min2, catalog: 'Minimal' },
-  { key: 'min3', data: min3, catalog: 'Minimal' },
-  { key: 'min4', data: min4, catalog: 'Minimal' },
-  { key: 'min5', data: min5, catalog: 'Minimal' },
-  { key: 'min6', data: min6, catalog: 'Minimal' },
-  { key: 'min7', data: min7, catalog: 'Minimal' },
+  {key: 'min1', data: min1, catalog: 'Minimal'},
+  {key: 'min2', data: min2, catalog: 'Minimal'},
+  {key: 'min3', data: min3, catalog: 'Minimal'},
+  {key: 'min4', data: min4, catalog: 'Minimal'},
+  {key: 'min5', data: min5, catalog: 'Minimal'},
+  {key: 'min6', data: min6, catalog: 'Minimal'},
+  {key: 'min7', data: min7, catalog: 'Minimal'},
   { key: 'b01', data: b01, catalog: 'Basic' },
   { key: 'b02', data: b02, catalog: 'Basic' },
   { key: 'b03', data: b03, catalog: 'Basic' },
@@ -97,13 +97,16 @@ const exampleFiles = [
   { key: 'b29', data: b29, catalog: 'Basic' },
 ];
 
-const getMessages = (ex: any) => Array.isArray(ex) ? ex : ex?.messages;
+const getMessages = (ex: { messages: A2uiMessage[] } | A2uiMessage[] | undefined) => (Array.isArray(ex) ? ex : ex?.messages);
 
-const DataModelViewer = ({ surface }: { surface: SurfaceModel<any> }) => {
-  const subscribeHook = useCallback((callback: () => void) => {
-    const bound = surface.dataModel.subscribe('/', callback);
-    return () => bound.unsubscribe();
-  }, [surface]);
+const DataModelViewer = ({surface}: {surface: SurfaceModel<any>}) => {
+  const subscribeHook = useCallback(
+    (callback: () => void) => {
+      const bound = surface.dataModel.subscribe('/', callback);
+      return () => bound.unsubscribe();
+    },
+    [surface]
+  );
 
   const getSnapshot = useCallback(() => {
     return JSON.stringify(surface.dataModel.get('/'), null, 2);
@@ -112,11 +115,9 @@ const DataModelViewer = ({ surface }: { surface: SurfaceModel<any> }) => {
   const dataString = useSyncExternalStore(subscribeHook, getSnapshot);
 
   return (
-    <div style={{ marginBottom: '1rem' }}>
+    <div style={{marginBottom: '1rem'}}>
       <strong>Surface: {surface.id}</strong>
-      <pre style={{ fontSize: '12px', margin: 0, whiteSpace: 'pre-wrap' }}>
-        {dataString}
-      </pre>
+      <pre style={{fontSize: '12px', margin: 0, whiteSpace: 'pre-wrap'}}>{dataString}</pre>
     </div>
   );
 };
@@ -126,44 +127,47 @@ export default function App() {
   const selectedExample = exampleFiles.find((e) => e.key === selectedExampleKey)?.data as any;
 
   const [logs, setLogs] = useState<any[]>([]);
-  const [processor, setProcessor] = useState<MessageProcessor<any> | null>(null);
+  const [processor, setProcessor] = useState<MessageProcessor<ReactComponentImplementation> | null>(null);
   const [surfaces, setSurfaces] = useState<string[]>([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(-1);
 
   // Initialize or reset processor
-  const resetProcessor = useCallback((advanceToEnd: boolean = false) => {
-    setProcessor(prevProcessor => {
-      if (prevProcessor) {
-        prevProcessor.model.dispose();
-      }
-      const newProcessor = new MessageProcessor([minimalCatalog as any, basicCatalog as any], async (action: any) => {
-        setLogs((l) => [...l, { time: new Date().toLocaleTimeString(), action }]);
+  const resetProcessor = useCallback(
+    (advanceToEnd: boolean = false) => {
+      setProcessor((prevProcessor) => {
+        if (prevProcessor) {
+          prevProcessor.model.dispose();
+        }
+        const newProcessor = new MessageProcessor([minimalCatalog, basicCatalog as any], async (action: any) => {
+          setLogs((l) => [...l, {time: new Date().toISOString(), action}]);
+        });
+
+        const msgs = getMessages(selectedExample);
+        if (advanceToEnd && msgs) {
+          newProcessor.processMessages(msgs);
+        }
+        return newProcessor;
       });
-      
+
+      setLogs([]);
+      setSurfaces([]);
+
       const msgs = getMessages(selectedExample);
       if (advanceToEnd && msgs) {
-        newProcessor.processMessages(msgs);
+        setCurrentMessageIndex(msgs.length - 1);
+      } else {
+        setCurrentMessageIndex(-1);
       }
-      return newProcessor;
-    });
-
-    setLogs([]);
-    setSurfaces([]);
-    
-    const msgs = getMessages(selectedExample);
-    if (advanceToEnd && msgs) {
-      setCurrentMessageIndex(msgs.length - 1);
-    } else {
-      setCurrentMessageIndex(-1);
-    }
-  }, [selectedExample]);
+    },
+    [selectedExample]
+  );
 
   // Effect to handle example selection change
   useEffect(() => {
     resetProcessor(true);
     // Cleanup on unmount or when changing examples
     return () => {
-      setProcessor(prev => {
+      setProcessor((prev) => {
         if (prev) prev.model.dispose();
         return null;
       });
@@ -195,7 +199,7 @@ export default function App() {
   const advanceToMessage = (index: number) => {
     const msgs = getMessages(selectedExample);
     if (!processor || !msgs) return;
-    
+
     // Process messages from currentMessageIndex + 1 to index
     const messagesToProcess = msgs.slice(currentMessageIndex + 1, index + 1);
     if (messagesToProcess.length > 0) {
@@ -211,14 +215,24 @@ export default function App() {
   const messages = getMessages(selectedExample) || [];
 
   return (
-    <div style={{ display: 'flex', gap: '2rem', padding: '2rem', height: '100vh', boxSizing: 'border-box', textAlign: 'left', backgroundColor: '#fff', color: '#000' }}>
-      
+    <div
+      style={{
+        display: 'flex',
+        gap: '2rem',
+        padding: '2rem',
+        height: '100vh',
+        boxSizing: 'border-box',
+        textAlign: 'left',
+        backgroundColor: '#fff',
+        color: '#000',
+      }}
+    >
       {/* Left Column: Sample List */}
-      <div style={{ width: '250px', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+      <div style={{width: '250px', flexShrink: 0, display: 'flex', flexDirection: 'column'}}>
         <h2>Samples</h2>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, overflowY: 'auto' }}>
+        <ul style={{listStyle: 'none', padding: 0, margin: 0, overflowY: 'auto'}}>
           {exampleFiles.map((ex) => (
-            <li key={ex.key} style={{ marginBottom: '8px' }}>
+            <li key={ex.key} style={{marginBottom: '8px'}}>
               <button
                 onClick={() => setSelectedExampleKey(ex.key)}
                 style={{
@@ -230,10 +244,10 @@ export default function App() {
                   border: '1px solid #ccc',
                   padding: '8px',
                   borderRadius: '4px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
-                <div style={{ fontSize: '10px', color: '#666' }}>{ex.catalog}</div>
+                <div style={{fontSize: '10px', color: '#666'}}>{ex.catalog}</div>
                 {(ex.data as any).name || ex.key}
               </button>
             </li>
@@ -242,50 +256,104 @@ export default function App() {
       </div>
 
       {/* Center Column: Preview & JSON Stepper */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: '400px' }}>
-        <div style={{ flex: 1, border: '1px dashed #ccc', padding: '1rem', overflowY: 'auto', background: '#f9f9f9', borderRadius: '8px' }}>
+      <div
+        style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: '400px'}}
+      >
+        <div
+          style={{
+            flex: 1,
+            border: '1px dashed #ccc',
+            padding: '1rem',
+            overflowY: 'auto',
+            background: '#f9f9f9',
+            borderRadius: '8px',
+          }}
+        >
           <h3>Preview</h3>
-          {surfaces.length === 0 && <p style={{ color: '#888' }}>No surfaces loaded. Advance the stepper to create one.</p>}
+          {surfaces.length === 0 && (
+            <p style={{color: '#888'}}>No surfaces loaded. Advance the stepper to create one.</p>
+          )}
           {surfaces.map((surfaceId) => {
             const surface = processor?.model.getSurface(surfaceId);
             if (!surface) return null;
             return (
-              <div key={surfaceId} style={{ marginBottom: '2rem' }}>
-                 <div style={{ border: '1px solid #007bff', padding: '1rem', borderRadius: '8px', background: '#fff' }}>
-                   <A2uiSurface surface={surface} />
-                 </div>
+              <div key={surfaceId} style={{marginBottom: '2rem'}}>
+                <div
+                  style={{
+                    border: '1px solid #007bff',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    background: '#fff',
+                  }}
+                >
+                  <A2uiSurface surface={surface} />
+                </div>
               </div>
             );
           })}
         </div>
 
-        <div style={{ height: '300px', border: '1px solid #ccc', padding: '1rem', overflowY: 'auto', background: '#fafafa', borderRadius: '8px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ margin: 0 }}>Messages</h3>
-            <button onClick={handleReset} style={{ padding: '4px 8px', cursor: 'pointer' }}>Reset</button>
+        <div
+          style={{
+            height: '300px',
+            border: '1px solid #ccc',
+            padding: '1rem',
+            overflowY: 'auto',
+            background: '#fafafa',
+            borderRadius: '8px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1rem',
+            }}
+          >
+            <h3 style={{margin: 0}}>Messages</h3>
+            <button onClick={handleReset} style={{padding: '4px 8px', cursor: 'pointer'}}>
+              Reset
+            </button>
           </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+
+          <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
             {messages.map((msg: any, i: number) => {
               const isActive = i <= currentMessageIndex;
               return (
-                <div key={i} style={{ 
-                  border: '1px solid', 
-                  borderColor: isActive ? '#007bff' : '#ddd',
-                  opacity: isActive ? 1 : 0.6,
-                  padding: '8px', 
-                  borderRadius: '4px',
-                  background: isActive ? '#f0f8ff' : '#fff'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <div
+                  key={i}
+                  style={{
+                    border: '1px solid',
+                    borderColor: isActive ? '#007bff' : '#ddd',
+                    opacity: isActive ? 1 : 0.6,
+                    padding: '8px',
+                    borderRadius: '4px',
+                    background: isActive ? '#f0f8ff' : '#fff',
+                  }}
+                >
+                  <div
+                    style={{display: 'flex', justifyContent: 'space-between', marginBottom: '8px'}}
+                  >
                     <strong>Message {i + 1}</strong>
                     {!isActive && (
-                      <button onClick={() => advanceToMessage(i)} style={{ padding: '2px 8px', cursor: 'pointer' }}>
+                      <button
+                        onClick={() => advanceToMessage(i)}
+                        style={{padding: '2px 8px', cursor: 'pointer'}}
+                      >
                         Advance
                       </button>
                     )}
                   </div>
-                  <pre style={{ fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', maxHeight: '100px', overflowY: 'auto' }}>
+                  <pre
+                    style={{
+                      fontSize: '11px',
+                      margin: 0,
+                      whiteSpace: 'pre-wrap',
+                      maxHeight: '100px',
+                      overflowY: 'auto',
+                    }}
+                  >
                     {JSON.stringify(msg, null, 2)}
                   </pre>
                 </div>
@@ -296,11 +364,31 @@ export default function App() {
       </div>
 
       {/* Right Column: Live DataModelViewer & Action Logs */}
-      <div style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          width: '300px',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem',
+        }}
+      >
+        <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
           <h3>Data Model</h3>
-          <div style={{ flex: 1, border: '1px solid #ccc', padding: '8px', overflowY: 'auto', background: '#f9f9f9', color: '#333', borderRadius: '4px' }}>
-            {surfaces.length === 0 ? <p style={{ color: '#888', fontSize: '12px' }}>Empty Data Model</p> : null}
+          <div
+            style={{
+              flex: 1,
+              border: '1px solid #ccc',
+              padding: '8px',
+              overflowY: 'auto',
+              background: '#f9f9f9',
+              color: '#333',
+              borderRadius: '4px',
+            }}
+          >
+            {surfaces.length === 0 ? (
+              <p style={{color: '#888', fontSize: '12px'}}>Empty Data Model</p>
+            ) : null}
             {surfaces.map((surfaceId) => {
               const surface = processor?.model.getSurface(surfaceId);
               if (!surface) return null;
@@ -309,20 +397,41 @@ export default function App() {
           </div>
         </div>
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
           <h3>Action Logs</h3>
-          <div style={{ flex: 1, border: '1px solid #ccc', padding: '8px', overflowY: 'auto', background: '#f9f9f9', color: '#333', borderRadius: '4px' }}>
-             {logs.length === 0 ? <p style={{ color: '#888', fontSize: '12px' }}>No actions logged yet.</p> : null}
-             {logs.map((log, i) => (
-              <div key={i} style={{ fontSize: '12px', marginBottom: '8px', borderBottom: '1px solid #eee', paddingBottom: '4px' }}>
-                <strong style={{ display: 'block', color: '#007bff' }}>{log.time}</strong>
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{JSON.stringify(log.action, null, 2)}</pre>
+          <div
+            style={{
+              flex: 1,
+              border: '1px solid #ccc',
+              padding: '8px',
+              overflowY: 'auto',
+              background: '#f9f9f9',
+              color: '#333',
+              borderRadius: '4px',
+            }}
+          >
+            {logs.length === 0 ? (
+              <p style={{color: '#888', fontSize: '12px'}}>No actions logged yet.</p>
+            ) : null}
+            {logs.map((log, i) => (
+              <div
+                key={i}
+                style={{
+                  fontSize: '12px',
+                  marginBottom: '8px',
+                  borderBottom: '1px solid #eee',
+                  paddingBottom: '4px',
+                }}
+              >
+                <strong style={{display: 'block', color: '#007bff'}}>{log.time}</strong>
+                <pre style={{margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all'}}>
+                  {JSON.stringify(log.action, null, 2)}
+                </pre>
               </div>
             ))}
           </div>
         </div>
       </div>
-
     </div>
   );
 }

@@ -19,7 +19,7 @@ import {createReactComponent} from '../../../adapter';
 import {SliderApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN} from '../utils';
 
-export const ReactSlider = createReactComponent(SliderApi, ({props}) => {
+export const Slider = createReactComponent(SliderApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     props.setValue(Number(e.target.value));
   };

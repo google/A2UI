@@ -62,8 +62,10 @@ describe("GenericBinder Checkable Trait", () => {
       value: { path: "/val" },
       checks: [
         {
-          call: "required",
-          args: { value: { path: "/val" } },
+          condition: {
+            call: "required",
+            args: { value: { path: "/val" } }
+          },
           message: "Value is required"
         }
       ]
@@ -94,13 +96,17 @@ describe("GenericBinder Checkable Trait", () => {
       value: { path: "/val" },
       checks: [
         {
-          call: "required",
-          args: { value: { path: "/val" } },
+          condition: {
+            call: "required",
+            args: { value: { path: "/val" } }
+          },
           message: "Cannot be empty"
         },
         {
-          call: "min_length",
-          args: { value: { path: "/val" }, min: 3 },
+          condition: {
+            call: "min_length",
+            args: { value: { path: "/val" }, min: 3 }
+          },
           message: "Must be at least 3 characters"
         }
       ]
@@ -138,10 +144,12 @@ describe("GenericBinder Checkable Trait", () => {
       value: { path: "/val" },
       checks: [
         {
-          call: "required",
-          args: { value: { path: "/val" } }
+          condition: {
+            call: "required",
+            args: { value: { path: "/val" } }
+          }
         }
-      ]
+      ] as any
     });
     surface.componentsModel.addComponent(compModel);
 

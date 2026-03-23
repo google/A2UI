@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
+import React from 'react';
 import {createReactComponent} from '../../../adapter';
-import {ColumnApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {ReactChildList} from './ReactChildList';
-import {mapJustify, mapAlign} from '../utils';
+import {CardApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {getBaseContainerStyle} from '../utils';
 
-export const ReactColumn = createReactComponent(ColumnApi, ({props, buildChild, context}) => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: mapJustify(props.justify),
-        alignItems: mapAlign(props.align),
-        width: '100%',
-        margin: 0,
-        padding: 0,
-      }}
-    >
-      <ReactChildList childList={props.children} buildChild={buildChild} context={context} />
-    </div>
-  );
+export const Card = createReactComponent(CardApi, ({props, buildChild}) => {
+  const style: React.CSSProperties = {
+    ...getBaseContainerStyle(),
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    width: '100%',
+  };
+
+  return <div style={style}>{props.child ? buildChild(props.child) : null}</div>;
 });

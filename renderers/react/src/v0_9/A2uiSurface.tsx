@@ -14,85 +14,119 @@
  * limitations under the License.
  */
 
-import React, {useSyncExternalStore} from 'react';
-import {type SurfaceModel, ComponentContext} from '@a2ui/web_core/v0_9';
+import React, {useSyncExternalStore, memo, useMemo, useCallback} from 'react';
+import {type SurfaceModel, ComponentContext, type ComponentModel} from '@a2ui/web_core/v0_9';
 import type {ReactComponentImplementation} from './adapter';
 
-export const A2uiSurface: React.FC<{surface: SurfaceModel<ReactComponentImplementation>}> = ({
-  surface,
-}) => {
-  const store = React.useMemo(() => {
+const ResolvedChild = memo(
+  ({
+    surface,
+    id,
+    basePath,
+    compImpl,
+    componentModel,
+  }: {
+    surface: SurfaceModel<ReactComponentImplementation>;
+    id: string;
+    basePath: string;
+    componentModel: ComponentModel;
+    compImpl: ReactComponentImplementation;
+  }) => {
+    const ComponentToRender = compImpl.render;
+
+    // Create context. Recreate if the componentModel instance changes (e.g. type change recreation).
+    const context = useMemo(
+      () => new ComponentContext(surface, id, basePath),
+      // componentModel is used as a trigger for recreation even if not in the body
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [surface, id, basePath, componentModel]
+    );
+
+    const buildChild = useCallback(
+      (childId: string, specificPath?: string) => {
+        const path = specificPath || context.dataContext.path;
+        return (
+          <DeferredChild
+            key={`${childId}-${path}`}
+            surface={surface}
+            id={childId}
+            basePath={path}
+          />
+        );
+      },
+      [surface, context.dataContext.path]
+    );
+
+    return <ComponentToRender context={context} buildChild={buildChild} />;
+  }
+);
+ResolvedChild.displayName = 'ResolvedChild';
+
+export const DeferredChild: React.FC<{
+  surface: SurfaceModel<ReactComponentImplementation>;
+  id: string;
+  basePath: string;
+}> = memo(({surface, id, basePath}) => {
+  // 1. Subscribe specifically to this component's existence
+  const store = useMemo(() => {
     let version = 0;
     return {
       subscribe: (cb: () => void) => {
-        const unsub1 = surface.componentsModel.onCreated.subscribe(() => {
-          version++;
-          cb();
+        const unsub1 = surface.componentsModel.onCreated.subscribe((comp) => {
+          if (comp.id === id) {
+            version++;
+            cb();
+          }
         });
-        const unsub2 = surface.componentsModel.onDeleted.subscribe(() => {
-          version++;
-          cb();
+        const unsub2 = surface.componentsModel.onDeleted.subscribe((delId) => {
+          if (delId === id) {
+            version++;
+            cb();
+          }
         });
         return () => {
           unsub1.unsubscribe();
           unsub2.unsubscribe();
         };
       },
-      getSnapshot: () => version,
+      getSnapshot: () => {
+        const comp = surface.componentsModel.get(id);
+        // We use instance identity + version as the snapshot to ensure
+        // type replacements (e.g. Button -> Text) trigger a re-render.
+        return comp ? `${comp.type}-${version}` : `missing-${version}`;
+      },
     };
-  }, [surface]);
+  }, [surface, id]);
 
   useSyncExternalStore(store.subscribe, store.getSnapshot);
 
-  const renderComponent = (id: string, currentBasePath: string) => {
-    try {
-      const componentModel = surface.componentsModel.get(id);
-      if (!componentModel) {
-        return (
-          <div key={`loading-${id}`} style={{color: 'gray', padding: '4px'}}>
-            [Loading {id}...]
-          </div>
-        );
-      }
+  const componentModel = surface.componentsModel.get(id);
 
-      const compImpl = surface.catalog.components.get(componentModel.type);
-
-      if (!compImpl) {
-        return (
-          <div key={`error-${id}`} style={{color: 'red'}}>
-            Unknown component: {componentModel.type}
-          </div>
-        );
-      }
-
-      const ComponentToRender = compImpl.render;
-      const context = new ComponentContext(surface, id, currentBasePath);
-
-      const buildChild = (childId: string, specificPath?: string) => {
-        return renderComponent(childId, specificPath || context.dataContext.path);
-      };
-
-      return (
-        <ComponentToRender
-          key={`${id}-${currentBasePath}`}
-          context={context}
-          buildChild={buildChild}
-        />
-      );
-    } catch (e: any) {
-      return (
-        <div key={`error-${id}`} style={{color: 'red'}}>
-          Error rendering {id}: {e.message}
-        </div>
-      );
-    }
-  };
-
-  const hasRoot = surface.componentsModel.get('root') !== undefined;
-
-  if (!hasRoot) {
-    return <div>Waiting for root component...</div>;
+  if (!componentModel) {
+    return <div style={{color: 'gray', padding: '4px'}}>[Loading {id}...]</div>;
   }
 
-  return <>{renderComponent('root', '/')}</>;
+  const compImpl = surface.catalog.components.get(componentModel.type);
+
+  if (!compImpl) {
+    return <div style={{color: 'red'}}>Unknown component: {componentModel.type}</div>;
+  }
+
+  return (
+    <ResolvedChild
+      surface={surface}
+      id={id}
+      basePath={basePath}
+      componentModel={componentModel}
+      compImpl={compImpl}
+    />
+  );
+});
+DeferredChild.displayName = 'DeferredChild';
+
+export const A2uiSurface: React.FC<{surface: SurfaceModel<ReactComponentImplementation>}> = ({
+  surface,
+}) => {
+  // The root component always has ID 'root' and base path '/'
+  return <DeferredChild surface={surface} id="root" basePath="/" />;
 };

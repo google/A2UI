@@ -95,6 +95,7 @@ export class DateTimeInputComponent {
    */
   props = input<Record<string, BoundProperty>>({});
   surfaceId = input.required<string>();
+  componentId = input<string>();
   dataContextPath = input<string>('/');
 
   label = computed(() => this.props()['label']?.value());

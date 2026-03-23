@@ -19,7 +19,7 @@ import {createReactComponent} from '../../../adapter';
 import {TextFieldApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 
-export const ReactTextField = createReactComponent(TextFieldApi, ({props}) => {
+export const TextField = createReactComponent(TextFieldApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     props.setValue(e.target.value);
   };

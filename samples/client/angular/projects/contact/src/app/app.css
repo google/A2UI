@@ -100,6 +100,23 @@ h1 {
   }
 }
 
+.rendering-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: var(--p-40);
+  font-size: 14px;
+  border-top: 1px solid var(--n-90);
+  margin-top: 16px;
+  margin-top: 16px;
+
+  & .g-icon {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+}
+
 .g-icon {
   font-family: "Google Symbols";
   font-weight: normal;

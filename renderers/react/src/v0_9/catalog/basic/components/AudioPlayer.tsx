@@ -16,24 +16,21 @@
 
 import React from 'react';
 import {createReactComponent} from '../../../adapter';
-import {DividerApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {AudioPlayerApi} from '@a2ui/web_core/v0_9/basic_catalog';
+import {getBaseLeafStyle} from '../utils';
 
-export const ReactDivider = createReactComponent(DividerApi, ({props}) => {
-  const isVertical = props.axis === 'vertical';
+export const AudioPlayer = createReactComponent(AudioPlayerApi, ({props}) => {
   const style: React.CSSProperties = {
-    margin: LEAF_MARGIN,
-    border: 'none',
-    backgroundColor: '#ccc',
+    ...getBaseLeafStyle(),
+    width: '100%',
   };
 
-  if (isVertical) {
-    style.width = '1px';
-    style.height = '100%';
-  } else {
-    style.width = '100%';
-    style.height = '1px';
-  }
-
-  return <div style={style} />;
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '4px', width: '100%'}}>
+      {props.description && (
+        <span style={{fontSize: '12px', color: '#666'}}>{props.description}</span>
+      )}
+      <audio src={props.url} controls style={style} />
+    </div>
+  );
 });
