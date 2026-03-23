@@ -146,10 +146,11 @@ class FrameCompiler:
     return frame
 
   def _container_component(self, container: ContainerState) -> ComponentNode:
+    explicit_children = list(container.child_ids)
     if container.container_type == 'Row':
       component = {
           'Row': {
-              'children': {'explicitList': container.child_ids},
+              'children': {'explicitList': explicit_children},
               'alignment': 'center',
               'distribution': 'start',
           }
@@ -157,7 +158,7 @@ class FrameCompiler:
     elif container.container_type == 'List':
       component = {
           'List': {
-              'children': {'explicitList': container.child_ids},
+              'children': {'explicitList': explicit_children},
               'direction': 'vertical',
               'alignment': 'stretch',
           }
@@ -165,7 +166,7 @@ class FrameCompiler:
     else:
       component = {
           'Column': {
-              'children': {'explicitList': container.child_ids},
+              'children': {'explicitList': explicit_children},
               'alignment': 'stretch',
               'distribution': 'start',
           }
