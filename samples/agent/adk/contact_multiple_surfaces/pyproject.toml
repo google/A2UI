@@ -27,6 +27,10 @@ dependencies = [
     "litellm",
     "jsonschema>=4.0.0",
     "a2ui-agent",
+    "mcp>=1.26.0",
+    "uvicorn>=0.40.0",
+    "starlette>=0.50.0",
+    "fastapi>=0.123.10",
 ]
 
 [tool.hatch.build.targets.wheel]

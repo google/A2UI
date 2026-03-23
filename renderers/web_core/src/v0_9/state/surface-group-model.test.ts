@@ -82,8 +82,10 @@ describe("SurfaceGroupModel", () => {
     const surface = new SurfaceModel("s1", catalog, {});
     model.addSurface(surface);
 
-    await surface.dispatchAction({ type: "test" });
-    assert.deepStrictEqual(receivedAction, { type: "test" });
+    await surface.dispatchAction({ event: { name: "test" } }, "c1");
+    assert.strictEqual(receivedAction.name, "test");
+    assert.strictEqual(receivedAction.surfaceId, "s1");
+    assert.strictEqual(receivedAction.sourceComponentId, "c1");
   });
 
   it("stops propagating actions after deletion", async () => {
@@ -96,7 +98,7 @@ describe("SurfaceGroupModel", () => {
     model.addSurface(surface);
     model.deleteSurface("s1");
 
-    await surface.dispatchAction({ type: "test" });
+    await surface.dispatchAction({ event: { name: "test" } }, "c1");
     assert.strictEqual(callCount, 0);
   });
 

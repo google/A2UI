@@ -54,18 +54,44 @@ TODO: Add verified setup example.
 > coming days.
 
 ```bash
-npm install @a2ui/angular @a2ui/web-lib
+npm install @a2ui/angular @a2ui/web_core
 ```
 
 The Angular renderer provides:
 
-- **`provideA2UI()` function**: Configures A2UI in your app config
-- **`Surface` component**: Renders A2UI surfaces
-- **`MessageProcessor` service**: Handles incoming A2UI messages
+- **`A2uiRendererService`**: A service that manages the A2UI message processor and reactive model.
+- **`a2ui-v09-component-host` component**: A dynamic component host that renders A2UI components from a surface.
+- **`A2UI_RENDERER_CONFIG` token**: Used to configure the renderer with catalogs and action handlers.
 
-TODO: Add verified setup example.
+### Setup Example (v0.9)
 
-**See working example:** [Angular restaurant sample](https://github.com/google/a2ui/tree/main/samples/client/angular/projects/restaurant)
+A2UI uses versioned imports for its protocol-specific implementations. For v0.9, configure your application providers as follows:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { 
+  A2UI_RENDERER_CONFIG, 
+  A2uiRendererService, 
+  minimalCatalog 
+} from '@a2ui/angular/v0_9';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    {
+      provide: A2UI_RENDERER_CONFIG,
+      useValue: {
+        catalogs: [minimalCatalog],
+        actionHandler: (action) => {
+          console.log('Action dispatched:', action);
+        }
+      }
+    },
+    A2uiRendererService
+  ]
+};
+```
+
+**See working example:** [Angular v0.9 Explorer](https://github.com/google/a2ui/tree/main/renderers/angular/a2ui_explorer)
 
 ## React
 

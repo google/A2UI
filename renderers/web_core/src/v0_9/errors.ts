@@ -24,8 +24,12 @@ interface V8ErrorConstructor extends ErrorConstructor {
 
 /**
  * Base class for all A2UI specific errors.
+ *
+ * Includes a machine-readable `code` for categorical handling and ensures
+ * proper stack trace capturing.
  */
 export class A2uiError extends Error {
+  /** A machine-readable string identifying the error category. */
   public readonly code: string;
 
   constructor(message: string, code: string = "UNKNOWN_ERROR") {
@@ -71,6 +75,7 @@ export class A2uiExpressionError extends A2uiError {
   constructor(
     message: string,
     public readonly expression?: string,
+    public readonly details?: any,
   ) {
     super(message, "EXPRESSION_ERROR");
   }

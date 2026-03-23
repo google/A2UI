@@ -52,6 +52,12 @@ export class DataModel {
 
   /**
    * Retrieves a Preact Signal for a specific data path.
+   * 
+   * This provides a reactive way to access a value. If the value at the path changes via `set()`,
+   * the signal will automatically be updated.
+   * 
+   * @param path The JSON pointer path to create or retrieve a signal for.
+   * @returns A Preact Signal representing the value at the specified path.
    */
   getSignal<T>(path: string): Signal<T | undefined> {
     const normalizedPath = this.normalizePath(path);
@@ -73,7 +79,7 @@ export class DataModel {
     if (path === null || path === undefined) {
       throw new A2uiDataError("Path cannot be null or undefined.");
     }
-    
+
     if (path === "/" || path === "") {
       this.data = value;
       this.notifyAllSignals();
@@ -83,6 +89,9 @@ export class DataModel {
     const segments = this.parsePath(path);
     const lastSegment = segments.pop()!;
 
+    if (!this.data) {
+      this.data = {};
+    }
     let current: any = this.data;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
@@ -163,7 +172,14 @@ export class DataModel {
 
   /**
    * Subscribes to changes at the specified data path.
-   * Backwards-compatible layer using Preact Signals.
+   * 
+   * This is a backwards-compatible layer using Preact Signals internally. It allows
+   * listeners to be notified whenever the value at the specified path (or any of its
+   * ancestors/descendants) changes.
+   * 
+   * @param path The JSON pointer path to observe.
+   * @param onChange A callback fired whenever the value changes.
+   * @returns A `DataSubscription` containing the initial value and an `unsubscribe` method.
    */
   subscribe<T>(
     path: string,
@@ -172,7 +188,7 @@ export class DataModel {
     const sig = this.getSignal<T>(path);
     let isSync = true;
     let currentValue = sig.peek();
-    
+
     const dispose = effect(() => {
       const val = sig.value;
       currentValue = val;
@@ -242,10 +258,6 @@ export class DataModel {
   private updateSignal(path: string): void {
     const sig = this.signals.get(path);
     if (sig) {
-      // Signals trigger updates based on strict equality checks. If an object or array
-      // in the data model is mutated, its reference doesn't change, and the signal
-      // won't update. By creating a shallow copy, we ensure a new reference is
-      // assigned, which correctly triggers dependent effects.
       const val = this.get(path);
       if (Array.isArray(val)) {
         sig.value = [...val];

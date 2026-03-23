@@ -19,6 +19,12 @@ from unittest.mock import MagicMock
 from a2ui.core.schema.manager import A2uiSchemaManager, A2uiCatalog, CatalogConfig
 from a2ui.core.schema.common_modifiers import remove_strict_validation
 from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.core.schema.validator import (
+    _find_root_id as find_root_id,
+    extract_component_ref_fields,
+    analyze_topology,
+    get_component_references,
+)
 
 
 class TestValidator:
@@ -48,7 +54,10 @@ class TestValidator:
                             "catalogId": {
                                 "type": "string",
                             },
-                            "theme": {"type": "object", "additionalProperties": True},
+                            "theme": {
+                                "type": "object",
+                                "additionalProperties": True,
+                            },
                         },
                         "required": ["surfaceId", "catalogId"],
                         "additionalProperties": False,
@@ -495,7 +504,10 @@ class TestValidator:
                 "children": {
                     "type": "object",
                     "properties": {
-                        "explicitList": {"type": "array", "items": {"type": "string"}}
+                        "explicitList": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        }
                     },
                     "required": ["explicitList"],
                 }
@@ -723,30 +735,53 @@ class TestValidator:
             processed.append(comp)
 
       if catalog.version == VERSION_0_8:
-        payload = {
-            "surfaceUpdate": {"surfaceId": "test-surface", "components": processed}
-        }
+        payload = [
+            {"beginRendering": {"surfaceId": "test-surface", "root": "root"}},
+            {
+                "surfaceUpdate": {
+                    "surfaceId": "test-surface",
+                    "components": processed,
+                }
+            },
+        ]
       else:
-        payload = {
-            "version": "v0.9",
-            "updateComponents": {"surfaceId": "test-surface", "components": processed},
-        }
+        payload = [
+            {
+                "version": "v0.9",
+                "createSurface": {"surfaceId": "test-surface", "catalogId": "std"},
+            },
+            {
+                "version": "v0.9",
+                "updateComponents": {
+                    "surfaceId": "test-surface",
+                    "components": processed,
+                },
+            },
+        ]
 
     elif data_model:
       if catalog.version == VERSION_0_8:
-        payload = {
-            "dataModelUpdate": {"surfaceId": "test-surface", "contents": data_model}
-        }
+        payload = [
+            {
+                "dataModelUpdate": {
+                    "surfaceId": "test-surface",
+                    "contents": data_model,
+                }
+            }
+        ]
       else:
-        payload = {
+        payload = [{
             "version": "v0.9",
-            "updateDataModel": {"surfaceId": "test-surface", "value": data_model},
-        }
+            "updateDataModel": {
+                "surfaceId": "test-surface",
+                "value": data_model,
+            },
+        }]
 
     if payload is None:
-      return [] if catalog.version == VERSION_0_9 else {}
+      return []
 
-    return [payload] if catalog.version == VERSION_0_9 else payload
+    return payload
 
   def test_validate_duplicate_ids(self, test_catalog):
     components = [
@@ -762,20 +797,29 @@ class TestValidator:
     # This payload has components but none are 'root'
     # bypass make_payload as it adds root if missing
     if test_catalog.version == VERSION_0_8:
-      payload = {
-          "surfaceUpdate": {
-              "surfaceId": "test",
-              "components": [{"id": "c1", "component": {"Text": {"text": "hi"}}}],
-          }
-      }
-    else:
-      payload = [{
-          "version": "v0.9",
-          "updateComponents": {
-              "surfaceId": "test",
-              "components": [{"id": "c1", "component": "Text", "text": "hi"}],
+      payload = [
+          {"beginRendering": {"surfaceId": "test", "root": "root"}},
+          {
+              "surfaceUpdate": {
+                  "surfaceId": "test",
+                  "components": [{"id": "c1", "component": {"Text": {"text": "hi"}}}],
+              }
           },
-      }]
+      ]
+    else:
+      payload = [
+          {
+              "version": "v0.9",
+              "createSurface": {"surfaceId": "test", "catalogId": "std"},
+          },
+          {
+              "version": "v0.9",
+              "updateComponents": {
+                  "surfaceId": "test",
+                  "components": [{"id": "c1", "component": "Text", "text": "hi"}],
+              },
+          },
+      ]
 
     with pytest.raises(ValueError, match="Missing root component"):
       test_catalog.validator.validate(payload)
@@ -915,12 +959,9 @@ class TestValidator:
         {"id": "custom-root", "component": "Text", "text": "I am the root"},
         {"id": "orphan", "component": "Text", "text": "I am an orphan"},
     ]
-    # make_payload only gives us surfaceUpdate, we need to wrap it with beginRendering
-    surface_update = self.make_payload(test_catalog, components=components)
-    payload = [
-        {"beginRendering": {"surfaceId": "test-surface", "root": "custom-root"}},
-        surface_update,
-    ]
+    # make_payload gives us both beginRendering and surfaceUpdate. We just need to change root.
+    payload = self.make_payload(test_catalog, components=components)
+    payload[0]["beginRendering"]["root"] = "custom-root"
 
     # This should fail because 'orphan' is not reachable from 'custom-root'
     with pytest.raises(
@@ -933,13 +974,8 @@ class TestValidator:
         {"id": "custom-root", "component": "Card", "child": "orphan"},
         {"id": "orphan", "component": "Text", "text": "I am no longer an orphan"},
     ]
-    surface_update_connected = self.make_payload(
-        test_catalog, components=components_connected
-    )
-    payload_connected = [
-        {"beginRendering": {"surfaceId": "test-surface", "root": "custom-root"}},
-        surface_update_connected,
-    ]
+    payload_connected = self.make_payload(test_catalog, components=components_connected)
+    payload_connected[0]["beginRendering"]["root"] = "custom-root"
     test_catalog.validator.validate(payload_connected)
 
   @pytest.mark.parametrize(
@@ -985,8 +1021,8 @@ class TestValidator:
         p[0]["updateDataModel"]["path"] = data.get("path")
         p[0]["updateDataModel"]["surfaceId"] = data.get("surfaceId", "surface1")
       else:
-        p["dataModelUpdate"]["path"] = data.get("path")
-        p["dataModelUpdate"]["surfaceId"] = data.get("surfaceId", "surface1")
+        p[0]["dataModelUpdate"]["path"] = data.get("path")
+        p[0]["dataModelUpdate"]["surfaceId"] = data.get("surfaceId", "surface1")
 
     with pytest.raises(
         ValueError,
@@ -1006,4 +1042,297 @@ class TestValidator:
     # Generic payload that results in deep dict
     payload = self.make_payload(test_catalog, data_model=deep_data)
     with pytest.raises(ValueError, match="Global recursion limit exceeded"):
+      test_catalog.validator.validate(payload)
+
+  def test_find_root_id_v08(self):
+    messages = [
+        {"beginRendering": {"surfaceId": "s1", "root": "custom-root"}},
+        {"surfaceUpdate": {"surfaceId": "s1", "components": []}},
+    ]
+    assert find_root_id(messages) == "custom-root"
+
+  def test_find_root_id_v09(self):
+    # For v0.9, if createSurface is provided, the root is 'root'
+    messages = [
+        {"createSurface": {"surfaceId": "s1"}},
+        {"updateComponents": {"surfaceId": "s1", "components": []}},
+    ]
+    assert find_root_id(messages) == "root"
+
+    # For an incremental update, there is no root
+    messages = [{"updateComponents": {"surfaceId": "s1", "components": []}}]
+    assert find_root_id(messages) is None
+
+  def test_get_component_references(self):
+    # Mock ref_fields_map
+    ref_fields_map = {
+        "Container": ({"child"}, {"children"}),
+        "Text": (set(), set()),
+    }
+    comp = {
+        "id": "c1",
+        "component": "Container",
+        "child": "c2",
+        "children": ["c3", "c4"],
+    }
+    refs = list(get_component_references(comp, ref_fields_map))
+    assert ("c2", "child") in refs
+    assert ("c3", "children") in refs
+    assert ("c4", "children") in refs
+
+  def test_analyze_topology_circular(self):
+    ref_fields_map = {"Node": ({"next"}, set())}
+    components = [
+        {"id": "c1", "component": "Node", "next": "c2"},
+        {"id": "c2", "component": "Node", "next": "c1"},
+    ]
+    with pytest.raises(ValueError, match="Circular reference detected"):
+      analyze_topology("c1", components, ref_fields_map)
+
+  def test_analyze_topology_self_ref(self):
+    ref_fields_map = {"Node": ({"next"}, set())}
+    components = [{"id": "c1", "component": "Node", "next": "c1"}]
+    with pytest.raises(ValueError, match="Self-reference detected"):
+      analyze_topology("c1", components, ref_fields_map)
+
+  def test_analyze_topology_reachable(self):
+    ref_fields_map = {"Node": ({"next"}, set())}
+    components = [
+        {"id": "root", "component": "Node", "next": "c1"},
+        {"id": "c1", "component": "Node", "next": "c2"},
+        {"id": "c2", "component": "Node"},
+        {"id": "orphan", "component": "Node"},
+    ]
+    reachable = analyze_topology("root", components, ref_fields_map)
+    assert reachable == {"root", "c1", "c2"}
+
+  def test_extract_component_ref_fields_mock(self):
+    # Test with a mock catalog
+    catalog = MagicMock(spec=A2uiCatalog)
+    catalog.version = VERSION_0_9
+    catalog.common_types_schema = {
+        "$defs": {
+            "ComponentId": {"type": "string"},
+            "ChildList": {
+                "oneOf": [
+                    {"type": "array", "items": {"$ref": "#/$defs/ComponentId"}},
+                    {
+                        "type": "object",
+                        "properties": {"componentId": {"$ref": "#/$defs/ComponentId"}},
+                    },
+                ]
+            },
+        }
+    }
+    catalog.catalog_schema = {
+        "components": {
+            "MyComp": {
+                "properties": {
+                    "ref": {"$ref": "common_types.json#/$defs/ComponentId"},
+                    "multi": {"$ref": "common_types.json#/$defs/ChildList"},
+                }
+            }
+        }
+    }
+    # Mock s2c_schema to avoid errors in extraction
+    catalog.s2c_schema = {}
+
+    ref_map = extract_component_ref_fields(catalog)
+    assert "MyComp" in ref_map
+    single_refs, list_refs = ref_map["MyComp"]
+    assert "ref" in single_refs
+    assert "multi" in list_refs
+
+  # --- Multi-surface tests ---
+
+  def test_validate_multi_surface_v08(self, catalog_0_8):
+    """Tests that multiple surfaces with different root IDs validate correctly."""
+    payload = [
+        {"beginRendering": {"surfaceId": "surface-a", "root": "root-a"}},
+        {"beginRendering": {"surfaceId": "surface-b", "root": "root-b"}},
+        {
+            "surfaceUpdate": {
+                "surfaceId": "surface-a",
+                "components": [
+                    {"id": "root-a", "component": {"Card": {"child": "child-a"}}},
+                    {"id": "child-a", "component": {"Text": {"text": "Hello A"}}},
+                ],
+            }
+        },
+        {
+            "surfaceUpdate": {
+                "surfaceId": "surface-b",
+                "components": [
+                    {"id": "root-b", "component": {"Card": {"child": "child-b"}}},
+                    {"id": "child-b", "component": {"Text": {"text": "Hello B"}}},
+                ],
+            }
+        },
+    ]
+    # Should not raise - each surface has its own root
+    catalog_0_8.validator.validate(payload)
+
+  def test_validate_multi_surface_missing_root_v08(self, catalog_0_8):
+    """Tests that missing root in one surface still fails validation."""
+    payload = [
+        {"beginRendering": {"surfaceId": "surface-a", "root": "root-a"}},
+        {"beginRendering": {"surfaceId": "surface-b", "root": "root-b"}},
+        {
+            "surfaceUpdate": {
+                "surfaceId": "surface-a",
+                "components": [
+                    {"id": "root-a", "component": {"Text": {"text": "Hello A"}}},
+                ],
+            }
+        },
+        {
+            "surfaceUpdate": {
+                "surfaceId": "surface-b",
+                "components": [
+                    # Missing root-b, only has a non-root component
+                    {"id": "not-root-b", "component": {"Text": {"text": "Hello B"}}},
+                ],
+            }
+        },
+    ]
+    with pytest.raises(ValueError, match="Missing root component.*root-b"):
+      catalog_0_8.validator.validate(payload)
+
+  # --- Incremental update tests ---
+
+  def test_incremental_update_no_root_v08(self, catalog_0_8):
+    """Incremental update without root component should pass."""
+    payload = [
+        {
+            "surfaceUpdate": {
+                "surfaceId": "contact-card",
+                "components": [
+                    {"id": "main_card", "component": {"Card": {"child": "col"}}},
+                    {"id": "col", "component": {"Text": {"text": "Updated"}}},
+                ],
+            }
+        },
+    ]
+    # No beginRendering → incremental update → root check skipped
+    catalog_0_8.validator.validate(payload)
+
+  def test_incremental_update_no_root_v09(self, catalog_0_9):
+    """Incremental update without root component should pass (v0.9)."""
+    payload = [
+        {
+            "version": "v0.9",
+            "updateComponents": {
+                "surfaceId": "contact-card",
+                "components": [
+                    {"id": "card1", "component": "Card", "child": "text1"},
+                    {"id": "text1", "component": "Text", "text": "Updated"},
+                ],
+            },
+        },
+    ]
+    # No createSurface → incremental update → root check skipped
+    catalog_0_9.validator.validate(payload)
+
+  def test_incremental_update_orphans_allowed_v08(self, catalog_0_8):
+    """Incremental update with 'orphaned' components should pass."""
+    payload = [
+        {
+            "surfaceUpdate": {
+                "surfaceId": "contact-card",
+                "components": [
+                    {"id": "text1", "component": {"Text": {"text": "Hello"}}},
+                    {"id": "text2", "component": {"Text": {"text": "World"}}},
+                ],
+            }
+        },
+    ]
+    # These are disconnected but it's an incremental update
+    catalog_0_8.validator.validate(payload)
+
+  def test_incremental_update_self_ref_still_fails(self, test_catalog):
+    """Self-references should still be caught in incremental updates."""
+    if test_catalog.version == VERSION_0_8:
+      payload = [
+          {
+              "surfaceUpdate": {
+                  "surfaceId": "s1",
+                  "components": [
+                      {"id": "card1", "component": {"Card": {"child": "card1"}}},
+                  ],
+              }
+          },
+      ]
+    else:
+      payload = [
+          {
+              "version": "v0.9",
+              "updateComponents": {
+                  "surfaceId": "s1",
+                  "components": [
+                      {"id": "card1", "component": "Card", "child": "card1"},
+                  ],
+              },
+          },
+      ]
+    with pytest.raises(ValueError, match="Self-reference detected"):
+      test_catalog.validator.validate(payload)
+
+  def test_incremental_update_cycle_still_fails(self, test_catalog):
+    """Cycles should still be caught in incremental updates."""
+    if test_catalog.version == VERSION_0_8:
+      payload = [
+          {
+              "surfaceUpdate": {
+                  "surfaceId": "s1",
+                  "components": [
+                      {"id": "a", "component": {"Card": {"child": "b"}}},
+                      {"id": "b", "component": {"Card": {"child": "a"}}},
+                  ],
+              }
+          },
+      ]
+    else:
+      payload = [
+          {
+              "version": "v0.9",
+              "updateComponents": {
+                  "surfaceId": "s1",
+                  "components": [
+                      {"id": "a", "component": "Card", "child": "b"},
+                      {"id": "b", "component": "Card", "child": "a"},
+                  ],
+              },
+          },
+      ]
+    with pytest.raises(ValueError, match="Circular reference detected"):
+      test_catalog.validator.validate(payload)
+
+  def test_incremental_update_duplicates_still_fail(self, test_catalog):
+    """Duplicate IDs should still be caught in incremental updates."""
+    if test_catalog.version == VERSION_0_8:
+      payload = [
+          {
+              "surfaceUpdate": {
+                  "surfaceId": "s1",
+                  "components": [
+                      {"id": "text1", "component": {"Text": {"text": "A"}}},
+                      {"id": "text1", "component": {"Text": {"text": "B"}}},
+                  ],
+              }
+          },
+      ]
+    else:
+      payload = [
+          {
+              "version": "v0.9",
+              "updateComponents": {
+                  "surfaceId": "s1",
+                  "components": [
+                      {"id": "text1", "component": "Text", "text": "A"},
+                      {"id": "text1", "component": "Text", "text": "B"},
+                  ],
+              },
+          },
+      ]
+    with pytest.raises(ValueError, match="Duplicate component ID"):
       test_catalog.validator.validate(payload)

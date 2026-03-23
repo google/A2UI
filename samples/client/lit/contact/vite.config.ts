@@ -27,6 +27,7 @@ export default async () => {
 
   const entry: Record<string, string> = {
     contact: resolve(__dirname, "index.html"),
+    sandbox: resolve(__dirname, "sandbox.html"),
   };
 
   return {
@@ -35,11 +36,22 @@ export default async () => {
       rollupOptions: {
         input: entry,
       },
-      target: "esnext",
+      target: "es2021",
     },
     define: {},
     resolve: {
       dedupe: ["lit"],
+      alias: {
+        "@a2ui/markdown-it": resolve(__dirname, "../../../../renderers/markdown/markdown-it/dist/src/markdown.js")
+      }
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        target: "es2021",
+      }
+    },
+    server: {
+      host: true, // Listen on all network interfaces (0.0.0.0), enabling both localhost and 127.0.0.1 simultaneously
     },
   } satisfies UserConfig;
 };

@@ -54,6 +54,7 @@ nav:
       - Renderer Development: guides/renderer-development.md
       - Custom Components: guides/custom-components.md
       - Theming & Styling: guides/theming.md
+      - A2UI over MCP: guides/a2ui_over_mcp.md
   - Reference:
       - Component Gallery: reference/components.md
       - Message Reference: reference/messages.md

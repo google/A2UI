@@ -151,11 +151,25 @@ When the agent uses that catalog, it generates a payload strictly conforming to 
 
 A2UI Catalogs must be standalone (no references to external files) to simplify LLM inference and dependency management. 
 
-While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. Run  `scripts/build_catalog.py` before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:
+While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema `$ref` pointing to external documents during local development. Run  `tools/build_catalog/assemble_catalog.py` before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:
 
 ```bash
-uv run scripts/build_catalog.py <path-to-your-catalog.json>
+uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPUT_NAME> [--catalog-id <ID>] [--version <VERSION>] [--extend-basic-catalog] [--out-dir <DIR>] [--verbose]
 ```
+
+where:
+- `inputs`: One or more paths or URLs to A2UI component catalog JSONs.
+- `--output-name`: (Required) The desired name of the combined catalog (e.g.
+  `my_merged_catalog`). The `.json` extension is appended automatically if
+  omitted.
+- `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
+- `--version`: The A2UI specification version to use for official catalog
+  fallbacks. Choices are `0.9` or `0.10`. Defaults to `0.9`.
+- `--extend-basic-catalog`: If passed, automatically includes the entirety of
+  `basic_catalog.json` in the root output regardless of whether the input
+  catalogs explicitly reference it.
+- `--out-dir`, `-o`: The directory where the assembled catalog will be saved. Defaults to `dist`.
+- `--verbose`, `-v`: If passed, enables verbose debug logging to help diagnose issues.
 
 ### Composition & Imports
 
@@ -189,7 +203,7 @@ This catalog imports all elements from the Basic Catalog and adds a new `Suggest
 }
 ```
 
-**Make sure to run `scripts/build_catalog.py` to resolve the external $ref before publishing.**
+**Make sure to run `tools/build_catalog/assemble_catalog.py` to resolve the external $ref before publishing.**
 
 #### Example: Cherry-picking Components
 
@@ -216,7 +230,7 @@ This catalog imports only `Text` from the Basic Catalog to build a simple Popup 
 }
 ```
 
-**Make sure to run `scripts/build_catalog.py` to resolve the external $ref before publishing.**
+**Make sure to run `tools/build_catalog/assemble_catalog.py` to resolve the external $ref before publishing.**
 
 ### Implementing Renderers
 
@@ -334,7 +348,7 @@ Example A2UI Message from the agent defining the catalog_id used in a surface
 
 ## Catalog Naming & Versioning
 
-A2UI component catalogs require versioning because catalog definitions are often built in at compile time, so any mismatch between what an agent generates and what a client can render will break the UI.
+A2UI component catalogs require versioning because catalog definitions are often built in at compile time, so any mismatch between what an agent generates and what a client can render can affect the UI.
 
 ### CatalogId Naming Convention
 
@@ -346,18 +360,42 @@ The `catalogId` is a unique text identifier used for negotiation between the cli
 
 ### Versioning Guidelines
 
-Unlike standard JSON parsers where extra data is safely ignored, A2UI requires strict versioning to prevent semantic errors. If a client silently drops a new component (like a new "Itinerary" component) because it doesn't recognize it, the user misses critical information. 
+To support continuous evolution without breaking older clients or agents, A2UI categorizes catalog updates based on whether the changes are **safe to ignore**.
 
-To ensure the agent only generates UI the client can fully render, any structural change—even purely additive ones—requires a new catalog version. This is enforced by the A2UI JSON Schema which generally does not allow for unrecognized properties.
+While standard JSON parsers ignore unknown fields, dropping a component in a Server-Driven UI can drop its entire view tree. To balance safety and flexibility, updates are split into **Breaking** and **Non-Breaking** categories, relying on **Graceful Degradation** to absorb version lags.
 
-* **Structural Changes (New Version Required)** Any change that alters the semantic meaning of the A2UI JSON payload requires a new catalog version. This ensures the Agent never sends a component the Client cannot render. A new catalog version is required for:
-    * **Adding a new component:** (e.g., adding `FacePile` or `Itinerary`).
-    * **Adding a new property:** Even if optional, if the Agent generates it, it expects it to be rendered. 
-    * **Renaming/Removing fields:** These are standard breaking changes.
+*   **Breaking Changes (Major Version Bump Required)**  
+    Any change that alters structure in a way that cannot be safely ignored by older clients incrementing the **Major** version in the `catalogId` URI (e.g., `v1` to `v2`).
+    *   **Adding a container component:** e.g., adding a `Grid` or `Accordion` component. If an older client ignores a container, it will drop all of its children, breaking the UI tree.
+    *   **Removing a container component:** e.g., removing a `Grid` or `Accordion` component. If an older agent uses the container it would be ignored by the client, and the client would drop all of its children, breaking the UI tree.
+    *   **Changing field types:** e.g., changing a property from a `string` to an `object`. This will fail JSON Schema validation on older clients.
+    *   **Adding a required property:** without a default value, as older agents won't know to send it.
 
-* **Metadata Changes (Same Version Allowed)** You may keep the same catalog version only if the change has no impact on the generated JSON structure or the renderer's behavior. You can keep the version when
-    * Updating `description` fields (to help the LLM understand the component better).
-    * Fixing typos in comments or documentation.
+*   **Non-Breaking Changes (Allowable under Major Version)**  
+    Changes that can be safely ignored or degrade gracefully without breaking the layout or data model can stay at the current version.
+    *   **Adding a leaf component (non-container):** e.g., adding `Badge` or `Tooltip`. If ignored, the layout remains intact.
+    *   **Adding an optional property:** e.g., adding `subtitle` to a Card.
+    *   **Removing a property:** Safe for the client to ignore if the agent stops sending it.
+    *   **Adding new functions or styles:** These can generally be ignored without changing the semantic meaning of the component.
+    *   **Metadata Changes:** Updating `description` fields or fixing typos in docs requires no version bump and has no impact on runtime.
+
+### Graceful Degradation
+
+**Non-Breaking changes rely on Graceful Degradation.** If an Agent uses a new component/property on an older client, the client **MUST** handle it gracefully (e.g., ignoring it or rendering a text fallback or a "Not Supported" placeholder) rather than crashing. The client may also report a validation error back to the agent, allowing the agent to self-correct and downgrade the UI automatically.
+
+#### Examples of Graceful Degradation
+
+Here is how catalog version mismatches are handled in practice:
+
+*   **An old iOS client is using an older catalog than the agent**
+    *   The agent sends a new component `Badge` that the old iOS client doesn't know about. The client renders a generic textbox placeholder or safe text description for it, keeping the rest of the interface functional.
+    *   The agent sends a new property `badge` on a `Button` that an old client doesn't know about. The client safely ignores it and renders the standard button.
+    *   The agent no longer sends the `Facepile` component that was removed in a later catalog version. This causes no issues for the client.
+
+*   **A web client rolls out a new catalog version ahead of the agent**
+    *   The web client supports the new `Badge` component, but the agent doesn't know about it yet.
+    *   The web client removed the `badge` property on `Button`, so it ignores it if the agent sends it.
+    *   The web client added new styles for `Button` that the agent doesn't know about. Again this causes no issues as the agent doesn't use them.
 
 ### Versioning with CatalogId
 
@@ -367,8 +405,8 @@ We recommend including the version in the catalogId. This allows using A2UI cata
 
 | Change Type  | URI Example                    | Description                                                        |
 | :----------- | :----------------------------- | :----------------------------------------------------------------- |
-| **Current**  | .../rizzcharts/v1/catalog.json | The stable, production schema.                                     |
-| **Breaking** | .../rizzcharts/v2/catalog.json | A new schema introducing renamed components or structural changes. |
+| **Current**  | .../rizzcharts/v1/catalog.json | Version 1.x. Supports all additive updates in the 1.x branch.      |
+| **Breaking** | .../rizzcharts/v2/catalog.json | A new schema introducing breaking structural changes.              |
 
 ### Handling Migrations
 

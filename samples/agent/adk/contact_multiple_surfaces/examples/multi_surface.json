@@ -481,6 +481,10 @@
       "path": "/",
       "contents": [
         {
+          "key": "id",
+          "valueString": "2"
+        },
+        {
           "key": "name",
           "valueString": "Casey Smith"
         },
