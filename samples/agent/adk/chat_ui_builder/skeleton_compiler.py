@@ -218,18 +218,11 @@ class SkeletonCompiler:
 
   def _build_layout_scaffold(self) -> list[A2UIFrame]:
     if self.layout_hint == 'single_column':
-      self.role_slots = {
-          'hero': 'root',
-          'summary': 'root',
-          'details': 'root',
-          'workflow': 'root',
-          'actions': 'root',
-          'form': 'root',
-          'list': 'root',
-          'insights': 'root',
-          'supporting': 'root',
-      }
-      return []
+      return self._build_role_buckets(
+          root_parent='root',
+          main_parent='root',
+          side_parent='root',
+      )
 
     row_id = 'layout_split_row'
     main_id = 'layout_main_column'
@@ -239,30 +232,47 @@ class SkeletonCompiler:
     frames.extend(self._apply_low_level(AddSectionDelta(event='add_section', id=main_id, parent_id=row_id, layout='Column')))
     frames.extend(self._apply_low_level(AddSectionDelta(event='add_section', id=side_id, parent_id=row_id, layout='Column')))
 
-    hero_slot = 'root' if self.layout_hint.startswith('hero_plus') else main_id
-    supporting_slot = side_id if self.layout_hint in {'two_column', 'hero_plus_two_column'} else main_id
-    actions_slot = side_id if self.layout_hint in {'two_column', 'hero_plus_two_column', 'hero_plus_action_panel'} else main_id
+    hero_parent = 'root' if self.layout_hint.startswith('hero_plus') else main_id
+    side_parent = side_id if self.layout_hint in {'two_column', 'hero_plus_two_column', 'hero_plus_action_panel'} else main_id
     if self.emphasis == 'content-first':
-      supporting_slot = main_id
-    self.role_slots = {
-        'hero': hero_slot,
-        'summary': main_id,
-        'details': main_id,
-        'workflow': main_id,
-        'form': main_id,
-        'list': main_id,
-        'insights': main_id,
-        'supporting': supporting_slot,
-        'actions': actions_slot,
-    }
+      side_parent = main_id
+    frames.extend(self._build_role_buckets(root_parent=hero_parent, main_parent=main_id, side_parent=side_parent))
     if self.layout_hint == 'two_column':
-      self.role_slots['hero'] = main_id
-      self.role_slots['supporting'] = side_id
+      self.role_slots['hero'] = 'hero_bucket'
+      self.role_slots['supporting'] = 'supporting_bucket'
     logger.info('Initialized layout scaffold=%s role_slots=%s', self.layout_hint, self.role_slots)
     return frames
 
   def _slot_for_role(self, role: str) -> str:
     return self.role_slots.get(role, 'root')
+
+  def _build_role_buckets(self, root_parent: str, main_parent: str, side_parent: str) -> list[A2UIFrame]:
+    bucket_parents = {
+        'hero_bucket': root_parent,
+        'summary_bucket': main_parent,
+        'details_bucket': main_parent,
+        'workflow_bucket': main_parent,
+        'form_bucket': main_parent,
+        'list_bucket': main_parent,
+        'supporting_bucket': side_parent,
+        'actions_bucket': side_parent,
+    }
+    role_map = {
+        'hero': 'hero_bucket',
+        'summary': 'summary_bucket',
+        'details': 'details_bucket',
+        'workflow': 'workflow_bucket',
+        'form': 'form_bucket',
+        'list': 'list_bucket',
+        'insights': 'summary_bucket',
+        'supporting': 'supporting_bucket',
+        'actions': 'actions_bucket',
+    }
+    frames: list[A2UIFrame] = []
+    for bucket_id, parent_id in bucket_parents.items():
+      frames.extend(self._apply_low_level(AddSectionDelta(event='add_section', id=bucket_id, parent_id=parent_id, layout='Column')))
+    self.role_slots = role_map
+    return frames
 
   def _add_region(self, delta: AddRegionDelta) -> list[A2UIFrame]:
     if not self.initialized:
