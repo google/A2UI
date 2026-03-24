@@ -52,6 +52,7 @@ nav:
       - Client Setup: guides/client-setup.md
       - Agent Development: guides/agent-development.md
       - Renderer Development: guides/renderer-development.md
+      - Design System Integration: guides/design-system-integration.md
       - Custom Components: guides/custom-components.md
       - Theming & Styling: guides/theming.md
       - A2UI over MCP: guides/a2ui_over_mcp.md
