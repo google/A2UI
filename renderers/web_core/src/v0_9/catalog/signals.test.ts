@@ -1,18 +1,74 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
-import {Signal, computed} from '@preact/signals-core';
+import {Signal as PSignal, computed as pComputed} from '@preact/signals-core';
+import {
+  signal as aSignal,
+  computed as aComputed,
+  Signal as ASignal,
+  WritableSignal as AWritableSignal,
+  isSignal,
+} from '@angular/core';
 
 import {FrameworkSignal} from './signals';
 
 describe('FrameworkSignal', () => {
+  // Test FrameworkSignal with two sample implemenations that wrap Angular and
+  // Preact signals. Angular and Preact signals are good representitive samples,
+  // because the two common patterns - `()` vs. `.value` - are represented by
+  // Angular and Preact respectively.
+
+  describe('Angular variation', () => {
+    const AngularSignal: FrameworkSignal<ASignal<any>> = {
+      computed: <T>(fn: () => T) => aComputed(fn),
+      isSignal: (val: unknown) => isSignal(val),
+      wrap: <T>(val: T) => aSignal(val),
+      unwrap: <T>(val: ASignal<T>) => val(),
+      set: <T>(signal: AWritableSignal<T>, value: T) => signal.set(value),
+    };
+
+    it('round trip wraps and unwraps successfully', () => {
+      const val = 'hello';
+      const wrapped = AngularSignal.wrap(val);
+      assert.strictEqual(AngularSignal.unwrap(wrapped), val);
+    });
+
+    it('handles updates well', () => {
+      const signal = AngularSignal.wrap('first');
+      const computedVal = AngularSignal.computed(() => `prefix ${signal()}`);
+
+      assert.strictEqual(signal(), 'first');
+      assert.strictEqual(AngularSignal.unwrap(signal), 'first');
+      assert.strictEqual(computedVal(), 'prefix first');
+      assert.strictEqual(AngularSignal.unwrap(computedVal), 'prefix first');
+
+      AngularSignal.set(signal, 'second');
+
+      assert.strictEqual(signal(), 'second');
+      assert.strictEqual(AngularSignal.unwrap(signal), 'second');
+      assert.strictEqual(computedVal(), 'prefix second');
+      assert.strictEqual(AngularSignal.unwrap(computedVal), 'prefix second');
+    });
+
+    describe('.isSignal()', () => {
+      it('validates a signal', () => {
+        const val = 'hello';
+        const wrapped = AngularSignal.wrap(val);
+        assert.ok(AngularSignal.isSignal(wrapped));
+      });
+
+      it('rejects a non-signal', () => {
+        assert.strictEqual(AngularSignal.isSignal('hello'), false);
+      });
+    });
+  });
+
   describe('Preact variation', () => {
-    // Sample Preact impl.
-    const PreactSignal: FrameworkSignal<Signal> = {
-      computed: <T>(fn: () => T) => computed(fn),
-      isSignal: (val: unknown) => val instanceof Signal,
-      wrap: <T>(val: T) => new Signal(val),
-      unwrap: <T>(val: Signal<T>) => val.value,
-      set: <T>(signal: Signal<T>, value: T) => (signal.value = value),
+    const PreactSignal: FrameworkSignal<PSignal> = {
+      computed: <T>(fn: () => T) => pComputed(fn),
+      isSignal: (val: unknown) => val instanceof PSignal,
+      wrap: <T>(val: T) => new PSignal(val),
+      unwrap: <T>(val: PSignal<T>) => val.value,
+      set: <T>(signal: PSignal<T>, value: T) => (signal.value = value),
     };
 
     it('round trip wraps and unwraps successfully', () => {
