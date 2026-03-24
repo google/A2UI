@@ -40,32 +40,125 @@ def save_messages_with_image_copies(messages: list, image_base_url: str, out_pat
         f.write(json_str)
     print(f"Recorded {len(messages)} A2UI message parts to {out_path}")
 
-async def main():
-    base_url = "http://localhost:10007"
-    agent = RestaurantAgent(base_url=base_url)
-    query = "Find me Szechuan restaurants in New York"
-    session_id = "test_session_3"
-    
-    print(f"Running agent with query: {query}")
-    
+def extract_restaurant_details(messages):
+    """
+    Extracts restaurant details (name, address, imageUrl) from A2UI messages.
+    Supports both v0.8 (dataModelUpdate) and v0.9 (updateDataModel) formats.
+    """
+    for msg in reversed(messages):  # Check most recent updates first
+        # --- Handle v0.8 (dataModelUpdate) ---
+        if "dataModelUpdate" in msg:
+            dm = msg["dataModelUpdate"]
+            contents = dm.get("contents", [])
+            # Some v0.8 implementations might have contents as a dict or list
+            if isinstance(contents, list):
+                for entry in contents:
+                    if entry.get("key") == "items" and "valueMap" in entry:
+                        items = entry["valueMap"]
+                        for item_entry in items:
+                            if "valueMap" in item_entry:
+                                sub_vmap = item_entry["valueMap"]
+                                details = {}
+                                for det in sub_vmap:
+                                    k = det.get("key")
+                                    # Handle various value field names
+                                    v = (det.get("valueString") or 
+                                         det.get("value") or 
+                                         det.get("valueNumber"))
+                                    if k:
+                                        details[k] = v
+                                if details.get("name"):
+                                    return details
+            elif isinstance(contents, dict) and "items" in contents:
+                # Handle flattened v0.8 contents if applicable
+                items = contents["items"]
+                if isinstance(items, list) and items:
+                    return items[0]
+
+        # --- Handle v0.9 (updateDataModel) ---
+        if "updateDataModel" in msg:
+            udm = msg["updateDataModel"]
+            if isinstance(udm, dict) and "items" in udm:
+                items = udm["items"]
+                first_item = None
+                if isinstance(items, list) and items:
+                    first_item = items[0]
+                elif isinstance(items, dict) and items:
+                    # Handle keyed items dict
+                    first_item = next(iter(items.values()), None)
+                
+                if first_item and isinstance(first_item, dict) and first_item.get("name"):
+                    return first_item
+
+    return None
+
+async def record_query(agent, query, session_id, ui_version):
+    """
+    Runs a query through the agent and collects all A2UI messages.
+    """
     messages = []
-    
-    async for event in agent.stream(query, session_id, ui_version=VERSION_0_8):
+    print(f"Running agent with query: {query}")
+    async for event in agent.stream(query, session_id, ui_version):
         parts = event.get("parts", [])
         for p in parts:
             if p.root.metadata and p.root.metadata.get("mimeType") == "application/json+a2ui":
-                # Some payloads are already a list, some are dicts
                 if isinstance(p.root.data, list):
                     messages.extend(p.root.data)
                 else:
                     messages.append(p.root.data)
-                    
-    if messages:
-        out_path = "../../../../tools/composer/src/data/dojo/restaurant-finder.json"
-        image_base_url = f"{base_url}/static/"
-        save_messages_with_image_copies(messages, image_base_url, out_path)
+    return messages
+
+async def main():
+    base_url = "http://localhost:10007"
+    ui_version = VERSION_0_8
+    agent = RestaurantAgent(base_url=base_url)
+    session_id = "test_session_3"
+    image_base_url = f"{base_url}/static/"
+    dojo_data_dir = "../../../../tools/composer/src/data/dojo"
+    
+    # 1. Search Query
+    search_query = "Find me Szechuan restaurants in New York"
+    search_messages = await record_query(agent, search_query, session_id, ui_version)
+    if search_messages:
+        search_out_path = os.path.join(dojo_data_dir, "restaurant-finder.json")
+        save_messages_with_image_copies(search_messages, image_base_url, search_out_path)
+    
+        # Extract data for next queries
+        first_restaurant = extract_restaurant_details(search_messages)
+        if first_restaurant:
+            restaurant_name = first_restaurant.get("name", "Unknown Restaurant")
+            address = first_restaurant.get("address", "Unknown Address")
+            image_url = first_restaurant.get("imageUrl", "")
+            
+            print(f"Extracted details: Name='{restaurant_name}', Address='{address}', ImageURL='{image_url}'")
+            
+            # 2. Booking Query
+            booking_query = (
+                f"USER_WANTS_TO_BOOK: {restaurant_name}, Address: {address}, ImageURL:"
+                f" {image_url}"
+            )
+            booking_messages = await record_query(agent, booking_query, session_id, ui_version)
+            if booking_messages:
+                booking_out_path = os.path.join(dojo_data_dir, "restaurant-booking.json")
+                save_messages_with_image_copies(booking_messages, image_base_url, booking_out_path)
+            
+            # 3. Confirmation Query
+            party_size = 4
+            reservation_time = "7:00 PM today"
+            dietary_reqs = "none"
+            confirmation_query = (
+                f"User submitted a booking for {restaurant_name} for {party_size} people at"
+                f" {reservation_time} with dietary requirements: {dietary_reqs}. The image"
+                f"URL is {image_url}"
+            )
+            confirmation_messages = await record_query(agent, confirmation_query, session_id, ui_version)
+            if confirmation_messages:
+                confirmation_out_path = os.path.join(dojo_data_dir, "restaurant-confirmation.json")
+                save_messages_with_image_copies(confirmation_messages, image_base_url, confirmation_out_path)
+        else:
+            print("Could not extract restaurant details for subsequent queries.")
     else:
-        print("No A2UI messages produced.")
+        print("No A2UI messages produced for initial query.")
 
 if __name__ == "__main__":
     asyncio.run(main())

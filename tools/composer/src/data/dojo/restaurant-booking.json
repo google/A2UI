@@ -19,13 +19,328 @@
             "Column": {
               "children": {
                 "explicitList": [
+                  "loading_children_booking-form-column"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_children_booking-form-column",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "loading_booking-title",
+                  "loading_restaurant-image",
+                  "loading_restaurant-address",
+                  "loading_party-size-field",
+                  "loading_datetime-field",
+                  "loading_dietary-field",
+                  "loading_"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_booking-title",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_restaurant-image",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_restaurant-address",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_party-size-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_datetime-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_dietary-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "loading_booking-title",
+                  "loading_restaurant-image",
+                  "loading_restaurant-address",
+                  "loading_party-size-field",
+                  "loading_datetime-field",
+                  "loading_dietary-field",
+                  "loading_submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_booking-title",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_restaurant-image",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_restaurant-address",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_party-size-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_datetime-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_dietary-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-button",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "loading_restaurant-image",
+                  "loading_restaurant-address",
+                  "loading_party-size-field",
+                  "loading_datetime-field",
+                  "loading_dietary-field",
+                  "loading_submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_restaurant-image",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_restaurant-address",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_party-size-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_datetime-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_dietary-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-button",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
                   "booking-title",
                   "restaurant-image",
-                  "restaurant-address",
-                  "party-size-field",
-                  "datetime-field",
-                  "dietary-field",
-                  "submit-button"
+                  "loading_restaurant-address",
+                  "loading_party-size-field",
+                  "loading_datetime-field",
+                  "loading_dietary-field",
+                  "loading_submit-button"
                 ]
               }
             }
@@ -53,11 +368,183 @@
           }
         },
         {
+          "id": "loading_restaurant-address",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_party-size-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_datetime-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_dietary-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-button",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "loading_party-size-field",
+                  "loading_datetime-field",
+                  "loading_dietary-field",
+                  "loading_submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
           "id": "restaurant-address",
           "component": {
             "Text": {
               "text": {
                 "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_party-size-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_datetime-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_dietary-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-button",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "loading_datetime-field",
+                  "loading_dietary-field",
+                  "loading_submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
               }
             }
           }
@@ -72,7 +559,93 @@
               "text": {
                 "path": "/partySize"
               },
-              "type": "number"
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_datetime-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_dietary-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-button",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "loading_dietary-field",
+                  "loading_submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
             }
           }
         },
@@ -80,9 +653,108 @@
           "id": "datetime-field",
           "component": {
             "DateTimeInput": {
-              "label": {
-                "literalString": "Date & Time"
+              "value": {
+                "path": "/reservationTime"
               },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_dietary-field",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-button",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "loading_submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
               "value": {
                 "path": "/reservationTime"
               },
@@ -100,6 +772,1099 @@
               },
               "text": {
                 "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-button",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "loading_submit-reservation-text",
+              "action": {
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-reservation-text",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "loading_submit-reservation-text",
+              "action": {
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  },
+                  {
+                    "key": "reservationTime",
+                    "value": {
+                      "path": "/reservationTime"
+                    }
+                  },
+                  {
+                    "key": "dietary",
+                    "value": {
+                      "path": "/dietary"
+                    }
+                  },
+                  {
+                    "key": "imageUrl",
+                    "value": {
+                      "path": "/imageUrl"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "loading_submit-reservation-text",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "submit-reservation-text",
+              "action": {
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  },
+                  {
+                    "key": "reservationTime",
+                    "value": {
+                      "path": "/reservationTime"
+                    }
+                  },
+                  {
+                    "key": "dietary",
+                    "value": {
+                      "path": "/dietary"
+                    }
+                  },
+                  {
+                    "key": "imageUrl",
+                    "value": {
+                      "path": "/imageUrl"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-reservation-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Submit Reservation"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "booking-form",
+      "contents": [
+        {
+          "key": "title",
+          "valueString": "Book a Table at Xi'an Famous Foods"
+        }
+      ],
+      "path": "/"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "submit-reservation-text",
+              "action": {
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  },
+                  {
+                    "key": "reservationTime",
+                    "value": {
+                      "path": "/reservationTime"
+                    }
+                  },
+                  {
+                    "key": "dietary",
+                    "value": {
+                      "path": "/dietary"
+                    }
+                  },
+                  {
+                    "key": "imageUrl",
+                    "value": {
+                      "path": "/imageUrl"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-reservation-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Submit Reservation"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "booking-form",
+      "contents": [
+        {
+          "key": "title",
+          "valueString": "Book a Table at Xi'an Famous Foods"
+        },
+        {
+          "key": "address",
+          "valueString": "81 St Marks Pl, New York, NY 10003"
+        }
+      ],
+      "path": "/"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "submit-reservation-text",
+              "action": {
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  },
+                  {
+                    "key": "reservationTime",
+                    "value": {
+                      "path": "/reservationTime"
+                    }
+                  },
+                  {
+                    "key": "dietary",
+                    "value": {
+                      "path": "/dietary"
+                    }
+                  },
+                  {
+                    "key": "imageUrl",
+                    "value": {
+                      "path": "/imageUrl"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-reservation-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Submit Reservation"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "booking-form",
+      "contents": [
+        {
+          "key": "title",
+          "valueString": "Book a Table at Xi'an Famous Foods"
+        },
+        {
+          "key": "address",
+          "valueString": "81 St Marks Pl, New York, NY 10003"
+        },
+        {
+          "key": "restaurantName",
+          "valueString": "Xi'an Famous Foods"
+        },
+        {
+          "key": "partySize",
+          "valueString": "2"
+        }
+      ],
+      "path": "/"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "submit-reservation-text",
+              "action": {
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  },
+                  {
+                    "key": "reservationTime",
+                    "value": {
+                      "path": "/reservationTime"
+                    }
+                  },
+                  {
+                    "key": "dietary",
+                    "value": {
+                      "path": "/dietary"
+                    }
+                  },
+                  {
+                    "key": "imageUrl",
+                    "value": {
+                      "path": "/imageUrl"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-reservation-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Submit Reservation"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "booking-form",
+      "contents": [
+        {
+          "key": "title",
+          "valueString": "Book a Table at Xi'an Famous Foods"
+        },
+        {
+          "key": "address",
+          "valueString": "81 St Marks Pl, New York, NY 10003"
+        },
+        {
+          "key": "restaurantName",
+          "valueString": "Xi'an Famous Foods"
+        },
+        {
+          "key": "partySize",
+          "valueString": "2"
+        },
+        {
+          "key": "reservationTime",
+          "valueString": ""
+        },
+        {
+          "key": "dietary",
+          "valueString": ""
+        }
+      ],
+      "path": "/"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "booking-form",
+      "components": [
+        {
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
+        },
+        {
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
               }
             }
           }
@@ -167,19 +1932,19 @@
       "contents": [
         {
           "key": "title",
-          "valueString": "Book a Table at Szechuan Garden"
+          "valueString": "Book a Table at Xi'an Famous Foods"
         },
         {
           "key": "address",
-          "valueString": "456 Main Street, New York, NY 10001"
+          "valueString": "81 St Marks Pl, New York, NY 10003"
         },
         {
           "key": "restaurantName",
-          "valueString": "Szechuan Garden"
+          "valueString": "Xi'an Famous Foods"
         },
         {
           "key": "partySize",
-          "valueString": "4"
+          "valueString": "2"
         },
         {
           "key": "reservationTime",
@@ -191,24 +1956,9 @@
         },
         {
           "key": "imageUrl",
-          "valueString": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600"
+          "valueString": "/images/restaurant_finder/shrimpchowmein.jpeg"
         }
       ]
-    }
-  },
-  {
-    "clientEvent": {
-      "surfaceId": "booking-form",
-      "name": "userAction",
-      "sourceComponentId": "submit-button",
-      "timestamp": "2026-03-16T14:30:00Z",
-      "context": {
-        "action": "book_restaurant",
-        "restaurantName": "Szechuan Garden",
-        "partySize": "4",
-        "reservationTime": "2026-03-20T19:00:00",
-        "dietary": "No shellfish"
-      }
     }
   },
   {
@@ -221,82 +1971,137 @@
             "Column": {
               "children": {
                 "explicitList": [
-                  "confirm-icon",
-                  "confirm-title",
-                  "confirm-details",
-                  "confirm-divider",
-                  "confirm-summary",
-                  "done-button"
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
                 ]
               }
             }
           }
         },
         {
-          "id": "confirm-icon",
-          "component": {
-            "Text": {
-              "usageHint": "h1",
-              "text": {
-                "literalString": "\u2705"
-              }
-            }
-          }
-        },
-        {
-          "id": "confirm-title",
+          "id": "booking-title",
           "component": {
             "Text": {
               "usageHint": "h2",
               "text": {
-                "path": "/confirmTitle"
+                "path": "/title"
               }
             }
           }
         },
         {
-          "id": "confirm-details",
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
           "component": {
             "Text": {
               "text": {
-                "path": "/confirmDetails"
+                "path": "/address"
               }
             }
           }
         },
         {
-          "id": "confirm-divider",
+          "id": "restaurant-image",
           "component": {
-            "Divider": {}
-          }
-        },
-        {
-          "id": "confirm-summary",
-          "component": {
-            "Text": {
-              "text": {
-                "path": "/confirmSummary"
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
               }
             }
           }
         },
         {
-          "id": "done-button",
+          "id": "submit-button",
           "component": {
             "Button": {
-              "child": "done-button-text",
+              "child": "submit-reservation-text",
               "action": {
-                "name": "dismiss"
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  },
+                  {
+                    "key": "reservationTime",
+                    "value": {
+                      "path": "/reservationTime"
+                    }
+                  },
+                  {
+                    "key": "dietary",
+                    "value": {
+                      "path": "/dietary"
+                    }
+                  },
+                  {
+                    "key": "imageUrl",
+                    "value": {
+                      "path": "/imageUrl"
+                    }
+                  }
+                ]
               }
             }
           }
         },
         {
-          "id": "done-button-text",
+          "id": "submit-reservation-text",
           "component": {
             "Text": {
               "text": {
-                "literalString": "Done"
+                "literalString": "Submit Reservation"
               }
             }
           }
@@ -305,21 +2110,149 @@
     }
   },
   {
-    "dataModelUpdate": {
+    "surfaceUpdate": {
       "surfaceId": "booking-form",
-      "path": "/",
-      "contents": [
+      "components": [
         {
-          "key": "confirmTitle",
-          "valueString": "Reservation Confirmed!"
+          "id": "booking-form-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "booking-title",
+                  "restaurant-image",
+                  "restaurant-address",
+                  "party-size-field",
+                  "datetime-field",
+                  "dietary-field",
+                  "submit-button"
+                ]
+              }
+            }
+          }
         },
         {
-          "key": "confirmDetails",
-          "valueString": "Szechuan Garden \u2014 4 guests \u2014 Mar 20, 7:00 PM"
+          "id": "booking-title",
+          "component": {
+            "Text": {
+              "usageHint": "h2",
+              "text": {
+                "path": "/title"
+              }
+            }
+          }
         },
         {
-          "key": "confirmSummary",
-          "valueString": "Dietary note: No shellfish. Confirmation #SZG-4821 sent to your email."
+          "id": "datetime-field",
+          "component": {
+            "DateTimeInput": {
+              "value": {
+                "path": "/reservationTime"
+              },
+              "enableDate": true,
+              "enableTime": true
+            }
+          }
+        },
+        {
+          "id": "dietary-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Dietary Requirements"
+              },
+              "text": {
+                "path": "/dietary"
+              }
+            }
+          }
+        },
+        {
+          "id": "party-size-field",
+          "component": {
+            "TextField": {
+              "label": {
+                "literalString": "Party Size"
+              },
+              "text": {
+                "path": "/partySize"
+              },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "restaurant-address",
+          "component": {
+            "Text": {
+              "text": {
+                "path": "/address"
+              }
+            }
+          }
+        },
+        {
+          "id": "restaurant-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "submit-reservation-text",
+              "action": {
+                "name": "submit_booking",
+                "context": [
+                  {
+                    "key": "restaurantName",
+                    "value": {
+                      "path": "/restaurantName"
+                    }
+                  },
+                  {
+                    "key": "partySize",
+                    "value": {
+                      "path": "/partySize"
+                    }
+                  },
+                  {
+                    "key": "reservationTime",
+                    "value": {
+                      "path": "/reservationTime"
+                    }
+                  },
+                  {
+                    "key": "dietary",
+                    "value": {
+                      "path": "/dietary"
+                    }
+                  },
+                  {
+                    "key": "imageUrl",
+                    "value": {
+                      "path": "/imageUrl"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "submit-reservation-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "Submit Reservation"
+              }
+            }
+          }
         }
       ]
     }
