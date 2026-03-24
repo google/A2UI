@@ -15,7 +15,7 @@
  */
 
 import { Catalog } from "@a2ui/web_core/v0_9";
-import { LitComponentImplementation } from "../../types.js";
+import { LitComponentApi } from "../../types.js";
 import { BASIC_FUNCTIONS } from "@a2ui/web_core/v0_9/basic_catalog";
 
 import { A2uiText } from "./components/Text.js";
@@ -37,7 +37,7 @@ import { A2uiChoicePicker } from "./components/ChoicePicker.js";
 import { A2uiTabs } from "./components/Tabs.js";
 import { A2uiModal } from "./components/Modal.js";
 
-export const basicCatalog = new Catalog<LitComponentImplementation>(
+export const basicCatalog = new Catalog<LitComponentApi>(
   "https://a2ui.org/specification/v0_9/basic_catalog.json",
   [
     A2uiText, A2uiButton, A2uiTextField, A2uiRow, A2uiColumn, A2uiList, A2uiImage, A2uiIcon,

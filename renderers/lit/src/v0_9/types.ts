@@ -22,6 +22,6 @@ import { ComponentApi } from "@a2ui/web_core/v0_9";
  * Extends the framework-agnostic component API to include the Lit custom element tag name.
  * Used by A2uiNode to dynamically render the corresponding Lit component, and as the type parameter when defining custom Catalogs.
  */
-export interface LitComponentImplementation extends ComponentApi {
+export interface LitComponentApi extends ComponentApi {
   tagName: string;
 }
