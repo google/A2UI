@@ -93,6 +93,11 @@ class ChatUIService:
         api_key=settings.openai_api_key,
         stream=True,
         temperature=settings.temperature,
+        extra_body={
+            "chat_template_kwargs": {
+                "enable_thinking": False
+            }
+        },
     )
 
     async for chunk in response:
