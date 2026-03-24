@@ -52,37 +52,6 @@ describe('Catalog Types', () => {
     assert.strictEqual(catalog.functions.get('mockFunc'), mockFunc);
   });
 
-  it('infers the correct schema type from a ComponentApi', () => {
-    const mockSchema = z.object({
-      field1: z.string(),
-      field2: z.number().optional(),
-    });
-
-    const mockApi: ComponentApi = {
-      name: 'MockComp',
-      schema: mockSchema,
-    };
-
-    // Type-level assertion: if inferred incorrectly, this would fail compilation
-    const mockData: InferredComponentApiSchemaType<typeof mockApi> = {
-      field1: 'test',
-      field2: 123,
-    };
-
-    // Type-level equivalence assertion using z.infer
-    type ExpectedType = z.infer<typeof mockSchema>;
-    type TypesAreEquivalent =
-      InferredComponentApiSchemaType<typeof mockApi> extends ExpectedType
-        ? ExpectedType extends InferredComponentApiSchemaType<typeof mockApi>
-          ? true
-          : false
-        : false;
-
-    // A TypeScript compilation error here means the types do not perfectly align
-    const typesMatchExact: TypesAreEquivalent = true;
-    assert.strictEqual(typesMatchExact as boolean, true);
-  });
-
   it('throws A2uiExpressionError when function is not found', () => {
     const catalog = new Catalog('test-cat', []);
     const ctx = {} as any;
@@ -124,5 +93,47 @@ describe('Catalog Types', () => {
         );
       },
     );
+  });
+});
+
+describe('InferredComponentApiSchemaType', () => {
+  it('infers the correct schema type from a ComponentApi', () => {
+    const mockSchema = z.object({
+      field1: z.string(),
+      field2: z.number().optional(),
+    });
+
+    const mockApi = {
+      name: 'MockComp',
+      schema: mockSchema,
+    } satisfies ComponentApi;
+
+    // Type-level equivalence assertion using z.infer
+    type ExpectedType = z.infer<typeof mockSchema>;
+    type InferredType = InferredComponentApiSchemaType<typeof mockApi>;
+
+    // Assert `InferredType` is not exactly `any`
+    type IsAny<T> = 0 extends 1 & T ? true : false;
+    // inferredIsAny only accepts "true" if `InferredType` is "any".
+    // This happens when `mockApi: ComponentApi`, but doesn't when
+    // `mockApi {} satisfies ComponentApi`!
+    const inferredIsAny: IsAny<InferredType> = false;
+    assert.strictEqual(inferredIsAny, false);
+
+    // When types are not "any", check that they're the same by checking if they
+    // extend each other.
+    type TypesAreEquivalent<Expected, Actual> =
+      Actual extends Expected
+        ? Expected extends Actual
+          ? true
+          : false
+        : false;
+
+    // typesMatchExact only accepts "true" if `TypesAreEquivalent`
+    const typesMatchExact: TypesAreEquivalent<ExpectedType, InferredType> = true;
+    assert.strictEqual(typesMatchExact, true);
+
+    // The asserts in this test should never fail, instead this test should fail
+    // at compile time if the inference is not correct.
   });
 });
