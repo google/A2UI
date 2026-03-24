@@ -90,6 +90,26 @@
           "component": {
             "Divider": {}
           }
+        },
+        {
+          "id": "confirmation-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "confirm-title",
+                  "confirm-image",
+                  "divider1",
+                  "confirm-details",
+                  "divider2",
+                  "confirm-dietary",
+                  "divider3",
+                  "confirm-text"
+                ]
+              },
+              "alignment": "center"
+            }
+          }
         }
       ]
     }
