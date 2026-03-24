@@ -56,10 +56,12 @@ import { Renderer } from '../rendering/renderer';
   `,
   template: `
     <section [class]="theme.components.List" [style]="theme.additionalStyles?.List">
-      @for (child of component().properties.children; track child) {
-        <div class="a2ui-list-item">
-          <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
-        </div>
+      @for (child of children() ?? component().properties.children; track child?.id ?? child) {
+        @if (child) {
+          <div class="a2ui-list-item">
+            <ng-container a2ui-renderer [surfaceId]="surfaceId()!" [component]="child" />
+          </div>
+        }
       }
     </section>
   `,
@@ -67,4 +69,5 @@ import { Renderer } from '../rendering/renderer';
 export class List extends DynamicComponent<Types.ListNode> {
   readonly alignment = input<Types.ResolvedList['alignment']>('stretch');
   readonly direction = input<Types.ResolvedList['direction']>('vertical');
+  readonly children = input<Types.AnyComponentNode[] | null>(null);
 }

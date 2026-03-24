@@ -64,8 +64,8 @@ export class Slider extends DynamicComponent<Types.SliderNode> {
       name,
       context: Object.entries(context).map(([key, val]) => ({
         key,
-        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
-      }))
+        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) },
+      })),
     });
   }
 }

@@ -162,25 +162,23 @@ class A2uiCatalog:
       if filename.endswith(".json"):
         full_path = os.path.join(path, filename)
         basename = os.path.splitext(filename)[0]
-        try:
-          with open(full_path, "r", encoding="utf-8") as f:
-            content = f.read()
-            if validate and not self._validate_example(full_path, basename, content):
-              continue
-            merged_examples.append(
-                f"---BEGIN {basename}---\n{content}\n---END {basename}---"
-            )
-        except Exception as e:
-          logging.warning(f"Failed to load example {full_path}: {e}")
+        with open(full_path, "r", encoding="utf-8") as f:
+          content = f.read()
+
+        if validate:
+          self._validate_example(full_path, basename, content)
+
+        merged_examples.append(
+            f"---BEGIN {basename}---\n{content}\n---END {basename}---"
+        )
+
     if not merged_examples:
       return ""
     return "\n\n".join(merged_examples)
 
-  def _validate_example(self, full_path: str, basename: str, content: str) -> bool:
+  def _validate_example(self, full_path: str, basename: str, content: str) -> None:
     try:
       json_data = json.loads(content)
       self.validator.validate(json_data)
     except Exception as e:
-      logging.warning(f"Failed to validate example {full_path}: {e}")
-      return False
-    return True
+      raise ValueError(f"Failed to validate example {full_path}: {e}") from e

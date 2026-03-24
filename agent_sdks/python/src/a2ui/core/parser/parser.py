@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import re
-from dataclasses import dataclass
 from typing import List, Optional, Any
+from .response_part import ResponsePart
 from ..schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from .payload_fixer import parse_and_fix
 
@@ -22,20 +22,6 @@ from .payload_fixer import parse_and_fix
 _A2UI_BLOCK_PATTERN = re.compile(
     f"{re.escape(A2UI_OPEN_TAG)}(.*?){re.escape(A2UI_CLOSE_TAG)}", re.DOTALL
 )
-
-
-@dataclass
-class ResponsePart:
-  """Represents a part of the LLM response.
-
-  Attributes:
-      text: The conversational text part. Can be an empty string.
-      a2ui_json: The parsed A2UI JSON data. None if this part only contains
-        trailing text.
-  """
-
-  text: str
-  a2ui_json: Optional[Any] = None
 
 
 def has_a2ui_parts(content: str) -> bool:

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Injectable, inject } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import * as WebCore from '@a2ui/web_core/v0_8';
-import { Catalog } from '../rendering/catalog';
-import { Theme } from '../rendering/theming';
+
 import { Types } from '../types';
 
 export interface A2UIClientEvent {
@@ -32,18 +31,32 @@ export type DispatchedEvent = A2UIClientEvent;
   providedIn: 'root',
 })
 export class MessageProcessor {
-  private readonly catalog = inject(Catalog);
   private baseProcessor: WebCore.A2uiMessageProcessor;
 
   private readonly eventsSubject = new Subject<A2UIClientEvent>();
   readonly events: Observable<A2UIClientEvent> = this.eventsSubject.asObservable();
+  readonly surfacesSignal = signal<ReadonlyMap<string, WebCore.Surface>>(new Map());
 
   constructor() {
     this.baseProcessor = new WebCore.A2uiMessageProcessor();
   }
 
+  private notify() {
+    // Angular signals (and change detection) are based on reference equality for
+    // objects. During streaming, the base MessageProcessor updates surfaces in-place.
+    // By shallow-cloning the surface objects into a new Map, we ensure that
+    // anything watching surfacesSignal() correctly detects that the data has
+    // changed, even if only internal properties of a surface were updated.
+    const clonedSurfaces = new Map<string, WebCore.Surface>();
+    for (const [id, surface] of this.getSurfaces()) {
+      clonedSurfaces.set(id, { ...surface });
+    }
+    this.surfacesSignal.set(clonedSurfaces);
+  }
+
   processMessages(messages: Types.ServerToClientMessage[]) {
     this.baseProcessor.processMessages(messages as WebCore.ServerToClientMessage[]);
+    this.notify();
   }
 
   dispatch(message: Types.A2UIClientEventMessage): Promise<Types.ServerToClientMessage[]> {
@@ -60,11 +73,16 @@ export class MessageProcessor {
   }
 
   getData(node: Types.AnyComponentNode, path: string, surfaceId?: string | null): unknown {
-    return this.baseProcessor.getData(node as WebCore.AnyComponentNode, path, surfaceId ?? undefined);
+    return this.baseProcessor.getData(
+      node as WebCore.AnyComponentNode,
+      path,
+      surfaceId ?? undefined,
+    );
   }
 
   setData(node: Types.AnyComponentNode | null, path: string, value: any, surfaceId: string) {
     this.baseProcessor.setData(node as WebCore.AnyComponentNode | null, path, value, surfaceId);
+    this.notify();
   }
 
   resolvePath(path: string, dataContextPath?: string): string {

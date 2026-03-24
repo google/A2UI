@@ -29,11 +29,13 @@ import { Renderer } from '../rendering/renderer';
       [style]="theme.additionalStyles?.Button"
       (click)="handleClick()"
     >
-      <ng-container
-        a2ui-renderer
-        [surfaceId]="surfaceId()!"
-        [component]="component().properties.child"
-      />
+      @if (child()) {
+        <ng-container
+          a2ui-renderer
+          [surfaceId]="surfaceId()!"
+          [component]="child() ?? component().properties.child"
+        />
+      }
     </button>
   `,
   styles: `
@@ -45,7 +47,8 @@ import { Renderer } from '../rendering/renderer';
   `,
 })
 export class Button extends DynamicComponent<Types.ButtonNode> {
-  readonly action = input.required<Types.Action | null>();
+  readonly action = input<Types.Action | null>(null);
+  readonly child = input<Types.AnyComponentNode | null>(null);
   // This is currently not handled by the template.
   readonly primary = input<boolean | null>(false);
 

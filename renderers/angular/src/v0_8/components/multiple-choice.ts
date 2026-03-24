@@ -21,17 +21,20 @@ import { Types } from '../types';
 @Component({
   selector: 'a2ui-multiple-choice',
   template: `
-    <div [class]="theme.components.MultipleChoice.container" [style]="theme.additionalStyles?.MultipleChoice">
+    <div
+      [class]="theme.components.MultipleChoice.container"
+      [style]="theme.additionalStyles?.MultipleChoice"
+    >
       <label [class]="theme.components.MultipleChoice.label" [for]="selectId">
-        {{ label() }}
+        {{ resolvedLabel() }}
       </label>
       <select
         [class]="theme.components.MultipleChoice.element"
         [id]="selectId"
-        [value]="value() ?? ''"
+        [value]="resolvedSelections()[0] || ''"
         (change)="onChange($event)"
       >
-        @for (option of options(); track option.value) {
+        @for (option of resolvedOptions(); track option.value) {
           <option [value]="option.value">{{ option.label }}</option>
         }
       </select>
@@ -45,11 +48,28 @@ import { Types } from '../types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
-  readonly label = input.required<Types.StringValue | null>();
+  readonly label = input<Types.StringValue | null>(null);
   readonly options = input.required<{ label: Types.StringValue; value: string }[]>();
-  readonly value = input.required<Types.StringValue | null>();
+  readonly selections = input.required<Types.AnyComponentNode | null>();
 
   protected readonly selectId = super.getUniqueId('a2ui-multiple-choice');
+
+  protected readonly resolvedLabel = computed(() => this.resolvePrimitive(this.label()));
+
+  protected readonly resolvedOptions = computed(() =>
+    this.options().map((opt) => ({
+      label: this.resolvePrimitive(opt.label),
+      value: opt.value,
+    })),
+  );
+
+  protected readonly resolvedSelections = computed(() => {
+    const s = this.selections();
+    if (s && typeof s === 'object' && 'literalArray' in s) {
+      return (s as any).literalArray as string[];
+    }
+    return [];
+  });
 
   onChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
@@ -61,8 +81,8 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
       name,
       context: Object.entries(context).map(([key, val]) => ({
         key,
-        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) }
-      }))
+        value: typeof val === 'number' ? { literalNumber: val } : { literalString: String(val) },
+      })),
     });
   }
 }

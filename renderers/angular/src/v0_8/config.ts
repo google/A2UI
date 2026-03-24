@@ -18,7 +18,10 @@ import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { Catalog, Theme } from './rendering';
 import { Types } from './types';
 
-export function provideA2UI(config: { catalog: Catalog; theme: Types.Theme }): EnvironmentProviders {
+export function provideA2UI(config: {
+  catalog: Catalog;
+  theme: Types.Theme;
+}): EnvironmentProviders {
   return makeEnvironmentProviders([
     { provide: Catalog, useValue: config.catalog },
     {

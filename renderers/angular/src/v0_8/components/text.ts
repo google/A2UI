@@ -70,14 +70,14 @@ interface HintedStyles {
 export class Text extends DynamicComponent<Types.TextNode> {
   private markdownRenderer = inject(MarkdownRenderer);
   readonly text = input.required<Primitives.StringValue | null>();
-  readonly usageHint = input.required<Types.ResolvedText['usageHint'] | null>();
+  readonly usageHint = input<Types.ResolvedText['usageHint'] | null>(null);
 
   protected resolvedText = computed(() => {
     const usageHint = this.usageHint();
     let value = super.resolvePrimitive(this.text());
 
     if (value == null) {
-      return Promise.resolve('(empty)');
+      return Promise.resolve('');
     }
 
     switch (usageHint) {
@@ -104,11 +104,9 @@ export class Text extends DynamicComponent<Types.TextNode> {
         break;
     }
 
-    return this.markdownRenderer.render(
-      value, {
-        tagClassMap: Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
-      },
-    );
+    return this.markdownRenderer.render(value, {
+      tagClassMap: Styles.appendToAll(this.theme.markdown, ['ol', 'ul', 'li'], {}),
+    });
   });
 
   protected classes = computed(() => {

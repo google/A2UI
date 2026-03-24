@@ -38,7 +38,12 @@ jobs:
 
       - name: Check license headers
         run: |
-          addlicense -check \
+          if ! addlicense -check \
             -l apache \
             -c "Google LLC" \
-            .
+            .; then
+            echo "License check failed. To fix this, install addlicense and run it:"
+            echo "  go install github.com/google/addlicense@latest"
+            echo "  addlicense -l apache -c \"Google LLC\" ."
+            exit 1
+          fi
