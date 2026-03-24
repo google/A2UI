@@ -2773,19 +2773,21 @@
 <p>While the final catalog must be freestanding, you may still author your catalogs modularly using JSON Schema <code>$ref</code> pointing to external documents during local development. Run  <code>tools/build_catalog/assemble_catalog.py</code> before distributing your catalog to bundle all external file references into a single, independent JSON Schema file:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>run<span class="w"> </span>tools/build_catalog/assemble_catalog.py<span class="w"> </span><span class="o">[</span>INPUTS<span class="w"> </span>...<span class="o">]</span><span class="w"> </span>--output-name<span class="w"> </span>&lt;OUTPUT_NAME&gt;<span class="w"> </span><span class="o">[</span>--catalog-id<span class="w"> </span>&lt;ID&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--version<span class="w"> </span>&lt;VERSION&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--extend-basic-catalog<span class="o">]</span><span class="w"> </span><span class="o">[</span>--out-dir<span class="w"> </span>&lt;DIR&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--verbose<span class="o">]</span>
 </span></code></pre></div>
-<p>where:
-- <code>inputs</code>: One or more paths or URLs to A2UI component catalog JSONs.
-- <code>--output-name</code>: (Required) The desired name of the combined catalog (e.g.
+<p>where:</p>
+<ul>
+<li><code>inputs</code>: One or more paths or URLs to A2UI component catalog JSONs.</li>
+<li><code>--output-name</code>: (Required) The desired name of the combined catalog (e.g.
   <code>my_merged_catalog</code>). The <code>.json</code> extension is appended automatically if
-  omitted.
-- <code>--catalog-id</code>: Custom <code>catalogId</code> for the output. Defaults to <code>urn:a2ui:catalog:&lt;base_name&gt;</code>.
-- <code>--version</code>: The A2UI specification version to use for official catalog
-  fallbacks. Choices are <code>0.9</code> or <code>0.10</code>. Defaults to <code>0.9</code>.
-- <code>--extend-basic-catalog</code>: If passed, automatically includes the entirety of
+  omitted.</li>
+<li><code>--catalog-id</code>: Custom <code>catalogId</code> for the output. Defaults to <code>urn:a2ui:catalog:&lt;base_name&gt;</code>.</li>
+<li><code>--version</code>: The A2UI specification version to use for official catalog
+  fallbacks. Choices are <code>0.9</code> or <code>0.10</code>. Defaults to <code>0.9</code>.</li>
+<li><code>--extend-basic-catalog</code>: If passed, automatically includes the entirety of
   <code>basic_catalog.json</code> in the root output regardless of whether the input
-  catalogs explicitly reference it.
-- <code>--out-dir</code>, <code>-o</code>: The directory where the assembled catalog will be saved. Defaults to <code>dist</code>.
-- <code>--verbose</code>, <code>-v</code>: If passed, enables verbose debug logging to help diagnose issues.</p>
+  catalogs explicitly reference it.</li>
+<li><code>--out-dir</code>, <code>-o</code>: The directory where the assembled catalog will be saved. Defaults to <code>dist</code>.</li>
+<li><code>--verbose</code>, <code>-v</code>: If passed, enables verbose debug logging to help diagnose issues.</li>
+</ul>
 <h3 id="composition-imports">Composition &amp; Imports<a class="headerlink" href="#composition-imports" title="Permanent link">&para;</a></h3>
 <p>You do not have to define everything from scratch. You can define a catalog which uses existing components from the basic or other catalogs, and one that reusing the existing rendering logic.</p>
 <h4 id="example-extending-the-basic-catalog">Example: Extending the Basic Catalog<a class="headerlink" href="#example-extending-the-basic-catalog" title="Permanent link">&para;</a></h4>
