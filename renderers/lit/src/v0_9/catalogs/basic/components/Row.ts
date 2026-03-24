@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-basic-row")
 export class A2uiBasicRowElement extends A2uiLitElement<typeof RowApi> {
-  protected createController() { return new A2uiController(this, RowApi); }
+  protected createController() {
+    return new A2uiController(this, RowApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
     const children = Array.isArray(props.children) ? props.children : [];
-    const styles = { display: "flex", flexDirection: "row", flex: props.weight !== undefined ? String(props.weight) : "initial", gap: "8px" };
-    
+    const styles = {
+      display: "flex",
+      flexDirection: "row",
+      flex: props.weight !== undefined ? String(props.weight) : "initial",
+      gap: "8px",
+    };
+
     return html`
       <div class="a2ui-row" style=${styleMap(styles as Record<string, string>)}>
         ${map(children, (child: any) => html`${this.renderNode(child)}`)}
@@ -43,5 +49,5 @@ export class A2uiBasicRowElement extends A2uiLitElement<typeof RowApi> {
 
 export const A2uiRow = {
   ...RowApi,
-  tagName: "a2ui-basic-row"
+  tagName: "a2ui-basic-row",
 };

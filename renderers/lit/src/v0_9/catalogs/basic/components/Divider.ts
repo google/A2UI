@@ -14,27 +14,34 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { DividerApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-divider")
 export class A2uiDividerElement extends A2uiLitElement<typeof DividerApi> {
-  protected createController() { return new A2uiController(this, DividerApi); }
+  protected createController() {
+    return new A2uiController(this, DividerApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    return props.axis === "vertical" 
-      ? html`<div class="a2ui-divider-vertical" style="width: 1px; background: #ccc; height: 100%;"></div>`
-      : html`<hr class="a2ui-divider" style="border: none; border-top: 1px solid #ccc; margin: 16px 0;" />`;
+    return props.axis === "vertical"
+      ? html`<div
+          class="a2ui-divider-vertical"
+          style="width: 1px; background: #ccc; height: 100%;"
+        ></div>`
+      : html`<hr
+          class="a2ui-divider"
+          style="border: none; border-top: 1px solid #ccc; margin: 16px 0;"
+        />`;
   }
 }
 
 export const A2uiDivider = {
   ...DividerApi,
-  tagName: "a2ui-divider"
+  tagName: "a2ui-divider",
 };

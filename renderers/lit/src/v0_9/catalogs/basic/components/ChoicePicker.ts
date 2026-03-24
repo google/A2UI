@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { ChoicePickerApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-choicepicker")
-export class A2uiChoicePickerElement extends A2uiLitElement<typeof ChoicePickerApi> {
-  protected createController() { return new A2uiController(this, ChoicePickerApi); }
+export class A2uiChoicePickerElement extends A2uiLitElement<
+  typeof ChoicePickerApi
+> {
+  protected createController() {
+    return new A2uiController(this, ChoicePickerApi);
+  }
 
   render() {
     const props = this.controller.props;
@@ -30,12 +33,15 @@ export class A2uiChoicePickerElement extends A2uiLitElement<typeof ChoicePickerA
 
     const selected = Array.isArray(props.value) ? props.value : [];
     const isMulti = props.variant === "multipleSelection";
-    
+
     const toggle = (val: string) => {
       if (!props.setValue) return;
       if (isMulti) {
-        if (selected.includes(val)) props.setValue(selected.filter((v: string) => v !== val));
-        else props.setValue([...selected, val]);
+        if (selected.includes(val)) {
+          props.setValue(selected.filter((v: string) => v !== val));
+        } else {
+          props.setValue([...selected, val]);
+        }
       } else {
         props.setValue([val]);
       }
@@ -45,16 +51,18 @@ export class A2uiChoicePickerElement extends A2uiLitElement<typeof ChoicePickerA
       <div class="a2ui-choicepicker">
         ${props.label ? html`<label>${props.label}</label>` : nothing}
         <div class="options">
-          ${props.options?.map((opt: any) => html`
-            <label>
-              <input 
-                type=${isMulti ? "checkbox" : "radio"} 
-                .checked=${selected.includes(opt.value)} 
-                @change=${() => toggle(opt.value)} 
-              />
-              ${opt.label}
-            </label>
-          `)}
+          ${props.options?.map(
+            (opt: any) => html`
+              <label>
+                <input
+                  type=${isMulti ? "checkbox" : "radio"}
+                  .checked=${selected.includes(opt.value)}
+                  @change=${() => toggle(opt.value)}
+                />
+                ${opt.label}
+              </label>
+            `,
+          )}
         </div>
       </div>
     `;
@@ -63,5 +71,5 @@ export class A2uiChoicePickerElement extends A2uiLitElement<typeof ChoicePickerA
 
 export const A2uiChoicePicker = {
   ...ChoicePickerApi,
-  tagName: "a2ui-choicepicker"
+  tagName: "a2ui-choicepicker",
 };

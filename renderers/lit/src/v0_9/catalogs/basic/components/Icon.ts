@@ -14,26 +14,30 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { IconApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-icon")
 export class A2uiIconElement extends A2uiLitElement<typeof IconApi> {
-  protected createController() { return new A2uiController(this, IconApi); }
+  protected createController() {
+    return new A2uiController(this, IconApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    const name = typeof props.name === 'string' ? props.name : (props.name as any)?.path;
-    return html`<span class="material-symbols-outlined a2ui-icon">${name}</span>`;
+    const name =
+      typeof props.name === "string" ? props.name : (props.name as any)?.path;
+    return html`<span class="material-symbols-outlined a2ui-icon"
+      >${name}</span
+    >`;
   }
 }
 
 export const A2uiIcon = {
   ...IconApi,
-  tagName: "a2ui-icon"
+  tagName: "a2ui-icon",
 };

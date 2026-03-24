@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { VideoApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-video")
 export class A2uiVideoElement extends A2uiLitElement<typeof VideoApi> {
-  protected createController() { return new A2uiController(this, VideoApi); }
+  protected createController() {
+    return new A2uiController(this, VideoApi);
+  }
 
   render() {
     const props = this.controller.props;
@@ -34,5 +35,5 @@ export class A2uiVideoElement extends A2uiLitElement<typeof VideoApi> {
 
 export const A2uiVideo = {
   ...VideoApi,
-  tagName: "a2ui-video"
+  tagName: "a2ui-video",
 };

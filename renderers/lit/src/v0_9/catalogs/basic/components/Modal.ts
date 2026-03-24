@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { html , nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement, query } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { ModalApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-modal")
 export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
-  protected createController() { return new A2uiController(this, ModalApi); }
+  protected createController() {
+    return new A2uiController(this, ModalApi);
+  }
   @query("dialog") accessor dialog!: HTMLDialogElement;
 
   render() {
@@ -33,8 +34,13 @@ export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
       <div @click=${() => this.dialog?.showModal()}>
         ${props.trigger ? html`${this.renderNode(props.trigger)}` : nothing}
       </div>
-      <dialog class="a2ui-modal" style="border: 1px solid #ccc; border-radius: 8px; padding: 24px; min-width: 300px;">
-        <form method="dialog" style="text-align: right;"><button>×</button></form>
+      <dialog
+        class="a2ui-modal"
+        style="border: 1px solid #ccc; border-radius: 8px; padding: 24px; min-width: 300px;"
+      >
+        <form method="dialog" style="text-align: right;">
+          <button>×</button>
+        </form>
         ${props.content ? html`${this.renderNode(props.content)}` : nothing}
       </dialog>
     `;
@@ -43,5 +49,5 @@ export class A2uiLitModal extends A2uiLitElement<typeof ModalApi> {
 
 export const A2uiModal = {
   ...ModalApi,
-  tagName: "a2ui-modal"
+  tagName: "a2ui-modal",
 };

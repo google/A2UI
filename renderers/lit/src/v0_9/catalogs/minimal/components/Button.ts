@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { ButtonApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-button")
 export class A2uiButtonElement extends A2uiLitElement<typeof ButtonApi> {
-  protected createController() { return new A2uiController(this, ButtonApi); }
+  protected createController() {
+    return new A2uiController(this, ButtonApi);
+  }
 
   render() {
     const props = this.controller.props;
@@ -44,9 +45,9 @@ export class A2uiButtonElement extends A2uiLitElement<typeof ButtonApi> {
     };
 
     return html`
-      <button 
-        class=${classMap(classes)} 
-        @click=${onClick} 
+      <button
+        class=${classMap(classes)}
+        @click=${onClick}
         ?disabled=${isDisabled}
       >
         ${props.child ? html`${this.renderNode(props.child)}` : nothing}
@@ -57,5 +58,5 @@ export class A2uiButtonElement extends A2uiLitElement<typeof ButtonApi> {
 
 export const A2uiButton = {
   ...ButtonApi,
-  tagName: "a2ui-button"
+  tagName: "a2ui-button",
 };

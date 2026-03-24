@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { CheckBoxApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-checkbox")
 export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
-  protected createController() { return new A2uiController(this, CheckBoxApi); }
+  protected createController() {
+    return new A2uiController(this, CheckBoxApi);
+  }
 
   render() {
     const props = this.controller.props;
@@ -30,10 +31,11 @@ export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
 
     return html`
       <label class="a2ui-checkbox">
-        <input 
-          type="checkbox" 
-          .checked=${props.value || false} 
-          @change=${(e: Event) => props.setValue?.((e.target as HTMLInputElement).checked)} 
+        <input
+          type="checkbox"
+          .checked=${props.value || false}
+          @change=${(e: Event) =>
+            props.setValue?.((e.target as HTMLInputElement).checked)}
         />
         ${props.label}
       </label>
@@ -43,5 +45,5 @@ export class A2uiCheckBoxElement extends A2uiLitElement<typeof CheckBoxApi> {
 
 export const A2uiCheckBox = {
   ...CheckBoxApi,
-  tagName: "a2ui-checkbox"
+  tagName: "a2ui-checkbox",
 };

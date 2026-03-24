@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { html , nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { TabsApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-tabs")
 export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
-  protected createController() { return new A2uiController(this, TabsApi); }
+  protected createController() {
+    return new A2uiController(this, TabsApi);
+  }
   @state() accessor activeIndex = 0;
 
   render() {
@@ -30,16 +31,26 @@ export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
     if (!props || !props.tabs) return nothing;
     return html`
       <div class="a2ui-tabs">
-        <div class="a2ui-tab-headers" style="display:flex; gap: 8px; border-bottom: 1px solid #ccc; margin-bottom: 16px;">
-          ${props.tabs.map((tab: any, i: number) => html`
-            <button @click=${() => this.activeIndex = i} style="padding: 8px; background: ${i === this.activeIndex ? '#eee' : 'transparent'}; border: none;">
-              ${tab.title}
-            </button>
-          `)}
+        <div
+          class="a2ui-tab-headers"
+          style="display:flex; gap: 8px; border-bottom: 1px solid #ccc; margin-bottom: 16px;"
+        >
+          ${props.tabs.map(
+            (tab: any, i: number) => html`
+              <button
+                @click=${() => (this.activeIndex = i)}
+                style="padding: 8px; background: ${i === this.activeIndex
+                  ? "#eee"
+                  : "transparent"}; border: none;"
+              >
+                ${tab.title}
+              </button>
+            `,
+          )}
         </div>
         <div class="a2ui-tab-content">
-          ${props.tabs[this.activeIndex] 
-            ? html`${this.renderNode(props.tabs[this.activeIndex].child)}` 
+          ${props.tabs[this.activeIndex]
+            ? html`${this.renderNode(props.tabs[this.activeIndex].child)}`
             : nothing}
         </div>
       </div>
@@ -49,5 +60,5 @@ export class A2uiLitTabs extends A2uiLitElement<typeof TabsApi> {
 
 export const A2uiTabs = {
   ...TabsApi,
-  tagName: "a2ui-tabs"
+  tagName: "a2ui-tabs",
 };

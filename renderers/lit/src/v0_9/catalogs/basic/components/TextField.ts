@@ -14,37 +14,51 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { TextFieldApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-basic-textfield")
-export class A2uiBasicTextFieldElement extends A2uiLitElement<typeof TextFieldApi> {
-  protected createController() { return new A2uiController(this, TextFieldApi); }
+export class A2uiBasicTextFieldElement extends A2uiLitElement<
+  typeof TextFieldApi
+> {
+  protected createController() {
+    return new A2uiController(this, TextFieldApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
     const isInvalid = props.isValid === false;
-    const onInput = (e: Event) => props.setValue?.((e.target as HTMLInputElement).value);
+    const onInput = (e: Event) =>
+      props.setValue?.((e.target as HTMLInputElement).value);
     let type = "text";
     if (props.variant === "number") type = "number";
     if (props.variant === "obscured") type = "password";
 
-    const classes = {"a2ui-textfield": true, "invalid": isInvalid};
+    const classes = { "a2ui-textfield": true, invalid: isInvalid };
 
     return html`
       <div class="a2ui-textfield-container">
         ${props.label ? html`<label>${props.label}</label>` : nothing}
-        ${props.variant === "longText" 
-          ? html`<textarea class=${classMap(classes)} .value=${props.value || ""} @input=${onInput}></textarea>`
-          : html`<input type=${type} class=${classMap(classes)} .value=${props.value || ""} @input=${onInput} />`
-        }
-        ${isInvalid && props.validationErrors?.length ? html`<div class="error">${props.validationErrors[0]}</div>` : nothing}
+        ${props.variant === "longText"
+          ? html`<textarea
+              class=${classMap(classes)}
+              .value=${props.value || ""}
+              @input=${onInput}
+            ></textarea>`
+          : html`<input
+              type=${type}
+              class=${classMap(classes)}
+              .value=${props.value || ""}
+              @input=${onInput}
+            />`}
+        ${isInvalid && props.validationErrors?.length
+          ? html`<div class="error">${props.validationErrors[0]}</div>`
+          : nothing}
       </div>
     `;
   }
@@ -52,5 +66,5 @@ export class A2uiBasicTextFieldElement extends A2uiLitElement<typeof TextFieldAp
 
 export const A2uiTextField = {
   ...TextFieldApi,
-  tagName: "a2ui-basic-textfield"
+  tagName: "a2ui-basic-textfield",
 };

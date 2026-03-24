@@ -15,17 +15,25 @@
  */
 
 import { ReactiveController, LitElement } from "lit";
-import { GenericBinder, ComponentContext, ComponentApi, ResolveA2uiProps, InferredComponentApiSchemaType } from "@a2ui/web_core/v0_9";
+import {
+  GenericBinder,
+  ComponentContext,
+  ComponentApi,
+  ResolveA2uiProps,
+  InferredComponentApiSchemaType,
+} from "@a2ui/web_core/v0_9";
 
 /**
  * A Lit ReactiveController that binds an A2UI component context to its API schema.
- * 
- * This controller manages the subscription to the GenericBinder, updating the 
+ *
+ * This controller manages the subscription to the GenericBinder, updating the
  * component props and requesting a host update whenever the underlying layer data changes.
- * 
+ *
  * @template Api The specific A2UI component API interface this controller is bound to.
  */
-export class A2uiController<Api extends ComponentApi> implements ReactiveController {
+export class A2uiController<
+  Api extends ComponentApi,
+> implements ReactiveController {
   /**
    * The current reactive properties of the A2UI component, matching the expected output schema.
    */
@@ -35,13 +43,18 @@ export class A2uiController<Api extends ComponentApi> implements ReactiveControl
 
   /**
    * Initializes the controller, binding it to the given Lit element and API schema.
-   * 
+   *
    * @param host The LitElement acting as the component host. Must provide a component `context`.
    * @param api The A2UI component API defining the schema for this element.
    */
-  constructor(private host: LitElement & { context: ComponentContext }, api: Api) {
+  constructor(
+    private host: LitElement & { context: ComponentContext },
+    api: Api,
+  ) {
     this.binder = new GenericBinder(this.host.context, api.schema);
-    this.props = this.binder.snapshot as ResolveA2uiProps<InferredComponentApiSchemaType<Api>>;
+    this.props = this.binder.snapshot as ResolveA2uiProps<
+      InferredComponentApiSchemaType<Api>
+    >;
     this.host.addController(this);
     if (this.host.isConnected) {
       this.hostConnected();
@@ -50,13 +63,15 @@ export class A2uiController<Api extends ComponentApi> implements ReactiveControl
 
   /**
    * Subscribes to the GenericBinder updates when the host connects.
-   * 
+   *
    * Triggers a request update on the host element when new props are received.
    */
   hostConnected() {
     if (!this.subscription) {
       this.subscription = this.binder.subscribe((newProps) => {
-        this.props = newProps as ResolveA2uiProps<InferredComponentApiSchemaType<Api>>;
+        this.props = newProps as ResolveA2uiProps<
+          InferredComponentApiSchemaType<Api>
+        >;
         this.host.requestUpdate();
       });
     }
