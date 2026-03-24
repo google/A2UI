@@ -600,6 +600,10 @@ describe("MessageProcessor", () => {
     assert.strictEqual(processor.resolvePath("/foo", "/bar"), "/foo");
     assert.strictEqual(processor.resolvePath("foo", "/bar"), "/bar/foo");
     assert.strictEqual(processor.resolvePath("foo", "/bar/"), "/bar/foo");
+    assert.strictEqual(processor.resolvePath("./foo", "/bar"), "/bar/foo");
+    assert.strictEqual(processor.resolvePath("", "/bar"), "/bar");
+    assert.strictEqual(processor.resolvePath(".", "/bar/"), "/bar");
     assert.strictEqual(processor.resolvePath("foo"), "/foo");
+    assert.strictEqual(processor.resolvePath("."), "/");
   });
 });
