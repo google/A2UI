@@ -44,9 +44,7 @@
     "test:coverage": "c8 node --test \"dist/**/*.test.js\"",
     "compile": "tsc",
     "lint": "gts lint",
-    "fix": "gts fix",
-    "prepare": "npm run compile",
-    "pretest": "npm run compile"
+    "fix": "gts fix"
   },
   "wireit": {
     "copy-spec": {
