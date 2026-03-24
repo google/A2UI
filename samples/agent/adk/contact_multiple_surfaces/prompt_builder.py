@@ -79,7 +79,7 @@ if __name__ == "__main__":
       ui_description=UI_DESCRIPTION,
       include_schema=True,
       include_examples=True,
-      validate_examples=True,
+      validate_examples=False,
   )
   print(contact_prompt)
   with open("generated_prompt.txt", "w") as f:
@@ -100,7 +100,9 @@ if __name__ == "__main__":
     f.write(request_prompt)
   print("\nGenerated request prompt saved to request_prompt.txt")
 
-  basic_catalog = schema_manager.get_selected_catalog()
+  basic_catalog = schema_manager.get_selected_catalog(
+      client_ui_capabilities=client_ui_capabilities
+  )
   examples = schema_manager.load_examples(
       basic_catalog,
       validate=True,

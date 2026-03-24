@@ -16,8 +16,34 @@ import json
 import logging
 import os
 from collections.abc import AsyncIterable
+from dataclasses import dataclass
 from typing import Any, Dict, Optional
+
+import jsonschema
+
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.artifacts import InMemoryArtifactService
+from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+from google.adk.models.lite_llm import LiteLlm
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from a2a.types import (
+    AgentCapabilities,
+    AgentCard,
+    AgentSkill,
+    DataPart,
+    Part,
+    TextPart,
+)
+
+from google.genai import types
+from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
+from tools import get_contact_info
+from a2ui.core.schema.constants import VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.core.parser.parser import parse_response, ResponsePart
+from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
 
 logger = logging.getLogger(__name__)
@@ -48,6 +74,11 @@ class ContactAgent:
   @property
   def agent_card(self) -> AgentCard:
     return self._agent_card
+
+  def get_schema_manager(self, version: Optional[str]) -> Optional[A2uiSchemaManager]:
+    if version is None:
+      return None
+    return self._schema_managers[version]
 
   def _build_schema_manager(self, version: str) -> A2uiSchemaManager:
     return A2uiSchemaManager(
@@ -124,7 +155,7 @@ class ContactAgent:
             ui_description=UI_DESCRIPTION,
             include_examples=True,
             include_schema=True,
-            validate_examples=False,
+            validate_examples=False,  # Missing inline_catalogs for OrgChart and WebFrame validation
         )
         if schema_manager
         else get_text_prompt()
@@ -236,7 +267,9 @@ class ContactAgent:
       runner = self._ui_runners[ui_version]
       schema_manager = self._schema_managers[ui_version]
       selected_catalog = (
-          schema_manager.get_selected_catalog() if schema_manager else None
+          schema_manager.get_selected_catalog(client_ui_capabilities)
+          if schema_manager
+          else None
       )
     else:
       runner = self._text_runner
