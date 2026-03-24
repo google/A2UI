@@ -41,8 +41,13 @@
     "build": "wireit",
     "build:tsc": "wireit",
     "test": "wireit",
-    "test:coverage": "c8 node --test \"dist/**/*.test.js\""
-
+    "test:coverage": "c8 node --test \"dist/**/*.test.js\"",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
   },
   "wireit": {
     "copy-spec": {
@@ -90,6 +95,7 @@
   "devDependencies": {
     "@types/node": "^24.11.0",
     "c8": "^11.0.0",
+    "gts": "^7.0.0",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
