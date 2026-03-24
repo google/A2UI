@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { BaseEventDetail } from "./base.js";
+import {BaseEventDetail} from './base.js';
 
 /**
  * Detailed payload for the `a2ui-validation-input` event.
  */
-export interface ValidationEventDetail extends BaseEventDetail<"a2ui-validation-input"> {
+export interface ValidationEventDetail extends BaseEventDetail<'a2ui-validation-input'> {
   /**
    * The ID of the component that is being validated.
    */
@@ -40,10 +40,10 @@ export interface ValidationEventDetail extends BaseEventDetail<"a2ui-validation-
  * Event dispatched when an input component's validation state is updated.
  */
 export class A2UIValidationEvent extends CustomEvent<ValidationEventDetail> {
-  static readonly EVENT_NAME = "a2ui-validation-input";
+  static readonly EVENT_NAME = 'a2ui-validation-input';
 
   constructor(
-    detail: Omit<ValidationEventDetail, "eventType">,
+    detail: Omit<ValidationEventDetail, 'eventType'>,
     eventInitDict?: EventInit,
   ) {
     super(A2UIValidationEvent.EVENT_NAME, {
@@ -60,6 +60,6 @@ export class A2UIValidationEvent extends CustomEvent<ValidationEventDetail> {
 
 declare global {
   interface HTMLElementEventMap {
-    "a2ui-validation-input": A2UIValidationEvent;
+    'a2ui-validation-input': A2UIValidationEvent;
   }
 }

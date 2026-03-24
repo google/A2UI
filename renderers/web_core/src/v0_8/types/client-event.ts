@@ -22,8 +22,8 @@
 
 export type ClientCapabilitiesUri = string;
 export declare interface ClientCapabilitiesDynamic {
-  components: { [key: string]: unknown };
-  styles: { [key: string]: unknown };
+  components: {[key: string]: unknown};
+  styles: {[key: string]: unknown};
 }
 
 export declare interface ClientCapabilitiesCatalogUri {

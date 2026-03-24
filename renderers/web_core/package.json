@@ -42,12 +42,11 @@
     "build:tsc": "wireit",
     "test": "wireit",
     "test:coverage": "c8 node --test \"dist/**/*.test.js\"",
+    "compile": "tsc",
     "lint": "gts lint",
-    "clean": "gts clean",
     "fix": "gts fix",
     "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "pretest": "npm run compile"
   },
   "wireit": {
     "copy-spec": {

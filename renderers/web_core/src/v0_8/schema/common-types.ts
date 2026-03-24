@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { z } from "zod";
+import {z} from 'zod';
 
 /**
  * Base primitives
  */
 
 const exactlyOneKey = (val: any, ctx: z.RefinementCtx) => {
-  const keys = Object.keys(val).filter((k) => val[k] !== undefined);
+  const keys = Object.keys(val).filter(k => val[k] !== undefined);
   if (keys.length !== 1) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: `Must define exactly one property, found ${keys.length} (${keys.join(", ")}).`,
+      message: `Must define exactly one property, found ${keys.length} (${keys.join(', ')}).`,
     });
   }
 };
@@ -92,7 +92,7 @@ export const DataValueSchema = z
       if (currentDepth > 5) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "valueMap recursion exceeded maximum depth of 5.",
+          message: 'valueMap recursion exceeded maximum depth of 5.',
         });
         return;
       }
@@ -146,20 +146,20 @@ export const ActionSchema = z.object({
               .optional(),
             literalString: z
               .string()
-              .describe("A fixed, hardcoded string value.")
+              .describe('A fixed, hardcoded string value.')
               .optional(),
             literalNumber: z.number().optional(),
             literalBoolean: z.boolean().optional(),
           })
           .describe(
-            "The dynamic value. Define EXACTLY ONE of the nested properties.",
+            'The dynamic value. Define EXACTLY ONE of the nested properties.',
           )
           .strict()
           .superRefine(exactlyOneKey),
       }),
     )
     .describe(
-      "A key-value map of data bindings to be resolved when the action is triggered.",
+      'A key-value map of data bindings to be resolved when the action is triggered.',
     )
     .optional(),
 });
@@ -171,7 +171,7 @@ export const ActionSchema = z.object({
 export const TextSchema = z.object({
   text: StringValueSchema,
   usageHint: z
-    .enum(["h1", "h2", "h3", "h4", "h5", "caption", "body"])
+    .enum(['h1', 'h2', 'h3', 'h4', 'h5', 'caption', 'body'])
     .optional(),
 });
 
@@ -179,15 +179,15 @@ export const ImageSchema = z.object({
   url: StringValueSchema,
   usageHint: z
     .enum([
-      "icon",
-      "avatar",
-      "smallFeature",
-      "mediumFeature",
-      "largeFeature",
-      "header",
+      'icon',
+      'avatar',
+      'smallFeature',
+      'mediumFeature',
+      'largeFeature',
+      'header',
     ])
     .optional(),
-  fit: z.enum(["contain", "cover", "fill", "none", "scale-down"]).optional(),
+  fit: z.enum(['contain', 'cover', 'fill', 'none', 'scale-down']).optional(),
   altText: StringValueSchema.optional(),
 });
 
@@ -202,7 +202,7 @@ export const VideoSchema = z.object({
 export const AudioPlayerSchema = z.object({
   url: StringValueSchema,
   description: StringValueSchema.optional().describe(
-    "A label, title, or placeholder text.",
+    'A label, title, or placeholder text.',
   ),
 });
 
@@ -220,12 +220,12 @@ export const TabsSchema = z.object({
               .optional(),
             literalString: z
               .string()
-              .describe("A fixed, hardcoded string value.")
+              .describe('A fixed, hardcoded string value.')
               .optional(),
           }),
           child: z
             .string()
-            .describe("A reference to a component instance by its unique ID."),
+            .describe('A reference to a component instance by its unique ID.'),
         })
         .strict()
         .superRefine((val: any, ctx: z.RefinementCtx) => {
@@ -246,26 +246,26 @@ export const TabsSchema = z.object({
           }
         }),
     )
-    .describe("A list of tabs, each with a title and a child component ID."),
+    .describe('A list of tabs, each with a title and a child component ID.'),
 });
 
 export const DividerSchema = z.object({
   axis: z
-    .enum(["horizontal", "vertical"])
+    .enum(['horizontal', 'vertical'])
     .optional()
-    .describe("The orientation."),
+    .describe('The orientation.'),
   color: z
     .string()
     .optional()
-    .describe("The color of the divider (e.g., hex code or semantic name)."),
-  thickness: z.number().optional().describe("The thickness of the divider."),
+    .describe('The color of the divider (e.g., hex code or semantic name).'),
+  thickness: z.number().optional().describe('The thickness of the divider.'),
 });
 
 export const ModalSchema = z.object({
   entryPointChild: z
     .string()
     .describe(
-      "The ID of the component (e.g., a button) that triggers the modal.",
+      'The ID of the component (e.g., a button) that triggers the modal.',
     ),
   contentChild: z
     .string()
@@ -276,12 +276,12 @@ export const ButtonSchema = z.object({
   child: z
     .string()
     .describe("The ID of the component to display as the button's content."),
-  action: ActionSchema.describe("Represents a user-initiated action."),
+  action: ActionSchema.describe('Represents a user-initiated action.'),
   primary: z
     .boolean()
     .optional()
     .describe(
-      "Indicates if this button should be styled as the primary action."
+      'Indicates if this button should be styled as the primary action.',
     ),
 });
 
@@ -303,12 +303,12 @@ export const CheckboxSchema = z.object({
 
 export const TextFieldSchema = z.object({
   text: StringValueSchema.optional(),
-  label: StringValueSchema.describe("A label, title, or placeholder text."),
-  textFieldType: z.enum(["shortText", "number", "date", "longText"]).optional(),
+  label: StringValueSchema.describe('A label, title, or placeholder text.'),
+  textFieldType: z.enum(['shortText', 'number', 'date', 'longText']).optional(),
   validationRegexp: z
     .string()
     .optional()
-    .describe("A regex string to validate the input."),
+    .describe('A regex string to validate the input.'),
 });
 
 export const DateTimeInputSchema = z.object({
@@ -347,7 +347,7 @@ export const MultipleChoiceSchema = z.object({
               .optional(),
             literalString: z
               .string()
-              .describe("A fixed, hardcoded string value.")
+              .describe('A fixed, hardcoded string value.')
               .optional(),
           })
           .strict()
@@ -357,7 +357,7 @@ export const MultipleChoiceSchema = z.object({
     )
     .optional(),
   maxAllowedSelections: z.number().optional(),
-  type: z.enum(["checkbox", "chips"]).optional(),
+  type: z.enum(['checkbox', 'chips']).optional(),
   filterable: z.boolean().optional(),
 });
 
@@ -387,7 +387,7 @@ export const ComponentArrayReferenceSchema = z
   .object({
     explicitList: z.array(z.string()).optional(),
     template: ComponentArrayTemplateSchema.describe(
-      "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
+      'A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.',
     ).optional(),
   })
   .strict()
@@ -397,40 +397,40 @@ export const RowSchema = z.object({
   children: ComponentArrayReferenceSchema,
   distribution: z
     .enum([
-      "start",
-      "center",
-      "end",
-      "spaceBetween",
-      "spaceAround",
-      "spaceEvenly",
+      'start',
+      'center',
+      'end',
+      'spaceBetween',
+      'spaceAround',
+      'spaceEvenly',
     ])
     .optional(),
-  alignment: z.enum(["start", "center", "end", "stretch"]).optional(),
+  alignment: z.enum(['start', 'center', 'end', 'stretch']).optional(),
 });
 
 export const ColumnSchema = z.object({
   children: ComponentArrayReferenceSchema,
   distribution: z
     .enum([
-      "start",
-      "center",
-      "end",
-      "spaceBetween",
-      "spaceAround",
-      "spaceEvenly",
+      'start',
+      'center',
+      'end',
+      'spaceBetween',
+      'spaceAround',
+      'spaceEvenly',
     ])
     .optional(),
-  alignment: z.enum(["start", "center", "end", "stretch"]).optional(),
+  alignment: z.enum(['start', 'center', 'end', 'stretch']).optional(),
 });
 
 export const ListSchema = z.object({
   children: ComponentArrayReferenceSchema,
-  direction: z.enum(["vertical", "horizontal"]).optional(),
-  alignment: z.enum(["start", "center", "end", "stretch"]).optional(),
+  direction: z.enum(['vertical', 'horizontal']).optional(),
+  alignment: z.enum(['start', 'center', 'end', 'stretch']).optional(),
 });
 
 export const CardSchema = z.object({
   child: z
     .string()
-    .describe("The ID of the component to be rendered inside the card."),
+    .describe('The ID of the component to be rendered inside the card.'),
 });

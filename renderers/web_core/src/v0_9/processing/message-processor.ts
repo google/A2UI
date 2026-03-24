@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SurfaceModel, ActionListener } from "../state/surface-model.js";
-import { Catalog, ComponentApi } from "../catalog/types.js";
-import { SurfaceGroupModel } from "../state/surface-group-model.js";
-import { ComponentModel } from "../state/component-model.js";
-import { Subscription } from "../common/events.js";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import {SurfaceModel, ActionListener} from '../state/surface-model.js';
+import {Catalog, ComponentApi} from '../catalog/types.js';
+import {SurfaceGroupModel} from '../state/surface-group-model.js';
+import {ComponentModel} from '../state/component-model.js';
+import {Subscription} from '../common/events.js';
+import {zodToJsonSchema} from 'zod-to-json-schema';
 
 import {
   A2uiMessage,
@@ -27,13 +27,13 @@ import {
   UpdateComponentsMessage,
   UpdateDataModelMessage,
   DeleteSurfaceMessage,
-} from "../schema/server-to-client.js";
+} from '../schema/server-to-client.js';
 import {
   A2uiClientCapabilities,
   InlineCatalog,
-} from "../schema/client-capabilities.js";
-import { A2uiClientDataModel } from "../schema/client-to-server.js";
-import { A2uiStateError, A2uiValidationError } from "../errors.js";
+} from '../schema/client-capabilities.js';
+import {A2uiClientDataModel} from '../schema/client-to-server.js';
+import {A2uiStateError, A2uiValidationError} from '../errors.js';
 
 /**
  * Options for generating client capabilities.
@@ -74,13 +74,13 @@ export class MessageProcessor<T extends ComponentApi> {
    */
   getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities {
     const capabilities: A2uiClientCapabilities = {
-      "v0.9": {
-        supportedCatalogIds: this.catalogs.map((c) => c.id),
+      'v0.9': {
+        supportedCatalogIds: this.catalogs.map(c => c.id),
       },
     };
 
     if (options?.includeInlineCatalogs) {
-      capabilities["v0.9"].inlineCatalogs = this.catalogs.map((c) =>
+      capabilities['v0.9'].inlineCatalogs = this.catalogs.map(c =>
         this.generateInlineCatalog(c),
       );
     }
@@ -93,7 +93,7 @@ export class MessageProcessor<T extends ComponentApi> {
 
     for (const [name, api] of catalog.components.entries()) {
       const zodSchema = zodToJsonSchema(api.schema, {
-        target: "jsonSchema2019-09",
+        target: 'jsonSchema2019-09',
       }) as any;
 
       // Clean up Zod-specific artifacts and process REF: tags
@@ -102,13 +102,13 @@ export class MessageProcessor<T extends ComponentApi> {
       // Wrap in standard A2UI component envelope (ComponentCommon)
       components[name] = {
         allOf: [
-          { $ref: "common_types.json#/$defs/ComponentCommon" },
+          {$ref: 'common_types.json#/$defs/ComponentCommon'},
           {
             properties: {
-              component: { const: name },
+              component: {const: name},
               ...zodSchema.properties,
             },
-            required: ["component", ...(zodSchema.required || [])],
+            required: ['component', ...(zodSchema.required || [])],
           },
         ],
       };
@@ -117,7 +117,7 @@ export class MessageProcessor<T extends ComponentApi> {
     const functions: any[] = [];
     for (const api of catalog.functions.values()) {
       const zodSchema = zodToJsonSchema(api.schema, {
-        target: "jsonSchema2019-09",
+        target: 'jsonSchema2019-09',
       }) as any;
 
       this.processRefs(zodSchema);
@@ -133,7 +133,7 @@ export class MessageProcessor<T extends ComponentApi> {
     let theme: Record<string, any> | undefined;
     if (catalog.themeSchema) {
       const zodSchema = zodToJsonSchema(catalog.themeSchema, {
-        target: "jsonSchema2019-09",
+        target: 'jsonSchema2019-09',
       }) as any;
 
       this.processRefs(zodSchema);
@@ -149,13 +149,16 @@ export class MessageProcessor<T extends ComponentApi> {
   }
 
   private processRefs(node: any): void {
-    if (typeof node !== "object" || node === null) return;
+    if (typeof node !== 'object' || node === null) return;
 
     // If the node itself is a REF target, transform it and stop recursion.
-    if (typeof node.description === "string" && node.description.startsWith("REF:")) {
-      const parts = node.description.substring(4).split("|");
+    if (
+      typeof node.description === 'string' &&
+      node.description.startsWith('REF:')
+    ) {
+      const parts = node.description.substring(4).split('|');
       const ref = parts[0];
-      const desc = parts[1] || "";
+      const desc = parts[1] || '';
 
       // Clear the node of all other properties.
       for (const k of Object.keys(node)) {
@@ -163,9 +166,9 @@ export class MessageProcessor<T extends ComponentApi> {
       }
 
       // Re-add only the $ref and an optional description.
-      node["$ref"] = ref;
+      node['$ref'] = ref;
       if (desc) {
-        node["description"] = desc;
+        node['description'] = desc;
       }
       return;
     }
@@ -190,7 +193,7 @@ export class MessageProcessor<T extends ComponentApi> {
 
     for (const surface of this.model.surfacesMap.values()) {
       if (surface.sendDataModel) {
-        surfaces[surface.id] = surface.dataModel.get("/");
+        surfaces[surface.id] = surface.dataModel.get('/');
       }
     }
 
@@ -199,7 +202,7 @@ export class MessageProcessor<T extends ComponentApi> {
     }
 
     return {
-      version: "v0.9",
+      version: 'v0.9',
       surfaces,
     };
   }
@@ -231,34 +234,34 @@ export class MessageProcessor<T extends ComponentApi> {
 
   private processMessage(message: A2uiMessage): void {
     const updateTypes = [
-      "createSurface",
-      "updateComponents",
-      "updateDataModel",
-      "deleteSurface",
-    ].filter((k) => k in message);
+      'createSurface',
+      'updateComponents',
+      'updateDataModel',
+      'deleteSurface',
+    ].filter(k => k in message);
 
     if (updateTypes.length > 1) {
       throw new A2uiValidationError(
-        `Message contains multiple update types: ${updateTypes.join(", ")}.`,
+        `Message contains multiple update types: ${updateTypes.join(', ')}.`,
       );
     }
 
-    if ("createSurface" in message) {
+    if ('createSurface' in message) {
       this.processCreateSurfaceMessage(message);
       return;
     }
 
-    if ("deleteSurface" in message) {
+    if ('deleteSurface' in message) {
       this.processDeleteSurfaceMessage(message);
       return;
     }
 
-    if ("updateComponents" in message) {
+    if ('updateComponents' in message) {
       this.processUpdateComponentsMessage(message);
       return;
     }
 
-    if ("updateDataModel" in message) {
+    if ('updateDataModel' in message) {
       this.processUpdateDataModelMessage(message);
       return;
     }
@@ -266,10 +269,10 @@ export class MessageProcessor<T extends ComponentApi> {
 
   private processCreateSurfaceMessage(message: CreateSurfaceMessage): void {
     const payload = message.createSurface;
-    const { surfaceId, catalogId, theme, sendDataModel } = payload;
+    const {surfaceId, catalogId, theme, sendDataModel} = payload;
 
     // Find catalog
-    const catalog = this.catalogs.find((c) => c.id === catalogId);
+    const catalog = this.catalogs.find(c => c.id === catalogId);
     if (!catalog) {
       throw new A2uiStateError(`Catalog not found: ${catalogId}`);
     }
@@ -307,7 +310,7 @@ export class MessageProcessor<T extends ComponentApi> {
     }
 
     for (const comp of payload.components) {
-      const { id, component, ...properties } = comp;
+      const {id, component, ...properties} = comp;
 
       if (!id) {
         throw new A2uiValidationError(
@@ -348,7 +351,7 @@ export class MessageProcessor<T extends ComponentApi> {
       );
     }
 
-    const path = payload.path || "/";
+    const path = payload.path || '/';
     const value = payload.value;
     surface.dataModel.set(path, value);
   }
@@ -360,11 +363,11 @@ export class MessageProcessor<T extends ComponentApi> {
    * @param contextPath The base path (optional).
    */
   resolvePath(path: string, contextPath?: string): string {
-    if (path.startsWith("/")) {
+    if (path.startsWith('/')) {
       return path;
     }
     if (contextPath) {
-      const base = contextPath.endsWith("/") ? contextPath : `${contextPath}/`;
+      const base = contextPath.endsWith('/') ? contextPath : `${contextPath}/`;
       return `${base}${path}`;
     }
     return `/${path}`;
