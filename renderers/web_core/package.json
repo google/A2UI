@@ -79,7 +79,7 @@
       "clean": "if-file-deleted"
     },
     "test": {
-      "command": "node --test \"dist/**/*.test.js\"",
+      "command": "node --test dist",
       "dependencies": [
         "build"
       ]

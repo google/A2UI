@@ -47,6 +47,10 @@ jobs:
         working-directory: ./renderers/web_core
         run: npm run build
 
+      - name: Test web_core
+        working-directory: ./renderers/web_core
+        run: npm run test
+
       - name: Install Lit renderer dependencies
         working-directory: ./renderers/lit
         run: npm i
