@@ -16,7 +16,7 @@
 
 import { nothing } from "lit";
 import { html, unsafeStatic } from "lit/static-html.js";
-import { ComponentContext } from "@a2ui/web_core/v0_9";
+import { ComponentContext, Catalog } from "@a2ui/web_core/v0_9";
 import { LitComponentImplementation } from "../types.js";
 
 /**
@@ -32,12 +32,12 @@ import { LitComponentImplementation } from "../types.js";
  * For examples on how to use `renderA2uiNode` when defining custom A2UI components that contain children,
  * refer to the implementation of `A2uiSurface`, or structural catalog components like `Row` and `Column`.
  */
-export function renderA2uiNode(context: ComponentContext) {
+export function renderA2uiNode(
+  context: ComponentContext,
+  catalog: Catalog<LitComponentImplementation>,
+) {
   const type = context.componentModel.type;
-  const catalog = context.dataContext.surface.catalog;
-  const implementation = catalog.components.get(type) as
-    | LitComponentImplementation
-    | undefined;
+  const implementation = catalog.components.get(type);
 
   if (!implementation) {
     console.warn(`Component implementation not found for type: ${type}`);

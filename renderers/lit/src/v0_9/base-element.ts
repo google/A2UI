@@ -98,7 +98,10 @@ export abstract class A2uiLitElement<
     // Fallback to the current component's context.
     path = path ?? parentPath;
 
-    return renderA2uiNode(new ComponentContext(surface, model, path));
+    return renderA2uiNode(
+      new ComponentContext(surface, model, path),
+      surface.catalog,
+    );
   }
 
   /**

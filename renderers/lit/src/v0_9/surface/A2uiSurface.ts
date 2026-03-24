@@ -18,11 +18,13 @@ import { html, nothing, LitElement, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { SurfaceModel, ComponentContext } from "@a2ui/web_core/v0_9";
 import { renderA2uiNode } from "./render-node.js";
+import { LitComponentImplementation } from "../types.js";
 
 @customElement("a2ui-surface")
 export class A2uiSurface extends LitElement {
-  @property({ type: Object }) accessor surface: SurfaceModel<any> | undefined =
-    undefined;
+  @property({ type: Object }) accessor surface:
+    | SurfaceModel<LitComponentImplementation>
+    | undefined;
 
   @state() accessor _hasRoot = false;
   private unsub?: () => void;
@@ -64,7 +66,7 @@ export class A2uiSurface extends LitElement {
 
     try {
       const rootContext = new ComponentContext(this.surface, "root", "/");
-      return html`${renderA2uiNode(rootContext)}`;
+      return html`${renderA2uiNode(rootContext, this.surface.catalog)}`;
     } catch (e) {
       console.error("Error creating root context:", e);
       return html`<div>Error rendering surface</div>`;
