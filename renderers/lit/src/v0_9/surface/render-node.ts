@@ -17,7 +17,7 @@
 import { nothing } from "lit";
 import { html, unsafeStatic } from "lit/static-html.js";
 import { ComponentContext, Catalog } from "@a2ui/web_core/v0_9";
-import { LitComponentImplementation } from "../types.js";
+import { LitComponentApi } from "../types.js";
 
 /**
  * Pure function that acts as a generic container for A2UI components.
@@ -34,7 +34,7 @@ import { LitComponentImplementation } from "../types.js";
  */
 export function renderA2uiNode(
   context: ComponentContext,
-  catalog: Catalog<LitComponentImplementation>,
+  catalog: Catalog<LitComponentApi>,
 ) {
   const type = context.componentModel.type;
   const implementation = catalog.components.get(type);
