@@ -11,8 +11,8 @@ export const scenarios = {
   'restaurant-booking': restaurantBooking,
   'restaurant-confirmation': restaurantConfirmation,
   'contact-lookup': contactLookup,
-  'contact-card': contactCard,
-  'floor-plan': floorPlan,
+  // 'contact-card': contactCard,
+  // 'floor-plan': floorPlan,
 };
 
 export type ScenarioId = keyof typeof scenarios;
