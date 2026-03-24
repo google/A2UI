@@ -1,3 +1,19 @@
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import fs from 'fs';
 import path from 'path';
 
@@ -22,7 +38,7 @@ for (const catalog of catalogs) {
       try {
         const data = JSON.parse(content);
         let example = data;
-        
+
         // Ensure it's in the Example format
         if (Array.isArray(data)) {
           example = {
@@ -31,13 +47,13 @@ for (const catalog of catalogs) {
             messages: data
           };
         } else if (!data.name || !data.messages) {
-           example = {
+          example = {
             name: data.name || file.replace('.json', '').replace(/^[0-9]+_/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
             description: data.description || `Example from ${catalog} catalog`,
             messages: data.messages || []
           };
         }
-        
+
         // In the Angular Demo we only load the basic catalog (which implements minimal components as well).
         // Rewrite the catalogId for minimal examples to use basic_catalog.json
         for (const msg of example.messages) {
@@ -45,7 +61,7 @@ for (const catalog of catalogs) {
             msg.createSurface.catalogId = 'https://a2ui.org/specification/v0_9/basic_catalog.json';
           }
         }
-        
+
         examples.push(example);
       } catch (e) {
         console.error(`Error parsing ${filePath}:`, e);
