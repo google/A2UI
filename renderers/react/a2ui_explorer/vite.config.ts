@@ -22,6 +22,12 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    fs: {
+      // Allow serving files from the root of the repo (where specifications are)
+      allow: ['../../../../']
+    }
+  },
   resolve: {
     alias: {
       '@a2ui/react/v0_9': resolve(__dirname, '../src/v0_9/index.ts'),
