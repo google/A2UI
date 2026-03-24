@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/lit",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "A2UI Lit Library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,6 +10,10 @@
       "default": "./dist/src/index.js"
     },
     "./0.8": {
+      "types": "./dist/src/0.8/core.d.ts",
+      "default": "./dist/src/0.8/core.js"
+    },
+    "./v0_8": {
       "types": "./dist/src/0.8/core.d.ts",
       "default": "./dist/src/0.8/core.js"
     },
