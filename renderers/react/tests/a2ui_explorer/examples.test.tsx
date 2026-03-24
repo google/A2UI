@@ -17,7 +17,7 @@
 import { describe, it, expect } from 'vitest';
 import { processExampleModules, getMessages } from '../../a2ui_explorer/src/examples';
 
-describe('Explorer Logic', () => {
+describe('examples.ts (Sample Loading Logic)', () => {
   describe('processExampleModules', () => {
     it('should correctly parse and sort modules', () => {
       const mockModules = {
