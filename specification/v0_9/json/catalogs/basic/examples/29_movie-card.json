@@ -1,6 +1,6 @@
 {
   "name": "Movie Card",
-  "description": "Example of movie card",
+  "description": "Example of movie card demonstrating Modal and Video components.",
   "messages": [
     {
       "version": "v0.9",
@@ -25,7 +25,8 @@
             "component": "Column",
             "children": [
               "poster",
-              "content"
+              "content",
+              "trailer-modal"
             ]
           },
           {
@@ -43,7 +44,8 @@
               "title-row",
               "genre",
               "rating-row",
-              "runtime"
+              "runtime",
+              "watch-trailer-btn"
             ]
           },
           {
@@ -122,6 +124,34 @@
               "path": "/runtime"
             },
             "variant": "caption"
+          },
+          {
+            "id": "watch-trailer-btn-text",
+            "component": "Text",
+            "text": "Watch Trailer"
+          },
+          {
+            "id": "watch-trailer-btn",
+            "component": "Button",
+            "child": "watch-trailer-btn-text",
+            "action": {
+              "event": {
+                "name": "open_trailer"
+              }
+            }
+          },
+          {
+            "id": "trailer-modal",
+            "component": "Modal",
+            "trigger": "watch-trailer-btn",
+            "content": "trailer-video"
+          },
+          {
+            "id": "trailer-video",
+            "component": "Video",
+            "url": {
+              "path": "/trailerUrl"
+            }
           }
         ]
       }
@@ -134,9 +164,10 @@
           "poster": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=200&h=300&fit=crop",
           "title": "Interstellar",
           "year": "(2014)",
-          "genre": "Sci-Fi \u2022 Adventure \u2022 Drama",
+          "genre": "Sci-Fi • Adventure • Drama",
           "rating": "8.7/10",
-          "runtime": "2h 49min"
+          "runtime": "2h 49min",
+          "trailerUrl": "https://www.w3schools.com/html/mov_bbb.mp4"
         }
       }
     }

@@ -79,6 +79,30 @@ describe("A2uiMessageProcessor", () => {
     assert.deepStrictEqual(root.properties.text, { literal: "Hello" });
   });
 
+  it("handles surfaceUpdate without beginRendering", () => {
+    const surfaceId = "s1";
+    processor.processMessages([
+      {
+        surfaceUpdate: {
+          surfaceId,
+          components: [
+            {
+              id: "root",
+              component: {
+                Text: { text: { literal: "Hello" }, usageHint: "body" },
+              } as any,
+            },
+          ],
+        },
+      },
+    ]);
+
+    // Should filter out the surface, as the processor treats it as not ready 
+    // to render without a beginRendering message
+    const surface = processor.getSurfaces().get(surfaceId);
+    assert.equal(surface, undefined);
+  });
+
   it("handles dataModelUpdate", () => {
     processor.processMessages([
       {

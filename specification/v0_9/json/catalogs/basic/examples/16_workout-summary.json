@@ -1,6 +1,6 @@
 {
   "name": "Workout Summary",
-  "description": "Example of workout summary",
+  "description": "Example of workout summary demonstrating number and date formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -102,7 +102,13 @@
             "id": "calories-value",
             "component": "Text",
             "text": {
-              "path": "/calories"
+              "call": "formatNumber",
+              "args": {
+                "value": {
+                  "path": "/calories"
+                }
+              },
+              "returnType": "string"
             },
             "variant": "h3"
           },
@@ -125,7 +131,11 @@
             "id": "distance-value",
             "component": "Text",
             "text": {
-              "path": "/distance"
+              "call": "formatString",
+              "args": {
+                "value": "${/distance} km"
+              },
+              "returnType": "string"
             },
             "variant": "h3"
           },
@@ -139,7 +149,14 @@
             "id": "date",
             "component": "Text",
             "text": {
-              "path": "/date"
+              "call": "formatDate",
+              "args": {
+                "value": {
+                  "path": "/date"
+                },
+                "format": "EEEE, MMM d 'at' h:mm a"
+              },
+              "returnType": "string"
             },
             "variant": "caption"
           }
@@ -154,9 +171,9 @@
           "icon": "directions_run",
           "workoutType": "Morning Run",
           "duration": "32:15",
-          "calories": "385",
-          "distance": "5.2 km",
-          "date": "Today at 7:30 AM"
+          "calories": 385,
+          "distance": 5.2,
+          "date": "2025-12-15T07:30:00Z"
         }
       }
     }
