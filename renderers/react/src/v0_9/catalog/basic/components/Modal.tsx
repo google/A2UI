@@ -50,25 +50,26 @@ export const Modal = createReactComponent(ModalApi, ({props, buildChild}) => {
               maxWidth: '90%',
               maxHeight: '90%',
               overflow: 'auto',
-              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{
-                position: 'absolute',
-                top: '8px',
-                right: '8px',
-                border: 'none',
-                background: 'none',
-                fontSize: '20px',
-                cursor: 'pointer',
-              }}
-            >
-              &times;
-            </button>
-            {props.content ? buildChild(props.content) : null}
+            <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+              <button
+                onClick={() => setIsOpen(false)}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  padding: '4px',
+                }}
+              >
+                &times;
+              </button>
+            </div>
+            <div style={{flex: 1}}>{props.content ? buildChild(props.content) : null}</div>
           </div>
         </div>
       )}
