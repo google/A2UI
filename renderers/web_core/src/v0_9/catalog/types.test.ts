@@ -16,16 +16,21 @@
 
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
-import {Catalog, ComponentApi, createFunctionImplementation} from './types.js';
+import {
+  Catalog,
+  ComponentApi,
+  InferredComponentApiSchemaType,
+  createFunctionImplementation,
+} from './types.js';
 import {A2uiExpressionError} from '../errors.js';
 import {z} from 'zod';
 
 describe('Catalog Types', () => {
   it('creates a catalog with functions', () => {
-    const mockComponent: ComponentApi = {
+    const mockComponent = {
       name: 'MockComp',
       schema: z.object({}),
-    };
+    } satisfies ComponentApi;
 
     const mockFunc = createFunctionImplementation(
       {
@@ -45,6 +50,37 @@ describe('Catalog Types', () => {
     assert.ok(catalog.functions);
     assert.strictEqual(catalog.functions.size, 1);
     assert.strictEqual(catalog.functions.get('mockFunc'), mockFunc);
+  });
+
+  it('infers the correct schema type from a ComponentApi', () => {
+    const mockSchema = z.object({
+      field1: z.string(),
+      field2: z.number().optional(),
+    });
+
+    const mockApi: ComponentApi = {
+      name: 'MockComp',
+      schema: mockSchema,
+    };
+
+    // Type-level assertion: if inferred incorrectly, this would fail compilation
+    const mockData: InferredComponentApiSchemaType<typeof mockApi> = {
+      field1: 'test',
+      field2: 123,
+    };
+
+    // Type-level equivalence assertion using z.infer
+    type ExpectedType = z.infer<typeof mockSchema>;
+    type TypesAreEquivalent =
+      InferredComponentApiSchemaType<typeof mockApi> extends ExpectedType
+        ? ExpectedType extends InferredComponentApiSchemaType<typeof mockApi>
+          ? true
+          : false
+        : false;
+
+    // A TypeScript compilation error here means the types do not perfectly align
+    const typesMatchExact: TypesAreEquivalent = true;
+    assert.strictEqual(typesMatchExact as boolean, true);
   });
 
   it('throws A2uiExpressionError when function is not found', () => {
