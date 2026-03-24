@@ -15,39 +15,9 @@
  */
 
 import {useState, useEffect, useSyncExternalStore, useCallback} from 'react';
-import {MessageProcessor, SurfaceModel, type A2uiMessage} from '@a2ui/web_core/v0_9';
+import {MessageProcessor, SurfaceModel} from '@a2ui/web_core/v0_9';
 import {minimalCatalog, basicCatalog, A2uiSurface, type ReactComponentImplementation} from '@a2ui/react/v0_9';
-
-// Dynamically import all examples from the specification folder
-const exampleModules = import.meta.glob(
-  '../../../../specification/v0_9/json/catalogs/*/examples/*.json',
-  {eager: true}
-);
-
-const exampleFiles = Object.entries(exampleModules)
-  .map(([path, data]) => {
-    const parts = path.split('/');
-    const filename = parts[parts.length - 1];
-    const catalogFolderName = parts[parts.length - 3];
-    const key = `${catalogFolderName}_${filename.replace('.json', '')}`;
-    const catalog = catalogFolderName.charAt(0).toUpperCase() + catalogFolderName.slice(1);
-
-    return {
-      key,
-      data: (data as any).default || data,
-      catalog,
-    };
-  })
-  .sort((a, b) => {
-    // Sort by catalog first, then by key (which includes the numeric prefix)
-    if (a.catalog !== b.catalog) {
-      return a.catalog.localeCompare(b.catalog);
-    }
-    return a.key.localeCompare(b.key);
-  });
-
-const getMessages = (ex: {messages: A2uiMessage[]} | A2uiMessage[] | undefined) =>
-  Array.isArray(ex) ? ex : ex?.messages;
+import {exampleFiles, getMessages} from './examples';
 
 const DataModelViewer = ({surface}: {surface: SurfaceModel<any>}) => {
   const subscribeHook = useCallback(
