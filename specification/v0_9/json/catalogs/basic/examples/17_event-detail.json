@@ -1,6 +1,6 @@
 {
   "name": "Event Detail",
-  "description": "Example of event detail",
+  "description": "Example of event detail demonstrating date and string formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -58,7 +58,11 @@
             "id": "time-text",
             "component": "Text",
             "text": {
-              "path": "/dateTime"
+              "call": "formatString",
+              "args": {
+                "value": "${formatDate(value: ${/start}, format: 'E, MMM d')} • ${formatDate(value: ${/start}, format: 'h:mm a')} - ${formatDate(value: ${/end}, format: 'h:mm a')}"
+              },
+              "returnType": "string"
             },
             "variant": "body"
           },
@@ -145,7 +149,8 @@
         "surfaceId": "gallery-event-detail",
         "value": {
           "title": "Product Launch Meeting",
-          "dateTime": "Thu, Dec 19 \u2022 2:00 PM - 3:30 PM",
+          "start": "2025-12-19T14:00:00Z",
+          "end": "2025-12-19T15:30:00Z",
           "location": "Conference Room A, Building 2",
           "description": "Review final product specs and marketing materials before the Q1 launch."
         }

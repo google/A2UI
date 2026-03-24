@@ -1,6 +1,6 @@
 {
   "name": "Account Balance",
-  "description": "Example of account balance",
+  "description": "Example of account balance demonstrating currency formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -57,7 +57,14 @@
             "id": "balance",
             "component": "Text",
             "text": {
-              "path": "/balance"
+              "call": "formatCurrency",
+              "args": {
+                "value": {
+                  "path": "/balance"
+                },
+                "currency": "USD"
+              },
+              "returnType": "string"
             },
             "variant": "h1"
           },
@@ -122,7 +129,7 @@
         "surfaceId": "gallery-account-balance",
         "value": {
           "accountName": "Primary Checking",
-          "balance": "$12,458.32",
+          "balance": 12458.32,
           "lastUpdated": "Updated just now"
         }
       }
