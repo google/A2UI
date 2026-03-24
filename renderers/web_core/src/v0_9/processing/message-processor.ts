@@ -363,10 +363,28 @@ export class MessageProcessor<T extends ComponentApi> {
     if (path.startsWith("/")) {
       return path;
     }
+    if (path === "" || path === ".") {
+      if (contextPath) {
+        return contextPath.endsWith("/") && contextPath.length > 1
+          ? contextPath.slice(0, -1)
+          : contextPath;
+      }
+      return "/";
+    }
+
+    const normalizedPath = path.startsWith("./") ? path.substring(2) : path;
+    if (normalizedPath === "") {
+      if (contextPath) {
+        return contextPath.endsWith("/") && contextPath.length > 1
+          ? contextPath.slice(0, -1)
+          : contextPath;
+      }
+      return "/";
+    }
     if (contextPath) {
       const base = contextPath.endsWith("/") ? contextPath : `${contextPath}/`;
-      return `${base}${path}`;
+      return `${base}${normalizedPath}`;
     }
-    return `/${path}`;
+    return `/${normalizedPath}`;
   }
 }
