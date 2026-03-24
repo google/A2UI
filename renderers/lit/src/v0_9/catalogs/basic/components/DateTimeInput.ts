@@ -14,28 +14,37 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { DateTimeInputApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-datetimeinput")
-export class A2uiDateTimeInputElement extends A2uiLitElement<typeof DateTimeInputApi> {
-  protected createController() { return new A2uiController(this, DateTimeInputApi); }
+export class A2uiDateTimeInputElement extends A2uiLitElement<
+  typeof DateTimeInputApi
+> {
+  protected createController() {
+    return new A2uiController(this, DateTimeInputApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    const type = (props.enableDate && props.enableTime) ? "datetime-local" : (props.enableDate ? "date" : "time");
+    const type =
+      props.enableDate && props.enableTime
+        ? "datetime-local"
+        : props.enableDate
+          ? "date"
+          : "time";
     return html`
       <div class="a2ui-datetime">
         ${props.label ? html`<label>${props.label}</label>` : nothing}
-        <input 
-          type=${type} 
-          .value=${props.value || ""} 
-          @input=${(e: Event) => props.setValue?.((e.target as HTMLInputElement).value)} 
+        <input
+          type=${type}
+          .value=${props.value || ""}
+          @input=${(e: Event) =>
+            props.setValue?.((e.target as HTMLInputElement).value)}
         />
       </div>
     `;
@@ -44,5 +53,5 @@ export class A2uiDateTimeInputElement extends A2uiLitElement<typeof DateTimeInpu
 
 export const A2uiDateTimeInput = {
   ...DateTimeInputApi,
-  tagName: "a2ui-datetimeinput"
+  tagName: "a2ui-datetimeinput",
 };

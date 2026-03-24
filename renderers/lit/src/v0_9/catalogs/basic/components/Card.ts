@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { CardApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-card")
 export class A2uiCardElement extends A2uiLitElement<typeof CardApi> {
-  protected createController() { return new A2uiController(this, CardApi); }
+  protected createController() {
+    return new A2uiController(this, CardApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
     return html`
-      <div class="a2ui-card" style="border: 1px solid #ccc; border-radius: 8px; padding: 16px;">
+      <div
+        class="a2ui-card"
+        style="border: 1px solid #ccc; border-radius: 8px; padding: 16px;"
+      >
         ${props.child ? html`${this.renderNode(props.child)}` : nothing}
       </div>
     `;
@@ -38,5 +42,5 @@ export class A2uiCardElement extends A2uiLitElement<typeof CardApi> {
 
 export const A2uiCard = {
   ...CardApi,
-  tagName: "a2ui-card"
+  tagName: "a2ui-card",
 };

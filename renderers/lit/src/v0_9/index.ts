@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-export * from "./types.js";
-export * from "./adapter.js";
-export * from "./surface/A2uiSurface.js";
-export * from "./base-element.js";
-export * from "./catalogs/minimal/index.js";
-export * from "./catalogs/basic/index.js";
+export type { LitComponentApi } from "./types.js";
+export { A2uiController } from "./a2ui-controller.js";
+export { A2uiSurface } from "./surface/a2ui-surface.js";
+export { A2uiLitElement } from "./a2ui-lit-element.js";
+export { minimalCatalog } from "./catalogs/minimal/index.js";
+export { basicCatalog } from "./catalogs/basic/index.js";

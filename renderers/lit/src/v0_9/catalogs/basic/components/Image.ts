@@ -14,27 +14,32 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { ImageApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-image")
 export class A2uiImageElement extends A2uiLitElement<typeof ImageApi> {
-  protected createController() { return new A2uiController(this, ImageApi); }
+  protected createController() {
+    return new A2uiController(this, ImageApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
     const styles = { objectFit: props.fit || "fill", width: "100%" };
-    return html`<img src=${props.url} class=${"a2ui-image " + (props.variant || "")} style=${styleMap(styles)} />`;
+    return html`<img
+      src=${props.url}
+      class=${"a2ui-image " + (props.variant || "")}
+      style=${styleMap(styles)}
+    />`;
   }
 }
 
 export const A2uiImage = {
   ...ImageApi,
-  tagName: "a2ui-image"
+  tagName: "a2ui-image",
 };

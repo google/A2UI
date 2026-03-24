@@ -15,8 +15,8 @@
  */
 
 import { Catalog } from "@a2ui/web_core/v0_9";
-import { LitComponentApi } from "../../types.js";
 import { BASIC_FUNCTIONS } from "@a2ui/web_core/v0_9/basic_catalog";
+import { LitComponentApi } from "@a2ui/lit/v0_9";
 
 import { A2uiText } from "./components/Text.js";
 import { A2uiButton } from "./components/Button.js";
@@ -40,9 +40,24 @@ import { A2uiModal } from "./components/Modal.js";
 export const basicCatalog = new Catalog<LitComponentApi>(
   "https://a2ui.org/specification/v0_9/basic_catalog.json",
   [
-    A2uiText, A2uiButton, A2uiTextField, A2uiRow, A2uiColumn, A2uiList, A2uiImage, A2uiIcon,
-    A2uiVideo, A2uiAudioPlayer, A2uiCard, A2uiDivider, A2uiCheckBox, A2uiSlider, A2uiDateTimeInput,
-    A2uiChoicePicker, A2uiTabs, A2uiModal
+    A2uiText,
+    A2uiButton,
+    A2uiTextField,
+    A2uiRow,
+    A2uiColumn,
+    A2uiList,
+    A2uiImage,
+    A2uiIcon,
+    A2uiVideo,
+    A2uiAudioPlayer,
+    A2uiCard,
+    A2uiDivider,
+    A2uiCheckBox,
+    A2uiSlider,
+    A2uiDateTimeInput,
+    A2uiChoicePicker,
+    A2uiTabs,
+    A2uiModal,
   ],
-  BASIC_FUNCTIONS as any
+  BASIC_FUNCTIONS as any,
 );

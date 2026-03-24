@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { SliderApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-slider")
 export class A2uiSliderElement extends A2uiLitElement<typeof SliderApi> {
-  protected createController() { return new A2uiController(this, SliderApi); }
+  protected createController() {
+    return new A2uiController(this, SliderApi);
+  }
 
   render() {
     const props = this.controller.props;
@@ -31,12 +32,13 @@ export class A2uiSliderElement extends A2uiLitElement<typeof SliderApi> {
     return html`
       <div class="a2ui-slider">
         ${props.label ? html`<label>${props.label}</label>` : nothing}
-        <input 
-          type="range" 
-          min=${props.min ?? 0} 
-          max=${props.max ?? 100} 
-          .value=${props.value?.toString() || "0"} 
-          @input=${(e: Event) => props.setValue?.(Number((e.target as HTMLInputElement).value))} 
+        <input
+          type="range"
+          min=${props.min ?? 0}
+          max=${props.max ?? 100}
+          .value=${props.value?.toString() || "0"}
+          @input=${(e: Event) =>
+            props.setValue?.(Number((e.target as HTMLInputElement).value))}
         />
         <span>${props.value}</span>
       </div>
@@ -46,5 +48,5 @@ export class A2uiSliderElement extends A2uiLitElement<typeof SliderApi> {
 
 export const A2uiSlider = {
   ...SliderApi,
-  tagName: "a2ui-slider"
+  tagName: "a2ui-slider",
 };

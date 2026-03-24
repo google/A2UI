@@ -14,27 +14,36 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { ColumnApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-basic-column")
 export class A2uiBasicColumnElement extends A2uiLitElement<typeof ColumnApi> {
-  protected createController() { return new A2uiController(this, ColumnApi); }
+  protected createController() {
+    return new A2uiController(this, ColumnApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
     const children = Array.isArray(props.children) ? props.children : [];
-    const styles = { display: "flex", flexDirection: "column", flex: props.weight !== undefined ? String(props.weight) : "initial", gap: "8px" };
-    
+    const styles = {
+      display: "flex",
+      flexDirection: "column",
+      flex: props.weight !== undefined ? String(props.weight) : "initial",
+      gap: "8px",
+    };
+
     return html`
-      <div class="a2ui-column" style=${styleMap(styles as Record<string, string>)}>
+      <div
+        class="a2ui-column"
+        style=${styleMap(styles as Record<string, string>)}
+      >
         ${map(children, (child: any) => html`${this.renderNode(child)}`)}
       </div>
     `;
@@ -43,5 +52,5 @@ export class A2uiBasicColumnElement extends A2uiLitElement<typeof ColumnApi> {
 
 export const A2uiColumn = {
   ...ColumnApi,
-  tagName: "a2ui-basic-column"
+  tagName: "a2ui-basic-column",
 };

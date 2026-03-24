@@ -14,26 +14,35 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { ListApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-list")
 export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
-  protected createController() { return new A2uiController(this, ListApi); }
+  protected createController() {
+    return new A2uiController(this, ListApi);
+  }
 
   render() {
     const props = this.controller.props;
     if (!props) return nothing;
 
     const children = Array.isArray(props.children) ? props.children : [];
-    const styles = { display: "flex", flexDirection: props.direction === "horizontal" ? "row" : "column", overflow: "auto", gap: "8px" };
+    const styles = {
+      display: "flex",
+      flexDirection: props.direction === "horizontal" ? "row" : "column",
+      overflow: "auto",
+      gap: "8px",
+    };
     return html`
-      <div class="a2ui-list" style=${styleMap(styles as Record<string, string>)}>
+      <div
+        class="a2ui-list"
+        style=${styleMap(styles as Record<string, string>)}
+      >
         ${map(children, (child: any) => html`${this.renderNode(child)}`)}
       </div>
     `;
@@ -42,5 +51,5 @@ export class A2uiListElement extends A2uiLitElement<typeof ListApi> {
 
 export const A2uiList = {
   ...ListApi,
-  tagName: "a2ui-list"
+  tagName: "a2ui-list",
 };

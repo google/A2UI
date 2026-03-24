@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { html, nothing} from "lit";
+import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-basic-text")
 export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
-  protected createController() { return new A2uiController(this, TextApi); }
+  protected createController() {
+    return new A2uiController(this, TextApi);
+  }
 
   render() {
     const props = this.controller.props;
@@ -30,18 +31,25 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
 
     const variant = props.variant ?? "body";
     switch (variant) {
-      case "h1": return html`<h1>${props.text}</h1>`;
-      case "h2": return html`<h2>${props.text}</h2>`;
-      case "h3": return html`<h3>${props.text}</h3>`;
-      case "h4": return html`<h4>${props.text}</h4>`;
-      case "h5": return html`<h5>${props.text}</h5>`;
-      case "caption": return html`<span class="a2ui-caption">${props.text}</span>`;
-      default: return html`<p>${props.text}</p>`;
+      case "h1":
+        return html`<h1>${props.text}</h1>`;
+      case "h2":
+        return html`<h2>${props.text}</h2>`;
+      case "h3":
+        return html`<h3>${props.text}</h3>`;
+      case "h4":
+        return html`<h4>${props.text}</h4>`;
+      case "h5":
+        return html`<h5>${props.text}</h5>`;
+      case "caption":
+        return html`<span class="a2ui-caption">${props.text}</span>`;
+      default:
+        return html`<p>${props.text}</p>`;
     }
   }
 }
 
 export const A2uiText = {
   ...TextApi,
-  tagName: "a2ui-basic-text"
+  tagName: "a2ui-basic-text",
 };

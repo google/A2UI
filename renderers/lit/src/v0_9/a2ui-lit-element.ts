@@ -17,8 +17,8 @@
 import { LitElement, nothing } from "lit";
 import { property } from "lit/decorators.js";
 import { ComponentContext, ComponentApi } from "@a2ui/web_core/v0_9";
-import { A2uiController } from "./adapter.js";
-import { renderA2uiNode } from "./surface/render-node.js";
+import { renderA2uiNode } from "./surface/render-a2ui-node.js";
+import { A2uiController } from "@a2ui/lit/v0_9";
 
 /**
  * Represents a reference to a child component that should be rendered.

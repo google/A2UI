@@ -17,9 +17,8 @@
 import { html, nothing} from "lit";
 import { customElement } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { A2uiLitElement } from "../../../base-element.js";
-import { A2uiController } from "../../../adapter.js";
 import { TextFieldApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
 
 @customElement("a2ui-textfield")
 export class A2uiTextFieldElement extends A2uiLitElement<typeof TextFieldApi> {
@@ -50,27 +49,26 @@ export class A2uiTextFieldElement extends A2uiLitElement<typeof TextFieldApi> {
     return html`
       <div class="a2ui-textfield-container">
         ${props.label ? html`<label>${props.label}</label>` : nothing}
-        
-        ${props.variant === "longText" 
-          ? html`
-            <textarea
+        ${props.variant === "longText"
+          ? html` <textarea
               class=${classMap(classes)}
               .value=${props.value || ""}
               @input=${onInput}
               pattern=${props.validationRegexp || undefined}
             ></textarea>`
-          : html`
-            <input
+          : html` <input
               type=${type}
               class=${classMap(classes)}
               .value=${props.value || ""}
               @input=${onInput}
               pattern=${props.validationRegexp || undefined}
-            />`
-        }
-        
-        ${isInvalid && props.validationErrors && props.validationErrors.length > 0
-          ? html`<div class="a2ui-error-message">${props.validationErrors[0]}</div>`
+            />`}
+        ${isInvalid &&
+        props.validationErrors &&
+        props.validationErrors.length > 0
+          ? html`<div class="a2ui-error-message">
+              ${props.validationErrors[0]}
+            </div>`
           : nothing}
       </div>
     `;
