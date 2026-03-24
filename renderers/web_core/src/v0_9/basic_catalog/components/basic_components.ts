@@ -38,7 +38,7 @@ const CommonProps = {
     .optional(),
 };
 
-export const TextApi: ComponentApi = {
+export const TextApi = {
   name: 'Text',
   schema: z
     .object({
@@ -53,9 +53,9 @@ export const TextApi: ComponentApi = {
         .optional(),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const ImageApi: ComponentApi = {
+export const ImageApi = {
   name: 'Image',
   schema: z
     .object({
@@ -82,7 +82,7 @@ export const ImageApi: ComponentApi = {
         .optional(),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
 const ICON_NAMES = [
   'accountCircle',
@@ -146,7 +146,7 @@ const ICON_NAMES = [
   'warning',
 ] as const;
 
-export const IconApi: ComponentApi = {
+export const IconApi = {
   name: 'Icon',
   schema: z
     .object({
@@ -163,9 +163,9 @@ export const IconApi: ComponentApi = {
         .describe('The name of the icon to display.'),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const VideoApi: ComponentApi = {
+export const VideoApi = {
   name: 'Video',
   schema: z
     .object({
@@ -173,9 +173,9 @@ export const VideoApi: ComponentApi = {
       url: DynamicStringSchema.describe('The URL of the video to display.'),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const AudioPlayerApi: ComponentApi = {
+export const AudioPlayerApi = {
   name: 'AudioPlayer',
   schema: z
     .object({
@@ -186,9 +186,9 @@ export const AudioPlayerApi: ComponentApi = {
       ).optional(),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const RowApi: ComponentApi = {
+export const RowApi = {
   name: 'Row',
   schema: z
     .object({
@@ -223,9 +223,9 @@ export const RowApi: ComponentApi = {
     .describe(
       'A layout component that arranges its children horizontally. To create a grid layout, nest Columns within this Row.',
     ),
-};
+} satisfies ComponentApi;
 
-export const ColumnApi: ComponentApi = {
+export const ColumnApi = {
   name: 'Column',
   schema: z
     .object({
@@ -260,9 +260,9 @@ export const ColumnApi: ComponentApi = {
     .describe(
       'A layout component that arranges its children vertically. To create a grid layout, nest Rows within this Column.',
     ),
-};
+} satisfies ComponentApi;
 
-export const ListApi: ComponentApi = {
+export const ListApi = {
   name: 'List',
   schema: z
     .object({
@@ -282,9 +282,9 @@ export const ListApi: ComponentApi = {
         .optional(),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const CardApi: ComponentApi = {
+export const CardApi = {
   name: 'Card',
   schema: z
     .object({
@@ -294,9 +294,9 @@ export const CardApi: ComponentApi = {
       ),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const TabsApi: ComponentApi = {
+export const TabsApi = {
   name: 'Tabs',
   schema: z
     .object({
@@ -318,9 +318,9 @@ export const TabsApi: ComponentApi = {
         ),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const ModalApi: ComponentApi = {
+export const ModalApi = {
   name: 'Modal',
   schema: z
     .object({
@@ -333,9 +333,9 @@ export const ModalApi: ComponentApi = {
       ),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const DividerApi: ComponentApi = {
+export const DividerApi = {
   name: 'Divider',
   schema: z
     .object({
@@ -347,9 +347,9 @@ export const DividerApi: ComponentApi = {
         .optional(),
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const ButtonApi: ComponentApi = {
+export const ButtonApi = {
   name: 'Button',
   schema: z
     .object({
@@ -368,9 +368,9 @@ export const ButtonApi: ComponentApi = {
       checks: CheckableSchema.shape.checks,
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const TextFieldApi: ComponentApi = {
+export const TextFieldApi = {
   name: 'TextField',
   schema: z
     .object({
@@ -395,9 +395,9 @@ export const TextFieldApi: ComponentApi = {
       checks: CheckableSchema.shape.checks,
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const CheckBoxApi: ComponentApi = {
+export const CheckBoxApi = {
   name: 'CheckBox',
   schema: z
     .object({
@@ -411,9 +411,9 @@ export const CheckBoxApi: ComponentApi = {
       checks: CheckableSchema.shape.checks,
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const ChoicePickerApi: ComponentApi = {
+export const ChoicePickerApi = {
   name: 'ChoicePicker',
   schema: z
     .object({
@@ -461,9 +461,9 @@ export const ChoicePickerApi: ComponentApi = {
     .describe(
       'A component that allows selecting one or more options from a list.',
     ),
-};
+} satisfies ComponentApi;
 
-export const SliderApi: ComponentApi = {
+export const SliderApi = {
   name: 'Slider',
   schema: z
     .object({
@@ -481,9 +481,9 @@ export const SliderApi: ComponentApi = {
       checks: CheckableSchema.shape.checks,
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
-export const DateTimeInputApi: ComponentApi = {
+export const DateTimeInputApi = {
   name: 'DateTimeInput',
   schema: z
     .object({
@@ -525,7 +525,7 @@ export const DateTimeInputApi: ComponentApi = {
       checks: CheckableSchema.shape.checks,
     })
     .strict(),
-};
+} satisfies ComponentApi;
 
 export const BASIC_COMPONENTS: ComponentApi[] = [
   TextApi,
