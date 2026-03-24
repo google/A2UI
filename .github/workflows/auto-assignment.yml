@@ -1,0 +1,30 @@
+name: A2UI Issue Auto-Assignment
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  auto-assign:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run auto-assignment script
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const path = require('path');
+            const { pathToFileURL } = require('url');
+
+            const filePath = path.resolve('./scripts/auto-assignment.mjs');
+            const fileUrl = pathToFileURL(filePath).href;
+
+            const importedModule = await import(fileUrl);
+            await importedModule.default({ github, context });
