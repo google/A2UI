@@ -15,7 +15,7 @@ A2UI utilizes a **double-iframe isolation pattern** to run untrusted third-party
 
 Testing for any changes in this directory requires bringing up the relevant clients and servers.
 
-### Contact Multi-Surface Sample (Lit & ADK Agent)
+### 1. Contact Multi-Surface Sample (Lit & ADK Agent)
 
 This test verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
 
@@ -26,3 +26,18 @@ This test verifies the sandbox with a Lit-based client and an ADK-based A2A agen
   - Path: `../../lit/contact/`
   - Command: `npm run dev` (requires building the Lit renderer first)
   - URL: `http://localhost:5173/`
+
+### 2. MCP Apps (Calculator) (Angular)
+
+This test verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.
+
+- **MCP Server (Calculator)**:
+  - Path: `../../../agent/mcp/mcp-apps-calculcator/`
+  - Command: `uv run .` (runs on port 8000)
+- **MCP Apps Proxy Agent**:
+  - Path: `../../../agent/adk/mcp_app_proxy/`
+  - Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
+- **Angular Client App**:
+  - Path: `../../angular/`
+  - Command: `npm start -- mcp_calculator` (requires `npm run build:sandbox` and `npm install`)
+  - URL: [`http://localhost:4200/?disable_security_self_test=true`](http://localhost:4200/?disable_security_self_test=true)
