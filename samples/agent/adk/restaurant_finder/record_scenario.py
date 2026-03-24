@@ -23,9 +23,13 @@ def save_messages_with_image_copies(messages: list, image_base_url: str, out_pat
         os.makedirs(dest_images, exist_ok=True)
         for file in os.listdir(src_images):
             src_path = os.path.join(src_images, file)
+            dest_path = os.path.join(dest_images, file)
             if os.path.isfile(src_path):
+                if os.path.exists(dest_path):
+                    print(f"Skipping {file}, already exists in {dest_images}")
+                    continue
                 shutil.copy2(src_path, dest_images)
-        print(f"Copied images from {src_images} to {dest_images}")
+        print(f"Copied new images from {src_images} to {dest_images}")
 
     # Update JSON payload to use the new public asset paths
     json_str = json.dumps(messages, indent=2)
