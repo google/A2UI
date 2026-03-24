@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Lit renderer build and test
+name: Lit renderer
 
 on:
   push:
