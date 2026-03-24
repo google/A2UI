@@ -18,11 +18,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'renderers/web_core/**'
+      - 'renderers/web_core/**/*'
       - '.github/workflows/web_build_and_test.yml'
   pull_request:
     paths:
-      - 'renderers/web_core/**'
+      - 'renderers/web_core/**/*'
       - '.github/workflows/web_build_and_test.yml'
 
 jobs:
