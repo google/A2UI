@@ -9,6 +9,8 @@ const customConfig = [
       "node_modules",
       ".wireit",
       "**/*.d.ts",
+      // Old library version.
+      "src/v0_8",
     ],
   },
   {
