@@ -39,16 +39,22 @@ for (const catalog of catalogs) {
         const data = JSON.parse(content);
         let example = data;
 
+        const nameFromFile = file
+          .replace('.json', '')
+          .replace(/^[0-9]+_/, '')
+          .replace(/[-_]/g, ' ')
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+
         // Ensure it's in the Example format
         if (Array.isArray(data)) {
           example = {
-            name: file.replace('.json', '').replace(/^[0-9]+_/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            name: nameFromFile,
             description: `Example from ${catalog} catalog`,
             messages: data
           };
         } else if (!data.name || !data.messages) {
           example = {
-            name: data.name || file.replace('.json', '').replace(/^[0-9]+_/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            name: data.name || nameFromFile,
             description: data.description || `Example from ${catalog} catalog`,
             messages: data.messages || []
           };
@@ -56,9 +62,12 @@ for (const catalog of catalogs) {
 
         // In the Angular Demo we only load the basic catalog (which implements minimal components as well).
         // Rewrite the catalogId for minimal examples to use basic_catalog.json
-        for (const msg of example.messages) {
-          if (msg.createSurface && msg.createSurface.catalogId) {
-            msg.createSurface.catalogId = 'https://a2ui.org/specification/v0_9/basic_catalog.json';
+        if (catalog === 'minimal') {
+          for (const msg of example.messages) {
+            if (msg.createSurface && msg.createSurface.catalogId) {
+              msg.createSurface.catalogId =
+                'https://a2ui.org/specification/v0_9/basic_catalog.json';
+            }
           }
         }
 
