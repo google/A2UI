@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Callable
+from typing import Callable, Literal
 
 from models import A2UIFrame, AddRegionDelta, AddSectionDelta, AddTextDelta
 
 
+WidthBehavior = Literal['full', 'readable', 'compact', 'card_grid_item']
+ActionsMode = Literal['inline_actions', 'stacked_actions', 'footer_actions', 'primary_plus_overflow']
 EmitLowLevel = Callable[[object], list[A2UIFrame]]
 
 
@@ -16,6 +18,8 @@ class RegionBuildContext:
   page_kind: str
   emphasis: str
   layout_hint: str
+  width_behavior: WidthBehavior
+  actions_mode: ActionsMode
 
 
 @dataclass
@@ -38,6 +42,11 @@ class RegionArchetypeBuilder:
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     raise NotImplementedError
+
+  def _panel_layout(self, context: RegionBuildContext) -> str:
+    if context.width_behavior == 'card_grid_item':
+      return 'Card'
+    return 'Column'
 
   def _base_region(
       self,
@@ -124,7 +133,6 @@ class RegionArchetypeBuilder:
         )
         content_parent = body_id
     elif include_body_slot and slot_specs:
-      # Keep text/image content above semantic slots even without title metadata.
       body_id = f'{region_id}_body'
       frames.extend(
           emit(
@@ -169,12 +177,14 @@ class HeroArchetypeBuilder(RegionArchetypeBuilder):
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
     actions_id = f'{region_id}_hero_actions'
+    action_layout = 'Column' if context.actions_mode == 'stacked_actions' else 'Row'
     return self._base_region(
         context,
         emit,
+        layout=self._panel_layout(context),
         slot_specs=[
             SlotSpec(name='fact', section_id=f'{region_id}_hero_facts', layout='Row', order=30),
-            SlotSpec(name='action_primary', section_id=actions_id, layout='Row', order=40),
+            SlotSpec(name='action_primary', section_id=actions_id, layout=action_layout, order=40),
         ],
         slot_parents={'action_secondary': actions_id},
     )
@@ -188,6 +198,7 @@ class SummaryArchetypeBuilder(RegionArchetypeBuilder):
     return self._base_region(
         context,
         emit,
+        layout=self._panel_layout(context),
         slot_specs=[SlotSpec(name='fact', section_id=f'{region_id}_summary_facts', layout='Row', order=30)],
     )
 
@@ -198,14 +209,15 @@ class DetailsArchetypeBuilder(RegionArchetypeBuilder):
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
     actions_id = f'{region_id}_details_actions'
-    layout = 'Card' if context.delta.importance == 'high' and context.emphasis != 'content-first' else 'Column'
+    layout = 'Card' if context.width_behavior == 'card_grid_item' else 'Column'
+    action_layout = 'Column' if context.actions_mode in {'stacked_actions', 'primary_plus_overflow'} else 'Row'
     return self._base_region(
         context,
         emit,
         layout=layout,
         slot_specs=[
             SlotSpec(name='fact', section_id=f'{region_id}_details_facts', layout='Row', order=30),
-            SlotSpec(name='action_primary', section_id=actions_id, layout='Row', order=40),
+            SlotSpec(name='action_primary', section_id=actions_id, layout=action_layout, order=40),
         ],
         slot_parents={'action_secondary': actions_id},
     )
@@ -216,11 +228,27 @@ class ActionsArchetypeBuilder(RegionArchetypeBuilder):
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
+    primary_id = f'{region_id}_actions_primary'
+    secondary_id = f'{region_id}_actions_secondary'
+
+    if context.actions_mode == 'primary_plus_overflow':
+      return self._base_region(
+          context,
+          emit,
+          layout='Card' if context.width_behavior in {'compact', 'card_grid_item'} else 'Column',
+          slot_specs=[
+              SlotSpec(name='action_primary', section_id=primary_id, layout='Column', order=30),
+              SlotSpec(name='action_secondary', section_id=secondary_id, layout='Column', order=40),
+          ],
+      )
+
+    action_layout = 'Column' if context.actions_mode in {'stacked_actions', 'footer_actions'} else 'Row'
     actions_id = f'{region_id}_actions'
     return self._base_region(
         context,
         emit,
-        slot_specs=[SlotSpec(name='action_primary', section_id=actions_id, layout='Row', order=30)],
+        layout='Card' if context.width_behavior in {'compact', 'card_grid_item'} else 'Column',
+        slot_specs=[SlotSpec(name='action_primary', section_id=actions_id, layout=action_layout, order=30)],
         slot_parents={'action_secondary': actions_id},
     )
 
@@ -231,12 +259,14 @@ class WorkflowArchetypeBuilder(RegionArchetypeBuilder):
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
     actions_id = f'{region_id}_workflow_actions'
+    action_layout = 'Column' if context.actions_mode == 'stacked_actions' else 'Row'
     return self._base_region(
         context,
         emit,
+        layout='Card' if context.width_behavior == 'card_grid_item' else 'Column',
         slot_specs=[
             SlotSpec(name='flow', section_id=f'{region_id}_workflow_flow', layout='Column', order=30),
-            SlotSpec(name='action_primary', section_id=actions_id, layout='Row', order=40),
+            SlotSpec(name='action_primary', section_id=actions_id, layout=action_layout, order=40),
         ],
         slot_parents={'action_secondary': actions_id},
     )
@@ -246,7 +276,11 @@ class SupportingArchetypeBuilder(RegionArchetypeBuilder):
   archetype_name = 'supporting_block'
 
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
-    return self._base_region(context, emit)
+    return self._base_region(
+        context,
+        emit,
+        layout='Card' if context.width_behavior in {'compact', 'card_grid_item'} else 'Column',
+    )
 
 
 class ListArchetypeBuilder(RegionArchetypeBuilder):
@@ -257,6 +291,7 @@ class ListArchetypeBuilder(RegionArchetypeBuilder):
     return self._base_region(
         context,
         emit,
+        layout='Card' if context.width_behavior == 'card_grid_item' else 'Column',
         slot_specs=[SlotSpec(name='list_item', section_id=f'{region_id}_list_items', layout='List', order=30)],
     )
 
@@ -267,14 +302,14 @@ class FormArchetypeBuilder(RegionArchetypeBuilder):
   def build(self, context: RegionBuildContext, emit: EmitLowLevel) -> RegionBuildResult:
     region_id = context.delta.id
     actions_id = f'{region_id}_form_actions'
-    layout = 'Card' if context.delta.importance == 'high' and context.emphasis != 'action-first' else 'Column'
+    action_layout = 'Column' if context.actions_mode in {'stacked_actions', 'footer_actions'} else 'Row'
     return self._base_region(
         context,
         emit,
-        layout=layout,
+        layout='Card' if context.width_behavior == 'card_grid_item' else 'Column',
         slot_specs=[
             SlotSpec(name='input', section_id=f'{region_id}_form_inputs', layout='Column', order=30),
-            SlotSpec(name='action_primary', section_id=actions_id, layout='Row', order=40),
+            SlotSpec(name='action_primary', section_id=actions_id, layout=action_layout, order=40),
         ],
         slot_parents={'action_secondary': actions_id},
     )

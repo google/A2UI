@@ -32,34 +32,6 @@ def _data_paths(frames: list[object]) -> list[str]:
   return paths
 
 
-def test_actions_region_uses_single_action_row_for_both_priorities() -> None:
-  compiler = SkeletonCompiler()
-  compiler.apply(
-      InitPlanDelta(
-          event='init_plan',
-          title='Action page',
-          page_kind='overview',
-          emphasis='balanced',
-          layout_hint='single_column',
-      )
-  )
-
-  frames = compiler.apply(
-      AddRegionDelta(
-          event='add_region',
-          id='actions_region',
-          role='actions',
-          title='Actions',
-      )
-  )
-
-  binding = compiler.regions['actions_region']
-  assert binding.parent_for('action_primary') == 'actions_region_actions'
-  assert binding.parent_for('action_secondary') == 'actions_region_actions'
-  assert 'actions_region_primary_actions' not in _slot_component_ids(frames)
-  assert 'actions_region_secondary_actions' not in _slot_component_ids(frames)
-
-
 def test_summary_region_uses_explicit_header_and_body_slots() -> None:
   compiler = SkeletonCompiler()
   compiler.apply(InitPlanDelta(event='init_plan', title='Summary page'))
@@ -79,14 +51,72 @@ def test_summary_region_uses_explicit_header_and_body_slots() -> None:
 
   assert binding.parent_for('text') == 'summary_region_body'
   assert binding.parent_for('fact') == 'summary_region_summary_facts'
-  assert binding.parent_for('action_primary') == 'summary_region'
-  assert binding.parent_for('action_secondary') == 'summary_region'
   assert 'summary_region_header' in component_ids
   assert 'summary_region_header_title' in component_ids
   assert 'summary_region_header_description' in component_ids
   assert '/sections/summary_region' not in data_paths
   assert '/content/summary_region_header_title' in data_paths
   assert '/content/summary_region_header_description' in data_paths
+
+
+def test_dashboard_summary_uses_card_grid_width_behavior() -> None:
+  compiler = SkeletonCompiler()
+  compiler.apply(
+      InitPlanDelta(
+          event='init_plan',
+          title='Dashboard',
+          page_kind='dashboard',
+          emphasis='analytics-first',
+          layout_hint='hero_plus_two_column',
+      )
+  )
+  frames = compiler.apply(AddRegionDelta(event='add_region', id='kpi_region', role='summary', title='KPI'))
+  component_ids = _slot_component_ids(frames)
+
+  assert compiler.role_width['summary'] == 'card_grid_item'
+  assert 'kpi_region' in component_ids
+
+
+def test_actions_region_in_narrow_side_uses_primary_plus_overflow_slots() -> None:
+  compiler = SkeletonCompiler()
+  compiler.apply(
+      InitPlanDelta(
+          event='init_plan',
+          title='Approval',
+          page_kind='detail',
+          emphasis='action-first',
+          layout_hint='two_column',
+      )
+  )
+  frames = compiler.apply(AddRegionDelta(event='add_region', id='actions_region', role='actions', title='Actions'))
+  binding = compiler.regions['actions_region']
+  component_ids = _slot_component_ids(frames)
+
+  assert compiler.side_behavior == 'narrow'
+  assert binding.parent_for('action_primary') == 'actions_region_actions_primary'
+  assert binding.parent_for('action_secondary') == 'actions_region_actions_secondary'
+  assert 'actions_region_actions_primary' in component_ids
+  assert 'actions_region_actions_secondary' in component_ids
+
+
+def test_form_action_first_routes_actions_to_footer_bucket() -> None:
+  compiler = SkeletonCompiler()
+  compiler.apply(
+      InitPlanDelta(
+          event='init_plan',
+          title='Form',
+          page_kind='form',
+          emphasis='action-first',
+          layout_hint='hero_plus_action_panel',
+      )
+  )
+
+  assert compiler.role_slots['actions'] == 'actions_footer_bucket'
+
+  frames = compiler.apply(AddRegionDelta(event='add_region', id='actions_form', role='actions', title='Submit'))
+  component_ids = _slot_component_ids(frames)
+  assert 'actions_footer_bucket' in component_ids
+  assert 'actions_form_actions' in component_ids
 
 
 def test_pending_region_deltas_flush_through_compact_slot_mapping() -> None:
