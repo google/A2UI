@@ -107,6 +107,8 @@ describe('InferredComponentApiSchemaType', () => {
       name: 'MockComp',
       schema: mockSchema,
     } satisfies ComponentApi;
+    // Appease typescript-eslint/no-unused-vars
+    assert.strictEqual(mockApi.name, 'MockComp');
 
     // Type-level equivalence assertion using z.infer
     type ExpectedType = z.infer<typeof mockSchema>;
@@ -122,15 +124,15 @@ describe('InferredComponentApiSchemaType', () => {
 
     // When types are not "any", check that they're the same by checking if they
     // extend each other.
-    type TypesAreEquivalent<Expected, Actual> =
-      Actual extends Expected
-        ? Expected extends Actual
-          ? true
-          : false
-        : false;
+    type TypesAreEquivalent<Expected, Actual> = Actual extends Expected
+      ? Expected extends Actual
+        ? true
+        : false
+      : false;
 
     // typesMatchExact only accepts "true" if `TypesAreEquivalent`
-    const typesMatchExact: TypesAreEquivalent<ExpectedType, InferredType> = true;
+    const typesMatchExact: TypesAreEquivalent<ExpectedType, InferredType> =
+      true;
     assert.strictEqual(typesMatchExact, true);
 
     // The asserts in this test should never fail, instead this test should fail
