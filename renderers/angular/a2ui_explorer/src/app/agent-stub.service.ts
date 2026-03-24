@@ -17,7 +17,7 @@
 import { Injectable } from '@angular/core';
 import { A2uiRendererService } from '@a2ui/angular/v0_9';
 
-import { SurfaceGroupAction, A2uiMessage } from '@a2ui/web_core/v0_9';
+import { A2uiClientAction, A2uiMessage } from '@a2ui/web_core/v0_9';
 import { ActionDispatcher } from './action-dispatcher.service';
 
 /**
@@ -46,7 +46,7 @@ interface SubmitFormContext {
 })
 export class AgentStubService {
   /** Log of actions received from the surface. */
-  actionsLog: Array<{ timestamp: Date; action: SurfaceGroupAction }> = [];
+  actionsLog: Array<{ timestamp: Date; action: A2uiClientAction }> = [];
 
   constructor(
     private rendererService: A2uiRendererService,
@@ -58,62 +58,57 @@ export class AgentStubService {
 
   /**
    * Pushes actions triggered from the rendered Canvas frame through simulation.
-   * - Logs actions into inspector event frame aggregates.
-   * - Emulates generic server-side evaluation triggers delaying deferred updates.
-   * - Dispatch subsequent node-tree node triggers back over `A2uiRendererService`.
    */
-  handleAction(action: SurfaceGroupAction) {
+  handleAction(action: A2uiClientAction) {
     console.log('[AgentStub] handleAction action:', action);
     this.actionsLog.push({ timestamp: new Date(), action });
 
     // Simulate server processing delay
     setTimeout(() => {
-      if ('event' in action) {
-        const { name, context } = action.event;
-        if (name === 'update_property' && context) {
-          const { path, value, surfaceId } = context as unknown as UpdatePropertyContext;
-          console.log(
-            '[AgentStub] update_property path:',
-            path,
-            'value:',
-            value,
-            'surfaceId:',
-            surfaceId,
-          );
-          this.rendererService.processMessages([
-            {
-              version: 'v0.9',
-              updateDataModel: {
-                surfaceId: surfaceId || action.surfaceId,
-                path: path,
-                value: value,
-              },
+      const { name, context } = action;
+      if (name === 'update_property' && context) {
+        const { path, value, surfaceId } = context as unknown as UpdatePropertyContext;
+        console.log(
+          '[AgentStub] update_property path:',
+          path,
+          'value:',
+          value,
+          'surfaceId:',
+          surfaceId,
+        );
+        this.rendererService.processMessages([
+          {
+            version: 'v0.9',
+            updateDataModel: {
+              surfaceId: surfaceId || action.surfaceId,
+              path: path,
+              value: value,
             },
-          ]);
-        } else if (name === 'submit_form' && context) {
-          const formData = context as unknown as SubmitFormContext;
-          const nameValue = formData.name || 'Anonymous';
+          },
+        ]);
+      } else if (name === 'submit_form' && context) {
+        const formData = context as unknown as SubmitFormContext;
+        const nameValue = formData.name || 'Anonymous';
 
-          // Respond with an update to the data model in v0.9 layout
-          this.rendererService.processMessages([
-            {
-              version: 'v0.9',
-              updateDataModel: {
-                surfaceId: action.surfaceId,
-                path: '/form/submitted',
-                value: true,
-              },
+        // Respond with an update to the data model in v0.9 layout
+        this.rendererService.processMessages([
+          {
+            version: 'v0.9',
+            updateDataModel: {
+              surfaceId: action.surfaceId,
+              path: '/form/submitted',
+              value: true,
             },
-            {
-              version: 'v0.9',
-              updateDataModel: {
-                surfaceId: action.surfaceId,
-                path: '/form/responseMessage',
-                value: `Hello, ${nameValue}! Your form has been processed.`,
-              },
+          },
+          {
+            version: 'v0.9',
+            updateDataModel: {
+              surfaceId: action.surfaceId,
+              path: '/form/responseMessage',
+              value: `Hello, ${nameValue}! Your form has been processed.`,
             },
-          ]);
-        }
+          },
+        ]);
       }
     }, 50); // Shorter delay for property updates
   }
@@ -124,16 +119,18 @@ export class AgentStubService {
   initializeDemo(initialMessages: A2uiMessage[]) {
     // Before replaying initial messages (which contains createSurface),
     // ensure any existing surface with the same ID is cleared.
-    for (const msg of initialMessages) {
-      if ('createSurface' in msg) {
-        const createSurface = msg.createSurface;
-        if (this.rendererService.surfaceGroup.getSurface(createSurface.surfaceId)) {
-          this.rendererService.processMessages([
-            {
-              version: 'v0.9',
-              deleteSurface: { surfaceId: createSurface.surfaceId },
-            },
-          ]);
+    if (this.rendererService.surfaceGroup) {
+      for (const msg of initialMessages) {
+        if ('createSurface' in msg) {
+          const createSurface = msg.createSurface;
+          if (this.rendererService.surfaceGroup.getSurface(createSurface.surfaceId)) {
+            this.rendererService.processMessages([
+              {
+                version: 'v0.9',
+                deleteSurface: { surfaceId: createSurface.surfaceId },
+              },
+            ]);
+          }
         }
       }
     }

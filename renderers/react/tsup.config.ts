@@ -22,6 +22,7 @@ export default defineConfig([
     entry: {
       index: 'src/index.ts',
       'v0_8/index': 'src/v0_8/index.ts',
+      'v0_9/index': 'src/v0_9/index.ts',
     },
     format: ['esm', 'cjs'],
     dts: true,

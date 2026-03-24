@@ -311,6 +311,15 @@
                   "additionalProperties": {
                     "$ref": "#/$defs/DynamicValue"
                   }
+                },
+                "wantResponse": {
+                  "type": "boolean",
+                  "description": "If true, the client expects an actionResponse from the server.",
+                  "default": false
+                },
+                "responsePath": {
+                  "type": "string",
+                  "description": "Optional JSON Pointer path where the client should save the response value in its local data model."
                 }
               },
               "required": ["name"],

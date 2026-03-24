@@ -3,10 +3,11 @@
   "version": "0.8.5",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "ng build && node postprocess-build.mjs",
-    "demo": "ng serve a2ui_explorer",
-    "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless"
+    "generate-examples": "node scripts/generate-examples.mjs",
+    "build": "npm run generate-examples && ng build && node postprocess-build.mjs",
+    "demo": "npm run generate-examples && ng serve a2ui_explorer",
+    "test": "npm run generate-examples && ng test",
+    "test:ci": "npm run generate-examples && ng test --watch=false --browsers=ChromeHeadless"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",

@@ -19,6 +19,7 @@ import { Catalog, ComponentApi } from "../catalog/types.js";
 import { SurfaceGroupModel } from "../state/surface-group-model.js";
 import { ComponentModel } from "../state/component-model.js";
 import { Subscription } from "../common/events.js";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 import {
   A2uiMessage,
@@ -27,8 +28,20 @@ import {
   UpdateDataModelMessage,
   DeleteSurfaceMessage,
 } from "../schema/server-to-client.js";
+import {
+  A2uiClientCapabilities,
+  InlineCatalog,
+} from "../schema/client-capabilities.js";
 import { A2uiClientDataModel } from "../schema/client-to-server.js";
 import { A2uiStateError, A2uiValidationError } from "../errors.js";
+
+/**
+ * Options for generating client capabilities.
+ */
+export interface CapabilitiesOptions {
+  /** If true, the full definition of all catalogs will be included. */
+  includeInlineCatalogs?: boolean;
+}
 
 /**
  * The central processor for A2UI messages.
@@ -50,6 +63,122 @@ export class MessageProcessor<T extends ComponentApi> {
     this.model = new SurfaceGroupModel<T>();
     if (this.actionHandler) {
       this.model.onAction.subscribe(this.actionHandler);
+    }
+  }
+
+  /**
+   * Generates the a2uiClientCapabilities object for the current processor.
+   *
+   * @param options Configuration for capability generation.
+   * @returns The capabilities object.
+   */
+  getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities {
+    const capabilities: A2uiClientCapabilities = {
+      "v0.9": {
+        supportedCatalogIds: this.catalogs.map((c) => c.id),
+      },
+    };
+
+    if (options?.includeInlineCatalogs) {
+      capabilities["v0.9"].inlineCatalogs = this.catalogs.map((c) =>
+        this.generateInlineCatalog(c),
+      );
+    }
+
+    return capabilities;
+  }
+
+  private generateInlineCatalog(catalog: Catalog<T>): InlineCatalog {
+    const components: Record<string, any> = {};
+
+    for (const [name, api] of catalog.components.entries()) {
+      const zodSchema = zodToJsonSchema(api.schema, {
+        target: "jsonSchema2019-09",
+      }) as any;
+
+      // Clean up Zod-specific artifacts and process REF: tags
+      this.processRefs(zodSchema);
+
+      // Wrap in standard A2UI component envelope (ComponentCommon)
+      components[name] = {
+        allOf: [
+          { $ref: "common_types.json#/$defs/ComponentCommon" },
+          {
+            properties: {
+              component: { const: name },
+              ...zodSchema.properties,
+            },
+            required: ["component", ...(zodSchema.required || [])],
+          },
+        ],
+      };
+    }
+
+    const functions: any[] = [];
+    for (const api of catalog.functions.values()) {
+      const zodSchema = zodToJsonSchema(api.schema, {
+        target: "jsonSchema2019-09",
+      }) as any;
+
+      this.processRefs(zodSchema);
+
+      functions.push({
+        name: api.name,
+        description: api.schema.description,
+        returnType: api.returnType,
+        parameters: zodSchema,
+      });
+    }
+
+    let theme: Record<string, any> | undefined;
+    if (catalog.themeSchema) {
+      const zodSchema = zodToJsonSchema(catalog.themeSchema, {
+        target: "jsonSchema2019-09",
+      }) as any;
+
+      this.processRefs(zodSchema);
+      theme = zodSchema.properties;
+    }
+
+    return {
+      catalogId: catalog.id,
+      components,
+      functions: functions.length > 0 ? functions : undefined,
+      theme,
+    };
+  }
+
+  private processRefs(node: any): void {
+    if (typeof node !== "object" || node === null) return;
+
+    // If the node itself is a REF target, transform it and stop recursion.
+    if (typeof node.description === "string" && node.description.startsWith("REF:")) {
+      const parts = node.description.substring(4).split("|");
+      const ref = parts[0];
+      const desc = parts[1] || "";
+
+      // Clear the node of all other properties.
+      for (const k of Object.keys(node)) {
+        delete node[k];
+      }
+
+      // Re-add only the $ref and an optional description.
+      node["$ref"] = ref;
+      if (desc) {
+        node["description"] = desc;
+      }
+      return;
+    }
+
+    // If not a REF target, recurse into its children.
+    if (Array.isArray(node)) {
+      for (const item of node) {
+        this.processRefs(item);
+      }
+    } else {
+      for (const key of Object.keys(node)) {
+        this.processRefs(node[key]);
+      }
     }
   }
 

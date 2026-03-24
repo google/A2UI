@@ -9,7 +9,8 @@
     { "$ref": "#/$defs/UpdateComponentsMessage" },
     { "$ref": "#/$defs/UpdateDataModelMessage" },
     { "$ref": "#/$defs/DeleteSurfaceMessage" },
-    { "$ref": "#/$defs/CallFunctionMessage" }
+    { "$ref": "#/$defs/CallFunctionMessage" },
+    { "$ref": "#/$defs/ActionResponseMessage" }
   ],
   "$defs": {
     "CreateSurfaceMessage": {
@@ -165,6 +166,44 @@
         }
       },
       "required": ["version", "callFunction", "functionCallId"],
+      "additionalProperties": false
+    },
+    "ActionResponseMessage": {
+      "type": "object",
+      "description": "A response to a client-initiated action.",
+      "properties": {
+        "version": {
+          "const": "v0.10"
+        },
+        "actionId": {
+          "type": "string",
+          "description": "The ID of the action call this response belongs to."
+        },
+        "actionResponse": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "description": "The return value of the action.",
+              "type": [ "string", "number", "boolean", "array", "object", "null" ]
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": { "type": "string" },
+                "message": { "type": "string" }
+              },
+              "required": [ "code", "message" ],
+              "additionalProperties": false
+            }
+          },
+          "oneOf": [
+            { "required": [ "value" ] },
+            { "required": [ "error" ] }
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [ "version", "actionResponse", "actionId" ],
       "additionalProperties": false
     }
   }

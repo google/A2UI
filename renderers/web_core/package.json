@@ -91,12 +91,12 @@
     "@types/node": "^24.11.0",
     "c8": "^11.0.0",
     "typescript": "^5.8.3",
-    "wireit": "^0.15.0-pre.2",
-    "zod-to-json-schema": "^3.25.1"
+    "wireit": "^0.15.0-pre.2"
   },
   "dependencies": {
     "@preact/signals-core": "^1.13.0",
     "date-fns": "^4.1.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.1"
   }
 }
