@@ -18,11 +18,10 @@ import {describe, it} from 'node:test';
 import assert from 'node:assert';
 import {DataModel} from '../state/data-model.js';
 import {DataContext} from '../rendering/data-context.js';
-
-import {signal} from '@preact/signals-core';
+import {testFrameworkSignal} from './test_signals.js';
 
 const createTestDataContext = (
-  model: DataModel,
+  model: DataModel<'preact'>,
   path: string,
   functionInvoker: any = () => null,
 ) => {
@@ -31,12 +30,12 @@ const createTestDataContext = (
     catalog: {invoker: functionInvoker},
     dispatchError: () => {},
   } as any;
-  return new DataContext(mockSurface, path);
+  return new DataContext(mockSurface, testFrameworkSignal, path);
 };
 
 describe('Function Execution in DataContext', () => {
   it('resolves and subscribes to metronome function', () => {
-    const dataModel = new DataModel();
+    const dataModel = new DataModel(testFrameworkSignal);
 
     const functions = new Map<string, Function>();
     // mimic metronome: returns a stream of ticks
@@ -44,10 +43,10 @@ describe('Function Execution in DataContext', () => {
       'metronome',
       (args: Record<string, any>, abortSignal?: AbortSignal) => {
         const interval = Number(args['interval']) || 100;
-        const subj = signal<string>('tick 0');
+        const subj = testFrameworkSignal.wrap('tick 0');
         let i = 1;
         const timerId = setInterval(() => {
-          subj.value = `tick ${i++}`;
+          testFrameworkSignal.set(subj, `tick ${i++}`);
         }, interval);
 
         abortSignal?.addEventListener('abort', () => {
@@ -102,7 +101,7 @@ describe('Function Execution in DataContext', () => {
   });
 
   it('updates function output when arguments change', () => {
-    const dataModel = new DataModel();
+    const dataModel = new DataModel(testFrameworkSignal);
     const functions = new Map<string, Function>();
 
     functions.set('echo', (args: Record<string, any>) => {

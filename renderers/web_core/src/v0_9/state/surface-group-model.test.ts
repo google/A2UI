@@ -19,33 +19,34 @@ import {describe, it, beforeEach} from 'node:test';
 import {SurfaceGroupModel} from './surface-group-model.js';
 import {Catalog, ComponentApi} from '../catalog/types.js';
 import {SurfaceModel} from './surface-model.js';
+import {testFrameworkSignal} from '../test/test_signals.js';
 
 describe('SurfaceGroupModel', () => {
-  let model: SurfaceGroupModel<ComponentApi>;
-  let catalog: Catalog<ComponentApi>;
+  let model: SurfaceGroupModel<ComponentApi, 'preact'>;
+  let catalog: Catalog<ComponentApi, 'preact'>;
 
   beforeEach(() => {
-    model = new SurfaceGroupModel<ComponentApi>();
+    model = new SurfaceGroupModel<ComponentApi, 'preact'>();
     catalog = new Catalog('test-catalog', []);
   });
 
   it('adds surface', () => {
-    const surface = new SurfaceModel('s1', catalog, {});
+    const surface = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
     model.addSurface(surface);
     assert.ok(model.getSurface('s1'));
     assert.strictEqual(model.getSurface('s1'), surface);
   });
 
   it('ignores duplicate surface addition', () => {
-    const s1 = new SurfaceModel('s1', catalog, {});
-    const s2 = new SurfaceModel('s1', catalog, {}); // Same ID
+    const s1 = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
+    const s2 = new SurfaceModel('s1', catalog, testFrameworkSignal, {}); // Same ID
     model.addSurface(s1);
     model.addSurface(s2);
     assert.strictEqual(model.getSurface('s1'), s1); // Should still be the first one
   });
 
   it('deletes surface', () => {
-    const surface = new SurfaceModel('s1', catalog, {});
+    const surface = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
     model.addSurface(surface);
     assert.ok(model.getSurface('s1'));
 
@@ -54,7 +55,7 @@ describe('SurfaceGroupModel', () => {
   });
 
   it('notifies lifecycle listeners', () => {
-    let created: SurfaceModel<ComponentApi> | undefined;
+    let created: SurfaceModel<ComponentApi, 'preact'> | undefined;
     let deletedId: string | undefined;
 
     model.onSurfaceCreated.subscribe(s => {
@@ -64,7 +65,7 @@ describe('SurfaceGroupModel', () => {
       deletedId = id;
     });
 
-    const surface = new SurfaceModel('s1', catalog, {});
+    const surface = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
     model.addSurface(surface);
     assert.ok(created);
     assert.strictEqual(created?.id, 's1');
@@ -79,7 +80,7 @@ describe('SurfaceGroupModel', () => {
       receivedAction = action;
     });
 
-    const surface = new SurfaceModel('s1', catalog, {});
+    const surface = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
     model.addSurface(surface);
 
     await surface.dispatchAction({event: {name: 'test'}}, 'c1');
@@ -94,7 +95,7 @@ describe('SurfaceGroupModel', () => {
       callCount++;
     });
 
-    const surface = new SurfaceModel('s1', catalog, {});
+    const surface = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
     model.addSurface(surface);
     model.deleteSurface('s1');
 
@@ -103,7 +104,7 @@ describe('SurfaceGroupModel', () => {
   });
 
   it('exposes surfacesMap', () => {
-    const surface = new SurfaceModel('s1', catalog, {});
+    const surface = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
     model.addSurface(surface);
     const map = model.surfacesMap;
     assert.strictEqual(map.size, 1);
@@ -111,8 +112,8 @@ describe('SurfaceGroupModel', () => {
   });
 
   it('disposes correctly', () => {
-    const s1 = new SurfaceModel('s1', catalog, {});
-    const s2 = new SurfaceModel('s2', catalog, {});
+    const s1 = new SurfaceModel('s1', catalog, testFrameworkSignal, {});
+    const s2 = new SurfaceModel('s2', catalog, testFrameworkSignal, {});
     model.addSurface(s1);
     model.addSurface(s2);
 

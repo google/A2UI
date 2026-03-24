@@ -23,12 +23,17 @@ import {SurfaceModel} from '../state/surface-model.js';
 import {Catalog} from '../catalog/types.js';
 import {ComponentModel} from '../state/component-model.js';
 import {CommonSchemas} from '../schema/common-types.js';
+import {testFrameworkSignal} from '../test/test_signals.js';
 
 describe('GenericBinder Checkable Trait', () => {
-  const mockCatalog = new Catalog('test', [], []);
+  const mockCatalog = new Catalog<never, 'preact'>('test', [], []);
 
   function setupSurfaceAndMocks() {
-    const surface = new SurfaceModel('s1', mockCatalog);
+    const surface = new SurfaceModel<never, 'preact'>(
+      's1',
+      mockCatalog,
+      testFrameworkSignal,
+    );
 
     // Mock required and min_length functions
     (surface.catalog as any).functions = new Map([
@@ -79,8 +84,8 @@ describe('GenericBinder Checkable Trait', () => {
     });
     surface.componentsModel.addComponent(compModel);
 
-    const context = new ComponentContext(surface, 'c1');
-    const binder = new GenericBinder<any>(context, schema);
+    const context = new ComponentContext(surface, 'c1', testFrameworkSignal);
+    const binder = new GenericBinder<any, 'preact'>(context, schema);
     binder.subscribe(() => {});
 
     // Initial state: should be invalid
@@ -122,8 +127,12 @@ describe('GenericBinder Checkable Trait', () => {
     });
     surface.componentsModel.addComponent(compModel);
 
-    const context = new ComponentContext(surface, 'c2');
-    const binder = new GenericBinder<any>(context, schema);
+    const context = new ComponentContext<'preact'>(
+      surface,
+      'c2',
+      testFrameworkSignal,
+    );
+    const binder = new GenericBinder<any, 'preact'>(context, schema);
     binder.subscribe(() => {});
 
     // Both rules fail initially
@@ -167,8 +176,8 @@ describe('GenericBinder Checkable Trait', () => {
     });
     surface.componentsModel.addComponent(compModel);
 
-    const context = new ComponentContext(surface, 'c3');
-    const binder = new GenericBinder<any>(context, schema);
+    const context = new ComponentContext(surface, 'c3', testFrameworkSignal);
+    const binder = new GenericBinder<any, 'preact'>(context, schema);
 
     assert.strictEqual(binder.snapshot.isValid, false);
     assert.deepStrictEqual(binder.snapshot.validationErrors, [
@@ -185,8 +194,8 @@ describe('GenericBinder Checkable Trait', () => {
     });
     surface.componentsModel.addComponent(compModel);
 
-    const context = new ComponentContext(surface, 'c4');
-    const binder = new GenericBinder<any>(context, schema);
+    const context = new ComponentContext(surface, 'c4', testFrameworkSignal);
+    const binder = new GenericBinder<any, 'preact'>(context, schema);
 
     assert.strictEqual(binder.snapshot.isValid, true);
     assert.deepStrictEqual(binder.snapshot.validationErrors, []);

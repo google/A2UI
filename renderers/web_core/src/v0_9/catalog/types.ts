@@ -15,9 +15,10 @@
  */
 
 import {z} from 'zod';
-import {DataContext} from '../rendering/data-context.js';
 import {Signal} from '@preact/signals-core';
+import {DataContext} from '../rendering/data-context.js';
 import {A2uiExpressionError} from '../errors.js';
+import {SignalKinds} from '../reactivity/signals.js';
 
 /**
  * Robust check for a Preact Signal that works across package boundaries.
@@ -61,10 +62,12 @@ export interface FunctionApi {
 /**
  * A function implementation that can be registered with the evaluator or basic catalog.
  */
-export interface FunctionImplementation extends FunctionApi {
+export interface FunctionImplementation<
+  SK extends keyof SignalKinds<any>,
+> extends FunctionApi {
   execute(
     args: Record<string, any>,
-    context: DataContext,
+    context: DataContext<SK>,
     abortSignal?: AbortSignal,
   ): unknown | Signal<unknown>;
 }
@@ -72,21 +75,22 @@ export interface FunctionImplementation extends FunctionApi {
 export function createFunctionImplementation<
   Schema extends z.ZodTypeAny,
   TReturn extends A2uiReturnType,
+  SK extends keyof SignalKinds<any>,
 >(
   api: {name: string; returnType: TReturn; schema: Schema},
   execute: (
     args: z.infer<Schema>,
-    context: DataContext,
+    context: DataContext<SK>,
     abortSignal?: AbortSignal,
   ) => InferA2uiReturnType<TReturn> | Signal<InferA2uiReturnType<TReturn>>,
-): FunctionImplementation {
+): FunctionImplementation<SK> {
   return {
     name: api.name,
     returnType: api.returnType,
     schema: api.schema,
     execute: execute as (
       args: Record<string, any>,
-      ctx: DataContext,
+      ctx: DataContext<SK>,
       ab?: AbortSignal,
     ) => unknown,
   };
@@ -127,7 +131,10 @@ export type InferredComponentApiSchemaType<Api extends ComponentApi> = z.infer<
 /**
  * A collection of available components and functions.
  */
-export class Catalog<T extends ComponentApi> {
+export class Catalog<
+  T extends ComponentApi,
+  SK extends keyof SignalKinds<any>,
+> {
   readonly id: string;
 
   /**
@@ -139,7 +146,7 @@ export class Catalog<T extends ComponentApi> {
   /**
    * Map of functions provided by this catalog.
    */
-  readonly functions: ReadonlyMap<string, FunctionImplementation>;
+  readonly functions: ReadonlyMap<string, FunctionImplementation<SK>>;
 
   /**
    * The schema for theme parameters used by this catalog.
@@ -150,12 +157,12 @@ export class Catalog<T extends ComponentApi> {
    * A ready-to-use FunctionInvoker callback that delegates to this catalog's functions.
    * Can be passed directly to a DataContext.
    */
-  readonly invoker: FunctionInvoker;
+  readonly invoker: FunctionInvoker<SK>;
 
   constructor(
     id: string,
     components: T[],
-    functions: FunctionImplementation[] = [],
+    functions: FunctionImplementation<SK>[] = [],
     themeSchema?: z.ZodObject<any>,
   ) {
     this.id = id;
@@ -166,7 +173,7 @@ export class Catalog<T extends ComponentApi> {
     }
     this.components = compMap;
 
-    const funcMap = new Map<string, FunctionImplementation>();
+    const funcMap = new Map<string, FunctionImplementation<SK>>();
     for (const fn of functions) {
       funcMap.set(fn.name, fn);
     }

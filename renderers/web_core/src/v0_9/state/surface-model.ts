@@ -22,6 +22,7 @@ import {
   A2uiClientAction,
   A2uiClientActionSchema,
 } from '../schema/client-to-server.js';
+import {FrameworkSignal, SignalKinds} from '../reactivity/signals.js';
 
 /** A function that listens for actions emitted from a surface. */
 export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
@@ -34,9 +35,12 @@ export type ActionListener = (action: A2uiClientAction) => void | Promise<void>;
  *
  * @template T The concrete type of the ComponentApi from the catalog.
  */
-export class SurfaceModel<T extends ComponentApi> {
+export class SurfaceModel<
+  T extends ComponentApi,
+  SK extends keyof SignalKinds<any>,
+> {
   /** The data model for this surface. */
-  readonly dataModel: DataModel;
+  readonly dataModel: DataModel<SK>;
   /** The collection of component models for this surface. */
   readonly componentsModel: SurfaceComponentsModel;
 
@@ -59,11 +63,12 @@ export class SurfaceModel<T extends ComponentApi> {
    */
   constructor(
     readonly id: string,
-    readonly catalog: Catalog<T>,
+    readonly catalog: Catalog<T, SK>,
+    frameworkSignal: FrameworkSignal<SK>,
     readonly theme: any = {},
     readonly sendDataModel: boolean = false,
   ) {
-    this.dataModel = new DataModel({});
+    this.dataModel = new DataModel(frameworkSignal, {});
     this.componentsModel = new SurfaceComponentsModel();
   }
 

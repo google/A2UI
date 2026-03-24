@@ -15,6 +15,7 @@
  */
 
 import {DataContext} from '../rendering/data-context.js';
+import {SignalKinds} from '../reactivity/signals.js';
 
 /**
  * A function that invokes a catalog function by name and returns its result synchronously or as a Signal.
@@ -25,9 +26,9 @@ import {DataContext} from '../rendering/data-context.js';
  * @param abortSignal An optional AbortSignal for asynchronous or long-running operations.
  * @returns The result of the function call, which can be a literal, a Signal, or a Promise (handled by the caller).
  */
-export type FunctionInvoker = (
+export type FunctionInvoker<SK extends keyof SignalKinds<any>> = (
   name: string,
   args: Record<string, any>,
-  context: DataContext,
+  context: DataContext<SK>,
   abortSignal?: AbortSignal,
 ) => any;

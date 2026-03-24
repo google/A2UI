@@ -19,19 +19,20 @@ import {ComponentModel} from '../state/component-model.js';
 import type {SurfaceModel} from '../state/surface-model.js';
 import type {SurfaceComponentsModel} from '../state/surface-components-model.js';
 import {A2uiStateError} from '../errors.js';
+import {FrameworkSignal, SignalKinds} from '../reactivity/signals.js';
 
 /**
  * Context provided to components during rendering.
  * It provides access to the component's model, the data context, and a way to dispatch actions.
  */
-export class ComponentContext {
+export class ComponentContext<SK extends keyof SignalKinds<any>> {
   /** The state model for this specific component, providing access to its properties and state. */
   readonly componentModel: ComponentModel;
   /**
    * The data context scoped to this component's position in the visual hierarchy.
    * Uses the `dataModelBasePath` to resolve relative data paths.
    */
-  readonly dataContext: DataContext;
+  readonly dataContext: DataContext<SK>;
   /** The collection of all component models for the current surface, allowing lookups by ID. */
   readonly surfaceComponents: SurfaceComponentsModel;
 
@@ -43,8 +44,9 @@ export class ComponentContext {
    * @param dataModelBasePath The base path for data model access (default: '/').
    */
   constructor(
-    surface: SurfaceModel<any>,
+    surface: SurfaceModel<any, SK>,
     componentId: string,
+    frameworkSignal: FrameworkSignal<SK>,
     dataModelBasePath: string = '/',
   ) {
     const model = surface.componentsModel.get(componentId);
@@ -54,7 +56,11 @@ export class ComponentContext {
     this.componentModel = model;
     this.surfaceComponents = surface.componentsModel;
 
-    this.dataContext = new DataContext(surface, dataModelBasePath);
+    this.dataContext = new DataContext(
+      surface,
+      frameworkSignal,
+      dataModelBasePath,
+    );
     this._actionDispatcher = action =>
       surface.dispatchAction(action, this.componentModel.id);
   }

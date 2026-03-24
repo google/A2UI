@@ -17,12 +17,13 @@
 import assert from 'node:assert';
 import {describe, it, beforeEach} from 'node:test';
 import {DataModel} from './data-model.js';
+import {testFrameworkSignal} from '../test/test_signals.js';
 
 describe('DataModel', () => {
-  let model: DataModel;
+  let model: DataModel<'preact'>;
 
   beforeEach(() => {
-    model = new DataModel({
+    model = new DataModel(testFrameworkSignal, {
       user: {
         name: 'Alice',
         settings: {
@@ -36,7 +37,7 @@ describe('DataModel', () => {
   // --- Initialization ---
 
   it('initializes with empty data if not provided', () => {
-    const emptyModel = new DataModel();
+    const emptyModel = new DataModel(testFrameworkSignal);
     assert.deepStrictEqual(emptyModel.get('/'), {});
   });
 

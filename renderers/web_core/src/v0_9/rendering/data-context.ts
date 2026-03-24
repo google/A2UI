@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {signal, computed, Signal, effect} from '@preact/signals-core';
 import {z} from 'zod';
 import {DataModel, DataSubscription} from '../state/data-model.js';
 import type {
@@ -25,9 +24,9 @@ import type {
 } from '../schema/common-types.js';
 import {A2uiExpressionError} from '../errors.js';
 import {isSignal} from '../catalog/types.js';
-
 import {FunctionInvoker} from '../catalog/function_invoker.js';
 import {SurfaceModel} from '../state/surface-model.js';
+import {FrameworkSignal, SignalKinds} from '../reactivity/signals.js';
 
 /**
  * A contextual view of the main DataModel, serving as the unified interface for resolving
@@ -37,20 +36,24 @@ import {SurfaceModel} from '../state/surface-model.js';
  * It automatically handles resolving relative paths against the component's current scope
  * and provides tools for evaluating complex, reactive expressions.
  */
-export class DataContext {
+export class DataContext<SK extends keyof SignalKinds<any>> {
   /** The shared, global DataModel instance for the entire UI surface. */
-  readonly dataModel: DataModel;
+  readonly dataModel: DataModel<SK>;
   /** A callback for executing function calls defined in the A2UI component tree. */
-  readonly functionInvoker: FunctionInvoker;
+  readonly functionInvoker: FunctionInvoker<SK>;
+
+  private readonly signalCleanups = new WeakMap<any, () => void>();
 
   /**
    * Initializes a new DataContext.
    *
    * @param surface The surface model this context belongs to.
+   * @param frameworkSignal The framework signal implementation to use for reactive values.
    * @param path The absolute path in the DataModel that this context is scoped to (its "current working directory").
    */
   constructor(
-    readonly surface: SurfaceModel<any>,
+    readonly surface: SurfaceModel<any, SK>,
+    readonly frameworkSignal: FrameworkSignal<SK>,
     readonly path: string,
   ) {
     this.dataModel = surface.dataModel;
@@ -140,10 +143,10 @@ export class DataContext {
     const sig = this.resolveSignal<V>(value);
 
     let isSync = true;
-    let currentValue = sig.peek();
+    let currentValue = this.frameworkSignal.unwrap(sig);
 
-    const dispose = effect(() => {
-      const val = sig.value;
+    const destroy = this.frameworkSignal.effect(() => {
+      const val = this.frameworkSignal.unwrap(sig);
       currentValue = val;
       if (!isSync) {
         onChange(val);
@@ -156,40 +159,41 @@ export class DataContext {
         return currentValue;
       },
       unsubscribe: () => {
-        dispose();
-        if ((sig as any).unsubscribe) {
-          (sig as any).unsubscribe();
-        }
+        destroy();
+        const cleanup = this.signalCleanups.get(sig);
+        if (cleanup) cleanup();
       },
     };
   }
 
   /**
-   * Returns a Preact Signal representing the reactive dynamic value.
+   * Returns a Signal representing the reactive dynamic value.
    *
    * This method recursively resolves any nested path bindings or function calls into a
    * single, reactive `Signal`. Any changes to the underlying data or function dependencies
    * will cause this signal's value to update.
    *
    * @param value The DynamicValue to evaluate and observe.
-   * @returns A Preact Signal containing the reactive result of the evaluation.
+   * @returns A signal containing the reactive result of the evaluation.
    */
-  resolveSignal<V>(value: DynamicValue): Signal<V> {
+  resolveSignal<V>(value: DynamicValue): SignalKinds<V | undefined>[SK] {
     // 1. Literal
     if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-      return signal(value as V);
+      return this.frameworkSignal.wrap(value as V);
     }
 
     // 2. Path Check
     if ('path' in value) {
-      const absolutePath = this.resolvePath((value as DataBinding).path);
-      return this.dataModel.getSignal<V>(absolutePath) as Signal<V>;
+      const absolutePath = this.resolvePath(value.path);
+      return this.dataModel.getSignal<V>(absolutePath);
     }
 
     // 3. Function Call
     if ('call' in value) {
       const call = value as FunctionCall;
-      const argSignals: Record<string, Signal<any>> = {};
+      // NOTE: argSignals seem to be totally unused in terms of reactivity and
+      //       they don't actually get updated again after becoming signals.
+      const argSignals: Record<string, SignalKinds<V | undefined>[SK]> = {};
 
       for (const [key, argVal] of Object.entries(call.args)) {
         argSignals[key] = this.resolveSignal(argVal);
@@ -202,27 +206,30 @@ export class DataContext {
           {},
           abortController.signal,
         );
-        const sig = result instanceof Signal ? result : signal(result);
-        (sig as any).unsubscribe = () => abortController.abort();
-        return sig;
+        return this.frameworkSignal.isSignal(result)
+          ? result
+          : this.frameworkSignal.wrap(result);
       }
 
       const keys = Object.keys(argSignals);
-      const resultSig = signal<V | undefined>(undefined);
+      const resultSig = this.frameworkSignal.wrap<V | undefined>(undefined);
       let abortController: AbortController | undefined;
       let innerUnsubscribe: (() => void) | undefined;
 
-      const argsSig = computed(() => {
+      const argsSig = this.frameworkSignal.computed(() => {
         const argsRecord: Record<string, any> = {};
         for (let i = 0; i < keys.length; i++) {
-          argsRecord[keys[i]] = argSignals[keys[i]].value;
+          argsRecord[keys[i]] = this.frameworkSignal.unwrap(
+            argSignals[keys[i]],
+          );
         }
         return argsRecord;
       });
 
-      const stopper = effect(() => {
+      const destroy = this.frameworkSignal.effect(() => {
         try {
-          const args = argsSig.value;
+          const args =
+            this.frameworkSignal.unwrap<Record<string, any>>(argsSig);
           if (abortController) abortController.abort();
           if (innerUnsubscribe) {
             innerUnsubscribe();
@@ -230,42 +237,47 @@ export class DataContext {
           }
           abortController = new AbortController();
 
+          // Run the function once. The result may be a signal.
           const res = this.evaluateFunctionReactive<V>(
             call.call,
             args,
             abortController.signal,
           );
 
-          if (isSignal(res)) {
-            innerUnsubscribe = effect(() => {
-              resultSig.value = res.value;
+          if (this.frameworkSignal.isSignal(res)) {
+            innerUnsubscribe = this.frameworkSignal.effect(() => {
+              this.frameworkSignal.set(
+                resultSig,
+                this.frameworkSignal.unwrap<V>(res),
+              );
             });
           } else {
-            resultSig.value = res;
+            this.frameworkSignal.set(resultSig, res);
           }
         } catch (e: any) {
           this.dispatchExpressionError(e, call.call);
           // In reactive mode, we should not throw. Instead, reset the signal value.
-          resultSig.value = undefined;
+          this.frameworkSignal.set(resultSig, undefined);
+        }
+
+        return () => {
+          if (innerUnsubscribe) innerUnsubscribe();
+          if (abortController) abortController.abort();
+        };
+      });
+
+      this.signalCleanups.set(resultSig, () => {
+        destroy();
+        for (const key of Object.keys(argSignals)) {
+          const childCleanup = this.signalCleanups.get(argSignals[key]);
+          if (childCleanup) childCleanup();
         }
       });
 
-      (resultSig as any).unsubscribe = () => {
-        stopper();
-        if (innerUnsubscribe) innerUnsubscribe();
-        if (abortController) abortController.abort();
-        for (let i = 0; i < keys.length; i++) {
-          const argSig = argSignals[keys[i]];
-          if ((argSig as any).unsubscribe) {
-            (argSig as any).unsubscribe();
-          }
-        }
-      };
-
-      return resultSig as unknown as Signal<V>;
+      return resultSig;
     }
 
-    return signal(value as unknown as V);
+    return this.frameworkSignal.wrap(value);
   }
 
   /**
@@ -303,12 +315,12 @@ export class DataContext {
     name: string,
     args: Record<string, any>,
     abortSignal?: AbortSignal,
-  ): Signal<V> | V {
+  ): SignalKinds<V>[SK] | V | undefined {
     try {
       return this.functionInvoker(name, args, this, abortSignal);
     } catch (e: any) {
       this.dispatchExpressionError(e, name);
-      return undefined as any;
+      return undefined;
     }
   }
 
@@ -352,9 +364,9 @@ export class DataContext {
    * @param relativePath The path relative to the *current* context's path.
    * @returns A new `DataContext` instance pointing to the resolved absolute path.
    */
-  nested(relativePath: string): DataContext {
+  nested(relativePath: string): DataContext<SK> {
     const newPath = this.resolvePath(relativePath);
-    return new DataContext(this.surface, newPath);
+    return new DataContext(this.surface, this.frameworkSignal, newPath);
   }
 
   private resolvePath(path: string): string {

@@ -21,9 +21,10 @@ import {z} from 'zod';
 import {DataModel} from '../state/data-model.js';
 import {DataContext} from './data-context.js';
 import {A2uiExpressionError} from '../errors.js';
+import {testFrameworkSignal} from '../test/test_signals.js';
 
 const createTestDataContext = (
-  model: DataModel,
+  model: DataModel<'preact'>,
   path: string,
   functionInvoker: any = () => null,
   dispatchError: (err: any) => void = () => {},
@@ -33,15 +34,15 @@ const createTestDataContext = (
     catalog: {invoker: functionInvoker},
     dispatchError,
   } as any;
-  return new DataContext(mockSurface, path);
+  return new DataContext(mockSurface, testFrameworkSignal, path);
 };
 
 describe('DataContext', () => {
-  let model: DataModel;
-  let context: DataContext;
+  let model: DataModel<'preact'>;
+  let context: DataContext<'preact'>;
 
   beforeEach(() => {
-    model = new DataModel({
+    model = new DataModel(testFrameworkSignal, {
       user: {
         name: 'Alice',
         address: {

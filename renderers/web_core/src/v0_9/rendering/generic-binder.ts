@@ -22,6 +22,7 @@ import {
   DataBinding,
   FunctionCall,
 } from '../schema/common-types.js';
+import {SignalKinds} from '../reactivity/signals.js';
 
 // --- Schema Scraping ---
 
@@ -189,17 +190,17 @@ export type ResolveA2uiProps<T> = (T extends object
  * 5. Bundles the final resolved primitives, structural arrays, and executable Actions into `currentProps`.
  * 6. Exposes a `subscribe()` interface for framework-specific adapters (React, Angular) to listen to state changes.
  */
-export class GenericBinder<T> {
+export class GenericBinder<T, SK extends keyof SignalKinds<any>> {
   private dataListeners: (() => void)[] = [];
   private propsListeners: ((props: T) => void)[] = [];
   public currentProps: Partial<T> = {};
   private compUnsub?: () => void;
   private isConnected = false;
 
-  private context: ComponentContext;
+  private context: ComponentContext<SK>;
   private behaviorTree: BehaviorNode;
 
-  constructor(context: ComponentContext, schema: z.ZodTypeAny) {
+  constructor(context: ComponentContext<SK>, schema: z.ZodTypeAny) {
     this.context = context;
     this.behaviorTree = scrapeSchemaBehavior(schema);
 

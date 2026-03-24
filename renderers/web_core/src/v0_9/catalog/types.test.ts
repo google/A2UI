@@ -103,11 +103,12 @@ describe('InferredComponentApiSchemaType', () => {
       field2: z.number().optional(),
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const mockApi = {
       name: 'MockComp',
       schema: mockSchema,
     } satisfies ComponentApi;
-    // Appease typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type _ = typeof mockApi;
 
     // Type-level equivalence assertion using z.infer
@@ -119,6 +120,7 @@ describe('InferredComponentApiSchemaType', () => {
     // inferredIsAny only accepts "true" if `InferredType` is "any".
     // This happens when `mockApi: ComponentApi`, but doesn't when
     // `mockApi {} satisfies ComponentApi`!
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const inferredIsAny: IsAny<InferredType> = false;
 
     // When types are not "any", check that they're the same by checking if they
@@ -130,6 +132,7 @@ describe('InferredComponentApiSchemaType', () => {
       : false;
 
     // typesMatchExact only accepts "true" if `TypesAreEquivalent`
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const typesMatchExact: TypesAreEquivalent<ExpectedType, InferredType> =
       true;
   });

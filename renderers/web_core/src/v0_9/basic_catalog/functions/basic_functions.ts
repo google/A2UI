@@ -285,7 +285,7 @@ export const OpenUrlImplementation = createFunctionImplementation(
  * Standard function implementations for the Basic Catalog.
  * These functions cover arithmetic, comparison, logic, string manipulation, validation, and formatting.
  */
-export const BASIC_FUNCTIONS: FunctionImplementation[] = [
+export const BASIC_FUNCTIONS: FunctionImplementation<any>[] = [
   AddImplementation,
   SubtractImplementation,
   MultiplyImplementation,

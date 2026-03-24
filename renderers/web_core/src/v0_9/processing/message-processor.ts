@@ -19,6 +19,7 @@ import {Catalog, ComponentApi} from '../catalog/types.js';
 import {SurfaceGroupModel} from '../state/surface-group-model.js';
 import {ComponentModel} from '../state/component-model.js';
 import {Subscription} from '../common/events.js';
+import {FrameworkSignal, SignalKinds} from '../reactivity/signals.js';
 import {zodToJsonSchema} from 'zod-to-json-schema';
 
 import {
@@ -47,8 +48,11 @@ export interface CapabilitiesOptions {
  * The central processor for A2UI messages.
  * @template T The concrete type of the ComponentApi.
  */
-export class MessageProcessor<T extends ComponentApi> {
-  readonly model: SurfaceGroupModel<T>;
+export class MessageProcessor<
+  T extends ComponentApi,
+  SK extends keyof SignalKinds<any>,
+> {
+  readonly model: SurfaceGroupModel<T, SK>;
 
   /**
    * Creates a new message processor.
@@ -57,10 +61,11 @@ export class MessageProcessor<T extends ComponentApi> {
    * @param actionHandler A global handler for actions from all surfaces.
    */
   constructor(
-    private catalogs: Catalog<T>[],
+    private catalogs: Catalog<T, SK>[],
+    private readonly frameworkSignal: FrameworkSignal<SK>,
     private actionHandler?: ActionListener,
   ) {
-    this.model = new SurfaceGroupModel<T>();
+    this.model = new SurfaceGroupModel<T, SK>();
     if (this.actionHandler) {
       this.model.onAction.subscribe(this.actionHandler);
     }
@@ -88,7 +93,7 @@ export class MessageProcessor<T extends ComponentApi> {
     return capabilities;
   }
 
-  private generateInlineCatalog(catalog: Catalog<T>): InlineCatalog {
+  private generateInlineCatalog(catalog: Catalog<T, SK>): InlineCatalog {
     const components: Record<string, any> = {};
 
     for (const [name, api] of catalog.components.entries()) {
@@ -210,7 +215,9 @@ export class MessageProcessor<T extends ComponentApi> {
   /**
    * Subscribes to surface creation events.
    */
-  onSurfaceCreated(handler: (surface: SurfaceModel<T>) => void): Subscription {
+  onSurfaceCreated(
+    handler: (surface: SurfaceModel<T, SK>) => void,
+  ): Subscription {
     return this.model.onSurfaceCreated.subscribe(handler);
   }
 
@@ -281,9 +288,10 @@ export class MessageProcessor<T extends ComponentApi> {
       throw new A2uiStateError(`Surface ${surfaceId} already exists.`);
     }
 
-    const surface = new SurfaceModel<T>(
+    const surface = new SurfaceModel<T, SK>(
       surfaceId,
       catalog,
+      this.frameworkSignal,
       theme,
       sendDataModel ?? false,
     );
