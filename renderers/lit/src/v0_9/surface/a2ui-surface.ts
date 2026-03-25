@@ -20,20 +20,48 @@ import { SurfaceModel, ComponentContext } from "@a2ui/web_core/v0_9";
 import { renderA2uiNode } from "./render-a2ui-node.js";
 import { LitComponentApi } from "@a2ui/lit/v0_9";
 
+/**
+ * A Lit component that renders an A2UI Surface.
+ *
+ * This component takes a `SurfaceModel` and dynamically renders the root component
+ * and its children using the provided catalog. It handles loading states if the
+ * root component is not yet available.
+ *
+ * @element a2ui-surface
+ */
 @customElement("a2ui-surface")
 export class A2uiSurface extends LitElement {
+  /**
+   * The surface model containing the component tree and catalog.
+   */
   @property({ type: Object }) accessor surface:
     | SurfaceModel<LitComponentApi>
     | undefined;
 
+  /**
+   * Internal state indicating whether the root component exists.
+   * @internal
+   */
   @state() accessor _hasRoot = false;
-  private unsub?: () => void;
+  /**
+   * Subscription cleanup function.
+   * @internal
+   */
+  private unsubscribe?: () => void;
 
+  /**
+   * Handles lifecycle updates, specifically when the `surface` property changes.
+   *
+   * It manages subscriptions to the components model to detect when the 'root'
+   * component is created.
+   *
+   * @param changedProperties Map of changed properties.
+   */
   protected willUpdate(changedProperties: PropertyValues) {
     if (changedProperties.has("surface")) {
-      if (this.unsub) {
-        this.unsub();
-        this.unsub = undefined;
+      if (this.unsubscribe) {
+        this.unsubscribe();
+        this.unsubscribe = undefined;
       }
       this._hasRoot = !!this.surface?.componentsModel.get("root");
 
@@ -41,23 +69,33 @@ export class A2uiSurface extends LitElement {
         const sub = this.surface.componentsModel.onCreated.subscribe((comp) => {
           if (comp.id === "root") {
             this._hasRoot = true;
-            this.unsub?.();
-            this.unsub = undefined;
+            this.unsubscribe?.();
+            this.unsubscribe = undefined;
           }
         });
-        this.unsub = () => sub.unsubscribe();
+        this.unsubscribe = () => sub.unsubscribe();
       }
     }
   }
 
+  /**
+   * Cleans up subscriptions.
+   */
   disconnectedCallback() {
     super.disconnectedCallback();
-    if (this.unsub) {
-      this.unsub();
-      this.unsub = undefined;
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = undefined;
     }
   }
 
+  /**
+   * Renders the surface.
+   *
+   * If `surface` is not set, returns `nothing`.
+   * If the root component is not yet available, renders a loading state.
+   * Otherwise, renders the root component using `renderA2uiNode`.
+   */
   render() {
     if (!this.surface) return nothing;
     if (!this._hasRoot) {

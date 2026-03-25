@@ -23,6 +23,12 @@ import { A2uiColumn } from "./components/Column.js";
 import { CapitalizeImplementation } from "./functions/capitalize.js";
 import { LitComponentApi } from "@a2ui/lit/v0_9";
 
+/**
+ * The minimal catalog for A2UI components in Lit.
+ *
+ * This catalog includes basic components like text, button, text field, row, and column,
+ * as well as the capitalize function.
+ */
 export const minimalCatalog = new Catalog<LitComponentApi>(
   "https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json",
   [A2uiText, A2uiButton, A2uiTextField, A2uiRow, A2uiColumn],
