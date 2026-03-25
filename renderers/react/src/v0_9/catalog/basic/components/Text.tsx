@@ -46,7 +46,7 @@ const MarkdownContent: React.FC<{
     };
   }, [text, renderer]);
 
-  const content = html === null ? text : undefined;
+  const content = renderer ? undefined : text;
   const dangerouslySetInnerHTML = html !== null ? {__html: html} : undefined;
 
   switch (variant) {
