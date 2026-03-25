@@ -17,9 +17,9 @@
 
 import assert from "node:assert";
 import { describe, it, beforeEach } from "node:test";
-import { v0_8 } from "@a2ui/lit";
+import * as v0_8 from "@a2ui/lit/v0_8";
 import * as Types from "@a2ui/web_core/types/types";
-import { A2uiStateError } from "@a2ui/web_core/v0_9";
+import { A2uiStateError } from "@a2ui/web_core/v0_8";
 
 // Helper function to strip reactivity for clean comparisons.
 const toPlainObject = (value: unknown): ReturnType<typeof JSON.parse> => {
@@ -95,15 +95,23 @@ describe("A2uiMessageProcessor", () => {
     });
 
     it("should handle `surfaceUpdate` by adding components", () => {
+      const surfaceId = "@default";
+      const rootComponentId = "comp-a";
       const messages = [
         {
+          beginRendering: {
+            surfaceId,
+            root: rootComponentId,
+          },
+        },
+        {
           surfaceUpdate: {
-            surfaceId: "@default",
+            surfaceId,
             components: [
               {
-                id: "comp-a",
+                id: rootComponentId,
                 component: {
-                  Text: { usageHint: "body",  text: { literalString: "Hi" } },
+                  Text: { usageHint: "body", text: { literalString: "Hi" } },
                 },
               },
             ],
@@ -111,12 +119,12 @@ describe("A2uiMessageProcessor", () => {
         },
       ];
       processor.processMessages(messages);
-      const surface = processor.getSurfaces().get("@default");
+      const surface = processor.getSurfaces().get(surfaceId);
       if (!surface) {
         assert.fail("No default surface");
       }
       assert.strictEqual(surface!.components.size, 1);
-      assert.ok(surface!.components.has("comp-a"));
+      assert.ok(surface!.components.has(rootComponentId));
     });
 
     it("should handle `deleteSurface`", () => {
@@ -353,7 +361,7 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "child",
                 component: {
-                  Text: { usageHint: "body",  text: { literalString: "Hello" } },
+                  Text: { usageHint: "body", text: { literalString: "Hello" } },
                 },
               },
             ],
@@ -444,7 +452,7 @@ describe("A2uiMessageProcessor", () => {
               },
               {
                 id: "item-template",
-                component: { Text: { usageHint: "body",  text: { path: "/name" } } },
+                component: { Text: { usageHint: "body", text: { path: "/name" } } },
               },
             ],
           },
@@ -498,7 +506,7 @@ describe("A2uiMessageProcessor", () => {
               },
               {
                 id: "item-template",
-                component: { Text: { usageHint: "body",  text: { path: "/name" } } },
+                component: { Text: { usageHint: "body", text: { path: "/name" } } },
               },
             ],
           },
@@ -576,7 +584,7 @@ describe("A2uiMessageProcessor", () => {
               // These paths would are typical when a databinding is used.
               {
                 id: "item-template",
-                component: { Text: { usageHint: "body",  text: { path: "./item/name" } } },
+                component: { Text: { usageHint: "body", text: { path: "./item/name" } } },
               },
             ],
           },
@@ -634,7 +642,7 @@ describe("A2uiMessageProcessor", () => {
               // These paths would are typical when a databinding is used.
               {
                 id: "item-template",
-                component: { Text: { usageHint: "body",  text: { path: "./name" } } },
+                component: { Text: { usageHint: "body", text: { path: "./name" } } },
               },
             ],
           },
@@ -731,7 +739,8 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "title-heading",
                 component: {
-                  Text: { usageHint: "body",
+                  Text: {
+                    usageHint: "body",
                     text: {
                       literalString: "Top Restaurants",
                     },
@@ -774,7 +783,8 @@ describe("A2uiMessageProcessor", () => {
                 id: "template-image",
                 weight: 1,
                 component: {
-                  Image: { usageHint: "largeFeature",
+                  Image: {
+                    usageHint: "largeFeature",
                     url: {
                       path: "imageUrl",
                     },
@@ -801,7 +811,8 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "template-name",
                 component: {
-                  Text: { usageHint: "body",
+                  Text: {
+                    usageHint: "body",
                     text: {
                       path: "name",
                     },
@@ -811,7 +822,8 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "template-rating",
                 component: {
-                  Text: { usageHint: "body",
+                  Text: {
+                    usageHint: "body",
                     text: {
                       path: "rating",
                     },
@@ -821,7 +833,8 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "template-detail",
                 component: {
-                  Text: { usageHint: "body",
+                  Text: {
+                    usageHint: "body",
                     text: {
                       path: "detail",
                     },
@@ -831,7 +844,8 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "template-link",
                 component: {
-                  Text: { usageHint: "body",
+                  Text: {
+                    usageHint: "body",
                     text: {
                       path: "infoLink",
                     },
@@ -872,7 +886,8 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "book-now-text",
                 component: {
-                  Text: { usageHint: "body",
+                  Text: {
+                    usageHint: "body",
                     text: {
                       literalString: "Book Now",
                     },
@@ -1133,7 +1148,7 @@ describe("A2uiMessageProcessor", () => {
               {
                 id: "day-title",
                 component: {
-                  Text: { usageHint: "body",  text: { path: "title" } },
+                  Text: { usageHint: "body", text: { path: "title" } },
                 },
               },
               {
@@ -1151,7 +1166,7 @@ describe("A2uiMessageProcessor", () => {
               },
               {
                 id: "activity-text",
-                component: { Text: { usageHint: "body",  text: { path: "." } } },
+                component: { Text: { usageHint: "body", text: { path: "." } } },
               },
             ],
           },
@@ -1228,7 +1243,7 @@ describe("A2uiMessageProcessor", () => {
                   },
                 },
               },
-              { id: "tag", component: { Text: { usageHint: "body",  text: { path: "." } } } },
+              { id: "tag", component: { Text: { usageHint: "body", text: { path: "." } } } },
             ],
           },
         },
@@ -1269,7 +1284,7 @@ describe("A2uiMessageProcessor", () => {
             components: [
               {
                 id: "comp-a",
-                component: { Text: { usageHint: "body",  text: { path: "/name" } } },
+                component: { Text: { usageHint: "body", text: { path: "/name" } } },
               },
             ],
           },
@@ -1289,7 +1304,7 @@ describe("A2uiMessageProcessor", () => {
             components: [
               {
                 id: "comp-b",
-                component: { Text: { usageHint: "body",  text: { path: "/name" } } },
+                component: { Text: { usageHint: "body", text: { path: "/name" } } },
               },
             ],
           },

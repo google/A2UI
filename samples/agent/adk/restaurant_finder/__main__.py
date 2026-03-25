@@ -50,17 +50,16 @@ def main(host, port):
 
     base_url = f"http://{host}:{port}"
 
-    ui_agent = RestaurantAgent(base_url=base_url, use_ui=True)
-    text_agent = RestaurantAgent(base_url=base_url, use_ui=False)
+    agent = RestaurantAgent(base_url=base_url)
 
-    agent_executor = RestaurantAgentExecutor(ui_agent, text_agent)
+    agent_executor = RestaurantAgentExecutor(agent)
 
     request_handler = DefaultRequestHandler(
         agent_executor=agent_executor,
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(
-        agent_card=ui_agent.get_agent_card(), http_handler=request_handler
+        agent_card=agent.agent_card, http_handler=request_handler
     )
     import uvicorn
 

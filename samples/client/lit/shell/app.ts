@@ -35,7 +35,7 @@ import {
 } from "./types/types.js";
 import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
-import { v0_8 } from "@a2ui/lit";
+import * as v0_8 from "@a2ui/lit/v0_8";
 import * as UI from "@a2ui/lit/ui";
 
 // App elements.

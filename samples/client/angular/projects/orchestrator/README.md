@@ -16,12 +16,8 @@ This angular app connects to an Orchastrator Agent which takes user messages and
 2. Build the shared dependencies by running `npm run build` in the `renderers/web_core` directory
 3. Install the dependencies: `npm i`
 4. Run the A2A server for all of the agents. ([Link to instructions](../../../../agent/adk/orchestrator/README.md))
-5. Optionally, build the `sandbox.js` for testing MCP Apps in A2UI demo
-
-- `npm run build:sandbox`
-
-6. Run the app:
+5. Run the app:
 
 - `npm start -- orchestrator`
 
-7. Open http://localhost:4200/
+6. Open http://localhost:4200/

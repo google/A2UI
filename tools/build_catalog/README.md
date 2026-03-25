@@ -1,9 +1,5 @@
 # Catalog Build Tools
 
-A2UI v0.9+ requires catalogs be free standing, except for references to
-`common_types` which are automatically resolved by the A2UI SDK, to simplify LLM
-inference and dependency management.
-
 This directory contains a tool for managing and bundling A2UI catalogs.
 
 ## assemble_catalog.py
@@ -13,6 +9,10 @@ A2UI component and function catalogs into a single unified JSON Schema file. It
 natively supports external HTTP refs, automatic GitHub version resolution for
 official catalogs, and multi-file merging.
 
+Furthermore, A2UI v0.9+ requires catalogs be freestanding, except for references
+to `common_types` which are automatically resolved by the A2UI SDK, to simplify
+LLM inference and dependency management.
+
 ### Key Features
 
 - **Multi-input support**: Pass one or more local file paths or HTTP(S) URLs to
@@ -20,10 +20,11 @@ official catalogs, and multi-file merging.
 - **Smart `$ref` Resolution**: Automatically fetches external URLs and
   accurately resolves relative local paths.
 - **Official Catalog Interception**: By default, it intercepts references to
-  `basic_catalog.json` and `common_types.json` and auto-downloads the official
-  A2UI specification from GitHub based on the `--version` provided (defaults to
-  `0.9`). If you provide your own local versions in the input list, it will
-  intelligently use those instead!
+  `basic_catalog.json` (or `standard_catalog_definition.json` for v0.8) and
+  `common_types.json` and auto-downloads the official A2UI specification from
+  GitHub based on the `--version` provided (defaults to `0.9`). If you provide
+  your own local versions in the input list, it will intelligently use those
+  instead!
 - **Circular Dependency Protection**: Detects and aborts on infinite `$ref`
   loops.
 - **Resilient Remote Fetching**: Employs timeouts for network requests and
@@ -49,7 +50,7 @@ uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPU
   omitted.
 - `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
 - `--version`: The A2UI specification version to use for official catalog
-  fallbacks. Choices are `0.9` or `0.10`. Defaults to `0.9`.
+  fallbacks. Choices are `0.8`, `0.9` or `0.10`. Defaults to `0.9`.
 - `--extend-basic-catalog`: If passed, automatically includes the entirety of
   `basic_catalog.json` in the root output regardless of whether the input
   catalogs explicitly reference it.
