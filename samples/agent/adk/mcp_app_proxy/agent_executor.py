@@ -79,11 +79,10 @@ class McpAppProxyAgentExecutor(A2aAgentExecutor):
   def __init__(
       self,
       base_url: str,
-      runner: Runner,
-      schema_manager: A2uiSchemaManager,
+      agent: "McpAppProxyAgent",
   ):
     self._base_url = base_url
-    self.schema_manager = schema_manager
+    self._agent = agent
 
     # Bypass tool check when converting tool responses to A2A parts to escape
     # the need to make the tool call to `SendA2uiJsonToClientTool`. By removing
@@ -93,31 +92,39 @@ class McpAppProxyAgentExecutor(A2aAgentExecutor):
     config = A2aAgentExecutorConfig(
         event_converter=A2uiEventConverter(bypass_tool_check=True)
     )
-    super().__init__(runner=runner, config=config)
+    # Use the text runner as the default runner.
+    super().__init__(runner=self._agent.get_runner(None), config=config)
 
   @override
   async def _prepare_session(
       self,
       context: RequestContext,
       run_request: AgentRunRequest,
-      runner: Runner,
+      _runner: Runner,
   ):
     logger.info(f"Loading session for message {context.message}")
+
+    active_ui_version = try_activate_a2ui_extension(context, self._agent.agent_card)
+    runner = self._agent.get_runner(active_ui_version)
+    schema_manager = self._agent.get_schema_manager(active_ui_version)
 
     session = await super()._prepare_session(context, run_request, runner)
 
     if "base_url" not in session.state:
       session.state["base_url"] = self._base_url
 
-    use_ui = try_activate_a2ui_extension(context)
-    if use_ui:
-      capabilities = (
+    if active_ui_version:
+      client_capabilities = (
           context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY)
           if context.message and context.message.metadata
           else None
       )
-      a2ui_catalog = self.schema_manager.get_selected_catalog(
-          client_ui_capabilities=capabilities
+      a2ui_catalog = (
+          schema_manager.get_selected_catalog(
+              client_ui_capabilities=client_capabilities
+          )
+          if schema_manager
+          else None
       )
 
       # TODO: Load examples from files.

@@ -19,7 +19,7 @@ import json
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
-from a2a.types import (DataPart, Part, TaskState, TextPart)
+from a2a.types import (DataPart, Part, TaskState, TextPart, AgentCard)
 from a2a.utils import new_agent_parts_message, new_task
 from agent import ComponentGalleryAgent
 from a2ui.a2a import try_activate_a2ui_extension
@@ -29,14 +29,15 @@ logger = logging.getLogger(__name__)
 
 class ComponentGalleryExecutor(AgentExecutor):
 
-  def __init__(self, base_url: str):
+  def __init__(self, base_url: str, agent_card: AgentCard):
     self.agent = ComponentGalleryAgent(base_url=base_url)
+    self._agent_card = agent_card
 
   async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
     query = "START"  # Default start
     ui_event_part = None
 
-    try_activate_a2ui_extension(context)
+    try_activate_a2ui_extension(context, self._agent_card)
 
     if context.message and context.message.parts:
       for part in context.message.parts:

@@ -40,11 +40,8 @@ logger = logging.getLogger(__name__)
 class ContactAgentExecutor(AgentExecutor):
   """Contact AgentExecutor Example."""
 
-  def __init__(self, ui_agent: ContactAgent, text_agent: ContactAgent):
-    # Instantiate two agents: one for UI and one for text-only.
-    # The appropriate one will be chosen at execution time.
-    self.ui_agent = ui_agent
-    self.text_agent = text_agent
+  def __init__(self, agent: ContactAgent):
+    self._agent = agent
 
   async def execute(
       self,
@@ -56,16 +53,16 @@ class ContactAgentExecutor(AgentExecutor):
     action = None
 
     logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
-    use_ui = try_activate_a2ui_extension(context)
+    active_ui_version = try_activate_a2ui_extension(context, self._agent.agent_card)
 
-    # Determine which agent to use based on whether the a2ui extension is active.
-    if use_ui:
-      agent = self.ui_agent
-      logger.info("--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---")
-    else:
-      agent = self.text_agent
+    if active_ui_version:
       logger.info(
-          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
+          f"--- AGENT_EXECUTOR: A2UI extension is active (v{active_ui_version}). Using"
+          " UI runner. ---"
+      )
+    else:
+      logger.info(
+          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text runner. ---"
       )
 
     if context.message and context.message.parts:
@@ -127,7 +124,7 @@ class ContactAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in agent.stream(query, task.context_id):
+    async for item in self._agent.stream(query, task.context_id, active_ui_version):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
         await updater.update_status(

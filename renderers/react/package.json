@@ -27,6 +27,16 @@
         "default": "./dist/v0_8/index.cjs"
       }
     },
+    "./v0_9": {
+      "import": {
+        "types": "./dist/v0_9/index.d.ts",
+        "default": "./dist/v0_9/index.js"
+      },
+      "require": {
+        "types": "./dist/v0_9/index.d.cts",
+        "default": "./dist/v0_9/index.cjs"
+      }
+    },
     "./styles": {
       "import": {
         "types": "./dist/styles/index.d.ts",
@@ -55,36 +65,50 @@
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "demo": "cd a2ui_explorer && vite",
+    "build:demo": "cd a2ui_explorer && tsc -b && vite build",
+    "test:demo": "cd a2ui_explorer && vitest run src"
   },
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
     "clsx": "^2.1.0",
-    "markdown-it": "^14.0.0"
+    "markdown-it": "^14.0.0",
+    "zod": "^3.23.8",
+    "rxjs": "^7.8.1"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "rxjs": "^7.8.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.0.0",
     "@types/markdown-it": "^14.1.0",
+    "@types/node": "^24.10.1",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
     "gts": "^7.0.0",
     "jsdom": "^28.0.0",
     "prettier": "^3.4.0",
+    "puppeteer": "^24.39.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "tsup": "^8.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.0",
     "typescript-eslint": "^8.0.0",
+    "vite": "^7.3.1",
     "vitest": "^4.0.18"
   },
   "keywords": [

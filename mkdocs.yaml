@@ -53,7 +53,9 @@ nav:
       - Agent Development: guides/agent-development.md
       - Renderer Development: guides/renderer-development.md
       - Custom Components: guides/custom-components.md
+      - Authoring Custom Components: guides/authoring-components.md
       - Theming & Styling: guides/theming.md
+
       - A2UI over MCP: guides/a2ui_over_mcp.md
   - Reference:
       - Component Gallery: reference/components.md

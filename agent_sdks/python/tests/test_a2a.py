@@ -51,17 +51,19 @@ def test_non_a2ui_part():
 
 
 def test_get_a2ui_agent_extension():
-  agent_extension = get_a2ui_agent_extension()
-  assert agent_extension.uri == A2UI_EXTENSION_URI
+  version = "0.8"
+  agent_extension = get_a2ui_agent_extension(version)
+  assert agent_extension.uri == f"{A2UI_EXTENSION_BASE_URI}/v{version}"
   assert agent_extension.params is None
 
 
 def test_get_a2ui_agent_extension_with_accepts_inline_catalogs():
+  version = "0.8"
   accepts_inline_catalogs = True
   agent_extension = get_a2ui_agent_extension(
-      accepts_inline_catalogs=accepts_inline_catalogs
+      version, accepts_inline_catalogs=accepts_inline_catalogs
   )
-  assert agent_extension.uri == A2UI_EXTENSION_URI
+  assert agent_extension.uri == f"{A2UI_EXTENSION_BASE_URI}/v{version}"
   assert agent_extension.params is not None
   assert (
       agent_extension.params.get(AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY)
@@ -70,11 +72,12 @@ def test_get_a2ui_agent_extension_with_accepts_inline_catalogs():
 
 
 def test_get_a2ui_agent_extension_with_supported_catalog_ids():
+  version = "0.8"
   supported_catalog_ids = ["a", "b", "c"]
   agent_extension = get_a2ui_agent_extension(
-      supported_catalog_ids=supported_catalog_ids
+      version, supported_catalog_ids=supported_catalog_ids
   )
-  assert agent_extension.uri == A2UI_EXTENSION_URI
+  assert agent_extension.uri == f"{A2UI_EXTENSION_BASE_URI}/v{version}"
   assert agent_extension.params is not None
   assert (
       agent_extension.params.get(AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY)
@@ -84,15 +87,26 @@ def test_get_a2ui_agent_extension_with_supported_catalog_ids():
 
 def test_try_activate_a2ui_extension():
   context = MagicMock(spec=RequestContext)
-  context.requested_extensions = [A2UI_EXTENSION_URI]
+  uri = f"{A2UI_EXTENSION_BASE_URI}/v0.8"
+  context.requested_extensions = [uri]
 
-  assert try_activate_a2ui_extension(context)
-  context.add_activated_extension.assert_called_once_with(A2UI_EXTENSION_URI)
+  card = MagicMock()
+  ext = MagicMock()
+  ext.uri = uri
+  card.capabilities.extensions = [ext]
+
+  assert try_activate_a2ui_extension(context, card) == "0.8"
+  context.add_activated_extension.assert_called_once_with(uri)
 
 
 def test_try_activate_a2ui_extension_not_requested():
   context = MagicMock(spec=RequestContext)
   context.requested_extensions = []
 
-  assert not try_activate_a2ui_extension(context)
+  card = MagicMock()
+  ext = MagicMock()
+  ext.uri = f"{A2UI_EXTENSION_BASE_URI}/v0.8"
+  card.capabilities.extensions = [ext]
+
+  assert try_activate_a2ui_extension(context, card) is None
   context.add_activated_extension.assert_not_called()

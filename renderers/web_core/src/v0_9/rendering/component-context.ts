@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { DataContext } from "./data-context.js";
-import { FunctionInvoker } from "../catalog/function_invoker.js";
-import { ComponentModel } from "../state/component-model.js";
-import type { SurfaceModel } from "../state/surface-model.js";
-import type { SurfaceComponentsModel } from "../state/surface-components-model.js";
-import { A2uiStateError } from "../errors.js";
+import {DataContext} from './data-context.js';
+import {ComponentModel} from '../state/component-model.js';
+import type {SurfaceModel} from '../state/surface-model.js';
+import type {SurfaceComponentsModel} from '../state/surface-components-model.js';
+import {A2uiStateError} from '../errors.js';
 
 /**
  * Context provided to components during rendering.
@@ -46,7 +45,7 @@ export class ComponentContext {
   constructor(
     surface: SurfaceModel<any>,
     componentId: string,
-    dataModelBasePath: string = "/",
+    dataModelBasePath: string = '/',
   ) {
     const model = surface.componentsModel.get(componentId);
     if (!model) {
@@ -55,11 +54,9 @@ export class ComponentContext {
     this.componentModel = model;
     this.surfaceComponents = surface.componentsModel;
 
-    this.dataContext = new DataContext(
-      surface,
-      dataModelBasePath
-    );
-    this._actionDispatcher = (action) => surface.dispatchAction(action, this.componentModel.id);
+    this.dataContext = new DataContext(surface, dataModelBasePath);
+    this._actionDispatcher = action =>
+      surface.dispatchAction(action, this.componentModel.id);
   }
 
   private _actionDispatcher: (action: any) => Promise<void>;

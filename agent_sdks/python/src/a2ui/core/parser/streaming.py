@@ -48,6 +48,13 @@ CUTTABLE_KEYS = {
     "text",
 }
 
+# A safe placeholder used when referencing a child component that hasn't yet streamed in.
+PLACEHOLDER_COMPONENT = {
+    "Row": {
+        "children": {"explicitList": []},
+    }
+}
+
 
 class A2uiStreamParser:
   """Parses a stream of text for A2UI JSON messages with fine-grained component yielding."""
@@ -1230,12 +1237,7 @@ class A2uiStreamParser:
                   valid_children.append(placeholder_id)
                   placeholder_comp = {
                       "id": placeholder_id,
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": f"Loading {child_id}..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   }
                   # Avoid duplicates in extra_components
                   if not any(ec["id"] == placeholder_id for ec in extra_components):
@@ -1253,12 +1255,7 @@ class A2uiStreamParser:
                     valid_children.append(placeholder_id)
                     placeholder_comp = {
                         "id": placeholder_id,
-                        "component": {
-                            "Text": {
-                                "text": {"literalString": "Loading children..."},
-                                "usageHint": "caption",
-                            }
-                        },
+                        "component": PLACEHOLDER_COMPONENT,
                     }
                     if not any(ec["id"] == placeholder_id for ec in extra_components):
                       extra_components.append(placeholder_comp)
@@ -1270,12 +1267,7 @@ class A2uiStreamParser:
                 obj[field] = placeholder_id
                 placeholder_comp = {
                     "id": placeholder_id,
-                    "component": {
-                        "Text": {
-                            "text": {"literalString": f"Loading {child_id}..."},
-                            "usageHint": "caption",
-                        }
-                    },
+                    "component": PLACEHOLDER_COMPONENT,
                 }
                 if not any(ec["id"] == placeholder_id for ec in extra_components):
                   extra_components.append(placeholder_comp)

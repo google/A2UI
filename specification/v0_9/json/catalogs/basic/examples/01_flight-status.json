@@ -1,6 +1,6 @@
 {
   "name": "Flight Status",
-  "description": "Example of flight status",
+  "description": "Example of flight status demonstrating date formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -67,7 +67,14 @@
             "id": "date",
             "component": "Text",
             "text": {
-              "path": "/date"
+              "call": "formatDate",
+              "args": {
+                "value": {
+                  "path": "/date"
+                },
+                "format": "E, MMM d"
+              },
+              "returnType": "string"
             },
             "variant": "caption"
           },
@@ -136,7 +143,14 @@
             "id": "departure-time",
             "component": "Text",
             "text": {
-              "path": "/departureTime"
+              "call": "formatDate",
+              "args": {
+                "value": {
+                  "path": "/departureTime"
+                },
+                "format": "h:mm a"
+              },
+              "returnType": "string"
             },
             "variant": "h3"
           },
@@ -182,7 +196,14 @@
             "id": "arrival-time",
             "component": "Text",
             "text": {
-              "path": "/arrivalTime"
+              "call": "formatDate",
+              "args": {
+                "value": {
+                  "path": "/arrivalTime"
+                },
+                "format": "h:mm a"
+              },
+              "returnType": "string"
             },
             "variant": "h3"
           }
@@ -195,12 +216,12 @@
         "surfaceId": "gallery-flight-status",
         "value": {
           "flightNumber": "OS 87",
-          "date": "Mon, Dec 15",
+          "date": "2025-12-15",
           "origin": "Vienna",
           "destination": "New York",
-          "departureTime": "10:15 AM",
+          "departureTime": "2025-12-15T10:15:00Z",
           "status": "On Time",
-          "arrivalTime": "2:30 PM"
+          "arrivalTime": "2025-12-15T14:30:00Z"
         }
       }
     }

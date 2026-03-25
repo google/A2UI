@@ -40,6 +40,16 @@
           }
         },
         {
+          "id": "map-image",
+          "component": {
+            "Image": {
+              "url": {
+                "literalString": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Los_Angeles_from_Mount_Hollywood.jpg/1280px-Los_Angeles_from_Mount_Hollywood.jpg"
+              }
+            }
+          }
+        },
+        {
           "id": "location-list",
           "component": {
             "List": {
