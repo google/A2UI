@@ -30,7 +30,7 @@ const MarkdownContent: React.FC<{
 
   useEffect(() => {
     if (renderer) {
-      renderer(text).then(setHtml);
+      renderer(text).then(setHtml).catch(console.error);
     } else {
       setHtml(null); // Fallback to plain text
     }
@@ -96,11 +96,5 @@ export const Text = createReactComponent(TextApi, ({props}) => {
     display: 'inline-block',
   };
 
-  return (
-    <MarkdownContent
-      text={text}
-      variant={props.variant}
-      style={style}
-    />
-  );
+  return <MarkdownContent text={text} variant={props.variant} style={style} />;
 });
