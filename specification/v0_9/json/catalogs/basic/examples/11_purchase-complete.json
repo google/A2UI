@@ -1,6 +1,6 @@
 {
   "name": "Purchase Complete",
-  "description": "Example of purchase complete",
+  "description": "Example of purchase complete demonstrating currency formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -81,7 +81,14 @@
             "id": "product-price",
             "component": "Text",
             "text": {
-              "path": "/price"
+              "call": "formatCurrency",
+              "args": {
+                "value": {
+                  "path": "/price"
+                },
+                "currency": "USD"
+              },
+              "returnType": "string"
             },
             "variant": "body"
           },
@@ -167,7 +174,7 @@
         "value": {
           "productImage": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop",
           "productName": "Wireless Headphones Pro",
-          "price": "$199.99",
+          "price": 199.99,
           "deliveryDate": "Arrives Dec 18 - Dec 20",
           "seller": "TechStore Official"
         }

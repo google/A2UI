@@ -73,7 +73,9 @@
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
     "clsx": "^2.1.0",
-    "markdown-it": "^14.0.0"
+    "markdown-it": "^14.0.0",
+    "zod": "^3.23.8",
+    "rxjs": "^7.8.1"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

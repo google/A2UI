@@ -30,7 +30,7 @@ from a2ui.core.parser.constants import (
     MSG_TYPE_DATA_MODEL_UPDATE,
 )
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.parser.streaming import A2uiStreamParser
+from a2ui.core.parser.streaming import A2uiStreamParser, PLACEHOLDER_COMPONENT
 from a2ui.core.parser.response_part import ResponsePart
 
 
@@ -145,6 +145,22 @@ def mock_catalog():
           "Text": {"type": "object", "additionalProperties": True},
           "Loading": {"type": "object", "additionalProperties": True},
           "List": {"type": "object", "additionalProperties": True},
+          "Row": {
+              "type": "object",
+              "properties": {
+                  "children": {
+                      "type": "object",
+                      "properties": {
+                          "explicitList": {
+                              "type": "array",
+                              "items": {"type": "string"},
+                          },
+                          "required": ["componentId", "dataBinding"],
+                      },
+                  }
+              },
+              "required": ["children"],
+          },
           "Column": {
               "type": "object",
               "properties": {
@@ -319,12 +335,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_children_root-column",
-                  "component": {
-                      "Text": {
-                          "text": {"literalString": "Loading children..."},
-                          "usageHint": "caption",
-                      }
-                  },
+                  "component": PLACEHOLDER_COMPONENT,
               },
           ],
       }
@@ -345,12 +356,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": {
-                      "Text": {
-                          "text": {"literalString": "Loading c1..."},
-                          "usageHint": "caption",
-                      }
-                  },
+                  "component": PLACEHOLDER_COMPONENT,
               },
           ],
       }
@@ -373,21 +379,11 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": {
-                      "Text": {
-                          "text": {"literalString": "Loading c1..."},
-                          "usageHint": "caption",
-                      }
-                  },
+                  "component": PLACEHOLDER_COMPONENT,
               },
               {
                   "id": "loading_c2",
-                  "component": {
-                      "Text": {
-                          "text": {"literalString": "Loading c2..."},
-                          "usageHint": "caption",
-                      }
-                  },
+                  "component": PLACEHOLDER_COMPONENT,
               },
           ],
       }
@@ -426,12 +422,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c2",
-                  "component": {
-                      "Text": {
-                          "text": {"literalString": "Loading c2..."},
-                          "usageHint": "caption",
-                      }
-                  },
+                  "component": PLACEHOLDER_COMPONENT,
               },
           ],
       }
@@ -811,12 +802,7 @@ def test_partial_single_child_string(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading c1..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   },
               ],
           }
@@ -884,12 +870,7 @@ def test_partial_template_componentId(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading c1..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   },
               ],
           }
@@ -957,30 +938,15 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading c1..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   },
                   {
                       "id": "loading_c2",
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading c2..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   },
                   {
                       "id": "loading_c3",
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading c3..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   },
               ],
           }
@@ -1013,21 +979,11 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c2",
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading c2..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   },
                   {
                       "id": "loading_c3",
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading c3..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                   },
               ],
           }
@@ -2073,12 +2029,7 @@ def test_sniff_partial_component_discards_empty_children_dict(mock_catalog):
                       "id": "root-column",
                   },
                   {
-                      "component": {
-                          "Text": {
-                              "text": {"literalString": "Loading item-list..."},
-                              "usageHint": "caption",
-                          }
-                      },
+                      "component": PLACEHOLDER_COMPONENT,
                       "id": "loading_item-list",
                   },
               ],

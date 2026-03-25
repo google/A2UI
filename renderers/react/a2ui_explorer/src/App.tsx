@@ -15,29 +15,9 @@
  */
 
 import {useState, useEffect, useSyncExternalStore, useCallback} from 'react';
-import {MessageProcessor, SurfaceModel, type A2uiMessage} from '@a2ui/web_core/v0_9';
-import {minimalCatalog, A2uiSurface, type ReactComponentImplementation} from '@a2ui/react/v0_9';
-
-// Import Minimal examples
-import min1 from '../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json';
-import min2 from '../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json';
-import min3 from '../../../../specification/v0_9/json/catalogs/minimal/examples/3_interactive_button.json';
-import min4 from '../../../../specification/v0_9/json/catalogs/minimal/examples/4_login_form.json';
-import min5 from '../../../../specification/v0_9/json/catalogs/minimal/examples/5_complex_layout.json';
-import min6 from '../../../../specification/v0_9/json/catalogs/minimal/examples/6_capitalized_text.json';
-import min7 from '../../../../specification/v0_9/json/catalogs/minimal/examples/7_incremental.json';
-
-const exampleFiles = [
-  {key: 'min1', data: min1, catalog: 'Minimal'},
-  {key: 'min2', data: min2, catalog: 'Minimal'},
-  {key: 'min3', data: min3, catalog: 'Minimal'},
-  {key: 'min4', data: min4, catalog: 'Minimal'},
-  {key: 'min5', data: min5, catalog: 'Minimal'},
-  {key: 'min6', data: min6, catalog: 'Minimal'},
-  {key: 'min7', data: min7, catalog: 'Minimal'},
-];
-
-const getMessages = (ex: { messages: A2uiMessage[] } | A2uiMessage[] | undefined) => (Array.isArray(ex) ? ex : ex?.messages);
+import {MessageProcessor, SurfaceModel} from '@a2ui/web_core/v0_9';
+import {minimalCatalog, basicCatalog, A2uiSurface, type ReactComponentImplementation} from '@a2ui/react/v0_9';
+import {exampleFiles, getMessages} from './examples';
 
 const DataModelViewer = ({surface}: {surface: SurfaceModel<any>}) => {
   const subscribeHook = useCallback(
@@ -78,7 +58,7 @@ export default function App() {
         if (prevProcessor) {
           prevProcessor.model.dispose();
         }
-        const newProcessor = new MessageProcessor([minimalCatalog], async (action: any) => {
+        const newProcessor = new MessageProcessor<ReactComponentImplementation>([minimalCatalog, basicCatalog], async (action: any) => {
           setLogs((l) => [...l, {time: new Date().toISOString(), action}]);
         });
 

@@ -87,7 +87,18 @@ export class A2uiMessageProcessor implements MessageProcessor {
   }
 
   getSurfaces(): ReadonlyMap<string, Surface> {
-    return this.surfaces;
+    const allSurfaces = this.surfaces;
+    // NOTE: If a message with a `surfaceUpdate` is processed prior to a
+    // `beginRendering` message, the surface is still returned, but it will
+    // throw an error when attempting to render it due to the missing
+    // `rootComponentId`.
+    const visibleSurfaces = new Map<string, Surface>();
+    for (const [surfaceId, surface] of allSurfaces) {
+      if (surface.rootComponentId) {
+        visibleSurfaces.set(surfaceId, surface);
+      }
+    }
+    return visibleSurfaces;
   }
 
   clearSurfaces() {

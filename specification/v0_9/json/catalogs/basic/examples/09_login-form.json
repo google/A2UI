@@ -1,6 +1,6 @@
 {
   "name": "Login Form",
-  "description": "Example of login form",
+  "description": "Example of login form demonstrating validation checks and logic.",
   "messages": [
     {
       "version": "v0.9",
@@ -59,7 +59,31 @@
             "value": {
               "path": "/email"
             },
-            "label": "Email"
+            "label": "Email",
+            "checks": [
+              {
+                "condition": {
+                  "call": "required",
+                  "args": {
+                    "value": {
+                      "path": "/email"
+                    }
+                  }
+                },
+                "message": "Email is required"
+              },
+              {
+                "condition": {
+                  "call": "email",
+                  "args": {
+                    "value": {
+                      "path": "/email"
+                    }
+                  }
+                },
+                "message": "Please enter a valid email address"
+              }
+            ]
           },
           {
             "id": "password-field",
@@ -68,7 +92,32 @@
               "path": "/password"
             },
             "label": "Password",
-            "variant": "obscured"
+            "variant": "obscured",
+            "checks": [
+              {
+                "condition": {
+                  "call": "required",
+                  "args": {
+                    "value": {
+                      "path": "/password"
+                    }
+                  }
+                },
+                "message": "Password is required"
+              },
+              {
+                "condition": {
+                  "call": "length",
+                  "args": {
+                    "value": {
+                      "path": "/password"
+                    },
+                    "min": 8
+                  }
+                },
+                "message": "Password must be at least 8 characters long"
+              }
+            ]
           },
           {
             "id": "login-btn-text",
@@ -79,10 +128,43 @@
             "id": "login-btn",
             "component": "Button",
             "child": "login-btn-text",
+            "checks": [
+              {
+                "condition": {
+                  "call": "and",
+                  "args": {
+                    "values": [
+                      {
+                        "call": "email",
+                        "args": {
+                          "value": {
+                            "path": "/email"
+                          }
+                        }
+                      },
+                      {
+                        "call": "length",
+                        "args": {
+                          "value": {
+                            "path": "/password"
+                          },
+                          "min": 8
+                        }
+                      }
+                    ]
+                  }
+                },
+                "message": "Please fix errors before signing in"
+              }
+            ],
             "action": {
               "event": {
                 "name": "login",
-                "context": {}
+                "context": {
+                  "email": {
+                    "path": "/email"
+                  }
+                }
               }
             }
           },

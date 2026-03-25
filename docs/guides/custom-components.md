@@ -31,9 +31,10 @@ TODO: Add detailed guide for defining custom catalogs for each platform.
 
 **Web (Lit / Angular):**
 
-- How to define a catalog with both standard and custom components
-- How to register the catalog with the A2UI client
-- How to implement custom component classes
+- [Authoring Custom Components](authoring-components.md): A detailed guide using Angular and rizzcharts as an example.
+- How to define a catalog with both standard and custom components in Lit
+- How to register the catalog with the A2UI client in Lit
+
 
 **Flutter:**
 

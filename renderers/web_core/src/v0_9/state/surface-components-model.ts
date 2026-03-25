@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentModel } from "./component-model.js";
-import { EventEmitter, EventSource } from "../common/events.js";
-import { A2uiStateError } from "../errors.js";
+import {ComponentModel} from './component-model.js';
+import {EventEmitter, EventSource} from '../common/events.js';
+import {A2uiStateError} from '../errors.js';
 
 /**
  * Manages the collection of components for a specific surface.

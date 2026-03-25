@@ -90,7 +90,7 @@ export class MessageProcessor {
   }
 
   getSurfaces(): Map<string, WebCore.Surface> {
-    return (this.baseProcessor as any).surfaces || new Map();
+    return this.baseProcessor.getSurfaces() as Map<string, WebCore.Surface>;
   }
 
   clearSurfaces() {

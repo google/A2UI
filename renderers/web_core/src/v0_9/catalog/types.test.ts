@@ -14,75 +14,79 @@
  * limitations under the License.
  */
 
-import assert from "node:assert";
-import { describe, it } from "node:test";
-import { Catalog, ComponentApi, createFunctionImplementation } from "./types.js";
-import { A2uiExpressionError } from "../errors.js";
-import { z } from "zod";
+import assert from 'node:assert';
+import {describe, it} from 'node:test';
+import {Catalog, ComponentApi, createFunctionImplementation} from './types.js';
+import {A2uiExpressionError} from '../errors.js';
+import {z} from 'zod';
 
-describe("Catalog Types", () => {
-  it("creates a catalog with functions", () => {
+describe('Catalog Types', () => {
+  it('creates a catalog with functions', () => {
     const mockComponent: ComponentApi = {
-      name: "MockComp",
+      name: 'MockComp',
       schema: z.object({}),
     };
 
     const mockFunc = createFunctionImplementation(
       {
-        name: "mockFunc",
-        returnType: "string",
-        schema: z.object({})
+        name: 'mockFunc',
+        returnType: 'string',
+        schema: z.object({}),
       },
-      () => "result"
+      () => 'result',
     );
 
-    const catalog = new Catalog("test-cat", [mockComponent], [mockFunc]);
+    const catalog = new Catalog('test-cat', [mockComponent], [mockFunc]);
 
-    assert.strictEqual(catalog.id, "test-cat");
+    assert.strictEqual(catalog.id, 'test-cat');
     assert.strictEqual(catalog.components.size, 1);
-    assert.strictEqual(catalog.components.get("MockComp"), mockComponent);
+    assert.strictEqual(catalog.components.get('MockComp'), mockComponent);
 
     assert.ok(catalog.functions);
     assert.strictEqual(catalog.functions.size, 1);
-    assert.strictEqual(catalog.functions.get("mockFunc"), mockFunc);
+    assert.strictEqual(catalog.functions.get('mockFunc'), mockFunc);
   });
 
-  it("throws A2uiExpressionError when function is not found", () => {
-    const catalog = new Catalog("test-cat", []);
+  it('throws A2uiExpressionError when function is not found', () => {
+    const catalog = new Catalog('test-cat', []);
     const ctx = {} as any;
 
     assert.throws(
-      () => catalog.invoker("nonExistent", {}, ctx),
+      () => catalog.invoker('nonExistent', {}, ctx),
       (err: any) => {
-        return err instanceof A2uiExpressionError &&
-               err.message.includes("Function not found") &&
-               err.expression === "nonExistent";
-      }
+        return (
+          err instanceof A2uiExpressionError &&
+          err.message.includes('Function not found') &&
+          err.expression === 'nonExistent'
+        );
+      },
     );
   });
 
-  it("throws A2uiExpressionError when zod validation fails", () => {
+  it('throws A2uiExpressionError when zod validation fails', () => {
     const mockFunc = createFunctionImplementation(
       {
-        name: "test",
-        returnType: "string",
+        name: 'test',
+        returnType: 'string',
         schema: z.object({
-          requiredField: z.string()
-        })
+          requiredField: z.string(),
+        }),
       },
-      () => "result"
+      () => 'result',
     );
-    const catalog = new Catalog("test-cat", [], [mockFunc]);
+    const catalog = new Catalog('test-cat', [], [mockFunc]);
     const ctx = {} as any;
 
     assert.throws(
-      () => catalog.invoker("test", {}, ctx),
+      () => catalog.invoker('test', {}, ctx),
       (err: any) => {
-        return err instanceof A2uiExpressionError &&
-               err.message.includes("Validation failed") &&
-               err.expression === "test" &&
-               Array.isArray(err.details);
-      }
+        return (
+          err instanceof A2uiExpressionError &&
+          err.message.includes('Validation failed') &&
+          err.expression === 'test' &&
+          Array.isArray(err.details)
+        );
+      },
     );
   });
 });

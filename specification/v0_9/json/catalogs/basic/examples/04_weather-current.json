@@ -1,6 +1,6 @@
 {
   "name": "Weather Current",
-  "description": "Example of weather current",
+  "description": "Example of weather current demonstrating templating and string formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -44,7 +44,11 @@
             "id": "temp-high",
             "component": "Text",
             "text": {
-              "path": "/tempHigh"
+              "call": "formatString",
+              "args": {
+                "value": "${/tempHigh}°"
+              },
+              "returnType": "string"
             },
             "variant": "h1"
           },
@@ -52,7 +56,11 @@
             "id": "temp-low",
             "component": "Text",
             "text": {
-              "path": "/tempLow"
+              "call": "formatString",
+              "args": {
+                "value": "${/tempLow}°"
+              },
+              "returnType": "string"
             },
             "variant": "h2"
           },
@@ -75,137 +83,54 @@
           {
             "id": "forecast-row",
             "component": "Row",
-            "children": [
-              "day1",
-              "day2",
-              "day3",
-              "day4",
-              "day5"
-            ],
+            "children": {
+              "path": "/forecast",
+              "componentId": "forecast-day-template"
+            },
             "justify": "spaceAround"
           },
           {
-            "id": "day1",
+            "id": "forecast-day-template",
             "component": "Column",
             "children": [
-              "day1-icon",
-              "day1-temp"
+              "day-name",
+              "day-icon",
+              "day-temp"
             ],
             "align": "center"
           },
           {
-            "id": "day1-icon",
+            "id": "day-name",
             "component": "Text",
             "text": {
-              "path": "/forecast/0/icon"
-            },
-            "variant": "h3"
-          },
-          {
-            "id": "day1-temp",
-            "component": "Text",
-            "text": {
-              "path": "/forecast/0/temp"
+              "call": "formatDate",
+              "args": {
+                "value": {
+                  "path": "date"
+                },
+                "format": "E"
+              },
+              "returnType": "string"
             },
             "variant": "caption"
           },
           {
-            "id": "day2",
-            "component": "Column",
-            "children": [
-              "day2-icon",
-              "day2-temp"
-            ],
-            "align": "center"
-          },
-          {
-            "id": "day2-icon",
+            "id": "day-icon",
             "component": "Text",
             "text": {
-              "path": "/forecast/1/icon"
+              "path": "icon"
             },
             "variant": "h3"
           },
           {
-            "id": "day2-temp",
+            "id": "day-temp",
             "component": "Text",
             "text": {
-              "path": "/forecast/1/temp"
-            },
-            "variant": "caption"
-          },
-          {
-            "id": "day3",
-            "component": "Column",
-            "children": [
-              "day3-icon",
-              "day3-temp"
-            ],
-            "align": "center"
-          },
-          {
-            "id": "day3-icon",
-            "component": "Text",
-            "text": {
-              "path": "/forecast/2/icon"
-            },
-            "variant": "h3"
-          },
-          {
-            "id": "day3-temp",
-            "component": "Text",
-            "text": {
-              "path": "/forecast/2/temp"
-            },
-            "variant": "caption"
-          },
-          {
-            "id": "day4",
-            "component": "Column",
-            "children": [
-              "day4-icon",
-              "day4-temp"
-            ],
-            "align": "center"
-          },
-          {
-            "id": "day4-icon",
-            "component": "Text",
-            "text": {
-              "path": "/forecast/3/icon"
-            },
-            "variant": "h3"
-          },
-          {
-            "id": "day4-temp",
-            "component": "Text",
-            "text": {
-              "path": "/forecast/3/temp"
-            },
-            "variant": "caption"
-          },
-          {
-            "id": "day5",
-            "component": "Column",
-            "children": [
-              "day5-icon",
-              "day5-temp"
-            ],
-            "align": "center"
-          },
-          {
-            "id": "day5-icon",
-            "component": "Text",
-            "text": {
-              "path": "/forecast/4/icon"
-            },
-            "variant": "h3"
-          },
-          {
-            "id": "day5-temp",
-            "component": "Text",
-            "text": {
-              "path": "/forecast/4/temp"
+              "call": "formatString",
+              "args": {
+                "value": "${temp}°"
+              },
+              "returnType": "string"
             },
             "variant": "caption"
           }
@@ -217,30 +142,35 @@
       "updateDataModel": {
         "surfaceId": "gallery-weather-current",
         "value": {
-          "tempHigh": "72\u00b0",
-          "tempLow": "58\u00b0",
+          "tempHigh": 72,
+          "tempLow": 58,
           "location": "Austin, TX",
           "description": "Clear skies with light breeze",
           "forecast": [
             {
-              "icon": "\u2600\ufe0f",
-              "temp": "74\u00b0"
+              "date": "2025-12-16",
+              "icon": "☀️",
+              "temp": 74
             },
             {
-              "icon": "\u2600\ufe0f",
-              "temp": "76\u00b0"
+              "date": "2025-12-17",
+              "icon": "☀️",
+              "temp": 76
             },
             {
-              "icon": "\u26c5",
-              "temp": "71\u00b0"
+              "date": "2025-12-18",
+              "icon": "⛅",
+              "temp": 71
             },
             {
-              "icon": "\u2600\ufe0f",
-              "temp": "73\u00b0"
+              "date": "2025-12-19",
+              "icon": "☀️",
+              "temp": 73
             },
             {
-              "icon": "\u2600\ufe0f",
-              "temp": "75\u00b0"
+              "date": "2025-12-20",
+              "icon": "☀️",
+              "temp": 75
             }
           ]
         }

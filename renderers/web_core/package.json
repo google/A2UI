@@ -41,8 +41,10 @@
     "build": "wireit",
     "build:tsc": "wireit",
     "test": "wireit",
-    "test:coverage": "c8 node --test \"dist/**/*.test.js\""
-
+    "test:coverage": "c8 node --test \"dist/**/*.test.js\"",
+    "compile": "tsc",
+    "lint": "gts lint",
+    "fix": "gts fix"
   },
   "wireit": {
     "copy-spec": {
@@ -79,7 +81,7 @@
       "clean": "if-file-deleted"
     },
     "test": {
-      "command": "node --test \"dist/**/*.test.js\"",
+      "command": "node --test dist",
       "dependencies": [
         "build"
       ]
@@ -90,6 +92,7 @@
   "devDependencies": {
     "@types/node": "^24.11.0",
     "c8": "^11.0.0",
+    "gts": "^7.0.0",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },

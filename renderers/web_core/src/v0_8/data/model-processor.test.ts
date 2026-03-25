@@ -15,9 +15,9 @@
  */
 
 import assert from "node:assert";
-import { describe, it, beforeEach } from "node:test";
-import { A2uiMessageProcessor } from "./model-processor.js";
-import { TextNode, RowNode } from "../types/types.js";
+import {describe, it, beforeEach} from "node:test";
+import {A2uiMessageProcessor} from "./model-processor.js";
+import {TextNode, RowNode} from "../types/types.js";
 
 describe("A2uiMessageProcessor", () => {
   let processor: A2uiMessageProcessor;
@@ -32,7 +32,7 @@ describe("A2uiMessageProcessor", () => {
         beginRendering: {
           surfaceId: "s1",
           root: "root",
-          styles: { font: "Arial" },
+          styles: {font: "Arial"},
         },
       },
     ]);
@@ -41,7 +41,7 @@ describe("A2uiMessageProcessor", () => {
     const surface = surfaces.get("s1");
     assert.ok(surface);
     assert.strictEqual(surface.rootComponentId, "root");
-    assert.deepStrictEqual(surface.styles, { font: "Arial" });
+    assert.deepStrictEqual(surface.styles, {font: "Arial"});
     // The component tree remains null until components are added via surfaceUpdate.
     assert.strictEqual(surface.componentTree, null);
   });
@@ -49,7 +49,7 @@ describe("A2uiMessageProcessor", () => {
   it("handles surfaceUpdate", () => {
     processor.processMessages([
       {
-        beginRendering: { surfaceId: "s1", root: "root" },
+        beginRendering: {surfaceId: "s1", root: "root"},
       },
     ]);
 
@@ -61,7 +61,7 @@ describe("A2uiMessageProcessor", () => {
             {
               id: "root",
               component: {
-                Text: { text: { literal: "Hello" }, usageHint: "body" },
+                Text: {text: {literal: "Hello"}, usageHint: "body"},
               } as any,
             },
           ],
@@ -76,18 +76,18 @@ describe("A2uiMessageProcessor", () => {
     assert.strictEqual(root.id, "root");
     assert.strictEqual(root.type, "Text");
     // The property preserves the literal wrapper
-    assert.deepStrictEqual(root.properties.text, { literal: "Hello" });
+    assert.deepStrictEqual(root.properties.text, {literal: "Hello"});
   });
 
   it("handles dataModelUpdate", () => {
     processor.processMessages([
       {
-        beginRendering: { surfaceId: "s1", root: "root" },
+        beginRendering: {surfaceId: "s1", root: "root"},
       },
       {
         dataModelUpdate: {
           surfaceId: "s1",
-          contents: [{ key: "message", valueString: "World" }],
+          contents: [{key: "message", valueString: "World"}],
         },
       },
     ]);
@@ -99,14 +99,14 @@ describe("A2uiMessageProcessor", () => {
   it("handles deleteSurface", () => {
     processor.processMessages([
       {
-        beginRendering: { surfaceId: "s1", root: "root" },
+        beginRendering: {surfaceId: "s1", root: "root"},
       },
     ]);
     assert.ok(processor.getSurfaces().has("s1"));
 
     processor.processMessages([
       {
-        deleteSurface: { surfaceId: "s1" },
+        deleteSurface: {surfaceId: "s1"},
       },
     ]);
     assert.ok(!processor.getSurfaces().has("s1"));
@@ -114,7 +114,7 @@ describe("A2uiMessageProcessor", () => {
 
   it("resolves component references (children)", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "row" } },
+      {beginRendering: {surfaceId: "s1", root: "row"}},
       {
         surfaceUpdate: {
           surfaceId: "s1",
@@ -122,19 +122,19 @@ describe("A2uiMessageProcessor", () => {
             {
               id: "row",
               component: {
-                Row: { children: { explicitList: ["t1", "t2"] } },
+                Row: {children: {explicitList: ["t1", "t2"]}},
               } as any,
             },
             {
               id: "t1",
               component: {
-                Text: { text: { literal: "One" }, usageHint: "body" },
+                Text: {text: {literal: "One"}, usageHint: "body"},
               } as any,
             },
             {
               id: "t2",
               component: {
-                Text: { text: { literal: "Two" }, usageHint: "body" },
+                Text: {text: {literal: "Two"}, usageHint: "body"},
               } as any,
             },
           ],
@@ -148,17 +148,17 @@ describe("A2uiMessageProcessor", () => {
     assert.strictEqual(root.properties.children.length, 2);
     assert.deepStrictEqual(
       (root.properties.children[0] as TextNode).properties.text,
-      { literal: "One" },
+      {literal: "One"},
     );
     assert.deepStrictEqual(
       (root.properties.children[1] as TextNode).properties.text,
-      { literal: "Two" },
+      {literal: "Two"},
     );
   });
 
   it("resolves templates", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "row" } },
+      {beginRendering: {surfaceId: "s1", root: "row"}},
       {
         dataModelUpdate: {
           surfaceId: "s1",
@@ -166,8 +166,8 @@ describe("A2uiMessageProcessor", () => {
             {
               key: "items",
               valueMap: [
-                { key: "0", valueString: "Item A" },
-                { key: "1", valueString: "Item B" },
+                {key: "0", valueString: "Item A"},
+                {key: "1", valueString: "Item B"},
               ],
             },
           ],
@@ -193,7 +193,7 @@ describe("A2uiMessageProcessor", () => {
             {
               id: "item",
               component: {
-                Text: { text: { path: "." }, usageHint: "body" },
+                Text: {text: {path: "."}, usageHint: "body"},
               } as any,
             },
           ],
@@ -211,33 +211,33 @@ describe("A2uiMessageProcessor", () => {
     const child1 = root.properties.children[1] as TextNode;
 
     // Check that binding paths are correct (processor does NOT resolve the value, just the binding path context)
-    assert.deepStrictEqual(child0.properties.text, { path: "." });
+    assert.deepStrictEqual(child0.properties.text, {path: "."});
 
     // Now verify we can resolve the data using the node's context
-    const textProp0 = child0.properties.text as { path: string };
-    const resolvedValue0 = processor.getData(child0, textProp0.path, "s1");
-    assert.strictEqual(resolvedValue0, "Item A");
+    const textProp0 = child0.properties.text as {path: string;};
+    const resolvedValue0 = processor.getData(child0, textProp0.path, 's1');
+    assert.strictEqual(resolvedValue0, 'Item A');
 
-    const textProp1 = child1.properties.text as { path: string };
-    const resolvedValue1 = processor.getData(child1, textProp1.path, "s1");
-    assert.strictEqual(resolvedValue1, "Item B");
+    const textProp1 = child1.properties.text as {path: string;};
+    const resolvedValue1 = processor.getData(child1, textProp1.path, 's1');
+    assert.strictEqual(resolvedValue1, 'Item B');
   });
 
   it("getData resolves paths relative to node context", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "root" } },
+      {beginRendering: {surfaceId: "s1", root: "root"}},
       {
         dataModelUpdate: {
           surfaceId: "s1",
           contents: [
-            { key: "user", valueMap: [{ key: "name", valueString: "Alice" }] },
+            {key: "user", valueMap: [{key: "name", valueString: "Alice"}]},
           ],
         },
       },
     ]);
 
     processor.getSurfaces().get("s1");
-    const node = { id: "test", dataContextPath: "/user" } as any;
+    const node = {id: "test", dataContextPath: "/user"} as any;
 
     const name = processor.getData(node, "name", "s1");
     assert.strictEqual(name, "Alice");
@@ -252,10 +252,10 @@ describe("A2uiMessageProcessor", () => {
 
   it("setData updates data model", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "root" } },
+      {beginRendering: {surfaceId: "s1", root: "root"}},
     ]);
     const surface = processor.getSurfaces().get("s1");
-    const node = { id: "test", dataContextPath: "/" } as any;
+    const node = {id: "test", dataContextPath: "/"} as any;
 
     processor.setData(node, "count", 42, "s1");
     assert.strictEqual(surface?.dataModel.get("count"), 42);
@@ -272,7 +272,7 @@ describe("A2uiMessageProcessor", () => {
 
   it("parses JSON strings in data", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "root" } },
+      {beginRendering: {surfaceId: "s1", root: "root"}},
     ]);
 
     // Explicitly testing private/internal parsing logic via public update
@@ -280,20 +280,20 @@ describe("A2uiMessageProcessor", () => {
       {
         dataModelUpdate: {
           surfaceId: "s1",
-          contents: [{ key: "config", valueString: '{"theme":"dark"}' }],
+          contents: [{key: "config", valueString: '{"theme":"dark"}'}],
         },
       },
     ]);
 
     const surface = processor.getSurfaces().get("s1");
     const config = surface?.dataModel.get("config") as any;
-    assert.deepStrictEqual(config, { theme: "dark" });
+    assert.deepStrictEqual(config, {theme: "dark"});
   });
 
   it("test basic edge cases and internal fallbacks", () => {
     // 1. clearSurfaces
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "root" } },
+      {beginRendering: {surfaceId: "s1", root: "root"}},
     ]);
     assert.strictEqual(processor.getSurfaces().size, 1);
     processor.clearSurfaces();
@@ -301,13 +301,13 @@ describe("A2uiMessageProcessor", () => {
 
     // 2. setData with null node
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "root" } },
+      {beginRendering: {surfaceId: "s1", root: "root"}},
     ]);
     // Shouldn't throw
     processor.setData(null, "foo", "bar");
 
     // 3. setData with default data context (default to /)
-    const node = { id: "test", dataContextPath: undefined } as any;
+    const node = {id: "test", dataContextPath: undefined} as any;
     processor.setData(node, ".", "value");
     const surface = processor.getSurfaces().get("s1")!;
     assert.strictEqual(surface.dataModel.get("."), undefined); // Normal setDataByPath logic when root=/
@@ -317,7 +317,7 @@ describe("A2uiMessageProcessor", () => {
       {
         dataModelUpdate: {
           surfaceId: "s1",
-          contents: [{ key: "badJson", valueString: '{bad" }' }],
+          contents: [{key: "badJson", valueString: '{bad" }'}],
         },
       },
     ]);
@@ -326,7 +326,7 @@ describe("A2uiMessageProcessor", () => {
     // 5. convertKeyValueArrayToMap with missing valueKey
     // Explicit array pass directly to internal mapping simulation
     (processor as any).setDataByPath(surface.dataModel, "malformed", [
-      { key: "foo", unknownKey: "bar" }, // missing value map/string etc
+      {key: "foo", unknownKey: "bar"}, // missing value map/string etc
     ]);
     const malformed = surface.dataModel.get("malformed") as Map<string, any>;
     assert.strictEqual(malformed.has("foo"), false); // Skips processing
@@ -344,7 +344,7 @@ describe("A2uiMessageProcessor", () => {
 
   it("test array set operations and invalid primitive traversal", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1", root: "root" } },
+      {beginRendering: {surfaceId: "s1", root: "root"}},
     ]);
     const surface = processor.getSurfaces().get("s1")!;
 
@@ -376,7 +376,7 @@ describe("A2uiMessageProcessor", () => {
 
   it("test tree rebuilding edge cases", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s_tree", root: "root" } },
+      {beginRendering: {surfaceId: "s_tree", root: "root"}},
     ]);
     const surface = processor.getSurfaces().get("s_tree")!;
 
@@ -389,11 +389,11 @@ describe("A2uiMessageProcessor", () => {
     surface.rootComponentId = "circleA";
     surface.components.set("circleA", {
       id: "circleA",
-      component: { Row: { children: ["circleB"] } } as any,
+      component: {Row: {children: ["circleB"]}} as any,
     });
     surface.components.set("circleB", {
       id: "circleB",
-      component: { Row: { children: ["circleA"] } } as any,
+      component: {Row: {children: ["circleA"]}} as any,
     });
 
     assert.throws(() => {
@@ -403,7 +403,7 @@ describe("A2uiMessageProcessor", () => {
 
   it("throws A2uiValidationError for malformed components", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: `s_bad_comp`, root: "bad" } },
+      {beginRendering: {surfaceId: `s_bad_comp`, root: "bad"}},
     ]);
     const surface = processor.getSurfaces().get("s_bad_comp")!;
     surface.rootComponentId = "bad";
@@ -446,7 +446,7 @@ describe("A2uiMessageProcessor", () => {
     // Default catch-all (doesn't throw, just passes it through)
     surface.components.set("bad", {
       id: "bad",
-      component: { CustomWidget: { foo: "bar" } } as any,
+      component: {CustomWidget: {foo: "bar"}} as any,
     });
     (processor as any).rebuildComponentTree(surface);
     assert.strictEqual((surface.componentTree as any).type, "CustomWidget");
@@ -454,14 +454,14 @@ describe("A2uiMessageProcessor", () => {
 
   it("resolves Template with Array data", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s3_arr", root: "list" } },
+      {beginRendering: {surfaceId: "s3_arr", root: "list"}},
       {
         dataModelUpdate: {
           surfaceId: "s3_arr",
           path: "/items",
           contents: [
-            { key: "0", valueString: "a" },
-            { key: "1", valueString: "b" },
+            {key: "0", valueString: "a"},
+            {key: "1", valueString: "b"},
           ],
         },
       },
@@ -473,7 +473,7 @@ describe("A2uiMessageProcessor", () => {
       component: {
         List: {
           children: {
-            template: { dataBinding: "/items", componentId: "item" },
+            template: {dataBinding: "/items", componentId: "item"},
           },
         },
       } as any,
@@ -481,7 +481,7 @@ describe("A2uiMessageProcessor", () => {
     surface.components.set("item", {
       id: "item",
       component: {
-        Text: { text: { literalString: "hello" }, usageHint: "body" },
+        Text: {text: {literalString: "hello"}, usageHint: "body"},
       },
     });
     (processor as any).rebuildComponentTree(surface);
@@ -496,7 +496,7 @@ describe("A2uiMessageProcessor", () => {
 
   it("resolves Template with undefined/null data as empty array", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s3_null", root: "list" } },
+      {beginRendering: {surfaceId: "s3_null", root: "list"}},
     ]);
     const surface = processor.getSurfaces().get("s3_null")!;
     surface.components.set("list", {
@@ -504,7 +504,7 @@ describe("A2uiMessageProcessor", () => {
       component: {
         List: {
           children: {
-            template: { dataBinding: "/missingItems", componentId: "item" },
+            template: {dataBinding: "/missingItems", componentId: "item"},
           },
         },
       } as any,
@@ -512,7 +512,7 @@ describe("A2uiMessageProcessor", () => {
     surface.components.set("item", {
       id: "item",
       component: {
-        Text: { text: { literalString: "hello" }, usageHint: "body" },
+        Text: {text: {literalString: "hello"}, usageHint: "body"},
       },
     });
 
@@ -524,19 +524,19 @@ describe("A2uiMessageProcessor", () => {
 
   it("sets primitive at path via single array element with dot key", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1_prim", root: "list" } },
+      {beginRendering: {surfaceId: "s1_prim", root: "list"}},
       {
         dataModelUpdate: {
           surfaceId: "s1_prim",
           path: "/nested/item",
-          contents: [{ key: ".", valueString: "hello" }],
+          contents: [{key: ".", valueString: "hello"}],
         },
       },
     ]);
     const surface = processor.getSurfaces().get("s1_prim")!;
     surface.components.set("list", {
       id: "list",
-      component: { Row: { children: { explicitList: [] } } } as any,
+      component: {Row: {children: {explicitList: []}}} as any,
     });
     (processor as any).rebuildComponentTree(surface);
     const root = surface.componentTree!;
@@ -552,7 +552,7 @@ describe("A2uiMessageProcessor", () => {
           dataModelUpdate: {
             surfaceId: "s1_prim",
             path: "/nested/malformed",
-            contents: [{ key: "." } as any],
+            contents: [{key: "."} as any],
           },
         },
       ]);
@@ -561,15 +561,15 @@ describe("A2uiMessageProcessor", () => {
 
   it("path resolves through primitive objects and arrays", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s1_path", root: "list" } },
+      {beginRendering: {surfaceId: "s1_path", root: "list"}},
     ]);
     const surface = processor.getSurfaces().get("s1_path")!;
     surface.dataModel.set("obj", {
-      nestedMap: new Map([["index", [1, 2, { val: "hi" }]]]),
+      nestedMap: new Map([["index", [1, 2, {val: "hi"}]]]),
     });
     surface.components.set("list", {
       id: "list",
-      component: { Row: { children: { explicitList: [] } } } as any,
+      component: {Row: {children: {explicitList: []}}} as any,
     });
     (processor as any).rebuildComponentTree(surface);
     const root = surface.componentTree!;
@@ -586,41 +586,41 @@ describe("A2uiMessageProcessor", () => {
 
   it("builds all component types correctly", () => {
     const surfaceId = "s_all";
-    processor.processMessages([{ beginRendering: { surfaceId, root: "col" } }]);
+    processor.processMessages([{beginRendering: {surfaceId, root: "col"}}]);
     const surface = processor.getSurfaces().get(surfaceId)!;
 
     const components = {
-      col: { Column: { children: ["row"] } },
-      row: { Row: { children: ["card"] } },
-      card: { Card: { child: "tabs" } },
+      col: {Column: {children: ["row"]}},
+      row: {Row: {children: ["card"]}},
+      card: {Card: {child: "tabs"}},
       tabs: {
         Tabs: {
-          tabItems: [{ title: { literalString: "T1" }, child: "modal" }],
+          tabItems: [{title: {literalString: "T1"}, child: "modal"}],
         },
       },
-      modal: { Modal: { entryPointChild: "list", contentChild: "div" } },
-      list: { List: { children: ["btn"] } },
-      btn: { Button: { child: "btn_txt", action: "act" } },
-      btn_txt: { Text: { text: { literalString: "Click" } } },
-      div: { Divider: {} },
+      modal: {Modal: {entryPointChild: "list", contentChild: "div"}},
+      list: {List: {children: ["btn"]}},
+      btn: {Button: {child: "btn_txt", action: "act"}},
+      btn_txt: {Text: {text: {literalString: "Click"}}},
+      div: {Divider: {}},
       chk: {
         CheckBox: {
-          label: { literalString: "Chk" },
-          value: { literalBoolean: true },
+          label: {literalString: "Chk"},
+          value: {literalBoolean: true},
         },
       },
-      txt: { TextField: { label: { literalString: "Txt" } } },
-      dt: { DateTimeInput: { value: { literalString: "2022-01-01" } } },
-      mc: { MultipleChoice: { selections: { literal: ["a"] } } },
-      sl: { Slider: { value: { literalNumber: 50 } } },
-      img: { Image: { url: { literalString: "http://img" } } },
-      icon: { Icon: { name: { literalString: "home" } } },
-      vid: { Video: { url: { literalString: "http://vid" } } },
-      aud: { AudioPlayer: { url: { literalString: "http://aud" } } },
+      txt: {TextField: {label: {literalString: "Txt"}}},
+      dt: {DateTimeInput: {value: {literalString: "2022-01-01"}}},
+      mc: {MultipleChoice: {selections: {literal: ["a"]}}},
+      sl: {Slider: {value: {literalNumber: 50}}},
+      img: {Image: {url: {literalString: "http://img"}}},
+      icon: {Icon: {name: {literalString: "home"}}},
+      vid: {Video: {url: {literalString: "http://vid"}}},
+      aud: {AudioPlayer: {url: {literalString: "http://aud"}}},
     };
 
     for (const [id, comp] of Object.entries(components)) {
-      surface.components.set(id, { id, component: comp } as any);
+      surface.components.set(id, {id, component: comp} as any);
     }
 
     surface.components.set("root_all", {
@@ -659,21 +659,21 @@ describe("A2uiMessageProcessor", () => {
       contents: [
         {
           key: "nested",
-          valueMap: [{ key: "inner", valueString: "val" }],
+          valueMap: [{key: "inner", valueString: "val"}],
         },
       ] as any, // Recursive generic type difficult to construct in TS literal
     };
 
     // We can use processMessages with dataModelUpdate.
     processor.processMessages([
-      { beginRendering: { surfaceId: "s_rec", root: "root" } },
+      {beginRendering: {surfaceId: "s_rec", root: "root"}},
     ]);
 
     // Set root to Map first
     const surface = processor.getSurfaces().get("s_rec")!;
     (surface.dataModel as any).set("junk", "ignored");
 
-    processor.processMessages([{ dataModelUpdate: update }]);
+    processor.processMessages([{dataModelUpdate: update}]);
 
     // Verify data
     const nested = surface.dataModel.get("nested") as Map<string, any>;
@@ -683,7 +683,7 @@ describe("A2uiMessageProcessor", () => {
 
   it("resolves Template with Map data", () => {
     processor.processMessages([
-      { beginRendering: { surfaceId: "s3_map", root: "list" } },
+      {beginRendering: {surfaceId: "s3_map", root: "list"}},
       {
         dataModelUpdate: {
           surfaceId: "s3_map",
@@ -691,8 +691,8 @@ describe("A2uiMessageProcessor", () => {
             {
               key: "items",
               valueMap: [
-                { key: "a", valueString: "valA" },
-                { key: "b", valueString: "valB" },
+                {key: "a", valueString: "valA"},
+                {key: "b", valueString: "valB"},
               ],
             },
           ],
@@ -719,7 +719,7 @@ describe("A2uiMessageProcessor", () => {
     surface.components.set("item", {
       id: "item",
       component: {
-        Text: { text: { path: "." } },
+        Text: {text: {path: "."}},
       } as any,
     });
 
@@ -733,7 +733,7 @@ describe("A2uiMessageProcessor", () => {
   it("handles Object-to-Map normalization in handleDataModelUpdate (direct call)", () => {
     const surfaceId = "s_norm";
     processor.processMessages([
-      { beginRendering: { surfaceId, root: "root" } },
+      {beginRendering: {surfaceId, root: "root"}},
     ]);
     const surface = processor.getSurfaces().get(surfaceId)!;
 
@@ -741,7 +741,7 @@ describe("A2uiMessageProcessor", () => {
     (processor as any).handleDataModelUpdate(
       {
         surfaceId,
-        contents: { normalized: "value" },
+        contents: {normalized: "value"},
       },
       surfaceId,
     );
@@ -752,13 +752,13 @@ describe("A2uiMessageProcessor", () => {
   it("throws validation error for invalid List", () => {
     const surfaceId = "s_bad_list";
     processor.processMessages([
-      { beginRendering: { surfaceId, root: "badList" } },
+      {beginRendering: {surfaceId, root: "badList"}},
     ]);
     const surface = processor.getSurfaces().get(surfaceId)!;
 
     surface.components.set("badList", {
       id: "badList",
-      component: { List: { children: "not-array" } } as any,
+      component: {List: {children: "not-array"}} as any,
     });
 
     assert.throws(() => {
@@ -772,7 +772,7 @@ describe("A2uiMessageProcessor", () => {
     const value = [
       {
         key: ".",
-        valueMap: [{ key: "inner", valueString: "val" }],
+        valueMap: [{key: "inner", valueString: "val"}],
       },
     ];
 
@@ -787,7 +787,7 @@ describe("A2uiMessageProcessor", () => {
   it("resolves Template with Array data (via direct setData)", () => {
     const surfaceId = "s_direct_arr";
     processor.processMessages([
-      { beginRendering: { surfaceId, root: "list" } },
+      {beginRendering: {surfaceId, root: "list"}},
     ]);
     const surface = processor.getSurfaces().get(surfaceId)!;
 
@@ -808,7 +808,7 @@ describe("A2uiMessageProcessor", () => {
     surface.components.set("item", {
       id: "item",
       component: {
-        Text: { text: { path: "." } },
+        Text: {text: {path: "."}},
       } as any,
     });
 
