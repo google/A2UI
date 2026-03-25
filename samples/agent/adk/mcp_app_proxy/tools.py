@@ -110,7 +110,7 @@ async def calculate_via_mcp(operation: str, a: float, b: float):
     return f"Error connecting to MCP server: {e}"
 
 
-async def get_pong_app(tool_context: ToolContext):
+async def get_pong_app_a2ui_json(tool_context: ToolContext):
   """Fetches the Pong game app."""
   import os
   current_dir = os.path.dirname(os.path.abspath(__file__))
