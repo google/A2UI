@@ -19,7 +19,7 @@
  * For any library building on top of A2UI's web core lib, this must be
  * implemented for their associated signals implementation.
  */
-export interface FrameworkSignal<SignalType> {
+export interface FrameworkSignal<SignalType, WriteableSignalType = SignalType> {
   /**
    * Create a computed signal for this framework.
    */
@@ -33,7 +33,7 @@ export interface FrameworkSignal<SignalType> {
   /**
    * Wrap the value in a signal.
    */
-  wrap<T>(val: T): SignalType;
+  wrap<T>(val: T): WriteableSignalType;
 
   /**
    * Extract the value from a signal.
@@ -43,5 +43,5 @@ export interface FrameworkSignal<SignalType> {
   /**
    * Sets the value of the provided framework signal.
    */
-  set<T>(signal: SignalType, value: T): void;
+  set<T>(signal: WriteableSignalType, value: T): void;
 }

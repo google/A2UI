@@ -34,7 +34,7 @@ describe('FrameworkSignal', () => {
   // Angular and Preact respectively.
 
   describe('Angular variation', () => {
-    const AngularSignal: FrameworkSignal<ASignal<any>> = {
+    const AngularSignal: FrameworkSignal<ASignal<any>, AWritableSignal<any>> = {
       computed: <T>(fn: () => T) => aComputed(fn),
       isSignal: (val: unknown) => isSignal(val),
       wrap: <T>(val: T) => aSignal(val),
