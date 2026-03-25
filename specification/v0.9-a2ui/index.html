@@ -416,11 +416,11 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../guides/custom-components/">
+<a class="md-nav__link" href="../../guides/defining-your-own-catalog/">
 <span class="md-ellipsis">
     
   
-    Custom Components
+    Defining Your Own Catalog
   
 
     
@@ -792,10 +792,10 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#validator-compliance-custom-catalogs">
+<a class="md-nav__link" href="#validator-compliance-when-defining-catalogs">
 <span class="md-ellipsis">
       
-        Validator compliance &amp; custom catalogs
+        Validator compliance when defining catalogs
       
     </span>
 </a>
@@ -1545,10 +1545,10 @@
 </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#validator-compliance-custom-catalogs">
+<a class="md-nav__link" href="#validator-compliance-when-defining-catalogs">
 <span class="md-ellipsis">
       
-        Validator compliance &amp; custom catalogs
+        Validator compliance when defining catalogs
       
     </span>
 </a>
@@ -2236,12 +2236,12 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 <p>To validate A2UI messages:</p>
 <ol>
 <li><strong>Basic Catalog</strong>: Map <code>catalog.json</code> to <code>basic_catalog.json</code>.</li>
-<li><strong>Custom Catalog</strong>: Map <code>catalog.json</code> to your custom catalog file (e.g., <code>my_custom_catalog.json</code>).</li>
+<li><strong>Client Catalog</strong>: Map <code>catalog.json</code> to your own catalog file (e.g., <code>my_company_catalog.json</code>).</li>
 </ol>
 <p>This indirection allows the same core envelope schema to be used with any compliant component catalog without modification.</p>
-<p>Custom catalogs can be used to define additional UI components or modify the behavior of existing components. To use a custom catalog, simply include it in the prompt in place of the basic catalog. It should have the same form as the basic catalog, and use common elements in the [<code>common_types.json</code>] schema.</p>
-<h3 id="validator-compliance-custom-catalogs">Validator compliance &amp; custom catalogs<a class="headerlink" href="#validator-compliance-custom-catalogs" title="Permanent link">¶</a></h3>
-<p>To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), custom catalogs MUST adhere to the following strict typing rules:</p>
+<p>Defining your own catalog allows you to restrict the agent to using exactly the components and visual language that exist in your application. To use your own catalog, simply include it in the prompt in place of the basic catalog. It should have the same form as the basic catalog and use common elements in the [<code>common_types.json</code>] schema.</p>
+<h3 id="validator-compliance-when-defining-catalogs">Validator compliance when defining catalogs<a class="headerlink" href="#validator-compliance-when-defining-catalogs" title="Permanent link">¶</a></h3>
+<p>To ensure that automated validators can verify the integrity of your UI tree (checking that parents reference existing children), any catalog you define MUST adhere to the following strict typing rules:</p>
 <ol>
 <li>
 <p><strong>Single child references:</strong> Any property that holds the ID of another component MUST use the <code>ComponentId</code> type defined in <code>common_types.json</code>.</p>
@@ -2364,7 +2364,7 @@ AG UI provides convenient integrations into many agent frameworks and frontends.
 </ul>
 <p>This structure is designed to be both flexible and strictly validated.</p>
 <h3 id="the-component-catalog">The component catalog<a class="headerlink" href="#the-component-catalog" title="Permanent link">¶</a></h3>
-<p>The set of available UI components and functions is defined in a <strong>Catalog</strong>. The basic catalog is defined in [<code>basic_catalog.json</code>]. This allows for different clients to support different sets of components and functions, including custom ones. Advanced use cases may want to define their own custom catalogs to support custom front end design systems or renderers. The server must generate messages that conform to the catalog understood by the client.</p>
+<p>The set of available UI components and functions is defined in a <strong>Catalog</strong>. The basic catalog is defined in [<code>basic_catalog.json</code>]. While the Basic Catalog is useful for starting out, most production applications will define their own catalog to reflect their specific design system. The server must generate messages that conform to the catalog understood by the client.</p>
 <h3 id="ui-composition-the-adjacency-list-model">UI composition: the adjacency list model<a class="headerlink" href="#ui-composition-the-adjacency-list-model" title="Permanent link">¶</a></h3>
 <p>The A2UI protocol defines the UI as a flat list of components. The tree structure is built implicitly using ID references. This is known as an adjacency list model.</p>
 <p>Container components (like <code>Row</code>, <code>Column</code>, <code>List</code>, and <code>Card</code>) have properties that reference the <code>id</code> of their child component(s). The client is responsible for storing all components in a map (e.g., <code>Map&lt;String, Component&gt;</code>) and recreating the tree structure at render time.</p>

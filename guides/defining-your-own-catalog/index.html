@@ -12,7 +12,7 @@
         <meta name="author" content="Google">
       
       
-        <link rel="canonical" href="https://a2ui.org/guides/custom-components/">
+        <link rel="canonical" href="https://a2ui.org/guides/defining-your-own-catalog/">
       
       
         <link rel="prev" href="../renderer-development/">
@@ -29,7 +29,7 @@
     
     
       
-        <title>Custom Components - A2UI</title>
+        <title>Defining Your Own Catalog - A2UI</title>
       
     
     
@@ -157,7 +157,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#custom-component-catalogs" class="md-skip">
+        <a href="#defining-your-own-catalog" class="md-skip">
           Skip to content
         </a>
       
@@ -192,7 +192,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Custom Components
+              Defining Your Own Catalog
             
           </span>
         </div>
@@ -1025,7 +1025,7 @@
   <span class="md-ellipsis">
     
   
-    Custom Components
+    Defining Your Own Catalog
   
 
     
@@ -1043,7 +1043,7 @@
   <span class="md-ellipsis">
     
   
-    Custom Components
+    Defining Your Own Catalog
   
 
     
@@ -1069,10 +1069,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-custom-catalogs" class="md-nav__link">
+  <a href="#why-define-your-own-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Custom Catalogs?
+        Why Define Your Own Catalog?
       
     </span>
   </a>
@@ -1080,10 +1080,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-custom-catalogs-work" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How Custom Catalogs Work
+        How It Works
       
     </span>
   </a>
@@ -1091,32 +1091,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#defining-custom-catalogs" class="md-nav__link">
+  <a href="#implementation-guide" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Defining Custom Catalogs
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#agent-side-using-components-from-a-custom-catalog" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Agent-Side: Using Components from a Custom Catalog
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-binding-and-actions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Binding and Actions
+        Implementation Guide
       
     </span>
   </a>
@@ -1915,10 +1893,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-custom-catalogs" class="md-nav__link">
+  <a href="#why-define-your-own-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Custom Catalogs?
+        Why Define Your Own Catalog?
       
     </span>
   </a>
@@ -1926,10 +1904,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-custom-catalogs-work" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How Custom Catalogs Work
+        How It Works
       
     </span>
   </a>
@@ -1937,32 +1915,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#defining-custom-catalogs" class="md-nav__link">
+  <a href="#implementation-guide" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Defining Custom Catalogs
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#agent-side-using-components-from-a-custom-catalog" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Agent-Side: Using Components from a Custom Catalog
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-binding-and-actions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Binding and Actions
+        Implementation Guide
       
     </span>
   </a>
@@ -2060,83 +2016,63 @@
     
       
     
-    <a href="https://github.com/google/A2UI/raw/main/docs/guides/custom-components.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/google/A2UI/raw/main/docs/guides/defining-your-own-catalog.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-<h1 id="custom-component-catalogs">Custom Component Catalogs<a class="headerlink" href="#custom-component-catalogs" title="Permanent link">&para;</a></h1>
-<p>Extend A2UI by defining <strong>custom catalogs</strong> that include your own components alongside standard A2UI components.</p>
-<h2 id="why-custom-catalogs">Why Custom Catalogs?<a class="headerlink" href="#why-custom-catalogs" title="Permanent link">&para;</a></h2>
-<p>The A2UI Standard Catalog provides common UI elements (buttons, text fields, etc.), but your application might need specialized components:</p>
+<h1 id="defining-your-own-catalog">Defining Your Own Catalog<a class="headerlink" href="#defining-your-own-catalog" title="Permanent link">&para;</a></h1>
+<p>While the <a href="../../specification/v0_9/json/basic_catalog.json">Basic Catalog</a> is useful for starting out and bootstrapping an application, most production applications will define their own catalog to reflect their specific design system.</p>
+<p>By defining your own catalog, you restrict the agent to using exactly the components and visual language that exist in your application, rather than generic inputs or buttons.</p>
+<h2 id="why-define-your-own-catalog">Why Define Your Own Catalog?<a class="headerlink" href="#why-define-your-own-catalog" title="Permanent link">&para;</a></h2>
+<p>Every A2UI surface is driven by a <strong>Catalog</strong>. A catalog is simply a JSON Schema file that tells the agent which components, functions, and themes are available for it to use.</p>
 <ul>
-<li><strong>Domain-specific widgets</strong>: Stock tickers, medical charts, CAD viewers</li>
-<li><strong>Third-party integrations</strong>: Google Maps, payment forms, chat widgets</li>
-<li><strong>Brand-specific components</strong>: Custom date pickers, product cards, dashboards</li>
+<li><strong>Design System Alignment</strong>: Restrict the agent to using exactly the components and visual language that exist in your application.</li>
+<li><strong>Security and Type Safety</strong>: You register entire catalogs with your client application, ensuring that only trusted components are rendered.</li>
+<li><strong>No Mappers Needed</strong>: We recommend building catalogs that directly reflect your client's design system rather than trying to map a generic catalog (like the Basic Catalog) to it through an adapter.</li>
 </ul>
-<p><strong>Custom catalogs</strong> are collections of components that can include:
-- Standard A2UI components (Text, Button, TextField, etc.)
-- Your custom components (GoogleMap, StockTicker, etc.)
-- Third-party components</p>
-<p>You register entire catalogs with your client application, not individual components. This allows agents and clients to agree on a shared, extended set of components while maintaining security and type safety.</p>
-<h2 id="how-custom-catalogs-work">How Custom Catalogs Work<a class="headerlink" href="#how-custom-catalogs-work" title="Permanent link">&para;</a></h2>
+<p>The Basic Catalog is just one example and is intentionally sparse to remain easily implementable by different renderers.</p>
+<h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Client Defines Catalog</strong>: You create a catalog definition that lists both standard and custom components.</li>
-<li><strong>Client Registers Catalog</strong>: You register the catalog (and its component implementations) with your client app.</li>
-<li><strong>Client Announces Support</strong>: The client informs the agent which catalogs it supports.</li>
-<li><strong>Agent Selects Catalog</strong>: The agent chooses a catalog for a given UI surface.</li>
-<li><strong>Agent Generates UI</strong>: The agent generates component messages (<code>surfaceUpdate</code> in v0.8, <code>updateComponents</code> in v0.9) using components from that catalog by name.</li>
+<li><strong>Define the Catalog</strong>: Create a catalog definition (JSON Schema) listing the components, functions, and styles your application supports.</li>
+<li><strong>Register the Catalog</strong>: Register the catalog and its corresponding component implementations (renderers) with your client application.</li>
+<li><strong>Announce Support</strong>: The client informs the agent which catalogs it supports (via <code>supportedCatalogIds</code>).</li>
+<li><strong>Agent Selects Catalog</strong>: The agent chooses a catalog for a given UI surface (via <code>catalogId</code> inside the creation message, like <code>createSurface</code>).</li>
+<li><strong>Agent Generates UI</strong>: The agent generates component messages using the components defined in that catalog by name.</li>
 </ol>
-<h2 id="defining-custom-catalogs">Defining Custom Catalogs<a class="headerlink" href="#defining-custom-catalogs" title="Permanent link">&para;</a></h2>
-<p>TODO: Add detailed guide for defining custom catalogs for each platform.</p>
-<p><strong>Web (Lit / Angular):</strong></p>
-<ul>
-<li><a href="../authoring-components/">Authoring Custom Components</a>: A detailed guide using Angular and rizzcharts as an example.</li>
-<li>How to define a catalog with both standard and custom components in Lit</li>
-<li>How to register the catalog with the A2UI client in Lit</li>
-</ul>
-<p><strong>Flutter:</strong></p>
-<ul>
-<li>How to define custom catalogs using GenUI</li>
-<li>How to register custom component renderers</li>
-</ul>
-<p><strong>See working examples:</strong></p>
-<ul>
-<li><a href="https://github.com/google/a2ui/tree/main/samples/client/lit">Lit samples</a></li>
-<li><a href="https://github.com/google/a2ui/tree/main/samples/client/angular">Angular samples</a></li>
-<li><a href="https://docs.flutter.dev/ai/genui">Flutter GenUI docs</a></li>
-</ul>
-<h2 id="agent-side-using-components-from-a-custom-catalog">Agent-Side: Using Components from a Custom Catalog<a class="headerlink" href="#agent-side-using-components-from-a-custom-catalog" title="Permanent link">&para;</a></h2>
-<p>Once a catalog is registered on the client, agents can use components from it in <code>surfaceUpdate</code> messages.</p>
-<p>The agent specifies which catalog to use via the <code>catalogId</code> in the <code>beginRendering</code> message.</p>
-<p>TODO: Add examples of:</p>
-<ul>
-<li>How agents select catalogs</li>
-<li>How agents reference custom components from catalogs</li>
-<li>How catalog versioning works</li>
-</ul>
-<h2 id="data-binding-and-actions">Data Binding and Actions<a class="headerlink" href="#data-binding-and-actions" title="Permanent link">&para;</a></h2>
-<p>Custom components support the same data binding and action mechanisms as standard components:</p>
-<ul>
-<li><strong>Data binding</strong>: Custom components can bind properties to data model paths using JSON Pointer syntax</li>
-<li><strong>Actions</strong>: Custom components can emit actions that the agent receives and handles</li>
-</ul>
+<h2 id="implementation-guide">Implementation Guide<a class="headerlink" href="#implementation-guide" title="Permanent link">&para;</a></h2>
+<p>We recommend creating catalogs that directly map to your existing component library.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="web-lit--angular--react" name="__tabbed_1" type="radio" /><input id="flutter" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="web-lit--angular--react">Web (Lit / Angular / React)</label><label for="flutter">Flutter</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>To implement your own catalog on the web:
+-   Create a JSON Schema containing your component definitions.
+-   Register your components with the <code>@a2ui/web</code> client.
+-   Provide the schema or reference ID to the agent.</p>
+<p><em>Detailed guides for each framework coming soon.</em></p>
+</div>
+<div class="tabbed-block">
+<p>To implement your own catalog in Flutter:
+-   Define a JSON Schema describing your widget properties.
+-   Map the schema to Flutter widgets using a custom renderer.</p>
+<p><em>Detailed Flutter integration guide coming soon.</em></p>
+</div>
+</div>
+</div>
 <h2 id="security-considerations">Security Considerations<a class="headerlink" href="#security-considerations" title="Permanent link">&para;</a></h2>
-<p>When creating custom catalogs and components:</p>
+<p>When defining and registering catalogs:</p>
 <ol>
-<li><strong>Allowlist components</strong>: Only register components you trust in your catalogs</li>
-<li><strong>Validate properties</strong>: Always validate component properties from agent messages</li>
-<li><strong>Sanitize user input</strong>: If components accept user input, sanitize it before processing</li>
-<li><strong>Limit API access</strong>: Don't expose sensitive APIs or credentials to custom components</li>
+<li><strong>Allowlist components</strong>: Only register components you trust in your catalog definition. Don't expose components that offer dangerous capabilities (e.g., executing arbitrary scripts) unless strictly controlled.</li>
+<li><strong>Validate properties</strong>: Always validate component properties from agent messages to ensure they match expected type constraints.</li>
+<li><strong>Sanitize text</strong>: Avoid rendering un-sanitized content provided by the agent unless safe bounds are established.</li>
 </ol>
-<p>TODO: Add detailed security best practices and code examples.</p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="../theming/">Theming &amp; Styling</a></strong>: Customize the look and feel of components</li>
-<li><strong><a href="../../reference/components/">Component Reference</a></strong>: See all standard components</li>
-<li><strong><a href="../agent-development/">Agent Development</a></strong>: Build agents that use custom components</li>
+<li><strong><a href="../theming/">Theming &amp; Styling</a></strong>: Customize the look and feel of components.</li>
+<li><strong><a href="../../reference/components/">Component Reference</a></strong>: Explore standard types that might be available for reuse.</li>
+<li><strong><a href="../agent-development/">Agent Development</a></strong>: Build agents that interact with your Catalog.</li>
 </ul>
 
 

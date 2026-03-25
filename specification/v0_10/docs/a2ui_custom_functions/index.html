@@ -25,7 +25,7 @@
     
     
       
-        <title>Extending A2UI with Custom Functions - A2UI</title>
+        <title>Defining Custom Functions - A2UI</title>
       
     
     
@@ -153,7 +153,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#extending-a2ui-with-custom-functions" class="md-skip">
+        <a href="#defining-custom-functions" class="md-skip">
           Skip to content
         </a>
       
@@ -188,7 +188,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Extending A2UI with Custom Functions
+              Defining Custom Functions
             
           </span>
         </div>
@@ -1003,14 +1003,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../guides/custom-components/" class="md-nav__link">
+      <a href="../../../../guides/defining-your-own-catalog/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Custom Components
+    Defining Your Own Catalog
   
 
     
@@ -1785,10 +1785,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-define-the-custom-catalog" class="md-nav__link">
+  <a href="#1-define-the-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Define the Custom Catalog
+        1. Define the Catalog
       
     </span>
   </a>
@@ -1853,13 +1853,11 @@
   
 
 
-<h1 id="extending-a2ui-with-custom-functions">Extending A2UI with Custom Functions<a class="headerlink" href="#extending-a2ui-with-custom-functions" title="Permanent link">&para;</a></h1>
-<p>A2UI functions are designed to be extensible. Third-party developers can define
-their own function catalogs.</p>
-<p>This guide demonstrates how to create a <code>custom_catalog.json</code> that adds a string
-<code>trim</code> function and a hardware query function (<code>getScreenResolution</code>).</p>
-<h2 id="1-define-the-custom-catalog">1. Define the Custom Catalog<a class="headerlink" href="#1-define-the-custom-catalog" title="Permanent link">&para;</a></h2>
-<p>Create a JSON Schema file (e.g., <code>custom_catalog.json</code>) that defines your
+<h1 id="defining-custom-functions">Defining Custom Functions<a class="headerlink" href="#defining-custom-functions" title="Permanent link">&para;</a></h1>
+<p>A2UI functions are defined inside a Catalog. When defining your own catalog, you can include custom functions that are specific to your application or design system.</p>
+<p>This guide demonstrates how to define a string <code>trim</code> function and a hardware query function (<code>getScreenResolution</code>) in your catalog.</p>
+<h2 id="1-define-the-catalog">1. Define the Catalog<a class="headerlink" href="#1-define-the-catalog" title="Permanent link">&para;</a></h2>
+<p>Create a JSON Schema file (e.g., <code>my_catalog.json</code>) that defines your
 function parameters.</p>
 <p>Use the <code>functions</code> property to define a map of function schemas.</p>
 <div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>

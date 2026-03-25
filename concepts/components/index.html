@@ -808,10 +808,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-standard-catalog" class="md-nav__link">
+  <a href="#the-basic-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Standard Catalog
+        The Basic Catalog
       
     </span>
   </a>
@@ -863,10 +863,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#custom-components" class="md-nav__link">
+  <a href="#defining-your-own-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom Components
+        Defining Your Own Catalog
       
     </span>
   </a>
@@ -1166,14 +1166,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/custom-components/" class="md-nav__link">
+      <a href="../../guides/defining-your-own-catalog/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Custom Components
+    Defining Your Own Catalog
   
 
     
@@ -1981,10 +1981,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-standard-catalog" class="md-nav__link">
+  <a href="#the-basic-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Standard Catalog
+        The Basic Catalog
       
     </span>
   </a>
@@ -2036,10 +2036,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#custom-components" class="md-nav__link">
+  <a href="#defining-your-own-catalog" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom Components
+        Defining Your Own Catalog
       
     </span>
   </a>
@@ -2297,14 +2297,9 @@
 </div>
 </div>
 </div>
-<h2 id="the-standard-catalog">The Standard Catalog<a class="headerlink" href="#the-standard-catalog" title="Permanent link">&para;</a></h2>
-<p>A2UI defines a standard catalog of components organized by purpose:</p>
-<ul>
-<li><strong>Layout</strong>: Row, Column, List - arrange other components</li>
-<li><strong>Display</strong>: Text, Image, Icon, Video, Divider - show information</li>
-<li><strong>Interactive</strong>: Button, TextField, CheckBox, DateTimeInput, Slider - user input</li>
-<li><strong>Container</strong>: Card, Tabs, Modal - group and organize content</li>
-</ul>
+<h2 id="the-basic-catalog">The Basic Catalog<a class="headerlink" href="#the-basic-catalog" title="Permanent link">&para;</a></h2>
+<p>To help developers get started quickly, the A2UI team maintains the <a href="../../specification/v0_9/json/basic_catalog.json">Basic Catalog</a>.</p>
+<p>This is a pre-defined catalog file that contains a standard set of general-purpose components (Buttons, Inputs, Cards). It is not a special "type" of catalog; it is simply a version of a catalog that has open source renderers available.</p>
 <p>For the complete component gallery with examples, see <a href="../../reference/components/">Component Reference</a>.</p>
 <h2 id="static-vs-dynamic-children">Static vs. Dynamic Children<a class="headerlink" href="#static-vs-dynamic-children" title="Permanent link">&para;</a></h2>
 <p><strong>Static (<code>explicitList</code>)</strong> - Fixed list of child IDs:
@@ -2362,15 +2357,10 @@
 <li><strong>Remove</strong> - Update parent's <code>children</code> list to exclude removed IDs</li>
 </ul>
 <p>The flat structure makes all updates simple ID-based operations.</p>
-<h2 id="custom-components">Custom Components<a class="headerlink" href="#custom-components" title="Permanent link">&para;</a></h2>
-<p>Beyond the standard catalog, clients can define custom components for domain-specific needs:</p>
-<ul>
-<li><strong>How</strong>: Register custom component types in your renderer</li>
-<li><strong>What</strong>: Charts, maps, custom visualizations, specialized widgets</li>
-<li><strong>Security</strong>: Custom components still part of the client's trusted catalog</li>
-</ul>
-<p>Custom components are <em>advertised</em> from the client's renderer to the LLM. The LLM can then use them in addition to the standard catalog.</p>
-<p>See <a href="../../guides/custom-components/">Custom Components Guide</a> for implementation details.</p>
+<h2 id="defining-your-own-catalog">Defining Your Own Catalog<a class="headerlink" href="#defining-your-own-catalog" title="Permanent link">&para;</a></h2>
+<p>While the Basic Catalog is useful for starting out, most production applications will define their own catalog to reflect their specific design system.</p>
+<p>By defining your own catalog, you restrict the agent to using exactly the components and visual language that exist in your application, rather than generic inputs or buttons.</p>
+<p>See <a href="../../guides/defining-your-own-catalog/">Defining Your Own Catalog Guide</a> for implementation details.</p>
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>Descriptive IDs</strong>: Use <code>"user-profile-card"</code> not <code>"c1"</code></li>

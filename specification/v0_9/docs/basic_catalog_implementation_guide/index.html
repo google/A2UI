@@ -12,31 +12,27 @@
         <meta name="author" content="Google">
       
       
-        <link rel="canonical" href="https://a2ui.org/concepts/transports/">
+        <link rel="canonical" href="https://a2ui.org/specification/v0_9/docs/basic_catalog_implementation_guide/">
       
       
-        <link rel="prev" href="../catalogs/">
-      
-      
-        <link rel="next" href="../client_to_server_actions/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/A2UI_dark.svg">
+      <link rel="icon" href="../../../../assets/A2UI_dark.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Transports - A2UI</title>
+        <title>A2UI Basic Catalog Implementation Guide - A2UI</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
   
@@ -120,9 +116,9 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/custom.css">
+      <link rel="stylesheet" href="../../../../stylesheets/custom.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
   
@@ -157,7 +153,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#transports-message-passing" class="md-skip">
+        <a href="#a2ui-basic-catalog-implementation-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -173,9 +169,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="A2UI" class="md-header__button md-logo" aria-label="A2UI" data-md-component="logo">
+    <a href="../../../.." title="A2UI" class="md-header__button md-logo" aria-label="A2UI" data-md-component="logo">
       
-  <img src="../../assets/A2UI_light.svg" alt="logo">
+  <img src="../../../../assets/A2UI_light.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -192,7 +188,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Transports
+              A2UI Basic Catalog Implementation Guide
             
           </span>
         </div>
@@ -308,9 +304,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="A2UI" class="md-nav__button md-logo" aria-label="A2UI" data-md-component="logo">
+    <a href="../../../.." title="A2UI" class="md-nav__button md-logo" aria-label="A2UI" data-md-component="logo">
       
-  <img src="../../assets/A2UI_light.svg" alt="logo">
+  <img src="../../../../assets/A2UI_light.svg" alt="logo">
 
     </a>
     A2UI
@@ -337,7 +333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../../.." class="md-nav__link">
         
   
   
@@ -421,7 +417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../introduction/what-is-a2ui/" class="md-nav__link">
+      <a href="../../../../introduction/what-is-a2ui/" class="md-nav__link">
         
   
   
@@ -449,7 +445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../introduction/who-is-it-for/" class="md-nav__link">
+      <a href="../../../../introduction/who-is-it-for/" class="md-nav__link">
         
   
   
@@ -477,7 +473,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../introduction/how-to-use/" class="md-nav__link">
+      <a href="../../../../introduction/how-to-use/" class="md-nav__link">
         
   
   
@@ -505,7 +501,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../introduction/agent-ui-ecosystem/" class="md-nav__link">
+      <a href="../../../../introduction/agent-ui-ecosystem/" class="md-nav__link">
         
   
   
@@ -540,7 +536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/" class="md-nav__link">
+      <a href="../../../../quickstart/" class="md-nav__link">
         
   
   
@@ -567,7 +563,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../composer/" class="md-nav__link">
+      <a href="../../../../composer/" class="md-nav__link">
         
   
   
@@ -591,10 +587,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -616,11 +610,11 @@
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -641,7 +635,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -659,7 +653,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../overview/" class="md-nav__link">
+      <a href="../../../../concepts/overview/" class="md-nav__link">
         
   
   
@@ -687,7 +681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../data-flow/" class="md-nav__link">
+      <a href="../../../../concepts/data-flow/" class="md-nav__link">
         
   
   
@@ -715,7 +709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../components/" class="md-nav__link">
+      <a href="../../../../concepts/components/" class="md-nav__link">
         
   
   
@@ -743,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../data-binding/" class="md-nav__link">
+      <a href="../../../../concepts/data-binding/" class="md-nav__link">
         
   
   
@@ -771,7 +765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../catalogs/" class="md-nav__link">
+      <a href="../../../../concepts/catalogs/" class="md-nav__link">
         
   
   
@@ -796,37 +790,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Transports
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../../concepts/transports/" class="md-nav__link">
         
   
   
@@ -842,92 +809,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How It Works
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#available-transports" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Available Transports
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a2a-protocol" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A2A Protocol
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#ag-ui" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        AG UI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#custom-transports" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Transports
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -940,7 +821,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../client_to_server_actions/" class="md-nav__link">
+      <a href="../../../../concepts/client_to_server_actions/" class="md-nav__link">
         
   
   
@@ -1038,7 +919,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/client-setup/" class="md-nav__link">
+      <a href="../../../../guides/client-setup/" class="md-nav__link">
         
   
   
@@ -1066,7 +947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/agent-development/" class="md-nav__link">
+      <a href="../../../../guides/agent-development/" class="md-nav__link">
         
   
   
@@ -1094,7 +975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/renderer-development/" class="md-nav__link">
+      <a href="../../../../guides/renderer-development/" class="md-nav__link">
         
   
   
@@ -1122,7 +1003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/defining-your-own-catalog/" class="md-nav__link">
+      <a href="../../../../guides/defining-your-own-catalog/" class="md-nav__link">
         
   
   
@@ -1150,7 +1031,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/authoring-components/" class="md-nav__link">
+      <a href="../../../../guides/authoring-components/" class="md-nav__link">
         
   
   
@@ -1178,7 +1059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/theming/" class="md-nav__link">
+      <a href="../../../../guides/theming/" class="md-nav__link">
         
   
   
@@ -1206,7 +1087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/a2ui_over_mcp/" class="md-nav__link">
+      <a href="../../../../guides/a2ui_over_mcp/" class="md-nav__link">
         
   
   
@@ -1298,7 +1179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/components/" class="md-nav__link">
+      <a href="../../../../reference/components/" class="md-nav__link">
         
   
   
@@ -1326,7 +1207,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/messages/" class="md-nav__link">
+      <a href="../../../../reference/messages/" class="md-nav__link">
         
   
   
@@ -1354,7 +1235,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/renderers/" class="md-nav__link">
+      <a href="../../../../reference/renderers/" class="md-nav__link">
         
   
   
@@ -1382,7 +1263,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/agents/" class="md-nav__link">
+      <a href="../../../../reference/agents/" class="md-nav__link">
         
   
   
@@ -1523,7 +1404,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../specification/v0.8-a2ui/" class="md-nav__link">
+      <a href="../../../v0.8-a2ui/" class="md-nav__link">
         
   
   
@@ -1551,7 +1432,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../specification/v0.8-a2a-extension/" class="md-nav__link">
+      <a href="../../../v0.8-a2a-extension/" class="md-nav__link">
         
   
   
@@ -1640,7 +1521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../specification/v0.9-a2ui/" class="md-nav__link">
+      <a href="../../../v0.9-a2ui/" class="md-nav__link">
         
   
   
@@ -1668,7 +1549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../specification/v0.9-evolution-guide/" class="md-nav__link">
+      <a href="../../../v0.9-evolution-guide/" class="md-nav__link">
         
   
   
@@ -1766,7 +1647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ecosystem/a2ui-in-the-world/" class="md-nav__link">
+      <a href="../../../../ecosystem/a2ui-in-the-world/" class="md-nav__link">
         
   
   
@@ -1794,7 +1675,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ecosystem/renderers/" class="md-nav__link">
+      <a href="../../../../ecosystem/renderers/" class="md-nav__link">
         
   
   
@@ -1822,7 +1703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ecosystem/community/" class="md-nav__link">
+      <a href="../../../../ecosystem/community/" class="md-nav__link">
         
   
   
@@ -1857,7 +1738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../roadmap/" class="md-nav__link">
+      <a href="../../../../roadmap/" class="md-nav__link">
         
   
   
@@ -1904,10 +1785,396 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
+  <a href="#1-components" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How It Works
+        1. Components
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#text" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#icon" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Icon
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#video" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Video
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audioplayer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AudioPlayer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#row" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Row
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Column
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        List
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Card
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tabs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#divider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Divider
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#button" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Button
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TextField
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checkbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CheckBox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choicepicker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ChoicePicker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slider
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#datetimeinput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DateTimeInput
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-client-side-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Client-Side Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Client-Side Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formatstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        formatString
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        required
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regex" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        regex
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#length" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        length
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numeric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        numeric
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        email
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formatnumber" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        formatNumber
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formatcurrency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        formatCurrency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formatdate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        formatDate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pluralize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pluralize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openurl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        openUrl
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#and" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        and
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#or" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        or
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        not
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-layout-spacing-margins-and-padding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Layout Spacing: Margins and Padding
       
     </span>
   </a>
@@ -1915,57 +2182,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#available-transports" class="md-nav__link">
+  <a href="#4-color-contrast-and-nesting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available Transports
+        4. Color, Contrast, and Nesting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Color, Contrast, and Nesting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#text-and-icon-contrast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text and Icon Contrast
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#a2a-protocol" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#nesting-containers-cards" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A2A Protocol
+        Nesting Containers (Cards)
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#ag-ui" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        AG UI
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#custom-transports" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Transports
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1987,46 +2238,6 @@
   
 
 
-  <nav class="md-path" aria-label="Navigation" >
-    <ol class="md-path__list">
-      
-        
-  
-  
-    <li class="md-path__item">
-      <a href="../.." class="md-path__link">
-        
-  <span class="md-ellipsis">
-    Home
-  </span>
-
-      </a>
-    </li>
-  
-
-      
-      
-        
-  
-  
-    
-    
-      <li class="md-path__item">
-        <a href="../overview/" class="md-path__link">
-          
-  <span class="md-ellipsis">
-    Concepts
-  </span>
-
-        </a>
-      </li>
-    
-  
-
-      
-    </ol>
-  </nav>
-
               
               <article class="md-content__inner md-typeset">
                 
@@ -2038,91 +2249,217 @@
     
       
     
-    <a href="https://github.com/google/A2UI/raw/main/docs/concepts/transports.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/google/A2UI/raw/main/docs/specification/v0_9/docs/basic_catalog_implementation_guide.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
     </a>
   
 
 
-<h1 id="transports-message-passing">Transports (Message Passing)<a class="headerlink" href="#transports-message-passing" title="Permanent link">&para;</a></h1>
-<p>Transports deliver A2UI messages from agents to clients. A2UI is transport-agnostic—use any method that can send JSON.</p>
-<p>The actual component rendering is done by the <a href="../../reference/renderers/">renderer</a>,
-and the <a href="../../reference/agents/">agents</a> are responsible for generating the A2UI messages.
-Getting the messages from the agent to the client is the job of the transport.</p>
-<h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Agent → Transport → Client Renderer
-</span></code></pre></div>
-<p>A2UI defines a sequence of JSON messages. The transport layer is responsible for delivering this sequence from the agent to the client. A common transport mechanism is a stream using a format like JSON Lines (JSONL), where each line is a single A2UI message.</p>
-<h2 id="available-transports">Available Transports<a class="headerlink" href="#available-transports" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Transport</th>
-<th>Status</th>
-<th>Use Case</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>A2A Protocol</strong></td>
-<td>✅ Stable</td>
-<td>Multi-agent systems, enterprise meshes</td>
-</tr>
-<tr>
-<td><strong>AG UI</strong></td>
-<td>✅ Stable</td>
-<td>Full-stack React applications</td>
-</tr>
-<tr>
-<td><strong>REST API</strong></td>
-<td>📋 Planned</td>
-<td>Simple HTTP endpoints</td>
-</tr>
-<tr>
-<td><strong>WebSockets</strong></td>
-<td>💡 Proposed</td>
-<td>Real-time bidirectional</td>
-</tr>
-<tr>
-<td><strong>SSE (Server-Sent Events)</strong></td>
-<td>💡 Proposed</td>
-<td>Web streaming</td>
-</tr>
-</tbody>
-</table>
-<h2 id="a2a-protocol">A2A Protocol<a class="headerlink" href="#a2a-protocol" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://a2a-protocol.org">Agent2Agent (A2A) protocol</a> provides secure,
-standardized agent communication.  An A2A extension provides easy integration with A2UI.</p>
-<p><strong>Benefits:</strong></p>
-<ul>
-<li>Security and authentication built-in</li>
-<li>Bindings for many message formats, auth, and transport protocols</li>
-<li>Clean separation of concerns</li>
+<h1 id="a2ui-basic-catalog-implementation-guide">A2UI Basic Catalog Implementation Guide<a class="headerlink" href="#a2ui-basic-catalog-implementation-guide" title="Permanent link">&para;</a></h1>
+<p>This guide is designed for renderer and client developers implementing the A2UI Basic Catalog (v0.9). It details how to visually present and functionally implement each component and client-side function defined in the catalog.</p>
+<p>When building your framework-specific adapters (Layer 3) over the generic A2UI bindings, refer to this document for the expected visual behaviors, suggested layouts, and interaction patterns. This guide uses generic terminology applicable to Web, Mobile (iOS/Android), and Desktop platforms.</p>
+<hr />
+<h2 id="1-components">1. Components<a class="headerlink" href="#1-components" title="Permanent link">&para;</a></h2>
+<h3 id="text">Text<a class="headerlink" href="#text" title="Permanent link">&para;</a></h3>
+<p>Displays text content.</p>
+<p><strong>Rendering Guidelines:</strong> Text should be rendered using a Markdown parser when possible. If markdown rendering is unavailable or fails, gracefully fallback to rendering the raw text. In such cases, renderers should ideally attempt to strip common Markdown markers (like <code>**</code> or <code>#</code>) to ensure the text remains legible and aesthetically consistent with the intended presentation.
+<strong>Property Mapping:</strong>
+- <code>variant="h1"</code> through <code>h5"</code>: Apply heading styling. Suggested relative font sizes: <code>h1</code> (2.5x base), <code>h2</code> (2x base), <code>h3</code> (1.75x base), <code>h4</code> (1.5x base), <code>h5</code> (1.25x base).
+- <code>variant="caption"</code>: Render as smaller text, typically italicized or in a lighter/muted color. Suggested font size: 0.8x base.
+- <code>variant="body"</code> (default): Standard body text. Uses the base font size (e.g., 16dp/16px).</p>
+<h3 id="image">Image<a class="headerlink" href="#image" title="Permanent link">&para;</a></h3>
+<p>Displays an image from a URL.</p>
+<p><strong>Rendering Guidelines:</strong> Ensure the component defaults to a flexible width so it fills its container.
+<strong>Property Mapping:</strong>
+- <code>fit</code>: Map the property to the platform's equivalent content scaling mode (e.g., CSS <code>object-fit</code>, iOS <code>contentMode</code>, Android <code>ScaleType</code>).
+- <code>variant="icon"</code>: Render very small and square (e.g., 24x24dp).
+- <code>variant="avatar"</code>: Render small and rounded/circular (e.g., 40x40dp, fully rounded corners).
+- <code>variant="smallFeature"</code>: Render as a small rectangle (e.g., 100x100dp).
+- <code>variant="mediumFeature"</code> (default): Render as a medium rectangle (e.g., 100% width up to 300dp, or 200x200dp).
+- <code>variant="largeFeature"</code>: Render as a large prominent image (e.g., 100% width, max height 400dp).
+- <code>variant="header"</code>: Render as a full-width banner image, usually at the top of a surface (e.g., 100% width, height 200dp, scaling mode set to cover/crop).</p>
+<h3 id="icon">Icon<a class="headerlink" href="#icon" title="Permanent link">&para;</a></h3>
+<p>Displays a standard system icon.</p>
+<p><strong>Rendering Guidelines:</strong> Map the icon <code>name</code> to a system or bundled icon set (e.g., Material Symbols, SF Symbols). The string <code>name</code> from the data model (e.g., <code>accountCircle</code>) should be converted to the required format (like snake_case <code>account_circle</code>) if required by the icon engine. Suggested styling: 24dp size and inherit the current text color.</p>
+<h3 id="video">Video<a class="headerlink" href="#video" title="Permanent link">&para;</a></h3>
+<p>A video player.</p>
+<p><strong>Rendering Guidelines:</strong> Render using a native video player component with user controls enabled. Ensure the video container spans the full width of the parent's container for responsiveness. Scrubbing (seeking) should be supported if provided by the native control.</p>
+<h3 id="audioplayer">AudioPlayer<a class="headerlink" href="#audioplayer" title="Permanent link">&para;</a></h3>
+<p>An audio player.</p>
+<p><strong>Rendering Guidelines:</strong> Render using a native audio player component with user controls enabled. Like video, its container should span the full width of its parent. Scrubbing (seeking) should be supported if provided by the native control.</p>
+<h3 id="row">Row<a class="headerlink" href="#row" title="Permanent link">&para;</a></h3>
+<p>A horizontal layout container.</p>
+<p><strong>Rendering Guidelines:</strong> Implemented using a horizontal layout container (e.g., CSS Flexbox row, Compose <code>Row</code>, SwiftUI <code>HStack</code>). Ensure it fills the available width.
+<strong>Property Mapping:</strong>
+- <code>justify</code>: Maps to main-axis alignment (e.g., <code>justify-content</code> in CSS, <code>horizontalArrangement</code> in Compose). Use equivalents for pushing items to edges (<code>spaceBetween</code>) or packing them together (<code>start</code>, <code>center</code>, <code>end</code>).
+- <code>align</code>: Maps to cross-axis alignment (e.g., <code>align-items</code> in CSS, <code>verticalAlignment</code> in Compose). Use equivalents for top (<code>start</code>), center, or bottom (<code>end</code>).</p>
+<h3 id="column">Column<a class="headerlink" href="#column" title="Permanent link">&para;</a></h3>
+<p>A vertical layout container.</p>
+<p><strong>Rendering Guidelines:</strong> Implemented using a vertical layout container (e.g., CSS Flexbox column, Compose <code>Column</code>, SwiftUI <code>VStack</code>).
+<strong>Property Mapping:</strong>
+- <code>justify</code>: Maps to main-axis alignment on the vertical axis.
+- <code>align</code>: Maps to cross-axis alignment on the horizontal axis.</p>
+<h3 id="list">List<a class="headerlink" href="#list" title="Permanent link">&para;</a></h3>
+<p>A scrollable list of components.</p>
+<p><strong>Rendering Guidelines:</strong> Children of a horizontal list should typically have a constrained max-width so they do not stretch indefinitely.
+<strong>Property Mapping:</strong>
+- <code>direction="vertical"</code> (default): Implement as a vertically scrollable view (e.g., CSS <code>overflow-y: auto</code>, Compose <code>LazyColumn</code>, SwiftUI <code>ScrollView</code> vertical).
+- <code>direction="horizontal"</code>: Implement as a horizontally scrollable view. Hide the scrollbar for a cleaner look if supported by the platform.</p>
+<h3 id="card">Card<a class="headerlink" href="#card" title="Permanent link">&para;</a></h3>
+<p>A container with card-like styling that visually groups its child.</p>
+<p><strong>Rendering Guidelines:</strong> Applies a background color distinct from the main surface, rounded corners (e.g., 8dp or 12dp), a subtle shadow or elevation, and inner padding (e.g., 16dp). Note that the card accepts exactly <strong>one</strong> child. If the user wants multiple elements inside a card, they must provide a container (like <code>Column</code>) as the single child.</p>
+<h3 id="tabs">Tabs<a class="headerlink" href="#tabs" title="Permanent link">&para;</a></h3>
+<p>A set of tabs, each with a title and a corresponding child component.</p>
+<p><strong>Rendering Guidelines:</strong> Render a horizontal row of interactive tab headers for the <code>titles</code>. Visually indicate the active tab (e.g., bold text, colored bottom border).
+<strong>Behavior &amp; State:</strong> Maintain a local <code>selectedIndex</code> state (defaulting to 0). When a tab header is tapped, update <code>selectedIndex</code> and render <em>only</em> the <code>child</code> component that corresponds to that index.</p>
+<h3 id="divider">Divider<a class="headerlink" href="#divider" title="Permanent link">&para;</a></h3>
+<p>A dividing line to separate content.</p>
+<p><strong>Property Mapping:</strong>
+- <code>axis="horizontal"</code> (default): Render a 1dp tall line spanning 100% width with a subtle border/outline color.
+- <code>axis="vertical"</code>: Render a 1dp wide line with a set height, spanning the height of the container.</p>
+<h3 id="modal">Modal<a class="headerlink" href="#modal" title="Permanent link">&para;</a></h3>
+<p>A dialog window.</p>
+<p><strong>Rendering Guidelines:</strong>
+- <strong>Desktop UIs</strong>: Render as a centered popup or native dialog window over the main content, typically with a dimmed backdrop.
+- <strong>Mobile UIs</strong>: Render as a bottom sheet or full-screen dialog over the main content.
+- You must provide a mechanism to close the modal (e.g., an "X" button, clicking/tapping the backdrop overlay, or a swipe-to-dismiss gesture).</p>
+<p><strong>Behavior &amp; State:</strong> This component behaves differently than a standard container. It acts as a <strong>Modal Entry Point</strong>. When instantiated, the user only sees the <code>trigger</code> child component on the screen (which usually acts and looks like a Button). The modal logic intercepts interactions (taps/clicks) on the <code>trigger</code>. When the <code>trigger</code> is tapped, the modal opens and displays the <code>content</code> child component.</p>
+<h3 id="button">Button<a class="headerlink" href="#button" title="Permanent link">&para;</a></h3>
+<p>An interactive button that dispatches a protocol action.</p>
+<p><strong>Rendering Guidelines:</strong> Render as a native interactive button component. It must render its <code>child</code> component inside the button (usually a <code>Text</code> or <code>Icon</code>).
+<strong>Behavior &amp; State:</strong> When tapped, it dispatches the <code>action</code> back to the server, dynamically resolving the context variables at the moment of the interaction.
+<strong>Property Mapping:</strong>
+- <code>variant="default"</code>: Standard button with a subtle background and border.
+- <code>variant="primary"</code>: Prominent call-to-action button using the theme's <code>primaryColor</code> for its background, and contrasting text.
+- <code>variant="borderless"</code>: Button with no background or border, appearing like a clickable text link.</p>
+<h3 id="textfield">TextField<a class="headerlink" href="#textfield" title="Permanent link">&para;</a></h3>
+<p>A field for user text input.</p>
+<p><strong>Rendering Guidelines:</strong> Render using the platform's native text input control.
+<strong>Behavior &amp; State:</strong> Establishes <strong>Two-Way Binding</strong>. As the user types, immediately write the new string back to the local data model path bound to <code>value</code>.
+<strong>Property Mapping:</strong>
+- <code>variant="shortText"</code> (default): Standard single-line input field.
+- <code>variant="longText"</code>: Render as a multi-line text area.
+- <code>variant="number"</code>: Render as a numeric input field, typically showing a numeric keyboard on mobile.
+- <code>variant="obscured"</code>: Render as an obscured password/secure field.</p>
+<h3 id="checkbox">CheckBox<a class="headerlink" href="#checkbox" title="Permanent link">&para;</a></h3>
+<p>A toggleable control with a label.</p>
+<p><strong>Rendering Guidelines:</strong> Render a native checkbox or toggle switch component alongside a text label.
+<strong>Behavior &amp; State:</strong> Triggers two-way binding on the <code>value</code> path, setting it to boolean <code>true</code> or <code>false</code> when interacted with.</p>
+<h3 id="choicepicker">ChoicePicker<a class="headerlink" href="#choicepicker" title="Permanent link">&para;</a></h3>
+<p>A component for selecting one or more options from a list.</p>
+<p><strong>Rendering Guidelines:</strong>
+- <code>displayStyle="checkbox"</code> (default): Render as a dropdown menu, picker wheel, or an expanding vertical list of selectable options. A dropdown wrapper is preferred to save space.
+- <code>displayStyle="chips"</code>: Render as a horizontal, wrapping row of selectable chips/pills. Selected chips should have a distinct background/border.
+- If <code>filterable</code> is true, render a text input above the list of options. As the user types, filter the visible options using a case-insensitive substring match on the option labels.</p>
+<p><strong>Behavior &amp; State:</strong> Binds to an array of strings in the data model representing the active selections. Toggle selections in the data model upon user interaction.</p>
+<h3 id="slider">Slider<a class="headerlink" href="#slider" title="Permanent link">&para;</a></h3>
+<p>A control for selecting a numeric value within a range.</p>
+<p><strong>Rendering Guidelines:</strong> Render using the platform's native slider or seek bar component. Optionally display the current numeric value next to the slider track.
+<strong>Behavior &amp; State:</strong> Set <code>min</code> and <code>max</code> limits. Perform two-way binding, updating the numeric <code>value</code> path as the user drags the slider. Note that the value is a <code>number</code> rather than an integer, allowing for decimal ranges (e.g., 0.0 to 1.0).</p>
+<h3 id="datetimeinput">DateTimeInput<a class="headerlink" href="#datetimeinput" title="Permanent link">&para;</a></h3>
+<p>An input for date and/or time.</p>
+<p><strong>Rendering Guidelines:</strong> Render using native date and time picker controls.
+- If <code>enableDate</code> and <code>enableTime</code> are both true, show both date and time selection UI.
+- If only <code>enableDate</code> is true, show only a date picker.
+- If only <code>enableTime</code> is true, show only a time picker.</p>
+<p><strong>Behavior &amp; State:</strong> The component must convert the platform's native date/time format into a standard ISO 8601 string before writing it to the A2UI data model, and correctly parse ISO 8601 strings coming from the model into the input field.</p>
+<hr />
+<h2 id="2-client-side-functions">2. Client-Side Functions<a class="headerlink" href="#2-client-side-functions" title="Permanent link">&para;</a></h2>
+<p>Functions provide client-side logic for validation, interpolation, and operations. As defined in the Architecture Guide, the reactivity of function arguments is generally handled by the Core Data Layer (specifically the Binder/Context layer). </p>
+<p>Core libraries for each language (such as <code>@a2ui/web_core</code> for TypeScript) typically provide a complete, framework-agnostic implementation of all the functions in the basic catalog. Developers are encouraged to utilize these shared implementations rather than writing their own.
+When a function is called, the system resolves its arguments. If an argument is a static value, it is passed directly. If it is a dynamic binding, the Context layer handles the subscription. For most standard functions, the <code>execute</code> implementation simply receives a dictionary of static <code>args</code> and returns a static value. The Context layer wraps this execution in a reactive stream (e.g., a <code>computed</code> signal) so that the function re-runs whenever any of its dynamic arguments change.</p>
+<p>However, complex functions like <code>formatString</code> must manually interact with the Context to parse and subscribe to nested dynamic dependencies.</p>
+<h3 id="formatstring"><code>formatString</code><a class="headerlink" href="#formatstring" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> The core interpolation engine. Parses the <code>args.value</code> string for <code>${expression}</code> blocks, combining literal strings, data paths, and other client-side function results.</p>
+<p><strong>Architecture &amp; Logic:</strong>
+Because <code>formatString</code> contains dynamic expressions embedded <em>within</em> a string literal, the Context layer cannot pre-resolve them. The implementation must parse the string and manually create a reactive output.</p>
+<ol>
+<li><strong>Parser/Scanner:</strong> Implement a parser that scans the input string (<code>args.value</code>) for <code>${...}</code> blocks. It must properly handle escaped markers (<code>\${</code>) which resolve to a literal <code>${</code>.</li>
+<li><strong>Expression Evaluation:</strong> Inside the interpolation block, the parser must differentiate between:<ul>
+<li><strong>Literals:</strong> Quoted strings (<code>'...'</code> or <code>"..."</code>), numbers, and keywords (<code>true</code>, <code>false</code>, <code>null</code>).</li>
+<li><strong>Data Paths:</strong> Identifiers starting with a slash (<code>/absolute/path</code>) or relative identifiers (<code>relative/path</code>).</li>
+<li><strong>Function Calls:</strong> Identifiers followed by parentheses, e.g., <code>funcName(argName: value)</code>.</li>
 </ul>
-<p>If you are using A2A, this should be nearly automatic.</p>
-<p>TODO: Add a detailed guide.</p>
-<p><strong>See:</strong> <a href="../../specification/v0.8-a2a-extension/">A2A Extension Specification</a></p>
-<h2 id="ag-ui">AG UI<a class="headerlink" href="#ag-ui" title="Permanent link">&para;</a></h2>
-<p><a href="https://ag-ui.com/">AG UI</a> translates from A2UI messages to AG UI messages, and handles transport and state sync automatically.</p>
-<p>If you are using AG UI, this should be automatic.</p>
-<p>TODO: Add a detailed guide.</p>
-<h2 id="custom-transports">Custom Transports<a class="headerlink" href="#custom-transports" title="Permanent link">&para;</a></h2>
-<p>You can use any transport that sends JSON:</p>
-<p><strong>HTTP/REST:</strong></p>
-<div class="language-javascript highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// TODO: Add an example</span>
-</span></code></pre></div>
-<p><strong>WebSockets:</strong></p>
-<div class="language-javascript highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// TODO: Add an example</span>
-</span></code></pre></div>
-<p><strong>Server-Sent Events:</strong></p>
-<div class="language-javascript highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// TODO: Add an example</span>
-</span></code></pre></div>
-<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+</li>
+<li><strong>Context Resolution:</strong> For every parsed <code>DataPath</code> or <code>FunctionCall</code> token, use the <code>DataContext</code> (e.g., <code>context.resolveSignal(token)</code>) to turn it into a reactive stream/signal.</li>
+<li><strong>Reactive Return:</strong> The function MUST return a computed reactive stream (e.g., a <code>computed(() =&gt; ...)</code> signal). Inside this computed stream, unwrap all the resolved signals, convert them to strings, and concatenate them with the literal string parts.</li>
+</ol>
+<h3 id="required"><code>required</code><a class="headerlink" href="#required" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Validates that a given value is present.</p>
+<p><strong>Logic:</strong> Return <code>true</code> if <code>args.value</code> is strictly not <code>null</code>, not <code>undefined</code>, not an empty string <code>""</code>, and not an empty array <code>[]</code>. Otherwise, return <code>false</code>.</p>
+<h3 id="regex"><code>regex</code><a class="headerlink" href="#regex" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Validates a value against a regular expression.</p>
+<p><strong>Logic:</strong> Instantiate a regular expression using <code>args.pattern</code>. Test the <code>args.value</code> string against it. Return <code>true</code> if it matches, <code>false</code> otherwise.</p>
+<h3 id="length"><code>length</code><a class="headerlink" href="#length" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Validates string length constraints.</p>
+<p><strong>Logic:</strong> Ensure the length of the string <code>args.value</code> is <code>&gt;= args.min</code> (if <code>min</code> is provided) and <code>&lt;= args.max</code> (if <code>max</code> is provided).</p>
+<h3 id="numeric"><code>numeric</code><a class="headerlink" href="#numeric" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Validates numeric range constraints.</p>
+<p><strong>Logic:</strong> Parse <code>args.value</code> as a number. Ensure it is <code>&gt;= args.min</code> (if <code>min</code> is provided) and <code>&lt;= args.max</code> (if <code>max</code> is provided). Return <code>true</code> if valid, <code>false</code> if invalid or if it cannot be parsed as a number.</p>
+<h3 id="email"><code>email</code><a class="headerlink" href="#email" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Validates an email address.</p>
+<p><strong>Logic:</strong> Test <code>args.value</code> against a standard email regex pattern (e.g., <code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code>).</p>
+<h3 id="formatnumber"><code>formatNumber</code><a class="headerlink" href="#formatnumber" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Formats a numeric value.</p>
+<p><strong>Logic:</strong> Use the platform's native locale formatting (e.g., <code>Intl.NumberFormat</code> on the web or <code>NumberFormatter</code> natively) on <code>args.value</code>. 
+- If <code>args.decimals</code> is provided, force both the minimum and maximum fraction digits to that value. 
+- Enable grouping (e.g., thousands separators) unless <code>args.grouping</code> is explicitly set to <code>false</code>.</p>
+<h3 id="formatcurrency"><code>formatCurrency</code><a class="headerlink" href="#formatcurrency" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Formats a number as a currency string.</p>
+<p><strong>Logic:</strong> Similar to <code>formatNumber</code>, but configured for currency style formatting. Apply the ISO 4217 currency code provided in <code>args.currency</code> (e.g., 'USD', 'EUR').</p>
+<h3 id="formatdate"><code>formatDate</code><a class="headerlink" href="#formatdate" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Formats a timestamp into a date string.</p>
+<p><strong>Logic:</strong> Parse <code>args.value</code> into a native Date/Time object. Interpret the Unicode TR35 <code>args.format</code> string (e.g., <code>yyyy-MM-dd</code>, <code>HH:mm</code>) and construct the formatted date string. You will likely need a platform-specific date formatting library to parse the TR35 pattern.</p>
+<h3 id="pluralize"><code>pluralize</code><a class="headerlink" href="#pluralize" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Returns a localized pluralized string.</p>
+<p><strong>Logic:</strong> Resolve the plural category for the numeric <code>args.value</code> based on the current locale (e.g., using <code>Intl.PluralRules</code> on the web). Map the resulting category (<code>zero</code>, <code>one</code>, <code>two</code>, <code>few</code>, <code>many</code>, <code>other</code>) to the corresponding string provided in the <code>args</code> object. If the specific category string is missing from <code>args</code>, fallback to <code>args.other</code>.</p>
+<h3 id="openurl"><code>openUrl</code><a class="headerlink" href="#openurl" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Opens a URL.</p>
+<p><strong>Logic:</strong> Open <code>args.url</code> using the native platform's URL handler (e.g., opening in the system browser or deep-linking to an app). This function returns <code>void</code> and is executed as a side-effect.</p>
+<h3 id="and"><code>and</code><a class="headerlink" href="#and" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Logical AND operator.</p>
+<p><strong>Logic:</strong> Iterate through the boolean array <code>args.values</code>. Return <code>true</code> only if all values are true. Short-circuit evaluation is encouraged.</p>
+<h3 id="or"><code>or</code><a class="headerlink" href="#or" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Logical OR operator.</p>
+<p><strong>Logic:</strong> Iterate through the boolean array <code>args.values</code>. Return <code>true</code> if at least one value is true. Short-circuit evaluation is encouraged.</p>
+<h3 id="not"><code>not</code><a class="headerlink" href="#not" title="Permanent link">&para;</a></h3>
+<p><strong>Description:</strong> Logical NOT operator.</p>
+<p><strong>Logic:</strong> Return the strict boolean negation of <code>args.value</code>.</p>
+<hr />
+<h2 id="3-layout-spacing-margins-and-padding">3. Layout Spacing: Margins and Padding<a class="headerlink" href="#3-layout-spacing-margins-and-padding" title="Permanent link">&para;</a></h2>
+<p>A common challenge in dynamic UI frameworks is preventing "spacing multiplication," where nested containers (e.g., a <code>Text</code> inside a <code>Row</code> inside a <code>Column</code>) result in accumulated empty space that throws off the design. </p>
+<p>To achieve a clean, consistent default spacing where elements feel naturally separated without stacking empty space, implementers should follow a <strong>Leaf-Margin Strategy</strong>:</p>
+<ol>
+<li><strong>Invisible Containers have ZERO Spacing</strong>: Structural, invisible layout containers (<code>Row</code>, <code>Column</code>, <code>List</code>) should have <strong>no internal padding</strong> and <strong>no external margins</strong>. They act purely as structural boundaries. This guarantees that wrapping an element in a <code>Row</code> or <code>Column</code> does not alter its spacing.</li>
+<li><strong>Leaf Components carry the Margin</strong>: All non-container, visual "leaf" elements (<code>Text</code>, <code>Image</code>, <code>Icon</code>, <code>Video</code>, <code>AudioPlayer</code>, <code>Slider</code>, etc.) should have a uniform default <strong>external margin</strong> applied to them (e.g., <code>8dp</code> on all sides).</li>
+<li><strong>Visually Outlined Containers carry the Margin</strong>: Containers and inputs that have a visible boundary (<code>Card</code>, <code>Button</code>, <code>TextField</code>, <code>CheckBox</code>, <code>ChoicePicker</code>) should also apply this same uniform default <strong>external margin</strong>. </li>
+<li><em>Note:</em> These elements will naturally also need internal <em>padding</em> to keep their content away from their own visible borders, but this padding is localized and does not affect the external layout.</li>
+</ol>
+<p><strong>Why use Margins on Leaves?</strong>
+Applying margins directly to the visual elements—rather than relying on padding or gap properties on the parent containers—ensures predictable spacing. For example, if you have <code>Row(Item1, Item2)</code>, using margins on the items guarantees that there is space to the left of <code>Item1</code>, space to the right of <code>Item2</code>, and space between them. Because the invisible containers themselves contribute zero extra spacing, you can deeply nest your structural rows and columns without the spacing unexpectedly multiplying.</p>
+<hr />
+<h2 id="4-color-contrast-and-nesting">4. Color, Contrast, and Nesting<a class="headerlink" href="#4-color-contrast-and-nesting" title="Permanent link">&para;</a></h2>
+<p>A common challenge in dynamically generated UI is ensuring proper contrast and visual hierarchy when components are nested. For example:
+- A <code>Text</code> or <code>Icon</code> nested inside a <code>primary</code> <code>Button</code> must change its color to contrast with the button's background.
+- A <code>Card</code> nested inside another <code>Card</code> should remain visually distinct.</p>
+<p>To keep the A2UI rendering layer simple and performant, <strong>do not manually calculate or pass color properties down the A2UI component tree</strong>. Instead, rely entirely on the native context and theme inheritance mechanisms provided by your target UI framework.</p>
+<h3 id="text-and-icon-contrast">Text and Icon Contrast<a class="headerlink" href="#text-and-icon-contrast" title="Permanent link">&para;</a></h3>
+<p>When an element defines a strong background color (like a <code>primary</code> <code>Button</code> using the theme's <code>primaryColor</code>), it must also define the expected text color for its content. It should propagate this expectation implicitly.</p>
 <ul>
-<li><strong><a href="https://a2a-protocol.org">A2A Protocol Docs</a></strong>: Learn about A2A</li>
-<li><strong><a href="../../specification/v0.8-a2a-extension/">A2A Extension Spec</a></strong>: A2UI + A2A details</li>
+<li><strong>Web (CSS):</strong> The <code>Button</code> wrapper sets the standard CSS <code>color</code> property. Because <code>color</code> is inherited in CSS, any <code>Text</code> or <code>Icon</code> component rendered inside the button will automatically adapt.</li>
+<li><strong>Compose (Android):</strong> The button wrapper should use <code>CompositionLocalProvider(LocalContentColor provides ...)</code>. Any nested <code>Text</code> and <code>Icon</code> components will automatically pick up this color without needing it explicitly passed to their A2UI classes.</li>
+<li><strong>SwiftUI (iOS):</strong> Apply <code>.foregroundColor(...)</code> or <code>.environment(\.colorScheme, ...)</code> to the button wrapper.</li>
+<li><strong>Flutter:</strong> Use <code>DefaultTextStyle.merge()</code> and <code>IconTheme.merge()</code> within the button wrapper. If using standard Material buttons (like <code>ElevatedButton</code>), this is often handled for you automatically.</li>
 </ul>
+<p><em>Rule of Thumb:</em> Leaf components like <code>Text</code> and <code>Icon</code> should <strong>never</strong> hardcode their colors unless explicitly instructed by a property. They must always inherit from their environment.</p>
+<h3 id="nesting-containers-cards">Nesting Containers (Cards)<a class="headerlink" href="#nesting-containers-cards" title="Permanent link">&para;</a></h3>
+<p>When a <code>Card</code> is nested within another <code>Card</code>, or placed on different background surfaces, it needs to remain distinct. Attempting to alternate surface colors based on depth adds significant complexity to the renderer.</p>
+<p><strong>Recommended Approach: Outlines and Transparent Surfaces</strong>
+The simplest, most robust starting approach is to give <code>Card</code> components a <strong>transparent background</strong> and a <strong>visible outline/border</strong> (e.g., a 1dp outline matching the theme's outline/border color). 
+- By using borders instead of opaque surface colors, nested cards will simply draw an inner boundary within the parent card. 
+- This guarantees a clear visual hierarchy regardless of how deeply they are nested, and it requires zero context-passing or depth-tracking in your code.
+- If your design system requires opaque cards, consider using a framework-specific elevation system (e.g., standard Material elevation) which often handles shadow and surface tinting automatically, rather than building custom color-alternation logic into the A2UI adapters.</p>
 
 
 
@@ -2157,44 +2494,6 @@ standardized agent communication.  An A2A extension provides easy integration wi
       
         <footer class="md-footer">
   
-    
-      
-      <nav class="md-footer__inner md-grid" aria-label="Footer" >
-        
-          
-          <a href="../catalogs/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Catalogs">
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-            </div>
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              <div class="md-ellipsis">
-                Catalogs
-              </div>
-            </div>
-          </a>
-        
-        
-          
-          <a href="../client_to_server_actions/" class="md-footer__link md-footer__link--next" aria-label="Next: Client-to-Server Actions">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                Client-to-Server Actions
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
     
   
   <div class="md-footer-meta md-typeset">
@@ -2303,10 +2602,10 @@ standardized agent communication.  An A2A extension provides easy integration wi
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["announce.dismiss", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.tabs.link", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
