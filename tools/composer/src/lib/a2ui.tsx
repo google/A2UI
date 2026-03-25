@@ -13,12 +13,12 @@
 
 import { A2UIViewer as BaseA2UIViewer } from "@a2ui/react";
 import type { ComponentProps } from "react";
-import { composerTheme } from "./composerTheme";
+import { viewerTheme } from "./viewerTheme";
 
 export type { ComponentInstance } from "@a2ui/react";
 
 type A2UIViewerProps = ComponentProps<typeof BaseA2UIViewer>;
 
 export function A2UIViewer(props: A2UIViewerProps) {
-  return <BaseA2UIViewer theme={composerTheme} {...props} />;
+  return <BaseA2UIViewer theme={viewerTheme} {...props} />;
 }

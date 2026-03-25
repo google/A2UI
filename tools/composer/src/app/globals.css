@@ -66,6 +66,7 @@
 }
 
 :root {
+  --a2ui-card-bg: #ffffff;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -182,7 +183,7 @@
   --n-0: #000000;
 
   /* Primary palette (indigo) */
-  --p-100: #ffffff;
+  --p-100: var(--a2ui-card-bg);
   --p-99: #fffbff;
   --p-98: #fcf8ff;
   --p-95: #f2efff;
