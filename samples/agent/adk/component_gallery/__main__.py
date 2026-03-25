@@ -28,7 +28,7 @@ from a2ui.a2a import get_a2ui_agent_extension
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from dotenv import load_dotenv
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
 
 
 from agent_executor import ComponentGalleryExecutor
@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 def main(host, port):
   try:
     extensions = []
-    for v in [VERSION_0_8]:
+    for v in [VERSION_0_8, VERSION_0_9]:
       extensions.append(get_a2ui_agent_extension(v))
     capabilities = AgentCapabilities(
         streaming=True,

@@ -37,7 +37,8 @@ class ComponentGalleryExecutor(AgentExecutor):
     query = "START"  # Default start
     ui_event_part = None
 
-    try_activate_a2ui_extension(context, self._agent_card)
+    active_ui_version = try_activate_a2ui_extension(context, self._agent_card)
+    logger.info(f"Active UI version: {active_ui_version}")
 
     if context.message and context.message.parts:
       for part in context.message.parts:
@@ -63,7 +64,7 @@ class ComponentGalleryExecutor(AgentExecutor):
 
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in self.agent.stream(query, task.context_id):
+    async for item in self.agent.stream(query, task.context_id, active_ui_version):
       final_parts = item["parts"]
 
       await updater.update_status(
