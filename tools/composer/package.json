@@ -12,7 +12,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "dependencies": {
-    "@copilotkit/a2ui-renderer": "1.50.1",
+    "@a2ui/react": "^0.8.0",
     "@copilotkit/react-core": "^1.50.1",
     "@copilotkit/react-ui": "^1.50.1",
     "@copilotkit/runtime": "^1.50.1",

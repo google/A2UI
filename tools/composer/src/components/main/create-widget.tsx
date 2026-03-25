@@ -28,7 +28,7 @@ import { z } from "zod";
 import { WidgetInput } from "./widget-input";
 import { useWidgets } from "@/contexts/widgets-context";
 import type { Widget } from "@/types/widget";
-import type { ComponentInstance } from "@copilotkit/a2ui-renderer";
+import type { ComponentInstance } from "@/lib/a2ui";
 import { parseRobustJSON } from "@/lib/json-parser";
 
 const DEFAULT_COMPONENTS: ComponentInstance[] = [
