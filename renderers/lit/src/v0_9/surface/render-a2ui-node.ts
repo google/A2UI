@@ -27,10 +27,12 @@ import { LitComponentApi } from "@a2ui/lit/v0_9";
  * to avoid duplicate DOM node wrapping.
  *
  * @param context The component context defining the data model and type to render.
+ * @param catalog The catalog of component implementations.
  * @returns A Lit TemplateResult representing the resolved component, or `nothing` if the component is invalid or unresolvable.
  *
- * For examples on how to use `renderA2uiNode` when defining custom A2UI components that contain children,
- * refer to the implementation of `A2uiSurface`, or structural catalog components like `Row` and `Column`.
+ * This method should be used directly very rarely. Instead, programmers should use
+ * the `renderNode` method on the base `A2uiLitElement` class, which handles context
+ * creation automatically.
  */
 export function renderA2uiNode(
   context: ComponentContext,
