@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { ComponentInstance } from "@copilotkit/a2ui-renderer";
+import type { ComponentInstance } from "@/lib/a2ui";
 
 export interface DataState {
   name: string;
