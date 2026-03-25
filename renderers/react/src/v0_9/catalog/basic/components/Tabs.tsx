@@ -21,7 +21,7 @@ import {LEAF_MARGIN} from '../utils';
 
 // It seems that individual tabs don't have their type inferred, so we use a
 // helper type here.
-type _Tab = {title: string, child: string}
+type _Tab = {title: string; child: string};
 
 export const Tabs = createReactComponent(TabsApi, ({props, buildChild}) => {
   const [selectedIndex, setSelectedIndex] = useState(0);

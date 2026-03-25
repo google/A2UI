@@ -15,9 +15,12 @@
  */
 
 import React, {useRef, useSyncExternalStore, useCallback, memo, useEffect} from 'react';
-import {type z} from 'zod';
 import {type ComponentContext, GenericBinder} from '@a2ui/web_core/v0_9';
-import type {ComponentApi, InferredComponentApiSchemaType, ResolveA2uiProps} from '@a2ui/web_core/v0_9';
+import type {
+  ComponentApi,
+  InferredComponentApiSchemaType,
+  ResolveA2uiProps,
+} from '@a2ui/web_core/v0_9';
 
 export interface ReactComponentImplementation extends ComponentApi {
   /** The framework-specific rendering wrapper. */
@@ -40,7 +43,9 @@ export type ReactA2uiComponentProps<T> = {
  */
 export function createReactComponent<Api extends ComponentApi>(
   api: Api,
-  RenderComponent: React.FC<ReactA2uiComponentProps<ResolveA2uiProps<InferredComponentApiSchemaType<Api>>>>
+  RenderComponent: React.FC<
+    ReactA2uiComponentProps<ResolveA2uiProps<InferredComponentApiSchemaType<Api>>>
+  >
 ): ReactComponentImplementation {
   type Props = ResolveA2uiProps<InferredComponentApiSchemaType<Api>>;
 
