@@ -43,12 +43,11 @@ from prompt_builder import (
 from tools import get_restaurants
 from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.manager import A2uiSchemaManager
-from a2ui.core.parser.parser import parse_response, ResponsePart
+from a2ui.core.parser.parser import parse_response
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
 from a2ui.a2a import (
     get_a2ui_agent_extension,
-    parse_response_to_parts,
     stream_response_to_parts,
 )
 
@@ -327,16 +326,13 @@ class RestaurantAgent:
 
       if is_valid:
         logger.info(
-            "--- RestaurantAgent.stream: Response is valid. Sending final response"
+            "--- RestaurantAgent.stream: Response is valid. Task complete"
             f" (Attempt {attempt}). ---"
-        )
-        final_parts = parse_response_to_parts(
-            final_response_content, fallback_text="OK."
         )
 
         yield {
             "is_task_complete": True,
-            "parts": final_parts,
+            "parts": [],
         }
         return  # We're done, exit the generator
 
