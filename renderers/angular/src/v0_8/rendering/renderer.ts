@@ -29,6 +29,7 @@ import { structuralStyles } from '@a2ui/web_core/styles/index';
 import { Catalog } from './catalog';
 import { MessageProcessor } from '../data';
 import { Types } from '../types';
+import { DynamicComponent } from './dynamic-component';
 
 @Directive({
   selector: '[a2ui-renderer]',
@@ -46,7 +47,7 @@ export class Renderer {
 
   private currentId: string | null = null;
   private currentType: string | null = null;
-  private currentComponentRef: ComponentRef<any> | null = null;
+  private currentComponentRef: ComponentRef<DynamicComponent<Types.AnyComponentNode>> | null = null;
 
   constructor() {
     const platformId = inject(PLATFORM_ID);
@@ -122,13 +123,13 @@ export class Renderer {
       componentTypeOrPromise.then((componentType) => {
         // Ensure we are still supposed to render this component
         if (this.currentId === node.id && this.currentType === node.type) {
-          const componentRef = container.createComponent(componentType);
+          const componentRef = container.createComponent(componentType) as ComponentRef<DynamicComponent<Types.AnyComponentNode>>;
           this.currentComponentRef = componentRef;
           this.updateInputs(componentRef, node, surfaceId);
         }
       });
     } else if (componentTypeOrPromise) {
-      const componentRef = container.createComponent(componentTypeOrPromise);
+      const componentRef = container.createComponent(componentTypeOrPromise) as ComponentRef<DynamicComponent<Types.AnyComponentNode>>;
       this.currentComponentRef = componentRef;
       this.updateInputs(componentRef, node, surfaceId);
     }
@@ -152,7 +153,7 @@ export class Renderer {
    * This is called during component reuse to keep the UI in sync without losing DOM state (like focus).
    */
   private updateInputs(
-    componentRef: ComponentRef<any>,
+    componentRef: ComponentRef<DynamicComponent<Types.AnyComponentNode>>,
     node: Types.AnyComponentNode,
     surfaceId: string,
   ) {

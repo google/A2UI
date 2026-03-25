@@ -80,7 +80,7 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
         dataModelUpdate: {
           surfaceId: this.surfaceId()!,
           path: this.processor.resolvePath(selectionsNode.path as string, this.component().dataContextPath),
-          contents: [{ key: '.', valueMap: [{ key: 'literalArray', valueMap: [{ key: value, valueBoolean: true }] }] }], // This is tricky in v0.8
+          contents: [{ key: '.', valueString: JSON.stringify({ literalArray: [value] }) }],
         },
       }]);
     } else {
