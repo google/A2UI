@@ -37,8 +37,8 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
   };
 
   const options = (props.options || []).filter(
-    (opt: {label: string; value: string}) =>
-      !props.filterable || filter === '' || opt.label.toLowerCase().includes(filter.toLowerCase())
+    (opt: any) =>
+      !props.filterable || filter === '' || String(opt.label).toLowerCase().includes(filter.toLowerCase())
   );
 
   const containerStyle: React.CSSProperties = {
@@ -69,7 +69,7 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
         />
       )}
       <div style={listStyle}>
-        {options.map((opt: {label: string; value: string}, i: number) => {
+        {options.map((opt: any, i: number) => {
           const isSelected = values.includes(opt.value);
           if (props.displayStyle === 'chips') {
             return (
@@ -88,7 +88,7 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
                   fontSize: '12px',
                 }}
               >
-                {opt.label}
+                {opt.label as any}
               </button>
             );
           }
@@ -103,7 +103,7 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
                 onChange={() => onToggle(opt.value)}
                 name={isMutuallyExclusive ? `choice-${context.componentModel.id}` : undefined}
               />
-              <span style={{fontSize: '14px'}}>{opt.label}</span>
+              <span style={{fontSize: '14px'}}>{opt.label as any}</span>
             </label>
           );
         })}
