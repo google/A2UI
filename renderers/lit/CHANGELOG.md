@@ -1,3 +1,7 @@
+## 0.8.4
+
+- Add a `v0_9` renderer. Import from `@a2ui/lit/v0_9`.
+
 ## 0.8.3
 
 - Prepare to land a `v0_9` renderer.
