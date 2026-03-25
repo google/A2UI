@@ -19,9 +19,44 @@ import {createReactComponent} from '../../../adapter';
 import {IconApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
+// Programmatically load the material symbols font if the application hasn't already.
+if (typeof document !== 'undefined') {
+  const isLoaded = Array.from(document.querySelectorAll('link')).some(
+    (link) => link.href.includes('Material+Symbols+Outlined')
+  );
+  if (!isLoaded) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,1';
+    document.head.appendChild(link);
+  }
+}
+
+const ICON_MAPPING: Record<string, string> = {
+  play: 'play_arrow',
+  rewind: 'fast_rewind',
+  favoriteOff: 'favorite',
+  starOff: 'star',
+};
+
+const FILLED_ICONS = ['star', 'starHalf', 'favorite'];
+
 export const Icon = createReactComponent(IconApi, ({props}) => {
-  const iconName =
+  const rawIconName =
     typeof props.name === 'string' ? props.name : (props.name as {path?: string})?.path;
+  
+  // Use mapping if available, otherwise convert camelCase to snake_case
+  let iconName = '';
+  if (rawIconName) {
+    if (ICON_MAPPING[rawIconName]) {
+      iconName = ICON_MAPPING[rawIconName];
+    } else {
+      iconName = rawIconName.replace(/([A-Z])/gm, "_$1").toLowerCase();
+    }
+  }
+
+  const isFilled = FILLED_ICONS.includes(rawIconName || '');
+
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     fontSize: '24px',
@@ -30,6 +65,7 @@ export const Icon = createReactComponent(IconApi, ({props}) => {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+    fontVariationSettings: isFilled ? '"FILL" 1' : undefined,
   };
 
   return (
