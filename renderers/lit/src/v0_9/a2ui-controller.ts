@@ -22,6 +22,7 @@ import {
   ResolveA2uiProps,
   InferredComponentApiSchemaType,
 } from "@a2ui/web_core/v0_9";
+import { A2uiLitElement } from "./a2ui-lit-element.js";
 
 /**
  * A Lit ReactiveController that binds an A2UI component context to its API schema.
@@ -44,11 +45,11 @@ export class A2uiController<
   /**
    * Initializes the controller, binding it to the given Lit element and API schema.
    *
-   * @param host The LitElement acting as the component host. Must provide a component `context`.
+   * @param host The A2uiLitElement acting as the component host.
    * @param api The A2UI component API defining the schema for this element.
    */
   constructor(
-    private host: LitElement & { context: ComponentContext },
+    private host: A2uiLitElement<any>,
     api: Api,
   ) {
     this.binder = new GenericBinder(this.host.context, api.schema);
