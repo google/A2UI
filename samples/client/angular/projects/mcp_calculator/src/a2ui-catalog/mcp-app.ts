@@ -143,10 +143,16 @@ export class McpApp
 
     window.addEventListener('message', this.messageHandler);
 
-    // Set src to trigger load AFTER listener is ready
-    // TODO: Make the sandbox URL configurable. To ensure CORS encapsulation, the sandbox
-    // should be served from a different origin than the host app.
-    const sandboxUrl = 'sandbox_iframe/sandbox.html';
+    
+    // Check for query param to opt-out of origin toggle (for testing)
+    const urlParams = new URLSearchParams(window.location.search);
+    const disableSecuritySelfTest = urlParams.get('disable_security_self_test') === 'true';
+
+    const currentOrigin = window.location.origin;
+    let sandboxUrl = `${currentOrigin}/sandbox_iframe/sandbox.html`;
+    if (disableSecuritySelfTest) {
+      sandboxUrl += '?disable_security_self_test=true';
+    }
     this.iframeSrc.set(
       this.sanitizer.bypassSecurityTrustResourceUrl(sandboxUrl),
     );

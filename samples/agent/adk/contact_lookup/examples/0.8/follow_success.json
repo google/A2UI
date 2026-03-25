@@ -14,10 +14,8 @@
           "component": {
             "Icon": {
               "name": {
-                "literalString": "check_circle"
-              },
-              "size": 48.0,
-              "color": "#4CAF50"
+                "literalString": "check"
+              }
             }
           }
         },

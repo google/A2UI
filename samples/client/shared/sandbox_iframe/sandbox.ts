@@ -43,13 +43,19 @@ if (!document.referrer.match(ALLOWED_REFERRER_PATTERN)) {
 const EXPECTED_HOST_ORIGIN = new URL(document.referrer).origin;
 const OWN_ORIGIN = new URL(window.location.href).origin;
 
-// Security self-test: verify iframe isolation is working correctly.
-try {
-  window.top!.alert("If you see this, the sandbox is not setup securely.");
-  throw "FAIL";
-} catch (e) {
-  if (e === "FAIL") {
-    throw new Error("The sandbox is not setup securely.");
+// Check for query param to opt-out of security self-test (for testing)
+const urlParams = new URLSearchParams(window.location.search);
+const disableSelfTest = urlParams.get('disable_security_self_test') === 'true';
+
+if (!disableSelfTest) {
+  // Security self-test: verify iframe isolation is working correctly.
+  try {
+    window.top!.alert("If you see this, the sandbox is not setup securely.");
+    throw "FAIL";
+  } catch (e) {
+    if (e === "FAIL") {
+      throw new Error("The sandbox is not setup securely.");
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/react",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "React renderer for A2UI (Agent-to-User Interface)",
   "type": "module",
   "main": "./dist/index.cjs",

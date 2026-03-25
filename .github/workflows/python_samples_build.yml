@@ -51,6 +51,10 @@ jobs:
         working-directory: samples/agent/adk
         run: uv run pyink --check .
 
+      - name: Validate Sample Examples
+        run: |
+          PYTHONPATH=agent_sdks/python/src uv run --project agent_sdks/python pytest -vv samples/agent/adk/tests/test_examples_validation.py
+
       - name: Build contact_lookup
         working-directory: samples/agent/adk/contact_lookup
         run: uv build .

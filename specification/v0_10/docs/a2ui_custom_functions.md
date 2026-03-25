@@ -1,14 +1,12 @@
-# Extending A2UI with Custom Functions
+# Defining Custom Functions
 
-A2UI functions are designed to be extensible. Third-party developers can define
-their own function catalogs.
+A2UI functions are defined inside a Catalog. When defining your own catalog, you can include custom functions that are specific to your application or design system.
 
-This guide demonstrates how to create a `custom_catalog.json` that adds a string
-`trim` function and a hardware query function (`getScreenResolution`).
+This guide demonstrates how to define a string `trim` function and a hardware query function (`getScreenResolution`) in your catalog.
 
-## 1. Define the Custom Catalog
+## 1. Define the Catalog
 
-Create a JSON Schema file (e.g., `custom_catalog.json`) that defines your
+Create a JSON Schema file (e.g., `my_catalog.json`) that defines your
 function parameters.
 
 Use the `functions` property to define a map of function schemas.

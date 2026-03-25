@@ -16,16 +16,21 @@
 
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
-import {Catalog, ComponentApi, createFunctionImplementation} from './types.js';
+import {
+  Catalog,
+  ComponentApi,
+  InferredComponentApiSchemaType,
+  createFunctionImplementation,
+} from './types.js';
 import {A2uiExpressionError} from '../errors.js';
 import {z} from 'zod';
 
 describe('Catalog Types', () => {
   it('creates a catalog with functions', () => {
-    const mockComponent: ComponentApi = {
+    const mockComponent = {
       name: 'MockComp',
       schema: z.object({}),
-    };
+    } satisfies ComponentApi;
 
     const mockFunc = createFunctionImplementation(
       {
@@ -88,5 +93,44 @@ describe('Catalog Types', () => {
         );
       },
     );
+  });
+});
+
+describe('InferredComponentApiSchemaType', () => {
+  it('infers the correct schema type from a ComponentApi', () => {
+    const mockSchema = z.object({
+      field1: z.string(),
+      field2: z.number().optional(),
+    });
+
+    const mockApi = {
+      name: 'MockComp',
+      schema: mockSchema,
+    } satisfies ComponentApi;
+    // Appease typescript-eslint/no-unused-vars
+    type _ = typeof mockApi;
+
+    // Type-level equivalence assertion using z.infer
+    type ExpectedType = z.infer<typeof mockSchema>;
+    type InferredType = InferredComponentApiSchemaType<typeof mockApi>;
+
+    // Assert `InferredType` is not exactly `any`
+    type IsAny<T> = 0 extends 1 & T ? true : false;
+    // inferredIsAny only accepts "true" if `InferredType` is "any".
+    // This happens when `mockApi: ComponentApi`, but doesn't when
+    // `mockApi {} satisfies ComponentApi`!
+    const inferredIsAny: IsAny<InferredType> = false;
+
+    // When types are not "any", check that they're the same by checking if they
+    // extend each other.
+    type TypesAreEquivalent<Expected, Actual> = Actual extends Expected
+      ? Expected extends Actual
+        ? true
+        : false
+      : false;
+
+    // typesMatchExact only accepts "true" if `TypesAreEquivalent`
+    const typesMatchExact: TypesAreEquivalent<ExpectedType, InferredType> =
+      true;
   });
 });

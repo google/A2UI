@@ -19,6 +19,11 @@ import {createReactComponent} from '../../../adapter';
 import {TabsApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN} from '../utils';
 
+// The type of a tab is deeply nested into the TabsApi schema, and
+// it seems z.infer is not inferring it correctly (?). We use `any` for now.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type _Tab = any;
+
 export const Tabs = createReactComponent(TabsApi, ({props, buildChild}) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -28,7 +33,7 @@ export const Tabs = createReactComponent(TabsApi, ({props, buildChild}) => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: LEAF_MARGIN}}>
       <div style={{display: 'flex', borderBottom: '1px solid #ccc', marginBottom: '8px'}}>
-        {tabs.map((tab: {title: string; child: string}, i: number) => (
+        {tabs.map((tab: _Tab, i: number) => (
           <button
             key={i}
             onClick={() => setSelectedIndex(i)}

@@ -49,7 +49,7 @@ export const CheckBox = createReactComponent(CheckBoxApi, ({props}) => {
       </div>
       {hasError && (
         <span style={{fontSize: '12px', color: 'red', marginTop: '4px'}}>
-          {props.validationErrors[0]}
+          {props.validationErrors?.[0]}
         </span>
       )}
     </div>
