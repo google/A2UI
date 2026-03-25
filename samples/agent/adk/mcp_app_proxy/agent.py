@@ -28,16 +28,17 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from pydantic import PrivateAttr
-from tools import get_calculator_app, calculate_via_mcp
+from tools import get_calculator_app, calculate_via_mcp, get_pong_app
 from agent_executor import get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
 
 logger = logging.getLogger(__name__)
 
 ROLE_DESCRIPTION = """
-You are an expert A2UI Proxy Agent. Your primary function is to fetch the Calculator App and display it to the user.
+You are an expert A2UI Proxy Agent. Your primary functions are to fetch the Calculator App or the Pong App and display it to the user.
 When the user asks for the calculator, you MUST call the `get_calculator_app` tool.
+When the user asks for Pong, you MUST call the `get_pong_app` tool.
 
-IMPORTANT: Do NOT attempt to construct the JSON manually. The tool `get_calculator_app` handles it automatically.
+IMPORTANT: Do NOT attempt to construct the JSON manually. The tools handle it automatically.
 
 When the user interacts with the calculator and issues a `calculate` action, you MUST call the `calculate_via_mcp` tool to perform the calculation via the remote MCP server. Return the resulting number directly as text to the user.
 """
@@ -45,6 +46,7 @@ When the user interacts with the calculator and issues a `calculate` action, you
 WORKFLOW_DESCRIPTION = """
 1. **Analyze Request**: 
    - If User asks for calculator: Call `get_calculator_app`.
+   - If User asks for Pong: Call `get_pong_app`.
    - If User interacts with the calculator (ACTION: calculate): Extract 'operation', 'a', and 'b' from the event context and call `calculate_via_mcp`. Return the result to the user.
 """
 
@@ -134,7 +136,7 @@ class McpAppProxyAgent:
 
     return AgentCard(
         name="MCP App Proxy Agent",
-        description="Provides access to MCP Apps like Calculator.",
+        description="Provides access to MCP Apps and HTML demos, such as the Calculator and Pong apps.",
         url=self.base_url,
         version="1.0.0",
         default_input_modes=McpAppProxyAgent.SUPPORTED_CONTENT_TYPES,
@@ -147,6 +149,13 @@ class McpAppProxyAgent:
                 description="Opens the calculator app.",
                 tags=["calculator", "app", "tool"],
                 examples=["open calculator", "show calculator"],
+            ),
+            AgentSkill(
+                id="open_pong",
+                name="Open Pong",
+                description="Opens Pong, a simple HTML game.",
+                tags=["html", "app", "demo", "tool"],
+                examples=["open pong", "show pong"],
             )
         ],
     )
@@ -182,7 +191,7 @@ class McpAppProxyAgent:
         name=self._agent_name,
         description="An agent that provides access to MCP Apps.",
         instruction=instruction,
-        tools=[get_calculator_app, calculate_via_mcp],
+        tools=[get_calculator_app, calculate_via_mcp, get_pong_app],
         planner=BuiltInPlanner(
             thinking_config=types.ThinkingConfig(
                 include_thoughts=True,

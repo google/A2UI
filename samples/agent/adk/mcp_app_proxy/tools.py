@@ -108,3 +108,44 @@ async def calculate_via_mcp(operation: str, a: float, b: float):
   except Exception as e:
     logger.error(f"Error calling MCP calculate: {e} {traceback.format_exc()}")
     return f"Error connecting to MCP server: {e}"
+
+
+async def get_pong_app(tool_context: ToolContext):
+  """Fetches the Pong game app."""
+  import os
+  current_dir = os.path.dirname(os.path.abspath(__file__))
+  html_file_path = os.path.join(current_dir, "pong_app.html")
+
+  try:
+    with open(html_file_path, "r", encoding="utf-8") as f:
+      html_content = f.read()
+  except FileNotFoundError:
+    logger.error(f"Could not find {html_file_path}")
+    return {"error": "Could not find pong app HTML file."}
+
+  encoded_html = "url_encoded:" + urllib.parse.quote(html_content)
+  messages = [
+      {
+          "beginRendering": {
+              "surfaceId": "pong_surface",
+              "root": "pong_root",
+          },
+      },
+      {
+          "surfaceUpdate": {
+              "surfaceId": "pong_surface",
+              "components": [{
+                  "id": "pong_root",
+                  "component": {
+                      "McpApp": {
+                          "content": {"literalString": encoded_html},
+                          "title": {"literalString": "Neon Pong"},
+                          "allowedTools": [],
+                      }
+                  },
+              }],
+          },
+      },
+  ]
+  tool_context.actions.skip_summarization = True
+  return {"validated_a2ui_json": messages}
