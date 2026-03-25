@@ -11,7 +11,7 @@ When building your framework-specific adapters (Layer 3) over the generic A2UI b
 ### Text
 Displays text content.
 
-**Rendering Guidelines:** Text should be rendered using a Markdown parser when possible. If markdown rendering is unavailable or fails, gracefully fallback to rendering the raw text using the framework's default text primitive (e.g., `<span>` in HTML, `Text` in Compose/SwiftUI).
+**Rendering Guidelines:** Text should be rendered using a Markdown parser when possible. If markdown rendering is unavailable or fails, gracefully fallback to rendering the raw text. In such cases, renderers should ideally attempt to strip common Markdown markers (like `**` or `#`) to ensure the text remains legible and aesthetically consistent with the intended presentation.
 **Property Mapping:**
 - `variant="h1"` through `h5"`: Apply heading styling. Suggested relative font sizes: `h1` (2.5x base), `h2` (2x base), `h3` (1.75x base), `h4` (1.5x base), `h5` (1.25x base).
 - `variant="caption"`: Render as smaller text, typically italicized or in a lighter/muted color. Suggested font size: 0.8x base.
@@ -38,12 +38,12 @@ Displays a standard system icon.
 ### Video
 A video player.
 
-**Rendering Guidelines:** Render using a native video player component with user controls enabled. Ensure the video container spans the full width of the parent's container for responsiveness.
+**Rendering Guidelines:** Render using a native video player component with user controls enabled. Ensure the video container spans the full width of the parent's container for responsiveness. Scrubbing (seeking) should be supported if provided by the native control.
 
 ### AudioPlayer
 An audio player.
 
-**Rendering Guidelines:** Render using a native audio player component with user controls enabled. Like video, its container should span the full width of its parent.
+**Rendering Guidelines:** Render using a native audio player component with user controls enabled. Like video, its container should span the full width of its parent. Scrubbing (seeking) should be supported if provided by the native control.
 
 ### Row
 A horizontal layout container.
@@ -138,7 +138,7 @@ A component for selecting one or more options from a list.
 A control for selecting a numeric value within a range.
 
 **Rendering Guidelines:** Render using the platform's native slider or seek bar component. Optionally display the current numeric value next to the slider track.
-**Behavior & State:** Set `min` and `max` limits. Perform two-way binding, updating the numeric `value` path as the user drags the slider.
+**Behavior & State:** Set `min` and `max` limits. Perform two-way binding, updating the numeric `value` path as the user drags the slider. Note that the value is a `number` rather than an integer, allowing for decimal ranges (e.g., 0.0 to 1.0).
 
 ### DateTimeInput
 An input for date and/or time.
@@ -156,6 +156,7 @@ An input for date and/or time.
 
 Functions provide client-side logic for validation, interpolation, and operations. As defined in the Architecture Guide, the reactivity of function arguments is generally handled by the Core Data Layer (specifically the Binder/Context layer). 
 
+Core libraries for each language (such as `@a2ui/web_core` for TypeScript) typically provide a complete, framework-agnostic implementation of all the functions in the basic catalog. Developers are encouraged to utilize these shared implementations rather than writing their own.
 When a function is called, the system resolves its arguments. If an argument is a static value, it is passed directly. If it is a dynamic binding, the Context layer handles the subscription. For most standard functions, the `execute` implementation simply receives a dictionary of static `args` and returns a static value. The Context layer wraps this execution in a reactive stream (e.g., a `computed` signal) so that the function re-runs whenever any of its dynamic arguments change.
 
 However, complex functions like `formatString` must manually interact with the Context to parse and subscribe to nested dynamic dependencies.
