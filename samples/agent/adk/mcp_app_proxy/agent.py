@@ -72,6 +72,11 @@ class McpAppProxyAgent:
 
     self._agent_name = "mcp_app_proxy_agent"
     self._user_id = "remote_agent"
+
+    self._session_service = InMemorySessionService()
+    self._memory_service = InMemoryMemoryService()
+    self._artifact_service = InMemoryArtifactService()
+
     self._text_runner: Optional[Runner] = self._build_runner(self._build_llm_agent())
 
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
@@ -105,7 +110,7 @@ class McpAppProxyAgent:
         catalogs=[
             CatalogConfig.from_path(
                 name="mcp_app_proxy",
-                catalog_path="mcp_app_catalog.json",
+                catalog_path=f"catalogs/{version}/mcp_app_catalog.json",
             ),
         ],
         accepts_inline_catalogs=True,
@@ -150,9 +155,9 @@ class McpAppProxyAgent:
     return Runner(
         app_name=self._agent_name,
         agent=agent,
-        artifact_service=InMemoryArtifactService(),
-        session_service=InMemorySessionService(),
-        memory_service=InMemoryMemoryService(),
+        artifact_service=self._artifact_service,
+        session_service=self._session_service,
+        memory_service=self._memory_service,
     )
 
   def _build_llm_agent(

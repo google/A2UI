@@ -1,0 +1,50 @@
+{
+  "catalogId": "a2ui.org:a2ui/v0.9/mcp_app_catalog.json",
+  "components": {
+    "McpApp": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "common_types.json#/$defs/ComponentCommon"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "component": {
+              "const": "McpApp"
+            },
+            "content": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "The HTML content of the app."
+            },
+            "title": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "The title of the app."
+            },
+            "allowedTools": {
+              "type": "array",
+              "description": "List of tool names the app is allowed to call.",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "component",
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "anyComponent": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/McpApp"
+        }
+      ]
+    }
+  }
+}
