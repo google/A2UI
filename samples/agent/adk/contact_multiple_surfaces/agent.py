@@ -40,7 +40,7 @@ from a2a.types import (
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.common_modifiers import remove_strict_validation
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser.parser import parse_response, ResponsePart
