@@ -136,7 +136,10 @@ class McpAppProxyAgent:
 
     return AgentCard(
         name="MCP App Proxy Agent",
-        description="Provides access to MCP Apps and HTML demos, such as the Calculator and Pong apps.",
+        description=(
+            "Provides access to MCP Apps and HTML demos, such as the Calculator and"
+            " Pong apps."
+        ),
         url=self.base_url,
         version="1.0.0",
         default_input_modes=McpAppProxyAgent.SUPPORTED_CONTENT_TYPES,
@@ -156,7 +159,7 @@ class McpAppProxyAgent:
                 description="Opens Pong, a simple HTML game.",
                 tags=["html", "app", "demo", "tool"],
                 examples=["open pong", "show pong"],
-            )
+            ),
         ],
     )
 

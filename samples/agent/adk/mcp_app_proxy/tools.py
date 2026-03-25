@@ -113,6 +113,7 @@ async def calculate_via_mcp(operation: str, a: float, b: float):
 async def get_pong_app_a2ui_json(tool_context: ToolContext):
   """Fetches the Pong game app."""
   import os
+
   current_dir = os.path.dirname(os.path.abspath(__file__))
   html_file_path = os.path.join(current_dir, "pong_app.html")
 
