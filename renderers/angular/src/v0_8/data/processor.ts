@@ -35,23 +35,22 @@ export class MessageProcessor {
 
   private readonly eventsSubject = new Subject<A2UIClientEvent>();
   readonly events: Observable<A2UIClientEvent> = this.eventsSubject.asObservable();
-  readonly surfacesSignal = signal<ReadonlyMap<string, WebCore.Surface>>(new Map());
+  // Signal to track the version of the data in the MessageProcessor. Since the base processor updates 
+  // surfaces in-place (mutating the Map), we use this to force Angular's change detection to 
+  // re-evaluate any components or effects that depend on getSurfaces().
+  private readonly versionSignal = signal(0);
+  readonly version = this.versionSignal.asReadonly();
 
   constructor() {
     this.baseProcessor = new WebCore.A2uiMessageProcessor();
   }
 
+  /**
+   * Increments the version signal to notify Angular that the data model has changed.
+   * This should be called after any update to the underlying base processor's surfaces.
+   */
   private notify() {
-    // Angular signals (and change detection) are based on reference equality for
-    // objects. During streaming, the base MessageProcessor updates surfaces in-place.
-    // By shallow-cloning the surface objects into a new Map, we ensure that
-    // anything watching surfacesSignal() correctly detects that the data has
-    // changed, even if only internal properties of a surface were updated.
-    const clonedSurfaces = new Map<string, WebCore.Surface>();
-    for (const [id, surface] of this.getSurfaces()) {
-      clonedSurfaces.set(id, { ...surface });
-    }
-    this.surfacesSignal.set(clonedSurfaces);
+    this.versionSignal.update((v) => v + 1);
   }
 
   processMessages(messages: Types.ServerToClientMessage[]) {
@@ -89,11 +88,13 @@ export class MessageProcessor {
     return this.baseProcessor.resolvePath(path, dataContextPath);
   }
 
-  getSurfaces(): Map<string, WebCore.Surface> {
-    return this.baseProcessor.getSurfaces() as Map<string, WebCore.Surface>;
+  getSurfaces(): ReadonlyMap<string, WebCore.Surface> {
+    this.versionSignal(); // Track dependency
+    return this.baseProcessor.getSurfaces();
   }
 
   clearSurfaces() {
     this.baseProcessor.clearSurfaces();
+    this.notify();
   }
 }

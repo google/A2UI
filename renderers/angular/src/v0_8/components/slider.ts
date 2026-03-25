@@ -56,7 +56,19 @@ export class Slider extends DynamicComponent<Types.SliderNode> {
 
   onInput(event: Event) {
     const value = Number((event.target as HTMLInputElement).value);
-    this.handleAction('change', { value });
+    const valueNode = this.value();
+    if (valueNode && typeof valueNode === 'object' && 'path' in valueNode && valueNode.path) {
+      // Update the local data model directly to ensure immediate UI feedback and avoid unnecessary network requests.
+      this.processor.processMessages([{
+        dataModelUpdate: {
+          surfaceId: this.surfaceId()!,
+          path: this.processor.resolvePath(valueNode.path as string, this.component().dataContextPath),
+          contents: [{ key: '.', valueNumber: value }],
+        },
+      }]);
+    } else {
+      this.handleAction('change', { value });
+    }
   }
 
   private handleAction(name: string, context: Record<string, unknown>) {
