@@ -54,7 +54,7 @@ describe('Surface Component', () => {
 
   beforeEach(async () => {
     surfacesMap = new Map();
-    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['getSurfaces']);
+    mockProcessor = jasmine.createSpyObj('MessageProcessor', ['getSurfaces', 'version']);
     mockProcessor.getSurfaces.and.returnValue(surfacesMap);
 
     await TestBed.configureTestingModule({
