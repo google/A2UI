@@ -95,6 +95,27 @@ export function createFunctionImplementation<
 import {FunctionInvoker} from './function_invoker.js';
 
 /**
+ * A map of tag names to a list of classnames to be applied to a tag.
+ */
+export type MarkdownRendererTagClassMap = Record<string, string[]>;
+
+/**
+ * The options for the markdown renderer passed from A2UI.
+ */
+export type MarkdownRendererOptions = {
+  tagClassMap?: MarkdownRendererTagClassMap;
+};
+
+/**
+ * Renders `markdown` using `options`.
+ * @returns A promise that resolves to the rendered HTML as a string.
+ */
+export type MarkdownRenderer = (
+  markdown: string,
+  options?: MarkdownRendererOptions,
+) => Promise<string>;
+
+/**
  * A definition of a UI component's API.
  * This interface defines the contract for a component's capabilities and properties,
  * independent of any specific rendering implementation.
