@@ -108,6 +108,11 @@ export type MarkdownRendererOptions = {
 
 /**
  * Renders `markdown` using `options`.
+ * 
+ * SECURITY WARNING: The resulting HTML will be injected directly into the DOM
+ * (e.g., using dangerouslySetInnerHTML). Implementations MUST ensure the 
+ * HTML is properly sanitized to prevent Cross-Site Scripting (XSS) attacks.
+ * 
  * @returns A promise that resolves to the rendered HTML as a string.
  */
 export type MarkdownRenderer = (

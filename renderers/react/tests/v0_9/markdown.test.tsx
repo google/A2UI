@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { screen, act } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { renderA2uiComponent } from '../utils';
 import { MarkdownProvider, Text } from '../../src/v0_9';
 import { type MarkdownRenderer } from '@a2ui/web_core/v0_9';
@@ -40,15 +40,8 @@ describe('Markdown Rendering in React v0.9', () => {
       )
     });
 
-    // Initial render might show plain text or nothing while promise resolves
     // Wait for the mock renderer to be called and state to update
-    await act(async () => {
-      await Promise.resolve(); // Allow useEffect to trigger
-      await Promise.resolve(); // Allow renderer promise to resolve
-      await Promise.resolve(); // Allow setHtml to trigger re-render
-    });
-
-    expect(mockRenderer).toHaveBeenCalledWith('**Bold**');
+    await waitFor(() => expect(mockRenderer).toHaveBeenCalledWith('**Bold**'));
     
     // Check for rendered HTML. dangerouslySetInnerHTML is used.
     const element = screen.getByText('Bold');
@@ -67,14 +60,10 @@ describe('Markdown Rendering in React v0.9', () => {
       )
     });
 
-    await act(async () => {
-      await Promise.resolve();
-      await Promise.resolve();
-      await Promise.resolve();
+    await waitFor(() => {
+      const h2 = view.container.querySelector('h2');
+      expect(h2).not.toBeNull();
+      expect(h2?.innerHTML).toBe('<u>Underline</u>');
     });
-
-    const h2 = view.container.querySelector('h2');
-    expect(h2).not.toBeNull();
-    expect(h2?.innerHTML).toBe('<u>Underline</u>');
   });
 });

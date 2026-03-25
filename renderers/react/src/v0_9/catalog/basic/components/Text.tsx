@@ -29,11 +29,21 @@ const MarkdownContent: React.FC<{
   const [html, setHtml] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
     if (renderer) {
-      renderer(text).then(setHtml).catch(console.error);
+      renderer(text)
+        .then((htmlResult) => {
+          if (isMounted) {
+            setHtml(htmlResult);
+          }
+        })
+        .catch(console.error);
     } else {
       setHtml(null); // Fallback to plain text
     }
+    return () => {
+      isMounted = false;
+    };
   }, [text, renderer]);
 
   const content = html === null ? text : undefined;
