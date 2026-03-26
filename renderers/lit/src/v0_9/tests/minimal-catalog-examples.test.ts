@@ -26,6 +26,11 @@ import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
 import fs from "fs";
 import path from "path";
 
+/**
+ * These tests verify that:
+ * - The minimal catalog is correctly defined and can be used to process
+ *   the examples from web_core.
+ */
 describe("v0.9 Minimal Catalog Examples", () => {
   const examplesDir = path.resolve(
     process.cwd(),
