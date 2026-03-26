@@ -33,6 +33,7 @@ export class A2uiImageElement extends A2uiLitElement<typeof ImageApi> {
     const styles = { objectFit: props.fit || "fill", width: "100%" };
     return html`<img
       src=${props.url}
+      alt=${props.description || ""}
       class=${"a2ui-image " + (props.variant || "")}
       style=${styleMap(styles)}
     />`;

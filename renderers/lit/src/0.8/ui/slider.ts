@@ -86,9 +86,16 @@ export class Slider extends Root {
     return html`<section
       class=${classMap(this.theme.components.Slider.container)}
     >
-      <label class=${classMap(this.theme.components.Slider.label)} for="data">
-        ${this.label?.literalString ?? ""}
-      </label>
+      ${this.label
+        ? html`<label class=${classMap(this.theme.components.Slider.label)} for="data">
+            ${extractStringValue(
+              this.label,
+              this.component,
+              this.processor,
+              this.surfaceId
+            )}
+          </label>`
+        : nothing}
       <input
         autocomplete="off"
         class=${classMap(this.theme.components.Slider.element)}

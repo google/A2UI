@@ -744,6 +744,19 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "label": {
+          "type": "object",
+          "description": "The label for the slider. This can be a literal string or a reference to a value in the data model ('path').",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
         "value": {
           "type": "object",
           "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost').",
