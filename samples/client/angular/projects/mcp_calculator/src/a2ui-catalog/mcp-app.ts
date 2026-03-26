@@ -48,8 +48,7 @@ import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-brows
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 100%;
-      min-height: 450px; /* Minimum height to ensure visibility */
+      height: 500px;
       border: 1px solid var(--mat-sys-outline-variant);
       border-radius: 8px;
       overflow: hidden;
