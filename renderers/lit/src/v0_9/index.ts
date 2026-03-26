@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-export const SANDBOX_BASE_PATH = "shared/mcp_apps_inner_iframe/";
-export const SANDBOX_ENTRY_NAME = `${SANDBOX_BASE_PATH}sandbox`;
-export const SANDBOX_IFRAME_PATH = `/${SANDBOX_ENTRY_NAME}.html`;
+export type { LitComponentApi } from "./types.js";
+export { A2uiController } from "./a2ui-controller.js";
+export { A2uiSurface } from "./surface/a2ui-surface.js";
+export { A2uiLitElement } from "./a2ui-lit-element.js";
+export { minimalCatalog } from "./catalogs/minimal/index.js";
+export { basicCatalog } from "./catalogs/basic/index.js";

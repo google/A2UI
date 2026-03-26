@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-export const SANDBOX_BASE_PATH = "shared/mcp_apps_inner_iframe/";
-export const SANDBOX_ENTRY_NAME = `${SANDBOX_BASE_PATH}sandbox`;
-export const SANDBOX_IFRAME_PATH = `/${SANDBOX_ENTRY_NAME}.html`;
+import { ComponentApi } from "@a2ui/web_core/v0_9";
+
+/**
+ * Interface representing an A2UI component implementation in Lit.
+ *
+ * Extends the framework-agnostic component API to include the Lit custom element
+ * tag name. Used by A2uiNode to dynamically render the corresponding Lit component,
+ * and as the type parameter when defining custom Catalogs.
+ */
+export interface LitComponentApi extends ComponentApi {
+  tagName: string;
+}

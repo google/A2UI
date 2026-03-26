@@ -1,11 +1,11 @@
-/*
- * Copyright 2025 Google LLC
+/**
+ * Copyright 2026 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,4 @@
  * limitations under the License.
  */
 
-export const SANDBOX_BASE_PATH = "shared/mcp_apps_inner_iframe/";
-export const SANDBOX_ENTRY_NAME = `${SANDBOX_BASE_PATH}sandbox`;
-export const SANDBOX_IFRAME_PATH = `/${SANDBOX_ENTRY_NAME}.html`;
+import './local-gallery.js';
