@@ -2,6 +2,25 @@
   "name": "@a2ui/lit",
   "version": "0.8.4",
   "description": "A2UI Lit Library",
+  "author": "Google",
+  "license": "Apache-2.0",
+  "homepage": "https://a2ui.org/",
+  "repository": {
+    "directory": "renderers/lit",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "keywords": [
+    "a2ui",
+    "lit",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",
   "exports": {
@@ -72,21 +91,9 @@
       "clean": "if-file-deleted"
     }
   },
-  "repository": {
-    "directory": "renderers/lit",
-    "type": "git",
-    "url": "git+https://github.com/google/A2UI.git"
-  },
   "files": [
     "dist/src"
   ],
-  "keywords": [],
-  "author": "Google",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/google/A2UI/issues"
-  },
-  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
   "devDependencies": {
     "@types/jsdom": "^28.0.1",
     "@types/node": "^24.10.1",

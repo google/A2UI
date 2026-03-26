@@ -2,6 +2,23 @@
   "name": "@a2ui/react",
   "version": "0.8.1",
   "description": "React renderer for A2UI (Agent-to-User Interface)",
+  "homepage": "https://a2ui.org/",
+  "repository": {
+    "directory": "renderers/react",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "keywords": [
+    "a2ui",
+    "react",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -111,21 +128,7 @@
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
   },
-  "keywords": [
-    "a2ui",
-    "react",
-    "ai",
-    "agent",
-    "ui",
-    "renderer"
-  ],
   "engines": {
     "node": ">=18.0.0"
-  },
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/google/A2UI.git",
-    "directory": "renderers/react"
   }
 }

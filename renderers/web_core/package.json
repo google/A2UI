@@ -2,6 +2,23 @@
   "name": "@a2ui/web_core",
   "version": "0.8.1",
   "description": "A2UI Core Library",
+  "homepage": "https://a2ui.org/",
+  "repository": {
+    "directory": "renderers/web_core",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "keywords": [
+    "a2ui",
+    "web",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
   "exports": {
