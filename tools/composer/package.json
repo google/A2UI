@@ -16,7 +16,8 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
-    "@a2ui/react": "^0.8.0",
+    "@a2ui/react": "file:../../renderers/react",
+    "@a2ui/web_core": "file:../../renderers/web_core",
     "@copilotkit/react-core": "^1.50.1",
     "@copilotkit/react-ui": "^1.50.1",
     "@copilotkit/runtime": "^1.50.1",

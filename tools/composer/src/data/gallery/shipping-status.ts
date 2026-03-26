@@ -23,6 +23,7 @@ export const SHIPPING_STATUS_WIDGET: Widget = {
   description: 'Package tracking with delivery steps',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

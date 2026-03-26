@@ -21,12 +21,15 @@ export interface DataState {
   data: Record<string, unknown>;
 }
 
+export type SpecVersion = '0.8' | '0.9';
+
 export interface Widget {
   id: string;
   name: string;
   description?: string;
   createdAt: Date;
   updatedAt: Date;
+  specVersion: SpecVersion;
   root: string;
   components: ComponentInstance[];
   dataStates: DataState[];

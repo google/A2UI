@@ -22,6 +22,7 @@ export const SPORTS_PLAYER_WIDGET: Widget = {
   description: 'Player profile with photo and stats',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

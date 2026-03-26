@@ -22,6 +22,7 @@ export const COFFEE_ORDER_WIDGET: Widget = {
   description: 'Coffee order summary with items and total',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

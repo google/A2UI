@@ -22,6 +22,7 @@ export const EMAIL_COMPOSE_WIDGET: Widget = {
   description: 'Email composition form with recipient and message fields',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

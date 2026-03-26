@@ -252,6 +252,7 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
               root={widget.root}
               components={components}
               data={activeData}
+              specVersion={widget.specVersion}
             />
           </ResizablePanel>
         </ResizablePanelGroup>

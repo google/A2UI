@@ -20,14 +20,16 @@ import { useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { A2UIViewer, type ComponentInstance } from '@/lib/a2ui';
+import type { SpecVersion } from '@/types/widget';
 
 interface PreviewPaneProps {
   root: string;
   components: ComponentInstance[];
   data: Record<string, unknown>;
+  specVersion?: SpecVersion;
 }
 
-export function PreviewPane({ root, components, data }: PreviewPaneProps) {
+export function PreviewPane({ root, components, data, specVersion }: PreviewPaneProps) {
   const [isDark, setIsDark] = useState(false);
 
   return (
@@ -51,6 +53,7 @@ export function PreviewPane({ root, components, data }: PreviewPaneProps) {
           root={root}
           components={components}
           data={data}
+          specVersion={specVersion}
           onAction={(action) => console.log('Widget action:', action)}
         />
       </div>

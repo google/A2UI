@@ -23,6 +23,7 @@ export const CREDIT_CARD_WIDGET: Widget = {
   description: 'Payment card with masked number and expiry',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

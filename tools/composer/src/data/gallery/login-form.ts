@@ -22,6 +22,7 @@ export const LOGIN_FORM_WIDGET: Widget = {
   description: 'User authentication form with email and password',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

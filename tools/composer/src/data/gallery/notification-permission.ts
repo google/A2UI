@@ -22,6 +22,7 @@ export const NOTIFICATION_PERMISSION_WIDGET: Widget = {
   description: 'Permission request dialog for notifications',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

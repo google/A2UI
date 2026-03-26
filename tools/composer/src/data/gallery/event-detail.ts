@@ -23,6 +23,7 @@ export const EVENT_DETAIL_WIDGET: Widget = {
   description: 'Detailed event view with time, location, and RSVP',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

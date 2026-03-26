@@ -22,6 +22,7 @@ export const USER_PROFILE_WIDGET: Widget = {
   description: 'User profile with stats and follow button',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

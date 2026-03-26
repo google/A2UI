@@ -23,6 +23,7 @@ export const STATS_CARD_WIDGET: Widget = {
   description: 'Metric display with trend indicator',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {
