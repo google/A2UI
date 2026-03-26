@@ -18,8 +18,8 @@ To prevent this, A2UI strictly excludes `allow-same-origin` for the inner iframe
 
 ### The Architecture
 
-1.  **Sandbox Proxy (`sandbox.html`)**: An intermediate `iframe` served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.
-    -   Permissions: **Do not sandbox** in the host template (e.g., `mcp-app.ts`).
+1.  **[Sandbox Proxy (`sandbox.html`)](https://github.com/google/A2UI/blob/main/samples/client/shared/mcp_apps_inner_iframe/sandbox.html)**: An intermediate `iframe` served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.
+    -   Permissions: **Do not sandbox** in the host template (e.g., [`mcp-app.ts`](https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts) or [`mcp-apps-component.ts`](https://github.com/google/A2UI/blob/main/samples/client/lit/contact/ui/custom-components/mcp-apps-component.ts)).
     -   Host origin validation: Validates that messages come from the expected host origin.
 2.  **Embedded App (Inner Iframe)**: The innermost `iframe`. Injected dynamically via `srcdoc` with restricted permissions.
     -   Permissions: `sandbox="allow-scripts allow-forms allow-popups allow-modals"` (**MUST NOT** include `allow-same-origin`).
@@ -28,14 +28,14 @@ To prevent this, A2UI strictly excludes `allow-same-origin` for the inner iframe
 ### Architecture Diagram
 
 ```mermaid
-graph TD
-    subgraph Host Application (A2UI)
-        A[A2UI Page] --> B[Host Component e.g., McpApp]
+flowchart TD
+    subgraph "Host Application"
+        A[A2UI Page] --> B["Host Component e.g., McpApp"]
     end
-    subgraph Sandbox Proxy (Same-Origin)
+    subgraph "Sandbox Proxy"
         B -->|Message Relay| C[iframe sandbox.html]
     end
-    subgraph Embedded App (Cross-Origin/Isolated)
+    subgraph "Embedded App"
         C -->|Dynamic Injection| D[inner iframe untrusted content]
     end
 ```
@@ -123,10 +123,10 @@ There are two primary samples demonstrating MCP Apps integration:
 This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.
 
 -   **A2A Agent Server**:
-    -   Path: `samples/agent/adk/contact_multiple_surfaces/`
+    -   Path: [`samples/agent/adk/contact_multiple_surfaces/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_multiple_surfaces/)
     -   Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
 -   **Lit Client App**:
-    -   Path: `samples/client/lit/contact/`
+    -   Path: [`samples/client/lit/contact/`](https://github.com/google/A2UI/tree/main/samples/client/lit/contact/)
     -   Command: `npm run dev` (requires building the Lit renderer first)
     -   URL: `http://localhost:5173/`
 
@@ -137,13 +137,13 @@ This sample verifies the sandbox with a Lit-based client and an ADK-based A2A ag
 This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.
 
 -   **MCP Server (Calculator)**:
-    -   Path: `samples/agent/mcp/mcp-apps-calculator/`
+    -   Path: [`samples/agent/mcp/mcp-apps-calculator/`](https://github.com/google/A2UI/tree/main/samples/agent/mcp/mcp-apps-calculator/)
     -   Command: `uv run .` (runs on port 8000)
 -   **MCP Apps Proxy Agent**:
-    -   Path: `samples/agent/adk/mcp_app_proxy/`
+    -   Path: [`samples/agent/adk/mcp_app_proxy/`](https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp_app_proxy/)
     -   Command: `uv run .` (requires `GEMINI_API_KEY` in `.env`)
 -   **Angular Client App**:
-    -   Path: `samples/client/angular/`
+    -   Path: [`samples/client/angular/`](https://github.com/google/A2UI/tree/main/samples/client/angular/)
     -   Command: `npm start -- mcp_calculator` (requires `npm run build:sandbox` and `npm install`)
     -   URL: `http://localhost:4200/?disable_security_self_test=true`
 
@@ -153,7 +153,7 @@ This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agen
 
 For testing purposes, you can opt-out of the security self-test by using specific URL query parameters.
 
-### `disable_security_self_test=true`
+`disable_security_self_test=true`
 
 This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments.
 
