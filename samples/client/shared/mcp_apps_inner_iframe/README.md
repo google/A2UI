@@ -1,4 +1,4 @@
-# Shared Sandbox iframe
+# Shared MCP Apps Inner iframe (Sandbox iframe)
 
 This directory contains the unified and reusable **Sandbox iframe** implementation for **A2UI applications** (Angular, Lit) to run **untrusted third-party Model Context Protocol (MCP) applications**.
 
