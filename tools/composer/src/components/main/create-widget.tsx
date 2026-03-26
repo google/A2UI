@@ -27,11 +27,12 @@ import {
 import { z } from "zod";
 import { WidgetInput } from "./widget-input";
 import { useWidgets } from "@/contexts/widgets-context";
+import { useSpecVersion } from "@/contexts/spec-version-context";
 import type { Widget } from "@/types/widget";
 import type { ComponentInstance } from "@/lib/a2ui";
 import { parseRobustJSON } from "@/lib/json-parser";
 
-const DEFAULT_COMPONENTS: ComponentInstance[] = [
+const DEFAULT_COMPONENTS_V08: ComponentInstance[] = [
   {
     id: "root",
     component: {
@@ -50,13 +51,30 @@ const DEFAULT_COMPONENTS: ComponentInstance[] = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const DEFAULT_COMPONENTS_V09: any[] = [
+  {
+    id: "root",
+    component: "Card",
+    child: "content",
+  },
+  {
+    id: "content",
+    component: "Text",
+    text: { path: "/title" },
+  },
+];
+
 const DEFAULT_DATA = { title: "Hello World" };
 
 export function CreateWidget() {
   const router = useRouter();
   const { addWidget } = useWidgets();
+  const { specVersion } = useSpecVersion();
   const { agent } = useAgent();
   const { copilotkit } = useCopilotKit();
+
+  const defaultComponents = specVersion === '0.9' ? DEFAULT_COMPONENTS_V09 : DEFAULT_COMPONENTS_V08;
 
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -197,11 +215,12 @@ export function CreateWidget() {
       agent.setMessages([]);
       agent.threadId = widgetId;
 
-      // Add user message
+      // Add user message with version tag so the AI uses the right format
+      const versionTag = specVersion === '0.9' ? '[A2UI v0.9]' : '[A2UI v0.8]';
       agent.addMessage({
         id: crypto.randomUUID(),
         role: "user",
-        content: inputValue,
+        content: `${versionTag} ${inputValue}`,
       });
 
       // Run agent (will call editWidget tool)
@@ -213,9 +232,9 @@ export function CreateWidget() {
         name: generatedName.current ?? "Untitled widget",
         createdAt: new Date(),
         updatedAt: new Date(),
-        specVersion: "0.8",
+        specVersion,
         root: "root",
-        components: generatedComponents.current ?? DEFAULT_COMPONENTS,
+        components: generatedComponents.current ?? defaultComponents,
         dataStates: [
           {
             name: "default",
@@ -253,9 +272,9 @@ export function CreateWidget() {
       name: "Untitled widget",
       createdAt: new Date(),
       updatedAt: new Date(),
-      specVersion: "0.8",
+      specVersion,
       root: "root",
-      components: DEFAULT_COMPONENTS,
+      components: defaultComponents,
       dataStates: [
         {
           name: "default",
