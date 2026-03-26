@@ -79,7 +79,6 @@ export class ComponentHostComponent implements OnInit {
   protected componentType: Type<any> | null = null;
   protected props: any = {};
   private context?: ComponentContext;
-  private componentUpdatedUnsubscribe?: () => void;
 
   ngOnInit(): void {
     const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
@@ -113,11 +112,9 @@ export class ComponentHostComponent implements OnInit {
     const updatedSubscription = componentModel.onUpdated.subscribe(() => {
       this.bindProps();
     });
-    this.componentUpdatedUnsubscribe = () => updatedSubscription.unsubscribe();
 
     this.destroyRef.onDestroy(() => {
-      this.componentUpdatedUnsubscribe?.();
-      this.componentUpdatedUnsubscribe = undefined;
+      updatedSubscription.unsubscribe();
       this.binder.disposeBoundProperties(this.props);
     });
   }
