@@ -76,7 +76,6 @@
   button.equals {
     background-color: #34c759;
     color: white;
-    grid-column: span 2;
   }
   button.equals:hover {
     background-color: #2da84e;
@@ -84,7 +83,6 @@
   button.mcp-equals {
     background-color: #5856d6;
     color: white;
-    grid-column: span 2;
   }
   button.mcp-equals:hover {
     background-color: #4342a1;
@@ -96,6 +94,9 @@
   }
   button.clear:hover {
     background-color: #d6332a;
+  }
+  button.zero {
+    grid-column: span 2;
   }
 </style>
 </head>
@@ -119,9 +120,9 @@
     <button onclick="appendNumber('2')">2</button>
     <button onclick="appendNumber('3')">3</button>
     <button class="equals" title="Local JavaScript Calculation" onclick="calculateJavascript()">💻 =</button>
-    <button class="mcp-equals" title="MCP Agent Calculation" onclick="calculateToolCall()">🤖 =</button>
-    <button onclick="appendNumber('0')">0</button>
+    <button class="zero" onclick="appendNumber('0')">0</button>
     <button onclick="appendPoint()">.</button>
+    <button class="mcp-equals" title="MCP Agent Calculation" onclick="calculateToolCall()">🤖 =</button>
   </div>
 </div>
 
