@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { LitElement, html, css, nothing, PropertyValues } from "lit";
+import { LitElement, html, css, nothing } from "lit";
+import { provide } from "@lit/context";
 import { customElement, state } from "lit/decorators.js";
 import { MessageProcessor } from "@a2ui/web_core/v0_9";
-import { minimalCatalog, basicCatalog } from "@a2ui/lit/v0_9";
+import { minimalCatalog, basicCatalog, Context } from "@a2ui/lit/v0_9";
+import { renderMarkdown } from "@a2ui/markdown-it";
 // Try avoiding direct deep import if A2uiMessage is not exported at the top level, using any for now as this is just a type for the array of messages
 interface DemoItem {
   id: string;
@@ -35,6 +37,9 @@ export class LocalGallery extends LitElement {
   @state() accessor activeItemIndex = 0;
   @state() accessor processedMessageCount = 0;
   @state() accessor currentDataModelText = "{}";
+
+  @provide({ context: Context.markdown })
+  private accessor markdownRenderer = renderMarkdown;
 
   private processor = new MessageProcessor(
     [minimalCatalog, basicCatalog],
