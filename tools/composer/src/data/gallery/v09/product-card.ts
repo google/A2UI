@@ -110,7 +110,7 @@ export const V09_PRODUCT_CARD_WIDGET: Widget = {
       child: 'add-cart-btn-text',
       action: { event: { name: 'addToCart' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

@@ -117,7 +117,7 @@ export const V09_RESTAURANT_CARD_WIDGET: Widget = {
       text: { path: '/deliveryTime' },
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

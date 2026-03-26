@@ -155,7 +155,7 @@ export const V09_EMAIL_COMPOSE_WIDGET: Widget = {
       child: 'discard-btn-text',
       action: { event: { name: 'discard' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

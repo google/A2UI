@@ -19,12 +19,12 @@
 import { useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { A2UIViewer, type ComponentInstance } from '@/lib/a2ui';
-import type { SpecVersion } from '@/types/widget';
+import { A2UIViewer } from '@/lib/a2ui';
+import type { A2UIComponent, SpecVersion } from '@/types/widget';
 
 interface PreviewPaneProps {
   root: string;
-  components: ComponentInstance[];
+  components: A2UIComponent[];
   data: Record<string, unknown>;
   specVersion?: SpecVersion;
 }

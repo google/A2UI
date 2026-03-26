@@ -114,7 +114,7 @@ export const V09_STEP_COUNTER_WIDGET: Widget = {
       text: 'Calories',
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

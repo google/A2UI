@@ -125,7 +125,7 @@ export const V09_MUSIC_PLAYER_WIDGET: Widget = {
       child: 'next-btn-text',
       action: { event: { name: 'next' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Playing',

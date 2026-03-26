@@ -110,7 +110,7 @@ export const V09_COUNTDOWN_TIMER_WIDGET: Widget = {
       text: { path: '/targetDate' },
       variant: 'body',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

@@ -139,7 +139,7 @@ export const V09_SPORTS_PLAYER_WIDGET: Widget = {
       text: { path: '/stat3/label' },
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

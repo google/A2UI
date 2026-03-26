@@ -29,10 +29,10 @@ import { WidgetInput } from "./widget-input";
 import { useWidgets } from "@/contexts/widgets-context";
 import { useSpecVersion } from "@/contexts/spec-version-context";
 import type { Widget } from "@/types/widget";
-import type { ComponentInstance } from "@/lib/a2ui";
+import type { A2UIComponent } from "@/types/widget";
 import { parseRobustJSON } from "@/lib/json-parser";
 
-const DEFAULT_COMPONENTS_V08: ComponentInstance[] = [
+const DEFAULT_COMPONENTS_V08: A2UIComponent[] = [
   {
     id: "root",
     component: {
@@ -71,7 +71,8 @@ export function CreateWidget() {
   const router = useRouter();
   const { addWidget } = useWidgets();
   const { specVersion } = useSpecVersion();
-  const { agent } = useAgent();
+  const agentId = specVersion === '0.9' ? 'v09' : 'v08';
+  const { agent } = useAgent({ agentId });
   const { copilotkit } = useCopilotKit();
 
   const defaultComponents = specVersion === '0.9' ? DEFAULT_COMPONENTS_V09 : DEFAULT_COMPONENTS_V08;
@@ -82,7 +83,7 @@ export function CreateWidget() {
 
   // Refs to capture tool results
   const generatedName = useRef<string | null>(null);
-  const generatedComponents = useRef<ComponentInstance[] | null>(null);
+  const generatedComponents = useRef<A2UIComponent[] | null>(null);
   const generatedData = useRef<Record<string, unknown> | null>(null);
 
   // Frontend tool for creating new widgets - captures AI output
@@ -187,7 +188,7 @@ export function CreateWidget() {
         >;
         generatedComponents.current = parseRobustJSON(
           components,
-        ) as ComponentInstance[];
+        ) as A2UIComponent[];
       } catch (error) {
         return {
           success: false,
@@ -215,12 +216,11 @@ export function CreateWidget() {
       agent.setMessages([]);
       agent.threadId = widgetId;
 
-      // Add user message with version tag so the AI uses the right format
-      const versionTag = specVersion === '0.9' ? '[A2UI v0.9]' : '[A2UI v0.8]';
+      // Add user message
       agent.addMessage({
         id: crypto.randomUUID(),
         role: "user",
-        content: `${versionTag} ${inputValue}`,
+        content: inputValue,
       });
 
       // Run agent (will call editWidget tool)

@@ -157,7 +157,7 @@ export const V09_CHAT_MESSAGE_WIDGET: Widget = {
       text: { path: '/message2/text' },
       variant: 'body',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

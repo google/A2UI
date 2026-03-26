@@ -98,7 +98,7 @@ export const V09_ACCOUNT_BALANCE_WIDGET: Widget = {
       child: 'pay-btn-text',
       action: { event: { name: 'pay_bill' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

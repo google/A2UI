@@ -125,7 +125,7 @@ export const V09_WORKOUT_SUMMARY_WIDGET: Widget = {
       text: { path: '/date' },
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

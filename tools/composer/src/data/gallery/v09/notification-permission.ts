@@ -83,7 +83,7 @@ export const V09_NOTIFICATION_PERMISSION_WIDGET: Widget = {
       child: 'no-btn-text',
       action: { event: { name: 'decline' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

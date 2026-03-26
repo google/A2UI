@@ -212,7 +212,7 @@ export const V09_COFFEE_ORDER_WIDGET: Widget = {
       child: 'add-btn-text',
       action: { event: { name: 'add_to_cart' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

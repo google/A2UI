@@ -137,7 +137,7 @@ export const V09_PURCHASE_COMPLETE_WIDGET: Widget = {
       child: 'view-btn-text',
       action: { event: { name: 'view_details' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

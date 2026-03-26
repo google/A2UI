@@ -128,7 +128,7 @@ export const V09_RECIPE_CARD_WIDGET: Widget = {
       text: { path: '/servings' },
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

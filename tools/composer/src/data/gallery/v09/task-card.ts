@@ -78,7 +78,7 @@ export const V09_TASK_CARD_WIDGET: Widget = {
       component: 'Icon',
       name: { path: '/priorityIcon' },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'High Priority',

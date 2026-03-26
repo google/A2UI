@@ -79,7 +79,7 @@ export const V09_STATS_CARD_WIDGET: Widget = {
       text: { path: '/trendText' },
       variant: 'body',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

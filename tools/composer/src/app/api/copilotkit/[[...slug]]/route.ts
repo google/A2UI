@@ -21,7 +21,8 @@ import {
   BuiltInAgent,
 } from "@copilotkit/runtime/v2";
 import { handle } from "hono/vercel";
-import { A2UI_SYSTEM_PROMPT } from "../a2ui-prompt";
+import { A2UI_V08_PROMPT } from "../a2ui-prompt-v08";
+import { A2UI_V09_PROMPT } from "../a2ui-prompt-v09";
 
 const determineModel = () => {
   if (
@@ -48,14 +49,26 @@ const determineModel = () => {
   return "google/gemini-2.5-flash";
 };
 
-const agent = new BuiltInAgent({
-  model: determineModel(),
-  prompt: A2UI_SYSTEM_PROMPT,
+const model = determineModel();
+
+const agentV08 = new BuiltInAgent({
+  model,
+  prompt: A2UI_V08_PROMPT,
+  temperature: 0.7,
+});
+
+const agentV09 = new BuiltInAgent({
+  model,
+  prompt: A2UI_V09_PROMPT,
   temperature: 0.7,
 });
 
 const runtime = new CopilotRuntime({
-  agents: { default: agent },
+  agents: {
+    default: agentV08,
+    v08: agentV08,
+    v09: agentV09,
+  },
   runner: new InMemoryAgentRunner(),
 });
 

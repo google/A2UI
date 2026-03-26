@@ -164,7 +164,7 @@ export const V09_FLIGHT_STATUS_WIDGET: Widget = {
       text: { path: '/arrivalTime' },
       variant: 'h3',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'On Time',

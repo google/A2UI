@@ -149,7 +149,7 @@ export const V09_CALENDAR_DAY_WIDGET: Widget = {
       child: 'discard-btn-text',
       action: { event: { name: 'discard' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

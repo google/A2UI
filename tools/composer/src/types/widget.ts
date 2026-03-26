@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import type { ComponentInstance } from "@/lib/a2ui";
+/**
+ * Version-agnostic component type.
+ *
+ * Components are stored as opaque objects — the editor displays them as JSON
+ * and the adapter interprets them based on specVersion. Only two places need
+ * to understand the internal structure: the renderer adapter and the AI prompt.
+ */
+export type A2UIComponent = Record<string, unknown> & { id: string };
 
 export interface DataState {
   name: string;
@@ -31,6 +38,6 @@ export interface Widget {
   updatedAt: Date;
   specVersion: SpecVersion;
   root: string;
-  components: ComponentInstance[];
+  components: A2UIComponent[];
   dataStates: DataState[];
 }

@@ -140,7 +140,7 @@ export const V09_USER_PROFILE_WIDGET: Widget = {
       child: 'follow-btn-text',
       action: { event: { name: 'follow' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

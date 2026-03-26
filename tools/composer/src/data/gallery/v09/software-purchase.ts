@@ -148,7 +148,7 @@ export const V09_SOFTWARE_PURCHASE_WIDGET: Widget = {
       child: 'cancel-btn-text',
       action: { event: { name: 'cancel' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

@@ -150,7 +150,7 @@ export const V09_CONTACT_CARD_WIDGET: Widget = {
       child: 'message-btn-text',
       action: { event: { name: 'message' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

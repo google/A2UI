@@ -194,7 +194,7 @@ export const V09_TRACK_LIST_WIDGET: Widget = {
       text: { path: '/track3/duration' },
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

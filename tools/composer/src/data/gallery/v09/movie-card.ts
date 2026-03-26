@@ -111,7 +111,7 @@ export const V09_MOVIE_CARD_WIDGET: Widget = {
       text: { path: '/runtime' },
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

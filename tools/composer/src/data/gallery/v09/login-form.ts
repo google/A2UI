@@ -109,7 +109,7 @@ export const V09_LOGIN_FORM_WIDGET: Widget = {
       child: 'signup-link-text',
       action: { event: { name: 'signup' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Empty',

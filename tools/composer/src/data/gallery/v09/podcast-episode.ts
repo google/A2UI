@@ -98,7 +98,7 @@ export const V09_PODCAST_EPISODE_WIDGET: Widget = {
       child: 'play-btn-text',
       action: { event: { name: 'play' } },
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

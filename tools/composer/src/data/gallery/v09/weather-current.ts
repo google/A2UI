@@ -165,7 +165,7 @@ export const V09_WEATHER_CURRENT_WIDGET: Widget = {
       text: { path: '/forecast/4/temp' },
       variant: 'caption',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Sunny',

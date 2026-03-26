@@ -161,7 +161,7 @@ export const V09_SHIPPING_STATUS_WIDGET: Widget = {
       text: { path: '/eta' },
       variant: 'body',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',

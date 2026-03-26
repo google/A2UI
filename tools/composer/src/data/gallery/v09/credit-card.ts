@@ -102,7 +102,7 @@ export const V09_CREDIT_CARD_WIDGET: Widget = {
       text: { path: '/expiryDate' },
       variant: 'body',
     },
-  ] as any[],
+  ],
   dataStates: [
     {
       name: 'Default',
