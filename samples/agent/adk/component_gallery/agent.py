@@ -1,9 +1,27 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Agent logic for the Component Gallery."""
 
 import logging
-import json
 from collections.abc import AsyncIterable
-from typing import Any
+from typing import Any, Optional
+import json
+
+from a2a.types import DataPart, Part, TextPart
+from a2ui.core.schema.constants import A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.a2a import create_a2ui_part, parse_response_to_parts
 
 import asyncio
 import datetime
@@ -19,20 +37,24 @@ class ComponentGalleryAgent:
   def __init__(self, base_url: str):
     self.base_url = base_url
 
-  async def stream(self, query: str, session_id: str) -> AsyncIterable[dict[str, Any]]:
+  async def stream(
+      self, query: str, session_id: str, active_ui_version: Optional[str]
+  ) -> AsyncIterable[dict[str, Any]]:
     """Streams the gallery or responses to actions."""
 
-    logger.info(f"Stream called with query: {query}")
+    logger.info(
+        f"Stream called with query: {query} and active_ui_version: {active_ui_version}"
+    )
 
     # Initial Load or Reset
     if "WHO_ARE_YOU" in query or "START" in query:  # Simple trigger for initial load
-      gallery_json = get_gallery_json()
+      gallery_json = get_gallery_json(active_ui_version)
       yield {
           "is_task_complete": True,
-          "payload": {
-              "text": "Here is the component gallery.",
-              "json_string": gallery_json,
-          },
+          "parts": parse_response_to_parts(
+              "Here is the component"
+              f" gallery.\n{A2UI_OPEN_TAG}\n{gallery_json}\n{A2UI_CLOSE_TAG}"
+          ),
       }
       return
 
@@ -46,7 +68,7 @@ class ComponentGalleryAgent:
 
       timestamp = datetime.datetime.now().strftime("%H:%M:%S")
 
-      response_update = [{
+      response_update = {
           "surfaceUpdate": {
               "surfaceId": "response-surface",
               "components": [{
@@ -63,16 +85,19 @@ class ComponentGalleryAgent:
                   },
               }],
           }
-      }]
+      }
 
       yield {
           "is_task_complete": True,
-          "payload": {"text": "Action processed.", "json_data": response_update},
+          "parts": [
+              Part(root=TextPart(text="Action processed.")),
+              create_a2ui_part(response_update),
+          ],
       }
       return
 
     # Fallback for text
     yield {
         "is_task_complete": True,
-        "payload": {"text": "I am the Component Gallery Agent."},
+        "parts": [Part(root=TextPart(text="I am the Component Gallery Agent."))],
     }

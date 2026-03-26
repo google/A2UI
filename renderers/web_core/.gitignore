@@ -2,3 +2,5 @@ node_modules/
 dist/
 .wireit/
 .npmrc
+src/v0_8/schemas/
+src/v0_9/schemas/

@@ -16,26 +16,34 @@ import json
 import logging
 import os
 from collections.abc import AsyncIterable
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Dict, Optional
 
 import jsonschema
 
-# Corrected imports from our new/refactored files
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from a2a.types import AgentCapabilities, AgentCard, AgentSkill
+from a2a.types import (
+    AgentCapabilities,
+    AgentCard,
+    AgentSkill,
+    DataPart,
+    Part,
+    TextPart,
+)
 
 from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.core.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -45,38 +53,51 @@ class ContactAgent:
 
   SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
-  def __init__(self, base_url: str, use_ui: bool = False):
+  def __init__(self, base_url: str):
     self.base_url = base_url
-    self.use_ui = use_ui
-    self._schema_manager = (
-        A2uiSchemaManager(
-            version=VERSION_0_8,
-            catalogs=[
-                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
-            ],
-        )
-        if use_ui
-        else None
-    )
-    self._agent = self._build_agent(use_ui)
+    self._agent_name = "contact_agent"
     self._user_id = "remote_agent"
-    self._runner = Runner(
-        app_name=self._agent.name,
-        agent=self._agent,
-        artifact_service=InMemoryArtifactService(),
-        session_service=InMemorySessionService(),
-        memory_service=InMemoryMemoryService(),
-    )
+    self._text_runner: Optional[Runner] = self._build_runner(self._build_llm_agent())
 
-  def get_agent_card(self) -> AgentCard:
-    capabilities = AgentCapabilities(
-        streaming=True,
-        extensions=[
-            get_a2ui_agent_extension(
-                self._schema_manager.accepts_inline_catalogs,
-                self._schema_manager.supported_catalog_ids,
+    self._schema_managers: Dict[str, A2uiSchemaManager] = {}
+    self._ui_runners: Dict[str, Runner] = {}
+
+    for version in [VERSION_0_8, VERSION_0_9]:
+      schema_manager = self._build_schema_manager(version)
+      self._schema_managers[version] = schema_manager
+      agent = self._build_llm_agent(schema_manager)
+      self._ui_runners[version] = self._build_runner(agent)
+
+    self._agent_card = self._build_agent_card()
+
+  @property
+  def agent_card(self) -> AgentCard:
+    return self._agent_card
+
+  def _build_schema_manager(self, version: str) -> A2uiSchemaManager:
+    return A2uiSchemaManager(
+        version=version,
+        catalogs=[
+            BasicCatalog.get_config(
+                version=version, examples_path=f"examples/{version}"
             )
         ],
+    )
+
+  def _build_agent_card(self) -> AgentCard:
+    extensions = []
+    if self._schema_managers:
+      for version, sm in self._schema_managers.items():
+        ext = get_a2ui_agent_extension(
+            version,
+            sm.accepts_inline_catalogs,
+            sm.supported_catalog_ids,
+        )
+        extensions.append(ext)
+
+    capabilities = AgentCapabilities(
+        streaming=True,
+        extensions=extensions,
     )
     skill = AgentSkill(
         id="find_contact",
@@ -105,15 +126,26 @@ class ContactAgent:
         skills=[skill],
     )
 
+  def _build_runner(self, agent: LlmAgent) -> Runner:
+    return Runner(
+        app_name=self._agent_name,
+        agent=agent,
+        artifact_service=InMemoryArtifactService(),
+        session_service=InMemorySessionService(),
+        memory_service=InMemoryMemoryService(),
+    )
+
   def get_processing_message(self) -> str:
     return "Looking up contact information..."
 
-  def _build_agent(self, use_ui: bool) -> LlmAgent:
+  def _build_llm_agent(
+      self, schema_manager: Optional[A2uiSchemaManager] = None
+  ) -> LlmAgent:
     """Builds the LLM agent for the contact agent."""
     LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
     instruction = (
-        self._schema_manager.generate_system_prompt(
+        schema_manager.generate_system_prompt(
             role_description=ROLE_DESCRIPTION,
             workflow_description=WORKFLOW_DESCRIPTION,
             ui_description=UI_DESCRIPTION,
@@ -121,29 +153,43 @@ class ContactAgent:
             include_examples=True,
             validate_examples=False,  # Use invalid examples to test retry logic
         )
-        if use_ui
+        if schema_manager
         else get_text_prompt()
     )
 
     return LlmAgent(
         model=LiteLlm(model=LITELLM_MODEL),
-        name="contact_agent",
+        name=self._agent_name,
         description="An agent that finds colleague contact info.",
         instruction=instruction,
         tools=[get_contact_info],
     )
 
-  async def stream(self, query, session_id) -> AsyncIterable[dict[str, Any]]:
+  async def stream(
+      self, query, session_id, ui_version: Optional[str] = None
+  ) -> AsyncIterable[dict[str, Any]]:
     session_state = {"base_url": self.base_url}
 
-    session = await self._runner.session_service.get_session(
-        app_name=self._agent.name,
+    # Determine which runner to use based on whether the a2ui extension is active.
+    if ui_version:
+      runner = self._ui_runners[ui_version]
+      schema_manager = self._schema_managers[ui_version]
+      selected_catalog = (
+          schema_manager.get_selected_catalog() if schema_manager else None
+      )
+    else:
+      runner = self._text_runner
+      schema_manager = None
+      selected_catalog = None
+
+    session = await runner.session_service.get_session(
+        app_name=self._agent_name,
         user_id=self._user_id,
         session_id=session_id,
     )
     if session is None:
-      session = await self._runner.session_service.create_session(
-          app_name=self._agent.name,
+      session = await runner.session_service.create_session(
+          app_name=self._agent_name,
           user_id=self._user_id,
           state=session_state,
           session_id=session_id,
@@ -157,18 +203,23 @@ class ContactAgent:
     current_query_text = query
 
     # Ensure catalog schema was loaded
-    selected_catalog = self._schema_manager.get_selected_catalog()
-    if self.use_ui and not selected_catalog.catalog_schema:
+    if ui_version and (not selected_catalog or not selected_catalog.catalog_schema):
       logger.error(
           "--- ContactAgent.stream: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
       )
       yield {
           "is_task_complete": True,
-          "content": (
-              "I'm sorry, I'm facing an internal configuration error with my UI"
-              " components. Please contact support."
-          ),
+          "parts": [
+              Part(
+                  root=TextPart(
+                      text=(
+                          "I'm sorry, I'm facing an internal configuration error with"
+                          " my UI components. Please contact support."
+                      )
+                  )
+              )
+          ],
       }
       return
 
@@ -184,7 +235,7 @@ class ContactAgent:
       )
       final_response_content = None
 
-      async for event in self._runner.run_async(
+      async for event in runner.run_async(
           user_id=self._user_id,
           session_id=session.id,
           new_message=current_message,
@@ -225,50 +276,42 @@ class ContactAgent:
       is_valid = False
       error_message = ""
 
-      if self.use_ui:
+      if ui_version:
         logger.info(
             "--- ContactAgent.stream: Validating UI response (Attempt"
             f" {attempt})... ---"
         )
         try:
-          if "---a2ui_JSON---" not in final_response_content:
-            raise ValueError("Delimiter '---a2ui_JSON---' not found.")
+          response_parts = parse_response(final_response_content)
 
-          text_part, json_string = final_response_content.split("---a2ui_JSON---", 1)
+          for part in response_parts:
+            if not part.a2ui_json:
+              continue
 
-          # Handle the "no results found" case
-          json_string_cleaned = (
-              json_string.strip().lstrip("```json").rstrip("```").strip()
-          )
-          if not json_string.strip() or json_string_cleaned == "[]":
-            logger.info(
-                "--- ContactAgent.stream: Empty JSON list found. Assuming valid (e.g.,"
-                " 'no results'). ---"
-            )
-            is_valid = True
+            parsed_json_data = part.a2ui_json
 
-          else:
-            if not json_string_cleaned:
-              raise ValueError("Cleaned JSON string is empty.")
+            # Handle the "no results found" or empty JSON case
+            if parsed_json_data == []:
+              logger.info(
+                  "--- ContactAgent.stream: Empty JSON list found. "
+                  "Assuming valid (e.g., 'no results'). ---"
+              )
+              is_valid = True
+            else:
+              # --- Validation Steps ---
+              # Check if it validates against the A2UI_SCHEMA
+              # This will raise jsonschema.exceptions.ValidationError if it fails
+              logger.info(
+                  "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
+              )
+              selected_catalog.validator.validate(parsed_json_data)
+              # --- End Validation Steps ---
 
-            # --- New Validation Steps ---
-            # 1. Check if it's parsable JSON
-            parsed_json_data = json.loads(json_string_cleaned)
-
-            # 2. Check if it validates against the A2UI_SCHEMA
-            # This will raise jsonschema.exceptions.ValidationError if it fails
-            logger.info(
-                "--- ContactAgent.stream: Validating against A2UI_SCHEMA... ---"
-            )
-            selected_catalog.validator.validate(parsed_json_data)
-            # --- End New Validation Steps ---
-
-            logger.info(
-                "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
-                f" against schema. Validation OK (Attempt {attempt}). ---"
-            )
-            is_valid = True
-
+              logger.info(
+                  "--- ContactAgent.stream: UI JSON successfully parsed AND validated"
+                  f" against schema. Validation OK (Attempt {attempt}). ---"
+              )
+              is_valid = True
         except (
             ValueError,
             json.JSONDecodeError,
@@ -291,10 +334,13 @@ class ContactAgent:
             "--- ContactAgent.stream: Response is valid. Sending final response"
             f" (Attempt {attempt}). ---"
         )
-        logger.info(f"Final response: {final_response_content}")
+        final_parts = parse_response_to_parts(
+            final_response_content, fallback_text="OK."
+        )
+
         yield {
             "is_task_complete": True,
-            "content": final_response_content,
+            "parts": final_parts,
         }
         return  # We're done, exit the generator
 
@@ -308,8 +354,8 @@ class ContactAgent:
         current_query_text = (
             f"Your previous response was invalid. {error_message} You MUST generate a"
             " valid response that strictly follows the A2UI JSON SCHEMA. The response"
-            " MUST be a JSON list of A2UI messages. Ensure the response is split by"
-            " '---a2ui_JSON---' and the JSON part is well-formed. Please retry the"
+            " MUST be a JSON list of A2UI messages. Ensure each JSON part is wrapped in"
+            f" '{A2UI_OPEN_TAG}' and '{A2UI_CLOSE_TAG}' tags. Please retry the"
             f" original request: '{query}'"
         )
         # Loop continues...
@@ -320,9 +366,15 @@ class ContactAgent:
     )
     yield {
         "is_task_complete": True,
-        "content": (
-            "I'm sorry, I'm having trouble generating the interface for that request"
-            " right now. Please try again in a moment."
-        ),
+        "parts": [
+            Part(
+                root=TextPart(
+                    text=(
+                        "I'm sorry, I'm having trouble generating the interface for"
+                        " that request right now. Please try again in a moment."
+                    )
+                )
+            )
+        ],
     }
     # --- End: UI Validation and Retry Logic ---

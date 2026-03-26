@@ -19,6 +19,7 @@ from a2ui.basic_catalog import BasicCatalog
 from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME
 from a2ui.core.schema.constants import (
     CATALOG_COMPONENTS_KEY,
+    DEFAULT_WORKFLOW_RULES,
     INLINE_CATALOG_NAME,
     VERSION_0_8,
     VERSION_0_9,
@@ -329,12 +330,46 @@ def test_generate_system_prompt_minimal_args(mock_importlib_resources):
 
   prompt = manager.generate_system_prompt("Just Role")
 
-  # Check that optional sections are missing
-  assert "## Workflow Description:" not in prompt
+  # Check that default workflow description is present even with no args
+  assert "## Workflow Description:" in prompt
+  assert DEFAULT_WORKFLOW_RULES in prompt
   assert "## UI Description:" not in prompt
   assert "## Examples:" not in prompt
   assert "Just Role" in prompt
   assert "---BEGIN A2UI JSON SCHEMA---" not in prompt
+
+
+def test_generate_system_prompt_custom_workflow_appending(mock_importlib_resources):
+  mock_files = mock_importlib_resources
+  mock_traversable = MagicMock()
+  mock_files.return_value = mock_traversable
+
+  def joinpath_side_effect(path):
+    if path == VERSION_0_8:
+      return mock_traversable
+
+    mock_file = MagicMock()
+    if "catalog" in path:
+      content = '{"catalogId": "basic", "components": {}}'
+    else:
+      content = "{}"
+    mock_file.open.return_value.__enter__.return_value = io.StringIO(content)
+    return mock_file
+
+  mock_traversable.joinpath.side_effect = joinpath_side_effect
+
+  manager = A2uiSchemaManager(
+      VERSION_0_8, catalogs=[BasicCatalog.get_config(VERSION_0_8)]
+  )
+
+  custom_rule = "Custom Rule Content"
+  prompt = manager.generate_system_prompt("Role", workflow_description=custom_rule)
+
+  assert "## Workflow Description:" in prompt
+  assert DEFAULT_WORKFLOW_RULES in prompt
+  assert custom_rule in prompt
+  # Ensure custom rule is appended to default
+  assert prompt.index(DEFAULT_WORKFLOW_RULES) < prompt.index(custom_rule)
 
 
 def test_generate_system_prompt_with_inline_catalog(mock_importlib_resources):
@@ -377,11 +412,9 @@ def test_generate_system_prompt_with_inline_catalog(mock_importlib_resources):
 
   assert "Role" in prompt
   assert "---BEGIN A2UI JSON SCHEMA---" in prompt
-  assert (
-      '### Catalog Schema:\n{\n  "$schema":'
-      ' "https://json-schema.org/draft/2020-12/schema",\n  "catalogId": "id_inline"'
-      in prompt
-  )
+  # Inline catalog is merged onto the base catalog (catalogId: "basic")
+  assert "### Catalog Schema:" in prompt
+  assert '"catalogId": "basic"' in prompt
   assert '"Button": {}' in prompt
 
 
@@ -434,28 +467,59 @@ def test_select_catalog_logic():
   assert A2uiSchemaManager._select_catalog(manager, {}) == basic
   assert A2uiSchemaManager._select_catalog(manager, None) == basic
 
-  # Rule 2: Exception if both inline and supported IDs are provided
-  with pytest.raises(ValueError, match="Only one is allowed"):
-    A2uiSchemaManager._select_catalog(
-        manager,
-        {
-            INLINE_CATALOGS_KEY: [{"inline": "catalog"}],
-            SUPPORTED_CATALOG_IDS_KEY: ["id_custom1"],
-        },
-    )
+  # Rule 2: Both inline and supported IDs are allowed (supportedCatalogIds
+  # selects the base catalog, inlineCatalogs extend it).
+  inline_with_supported = {
+      INLINE_CATALOGS_KEY: [{"components": {"Custom": {}}}],
+      SUPPORTED_CATALOG_IDS_KEY: ["id_custom1"],
+  }
+  # Need components on the base catalog for merging to work
+  custom1_with_components = A2uiCatalog(
+      version=VERSION_0_9,
+      name="custom1",
+      s2c_schema={},
+      common_types_schema={},
+      catalog_schema={
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "catalogId": "id_custom1",
+          "components": {"Base": {}},
+      },
+  )
+  manager._supported_catalogs[1] = custom1_with_components
+  manager._apply_modifiers = MagicMock(side_effect=lambda x: x)
+  catalog_both = A2uiSchemaManager._select_catalog(manager, inline_with_supported)
+  assert catalog_both.name == INLINE_CATALOG_NAME
+  # Base catalog's components are preserved and inline components are merged
+  assert "Base" in catalog_both.catalog_schema["components"]
+  assert "Custom" in catalog_both.catalog_schema["components"]
+  assert catalog_both.catalog_schema["catalogId"] == "id_custom1"
 
-  # Rule 3: Inline catalog loading
+  # Rule 3: Inline catalog loading (merges onto base)
+  basic_with_components = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema={},
+      catalog_schema={
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "catalogId": "id_basic",
+          "components": {"Text": {}},
+      },
+  )
+  manager._supported_catalogs[0] = basic_with_components
   inline_schema = {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "catalogId": "id_inline",
-      "components": {},
+      "components": {"Button": {}},
   }
   manager._apply_modifiers = MagicMock(return_value=inline_schema)
   catalog_inline = A2uiSchemaManager._select_catalog(
       manager, {INLINE_CATALOGS_KEY: [inline_schema]}
   )
   assert catalog_inline.name == INLINE_CATALOG_NAME
-  assert catalog_inline.catalog_schema == inline_schema
+  # Merged: base components + inline components
+  assert "Text" in catalog_inline.catalog_schema["components"]
+  assert "Button" in catalog_inline.catalog_schema["components"]
   assert catalog_inline.s2c_schema == manager._server_to_client_schema
   assert catalog_inline.common_types_schema == manager._common_types_schema
 
@@ -464,6 +528,9 @@ def test_select_catalog_logic():
   with pytest.raises(ValueError, match="the agent does not accept inline catalogs"):
     A2uiSchemaManager._select_catalog(manager, {INLINE_CATALOGS_KEY: [inline_schema]})
   manager._accepts_inline_catalogs = True
+
+  # Restore original catalogs for remaining tests
+  manager._supported_catalogs = [basic, custom1, custom2]
 
   # Rule 4: Otherwise, find the intersection, return any catalog that matches.
   # The priority is determined by the order in supported_catalog_ids.

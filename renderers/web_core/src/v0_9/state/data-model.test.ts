@@ -1,6 +1,22 @@
+/*
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import assert from 'node:assert';
-import { test, describe, it, beforeEach } from 'node:test';
-import { DataModel } from './data-model.js';
+import {describe, it, beforeEach} from 'node:test';
+import {DataModel} from './data-model.js';
 
 describe('DataModel', () => {
   let model: DataModel;
@@ -10,17 +26,27 @@ describe('DataModel', () => {
       user: {
         name: 'Alice',
         settings: {
-          theme: 'dark'
-        }
+          theme: 'dark',
+        },
       },
-      items: ['a', 'b', 'c']
+      items: ['a', 'b', 'c'],
     });
+  });
+
+  // --- Initialization ---
+
+  it('initializes with empty data if not provided', () => {
+    const emptyModel = new DataModel();
+    assert.deepStrictEqual(emptyModel.get('/'), {});
   });
 
   // --- Basic Retrieval ---
 
   it('retrieves root data', () => {
-    assert.deepStrictEqual(model.get('/'), { user: { name: 'Alice', settings: { theme: 'dark' } }, items: ['a', 'b', 'c'] });
+    assert.deepStrictEqual(model.get('/'), {
+      user: {name: 'Alice', settings: {theme: 'dark'}},
+      items: ['a', 'b', 'c'],
+    });
   });
 
   it('retrieves nested path', () => {
@@ -36,6 +62,11 @@ describe('DataModel', () => {
   it('returns undefined for non-existent paths', () => {
     assert.strictEqual(model.get('/user/age'), undefined);
     assert.strictEqual(model.get('/unknown/path'), undefined);
+  });
+
+  it('returns undefined when traversing through undefined/null segments', () => {
+    model.set('/nullable', null);
+    assert.strictEqual(model.get('/nullable/deep/path'), undefined);
   });
 
   // --- Updates ---
@@ -60,11 +91,6 @@ describe('DataModel', () => {
     model.set('/user/name', undefined);
     assert.strictEqual(model.get('/user/name'), undefined);
     assert.strictEqual(Object.keys(model.get('/user')).includes('name'), false);
-  });
-
-  it('replaces root object on root update', () => {
-    model.set('/', { newRoot: true });
-    assert.deepStrictEqual(model.get('/'), { newRoot: true });
   });
 
   // --- Array / List Handling (Flutter Parity) ---
@@ -110,11 +136,10 @@ describe('DataModel', () => {
 
   it('returns a subscription object', () => {
     model.set('/a', 1);
-    const sub = model.subscribe<number>('/a', (val) => updatedValue = val);
+    const sub = model.subscribe<number>('/a', val => (updatedValue = val));
     assert.strictEqual(sub.value, 1);
 
     let updatedValue: number | undefined;
-    
 
     model.set('/a', 2);
     assert.strictEqual(sub.value, 2);
@@ -128,7 +153,7 @@ describe('DataModel', () => {
 
   it('notifies subscribers on exact match', () => {
     let called = false;
-    const sub = model.subscribe('/user/name', (val) => {
+    model.subscribe('/user/name', val => {
       assert.strictEqual(val, 'Charlie');
       called = true;
     });
@@ -138,7 +163,7 @@ describe('DataModel', () => {
 
   it('notifies ancestor subscribers (Container Semantics)', () => {
     let called = false;
-    const sub = model.subscribe('/user', (val: any) => {
+    model.subscribe('/user', (val: any) => {
       assert.strictEqual(val.name, 'Dave');
       called = true;
     });
@@ -148,19 +173,19 @@ describe('DataModel', () => {
 
   it('notifies descendant subscribers', () => {
     let called = false;
-    const sub = model.subscribe('/user/settings/theme', (val) => {
+    model.subscribe('/user/settings/theme', val => {
       assert.strictEqual(val, 'light');
       called = true;
     });
 
     // We update the parent object
-    model.set('/user/settings', { theme: 'light' });
+    model.set('/user/settings', {theme: 'light'});
     assert.strictEqual(called, true, 'Callback was never called');
   });
 
   it('notifies root subscriber', () => {
     let called = false;
-    const sub = model.subscribe('/', (val: any) => {
+    model.subscribe('/', (val: any) => {
       assert.strictEqual(val.newProp, 'test');
       called = true;
     });
@@ -169,18 +194,18 @@ describe('DataModel', () => {
   });
 
   it('notifies parent when child updates', () => {
-    model.set('/parent', { child: 'initial' });
+    model.set('/parent', {child: 'initial'});
 
     let parentValue: any;
-    const sub = model.subscribe('/parent', (val) => parentValue = val);
+    model.subscribe('/parent', val => (parentValue = val));
 
     model.set('/parent/child', 'updated');
-    assert.deepStrictEqual(parentValue, { child: 'updated' });
+    assert.deepStrictEqual(parentValue, {child: 'updated'});
   });
 
   it('stops notifying after dispose', () => {
     let count = 0;
-    const sub = model.subscribe('/', () => count++);
+    model.subscribe('/', () => count++);
 
     model.dispose();
     model.set('/foo', 'bar');
@@ -218,11 +243,15 @@ describe('DataModel', () => {
     assert.strictEqual(callCount1, 0); // sub1 was unsubscribed
     assert.strictEqual(callCount2, 1); // sub2 still active
     assert.strictEqual(sub2.value, 'Frank');
+
+    sub2.unsubscribe(); // Should clear the internal map set
+    model.set('/user/name', 'Grace');
+    assert.strictEqual(callCount2, 1); // still 1
   });
 
   it('handles subscription to non-existent path', () => {
     let val: any;
-    const sub = model.subscribe('/non/existent', (v) => val = v);
+    const sub = model.subscribe('/non/existent', v => (val = v));
     assert.strictEqual(sub.value, undefined);
 
     model.set('/non/existent', 'exists now');
@@ -233,7 +262,7 @@ describe('DataModel', () => {
   it('handles updates to undefined', () => {
     model.set('/foo', 'bar');
     let val: any = 'initial';
-    const sub = model.subscribe('/foo', (v) => val = v);
+    const sub = model.subscribe('/foo', v => (val = v));
 
     model.set('/foo', undefined);
     assert.strictEqual(sub.value, undefined);
@@ -253,5 +282,57 @@ describe('DataModel', () => {
     assert.throws(() => {
       model.set('/items/foo', 'bar');
     }, /Cannot use non-numeric segment/);
+  });
+
+  it('throws when using non-numeric segment on an array (intermediate)', () => {
+    model.set('/', {items: [1, 2, 3]});
+    assert.throws(() => {
+      model.set('/items/foo/bar', 'value');
+    }, /Cannot use non-numeric segment 'foo' on an array/);
+  });
+
+  it('normalizes trailing slashes', () => {
+    let callCount = 0;
+    model.subscribe('/foo', () => callCount++);
+    model.set('/foo/', 'bar'); // Trailing slash
+    assert.strictEqual(model.get('/foo/'), 'bar');
+    assert.strictEqual(callCount, 1);
+  });
+
+  it('replaces root object on root update', () => {
+    let callCount = 0;
+    model.subscribe('/', () => callCount++);
+    // Just add another sub on a generic path to ensure notifyAllSubscribers loop hits multiple items
+    model.subscribe('/unrelated', () => {});
+
+    model.set('/', {newRoot: 'foo'});
+    assert.deepStrictEqual(model.get(''), {newRoot: 'foo'});
+    assert.strictEqual(callCount, 1);
+  });
+
+  it('throws when path is null or undefined', () => {
+    assert.throws(
+      () => model.get(null as any),
+      /Path cannot be null or undefined/,
+    );
+    assert.throws(
+      () => model.get(undefined as any),
+      /Path cannot be null or undefined/,
+    );
+    assert.throws(
+      () => model.set(null as any, 'value'),
+      /Path cannot be null or undefined/,
+    );
+    assert.throws(
+      () => model.set(undefined as any, 'value'),
+      /Path cannot be null or undefined/,
+    );
+  });
+
+  it('calculates descendants against root path', () => {
+    // This explicitly hits an internal method branch where parentPath === "/"
+    const isDescendant = (model as any).isDescendant.bind(model);
+    assert.strictEqual(isDescendant('/user', '/'), true);
+    assert.strictEqual(isDescendant('/', '/'), false);
   });
 });

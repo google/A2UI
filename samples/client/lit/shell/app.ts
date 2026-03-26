@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { SignalWatcher } from "@lit-labs/signals";
@@ -35,7 +35,7 @@ import {
 } from "./types/types.js";
 import { type Snackbar } from "./ui/snackbar.js";
 import { repeat } from "lit/directives/repeat.js";
-import { v0_8 } from "@a2ui/lit";
+import * as v0_8 from "@a2ui/lit/v0_8";
 import * as UI from "@a2ui/lit/ui";
 
 // App elements.
@@ -71,7 +71,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   accessor #lastMessages: v0_8.Types.ServerToClientMessage[] = [];
 
   @state()
-  accessor config: AppConfig = configs.restaurant;
+  accessor config: AppConfig = configs.contacts;
 
   @state()
   accessor #loadingTextIndex = 0;
@@ -289,8 +289,8 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
     // Load config from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const appKey = urlParams.get("app") || "restaurant";
-    this.config = configs[appKey] || configs.restaurant;
+    const appKey = urlParams.get("app");
+    this.config = (appKey && configs[appKey]) || configs.contacts;
 
     // Apply the theme directly, which will use the Lit context.
     if (this.config.theme) {

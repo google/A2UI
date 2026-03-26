@@ -1,17 +1,17 @@
 /*
- Copyright 2025 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      https://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2025 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import { SignalWatcher } from "@lit-labs/signals";
@@ -41,6 +41,9 @@ import * as UI from "@a2ui/lit/ui";
 // Demo elements.
 import "./ui/ui.js";
 import { registerContactComponents } from "./ui/custom-components/register-components.js";
+import { Context } from "@a2ui/lit/ui";
+// @ts-ignore
+import { renderMarkdown } from "@a2ui/markdown-it";
 
 // Register custom components for the contact app
 registerContactComponents();
@@ -53,6 +56,11 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
   @provide({ context: UI.Context.themeContext })
   accessor theme: v0_8.Types.Theme = uiTheme;
+
+  @provide({ context: UI.Context.markdown })
+  accessor markdownRenderer: v0_8.Types.MarkdownRenderer = async (text, options) => {
+    return renderMarkdown(text, options);
+  };
 
   @state()
   accessor #requesting = false;
@@ -268,7 +276,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
       </div>`;
     }
 
-    const surfacesMap = this.#processor.getSurfaces();
+    const surfacesMap = new Map(this.#processor.getSurfaces());
     const surfaces = Array.from(surfacesMap.entries()).sort(([a], [b]) => {
       // "org-chart-view" comes first (left), "contact-card" second (right)
       if (a === 'org-chart-view') return -1;
@@ -345,7 +353,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
             const message: v0_8.Types.A2UIClientEventMessage = {
               userAction: {
                 surfaceId: surfaceId,
-                name: evt.detail.action.name,
+                name: "ACTION: " + evt.detail.action.name,
                 sourceComponentId: target.id,
                 timestamp: new Date().toISOString(),
                 context,
@@ -376,6 +384,7 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
     // this.#processor.clearSurfaces(); // Removed to allow partial updates
     this.#processor.processMessages(messages);
     this.renderVersion++; // Force re-render of surfaces
+    this.requestUpdate();
 
     const cardSurface = this.#processor.getSurfaces().get('contact-card');
     if (cardSurface) {

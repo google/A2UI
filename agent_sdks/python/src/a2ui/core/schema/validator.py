@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import copy
+import logging
 import re
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union, Iterator
 
@@ -124,7 +125,12 @@ class A2uiValidator:
 
   def __init__(self, catalog: "A2uiCatalog"):
     self._catalog = catalog
+    self.version = getattr(catalog, "version", VERSION_0_8)
     self._validator = self._build_validator()
+
+  def get_version(self) -> str:
+    """Returns the A2UI protocol version."""
+    return self.version
 
   def _build_validator(self) -> Draft202012Validator:
     """Builds a validator for the A2UI schema."""
@@ -260,13 +266,26 @@ class A2uiValidator:
 
     return Draft202012Validator(validator_schema, registry=registry)
 
-  def validate(self, a2ui_json: Union[Dict[str, Any], List[Any]]) -> None:
-    """Validates an A2UI messages against the schema."""
+  def validate(
+      self,
+      a2ui_json: Union[Dict[str, Any], List[Any]],
+      root_id: Optional[str] = None,
+      strict_integrity: bool = True,
+  ) -> None:
+    """Validates an A2UI messages against the schema.
+
+    Args:
+        a2ui_json: The A2UI message(s) to validate.
+        root_id: Optional root component ID.
+        strict_integrity: If True, performs full topology and integrity checks.
+                If False, only performs schema validation and basic syntax checks.
+    """
     messages = a2ui_json if isinstance(a2ui_json, list) else [a2ui_json]
 
     # Basic schema validation
-    error = next(self._validator.iter_errors(messages), None)
-    if error is not None:
+    errors = list(self._validator.iter_errors(messages))
+    if errors:
+      error = errors[0]
       msg = f"Validation failed: {error.message}"
       if error.context:
         msg += "\nContext failures:"
@@ -274,31 +293,41 @@ class A2uiValidator:
           msg += f"\n  - {sub_error.message}"
       raise ValueError(msg)
 
-    root_id = _find_root_id(messages)
-
     for message in messages:
       if not isinstance(message, dict):
         continue
 
       components = None
+      surface_id = None
       if "surfaceUpdate" in message:  # v0.8
         components = message["surfaceUpdate"].get(COMPONENTS)
+        surface_id = message["surfaceUpdate"].get("surfaceId")
       elif "updateComponents" in message and isinstance(
           message["updateComponents"], dict
       ):  # v0.9
         components = message["updateComponents"].get(COMPONENTS)
+        surface_id = message["updateComponents"].get("surfaceId")
 
       if components:
-        ref_map = _extract_component_ref_fields(self._catalog)
-        _validate_component_integrity(root_id, components, ref_map)
-        _validate_topology(root_id, components, ref_map)
+        ref_map = extract_component_ref_fields(self._catalog)
+        root_id = _find_root_id(messages, surface_id)
+        # Always check for basic integrity (duplicates)
+        _validate_component_integrity(
+            root_id, components, ref_map, skip_root_check=not strict_integrity
+        )
+        # Always check topology (cycles), but only raise on orphans if strict_integrity is True
+        analyze_topology(
+            root_id, components, ref_map, raise_on_orphans=strict_integrity
+        )
 
       _validate_recursion_and_paths(message)
 
 
-def _find_root_id(messages: List[Dict[str, Any]]) -> str:
+def _find_root_id(
+    messages: List[Dict[str, Any]], surface_id: Optional[str] = None
+) -> Optional[str]:
   """
-  Finds the root id from a list of A2UI messages.
+  Finds the root id from a list of A2UI messages for a given surface.
   - For v0.8, the root id is in the beginRendering message.
   - For v0.9+, the root id is 'root'.
   """
@@ -306,14 +335,21 @@ def _find_root_id(messages: List[Dict[str, Any]]) -> str:
     if not isinstance(message, dict):
       continue
     if "beginRendering" in message:
+      if surface_id and message["beginRendering"].get("surfaceId") != surface_id:
+        continue
       return message["beginRendering"].get(ROOT, ROOT)
-  return ROOT
+    if "createSurface" in message:
+      if surface_id and message["createSurface"].get("surfaceId") != surface_id:
+        continue
+      return ROOT
+  return None
 
 
 def _validate_component_integrity(
-    root_id: str,
+    root_id: Optional[str],
     components: List[Dict[str, Any]],
     ref_fields_map: Dict[str, tuple[Set[str], Set[str]]],
+    skip_root_check: bool = False,
 ) -> None:
   """
   Validates that:
@@ -334,28 +370,41 @@ def _validate_component_integrity(
     ids.add(comp_id)
 
   # 2. Check for root component
-  if root_id not in ids:
+  if not skip_root_check and root_id is not None and root_id not in ids:
     raise ValueError(f"Missing root component: No component has id='{root_id}'")
 
   # 3. Check for dangling references using helper
-  for comp in components:
-    for ref_id, field_name in _get_component_references(comp, ref_fields_map):
-      if ref_id not in ids:
-        raise ValueError(
-            f"Component '{comp.get(ID)}' references non-existent component '{ref_id}'"
-            f" in field '{field_name}'"
-        )
+  # In an incremental update (root_id is None), components may reference IDs already on the client.
+  if root_id is not None and not skip_root_check:
+    for comp in components:
+      for ref_id, field_name in get_component_references(comp, ref_fields_map):
+        if ref_id not in ids:
+          raise ValueError(
+              f"Component '{comp.get(ID)}' references non-existent component '{ref_id}'"
+              f" in field '{field_name}'"
+          )
 
 
-def _validate_topology(
-    root_id: str,
+def analyze_topology(
+    root_id: Optional[str],
     components: List[Dict[str, Any]],
     ref_fields_map: Dict[str, tuple[Set[str], Set[str]]],
-) -> None:
+    raise_on_orphans: bool = False,
+) -> Set[str]:
   """
-  Validates the topology of the component tree:
-  1. No circular references (including self-references).
-  2. No orphaned components (all components must be reachable from 'root').
+  Analyzes the topology of the component tree and returns reachable component IDs.
+
+  Args:
+      root_id: The ID of the root component.
+      components: The list of components.
+      ref_fields_map: Map of component reference fields.
+      raise_on_orphans: If True, raises ValueError if any components are unreachable from root.
+
+  Returns:
+      A set of reachable component IDs.
+
+  Raises:
+      ValueError: On circular references or self-references.
   """
   adj_list: Dict[str, List[str]] = {}
   all_ids: Set[str] = set()
@@ -370,7 +419,7 @@ def _validate_topology(
     if comp_id not in adj_list:
       adj_list[comp_id] = []
 
-    for ref_id, field_name in _get_component_references(comp, ref_fields_map):
+    for ref_id, field_name in get_component_references(comp, ref_fields_map):
       if ref_id == comp_id:
         raise ValueError(
             f"Self-reference detected: Component '{comp_id}' references itself in field"
@@ -401,19 +450,83 @@ def _validate_topology(
 
     recursion_stack.remove(node_id)
 
-  if root_id in all_ids:
-    dfs(root_id, 0)
+  if root_id is not None:
+    if root_id in all_ids:
+      dfs(root_id, 0)
 
-  # Check for Orphans
-  orphans = all_ids - visited
-  if orphans:
-    sorted_orphans = sorted(list(orphans))
-    raise ValueError(
-        f"Component '{sorted_orphans[0]}' is not reachable from '{root_id}'"
-    )
+    # Check for Orphans if requested
+    if raise_on_orphans:
+      orphans = all_ids - visited
+      if orphans:
+        sorted_orphans = sorted(list(orphans))
+        raise ValueError(
+            f"Component '{sorted_orphans[0]}' is not reachable from '{root_id}'"
+        )
+  else:
+    # No root provided (e.g. partial update): we traverse everything to check for cycles
+    for node_id in sorted(list(all_ids)):
+      if node_id not in visited:
+        dfs(node_id, 0)
+
+  return visited
 
 
-def _extract_component_ref_fields(
+def extract_component_required_fields(
+    catalog: "A2uiCatalog",
+) -> Dict[str, Set[str]]:
+  """
+  Parses the catalog/schema to identify which component properties are required.
+  Returns a map: { component_name: set_of_required_fields }
+  """
+  req_map = {}
+
+  all_components = {}
+  # Version aware extraction
+  if catalog.version == VERSION_0_8:
+    # Search for components in s2c schema properties
+    try:
+      s2c = catalog.s2c_schema or {}
+      props = s2c.get("properties", {})
+      if "surfaceUpdate" in props:
+        su = props["surfaceUpdate"].get("properties", {})
+        if "components" in su:
+          items = su["components"].get("items", {})
+          if "properties" in items:
+            comp_wrapper = items["properties"].get("component", {})
+            all_components = comp_wrapper.get("properties", {})
+    except Exception:
+      pass
+
+    if not all_components and catalog.catalog_schema:
+      all_components = catalog.catalog_schema.get(COMPONENTS, {})
+  else:  # v0.9+
+    all_components = catalog.catalog_schema.get(COMPONENTS, {})
+
+  for comp_name, comp_schema in all_components.items():
+    required_fields = set()
+
+    def extract_from_props(cs: Dict[str, Any]):
+      if not isinstance(cs, dict):
+        return
+
+      if "required" in cs and isinstance(cs["required"], list):
+        required_fields.update(req for req in cs["required"] if req != "component")
+
+      # Recurse into allOf/oneOf/anyOf
+      for key in ["allOf", "oneOf", "anyOf"]:
+        if key in cs:
+          for sub in cs[key]:
+            extract_from_props(sub)
+
+    extract_from_props(comp_schema)
+
+    if required_fields:
+      req_map[comp_name] = required_fields
+
+  return req_map
+
+
+def extract_component_ref_fields(
     catalog: "A2uiCatalog",
 ) -> Dict[str, tuple[Set[str], Set[str]]]:
   """
@@ -535,7 +648,7 @@ def _extract_component_ref_fields(
   return ref_map
 
 
-def _get_component_references(
+def get_component_references(
     component: Dict[str, Any], ref_fields_map: Dict[str, tuple[Set[str], Set[str]]]
 ) -> Iterator[Tuple[str, str]]:
   """
@@ -543,23 +656,19 @@ def _get_component_references(
   Yields (referenced_id, field_name).
   """
   # Support both v0.8 and v0.9+
-  comp_type = None
-  props = {}
-
-  if "component" in component:
-    comp_val = component.get("component")
-    if isinstance(comp_val, str):
-      # v0.9 flattened
-      yield from _get_refs_recursively(comp_val, component, ref_fields_map)
-    elif isinstance(comp_val, dict):
-      # v0.8 structured
-      for c_type, c_props in comp_val.items():
-        # Recurse into the properties container
-        if isinstance(c_props, dict):
-          yield from _get_refs_recursively(c_type, c_props, ref_fields_map)
+  comp_val = component.get("component")
+  if isinstance(comp_val, str):
+    # v0.9 flattened
+    yield from get_refs_recursively(comp_val, component, ref_fields_map)
+  elif isinstance(comp_val, dict):
+    # v0.8 structured
+    for c_type, c_props in comp_val.items():
+      # Recurse into the properties container
+      if isinstance(c_props, dict):
+        yield from get_refs_recursively(c_type, c_props, ref_fields_map)
 
 
-def _get_refs_recursively(
+def get_refs_recursively(
     comp_type: str,
     props: Dict[str, Any],
     ref_fields_map: Dict[str, tuple[Set[str], Set[str]]],
@@ -569,28 +678,46 @@ def _get_refs_recursively(
 
   single_refs, list_refs = ref_fields_map.get(comp_type, (set(), set()))
 
+  # Standard A2UI reference fields to check as heuristics if not explicitly mapped
+  HEURISTIC_SINGLE = {
+      "child",
+      "contentChild",
+      "entryPointChild",
+      "detail",
+      "summary",
+      "root",
+  }
+  HEURISTIC_LIST = {"children", "explicitList", "template"}
+
   for key, value in props.items():
-    if key in single_refs:
+    is_ref = False
+    if key in single_refs or key in HEURISTIC_SINGLE:
       if isinstance(value, str):
         yield value, key
+        is_ref = True
       elif isinstance(value, dict) and "componentId" in value:  # ChildList template
         yield value["componentId"], f"{key}.componentId"
-    elif key in list_refs:
+        is_ref = True
+    elif key in list_refs or key in HEURISTIC_LIST:
       if isinstance(value, list):
         for item in value:
           if isinstance(item, str):
             yield item, key
+            is_ref = True
       elif isinstance(value, dict):
         if "explicitList" in value:
           for item in value["explicitList"]:
             if isinstance(item, str):
               yield item, f"{key}.explicitList"
+              is_ref = True
         elif "template" in value:
           template = value["template"]
           if isinstance(template, dict) and "componentId" in template:
             yield template["componentId"], f"{key}.template.componentId"
+            is_ref = True
         elif "componentId" in value:
           yield value["componentId"], f"{key}.componentId"
+          is_ref = True
 
     # Special handling for 'tabs' or other nested arrays
     if isinstance(value, list) and key not in list_refs:

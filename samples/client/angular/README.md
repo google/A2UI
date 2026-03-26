@@ -5,6 +5,7 @@ These are sample implementations of A2UI in Angular.
 ## Prerequisites
 
 1. [nodejs](https://nodejs.org/en)
+2. [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
 NOTE: [For the rizzcharts app](../../agent/adk/rizzcharts/), you will need GoogleMap API ([How to get the API key](https://developers.google.com/maps/documentation/javascript/get-api-key)) to display Google Map custome components. Please refer to [Rizzcharts README](./projects/rizzcharts/README.md)
 
@@ -36,8 +37,18 @@ Here are the instructions if you want to do each step manually.
   * `npm start -- contact`
   * `npm start -- rizzcharts`
   * `npm start -- orchestrator`
+  * `npm run build:sandbox && npm start -- mcp_calculator`
   * `npm start -- gallery` (Client-only, no server required)
 5. Open http://localhost:4200/
+
+## Streaming
+
+By default, the Angular client uses the non-streaming API to communicate with the agent. To enable streaming, set the `ENABLE_STREAMING` environment variable to `true`:
+
+```bash
+export ENABLE_STREAMING=true
+npm start -- contact
+```
 
 Important: The sample code provided is for demonstration purposes and illustrates the mechanics of A2UI and the Agent-to-Agent (A2A) protocol. When building production applications, it is critical to treat any agent operating outside of your direct control as a potentially untrusted entity.
 

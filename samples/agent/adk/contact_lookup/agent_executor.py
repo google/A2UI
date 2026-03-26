@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import logging
 
 from a2a.server.agent_execution import AgentExecutor, RequestContext
@@ -33,7 +32,7 @@ from a2a.utils import (
 )
 from a2a.utils.errors import ServerError
 from agent import ContactAgent
-from a2ui.a2a import create_a2ui_part, try_activate_a2ui_extension
+from a2ui.a2a import try_activate_a2ui_extension
 
 logger = logging.getLogger(__name__)
 
@@ -41,11 +40,8 @@ logger = logging.getLogger(__name__)
 class ContactAgentExecutor(AgentExecutor):
   """Contact AgentExecutor Example."""
 
-  def __init__(self, ui_agent: ContactAgent, text_agent: ContactAgent):
-    # Instantiate two agents: one for UI and one for text-only.
-    # The appropriate one will be chosen at execution time.
-    self.ui_agent = ui_agent
-    self.text_agent = text_agent
+  def __init__(self, agent: ContactAgent):
+    self._agent = agent
 
   async def execute(
       self,
@@ -57,16 +53,16 @@ class ContactAgentExecutor(AgentExecutor):
     action = None
 
     logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
-    use_ui = try_activate_a2ui_extension(context)
+    active_ui_version = try_activate_a2ui_extension(context, self._agent.agent_card)
 
-    # Determine which agent to use based on whether the a2ui extension is active.
-    if use_ui:
-      agent = self.ui_agent
-      logger.info("--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---")
-    else:
-      agent = self.text_agent
+    if active_ui_version:
       logger.info(
-          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
+          f"--- AGENT_EXECUTOR: A2UI extension is active (v{active_ui_version}). Using"
+          " UI runner. ---"
+      )
+    else:
+      logger.info(
+          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text runner. ---"
       )
 
     if context.message and context.message.parts:
@@ -128,7 +124,7 @@ class ContactAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in agent.stream(query, task.context_id):
+    async for item in self._agent.stream(query, task.context_id, active_ui_version):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
         await updater.update_status(
@@ -141,49 +137,7 @@ class ContactAgentExecutor(AgentExecutor):
       if action in ["send_email", "send_message", "view_full_profile"]:
         final_state = TaskState.completed
 
-      content = item["content"]
-      final_parts = []
-      if "---a2ui_JSON---" in content:
-        logger.info("Splitting final response into text and UI parts.")
-        text_content, json_string = content.split("---a2ui_JSON---", 1)
-
-        if text_content.strip():
-          final_parts.append(Part(root=TextPart(text=text_content.strip())))
-
-        if json_string.strip():
-          try:
-            json_string_cleaned = (
-                json_string.strip().lstrip("```json").rstrip("```").strip()
-            )
-
-            # Handle empty JSON list (e.g., no results)
-            if not json_string_cleaned or json_string_cleaned == "[]":
-              logger.info("Received empty/no JSON part. Skipping DataPart.")
-            else:
-              json_data = json.loads(json_string_cleaned)
-              if isinstance(json_data, list):
-                logger.info(
-                    f"Found {len(json_data)} messages. Creating individual DataParts."
-                )
-                for message in json_data:
-                  final_parts.append(create_a2ui_part(message))
-
-              else:
-                # Handle the case where a single JSON object is returned
-                logger.info("Received a single JSON object. Creating a DataPart.")
-                final_parts.append(create_a2ui_part(json_data))
-
-          except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse UI JSON: {e}")
-            final_parts.append(Part(root=TextPart(text=json_string)))
-      else:
-        final_parts.append(Part(root=TextPart(text=content.strip())))
-
-      # If after all that, we only have empty parts, add a default text response
-      if not final_parts or all(
-          isinstance(p.root, TextPart) and not p.root.text for p in final_parts
-      ):
-        final_parts = [Part(root=TextPart(text="OK."))]
+      final_parts = item["parts"]
 
       logger.info("--- FINAL PARTS TO BE SENT ---")
       for i, part in enumerate(final_parts):

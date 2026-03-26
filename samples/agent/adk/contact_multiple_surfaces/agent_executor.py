@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import logging
 import time
 
@@ -34,7 +33,7 @@ from a2a.utils import (
 )
 from a2a.utils.errors import ServerError
 from agent import ContactAgent
-from a2ui.a2a import create_a2ui_part, try_activate_a2ui_extension
+from a2ui.a2a import try_activate_a2ui_extension
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +42,7 @@ class ContactAgentExecutor(AgentExecutor):
   """Contact AgentExecutor Example."""
 
   def __init__(self, agent: ContactAgent):
-    # Instantiate the UI agent.
-    self.ui_agent = agent
+    self._agent = agent
 
   async def execute(
       self,
@@ -54,19 +52,21 @@ class ContactAgentExecutor(AgentExecutor):
     query = ""
     ui_event_part = None
     action = None
+    client_ui_capabilities = None
 
     logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
-    use_ui = try_activate_a2ui_extension(context)
+    active_ui_version = try_activate_a2ui_extension(context, self._agent.agent_card)
+    schema_manager = self._agent.get_schema_manager(active_ui_version)
 
-    # Determine which agent to use based on whether the a2ui extension is active.
-    if use_ui:
-      agent = self.ui_agent
-      logger.info("--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---")
+    if active_ui_version:
+      logger.info(
+          f"--- AGENT_EXECUTOR: A2UI extension is active (v{active_ui_version}). Using"
+          " UI runner. ---"
+      )
     else:
-      # Enforce A2UI extension as per review comment
-      error_msg = "A2UI extension is NOT active. This agent requires A2UI to function."
-      logger.error(f"--- AGENT_EXECUTOR: {error_msg} ---")
-      raise ServerError(error=UnsupportedOperationError(error_msg))
+      logger.info(
+          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text runner. ---"
+      )
 
     if context.message and context.message.parts:
       logger.info(
@@ -75,32 +75,24 @@ class ContactAgentExecutor(AgentExecutor):
       )
       for i, part in enumerate(context.message.parts):
         if isinstance(part.root, DataPart):
+          # Extract client UI capabilities from any DataPart that has them
+          if (
+              schema_manager
+              and schema_manager.accepts_inline_catalogs
+              and "metadata" in part.root.data
+              and "a2uiClientCapabilities" in part.root.data["metadata"]
+          ):
+            logger.info(f"  Part {i}: Found 'a2uiClientCapabilities' in DataPart.")
+            client_ui_capabilities = part.root.data["metadata"][
+                "a2uiClientCapabilities"
+            ]
+
           if "userAction" in part.root.data:
             logger.info(f"  Part {i}: Found a2ui UI ClientEvent payload.")
             ui_event_part = part.root.data["userAction"]
           elif "request" in part.root.data:
             logger.info(f"  Part {i}: Found 'request' in DataPart.")
             query = part.root.data["request"]
-
-            # Check for inline catalog
-            if (
-                agent.schema_manager.accepts_inline_catalogs
-                and "metadata" in part.root.data
-                and "a2uiClientCapabilities" in part.root.data["metadata"]
-            ):
-              logger.info(f"  Part {i}: Found 'a2uiClientCapabilities' in DataPart.")
-              client_ui_capabilities = part.root.data["metadata"][
-                  "a2uiClientCapabilities"
-              ]
-              catalog = agent.schema_manager.get_selected_catalog(
-                  client_ui_capabilities=client_ui_capabilities
-              )
-              catalog_schema_str = catalog.render_as_llm_instructions()
-              # Append to query so the agent sees it (simple injection)
-              query += (
-                  "\n\n[SYSTEM: The client supports the following custom components:"
-                  f" {catalog_schema_str}]"
-              )
           else:
             logger.info(f"  Part {i}: DataPart (data: {part.root.data})")
         elif isinstance(part.root, TextPart):
@@ -156,6 +148,22 @@ class ContactAgentExecutor(AgentExecutor):
         logger.info("No a2ui UI event part found. Falling back to text input.")
         query = context.get_user_input()
 
+    # Inject client UI capabilities into the query if found
+    if (
+        client_ui_capabilities is not None
+        and "query" in locals()
+        and query
+        and schema_manager
+    ):
+      catalog = schema_manager.get_selected_catalog(
+          client_ui_capabilities=client_ui_capabilities
+      )
+      catalog_schema_str = catalog.render_as_llm_instructions()
+      query += (
+          "\n\n[SYSTEM: The client supports the following custom components:"
+          f" {catalog_schema_str}]"
+      )
+
     logger.info(f"--- AGENT_EXECUTOR: Final query for LLM: '{query}' ---")
 
     task = context.current_task
@@ -165,7 +173,9 @@ class ContactAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in agent.stream(query, task.context_id):
+    async for item in self._agent.stream(
+        query, task.context_id, client_ui_capabilities, active_ui_version
+    ):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
         await updater.update_status(
@@ -178,49 +188,7 @@ class ContactAgentExecutor(AgentExecutor):
       if action in ["send_email", "send_message", "view_full_profile"]:
         final_state = TaskState.completed
 
-      content = item["content"]
-      final_parts = []
-      if "---a2ui_JSON---" in content:
-        logger.info("Splitting final response into text and UI parts.")
-        text_content, json_string = content.split("---a2ui_JSON---", 1)
-
-        if text_content.strip():
-          final_parts.append(Part(root=TextPart(text=text_content.strip())))
-
-        if json_string.strip():
-          try:
-            json_string_cleaned = (
-                json_string.strip().lstrip("```json").rstrip("```").strip()
-            )
-
-            # Handle empty JSON list (e.g., no results)
-            if not json_string_cleaned or json_string_cleaned == "[]":
-              logger.info("Received empty/no JSON part. Skipping DataPart.")
-            else:
-              json_data = json.loads(json_string_cleaned)
-              if isinstance(json_data, list):
-                logger.info(
-                    f"Found {len(json_data)} messages. Creating individual DataParts."
-                )
-                for message in json_data:
-                  final_parts.append(create_a2ui_part(message))
-
-              else:
-                # Handle the case where a single JSON object is returned
-                logger.info("Received a single JSON object. Creating a DataPart.")
-                final_parts.append(create_a2ui_part(json_data))
-
-          except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse UI JSON: {e}")
-            final_parts.append(Part(root=TextPart(text=json_string)))
-      else:
-        final_parts.append(Part(root=TextPart(text=content.strip())))
-
-      # If after all that, we only have empty parts, add a default text response
-      if not final_parts or all(
-          isinstance(p.root, TextPart) and not p.root.text for p in final_parts
-      ):
-        final_parts = [Part(root=TextPart(text="OK."))]
+      final_parts = item["parts"]
 
       logger.info("--- FINAL PARTS TO BE SENT ---")
       for i, part in enumerate(final_parts):

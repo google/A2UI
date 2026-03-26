@@ -103,8 +103,11 @@ class A2uiSchemaManager(InferenceStrategy):
     """Selects the component catalog for the prompt based on client capabilities.
 
     Selection priority:
-    1. First inline catalog if provided (and accepted by the agent).
-    2. First client-supported catalog ID that is also supported by the agent.
+    1. If inline catalogs are provided (and accepted by the agent), their
+       components are merged on top of a base catalog. The base is determined
+       by supportedCatalogIds (if also provided) or the agent's default catalog.
+    2. If only supportedCatalogIds is provided, pick the first mutually
+       supported catalog.
     3. Fallback to the first agent-supported catalog (usually the bundled catalog).
 
     Args:
@@ -114,8 +117,8 @@ class A2uiSchemaManager(InferenceStrategy):
     Returns:
       The resolved A2uiCatalog.
     Raises:
-      ValueError: If capabilities are ambiguous (both inline_catalogs and supported_catalog_ids are provided), if inline
-        catalogs are sent but not accepted, or if no mutually supported catalog is found.
+      ValueError: If inline catalogs are sent but not accepted, or if no
+        mutually supported catalog is found.
     """
     if not self._supported_catalogs:
       raise ValueError("No supported catalogs found.")  # This should not happen.
@@ -136,20 +139,28 @@ class A2uiSchemaManager(InferenceStrategy):
           " capabilities. However, the agent does not accept inline catalogs."
       )
 
-    if inline_catalogs and client_supported_catalog_ids:
-      raise ValueError(
-          f"Both '{INLINE_CATALOGS_KEY}' and '{SUPPORTED_CATALOG_IDS_KEY}' "
-          "are provided in client UI capabilities. Only one is allowed."
-      )
-
     if inline_catalogs:
-      # Load the first inline catalog schema.
-      inline_catalog_schema = inline_catalogs[0]
-      inline_catalog_schema = self._apply_modifiers(inline_catalog_schema)
+      # Determine the base catalog: use supportedCatalogIds if provided,
+      # otherwise fall back to the agent's default catalog.
+      base_catalog = self._supported_catalogs[0]
+      if client_supported_catalog_ids:
+        agent_supported_catalogs = {c.catalog_id: c for c in self._supported_catalogs}
+        for cscid in client_supported_catalog_ids:
+          if cscid in agent_supported_catalogs:
+            base_catalog = agent_supported_catalogs[cscid]
+            break
+
+      merged_schema = copy.deepcopy(base_catalog.catalog_schema)
+
+      for inline_catalog_schema in inline_catalogs:
+        inline_catalog_schema = self._apply_modifiers(inline_catalog_schema)
+        inline_components = inline_catalog_schema.get(CATALOG_COMPONENTS_KEY, {})
+        merged_schema[CATALOG_COMPONENTS_KEY].update(inline_components)
+
       return A2uiCatalog(
           version=self._version,
           name=INLINE_CATALOG_NAME,
-          catalog_schema=inline_catalog_schema,
+          catalog_schema=merged_schema,
           s2c_schema=self._server_to_client_schema,
           common_types_schema=self._common_types_schema,
       )
@@ -198,8 +209,12 @@ class A2uiSchemaManager(InferenceStrategy):
   ) -> str:
     """Assembles the final system instruction for the LLM."""
     parts = [role_description]
+
+    workflow = DEFAULT_WORKFLOW_RULES
     if workflow_description:
-      parts.append(f"## Workflow Description:\n{workflow_description}")
+      workflow += f"\n{workflow_description}"
+    parts.append(f"## Workflow Description:\n{workflow}")
+
     if ui_description:
       parts.append(f"## UI Description:\n{ui_description}")
 

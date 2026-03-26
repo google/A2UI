@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.8.0",
+  "version": "0.8.8",
   "description": "A2UI Core Library",
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
@@ -9,24 +9,29 @@
       "types": "./dist/src/v0_8/index.d.ts",
       "default": "./dist/src/v0_8/index.js"
     },
+    "./v0_8": {
+      "types": "./dist/src/v0_8/index.d.ts",
+      "default": "./dist/src/v0_8/index.js"
+    },
     "./v0_9": {
       "types": "./dist/src/v0_9/index.d.ts",
       "default": "./dist/src/v0_9/index.js"
     },
-    "./types/*": {
-      "types": "./dist/src/v0_8/types/*.d.ts",
-      "default": "./dist/src/v0_8/types/*.js"
+    "./v0_9/basic_catalog": {
+      "types": "./dist/src/v0_9/basic_catalog/index.d.ts",
+      "default": "./dist/src/v0_9/basic_catalog/index.js"
     },
     "./data/*": {
       "types": "./dist/src/v0_8/data/*.d.ts",
       "default": "./dist/src/v0_8/data/*.js"
     },
+    "./types/*": {
+      "types": "./dist/src/v0_8/types/*.d.ts",
+      "default": "./dist/src/v0_8/types/*.js"
+    },
     "./styles/*": {
       "types": "./dist/src/v0_8/styles/*.d.ts",
       "default": "./dist/src/v0_8/styles/*.js"
-    },
-    "./schemas/*": {
-      "default": "./dist/src/v0_8/schemas/*"
     }
   },
   "type": "module",
@@ -39,17 +44,23 @@
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
-    "test": "wireit"
+    "test": "wireit",
+    "test:coverage": "c8 node --test \"dist/**/*.test.js\"",
+    "compile": "tsc",
+    "lint": "gts lint",
+    "fix": "gts fix"
   },
   "wireit": {
     "copy-spec": {
       "command": "node scripts/copy-spec.js",
       "files": [
         "../../specification/v0_8/json/*.json",
+        "../../specification/v0_9/json/*.json",
         "scripts/copy-spec.js"
       ],
       "output": [
-        "src/v0_8/schemas/*.json"
+        "src/v0_8/schemas/*.json",
+        "src/v0_9/schemas/*.json"
       ]
     },
     "build": {
@@ -74,7 +85,7 @@
       "clean": "if-file-deleted"
     },
     "test": {
-      "command": "node --test dist/**/*.test.js",
+      "command": "node --test dist",
       "dependencies": [
         "build"
       ]
@@ -83,11 +94,17 @@
   "author": "Google",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^24.10.1",
+    "@angular/core": "^21.2.5",
+    "@types/node": "^24.11.0",
+    "c8": "^11.0.0",
+    "gts": "^7.0.0",
+    "rxjs": "^7.8.2",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
   },
   "dependencies": {
+    "@preact/signals-core": "^1.13.0",
+    "date-fns": "^4.1.0",
     "zod": "^3.25.76",
     "zod-to-json-schema": "^3.25.1"
   }
