@@ -55,6 +55,10 @@
               "$ref": "common_types.json#/$defs/DynamicString",
               "description": "The URL of the image to display."
             },
+            "description": {
+              "$ref": "common_types.json#/$defs/DynamicString",
+              "description": "Accessibility text for the image."
+            },
             "fit": {
               "type": "string",
               "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",

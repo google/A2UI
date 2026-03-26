@@ -642,19 +642,6 @@
       
     </span>
 </a>
-<nav aria-label="URL Options for Testing" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#disable_security_self_testtrue">
-<span class="md-ellipsis">
-      
-        disable_security_self_test=true
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
 </li>
 </ul>
 </nav>
@@ -1100,19 +1087,6 @@
       
     </span>
 </a>
-<nav aria-label="URL Options for Testing" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#disable_security_self_testtrue">
-<span class="md-ellipsis">
-      
-        disable_security_self_test=true
-      
-    </span>
-</a>
-</li>
-</ul>
-</nav>
 </li>
 </ul>
 </nav>
@@ -1153,8 +1127,8 @@
 <p>To prevent this, A2UI strictly excludes <code>allow-same-origin</code> for the inner iframe where the third-party application runs.</p>
 <h3 id="the-architecture">The Architecture<a class="headerlink" href="#the-architecture" title="Permanent link">¶</a></h3>
 <ol>
-<li><strong>Sandbox Proxy (<code>sandbox.html</code>)</strong>: An intermediate <code>iframe</code> served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.<ul>
-<li>Permissions: <strong>Do not sandbox</strong> in the host template (e.g., <code>mcp-app.ts</code>).</li>
+<li><strong><a href="https://github.com/google/A2UI/blob/main/samples/client/shared/mcp_apps_inner_iframe/sandbox.html">Sandbox Proxy (<code>sandbox.html</code>)</a></strong>: An intermediate <code>iframe</code> served from the same origin. It isolates raw DOM injection from the main app while maintaining a structured JSON-RPC channel.<ul>
+<li>Permissions: <strong>Do not sandbox</strong> in the host template (e.g., <a href="https://github.com/google/A2UI/blob/main/samples/client/angular/projects/mcp_calculator/src/a2ui-catalog/mcp-app.ts"><code>mcp-app.ts</code></a> or <a href="https://github.com/google/A2UI/blob/main/samples/client/lit/contact/ui/custom-components/mcp-apps-component.ts"><code>mcp-apps-component.ts</code></a>).</li>
 <li>Host origin validation: Validates that messages come from the expected host origin.</li>
 </ul>
 </li>
@@ -1165,14 +1139,14 @@
 </li>
 </ol>
 <h3 id="architecture-diagram">Architecture Diagram<a class="headerlink" href="#architecture-diagram" title="Permanent link">¶</a></h3>
-<pre class="mermaid"><code>graph TD
-    subgraph Host Application (A2UI)
-        A[A2UI Page] --&gt; B[Host Component e.g., McpApp]
+<pre class="mermaid"><code>flowchart TD
+    subgraph "Host Application"
+        A[A2UI Page] --&gt; B["Host Component e.g., McpApp"]
     end
-    subgraph Sandbox Proxy (Same-Origin)
+    subgraph "Sandbox Proxy"
         B --&gt;|Message Relay| C[iframe sandbox.html]
     end
-    subgraph Embedded App (Cross-Origin/Isolated)
+    subgraph "Embedded App"
         C --&gt;|Dynamic Injection| D[inner iframe untrusted content]
     end</code></pre>
 <h2 id="usage-code-example">Usage / Code Example<a class="headerlink" href="#usage-code-example" title="Permanent link">¶</a></h2>
@@ -1237,12 +1211,12 @@
 <p>This sample verifies the sandbox with a Lit-based client and an ADK-based A2A agent.</p>
 <ul>
 <li><strong>A2A Agent Server</strong>:<ul>
-<li>Path: <code>samples/agent/adk/contact_multiple_surfaces/</code></li>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_multiple_surfaces/"><code>samples/agent/adk/contact_multiple_surfaces/</code></a></li>
 <li>Command: <code>uv run .</code> (requires <code>GEMINI_API_KEY</code> in <code>.env</code>)</li>
 </ul>
 </li>
 <li><strong>Lit Client App</strong>:<ul>
-<li>Path: <code>samples/client/lit/contact/</code></li>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/client/lit/contact/"><code>samples/client/lit/contact/</code></a></li>
 <li>Command: <code>npm run dev</code> (requires building the Lit renderer first)</li>
 <li>URL: <code>http://localhost:5173/</code></li>
 </ul>
@@ -1253,17 +1227,17 @@
 <p>This sample verifies the sandbox with an Angular-based client, an MCP Proxy Agent, and a remote MCP Server.</p>
 <ul>
 <li><strong>MCP Server (Calculator)</strong>:<ul>
-<li>Path: <code>samples/agent/mcp/mcp-apps-calculator/</code></li>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/mcp/mcp-apps-calculator/"><code>samples/agent/mcp/mcp-apps-calculator/</code></a></li>
 <li>Command: <code>uv run .</code> (runs on port 8000)</li>
 </ul>
 </li>
 <li><strong>MCP Apps Proxy Agent</strong>:<ul>
-<li>Path: <code>samples/agent/adk/mcp_app_proxy/</code></li>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/agent/adk/mcp_app_proxy/"><code>samples/agent/adk/mcp_app_proxy/</code></a></li>
 <li>Command: <code>uv run .</code> (requires <code>GEMINI_API_KEY</code> in <code>.env</code>)</li>
 </ul>
 </li>
 <li><strong>Angular Client App</strong>:<ul>
-<li>Path: <code>samples/client/angular/</code></li>
+<li>Path: <a href="https://github.com/google/A2UI/tree/main/samples/client/angular/"><code>samples/client/angular/</code></a></li>
 <li>Command: <code>npm start -- mcp_calculator</code> (requires <code>npm run build:sandbox</code> and <code>npm install</code>)</li>
 <li>URL: <code>http://localhost:4200/?disable_security_self_test=true</code></li>
 </ul>
@@ -1272,7 +1246,7 @@
 <p><strong>What to expect</strong>: A basic calculator will be rendered. You can execute arithmetic calculations cleanly through the sandbox.</p>
 <h2 id="url-options-for-testing">URL Options for Testing<a class="headerlink" href="#url-options-for-testing" title="Permanent link">¶</a></h2>
 <p>For testing purposes, you can opt-out of the security self-test by using specific URL query parameters.</p>
-<h3 id="disable_security_self_testtrue"><code>disable_security_self_test=true</code><a class="headerlink" href="#disable_security_self_testtrue" title="Permanent link">¶</a></h3>
+<p><code>disable_security_self_test=true</code></p>
 <p>This query parameter allows you to bypass the security self-test that verifies iframe isolation. This is useful for debugging and testing environments.</p>
 <p>Example usage:
 <code>http://localhost:4200/?disable_security_self_test=true</code></p>
