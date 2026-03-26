@@ -39,6 +39,7 @@ function isNumeric(value: string): boolean {
 export class DataModel {
   private data: Record<string, unknown> = {};
   private readonly signals: Map<string, Signal<any>> = new Map();
+  private readonly signalRefCounts: Map<string, number> = new Map();
   private readonly subscriptions: Set<() => void> = new Set(); // To track direct subscriptions for dispose
 
   /**
@@ -63,8 +64,31 @@ export class DataModel {
     const normalizedPath = this.normalizePath(path);
     if (!this.signals.has(normalizedPath)) {
       this.signals.set(normalizedPath, signal(this.get(normalizedPath)));
+      this.signalRefCounts.set(normalizedPath, 0);
     }
+    this.signalRefCounts.set(
+      normalizedPath,
+      (this.signalRefCounts.get(normalizedPath) ?? 0) + 1,
+    );
     return this.signals.get(normalizedPath) as Signal<T | undefined>;
+  }
+
+  /**
+   * Releases a reference to a signal at the given path.
+   * When the last reference is released, the signal is removed from the
+   * internal Map, preventing unbounded growth of orphaned signals.
+   *
+   * @param path The JSON pointer path whose signal reference to release.
+   */
+  releaseSignal(path: string): void {
+    const normalizedPath = this.normalizePath(path);
+    const count = (this.signalRefCounts.get(normalizedPath) ?? 0) - 1;
+    if (count <= 0) {
+      this.signals.delete(normalizedPath);
+      this.signalRefCounts.delete(normalizedPath);
+    } else {
+      this.signalRefCounts.set(normalizedPath, count);
+    }
   }
 
   /**
@@ -185,7 +209,8 @@ export class DataModel {
     path: string,
     onChange: (value: T | undefined) => void,
   ): DataSubscription<T> {
-    const sig = this.getSignal<T>(path);
+    const normalizedPath = this.normalizePath(path);
+    const sig = this.getSignal<T>(normalizedPath);
     let isSync = true;
     let currentValue = sig.peek();
 
@@ -207,6 +232,7 @@ export class DataModel {
       unsubscribe: () => {
         dispose();
         this.subscriptions.delete(dispose);
+        this.releaseSignal(normalizedPath);
       },
     };
   }
@@ -220,6 +246,7 @@ export class DataModel {
     }
     this.subscriptions.clear();
     this.signals.clear();
+    this.signalRefCounts.clear();
   }
 
   private normalizePath(path: string): string {

@@ -69,7 +69,7 @@ describe('ComponentBinder', () => {
       dataContext: mockDataContext,
     } as unknown as ComponentContext;
 
-    const bound = binder.bind(mockContext);
+    const bound = binder.bind(mockContext, mockDestroyRef);
 
     expect(bound['text']).toBeDefined();
     expect(bound['visible']).toBeDefined();
@@ -99,7 +99,7 @@ describe('ComponentBinder', () => {
       dataContext: mockDataContext,
     } as unknown as ComponentContext;
 
-    const bound = binder.bind(mockContext);
+    const bound = binder.bind(mockContext, mockDestroyRef);
 
     expect(bound['value']).toBeDefined();
     expect(bound['value'].value()).toBe('initial');
@@ -130,7 +130,7 @@ describe('ComponentBinder', () => {
       dataContext: mockDataContext,
     } as unknown as ComponentContext;
 
-    const bound = binder.bind(mockContext);
+    const bound = binder.bind(mockContext, mockDestroyRef);
 
     expect(bound['text']).toBeDefined();
     expect(bound['text'].value()).toBe('Literal String');
@@ -139,5 +139,21 @@ describe('ComponentBinder', () => {
     // Call onUpdate on literal, should not crash or call set
     bound['text'].onUpdate('new');
     expect(mockDataContext.set).not.toHaveBeenCalled();
+  });
+
+  it('should dispose bound properties through disposeBoundProperties()', () => {
+    const disposeSpy = jasmine.createSpy('dispose');
+    const bound = {
+      value: {
+        value: () => 'v',
+        dispose: disposeSpy,
+      },
+      raw: 'v',
+      onUpdate: () => {},
+    } as any;
+
+    binder.disposeBoundProperties({ value: bound });
+
+    expect(disposeSpy).toHaveBeenCalled();
   });
 });

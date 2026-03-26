@@ -42,6 +42,8 @@ describe('ComponentHostComponent', () => {
   let mockBinder: jasmine.SpyObj<ComponentBinder>;
   let mockSurface: any;
   let mockSurfaceGroup: any;
+  let onUpdatedHandler: (() => void) | undefined;
+  let onUpdatedUnsubscribeSpy: jasmine.Spy;
 
   beforeEach(async () => {
     mockCatalog = {
@@ -49,9 +51,25 @@ describe('ComponentHostComponent', () => {
       components: new Map([['TestType', { component: TestChildComponent }]]),
     };
 
+    onUpdatedUnsubscribeSpy = jasmine.createSpy('onUpdated.unsubscribe');
     mockSurface = {
       componentsModel: new Map([
-        ['comp1', { id: 'comp1', type: 'TestType', properties: { text: 'Hello' } }],
+        [
+          'comp1',
+          {
+            id: 'comp1',
+            type: 'TestType',
+            properties: { text: 'Hello' },
+            onUpdated: {
+              subscribe: jasmine
+                .createSpy('onUpdated.subscribe')
+                .and.callFake((handler: () => void) => {
+                  onUpdatedHandler = handler;
+                  return { unsubscribe: onUpdatedUnsubscribeSpy };
+                }),
+            },
+          },
+        ],
       ]),
       catalog: mockCatalog,
     };
@@ -64,7 +82,7 @@ describe('ComponentHostComponent', () => {
       surfaceGroup: mockSurfaceGroup,
     };
 
-    mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind']);
+    mockBinder = jasmine.createSpyObj('ComponentBinder', ['bind', 'disposeBoundProperties']);
     mockBinder.bind.and.returnValue({
       text: { value: () => 'bound-hello', onUpdate: () => {} } as any,
     });
@@ -100,6 +118,7 @@ describe('ComponentHostComponent', () => {
 
       expect(mockSurfaceGroup.getSurface).toHaveBeenCalledWith('surf1');
       expect(mockBinder.bind).toHaveBeenCalled();
+      expect(mockBinder.bind.calls.mostRecent().args[1]).toBeDefined();
 
       // Verify context creation implicitly by checking if bind was called with a ComponentContext
       const bindArg = mockBinder.bind.calls.mostRecent().args[0];
@@ -157,8 +176,21 @@ describe('ComponentHostComponent', () => {
       // Destroy fixture
       fixture.destroy();
 
+      expect(onUpdatedUnsubscribeSpy).toHaveBeenCalled();
+      expect(mockBinder.disposeBoundProperties).toHaveBeenCalled();
+
       // Implicitly verifies no crash on destroy
       expect(component).toBeTruthy();
+    });
+
+    it('should refresh bindings when component properties are updated', () => {
+      fixture.detectChanges();
+      expect(mockBinder.bind).toHaveBeenCalledTimes(1);
+
+      onUpdatedHandler?.();
+
+      expect(mockBinder.disposeBoundProperties).toHaveBeenCalled();
+      expect(mockBinder.bind).toHaveBeenCalledTimes(2);
     });
   });
 

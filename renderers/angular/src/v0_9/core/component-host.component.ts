@@ -79,6 +79,7 @@ export class ComponentHostComponent implements OnInit {
   protected componentType: Type<any> | null = null;
   protected props: any = {};
   private context?: ComponentContext;
+  private componentUpdatedUnsubscribe?: () => void;
 
   ngOnInit(): void {
     const surface = this.rendererService.surfaceGroup?.getSurface(this.surfaceId());
@@ -107,11 +108,26 @@ export class ComponentHostComponent implements OnInit {
 
     // Create context
     this.context = new ComponentContext(surface, this.componentId(), this.dataContextPath());
-    this.props = this.binder.bind(this.context);
+    this.bindProps();
+
+    const updatedSubscription = componentModel.onUpdated.subscribe(() => {
+      this.bindProps();
+    });
+    this.componentUpdatedUnsubscribe = () => updatedSubscription.unsubscribe();
 
     this.destroyRef.onDestroy(() => {
-      // ComponentContext itself doesn't have a dispose, but its inner components might.
-      // However, SurfaceModel takes care of component disposal.
+      this.componentUpdatedUnsubscribe?.();
+      this.componentUpdatedUnsubscribe = undefined;
+      this.binder.disposeBoundProperties(this.props);
     });
+  }
+
+  private bindProps(): void {
+    if (!this.context) {
+      return;
+    }
+
+    this.binder.disposeBoundProperties(this.props);
+    this.props = this.binder.bind(this.context, this.destroyRef);
   }
 }

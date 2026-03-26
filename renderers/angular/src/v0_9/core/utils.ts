@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { DestroyRef, Signal, signal as angularSignal } from '@angular/core';
+import {
+  DestroyRef,
+  NgZone,
+  Signal,
+  signal as angularSignal,
+} from '@angular/core';
 import { Signal as PreactSignal, effect } from '@a2ui/web_core/v0_9';
 
 /**
@@ -31,7 +36,10 @@ import { Signal as PreactSignal, effect } from '@a2ui/web_core/v0_9';
  *               (necessary for correct change detection in OnPush components).
  * @returns A read-only Angular Signal.
  */
-import { NgZone } from '@angular/core';
+
+type ManagedAngularSignal<T> = Signal<T> & {
+  dispose?: () => void;
+};
 
 export function toAngularSignal<T>(
   preactSignal: PreactSignal<T>,
@@ -48,15 +56,27 @@ export function toAngularSignal<T>(
     }
   });
 
-  destroyRef.onDestroy(() => {
+  let isDisposed = false;
+  const cleanup = () => {
+    if (isDisposed) {
+      return;
+    }
+    isDisposed = true;
+
     dispose();
+
     // Some signals returned by DataContext.resolveSignal have a custom unsubscribe for AbortControllers
     if ((preactSignal as any).unsubscribe) {
       (preactSignal as any).unsubscribe();
     }
-  });
+  };
 
-  return s.asReadonly();
+  destroyRef.onDestroy(cleanup);
+
+  const readonlySignal = s.asReadonly() as ManagedAngularSignal<T>;
+  readonlySignal.dispose = cleanup;
+
+  return readonlySignal;
 }
 
 /**

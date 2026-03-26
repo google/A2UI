@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DestroyRef, Injectable, inject, NgZone } from '@angular/core';
+import { DestroyRef, Injectable, NgZone, inject } from '@angular/core';
 import { ComponentContext } from '@a2ui/web_core/v0_9';
 import { toAngularSignal } from './utils';
 import { BoundProperty } from './types';
@@ -31,7 +31,6 @@ import { BoundProperty } from './types';
   providedIn: 'root',
 })
 export class ComponentBinder {
-  private destroyRef = inject(DestroyRef);
   private ngZone = inject(NgZone);
 
   /**
@@ -40,14 +39,14 @@ export class ComponentBinder {
    * @param context The ComponentContext containing the model and data context.
    * @returns An object where each key corresponds to a component prop and its value is an Angular Signal.
    */
-  bind(context: ComponentContext): Record<string, BoundProperty> {
+  bind(context: ComponentContext, destroyRef: DestroyRef): Record<string, BoundProperty> {
     const props = context.componentModel.properties;
     const bound: Record<string, any> = {};
 
     for (const key of Object.keys(props)) {
       const value = props[key];
       const preactSig = context.dataContext.resolveSignal(value);
-      const angSig = toAngularSignal(preactSig as any, this.destroyRef, this.ngZone);
+      const angSig = toAngularSignal(preactSig as any, destroyRef, this.ngZone);
 
       const isBoundPath = value && typeof value === 'object' && 'path' in value;
 
@@ -61,5 +60,18 @@ export class ComponentBinder {
     }
 
     return bound;
+  }
+
+  disposeBoundProperties(bound: Record<string, BoundProperty> | undefined): void {
+    if (!bound) {
+      return;
+    }
+
+    for (const prop of Object.values(bound)) {
+      const dispose = (prop.value as any)?.dispose;
+      if (typeof dispose === 'function') {
+        dispose();
+      }
+    }
   }
 }
