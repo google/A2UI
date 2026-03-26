@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-export * from './A2uiSurface';
-export * from './adapter';
-export * from './context/MarkdownContext';
+import React, {createContext, useContext} from 'react';
+import {type MarkdownRenderer} from '@a2ui/web_core/v0_9';
 
-// Export basic catalog components directly for 3P developers
-export * from './catalog/basic';
+const MarkdownContext = createContext<MarkdownRenderer | undefined>(undefined);
 
-// Export minimal catalog under a namespace to avoid symbol conflicts
-export * as MinimalCatalog from './catalog/minimal';
-export {minimalCatalog} from './catalog/minimal';
+export const MarkdownProvider: React.FC<{
+  renderer?: MarkdownRenderer;
+  children: React.ReactNode;
+}> = ({renderer, children}) => (
+  <MarkdownContext.Provider value={renderer}>{children}</MarkdownContext.Provider>
+);
+
+export const useMarkdown = () => useContext(MarkdownContext);

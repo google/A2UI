@@ -14,10 +14,90 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {createReactComponent} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
+import {useMarkdown} from '../../../context/MarkdownContext';
+
+const MarkdownContent: React.FC<{
+  text: string;
+  variant?: string;
+  style?: React.CSSProperties;
+}> = ({text, variant, style}) => {
+  const renderer = useMarkdown();
+  const [html, setHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (renderer) {
+      renderer(text)
+        .then((htmlResult) => {
+          if (isMounted) {
+            setHtml(htmlResult);
+          }
+        })
+        .catch(console.error);
+    } else {
+      setHtml(null); // Fallback to plain text
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [text, renderer]);
+
+  const content = renderer ? undefined : text;
+  const dangerouslySetInnerHTML = html !== null ? {__html: html} : undefined;
+
+  switch (variant) {
+    case 'h1':
+      return (
+        <h1 style={style} dangerouslySetInnerHTML={dangerouslySetInnerHTML}>
+          {content}
+        </h1>
+      );
+    case 'h2':
+      return (
+        <h2 style={style} dangerouslySetInnerHTML={dangerouslySetInnerHTML}>
+          {content}
+        </h2>
+      );
+    case 'h3':
+      return (
+        <h3 style={style} dangerouslySetInnerHTML={dangerouslySetInnerHTML}>
+          {content}
+        </h3>
+      );
+    case 'h4':
+      return (
+        <h4 style={style} dangerouslySetInnerHTML={dangerouslySetInnerHTML}>
+          {content}
+        </h4>
+      );
+    case 'h5':
+      return (
+        <h5 style={style} dangerouslySetInnerHTML={dangerouslySetInnerHTML}>
+          {content}
+        </h5>
+      );
+    case 'caption':
+      return (
+        <caption
+          style={{...style, color: '#666', textAlign: 'left'}}
+          dangerouslySetInnerHTML={dangerouslySetInnerHTML}
+        >
+          {content}
+        </caption>
+      );
+    case 'body':
+    default:
+      return (
+        <span style={style} dangerouslySetInnerHTML={dangerouslySetInnerHTML}>
+          {content}
+        </span>
+      );
+  }
+};
 
 export const Text = createReactComponent(TextApi, ({props}) => {
   const text = props.text ?? '';
@@ -26,21 +106,5 @@ export const Text = createReactComponent(TextApi, ({props}) => {
     display: 'inline-block',
   };
 
-  switch (props.variant) {
-    case 'h1':
-      return <h1 style={style}>{text}</h1>;
-    case 'h2':
-      return <h2 style={style}>{text}</h2>;
-    case 'h3':
-      return <h3 style={style}>{text}</h3>;
-    case 'h4':
-      return <h4 style={style}>{text}</h4>;
-    case 'h5':
-      return <h5 style={style}>{text}</h5>;
-    case 'caption':
-      return <caption style={{...style, color: '#666', textAlign: 'left'}}>{text}</caption>;
-    case 'body':
-    default:
-      return <span style={style}>{text}</span>;
-  }
+  return <MarkdownContent text={text} variant={props.variant} style={style} />;
 });

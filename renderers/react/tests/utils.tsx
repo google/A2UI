@@ -29,6 +29,10 @@ export interface RenderA2uiOptions {
   additionalComponents?: ComponentModel[];
   /** Functions to include in the catalog */
   functions?: any[];
+  /** Theme to apply to the surface */
+  theme?: any;
+  /** Optional wrapper for the component under test (e.g. providers) */
+  wrapper?: React.JSXElementConstructor<{children: React.ReactNode}>;
 }
 
 /**
@@ -45,13 +49,15 @@ export function renderA2uiComponent(
     initialData = {}, 
     additionalImpls = [], 
     additionalComponents = [],
-    functions = BASIC_FUNCTIONS
+    functions = BASIC_FUNCTIONS,
+    theme = {},
+    wrapper
   } = options;
 
   // Combine all implementations into the catalog
   const allImpls = [impl, ...additionalImpls];
   const catalog = new Catalog('test-catalog', allImpls, functions);
-  const surface = new SurfaceModel<ReactComponentImplementation>('test-surface', catalog);
+  const surface = new SurfaceModel<ReactComponentImplementation>('test-surface', catalog, theme);
   
   // Setup data model
   surface.dataModel.set('/', initialData);
@@ -91,7 +97,8 @@ export function renderA2uiComponent(
   const ComponentToRender = impl.render;
 
   const view = render(
-    <ComponentToRender context={mainContext} buildChild={buildChild} />
+    <ComponentToRender context={mainContext} buildChild={buildChild} />,
+    { wrapper }
   );
 
   return { 
