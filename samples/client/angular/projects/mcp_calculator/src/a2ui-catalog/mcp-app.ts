@@ -149,7 +149,7 @@ export class McpApp
     const disableSecuritySelfTest = urlParams.get('disable_security_self_test') === 'true';
 
     const currentOrigin = window.location.origin;
-    let sandboxUrl = `${currentOrigin}/sandbox_iframe/sandbox.html`;
+    let sandboxUrl = `${currentOrigin}/mcp_apps_inner_iframe/sandbox.html`;
     if (disableSecuritySelfTest) {
       sandboxUrl += '?disable_security_self_test=true';
     }
