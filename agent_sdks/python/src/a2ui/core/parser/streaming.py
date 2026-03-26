@@ -88,9 +88,6 @@ class A2uiStreamParser:
     # Set of unique component IDs yielded per surface
     self._yielded_ids: Dict[str, Set[str]] = {}  # surfaceId -> set of cids
     self._yielded_contents: Dict[Any, str] = {}  # (surfaceId, cid) -> hash of content
-    self._dirty_components: Set[str] = (
-        set()
-    )  # Set of component IDs that need re-yielding
     self._components_with_placeholders: Set[str] = (
         set()
     )  # cid set that were yielded as placeholders
@@ -695,9 +692,8 @@ class A2uiStreamParser:
                 delta_msg = {MSG_TYPE_DATA_MODEL_UPDATE: delta_msg_payload}
                 self._yield_messages([delta_msg], messages, strict_integrity=False)
                 self._yielded_data_model.update(contents_dict)
-                # Update internal model to trigger re-yielding of resolved placeholders
+                # Update internal model for path resolution
                 self.update_data_model(dm_obj, messages)
-                self.yield_reachable(messages, check_root=False)
 
         # v0.9: updateDataModel
         elif MSG_TYPE_UPDATE_DATA_MODEL in obj:
@@ -889,9 +885,6 @@ class A2uiStreamParser:
 
     self._data_model.update(contents)
     updated_keys = set(contents.keys())
-    for cid, paths in self._comp_paths.items():
-      if paths & updated_keys:
-        self._dirty_components.add(cid)
 
   def _handle_complete_object(
       self,
@@ -1078,9 +1071,7 @@ class A2uiStreamParser:
         return
 
       should_yield = False
-      if (available_reachable - yielded_for_surface) or (
-          available_reachable & self._dirty_components
-      ):
+      if available_reachable - yielded_for_surface:
         should_yield = True
       else:
         # Check if any yielded component's content has changed for this surface
@@ -1154,8 +1145,6 @@ class A2uiStreamParser:
           cid = comp["id"]
           self._yielded_contents[(surface_id, cid)] = json.dumps(comp, sort_keys=True)
           self._yielded_placeholders[cid] = self._get_placeholders(comp)
-          if cid in self._dirty_components:
-            self._dirty_components.remove(cid)
 
     except ValueError as e:
       if "Circular reference detected" in str(e):
