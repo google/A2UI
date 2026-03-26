@@ -211,12 +211,21 @@ describe('GenericBinder Checkable Trait', () => {
     const binder = new GenericBinder<any>(context, schema);
 
     assert.strictEqual(binder.snapshot.text, 'hello');
-    assert.strictEqual((surface.dataModel as any).signals.size, initialSignalCount);
+    assert.strictEqual(
+      (surface.dataModel as any).signals.size,
+      initialSignalCount,
+    );
 
     const sub = binder.subscribe(() => {});
-    assert.strictEqual((surface.dataModel as any).signals.size, initialSignalCount + 1);
+    assert.strictEqual(
+      (surface.dataModel as any).signals.size,
+      initialSignalCount + 1,
+    );
 
     sub.unsubscribe();
-    assert.strictEqual((surface.dataModel as any).signals.size, initialSignalCount);
+    assert.strictEqual(
+      (surface.dataModel as any).signals.size,
+      initialSignalCount,
+    );
   });
 });
