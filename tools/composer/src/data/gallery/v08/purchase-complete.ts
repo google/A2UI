@@ -189,7 +189,7 @@ export const PURCHASE_COMPLETE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'view-btn-text',
-          action: 'view_details',
+          action: { name: 'view_details' },
         },
       },
     },

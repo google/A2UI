@@ -138,7 +138,7 @@ export const MUSIC_PLAYER_WIDGET: Widget = {
       component: {
         Button: {
           child: 'prev-btn-text',
-          action: 'previous',
+          action: { name: 'previous' },
         },
       },
     },
@@ -155,7 +155,7 @@ export const MUSIC_PLAYER_WIDGET: Widget = {
       component: {
         Button: {
           child: 'play-btn-text',
-          action: 'playPause',
+          action: { name: 'playPause' },
         },
       },
     },
@@ -172,7 +172,7 @@ export const MUSIC_PLAYER_WIDGET: Widget = {
       component: {
         Button: {
           child: 'next-btn-text',
-          action: 'next',
+          action: { name: 'next' },
         },
       },
     },

@@ -104,7 +104,7 @@ export const PRODUCT_CARD_WIDGET: Widget = {
         Row: {
           children: { explicitList: ['price', 'original-price'] },
           gap: 'small',
-          alignment: 'baseline',
+          alignment: 'center',
         },
       },
     },
@@ -148,7 +148,7 @@ export const PRODUCT_CARD_WIDGET: Widget = {
       component: {
         Button: {
           child: 'add-cart-btn-text',
-          action: 'addToCart',
+          action: { name: 'addToCart' },
         },
       },
     },

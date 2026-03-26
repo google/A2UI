@@ -191,7 +191,7 @@ export const CONTACT_CARD_WIDGET: Widget = {
       component: {
         Button: {
           child: 'call-btn-text',
-          action: 'call',
+          action: { name: 'call' },
         },
       },
     },
@@ -208,7 +208,7 @@ export const CONTACT_CARD_WIDGET: Widget = {
       component: {
         Button: {
           child: 'message-btn-text',
-          action: 'message',
+          action: { name: 'message' },
         },
       },
     },

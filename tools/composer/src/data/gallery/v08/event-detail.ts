@@ -143,7 +143,7 @@ export const EVENT_DETAIL_WIDGET: Widget = {
       component: {
         Button: {
           child: 'accept-btn-text',
-          action: 'accept',
+          action: { name: 'accept' },
         },
       },
     },
@@ -160,7 +160,7 @@ export const EVENT_DETAIL_WIDGET: Widget = {
       component: {
         Button: {
           child: 'decline-btn-text',
-          action: 'decline',
+          action: { name: 'decline' },
         },
       },
     },

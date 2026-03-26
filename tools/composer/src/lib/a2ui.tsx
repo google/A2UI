@@ -7,15 +7,20 @@
  * v0.8: Uses A2UIViewer from @a2ui/react with the viewerTheme and
  *       CSS palette variables from globals.css.
  * v0.9: Uses V09Viewer which creates a SurfaceModel and renders via
- *       A2uiSurface from @a2ui/react/v0_9.
+ *       A2uiSurface from @a2ui/react/v0_9. Loaded dynamically (client-only)
+ *       because A2uiSurface uses useSyncExternalStore without a server snapshot.
  */
 'use client';
 
+import dynamic from "next/dynamic";
 import { A2UIViewer as BaseA2UIViewer } from "@a2ui/react";
 import type { ComponentProps } from "react";
 import { viewerTheme } from "./viewerTheme";
-import { V09Viewer } from "./v09Viewer";
 import type { SpecVersion } from "@/types/widget";
+
+const V09Viewer = dynamic(() => import("./v09Viewer").then(m => ({ default: m.V09Viewer })), {
+  ssr: false,
+});
 
 export type { ComponentInstance } from "@a2ui/react";
 

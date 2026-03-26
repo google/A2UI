@@ -188,7 +188,7 @@ export const SOFTWARE_PURCHASE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'confirm-btn-text',
-          action: 'confirm',
+          action: { name: 'confirm' },
         },
       },
     },
@@ -205,7 +205,7 @@ export const SOFTWARE_PURCHASE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'cancel-btn-text',
-          action: 'cancel',
+          action: { name: 'cancel' },
         },
       },
     },

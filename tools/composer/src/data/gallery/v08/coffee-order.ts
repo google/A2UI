@@ -286,7 +286,7 @@ export const COFFEE_ORDER_WIDGET: Widget = {
       component: {
         Button: {
           child: 'purchase-btn-text',
-          action: 'purchase',
+          action: { name: 'purchase' },
         },
       },
     },
@@ -303,7 +303,7 @@ export const COFFEE_ORDER_WIDGET: Widget = {
       component: {
         Button: {
           child: 'add-btn-text',
-          action: 'add_to_cart',
+          action: { name: 'add_to_cart' },
         },
       },
     },

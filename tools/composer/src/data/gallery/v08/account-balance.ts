@@ -115,7 +115,7 @@ export const ACCOUNT_BALANCE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'transfer-btn-text',
-          action: 'transfer',
+          action: { name: 'transfer' },
         },
       },
     },
@@ -132,7 +132,7 @@ export const ACCOUNT_BALANCE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'pay-btn-text',
-          action: 'pay_bill',
+          action: { name: 'pay_bill' },
         },
       },
     },

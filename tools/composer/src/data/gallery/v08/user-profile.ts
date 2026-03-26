@@ -193,7 +193,7 @@ export const USER_PROFILE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'follow-btn-text',
-          action: 'follow',
+          action: { name: 'follow' },
         },
       },
     },

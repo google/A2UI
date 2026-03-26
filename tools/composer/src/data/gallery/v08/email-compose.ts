@@ -199,7 +199,7 @@ export const EMAIL_COMPOSE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'send-btn-text',
-          action: 'send',
+          action: { name: 'send' },
         },
       },
     },
@@ -216,7 +216,7 @@ export const EMAIL_COMPOSE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'discard-btn-text',
-          action: 'discard',
+          action: { name: 'discard' },
         },
       },
     },

@@ -193,7 +193,7 @@ export const CALENDAR_DAY_WIDGET: Widget = {
       component: {
         Button: {
           child: 'add-btn-text',
-          action: 'add',
+          action: { name: 'add' },
         },
       },
     },
@@ -210,7 +210,7 @@ export const CALENDAR_DAY_WIDGET: Widget = {
       component: {
         Button: {
           child: 'discard-btn-text',
-          action: 'discard',
+          action: { name: 'discard' },
         },
       },
     },

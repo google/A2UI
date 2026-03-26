@@ -49,7 +49,7 @@ export const WEATHER_CURRENT_WIDGET: Widget = {
         Row: {
           children: { explicitList: ['temp-high', 'temp-low'] },
           gap: 'small',
-          alignment: 'baseline',
+          alignment: 'center',
         },
       },
     },

@@ -92,7 +92,7 @@ export const NOTIFICATION_PERMISSION_WIDGET: Widget = {
       component: {
         Button: {
           child: 'yes-btn-text',
-          action: 'accept',
+          action: { name: 'accept' },
         },
       },
     },
@@ -109,7 +109,7 @@ export const NOTIFICATION_PERMISSION_WIDGET: Widget = {
       component: {
         Button: {
           child: 'no-btn-text',
-          action: 'decline',
+          action: { name: 'decline' },
         },
       },
     },

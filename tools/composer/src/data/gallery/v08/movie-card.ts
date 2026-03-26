@@ -68,7 +68,7 @@ export const MOVIE_CARD_WIDGET: Widget = {
         Row: {
           children: { explicitList: ['movie-title', 'year'] },
           gap: 'small',
-          alignment: 'baseline',
+          alignment: 'center',
         },
       },
     },

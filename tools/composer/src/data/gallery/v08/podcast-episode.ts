@@ -130,7 +130,7 @@ export const PODCAST_EPISODE_WIDGET: Widget = {
       component: {
         Button: {
           child: 'play-btn-text',
-          action: 'play',
+          action: { name: 'play' },
         },
       },
     },

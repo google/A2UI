@@ -76,7 +76,7 @@ export const LOGIN_FORM_WIDGET: Widget = {
           value: { path: '/email' },
           placeholder: { literalString: 'Email address' },
           label: { literalString: 'Email' },
-          action: 'updateEmail',
+          action: { name: 'updateEmail' },
         },
       },
     },
@@ -87,7 +87,7 @@ export const LOGIN_FORM_WIDGET: Widget = {
           value: { path: '/password' },
           placeholder: { literalString: 'Password' },
           label: { literalString: 'Password' },
-          action: 'updatePassword',
+          action: { name: 'updatePassword' },
         },
       },
     },
@@ -104,7 +104,7 @@ export const LOGIN_FORM_WIDGET: Widget = {
       component: {
         Button: {
           child: 'login-btn-text',
-          action: 'login',
+          action: { name: 'login' },
         },
       },
     },
@@ -146,7 +146,7 @@ export const LOGIN_FORM_WIDGET: Widget = {
       component: {
         Button: {
           child: 'signup-link-text',
-          action: 'signup',
+          action: { name: 'signup' },
         },
       },
     },
