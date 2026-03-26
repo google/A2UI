@@ -30,7 +30,7 @@ from a2ui.core.parser.constants import (
     MSG_TYPE_DATA_MODEL_UPDATE,
 )
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.parser.streaming import A2uiStreamParser, PLACEHOLDER_COMPONENT
+from a2ui.core.parser.streaming import A2uiStreamParser
 from a2ui.core.parser.response_part import ResponsePart
 
 
@@ -223,10 +223,6 @@ def _normalize_messages(messages):
       payload = msg[MSG_TYPE_SURFACE_UPDATE]
       if CATALOG_COMPONENTS_KEY in payload:
         payload[CATALOG_COMPONENTS_KEY].sort(key=lambda x: x.get("id", ""))
-    elif "updateComponents" in msg:
-      payload = msg["updateComponents"]
-      if CATALOG_COMPONENTS_KEY in payload:
-        payload[CATALOG_COMPONENTS_KEY].sort(key=lambda x: x.get("id", ""))
   return res
 
 
@@ -335,7 +331,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_children_root-column",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -356,7 +352,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -379,11 +375,11 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
               {
                   "id": "loading_c2",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -422,7 +418,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c2",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -802,7 +798,7 @@ def test_partial_single_child_string(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -870,7 +866,7 @@ def test_partial_template_componentId(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -938,15 +934,15 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c2",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c3",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -979,11 +975,11 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c2",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c3",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -1881,8 +1877,8 @@ def test_sniff_partial_component_discards_empty_children_dict(mock_catalog):
                       "id": "root-column",
                   },
                   {
-                      "component": PLACEHOLDER_COMPONENT,
                       "id": "loading_item-list",
+                      **parser._placeholder_component,
                   },
               ],
           }
