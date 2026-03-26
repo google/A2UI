@@ -108,6 +108,7 @@ export const V09_PRODUCT_CARD_WIDGET: Widget = {
       id: 'add-cart-btn',
       component: 'Button',
       child: 'add-cart-btn-text',
+      variant: 'primary',
       action: { event: { name: 'addToCart' } },
     },
   ],

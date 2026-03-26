@@ -79,6 +79,7 @@ export const V09_LOGIN_FORM_WIDGET: Widget = {
       id: 'login-btn',
       component: 'Button',
       child: 'login-btn-text',
+      variant: 'primary',
       action: { event: { name: 'login' } },
     },
     {

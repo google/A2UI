@@ -136,6 +136,7 @@ export const V09_CALENDAR_DAY_WIDGET: Widget = {
       id: 'add-btn',
       component: 'Button',
       child: 'add-btn-text',
+      variant: 'primary',
       action: { event: { name: 'add' } },
     },
     {

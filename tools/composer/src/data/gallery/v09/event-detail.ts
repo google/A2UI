@@ -104,6 +104,7 @@ export const V09_EVENT_DETAIL_WIDGET: Widget = {
       id: 'accept-btn',
       component: 'Button',
       child: 'accept-btn-text',
+      variant: 'primary',
       action: { event: { name: 'accept' } },
     },
     {

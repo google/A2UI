@@ -11,7 +11,7 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import type { SpecVersion } from '@/types/widget';
 
 const STORAGE_KEY = 'a2ui-spec-version';
-const DEFAULT_VERSION: SpecVersion = '0.8';
+const DEFAULT_VERSION: SpecVersion = '0.9';
 
 interface SpecVersionContextValue {
   specVersion: SpecVersion;

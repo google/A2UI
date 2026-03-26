@@ -135,6 +135,7 @@ export const V09_SOFTWARE_PURCHASE_WIDGET: Widget = {
       id: 'confirm-btn',
       component: 'Button',
       child: 'confirm-btn-text',
+      variant: 'primary',
       action: { event: { name: 'confirm' } },
     },
     {

@@ -138,6 +138,7 @@ export const V09_USER_PROFILE_WIDGET: Widget = {
       id: 'follow-btn',
       component: 'Button',
       child: 'follow-btn-text',
+      variant: 'primary',
       action: { event: { name: 'follow' } },
     },
   ],

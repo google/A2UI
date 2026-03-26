@@ -59,9 +59,9 @@ export function Sidebar() {
       >
         <SidebarHeader />
         <hr />
-        <SidebarNav onNavigate={() => setIsOpen(false)} />
-        <hr />
         <VersionSelector />
+        <hr />
+        <SidebarNav onNavigate={() => setIsOpen(false)} />
         <hr />
         <SidebarWidgets onNavigate={() => setIsOpen(false)} />
       </aside>

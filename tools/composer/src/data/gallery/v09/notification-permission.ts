@@ -70,6 +70,7 @@ export const V09_NOTIFICATION_PERMISSION_WIDGET: Widget = {
       id: 'yes-btn',
       component: 'Button',
       child: 'yes-btn-text',
+      variant: 'primary',
       action: { event: { name: 'accept' } },
     },
     {

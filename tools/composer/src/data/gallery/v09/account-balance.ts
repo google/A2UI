@@ -85,6 +85,7 @@ export const V09_ACCOUNT_BALANCE_WIDGET: Widget = {
       id: 'transfer-btn',
       component: 'Button',
       child: 'transfer-btn-text',
+      variant: 'primary',
       action: { event: { name: 'transfer' } },
     },
     {

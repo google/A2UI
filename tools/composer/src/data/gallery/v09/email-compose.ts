@@ -142,6 +142,7 @@ export const V09_EMAIL_COMPOSE_WIDGET: Widget = {
       id: 'send-btn',
       component: 'Button',
       child: 'send-btn-text',
+      variant: 'primary',
       action: { event: { name: 'send' } },
     },
     {
