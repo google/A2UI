@@ -223,6 +223,25 @@
   --s-0: #000000;
 }
 
+/* Material Symbols class for v0.9 renderer.
+ * The v0.9 Icon component uses className="material-symbols-outlined"
+ * but Google Fonts only defines @font-face rules, not the CSS class. */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
 /* Monaco editor - use background highlight instead of border */
 .monaco-editor .current-line,
 .monaco-editor .view-overlays .current-line {
