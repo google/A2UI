@@ -43,7 +43,7 @@ const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
 if (pkg.dependencies && pkg.dependencies['@a2ui/web_core']) {
   pkg.dependencies['@a2ui/web_core'] = coreVersion;
 } else {
-  console.warn('Warning: @a2ui/web_core not found in dependencies.');
+  throw new Error('Error: @a2ui/web_core not found in dependencies. This is a mandatory dependency for publishing.');
 }
 
 // 4. Adjust Paths for Dist
