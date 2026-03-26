@@ -22,6 +22,7 @@ export const TASK_CARD_WIDGET: Widget = {
   description: 'Task item with priority and due date',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

@@ -22,6 +22,7 @@ export const MUSIC_PLAYER_WIDGET: Widget = {
   description: 'Now playing interface with playback controls',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

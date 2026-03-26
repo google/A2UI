@@ -22,6 +22,7 @@ export const ACCOUNT_BALANCE_WIDGET: Widget = {
   description: 'Bank account balance display with actions',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

@@ -22,6 +22,7 @@ export const CALENDAR_DAY_WIDGET: Widget = {
   description: 'Daily calendar view with scheduled events',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

@@ -23,6 +23,7 @@ export const TRACK_LIST_WIDGET: Widget = {
   description: 'Music playlist with track items',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

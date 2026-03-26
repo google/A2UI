@@ -22,6 +22,7 @@ export const FLIGHT_STATUS_WIDGET: Widget = {
   description: 'Real-time flight tracking with route and timing information',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

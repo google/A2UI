@@ -213,6 +213,7 @@ export function CreateWidget() {
         name: generatedName.current ?? "Untitled widget",
         createdAt: new Date(),
         updatedAt: new Date(),
+        specVersion: "0.8",
         root: "root",
         components: generatedComponents.current ?? DEFAULT_COMPONENTS,
         dataStates: [
@@ -252,6 +253,7 @@ export function CreateWidget() {
       name: "Untitled widget",
       createdAt: new Date(),
       updatedAt: new Date(),
+      specVersion: "0.8",
       root: "root",
       components: DEFAULT_COMPONENTS,
       dataStates: [

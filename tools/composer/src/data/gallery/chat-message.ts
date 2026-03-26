@@ -22,6 +22,7 @@ export const CHAT_MESSAGE_WIDGET: Widget = {
   description: 'Messaging thread with multiple messages and user avatars',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

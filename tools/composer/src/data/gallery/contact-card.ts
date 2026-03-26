@@ -23,6 +23,7 @@ export const CONTACT_CARD_WIDGET: Widget = {
   description: 'Contact info with avatar and action buttons',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

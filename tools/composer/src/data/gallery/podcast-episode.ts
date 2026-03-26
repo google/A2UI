@@ -23,6 +23,7 @@ export const PODCAST_EPISODE_WIDGET: Widget = {
   description: 'Podcast episode card with play button',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

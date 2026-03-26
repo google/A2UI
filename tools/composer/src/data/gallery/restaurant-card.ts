@@ -23,6 +23,7 @@ export const RESTAURANT_CARD_WIDGET: Widget = {
   description: 'Restaurant listing with rating and details',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

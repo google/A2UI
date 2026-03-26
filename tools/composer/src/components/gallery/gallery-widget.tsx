@@ -50,6 +50,7 @@ export function GalleryWidget({ widget, height = 200, onClick }: GalleryWidgetPr
             root={widget.root}
             components={widget.components}
             data={previewData}
+            specVersion={widget.specVersion}
           />
         </div>
       </div>

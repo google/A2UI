@@ -22,6 +22,7 @@ export const PURCHASE_COMPLETE_WIDGET: Widget = {
   description: 'Order confirmation with product details and delivery info',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

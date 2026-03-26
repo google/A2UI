@@ -23,6 +23,7 @@ export const STEP_COUNTER_WIDGET: Widget = {
   description: 'Daily step tracking with goal progress',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {

@@ -23,6 +23,7 @@ export const COUNTDOWN_TIMER_WIDGET: Widget = {
   description: 'Event countdown with days, hours, minutes',
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
+  specVersion: '0.8',
   root: 'root',
   components: [
     {
