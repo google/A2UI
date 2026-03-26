@@ -18,20 +18,26 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { COMPONENTS_DATA, ComponentDoc } from '@/lib/components-data';
+import { COMPONENTS_DATA } from '@/lib/components-data';
+import { COMPONENTS_DATA_V09 } from '@/lib/components-data-v09';
+import type { ComponentDoc } from '@/lib/components-data';
 import { A2UIViewer } from '@/lib/a2ui';
+import { useSpecVersion } from '@/contexts/spec-version-context';
+import type { SpecVersion } from '@/types/widget';
 
 function ComponentSidebar({
   selectedComponent,
   onSelect,
+  data,
 }: {
   selectedComponent: string;
   onSelect: (name: string) => void;
+  data: typeof COMPONENTS_DATA;
 }) {
   return (
     <nav className="w-48 shrink-0 border-r border-border overflow-auto">
       <div className="p-4">
-        {COMPONENTS_DATA.map((category) => (
+        {data.map((category) => (
           <div key={category.name} className="mb-4">
             <div className="text-sm text-muted-foreground mb-2">{category.name}</div>
             <div className="flex flex-col gap-0.5">
@@ -149,7 +155,7 @@ function PropsTable({ component }: { component: ComponentDoc }) {
   );
 }
 
-function ComponentPreview({ component }: { component: ComponentDoc }) {
+function ComponentPreview({ component, specVersion }: { component: ComponentDoc; specVersion: SpecVersion }) {
   if (!component.preview) {
     return null;
   }
@@ -162,6 +168,7 @@ function ComponentPreview({ component }: { component: ComponentDoc }) {
           root={component.preview.root}
           components={component.preview.components}
           data={component.preview.data ?? {}}
+          specVersion={specVersion}
           onAction={(action) => console.log('Component action:', action)}
         />
       </div>
@@ -169,13 +176,13 @@ function ComponentPreview({ component }: { component: ComponentDoc }) {
   );
 }
 
-function ComponentContent({ component }: { component: ComponentDoc }) {
+function ComponentContent({ component, specVersion }: { component: ComponentDoc; specVersion: SpecVersion }) {
   return (
     <div className="flex-1 overflow-auto p-8">
       <h1 className="text-3xl font-semibold mb-2">{component.name}</h1>
       <p className="text-muted-foreground mb-6">{component.description}</p>
 
-      <ComponentPreview component={component} />
+      <ComponentPreview component={component} specVersion={specVersion} />
 
       <h2 className="text-xl font-semibold mb-4">Usage</h2>
       <UsageBlock code={component.usage} />
@@ -187,10 +194,12 @@ function ComponentContent({ component }: { component: ComponentDoc }) {
 }
 
 export default function ComponentsPage() {
+  const { specVersion } = useSpecVersion();
+  const componentsData = specVersion === '0.9' ? COMPONENTS_DATA_V09 : COMPONENTS_DATA;
   const [selectedComponent, setSelectedComponent] = useState('Row');
 
   // Find the selected component
-  const component = COMPONENTS_DATA
+  const component = componentsData
     .flatMap((cat) => cat.components)
     .find((c) => c.name === selectedComponent);
 
@@ -199,8 +208,9 @@ export default function ComponentsPage() {
       <ComponentSidebar
         selectedComponent={selectedComponent}
         onSelect={setSelectedComponent}
+        data={componentsData}
       />
-      {component && <ComponentContent component={component} />}
+      {component && <ComponentContent component={component} specVersion={specVersion} />}
     </div>
   );
 }
