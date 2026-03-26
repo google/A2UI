@@ -37,7 +37,7 @@ if (!packageJson.dependencies['@a2ui/web_core']) {
   );
 }
 
-packageJson.dependencies['@a2ui/web_core'] = '^' + coreVersion;
+packageJson.dependencies['@a2ui/web_core'] = coreVersion;
 
 // Remove scripts and properties that should not be in the published package
 delete packageJson.scripts;

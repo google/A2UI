@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.8.8",
+  "version": "0.8.1",
   "description": "A2UI Core Library",
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
@@ -97,6 +97,7 @@
     "@angular/core": "^21.2.5",
     "@types/node": "^24.11.0",
     "c8": "^11.0.0",
+    "google-artifactregistry-auth": "^3.5.0",
     "gts": "^7.0.0",
     "rxjs": "^7.8.2",
     "typescript": "^5.8.3",
