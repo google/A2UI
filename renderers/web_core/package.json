@@ -1,6 +1,6 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.9.0",
+  "version": "0.8.1",
   "description": "A2UI Core Library",
   "homepage": "https://a2ui.org/",
   "repository": {
@@ -58,6 +58,8 @@
     "src"
   ],
   "scripts": {
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
+    "publish:package": "npm run build && node ../scripts/prepare-publish.mjs && npm publish dist/ --access public",
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
