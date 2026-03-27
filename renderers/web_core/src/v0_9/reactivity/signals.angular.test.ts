@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Copyright 2026 Google LLC
  *
@@ -18,29 +17,32 @@
 import {
   signal,
   computed,
-  Signal,
-  WritableSignal,
   isSignal,
   effect,
+  Signal as NgSignal,
+  WritableSignal as NgWritableSignal,
 } from '@angular/core';
 
 import {FrameworkSignal} from './signals.js';
 import {runFrameworkSignalTests} from './signals-testing.shared.js';
 
 declare module './signals.js' {
+  // Setup the appropriate types for Angular Signals
   interface SignalKinds<T> {
-    readonly: Signal<T>;
-    writable: WritableSignal<T>;
+    // @ts-ignore : Suppress cross-compilation interface overlap
+    readonly: NgSignal<T>;
+    // @ts-ignore : Suppress cross-compilation interface overlap
+    writable: NgWritableSignal<T>;
   }
 }
 
 // Test FrameworkSignal with Angular signals explicitly mapped over SignalKinds.
 const AngularSignal = {
   computed: <T>(fn: () => T) => computed(fn),
-  isSignal: (val: unknown): val is Signal<any> => isSignal(val),
+  isSignal: (val: unknown): val is NgSignal<any> => isSignal(val),
   wrap: <T>(val: T) => signal(val),
-  unwrap: <T>(val: Signal<T>) => val(),
-  set: <T>(sig: WritableSignal<T>, value: T) => sig.set(value),
+  unwrap: <T>(val: NgSignal<T>) => val(),
+  set: <T>(sig: NgWritableSignal<T>, value: T) => sig.set(value),
   effect: (fn: () => void, cleanupCallback: () => void) => {
     const e = effect(cleanupRegisterFn => {
       cleanupRegisterFn(cleanupCallback);
@@ -48,6 +50,10 @@ const AngularSignal = {
     });
     return () => e.destroy();
   },
-} satisfies FrameworkSignal;
+} as unknown as FrameworkSignal; // Bypass Mono-compilation interface overlap
+// The cast above is needed because tsc is merging all our test files together,
+// and the SignalKinds interface is being declared multiple times, causing a
+// type collision. Normally, the AngularSignal would `satisfies FrameworkSignal`,
+// and the declaration of SignalKinds wouldn't need to suppress anything.
 
 runFrameworkSignalTests('Angular implementation', AngularSignal);
