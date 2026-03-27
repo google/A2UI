@@ -236,8 +236,8 @@ class A2aHandler(private val runner: Runner) {
       is JsonPrimitive -> {
         if (element.isString) element.content
         else if (element.booleanOrNull != null) element.booleanOrNull
-        else if (element.doubleOrNull != null) element.doubleOrNull
-        else if (element.longOrNull != null) element.longOrNull else null
+        else if (element.longOrNull != null) element.longOrNull
+        else if (element.doubleOrNull != null) element.doubleOrNull else null
       }
     }
 }
