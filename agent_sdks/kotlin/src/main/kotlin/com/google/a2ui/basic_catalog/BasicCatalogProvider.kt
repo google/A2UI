@@ -37,7 +37,7 @@ class BundledCatalogProvider(private val version: A2uiVersion) : A2uiCatalogProv
   override fun load(): JsonObject {
     val specMap = BasicCatalog.BASIC_CATALOG_PATHS[version] ?: emptyMap()
     val relPath = specMap[A2uiConstants.CATALOG_SCHEMA_KEY] ?: ""
-    val filename = java.io.File(relPath).name
+    val filename = relPath.substringAfterLast('/')
 
     val resource =
       SchemaResourceLoader.loadFromBundledResource(version.value, filename)?.toMutableMap()

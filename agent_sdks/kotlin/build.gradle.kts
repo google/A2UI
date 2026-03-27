@@ -57,7 +57,7 @@ tasks.test {
 }
 
 val copySpecs by tasks.registering(Copy::class) {
-  val repoRoot = projectDir.parentFile.parentFile
+  val repoRoot = findRepoRoot()
 
   from(File(repoRoot, "specification/v0_8/json/server_to_client.json")) {
     into("com/google/a2ui/assets/0.8")
@@ -85,4 +85,15 @@ sourceSets {
       srcDir(copySpecs)
     }
   }
+}
+
+fun findRepoRoot(): File {
+  var currentDir = project.projectDir
+  while (currentDir != null) {
+    if (File(currentDir, ".git").exists()) {
+      return currentDir
+    }
+    currentDir = currentDir.parentFile
+  }
+  throw GradleException("Could not find repository root.")
 }
