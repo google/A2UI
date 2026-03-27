@@ -80,10 +80,10 @@ class A2aHandler(private val runner: Runner) {
         }
 
         // Extract context and user ID
-        val contextId = messageMap["contextId"] as? String ?: "default-context"
+        val contextId = messageMap["contextId"] as? String ?: DEFAULT_CONTEXT_ID
         // Actually A2A uses contextId as the session grouping. We use contextId as sessionId
         val sessionId = contextId
-        val userId = "a2a-user" // A2A doesn't strictly provide userId natively in baseline message
+        val userId = A2A_USER_ID // A2A doesn't strictly provide userId natively in baseline message
 
         // Extract text from parts
         val partsList = messageMap["parts"] as? List<*> ?: emptyList<Any>()
