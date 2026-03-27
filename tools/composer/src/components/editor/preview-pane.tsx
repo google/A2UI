@@ -37,6 +37,10 @@ class PreviewErrorBoundary extends Component<
     return { error };
   }
 
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('A2UI Preview Error:', error, errorInfo);
+  }
+
   componentDidUpdate(prevProps: { resetKey: string }) {
     if (prevProps.resetKey !== this.props.resetKey && this.state.error) {
       this.setState({ error: null });

@@ -71,16 +71,24 @@ function slugToName(slug) {
 }
 
 /**
+ * Convert a single v0.8 value entry to a JS value.
+ */
+function convertValue(v) {
+  if ('valueString' in v) return v.valueString;
+  if ('valueNumber' in v) return v.valueNumber;
+  if ('valueBoolean' in v) return v.valueBoolean;
+  if ('valueMap' in v) return valueMapToObject(v.valueMap);
+  if ('valueArray' in v) return v.valueArray.map(convertValue);
+  return null;
+}
+
+/**
  * Convert v0.8 ValueMap[] to plain JS object.
  */
 function valueMapToObject(contents) {
   const result = {};
   for (const item of contents) {
-    if ('valueString' in item) result[item.key] = item.valueString;
-    else if ('valueNumber' in item) result[item.key] = item.valueNumber;
-    else if ('valueBoolean' in item) result[item.key] = item.valueBoolean;
-    else if ('valueMap' in item) result[item.key] = valueMapToObject(item.valueMap);
-    else result[item.key] = null;
+    result[item.key] = convertValue(item);
   }
   return result;
 }
