@@ -53,10 +53,11 @@ object A2uiA2a {
       params[A2uiConstants.SUPPORTED_CATALOG_IDS_KEY] = supportedCatalogIds
     }
 
+    val isSupportRequired = false
     return AgentExtension(
       A2UI_EXTENSION_URI,
       params,
-      false, // isRequired
+      isSupportRequired,
       "Provides agent driven UI using the A2UI JSON format.",
     )
   }
