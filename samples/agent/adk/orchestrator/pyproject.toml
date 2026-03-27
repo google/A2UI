@@ -39,8 +39,6 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata]
 allow-direct-references = true
 
-[tool.uv.sources]
-google-adk = { git = "https://github.com/google/adk-python.git", rev = "143ad44" }
 
 [[tool.uv.index]]
 url = "https://pypi.org/simple"
