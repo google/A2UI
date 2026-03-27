@@ -224,13 +224,21 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
       validateTopology(components, refFieldsMap)
     }
 
+    /**
+     * Analyzes the catalog schema to identify which fields in each component type act as references
+     * to other components (either single IDs or lists of IDs).
+     *
+     * @return A map where the key is the component type name, and the value is a Pair of:
+     *     - Set of property names that are single component references.
+     *     - Set of property names that are list/collection component references.
+     */
     private fun extractComponentRefFields(): Map<String, Pair<Set<String>, Set<String>>> {
       val refMap = mutableMapOf<String, Pair<Set<String>, Set<String>>>()
 
-      val allComponents = catalog.catalogSchema[A2uiConstants.CATALOG_COMPONENTS_KEY] as? JsonObject
+      val allComponents =
+        catalog.catalogSchema[A2uiConstants.CATALOG_COMPONENTS_KEY] as? JsonObject ?: return refMap
 
-      if (allComponents == null) return refMap
-
+      // Heuristically determines if a schema property represents a single ComponentId reference.
       fun isComponentIdRef(propSchema: JsonElement): Boolean {
         if (propSchema !is JsonObject) return false
         val ref = propSchema[KEY_DOLLAR_REF]?.jsonPrimitive?.content ?: ""
@@ -249,6 +257,7 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
         }
       }
 
+      // Heuristically determines if a schema property represents a collection of ComponentIds.
       fun isChildListRef(propSchema: JsonElement): Boolean {
         if (propSchema !is JsonObject) return false
         val ref = propSchema[KEY_DOLLAR_REF]?.jsonPrimitive?.content ?: ""
@@ -277,10 +286,12 @@ class A2uiValidator(private val catalog: A2uiCatalog) {
         }
       }
 
+      // Iterate over all components defined in the catalog to extract their reference fields.
       for ((compName, compSchemaElem) in allComponents) {
         val singleRefs = mutableSetOf<String>()
         val listRefs = mutableSetOf<String>()
 
+        // Recursively inspects properties and combinators to find reference fields.
         fun extractFromProps(cs: JsonElement) {
           if (cs !is JsonObject) return
           val props = cs[PROP_PROPERTIES] as? JsonObject ?: return
