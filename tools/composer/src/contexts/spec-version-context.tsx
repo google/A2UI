@@ -20,6 +20,10 @@
  * Controls which version (v0.8 or v0.9) the entire composer uses for
  * rendering, gallery samples, component docs, and new widget creation.
  * Persisted to localStorage.
+ *
+ * Uses useEffect to load from localStorage after hydration to avoid
+ * server/client mismatch. The `isLoaded` flag lets consumers defer
+ * version-dependent rendering until the client value is available.
  */
 'use client';
 
@@ -32,19 +36,22 @@ const DEFAULT_VERSION: SpecVersion = '0.9';
 interface SpecVersionContextValue {
   specVersion: SpecVersion;
   setSpecVersion: (version: SpecVersion) => void;
+  isLoaded: boolean;
 }
 
 const SpecVersionContext = createContext<SpecVersionContextValue | null>(null);
 
 export function SpecVersionProvider({ children }: { children: ReactNode }) {
   const [specVersion, setSpecVersionState] = useState<SpecVersion>(DEFAULT_VERSION);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from localStorage after hydration
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === '0.8' || stored === '0.9') {
       setSpecVersionState(stored);
     }
+    setIsLoaded(true);
   }, []);
 
   const setSpecVersion = useCallback((version: SpecVersion) => {
@@ -53,7 +60,7 @@ export function SpecVersionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SpecVersionContext.Provider value={{ specVersion, setSpecVersion }}>
+    <SpecVersionContext.Provider value={{ specVersion, setSpecVersion, isLoaded }}>
       {children}
     </SpecVersionContext.Provider>
   );

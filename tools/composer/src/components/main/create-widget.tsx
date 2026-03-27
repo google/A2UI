@@ -51,8 +51,7 @@ const DEFAULT_COMPONENTS_V08: A2UIComponent[] = [
   },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const DEFAULT_COMPONENTS_V09: any[] = [
+const DEFAULT_COMPONENTS_V09: A2UIComponent[] = [
   {
     id: "root",
     component: "Card",
