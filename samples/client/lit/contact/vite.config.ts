@@ -19,6 +19,7 @@ import { UserConfig } from "vite";
 import * as Middleware from "./middleware";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SANDBOX_ENTRY_NAME, SANDBOX_BASE_PATH, SANDBOX_IFRAME_PATH } from "./ui/shared-constants.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -27,11 +28,24 @@ export default async () => {
 
   const entry: Record<string, string> = {
     contact: resolve(__dirname, "index.html"),
-    sandbox: resolve(__dirname, "sandbox.html"),
+    [SANDBOX_ENTRY_NAME]: resolve(__dirname, `../..${SANDBOX_IFRAME_PATH}`),
   };
 
   return {
-    plugins: [Middleware.A2AMiddleware.plugin()],
+    plugins: [
+      Middleware.A2AMiddleware.plugin(),
+      {
+        name: 'serve-sandbox',
+        configureServer(server) {
+          server.middlewares.use((req, _res, next) => {
+            if (req.url?.startsWith(`/${SANDBOX_BASE_PATH}`)) {
+              req.url = '/@fs' + resolve(__dirname, '../../' + req.url.slice(1));
+            }
+            next();
+          });
+        }
+      }
+    ],
     build: {
       rollupOptions: {
         input: entry,
@@ -42,7 +56,9 @@ export default async () => {
     resolve: {
       dedupe: ["lit"],
       alias: {
-        "@a2ui/markdown-it": resolve(__dirname, "../../../../renderers/markdown/markdown-it/dist/src/markdown.js")
+        "@a2ui/markdown-it": resolve(__dirname, "../../../../renderers/markdown/markdown-it/dist/src/markdown.js"),
+        "sandbox.js": resolve(__dirname, "../../" + SANDBOX_ENTRY_NAME + ".ts"),
+        "@modelcontextprotocol/ext-apps/app-bridge": resolve(__dirname, "../node_modules/@modelcontextprotocol/ext-apps/dist/src/app-bridge.js"),
       }
     },
     optimizeDeps: {

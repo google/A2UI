@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-import { DynamicValue } from "../../schema/common-types.js";
-import { A2uiExpressionError } from "../../errors.js";
+import {DynamicValue} from '../../schema/common-types.js';
+import {A2uiExpressionError} from '../../errors.js';
 
+/**
+ * A parser for A2UI expressions, supporting string interpolation and functional calls.
+ *
+ * The parser converts strings with `${...}` placeholders into arrays of `DynamicValue`s.
+ * It supports literals (strings, numbers, booleans), path-based data bindings, and
+ * nested function calls with named arguments.
+ */
 export class ExpressionParser {
+  /** The maximum allowed recursion depth for nested expressions to prevent stack overflows. */
   private static readonly MAX_DEPTH = 10;
 
   /**
@@ -26,9 +34,9 @@ export class ExpressionParser {
    */
   public parse(input: string, depth = 0): DynamicValue[] {
     if (depth > ExpressionParser.MAX_DEPTH) {
-      throw new A2uiExpressionError("Max recursion depth reached in parse");
+      throw new A2uiExpressionError('Max recursion depth reached in parse');
     }
-    if (!input || !input.includes("${")) {
+    if (!input || !input.includes('${')) {
       return [input];
     }
 
@@ -36,7 +44,7 @@ export class ExpressionParser {
     const scanner = new Scanner(input);
 
     while (!scanner.isAtEnd()) {
-      if (scanner.matches("${")) {
+      if (scanner.matches('${')) {
         scanner.advance(2);
         const content = this.extractInterpolationContent(scanner);
         const parsed = this.parseExpression(content, depth + 1);
@@ -44,23 +52,23 @@ export class ExpressionParser {
           parts.push(parsed);
         }
       } else if (
-        scanner.peek() === "\\" &&
-        scanner.peek(1) === "$" &&
-        scanner.peek(2) === "{"
+        scanner.peek() === '\\' &&
+        scanner.peek(1) === '$' &&
+        scanner.peek(2) === '{'
       ) {
         scanner.advance();
-        parts.push("${");
+        parts.push('${');
         scanner.advance(2);
       } else {
         const start = scanner.pos;
         while (!scanner.isAtEnd()) {
-          if (scanner.matches("${")) {
+          if (scanner.matches('${')) {
             break;
           }
           if (
-            scanner.peek() === "\\" &&
-            scanner.peek(1) === "$" &&
-            scanner.peek(2) === "{"
+            scanner.peek() === '\\' &&
+            scanner.peek(1) === '$' &&
+            scanner.peek(2) === '{'
           ) {
             break;
           }
@@ -69,7 +77,7 @@ export class ExpressionParser {
         parts.push(scanner.input.substring(start, scanner.pos));
       }
     }
-    return parts.filter((p) => p !== null && p !== "") as DynamicValue[];
+    return parts.filter(p => p !== null && p !== '') as DynamicValue[];
   }
 
   private extractInterpolationContent(scanner: Scanner): string {
@@ -78,15 +86,15 @@ export class ExpressionParser {
 
     while (!scanner.isAtEnd() && braceBalance > 0) {
       const char = scanner.advance();
-      if (char === "{") {
+      if (char === '{') {
         braceBalance++;
-      } else if (char === "}") {
+      } else if (char === '}') {
         braceBalance--;
       } else if (char === "'" || char === '"') {
         const quote = char;
         while (!scanner.isAtEnd()) {
           const c = scanner.advance();
-          if (c === "\\") {
+          if (c === '\\') {
             scanner.advance();
           } else if (c === quote) {
             break;
@@ -104,10 +112,17 @@ export class ExpressionParser {
 
   /**
    * Parses a single expression string into a DynamicValue.
+   *
+   * Unlike `parse()`, which handles mixed literal text and interpolations,
+   * this assumes the entire string is a single expression (e.g., as found inside `${...}`).
+   *
+   * @param expr The expression string to parse.
+   * @param depth The current recursion depth.
+   * @returns The resolved DynamicValue.
    */
   public parseExpression(expr: string, depth = 0): DynamicValue {
     expr = expr.trim();
-    if (!expr) return "";
+    if (!expr) return '';
 
     const scanner = new Scanner(expr);
     const result = this.parseExpressionInternal(scanner, depth);
@@ -126,10 +141,10 @@ export class ExpressionParser {
     depth: number,
   ): DynamicValue {
     scanner.skipWhitespace();
-    if (scanner.isAtEnd()) return "";
+    if (scanner.isAtEnd()) return '';
 
     // 0. Nested Interpolation (Block)
-    if (scanner.matches("${")) {
+    if (scanner.matches('${')) {
       scanner.advance(2);
       const content = this.extractInterpolationContent(scanner);
       return this.parseExpression(content, depth + 1);
@@ -142,21 +157,21 @@ export class ExpressionParser {
     if (this.isDigit(scanner.peek())) {
       return this.parseNumberLiteral(scanner);
     }
-    if (scanner.matchesKeyword("true")) return true;
-    if (scanner.matchesKeyword("false")) return false;
-    if (scanner.matchesKeyword("null")) return "";
+    if (scanner.matchesKeyword('true')) return true;
+    if (scanner.matchesKeyword('false')) return false;
+    if (scanner.matchesKeyword('null')) return '';
 
     // 2. Identifiers (Function calls or Path starts)
     const token = this.scanPathOrIdentifier(scanner);
     scanner.skipWhitespace();
 
-    if (scanner.peek() === "(") {
+    if (scanner.peek() === '(') {
       return this.parseFunctionCall(token, scanner, depth);
     } else {
       if (!token) {
-        return "";
+        return '';
       }
-      return { path: token };
+      return {path: token};
     }
   }
 
@@ -164,7 +179,7 @@ export class ExpressionParser {
     const start = scanner.pos;
     while (!scanner.isAtEnd()) {
       const c = scanner.peek();
-      if (this.isAlnum(c) || c === "/" || c === "." || c === "_" || c === "-") {
+      if (this.isAlnum(c) || c === '/' || c === '.' || c === '_' || c === '-') {
         scanner.advance();
       } else {
         break;
@@ -177,16 +192,16 @@ export class ExpressionParser {
     funcName: string,
     scanner: Scanner,
     depth: number,
-  ): { call: string; args: Record<string, any>; returnType: "any" } {
-    scanner.match("(");
+  ): {call: string; args: Record<string, any>; returnType: 'any'} {
+    scanner.match('(');
     scanner.skipWhitespace();
 
     const args: Record<string, any> = {};
 
-    while (!scanner.isAtEnd() && scanner.peek() !== ")") {
+    while (!scanner.isAtEnd() && scanner.peek() !== ')') {
       const argName = this.scanIdentifier(scanner);
       scanner.skipWhitespace();
-      if (!scanner.match(":")) {
+      if (!scanner.match(':')) {
         throw new A2uiExpressionError(
           `Expected ':' after argument name '${argName}' in function '${funcName}'`,
         );
@@ -196,26 +211,26 @@ export class ExpressionParser {
       args[argName] = this.parseExpressionInternal(scanner, depth);
 
       scanner.skipWhitespace();
-      if (scanner.peek() === ",") {
+      if (scanner.peek() === ',') {
         scanner.advance();
         scanner.skipWhitespace();
       }
     }
 
-    if (!scanner.match(")")) {
+    if (!scanner.match(')')) {
       throw new A2uiExpressionError(
         `Expected ')' after function arguments for '${funcName}'`,
       );
     }
 
-    return { call: funcName, args, returnType: "any" };
+    return {call: funcName, args, returnType: 'any'};
   }
 
   private scanIdentifier(scanner: Scanner): string {
     const start = scanner.pos;
     while (
       !scanner.isAtEnd() &&
-      (this.isAlnum(scanner.peek()) || scanner.peek() === "_")
+      (this.isAlnum(scanner.peek()) || scanner.peek() === '_')
     ) {
       scanner.advance();
     }
@@ -224,14 +239,14 @@ export class ExpressionParser {
 
   private parseStringLiteral(scanner: Scanner): string {
     const quote = scanner.advance();
-    let result = "";
+    let result = '';
     while (!scanner.isAtEnd()) {
       const c = scanner.advance();
-      if (c === "\\") {
+      if (c === '\\') {
         const next = scanner.advance();
-        if (next === "n") result += "\n";
-        else if (next === "t") result += "\t";
-        else if (next === "r") result += "\r";
+        if (next === 'n') result += '\n';
+        else if (next === 't') result += '\t';
+        else if (next === 'r') result += '\r';
         else result += next;
       } else if (c === quote) {
         break;
@@ -246,7 +261,7 @@ export class ExpressionParser {
     const start = scanner.pos;
     while (
       !scanner.isAtEnd() &&
-      (this.isDigit(scanner.peek()) || scanner.peek() === ".")
+      (this.isDigit(scanner.peek()) || scanner.peek() === '.')
     ) {
       scanner.advance();
     }
@@ -255,12 +270,12 @@ export class ExpressionParser {
 
   private isAlnum(c: string): boolean {
     return (
-      (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || (c >= "0" && c <= "9")
+      (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
     );
   }
 
   private isDigit(c: string): boolean {
-    return c >= "0" && c <= "9";
+    return c >= '0' && c <= '9';
   }
 }
 
@@ -273,7 +288,7 @@ class Scanner {
   }
 
   peek(offset = 0): string {
-    if (this.pos + offset >= this.input.length) return "\0";
+    if (this.pos + offset >= this.input.length) return '\0';
     return this.input[this.pos + offset];
   }
 

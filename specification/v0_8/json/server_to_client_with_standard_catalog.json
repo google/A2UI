@@ -13,6 +13,10 @@
           "type": "string",
           "description": "The unique identifier for the UI surface to be rendered."
         },
+        "catalogId": {
+          "type": "string",
+          "description": "The identifier of the component catalog to use for this surface. If omitted, the client MUST default to the standard catalog for this A2UI version (https://a2ui.org/specification/v0_8/standard_catalog_definition.json)."
+        },
         "root": {
           "type": "string",
           "description": "The ID of the root component to render."
@@ -107,6 +111,19 @@
                       "url": {
                         "type": "object",
                         "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/url').",
+                        "additionalProperties": false,
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "altText": {
+                        "type": "object",
+                        "description": "The alt text for the image. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/altText').",
                         "additionalProperties": false,
                         "properties": {
                           "literalString": {
@@ -709,6 +726,19 @@
                     "type": "object",
                     "additionalProperties": false,
                     "properties": {
+                      "label": {
+                        "type": "object",
+                        "description": "The label for the slider. This can be a literal string or a reference to a value in the data model ('path').",
+                        "additionalProperties": false,
+                        "properties": {
+                          "literalString": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      },
                       "value": {
                         "type": "object",
                         "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost').",

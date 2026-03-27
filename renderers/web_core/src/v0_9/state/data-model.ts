@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Subscription as BaseSubscription } from "../common/events.js";
-import { A2uiDataError } from "../errors.js";
-import { signal, Signal, batch, effect } from "@preact/signals-core";
+import {Subscription as BaseSubscription} from '../common/events.js';
+import {A2uiDataError} from '../errors.js';
+import {signal, Signal, batch, effect} from '@preact/signals-core';
 
 /**
  * Represents a reactive connection to a specific path in the data model.
@@ -52,6 +52,12 @@ export class DataModel {
 
   /**
    * Retrieves a Preact Signal for a specific data path.
+   *
+   * This provides a reactive way to access a value. If the value at the path changes via `set()`,
+   * the signal will automatically be updated.
+   *
+   * @param path The JSON pointer path to create or retrieve a signal for.
+   * @returns A Preact Signal representing the value at the specified path.
    */
   getSignal<T>(path: string): Signal<T | undefined> {
     const normalizedPath = this.normalizePath(path);
@@ -71,10 +77,10 @@ export class DataModel {
    */
   set(path: string, value: any): this {
     if (path === null || path === undefined) {
-      throw new A2uiDataError("Path cannot be null or undefined.");
+      throw new A2uiDataError('Path cannot be null or undefined.');
     }
-    
-    if (path === "/" || path === "") {
+
+    if (path === '/' || path === '') {
       this.data = value;
       this.notifyAllSignals();
       return this;
@@ -83,6 +89,9 @@ export class DataModel {
     const segments = this.parsePath(path);
     const lastSegment = segments.pop()!;
 
+    if (!this.data) {
+      this.data = {};
+    }
     let current: any = this.data;
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
@@ -99,7 +108,7 @@ export class DataModel {
       if (
         current[segment] !== undefined &&
         current[segment] !== null &&
-        typeof current[segment] !== "object"
+        typeof current[segment] !== 'object'
       ) {
         throw new A2uiDataError(
           `Cannot set path '${path}': segment '${segment}' is a primitive value.`,
@@ -144,9 +153,9 @@ export class DataModel {
    */
   get(path: string): any {
     if (path === null || path === undefined) {
-      throw new A2uiDataError("Path cannot be null or undefined.");
+      throw new A2uiDataError('Path cannot be null or undefined.');
     }
-    if (path === "/" || path === "") {
+    if (path === '/' || path === '') {
       return this.data;
     }
 
@@ -163,7 +172,14 @@ export class DataModel {
 
   /**
    * Subscribes to changes at the specified data path.
-   * Backwards-compatible layer using Preact Signals.
+   *
+   * This is a backwards-compatible layer using Preact Signals internally. It allows
+   * listeners to be notified whenever the value at the specified path (or any of its
+   * ancestors/descendants) changes.
+   *
+   * @param path The JSON pointer path to observe.
+   * @param onChange A callback fired whenever the value changes.
+   * @returns A `DataSubscription` containing the initial value and an `unsubscribe` method.
    */
   subscribe<T>(
     path: string,
@@ -172,7 +188,7 @@ export class DataModel {
     const sig = this.getSignal<T>(path);
     let isSync = true;
     let currentValue = sig.peek();
-    
+
     const dispose = effect(() => {
       const val = sig.value;
       currentValue = val;
@@ -191,7 +207,7 @@ export class DataModel {
       unsubscribe: () => {
         dispose();
         this.subscriptions.delete(dispose);
-      }
+      },
     };
   }
 
@@ -207,14 +223,14 @@ export class DataModel {
   }
 
   private normalizePath(path: string): string {
-    if (path.length > 1 && path.endsWith("/")) {
+    if (path.length > 1 && path.endsWith('/')) {
       return path.slice(0, -1);
     }
-    return path || "/";
+    return path || '/';
   }
 
   private parsePath(path: string): string[] {
-    return path.split("/").filter((p) => p.length > 0);
+    return path.split('/').filter(p => p.length > 0);
   }
 
   private notifySignals(path: string): void {
@@ -225,8 +241,9 @@ export class DataModel {
 
       // Notify Ancestors
       let parentPath = normalizedPath;
-      while (parentPath !== "/" && parentPath !== "") {
-        parentPath = parentPath.substring(0, parentPath.lastIndexOf("/")) || "/";
+      while (parentPath !== '/' && parentPath !== '') {
+        parentPath =
+          parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
         this.updateSignal(parentPath);
       }
 
@@ -242,15 +259,11 @@ export class DataModel {
   private updateSignal(path: string): void {
     const sig = this.signals.get(path);
     if (sig) {
-      // Signals trigger updates based on strict equality checks. If an object or array
-      // in the data model is mutated, its reference doesn't change, and the signal
-      // won't update. By creating a shallow copy, we ensure a new reference is
-      // assigned, which correctly triggers dependent effects.
       const val = this.get(path);
       if (Array.isArray(val)) {
         sig.value = [...val];
       } else if (typeof val === 'object' && val !== null) {
-        sig.value = { ...val };
+        sig.value = {...val};
       } else {
         sig.value = val;
       }
@@ -266,9 +279,9 @@ export class DataModel {
   }
 
   private isDescendant(childPath: string, parentPath: string): boolean {
-    if (parentPath === "/" || parentPath === "") {
-      return childPath !== "/";
+    if (parentPath === '/' || parentPath === '') {
+      return childPath !== '/';
     }
-    return childPath.startsWith(parentPath + "/");
+    return childPath.startsWith(parentPath + '/');
   }
 }

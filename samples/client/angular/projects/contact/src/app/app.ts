@@ -15,8 +15,7 @@
  */
 
 import { MessageProcessor, Surface } from '@a2ui/angular';
-import * as Types from '@a2ui/web_core/types/types';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Client } from './client';
 
 @Component({
@@ -24,28 +23,37 @@ import { Client } from './client';
   templateUrl: './app.html',
   styleUrl: 'app.css',
   imports: [Surface],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   protected client = inject(Client);
   protected processor = inject(MessageProcessor);
 
   protected hasData = signal(false);
+  protected userInput = signal('Casey Smith');
+  protected surfaces = computed(() => {
+    return Array.from(this.processor.getSurfaces().entries());
+  });
+
+  protected statusText = computed(() => {
+    if (!this.client.isLoading()) return null;
+    return this.surfaces().length === 0 ? 'Awaiting an answer...' : 'Rendering UI...';
+  });
 
   protected async handleSubmit(event: SubmitEvent) {
     event.preventDefault();
 
-    if (!(event.target instanceof HTMLFormElement)) {
-      return;
-    }
+    const message = this.userInput().trim();
+    if (!message) return;
 
-    const data = new FormData(event.target);
-    const body = data.get('body') ?? null;
+    this.hasData.set(true);
+    // Clear the input after submission
+    this.userInput.set('');
 
-    if (body) {
-      const message = body as Types.A2UIClientEventMessage;
+    try {
       await this.client.makeRequest(message);
-      this.hasData.set(true);
+    } catch (error) {
+      console.error('Error sending message:', error);
     }
   }
 }

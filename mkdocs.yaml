@@ -52,8 +52,11 @@ nav:
       - Client Setup: guides/client-setup.md
       - Agent Development: guides/agent-development.md
       - Renderer Development: guides/renderer-development.md
-      - Custom Components: guides/custom-components.md
+      - Defining Your Own Catalog: guides/defining-your-own-catalog.md
+      - Authoring Custom Components: guides/authoring-components.md
       - Theming & Styling: guides/theming.md
+      - A2UI over MCP: guides/a2ui_over_mcp.md
+      - MCP Apps integration in A2UI Surface: guides/mcp-apps-in-a2ui-surface.md
   - Reference:
       - Component Gallery: reference/components.md
       - Message Reference: reference/messages.md

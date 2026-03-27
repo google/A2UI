@@ -14,271 +14,382 @@
  * limitations under the License.
  */
 
-import { describe, it } from "node:test";
-import * as assert from "node:assert";
-import { effect } from "@preact/signals-core";
-import { BASIC_FUNCTIONS } from "./basic_functions.js";
-import { DataModel } from "../../state/data-model.js";
-import { DataContext } from "../../rendering/data-context.js";
+import {describe, it} from 'node:test';
+import * as assert from 'node:assert';
+import {effect} from '@preact/signals-core';
+
+import {BASIC_FUNCTIONS} from './basic_functions.js';
+import {DataModel} from '../../state/data-model.js';
+import {DataContext} from '../../rendering/data-context.js';
+import {A2uiExpressionError} from '../../errors.js';
+import {Catalog, ComponentApi} from '../../catalog/types.js';
+
+const testCatalog = new Catalog<ComponentApi>('test', [], BASIC_FUNCTIONS);
 
 function invoke(name: string, args: Record<string, any>, context: DataContext) {
-  const fn = BASIC_FUNCTIONS.find(f => f.name === name);
-  if (!fn) throw new Error(`Function ${name} not found`);
-  return fn.execute(fn.schema.parse(args), context);
+  return testCatalog.invoker(name, args, context);
 }
 
-describe("BASIC_FUNCTIONS", () => {
-  const dataModel = new DataModel({ a: 10, b: 20 });
-  const context = new DataContext(dataModel, "/", () => null);
+const createTestDataContext = (
+  model: DataModel,
+  path: string,
+  functionInvoker: any = testCatalog.invoker,
+) => {
+  const mockSurface = {
+    dataModel: model,
+    catalog: {invoker: functionInvoker},
+    dispatchError: () => {},
+  } as any;
+  return new DataContext(mockSurface, path);
+};
 
-  describe("Arithmetic", () => {
-    it("add", () => {
-      assert.strictEqual(invoke("add", { a: 1, b: 2 }, context), 3);
-      assert.strictEqual(invoke("add", { a: "1", b: "2" }, context), 3);
+describe('BASIC_FUNCTIONS', () => {
+  const dataModel = new DataModel({a: 10, b: 20});
+  const context = createTestDataContext(dataModel, '/');
+
+  describe('Arithmetic', () => {
+    it('add', () => {
+      assert.strictEqual(invoke('add', {a: 1, b: 2}, context), 3);
+      assert.strictEqual(invoke('add', {a: '1', b: '2'}, context), 3);
+      assert.throws(
+        () => invoke('add', {a: 10, b: undefined}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(() => invoke('add', {a: 10}, context), A2uiExpressionError);
     });
-    it("subtract", () => {
-      assert.strictEqual(invoke("subtract", { a: 5, b: 3 }, context), 2);
+    it('subtract', () => {
+      assert.strictEqual(invoke('subtract', {a: 5, b: 3}, context), 2);
+      assert.throws(
+        () => invoke('subtract', {a: 10, b: undefined}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('subtract', {a: 10}, context),
+        A2uiExpressionError,
+      );
     });
-    it("multiply", () => {
-      assert.strictEqual(invoke("multiply", { a: 4, b: 2 }, context), 8);
+    it('multiply', () => {
+      assert.strictEqual(invoke('multiply', {a: 4, b: 2}, context), 8);
+      assert.throws(
+        () => invoke('multiply', {a: 10, b: undefined}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('multiply', {a: 10}, context),
+        A2uiExpressionError,
+      );
     });
-    it("divide", () => {
-      assert.strictEqual(invoke("divide", { a: 10, b: 2 }, context), 5);
-      assert.strictEqual(
-        invoke("divide", { a: 10, b: 0 }, context),
-        Infinity,
+    it('divide', () => {
+      assert.strictEqual(invoke('divide', {a: 10, b: 2}, context), 5);
+      assert.strictEqual(invoke('divide', {a: 10, b: 0}, context), Infinity);
+      assert.throws(
+        () => invoke('divide', {a: 10, b: undefined}, context),
+        A2uiExpressionError,
       );
-      assert.ok(
-        Number.isNaN(invoke("divide", { a: 10, b: undefined }, context)),
+      assert.throws(
+        () => invoke('divide', {a: undefined, b: 10}, context),
+        A2uiExpressionError,
       );
-      assert.ok(
-        Number.isNaN(invoke("divide", { a: undefined, b: 10 }, context)),
+      assert.throws(
+        () => invoke('divide', {a: undefined, b: undefined}, context),
+        A2uiExpressionError,
       );
-      assert.ok(
-        Number.isNaN(
-          invoke("divide", { a: undefined, b: undefined }, context),
-        ),
+      assert.throws(
+        () => invoke('divide', {a: 10, b: null}, context),
+        A2uiExpressionError,
       );
-      assert.ok(
-        Number.isNaN(invoke("divide", { a: 10, b: null }, context)),
+      assert.throws(
+        () => invoke('divide', {a: 10, b: 'invalid'}, context),
+        A2uiExpressionError,
       );
-      assert.ok(
-        Number.isNaN(invoke("divide", { a: 10, b: "invalid" }, context)),
+      assert.strictEqual(invoke('divide', {a: 10, b: '2'}, context), 5);
+      assert.strictEqual(invoke('divide', {a: '10', b: '2'}, context), 5);
+    });
+  });
+
+  describe('Comparison', () => {
+    it('equals', () => {
+      assert.strictEqual(invoke('equals', {a: 1, b: 1}, context), true);
+      assert.strictEqual(invoke('equals', {a: 1, b: 2}, context), false);
+      assert.throws(
+        () => invoke('equals', {a: 1}, context),
+        A2uiExpressionError,
       );
-      assert.strictEqual(invoke("divide", { a: 10, b: "2" }, context), 5);
-      assert.strictEqual(
-        invoke("divide", { a: "10", b: "2" }, context),
-        5,
+      assert.throws(
+        () => invoke('equals', {b: 1}, context),
+        A2uiExpressionError,
+      );
+    });
+    it('not_equals', () => {
+      assert.strictEqual(invoke('not_equals', {a: 1, b: 2}, context), true);
+      assert.throws(
+        () => invoke('not_equals', {a: 1}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('not_equals', {b: 1}, context),
+        A2uiExpressionError,
+      );
+    });
+    it('greater_than', () => {
+      assert.strictEqual(invoke('greater_than', {a: 5, b: 3}, context), true);
+      assert.strictEqual(invoke('greater_than', {a: 3, b: 5}, context), false);
+      assert.throws(
+        () => invoke('greater_than', {a: 10, b: undefined}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('greater_than', {a: 10, b: null}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('greater_than', {a: 10, b: 'invalid'}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('greater_than', {a: 10}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('greater_than', {b: 10}, context),
+        A2uiExpressionError,
+      );
+    });
+    it('less_than', () => {
+      assert.strictEqual(invoke('less_than', {a: 3, b: 5}, context), true);
+      assert.throws(
+        () => invoke('less_than', {a: 3, b: undefined}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('less_than', {a: 3, b: null}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('less_than', {a: 3, b: 'invalid'}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('less_than', {a: 3}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('less_than', {b: 3}, context),
+        A2uiExpressionError,
       );
     });
   });
 
-  describe("Comparison", () => {
-    it("equals", () => {
-      assert.strictEqual(invoke("equals", { a: 1, b: 1 }, context), true);
-      assert.strictEqual(
-        invoke("equals", { a: 1, b: 2 }, context),
-        false,
-      );
-    });
-    it("not_equals", () => {
-      assert.strictEqual(
-        invoke("not_equals", { a: 1, b: 2 }, context),
-        true,
-      );
-    });
-    it("greater_than", () => {
-      assert.strictEqual(
-        invoke("greater_than", { a: 5, b: 3 }, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke("greater_than", { a: 3, b: 5 }, context),
-        false,
-      );
-    });
-    it("less_than", () => {
-      assert.strictEqual(
-        invoke("less_than", { a: 3, b: 5 }, context),
-        true,
-      );
-    });
-  });
-
-  describe("Logical", () => {
-    it("and", () => {
+  describe('Logical', () => {
+    it('and', () => {
       // Checks args['values'] array OR args['a'] && args['b'].
+      assert.strictEqual(invoke('and', {values: [true, true]}, context), true);
       assert.strictEqual(
-        invoke("and", { values: [true, true] }, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke("and", { values: [true, false] }, context),
+        invoke('and', {values: [true, false]}, context),
         false,
       );
-      assert.strictEqual(
-        invoke("and", { a: true, b: true }, context),
-        true,
+      assert.throws(
+        () => invoke('and', {values: [true]}, context),
+        A2uiExpressionError,
       );
+      assert.throws(() => invoke('and', {}, context), A2uiExpressionError);
     });
-    it("or", () => {
+    it('or', () => {
+      assert.strictEqual(invoke('or', {values: [false, true]}, context), true);
       assert.strictEqual(
-        invoke("or", { values: [false, true] }, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke("or", { values: [false, false] }, context),
+        invoke('or', {values: [false, false]}, context),
         false,
       );
-      assert.strictEqual(
-        invoke("or", { a: false, b: true }, context),
-        true,
+      assert.throws(
+        () => invoke('or', {values: [true]}, context),
+        A2uiExpressionError,
       );
+      assert.throws(() => invoke('or', {}, context), A2uiExpressionError);
     });
-    it("not", () => {
-      assert.strictEqual(invoke("not", { value: false }, context), true);
-      assert.strictEqual(invoke("not", { value: true }, context), false);
+    it('not', () => {
+      assert.strictEqual(invoke('not', {value: false}, context), true);
+      assert.strictEqual(invoke('not', {value: true}, context), false);
+      assert.throws(() => invoke('not', {}, context), A2uiExpressionError);
     });
   });
 
-  describe("String", () => {
-    it("contains", () => {
+  describe('String', () => {
+    it('contains', () => {
       assert.strictEqual(
-        invoke("contains", 
-          { string: "hello world", substring: "world" },
+        invoke(
+          'contains',
+          {string: 'hello world', substring: 'world'},
           context,
         ),
         true,
       );
       assert.strictEqual(
-        invoke("contains", 
-          { string: "hello world", substring: "foo" },
-          context,
-        ),
+        invoke('contains', {string: 'hello world', substring: 'foo'}, context),
         false,
       );
-    });
-    it("starts_with", () => {
-      assert.strictEqual(
-        invoke("starts_with", { string: "hello", prefix: "he" }, context),
-        true,
+      assert.throws(
+        () => invoke('contains', {string: 'hello'}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('contains', {substring: 'hello'}, context),
+        A2uiExpressionError,
       );
     });
-    it("ends_with", () => {
+    it('starts_with', () => {
       assert.strictEqual(
-        invoke("ends_with", { string: "hello", suffix: "lo" }, context),
+        invoke('starts_with', {string: 'hello', prefix: 'he'}, context),
         true,
+      );
+      assert.throws(
+        () => invoke('starts_with', {string: 'hello'}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('starts_with', {prefix: 'he'}, context),
+        A2uiExpressionError,
+      );
+    });
+    it('ends_with', () => {
+      assert.strictEqual(
+        invoke('ends_with', {string: 'hello', suffix: 'lo'}, context),
+        true,
+      );
+      assert.throws(
+        () => invoke('ends_with', {string: 'hello'}, context),
+        A2uiExpressionError,
+      );
+      assert.throws(
+        () => invoke('ends_with', {suffix: 'lo'}, context),
+        A2uiExpressionError,
       );
     });
   });
 
-  describe("Validation", () => {
-    it("required", () => {
+  describe('Validation', () => {
+    it('required', () => {
+      assert.strictEqual(invoke('required', {value: 'a'}, context), true);
+      assert.strictEqual(invoke('required', {value: ''}, context), false);
+      assert.strictEqual(invoke('required', {value: null}, context), false);
+      assert.throws(() => invoke('required', {}, context), A2uiExpressionError);
+    });
+
+    it('length', () => {
       assert.strictEqual(
-        invoke("required", { value: "a" }, context),
+        invoke('length', {value: 'abc', min: 2}, context),
         true,
       );
       assert.strictEqual(
-        invoke("required", { value: "" }, context),
+        invoke('length', {value: 'abc', max: 2}, context),
         false,
       );
+      assert.throws(() => invoke('length', {}, context), A2uiExpressionError);
+    });
+
+    it('numeric', () => {
       assert.strictEqual(
-        invoke("required", { value: null }, context),
+        invoke('numeric', {value: 10, min: 5, max: 15}, context),
+        true,
+      );
+      assert.strictEqual(invoke('numeric', {value: 3, min: 5}, context), false);
+      assert.throws(() => invoke('numeric', {}, context), A2uiExpressionError);
+    });
+
+    it('email', () => {
+      assert.strictEqual(
+        invoke('email', {value: 'test@example.com'}, context),
+        true,
+      );
+      assert.strictEqual(
+        invoke('email', {value: 'test.name@example.com'}, context),
+        true,
+      );
+      assert.strictEqual(
+        invoke('email', {value: 'test+label@example.com'}, context),
+        true,
+      );
+      assert.strictEqual(
+        invoke('email', {value: 'test@example-domain.com'}, context),
+        true,
+      );
+
+      assert.strictEqual(invoke('email', {value: 'invalid'}, context), false);
+      assert.strictEqual(invoke('email', {value: 'test@test'}, context), false);
+      assert.strictEqual(
+        invoke('email', {value: 'test@test.c'}, context),
+        false,
+      );
+      assert.strictEqual(invoke('email', {value: 'test@.com'}, context), false);
+
+      assert.throws(() => invoke('email', {}, context), A2uiExpressionError);
+    });
+
+    it('regex', () => {
+      assert.strictEqual(
+        invoke('regex', {value: 'abc', pattern: '^[a-z]+$'}, context),
+        true,
+      );
+      assert.strictEqual(
+        invoke('regex', {value: '123', pattern: '^[a-z]+$'}, context),
         false,
       );
     });
 
-    it("length", () => {
-      assert.strictEqual(
-        invoke("length", { value: "abc", min: 2 }, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke("length", { value: "abc", max: 2 }, context),
-        false,
-      );
-    });
-
-    it("numeric", () => {
-      assert.strictEqual(
-        invoke("numeric", { value: 10, min: 5, max: 15 }, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke("numeric", { value: 3, min: 5 }, context),
-        false,
-      );
-    });
-
-    it("email", () => {
-      assert.strictEqual(
-        invoke("email", { value: "test@example.com" }, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke("email", { value: "invalid" }, context),
-        false,
-      );
-    });
-
-    it("regex", () => {
-      assert.strictEqual(
-        invoke("regex", { value: "abc", pattern: "^[a-z]+$" }, context),
-        true,
-      );
-      assert.strictEqual(
-        invoke("regex", { value: "123", pattern: "^[a-z]+$" }, context),
-        false,
-      );
-    });
-
-    it("regex handles invalid pattern", () => {
-      assert.strictEqual(
-        invoke("regex", { value: "abc", pattern: "[" }, context),
-        false, // fallback when regex throws
+    it('regex handles invalid pattern', () => {
+      assert.throws(
+        () => invoke('regex', {value: 'abc', pattern: '['}, context),
+        A2uiExpressionError,
       );
     });
   });
 
-  describe("Formatting", () => {
-    it("formatString (static literal)", (_, done) => {
-      const result = invoke("formatString", 
-        { value: "hello world" },
+  describe('Formatting', () => {
+    it('formatString (static literal)', (_, done) => {
+      const result = invoke(
+        'formatString',
+        {value: 'hello world'},
         context,
-      ) as import("@preact/signals-core").Signal<string>;
+      ) as import('@preact/signals-core').Signal<string>;
 
       let cleanup: (() => void) | undefined;
+      // Required to pass a reference to cleanup() into th effect(). Probably
+      // worth cleaning up at some point.
+      // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
         if (val) {
-          assert.strictEqual(val, "hello world");
+          assert.strictEqual(val, 'hello world');
           if (cleanup) cleanup();
           done();
         }
       });
     });
 
-    it("formatString (with data binding)", (_, done) => {
+    it('formatString (with data binding)', (_, done) => {
       // Assuming dataModel has { "a": 10 } from setup
-      const result = invoke("formatString", 
-        { value: "Value: ${a}" },
+      const result = invoke(
+        'formatString',
+        {value: 'Value: ${a}'},
         context,
-      ) as import("@preact/signals-core").Signal<string>;
+      ) as import('@preact/signals-core').Signal<string>;
 
       let emitCount = 0;
       let cleanup: (() => void) | undefined;
+      // Required to pass a reference to cleanup() into th effect(). Probably
+      // worth cleaning up at some point.
+      // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
         try {
           if (emitCount === 0) {
-            assert.strictEqual(val, "Value: 10");
+            assert.strictEqual(val, 'Value: 10');
             emitCount++;
             // Trigger a change in the next tick to avoid uninitialized sub
             setTimeout(() => {
-              dataModel.set("/a", 42);
+              dataModel.set('/a', 42);
             }, 0);
           } else if (emitCount === 1) {
-            assert.strictEqual(val, "Value: 42");
+            assert.strictEqual(val, 'Value: 42');
             emitCount++;
             if (cleanup) cleanup();
             done();
@@ -290,131 +401,117 @@ describe("BASIC_FUNCTIONS", () => {
       });
     });
 
-    it("formatString (with function call)", (_, done) => {
+    it('formatString (with function call)', (_, done) => {
       // Need a functionInvoker for function calls
-      const ctxWithInvoker = new DataContext(dataModel, "/", (name, args) => {
-        if (name === "add") {
-          return Number(args["a"]) + Number(args["b"]);
-        }
-        return null;
-      });
+      const ctxWithInvoker = createTestDataContext(
+        dataModel,
+        '/',
+        (name: string, args: any) => {
+          if (name === 'add') {
+            return Number(args['a']) + Number(args['b']);
+          }
+          return null;
+        },
+      );
 
-      const result = invoke("formatString", 
-        { value: "Result: ${add(a: 5, b: 7)}" },
+      const result = invoke(
+        'formatString',
+        {value: 'Result: ${add(a: 5, b: 7)}'},
         ctxWithInvoker,
-      ) as import("@preact/signals-core").Signal<string>;
+      ) as import('@preact/signals-core').Signal<string>;
 
       let cleanup: (() => void) | undefined;
+      // Required to pass a reference to cleanup() into th effect(). Probably
+      // worth cleaning up at some point.
+      // eslint-disable-next-line prefer-const
       cleanup = effect(() => {
         const val = result.value;
         if (val) {
-          assert.strictEqual(val, "Result: 12");
+          assert.strictEqual(val, 'Result: 12');
           if (cleanup) cleanup();
           done();
         }
       });
     });
 
-    it("formatNumber", () => {
+    it('formatNumber', () => {
       // Test basic output as Intl behavior varies by environment.
-      const result = invoke("formatNumber", 
-        { value: 1234.56, decimals: 1 },
+      const result = invoke(
+        'formatNumber',
+        {value: 1234.56, decimals: 1},
         context,
       );
-      assert.ok(typeof result === "string");
+      assert.ok(typeof result === 'string');
       assert.ok(
-        result.includes("1,234.6") ||
-          result.includes("1234.6") ||
-          result.includes("1 234,6"),
+        result.includes('1,234.6') ||
+          result.includes('1234.6') ||
+          result.includes('1 234,6'),
       );
     });
 
-    it("formatCurrency", () => {
-      const result = invoke("formatCurrency", 
-        { value: 1234.56, currency: "USD" },
+    it('formatCurrency', () => {
+      const result = invoke(
+        'formatCurrency',
+        {value: 1234.56, currency: 'USD'},
         context,
       );
-      assert.ok(typeof result === "string");
-      assert.ok(result.includes("1,234.56") || result.includes("1234.56"));
-      assert.ok(result.includes("$") || result.includes("USD"));
+      assert.ok(typeof result === 'string');
+      assert.ok(result.includes('1,234.56') || result.includes('1234.56'));
+      assert.ok(result.includes('$') || result.includes('USD'));
     });
 
-    it("formatDate", () => {
-      const result = invoke("formatDate", 
-        { value: "2025-01-01T00:00:00Z" },
+    it('formatDate', () => {
+      const result = invoke(
+        'formatDate',
+        {value: '2025-01-01T12:00:00Z', format: 'yyyy-MM-dd'},
         context,
       );
-      assert.ok(typeof result === "string");
-      assert.ok(result.length > 0);
+      assert.strictEqual(result, '2025-01-01');
 
-      const resultISO = invoke("formatDate", 
-        { value: "2025-01-01T00:00:00Z", format: "ISO" },
+      const resultISO = invoke(
+        'formatDate',
+        {value: '2025-01-01T12:00:00Z', format: 'ISO'},
         context,
       );
-      assert.strictEqual(resultISO, "2025-01-01T00:00:00.000Z");
+      assert.strictEqual(resultISO, '2025-01-01T12:00:00.000Z');
     });
 
-    it("formatDate handles invalid dates", () => {
-      const result = invoke("formatDate", 
-        { value: "invalid-date" },
+    it('formatDate handles invalid dates', () => {
+      const result = invoke(
+        'formatDate',
+        {value: 'invalid-date', format: 'yyyy'},
         context,
       );
-      assert.strictEqual(result, "");
+      assert.strictEqual(result, '');
     });
 
-    it("formatDate uses options properly", () => {
-      const result = invoke("formatDate", 
-        {
-          value: "2025-01-01T00:00:00Z",
-          options: { year: "numeric", timeZone: "UTC" },
-        },
-        context,
-      );
-      assert.ok(typeof result === "string");
-      assert.ok(result.includes("2025"), `Result was: ${result}`);
-    });
-
-    it("formatDate fallback on formatting error", () => {
-      const result = invoke("formatDate", 
-        { value: "2025-01-01T00:00:00Z", locale: "invalid-locale-!!!11123" },
-        context,
-      );
-      // It should fallback to .toISOString() which starts with 2025
-      assert.ok(typeof result === "string" && result.includes("2025"));
-    });
-
-    it("formatCurrency fallback on formatting error", () => {
-      const result = invoke("formatCurrency", 
-        { value: 1234.56, currency: "INVALID-CURRENCY", decimals: 2 },
+    it('formatCurrency fallback on formatting error', () => {
+      const result = invoke(
+        'formatCurrency',
+        {value: 1234.56, currency: 'INVALID-CURRENCY', decimals: 2},
         context,
       );
       // Fallbacks to toFixed
-      assert.strictEqual(result, "1234.56");
+      assert.strictEqual(result, '1234.56');
     });
 
-    it("pluralize", () => {
+    it('pluralize', () => {
       assert.strictEqual(
-        invoke("pluralize", 
-          { value: 1, one: "apple", other: "apples" },
-          context,
-        ),
-        "apple",
+        invoke('pluralize', {value: 1, one: 'apple', other: 'apples'}, context),
+        'apple',
       );
       assert.strictEqual(
-        invoke("pluralize", 
-          { value: 2, one: "apple", other: "apples" },
-          context,
-        ),
-        "apples",
+        invoke('pluralize', {value: 2, one: 'apple', other: 'apples'}, context),
+        'apples',
       );
     });
   });
 
-  describe("Actions", () => {
-    it("openUrl", () => {
+  describe('Actions', () => {
+    it('openUrl', () => {
       // Set up mock window object
       const originalWindow = (global as any).window;
-      let openedUrl = "";
+      let openedUrl = '';
       (global as any).window = {
         open: (url: string) => {
           openedUrl = url;
@@ -422,8 +519,12 @@ describe("BASIC_FUNCTIONS", () => {
       };
 
       try {
-        invoke("openUrl", { url: "https://google.com" }, context);
-        assert.strictEqual(openedUrl, "https://google.com");
+        invoke('openUrl', {url: 'https://google.com'}, context);
+        assert.strictEqual(openedUrl, 'https://google.com');
+        assert.throws(
+          () => invoke('openUrl', {}, context),
+          A2uiExpressionError,
+        );
       } finally {
         (global as any).window = originalWindow;
       }

@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,19 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Lit renderer build and test
+name: Web core
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'renderers/lit/**'
-      - 'renderers/web_core/**'
+      - 'renderers/web_core/**/*'
       - '.github/workflows/web_build_and_test.yml'
   pull_request:
     paths:
-      - 'renderers/lit/**'
-      - 'renderers/web_core/**'
+      - 'renderers/web_core/**/*'
       - '.github/workflows/web_build_and_test.yml'
 
 jobs:
@@ -47,14 +45,26 @@ jobs:
         working-directory: ./renderers/web_core
         run: npm run build
 
-      - name: Install Lit renderer dependencies
-        working-directory: ./renderers/lit
+      - name: Test web_core
+        working-directory: ./renderers/web_core
+        run: npm run test
+  lint:
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install web_core dependencies
+        working-directory: ./renderers/web_core
         run: npm i
 
-      - name: Build Lit renderer
-        working-directory: ./renderers/lit
+      - name: Build web_core
+        working-directory: ./renderers/web_core
         run: npm run build
 
-      - name: Run Lit renderer tests
-        working-directory: ./renderers/lit
-        run: npm test
+      - name: Lint web_core
+        working-directory: ./renderers/web_core
+        run: npm run lint

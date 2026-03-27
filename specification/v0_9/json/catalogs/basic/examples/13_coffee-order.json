@@ -1,6 +1,6 @@
 {
   "name": "Coffee Order",
-  "description": "Example of coffee order",
+  "description": "Example of coffee order demonstrating templating and currency formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -25,7 +25,7 @@
             "component": "Column",
             "children": [
               "header",
-              "items",
+              "items-list",
               "divider",
               "totals",
               "actions"
@@ -54,94 +54,59 @@
             "variant": "h3"
           },
           {
-            "id": "items",
+            "id": "items-list",
             "component": "Column",
-            "children": [
-              "item1",
-              "item2"
-            ]
+            "children": {
+              "path": "/items",
+              "componentId": "order-item-template"
+            }
           },
           {
-            "id": "item1",
+            "id": "order-item-template",
             "component": "Row",
             "children": [
-              "item1-details",
-              "item1-price"
+              "item-details",
+              "item-price"
             ],
             "justify": "spaceBetween",
             "align": "start"
           },
           {
-            "id": "item1-details",
+            "id": "item-details",
             "component": "Column",
             "children": [
-              "item1-name",
-              "item1-size"
+              "item-name",
+              "item-size"
             ]
           },
           {
-            "id": "item1-name",
+            "id": "item-name",
             "component": "Text",
             "text": {
-              "path": "/item1/name"
+              "path": "name"
             },
             "variant": "body"
           },
           {
-            "id": "item1-size",
+            "id": "item-size",
             "component": "Text",
             "text": {
-              "path": "/item1/size"
+              "path": "size"
             },
             "variant": "caption"
           },
           {
-            "id": "item1-price",
+            "id": "item-price",
             "component": "Text",
             "text": {
-              "path": "/item1/price"
-            },
-            "variant": "body"
-          },
-          {
-            "id": "item2",
-            "component": "Row",
-            "children": [
-              "item2-details",
-              "item2-price"
-            ],
-            "justify": "spaceBetween",
-            "align": "start"
-          },
-          {
-            "id": "item2-details",
-            "component": "Column",
-            "children": [
-              "item2-name",
-              "item2-size"
-            ]
-          },
-          {
-            "id": "item2-name",
-            "component": "Text",
-            "text": {
-              "path": "/item2/name"
-            },
-            "variant": "body"
-          },
-          {
-            "id": "item2-size",
-            "component": "Text",
-            "text": {
-              "path": "/item2/size"
-            },
-            "variant": "caption"
-          },
-          {
-            "id": "item2-price",
-            "component": "Text",
-            "text": {
-              "path": "/item2/price"
+              "call": "formatCurrency",
+              "args": {
+                "value": {
+                  "path": "price"
+                },
+                "currency": "USD"
+              },
+              "returnType": "string"
             },
             "variant": "body"
           },
@@ -177,7 +142,14 @@
             "id": "subtotal-value",
             "component": "Text",
             "text": {
-              "path": "/subtotal"
+              "call": "formatCurrency",
+              "args": {
+                "value": {
+                  "path": "/subtotal"
+                },
+                "currency": "USD"
+              },
+              "returnType": "string"
             },
             "variant": "body"
           },
@@ -200,7 +172,14 @@
             "id": "tax-value",
             "component": "Text",
             "text": {
-              "path": "/tax"
+              "call": "formatCurrency",
+              "args": {
+                "value": {
+                  "path": "/tax"
+                },
+                "currency": "USD"
+              },
+              "returnType": "string"
             },
             "variant": "body"
           },
@@ -223,7 +202,14 @@
             "id": "total-value",
             "component": "Text",
             "text": {
-              "path": "/total"
+              "call": "formatCurrency",
+              "args": {
+                "value": {
+                  "path": "/total"
+                },
+                "currency": "USD"
+              },
+              "returnType": "string"
             },
             "variant": "h4"
           },
@@ -276,19 +262,21 @@
         "surfaceId": "gallery-coffee-order",
         "value": {
           "storeName": "Sunrise Coffee",
-          "item1": {
-            "name": "Oat Milk Latte",
-            "size": "Grande, Extra Shot",
-            "price": "$6.45"
-          },
-          "item2": {
-            "name": "Chocolate Croissant",
-            "size": "Warmed",
-            "price": "$4.25"
-          },
-          "subtotal": "$10.70",
-          "tax": "$0.96",
-          "total": "$11.66"
+          "items": [
+            {
+              "name": "Oat Milk Latte",
+              "size": "Grande, Extra Shot",
+              "price": 6.45
+            },
+            {
+              "name": "Chocolate Croissant",
+              "size": "Warmed",
+              "price": 4.25
+            }
+          ],
+          "subtotal": 10.70,
+          "tax": 0.96,
+          "total": 11.66
         }
       }
     }

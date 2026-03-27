@@ -30,11 +30,14 @@ const exactlyOneKey = (val: any, ctx: z.RefinementCtx) => {
   }
 };
 
-export const StringValueSchema = z.object({
-  path: z.string().optional(),
-  literalString: z.string().optional(),
-  literal: z.string().optional(),
-}).strict().superRefine(exactlyOneKey);
+export const StringValueSchema = z
+  .object({
+    path: z.string().optional(),
+    literalString: z.string().optional(),
+    literal: z.string().optional(),
+  })
+  .strict()
+  .superRefine(exactlyOneKey);
 export type StringValue = z.infer<typeof StringValueSchema>;
 
 const DataValueMapItemSchema: z.ZodType<any> = z.lazy(() =>
@@ -70,7 +73,8 @@ export const DataValueSchema = z
     valueBoolean: z.boolean().optional(),
     valueMap: z.array(DataValueMapItemSchema).optional(),
   })
-  .strict().superRefine((val: any, ctx: z.RefinementCtx) => {
+  .strict()
+  .superRefine((val: any, ctx: z.RefinementCtx) => {
     let count = 0;
     if (val.valueString !== undefined) count++;
     if (val.valueNumber !== undefined) count++;
@@ -82,7 +86,8 @@ export const DataValueSchema = z
         message: `Value must have exactly one value property (valueString, valueNumber, valueBoolean, valueMap), found ${count}.`,
       });
     }
-  }).superRefine((val: any, ctx: z.RefinementCtx) => {
+  })
+  .superRefine((val: any, ctx: z.RefinementCtx) => {
     const checkDepth = (v: any, currentDepth: number) => {
       if (currentDepth > 5) {
         ctx.addIssue({
@@ -100,18 +105,24 @@ export const DataValueSchema = z
     checkDepth(val, 1);
   });
 
-export const NumberValueSchema = z.object({
-  path: z.string().optional(),
-  literalNumber: z.number().optional(),
-  literal: z.number().optional(),
-}).strict().superRefine(exactlyOneKey);
+export const NumberValueSchema = z
+  .object({
+    path: z.string().optional(),
+    literalNumber: z.number().optional(),
+    literal: z.number().optional(),
+  })
+  .strict()
+  .superRefine(exactlyOneKey);
 export type NumberValue = z.infer<typeof NumberValueSchema>;
 
-export const BooleanValueSchema = z.object({
-  path: z.string().optional(),
-  literalBoolean: z.boolean().optional(),
-  literal: z.boolean().optional(),
-}).strict().superRefine(exactlyOneKey);
+export const BooleanValueSchema = z
+  .object({
+    path: z.string().optional(),
+    literalBoolean: z.boolean().optional(),
+    literal: z.boolean().optional(),
+  })
+  .strict()
+  .superRefine(exactlyOneKey);
 export type BooleanValue = z.infer<typeof BooleanValueSchema>;
 
 /**
@@ -140,9 +151,11 @@ export const ActionSchema = z.object({
             literalNumber: z.number().optional(),
             literalBoolean: z.boolean().optional(),
           })
-            .describe(
-              "The dynamic value. Define EXACTLY ONE of the nested properties.",
-            ).strict().superRefine(exactlyOneKey),
+          .describe(
+            "The dynamic value. Define EXACTLY ONE of the nested properties.",
+          )
+          .strict()
+          .superRefine(exactlyOneKey),
       }),
     )
     .describe(
@@ -196,33 +209,42 @@ export const AudioPlayerSchema = z.object({
 export const TabsSchema = z.object({
   tabItems: z
     .array(
-      z.object({
-        title: z.object({
-          path: z
+      z
+        .object({
+          title: z.object({
+            path: z
+              .string()
+              .describe(
+                "A data binding reference to a location in the data model (e.g., '/user/name').",
+              )
+              .optional(),
+            literalString: z
+              .string()
+              .describe("A fixed, hardcoded string value.")
+              .optional(),
+          }),
+          child: z
             .string()
-            .describe(
-              "A data binding reference to a location in the data model (e.g., '/user/name').",
-            )
-            .optional(),
-          literalString: z
-            .string()
-            .describe("A fixed, hardcoded string value.")
-            .optional(),
+            .describe("A reference to a component instance by its unique ID."),
+        })
+        .strict()
+        .superRefine((val: any, ctx: z.RefinementCtx) => {
+          if (!val.title) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Tab item is missing 'title'.",
+            });
+          }
+          if (!val.child) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Tab item is missing 'child'.",
+            });
+          }
+          if (val.title) {
+            exactlyOneKey(val.title, ctx);
+          }
         }),
-        child: z
-          .string()
-          .describe("A reference to a component instance by its unique ID."),
-      }).strict().superRefine((val: any, ctx: z.RefinementCtx) => {
-        if (!val.title) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tab item is missing 'title'." });
-        }
-        if (!val.child) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Tab item is missing 'child'." });
-        }
-        if (val.title) {
-          exactlyOneKey(val.title, ctx);
-        }
-      }),
     )
     .describe("A list of tabs, each with a title and a child component ID."),
 });
@@ -265,15 +287,18 @@ export const ButtonSchema = z.object({
 
 export const CheckboxSchema = z.object({
   label: StringValueSchema,
-  value: z.object({
-    path: z
-      .string()
-      .describe(
-        "A data binding reference to a location in the data model (e.g., '/user/name').",
-      )
-      .optional(),
-    literalBoolean: z.boolean().optional(),
-  }).strict().superRefine(exactlyOneKey),
+  value: z
+    .object({
+      path: z
+        .string()
+        .describe(
+          "A data binding reference to a location in the data model (e.g., '/user/name').",
+        )
+        .optional(),
+      literalBoolean: z.boolean().optional(),
+    })
+    .strict()
+    .superRefine(exactlyOneKey),
 });
 
 export const TextFieldSchema = z.object({
@@ -297,30 +322,36 @@ export const DateTimeInputSchema = z.object({
 });
 
 export const MultipleChoiceSchema = z.object({
-  selections: z.object({
-    path: z
-      .string()
-      .describe(
-        "A data binding reference to a location in the data model (e.g., '/user/name').",
-      )
-      .optional(),
-    literalArray: z.array(z.string()).optional(),
-  }).strict().superRefine(exactlyOneKey),
+  selections: z
+    .object({
+      path: z
+        .string()
+        .describe(
+          "A data binding reference to a location in the data model (e.g., '/user/name').",
+        )
+        .optional(),
+      literalArray: z.array(z.string()).optional(),
+    })
+    .strict()
+    .superRefine(exactlyOneKey),
   options: z
     .array(
       z.object({
-        label: z.object({
-          path: z
-            .string()
-            .describe(
-              "A data binding reference to a location in the data model (e.g., '/user/name').",
-            )
-            .optional(),
-          literalString: z
-            .string()
-            .describe("A fixed, hardcoded string value.")
-            .optional(),
-        }).strict().superRefine(exactlyOneKey),
+        label: z
+          .object({
+            path: z
+              .string()
+              .describe(
+                "A data binding reference to a location in the data model (e.g., '/user/name').",
+              )
+              .optional(),
+            literalString: z
+              .string()
+              .describe("A fixed, hardcoded string value.")
+              .optional(),
+          })
+          .strict()
+          .superRefine(exactlyOneKey),
         value: z.string(),
       }),
     )
@@ -331,17 +362,21 @@ export const MultipleChoiceSchema = z.object({
 });
 
 export const SliderSchema = z.object({
-  value: z.object({
-    path: z
-      .string()
-      .describe(
-        "A data binding reference to a location in the data model (e.g., '/user/name').",
-      )
-      .optional(),
-    literalNumber: z.number().optional(),
-  }).strict().superRefine(exactlyOneKey),
+  value: z
+    .object({
+      path: z
+        .string()
+        .describe(
+          "A data binding reference to a location in the data model (e.g., '/user/name').",
+        )
+        .optional(),
+      literalNumber: z.number().optional(),
+    })
+    .strict()
+    .superRefine(exactlyOneKey),
   minValue: z.number().optional(),
   maxValue: z.number().optional(),
+  label: StringValueSchema.optional(),
 });
 
 export const ComponentArrayTemplateSchema = z.object({
@@ -349,12 +384,15 @@ export const ComponentArrayTemplateSchema = z.object({
   dataBinding: z.string(),
 });
 
-export const ComponentArrayReferenceSchema = z.object({
-  explicitList: z.array(z.string()).optional(),
-  template: ComponentArrayTemplateSchema.describe(
-    "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
-  ).optional(),
-}).strict().superRefine(exactlyOneKey);
+export const ComponentArrayReferenceSchema = z
+  .object({
+    explicitList: z.array(z.string()).optional(),
+    template: ComponentArrayTemplateSchema.describe(
+      "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
+    ).optional(),
+  })
+  .strict()
+  .superRefine(exactlyOneKey);
 
 export const RowSchema = z.object({
   children: ComponentArrayReferenceSchema,

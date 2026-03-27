@@ -28,6 +28,7 @@ from a2ui.a2a import get_a2ui_agent_extension
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from dotenv import load_dotenv
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
 
 
 from agent_executor import ComponentGalleryExecutor
@@ -49,9 +50,12 @@ logger = logging.getLogger(__name__)
 @click.option("--port", default=10005)
 def main(host, port):
   try:
+    extensions = []
+    for v in [VERSION_0_8, VERSION_0_9]:
+      extensions.append(get_a2ui_agent_extension(v))
     capabilities = AgentCapabilities(
         streaming=True,
-        extensions=[get_a2ui_agent_extension()],
+        extensions=extensions,
     )
 
     # Skill definition
@@ -76,7 +80,7 @@ def main(host, port):
         skills=[skill],
     )
 
-    agent_executor = ComponentGalleryExecutor(base_url=base_url)
+    agent_executor = ComponentGalleryExecutor(base_url=base_url, agent_card=agent_card)
 
     request_handler = DefaultRequestHandler(
         agent_executor=agent_executor,

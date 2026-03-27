@@ -80,6 +80,32 @@ function App() {
 
 ## Architecture
 
+### Versioned Structure
+
+To support the evolution of the A2UI protocol, the `@a2ui/react` package is organized into versioned subdirectories (e.g., `v0_8/`, and soon `v0_9/`). 
+
+```
+renderers/react/
+├── src/
+│   ├── v0_8/           # Implementation of the v0.8 protocol
+│   │   ├── components/
+│   │   ├── core/
+│   │   └── ...
+│   ├── index.ts        # Proxy export for backward compatibility -> ./v0_8/index
+│   ├── types.ts        # Proxy export -> ./v0_8/types
+│   └── styles/         # Proxy export -> ../v0_8/styles/index
+```
+
+**Backward Compatibility & Future Roadmap**
+
+The top-level exports in `package.json` and the proxy files in the `src/` root currently default to the `v0_8` implementation. This guarantees that existing applications relying on `import { A2UIProvider } from '@a2ui/react'` will continue to work without modification.
+
+Applications can also explicitly import from a specific version path if desired (e.g., `import { A2UIProvider } from '@a2ui/react/v0_8'`). 
+
+As the `v0_9` protocol implementation is added to the `v0_9/` subdirectory, the top-level exports will be updated to point to the newest stable version. 
+
+**Note:** This side-by-side versioned directory structure is a temporary transition phase. Eventually, the `v0_8` renderer will be deprecated and removed. The package will then revert to a single, unified codebase that natively supports multiple versions of the A2UI specification simultaneously.
+
 ### Two-Context Pattern
 
 The React renderer uses a two-context architecture for optimal performance:

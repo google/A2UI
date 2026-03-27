@@ -43,7 +43,7 @@
   <div class="surfaces">
     @let surfaces = processor.getSurfaces();
 
-    @for (entry of surfaces; track $index) {
+    @for (entry of surfaces; track entry[0]) {
       <a2ui-surface [surfaceId]="entry[0]" [surface]="entry[1]"/>
     }
   </div>
