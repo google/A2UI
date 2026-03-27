@@ -31,11 +31,11 @@ export function GalleryWidget({ widget, height = 200, onClick }: GalleryWidgetPr
 
   return (
     <div
-      role="button"
-      tabIndex={0}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.(); }}
-      className="w-full text-left rounded-xl border border-white bg-white/80 p-4 shadow-sm transition-all hover:shadow-md hover:border-muted-foreground/30 cursor-pointer overflow-hidden"
+      onKeyDown={(e) => { if (onClick && (e.key === 'Enter' || e.key === ' ')) onClick(); }}
+      className={`w-full text-left rounded-xl border border-white bg-white/80 p-4 shadow-sm transition-all hover:shadow-md hover:border-muted-foreground/30 overflow-hidden ${onClick ? 'cursor-pointer' : ''}`}
       style={{ minHeight: height }}
     >
       <div className="flex flex-col gap-2 h-full">

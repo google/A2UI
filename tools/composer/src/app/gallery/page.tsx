@@ -29,7 +29,7 @@ export default function GalleryPage() {
   const [selectedWidget, setSelectedWidget] = useState<Widget | null>(null);
   const { addWidget } = useWidgets();
   const router = useRouter();
-  const { specVersion } = useSpecVersion();
+  const { specVersion, isLoaded } = useSpecVersion();
 
   const galleryWidgets = specVersion === '0.9' ? V09_GALLERY_WIDGETS : V08_GALLERY_WIDGETS;
 
@@ -57,7 +57,7 @@ export default function GalleryPage() {
     <div className="flex-1 overflow-auto p-6">
       <h1 className="mb-6 text-2xl font-semibold">Gallery</h1>
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5" style={{ columnWidth: '308px' }}>
-        {galleryWidgets.map((item) => (
+        {!isLoaded ? null : galleryWidgets.map((item) => (
           <div key={item.widget.id} className="mb-4 break-inside-avoid">
             <GalleryWidget
               widget={item.widget}

@@ -194,7 +194,7 @@ function ComponentContent({ component, specVersion }: { component: ComponentDoc;
 }
 
 export default function ComponentsPage() {
-  const { specVersion } = useSpecVersion();
+  const { specVersion, isLoaded } = useSpecVersion();
   const componentsData = specVersion === '0.9' ? COMPONENTS_DATA_V09 : COMPONENTS_DATA;
   const [selectedComponent, setSelectedComponent] = useState('Row');
 
@@ -210,7 +210,7 @@ export default function ComponentsPage() {
         onSelect={setSelectedComponent}
         data={componentsData}
       />
-      {component && <ComponentContent component={component} specVersion={specVersion} />}
+      {isLoaded && component && <ComponentContent component={component} specVersion={specVersion} />}
     </div>
   );
 }
