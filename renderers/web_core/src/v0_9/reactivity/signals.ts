@@ -14,37 +14,45 @@
  * limitations under the License.
  */
 
-// SignalKinds and WritableSignalKinds are declared in such a way that
+// SignalKinds is declared in such a way that
 // downstream library impls can dynamically provide their Signal implementations
 // in a type-safe way. Usage downstream might look something like:
 //
 // declare module '../reactivity/signals' {
 //   interface SignalKinds<T> {
-//     preact: Signal<T>;
-//   }
-//   interface WritableSignalKinds<T> {
-//     preact: Signal<T>;
+//     readonly: Signal<T>;
+//     writable: Signal<T>;
 //   }
 // }
 //
 // This <T>, while unused, is required to pass through to a given Signal impl.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface SignalKinds<T> {}
+export interface SignalKinds<T> {
+  _phantom?: T;
+}
 
-// This <T>, while unused, is required to pass through to a given Signal impl.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface WritableSignalKinds<T> {}
+/**
+ * A generic representation of a read-only Signal.
+ * Resolves to the specific framework's signal type if augmented.
+ */
+export type Signal<T> = SignalKinds<T> extends { readonly: infer R } ? R : unknown;
+
+/**
+ * A generic representation of a writable Signal.
+ * Resolves to the specific framework's signal type if augmented.
+ */
+export type WritableSignal<T> = SignalKinds<T> extends { writable: infer W } ? W : unknown;
 
 /**
  * A generic representation of a Signal that could come from any framework.
  * For any library building on top of A2UI's web core lib, this must be
  * implemented for their associated signals implementation.
  */
-export interface FrameworkSignal<K extends keyof SignalKinds<any>> {
+export interface FrameworkSignal {
   /**
    * Create a computed signal for this framework.
    */
-  computed<T>(fn: () => T): SignalKinds<T>[K];
+  computed<T>(fn: () => T): Signal<T>;
 
   /**
    * Run a reactive effect.
@@ -54,20 +62,20 @@ export interface FrameworkSignal<K extends keyof SignalKinds<any>> {
   /**
    * Check if an arbitrary object is a framework signal.
    */
-  isSignal(val: unknown): val is SignalKinds<any>[K];
+  isSignal(val: unknown): val is Signal<any>;
 
   /**
    * Wrap the value in a signal.
    */
-  wrap<T>(val: T): WritableSignalKinds<T>[K];
+  wrap<T>(val: T): WritableSignal<T>;
 
   /**
    * Extract the value from a signal.
    */
-  unwrap<T>(val: SignalKinds<T>[K]): T;
+  unwrap<T>(val: Signal<T>): T;
 
   /**
    * Sets the value of the provided framework signal.
    */
-  set<T>(signal: WritableSignalKinds<T>[K], value: T): void;
+  set<T>(signal: WritableSignal<T>, value: T): void;
 }

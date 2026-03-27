@@ -32,16 +32,6 @@ import {
 
 import {FrameworkSignal} from './signals';
 
-declare module './signals' {
-  interface SignalKinds<T> {
-    angular: ASignal<T>;
-    preact: PSignal<T>;
-  }
-  interface WritableSignalKinds<T> {
-    angular: AWritableSignal<T>;
-    preact: PSignal<T>;
-  }
-}
 
 describe('FrameworkSignal', () => {
   // Test FrameworkSignal with two sample implemenations that wrap Angular and
@@ -50,12 +40,12 @@ describe('FrameworkSignal', () => {
   // Angular and Preact respectively.
 
   describe('Angular variation', () => {
-    const AngularSignal: FrameworkSignal<'angular'> = {
+    const AngularSignal = {
       computed: <T>(fn: () => T) => aComputed(fn),
-      isSignal: (val: unknown) => isSignal(val),
+      isSignal: (val: unknown): val is any => isSignal(val),
       wrap: <T>(val: T) => aSignal(val),
-      unwrap: <T>(val: ASignal<T>) => val(),
-      set: <T>(signal: AWritableSignal<T>, value: T) => signal.set(value),
+      unwrap: <T>(val: any) => (val as ASignal<T>)(),
+      set: <T>(signal: any, value: T) => (signal as AWritableSignal<T>).set(value),
       effect: (fn: () => void, cleanupCallback: () => void) => {
         const e = aEffect(cleanupRegisterFn => {
           cleanupRegisterFn(cleanupCallback);
@@ -63,7 +53,7 @@ describe('FrameworkSignal', () => {
         });
         return () => e.destroy();
       },
-    };
+    } satisfies FrameworkSignal;
 
     it('round trip wraps and unwraps successfully', () => {
       const val = 'hello';
@@ -102,14 +92,14 @@ describe('FrameworkSignal', () => {
   });
 
   describe('Preact variation', () => {
-    const PreactSignal: FrameworkSignal<'preact'> = {
+    const PreactSignal = {
       computed: <T>(fn: () => T) => pComputed(fn),
-      isSignal: (val: unknown) => val instanceof PSignal,
+      isSignal: (val: unknown): val is any => val instanceof PSignal,
       wrap: <T>(val: T) => new PSignal(val),
-      unwrap: <T>(val: PSignal<T>) => val.value,
-      set: <T>(signal: PSignal<T>, value: T) => (signal.value = value),
+      unwrap: <T>(val: any) => (val as PSignal<T>).value,
+      set: <T>(signal: any, value: T) => ((signal as PSignal<T>).value = value),
       effect: (fn: () => void) => pEffect(fn),
-    };
+    } satisfies FrameworkSignal;
 
     it('round trip wraps and unwraps successfully', () => {
       const val = 'hello';
