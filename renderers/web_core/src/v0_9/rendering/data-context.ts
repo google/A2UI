@@ -191,8 +191,6 @@ export class DataContext<SK extends keyof SignalKinds<any>> {
     // 3. Function Call
     if ('call' in value) {
       const call = value as FunctionCall;
-      // NOTE: argSignals seem to be totally unused in terms of reactivity and
-      //       they don't actually get updated again after becoming signals.
       const argSignals: Record<string, SignalKinds<V | undefined>[SK]> = {};
 
       for (const [key, argVal] of Object.entries(call.args)) {
