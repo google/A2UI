@@ -135,7 +135,22 @@ The model is designed to support high-performance rendering through granular upd
 *   **Property Changes**: The `ComponentModel` notifies when its specific configuration changes.
 *   **Data Changes**: The `DataModel` notifies only subscribers to the specific path that changed.
 
-### The Models
+### Protocol Models & Serialization
+
+The framework-agnostic layer is responsible for defining strict, native type representations of the A2UI JSON schemas. Renderers should not pass raw generic dictionaries (like `Map<String, Any>` or `Record<string, any>`) directly into the state layer. 
+
+Developers must create data classes, structs, or interfaces (e.g., `data class` in Kotlin, `Codable struct` in Swift, or Zod-validated `interface` in TypeScript) that perfectly mirror the official JSON specifications. This creates a safe boundary between the raw network stream and the internal state models.
+
+**Required Data Structures:**
+*   **Server-to-Client Messages:** `A2uiMessage` (a union/protocol type), `CreateSurfaceMessage`, `UpdateComponentsMessage`, `UpdateDataModelMessage`, `DeleteSurfaceMessage`.
+*   **Client-to-Server Events:** `ClientEvent` (a union/protocol type), `ActionMessage`, `ErrorMessage`.
+*   **Client Metadata:** `A2uiClientCapabilities`, `InlineCatalog`, `FunctionDefinition`, `ClientDataModel`.
+
+**JSON Serialization & Validation:**
+*   **Inbound (Parsing)**: The core library must provide a mechanism to deserialize a raw JSON string into a strongly-typed `A2uiMessage`. If the payload violates the A2UI JSON schema, this layer must throw an `A2uiValidationError` *before* the message reaches the state models.
+*   **Outbound (Stringifying)**: The core library must serialize client-to-server events and capabilities from their strict native types back into valid JSON strings to hand off to the transport layer.
+
+### The State Models
 
 #### SurfaceGroupModel & SurfaceModel
 The root containers for active surfaces and their catalogs, data, and components.
@@ -278,8 +293,11 @@ class MessageProcessor<T extends ComponentApi> {
   
   constructor(catalogs: Catalog<T>[], actionHandler: ActionListener);
 
+  // Accepts validated, strongly-typed message objects, not raw JSON
   processMessages(messages: A2uiMessage[]): void;
   addLifecycleListener(l: SurfaceLifecycleListener<T>): () => void;
+  
+  // Returns a strictly typed capabilities object ready for JSON serialization
   getClientCapabilities(options?: CapabilitiesOptions): A2uiClientCapabilities;
   
   /**
@@ -308,15 +326,15 @@ To dynamically generate the `a2uiClientCapabilities` payload (specifically `inli
 
 **Detectable Common Types**: Shared definitions (like `DynamicString`) must emit external JSON Schema `$ref` pointers. This is achieved by "tagging" the schemas using their `description` property (e.g., `REF:common_types.json#/$defs/DynamicString`). 
 
-When `getClientCapabilities()` converts internal schemas:
-1. Translate the definition into a raw JSON Schema.
-2. Traverse the tree looking for descriptions starting with `REF:`.
-3. Strip the tag and replace the node with a valid JSON Schema `$ref` object.
-4. Wrap property schemas in the standard A2UI component envelope (`allOf` containing `ComponentCommon`).
+When `getClientCapabilities()` converts internal schemas to generate `inlineCatalogs`:
+1. **Components**: Translate each component schema into a raw JSON Schema. Wrap it in the standard A2UI component envelope (`allOf` containing `ComponentCommon`).
+2. **Functions**: Map each function in the catalog to a `FunctionDefinition` object, converting its argument schema to JSON Schema.
+3. **Theme**: Convert the catalog's theme schema into a JSON Schema representation.
+4. **Reference Processing**: For all generated schemas (components, functions, and themes), traverse the tree looking for descriptions starting with `REF:`. Strip the tag and replace the node with a valid JSON Schema `$ref` object.
 
 ## 4. The Catalog API & Functions
 
-A catalog groups component definitions and function definitions together.
+A catalog groups component definitions and function definitions together, along with an optional theme schema.
 
 ```typescript
 interface FunctionApi {
@@ -339,9 +357,9 @@ class Catalog<T extends ComponentApi> {
   readonly id: string; // Unique catalog URI
   readonly components: ReadonlyMap<string, T>;
   readonly functions?: ReadonlyMap<string, FunctionImplementation>;
-  readonly theme?: Schema;
+  readonly themeSchema?: Schema;
 
-  constructor(id: string, components: T[], functions?: FunctionImplementation[], theme?: Schema) {
+  constructor(id: string, components: T[], functions?: FunctionImplementation[], themeSchema?: Schema) {
     // Initializes the properties
   }
 }
@@ -357,17 +375,17 @@ Functions generally fall into a few common patterns:
 
 If a function returns a reactive stream, it MUST use an idiomatic listening mechanism that supports standard unsubscription. To properly support an AI agent, functions SHOULD include a schema to generate accurate client capabilities.
 
-### Creating Custom Catalogs
-Extensibility is a core feature of A2UI. It should be trivial to create a new catalog by extending an existing one, combining custom components with the standard set.
+### Composing Your Own Catalog
+You can define your own catalog by composing components and functions that reflect your design system. While you can build a catalog entirely from scratch, you can also import or combine definitions with the Basic Catalog to save time.
 
-*Example of composing a custom catalog:*
+*Example of composing a catalog:*
 ```python
 # Pseudocode
 myCustomCatalog = Catalog(
   id="https://mycompany.com/catalogs/custom_catalog.json",
   functions=basicCatalog.functions,
   components=basicCatalog.components + [MyCompanyLogoComponent()],
-  theme=basicCatalog.theme # Inherit theme schema
+  themeSchema=basicCatalog.themeSchema # Inherit theme schema
 )
 ```
 
@@ -557,6 +575,8 @@ When building libraries that provide the Basic Catalog, it is **crucial** to sep
 *   **Multi-Framework Code Reuse**: In ecosystems like the Web, this allows a shared `web_core` library to define the Basic Catalog API and Binders once, while separate packages (`react_renderer`, `angular_renderer`) provide the native view implementations.
 *   **Developer Overrides**: By exposing the standard API definitions, developers adopting A2UI can easily swap in custom UI implementations (e.g., replacing the default `Button` with their company's internal Design System `Button`) without having to rewrite the complex A2UI validation, data binding, and capability generation logic. 
 
+For a detailed walkthrough on how to visually and functionally implement each basic component and function, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md).
+
 ### Strongly-Typed Catalog Implementations
 To ensure all components are properly implemented and match the exact API signature, platforms with strong type systems should utilize their advanced typing features. This ensures that a provided renderer not only exists, but its `name` and `schema` strictly match the official Catalog Definition, catching mismatches at compile time rather than runtime.
 
@@ -644,11 +664,14 @@ Every renderer implementation must include a suite of automated integration test
 If you are an AI Agent tasked with building a new renderer for A2UI, you MUST follow this strict, phased sequence of operations. 
 
 ### 1. Context to Ingest
+
 Thoroughly review:
 *   `specification/v0_9/docs/a2ui_protocol.md` (protocol rules)
 *   `specification/v0_9/json/common_types.json` (dynamic binding types)
 *   `specification/v0_9/json/server_to_client.json` (message envelopes)
 *   `specification/v0_9/json/catalogs/minimal/minimal_catalog.json` (your initial target)
+*   `specification/v0_9/docs/basic_catalog_implementation_guide.md` (for rendering and spacing rules for when you get to the basic catalog)
+
 
 ### 2. Key Architecture Decisions (Write a Plan Document)
 Create a comprehensive design document detailing:
@@ -661,11 +684,12 @@ Create a comprehensive design document detailing:
 ### 3. Core Model Layer
 Implement the framework-agnostic Data Layer (Section 3).
 *   Implement event streams and stateful signals.
+*   Implement strict Protocol Models (`A2uiMessage`, `A2uiClientCapabilities`, etc.) with JSON serialization/deserialization and schema validation logic.
 *   Implement `DataModel`, ensuring correct JSON pointer resolution and the cascade/bubble notification strategy.
 *   Implement `ComponentModel`, `SurfaceComponentsModel`, `SurfaceModel`, and `SurfaceGroupModel`.
 *   Implement `DataContext` and `ComponentContext`.
 *   Implement `MessageProcessor` and ClientCapabilities generation.
-*   **Action**: Write unit tests for the `DataModel` (especially pointer resolution/cascade logic) and `MessageProcessor`. Ensure they pass before continuing.
+*   **Action**: Write unit tests for JSON validation, the `DataModel` (especially pointer resolution/cascade logic), and `MessageProcessor`. Ensure they pass before continuing.
 
 ### 4. Framework-Specific Layer
 Implement the bridge between models and native UI (Section 5 & 6).
@@ -688,7 +712,9 @@ Build the Gallery App following the requirements in **Section 8**.
 *   **STOP HERE. Ask the user for approval of the architecture and gallery application before proceeding to step 7.**
 
 ### 7. Basic Catalog Support
-*   Implement the full suite of Basic Catalog core functions (including `formatString`).
-*   Implement the remaining Basic Catalog schemas and UI components.
-*   Write comprehensive unit tests for data coercion and function logic.
+Once the minimal architecture is proven robust, refer to the [Basic Catalog Implementation Guide](basic_catalog_implementation_guide.md) and:
+*   **Core Library**: Implement the full suite of basic functions. It is crucial to note that string interpolation and expression parsing should ONLY happen within the `formatString` function. Do not attempt to add global string interpolation to all strings.
+*   **Core Library**: Create definitions/binders for the remaining Basic Catalog components.
+*   **Framework Library**: Implement all remaining UI widgets.
+*   **Tests**: Look at existing reference implementations (e.g., `web_core`) to formulate and run comprehensive unit and integration test cases for data coercion and function logic. 
 *   Update the Gallery App to load samples from `specification/v0_9/json/catalogs/basic/examples/`.

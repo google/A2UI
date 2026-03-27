@@ -105,7 +105,6 @@ import jsonschema
 
 from a2a import types as a2a_types
 from a2ui.a2a import (
-    A2UI_EXTENSION_URI,
     create_a2ui_part,
     parse_response_to_parts,
 )

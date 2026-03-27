@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from a2ui.core.schema.constants import VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 
@@ -22,14 +22,14 @@ ROLE_DESCRIPTION = (
 )
 
 WORKFLOW_DESCRIPTION = """
-Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` attribute.
+Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` (for spec version v0.8) or `"variant": "primary"` (for spec version v0.9+) attribute.
 """
 
 UI_DESCRIPTION = f"""
 -   **For finding contacts (e.g., "Who is Alex Jordan?"):**
     a.  You MUST call the `get_contact_info` tool.
-    b.  If the tool returns a **single contact**, you MUST use the `CONTACT_CARD_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the contact's details (name, title, email, etc.).
-    c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
+    b.  If the tool returns a **single contact**, you MUST use the `CONTACT_CARD_EXAMPLE` template. Populate the `dataModelUpdate.contents` (v0.8) or `updateDataModel.value` (v0.9+) with the contact's details (name, title, email, etc.).
+    c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` (v0.8) or `updateDataModel.value` (v0.9+) with the list of contacts for the "contacts" key.
     d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.{A2UI_OPEN_TAG}[]{A2UI_CLOSE_TAG}"
 
 -   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
@@ -64,16 +64,22 @@ def get_text_prompt() -> str:
 
 if __name__ == "__main__":
   # Example of how to use the A2UI Schema Manager to generate a system prompt
+  my_version = VERSION_0_9
   contact_prompt = A2uiSchemaManager(
-      VERSION_0_8,
-      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
+      my_version,
+      catalogs=[
+          BasicCatalog.get_config(
+              version=my_version,
+              examples_path=f"examples/{my_version}",
+          )
+      ],
   ).generate_system_prompt(
       role_description=ROLE_DESCRIPTION,
       workflow_description=WORKFLOW_DESCRIPTION,
       ui_description=UI_DESCRIPTION,
       include_schema=True,
       include_examples=True,
-      validate_examples=False,
+      validate_examples=False,  # Use invalid examples to test retry logic
   )
   print(contact_prompt)
   with open("generated_prompt.txt", "w") as f:

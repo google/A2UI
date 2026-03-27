@@ -1,6 +1,6 @@
 {
   "name": "Countdown Timer",
-  "description": "Example of countdown timer",
+  "description": "Example of countdown timer demonstrating date formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -121,7 +121,14 @@
             "id": "target-date",
             "component": "Text",
             "text": {
-              "path": "/targetDate"
+              "call": "formatDate",
+              "args": {
+                "value": {
+                  "path": "/targetDate"
+                },
+                "format": "MMMM d, yyyy"
+              },
+              "returnType": "string"
             },
             "variant": "body"
           }
@@ -137,7 +144,7 @@
           "days": "14",
           "hours": "08",
           "minutes": "32",
-          "targetDate": "January 15, 2025"
+          "targetDate": "2025-01-15"
         }
       }
     }

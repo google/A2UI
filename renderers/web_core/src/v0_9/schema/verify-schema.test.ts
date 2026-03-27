@@ -26,8 +26,7 @@ import {
   UpdateComponentsMessageSchema,
   UpdateDataModelMessageSchema,
   DeleteSurfaceMessageSchema,
-} from "./server-to-client.js";
-import { LogicExpressionSchema } from "./common-types.js";
+} from './server-to-client.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,7 +34,7 @@ const __dirname = dirname(__filename);
 // `__dirname` will be `dist/src/v0_9/schema` when run via `node --test dist/**/*.test.js`
 const SPEC_DIR_V0_9 = resolve(
   __dirname,
-  "../../../../../../specification/v0_9/json",
+  '../../../../../../specification/v0_9/json',
 );
 
 // Parse both so we can do structural comparison rather than formatting
@@ -48,10 +47,10 @@ function compareDefinitions(zodDefs: any, jsonDefs: any): Record<string, any> {
   ]);
 
   for (const key of keys) {
-    if (key === "A2uiMessage") continue; // Zod wrapper artifact
+    if (key === 'A2uiMessage') continue; // Zod wrapper artifact
 
-    if (!zodDefs[key]) diff[key] = { error: "Missing in Zod schema" };
-    else if (!jsonDefs[key]) diff[key] = { error: "Missing in JSON schema" };
+    if (!zodDefs[key]) diff[key] = {error: 'Missing in Zod schema'};
+    else if (!jsonDefs[key]) diff[key] = {error: 'Missing in JSON schema'};
     else {
       const defDiff = getObjectDiff(zodDefs[key], jsonDefs[key]);
       if (Object.keys(defDiff).length > 0) {
@@ -62,11 +61,11 @@ function compareDefinitions(zodDefs: any, jsonDefs: any): Record<string, any> {
   return diff;
 }
 
-function getObjectDiff(obj1: any, obj2: any, path = ""): Record<string, any> {
+function getObjectDiff(obj1: any, obj2: any, path = ''): Record<string, any> {
   const diff: Record<string, any> = {};
 
   // Ignore descriptions in strict structural comparison
-  const ignoreKeys = new Set(["description", "title", "$id", "$schema"]);
+  const ignoreKeys = new Set(['description', 'title', '$id', '$schema']);
 
   const keys = new Set([
     ...Object.keys(obj1 || {}),
@@ -77,14 +76,14 @@ function getObjectDiff(obj1: any, obj2: any, path = ""): Record<string, any> {
     if (ignoreKeys.has(key)) continue;
 
     const currentPath = path ? `${path}.${key}` : key;
-    let val1 = obj1 ? obj1[key] : undefined;
-    let val2 = obj2 ? obj2[key] : undefined;
+    const val1 = obj1 ? obj1[key] : undefined;
+    const val2 = obj2 ? obj2[key] : undefined;
 
     // Zod emits `type: "string"` for consts, whereas JSON Schema infers it.
     if (
-      path.endsWith("version") &&
-      key === "type" &&
-      val1 === "string" &&
+      path.endsWith('version') &&
+      key === 'type' &&
+      val1 === 'string' &&
       val2 === undefined
     ) {
       continue;
@@ -93,7 +92,7 @@ function getObjectDiff(obj1: any, obj2: any, path = ""): Record<string, any> {
     // Zod doesn't emit additionalProperties: true by default, but it's the default
     if (
       currentPath.endsWith(
-        "updateDataModel.properties.value.additionalProperties",
+        'updateDataModel.properties.value.additionalProperties',
       ) &&
       val1 === undefined &&
       val2 === true
@@ -113,23 +112,23 @@ function getObjectDiff(obj1: any, obj2: any, path = ""): Record<string, any> {
 
     // Zod resolves the AnyComponentSchema instead of preserving the $ref because we imported it.
     // The JSON spec uses a `$ref` to `catalog.json`
-    if (currentPath.includes("components.items")) {
+    if (currentPath.includes('components.items')) {
       continue;
     }
 
     // Zod defines theme as any (no validation), while JSON spec references catalog.json theme schema
     if (
-      currentPath.includes("theme.$ref") &&
+      currentPath.includes('theme.$ref') &&
       val1 === undefined &&
-      val2 === "catalog.json#/$defs/theme"
+      val2 === 'catalog.json#/$defs/theme'
     ) {
       continue;
     }
 
     if (
-      typeof val1 === "object" &&
+      typeof val1 === 'object' &&
       val1 !== null &&
-      typeof val2 === "object" &&
+      typeof val2 === 'object' &&
       val2 !== null
     ) {
       if (Array.isArray(val1) && Array.isArray(val2)) {
@@ -137,7 +136,7 @@ function getObjectDiff(obj1: any, obj2: any, path = ""): Record<string, any> {
         const sortedVal1 = [...val1].sort();
         const sortedVal2 = [...val2].sort();
         if (JSON.stringify(sortedVal1) !== JSON.stringify(sortedVal2)) {
-          diff[currentPath] = { zod: val1, json: val2 };
+          diff[currentPath] = {zod: val1, json: val2};
         }
       } else {
         const nestedDiff = getObjectDiff(val1, val2, currentPath);
@@ -146,7 +145,7 @@ function getObjectDiff(obj1: any, obj2: any, path = ""): Record<string, any> {
         }
       }
     } else if (val1 !== val2) {
-      diff[currentPath] = { zod: val1, json: val2 };
+      diff[currentPath] = {zod: val1, json: val2};
     }
   }
 
@@ -190,12 +189,12 @@ function verifySchema(
   console.log(`Zod schema structurally matches the ${version} JSON spec!`);
 }
 
-describe("A2UI Schema Verification v0.9", () => {
-  it("verifies v0.9 schema", () => {
+describe('A2UI Schema Verification v0.9', () => {
+  it('verifies v0.9 schema', () => {
     verifySchema(
-      "v0.9",
+      'v0.9',
       A2uiMessageSchema,
-      join(SPEC_DIR_V0_9, "server_to_client.json"),
+      join(SPEC_DIR_V0_9, 'server_to_client.json'),
       {
         CreateSurfaceMessage: CreateSurfaceMessageSchema,
         UpdateComponentsMessage: UpdateComponentsMessageSchema,
@@ -205,19 +204,10 @@ describe("A2UI Schema Verification v0.9", () => {
     );
   });
 
-  it("validates LogicExpression boolean literals", () => {
-    assert.deepStrictEqual(LogicExpressionSchema.parse({ true: true }), {
-      true: true,
-    });
-    assert.deepStrictEqual(LogicExpressionSchema.parse({ false: false }), {
-      false: false,
-    });
-  });
-
-  it("validates A2uiMessage wrapper", () => {
+  it('validates A2uiMessage wrapper', () => {
     const msg = {
-      version: "v0.9",
-      deleteSurface: { surfaceId: "surface-1" },
+      version: 'v0.9',
+      deleteSurface: {surfaceId: 'surface-1'},
     };
     assert.deepStrictEqual(A2uiMessageSchema.parse(msg), msg);
   });

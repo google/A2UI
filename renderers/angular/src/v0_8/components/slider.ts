@@ -22,7 +22,9 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   selector: 'a2ui-slider',
   template: `
     <div [class]="theme.components.Slider.container" [style]="theme.additionalStyles?.Slider">
-      <label [class]="theme.components.Slider.label" [id]="labelId">{{ resolvedLabel() }}</label>
+      @if (resolvedLabel()) {
+        <label [class]="theme.components.Slider.label" [id]="labelId">{{ resolvedLabel() }}</label>
+      }
       <input
         type="range"
         [class]="theme.components.Slider.element"
@@ -43,7 +45,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Slider extends DynamicComponent<Types.SliderNode> {
-  readonly label = input.required<Types.StringValue | null>();
+  readonly label = input<Types.StringValue | null>(null);
   readonly value = input.required<Types.NumberValue | null>();
   readonly minValue = input<number>(0);
   readonly maxValue = input<number>(100);
@@ -56,7 +58,19 @@ export class Slider extends DynamicComponent<Types.SliderNode> {
 
   onInput(event: Event) {
     const value = Number((event.target as HTMLInputElement).value);
-    this.handleAction('change', { value });
+    const valueNode = this.value();
+    if (valueNode && typeof valueNode === 'object' && 'path' in valueNode && valueNode.path) {
+      // Update the local data model directly to ensure immediate UI feedback and avoid unnecessary network requests.
+      this.processor.processMessages([{
+        dataModelUpdate: {
+          surfaceId: this.surfaceId()!,
+          path: this.processor.resolvePath(valueNode.path as string, this.component().dataContextPath),
+          contents: [{ key: '.', valueNumber: value }],
+        },
+      }]);
+    } else {
+      this.handleAction('change', { value });
+    }
   }
 
   private handleAction(name: string, context: Record<string, unknown>) {

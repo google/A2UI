@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { z } from "zod";
+import {z} from 'zod';
 import {
   DynamicStringSchema,
   DynamicNumberSchema,
@@ -25,12 +25,17 @@ import {
   ActionSchema,
   AccessibilityAttributesSchema,
   CheckableSchema,
-} from "../../schema/common-types.js";
-import { ComponentApi } from "../../catalog/types.js";
+} from '../../schema/common-types.js';
+import {ComponentApi} from '../../catalog/types.js';
 
 const CommonProps = {
   accessibility: AccessibilityAttributesSchema.optional(),
-  weight: z.number().describe("The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column.").optional(),
+  weight: z
+    .number()
+    .describe(
+      "The relative weight of this component within a Row or Column. This is similar to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column.",
+    )
+    .optional(),
 };
 
 export const TextApi: ComponentApi = {
@@ -60,17 +65,65 @@ export const ImageApi: ComponentApi = {
 };
 
 const ICON_NAMES = [
-  "accountCircle", "add", "arrowBack", "arrowForward", "attachFile",
-  "calendarToday", "call", "camera", "check", "close", "delete",
-  "download", "edit", "event", "error", "fastForward", "favorite",
-  "favoriteOff", "folder", "help", "home", "info", "locationOn",
-  "lock", "lockOpen", "mail", "menu", "moreVert", "moreHoriz",
-  "notificationsOff", "notifications", "pause", "payment", "person",
-  "phone", "photo", "play", "print", "refresh", "rewind", "search",
-  "send", "settings", "share", "shoppingCart", "skipNext",
-  "skipPrevious", "star", "starHalf", "starOff", "stop", "upload",
-  "visibility", "visibilityOff", "volumeDown", "volumeMute",
-  "volumeOff", "volumeUp", "warning"
+  'accountCircle',
+  'add',
+  'arrowBack',
+  'arrowForward',
+  'attachFile',
+  'calendarToday',
+  'call',
+  'camera',
+  'check',
+  'close',
+  'delete',
+  'download',
+  'edit',
+  'event',
+  'error',
+  'fastForward',
+  'favorite',
+  'favoriteOff',
+  'folder',
+  'help',
+  'home',
+  'info',
+  'locationOn',
+  'lock',
+  'lockOpen',
+  'mail',
+  'menu',
+  'moreVert',
+  'moreHoriz',
+  'notificationsOff',
+  'notifications',
+  'pause',
+  'payment',
+  'person',
+  'phone',
+  'photo',
+  'play',
+  'print',
+  'refresh',
+  'rewind',
+  'search',
+  'send',
+  'settings',
+  'share',
+  'shoppingCart',
+  'skipNext',
+  'skipPrevious',
+  'star',
+  'starHalf',
+  'starOff',
+  'stop',
+  'upload',
+  'visibility',
+  'visibilityOff',
+  'volumeDown',
+  'volumeMute',
+  'volumeOff',
+  'volumeUp',
+  'warning',
 ] as const;
 
 export const IconApi: ComponentApi = {

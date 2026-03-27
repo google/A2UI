@@ -84,38 +84,42 @@ export const DynamicValueSchema = z.union([
 export type DataBinding = z.infer<typeof DataBindingSchema>;
 /** A function call representation. */
 export type FunctionCall = z.infer<typeof FunctionCallSchema>;
-/** A logical expression representation. */
-export type LogicExpression = z.infer<typeof LogicExpressionSchema>;
 /** A dynamic string that can be a literal, a data binding, or a function call. */
 export type DynamicString = z.infer<typeof DynamicStringSchema>;
 /** A dynamic number that can be a literal, a data binding, or a function call. */
 export type DynamicNumber = z.infer<typeof DynamicNumberSchema>;
-/** A dynamic boolean that can be a literal, a data binding, or a function call. */
+/** A dynamic boolean that can be a literal, a path, or a function call returning a boolean. */
 export type DynamicBoolean = z.infer<typeof DynamicBooleanSchema>;
 /** A dynamic list of strings that can be a literal array, a data binding, or a function call. */
 export type DynamicStringList = z.infer<typeof DynamicStringListSchema>;
-/** A dynamic value that can be a literal, a data binding, or a function call. */
+/** A dynamic value that can be a literal, a path, or a function call returning any type. */
 export type DynamicValue = z.infer<typeof DynamicValueSchema>;
 
 export const ComponentIdSchema = z
   .string()
-  .describe("The unique identifier for a component.");
+  .describe(
+    'REF:common_types.json#/$defs/ComponentId|The unique identifier for a component.',
+  );
 /** The unique identifier for a component. */
 export type ComponentId = z.infer<typeof ComponentIdSchema>;
 
-export const ChildListSchema = z.union([
-  z.array(ComponentIdSchema).describe("A static list of child component IDs."),
-  z
-    .object({
-      componentId: ComponentIdSchema,
-      path: z
-        .string()
-        .describe(
-          "The path to the list of component property objects in the data model.",
-        ),
-    })
-    .describe("A template for generating a dynamic list of children."),
-]);
+export const ChildListSchema = z
+  .union([
+    z
+      .array(ComponentIdSchema)
+      .describe('A static list of child component IDs.'),
+    z
+      .object({
+        componentId: ComponentIdSchema,
+        path: z
+          .string()
+          .describe(
+            'The path to the list of component property objects in the data model.',
+          ),
+      })
+      .describe('A template for generating a dynamic list of children.'),
+  ])
+  .describe('REF:common_types.json#/$defs/ChildList');
 /** A static list of child component IDs or a dynamic list template. */
 export type ChildList = z.infer<typeof ChildListSchema>;
 
@@ -141,32 +145,38 @@ export const CheckRuleSchema = LogicExpressionSchema.and(
   z.object({
     message: z
       .string()
-      .describe("The error message to display if the check fails."),
-  }),
-);
+      .describe('The error message to display if the check fails.'),
+  })
+  .describe(
+    'REF:common_types.json#/$defs/CheckRule|A check rule consisting of a condition and an error message.',
+  );
 /** A check rule consisting of a condition and an error message. */
 export type CheckRule = z.infer<typeof CheckRuleSchema>;
 
-export const CheckableSchema = z.object({
-  checks: z
-    .array(CheckRuleSchema)
-    .optional()
-    .describe("A list of checks to perform."),
-});
+export const CheckableSchema = z
+  .object({
+    checks: z
+      .array(CheckRuleSchema)
+      .optional()
+      .describe('A list of checks to perform.'),
+  })
+  .describe(
+    'REF:common_types.json#/$defs/Checkable|Properties for components that support client-side checks.',
+  );
 /** An object that contains checks. */
 export type Checkable = z.infer<typeof CheckableSchema>;
 
 export const AccessibilityAttributesSchema = z
   .object({
     label: DynamicStringSchema.optional().describe(
-      "REF:common_types.json#/$defs/DynamicString|A short string used by assistive technologies to convey the purpose of an element.",
+      'REF:common_types.json#/$defs/DynamicString|A short string used by assistive technologies to convey the purpose of an element.',
     ),
     description: DynamicStringSchema.optional().describe(
-      "REF:common_types.json#/$defs/DynamicString|Additional information provided by assistive technologies about an element.",
+      'REF:common_types.json#/$defs/DynamicString|Additional information provided by assistive technologies about an element.',
     ),
   })
   .describe(
-    "REF:common_types.json#/$defs/AccessibilityAttributes|Attributes to enhance accessibility.",
+    'REF:common_types.json#/$defs/AccessibilityAttributes|Attributes to enhance accessibility.',
   );
 
 /** Accessibility attributes like label and description. */
@@ -195,7 +205,6 @@ export const CommonSchemas = {
   DynamicBoolean: DynamicBooleanSchema,
   DynamicStringList: DynamicStringListSchema,
   FunctionCall: FunctionCallSchema,
-  LogicExpression: LogicExpressionSchema,
   CheckRule: CheckRuleSchema,
   Checkable: CheckableSchema,
   Action: ActionSchema,

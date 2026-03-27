@@ -22,12 +22,6 @@ import prettierConfig from 'eslint-config-prettier';
 import gts from 'gts';
 
 export default tseslint.config(
-  // Base JS recommended rules
-  js.configs.recommended,
-
-  // TypeScript recommended rules
-  ...tseslint.configs.recommended,
-
   // Google TypeScript style guide plugin.
   // See: https://github.com/google/gts
   // And: https://google.github.io/styleguide/tsguide.html
@@ -82,8 +76,6 @@ export default tseslint.config(
 
       // General rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'prefer-const': 'error',
-      'no-var': 'error',
       'prefer-arrow-callback': 'off',
     },
   },

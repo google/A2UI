@@ -285,6 +285,7 @@ describe('Slider Component', () => {
     it('should have correct DOM structure: label, input, span in order', () => {
       const messages = createSimpleMessages('sl-1', 'Slider', {
         value: { literalNumber: 50 },
+        label: { literalString: 'Volume' },
         minValue: 0,
         maxValue: 100,
       });
@@ -303,6 +304,26 @@ describe('Slider Component', () => {
       expect(children[0]?.tagName).toBe('LABEL');
       expect(children[1]?.tagName).toBe('INPUT');
       expect(children[2]?.tagName).toBe('SPAN');
+    });
+
+    it('should omit label from DOM structure when not provided', () => {
+      const messages = createSimpleMessages('sl-1', 'Slider', {
+        value: { literalNumber: 50 },
+      });
+
+      const { container } = render(
+        <TestWrapper>
+          <TestRenderer messages={messages} />
+        </TestWrapper>
+      );
+
+      const section = container.querySelector('section');
+      expect(section).toBeInTheDocument();
+
+      const children = Array.from(section?.children ?? []);
+      expect(children.length).toBe(2);
+      expect(children[0]?.tagName).toBe('INPUT');
+      expect(children[1]?.tagName).toBe('SPAN');
     });
 
     it('should have input inside section container', () => {

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { z } from "zod";
-import { AnyComponentSchema } from "./common-types.js";
+import {z} from 'zod';
+import {AnyComponentSchema} from './common-types.js';
 
 export const CreateSurfaceMessageSchema = z.strictObject({
   version: z.literal("v0.9"),
@@ -75,8 +75,10 @@ export const DeleteSurfaceMessageSchema = z.strictObject({
   }),
 });
 
-export declare interface CreateSurfaceMessage extends z.infer<typeof CreateSurfaceMessageSchema> {
-  version: "v0.9";
+export declare interface CreateSurfaceMessage extends z.infer<
+  typeof CreateSurfaceMessageSchema
+> {
+  version: 'v0.9';
   createSurface: {
     surfaceId: string;
     catalogId: string;
@@ -84,25 +86,29 @@ export declare interface CreateSurfaceMessage extends z.infer<typeof CreateSurfa
     sendDataModel?: boolean;
   };
 }
-export declare interface UpdateComponentsMessage
-  extends z.infer<typeof UpdateComponentsMessageSchema> {
-  version: "v0.9";
+export declare interface UpdateComponentsMessage extends z.infer<
+  typeof UpdateComponentsMessageSchema
+> {
+  version: 'v0.9';
   updateComponents: {
     surfaceId: string;
     components: any[];
   };
 }
-export declare interface UpdateDataModelMessage
-  extends z.infer<typeof UpdateDataModelMessageSchema> {
-  version: "v0.9";
+export declare interface UpdateDataModelMessage extends z.infer<
+  typeof UpdateDataModelMessageSchema
+> {
+  version: 'v0.9';
   updateDataModel: {
     surfaceId: string;
     path?: string;
     value?: any;
   };
 }
-export declare interface DeleteSurfaceMessage extends z.infer<typeof DeleteSurfaceMessageSchema> {
-  version: "v0.9";
+export declare interface DeleteSurfaceMessage extends z.infer<
+  typeof DeleteSurfaceMessageSchema
+> {
+  version: 'v0.9';
   deleteSurface: {
     surfaceId: string;
   };

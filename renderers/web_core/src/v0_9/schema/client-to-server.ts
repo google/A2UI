@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { z } from "zod";
+import {z} from 'zod';
 
 /**
  * Reports a user-initiated action from a component.
@@ -60,12 +60,16 @@ export const A2uiClientErrorSchema = z.union([
  * A message sent from the A2UI client to the server.
  * Matches specification/v0_9/json/client_to_server.json.
  */
-export const A2uiClientMessageSchema = z.object({
-  version: z.literal("v0.9"),
-}).and(z.union([
-  z.object({ action: A2uiClientActionSchema }),
-  z.object({ error: A2uiClientErrorSchema }),
-]));
+export const A2uiClientMessageSchema = z
+  .object({
+    version: z.literal('v0.9'),
+  })
+  .and(
+    z.union([
+      z.object({action: A2uiClientActionSchema}),
+      z.object({error: A2uiClientErrorSchema}),
+    ]),
+  );
 
 /**
  * Schema for the client data model synchronization.

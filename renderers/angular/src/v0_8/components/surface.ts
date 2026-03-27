@@ -23,10 +23,8 @@ import { Types } from '../types';
   selector: 'a2ui-surface',
   imports: [Renderer],
   template: `
-    @if (surface(); as s) {
-      @if (s.componentTree; as root) {
-        <ng-container a2ui-renderer [surfaceId]="surfaceId()" [component]="root" />
-      }
+    @if (rootComponent()) {
+      <ng-container a2ui-renderer [surfaceId]="surfaceId()" [component]="rootComponent()!" />
     }
   `,
   styles: `
@@ -44,6 +42,12 @@ export class Surface {
   readonly surfaceInput = input<Types.Surface | null>(null, { alias: 'surface' });
 
   protected readonly surface = computed(() => {
+    this.processor.version(); // Track dependency on in-place mutations
     return this.surfaceInput() ?? this.processor.getSurfaces().get(this.surfaceId()) ?? null;
+  });
+
+  protected readonly rootComponent = computed(() => {
+    this.processor.version(); // Track dependency on in-place mutations
+    return this.surface()?.componentTree ?? null;
   });
 }
