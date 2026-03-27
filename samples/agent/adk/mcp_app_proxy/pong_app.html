@@ -198,7 +198,13 @@
         .blob-2 { bottom: -100px; right: -100px; background: var(--secondary); }
     </style>
     <script>
-        // MCP Communication
+        /**
+         * MCP Communication Layer
+         * Handles bidirectional JSON-RPC communication using the Model Context Protocol (MCP)
+         * over the Window.postMessage API. This allows the embedded app to send requests 
+         * (like tool calls) to the parent proxy agent and handle framework-level initialization 
+         * and state updates.
+         */
         let nextId = 1;
 
         function sendRequest(method, params) {
@@ -277,6 +283,12 @@
     </div>
 
     <script>
+        /**
+         * Game Engine & Rendering Logic
+         * Manages game state (ball, paddles), user inputs, physics (collision, movement velocity), 
+         * and the canvas rendering loop. This script encapsulates the core Pong mechanics and interfaces
+         * with the MCP layer to synchronize critical game state like scores with the backend agent.
+         */
         const canvas = document.getElementById('pong');
         const context = canvas.getContext('2d');
         const container = document.getElementById('container');
@@ -477,16 +489,16 @@
             sendRequest('tools/call', {
                 name: 'score_update',
                 arguments: { player: player, silent: true }
-            }).catch(e => console.error("Failed to send score update:", e)).finally(() => window.unpauseGame());
+            }).catch(e => console.error("Failed to send score update:", e)).finally(() => unpauseGame());
         }
 
-        window.unpauseGame = function() {
+        function unpauseGame() {
             isPaused = false;
             hideOverlay();
             if (isRunning) {
                 document.getElementById('pause-btn').textContent = "Pause";
             }
-        };
+        }
 
 
 
