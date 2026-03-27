@@ -31,6 +31,9 @@ export class Image extends Root {
   accessor url: Primitives.StringValue | null = null;
 
   @property()
+  accessor altText: Primitives.StringValue | null = null;
+
+  @property()
   accessor usageHint: Types.ResolvedImage["usageHint"] | null = null;
 
   @property()
@@ -65,7 +68,28 @@ export class Image extends Root {
     }
 
     const render = (url: string) => {
-      return html`<img src=${url} />`;
+      let resolvedAlt = "";
+      if (this.altText) {
+        if (typeof this.altText === "object") {
+          if ("literalString" in this.altText) {
+            resolvedAlt = this.altText.literalString ?? "";
+          } else if ("literal" in this.altText) {
+            resolvedAlt = this.altText.literal ?? "";
+          } else if ("path" in this.altText && this.altText.path) {
+            if (this.processor && this.component) {
+              const data = this.processor.getData(
+                this.component,
+                this.altText.path,
+                this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
+              );
+              if (typeof data === "string") {
+                resolvedAlt = data;
+              }
+            }
+          }
+        }
+      }
+      return html`<img src=${url} alt=${resolvedAlt} />`;
     };
 
     if (this.url && typeof this.url === "object") {

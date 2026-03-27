@@ -41,13 +41,13 @@ const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
 
 // 3. Update Dependency
 if (pkg.peerDependencies && pkg.peerDependencies['@a2ui/web_core']) {
-  pkg.peerDependencies['@a2ui/web_core'] = '^' + coreVersion;
+  pkg.peerDependencies['@a2ui/web_core'] = coreVersion;
 } else {
-  console.warn('Warning: @a2ui/web_core not found in peerDependencies.');
+  throw new Error('Error: @a2ui/web_core not found in peerDependencies. This is a mandatory dependency for publishing.');
 }
 if (pkg.devDependencies && pkg.devDependencies['@a2ui/web_core']) {
   // We can just remove devDependencies for the published package, or update it
-  pkg.devDependencies['@a2ui/web_core'] = '^' + coreVersion;
+  pkg.devDependencies['@a2ui/web_core'] = coreVersion;
 }
 
 // 4. Adjust Paths for Dist

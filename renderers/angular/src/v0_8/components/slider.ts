@@ -22,7 +22,9 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   selector: 'a2ui-slider',
   template: `
     <div [class]="theme.components.Slider.container" [style]="theme.additionalStyles?.Slider">
-      <label [class]="theme.components.Slider.label" [id]="labelId">{{ resolvedLabel() }}</label>
+      @if (resolvedLabel()) {
+        <label [class]="theme.components.Slider.label" [id]="labelId">{{ resolvedLabel() }}</label>
+      }
       <input
         type="range"
         [class]="theme.components.Slider.element"
@@ -43,7 +45,7 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Slider extends DynamicComponent<Types.SliderNode> {
-  readonly label = input.required<Types.StringValue | null>();
+  readonly label = input<Types.StringValue | null>(null);
   readonly value = input.required<Types.NumberValue | null>();
   readonly minValue = input<number>(0);
   readonly maxValue = input<number>(100);

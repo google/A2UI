@@ -2,16 +2,22 @@
   "name": "@a2ui/markdown-it",
   "version": "0.0.2",
   "description": "A Markdown renderer using markdown-it and dompurify.",
-  "keywords": [],
-  "homepage": "https://github.com/google/A2UI/tree/main/web#readme",
+  "repository": {
+    "directory": "renderers/markdown/markdown-it",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
   "bugs": {
     "url": "https://github.com/google/A2UI/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/google/A2UI.git",
-    "directory": "renderers/markdown/markdown-it"
-  },
+  "keywords": [
+    "a2ui",
+    "markdown",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
   "license": "Apache-2.0",
   "author": "Google",
   "type": "module",

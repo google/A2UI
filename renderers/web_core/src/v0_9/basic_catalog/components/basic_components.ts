@@ -61,6 +61,9 @@ export const ImageApi = {
     .object({
       ...CommonProps,
       url: DynamicStringSchema.describe('The URL of the image to display.'),
+      description: DynamicStringSchema.describe(
+        'The accessibility description of the image.',
+      ).optional(),
       fit: z
         .enum(['contain', 'cover', 'fill', 'none', 'scaleDown'])
         .default('fill')

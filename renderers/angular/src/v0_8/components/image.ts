@@ -40,10 +40,11 @@ import { DynamicComponent } from '../rendering/dynamic-component';
   `,
   template: `
     @let resolvedUrl = this.resolvedUrl();
+    @let resolvedAltText = this.resolvedAltText();
 
     @if (resolvedUrl) {
       <section [class]="classes()" [style]="theme.additionalStyles?.Image">
-        <img [src]="resolvedUrl" alt="" />
+        <img [src]="resolvedUrl" [alt]="resolvedAltText" />
       </section>
     }
   `,
@@ -52,8 +53,10 @@ export class Image extends DynamicComponent<Types.ImageNode> {
   readonly url = input<Primitives.StringValue | null>(null);
   readonly usageHint = input<Types.ResolvedImage['usageHint'] | null>(null);
   readonly fit = input<Types.ResolvedImage['fit'] | null>(null);
+  readonly altText = input<Primitives.StringValue | null>(null);
 
   protected readonly resolvedUrl = computed(() => this.resolvePrimitive(this.url()));
+  protected readonly resolvedAltText = computed(() => this.resolvePrimitive(this.altText()) || '');
 
   protected classes = computed(() => {
     const usageHint = this.usageHint();

@@ -1,7 +1,24 @@
 {
   "name": "@a2ui/web_core",
-  "version": "0.8.8",
+  "version": "0.9.0",
   "description": "A2UI Core Library",
+  "homepage": "https://a2ui.org/",
+  "repository": {
+    "directory": "renderers/web_core",
+    "type": "git",
+    "url": "git+https://github.com/google/A2UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/google/A2UI/issues"
+  },
+  "keywords": [
+    "a2ui",
+    "web",
+    "ai",
+    "agent",
+    "ui",
+    "renderer"
+  ],
   "main": "./dist/src/v0_8/index.js",
   "types": "./dist/src/v0_8/index.d.ts",
   "exports": {
@@ -41,6 +58,8 @@
     "src"
   ],
   "scripts": {
+    "prepublishOnly": "node -e \"if(!process.cwd().endsWith('dist')) { console.error('Error: This package must be published from the dist/ directory. Run `npm run build` then `npm publish dist/`'); process.exit(1); }\"",
+    "publish:package": "npm run build && node ../scripts/prepare-publish.mjs && npm publish dist/ --access public",
     "prepack": "npm run build",
     "build": "wireit",
     "build:tsc": "wireit",
@@ -96,6 +115,7 @@
   "devDependencies": {
     "@types/node": "^24.11.0",
     "c8": "^11.0.0",
+    "google-artifactregistry-auth": "^3.5.0",
     "gts": "^7.0.0",
     "typescript": "^5.8.3",
     "wireit": "^0.15.0-pre.2"
