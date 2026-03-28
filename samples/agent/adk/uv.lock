@@ -91,7 +91,7 @@ requires-dist = [
 [[package]]
 name = "a2ui-contact-multiple-surfaces"
 version = "0.1.0"
-source = { editable = "contact_multiple_surfaces" }
+source = { editable = "custom-components-example" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "a2ui-agent" },
