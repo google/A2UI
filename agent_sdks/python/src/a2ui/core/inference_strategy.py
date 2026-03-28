@@ -24,7 +24,7 @@ class InferenceStrategy(ABC):
       role_description: str,
       workflow_description: str = "",
       ui_description: str = "",
-      supported_catalog_ids: List[str] = [],
+      client_ui_capabilities: Optional[dict[str, Any]] = None,
       allowed_components: List[str] = [],
       include_schema: bool = False,
       include_examples: bool = False,
@@ -37,7 +37,7 @@ class InferenceStrategy(ABC):
       role_description: Description of the agent's role.
       workflow_description: Description of the workflow.
       ui_description: Description of the UI.
-      supported_catalog_ids: List of supported catalog IDs.
+      client_ui_capabilities: Capabilities reported by the client for targeted schema pruning.
       allowed_components: List of allowed components.
       include_schema: Whether to include the schema.
       include_examples: Whether to include examples.
