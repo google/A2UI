@@ -16,7 +16,7 @@
 
 import {createReactComponent} from '../../../adapter';
 import {z} from 'zod';
-import {CommonSchemas} from '@a2ui/web_core/v0_9';
+import {CommonSchemas, mapJustify, mapAlign} from '@a2ui/web_core/v0_9';
 import {ChildList} from './ChildList';
 
 export const ColumnSchema = z.object({
@@ -26,42 +26,6 @@ export const ColumnSchema = z.object({
     .optional(),
   align: z.enum(['center', 'end', 'start', 'stretch']).optional(),
 });
-
-const mapJustify = (j?: string) => {
-  switch (j) {
-    case 'center':
-      return 'center';
-    case 'end':
-      return 'flex-end';
-    case 'spaceAround':
-      return 'space-around';
-    case 'spaceBetween':
-      return 'space-between';
-    case 'spaceEvenly':
-      return 'space-evenly';
-    case 'start':
-      return 'flex-start';
-    case 'stretch':
-      return 'stretch';
-    default:
-      return 'flex-start';
-  }
-};
-
-const mapAlign = (a?: string) => {
-  switch (a) {
-    case 'start':
-      return 'flex-start';
-    case 'center':
-      return 'center';
-    case 'end':
-      return 'flex-end';
-    case 'stretch':
-      return 'stretch';
-    default:
-      return 'stretch';
-  }
-};
 
 export const ColumnApiDef = {
   name: 'Column',

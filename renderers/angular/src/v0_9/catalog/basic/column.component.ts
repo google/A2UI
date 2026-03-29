@@ -17,7 +17,7 @@
 import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentHostComponent } from '../../core/component-host.component';
 import { BoundProperty } from '../../core/types';
-
+import { mapJustify, mapAlign } from '@a2ui/web_core/v0_9';
 import { getNormalizedPath } from '../../core/utils';
 
 /**
@@ -76,8 +76,8 @@ export class ColumnComponent {
   componentId = input<string>();
   dataContextPath = input<string>('/');
 
-  protected justify = computed(() => this.props()['justify']?.value());
-  protected align = computed(() => this.props()['align']?.value());
+  protected justify = computed(() => mapJustify(this.props()['justify']?.value()));
+  protected align = computed(() => mapAlign(this.props()['align']?.value()));
 
   protected children = computed(() => {
     const raw = this.props()['children']?.value() || [];

@@ -19,43 +19,8 @@ import { customElement } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { RowApi } from "@a2ui/web_core/v0_9/basic_catalog";
+import { mapJustify, mapAlign } from "@a2ui/web_core/v0_9";
 import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
-
-function mapJustify(justify: string | undefined): string {
-  switch (justify) {
-    case "start":
-      return "flex-start";
-    case "center":
-      return "center";
-    case "end":
-      return "flex-end";
-    case "spaceBetween":
-      return "space-between";
-    case "spaceAround":
-      return "space-around";
-    case "spaceEvenly":
-      return "space-evenly";
-    case "stretch":
-      return "stretch";
-    default:
-      return "flex-start";
-  }
-}
-
-function mapAlign(align: string | undefined): string {
-  switch (align) {
-    case "start":
-      return "flex-start";
-    case "center":
-      return "center";
-    case "end":
-      return "flex-end";
-    case "stretch":
-      return "stretch";
-    default:
-      return "stretch";
-  }
-}
 
 @customElement("a2ui-row")
 export class A2uiRowElement extends A2uiLitElement<typeof RowApi> {
