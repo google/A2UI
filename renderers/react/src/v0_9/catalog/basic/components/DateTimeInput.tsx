@@ -37,7 +37,12 @@ export const DateTimeInput = createReactComponent(DateTimeInputApi, ({props}) =>
     border: STANDARD_BORDER,
     borderRadius: STANDARD_RADIUS,
     boxSizing: 'border-box',
+    color: '#333',
   };
+
+  // CSS class scoped to this instance for pseudo-element rules that
+  // cannot be expressed as React inline styles (WebKit date/time inputs).
+  const scopeClass = `a2ui-dti-${uniqueId.replace(/:/g, '')}`;
 
   return (
     <div
@@ -49,6 +54,12 @@ export const DateTimeInput = createReactComponent(DateTimeInputApi, ({props}) =>
         margin: LEAF_MARGIN,
       }}
     >
+      <style>{`
+        .${scopeClass}::-webkit-datetime-edit,
+        .${scopeClass}::-webkit-datetime-edit-fields-wrapper {
+          color: #333;
+        }
+      `}</style>
       {props.label && (
         <label htmlFor={uniqueId} style={{fontSize: '14px', fontWeight: 'bold'}}>
           {props.label}
@@ -56,6 +67,7 @@ export const DateTimeInput = createReactComponent(DateTimeInputApi, ({props}) =>
       )}
       <input
         id={uniqueId}
+        className={scopeClass}
         type={type}
         style={style}
         value={props.value || ''}

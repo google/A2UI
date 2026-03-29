@@ -41,6 +41,13 @@ import { Types } from '../types';
     :host {
       display: block;
     }
+    input {
+      color: #333;
+    }
+    input::-webkit-datetime-edit,
+    input::-webkit-datetime-edit-fields-wrapper {
+      color: #333;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
