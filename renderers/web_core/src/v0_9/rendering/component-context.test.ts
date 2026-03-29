@@ -61,4 +61,20 @@ describe('ComponentContext', () => {
     const context = new ComponentContext(mockSurface, componentId, '/foo/bar');
     assert.strictEqual(context.dataContext.path, '/foo/bar');
   });
+
+  it('exposes theme from surface', () => {
+    const theme = {primaryColor: '#FF5733'};
+    const themedSurface = new SurfaceModel('themed', {} as any, theme);
+    const comp = new ComponentModel('c1', 'Text', {});
+    themedSurface.componentsModel.addComponent(comp);
+
+    const context = new ComponentContext(themedSurface, 'c1');
+    assert.deepStrictEqual(context.theme, theme);
+    assert.strictEqual(context.theme.primaryColor, '#FF5733');
+  });
+
+  it('exposes empty theme when none provided', () => {
+    const context = new ComponentContext(mockSurface, componentId);
+    assert.deepStrictEqual(context.theme, {});
+  });
 });
