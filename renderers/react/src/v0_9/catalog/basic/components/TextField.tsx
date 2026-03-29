@@ -17,7 +17,7 @@
 import React from 'react';
 import {createReactComponent} from '../../../adapter';
 import {TextFieldApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
+import {LEAF_MARGIN, PRIMARY_COLOR, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 
 export const TextField = createReactComponent(TextFieldApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,6 +34,7 @@ export const TextField = createReactComponent(TextFieldApi, ({props}) => {
     border: STANDARD_BORDER,
     borderRadius: STANDARD_RADIUS,
     boxSizing: 'border-box',
+    outlineColor: PRIMARY_COLOR,
   };
 
   // Note: To have a unique id without passing context we can use a random or provided id,

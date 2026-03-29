@@ -28,6 +28,12 @@ export const STANDARD_BORDER = '1px solid #ccc';
 /** Standard border radius. */
 export const STANDARD_RADIUS = '8px';
 
+/** Default primary color, used as fallback when no theme is provided. */
+export const DEFAULT_PRIMARY_COLOR = '#007bff';
+
+/** CSS value referencing the theme primary color with fallback. */
+export const PRIMARY_COLOR = `var(--a2ui-primary-color, ${DEFAULT_PRIMARY_COLOR})`;
+
 export const mapJustify = (j?: string) => {
   switch (j) {
     case 'center':

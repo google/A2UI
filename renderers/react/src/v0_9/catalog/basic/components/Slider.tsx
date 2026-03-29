@@ -17,7 +17,7 @@
 import React from 'react';
 import {createReactComponent} from '../../../adapter';
 import {SliderApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {LEAF_MARGIN, PRIMARY_COLOR} from '../utils';
 
 export const Slider = createReactComponent(SliderApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,7 @@ export const Slider = createReactComponent(SliderApi, ({props}) => {
         max={props.max}
         value={props.value ?? 0}
         onChange={onChange}
-        style={{width: '100%', cursor: 'pointer'}}
+        style={{width: '100%', cursor: 'pointer', accentColor: PRIMARY_COLOR}}
       />
     </div>
   );

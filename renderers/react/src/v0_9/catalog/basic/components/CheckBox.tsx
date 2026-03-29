@@ -17,7 +17,7 @@
 import React from 'react';
 import {createReactComponent} from '../../../adapter';
 import {CheckBoxApi} from '@a2ui/web_core/v0_9/basic_catalog';
-import {LEAF_MARGIN} from '../utils';
+import {LEAF_MARGIN, PRIMARY_COLOR} from '../utils';
 
 export const CheckBox = createReactComponent(CheckBoxApi, ({props}) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +36,7 @@ export const CheckBox = createReactComponent(CheckBoxApi, ({props}) => {
           type="checkbox"
           checked={!!props.value}
           onChange={onChange}
-          style={{cursor: 'pointer', outline: hasError ? '1px solid red' : 'none'}}
+          style={{cursor: 'pointer', outline: hasError ? '1px solid red' : 'none', accentColor: PRIMARY_COLOR}}
         />
         {props.label && (
           <label
