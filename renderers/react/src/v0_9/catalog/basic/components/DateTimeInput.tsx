@@ -55,6 +55,7 @@ export const DateTimeInput = createReactComponent(DateTimeInputApi, ({props}) =>
       }}
     >
       <style>{`
+        .${scopeClass},
         .${scopeClass}::-webkit-datetime-edit,
         .${scopeClass}::-webkit-datetime-edit-fields-wrapper {
           color: #333;

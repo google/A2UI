@@ -28,10 +28,7 @@ export class A2uiDateTimeInputElement extends A2uiLitElement<
   }
 
   static styles = css`
-    input {
-      color: #333;
-    }
-
+    input,
     input::-webkit-datetime-edit,
     input::-webkit-datetime-edit-fields-wrapper {
       color: #333;

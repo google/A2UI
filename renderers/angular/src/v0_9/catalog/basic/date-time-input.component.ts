@@ -78,8 +78,8 @@ import { BoundProperty } from '../../core/types';
         border: 1px solid #ccc;
         font-family: inherit;
         flex: 1;
-        color: #333;
       }
+      .a2ui-date-time-input,
       .a2ui-date-time-input::-webkit-datetime-edit,
       .a2ui-date-time-input::-webkit-datetime-edit-fields-wrapper {
         color: #333;
