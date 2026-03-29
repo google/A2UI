@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {VideoApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
-export const Video = createReactComponent(VideoApi, ({props}) => {
+export const Video = createComponentImplementation(VideoApi, ({props}) => {
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
     width: '100%',

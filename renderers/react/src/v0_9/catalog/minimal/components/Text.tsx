@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {z} from 'zod';
 import {CommonSchemas} from '@a2ui/web_core/v0_9';
 
@@ -28,7 +28,7 @@ export const TextApiDef = {
   schema: TextSchema,
 };
 
-export const Text = createReactComponent(TextApiDef, ({props}) => {
+export const Text = createComponentImplementation(TextApiDef, ({props}) => {
   const text = props.text ?? '';
   switch (props.variant) {
     case 'h1':

@@ -15,11 +15,11 @@
  */
 
 import React from 'react';
-import {createReactComponent} from '../../../adapter';
+import {createComponentImplementation} from '../../../adapter';
 import {TextApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {getBaseLeafStyle} from '../utils';
 
-export const Text = createReactComponent(TextApi, ({props}) => {
+export const Text = createComponentImplementation(TextApi, ({props}) => {
   const text = props.text ?? '';
   const style: React.CSSProperties = {
     ...getBaseLeafStyle(),
