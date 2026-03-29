@@ -16,6 +16,7 @@ Community and third-party A2UI renderer implementations.
 | **@zhama/a2ui** | React (Web) | ✅ | ❌ | — | [npm](https://www.npmjs.com/package/@zhama/a2ui) |
 | **A2UI-react** | React (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/jem-computer/A2UI-react?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/jem-computer/A2UI-react?style=flat-square&label=updated) | [GitHub](https://github.com/jem-computer/A2UI-react) |
 | **a2ui-swiftui** | SwiftUI (iOS, iPadOS, macOS, tvOS, watchOS, visionOS) | ✅ | ✅ | ![Stars](https://img.shields.io/github/stars/BBC6BAE9/a2ui-swiftui?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/BBC6BAE9/a2ui-swiftui?style=flat-square&label=updated) | [GitHub](https://github.com/BBC6BAE9/a2ui-swiftui) |
+| **a2ui-oat** | Web (vanilla JS, no framework) | ❌ | ✅ | ![Stars](https://img.shields.io/github/stars/MisterTK/a2ui-oat?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/MisterTK/a2ui-oat?style=flat-square&label=updated) | [GitHub](https://github.com/MisterTK/a2ui-oat) · [npm](https://www.npmjs.com/package/a2ui-oat) · [Demo](https://mistertk.github.io/a2ui-oat/) |
 
 ### Notable Mentions
 
@@ -34,6 +35,8 @@ These projects are early-stage or experimental:
 **a2ui-react-native** is the only React Native renderer, enabling A2UI on iOS and Android via a single codebase.
 
 **a2ui-swiftui** is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
+
+**a2ui-oat** is the first framework-free web renderer, built on [Oat CSS](https://oat.ink/) semantic styling. It maps 37 catalog components (all 16 basic + 21 extensions) to semantic HTML with zero framework dependencies (~13KB total client footprint). It includes 22 registered client-side functions (pagination, SSE streaming, WebSocket, routing, formatting, validation), a custom catalog with theme support, and a dual-mode architecture that also supports direct HTML rendering for trusted agents. v0.9 only, with `@a2ui/web-lib` integration via `registerWithWebLib()`.
 
 ### Python / PyPI
 
