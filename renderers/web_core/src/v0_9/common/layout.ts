@@ -30,25 +30,18 @@
  * @returns The corresponding CSS `justify-content` value. Defaults to
  *   `'flex-start'` for unrecognized or undefined input.
  */
+const justifyMap: Record<string, string> = {
+  center: 'center',
+  end: 'flex-end',
+  spaceAround: 'space-around',
+  spaceBetween: 'space-between',
+  spaceEvenly: 'space-evenly',
+  start: 'flex-start',
+  stretch: 'stretch',
+};
+
 export function mapJustify(value?: string): string {
-  switch (value) {
-    case 'center':
-      return 'center';
-    case 'end':
-      return 'flex-end';
-    case 'spaceAround':
-      return 'space-around';
-    case 'spaceBetween':
-      return 'space-between';
-    case 'spaceEvenly':
-      return 'space-evenly';
-    case 'start':
-      return 'flex-start';
-    case 'stretch':
-      return 'stretch';
-    default:
-      return 'flex-start';
-  }
+  return (value && justifyMap[value]) || 'flex-start';
 }
 
 /**
@@ -59,17 +52,13 @@ export function mapJustify(value?: string): string {
  * @returns The corresponding CSS `align-items` value. Defaults to `'stretch'`
  *   for unrecognized or undefined input.
  */
+const alignMap: Record<string, string> = {
+  center: 'center',
+  end: 'flex-end',
+  start: 'flex-start',
+  stretch: 'stretch',
+};
+
 export function mapAlign(value?: string): string {
-  switch (value) {
-    case 'start':
-      return 'flex-start';
-    case 'center':
-      return 'center';
-    case 'end':
-      return 'flex-end';
-    case 'stretch':
-      return 'stretch';
-    default:
-      return 'stretch';
-  }
+  return (value && alignMap[value]) || 'stretch';
 }
