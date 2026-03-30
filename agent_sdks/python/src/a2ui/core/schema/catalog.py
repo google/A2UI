@@ -20,7 +20,12 @@ from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from .catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
-from .constants import CATALOG_COMPONENTS_KEY, CATALOG_ID_KEY
+from .constants import (
+    A2UI_SCHEMA_BLOCK_START,
+    A2UI_SCHEMA_BLOCK_END,
+    CATALOG_COMPONENTS_KEY,
+    CATALOG_ID_KEY,
+)
 
 
 @dataclass
@@ -132,7 +137,7 @@ class A2uiCatalog:
   def render_as_llm_instructions(self) -> str:
     """Renders the catalog and schema as LLM instructions."""
     all_schemas = []
-    all_schemas.append("---BEGIN A2UI JSON SCHEMA---")
+    all_schemas.append(A2UI_SCHEMA_BLOCK_START)
 
     server_client_str = (
         json.dumps(self.s2c_schema, indent=2) if self.s2c_schema else "{}"
@@ -146,7 +151,7 @@ class A2uiCatalog:
     catalog_str = json.dumps(self.catalog_schema, indent=2)
     all_schemas.append(f"### Catalog Schema:\n{catalog_str}")
 
-    all_schemas.append("---END A2UI JSON SCHEMA---")
+    all_schemas.append(A2UI_SCHEMA_BLOCK_END)
 
     return "\n\n".join(all_schemas)
 
@@ -166,7 +171,7 @@ class A2uiCatalog:
           content = f.read()
 
         if validate:
-          self._validate_example(full_path, basename, content)
+          self._validate_example(full_path, content)
 
         merged_examples.append(
             f"---BEGIN {basename}---\n{content}\n---END {basename}---"
@@ -176,7 +181,7 @@ class A2uiCatalog:
       return ""
     return "\n\n".join(merged_examples)
 
-  def _validate_example(self, full_path: str, basename: str, content: str) -> None:
+  def _validate_example(self, full_path: str, content: str) -> None:
     try:
       json_data = json.loads(content)
       self.validator.validate(json_data)

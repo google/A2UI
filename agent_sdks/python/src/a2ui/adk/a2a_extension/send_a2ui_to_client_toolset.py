@@ -110,6 +110,7 @@ from a2ui.a2a import (
 )
 from a2ui.core.parser.parser import has_a2ui_parts
 from a2ui.core.parser.payload_fixer import parse_and_fix
+from a2ui.core.schema.constants import A2UI_SCHEMA_BLOCK_START, A2UI_SCHEMA_BLOCK_END
 from a2ui.core.schema.catalog import A2uiCatalog
 from google.adk.a2a.converters import part_converter
 from google.adk.agents.readonly_context import ReadonlyContext
@@ -225,7 +226,7 @@ class SendA2uiToClientToolset(base_toolset.BaseToolset):
               " render multiple UI surfaces.Args:   "
               f" {self.A2UI_JSON_ARG_NAME}: Valid A2UI JSON Schema to send to"
               " the client. The A2UI JSON Schema definition is between"
-              " ---BEGIN A2UI JSON SCHEMA--- and ---END A2UI JSON SCHEMA--- in"
+              f" {A2UI_SCHEMA_BLOCK_START} and {A2UI_SCHEMA_BLOCK_END} in"
               " the system instructions."
           ),
       )

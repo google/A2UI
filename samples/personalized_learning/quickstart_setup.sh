@@ -92,8 +92,8 @@ if [ "$SKIP_PIP" = false ]; then
         --index-url https://pypi.org/simple/ \
         --trusted-host pypi.org \
         --trusted-host files.pythonhosted.org \
-        "google-adk>=0.3.0" \
-        "google-genai>=1.0.0" \
+        "google-adk>=1.28.0" \
+        "google-genai>=1.27.0" \
         "google-cloud-storage>=2.10.0" \
         "python-dotenv>=1.0.0" \
         "vertexai" 2>/dev/null
