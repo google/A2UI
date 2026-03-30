@@ -26,7 +26,7 @@ import {
 } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { theme as uiTheme } from "./theme/default-theme.js";
-import { A2UIClient } from "./client.js";
+import { A2UIClient, type A2UIClientResponse } from "./client.js";
 import {
   SnackbarAction,
   SnackbarMessage,
@@ -407,12 +407,11 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
 
   async #sendMessage(
     message: v0_8.Types.A2UIClientEventMessage
-  ): Promise<v0_8.Types.ServerToClientMessage[]> {
+  ): Promise<A2UIClientResponse> {
     try {
       this.#requesting = true;
       this.#startLoadingAnimation();
-      const response = this.#a2uiClient.send(message);
-      await response;
+      const response = await this.#a2uiClient.send(message);
       this.#requesting = false;
       this.#stopLoadingAnimation();
 
@@ -424,7 +423,7 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
       this.#stopLoadingAnimation();
     }
 
-    return [];
+    return { messages: [], fallbackText: null };
   }
 
   #maybeRenderData() {
@@ -511,11 +510,13 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
   }
 
   async #sendAndProcessMessage(request) {
-    const messages = await this.#sendMessage(request);
+    this.#error = null;
+    const { messages, fallbackText } = await this.#sendMessage(request);
 
     console.log(messages);
 
     this.#lastMessages = messages;
+    this.#error = fallbackText;
     this.#processor.clearSurfaces();
     this.#processor.processMessages(messages);
   }
