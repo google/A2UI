@@ -1,0 +1,17 @@
+<main class="main">
+  <div class="header">
+    <h1>Simple MCP Host</h1>
+    <p>Status: {{ status() }}</p>
+    <button (click)="connectAndLoadApp()" [disabled]="isAppLoading()">
+      {{ isAppLoading() ? 'Loading...' : 'Load MCP App' }}
+    </button>
+  </div>
+
+  <div class="content">
+    <iframe #appIframe
+            class="mcp-app-iframe"
+            sandbox="allow-scripts allow-forms allow-popups"
+            style="width: 100%; height: 600px; border: 1px solid #ccc; margin-top: 20px;">
+    </iframe>
+  </div>
+</main>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple MCP App</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Hello from MCP App</h1>
+    <p>This app is being served over the MCP protocol.</p>
+    <button onclick="pingHost()">Ping Host</button>
+    <p id="status"></p>
+
+    <script>
+        let nextId = 1;
+
+        // Send a request to the host
+        function sendRequest(method, params) {
+            const id = nextId++;
+            window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, '*');
+            return new Promise((resolve, reject) => {
+                const listener = (event) => {
+                    if (event.source !== window.parent) return;
+
+                    if (event.data?.id === id) {
+                        window.removeEventListener('message', listener);
+                        if (event.data?.result) {
+                            resolve(event.data.result);
+                        } else if (event.data?.error) {
+                            reject(new Error(event.data.error.message || JSON.stringify(event.data.error)));
+                        }
+                    }
+                };
+                window.addEventListener('message', listener);
+            });
+        }
+
+        // Send a notification to the host
+        function sendNotification(method, params) {
+            window.parent.postMessage({ jsonrpc: "2.0", method, params }, '*');
+        }
+
+        function pingHost() {
+            document.getElementById('status').innerText = "Pinging host...";
+            sendRequest("ui/ping", {}).then(() => {
+                document.getElementById('status').innerText = "Ping successful!";
+            }).catch(e => {
+                document.getElementById('status').innerText = "Ping failed: " + e.message;
+            });
+        }
+
+        // Standard Ping Listener (Host verifies if app is still alive)
+        window.addEventListener('message', (event) => {
+            if (event.source !== window.parent) return;
+
+            if (event.data?.method === 'ping' && event.data.id) {
+                window.parent.postMessage({ jsonrpc: "2.0", id: event.data.id, result: {} }, '*');
+            }
+        });
+
+        // Initialize handshake
+        sendRequest("ui/initialize", {
+            appCapabilities: { availableDisplayModes: ["inline"] }
+        }).then(result => {
+             console.log("App Initialized with Host");
+             sendNotification("ui/notifications/initialized", {});
+             document.getElementById('status').innerText = "App Initialized";
+        }).catch(e => {
+            document.getElementById('status').innerText = "Initialization failed: " + e.message;
+        });
+
+    </script>
+</body>
+</html>
