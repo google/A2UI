@@ -62,24 +62,10 @@ export class DateTimeInput extends Root {
   ];
 
   #setBoundValue(value: string) {
-    if (!this.value || !this.processor) {
+    if (!this.value || !("path" in this.value) || !this.value.path) {
       return;
     }
-
-    if (!("path" in this.value)) {
-      return;
-    }
-
-    if (!this.value.path) {
-      return;
-    }
-
-    this.processor.setData(
-      this.component,
-      this.value.path,
-      value,
-      this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
-    );
+    this.updateBoundData(this.value.path, value);
   }
 
   #renderField(value: string) {
