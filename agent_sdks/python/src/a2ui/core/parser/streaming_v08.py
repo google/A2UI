@@ -27,7 +27,6 @@ class A2uiStreamParserV08(A2uiStreamParser):
 
   def __init__(self, catalog=None):
     super().__init__(catalog=catalog)
-    self._root_id = None  # v0.8 root is determined by beginRendering
     self._yielded_begin_rendering_surfaces: Set[str] = set()
 
   @property
@@ -65,15 +64,13 @@ class A2uiStreamParserV08(A2uiStreamParser):
 
   def _sniff_metadata(self):
     """Sniffs for v0.8 metadata in the json_buffer."""
-    if not self.surface_id:
-      match = re.search(r'"surfaceId"\s*:\s*"([^"]+)"', self._json_buffer)
-      if match:
-        self.surface_id = match.group(1)
+    matches = re.findall(r'"surfaceId"\s*:\s*"([^"]+)"', self._json_buffer)
+    if matches:
+      self.surface_id = matches[-1]
 
-    if not self.root_id:
-      match = re.search(r'"root"\s*:\s*"([^"]+)"', self._json_buffer)
-      if match:
-        self.root_id = match.group(1)
+    root_matches = re.findall(r'"root"\s*:\s*"([^"]+)"', self._json_buffer)
+    if root_matches:
+      self.root_id = root_matches[-1]
 
     if f'"{MSG_TYPE_BEGIN_RENDERING}":' in self._json_buffer:
       self.add_msg_type(MSG_TYPE_BEGIN_RENDERING)

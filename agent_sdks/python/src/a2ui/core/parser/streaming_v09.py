@@ -56,15 +56,13 @@ class A2uiStreamParserV09(A2uiStreamParser):
 
   def _sniff_metadata(self):
     """Sniffs for v0.9 metadata in the json_buffer."""
-    if not self.surface_id:
-      match = re.search(r'"surfaceId"\s*:\s*"([^"]+)"', self._json_buffer)
-      if match:
-        self.surface_id = match.group(1)
+    matches = re.findall(r'"surfaceId"\s*:\s*"([^"]+)"', self._json_buffer)
+    if matches:
+      self.surface_id = matches[-1]
 
-    if not self.root_id or self.root_id == DEFAULT_ROOT_ID:
-      match = re.search(r'"root"\s*:\s*"([^"]+)"', self._json_buffer)
-      if match:
-        self.root_id = match.group(1)
+    root_matches = re.findall(r'"root"\s*:\s*"([^"]+)"', self._json_buffer)
+    if root_matches:
+      self.root_id = root_matches[-1]
 
     if f'"{MSG_TYPE_CREATE_SURFACE}":' in self._json_buffer:
       self.add_msg_type(MSG_TYPE_CREATE_SURFACE)
