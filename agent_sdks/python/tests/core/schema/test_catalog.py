@@ -17,7 +17,12 @@ import os
 import pytest
 from typing import Any, Dict, List
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.core.schema.constants import (
+    A2UI_SCHEMA_BLOCK_START,
+    A2UI_SCHEMA_BLOCK_END,
+    VERSION_0_8,
+    VERSION_0_9,
+)
 from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME
 
 
@@ -197,10 +202,10 @@ def test_render_as_llm_instructions():
   )
 
   schema_str = catalog.render_as_llm_instructions()
-  assert "---BEGIN A2UI JSON SCHEMA---" in schema_str
+  assert A2UI_SCHEMA_BLOCK_START in schema_str
   assert '### Server To Client Schema:\n{\n  "s2c": "schema"\n}' in schema_str
   assert '### Common Types Schema:\n{\n  "common": "types"\n}' in schema_str
   assert "### Catalog Schema:" in schema_str
   assert '"catalog": "schema"' in schema_str
   assert '"catalogId": "id_basic"' in schema_str
-  assert "---END A2UI JSON SCHEMA---" in schema_str
+  assert A2UI_SCHEMA_BLOCK_END in schema_str

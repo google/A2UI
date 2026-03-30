@@ -16,7 +16,7 @@ import json
 import logging
 import os
 from collections.abc import AsyncIterable
-from typing import Any
+from typing import Any, Optional, Dict
 
 import jsonschema
 from a2a.types import (
@@ -40,7 +40,7 @@ from prompt_builder import (
     UI_DESCRIPTION,
 )
 from tools import get_restaurants
-from a2ui.core.schema.constants import VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
@@ -55,39 +55,52 @@ class RestaurantAgent:
 
   SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
-  def __init__(self, base_url: str, use_ui: bool = False):
+  def __init__(self, base_url: str):
     self.base_url = base_url
-    self.use_ui = use_ui
-    self._schema_manager = (
-        A2uiSchemaManager(
-            VERSION_0_8,
-            catalogs=[
-                BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")
-            ],
-            schema_modifiers=[remove_strict_validation],
-        )
-        if use_ui
-        else None
-    )
-    self._agent = self._build_agent(use_ui)
+    self._agent_name = "Restaurant Agent"
     self._user_id = "remote_agent"
-    self._runner = Runner(
-        app_name=self._agent.name,
-        agent=self._agent,
-        artifact_service=InMemoryArtifactService(),
-        session_service=InMemorySessionService(),
-        memory_service=InMemoryMemoryService(),
-    )
+    self._text_runner: Optional[Runner] = self._build_runner(self._build_llm_agent())
 
-  def get_agent_card(self) -> AgentCard:
-    capabilities = AgentCapabilities(
-        streaming=True,
-        extensions=[
-            get_a2ui_agent_extension(
-                self._schema_manager.accepts_inline_catalogs,
-                self._schema_manager.supported_catalog_ids,
+    self._schema_managers: Dict[str, A2uiSchemaManager] = {}
+    self._ui_runners: Dict[str, Runner] = {}
+
+    for version in [VERSION_0_8, VERSION_0_9]:
+      schema_manager = self._build_schema_manager(version)
+      self._schema_managers[version] = schema_manager
+      agent = self._build_llm_agent(schema_manager)
+      self._ui_runners[version] = self._build_runner(agent)
+
+    self._agent_card = self._build_agent_card()
+
+  @property
+  def agent_card(self) -> AgentCard:
+    return self._agent_card
+
+  def _build_schema_manager(self, version: str) -> A2uiSchemaManager:
+    return A2uiSchemaManager(
+        version=version,
+        catalogs=[
+            BasicCatalog.get_config(
+                version=version, examples_path=f"examples/{version}"
             )
         ],
+        schema_modifiers=[remove_strict_validation],
+    )
+
+  def _build_agent_card(self) -> AgentCard:
+    extensions = []
+    if self._schema_managers:
+      for version, sm in self._schema_managers.items():
+        ext = get_a2ui_agent_extension(
+            version,
+            sm.accepts_inline_catalogs,
+            sm.supported_catalog_ids,
+        )
+        extensions.append(ext)
+
+    capabilities = AgentCapabilities(
+        streaming=True,
+        extensions=extensions,
     )
     skill = AgentSkill(
         id="find_restaurants",
@@ -110,22 +123,33 @@ class RestaurantAgent:
         skills=[skill],
     )
 
+  def _build_runner(self, agent: LlmAgent) -> Runner:
+    return Runner(
+        app_name=self._agent_name,
+        agent=agent,
+        artifact_service=InMemoryArtifactService(),
+        session_service=InMemorySessionService(),
+        memory_service=InMemoryMemoryService(),
+    )
+
   def get_processing_message(self) -> str:
     return "Finding restaurants that match your criteria..."
 
-  def _build_agent(self, use_ui: bool) -> LlmAgent:
+  def _build_llm_agent(
+      self, schema_manager: Optional[A2uiSchemaManager] = None
+  ) -> LlmAgent:
     """Builds the LLM agent for the restaurant agent."""
     LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
 
     instruction = (
-        self._schema_manager.generate_system_prompt(
+        schema_manager.generate_system_prompt(
             role_description=ROLE_DESCRIPTION,
             ui_description=UI_DESCRIPTION,
             include_schema=True,
             include_examples=True,
             validate_examples=True,
         )
-        if use_ui
+        if schema_manager
         else get_text_prompt()
     )
 
@@ -137,17 +161,31 @@ class RestaurantAgent:
         tools=[get_restaurants],
     )
 
-  async def stream(self, query, session_id) -> AsyncIterable[dict[str, Any]]:
+  async def stream(
+      self, query, session_id, ui_version: Optional[str] = None
+  ) -> AsyncIterable[dict[str, Any]]:
     session_state = {"base_url": self.base_url}
 
-    session = await self._runner.session_service.get_session(
-        app_name=self._agent.name,
+    # Determine which runner to use based on whether the a2ui extension is active.
+    if ui_version:
+      runner = self._ui_runners[ui_version]
+      schema_manager = self._schema_managers[ui_version]
+      selected_catalog = (
+          schema_manager.get_selected_catalog() if schema_manager else None
+      )
+    else:
+      runner = self._text_runner
+      schema_manager = None
+      selected_catalog = None
+
+    session = await runner.session_service.get_session(
+        app_name=self._agent_name,
         user_id=self._user_id,
         session_id=session_id,
     )
     if session is None:
-      session = await self._runner.session_service.create_session(
-          app_name=self._agent.name,
+      session = await runner.session_service.create_session(
+          app_name=self._agent_name,
           user_id=self._user_id,
           state=session_state,
           session_id=session_id,
@@ -161,8 +199,7 @@ class RestaurantAgent:
     current_query_text = query
 
     # Ensure schema was loaded
-    selected_catalog = self._schema_manager.get_selected_catalog()
-    if self.use_ui and not selected_catalog.catalog_schema:
+    if ui_version and (not selected_catalog or not selected_catalog.catalog_schema):
       logger.error(
           "--- RestaurantAgent.stream: A2UI_SCHEMA is not loaded. "
           "Cannot perform UI validation. ---"
@@ -194,7 +231,7 @@ class RestaurantAgent:
       )
       final_response_content = None
 
-      async for event in self._runner.run_async(
+      async for event in runner.run_async(
           user_id=self._user_id,
           session_id=session.id,
           new_message=current_message,
@@ -235,7 +272,7 @@ class RestaurantAgent:
       is_valid = False
       error_message = ""
 
-      if self.use_ui:
+      if ui_version:
         logger.info(
             "--- RestaurantAgent.stream: Validating UI response (Attempt"
             f" {attempt})... ---"

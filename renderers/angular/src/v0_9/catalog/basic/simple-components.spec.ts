@@ -175,6 +175,16 @@ describe('Simple Components', () => {
       expect(img.style.objectFit).toBe('cover');
       expect(img.className).toContain('avatar');
     });
+
+    it('should render image with description', () => {
+      fixture.componentRef.setInput('props', {
+        url: createBoundProperty('https://example.com/image.png'),
+        description: createBoundProperty('A cute cat'),
+      });
+      fixture.detectChanges();
+      const img = fixture.nativeElement.querySelector('img') as HTMLImageElement;
+      expect(img.alt).toBe('A cute cat');
+    });
   });
 
   describe('IconComponent', () => {

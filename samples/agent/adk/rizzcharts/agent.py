@@ -16,19 +16,26 @@ import json
 import logging
 from pathlib import Path
 import pkgutil
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Dict, Optional
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from a2ui.a2a import get_a2ui_agent_extension
 from a2ui.adk.a2a_extension.send_a2ui_to_client_toolset import SendA2uiToClientToolset, A2uiEnabledProvider, A2uiCatalogProvider, A2uiExamplesProvider
-from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
+from a2ui.basic_catalog.provider import BasicCatalog
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners.built_in_planner import BuiltInPlanner
 from google.genai import types
 from pydantic import PrivateAttr
+from google.adk.sessions.in_memory_session_service import InMemorySessionService
+from google.adk.artifacts import InMemoryArtifactService
+from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+from agent_executor import get_a2ui_enabled, get_a2ui_catalog, get_a2ui_examples
+from google.adk.runners import Runner
 
 try:
-  from .tools import get_sales_data, get_store_sales
+  from tools import get_sales_data, get_store_sales
 except ImportError:
   from tools import get_sales_data, get_store_sales
 
@@ -58,8 +65,8 @@ Your task is to analyze the user's request, fetch the necessary data, select the
 
 4.  **Construct the JSON Payload:**
     * Use the **entire** JSON array from the chosen example as the base value for the `a2ui_json` argument.
-    * **Generate a new `surfaceId`:** You MUST generate a new, unique `surfaceId` for this request (e.g., `sales_breakdown_q3_surface`, `regional_outliers_northeast_surface`). This new ID must be used for the `surfaceId` in all three messages within the JSON array (`beginRendering`, `surfaceUpdate`, `dataModelUpdate`).
-    * **Update the title Text:** You MUST update the `literalString` value for the `Text` component (the component with `id: "page_header"`) to accurately reflect the specific user query. For example, if the user asks for "Q3" sales, update the generic template text to "Q3 2025 Sales by Product Category".
+    * **Generate a new `surfaceId`:** You MUST generate a new, unique `surfaceId` for this request (e.g., `sales_breakdown_q3_surface`, `regional_outliers_northeast_surface`). This new ID must be used for the `surfaceId` in all three messages within the JSON array (`createSurface`, `updateComponents`, `updateDataModel`).
+    * **Update the title Text:** You MUST update the `text` property of the `Text` component (the component with `id: "page_header"`) to accurately reflect the specific user query. For example, if the user asks for "Q3" sales, update the generic template text to "Q3 2025 Sales by Product Category".
     * Ensure the generated JSON perfectly matches the A2UI specification. It will be validated against the json_schema and rejected if it does not conform.  
     * If you get an error in the tool response apologize to the user and let them know they should try again.
 
@@ -82,78 +89,101 @@ You will also use layout components like `Column` (as the `root`) and `Text` (to
 """
 
 
-class RizzchartsAgent(LlmAgent):
+class RizzchartsAgent:
   """An agent that runs an ecommerce dashboard"""
 
   SUPPORTED_CONTENT_TYPES: ClassVar[list[str]] = ["text", "text/plain"]
-  base_url: str = ""
-  schema_manager: A2uiSchemaManager = None
-  _a2ui_enabled_provider: A2uiEnabledProvider = PrivateAttr()
-  _a2ui_catalog_provider: A2uiCatalogProvider = PrivateAttr()
-  _a2ui_examples_provider: A2uiExamplesProvider = PrivateAttr()
 
   def __init__(
       self,
-      model: Any,
       base_url: str,
-      schema_manager: A2uiSchemaManager,
-      a2ui_enabled_provider: A2uiEnabledProvider,
-      a2ui_catalog_provider: A2uiCatalogProvider,
-      a2ui_examples_provider: A2uiExamplesProvider,
+      model: Any,
   ):
-    """Initializes the RizzchartsAgent.
+    self.base_url = base_url
+    self._model = model
 
-    Args:
-        model: The LLM model to use.
-        base_url: The base URL for the agent.
-        schema_manager: The A2UI schema manager.
-        a2ui_enabled_provider: A provider to check if A2UI is enabled.
-        a2ui_catalog_provider: A provider to retrieve the A2UI catalog (A2uiCatalog object).
-        a2ui_examples_provider: A provider to retrieve the A2UI examples (str).
-    """
+    self._a2ui_enabled_provider = get_a2ui_enabled
+    self._a2ui_catalog_provider = get_a2ui_catalog
+    self._a2ui_examples_provider = get_a2ui_examples
 
-    system_instructions = schema_manager.generate_system_prompt(
-        role_description=ROLE_DESCRIPTION,
-        workflow_description=WORKFLOW_DESCRIPTION,
-        ui_description=UI_DESCRIPTION,
-        include_schema=False,
-        include_examples=False,
-        validate_examples=False,
-    )
-    super().__init__(
-        model=model,
-        name="rizzcharts_agent",
-        description="An agent that lets sales managers request sales data.",
-        instruction=system_instructions,
-        tools=[
-            get_store_sales,
-            get_sales_data,
-            SendA2uiToClientToolset(
-                a2ui_catalog=a2ui_catalog_provider,
-                a2ui_enabled=a2ui_enabled_provider,
-                a2ui_examples=a2ui_examples_provider,
+    self._agent_name = "mcp_app_proxy_agent"
+    self._user_id = "remote_agent"
+
+    self._session_service = InMemorySessionService()
+    self._memory_service = InMemoryMemoryService()
+    self._artifact_service = InMemoryArtifactService()
+
+    self._text_runner: Optional[Runner] = self._build_runner(self._build_llm_agent())
+
+    self._schema_managers: Dict[str, A2uiSchemaManager] = {}
+    self._ui_runners: Dict[str, Runner] = {}
+
+    for version in [VERSION_0_8, VERSION_0_9]:
+      schema_manager = self._build_schema_manager(version)
+      self._schema_managers[version] = schema_manager
+      agent = self._build_llm_agent(schema_manager)
+      self._ui_runners[version] = self._build_runner(agent)
+
+    self._agent_card = self._build_agent_card()
+
+  @property
+  def agent_card(self) -> AgentCard:
+    return self._agent_card
+
+  def get_runner(self, version: Optional[str]) -> Runner:
+    if version is None:
+      return self._text_runner
+    return self._ui_runners[version]
+
+  def get_schema_manager(self, version: Optional[str]) -> Optional[A2uiSchemaManager]:
+    if version is None:
+      return None
+    return self._schema_managers[version]
+
+  def _build_schema_manager(self, version: str) -> A2uiSchemaManager:
+    return A2uiSchemaManager(
+        version=version,
+        catalogs=[
+            CatalogConfig.from_path(
+                name="rizzcharts",
+                catalog_path=(
+                    f"catalog_schemas/{version}/rizzcharts_catalog_definition.json"
+                ),
+                examples_path=f"examples/rizzcharts_catalog/{version}",
+            ),
+            BasicCatalog.get_config(
+                version=version,
+                examples_path=f"examples/standard_catalog/{version}",
             ),
         ],
-        planner=BuiltInPlanner(
-            thinking_config=types.ThinkingConfig(
-                include_thoughts=True,
-            )
-        ),
-        disallow_transfer_to_peers=True,
-        base_url=base_url,
-        schema_manager=schema_manager,
+        accepts_inline_catalogs=True,
     )
 
     self._a2ui_enabled_provider = a2ui_enabled_provider
     self._a2ui_catalog_provider = a2ui_catalog_provider
     self._a2ui_examples_provider = a2ui_examples_provider
 
-  def get_agent_card(self) -> AgentCard:
+  def _build_agent_card(self) -> AgentCard:
     """Returns the AgentCard defining this agent's metadata and skills.
 
     Returns:
         An AgentCard object.
     """
+    extensions = []
+    if self._schema_managers:
+      for version, sm in self._schema_managers.items():
+        ext = get_a2ui_agent_extension(
+            version,
+            sm.accepts_inline_catalogs,
+            sm.supported_catalog_ids,
+        )
+        extensions.append(ext)
+
+    capabilities = AgentCapabilities(
+        streaming=True,
+        extensions=extensions,
+    )
+
     return AgentCard(
         name="Ecommerce Dashboard Agent",
         description=(
@@ -164,15 +194,7 @@ class RizzchartsAgent(LlmAgent):
         version="1.0.0",
         default_input_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
         default_output_modes=RizzchartsAgent.SUPPORTED_CONTENT_TYPES,
-        capabilities=AgentCapabilities(
-            streaming=True,
-            extensions=[
-                get_a2ui_agent_extension(
-                    self.schema_manager.accepts_inline_catalogs,
-                    self.schema_manager.supported_catalog_ids,
-                )
-            ],
-        ),
+        capabilities=capabilities,
         skills=[
             AgentSkill(
                 id="view_sales_by_category",
@@ -201,4 +223,52 @@ class RizzchartsAgent(LlmAgent):
                 ],
             ),
         ],
+    )
+
+  def _build_runner(self, agent: LlmAgent) -> Runner:
+    return Runner(
+        app_name=self._agent_name,
+        agent=agent,
+        artifact_service=self._artifact_service,
+        session_service=self._session_service,
+        memory_service=self._memory_service,
+    )
+
+  def _build_llm_agent(
+      self, schema_manager: Optional[A2uiSchemaManager] = None
+  ) -> LlmAgent:
+    """Builds the LLM agent for the contact agent."""
+    instruction = (
+        schema_manager.generate_system_prompt(
+            role_description=ROLE_DESCRIPTION,
+            workflow_description=WORKFLOW_DESCRIPTION,
+            ui_description=UI_DESCRIPTION,
+            include_schema=False,
+            include_examples=False,
+            validate_examples=False,
+        )
+        if schema_manager
+        else ""
+    )
+
+    return LlmAgent(
+        model=self._model,
+        name=self._agent_name,
+        description="An agent that lets sales managers request sales data.",
+        instruction=instruction,
+        tools=[
+            get_store_sales,
+            get_sales_data,
+            SendA2uiToClientToolset(
+                a2ui_catalog=self._a2ui_catalog_provider,
+                a2ui_enabled=self._a2ui_enabled_provider,
+                a2ui_examples=self._a2ui_examples_provider,
+            ),
+        ],
+        planner=BuiltInPlanner(
+            thinking_config=types.ThinkingConfig(
+                include_thoughts=True,
+            )
+        ),
+        disallow_transfer_to_peers=True,
     )

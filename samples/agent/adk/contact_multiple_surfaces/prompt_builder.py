@@ -14,10 +14,12 @@
 
 import json
 
-from a2ui.core.schema.constants import VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
-from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9, A2UI_OPEN_TAG, A2UI_CLOSE_TAG
+from a2ui.core.schema.manager import A2uiSchemaManager, CatalogConfig
 from a2ui.basic_catalog.provider import BasicCatalog
 from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.catalog_provider import A2uiCatalogProvider, FileSystemCatalogProvider
+from typing import Dict, Any
 
 ROLE_DESCRIPTION = (
     "You are a helpful contact lookup assistant. Your final output MUST be a a2ui UI"
@@ -25,14 +27,14 @@ ROLE_DESCRIPTION = (
 )
 
 WORKFLOW_DESCRIPTION = """
-Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` attribute.
+Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` (for spec version v0.8) or `"variant": "primary"` attribute (for spec version v0.9+).
 """
 
 UI_DESCRIPTION = f"""
 -   **For finding contacts (e.g., "Who is Alex Jordan?"):**
     a.  You MUST call the `get_contact_info` tool.
     b.  If the tool returns a **single contact**, you MUST use the `MULTI_SURFACE_EXAMPLE` template. Provide BOTH the Contact Card and the Org Chart in a single response.
-    c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
+    c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` (v0.8) or `updateDataModel.value` (v0.9+) with the list of contacts for the "contacts" key.
     d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.{A2UI_OPEN_TAG}[]{A2UI_CLOSE_TAG}"
 
 -   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
@@ -41,7 +43,7 @@ UI_DESCRIPTION = f"""
 
 -   **For handling actions (e.g., "USER_WANTS_TO_EMAIL: ..."):**
     a.  You MUST use the `ACTION_CONFIRMATION_EXAMPLE` template.
-    b.  Populate the `dataModelUpdate.contents` with a confirmation title and message (e.g., title: "Email Drafted", message: "Drafting an email to Alex Jordan...").
+    b.  Populate the `updateDataModel.value` with a confirmation title and message (e.g., title: "Email Drafted", message: "Drafting an email to Alex Jordan...").
 """
 
 
@@ -67,9 +69,17 @@ def get_text_prompt() -> str:
 if __name__ == "__main__":
   # Example of how to use the A2UI Schema Manager to generate a system prompt
   my_base_url = "http://localhost:8000"
+  my_version = VERSION_0_9
+  inline_catalog_path = f"inline_catalog_{my_version}.json"
   schema_manager = A2uiSchemaManager(
-      VERSION_0_8,
-      catalogs=[BasicCatalog.get_config(version=VERSION_0_8, examples_path="examples")],
+      my_version,
+      catalogs=[
+          CatalogConfig.from_path(
+              name="contact_multiple_surfaces_inline_catalog",
+              catalog_path=inline_catalog_path,
+              examples_path=f"examples/{my_version}",
+          ),
+      ],
       accepts_inline_catalogs=True,
       schema_modifiers=[remove_strict_validation],
   )
@@ -79,18 +89,17 @@ if __name__ == "__main__":
       ui_description=UI_DESCRIPTION,
       include_schema=True,
       include_examples=True,
-      validate_examples=True,
+      validate_examples=False,
   )
   print(contact_prompt)
   with open("generated_prompt.txt", "w") as f:
     f.write(contact_prompt)
   print("\nGenerated prompt saved to generated_prompt.txt")
 
-  client_ui_capabilities_str = (
-      '{"inlineCatalogs":[{"catalogId": "inline_catalog",'
-      ' "components":{"OrgChart":{"type":"object","properties":{"chain":{"oneOf":[{"type":"object","properties":{"path":{"type":"string"}},"required":["path"]},{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"name":{"type":"string"}},"required":["title","name"]}}]},"action":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"array","items":{"type":"object","properties":{"key":{"type":"string"},"value":{"type":"object","properties":{"path":{"type":"string"},"literalString":{"type":"string"},"literalNumber":{"type":"number"},"literalBoolean":{"type":"boolean"}}}},"required":["key","value"]}}},"required":["name"]}},"required":["chain"]},"WebFrame":{"type":"object","properties":{"url":{"type":"string"},"html":{"type":"string"},"height":{"type":"number"},"interactionMode":{"type":"string","enum":["readOnly","interactive"]},"allowedEvents":{"type":"array","items":{"type":"string"}}}}}}]}'
-  )
-  client_ui_capabilities = json.loads(client_ui_capabilities_str)
+  with open(inline_catalog_path, "r", encoding="utf-8") as f:
+    inline_catalog = json.load(f)
+
+  client_ui_capabilities = {"inlineCatalogs": [inline_catalog]}
   inline_catalog = schema_manager.get_selected_catalog(
       client_ui_capabilities=client_ui_capabilities,
   )
@@ -100,7 +109,9 @@ if __name__ == "__main__":
     f.write(request_prompt)
   print("\nGenerated request prompt saved to request_prompt.txt")
 
-  basic_catalog = schema_manager.get_selected_catalog()
+  basic_catalog = schema_manager.get_selected_catalog(
+      client_ui_capabilities=client_ui_capabilities
+  )
   examples = schema_manager.load_examples(
       basic_catalog,
       validate=True,

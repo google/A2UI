@@ -62,126 +62,13 @@ def main(host, port):
     lite_llm_model = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
     base_url = f"http://{host}:{port}"
 
-    schema_manager = A2uiSchemaManager(
-        VERSION_0_8,
-        catalogs=[
-            CatalogConfig.from_path(
-                name="mcp_app_proxy",
-                catalog_path="mcp_app_catalog.json",
-            ),
-        ],
-        accepts_inline_catalogs=True,
-    )
-
-    # Define get_calculator_app tool in a way that the LlmAgent can use.
-    async def get_calculator_app(tool_context: ToolContext):
-      """Fetches the calculator app."""
-      # Connect to the MCP server via SSE
-      mcp_server_host = os.getenv("MCP_SERVER_HOST", "localhost")
-      mcp_server_port = os.getenv("MCP_SERVER_PORT", "8000")
-      sse_url = f"http://{mcp_server_host}:{mcp_server_port}/sse"
-
-      try:
-        async with sse_client(sse_url) as streams:
-          async with ClientSession(streams[0], streams[1]) as session:
-            await session.initialize()
-
-            # Read the resource
-            result = await session.read_resource("ui://calculator/app")
-
-            # Package the resource as an A2UI message
-            if result.contents and hasattr(result.contents[0], "text"):
-              html_content = result.contents[0].text
-              encoded_html = "url_encoded:" + urllib.parse.quote(html_content)
-              messages = [
-                  {
-                      "beginRendering": {
-                          "surfaceId": "calculator_surface",
-                          "root": "calculator_app_root",
-                      },
-                  },
-                  {
-                      "surfaceUpdate": {
-                          "surfaceId": "calculator_surface",
-                          "components": [{
-                              "id": "calculator_app_root",
-                              "component": {
-                                  "McpApp": {
-                                      "content": {"literalString": encoded_html},
-                                      "title": {"literalString": "Calculator"},
-                                      "allowedTools": ["calculate"],
-                                  }
-                              },
-                          }],
-                      },
-                  },
-              ]
-              tool_context.actions.skip_summarization = True
-              return {"validated_a2ui_json": messages}
-            else:
-              logger.error("Failed to get text content from resource")
-              return {"error": "Could not fetch calculator app content."}
-
-      except Exception as e:
-        logger.error(f"Error fetching calculator app: {e} {traceback.format_exc()}")
-        return {"error": f"Failed to connect to MCP server or fetch app. Details: {e}"}
-
-    async def calculate_via_mcp(operation: str, a: float, b: float):
-      """Calculates via the MCP server's Calculate tool.
-
-      Args:
-          operation: The mathematical operation (e.g. 'add', 'subtract', 'multiply', 'divide').
-          a: First operand.
-          b: Second operand.
-      """
-      mcp_server_host = os.getenv("MCP_SERVER_HOST", "localhost")
-      mcp_server_port = os.getenv("MCP_SERVER_PORT", "8000")
-      sse_url = f"http://{mcp_server_host}:{mcp_server_port}/sse"
-
-      try:
-        async with sse_client(sse_url) as streams:
-          async with ClientSession(streams[0], streams[1]) as session:
-            await session.initialize()
-
-            result = await session.call_tool(
-                "calculate", arguments={"operation": operation, "a": a, "b": b}
-            )
-
-            if (
-                result.content
-                and len(result.content) > 0
-                and hasattr(result.content[0], "text")
-            ):
-              return result.content[0].text
-            return "No result text from MCP calculate tool."
-      except Exception as e:
-        logger.error(f"Error calling MCP calculate: {e} {traceback.format_exc()}")
-        return f"Error connecting to MCP server: {e}"
-
-    tools = [get_calculator_app, calculate_via_mcp]
-
     agent = McpAppProxyAgent(
-        base_url=base_url,
         model=LiteLlm(model=lite_llm_model),
-        schema_manager=schema_manager,
-        a2ui_enabled_provider=get_a2ui_enabled,
-        a2ui_catalog_provider=get_a2ui_catalog,
-        a2ui_examples_provider=get_a2ui_examples,
-        tools=tools,
+        base_url=base_url,
     )
-
-    runner = Runner(
-        app_name=agent.name,
-        agent=agent,
-        artifact_service=InMemoryArtifactService(),
-        session_service=InMemorySessionService(),
-        memory_service=InMemoryMemoryService(),
-    )
-
     agent_executor = McpAppProxyAgentExecutor(
         base_url=base_url,
-        runner=runner,
-        schema_manager=schema_manager,
+        agent=agent,
     )
 
     request_handler = DefaultRequestHandler(
@@ -189,7 +76,7 @@ def main(host, port):
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(
-        agent_card=agent.get_agent_card(), http_handler=request_handler
+        agent_card=agent.agent_card, http_handler=request_handler
     )
     import uvicorn
 

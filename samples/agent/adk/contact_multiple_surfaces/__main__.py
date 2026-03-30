@@ -50,7 +50,7 @@ def main(host, port):
 
     base_url = f"http://{host}:{port}"
 
-    agent = ContactAgent(base_url=base_url, use_ui=True)
+    agent = ContactAgent(base_url=base_url)
 
     agent_executor = ContactAgentExecutor(agent=agent)
 
@@ -59,7 +59,7 @@ def main(host, port):
         task_store=InMemoryTaskStore(),
     )
     server = A2AStarletteApplication(
-        agent_card=agent.get_agent_card(), http_handler=request_handler
+        agent_card=agent.agent_card, http_handler=request_handler
     )
     import uvicorn
 

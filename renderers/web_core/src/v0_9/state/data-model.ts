@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Subscription as BaseSubscription } from "../common/events.js";
-import { A2uiDataError } from "../errors.js";
-import { signal, Signal, batch, effect } from "@preact/signals-core";
+import {Subscription as BaseSubscription} from '../common/events.js';
+import {A2uiDataError} from '../errors.js';
+import {signal, Signal, batch, effect} from '@preact/signals-core';
 
 /**
  * Represents a reactive connection to a specific path in the data model.
@@ -52,10 +52,10 @@ export class DataModel {
 
   /**
    * Retrieves a Preact Signal for a specific data path.
-   * 
+   *
    * This provides a reactive way to access a value. If the value at the path changes via `set()`,
    * the signal will automatically be updated.
-   * 
+   *
    * @param path The JSON pointer path to create or retrieve a signal for.
    * @returns A Preact Signal representing the value at the specified path.
    */
@@ -77,10 +77,10 @@ export class DataModel {
    */
   set(path: string, value: any): this {
     if (path === null || path === undefined) {
-      throw new A2uiDataError("Path cannot be null or undefined.");
+      throw new A2uiDataError('Path cannot be null or undefined.');
     }
 
-    if (path === "/" || path === "") {
+    if (path === '/' || path === '') {
       this.data = value;
       this.notifyAllSignals();
       return this;
@@ -108,7 +108,7 @@ export class DataModel {
       if (
         current[segment] !== undefined &&
         current[segment] !== null &&
-        typeof current[segment] !== "object"
+        typeof current[segment] !== 'object'
       ) {
         throw new A2uiDataError(
           `Cannot set path '${path}': segment '${segment}' is a primitive value.`,
@@ -153,9 +153,9 @@ export class DataModel {
    */
   get(path: string): any {
     if (path === null || path === undefined) {
-      throw new A2uiDataError("Path cannot be null or undefined.");
+      throw new A2uiDataError('Path cannot be null or undefined.');
     }
-    if (path === "/" || path === "") {
+    if (path === '/' || path === '') {
       return this.data;
     }
 
@@ -172,11 +172,11 @@ export class DataModel {
 
   /**
    * Subscribes to changes at the specified data path.
-   * 
+   *
    * This is a backwards-compatible layer using Preact Signals internally. It allows
    * listeners to be notified whenever the value at the specified path (or any of its
    * ancestors/descendants) changes.
-   * 
+   *
    * @param path The JSON pointer path to observe.
    * @param onChange A callback fired whenever the value changes.
    * @returns A `DataSubscription` containing the initial value and an `unsubscribe` method.
@@ -207,7 +207,7 @@ export class DataModel {
       unsubscribe: () => {
         dispose();
         this.subscriptions.delete(dispose);
-      }
+      },
     };
   }
 
@@ -223,14 +223,14 @@ export class DataModel {
   }
 
   private normalizePath(path: string): string {
-    if (path.length > 1 && path.endsWith("/")) {
+    if (path.length > 1 && path.endsWith('/')) {
       return path.slice(0, -1);
     }
-    return path || "/";
+    return path || '/';
   }
 
   private parsePath(path: string): string[] {
-    return path.split("/").filter((p) => p.length > 0);
+    return path.split('/').filter(p => p.length > 0);
   }
 
   private notifySignals(path: string): void {
@@ -241,8 +241,9 @@ export class DataModel {
 
       // Notify Ancestors
       let parentPath = normalizedPath;
-      while (parentPath !== "/" && parentPath !== "") {
-        parentPath = parentPath.substring(0, parentPath.lastIndexOf("/")) || "/";
+      while (parentPath !== '/' && parentPath !== '') {
+        parentPath =
+          parentPath.substring(0, parentPath.lastIndexOf('/')) || '/';
         this.updateSignal(parentPath);
       }
 
@@ -262,7 +263,7 @@ export class DataModel {
       if (Array.isArray(val)) {
         sig.value = [...val];
       } else if (typeof val === 'object' && val !== null) {
-        sig.value = { ...val };
+        sig.value = {...val};
       } else {
         sig.value = val;
       }
@@ -278,9 +279,9 @@ export class DataModel {
   }
 
   private isDescendant(childPath: string, parentPath: string): boolean {
-    if (parentPath === "/" || parentPath === "") {
-      return childPath !== "/";
+    if (parentPath === '/' || parentPath === '') {
+      return childPath !== '/';
     }
-    return childPath.startsWith(parentPath + "/");
+    return childPath.startsWith(parentPath + '/');
   }
 }

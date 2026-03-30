@@ -73,7 +73,19 @@ export class MultipleChoice extends DynamicComponent<Types.MultipleChoiceNode> {
 
   onChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
-    this.handleAction('change', { value });
+    const selectionsNode = this.selections();
+    if (selectionsNode && typeof selectionsNode === 'object' && 'path' in selectionsNode && selectionsNode.path) {
+      // Update the local data model directly to ensure immediate UI feedback and avoid unnecessary network requests.
+      this.processor.processMessages([{
+        dataModelUpdate: {
+          surfaceId: this.surfaceId()!,
+          path: this.processor.resolvePath(selectionsNode.path as string, this.component().dataContextPath),
+          contents: [{ key: '.', valueString: JSON.stringify({ literalArray: [value] }) }],
+        },
+      }]);
+    } else {
+      this.handleAction('change', { value });
+    }
   }
 
   private handleAction(name: string, context: Record<string, unknown>) {

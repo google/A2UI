@@ -20,6 +20,7 @@ import { Root } from "@a2ui/lit/ui";
 import { v0_8 } from "@a2ui/lit";
 import { AppBridge, PostMessageTransport } from "@modelcontextprotocol/ext-apps/app-bridge";
 import type { McpUiSandboxProxyReadyNotification } from "@modelcontextprotocol/ext-apps/app-bridge";
+import { SANDBOX_IFRAME_PATH } from "../shared-constants.js";
 
 @customElement("a2ui-mcp-apps-component")
 export class McpApp extends Root {
@@ -103,7 +104,7 @@ export class McpApp extends Root {
     // Fall back to the 127.0.0.1 trick for local development to simulate cross-origin isolation
     const meta = import.meta as any;
     const configuredSandboxUrl = meta && meta.env ? meta.env.VITE_MCP_SANDBOX_URL : undefined;
-    const sandboxOrigin = configuredSandboxUrl || `http://127.0.0.1:${window.location.port}/sandbox.html`;
+    const sandboxOrigin = configuredSandboxUrl || `http://127.0.0.1:${window.location.port}${SANDBOX_IFRAME_PATH}`;
     const sandboxUrl = new URL(sandboxOrigin);
 
     // Set up the bridge. No MCP client needed because A2UI acts as the orchestrator.

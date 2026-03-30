@@ -32,7 +32,7 @@ export class App {
   protected hasData = signal(false);
   protected userInput = signal('Casey Smith');
   protected surfaces = computed(() => {
-    return Array.from(this.processor.surfacesSignal().entries());
+    return Array.from(this.processor.getSurfaces().entries());
   });
 
   protected statusText = computed(() => {

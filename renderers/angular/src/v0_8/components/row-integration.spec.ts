@@ -15,14 +15,12 @@
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Row } from './row';
 import { Renderer } from '../rendering/renderer';
 import { Catalog } from '../rendering/catalog';
 import { DEFAULT_CATALOG } from '../catalog';
 import { Theme } from '../rendering/theming';
 import { MessageProcessor } from '../data/processor';
 import { MarkdownRenderer, DefaultMarkdownRenderer } from '../data/markdown';
-import { Types } from '../types';
 import { Component } from '@angular/core';
 
 @Component({
@@ -44,7 +42,7 @@ describe('Row Component Integration (Real Renderer)', () => {
   let processor: jasmine.SpyObj<MessageProcessor>;
 
   beforeEach(async () => {
-    processor = jasmine.createSpyObj('MessageProcessor', ['getData', 'dispatch', 'resolvePath']);
+    processor = jasmine.createSpyObj('MessageProcessor', ['getData', 'dispatch', 'resolvePath', 'version']);
 
     await TestBed.configureTestingModule({
       imports: [TestHost],
