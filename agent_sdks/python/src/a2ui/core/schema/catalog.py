@@ -196,7 +196,11 @@ class A2uiCatalog:
     )
     all_schemas.append(f"### Server To Client Schema:\n{server_client_str}")
 
-    if self.common_types_schema:
+    if (
+        self.common_types_schema
+        and "$defs" in self.common_types_schema
+        and self.common_types_schema["$defs"]
+    ):
       common_str = json.dumps(self.common_types_schema, indent=2)
       all_schemas.append(f"### Common Types Schema:\n{common_str}")
 
