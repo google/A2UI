@@ -209,3 +209,32 @@ def test_render_as_llm_instructions():
   assert '"catalog": "schema"' in schema_str
   assert '"catalogId": "id_basic"' in schema_str
   assert A2UI_SCHEMA_BLOCK_END in schema_str
+
+
+def test_with_pruned_components_prunes_common_types():
+  common_types = {
+      "$defs": {
+          "TypeForCompA": {"type": "string"},
+          "TypeForCompB": {"type": "number"},
+      }
+  }
+  catalog_schema = {
+      "catalogId": "basic",
+      "components": {
+          "CompA": {"$ref": "common_types.json#/$defs/TypeForCompA"},
+          "CompB": {"$ref": "common_types.json#/$defs/TypeForCompB"},
+      },
+  }
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema=common_types,
+      catalog_schema=catalog_schema,
+  )
+
+  pruned_catalog = catalog.with_pruned_components(["CompA"])
+  pruned_defs = pruned_catalog.common_types_schema["$defs"]
+
+  assert "TypeForCompA" in pruned_defs
+  assert "TypeForCompB" not in pruned_defs
