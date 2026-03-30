@@ -106,6 +106,7 @@ class A2uiStreamParser:
     self._yielded_contents: Dict[Any, str] = {}
 
     self._root_ids: Dict[str, str] = {}  # The root component IDs mapped per surface
+    self._default_root_id: Optional[str] = None  # Base default root ID for the protocol
     self._unbound_root_id: Optional[str] = (
         None  # Temporary holding variable for when root arrives before surfaceId
     )
@@ -153,8 +154,13 @@ class A2uiStreamParser:
   @property
   def root_id(self) -> Optional[str]:
     if self._surface_id:
-      return self._root_ids.get(self._surface_id)
-    return self._unbound_root_id
+      return self._root_ids.get(self._surface_id, self._default_root_id)
+    # Return unbound root ID if explicitly sniffed, otherwise use protocol default
+    return (
+        self._unbound_root_id
+        if self._unbound_root_id is not None
+        else self._default_root_id
+    )
 
   @root_id.setter
   def root_id(self, value: Optional[str]):

@@ -28,7 +28,7 @@ class A2uiStreamParserV09(A2uiStreamParser):
   def __init__(self, catalog=None):
     super().__init__(catalog=catalog)
     # v0.9 default root is "root"
-    self.root_id = DEFAULT_ROOT_ID
+    self._default_root_id = DEFAULT_ROOT_ID
 
   @property
   def _placeholder_component(self) -> Dict[str, Any]:
@@ -56,13 +56,22 @@ class A2uiStreamParserV09(A2uiStreamParser):
 
   def _sniff_metadata(self):
     """Sniffs for v0.9 metadata in the json_buffer."""
-    matches = re.findall(r'"surfaceId"\s*:\s*"([^"]+)"', self._json_buffer)
-    if matches:
-      self.surface_id = matches[-1]
 
-    root_matches = re.findall(r'"root"\s*:\s*"([^"]+)"', self._json_buffer)
-    if root_matches:
-      self.root_id = root_matches[-1]
+    def get_latest_value(key: str) -> Optional[str]:
+      idx = len(self._json_buffer)
+      while True:
+        idx = self._json_buffer.rfind(f'"{key}"', 0, idx)
+        if idx == -1:
+          return None
+        match = re.match(rf'"{key}"\s*:\s*"([^"]+)"', self._json_buffer[idx:])
+        if match:
+          return match.group(1)
+
+    self.surface_id = get_latest_value('surfaceId')
+
+    parsed_root = get_latest_value('root')
+    if parsed_root is not None:
+      self.root_id = parsed_root
 
     if f'"{MSG_TYPE_CREATE_SURFACE}":' in self._json_buffer:
       self.add_msg_type(MSG_TYPE_CREATE_SURFACE)
