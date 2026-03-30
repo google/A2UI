@@ -17,79 +17,63 @@
 import {z} from 'zod';
 import {AnyComponentSchema} from './common-types.js';
 
-export const CreateSurfaceMessageSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    createSurface: z
-      .object({
-        surfaceId: z
-          .string()
-          .describe('The unique identifier for the UI surface to be rendered.'),
-        catalogId: z
-          .string()
-          .describe('A string that uniquely identifies this catalog.'),
-        theme: z.any().optional().describe('Theme parameters for the surface.'),
-        sendDataModel: z
-          .boolean()
-          .optional()
-          .describe('If true, the client will send the full data model.'),
-      })
-      .strict(),
-  })
-  .strict();
+export const CreateSurfaceMessageSchema = z.strictObject({
+  version: z.literal("v0.9"),
+  createSurface: z.strictObject({
+    surfaceId: z
+      .string()
+      .describe("The unique identifier for the UI surface to be rendered."),
+    catalogId: z
+      .string()
+      .describe("A string that uniquely identifies this catalog."),
+    theme: z.any().optional().describe("Theme parameters for the surface."),
+    sendDataModel: z
+      .boolean()
+      .optional()
+      .describe("If true, the client will send the full data model."),
+  }),
+});
 
-export const UpdateComponentsMessageSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    updateComponents: z
-      .object({
-        surfaceId: z
-          .string()
-          .describe('The unique identifier for the UI surface to be updated.'),
-        components: z
-          .array(AnyComponentSchema)
-          .min(1)
-          .describe('A list containing all UI components for the surface.'),
-      })
-      .strict(),
-  })
-  .strict();
+export const UpdateComponentsMessageSchema = z.strictObject({
+  version: z.literal("v0.9"),
+  updateComponents: z.strictObject({
+    surfaceId: z
+      .string()
+      .describe("The unique identifier for the UI surface to be updated."),
+    components: z
+      .array(AnyComponentSchema)
+      .min(1)
+      .describe("A list containing all UI components for the surface."),
+  }),
+});
 
-export const UpdateDataModelMessageSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    updateDataModel: z
-      .object({
-        surfaceId: z
-          .string()
-          .describe(
-            'The unique identifier for the UI surface this data model update applies to.',
-          ),
-        path: z
-          .string()
-          .optional()
-          .describe('An optional path to a location within the data model.'),
-        value: z
-          .any()
-          .optional()
-          .describe('The data to be updated in the data model.'),
-      })
-      .strict(),
-  })
-  .strict();
+export const UpdateDataModelMessageSchema = z.strictObject({
+  version: z.literal("v0.9"),
+  updateDataModel: z.strictObject({
+    surfaceId: z
+      .string()
+      .describe(
+        "The unique identifier for the UI surface this data model update applies to.",
+      ),
+    path: z
+      .string()
+      .optional()
+      .describe("An optional path to a location within the data model."),
+    value: z
+      .any()
+      .optional()
+      .describe("The data to be updated in the data model."),
+  }),
+});
 
-export const DeleteSurfaceMessageSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    deleteSurface: z
-      .object({
-        surfaceId: z
-          .string()
-          .describe('The unique identifier for the UI surface to be deleted.'),
-      })
-      .strict(),
-  })
-  .strict();
+export const DeleteSurfaceMessageSchema = z.strictObject({
+  version: z.literal("v0.9"),
+  deleteSurface: z.strictObject({
+    surfaceId: z
+      .string()
+      .describe("The unique identifier for the UI surface to be deleted."),
+  }),
+});
 
 export declare interface CreateSurfaceMessage extends z.infer<
   typeof CreateSurfaceMessageSchema

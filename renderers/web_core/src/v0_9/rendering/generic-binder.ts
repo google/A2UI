@@ -56,21 +56,18 @@ export type BehaviorNode =
  * It identifies core A2UI primitives (Dynamic values, Actions, ChildLists) by
  * inspecting the shape of ZodUnion objects defined in `common-types.ts`.
  */
-export function scrapeSchemaBehavior(schema: z.ZodTypeAny): BehaviorNode {
+export function scrapeSchemaBehavior(schema: z.ZodType): BehaviorNode {
   return getFieldBehavior(schema);
 }
 
-function getFieldBehavior(
-  type: z.ZodTypeAny,
-  propertyName?: string,
-): BehaviorNode {
-  let current = type;
+function getFieldBehavior(type: z.ZodType, propertyName?: string): BehaviorNode {
+  let current: any = type;
 
   // Unwrap optionals/nullables/defaults
   while (
-    current._def.typeName === 'ZodOptional' ||
-    current._def.typeName === 'ZodNullable' ||
-    current._def.typeName === 'ZodDefault'
+    current._def.type === "optional" ||
+    current._def.type === "nullable" ||
+    current._def.type === "default"
   ) {
     current = current._def.innerType;
   }
@@ -79,51 +76,41 @@ function getFieldBehavior(
     return {type: 'CHECKABLE'};
   }
 
-  // Structural matching for A2UI primitives using typeName to avoid dual-module instanceof issues
-  if (current._def.typeName === 'ZodUnion') {
-    const options = current._def.options as z.ZodTypeAny[];
+  const def = current._def;
+
+  // Structural matching for A2UI primitives using _def.type to identify schema kinds
+  if (def.type === "union") {
+    const options = def.options as any[];
 
     // ActionSchema is a union containing { event: ... }
-    const isAction = options.some(
-      o => o._def.typeName === 'ZodObject' && o._def.shape().event,
-    );
-    if (isAction) return {type: 'ACTION'};
+    const isAction = options.some(o => o._def.type === "object" && o._def.shape.event);
+    if (isAction) return { type: 'ACTION' };
 
     // Dynamic strings/values are unions containing DataBindingSchema { path: ... } but NOT { componentId: ... }
-    const isDynamic = options.some(
-      o =>
-        o._def.typeName === 'ZodObject' &&
-        o._def.shape().path &&
-        !o._def.shape().componentId,
-    );
-    if (isDynamic) return {type: 'DYNAMIC'};
+    const isDynamic = options.some(o => o._def.type === "object" && o._def.shape.path && !o._def.shape.componentId);
+    if (isDynamic) return { type: 'DYNAMIC' };
 
     // ChildList is a union containing an array and an object with { componentId, path }
-    const isChildList = options.some(
-      o =>
-        o._def.typeName === 'ZodObject' &&
-        o._def.shape().componentId &&
-        o._def.shape().path,
-    );
-    if (isChildList) return {type: 'STRUCTURAL'};
-  } else if (current._def.typeName === 'ZodString') {
+    const isChildList = options.some(o => o._def.type === "object" && o._def.shape.componentId && o._def.shape.path);
+    if (isChildList) return { type: 'STRUCTURAL' };
+  } else if (def.type === "string") {
     // ComponentId falls back to STATIC since we can't perfectly identify it, which is fine because STATIC returns strings as-is.
   }
 
   // Recursive array scraping
-  if (current._def.typeName === 'ZodArray') {
+  if (def.type === "array") {
     return {
       type: 'ARRAY',
-      element: getFieldBehavior(current._def.type),
+      element: getFieldBehavior(def.element)
     };
   }
 
   // Recursive object scraping
-  if (current._def.typeName === 'ZodObject') {
+  if (def.type === "object") {
     const shape: Record<string, BehaviorNode> = {};
-    const objShape = current._def.shape();
+    const objShape = def.shape;
     for (const [key, value] of Object.entries(objShape)) {
-      shape[key] = getFieldBehavior(value as z.ZodTypeAny, key);
+      shape[key] = getFieldBehavior(value as z.ZodType, key);
     }
     return {type: 'OBJECT', shape};
   }
@@ -199,7 +186,7 @@ export class GenericBinder<T> {
   private context: ComponentContext;
   private behaviorTree: BehaviorNode;
 
-  constructor(context: ComponentContext, schema: z.ZodTypeAny) {
+  constructor(context: ComponentContext, schema: z.ZodType) {
     this.context = context;
     this.behaviorTree = scrapeSchemaBehavior(schema);
 

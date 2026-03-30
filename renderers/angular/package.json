@@ -31,7 +31,7 @@
   "dependencies": {
     "@a2ui/web_core": "file:../web_core",
     "tslib": "^2.3.0",
-    "zod": "^3.25.76"
+    "zod": "^4.3.6"
   },
   "peerDependencies": {
     "@angular/common": "^21.2.0",

@@ -14,69 +14,71 @@
  * limitations under the License.
  */
 
-import {z} from 'zod';
+import { z } from "zod";
 
-export const DataBindingSchema = z
-  .object({
-    path: z
-      .string()
-      .describe('A JSON Pointer path to a value in the data model.'),
-  })
-  .describe(
-    'REF:common_types.json#/$defs/DataBinding|A JSON Pointer path to a value in the data model.',
-  );
+export const DataBindingSchema = z.object({
+  path: z
+    .string()
+    .describe("A JSON Pointer path to a value in the data model."),
+});
 
-export const FunctionCallSchema = z
-  .object({
-    call: z.string().describe('The name of the function to call.'),
-    args: z.record(z.any()).describe('Arguments passed to the function.'),
-    returnType: z
-      .enum(['string', 'number', 'boolean', 'array', 'object', 'any', 'void'])
-      .default('boolean'),
-  })
-  .describe(
-    'REF:common_types.json#/$defs/FunctionCall|Invokes a named function on the client.',
-  );
+export const FunctionCallSchema = z.object({
+  call: z.string().describe("The name of the function to call."),
+  args: z.record(z.string(), z.any()).describe("Arguments passed to the function."),
+  returnType: z
+    .enum(["string", "number", "boolean", "array", "object", "any", "void"])
+    .default("boolean"),
+});
 
-export const DynamicBooleanSchema = z
-  .union([z.boolean(), DataBindingSchema, FunctionCallSchema])
-  .describe(
-    'REF:common_types.json#/$defs/DynamicBoolean|A boolean value that can be a literal, a path, or a function call returning a boolean.',
-  );
+export const LogicExpressionSchema: z.ZodType<any> = z.lazy(() =>
+  z.union([
+    z.object({ and: z.array(LogicExpressionSchema).min(1) }),
+    z.object({ or: z.array(LogicExpressionSchema).min(1) }),
+    z.object({ not: LogicExpressionSchema }),
+    // FunctionCall returning boolean — merged object replaces z.intersection()
+    z.object({
+      call: z.string().describe("The name of the function to call."),
+      args: z.record(z.string(), z.any()).describe("Arguments passed to the function."),
+      returnType: z.literal("boolean").optional(),
+    }),
+    z.object({ true: z.literal(true) }),
+    z.object({ false: z.literal(false) }),
+  ]),
+);
 
-export const DynamicStringSchema = z
-  .union([
-    z.string(),
-    DataBindingSchema,
-    // FunctionCall returning string (simplified schema for Zod, stricter in JSON Schema)
-    FunctionCallSchema,
-  ])
-  .describe('REF:common_types.json#/$defs/DynamicString|Represents a string');
+export const DynamicStringSchema = z.union([
+  z.string(),
+  DataBindingSchema,
+  // FunctionCall returning string (simplified schema for Zod, stricter in JSON Schema)
+  FunctionCallSchema,
+]);
 
-export const DynamicNumberSchema = z
-  .union([z.number(), DataBindingSchema, FunctionCallSchema])
-  .describe(
-    'REF:common_types.json#/$defs/DynamicNumber|Represents a value that can be either a literal number, a path to a number in the data model, or a function call returning a number.',
-  );
+export const DynamicNumberSchema = z.union([
+  z.number(),
+  DataBindingSchema,
+  FunctionCallSchema,
+]);
 
-export const DynamicStringListSchema = z
-  .union([z.array(z.string()), DataBindingSchema, FunctionCallSchema])
-  .describe(
-    'REF:common_types.json#/$defs/DynamicStringList|Represents a value that can be either a literal array of strings, a path to a string array in the data model, or a function call returning a string array.',
-  );
+export const DynamicBooleanSchema = z.union([
+  z.boolean(),
+  DataBindingSchema,
+  LogicExpressionSchema,
+]);
 
-export const DynamicValueSchema = z
-  .union([
-    z.string(),
-    z.number(),
-    z.boolean(),
-    z.array(z.any()),
-    DataBindingSchema,
-    FunctionCallSchema,
-  ])
-  .describe(
-    'REF:common_types.json#/$defs/DynamicValue|A value that can be a literal, a path, or a function call returning any type.',
-  );
+export const DynamicStringListSchema = z.union([
+  z.array(z.string()),
+  DataBindingSchema,
+  FunctionCallSchema,
+]);
+
+export const DynamicValueSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.array(z.any()),
+  DataBindingSchema,
+  FunctionCallSchema,
+]);
 
 /** A JSON Pointer path to a value in the data model. */
 export type DataBinding = z.infer<typeof DataBindingSchema>;
@@ -121,29 +123,26 @@ export const ChildListSchema = z
 /** A static list of child component IDs or a dynamic list template. */
 export type ChildList = z.infer<typeof ChildListSchema>;
 
-export const ActionSchema = z
-  .union([
-    z
-      .object({
-        event: z.object({
-          name: z.string(),
-          context: z.record(DynamicValueSchema).optional(),
-        }),
-      })
-      .describe('Triggers a server-side event.'),
-    z
-      .object({
-        functionCall: FunctionCallSchema,
-      })
-      .describe('Executes a local client-side function.'),
-  ])
-  .describe('REF:common_types.json#/$defs/Action');
+export const ActionSchema = z.union([
+  z
+    .object({
+      event: z.object({
+        name: z.string(),
+        context: z.record(z.string(), DynamicValueSchema).optional(),
+      }),
+    })
+    .describe("Triggers a server-side event."),
+  z
+    .object({
+      functionCall: FunctionCallSchema,
+    })
+    .describe("Executes a local client-side function."),
+]);
 /** Triggers a server-side event or a local client-side function. */
 export type Action = z.infer<typeof ActionSchema>;
 
-export const CheckRuleSchema = z
-  .object({
-    condition: DynamicBooleanSchema,
+export const CheckRuleSchema = LogicExpressionSchema.and(
+  z.object({
     message: z
       .string()
       .describe('The error message to display if the check fails.'),
@@ -186,13 +185,12 @@ export type AccessibilityAttributes = z.infer<
 >;
 
 export const AnyComponentSchema = z
-  .object({
-    component: z.string().describe('The type name of the component.'),
+  .looseObject({
+    component: z.string().describe("The type name of the component."),
     id: ComponentIdSchema.optional(),
     weight: z.number().optional(),
   })
-  .passthrough()
-  .describe('A generic A2UI component definition.');
+  .describe("A generic A2UI component definition.");
 
 /** A generic A2UI component definition. */
 export type AnyComponent = z.infer<typeof AnyComponentSchema>;

@@ -314,11 +314,10 @@ describe('DataContext', () => {
       const invokerWithZodError = () => {
         throw new z.ZodError([
           {
-            code: 'invalid_type',
-            expected: 'string',
-            received: 'number',
-            path: ['foo'],
-            message: 'Expected string, received number',
+            code: "invalid_type",
+            expected: "string",
+            path: ["foo"],
+            message: "Expected string, received number",
           },
         ]);
       };

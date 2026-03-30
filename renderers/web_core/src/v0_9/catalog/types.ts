@@ -55,7 +55,7 @@ export type InferA2uiReturnType<T extends A2uiReturnType> = T extends 'string'
 export interface FunctionApi {
   readonly name: string;
   readonly returnType: A2uiReturnType;
-  readonly schema: z.ZodTypeAny;
+  readonly schema: z.ZodType;
 }
 
 /**
@@ -70,8 +70,8 @@ export interface FunctionImplementation extends FunctionApi {
 }
 
 export function createFunctionImplementation<
-  Schema extends z.ZodTypeAny,
-  TReturn extends A2uiReturnType,
+  Schema extends z.ZodType,
+  TReturn extends A2uiReturnType
 >(
   api: {name: string; returnType: TReturn; schema: Schema},
   execute: (
@@ -185,7 +185,7 @@ export class Catalog<T extends ComponentApi> {
 
       // Provides runtime safety: Coerces and strips invalid arguments before execute()
       try {
-        const safeArgs = fn.schema.parse(rawArgs);
+        const safeArgs = fn.schema.parse(rawArgs) as Record<string, any>;
         return fn.execute(safeArgs, ctx, abortSignal);
       } catch (e: any) {
         if (e?.name === 'ZodError' || e instanceof z.ZodError) {
