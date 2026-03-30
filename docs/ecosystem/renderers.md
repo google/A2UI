@@ -36,7 +36,7 @@ These projects are early-stage or experimental:
 
 **a2ui-swiftui** is a native SwiftUI renderer supporting iOS, macOS, visionOS, watchOS, and tvOS. It covers all 18 standard A2UI components with dual v0.8 + v0.9 protocol support, includes JSONL streaming, and uses the Observation framework for reactivity.
 
-**a2ui-oat** is the first framework-free web renderer, built on [Oat CSS](https://oat.ink/) semantic styling. It maps 37 catalog components (all 16 basic + 21 extensions) to semantic HTML with zero framework dependencies (~13KB total client footprint). It includes 22 registered client-side functions (pagination, SSE streaming, WebSocket, routing, formatting, validation), a custom catalog with theme support, and a dual-mode architecture that also supports direct HTML rendering for trusted agents. v0.9 only, with `@a2ui/web-lib` integration via `registerWithWebLib()`.
+**a2ui-oat** is the first framework-free web renderer, built on [Oat CSS](https://oat.ink/) semantic styling. It provides 37 components and 22 client-side functions with a minimal footprint (~13KB). Key features include a custom catalog with theme support, a dual-mode architecture, and `@a2ui/web-lib` integration. v0.9 only.
 
 ### Python / PyPI
 
