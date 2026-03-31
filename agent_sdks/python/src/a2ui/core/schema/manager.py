@@ -182,10 +182,11 @@ class A2uiSchemaManager(InferenceStrategy):
       self,
       client_ui_capabilities: Optional[dict[str, Any]] = None,
       allowed_components: List[str] = [],
+      allowed_messages: List[str] = [],
   ) -> A2uiCatalog:
     """Gets the selected catalog after selection and component pruning."""
     catalog = self._select_catalog(client_ui_capabilities)
-    pruned_catalog = catalog.with_pruned_components(allowed_components)
+    pruned_catalog = catalog.with_pruning(allowed_components, allowed_messages)
     return pruned_catalog
 
   def load_examples(self, catalog: A2uiCatalog, validate: bool = False) -> str:
@@ -203,6 +204,7 @@ class A2uiSchemaManager(InferenceStrategy):
       ui_description: str = "",
       client_ui_capabilities: Optional[dict[str, Any]] = None,
       allowed_components: List[str] = [],
+      allowed_messages: List[str] = [],
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,
@@ -219,7 +221,7 @@ class A2uiSchemaManager(InferenceStrategy):
       parts.append(f"## UI Description:\n{ui_description}")
 
     selected_catalog = self.get_selected_catalog(
-        client_ui_capabilities, allowed_components
+        client_ui_capabilities, allowed_components, allowed_messages
     )
 
     if include_schema:

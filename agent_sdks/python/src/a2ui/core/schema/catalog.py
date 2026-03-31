@@ -89,7 +89,7 @@ class A2uiCatalog:
 
     return A2uiValidator(self)
 
-  def with_pruned_components(self, allowed_components: List[str]) -> "A2uiCatalog":
+  def _with_pruned_components(self, allowed_components: List[str]) -> "A2uiCatalog":
     """Returns a new catalog with only allowed components.
 
     Args:
@@ -99,11 +99,10 @@ class A2uiCatalog:
       A copy of the catalog with only allowed components.
     """
 
-    schema_copy = copy.deepcopy(self.catalog_schema)
-
-    # Allow all components if no allowed components are specified
     if not allowed_components:
-      return self._with_pruned_common_types()
+      return self
+
+    schema_copy = copy.deepcopy(self.catalog_schema)
 
     if CATALOG_COMPONENTS_KEY in schema_copy and isinstance(
         schema_copy[CATALOG_COMPONENTS_KEY], dict
@@ -133,8 +132,59 @@ class A2uiCatalog:
 
         any_comp["oneOf"] = filtered_one_of
 
-    pruned_catalog = replace(self, catalog_schema=schema_copy)
-    return pruned_catalog._with_pruned_common_types()
+    return replace(self, catalog_schema=schema_copy)
+
+  def _with_pruned_messages(self, allowed_messages: List[str]) -> "A2uiCatalog":
+    """Returns a new catalog with only allowed messages.
+
+    Args:
+      allowed_messages: List of message names to include in s2c_schema.
+
+    Returns:
+      A copy of the catalog with only allowed messages.
+    """
+    if not allowed_messages:
+      return self
+
+    s2c_schema_copy = copy.deepcopy(self.s2c_schema)
+    if "oneOf" in s2c_schema_copy and isinstance(s2c_schema_copy["oneOf"], list):
+      s2c_schema_copy["oneOf"] = [
+          item
+          for item in s2c_schema_copy["oneOf"]
+          if "$ref" in item
+          and item["$ref"].startswith("#/$defs/")
+          and item["$ref"].split("/")[-1] in allowed_messages
+      ]
+
+    if "$defs" in s2c_schema_copy and isinstance(s2c_schema_copy["$defs"], dict):
+      s2c_schema_copy["$defs"] = {
+          k: v for k, v in s2c_schema_copy["$defs"].items() if k in allowed_messages
+      }
+
+    return replace(self, s2c_schema=s2c_schema_copy)
+
+  def with_pruning(
+      self,
+      allowed_components: List[str] = [],
+      allowed_messages: List[str] = [],
+  ) -> "A2uiCatalog":
+    """Returns a new catalog with pruned components and messages.
+
+    Args:
+      allowed_components: List of component names to include.
+      allowed_messages: List of message names to include in s2c_schema.
+
+    Returns:
+      A copy of the catalog with pruned components and messages.
+    """
+    catalog = self
+    if allowed_components:
+      catalog = catalog._with_pruned_components(allowed_components)
+
+    if allowed_messages:
+      catalog = catalog._with_pruned_messages(allowed_messages)
+
+    return catalog._with_pruned_common_types()
 
   def _with_pruned_common_types(self) -> "A2uiCatalog":
     """Returns a new catalog with unused common types pruned from the schema."""
