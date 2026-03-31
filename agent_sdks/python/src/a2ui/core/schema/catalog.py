@@ -214,8 +214,8 @@ class A2uiCatalog:
 
   def with_pruning(
       self,
-      allowed_components: List[str] = [],
-      allowed_messages: List[str] = [],
+      allowed_components: Optional[List[str]] = None,
+      allowed_messages: Optional[List[str]] = None,
   ) -> "A2uiCatalog":
     """Returns a new catalog with pruned components and messages.
 
