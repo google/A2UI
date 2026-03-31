@@ -19,13 +19,19 @@ import re
 from typing import Any, List, Dict, Optional, Set, TYPE_CHECKING
 
 from .constants import *
-from ..schema.constants import VERSION_0_9, VERSION_0_8, A2UI_OPEN_TAG, A2UI_CLOSE_TAG, SURFACE_ID_KEY, CATALOG_COMPONENTS_KEY
+from ..schema.constants import (
+    VERSION_0_9,
+    VERSION_0_8,
+    A2UI_OPEN_TAG,
+    A2UI_CLOSE_TAG,
+    SURFACE_ID_KEY,
+    CATALOG_COMPONENTS_KEY,
+)
 from ..schema.validator import (
     analyze_topology,
     extract_component_ref_fields,
     extract_component_required_fields,
 )
-from .version_handlers import A2uiV08Handler, A2uiV09Handler, A2uiVersionHandler
 from .response_part import ResponsePart
 
 
@@ -48,16 +54,26 @@ CUTTABLE_KEYS = {
     "text",
 }
 
-# A safe placeholder used when referencing a child component that hasn't yet streamed in.
-PLACEHOLDER_COMPONENT = {
-    "Row": {
-        "children": {"explicitList": []},
-    }
-}
-
 
 class A2uiStreamParser:
-  """Parses a stream of text for A2UI JSON messages with fine-grained component yielding."""
+  """Parses a stream of text for A2UI JSON messages with fine-grained component yielding.
+
+  This class acts as a factory that returns a version-specific parser instance
+  (V08 or V09) depending on the catalog version.
+  """
+
+  def __new__(cls, catalog: "A2uiCatalog" = None, *args, **kwargs):
+    if cls is A2uiStreamParser:
+      version = getattr(catalog, "version", None) if catalog else None
+      if version == VERSION_0_9:
+        from .streaming_v09 import A2uiStreamParserV09
+
+        return A2uiStreamParserV09(catalog=catalog, *args, **kwargs)
+      else:
+        from .streaming_v08 import A2uiStreamParserV08
+
+        return A2uiStreamParserV08(catalog=catalog, *args, **kwargs)
+    return super().__new__(cls)
 
   def __init__(self, catalog: "A2uiCatalog" = None):
     self._ref_fields_map = extract_component_ref_fields(catalog) if catalog else {}
@@ -80,58 +96,45 @@ class A2uiStreamParser:
     self._seen_components: Dict[str, Dict[str, Any]] = {}
 
     # Track data model for path resolution
-    self._data_model: Dict[str, Any] = {}
     self._yielded_data_model: Dict[str, Any] = {}
-    self._yielded_placeholders: Dict[str, Set[str]] = {}  # comp_id -> set of paths
     self._deleted_surfaces: Set[str] = set()
-    self._comp_paths: Dict[str, Set[str]] = {}  # cid -> set of data model paths
-    # Set of unique component IDs yielded per surface
-    self._yielded_ids: Dict[str, Set[str]] = {}  # surfaceId -> set of cids
-    self._yielded_contents: Dict[Any, str] = {}  # (surfaceId, cid) -> hash of content
-    self._dirty_components: Set[str] = (
-        set()
-    )  # Set of component IDs that need re-yielding
-    self._components_with_placeholders: Set[str] = (
-        set()
-    )  # cid set that were yielded as placeholders
 
-    self._handler: Optional[A2uiVersionHandler] = None
-    if catalog:
-      version = getattr(catalog, "version", None)
-      if version == VERSION_0_9:
-        self._handler = A2uiV09Handler()
-      elif version == VERSION_0_8:
-        self._handler = A2uiV08Handler()
+    # Set of unique component IDs yielded per surface to prevent duplicate yielding
+    # surfaceId -> set of cids
+    self._yielded_ids: Dict[str, Set[str]] = {}
+    # (surfaceId, cid) -> hash of content for change detection
+    self._yielded_contents: Dict[Any, str] = {}
 
-    self._root_id: Optional[str] = (
-        DEFAULT_ROOT_ID
-        if catalog and getattr(catalog, "version", None) == VERSION_0_9
-        else None
-    )
-    self._surface_id: Optional[str] = None
-    self._msg_types: List[str] = []
-    self._yielded_begin_rendering_surfaces: Set[str] = set()
-    self._yielded_real_begin_rendering_surfaces: Set[str] = set()
+    self._root_id: Optional[str] = None  # The root component ID for the layout tree
+    self._surface_id: Optional[str] = None  # The active surface ID tracking the context
+    self._msg_types: List[str] = []  # Running list of message types seen in the block
+
+    # A set of surface ids for which we have already yielded a start message
+    # Tracks if beginRendering or createSurface was emitted
+    self._yielded_start_messages: Set[str] = set()
+
+    # The current active message type for component grouping
     self._active_msg_type: Optional[str] = None
 
-    # New state for buffering and progress
+    # State for buffering updates until surface is ready
     self._pending_messages: Dict[str, List[Dict[str, Any]]] = (
         {}
-    )  # surfaceId -> list of msgs
-    self._buffered_begin_rendering: Optional[Dict[str, Any]] = None
-    self._topology_dirty = False
+    )  # surfaceId -> list of msgs delayed until start message arrives
+    self._buffered_start_message: Optional[Dict[str, Any]] = (
+        None  # The start message to yield before any components
+    )
+    self._topology_dirty = False  # Set to true if components are added out of order
+    self._in_top_level_list = False
 
   @property
-  def seen_components(self) -> Dict[str, Dict[str, Any]]:
-    return self._seen_components
+  def _placeholder_component(self) -> Dict[str, Any]:
+    """Returns the version-specific placeholder component.
 
-  @property
-  def buffered_begin_rendering(self) -> Optional[Dict[str, Any]]:
-    return self._buffered_begin_rendering
-
-  @buffered_begin_rendering.setter
-  def buffered_begin_rendering(self, value: Optional[Dict[str, Any]]):
-    self._buffered_begin_rendering = value
+    This is used when a component references a child component that hasn't yet
+    streamed in. The placeholder component is added to the components list and
+    the reference is updated to point to the placeholder component.
+    """
+    raise NotImplementedError("Subclasses must implement _placeholder_component")
 
   @property
   def surface_id(self) -> Optional[str]:
@@ -163,20 +166,29 @@ class A2uiStreamParser:
     ):
       self._active_msg_type = msg_type
 
+  @property
+  def _yielded_surfaces_set(self) -> Set[str]:
+    """Provides access to version-specific yielded surfaces set."""
+    raise NotImplementedError("Subclasses must implement _yielded_surfaces_set")
+
+  def is_protocol_msg(self, obj: Dict[str, Any]) -> bool:
+    """Checks if the object is a recognized A2UI message for this version."""
+    raise NotImplementedError("Subclasses must implement is_protocol_msg")
+
+  @property
+  def _data_model_msg_type(self) -> str:
+    """Returns the message type identifier for data model updates."""
+    raise NotImplementedError("Subclasses must implement _data_model_msg_type")
+
   def _get_active_msg_type_for_components(self) -> Optional[str]:
     """Determines which msg_type to use when wrapping component updates."""
-    if self._active_msg_type:
-      return self._active_msg_type
-    for mt in self._msg_types:
-      if mt in (
-          MSG_TYPE_SURFACE_UPDATE,
-          MSG_TYPE_UPDATE_COMPONENTS,
-          MSG_TYPE_CREATE_SURFACE,
-      ):
-        self._active_msg_type = mt
-        return mt
-    # Fallback to the first found message type or default
-    return self._msg_types[0] if self._msg_types else None
+    raise NotImplementedError(
+        "Subclasses must implement _get_active_msg_type_for_components"
+    )
+
+  def _deduplicate_data_model(self, m: Dict[str, Any], strict_integrity: bool) -> bool:
+    """Returns True if message should be yielded, False if skipped."""
+    return True
 
   def _yield_messages(
       self,
@@ -186,56 +198,8 @@ class A2uiStreamParser:
   ):
     """Validates and appends messages to the final output list."""
     for m in messages_to_yield:
-      # Deduplicate dataModelUpdate (v0.8)
-      if MSG_TYPE_DATA_MODEL_UPDATE in m:
-        dm = m[MSG_TYPE_DATA_MODEL_UPDATE]
-        raw_contents = dm.get("contents", {})
-        contents_dict = {}
-        if isinstance(raw_contents, list):
-          for entry in raw_contents:
-            if isinstance(entry, dict) and "key" in entry:
-              key = entry["key"]
-              val = (
-                  entry.get("valueString")
-                  or entry.get("valueNumber")
-                  or entry.get("valueBoolean")
-                  or entry.get("valueMap")
-              )
-              if key and val is not None:
-                contents_dict[key] = val
-        elif isinstance(raw_contents, dict):
-          contents_dict = raw_contents
-
-        if contents_dict:
-          is_new = False
-          for k, v in contents_dict.items():
-            if self._yielded_data_model.get(k) != v:
-              is_new = True
-              break
-          if not is_new and strict_integrity:
-            # Only skip if strict (complete message) and truly old
-            continue
-          # Note: we don't update self._yielded_data_model here if it was already updated by sniff
-          self._yielded_data_model.update(contents_dict)
-
-      # Deduplicate updateDataModel (v0.9)
-      if MSG_TYPE_UPDATE_DATA_MODEL in m:
-        udm = m[MSG_TYPE_UPDATE_DATA_MODEL]
-        if isinstance(udm, dict):
-          is_new = False
-          for k, v in udm.items():
-            if (
-                k not in (SURFACE_ID_KEY, "root")
-                and self._yielded_data_model.get(k) != v
-            ):
-              is_new = True
-              break
-          if not is_new and strict_integrity:
-            continue
-          # Update yielded model
-          for k, v in udm.items():
-            if k not in (SURFACE_ID_KEY, "root"):
-              self._yielded_data_model[k] = v
+      if not self._deduplicate_data_model(m, strict_integrity):
+        continue
 
       # Each surface update message must specify a surfaceId and satisfy catalog validation.
       if self._validator:
@@ -245,11 +209,8 @@ class A2uiStreamParser:
           )
         except ValueError as e:
           if strict_integrity:
-            # Fatal error: the agent produced invalid A2UI.
             raise e
           else:
-            # Sniffing error: the fragment is probably not yet complete enough for A2UI.
-            # We swallow this and wait for more data.
             logger.debug(f"Validation failed for partial/sniffed message: {e}")
             continue
 
@@ -264,18 +225,14 @@ class A2uiStreamParser:
   def _delete_surface(self, sid: str) -> None:
     """Clears all state related to a specific surface."""
     self._pending_messages.pop(sid, None)
-    # Clear component paths and placeholders for components yielded on this surface
-    yielded_cids = self._yielded_ids.pop(sid, set())
-    for cid in yielded_cids:
-      self._comp_paths.pop(cid, None)
-      self._yielded_placeholders.pop(cid, None)
+    self._yielded_ids.pop(sid, None)
 
     # Clear contents for this surface
     self._yielded_contents = {
         k: v for k, v in self._yielded_contents.items() if k[0] != sid
     }
-    self._yielded_begin_rendering_surfaces.discard(sid)
-    self._yielded_real_begin_rendering_surfaces.discard(sid)
+    self._yielded_surfaces_set.discard(sid)
+    self._yielded_start_messages.discard(sid)
 
     self._deleted_surfaces.add(sid)
 
@@ -462,22 +419,6 @@ class A2uiStreamParser:
 
     return fixed
 
-  def _process_json_chunk(self, chunk: str, messages: List[Dict[str, Any]]):
-    """Processes raw JSON characters and manages the brace stack.
-
-    This method implements a lightweight stream-parsing state machine using a
-    brace stack. It identifies potential JSON objects within the top-level
-    A2UI message array (`[...]`).
-
-    When an object is fully closed (brace count returns to zero), it triggers
-    `_handle_complete_object`. While an object is nested, it continuously
-    triggers `_sniff_metadata` to discover identifiers as early as possible.
-
-    Args:
-        chunk: The raw string of bytes suspected to be part of the JSON array.
-        messages: The list to which newly parsed A2UI messages will be added.
-    """
-
   def _process_json_chunk(self, chunk: str, messages: List[ResponsePart]):
     for char in chunk:
       char_handled = False
@@ -546,15 +487,12 @@ class A2uiStreamParser:
                 try:
                   obj = json.loads(obj_buffer)
                   if isinstance(obj, dict):
-                    is_v08_msg = self._in_top_level_list and any(
-                        k in obj
-                        for k in (
-                            MSG_TYPE_BEGIN_RENDERING,
-                            MSG_TYPE_SURFACE_UPDATE,
-                            MSG_TYPE_DATA_MODEL_UPDATE,
-                            MSG_TYPE_DELETE_SURFACE,
-                        )
+                    logger.debug(
+                        f"[Parsed Dict] Keys: {list(obj.keys())}, protocol check"
+                        " follows..."
                     )
+
+                    is_protocol = self._in_top_level_list and self.is_protocol_msg(obj)
                     is_comp = obj.get("id") and obj.get("component")
                     # Process objects at top-level OR items in top-level list
                     # When in a list, we are top-level if the ONLY thing on the stack is the list opener
@@ -565,7 +503,7 @@ class A2uiStreamParser:
                     )
                     if is_comp:
                       self._handle_partial_component(obj, messages)
-                    elif is_top_level or is_v08_msg:
+                    elif is_top_level or is_protocol:
                       if not self._handle_complete_object(
                           obj, self.surface_id, messages
                       ):
@@ -573,21 +511,26 @@ class A2uiStreamParser:
                         self._yield_messages([obj], messages)
 
                     if self._brace_count == 0 or (
-                        self._in_top_level_list and self._brace_count == 1
+                        self._in_top_level_list and len(self._brace_stack) == 1
                     ):
                       # Aggressively clear processed objects from the buffer to prevent slowdown.
-                      # We slice up to the current position.
-                      self._json_buffer = self._json_buffer[len(obj_buffer) :]
-                      if self._brace_stack:
-                        # Adjust stack indices after shift
-                        shift = len(obj_buffer)
-                        self._brace_stack = [
-                            (b_t, i - shift) for b_t, i in self._brace_stack
-                        ]
+                      if len(self._brace_stack) == 1 and self._brace_stack[0][0] == "[":
+                        # Keep '[' and remove the object after it
+                        self._json_buffer = (
+                            self._json_buffer[:start_idx]
+                            + self._json_buffer[start_idx + len(obj_buffer) :]
+                        )
                       else:
-                        self._brace_stack = []
+                        self._json_buffer = self._json_buffer[len(obj_buffer) :]
+                        if self._brace_stack:
+                          shift = len(obj_buffer)
+                          self._brace_stack = [
+                              (b_t, i - shift) for b_t, i in self._brace_stack
+                          ]
+
                 except json.JSONDecodeError as e:
                   logger.debug(f"Object recognition failed: {e}")
+
         elif char == "[":
           self._brace_stack.append(("[", len(self._json_buffer)))
           self._json_buffer += "["
@@ -617,12 +560,15 @@ class A2uiStreamParser:
       self.yield_reachable(messages, check_root=False, raise_on_orphans=False)
       self._topology_dirty = False
 
+  def _construct_sniffed_data_model_message(
+      self, active_msg_type: str, delta_msg_payload: Dict[str, Any]
+  ) -> Dict[str, Any]:
+    """Returns the message to yield for a partial data model update."""
+    return {active_msg_type: delta_msg_payload}
+
   def _sniff_partial_data_model(self, messages: List[ResponsePart]) -> None:
-    """Sniffs for partial data model updates in the buffer."""
-    if (
-        f'"{MSG_TYPE_DATA_MODEL_UPDATE}"' not in self._json_buffer
-        and f'"{MSG_TYPE_UPDATE_DATA_MODEL}"' not in self._json_buffer
-    ):
+    msg_type = self._data_model_msg_type
+    if f'"{msg_type}"' not in self._json_buffer:
       return
     # Look through the brace stack for objects that might contain data model updates
     for b_type, start_idx in reversed(self._brace_stack):
@@ -652,10 +598,15 @@ class A2uiStreamParser:
             continue
 
       if obj and isinstance(obj, dict):
-        # v0.8: dataModelUpdate
-        if MSG_TYPE_DATA_MODEL_UPDATE in obj:
-          dm_obj = obj[MSG_TYPE_DATA_MODEL_UPDATE]
+        active_msg_type = None
+        msg_type = self._data_model_msg_type
+        if msg_type in obj:
+          active_msg_type = msg_type
+
+        if active_msg_type:
+          dm_obj = obj[active_msg_type]
           if isinstance(dm_obj, dict) and "contents" in dm_obj:
+
             raw_contents = dm_obj["contents"]
             contents_dict = self._parse_contents_to_dict(raw_contents)
 
@@ -692,19 +643,14 @@ class A2uiStreamParser:
                 if "path" in dm_obj:
                   delta_msg_payload["path"] = dm_obj["path"]
 
-                delta_msg = {MSG_TYPE_DATA_MODEL_UPDATE: delta_msg_payload}
+                delta_msg = self._construct_sniffed_data_model_message(
+                    active_msg_type, delta_msg_payload
+                )
                 self._yield_messages([delta_msg], messages, strict_integrity=False)
-                self._yielded_data_model.update(contents_dict)
-                # Update internal model to trigger re-yielding of resolved placeholders
-                self.update_data_model(dm_obj, messages)
-                self.yield_reachable(messages, check_root=False)
 
-        # v0.9: updateDataModel
-        elif MSG_TYPE_UPDATE_DATA_MODEL in obj:
-          dm_obj = obj[MSG_TYPE_UPDATE_DATA_MODEL]
-          if isinstance(dm_obj, dict):
-            self.update_data_model(dm_obj, messages)
-            return
+                self._yielded_data_model.update(contents_dict)
+                # Update internal model for path resolution
+                self.update_data_model(dm_obj, messages)
 
   def _sniff_partial_component(self, messages: List[ResponsePart]):
     """Attempts to parse a partial component from the current buffer."""
@@ -723,49 +669,19 @@ class A2uiStreamParser:
       try:
         obj = json.loads(fixed_fragment)
         if isinstance(obj, dict) and obj.get("id") and obj.get("component"):
-          # Ignore components that are effectively empty (no type keys)
-          if isinstance(obj["component"], dict) and len(obj["component"]) > 0:
+          if isinstance(obj["component"], str):
+            # Flat style (v0.9+): component type is a string
+            self._handle_partial_component(obj, messages)
+          elif isinstance(obj["component"], dict) and len(obj["component"]) > 0:
+            # Structured style (v0.8): Ignore components that are effectively empty (no type keys)
             self._handle_partial_component(obj, messages)
 
       except Exception:
         continue
 
-  def _sniff_metadata(self):
-    """Sniffs for surfaceId, root, and msg_types in the current json_buffer.
-
-    This method is called frequently during the parsing of an object fragment.
-    It attempts to detect the A2UI version (if not already known) and delegates
-    to the version handler to perform regex-based "sniffing" of keys like
-    `surfaceId` or `root`.
-
-    Why we need it:
-    In a streaming context, we want to know *which* UI surface we are updating
-    long before the closing brace of the message arrives. This allows us to
-    yield components that have been fully received even if the rest of the
-    message (e.g., more components or metadata) is still on the wire.
-    """
-    if not self._handler:
-      version = A2uiVersionHandler.detect_version(self._json_buffer)
-      if version == VERSION_0_8:
-        self._handler = A2uiV08Handler()
-      else:
-        # Default to 0.9.
-        # Create new handler if the version is not compatible with 0.9.
-        self._handler = A2uiV09Handler()
-
-    if self._handler:
-      self._handler.sniff_metadata(self._json_buffer, self)
-    else:
-      # Fallback to generic sniffing if version not yet known
-      if not self.surface_id:
-        match = re.search(rf'"{SURFACE_ID_KEY}":\s*"([^"]+)"', self._json_buffer)
-        if match:
-          self.surface_id = match.group(1)
-
-      if not self.root_id:
-        match = re.search(r'"root":\s*"([^"]+)"', self._json_buffer)
-        if match:
-          self.root_id = match.group(1)
+  def _sniff_metadata(self) -> None:
+    """Sniffs for surfaceId, root, and msg_types in the current json_buffer."""
+    raise NotImplementedError("Subclasses must implement _sniff_metadata")
 
   def _prune_incomplete_datamodel_entries(self, entries: Any) -> Any:
     """Recursively removes data model entries that only contain 'key' and no valid values."""
@@ -830,7 +746,12 @@ class A2uiStreamParser:
       return False
 
     component_def = comp.get("component")
-    if _has_empty_dict(component_def):
+    if isinstance(component_def, str):
+      # v0.9 flat style: check the whole component object for empty dicts
+      if _has_empty_dict(comp):
+        return
+    elif _has_empty_dict(component_def):
+      # v0.8 nested style: check properties inside component
       return
 
     if isinstance(component_def, dict) and hasattr(self, "_required_fields_map"):
@@ -887,116 +808,14 @@ class A2uiStreamParser:
           if k not in (SURFACE_ID_KEY, "root", "contents")
       }
 
-    self._data_model.update(contents)
-    updated_keys = set(contents.keys())
-    for cid, paths in self._comp_paths.items():
-      if paths & updated_keys:
-        self._dirty_components.add(cid)
-
   def _handle_complete_object(
       self,
       obj: Dict[str, Any],
       sid: Optional[str],
       messages: List[ResponsePart],
   ) -> bool:
-    """Handles a fully-closed top-level A2UI message object.
-
-    This is called when a top-level object (e.g., `beginRendering`,
-    `surfaceUpdate`, `deleteSurface`) is fully parsed. It finalizes the parser
-    state for that message and allows version handlers to perform final
-    processing (like yielding any remaining buffered components).
-
-    Args:
-        obj: The fully parsed message object.
-        messages: The list of final A2UI messages to be delivered to the client.
-    """
-    if not isinstance(obj, dict):
-      return
-
-    # Validate against the schema
-    if self._validator:
-      self._validator.validate(obj, root_id=sid, strict_integrity=False)
-
-    # Update state based on the message content
-    surface_id = obj.get(SURFACE_ID_KEY, self.surface_id)
-    if MSG_TYPE_SURFACE_UPDATE in obj:
-      val = obj[MSG_TYPE_SURFACE_UPDATE]
-      if isinstance(val, dict):
-        surface_id = val.get(SURFACE_ID_KEY) or surface_id
-    elif MSG_TYPE_BEGIN_RENDERING in obj:
-      val = obj[MSG_TYPE_BEGIN_RENDERING]
-      if isinstance(val, dict):
-        surface_id = val.get(SURFACE_ID_KEY) or surface_id
-    elif MSG_TYPE_CREATE_SURFACE in obj:
-      val = obj[MSG_TYPE_CREATE_SURFACE]
-      if isinstance(val, dict):
-        surface_id = val.get(SURFACE_ID_KEY) or surface_id
-    elif MSG_TYPE_DELETE_SURFACE in obj:
-      val = obj[MSG_TYPE_DELETE_SURFACE]
-      if isinstance(val, str):
-        surface_id = val
-      elif isinstance(val, dict):
-        surface_id = val.get(SURFACE_ID_KEY) or surface_id
-
-    self.surface_id = surface_id
-    sid = self.surface_id or "unknown"
-
-    if MSG_TYPE_DELETE_SURFACE in obj:
-      # Only process actual deletion if we've already established the surface.
-      # Otherwise, we buffer it (handled below) so it can be processed after beginRendering.
-      if (
-          sid in self._yielded_begin_rendering_surfaces
-          or self._buffered_begin_rendering
-      ):
-        self._delete_surface(sid)
-
-    # Handle buffering if beginRendering is missing
-    if sid in self._deleted_surfaces:
-      return True
-
-    if (
-        (MSG_TYPE_SURFACE_UPDATE in obj or MSG_TYPE_DELETE_SURFACE in obj)
-        and sid not in self._yielded_begin_rendering_surfaces
-        and not self._buffered_begin_rendering
-    ):
-      if sid not in self._pending_messages:
-        self._pending_messages[sid] = []
-      self._pending_messages[sid].append(obj)
-
-      # deleteSurface should NOT trigger progress
-      return True
-
-    # Let the handler try to deal with it first
-    if self._handler and self._handler.handle_complete_object(obj, self, messages):
-      # If beginRendering just completed, flush pending messages
-      if MSG_TYPE_BEGIN_RENDERING in obj or MSG_TYPE_CREATE_SURFACE in obj:
-        # ...
-        # Yield beginRendering immediately when it completes
-        if sid not in self._yielded_real_begin_rendering_surfaces:
-          self._yield_messages([obj], messages)
-          self._yielded_real_begin_rendering_surfaces.add(sid)
-          self._yielded_begin_rendering_surfaces.add(sid)
-
-          self._buffered_begin_rendering = None
-
-        if sid in self._pending_messages:
-          pending_list = self._pending_messages.pop(sid)
-          for pending_msg in pending_list:
-            self._handle_complete_object(pending_msg, sid, messages)
-
-        # Also try to yield reachable components if we just got a root
-        self.yield_reachable(messages)
-      return True
-
-    # Fallback or shared logic (like deleteSurface)
-    if MSG_TYPE_DELETE_SURFACE in obj:
-      self._yield_messages([obj], messages)
-      return True
-
-    # If message type is still unknown, we might have missed it
-    # We yield anything else as is
-    self._yield_messages([obj], messages)
-    return True
+    """Handles an object that has been fully parsed. To be implemented by subclasses."""
+    raise NotImplementedError("Subclasses must implement _handle_complete_object")
 
   def yield_reachable(
       self,
@@ -1024,10 +843,7 @@ class A2uiStreamParser:
       return
 
     sid = self.surface_id
-    if (
-        sid not in self._yielded_begin_rendering_surfaces
-        and not self._buffered_begin_rendering
-    ):
+    if sid not in self._yielded_surfaces_set and not self._buffered_start_message:
       return
 
     try:
@@ -1078,9 +894,7 @@ class A2uiStreamParser:
         return
 
       should_yield = False
-      if (available_reachable - yielded_for_surface) or (
-          available_reachable & self._dirty_components
-      ):
+      if available_reachable - yielded_for_surface:
         should_yield = True
       else:
         # Check if any yielded component's content has changed for this surface
@@ -1092,70 +906,31 @@ class A2uiStreamParser:
             should_yield = True
             break
 
-          # OR check if any path used by this component was updated in the most recent dataModelUpdate
-          # (Wait! yield_reachable doesn't know what was just updated.
-          # But we can check if any of its paths are in our current data model?)
-          # No, that's not enough. We need to know it was UPDATED.
-          # Actually, the test updates p1.
-          # I'll just assume if it has a path that is IN data_model, and it wasn't yielded yet?
-          # No, _yielded_contents already tracks the hash.
-          # If hash didn't change (because path is still /p1), then we need another signal.
-          # I'll add a 'dirty' set to the parser.
-
       if should_yield:
         current_sid = self.surface_id or "unknown"
         if (
-            self._buffered_begin_rendering
-            and current_sid not in self._yielded_real_begin_rendering_surfaces
+            self._buffered_start_message
+            and current_sid not in self._yielded_start_messages
         ):
           self._yield_messages(
-              [self._buffered_begin_rendering], messages, strict_integrity=True
+              [self._buffered_start_message], messages, strict_integrity=True
           )
-          self._yielded_real_begin_rendering_surfaces.add(current_sid)
-          self._yielded_begin_rendering_surfaces.add(current_sid)
+          self._yielded_start_messages.add(current_sid)
+          self._yielded_surfaces_set.add(current_sid)
 
         # Construct a partial message of the correct type
-        if self._handler and self._handler.get_version() == VERSION_0_8:
-          # v0.8: Always yield components via surfaceUpdate
-          payload = {
-              SURFACE_ID_KEY: self._surface_id,
-              CATALOG_COMPONENTS_KEY: processed_components,
-          }
-          partial_msg = {MSG_TYPE_SURFACE_UPDATE: payload}
-        elif active_msg_type == MSG_TYPE_SURFACE_UPDATE:
-          payload = {
-              SURFACE_ID_KEY: self._surface_id,
-              CATALOG_COMPONENTS_KEY: processed_components,
-          }
-          partial_msg = {MSG_TYPE_SURFACE_UPDATE: payload}
-        elif active_msg_type in (MSG_TYPE_UPDATE_COMPONENTS, MSG_TYPE_CREATE_SURFACE):
-          # v0.9 logic
-          payload = {
-              CATALOG_COMPONENTS_KEY: processed_components,
-              "root": self._root_id or DEFAULT_ROOT_ID,
-          }
-          partial_msg = {MSG_TYPE_UPDATE_COMPONENTS: payload}
-          if self._surface_id:
-            partial_msg[SURFACE_ID_KEY] = self._surface_id
-        else:
-          # Fallback
-          partial_msg = {
-              MSG_TYPE_SURFACE_UPDATE: {
-                  SURFACE_ID_KEY: self._surface_id,
-                  CATALOG_COMPONENTS_KEY: processed_components,
-              }
-          }
+        partial_msg = self._construct_partial_message(
+            processed_components, active_msg_type
+        )
 
         # Use strict_integrity=False for partial fragments yielded during streaming
         self._yield_messages([partial_msg], messages, strict_integrity=False)
         self._yielded_ids.setdefault(surface_id, set()).update(available_reachable)
+
         # Update content/placeholder tracking
         for comp in processed_components:
           cid = comp["id"]
           self._yielded_contents[(surface_id, cid)] = json.dumps(comp, sort_keys=True)
-          self._yielded_placeholders[cid] = self._get_placeholders(comp)
-          if cid in self._dirty_components:
-            self._dirty_components.remove(cid)
 
     except ValueError as e:
       if "Circular reference detected" in str(e):
@@ -1173,6 +948,10 @@ class A2uiStreamParser:
         logger.debug(f"yield_reachable error (strict={check_root}): {msg}")
         raise e
 
+  def _get_placeholder_id(self, child_id: str) -> str:
+    """Returns the ID to use for a missing child placeholder."""
+    return f"loading_{child_id}"
+
   def _process_component_topology(
       self,
       comp: Dict[str, Any],
@@ -1181,6 +960,7 @@ class A2uiStreamParser:
   ):
     """Recursively processes path placeholders and child pruning in one pass."""
     comp_id = comp.get("id", "unknown")
+
     # Deduce the component type for better placeholder typing
     comp_type = (
         next(iter(comp.get("component", {}).keys()))
@@ -1198,17 +978,9 @@ class A2uiStreamParser:
         ):
           path = obj["path"]
           key = path.lstrip("/")
-          # Always track dependencies for re-yielding when data arrives
-          self._comp_paths.setdefault(comp_id, set()).add(key)
-
-          # Always keep path as-is, client will resolve it or leave undefined
-          # Always ensure path has a leading slash for v0.8 validation
-          obj.clear()
+          if "componentId" not in obj:
+            obj.clear()
           obj.update({"path": "/" + key})
-        elif "dataBinding" in obj and isinstance(obj["dataBinding"], str):
-          path = obj["dataBinding"]
-          if path.startswith("/"):
-            self._comp_paths.setdefault(comp_id, set()).add(path.lstrip("/"))
         else:
           # If not in data model, still ensure path has leading slash if it's a bindable object
           current_path = obj.get("path")
@@ -1233,11 +1005,11 @@ class A2uiStreamParser:
                   valid_children.append(child_id)
                 else:
                   # Individual placeholder for missing child
-                  placeholder_id = f"loading_{child_id}"
+                  placeholder_id = self._get_placeholder_id(child_id)
                   valid_children.append(placeholder_id)
                   placeholder_comp = {
                       "id": placeholder_id,
-                      "component": PLACEHOLDER_COMPONENT,
+                      **self._placeholder_component,
                   }
                   # Avoid duplicates in extra_components
                   if not any(ec["id"] == placeholder_id for ec in extra_components):
@@ -1255,7 +1027,7 @@ class A2uiStreamParser:
                     valid_children.append(placeholder_id)
                     placeholder_comp = {
                         "id": placeholder_id,
-                        "component": PLACEHOLDER_COMPONENT,
+                        **self._placeholder_component,
                     }
                     if not any(ec["id"] == placeholder_id for ec in extra_components):
                       extra_components.append(placeholder_comp)
@@ -1263,11 +1035,11 @@ class A2uiStreamParser:
             elif isinstance(obj[field], str):
               child_id = obj[field]
               if child_id not in self._seen_components:
-                placeholder_id = f"loading_{child_id}"
+                placeholder_id = self._get_placeholder_id(child_id)
                 obj[field] = placeholder_id
                 placeholder_comp = {
                     "id": placeholder_id,
-                    "component": PLACEHOLDER_COMPONENT,
+                    **self._placeholder_component,
                 }
                 if not any(ec["id"] == placeholder_id for ec in extra_components):
                   extra_components.append(placeholder_comp)
@@ -1280,22 +1052,8 @@ class A2uiStreamParser:
           traverse(item, parent_key)
 
     # Start recursion from the component content
-    traverse(comp.get("component", {}))
-
-  def _get_placeholders(self, comp: Dict[str, Any]) -> Set[str]:
-    """Returns the set of placeholder paths currently in the component."""
-    placeholders = set()
-
-    def traverse(obj):
-      if isinstance(obj, dict):
-        if "literalString" in obj and isinstance(obj["literalString"], str):
-          if obj["literalString"].startswith("Loading from dataModel at path "):
-            placeholders.add(obj["literalString"])
-        for v in obj.values():
-          traverse(v)
-      elif isinstance(obj, list):
-        for item in obj:
-          traverse(item)
-
-    traverse(comp.get("component", {}))
-    return placeholders
+    if isinstance(comp.get("component"), dict):
+      traverse(comp.get("component", {}))
+    else:
+      # Flat style properties are siblings to 'component' type key
+      traverse(comp)

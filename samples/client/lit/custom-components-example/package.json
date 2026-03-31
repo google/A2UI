@@ -1,8 +1,8 @@
 {
-  "name": "@a2ui/contact",
+  "name": "@a2ui/custom-components-example",
   "private": true,
   "version": "0.8.1",
-  "description": "A2UI Contact Demo",
+  "description": "A2UI Custom Components Example Demo",
   "main": "./dist/contact.js",
   "types": "./dist/contact.d.ts",
   "type": "module",
@@ -53,7 +53,7 @@
     }
   },
   "repository": {
-    "directory": "samples/client/lit/contact",
+    "directory": "samples/client/lit/custom-components-example",
     "type": "git",
     "url": "git+https://github.com/google/A2UI.git"
   },

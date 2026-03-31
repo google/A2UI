@@ -30,7 +30,7 @@ from a2ui.core.parser.constants import (
     MSG_TYPE_DATA_MODEL_UPDATE,
 )
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.parser.streaming import A2uiStreamParser, PLACEHOLDER_COMPONENT
+from a2ui.core.parser.streaming import A2uiStreamParser
 from a2ui.core.parser.response_part import ResponsePart
 
 
@@ -223,10 +223,6 @@ def _normalize_messages(messages):
       payload = msg[MSG_TYPE_SURFACE_UPDATE]
       if CATALOG_COMPONENTS_KEY in payload:
         payload[CATALOG_COMPONENTS_KEY].sort(key=lambda x: x.get("id", ""))
-    elif "updateComponents" in msg:
-      payload = msg["updateComponents"]
-      if CATALOG_COMPONENTS_KEY in payload:
-        payload[CATALOG_COMPONENTS_KEY].sort(key=lambda x: x.get("id", ""))
   return res
 
 
@@ -335,7 +331,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_children_root-column",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -356,7 +352,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -379,11 +375,11 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c1",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
               {
                   "id": "loading_c2",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -422,7 +418,7 @@ def test_incremental_yielding_v08(mock_catalog):
               },
               {
                   "id": "loading_c2",
-                  "component": PLACEHOLDER_COMPONENT,
+                  **parser._placeholder_component,
               },
           ],
       }
@@ -802,7 +798,7 @@ def test_partial_single_child_string(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -870,7 +866,7 @@ def test_partial_template_componentId(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -938,15 +934,15 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c1",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c2",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c3",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -979,11 +975,11 @@ def test_partial_children_lists(mock_catalog):
                   },
                   {
                       "id": "loading_c2",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
                   {
                       "id": "loading_c3",
-                      "component": PLACEHOLDER_COMPONENT,
+                      **parser._placeholder_component,
                   },
               ],
           }
@@ -1088,19 +1084,6 @@ def test_data_model_after_components(mock_catalog):
               "contents": [{
                   "key": "name",
                   "valueString": "Alice",
-              }],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "s1",
-              "components": [{
-                  "id": "root",
-                  "component": {
-                      "Text": {
-                          "text": {"path": "/name"},
-                      }
-                  },
               }],
           }
       },
@@ -1518,37 +1501,6 @@ def test_multiple_re_yielding_scenarios(mock_catalog):
               "contents": [{"key": "p1", "valueString": "v1"}],
           }
       },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "s1",
-              "components": [
-                  {
-                      "id": "c1",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p1"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "c2",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p2"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "root",
-                      "component": {
-                          "Container": {
-                              "children": ["c1", "c2"],
-                          }
-                      },
-                  },
-              ],
-          }
-      },
   ]
   assertResponseContainsMessages(response_parts, expected)
 
@@ -1562,37 +1514,6 @@ def test_multiple_re_yielding_scenarios(mock_catalog):
           "dataModelUpdate": {
               "surfaceId": "s1",
               "contents": [{"key": "p2", "valueString": "v2"}],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "s1",
-              "components": [
-                  {
-                      "id": "c1",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p1"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "c2",
-                      "component": {
-                          "Text": {
-                              "text": {"path": "/p2"},
-                          }
-                      },
-                  },
-                  {
-                      "id": "root",
-                      "component": {
-                          "Container": {
-                              "children": ["c1", "c2"],
-                          }
-                      },
-                  },
-              ],
           }
       },
   ]
@@ -1650,36 +1571,11 @@ def test_incremental_data_model_streaming(mock_catalog):
       ' "valueMap": ['
   )
   # The parser yields the data model early once it sniffs the start of it
-  # AND it triggers a re-yield of reachable components that depend on 'items'
   expected = [
       {
           "dataModelUpdate": {
               "contents": [{"key": "items", "valueMap": []}],
               "surfaceId": "default",
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "default",
-              "components": [
-                  {
-                      "id": "item-list",
-                      "component": {
-                          "List": {
-                              "children": {
-                                  "template": {
-                                      "componentId": "template-name",
-                                      "dataBinding": "/items",
-                                  }
-                              }
-                          }
-                      },
-                  },
-                  {
-                      "id": "template-name",
-                      "component": {"Text": {"text": {"path": "/name"}}},
-                  },
-              ],
           }
       },
   ]
@@ -1695,30 +1591,6 @@ def test_incremental_data_model_streaming(mock_catalog):
                   "key": "items",
                   "valueMap": [{"key": "name", "valueString": "Item 1"}],
               }],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "default",
-              "components": [
-                  {
-                      "id": "item-list",
-                      "component": {
-                          "List": {
-                              "children": {
-                                  "template": {
-                                      "componentId": "template-name",
-                                      "dataBinding": "/items",
-                                  }
-                              }
-                          }
-                      },
-                  },
-                  {
-                      "id": "template-name",
-                      "component": {"Text": {"text": {"path": "/name"}}},
-                  },
-              ],
           }
       },
   ]
@@ -1737,30 +1609,6 @@ def test_incremental_data_model_streaming(mock_catalog):
                       {"key": "name", "valueString": "Item 2"},
                   ],
               }],
-          }
-      },
-      {
-          "surfaceUpdate": {
-              "surfaceId": "default",
-              "components": [
-                  {
-                      "id": "item-list",
-                      "component": {
-                          "List": {
-                              "children": {
-                                  "template": {
-                                      "componentId": "template-name",
-                                      "dataBinding": "/items",
-                                  }
-                              }
-                          }
-                      },
-                  },
-                  {
-                      "id": "template-name",
-                      "component": {"Text": {"text": {"path": "/name"}}},
-                  },
-              ],
           }
       },
   ]
@@ -2029,8 +1877,8 @@ def test_sniff_partial_component_discards_empty_children_dict(mock_catalog):
                       "id": "root-column",
                   },
                   {
-                      "component": PLACEHOLDER_COMPONENT,
                       "id": "loading_item-list",
+                      **parser._placeholder_component,
                   },
               ],
           }

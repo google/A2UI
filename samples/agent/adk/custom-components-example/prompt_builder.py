@@ -75,7 +75,7 @@ if __name__ == "__main__":
       my_version,
       catalogs=[
           CatalogConfig.from_path(
-              name="contact_multiple_surfaces_inline_catalog",
+              name="custom-components-example_inline_catalog",
               catalog_path=inline_catalog_path,
               examples_path=f"examples/{my_version}",
           ),

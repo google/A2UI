@@ -42,11 +42,11 @@ SAMPLE_CONFIGS = [
         "validate": False,  # Use invalid examples to test retry logic
     },
     {
-        "name": "contact_multiple_surfaces",
-        "path": SAMPLES_DIR / "contact_multiple_surfaces",
+        "name": "custom-components-example",
+        "path": SAMPLES_DIR / "custom-components-example",
         "catalogs": [
             CatalogConfig.from_path(
-                name="contact_multiple_surfaces_inline_catalog",
+                name="custom-components-example_inline_catalog",
                 catalog_path="inline_catalog_0.9.json",
                 examples_path=f"examples/{VERSION_0_9}",
             ),

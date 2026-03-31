@@ -8,7 +8,7 @@ Unlike standard A2UI agents that rely solely on the core component library, this
 
 1.  **Client Defines Components**: The web client (`contact` sample) defines custom components (`OrgChart`, `WebFrame`) and their schemas.
 2.  **Inline Catalog Negotiation**: When the client connects to the agent, it sends these schemas in its connection handshake (Client Event) under `metadata.inlineCatalog`.
-3.  **Agent Adaptation**: The agent (`contact_multiple_surfaces`) dynamically reads this catalog and injects the schema into the LLM's system prompt (via `[SYSTEM]` messages).
+3.  **Agent Adaptation**: The agent (`custom-components-example`) dynamically reads this catalog and injects the schema into the LLM's system prompt (via `[SYSTEM]` messages).
 4.  **Rich Rendering**: The LLM can then instruct the client to render these custom components.
 
 ## Key Features
@@ -36,7 +36,7 @@ A powerful component that allows embedding external web content or local static 
 
 1.  **Start the Agent**:
     ```bash
-    cd samples/agent/adk/contact_multiple_surfaces
+    cd samples/agent/adk/custom-components-example
     uv run .
     ```
     *Runs on port 10004.*

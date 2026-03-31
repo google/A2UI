@@ -1,3 +1,10 @@
+## 0.9.1
+
+- Add new `FrameworkSignal` concept, which represents a generic signal from a
+  given framework like Preact or Angular.
+  - Unused in this version; future versions will introduce this throughout web
+    core and will likely be breaking changes.
+
 ## 0.8.8
 
 - Add the ability to access the `schema` of a component in a type-safe way.

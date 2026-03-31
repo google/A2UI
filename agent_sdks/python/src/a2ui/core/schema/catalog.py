@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import collections
 import copy
 import json
 import logging
@@ -102,7 +103,7 @@ class A2uiCatalog:
 
     # Allow all components if no allowed components are specified
     if not allowed_components:
-      return self
+      return self._with_pruned_common_types()
 
     if CATALOG_COMPONENTS_KEY in schema_copy and isinstance(
         schema_copy[CATALOG_COMPONENTS_KEY], dict
@@ -132,7 +133,58 @@ class A2uiCatalog:
 
         any_comp["oneOf"] = filtered_one_of
 
-    return replace(self, catalog_schema=schema_copy)
+    pruned_catalog = replace(self, catalog_schema=schema_copy)
+    return pruned_catalog._with_pruned_common_types()
+
+  def _with_pruned_common_types(self) -> "A2uiCatalog":
+    """Returns a new catalog with unused common types pruned from the schema."""
+    if not self.common_types_schema or "$defs" not in self.common_types_schema:
+      return self
+
+    def _collect_refs(obj: Any) -> set[str]:
+      refs = set()
+      if isinstance(obj, dict):
+        for k, v in obj.items():
+          if k == "$ref" and isinstance(v, str):
+            refs.add(v)
+          else:
+            refs.update(_collect_refs(v))
+      elif isinstance(obj, list):
+        for item in obj:
+          refs.update(_collect_refs(item))
+      return refs
+
+    visited_defs = set()
+    internal_refs_queue = collections.deque()
+
+    # Initialize queue with ONLY refs targeting common_types.json from external schemas
+    external_refs = _collect_refs(self.catalog_schema)
+    external_refs.update(_collect_refs(self.s2c_schema))
+
+    for ref in external_refs:
+      if ref.startswith("common_types.json#/$defs/"):
+        internal_refs_queue.append(ref.split("#/$defs/")[-1])
+
+    while internal_refs_queue:
+      def_name = internal_refs_queue.popleft()
+      if def_name in self.common_types_schema["$defs"] and def_name not in visited_defs:
+        visited_defs.add(def_name)
+
+        # Collect internal references (which just use #/$defs/)
+        internal_refs = _collect_refs(self.common_types_schema["$defs"][def_name])
+        for ref in internal_refs:
+          if ref.startswith("#/$defs/"):
+            # Note: This assumes a flat `$defs` namespace and no escaped
+            # slashes (~1) or tildes (~0) in the definition names as per RFC 6901.
+            internal_refs_queue.append(ref.split("#/$defs/")[-1])
+
+    new_common_types_schema = copy.deepcopy(self.common_types_schema)
+    all_defs = new_common_types_schema["$defs"]
+    new_common_types_schema["$defs"] = {
+        k: v for k, v in all_defs.items() if k in visited_defs
+    }
+
+    return replace(self, common_types_schema=new_common_types_schema)
 
   def render_as_llm_instructions(self) -> str:
     """Renders the catalog and schema as LLM instructions."""
@@ -144,7 +196,11 @@ class A2uiCatalog:
     )
     all_schemas.append(f"### Server To Client Schema:\n{server_client_str}")
 
-    if self.common_types_schema:
+    if (
+        self.common_types_schema
+        and "$defs" in self.common_types_schema
+        and self.common_types_schema["$defs"]
+    ):
       common_str = json.dumps(self.common_types_schema, indent=2)
       all_schemas.append(f"### Common Types Schema:\n{common_str}")
 
