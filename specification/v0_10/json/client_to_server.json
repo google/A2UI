@@ -35,6 +35,15 @@
           "type": "object",
           "description": "A JSON object containing the key-value pairs from the component's action.event.context, after resolving all data bindings.",
           "additionalProperties": true
+        },
+        "wantResponse": {
+          "type": "boolean",
+          "description": "If true, the client expects an actionResponse from the server.",
+          "default": false
+        },
+        "actionId": {
+          "type": "string",
+          "description": "Unique ID for this action call. Only needed if wantResponse is true."
         }
       },
       "required": [

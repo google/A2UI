@@ -62,9 +62,12 @@ class A2UIMetadataInterceptor(ClientCallInterceptor):
         + json.dumps(request_payload)
     )
 
-    if context and context.state and context.state.get("use_ui"):
+    if context and context.state and context.state.get("active_ui_version"):
       # Add A2UI extension header
-      http_kwargs["headers"] = {HTTP_EXTENSION_HEADER: A2UI_EXTENSION_URI}
+      a2ui_extension_uri = (
+          f"{A2UI_EXTENSION_BASE_URI}/v{context.state.get('active_ui_version')}"
+      )
+      http_kwargs["headers"] = {HTTP_EXTENSION_HEADER: a2ui_extension_uri}
 
       # Add A2UI client capabilities (supported catalogs, etc) to message metadata
       if (params := request_payload.get("params")) and (
@@ -153,6 +156,7 @@ class OrchestratorAgent:
     subagents = []
     supported_catalog_ids = set()
     skills = []
+    extensions = []
     accepts_inline_catalogs = False
     for subagent_url in subagent_urls:
       async with httpx.AsyncClient() as httpx_client:
@@ -163,14 +167,17 @@ class OrchestratorAgent:
 
         subagent_card = await resolver.get_agent_card()
         for extension in subagent_card.capabilities.extensions or []:
-          if extension.uri == A2UI_EXTENSION_URI and extension.params:
-            supported_catalog_ids.update(
-                extension.params.get(AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY) or []
-            )
-            accepts_inline_catalogs |= bool(
-                extension.params.get(AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY)
-            )
-
+          if extension.uri.startswith(A2UI_EXTENSION_BASE_URI):
+            if extension.params:
+              supported_catalog_ids.update(
+                  extension.params.get(AGENT_EXTENSION_SUPPORTED_CATALOG_IDS_KEY) or []
+              )
+              accepts_inline_catalogs |= bool(
+                  extension.params.get(AGENT_EXTENSION_ACCEPTS_INLINE_CATALOGS_KEY)
+              )
+            # Only append unique extensions
+            if not any(ext.uri == extension.uri for ext in extensions):
+              extensions.append(extension)
         skills.extend(subagent_card.skills)
 
         logger.info(
@@ -253,12 +260,7 @@ class OrchestratorAgent:
         default_output_modes=OrchestratorAgent.SUPPORTED_CONTENT_TYPES,
         capabilities=AgentCapabilities(
             streaming=True,
-            extensions=[
-                get_a2ui_agent_extension(
-                    accepts_inline_catalogs=accepts_inline_catalogs,
-                    supported_catalog_ids=list(supported_catalog_ids),
-                )
-            ],
+            extensions=extensions,
         ),
         skills=skills,
     )

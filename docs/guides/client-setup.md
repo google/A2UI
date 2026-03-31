@@ -15,9 +15,9 @@ Integrate A2UI into your application using the renderer for your platform.
 
 ## Component Catalogs
 
-A component catalog is any collection of components — standard ones, your custom components, or shared libraries. **Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
+A component catalog is any collection of components — the Basic Catalog, your own components, or shared libraries. **Your design system is what matters.** You can register any collection of components and functions, and A2UI will work with them. The catalog is just the contract between your agent and your renderer.
 
-See [Custom Components](custom-components.md) for how to extend or replace the standard catalog.
+See [Defining Your Own Catalog](defining-your-own-catalog.md) for how to define a catalog that matches your design system.
 
 ## Shared Web Library
 
@@ -161,6 +161,6 @@ TODO: Add error handling examples.
 
 - **[Quickstart](../quickstart.md)**: Try the demo application
 - **[Theming & Styling](theming.md)**: Customize the look and feel
-- **[Custom Components](custom-components.md)**: Extend the component catalog
+- **[Defining Your Own Catalog](defining-your-own-catalog.md)**: Extend the component catalog
 - **[Agent Development](agent-development.md)**: Build agents that generate A2UI
 - **[Reference Documentation](../reference/messages.md)**: Deep dive into the protocol

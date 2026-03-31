@@ -1,6 +1,6 @@
 {
   "name": "Software Purchase",
-  "description": "Example of software purchase",
+  "description": "Example of software purchase demonstrating currency formatting and ChoicePicker.",
   "messages": [
     {
       "version": "v0.9",
@@ -88,7 +88,7 @@
             "component": "Row",
             "children": [
               "period-label",
-              "period-value"
+              "period-picker"
             ],
             "justify": "spaceBetween",
             "align": "center"
@@ -100,12 +100,23 @@
             "variant": "body"
           },
           {
-            "id": "period-value",
-            "component": "Text",
-            "text": {
+            "id": "period-picker",
+            "component": "ChoicePicker",
+            "options": [
+              {
+                "label": "Annual",
+                "value": "annual"
+              },
+              {
+                "label": "Monthly",
+                "value": "monthly"
+              }
+            ],
+            "value": {
               "path": "/billingPeriod"
             },
-            "variant": "h4"
+            "variant": "mutuallyExclusive",
+            "displayStyle": "chips"
           },
           {
             "id": "divider2",
@@ -131,7 +142,11 @@
             "id": "total-value",
             "component": "Text",
             "text": {
-              "path": "/total"
+              "call": "formatString",
+              "args": {
+                "value": "${formatCurrency(value: ${/total}, currency: 'USD')}/year"
+              },
+              "returnType": "string"
             },
             "variant": "h2"
           },
@@ -185,8 +200,8 @@
         "value": {
           "productName": "Design Suite Pro",
           "seats": "10 seats",
-          "billingPeriod": "Annual",
-          "total": "$1,188/year"
+          "billingPeriod": ["annual"],
+          "total": 1188.00
         }
       }
     }

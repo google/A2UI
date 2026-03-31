@@ -17,7 +17,12 @@ import os
 import pytest
 from typing import Any, Dict, List
 from a2ui.core.schema.catalog import A2uiCatalog
-from a2ui.core.schema.constants import VERSION_0_8, VERSION_0_9
+from a2ui.core.schema.constants import (
+    A2UI_SCHEMA_BLOCK_START,
+    A2UI_SCHEMA_BLOCK_END,
+    VERSION_0_8,
+    VERSION_0_9,
+)
 from a2ui.basic_catalog.constants import BASIC_CATALOG_NAME
 
 
@@ -188,7 +193,7 @@ def test_render_as_llm_instructions():
       version=VERSION_0_9,
       name=BASIC_CATALOG_NAME,
       s2c_schema={"s2c": "schema"},
-      common_types_schema={"common": "types"},
+      common_types_schema={"$defs": {"common": "types"}},
       catalog_schema={
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "catalog": "schema",
@@ -197,10 +202,89 @@ def test_render_as_llm_instructions():
   )
 
   schema_str = catalog.render_as_llm_instructions()
-  assert "---BEGIN A2UI JSON SCHEMA---" in schema_str
+  assert A2UI_SCHEMA_BLOCK_START in schema_str
   assert '### Server To Client Schema:\n{\n  "s2c": "schema"\n}' in schema_str
-  assert '### Common Types Schema:\n{\n  "common": "types"\n}' in schema_str
+  assert (
+      '### Common Types Schema:\n{\n  "$defs": {\n    "common": "types"\n  }\n}'
+      in schema_str
+  )
   assert "### Catalog Schema:" in schema_str
   assert '"catalog": "schema"' in schema_str
   assert '"catalogId": "id_basic"' in schema_str
-  assert "---END A2UI JSON SCHEMA---" in schema_str
+  assert A2UI_SCHEMA_BLOCK_END in schema_str
+
+
+def test_render_as_llm_instructions_drops_empty_common_types():
+  # Test with empty common_types_schema
+  catalog_empty = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={"s2c": "schema"},
+      common_types_schema={},
+      catalog_schema={
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "catalog": "schema",
+          "catalogId": "id_basic",
+      },
+  )
+  schema_str_empty = catalog_empty.render_as_llm_instructions()
+  assert "### Common Types Schema:" not in schema_str_empty
+
+  # Test with common_types_schema missing $defs
+  catalog_no_defs = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={"s2c": "schema"},
+      common_types_schema={"something": "else"},
+      catalog_schema={
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "catalog": "schema",
+          "catalogId": "id_basic",
+      },
+  )
+  schema_str_no_defs = catalog_no_defs.render_as_llm_instructions()
+  assert "### Common Types Schema:" not in schema_str_no_defs
+
+  # Test with common_types_schema having empty $defs
+  catalog_empty_defs = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={"s2c": "schema"},
+      common_types_schema={"$defs": {}},
+      catalog_schema={
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "catalog": "schema",
+          "catalogId": "id_basic",
+      },
+  )
+  schema_str_empty_defs = catalog_empty_defs.render_as_llm_instructions()
+  assert "### Common Types Schema:" not in schema_str_empty_defs
+
+
+def test_with_pruned_components_prunes_common_types():
+  common_types = {
+      "$defs": {
+          "TypeForCompA": {"type": "string"},
+          "TypeForCompB": {"type": "number"},
+      }
+  }
+  catalog_schema = {
+      "catalogId": "basic",
+      "components": {
+          "CompA": {"$ref": "common_types.json#/$defs/TypeForCompA"},
+          "CompB": {"$ref": "common_types.json#/$defs/TypeForCompB"},
+      },
+  }
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema={},
+      common_types_schema=common_types,
+      catalog_schema=catalog_schema,
+  )
+
+  pruned_catalog = catalog.with_pruned_components(["CompA"])
+  pruned_defs = pruned_catalog.common_types_schema["$defs"]
+
+  assert "TypeForCompA" in pruned_defs
+  assert "TypeForCompB" not in pruned_defs

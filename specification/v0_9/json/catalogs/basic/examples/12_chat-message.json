@@ -1,6 +1,6 @@
 {
   "name": "Chat Message",
-  "description": "Example of chat message",
+  "description": "Example of chat message demonstrating templating and relative paths.",
   "messages": [
     {
       "version": "v0.9",
@@ -26,7 +26,7 @@
             "children": [
               "header",
               "divider",
-              "messages"
+              "messages-list"
             ]
           },
           {
@@ -56,129 +56,77 @@
             "component": "Divider"
           },
           {
-            "id": "messages",
+            "id": "messages-list",
             "component": "Column",
-            "children": [
-              "message1",
-              "message2"
-            ],
+            "children": {
+              "path": "/messages",
+              "componentId": "message-template"
+            },
             "align": "start"
           },
           {
-            "id": "message1",
+            "id": "message-template",
             "component": "Row",
             "children": [
-              "avatar1",
-              "msg1-content"
+              "msg-avatar",
+              "msg-content"
             ],
             "align": "start"
           },
           {
-            "id": "avatar1",
+            "id": "msg-avatar",
             "component": "Image",
             "url": {
-              "path": "/message1/avatar"
+              "path": "avatar"
             },
             "fit": "cover",
             "variant": "avatar"
           },
           {
-            "id": "msg1-content",
+            "id": "msg-content",
             "component": "Column",
             "children": [
-              "msg1-header",
-              "msg1-text"
+              "msg-header",
+              "msg-text"
             ]
           },
           {
-            "id": "msg1-header",
+            "id": "msg-header",
             "component": "Row",
             "children": [
-              "msg1-username",
-              "msg1-time"
+              "msg-username",
+              "msg-time"
             ],
             "align": "center"
           },
           {
-            "id": "msg1-username",
+            "id": "msg-username",
             "component": "Text",
             "text": {
-              "path": "/message1/username"
+              "path": "username"
             },
             "variant": "h4"
           },
           {
-            "id": "msg1-time",
+            "id": "msg-time",
             "component": "Text",
             "text": {
-              "path": "/message1/time"
+              "call": "formatDate",
+              "args": {
+                "value": {
+                  "path": "timestamp"
+                },
+                "format": "h:mm a"
+              },
+              "returnType": "string"
             },
             "variant": "caption"
           },
           {
-            "id": "msg1-text",
+            "id": "msg-text",
             "component": "Text",
             "text": {
-              "path": "/message1/text"
-            },
-            "variant": "body"
-          },
-          {
-            "id": "message2",
-            "component": "Row",
-            "children": [
-              "avatar2",
-              "msg2-content"
-            ],
-            "align": "start"
-          },
-          {
-            "id": "avatar2",
-            "component": "Image",
-            "url": {
-              "path": "/message2/avatar"
-            },
-            "fit": "cover",
-            "variant": "avatar"
-          },
-          {
-            "id": "msg2-content",
-            "component": "Column",
-            "children": [
-              "msg2-header",
-              "msg2-text"
-            ]
-          },
-          {
-            "id": "msg2-header",
-            "component": "Row",
-            "children": [
-              "msg2-username",
-              "msg2-time"
-            ],
-            "align": "center"
-          },
-          {
-            "id": "msg2-username",
-            "component": "Text",
-            "text": {
-              "path": "/message2/username"
-            },
-            "variant": "h4"
-          },
-          {
-            "id": "msg2-time",
-            "component": "Text",
-            "text": {
-              "path": "/message2/time"
-            },
-            "variant": "caption"
-          },
-          {
-            "id": "msg2-text",
-            "component": "Text",
-            "text": {
-              "path": "/message2/text"
+              "path": "text"
             },
             "variant": "body"
           }
@@ -191,18 +139,20 @@
         "surfaceId": "gallery-chat-message",
         "value": {
           "channelName": "project-updates",
-          "message1": {
-            "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop",
-            "username": "Mike Chen",
-            "time": "10:32 AM",
-            "text": "Just pushed the new API changes. Ready for review."
-          },
-          "message2": {
-            "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop",
-            "username": "Sarah Kim",
-            "time": "10:45 AM",
-            "text": "Great! I'll take a look after standup."
-          }
+          "messages": [
+            {
+              "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop",
+              "username": "Mike Chen",
+              "timestamp": "2025-12-15T10:32:00Z",
+              "text": "Just pushed the new API changes. Ready for review."
+            },
+            {
+              "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop",
+              "username": "Sarah Kim",
+              "timestamp": "2025-12-15T10:45:00Z",
+              "text": "Great! I'll take a look after standup."
+            }
+          ]
         }
       }
     }

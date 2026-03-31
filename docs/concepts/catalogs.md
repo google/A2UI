@@ -158,18 +158,19 @@ uv run tools/build_catalog/assemble_catalog.py [INPUTS ...] --output-name <OUTPU
 ```
 
 where:
-- `inputs`: One or more paths or URLs to A2UI component catalog JSONs.
-- `--output-name`: (Required) The desired name of the combined catalog (e.g.
+
+* `inputs`: One or more paths or URLs to A2UI component catalog JSONs.
+* `--output-name`: (Required) The desired name of the combined catalog (e.g.
   `my_merged_catalog`). The `.json` extension is appended automatically if
   omitted.
-- `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
-- `--version`: The A2UI specification version to use for official catalog
+* `--catalog-id`: Custom `catalogId` for the output. Defaults to `urn:a2ui:catalog:<base_name>`.
+* `--version`: The A2UI specification version to use for official catalog
   fallbacks. Choices are `0.9` or `0.10`. Defaults to `0.9`.
-- `--extend-basic-catalog`: If passed, automatically includes the entirety of
+* `--extend-basic-catalog`: If passed, automatically includes the entirety of
   `basic_catalog.json` in the root output regardless of whether the input
   catalogs explicitly reference it.
-- `--out-dir`, `-o`: The directory where the assembled catalog will be saved. Defaults to `dist`.
-- `--verbose`, `-v`: If passed, enables verbose debug logging to help diagnose issues.
+* `--out-dir`, `-o`: The directory where the assembled catalog will be saved. Defaults to `dist`.
+* `--verbose`, `-v`: If passed, enables verbose debug logging to help diagnose issues.
 
 ### Composition & Imports
 

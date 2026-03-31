@@ -95,9 +95,11 @@ export const Slider = memo(function Slider({
   return (
     <div className="a2ui-slider" style={hostStyle}>
       <section className={classMapToString(theme.components.Slider.container)}>
-        <label htmlFor={id} className={classMapToString(theme.components.Slider.label)}>
-          {label}
-        </label>
+        {label && (
+          <label htmlFor={id} className={classMapToString(theme.components.Slider.label)}>
+            {label}
+          </label>
+        )}
         <input
           type="range"
           id={id}

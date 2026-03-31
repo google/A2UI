@@ -182,6 +182,6 @@ Define reusable design tokens (colors, spacing, etc.) and reference them through
 
 ## Next Steps
 
-- **[Custom Components](custom-components.md)**: Build custom components with your styling
+- **[Defining Your Own Catalog](defining-your-own-catalog.md)**: Build custom components with your styling
 - **[Component Reference](../reference/components.md)**: See styling options for all components
 - **[Client Setup](client-setup.md)**: Set up the renderer in your app

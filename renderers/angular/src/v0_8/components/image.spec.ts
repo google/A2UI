@@ -60,6 +60,16 @@ describe('Image Component', () => {
     expect(sectionEl.nativeElement.className).toContain('image-all-class');
   });
 
+  it('should render <img> with altText if provided', () => {
+    fixture.componentRef.setInput('url', { literalString: 'http://example.com/a.png' });
+    fixture.componentRef.setInput('altText', { literalString: 'A beautiful sunset' });
+    fixture.detectChanges();
+
+    const imgEl = fixture.debugElement.query(By.css('img'));
+    expect(imgEl).toBeTruthy();
+    expect(imgEl.nativeElement.alt).toBe('A beautiful sunset');
+  });
+
   it('should NOT render <img> if url is null', () => {
     fixture.componentRef.setInput('usageHint', null);
     fixture.detectChanges();

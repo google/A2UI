@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { SurfaceModel } from "./surface-model.js";
-import { ComponentApi } from "../catalog/types.js";
-import { EventEmitter, EventSource, Subscription } from "../common/events.js";
-import { A2uiClientAction } from "../schema/client-to-server.js";
+import {SurfaceModel} from './surface-model.js';
+import {ComponentApi} from '../catalog/types.js';
+import {EventEmitter, EventSource, Subscription} from '../common/events.js';
+import {A2uiClientAction} from '../schema/client-to-server.js';
 
 /**
  * The root state model for the A2UI system.
@@ -54,7 +54,7 @@ export class SurfaceGroupModel<T extends ComponentApi> {
     this.surfaces.set(surface.id, surface);
 
     // Subscribe to surface actions and propagate
-    const sub = surface.onAction.subscribe((action) =>
+    const sub = surface.onAction.subscribe(action =>
       this._onAction.emit(action),
     );
     this.surfaceUnsubscribers.set(surface.id, sub);

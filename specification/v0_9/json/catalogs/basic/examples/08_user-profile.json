@@ -1,6 +1,6 @@
 {
   "name": "User Profile",
-  "description": "Example of user profile",
+  "description": "Example of user profile demonstrating number formatting.",
   "messages": [
     {
       "version": "v0.9",
@@ -97,7 +97,13 @@
             "id": "followers-count",
             "component": "Text",
             "text": {
-              "path": "/followers"
+              "call": "formatNumber",
+              "args": {
+                "value": {
+                  "path": "/followers"
+                }
+              },
+              "returnType": "string"
             },
             "variant": "h3"
           },
@@ -120,7 +126,13 @@
             "id": "following-count",
             "component": "Text",
             "text": {
-              "path": "/following"
+              "call": "formatNumber",
+              "args": {
+                "value": {
+                  "path": "/following"
+                }
+              },
+              "returnType": "string"
             },
             "variant": "h3"
           },
@@ -143,7 +155,13 @@
             "id": "posts-count",
             "component": "Text",
             "text": {
-              "path": "/posts"
+              "call": "formatNumber",
+              "args": {
+                "value": {
+                  "path": "/posts"
+                }
+              },
+              "returnType": "string"
             },
             "variant": "h3"
           },
@@ -183,9 +201,9 @@
           "name": "Sarah Chen",
           "username": "@sarahchen",
           "bio": "Product Designer at Tech Co. Creating delightful experiences.",
-          "followers": "12.4K",
-          "following": "892",
-          "posts": "347",
+          "followers": 12400,
+          "following": 892,
+          "posts": 347,
           "followText": "Follow"
         }
       }

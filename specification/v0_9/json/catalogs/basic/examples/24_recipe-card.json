@@ -1,6 +1,6 @@
 {
   "name": "Recipe Card",
-  "description": "Example of recipe card",
+  "description": "Example of recipe card demonstrating Tabs and pluralization.",
   "messages": [
     {
       "version": "v0.9",
@@ -18,14 +18,32 @@
           {
             "id": "root",
             "component": "Card",
-            "child": "main-column"
+            "child": "tabs-container"
           },
           {
-            "id": "main-column",
+            "id": "tabs-container",
+            "component": "Tabs",
+            "tabs": [
+              {
+                "title": "Overview",
+                "child": "overview-col"
+              },
+              {
+                "title": "Ingredients",
+                "child": "ingredients-list"
+              },
+              {
+                "title": "Instructions",
+                "child": "instructions-list"
+              }
+            ]
+          },
+          {
+            "id": "overview-col",
             "component": "Column",
             "children": [
               "recipe-image",
-              "content"
+              "overview-content"
             ]
           },
           {
@@ -37,7 +55,7 @@
             "fit": "cover"
           },
           {
-            "id": "content",
+            "id": "overview-content",
             "component": "Column",
             "children": [
               "title",
@@ -81,7 +99,11 @@
             "id": "review-count",
             "component": "Text",
             "text": {
-              "path": "/reviewCount"
+              "call": "formatString",
+              "args": {
+                "value": "(${formatNumber(value: ${/reviewCount})} ${pluralize(value: ${/reviewCount}, one: 'review', other: 'reviews')})"
+              },
+              "returnType": "string"
             },
             "variant": "caption"
           },
@@ -144,6 +166,30 @@
               "path": "/servings"
             },
             "variant": "caption"
+          },
+          {
+            "id": "ingredients-list",
+            "component": "Column",
+            "children": {
+              "path": "/ingredients",
+              "componentId": "item-template"
+            }
+          },
+          {
+            "id": "instructions-list",
+            "component": "Column",
+            "children": {
+              "path": "/instructions",
+              "componentId": "item-template"
+            }
+          },
+          {
+            "id": "item-template",
+            "component": "Text",
+            "text": {
+              "path": "text"
+            },
+            "variant": "body"
           }
         ]
       }
@@ -156,10 +202,22 @@
           "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=180&fit=crop",
           "title": "Mediterranean Quinoa Bowl",
           "rating": "4.9",
-          "reviewCount": "(1,247 reviews)",
+          "reviewCount": 1247,
           "prepTime": "15 min prep",
           "cookTime": "20 min cook",
-          "servings": "Serves 4"
+          "servings": "Serves 4",
+          "ingredients": [
+            { "text": "1 cup quinoa" },
+            { "text": "2 cups water" },
+            { "text": "1 cucumber, diced" },
+            { "text": "1 cup cherry tomatoes, halved" }
+          ],
+          "instructions": [
+            { "text": "1. Rinse quinoa and bring to a boil in water." },
+            { "text": "2. Reduce heat and simmer for 15 minutes." },
+            { "text": "3. Fluff with a fork and let cool." },
+            { "text": "4. Mix with diced vegetables." }
+          ]
         }
       }
     }

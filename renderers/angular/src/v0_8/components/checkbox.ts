@@ -50,9 +50,21 @@ export class Checkbox extends DynamicComponent<Types.CheckboxNode> {
 
   onToggle(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    this.sendAction({
-      name: 'toggle',
-      context: [{ key: 'checked', value: { literalBoolean: checked } }],
-    });
+    const checkedNode = this.checked();
+    if (checkedNode && typeof checkedNode === 'object' && 'path' in checkedNode && checkedNode.path) {
+      // Update the local data model directly to ensure immediate UI feedback and avoid unnecessary network requests.
+      this.processor.processMessages([{
+        dataModelUpdate: {
+          surfaceId: this.surfaceId()!,
+          path: this.processor.resolvePath(checkedNode.path as string, this.component().dataContextPath),
+          contents: [{ key: '.', valueBoolean: checked }],
+        },
+      }]);
+    } else {
+      this.sendAction({
+        name: 'toggle',
+        context: [{ key: 'checked', value: { literalBoolean: checked } }],
+      });
+    }
   }
 }

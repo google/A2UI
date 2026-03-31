@@ -1,3 +1,19 @@
+## 0.9.1
+
+- Add new `FrameworkSignal` concept, which represents a generic signal from a
+  given framework like Preact or Angular.
+  - Unused in this version; future versions will introduce this throughout web
+    core and will likely be breaking changes.
+
+## 0.8.8
+
+- Add the ability to access the `schema` of a component in a type-safe way.
+  - Update `ComponentApi` object to be generic over its `schema` type.
+  - Modify the basic component definitions to `satisfies ComponentApi` instead
+    of `: ComponentApi` so their schema type can be inferred later.
+  - Add an `InferredComponentApiSchemaType` type to extract the schema type
+    from a `ComponentApi` object.
+
 ## 0.8.7
 
 - Adds `catalogId` to v0.8 schemas (was removed by mistake earlier)

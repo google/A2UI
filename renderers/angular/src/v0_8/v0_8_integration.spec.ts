@@ -21,9 +21,7 @@ import { DEFAULT_CATALOG } from './catalog';
 import { Theme } from './rendering/theming';
 import { MessageProcessor } from './data/processor';
 import { MarkdownRenderer, DefaultMarkdownRenderer } from './data/markdown';
-import { Component, Input, Type } from '@angular/core';
-import { Types } from './types';
-import { By } from '@angular/platform-browser';
+import { Component } from '@angular/core';
 import * as restaurantCardMock from './test_data/mocks/restaurant-card.json';
 import * as contactCardMock from './test_data/mocks/contact-card.json';
 
@@ -97,7 +95,7 @@ describe('v0.8 Angular Renderer Integration', () => {
   let catalog: Catalog;
 
   beforeEach(async () => {
-    processor = jasmine.createSpyObj('MessageProcessor', ['getData', 'dispatch', 'resolvePath']);
+    processor = jasmine.createSpyObj('MessageProcessor', ['getData', 'dispatch', 'resolvePath', 'version']);
     // Default mock behavior for getData
     processor.getData.and.callFake((node: any, path: string, surfaceId?: string) => {
       if (path === '/name') return 'The Italian Kitchen';
