@@ -193,6 +193,8 @@ class A2uiCatalog:
       return self
 
     s2c_schema_copy = copy.deepcopy(self.s2c_schema)
+
+    # 0.9 style pruning: Filter the 'oneOf' entry points list.
     if "oneOf" in s2c_schema_copy and isinstance(s2c_schema_copy["oneOf"], list):
       s2c_schema_copy["oneOf"] = [
           item
@@ -202,13 +204,21 @@ class A2uiCatalog:
           and item["$ref"].split("/")[-1] in allowed_messages
       ]
 
-    if "$defs" in s2c_schema_copy and isinstance(s2c_schema_copy["$defs"], dict):
-      # Start with allowed messages as roots for internal reachability analysis
-      s2c_schema_copy["$defs"] = _prune_defs_by_reachability(
-          defs=s2c_schema_copy["$defs"],
-          root_def_names=allowed_messages,
-          internal_ref_prefix="#/$defs/",
-      )
+    # Reachability pruning for definition containers:
+    for container_key, ref_prefix in [
+        # For v0.9.
+        ("$defs", "#/$defs/"),
+        # For v0.8
+        ("properties", "#/properties/"),
+    ]:
+      if container_key in s2c_schema_copy and isinstance(
+          s2c_schema_copy[container_key], dict
+      ):
+        s2c_schema_copy[container_key] = _prune_defs_by_reachability(
+            defs=s2c_schema_copy[container_key],
+            root_def_names=allowed_messages,
+            internal_ref_prefix=ref_prefix,
+        )
 
     return replace(self, s2c_schema=s2c_schema_copy)
 

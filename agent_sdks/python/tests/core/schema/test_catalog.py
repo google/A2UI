@@ -392,3 +392,33 @@ def test_with_pruning_s2c_also_prunes_common_types():
 
   assert "TypeForA" in pruned_catalog.common_types_schema["$defs"]
   assert "TypeForB" not in pruned_catalog.common_types_schema["$defs"]
+
+
+def test_with_pruning_messages_v08():
+  s2c_schema = {
+      "properties": {
+          "beginRendering": {"type": "object"},
+          "surfaceUpdate": {"type": "object"},
+          "deleteSurface": {"type": "object"},
+      },
+      "required": ["surfaceId"],
+  }
+  catalog_schema = {"catalogId": "basic"}
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema=s2c_schema,
+      common_types_schema={},
+      catalog_schema=catalog_schema,
+  )
+
+  # Prune to only beginRendering and deleteSurface
+  pruned_catalog = catalog.with_pruning(
+      [], allowed_messages=["beginRendering", "deleteSurface"]
+  )
+  pruned_s2c = pruned_catalog.s2c_schema
+
+  assert "beginRendering" in pruned_s2c["properties"]
+  assert "deleteSurface" in pruned_s2c["properties"]
+  assert "surfaceUpdate" not in pruned_s2c["properties"]
+  assert pruned_s2c["required"] == ["surfaceId"]
