@@ -224,6 +224,38 @@ def test_with_pruning_messages():
   assert "MessageB" not in pruned_s2c["$defs"]
 
 
+def test_with_pruning_messages_internal_reachability():
+  s2c_schema = {
+      "oneOf": [
+          {"$ref": "#/$defs/MessageA"},
+      ],
+      "$defs": {
+          "MessageA": {
+              "type": "object",
+              "properties": {"shared": {"$ref": "#/$defs/SharedType"}},
+          },
+          "SharedType": {"type": "string"},
+          "UnusedType": {"type": "number"},
+      },
+  }
+  catalog_schema = {"catalogId": "basic"}
+  catalog = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema=s2c_schema,
+      common_types_schema={},
+      catalog_schema=catalog_schema,
+  )
+
+  # Prune to MessageA. SharedType should be kept, UnusedType should be removed.
+  pruned_catalog = catalog.with_pruning([], allowed_messages=["MessageA"])
+  pruned_defs = pruned_catalog.s2c_schema["$defs"]
+
+  assert "MessageA" in pruned_defs
+  assert "SharedType" in pruned_defs
+  assert "UnusedType" not in pruned_defs
+
+
 def test_render_as_llm_instructions():
   catalog = A2uiCatalog(
       version=VERSION_0_9,

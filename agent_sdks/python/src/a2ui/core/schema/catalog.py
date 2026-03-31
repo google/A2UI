@@ -59,6 +59,52 @@ class CatalogConfig:
     )
 
 
+def _collect_refs(obj: Any) -> set[str]:
+  """Recursively collects all $ref values from a JSON object."""
+  refs = set()
+  if isinstance(obj, dict):
+    for k, v in obj.items():
+      if k == "$ref" and isinstance(v, str):
+        refs.add(v)
+      else:
+        refs.update(_collect_refs(v))
+  elif isinstance(obj, list):
+    for item in obj:
+      refs.update(_collect_refs(item))
+  return refs
+
+
+def _prune_defs_by_reachability(
+    defs: Dict[str, Any],
+    root_def_names: List[str],
+    internal_ref_prefix: str = "#/$defs/",
+) -> Dict[str, Any]:
+  """Prunes definitions not reachable from the provided roots.
+
+  Args:
+    defs: The dictionary of definitions to prune.
+    root_def_names: The names of the definitions to start the traversal from.
+    internal_ref_prefix: The prefix used for internal references.
+
+  Returns:
+    A new dictionary containing only reachable definitions.
+  """
+  visited_defs = set()
+  refs_queue = collections.deque(root_def_names)
+
+  while refs_queue:
+    def_name = refs_queue.popleft()
+    if def_name in defs and def_name not in visited_defs:
+      visited_defs.add(def_name)
+
+      internal_refs = _collect_refs(defs[def_name])
+      for ref in internal_refs:
+        if ref.startswith(internal_ref_prefix):
+          refs_queue.append(ref.split(internal_ref_prefix)[-1])
+
+  return {k: v for k, v in defs.items() if k in visited_defs}
+
+
 @dataclass(frozen=True)
 class A2uiCatalog:
   """Represents a processed component catalog with its schema.
@@ -157,9 +203,12 @@ class A2uiCatalog:
       ]
 
     if "$defs" in s2c_schema_copy and isinstance(s2c_schema_copy["$defs"], dict):
-      s2c_schema_copy["$defs"] = {
-          k: v for k, v in s2c_schema_copy["$defs"].items() if k in allowed_messages
-      }
+      # Start with allowed messages as roots for internal reachability analysis
+      s2c_schema_copy["$defs"] = _prune_defs_by_reachability(
+          defs=s2c_schema_copy["$defs"],
+          root_def_names=allowed_messages,
+          internal_ref_prefix="#/$defs/",
+      )
 
     return replace(self, s2c_schema=s2c_schema_copy)
 
@@ -191,48 +240,20 @@ class A2uiCatalog:
     if not self.common_types_schema or "$defs" not in self.common_types_schema:
       return self
 
-    def _collect_refs(obj: Any) -> set[str]:
-      refs = set()
-      if isinstance(obj, dict):
-        for k, v in obj.items():
-          if k == "$ref" and isinstance(v, str):
-            refs.add(v)
-          else:
-            refs.update(_collect_refs(v))
-      elif isinstance(obj, list):
-        for item in obj:
-          refs.update(_collect_refs(item))
-      return refs
-
-    visited_defs = set()
-    internal_refs_queue = collections.deque()
-
-    # Initialize queue with ONLY refs targeting common_types.json from external schemas
+    # Initialize roots with ONLY refs targeting common_types.json from external schemas
     external_refs = _collect_refs(self.catalog_schema)
     external_refs.update(_collect_refs(self.s2c_schema))
 
+    root_common_types = []
     for ref in external_refs:
       if ref.startswith("common_types.json#/$defs/"):
-        internal_refs_queue.append(ref.split("#/$defs/")[-1])
-
-    while internal_refs_queue:
-      def_name = internal_refs_queue.popleft()
-      if def_name in self.common_types_schema["$defs"] and def_name not in visited_defs:
-        visited_defs.add(def_name)
-
-        # Collect internal references (which just use #/$defs/)
-        internal_refs = _collect_refs(self.common_types_schema["$defs"][def_name])
-        for ref in internal_refs:
-          if ref.startswith("#/$defs/"):
-            # Note: This assumes a flat `$defs` namespace and no escaped
-            # slashes (~1) or tildes (~0) in the definition names as per RFC 6901.
-            internal_refs_queue.append(ref.split("#/$defs/")[-1])
+        root_common_types.append(ref.split("#/$defs/")[-1])
 
     new_common_types_schema = copy.deepcopy(self.common_types_schema)
-    all_defs = new_common_types_schema["$defs"]
-    new_common_types_schema["$defs"] = {
-        k: v for k, v in all_defs.items() if k in visited_defs
-    }
+    new_common_types_schema["$defs"] = _prune_defs_by_reachability(
+        defs=new_common_types_schema["$defs"],
+        root_def_names=root_common_types,
+    )
 
     return replace(self, common_types_schema=new_common_types_schema)
 
