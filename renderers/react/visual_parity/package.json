@@ -20,7 +20,7 @@
     "@a2ui/react": "file:..",
     "@lit/context": "^1.1.0",
     "lit": "^3.1.0",
-    "markdown_it": "^14.0.0",
+    "markdown-it": "^14.0.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },
