@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from ..inference_strategy import InferenceStrategy
-from typing import List, Optional, Any
+from typing import Optional, Any
 
 
 class A2uiTemplateManager(InferenceStrategy):
@@ -24,8 +24,8 @@ class A2uiTemplateManager(InferenceStrategy):
       workflow_description: str = "",
       ui_description: str = "",
       client_ui_capabilities: Optional[dict[str, Any]] = None,
-      allowed_components: Optional[List[str]] = None,
-      allowed_messages: Optional[List[str]] = None,
+      allowed_components: Optional[list[str]] = None,
+      allowed_messages: Optional[list[str]] = None,
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Any
+from typing import Optional, Any
 
 
 class InferenceStrategy(ABC):
@@ -25,8 +25,8 @@ class InferenceStrategy(ABC):
       workflow_description: str = "",
       ui_description: str = "",
       client_ui_capabilities: Optional[dict[str, Any]] = None,
-      allowed_components: Optional[List[str]] = None,
-      allowed_messages: Optional[List[str]] = None,
+      allowed_components: Optional[list[str]] = None,
+      allowed_messages: Optional[list[str]] = None,
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,

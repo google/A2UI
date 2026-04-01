@@ -17,7 +17,7 @@ import json
 import logging
 import os
 import importlib.resources
-from typing import List, Dict, Any, Optional, Callable
+from typing import Any, Optional, Callable
 from dataclasses import dataclass, field
 from .utils import load_from_bundled_resource
 from ..inference_strategy import InferenceStrategy
@@ -31,10 +31,10 @@ class A2uiSchemaManager(InferenceStrategy):
   def __init__(
       self,
       version: str,
-      catalogs: Optional[List[CatalogConfig]] = None,
+      catalogs: Optional[list[CatalogConfig]] = None,
       accepts_inline_catalogs: bool = False,
       schema_modifiers: Optional[
-          List[Callable[[Dict[str, Any]], Dict[str, Any]]]
+          list[Callable[[dict[str, Any]], dict[str, Any]]]
       ] = None,
   ):
     self._version = version
@@ -42,8 +42,8 @@ class A2uiSchemaManager(InferenceStrategy):
 
     self._server_to_client_schema = None
     self._common_types_schema = None
-    self._supported_catalogs: List[A2uiCatalog] = []
-    self._catalog_example_paths: Dict[str, str] = {}
+    self._supported_catalogs: list[A2uiCatalog] = []
+    self._catalog_example_paths: dict[str, str] = {}
     self._schema_modifiers = schema_modifiers or []
     self._load_schemas(version, catalogs or [])
 
@@ -52,10 +52,10 @@ class A2uiSchemaManager(InferenceStrategy):
     return self._accepts_inline_catalogs
 
   @property
-  def supported_catalog_ids(self) -> List[str]:
+  def supported_catalog_ids(self) -> list[str]:
     return [c.catalog_id for c in self._supported_catalogs]
 
-  def _apply_modifiers(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+  def _apply_modifiers(self, schema: dict[str, Any]) -> dict[str, Any]:
     if self._schema_modifiers:
       for modifier in self._schema_modifiers:
         schema = modifier(schema)
@@ -64,7 +64,7 @@ class A2uiSchemaManager(InferenceStrategy):
   def _load_schemas(
       self,
       version: str,
-      catalogs: Optional[List[CatalogConfig]] = None,
+      catalogs: Optional[list[CatalogConfig]] = None,
   ):
     """Loads separate schema components and processes catalogs."""
     catalogs = catalogs or []
@@ -127,10 +127,10 @@ class A2uiSchemaManager(InferenceStrategy):
     if not client_ui_capabilities or not isinstance(client_ui_capabilities, dict):
       return self._supported_catalogs[0]
 
-    inline_catalogs: List[dict[str, Any]] = client_ui_capabilities.get(
+    inline_catalogs: list[dict[str, Any]] = client_ui_capabilities.get(
         INLINE_CATALOGS_KEY, []
     )
-    client_supported_catalog_ids: List[str] = client_ui_capabilities.get(
+    client_supported_catalog_ids: list[str] = client_ui_capabilities.get(
         SUPPORTED_CATALOG_IDS_KEY, []
     )
 
@@ -182,8 +182,8 @@ class A2uiSchemaManager(InferenceStrategy):
   def get_selected_catalog(
       self,
       client_ui_capabilities: Optional[dict[str, Any]] = None,
-      allowed_components: Optional[List[str]] = None,
-      allowed_messages: Optional[List[str]] = None,
+      allowed_components: Optional[list[str]] = None,
+      allowed_messages: Optional[list[str]] = None,
   ) -> A2uiCatalog:
     """Gets the selected catalog after selection and component pruning."""
     catalog = self._select_catalog(client_ui_capabilities)
@@ -204,8 +204,8 @@ class A2uiSchemaManager(InferenceStrategy):
       workflow_description: str = "",
       ui_description: str = "",
       client_ui_capabilities: Optional[dict[str, Any]] = None,
-      allowed_components: Optional[List[str]] = None,
-      allowed_messages: Optional[List[str]] = None,
+      allowed_components: Optional[list[str]] = None,
+      allowed_messages: Optional[list[str]] = None,
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,
