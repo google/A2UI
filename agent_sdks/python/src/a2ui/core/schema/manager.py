@@ -64,9 +64,10 @@ class A2uiSchemaManager(InferenceStrategy):
   def _load_schemas(
       self,
       version: str,
-      catalogs: List[CatalogConfig] = [],
+      catalogs: Optional[List[CatalogConfig]] = None,
   ):
     """Loads separate schema components and processes catalogs."""
+    catalogs = catalogs or []
     if version not in SPEC_VERSION_MAP:
       raise ValueError(
           f"Unknown A2UI specification version: {version}. Supported:"
@@ -181,11 +182,12 @@ class A2uiSchemaManager(InferenceStrategy):
   def get_selected_catalog(
       self,
       client_ui_capabilities: Optional[dict[str, Any]] = None,
-      allowed_components: List[str] = [],
+      allowed_components: Optional[List[str]] = None,
+      allowed_messages: Optional[List[str]] = None,
   ) -> A2uiCatalog:
     """Gets the selected catalog after selection and component pruning."""
     catalog = self._select_catalog(client_ui_capabilities)
-    pruned_catalog = catalog.with_pruned_components(allowed_components)
+    pruned_catalog = catalog.with_pruning(allowed_components, allowed_messages)
     return pruned_catalog
 
   def load_examples(self, catalog: A2uiCatalog, validate: bool = False) -> str:
@@ -202,7 +204,8 @@ class A2uiSchemaManager(InferenceStrategy):
       workflow_description: str = "",
       ui_description: str = "",
       client_ui_capabilities: Optional[dict[str, Any]] = None,
-      allowed_components: List[str] = [],
+      allowed_components: Optional[List[str]] = None,
+      allowed_messages: Optional[List[str]] = None,
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,
@@ -219,7 +222,7 @@ class A2uiSchemaManager(InferenceStrategy):
       parts.append(f"## UI Description:\n{ui_description}")
 
     selected_catalog = self.get_selected_catalog(
-        client_ui_capabilities, allowed_components
+        client_ui_capabilities, allowed_components, allowed_messages
     )
 
     if include_schema:

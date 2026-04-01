@@ -9,7 +9,7 @@ resolution-markers = [
 [manifest]
 members = [
     "a2ui-contact-lookup",
-    "a2ui-contact-multiple-surfaces",
+    "a2ui-custom-components-example",
     "a2ui-restaurant-finder",
     "mcp-app-proxy",
     "orchestrator",
@@ -89,9 +89,9 @@ requires-dist = [
 ]
 
 [[package]]
-name = "a2ui-contact-multiple-surfaces"
+name = "a2ui-custom-components-example"
 version = "0.1.0"
-source = { editable = "contact_multiple_surfaces" }
+source = { editable = "custom-components-example" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "a2ui-agent" },

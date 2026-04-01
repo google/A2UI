@@ -279,7 +279,7 @@ def test_generate_system_prompt_v0_9_common_types(mock_importlib_resources):
     content = '{"$schema": "https://json-schema.org/draft/2020-12/schema"}'
     if path == "common_types.json":
       content = (
-          '{"$schema": "https://json-schema.org/draft/2020-12/schema", "types":'
+          '{"$schema": "https://json-schema.org/draft/2020-12/schema", "$defs":'
           ' {"Common": {}}}'
       )
     elif "server_to_client" in path:
@@ -290,9 +290,9 @@ def test_generate_system_prompt_v0_9_common_types(mock_importlib_resources):
     elif "catalog" in path:
       content = (
           '{"$schema": "https://json-schema.org/draft/2020-12/schema", "catalogId":'
-          ' "basic", "components": {}}'
+          ' "basic", "components": {}, "$defs": {"test": {"$ref":'
+          ' "common_types.json#/$defs/Common"}}}'
       )
-
     mock_file.open.return_value.__enter__.return_value = io.StringIO(content)
     return mock_file
 
@@ -306,7 +306,7 @@ def test_generate_system_prompt_v0_9_common_types(mock_importlib_resources):
   prompt = manager.generate_system_prompt("Role", include_schema=True)
 
   assert "### Common Types Schema:" in prompt
-  assert '"types":{"Common":{}}' in prompt.replace(" ", "").replace("\n", "")
+  assert '"$defs":{"Common":{}}' in prompt.replace(" ", "").replace("\n", "")
 
 
 def test_generate_system_prompt_minimal_args(mock_importlib_resources):
