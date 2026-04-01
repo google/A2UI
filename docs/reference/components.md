@@ -646,5 +646,5 @@ npm start -- gallery
 
         [:material-code-json: Basic Catalog Definition (JSON Schema)](https://a2ui.org/specification/v0_9/basic_catalog.json)
 
-- **[Custom Components Guide](../guides/custom-components.md)**: Build your own components
+- **[Defining Your Own Catalog](../guides/defining-your-own-catalog.md)**: Build your own components
 - **[Theming Guide](../guides/theming.md)**: Style components to match your brand

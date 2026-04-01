@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import { signal as preactSignal } from '@a2ui/web_core/v0_9';
 import { DestroyRef } from '@angular/core';
-import { signal as preactSignal } from '@preact/signals-core';
 import { toAngularSignal, getNormalizedPath } from './utils';
 
 describe('toAngularSignal', () => {

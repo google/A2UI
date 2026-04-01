@@ -21,12 +21,12 @@ requires-python = ">=3.13"
 dependencies = [
     "a2a-sdk>=0.3.0",
     "click>=8.1.8",
-    "google-adk>=1.8.0",
+    "google-adk>=1.28.0",
     "google-genai>=1.27.0",
     "python-dotenv>=1.1.0",
     "litellm",
     "jsonschema>=4.0.0",
-    "a2ui-agent",
+    "a2ui-agent-sdk>=0.1.1",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -39,8 +39,6 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata]
 allow-direct-references = true
 
-[tool.uv.sources]
-google-adk = { git = "https://github.com/google/adk-python.git", rev = "143ad44" }
 
 [[tool.uv.index]]
 url = "https://pypi.org/simple"

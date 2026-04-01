@@ -83,6 +83,15 @@ describe('Basic Catalog Components', () => {
       expect(img.style.objectFit).toBe('cover');
     });
 
+    it('renders image with description as alt text', () => {
+      const { view } = renderA2uiComponent(Image, 'i1', { 
+        url: 'url',
+        description: 'A beautiful sunset'
+      });
+      const img = view.container.querySelector('img') as HTMLImageElement;
+      expect(img.alt).toBe('A beautiful sunset');
+    });
+
     it('applies variant-specific styling (avatar)', () => {
       const { view } = renderA2uiComponent(Image, 'i1', { 
         url: 'url',

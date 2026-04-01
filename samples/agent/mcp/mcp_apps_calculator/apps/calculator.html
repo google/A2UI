@@ -76,7 +76,6 @@
   button.equals {
     background-color: #34c759;
     color: white;
-    grid-column: span 2;
   }
   button.equals:hover {
     background-color: #2da84e;
@@ -84,7 +83,6 @@
   button.mcp-equals {
     background-color: #5856d6;
     color: white;
-    grid-column: span 2;
   }
   button.mcp-equals:hover {
     background-color: #4342a1;
@@ -96,6 +94,9 @@
   }
   button.clear:hover {
     background-color: #d6332a;
+  }
+  button.zero {
+    grid-column: span 2;
   }
 </style>
 </head>
@@ -119,9 +120,9 @@
     <button onclick="appendNumber('2')">2</button>
     <button onclick="appendNumber('3')">3</button>
     <button class="equals" title="Local JavaScript Calculation" onclick="calculateJavascript()">💻 =</button>
-    <button class="mcp-equals" title="MCP Agent Calculation" onclick="calculateToolCall()">🤖 =</button>
-    <button onclick="appendNumber('0')">0</button>
+    <button class="zero" onclick="appendNumber('0')">0</button>
     <button onclick="appendPoint()">.</button>
+    <button class="mcp-equals" title="MCP Agent Calculation" onclick="calculateToolCall()">🤖 =</button>
   </div>
 </div>
 
@@ -248,12 +249,17 @@
 
   // MCP Communication
   let nextId = 1;
+  const PARENT_ORIGIN = 'http://localhost:4200';
 
   function sendRequest(method, params) {
     const id = nextId++;
-    window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, '*');
+    window.parent.postMessage({ jsonrpc: "2.0", id, method, params }, PARENT_ORIGIN);
     return new Promise((resolve, reject) => {
       const listener = (event) => {
+        if (event.origin !== PARENT_ORIGIN) {
+          console.warn('Message from untrusted origin ignored:', event.origin);
+          return;
+        }
         if (event.data?.id === id) {
           window.removeEventListener('message', listener);
           if (event.data?.result) {
@@ -268,17 +274,21 @@
   }
 
   function sendNotification(method, params) {
-    window.parent.postMessage({ jsonrpc: "2.0", method, params }, '*');
+    window.parent.postMessage({ jsonrpc: "2.0", method, params }, PARENT_ORIGIN);
   }
 
   window.addEventListener('message', (event) => {
+    if (event.origin !== PARENT_ORIGIN) {
+      console.warn('Message from untrusted origin ignored:', event.origin);
+      return;
+    }
     const data = event.data;
     if (data?.method === 'ping') {
       // The host sends a 'ping' to check if the app is responsive (liveness check).
       // Since this example does not use an MCP SDK, we must manually reply with an empty result
       // to acknowledge the ping and keep the connection alive.
       if (data.id) {
-         window.parent.postMessage({ jsonrpc: "2.0", id: data.id, result: {} }, '*');
+         window.parent.postMessage({ jsonrpc: "2.0", id: data.id, result: {} }, PARENT_ORIGIN);
       }
     }
   });

@@ -48,8 +48,7 @@ import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-brows
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 100%;
-      min-height: 450px; /* Minimum height to ensure visibility */
+      height: 500px;
       border: 1px solid var(--mat-sys-outline-variant);
       border-radius: 8px;
       overflow: hidden;
@@ -143,10 +142,16 @@ export class McpApp
 
     window.addEventListener('message', this.messageHandler);
 
-    // Set src to trigger load AFTER listener is ready
-    // TODO: Make the sandbox URL configurable. To ensure CORS encapsulation, the sandbox
-    // should be served from a different origin than the host app.
-    const sandboxUrl = 'sandbox_iframe/sandbox.html';
+    
+    // Check for query param to opt-out of origin toggle (for testing)
+    const urlParams = new URLSearchParams(window.location.search);
+    const disableSecuritySelfTest = urlParams.get('disable_security_self_test') === 'true';
+
+    const currentOrigin = window.location.origin;
+    let sandboxUrl = `${currentOrigin}/mcp_apps_inner_iframe/sandbox.html`;
+    if (disableSecuritySelfTest) {
+      sandboxUrl += '?disable_security_self_test=true';
+    }
     this.iframeSrc.set(
       this.sanitizer.bypassSecurityTrustResourceUrl(sandboxUrl),
     );

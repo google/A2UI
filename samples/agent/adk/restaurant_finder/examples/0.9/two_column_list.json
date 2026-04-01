@@ -1,0 +1,247 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "default",
+      "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+      "theme": {
+        "primaryColor": "#FF0000",
+        "font": "Roboto"
+      }
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "default",
+      "components": [
+        {
+          "id": "root",
+          "component": "Column",
+          "children": [
+            "title-heading",
+            "restaurant-row-1"
+          ]
+        },
+        {
+          "id": "title-heading",
+          "component": "Text",
+          "variant": "h1",
+          "text": {
+            "path": "/title"
+          }
+        },
+        {
+          "id": "restaurant-row-1",
+          "component": "Row",
+          "children": [
+            "item-card-1",
+            "item-card-2"
+          ]
+        },
+        {
+          "id": "item-card-1",
+          "component": "Card",
+          "weight": 1,
+          "child": "card-layout-1"
+        },
+        {
+          "id": "card-layout-1",
+          "component": "Column",
+          "children": [
+            "template-image-1",
+            "card-details-1"
+          ]
+        },
+        {
+          "id": "template-image-1",
+          "component": "Image",
+          "url": {
+            "path": "/items/0/imageUrl"
+          }
+        },
+        {
+          "id": "card-details-1",
+          "component": "Column",
+          "children": [
+            "template-name-1",
+            "template-rating-1",
+            "template-detail-1",
+            "template-link-1",
+            "template-book-button-1"
+          ]
+        },
+        {
+          "id": "template-name-1",
+          "component": "Text",
+          "variant": "h3",
+          "text": {
+            "path": "/items/0/name"
+          }
+        },
+        {
+          "id": "template-rating-1",
+          "component": "Text",
+          "text": {
+            "path": "/items/0/rating"
+          }
+        },
+        {
+          "id": "template-detail-1",
+          "component": "Text",
+          "text": {
+            "path": "/items/0/detail"
+          }
+        },
+        {
+          "id": "template-link-1",
+          "component": "Text",
+          "text": {
+            "path": "/items/0/infoLink"
+          }
+        },
+        {
+          "id": "template-book-button-1",
+          "component": "Button",
+          "child": "book-now-text-1",
+          "action": {
+            "event": {
+              "name": "book_restaurant",
+              "context": {
+                "restaurantName": {
+                  "path": "/items/0/name"
+                },
+                "imageUrl": {
+                  "path": "/items/0/imageUrl"
+                },
+                "address": {
+                  "path": "/items/0/address"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "book-now-text-1",
+          "component": "Text",
+          "text": "Book Now"
+        },
+        {
+          "id": "item-card-2",
+          "component": "Card",
+          "weight": 1,
+          "child": "card-layout-2"
+        },
+        {
+          "id": "card-layout-2",
+          "component": "Column",
+          "children": [
+            "template-image-2",
+            "card-details-2"
+          ]
+        },
+        {
+          "id": "template-image-2",
+          "component": "Image",
+          "url": {
+            "path": "/items/1/imageUrl"
+          }
+        },
+        {
+          "id": "card-details-2",
+          "component": "Column",
+          "children": [
+            "template-name-2",
+            "template-rating-2",
+            "template-detail-2",
+            "template-link-2",
+            "template-book-button-2"
+          ]
+        },
+        {
+          "id": "template-name-2",
+          "component": "Text",
+          "variant": "h3",
+          "text": {
+            "path": "/items/1/name"
+          }
+        },
+        {
+          "id": "template-rating-2",
+          "component": "Text",
+          "text": {
+            "path": "/items/1/rating"
+          }
+        },
+        {
+          "id": "template-detail-2",
+          "component": "Text",
+          "text": {
+            "path": "/items/1/detail"
+          }
+        },
+        {
+          "id": "template-link-2",
+          "component": "Text",
+          "text": {
+            "path": "/items/1/infoLink"
+          }
+        },
+        {
+          "id": "template-book-button-2",
+          "component": "Button",
+          "child": "book-now-text-2",
+          "action": {
+            "event": {
+              "name": "book_restaurant",
+              "context": {
+                "restaurantName": {
+                  "path": "/items/1/name"
+                },
+                "imageUrl": {
+                  "path": "/items/1/imageUrl"
+                },
+                "address": {
+                  "path": "/items/1/address"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "book-now-text-2",
+          "component": "Text",
+          "text": "Book Now"
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "default",
+      "path": "/",
+      "value": {
+        "title": "Top Restaurants",
+        "items": {
+          "item1": {
+            "name": "The Fancy Place",
+            "rating": 4.8,
+            "detail": "Fine dining experience",
+            "infoLink": "https://example.com/fancy",
+            "imageUrl": "https://example.com/fancy.jpg",
+            "address": "123 Main St"
+          },
+          "item2": {
+            "name": "Quick Bites",
+            "rating": 4.2,
+            "detail": "Casual and fast",
+            "infoLink": "https://example.com/quick",
+            "imageUrl": "https://example.com/quick.jpg",
+            "address": "456 Oak Ave"
+          }
+        }
+      }
+    }
+  }
+]

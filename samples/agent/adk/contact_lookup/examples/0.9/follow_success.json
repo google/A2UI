@@ -1,0 +1,42 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "contact-card",
+      "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "contact-card",
+      "components": [
+        {
+          "id": "root",
+          "component": "Card",
+          "child": "success_column"
+        },
+        {
+          "id": "success_column",
+          "component": "Column",
+          "children": [
+            "success_icon",
+            "success_text"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "success_icon",
+          "component": "Icon",
+          "name": "check"
+        },
+        {
+          "id": "success_text",
+          "component": "Text",
+          "text": "Successfully Followed",
+          "variant": "h2"
+        }
+      ]
+    }
+  }
+]

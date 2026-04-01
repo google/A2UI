@@ -16,7 +16,7 @@ Build multi-agent platforms, enterprise assistants, or cross-platform apps where
 - Cross-platform: web, mobile, desktop
 - Interoperable: open source, same spec with multiple renderers
 
-**Get started:** [Client Setup](../guides/client-setup.md) | [Theming](../guides/theming.md) | [Custom Components](../guides/custom-components.md)
+**Get started:** [Client Setup](../guides/client-setup.md) | [Theming](../guides/theming.md) | [Defining Your Own Catalog](../guides/defining-your-own-catalog.md)
 
 ### 2. Agent Developers (Backend/AI)
 

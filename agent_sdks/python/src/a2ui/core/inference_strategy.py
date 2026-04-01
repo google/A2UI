@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import List, Optional, Any
+from typing import Optional, Any
 
 
 class InferenceStrategy(ABC):
@@ -24,8 +24,9 @@ class InferenceStrategy(ABC):
       role_description: str,
       workflow_description: str = "",
       ui_description: str = "",
-      supported_catalog_ids: List[str] = [],
-      allowed_components: List[str] = [],
+      client_ui_capabilities: Optional[dict[str, Any]] = None,
+      allowed_components: Optional[list[str]] = None,
+      allowed_messages: Optional[list[str]] = None,
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,
@@ -37,8 +38,9 @@ class InferenceStrategy(ABC):
       role_description: Description of the agent's role.
       workflow_description: Description of the workflow.
       ui_description: Description of the UI.
-      supported_catalog_ids: List of supported catalog IDs.
-      allowed_components: List of allowed components.
+      client_ui_capabilities: Capabilities reported by the client for targeted schema pruning.
+      allowed_components: List of allowed catalog components.
+      allowed_messages: List of allowed messages.
       include_schema: Whether to include the schema.
       include_examples: Whether to include examples.
       validate_examples: Whether to validate examples.

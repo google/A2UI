@@ -16,6 +16,7 @@ import asyncio
 import logging
 import json
 from typing import List, Optional, override
+from a2a.types import AgentCard
 from google.adk.agents.invocation_context import new_invocation_context_id
 from google.adk.events.event_actions import EventActions
 
@@ -31,7 +32,7 @@ from google.adk.a2a.executor.a2a_agent_executor import (
     A2aAgentExecutorConfig,
     A2aAgentExecutor,
 )
-from a2ui.a2a import is_a2ui_part, try_activate_a2ui_extension, A2UI_EXTENSION_URI
+from a2ui.a2a import is_a2ui_part, try_activate_a2ui_extension
 from a2ui.core.schema.constants import A2UI_CLIENT_CAPABILITIES_KEY
 from google.adk.a2a.converters import event_converter
 from a2a.server.events import Event as A2AEvent
@@ -49,7 +50,8 @@ logger = logging.getLogger(__name__)
 class OrchestratorAgentExecutor(A2aAgentExecutor):
   """Contact AgentExecutor Example."""
 
-  def __init__(self, agent: LlmAgent):
+  def __init__(self, agent: LlmAgent, agent_card: AgentCard):
+    self._agent_card = agent_card
     config = A2aAgentExecutorConfig(
         gen_ai_part_converter=part_converters.convert_genai_part_to_a2a_part,
         a2a_part_converter=part_converters.convert_a2a_part_to_genai_part,
@@ -134,7 +136,8 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
   ):
     session = await super()._prepare_session(context, run_request, runner)
 
-    if try_activate_a2ui_extension(context):
+    active_ui_version = try_activate_a2ui_extension(context, self._agent_card)
+    if active_ui_version:
       client_capabilities = (
           context.message.metadata.get(A2UI_CLIENT_CAPABILITIES_KEY)
           if context.message and context.message.metadata
@@ -149,7 +152,7 @@ class OrchestratorAgentExecutor(A2aAgentExecutor):
               actions=EventActions(
                   state_delta={
                       # These values are used to configure A2UI messages to remote agent calls
-                      "use_ui": True,
+                      "active_ui_version": active_ui_version,
                       "client_capabilities": client_capabilities,
                   }
               ),

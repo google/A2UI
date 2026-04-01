@@ -376,6 +376,7 @@ export const SliderSchema = z.object({
     .superRefine(exactlyOneKey),
   minValue: z.number().optional(),
   maxValue: z.number().optional(),
+  label: StringValueSchema.optional(),
 });
 
 export const ComponentArrayTemplateSchema = z.object({

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Validate A2UI Specification Examples
+name: Validate A2UI specification examples
 
 on:
   push:

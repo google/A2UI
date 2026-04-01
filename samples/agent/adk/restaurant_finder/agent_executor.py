@@ -40,11 +40,8 @@ logger = logging.getLogger(__name__)
 class RestaurantAgentExecutor(AgentExecutor):
   """Restaurant AgentExecutor Example."""
 
-  def __init__(self, ui_agent: RestaurantAgent, text_agent: RestaurantAgent):
-    # Instantiate two agents: one for UI and one for text-only.
-    # The appropriate one will be chosen at execution time.
-    self.ui_agent = ui_agent
-    self.text_agent = text_agent
+  def __init__(self, agent: RestaurantAgent):
+    self._agent = agent
 
   async def execute(
       self,
@@ -56,14 +53,12 @@ class RestaurantAgentExecutor(AgentExecutor):
     action = None
 
     logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
-    use_ui = try_activate_a2ui_extension(context)
+    active_ui_version = try_activate_a2ui_extension(context, self._agent.agent_card)
 
     # Determine which agent to use based on whether the a2ui extension is active.
-    if use_ui:
-      agent = self.ui_agent
+    if active_ui_version:
       logger.info("--- AGENT_EXECUTOR: A2UI extension is active. Using UI agent. ---")
     else:
-      agent = self.text_agent
       logger.info(
           "--- AGENT_EXECUTOR: A2UI extension is not active. Using text agent. ---"
       )
@@ -126,13 +121,17 @@ class RestaurantAgentExecutor(AgentExecutor):
       await event_queue.enqueue_event(task)
     updater = TaskUpdater(event_queue, task.id, task.context_id)
 
-    async for item in agent.stream(query, task.context_id):
+    async for item in self._agent.stream(query, task.context_id, active_ui_version):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
-        await updater.update_status(
-            TaskState.working,
-            new_agent_text_message(item["updates"], task.context_id, task.id),
-        )
+        message = None
+        if "parts" in item:
+          message = new_agent_parts_message(item["parts"], task.context_id, task.id)
+        elif "updates" in item:
+          message = new_agent_text_message(item["updates"], task.context_id, task.id)
+
+        if message:
+          await updater.update_status(TaskState.working, message)
         continue
 
       final_state = (

@@ -49,5 +49,5 @@ export const Image = createReactComponent(ImageApi, ({props}) => {
     style.objectFit = 'cover';
   }
 
-  return <img src={props.url} alt="" style={style} />;
+  return <img src={props.url} alt={props.description || ''} style={style} />;
 });

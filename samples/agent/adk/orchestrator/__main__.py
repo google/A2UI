@@ -54,7 +54,9 @@ def main(host, port, subagent_urls):
     orchestrator_agent, agent_card = asyncio.run(
         OrchestratorAgent.build_agent(base_url=base_url, subagent_urls=subagent_urls)
     )
-    agent_executor = OrchestratorAgentExecutor(agent=orchestrator_agent)
+    agent_executor = OrchestratorAgentExecutor(
+        agent=orchestrator_agent, agent_card=agent_card
+    )
 
     request_handler = DefaultRequestHandler(
         agent_executor=agent_executor,

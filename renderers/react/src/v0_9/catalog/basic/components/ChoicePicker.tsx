@@ -19,6 +19,11 @@ import {createReactComponent} from '../../../adapter';
 import {ChoicePickerApi} from '@a2ui/web_core/v0_9/basic_catalog';
 import {LEAF_MARGIN, STANDARD_BORDER, STANDARD_RADIUS} from '../utils';
 
+// The type of an option is deeply nested into the ChoicePickerApi schema, and
+// it seems z.infer is not inferring it correctly (?). We use `any` for now.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type _Option = any;
+
 export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, context}) => {
   const [filter, setFilter] = useState('');
 
@@ -37,8 +42,10 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
   };
 
   const options = (props.options || []).filter(
-    (opt: {label: string; value: string}) =>
-      !props.filterable || filter === '' || opt.label.toLowerCase().includes(filter.toLowerCase())
+    (opt: _Option) =>
+      !props.filterable ||
+      filter === '' ||
+      String(opt.label).toLowerCase().includes(filter.toLowerCase())
   );
 
   const containerStyle: React.CSSProperties = {
@@ -69,7 +76,7 @@ export const ChoicePicker = createReactComponent(ChoicePickerApi, ({props, conte
         />
       )}
       <div style={listStyle}>
-        {options.map((opt: {label: string; value: string}, i: number) => {
+        {options.map((opt: _Option, i: number) => {
           const isSelected = values.includes(opt.value);
           if (props.displayStyle === 'chips') {
             return (

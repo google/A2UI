@@ -28,7 +28,12 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "rxjs/operators": ["./node_modules/rxjs/operators/index.js"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.json"]
+  "include": ["src/**/*.ts", "src/**/*.json"],
 }
