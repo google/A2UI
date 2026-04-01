@@ -15,6 +15,7 @@
 import json
 import logging
 import os
+from collections import OrderedDict
 from collections.abc import AsyncIterable
 from typing import Any, Optional, Dict
 
@@ -67,7 +68,8 @@ class RestaurantAgent:
 
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
-    self._parsers = {}
+    self._parsers = OrderedDict()
+    self._max_parsers = 1000  # Max active sessions to keep in memory
 
     for version in [VERSION_0_8, VERSION_0_9]:
       schema_manager = self._build_schema_manager(version)
@@ -255,8 +257,12 @@ class RestaurantAgent:
       if selected_catalog:
         from a2ui.core.parser.streaming import A2uiStreamParser
 
-        if session_id not in self._parsers:
+        if session_id in self._parsers:
+          self._parsers.move_to_end(session_id)
+        else:
           self._parsers[session_id] = A2uiStreamParser(catalog=selected_catalog)
+          if len(self._parsers) > self._max_parsers:
+            self._parsers.popitem(last=False)
 
         async for part in stream_response_to_parts(
             self._parsers[session_id],
