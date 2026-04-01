@@ -135,7 +135,7 @@ CONVERSATIONAL TEXT RESPONSE
 
 ## 5. The Streaming Parser
 
-The `A2uiStreamParser` is a state-machine-based parser designed to parse A2UI JSON *incrementally* as it arrives from the LLM stream. It enables yielding partial UI updates to the client for progressive rendering.
+The `A2uiStreamParser` uses **regex-based block parsing** to find and extract A2UI JSON payloads from the LLM's text output stream. It buffers incoming chunks and yields standard part representations when a complete block is detected.
 
 ### 1. High-Level Usage
 
@@ -157,24 +157,21 @@ for chunk in llm_stream:
 
 ### 2. Internal Mechanics
 
-The parser uses a single-pass character scanner to track state and extract JSON fragments.
+The parser buffers text and uses regex to extract content between tags.
 
-#### State Tracking (The Brace Stack)
-The parser tracks curly braces `{}` and brackets `[]` using a stack.
-*   **Outside Tags**: It ignores characters until it sees `<a2ui-json>`.
-*   **Inside Tags**: It pushes index and brace type onto the stack. When it sees a matching close brace, it pops.
-*   **Object Completion**: When the stack becomes empty (single top-level object) or when a specific object (like a component) finishes, it attempts to parse it.
+#### Chunk Buffering
+Incoming text chunks are appended to an internal buffer. The parser passes through conversational text until it detects the `<a2ui-json>` opening tag.
 
-#### JSON Fixing (The Healer)
-If a chunk ends in the middle of a JSON object, the parser uses a `_fix_json` utility to make it valid JSON.
-*   **Closing Quotes**: If a string value is cut off, it closes it (only for safe keys like labels, not for structural IDs or URLs to prevent breakage).
-*   **Closing Braces**: It appends missing `}` and `]` to balance the stack.
-*   **Trailing Commas**: It removes trailing commas.
+#### Regex Block Extraction
+Once both the opening and closing tags are found in the buffer, the parser uses a regex pattern (e.g., `<a2ui-json>(.*?)</a2ui-json>` with `re.DOTALL`) to extract the raw JSON string.
+*   It yields any text preceding the tag as standard conversational text.
+*   It yields the JSON content as an A2UI JSON part.
 
-#### Component Sniffing
-To enable fast UI updates, the parser "sniffs" for components *before* the outer JSON message is complete.
-*   If it sees a JSON object with `{ "id": "...", "component": "..." }`, it validates it early.
-*   If valid, it yields it immediately and caches it. The client can render this component while the rest of the stream arrives.
+#### Sanitization & Cleanup
+Before parsing the JSON, it sanitizes the string to remove any unexpected markdown code block delimiters (e.g., ` ```json `) that the LLM might have inadvertently wrapped around the JSON inside the A2UI tags.
+
+#### Multi-Block Support
+The parser searches for all occurrences of the tags in the buffer and splits the content into alternating text parts and A2UI JSON parts, clearing processed blocks from the buffer.
 
 ---
 
