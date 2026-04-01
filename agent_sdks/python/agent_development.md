@@ -15,6 +15,10 @@ The `agent_sdk` revolves around three main classes:
 * **`A2uiSchemaManager`**: The central coordinator that loads catalogs, manages
   versioning, and generates system prompts.
 
+## Prerequisites
+
+- Install the SDK: `pip install a2ui-agent-sdk`
+
 ## Generating A2UI Messages
 
 ### Step 1: Set up the Schema Manager
@@ -169,6 +173,40 @@ yield {
                                      fallback_text="OK."),
 }
 ```
+
+#### 4e. Incremental Streaming (Advanced)
+
+For sub-second UI updates, you can parse the LLM stream *incrementally* using `A2uiStreamParser`. This parser uses a state-machine to sniff characters and yield components *before* the entire JSON block is complete. It automatically "heals" partial JSON (closing quotes and braces) to ensure valid payloads are yielded early.
+
+```python
+from a2ui.core.parser.streaming import A2uiStreamParser
+from a2ui.a2a import create_a2ui_part
+
+# Initialize the stream parser with your catalog
+parser = A2uiStreamParser(catalog=schema_manager.get_selected_catalog())
+
+# Inside your LLM stream loop:
+for chunk in llm_response_stream:
+    # Process each text chunk as it arrives
+    response_parts = parser.process_chunk(chunk.text)
+    
+    for part in response_parts:
+        if part.a2ui_json:
+            # Yield partial UI updates immediately
+            yield {
+                "is_task_complete": False,
+                "parts": [create_a2ui_part(p) for p in part.a2ui_json]
+            }
+        if part.text:
+            # Yield conversational text
+            yield {
+                "is_task_complete": False,
+                "parts": [DataPart(text=part.text, mime_type="text/plain")]
+            }
+```
+
+> [!TIP]
+> `A2uiStreamParser` performs content-based change detection to ensure components are only re-yielded if their content changes, minimizing bandwidth usage.
 
 ## Use Cases
 
