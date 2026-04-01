@@ -37,7 +37,7 @@ export default defineConfig({
     exclude: [
       '@a2ui/react',
       '@a2ui/lit',
-      'markdown_it',
+      'markdown-it',
       'clsx',
       'signal-utils/array',
       'signal-utils/map',

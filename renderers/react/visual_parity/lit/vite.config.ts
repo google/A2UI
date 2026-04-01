@@ -28,7 +28,7 @@ export default defineConfig({
     // Don't pre-bundle @a2ui/lit or its deps to avoid duplicate module instances
     exclude: [
       '@a2ui/lit',
-      'markdown_it',
+      'markdown-it',
       'clsx',
       'signal-utils/array',
       'signal-utils/map',
