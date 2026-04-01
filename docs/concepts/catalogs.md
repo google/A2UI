@@ -256,6 +256,7 @@ export const RIZZ_CHARTS_CATALOG = {
 
 and the hello_world_banner implementation
 
+{% raw %}
 ```typescript
 import { DynamicComponent } from '@a2ui/angular';
 import { Component, Input } from '@angular/core';
@@ -274,6 +275,7 @@ export class HelloWorldBanner extends DynamicComponent {
   @Input() message?: string;
 }
 ```
+{% endraw %}
 
 You can see a working example of a client renderer in the [Rizzcharts demo](../samples/client/angular/projects/rizzcharts/src/a2ui-catalog/catalog.ts).
 
