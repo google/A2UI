@@ -19,9 +19,6 @@ default = true
 [tool.uv.workspace]
 members = ["contact_lookup", "custom-components-example", "orchestrator", "restaurant_finder", "rizzcharts", "mcp_app_proxy"]
 
-[tool.uv.sources]
-a2ui-agent = { path = "../../../agent_sdks/python", editable = true }
-
 [tool.pyink]
 unstable = true
 target-version = []
