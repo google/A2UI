@@ -159,6 +159,7 @@ export const plugin = (): Plugin => {
                   res.setHeader("Content-Type", "application/json");
                   res.end(JSON.stringify({ error: e.message || String(e) }));
                 } else {
+                  res.write(`data: ${JSON.stringify({ error: e.message || String(e) })}\n\n`);
                   res.end();
                 }
               }

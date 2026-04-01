@@ -81,38 +81,13 @@ export class A2UIClient {
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            const jsonStr = line.slice(6);
+            const jsonStr = line.replace(/^data:\s*/, "");
             try {
               const parsed = JSON.parse(jsonStr);
               if ("error" in parsed) {
                 throw new Error(parsed.error);
               } else {
-                let items: any[] = [];
-                // If it's a TaskEvent, it has a 'messages' array
-                if (parsed.messages && Array.isArray(parsed.messages)) {
-                  items = parsed.messages;
-                } else {
-                  items = Array.isArray(parsed) 
-                    ? parsed 
-                    : (parsed.kind === "message" && Array.isArray(parsed.parts) ? parsed.parts : [parsed]);
-                }
-
-                const chunkMessages: v0_8.Types.ServerToClientMessage[] = [];
-                for (const item of items) {
-                  // item is potentially a Message object like { kind: "message", parts: [...] }
-                  if (item.kind === "message" && Array.isArray(item.parts)) {
-                    for (const part of item.parts) {
-                      if (part.data) {
-                        chunkMessages.push(part.data);
-                      }
-                    }
-                  } else {
-                    if (item.kind === "text") continue;
-                    if (item.data) {
-                      chunkMessages.push(item.data);
-                    }
-                  }
-                }
+                const chunkMessages = this.#extractMessages(parsed);
                 if (chunkMessages.length > 0) {
                   messages.push(...chunkMessages);
                   onChunk?.(chunkMessages);
@@ -131,31 +106,38 @@ export class A2UIClient {
     if (data && typeof data === 'object' && "error" in data) {
       throw new Error(data.error);
     } else {
-      let items: any[] = [];
-      if (data.messages && Array.isArray(data.messages)) {
-        items = data.messages;
-      } else {
-        items = Array.isArray(data) 
-          ? data 
-          : (data.kind === "message" && Array.isArray(data.parts) ? data.parts : [data]);
-      }
-
-      for (const item of items) {
-        if (item.kind === "message" && Array.isArray(item.parts)) {
-          for (const part of item.parts) {
-            if (part.data) {
-              messages.push(part.data);
-            }
-          }
-        } else {
-          if (item.kind === "text") continue;
-          if (item.data) {
-            messages.push(item.data);
-          }
-        }
-      }
+      const extracted = this.#extractMessages(data);
+      messages.push(...extracted);
       if (messages.length > 0) {
         onChunk?.(messages);
+      }
+    }
+    return messages;
+  }
+
+  #extractMessages(data: any): v0_8.Types.ServerToClientMessage[] {
+    let items: any[] = [];
+    if (data.messages && Array.isArray(data.messages)) {
+      items = data.messages;
+    } else {
+      items = Array.isArray(data)
+        ? data
+        : (data.kind === "message" && Array.isArray(data.parts) ? data.parts : [data]);
+    }
+
+    const messages: v0_8.Types.ServerToClientMessage[] = [];
+    for (const item of items) {
+      if (item.kind === "message" && Array.isArray(item.parts)) {
+        for (const part of item.parts) {
+          if (part.data) {
+            messages.push(part.data);
+          }
+        }
+      } else {
+        if (item.kind === "text") continue;
+        if (item.data) {
+          messages.push(item.data);
+        }
       }
     }
     return messages;
