@@ -25,7 +25,8 @@ class InferenceStrategy(ABC):
       workflow_description: str = "",
       ui_description: str = "",
       client_ui_capabilities: Optional[dict[str, Any]] = None,
-      allowed_components: List[str] = [],
+      allowed_components: Optional[List[str]] = None,
+      allowed_messages: Optional[List[str]] = None,
       include_schema: bool = False,
       include_examples: bool = False,
       validate_examples: bool = False,
@@ -38,7 +39,8 @@ class InferenceStrategy(ABC):
       workflow_description: Description of the workflow.
       ui_description: Description of the UI.
       client_ui_capabilities: Capabilities reported by the client for targeted schema pruning.
-      allowed_components: List of allowed components.
+      allowed_components: List of allowed catalog components.
+      allowed_messages: List of allowed messages.
       include_schema: Whether to include the schema.
       include_examples: Whether to include examples.
       validate_examples: Whether to validate examples.
