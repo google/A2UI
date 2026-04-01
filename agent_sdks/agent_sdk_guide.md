@@ -258,3 +258,16 @@ Create a simple sample (like a command-line agent or local server) to verify tha
 
 > [!IMPORTANT]
 > Keep the SDK idiomatic to your language. Don't force Python-isms if it doesn't make sense (e.g., use builder patterns in Java/Kotlin or macros in C++ if they are more ergonomic).
+
+---
+
+## 11. Cross-Language Feature Synchronization
+
+The A2UI Agent SDK is a multi-language ecosystem. While features may be implemented in one language first (e.g., Python), we strive for consistency across all supported languages (Kotlin, C++, etc.). To maintain this consistency, we follow a strict synchronization process:
+
+### Synchronization Process:
+
+1.  **Lead Implementation**: A feature can be developed and merged in one language first (often Python as the reference).
+2.  **File Sync Issues**: The author or reviewer of the feature **must file issues** for the equivalent feature requests in all other supported languages to ensure they are tracked.
+3.  **Cross-Referencing**: Link these new issues back to the original Pull Request or issue for context and reference.
+4.  **Consistency Over Clones**: While implementations should be idiomatic to the target language, they must follow the same architectural patterns (Inference Strategies, Validators, Streaming Parsers) and protocol standards defined in this guide.
