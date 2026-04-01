@@ -22,12 +22,12 @@ At the heart of the A2UI Agent SDK are four key interfaces that manage schemas a
 
 ### `CatalogConfig`
 
-Defines the metadata for a component catalog. It points to where the schemas and examples live on disk.
+Defines the metadata for a component catalog. It uses a **Provider** to load the schema and points to optional examples.
 
 ```python
 class CatalogConfig:
     name: str
-    schema_path: str
+    provider: A2uiCatalogProvider
     examples_path: Optional[str] = None
 ```
 
@@ -40,7 +40,7 @@ class A2uiCatalog:
     name: str
     validator: A2uiValidator
     
-    def render_instructions(self, options: InstructionOptions) -> str:
+    def render_as_llm_instructions(self, options: InstructionOptions) -> str:
         """
         Generates a string representation of the catalog (schemas and examples) 
         suitable for inclusion in an LLM system prompt.
@@ -123,7 +123,7 @@ When generating prompts, the SDK should allow developers to:
 
 **Standard Prompt Tags:**
 ```
-CONVERSTIONAL TEXT RESPONSE
+CONVERSATIONAL TEXT RESPONSE
 <a2ui-json>
 [{
   "surfaceUpdate": { ... }
@@ -242,7 +242,7 @@ An Event Converter intercepts the agent framework's event stream and applies the
 If you are tasked with porting the `agent_sdk` to a new language (e.g., C++ or Kotlin), follow this strict, phased sequence:
 
 ### Step 1: Core Foundation (Non-UI)
-Implement `CatalogConfig`, `A2uiCatalog`, and an `InferenceStrategy` (like `A2uiSchemaManager`). Ensure you can load a JSON file and print its schema.
+Implement `CatalogConfig` (and its `Provider`), `A2uiCatalog`, and an `InferenceStrategy` (like `A2uiSchemaManager`). Ensure you can load a JSON file via a provider and print its schema.
 
 ### Step 2: Prompt Generation
 Implement `generateSystemPrompt`. Verify that it outputs valid Markdown with embedded JSON schemas and examples.
