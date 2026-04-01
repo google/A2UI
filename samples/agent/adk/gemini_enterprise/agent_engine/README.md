@@ -64,7 +64,6 @@ curl -X POST \
          "tokenUri": "<OAUTH_TOKEN_URI>"
       }
    }'
-'
 ```
 
 Replace the following:
