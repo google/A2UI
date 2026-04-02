@@ -16,7 +16,6 @@
 
 import {Catalog} from '@a2ui/web_core/v0_9';
 import {BASIC_FUNCTIONS} from '@a2ui/web_core/v0_9/basic_catalog';
-import type {ReactComponentImplementation} from '../../adapter';
 
 import {Text} from './components/Text';
 import {Image} from './components/Image';
@@ -36,6 +35,7 @@ import {CheckBox} from './components/CheckBox';
 import {ChoicePicker} from './components/ChoicePicker';
 import {Slider} from './components/Slider';
 import {DateTimeInput} from './components/DateTimeInput';
+import type {ReactComponentImplementation} from '../../adapter';
 
 const basicComponents: ReactComponentImplementation[] = [
   Text,
@@ -58,7 +58,7 @@ const basicComponents: ReactComponentImplementation[] = [
   DateTimeInput,
 ];
 
-export const basicCatalog = new Catalog<ReactComponentImplementation>(
+export const basicCatalog = new Catalog<ReactComponentImplementation, 'react'>(
   'https://a2ui.org/specification/v0_9/basic_catalog.json',
   basicComponents,
   BASIC_FUNCTIONS

@@ -15,17 +15,18 @@
  */
 
 import {Catalog, createFunctionImplementation} from '@a2ui/web_core/v0_9';
+import {z} from 'zod';
+
 import {Text} from './components/Text';
 import {Button} from './components/Button';
 import {Row} from './components/Row';
 import {Column} from './components/Column';
 import {TextField} from './components/TextField';
 import type {ReactComponentImplementation} from '../../adapter';
-import {z} from 'zod';
 
 const minimalComponents: ReactComponentImplementation[] = [Text, Button, Row, Column, TextField];
 
-export const minimalCatalog = new Catalog<ReactComponentImplementation>(
+export const minimalCatalog = new Catalog<ReactComponentImplementation, 'react'>(
   'https://a2ui.org/specification/v0_9/catalogs/minimal/minimal_catalog.json',
   minimalComponents,
   [

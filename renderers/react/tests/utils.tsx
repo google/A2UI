@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
-import { vi } from 'vitest';
-import { SurfaceModel, ComponentModel, Catalog, ComponentContext } from '@a2ui/web_core/v0_9';
-import { BASIC_FUNCTIONS } from '@a2ui/web_core/v0_9/basic_catalog';
-import type { ReactComponentImplementation } from '../src/v0_9/adapter';
+import {render} from '@testing-library/react';
+import {vi} from 'vitest';
+import {SurfaceModel, ComponentModel, Catalog, ComponentContext} from '@a2ui/web_core/v0_9';
+import {BASIC_FUNCTIONS} from '@a2ui/web_core/v0_9/basic_catalog';
+import type {ReactComponentImplementation} from '../src/v0_9/adapter';
+import {reactSignal} from '../src/v0_9/reactSignal';
 
 export interface RenderA2uiOptions {
   initialData?: Record<string, any>;
@@ -41,9 +42,9 @@ export function renderA2uiComponent(
   initialProperties: Record<string, any>,
   options: RenderA2uiOptions = {}
 ) {
-  const { 
-    initialData = {}, 
-    additionalImpls = [], 
+  const {
+    initialData = {},
+    additionalImpls = [],
     additionalComponents = [],
     functions = BASIC_FUNCTIONS
   } = options;
@@ -51,8 +52,8 @@ export function renderA2uiComponent(
   // Combine all implementations into the catalog
   const allImpls = [impl, ...additionalImpls];
   const catalog = new Catalog('test-catalog', allImpls, functions);
-  const surface = new SurfaceModel<ReactComponentImplementation>('test-surface', catalog);
-  
+  const surface = new SurfaceModel<ReactComponentImplementation, 'react'>('test-surface', catalog, reactSignal);
+
   // Setup data model
   surface.dataModel.set('/', initialData);
 
@@ -65,24 +66,24 @@ export function renderA2uiComponent(
     surface.componentsModel.addComponent(childModel);
   }
 
-  const mainContext = new ComponentContext(surface, componentId, '/');
+  const mainContext = new ComponentContext(surface, componentId, reactSignal, '/');
 
   // Smart buildChild mock:
   // 1. If the component exists in the model and catalog, render it for real.
   // 2. Otherwise, render a placeholder div that tests can query.
   const buildChild = vi.fn((id: string, basePath?: string) => {
     const compModel = surface.componentsModel.get(id);
-    
+
     if (!compModel) {
       return <div key={`${id}-${basePath}`} data-testid={`child-${id}`} data-basepath={basePath} />;
     }
 
     const compImpl = surface.catalog.components.get(compModel.type);
     if (!compImpl) {
-       return <div key={`${id}-${basePath}`} data-testid={`error-unknown-type-${compModel.type}`} />;
+      return <div key={`${id}-${basePath}`} data-testid={`error-unknown-type-${compModel.type}`} />;
     }
 
-    const ctx = new ComponentContext(surface, id, basePath || '/');
+    const ctx = new ComponentContext(surface, id, reactSignal, basePath || '/');
     const ChildComponent = (compImpl as ReactComponentImplementation).render;
 
     return <ChildComponent key={`${id}-${basePath}`} context={ctx} buildChild={buildChild} />;
@@ -94,10 +95,10 @@ export function renderA2uiComponent(
     <ComponentToRender context={mainContext} buildChild={buildChild} />
   );
 
-  return { 
-    view, 
-    surface, 
-    buildChild, 
+  return {
+    view,
+    surface,
+    buildChild,
     mainModel,
     context: mainContext,
     // Helper to trigger data model updates and wait for re-render

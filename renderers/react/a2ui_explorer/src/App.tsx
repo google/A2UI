@@ -16,10 +16,10 @@
 
 import {useState, useEffect, useSyncExternalStore, useCallback} from 'react';
 import {MessageProcessor, SurfaceModel} from '@a2ui/web_core/v0_9';
-import {minimalCatalog, basicCatalog, A2uiSurface, type ReactComponentImplementation} from '@a2ui/react/v0_9';
+import {minimalCatalog, basicCatalog, A2uiSurface, reactSignal, type ReactComponentImplementation} from '@a2ui/react/v0_9';
 import {exampleFiles, getMessages} from './examples';
 
-const DataModelViewer = ({surface}: {surface: SurfaceModel<any>}) => {
+const DataModelViewer = ({surface}: {surface: SurfaceModel<any, 'react'>;}) => {
   const subscribeHook = useCallback(
     (callback: () => void) => {
       const bound = surface.dataModel.subscribe('/', callback);
@@ -47,7 +47,7 @@ export default function App() {
   const selectedExample = exampleFiles.find((e) => e.key === selectedExampleKey)?.data as any;
 
   const [logs, setLogs] = useState<any[]>([]);
-  const [processor, setProcessor] = useState<MessageProcessor<ReactComponentImplementation> | null>(null);
+  const [processor, setProcessor] = useState<MessageProcessor<ReactComponentImplementation, 'react'> | null>(null);
   const [surfaces, setSurfaces] = useState<string[]>([]);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(-1);
 
@@ -58,7 +58,7 @@ export default function App() {
         if (prevProcessor) {
           prevProcessor.model.dispose();
         }
-        const newProcessor = new MessageProcessor<ReactComponentImplementation>([minimalCatalog, basicCatalog], async (action: any) => {
+        const newProcessor = new MessageProcessor<ReactComponentImplementation, 'react'>([minimalCatalog, basicCatalog], reactSignal, async (action: any) => {
           setLogs((l) => [...l, {time: new Date().toISOString(), action}]);
         });
 
