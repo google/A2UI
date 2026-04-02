@@ -1,18 +1,77 @@
 # A2UI over Model Context Protocol (MCP)
 
-This guide outlines how to use **A2UI** declarative syntax to build rich, interactive interfaces on top of **Model Context Protocol (MCP)** using Tools and Resources.
+This guide shows you how to serve **rich, interactive A2UI interfaces** from an **MCP server** using Tools and Embedded Resources. By the end, you'll have a working MCP server that returns A2UI components to any MCP-compatible client.
 
-See samples at [MCP Samples](../../samples/agent/mcp).
+<video width="100%" height="auto" controls playsinline style="display: block; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; margin-bottom: 24px;">
+  <source src="../assets/guides-a2ui-over-mcp-tour.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+## Prerequisites
+
+- **Python 3.10+**
+- **[uv](https://docs.astral.sh/uv/)** — fast Python package manager
+- **Node.js 18+** (for the MCP Inspector)
+
+## Quick Start: Run the Sample
+
+Before diving into the protocol details, let's get a working example running. The A2UI repo includes a ready-to-go MCP recipe demo.
+
+```bash
+# Clone the repo (if you haven't already)
+git clone https://github.com/google/A2UI.git
+cd A2UI/samples/agent/mcp/a2ui-over-mcp-recipe
+
+# Start the MCP server (SSE transport on port 8000)
+uv run .
+```
+
+In a separate terminal, launch the [MCP Inspector](https://github.com/modelcontextprotocol/inspector) to interact with the server:
+
+```bash
+npx @modelcontextprotocol/inspector
+```
+
+In the Inspector:
+
+1. Set **Transport Type** to `SSE`
+2. Connect to `http://localhost:8000/sse`
+3. Click **List Tools** → you'll see `get_recipe_a2ui`
+4. Run the tool → the response contains A2UI JSON that renders a recipe card
+
+> ⚠️ **Note**
+>
+> The sample uses a local path reference to the A2UI Agent SDK. For your own projects, install from PyPI:
+> ```bash
+> pip install a2ui-agent-sdk
+> ```
+
+See all samples at [`samples/agent/mcp/`](../../samples/agent/mcp).
+
+## How It Works
+
+An MCP server returns A2UI content as **Embedded Resources** inside tool responses. The client detects the `application/json+a2ui` MIME type and routes the payload to an A2UI renderer.
+
+```
+Client → tools/call → MCP Server
+                         ↓
+              Generate A2UI JSON
+                         ↓
+         Wrap as EmbeddedResource
+              (application/json+a2ui)
+                         ↓
+Client ← CallToolResult ← MCP Server
+   ↓
+A2UI Renderer displays UI
+```
 
 ## Catalog Negotiation
 
-Before a server can send A2UI to a client, they must establish mutual support for the protocol and determine which catalogs are available. Depending on your system architecture, this capability negotiation can be handled in one of two ways: during the initial connection handshake or on a per-message basis.
+Before a server can send A2UI to a client, they must establish which catalogs are available. Depending on your architecture, this can happen in one of two ways.
 
-### Option A: Catalog Handshake during MCP Initialization
+### Option A: During MCP Initialization (Recommended)
 
-Because MCP operates as a stateful session protocol, the most efficient approach is to declare capabilities exactly once when establishing the connection. The client declares its A2UI support under the capabilities object (often under an experimental or custom key) of the standard initialize request. The server stores this state for the duration of the session.
-
-Example Initialize Request:
+MCP is a stateful session protocol, so the most efficient approach is to declare capabilities once during connection setup. The client declares its A2UI support under `capabilities`:
 
 ```json
 {
@@ -28,9 +87,9 @@ Example Initialize Request:
     "capabilities": {
       "a2ui": {
         "clientCapabilities": {
-          "v0.10": {
+          "v0.9": {
             "supportedCatalogIds": [
-              "https://a2ui.org/specification/v0_10/basic_catalog.json"
+              "https://a2ui.org/specification/v0_9/basic_catalog.json"
             ]
           }
         }
@@ -40,11 +99,11 @@ Example Initialize Request:
 }
 ```
 
-### Option B: Catalog Handshake on Each MCP Message (For Stateless Servers)
+The server stores this state for the duration of the session.
 
-If your architecture requires the MCP Server to remain entirely stateless, the client can pass its A2UI version and catalog support in the `_meta` field of every tool call request. The server reads this metadata on the fly to determine which catalog to use for the response UI.
+### Option B: Per-Message Metadata (For Stateless Servers)
 
-Example Call Request Metadata:
+If your server must remain stateless, the client can pass A2UI capabilities in the `_meta` field of every tool call:
 
 ```json
 {
@@ -57,9 +116,9 @@ Example Call Request Metadata:
     "_meta": {
       "a2ui": {
         "clientCapabilities": {
-          "v0.10": {
+          "v0.9": {
             "supportedCatalogIds": [
-              "https://a2ui.org/specification/v0_10/basic_catalog.json"
+              "https://a2ui.org/specification/v0_9/basic_catalog.json"
             ],
             "inlineCatalogs": []
           }
@@ -70,30 +129,32 @@ Example Call Request Metadata:
 }
 ```
 
-## Returning A2UI Content as Embedded Resources
+## Returning A2UI Content
 
-Embedded Resources allow a Tool to return the UI layout directly tied to that specific response, without requiring server-side storage or tracking.
+A2UI content is returned as **Embedded Resources** inside a `CallToolResult`. Key rules:
 
-- **URI**: Must use the `a2ui://` prefix with a descriptive name identifier (e.g., `a2ui://training-plan-page`).
-- **MIME Type**: Must use `application/json+a2ui`. This ensures the MCP client routes the payload to the A2UI renderer rather than displaying raw JSON to the user. 
+- **URI**: Must use the `a2ui://` prefix with a descriptive name (e.g., `a2ui://training-plan-page`)
+- **MIME Type**: Must be `application/json+a2ui` — this tells the client to route the payload to an A2UI renderer
 
-#### Python Implementation Example
+### Python Example
 
 ```python
+import json
 import mcp.types as types
 
 @self.tool()
 def get_hello_world_ui():
+    """Returns a simple A2UI hello world interface."""
     a2ui_payload = [
         {
-            "version": "v0.10",
+            "version": "v0.9",
             "createSurface": {
                 "surfaceId": "default",
-                "catalogId": "https://a2ui.org/specification/v0_10/basic_catalog.json"
+                "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
             }
         },
         {
-            "version": "v0.10",
+            "version": "v0.9",
             "updateComponents": {
                 "surfaceId": "default",
                 "components": [
@@ -111,25 +172,32 @@ def get_hello_world_ui():
     a2ui_resource = types.EmbeddedResource(
         type="resource",
         resource=types.TextResourceContents(
-            uri="a2ui://training-plan-page",
+            uri="a2ui://hello-world",
             mimeType="application/json+a2ui",
             text=json.dumps(a2ui_payload),
         )
     )
 
+    # Include a text summary alongside the UI
     text_content = types.TextContent(
         type="text",
-        text="Here is your generated training plan summary..."
+        text="Here is a hello world UI."
     )
-    
+
     return types.CallToolResult(content=[text_content, a2ui_resource])
 ```
 
+> ⚠️ **Tip**
+>
+> Always include a `TextContent` alongside your A2UI resource. Clients that don't support A2UI will fall back to showing the text.
+
 ## Handling User Actions
 
-Interactive components (such as a `Button`) allow `actions` to be sent back to the server.
+Interactive components like `Button` can trigger actions that are sent back to the server as MCP tool calls.
 
-#### 1. A2UI JSON with an Action
+### 1. Define a Button with an Action
+
+In your A2UI JSON, add an `action` to a component:
 
 ```json
 {
@@ -151,9 +219,9 @@ Interactive components (such as a `Button`) allow `actions` to be sent back to t
 }
 ```
 
-#### 2. A2UI Action MCP Payload
+### 2. Client Sends the Action as a Tool Call
 
-When the button is clicked, the client resolves any absolute or relative path models (like `/dates/start` or `/dates/end`) against the surface binding state, and translates that into the MCP tool call arguments.
+When the user clicks the button, the client resolves data bindings (like `/dates/start`) against the surface state and sends a tool call:
 
 ```json
 {
@@ -173,25 +241,26 @@ When the button is clicked, the client resolves any absolute or relative path mo
 }
 ```
 
-#### 3. Action Handler MCP Server Tool
-
-The MCP server receives the tool call and executes the corresponding handler. 
+### 3. Handle the Action on the Server
 
 ```python
 @self.tool()
-async def action(action_payload: Dict[str, Any]) -> Dict[str, Any]:
-    if action_payload["name"] == "confirm_booking":
-        return {"response": f"Booking confirmed for {action_payload['context']['start']} to {action_payload['context']['end']}."}
-    raise ValueError(f"Unknown action: {action_payload['name']}")
+async def action(name: str, context: dict) -> types.CallToolResult:
+    """Handle A2UI user actions."""
+    if name == "confirm_booking":
+        # Process the booking, then return confirmation UI
+        return types.CallToolResult(content=[
+            types.TextContent(
+                type="text",
+                text=f"Booking confirmed: {context['start']} to {context['end']}"
+            )
+        ])
+    raise ValueError(f"Unknown action: {name}")
 ```
 
 ## Error Handling
 
-Similarly to handling user interactions, the MCP server can also receive errors from the client.
-
-#### 1. A2UI Error MCP Payload
-
-When the client encounters an error with the A2UI payload, it can send an error MCP payload to the server.
+Clients can report A2UI rendering errors back to the server via a tool call:
 
 ```json
 {
@@ -203,25 +272,30 @@ When the client encounters an error with the A2UI payload, it can send an error 
     "arguments": {
       "code": "INVALID_JSON",
       "message": "Failed to parse A2UI payload.",
-      "surfaceId": "default",
+      "surfaceId": "default"
     }
   }
 }
 ```
 
-#### 2. Error Handler MCP Server Tool
-
-The MCP server receives the tool call and executes the corresponding handler. 
+Handle it on the server:
 
 ```python
 @self.tool()
-async def error(error_payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {"response": f"Received A2UI error: {error_payload['error']}."}
+async def error(code: str, message: str, surfaceId: str = "") -> types.CallToolResult:
+    """Handle A2UI client errors."""
+    # Log the error, retry, or send a fallback UI
+    return types.CallToolResult(content=[
+        types.TextContent(
+            type="text",
+            text=f"Acknowledged error {code}: {message}"
+        )
+    ])
 ```
 
 ## Verbalization and Visibility Control
 
-You can control whether following assistant turns can "read" or interpret the backend payloads using MCP **Resource Annotations**.
+Control whether the LLM can "read" A2UI payloads in subsequent turns using MCP **Resource Annotations**:
 
 ```python
 a2ui_resource = types.EmbeddedResource(
@@ -231,11 +305,44 @@ a2ui_resource = types.EmbeddedResource(
         mimeType="application/json+a2ui",
         text=json.dumps(a2ui_payload)
     ),
-    # Hide the raw JSON from the LLM, but show the UI to the user
-    annotations=types.Annotations(audience=["user"]) 
+    # Show the UI to the user, but hide the raw JSON from the LLM
+    annotations=types.Annotations(audience=["user"])
 )
 ```
 
-- **Empty Audience**: Element visible to both user and LLM model.
-- **Audience `user`**: Required to render item on view screens.
-- **Audience `assistant`**: Allows content verbalization to trigger prompt inputs following consecutive turns. Disabling assistant limits agent contextual parsing but preserves discrete safe data leakage.
+| Audience | Behavior |
+|----------|----------|
+| *(empty)* | Visible to both user and LLM |
+| `["user"]` | Rendered for the user; hidden from LLM context |
+| `["assistant"]` | Available to LLM for follow-up reasoning; not rendered |
+
+## Using the A2UI Agent SDK
+
+For production use, the **A2UI Agent SDK** handles schema management, validation, and prompt generation for you:
+
+```bash
+pip install a2ui-agent-sdk
+```
+
+```python
+from a2ui.core.schema.manager import A2uiSchemaManager
+from a2ui.basic_catalog.provider import BasicCatalog
+
+# Initialize the schema manager with the basic catalog
+schema_manager = A2uiSchemaManager(
+    catalogs=[BasicCatalog.get_config()],
+)
+
+# Validate A2UI output before sending
+selected_catalog = schema_manager.get_selected_catalog()
+selected_catalog.validator.validate(a2ui_payload)
+```
+
+See the full [Agent Development Guide](agent-development.md) for details on schema management, dynamic catalogs, and streaming.
+
+## Next Steps
+
+- [A2UI Specification](../specification/v0.9-a2ui.md) — full protocol reference
+- [Component Gallery](../reference/components.md) — browse available components
+- [MCP Apps in A2UI Surface](mcp-apps-in-a2ui-surface.md) — embed HTML-based MCP apps inside A2UI
+- [Client Setup](client-setup.md) — build a renderer that displays A2UI

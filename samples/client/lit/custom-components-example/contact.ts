@@ -186,6 +186,23 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
         animation: spin 1s linear infinite;
       }
 
+      .rendering-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        color: var(--p-40);
+        font-size: 14px;
+        border-top: 1px solid var(--n-90);
+        margin-top: 16px;
+        width: 100%;
+
+        & .g-icon {
+          margin-right: 8px;
+          font-size: 16px;
+        }
+      }
+
       @keyframes spin {
         to {
           transform: rotate(360deg);
@@ -242,9 +259,9 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
         if (!body) {
           return;
         }
-      const message: v0_8.Types.A2UIClientEventMessage = {
-        request: body,
-      };
+        const message: v0_8.Types.A2UIClientEventMessage = {
+          request: body,
+        };
         await this.#sendAndProcessMessage(message);
       }}
     >
@@ -289,89 +306,79 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
       return nothing;
     }
 
-    return html`<section id="surfaces">
-      ${repeat(
-        surfaces,
-        ([surfaceId]) => surfaceId,
-        ([surfaceId, surface]) => {
-          return html`
+    return html`
+      ${this.#requesting
+        ? html`<div class="rendering-indicator">
+            <span class="g-icon filled-heavy rotate">progress_activity</span>
+            Rendering UI...
+          </div>`
+        : nothing}
+      <section id="surfaces">
+        ${repeat(
+          surfaces,
+          ([surfaceId]) => surfaceId,
+          ([surfaceId, surface]) => {
+            return html`
             <div style="position: relative; height: 100%; display: flex; flex-direction: column;">
-              ${this.#requesting && surfaceId === 'contact-card' ? html`
-                <div style="
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background: rgba(255, 255, 255, 0.7);
-                  z-index: 10;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  backdrop-filter: blur(2px);
-                  border-radius: 8px;
-                ">
-                  <span class="g-icon filled-heavy rotate" style="font-size: 32px; color: var(--p-40);">progress_activity</span>
-                </div>
-              ` : nothing}
+
                 <a2ui-surface
                   .surface=${{ ...surface }}
                   @a2uiaction=${async (
-            evt: v0_8.Events.StateEvent<"a2ui.action">
-          ) => {
-              const [target] = evt.composedPath();
-              if (!(target instanceof HTMLElement)) {
-                return;
-              }
-
-            const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] =
-              {};
-            if (evt.detail.action.context) {
-              const srcContext = evt.detail.action.context;
-              for (const item of srcContext) {
-                if (item.value.literalBoolean) {
-                  context[item.key] = item.value.literalBoolean;
-                } else if (item.value.literalNumber) {
-                  context[item.key] = item.value.literalNumber;
-                } else if (item.value.literalString) {
-                  context[item.key] = item.value.literalString;
-                } else if (item.value.path) {
-                  const path = this.#processor.resolvePath(
-                    item.value.path,
-                    evt.detail.dataContextPath
-                  );
-                  const value = this.#processor.getData(
-                    evt.detail.sourceComponent,
-                    path,
-                    surfaceId
-                  );
-                  context[item.key] = value;
+              evt: v0_8.Events.StateEvent<"a2ui.action">
+            ) => {
+                const [target] = evt.composedPath();
+                if (!(target instanceof HTMLElement)) {
+                  return;
                 }
-              }
-            }
 
-            const message: v0_8.Types.A2UIClientEventMessage = {
-              userAction: {
-                surfaceId: surfaceId,
-                name: "ACTION: " + evt.detail.action.name,
-                sourceComponentId: target.id,
-                timestamp: new Date().toISOString(),
-                context,
-              },
-            };
+                const context: v0_8.Types.A2UIClientEventMessage["userAction"]["context"] =
+                  {};
+                if (evt.detail.action.context) {
+                  const srcContext = evt.detail.action.context;
+                  for (const item of srcContext) {
+                    if (item.value.literalBoolean) {
+                      context[item.key] = item.value.literalBoolean;
+                    } else if (item.value.literalNumber) {
+                      context[item.key] = item.value.literalNumber;
+                    } else if (item.value.literalString) {
+                      context[item.key] = item.value.literalString;
+                    } else if (item.value.path) {
+                      const path = this.#processor.resolvePath(
+                        item.value.path,
+                        evt.detail.dataContextPath
+                      );
+                      const value = this.#processor.getData(
+                        evt.detail.sourceComponent,
+                        path,
+                        surfaceId
+                      );
+                      context[item.key] = value;
+                    }
+                  }
+                }
+
+                const message: v0_8.Types.A2UIClientEventMessage = {
+                  userAction: {
+                    surfaceId: surfaceId,
+                    name: "ACTION: " + evt.detail.action.name,
+                    sourceComponentId: target.id,
+                    timestamp: new Date().toISOString(),
+                    context,
+                  },
+                };
 
 
 
-              await this.#sendAndProcessMessage(message);
-            }}
+                await this.#sendAndProcessMessage(message);
+              }}
                 .surfaceId=${surfaceId}
 
                 .processor=${this.#processor}
                 .enableCustomElements=${true}
               ></a2ui-surface>
             </div>`;
-        }
-      )}
+          }
+        )}
     </section>`;
   }
 
@@ -381,8 +388,6 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
 
     this.#lastMessages = messages;
 
-    // this.#processor.clearSurfaces(); // Removed to allow partial updates
-    this.#processor.processMessages(messages);
     this.renderVersion++; // Force re-render of surfaces
     this.requestUpdate();
 
@@ -397,7 +402,11 @@ export class A2UIContactFinder extends SignalWatcher(LitElement) {
   ): Promise<v0_8.Types.ServerToClientMessage[]> {
     try {
       this.#requesting = true;
-      const response = await this.#a2uiClient.send(message);
+      const response = await this.#a2uiClient.send(message, (chunkMessages) => {
+        this.#processor.processMessages(chunkMessages);
+        this.renderVersion++;
+        this.requestUpdate();
+      });
 
       this.#requesting = false;
 
