@@ -1,4 +1,18 @@
 #!/bin/bash
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 
 set -e # Exit on error
 #set -x # Echo commands
@@ -40,11 +54,13 @@ twine upload --repository-url $REPOSITORY_URL dist/*
 echo "Version $version uploaded to Artifact Registry."
 
 echo "--- Creating manifest.json ---"
-echo '{ "publish_all": true }' > manifest.json
+MANIFEST_FILE="manifest.json"
+echo '{ "publish_all": true }' > $MANIFEST_FILE
 
 echo "--- Uploading manifest to GCS to trigger OSS Exit Gate ---"
 MANIFEST_NAME="manifest-${version}-$(date +%Y%m%d%H%M%S).json"
-gcloud storage cp manifest.json "${GCS_URI}/${MANIFEST_NAME}"
+gcloud storage cp $MANIFEST_FILE "${GCS_URI}/${MANIFEST_NAME}"
+rm -rf $MANIFEST_FILE
 
 echo "Manifest ${MANIFEST_NAME} uploaded."
 echo "--- Build script finished ---"

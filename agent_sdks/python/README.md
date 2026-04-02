@@ -88,6 +88,11 @@ To release a new version of the SDK, follow these steps:
 
 The script will build the package, upload it to the Artifact Registry, and trigger the release pipeline.
 
+## Tracking the release
+
+1. Check the release status through Sponge: go/spng2?q=PROJECT%3Aa2ui%2Fpypi
+2. You will see logs for the jobs involved in your release. A successful release is confirmed when the final job, named "publisher", completes successfully.
+
 ## Disclaimer
 
 Important: The sample code provided is for demonstration purposes and
