@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { RENDERERS_MAP } from '@a2a_chat_canvas/a2a_renderer/tokens';
-import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
+import { RENDERERS_MAP } from '@a2a-chat-canvas/a2a_renderer/tokens';
+import { UiMessageContent } from '@a2a-chat-canvas/types/ui-message';
 import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, resource } from '@angular/core';
 

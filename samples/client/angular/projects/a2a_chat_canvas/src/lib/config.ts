@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import { A2UI_DATA_PART_RENDERER_ENTRY } from '@a2a_chat_canvas/a2a_renderer/catalog/a2ui_data_part/renderer-config';
-import { A2UI_DATA_PART_RESOLVER } from '@a2a_chat_canvas/a2a_renderer/catalog/a2ui_data_part/resolver';
-import { DEFAULT_TEXT_PART_RENDERER_ENTRY } from '@a2a_chat_canvas/a2a_renderer/catalog/default_text_part/renderer-config';
-import { DEFAULT_TEXT_PART_RESOLVER } from '@a2a_chat_canvas/a2a_renderer/catalog/default_text_part/resolver';
+import { A2UI_DATA_PART_RENDERER_ENTRY } from '@a2a-chat-canvas/a2a_renderer/catalog/a2ui_data_part/renderer-config';
+import { A2UI_DATA_PART_RESOLVER } from '@a2a-chat-canvas/a2a_renderer/catalog/a2ui_data_part/resolver';
+import { DEFAULT_TEXT_PART_RENDERER_ENTRY } from '@a2a-chat-canvas/a2a_renderer/catalog/default_text_part/renderer-config';
+import { DEFAULT_TEXT_PART_RESOLVER } from '@a2a-chat-canvas/a2a_renderer/catalog/default_text_part/resolver';
 import {
   ARTIFACT_RESOLVERS,
   PART_RESOLVERS,
   RENDERERS,
-} from '@a2a_chat_canvas/a2a_renderer/tokens';
-import { ArtifactResolver, PartResolver, RendererEntry } from '@a2a_chat_canvas/a2a_renderer/types';
-import { theme as a2uiTheme } from '@a2a_chat_canvas/a2ui_catalog/theme';
-import { A2A_SERVICE, A2aService } from '@a2a_chat_canvas/interfaces/a2a-service';
+} from '@a2a-chat-canvas/a2a_renderer/tokens';
+import { ArtifactResolver, PartResolver, RendererEntry } from '@a2a-chat-canvas/a2a_renderer/types';
+import { theme as a2uiTheme } from '@a2a-chat-canvas/a2ui_catalog/theme';
+import { A2A_SERVICE, A2aService } from '@a2a-chat-canvas/interfaces/a2a-service';
 import {
   MARKDOWN_RENDERER_SERVICE,
   MarkdownRendererService,
-} from '@a2a_chat_canvas/interfaces/markdown-renderer-service';
-import { SanitizerMarkdownRendererService } from '@a2a_chat_canvas/services/sanitizer-markdown-renderer-service';
+} from '@a2a-chat-canvas/interfaces/markdown-renderer-service';
+import { SanitizerMarkdownRendererService } from '@a2a-chat-canvas/services/sanitizer-markdown-renderer-service';
 import { Catalog, Theme } from '@a2ui/angular';
 import { EnvironmentProviders, Provider, Type, makeEnvironmentProviders } from '@angular/core';
 import { DEFAULT_A2UI_CATALOG } from './a2ui_catalog/a2a-chat-canvas-catalog';

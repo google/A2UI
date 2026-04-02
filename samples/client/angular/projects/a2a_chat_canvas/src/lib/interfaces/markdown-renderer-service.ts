@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SanitizerMarkdownRendererService } from '@a2a_chat_canvas/services/sanitizer-markdown-renderer-service';
+import { SanitizerMarkdownRendererService } from '@a2a-chat-canvas/services/sanitizer-markdown-renderer-service';
 import { InjectionToken } from '@angular/core';
 import { SafeHtml } from '@angular/platform-browser';
 /**

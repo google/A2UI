@@ -16,7 +16,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChatHistory } from './chat_history';
+import { ChatHistory } from './chat-history';
 
 describe('ChatHistory', () => {
   let component: ChatHistory;

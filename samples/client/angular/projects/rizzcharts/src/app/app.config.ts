@@ -19,7 +19,7 @@ import {
   usingA2aService,
   usingA2uiRenderers,
   usingMarkdownRenderer,
-} from '@a2a_chat_canvas/config';
+} from '@a2a-chat-canvas/config';
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,

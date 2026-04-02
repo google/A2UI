@@ -148,7 +148,7 @@ def prepare_build_context(demo_dir: Path) -> Path:
     lit_package_json = a2ui_dest / "package.json"
     if lit_package_json.exists():
         content = lit_package_json.read_text()
-        content = content.replace('"@a2ui/web_core": "file:../web_core"', '"@a2ui/web_core": "file:../a2ui-web-core"')
+        content = content.replace('"@a2ui/web-core": "file:../web_core"', '"@a2ui/web-core": "file:../a2ui-web-core"')
         lit_package_json.write_text(content)
         print("  Updated lit package.json to reference local web_core")
 

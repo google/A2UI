@@ -15,12 +15,12 @@
  */
 
 import { AgentCard, SendMessageSuccessResponse } from '@a2a-js/sdk';
-import { PART_RESOLVERS } from '@a2a_chat_canvas/a2a_renderer/tokens';
-import { A2A_SERVICE } from '@a2a_chat_canvas/interfaces/a2a-service';
-import { UiAgent, UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-import { extractA2aPartsFromResponse } from '@a2a_chat_canvas/utils/a2a';
-import { extractA2uiDataParts } from '@a2a_chat_canvas/utils/a2ui';
-import { convertPartToUiMessageContent } from '@a2a_chat_canvas/utils/ui-message-utils';
+import { PART_RESOLVERS } from '@a2a-chat-canvas/a2a_renderer/tokens';
+import { A2A_SERVICE } from '@a2a-chat-canvas/interfaces/a2a-service';
+import { UiAgent, UiMessage, UiMessageContent } from '@a2a-chat-canvas/types/ui-message';
+import { extractA2aPartsFromResponse } from '@a2a-chat-canvas/utils/a2a';
+import { extractA2uiDataParts } from '@a2a-chat-canvas/utils/a2ui';
+import { convertPartToUiMessageContent } from '@a2a-chat-canvas/utils/ui-message-utils';
 import { MessageProcessor, DispatchedEvent } from '@a2ui/angular';
 import { inject, Injectable, resource, signal } from '@angular/core';
 import { v4 as uuid } from 'uuid';

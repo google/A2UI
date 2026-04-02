@@ -16,7 +16,7 @@
 
 import { Pipe, PipeTransform, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import markdownit from 'markdown_it';
+import markdownit from 'markdown-it';
 
 @Pipe({ name: 'markdown' })
 export class MarkdownPipe implements PipeTransform {

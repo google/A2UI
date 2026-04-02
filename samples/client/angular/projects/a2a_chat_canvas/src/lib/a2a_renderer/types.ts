@@ -15,7 +15,7 @@
  */
 
 import { Artifact, Part } from '@a2a-js/sdk';
-import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
+import { UiMessageContent } from '@a2a-chat-canvas/types/ui-message';
 import { InputSignal, Type } from '@angular/core';
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RendererEntry } from '@a2a_chat_canvas/a2a_renderer/types';
+import { RendererEntry } from '@a2a-chat-canvas/a2a_renderer/types';
 
 /**
  * Renderer catalog entry for the 'a2ui_data_part' variant.
@@ -30,7 +30,7 @@ export const A2UI_DATA_PART_RENDERER_ENTRY: RendererEntry = [
   'a2ui_data_part',
   async () => {
     const { A2uiDataPart } = await import(
-      '@a2a_chat_canvas/a2a_renderer/catalog/a2ui_data_part/a2ui_data_part'
+      '@a2a-chat-canvas/a2a_renderer/catalog/a2ui_data_part/a2ui_data_part'
     );
     return A2uiDataPart;
   },

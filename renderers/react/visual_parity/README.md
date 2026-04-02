@@ -47,7 +47,7 @@ Tests pass when the pixel difference is ≤1%.
 1.  Build the React renderer first: `bash cd renderers/react npm install npm run
     build`
 
-2.  Install visual-parity dependencies: `bash cd visual-parity npm install`
+2.  Install visual-parity dependencies: `bash cd visual_parity npm install`
 
 ### Running Tests
 
@@ -236,7 +236,7 @@ cd renderers/react
 npm run build
 
 # 2. Clear Vite cache and restart
-cd visual-parity
+cd visual_parity
 rm -rf node_modules/.vite react/node_modules/.vite
 npm run dev:react
 ```

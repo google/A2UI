@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
+import { ChatService } from '@a2a-chat-canvas/services/chat-service';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { ChangeDetectionStrategy, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';

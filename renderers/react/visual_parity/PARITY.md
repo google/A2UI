@@ -188,7 +188,7 @@ cd ../
 npm run build
 
 # 2. Clear Vite cache and restart
-cd visual-parity
+cd visual_parity
 rm -rf react/node_modules/.vite node_modules/.vite
 npm run dev:react
 ```

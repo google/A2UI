@@ -553,7 +553,7 @@ between both renderers.
 ### Running Visual Parity Tests
 
 ```bash
-cd visual-parity
+cd visual_parity
 npm install
 npm test
 ```

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { A2aRenderer } from '@a2a_chat_canvas/a2a_renderer/a2a_renderer';
-import { Avatar } from '@a2a_chat_canvas/components/chat/avatar/avatar';
-import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
+import { A2aRenderer } from '@a2a-chat-canvas/a2a_renderer/a2a_renderer';
+import { Avatar } from '@a2a-chat-canvas/components/chat/avatar/avatar';
+import { UiMessageContent } from '@a2a-chat-canvas/types/ui-message';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';

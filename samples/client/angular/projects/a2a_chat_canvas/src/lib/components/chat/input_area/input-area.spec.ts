@@ -16,7 +16,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InputArea } from './input_area';
+import { InputArea } from './input-area';
 
 describe('InputArea', () => {
   let component: InputArea;

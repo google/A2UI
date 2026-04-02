@@ -17,7 +17,7 @@
 import { MarkdownRendererService } from '@a2a_chat_canvas/interfaces/markdown-renderer-service';
 import { inject, Injectable } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import markdownit from 'markdown_it';
+import markdownit from 'markdown-it';
 
 @Injectable({
   providedIn: 'root',

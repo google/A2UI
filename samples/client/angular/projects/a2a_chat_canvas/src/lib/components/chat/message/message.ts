@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { A2aRenderer } from '@a2a_chat_canvas/a2a_renderer/a2a_renderer';
-import { AgentHeader } from '@a2a_chat_canvas/components/chat/agent_header/agent_header';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { Role, UiAgent, UiMessage, UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-import { isAgentThought } from '@a2a_chat_canvas/utils/a2a';
-import { isA2aPart } from '@a2a_chat_canvas/utils/type-guards';
+import { A2aRenderer } from '@a2a-chat-canvas/a2a_renderer/a2a_renderer';
+import { AgentHeader } from '@a2a-chat-canvas/components/chat/agent_header/agent-header';
+import { ChatService } from '@a2a-chat-canvas/services/chat-service';
+import { Role, UiAgent, UiMessage, UiMessageContent } from '@a2a-chat-canvas/types/ui-message';
+import { isAgentThought } from '@a2a-chat-canvas/utils/a2a';
+import { isA2aPart } from '@a2a-chat-canvas/utils/type-guards';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 
 /** UI message component. */

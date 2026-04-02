@@ -15,8 +15,8 @@
  */
 
 import { Part } from '@a2a-js/sdk';
-import { PartResolver, UNRESOLVED_PART_VARIANT } from '@a2a_chat_canvas/a2a_renderer/types';
-import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
+import { PartResolver, UNRESOLVED_PART_VARIANT } from '@a2a-chat-canvas/a2a_renderer/types';
+import { UiMessageContent } from '@a2a-chat-canvas/types/ui-message';
 import { v4 as uuid } from 'uuid';
 
 /**

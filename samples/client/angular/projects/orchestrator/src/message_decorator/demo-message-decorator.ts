@@ -17,8 +17,8 @@
 import {
   MessageDecorator,
   MessageDecoratorComponent,
-} from '@a2a_chat_canvas/components/chat/chat_history/message_decorator/types';
-import { UiMessage } from '@a2a_chat_canvas/types/ui-message'; // Assuming path based on context
+} from '@a2a-chat-canvas/components/chat/chat_history/message_decorator/types';
+import { UiMessage } from '@a2a-chat-canvas/types/ui-message'; // Assuming path based on context
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, TemplateRef } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';

@@ -15,10 +15,10 @@
  */
 
 import { Part } from '@a2a-js/sdk';
-import { RendererComponent } from '@a2a_chat_canvas/a2a_renderer/types';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
-import { UiMessageContent } from '@a2a_chat_canvas/types/ui-message';
-import { isA2aDataPart } from '@a2a_chat_canvas/utils/type-guards';
+import { RendererComponent } from '@a2a-chat-canvas/a2a_renderer/types';
+import { ChatService } from '@a2a-chat-canvas/services/chat-service';
+import { UiMessageContent } from '@a2a-chat-canvas/types/ui-message';
+import { isA2aDataPart } from '@a2a-chat-canvas/utils/type-guards';
 import { Surface } from '@a2ui/angular';
 import * as Types from '@a2ui/web-core/types/types';
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';

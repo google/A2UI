@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ChatHistory } from '@a2a_chat_canvas/components/chat/chat_history/chat_history';
-import { MessageDecorator } from '@a2a_chat_canvas/components/chat/chat_history/message_decorator/types';
-import { InputArea } from '@a2a_chat_canvas/components/chat/input_area/input_area';
-import { ChatService } from '@a2a_chat_canvas/services/chat-service';
+import { ChatHistory } from '@a2a-chat-canvas/components/chat/chat_history/chat-history';
+import { MessageDecorator } from '@a2a-chat-canvas/components/chat/chat_history/message_decorator/types';
+import { InputArea } from '@a2a-chat-canvas/components/chat/input_area/input-area';
+import { ChatService } from '@a2a-chat-canvas/services/chat-service';
 import {
   ChangeDetectionStrategy,
   Component,

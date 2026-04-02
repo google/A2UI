@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CanvasService } from '@a2a_chat_canvas/services/canvas-service';
+import { CanvasService } from '@a2a-chat-canvas/services/canvas-service';
 import { DynamicComponent } from '@a2ui/angular';
 import * as Types from '@a2ui/web-core/types/types';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';

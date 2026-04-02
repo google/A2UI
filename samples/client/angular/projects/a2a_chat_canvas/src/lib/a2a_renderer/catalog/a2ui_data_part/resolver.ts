@@ -15,7 +15,7 @@
  */
 
 import { Part } from '@a2a-js/sdk';
-import { type PartResolver } from '@a2a_chat_canvas/a2a_renderer/types';
+import { type PartResolver } from '@a2a-chat-canvas/a2a_renderer/types';
 
 /**
  * A PartResolver for identifying A2UI data parts within an A2A message.

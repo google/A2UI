@@ -16,7 +16,7 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AgentHeader } from './agent_header';
+import { AgentHeader } from './agent-header';
 
 describe('AgentHeader', () => {
   let component: AgentHeader;
