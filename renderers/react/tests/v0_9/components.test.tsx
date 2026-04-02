@@ -14,37 +14,38 @@
  * limitations under the License.
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { ComponentContext, ComponentModel, SurfaceModel, Catalog } from '@a2ui/web_core/v0_9';
+import {describe, it, expect, vi} from 'vitest';
+import {render, screen, fireEvent} from '@testing-library/react';
+import {ComponentContext, ComponentModel, SurfaceModel, Catalog} from '@a2ui/web_core/v0_9';
 
-import { Text } from '../../src/v0_9/catalog/minimal/components/Text';
-import { Button } from '../../src/v0_9/catalog/minimal/components/Button';
-import { Row } from '../../src/v0_9/catalog/minimal/components/Row';
-import { Column } from '../../src/v0_9/catalog/minimal/components/Column';
-import { TextField } from '../../src/v0_9/catalog/minimal/components/TextField';
+import {Text} from '../../src/v0_9/catalog/minimal/components/Text';
+import {Button} from '../../src/v0_9/catalog/minimal/components/Button';
+import {Row} from '../../src/v0_9/catalog/minimal/components/Row';
+import {Column} from '../../src/v0_9/catalog/minimal/components/Column';
+import {TextField} from '../../src/v0_9/catalog/minimal/components/TextField';
+import {reactSignal} from '../../src/v0_9/reactSignal';
 
 const mockCatalog = new Catalog('test', [], []);
 
 function createContext(type: string, properties: any) {
-  const surface = new SurfaceModel<any>('test-surface', mockCatalog);
+  const surface = new SurfaceModel<any, 'react'>('test-surface', mockCatalog, reactSignal);
   const compModel = new ComponentModel('test-id', type, properties);
   surface.componentsModel.addComponent(compModel);
-  return new ComponentContext(surface, 'test-id', '/');
+  return new ComponentContext(surface, 'test-id', reactSignal, '/');
 }
 
 describe('Text', () => {
   it('renders text and variant correctly', () => {
-    const ctx = createContext('Text', { text: 'Hello', variant: 'h1' });
-    const { container } = render(<Text.render context={ctx} buildChild={() => null} />);
+    const ctx = createContext('Text', {text: 'Hello', variant: 'h1'});
+    const {container} = render(<Text.render context={ctx} buildChild={() => null} />);
     const h1 = container.querySelector('h1');
     expect(h1).not.toBeNull();
     expect(h1?.textContent).toBe('Hello');
   });
 
   it('renders default variant', () => {
-    const ctx = createContext('Text', { text: 'Hello' });
-    const { container } = render(<Text.render context={ctx} buildChild={() => null} />);
+    const ctx = createContext('Text', {text: 'Hello'});
+    const {container} = render(<Text.render context={ctx} buildChild={() => null} />);
     const span = container.querySelector('span');
     expect(span).not.toBeNull();
     expect(span?.textContent).toBe('Hello');
@@ -53,10 +54,10 @@ describe('Text', () => {
 
 describe('Button', () => {
   it('renders and dispatches action', () => {
-    const ctx = createContext('Button', { 
+    const ctx = createContext('Button', {
       child: 'btn-child',
       variant: 'primary',
-      action: { event: { name: 'test_action' } }
+      action: {event: {name: 'test_action'}}
     });
 
     const spy = vi.spyOn(ctx, 'dispatchAction').mockResolvedValue();
@@ -68,12 +69,12 @@ describe('Button', () => {
     const button = screen.getByRole('button');
     expect(button).not.toBeNull();
     expect(screen.getByTestId('child').textContent).toBe('btn-child');
-    
+
     // Check style for primary variant
     expect(button.style.backgroundColor).toBe('rgb(0, 123, 255)'); // #007bff in rgb
 
     fireEvent.click(button);
-    expect(spy).toHaveBeenCalledWith({ event: { name: 'test_action' } });
+    expect(spy).toHaveBeenCalledWith({event: {name: 'test_action'}});
   });
 });
 
@@ -87,7 +88,7 @@ describe('Row', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>{id}</div>);
 
-    const { container } = render(<Row.render context={ctx} buildChild={buildChild} />);
+    const {container} = render(<Row.render context={ctx} buildChild={buildChild} />);
     const rowDiv = container.firstChild as HTMLElement;
     expect(rowDiv.style.display).toBe('flex');
     expect(rowDiv.style.flexDirection).toBe('row');
@@ -109,7 +110,7 @@ describe('Column', () => {
 
     const buildChild = vi.fn().mockImplementation((id) => <div data-testid={id}>{id}</div>);
 
-    const { container } = render(<Column.render context={ctx} buildChild={buildChild} />);
+    const {container} = render(<Column.render context={ctx} buildChild={buildChild} />);
     const colDiv = container.firstChild as HTMLElement;
     expect(colDiv.style.display).toBe('flex');
     expect(colDiv.style.flexDirection).toBe('column');
@@ -128,7 +129,7 @@ describe('TextField', () => {
       variant: 'shortText'
     });
 
-    const { container } = render(<TextField.render context={ctx} buildChild={() => null} />);
+    const {container} = render(<TextField.render context={ctx} buildChild={() => null} />);
     const label = container.querySelector('label');
     expect(label?.textContent).toBe('Username');
 
@@ -144,7 +145,7 @@ describe('TextField', () => {
       variant: 'longText'
     });
 
-    const { container } = render(<TextField.render context={ctx} buildChild={() => null} />);
+    const {container} = render(<TextField.render context={ctx} buildChild={() => null} />);
     const textarea = container.querySelector('textarea');
     expect(textarea).not.toBeNull();
     expect(textarea?.value).toBe('lots of text');
@@ -153,16 +154,16 @@ describe('TextField', () => {
   it('updates data model on change', () => {
     const ctx = createContext('TextField', {
       label: 'Username',
-      value: { path: '/user' }
+      value: {path: '/user'}
     });
 
     const spySet = vi.spyOn(ctx.dataContext, 'set');
 
-    const { container } = render(<TextField.render context={ctx} buildChild={() => null} />);
+    const {container} = render(<TextField.render context={ctx} buildChild={() => null} />);
     const input = container.querySelector('input');
-    
-    fireEvent.change(input!, { target: { value: 'bob' } });
-    
+
+    fireEvent.change(input!, {target: {value: 'bob'}});
+
     expect(spySet).toHaveBeenCalledWith('/user', 'bob');
   });
 });

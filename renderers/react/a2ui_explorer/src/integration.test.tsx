@@ -18,7 +18,7 @@ import {describe, it, expect} from 'vitest';
 import {render, screen, act, fireEvent} from '@testing-library/react';
 import React from 'react';
 import {MessageProcessor} from '@a2ui/web_core/v0_9';
-import {A2uiSurface, minimalCatalog} from '@a2ui/react/v0_9';
+import {A2uiSurface, minimalCatalog, reactSignal} from '@a2ui/react/v0_9';
 
 import ex1 from '../../../../specification/v0_9/json/catalogs/minimal/examples/1_simple_text.json';
 import ex2 from '../../../../specification/v0_9/json/catalogs/minimal/examples/2_row_layout.json';
@@ -26,7 +26,7 @@ import ex4 from '../../../../specification/v0_9/json/catalogs/minimal/examples/4
 
 describe('Gallery Integration Tests', () => {
   it('renders Simple Text -> "Hello Minimal Catalog"', async () => {
-    const processor = new MessageProcessor([minimalCatalog as any], async () => {});
+    const processor = new MessageProcessor([minimalCatalog as any], reactSignal, async () => {});
     processor.processMessages(ex1.messages as any[]);
 
     const surface = processor.model.getSurface('example_1');
@@ -42,7 +42,7 @@ describe('Gallery Integration Tests', () => {
   });
 
   it('renders Row layout -> content visibility', async () => {
-    const processor = new MessageProcessor([minimalCatalog as any], async () => {});
+    const processor = new MessageProcessor([minimalCatalog as any], reactSignal, async () => {});
     processor.processMessages(ex2.messages as any[]);
 
     const surface = processor.model.getSurface('example_2');
@@ -59,7 +59,7 @@ describe('Gallery Integration Tests', () => {
   });
 
   it('handles Login form -> input updates data model', async () => {
-    const processor = new MessageProcessor([minimalCatalog as any], async () => {});
+    const processor = new MessageProcessor([minimalCatalog as any], reactSignal, async () => {});
     processor.processMessages(ex4.messages as any[]);
 
     const surface = processor.model.getSurface('example_4');
