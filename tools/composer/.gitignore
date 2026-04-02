@@ -48,3 +48,4 @@ yarn-error.log*
 __pycache__
 
 .playwright-mcp
+RENDERER_ISSUES.md

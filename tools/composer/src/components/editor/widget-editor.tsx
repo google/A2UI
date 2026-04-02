@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/resizable";
 import { useWidgets } from "@/contexts/widgets-context";
 import type { Widget, DataState } from "@/types/widget";
-import type { ComponentInstance } from "@copilotkit/a2ui-renderer";
+import type { A2UIComponent } from "@/types/widget";
 
 interface WidgetEditorProps {
   widget: Widget;
@@ -55,7 +55,7 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
   const [activeDataStateIndex, setActiveDataStateIndex] = useState(0);
 
   // Parsed components for preview (null if invalid JSON)
-  const [components, setComponents] = useState<ComponentInstance[]>(
+  const [components, setComponents] = useState<A2UIComponent[]>(
     widget.components,
   );
 
@@ -63,7 +63,7 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
     (json: string) => {
       setComponentsJson(json);
       try {
-        const parsed = JSON.parse(json) as ComponentInstance[];
+        const parsed = JSON.parse(json) as A2UIComponent[];
         setComponents(parsed);
         updateWidget(widget.id, { components: parsed });
       } catch {
@@ -252,6 +252,7 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
               root={widget.root}
               components={components}
               data={activeData}
+              specVersion={widget.specVersion}
             />
           </ResizablePanel>
         </ResizablePanelGroup>
@@ -260,6 +261,7 @@ export function WidgetEditor({ widget }: WidgetEditorProps) {
       {/* Right: Chat column - styled like left sidebar */}
       <div className="w-[400px] shrink-0 border-2 border-white bg-white rounded-lg overflow-hidden">
         <CopilotChat
+          agentId={widget.specVersion === '0.9' ? 'v09' : 'v08'}
           threadId={widget.id}
           className="h-full"
           feather={{ className: "right-0" }}
