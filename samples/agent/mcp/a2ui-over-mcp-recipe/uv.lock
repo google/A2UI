@@ -25,9 +25,9 @@ wheels = [
 ]
 
 [[package]]
-name = "a2ui-agent"
-version = "0.1.0"
-source = { editable = "../../../../agent_sdks/python" }
+name = "a2ui-agent-sdk"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "google-adk" },
@@ -55,7 +55,7 @@ name = "a2ui-mcp-recipe-demo"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "a2ui-agent" },
+    { name = "a2ui-agent-sdk" },
     { name = "anyio" },
     { name = "click" },
     { name = "httpx" },
@@ -71,7 +71,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "a2ui-agent", editable = "../../../../agent_sdks/python" },
+    { name = "a2ui-agent-sdk", specifier = ">=0.1.1" },
     { name = "anyio", specifier = ">=4.5" },
     { name = "click", specifier = ">=8.2.0" },
     { name = "httpx", specifier = ">=0.27" },

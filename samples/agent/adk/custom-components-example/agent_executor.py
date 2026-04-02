@@ -178,10 +178,14 @@ class ContactAgentExecutor(AgentExecutor):
     ):
       is_task_complete = item["is_task_complete"]
       if not is_task_complete:
-        await updater.update_status(
-            TaskState.working,
-            new_agent_text_message(item["updates"], task.context_id, task.id),
-        )
+        message = None
+        if "parts" in item:
+          message = new_agent_parts_message(item["parts"], task.context_id, task.id)
+        elif "updates" in item:
+          message = new_agent_text_message(item["updates"], task.context_id, task.id)
+
+        if message:
+          await updater.update_status(TaskState.working, message)
         continue
 
       final_state = TaskState.input_required  # Default
