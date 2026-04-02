@@ -25,34 +25,39 @@ npm run build
 
 ## Setup and Development
 
-Once the dependencies are built, you can start the gallery app:
+Once the dependencies are built, you can start the gallery app from the parent directory:
 
 ```bash
-# Navigate to this directory
-cd renderers/react/a2ui_explorer
+# Navigate to the React renderer directory
+cd renderers/react
 
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
+# Start the gallery app (Vite)
+npm run demo
 ```
+
 
 ## Building for Production
 
-To create a production build of the gallery app:
+To create a production build of the gallery app, run the following from the parent directory:
 
 ```bash
-npm run build
+# Navigate to the React renderer directory
+cd renderers/react
+
+npm run build:demo
 ```
 
 ## Running Tests
 
-To run the integration tests:
+To run the integration tests for the gallery app, run the following from the parent directory:
 
 ```bash
-npm test
+# Navigate to the React renderer directory
+cd renderers/react
+
+npm run test:demo
 ```
+
 
 ## Gallery Features
 
