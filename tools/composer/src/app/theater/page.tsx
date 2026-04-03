@@ -390,7 +390,7 @@ export default function TheaterPage() {
                     <span className="text-[10px] text-muted-foreground font-mono">{selectedScenario}</span>
                   </div>
                   <div className="p-4 bg-dot-pattern">
-                    {activeMessages.length > 0 && surfaceState.components.length > 0 ? (
+                    {surfaceState.components.length > 0 ? (
                       <div className="w-full flex items-start justify-center">
                         <A2UIViewer
                           root={surfaceState.root}
