@@ -36,7 +36,13 @@
   "peerDependencies": {
     "@angular/common": "^21.2.0",
     "@angular/core": "^21.2.0",
-    "@angular/platform-browser": "^21.2.0"
+    "@angular/platform-browser": "^21.2.0",
+    "@a2ui/markdown-it": "file:../markdown/markdown-it"
+  },
+  "peerDependenciesMeta": {
+    "@a2ui/markdown-it": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@angular/build": "^21.2.0",
