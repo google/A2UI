@@ -52,7 +52,7 @@ Here are some additional things to keep in mind during the process:
 
 To keep our codebase consistent and maintainable, we follow specific coding standards for Python and TypeScript.
 
-Please refer to the following style guides for detailed guidelines on:
+Please refer to the following guidelines for detailed information on:
 *   **Python**: [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html).
 *   **TypeScript**: usage of [`gts`](https://github.com/google/gts) and [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
 *   **License Headers**: required copyright notices.
