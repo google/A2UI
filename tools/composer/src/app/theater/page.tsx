@@ -140,7 +140,7 @@ export default function TheaterPage() {
   }, [playbackState, progress, totalChunks, play, pause, seek]);
 
   if (!mounted) {
-    return <div className="flex h-screen items-center justify-center bg-background text-foreground">Loading...</div>;
+    return <div className="flex h-screen items-center justify-center bg-background text-foreground font-sans">Loading...</div>;
   }
 
   return (
