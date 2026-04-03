@@ -54,7 +54,7 @@ To keep our codebase consistent and maintainable, we follow specific coding stan
 
 Please refer to the following style guides for detailed guidelines on:
 *   **Python**: [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html).
-*   **TypeScript**: usage of `gts` and [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
+*   **TypeScript**: usage of [`gts`](https://github.com/google/gts) and [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
 *   **License Headers**: required copyright notices.
 
 We expect all contributors to adhere to these styles.
