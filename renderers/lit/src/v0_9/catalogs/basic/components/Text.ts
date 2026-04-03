@@ -16,11 +16,20 @@
 
 import { html, nothing } from "lit";
 import { customElement } from "lit/decorators.js";
+import { consume } from "@lit/context";
 import { TextApi } from "@a2ui/web_core/v0_9/basic_catalog";
-import { A2uiLitElement, A2uiController } from "@a2ui/lit/v0_9";
+import { A2uiLitElement, A2uiController, Context } from "@a2ui/lit/v0_9";
+import * as Types from "@a2ui/web_core/types/types";
+
+import { markdown } from "../../../directives/directives.js";
 
 @customElement("a2ui-basic-text")
 export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
+
+  // Retrieve a MarkdownRenderer provided by the application.
+  @consume({ context: Context.markdown, subscribe: true })
+  accessor markdownRenderer: Types.MarkdownRenderer | undefined;
+
   protected createController() {
     return new A2uiController(this, TextApi);
   }
@@ -29,23 +38,35 @@ export class A2uiBasicTextElement extends A2uiLitElement<typeof TextApi> {
     const props = this.controller.props;
     if (!props) return nothing;
 
-    const variant = props.variant ?? "body";
-    switch (variant) {
+    // Use props.variant to convert props.text to markdown
+    let markdownText = props.text;
+    switch (props.variant) {
       case "h1":
-        return html`<h1>${props.text}</h1>`;
+        markdownText = `# ${markdownText}`;
+        break;
       case "h2":
-        return html`<h2>${props.text}</h2>`;
+        markdownText = `## ${markdownText}`;
+        break;
       case "h3":
-        return html`<h3>${props.text}</h3>`;
+        markdownText = `### ${markdownText}`;
+        break;
       case "h4":
-        return html`<h4>${props.text}</h4>`;
+        markdownText = `#### ${markdownText}`;
+        break;
       case "h5":
-        return html`<h5>${props.text}</h5>`;
-      case "caption":
-        return html`<span class="a2ui-caption">${props.text}</span>`;
+        markdownText = `##### ${markdownText}`;
+        break;
       default:
-        return html`<p>${props.text}</p>`;
+        break; // body and caption.
     }
+
+    const renderedMarkdown = markdown(markdownText, this.markdownRenderer);
+    // There's not a good way to handle the caption variant in markdown, so we
+    // tag it with a class so it can be tweaked via CSS.
+    if (props.variant === "caption") {
+      return html`<span class="a2ui-caption">${renderedMarkdown}</span>`;
+    }
+    return html`${renderedMarkdown}`;
   }
 }
 

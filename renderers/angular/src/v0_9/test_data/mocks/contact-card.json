@@ -1,0 +1,161 @@
+[
+  {
+    "version": "v0.9",
+    "createSurface": {
+      "surfaceId": "gallery-contact-card",
+      "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json"
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateComponents": {
+      "surfaceId": "gallery-contact-card",
+      "components": [
+        {
+          "id": "root",
+          "component": "card",
+          "child": "main-column"
+        },
+        {
+          "id": "main-column",
+          "component": "column",
+          "children": [
+            "avatar-image",
+            "name",
+            "title",
+            "divider",
+            "contact-info",
+            "actions"
+          ],
+          "align": "center"
+        },
+        {
+          "id": "avatar-image",
+          "component": "image",
+          "url": { "path": "/avatar" },
+          "fit": "cover"
+        },
+        {
+          "id": "name",
+          "component": "text",
+          "text": { "path": "/name" },
+          "weight": 700
+        },
+        {
+          "id": "title",
+          "component": "text",
+          "text": { "path": "/title" }
+        },
+        {
+          "id": "divider",
+          "component": "divider"
+        },
+        {
+          "id": "contact-info",
+          "component": "column",
+          "children": ["phone-row", "email-row", "location-row"]
+        },
+        {
+          "id": "phone-row",
+          "component": "row",
+          "children": ["phone-icon", "phone-text"],
+          "align": "center"
+        },
+        {
+          "id": "phone-icon",
+          "component": "icon",
+          "name": "phone"
+        },
+        {
+          "id": "phone-text",
+          "component": "text",
+          "text": { "path": "/phone" }
+        },
+        {
+          "id": "email-row",
+          "component": "row",
+          "children": ["email-icon", "email-text"],
+          "align": "center"
+        },
+        {
+          "id": "email-icon",
+          "component": "icon",
+          "name": "mail"
+        },
+        {
+          "id": "email-text",
+          "component": "text",
+          "text": { "path": "/email" }
+        },
+        {
+          "id": "location-row",
+          "component": "row",
+          "children": ["location-icon", "location-text"],
+          "align": "center"
+        },
+        {
+          "id": "location-icon",
+          "component": "icon",
+          "name": "locationOn"
+        },
+        {
+          "id": "location-text",
+          "component": "text",
+          "text": { "path": "/location" }
+        },
+        {
+          "id": "actions",
+          "component": "row",
+          "children": ["call-btn", "message-btn"]
+        },
+        {
+          "id": "call-btn",
+          "component": "button",
+          "child": "call-btn-text",
+          "action": {
+            "functionCall": {
+              "call": "call",
+              "args": { "number": { "path": "/phone" } }
+            }
+          }
+        },
+        {
+          "id": "call-btn-text",
+          "component": "text",
+          "text": "Call"
+        },
+        {
+          "id": "message-btn",
+          "component": "button",
+          "child": "message-btn-text",
+          "action": {
+            "functionCall": {
+              "call": "message",
+              "args": { "recipient": { "path": "/email" } }
+            }
+          }
+        },
+        {
+          "id": "message-btn-text",
+          "component": "text",
+          "text": "Message"
+        }
+      ]
+    }
+  },
+  {
+    "version": "v0.9",
+    "updateDataModel": {
+      "surfaceId": "gallery-contact-card",
+      "path": "/",
+      "value": {
+        "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+        "name": "David Park",
+        "title": "Engineering Manager",
+        "phone": "+1 (555) 234-5678",
+        "email": "david.park@company.com",
+        "location": "San Francisco, CA"
+      }
+    }
+  }
+]

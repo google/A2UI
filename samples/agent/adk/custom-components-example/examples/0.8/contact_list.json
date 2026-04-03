@@ -120,16 +120,6 @@
           }
         },
         {
-          "id": "view-button-text",
-          "component": {
-            "Text": {
-              "text": {
-                "literalString": "View"
-              }
-            }
-          }
-        },
-        {
           "id": "view-button",
           "component": {
             "Button": {
@@ -151,6 +141,16 @@
                     }
                   }
                 ]
+              }
+            }
+          }
+        },
+        {
+          "id": "view-button-text",
+          "component": {
+            "Text": {
+              "text": {
+                "literalString": "View"
               }
             }
           }
