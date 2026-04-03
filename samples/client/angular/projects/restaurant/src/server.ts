@@ -51,25 +51,58 @@ app.post('/a2a', (req, res) => {
     let sendParams: MessageSendParams;
 
     if (isJson(originalBody)) {
-      console.log('[a2a-middleware] Received JSON UI event:', originalBody);
+      const requestData = JSON.parse(originalBody);
+      const contextId = requestData.contextId;
 
-      const clientEvent = JSON.parse(originalBody);
-      sendParams = {
-        message: {
-          messageId: uuidv4(),
-          role: 'user',
-          parts: [
-            {
-              kind: 'data',
-              data: clientEvent,
-              metadata: { 'mimeType': 'application/json+a2ui' },
-            } as Part,
-          ],
-          kind: 'message',
-        },
-      };
+      if (requestData.event) {
+        console.log('[a2a-middleware] Received JSON UI event:', requestData.event);
+        sendParams = {
+          message: {
+            messageId: uuidv4(),
+            contextId,
+            role: 'user',
+            parts: [
+              {
+                kind: 'data',
+                data: requestData.event,
+                metadata: { 'mimeType': 'application/json+a2ui' },
+              } as Part,
+            ],
+            kind: 'message',
+          },
+        };
+      } else if (requestData.query) {
+        console.log('[a2a-middleware] Received text query:', requestData.query);
+        sendParams = {
+          message: {
+            messageId: uuidv4(),
+            contextId,
+            role: 'user',
+            parts: [{ kind: 'text', text: requestData.query }],
+            kind: 'message',
+          },
+        };
+      } else {
+        // Fallback for legacy JSON event
+        console.log('[a2a-middleware] Received legacy JSON event:', originalBody);
+        sendParams = {
+          message: {
+            messageId: uuidv4(),
+            contextId,
+            role: 'user',
+            parts: [
+              {
+                kind: 'data',
+                data: requestData,
+                metadata: { 'mimeType': 'application/json+a2ui' },
+              } as Part,
+            ],
+            kind: 'message',
+          },
+        };
+      }
     } else {
-      console.log('[a2a-middleware] Received text query:', originalBody);
+      console.log('[a2a-middleware] Received plain text query:', originalBody);
       sendParams = {
         message: {
           messageId: uuidv4(),
@@ -122,7 +155,11 @@ async function handleStreamingResponse(client: A2AClient, sendParams: MessageSen
     if (parts.length > 0) {
       console.log(`[server] Streaming ${parts.length} parts to client`);
       console.log(`[server] Streaming parts: ${JSON.stringify(parts)}`);
-      res.write(`data: ${JSON.stringify(parts)}\n\n`);
+      const responseData = {
+        parts,
+        contextId: (event as any).contextId || (event as any).status?.message?.contextId
+      };
+      res.write(`data: ${JSON.stringify(responseData)}\n\n`);
     }
   }
   res.end();
@@ -141,7 +178,10 @@ async function handleNonStreamingResponse(client: A2AClient, sendParams: Message
   }
 
   const result = (response as SendMessageSuccessResponse).result as Task;
-  res.json(result.kind === 'task' ? result.status.message?.parts || [] : []);
+  res.json({
+    parts: result.kind === 'task' ? result.status.message?.parts || [] : [],
+    contextId: result.contextId
+  });
 }
 
 app.use((req, res, next) => {
