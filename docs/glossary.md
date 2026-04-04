@@ -20,27 +20,9 @@ The A2UI protocol enables conversation between agent and renderer:
     - Receives user input, communicated by renderer
     - Updates data to show in UI
 
-```mermaid
-%% styling
-graph LR
-subgraph " "
-direction LR
+![agent and renderer](assets/agent-and-renderer.png)
 
-%% Define square nodes with padding (using <br> is most reliable for graph LR padding)
-Agent["<br>A2UI<br>Agent<br><br>"]:::square
-Renderer["<br>A2UI<br>Renderer<br><br>"]:::square
 
-Agent ---|"
-        ←←← UI capabilities 
-        UI to render →→→
-        Functions to call →→→
-        ←←← user input 
-        data to show in UI →→→
-        "| Renderer
-linkStyle 0 stroke-width:0px;
-
-end
-```
 
 While the protocol is designed for **AI-empowered agents**, it can work with deterministic agents as well. For example, an agent that tests the renderer, may be noAI-agent.
 
