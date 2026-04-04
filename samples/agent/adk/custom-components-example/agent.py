@@ -15,6 +15,7 @@
 import json
 import logging
 import os
+from collections import OrderedDict
 from collections.abc import AsyncIterable
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
@@ -22,6 +23,8 @@ from typing import Any, Dict, Optional
 import jsonschema
 
 from a2ui_examples import load_floor_plan_example
+from a2ui.core.parser.streaming import A2uiStreamParser
+from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
@@ -45,7 +48,7 @@ from a2ui.core.schema.common_modifiers import remove_strict_validation
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.core.parser.parser import parse_response, ResponsePart
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts
+from a2ui.a2a import create_a2ui_part, get_a2ui_agent_extension, parse_response_to_parts, stream_response_to_parts
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +66,8 @@ class ContactAgent:
 
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
+    self._parsers: OrderedDict[str, A2uiStreamParser] = OrderedDict()
+    self._max_parsers = 1000  # Max active sessions to keep in memory
 
     for version in [VERSION_0_8, VERSION_0_9]:
       schema_manager = self._build_schema_manager(version)
@@ -382,27 +387,48 @@ class ContactAgent:
       current_message = types.Content(
           role="user", parts=[types.Part.from_text(text=current_query_text)]
       )
-      final_response_content = None
 
-      async for event in runner.run_async(
-          user_id=self._user_id,
-          session_id=session.id,
-          new_message=current_message,
-      ):
-        logger.info(f"Event from runner: {event}")
-        if event.is_final_response():
-          if event.content and event.content.parts and event.content.parts[0].text:
-            final_response_content = "\n".join(
-                [p.text for p in event.content.parts if p.text]
-            )
-          break  # Got the final response, stop consuming events
+      full_content_list = []
+
+      async def token_stream():
+        async for event in runner.run_async(
+            user_id=self._user_id,
+            session_id=session.id,
+            run_config=run_config.RunConfig(
+                streaming_mode=run_config.StreamingMode.SSE
+            ),
+            new_message=current_message,
+        ):
+          if event.content and event.content.parts:
+            for p in event.content.parts:
+              if p.text:
+                full_content_list.append(p.text)
+                yield p.text
+
+      if selected_catalog:
+        if session_id in self._parsers:
+          self._parsers.move_to_end(session_id)
         else:
-          logger.info(f"Intermediate event: {event}")
-          # Yield intermediate updates on every attempt
+          self._parsers[session_id] = A2uiStreamParser(catalog=selected_catalog)
+          if len(self._parsers) > self._max_parsers:
+            self._parsers.popitem(last=False)
+
+        async for part in stream_response_to_parts(
+            self._parsers[session_id],
+            token_stream(),
+        ):
           yield {
               "is_task_complete": False,
-              "updates": self.get_processing_message(),
+              "parts": [part],
           }
+      else:
+        async for token in token_stream():
+          yield {
+              "is_task_complete": False,
+              "updates": token,
+          }
+
+      final_response_content = "".join(full_content_list) if full_content_list else None
 
       if final_response_content is None:
         logger.warning(

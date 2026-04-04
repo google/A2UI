@@ -26,6 +26,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 const A2UI_MIME_TYPE = "application/json+a2ui";
+const enableStreaming = process.env["ENABLE_STREAMING"] === "true";
 
 const fetchWithCustomHeader: typeof fetch = async (url, init) => {
   const headers = new Headers(init?.headers);
@@ -119,27 +120,49 @@ export const plugin = (): Plugin => {
               }
 
               const client = await createOrGetClient();
-              const response = await client.sendMessage(sendParams);
-              if ("error" in response) {
-                console.error("Error:", response.error.message);
-                res.statusCode = 500;
-                res.setHeader("Content-Type", "application/json");
-                res.end(JSON.stringify({ error: response.error.message }));
-                return;
-              } else {
-                const result = (response as SendMessageSuccessResponse)
-                  .result as Task;
-                if (result.kind === "task") {
+
+              try {
+                if (enableStreaming) {
+                  const stream = await client.sendMessageStream(sendParams);
                   res.statusCode = 200;
+                  res.setHeader("Content-Type", "text/event-stream");
+                  res.setHeader("Cache-Control", "no-cache");
+                  res.setHeader("Connection", "keep-alive");
+
+                  for await (const chunk of stream) {
+                    // A2AClient unpacks the JSON-RPC, so chunk is an A2AStreamEventData
+                    if (chunk.kind === "status-update" && chunk.status.message?.parts) {
+                      res.write(`data: ${JSON.stringify(chunk.status.message.parts)}\n\n`);
+                    } else if (chunk.kind === "message" && chunk.parts) {
+                      res.write(`data: ${JSON.stringify(chunk.parts)}\n\n`);
+                    }
+                  }
+                  res.end();
+                } else {
+                  const response = await client.sendMessage(sendParams);
+                  res.setHeader("Cache-Control", "no-store");
+                  if ("error" in response) {
+                    res.statusCode = 500;
+                    res.setHeader("Content-Type", "application/json");
+                    res.end(JSON.stringify({ error: response.error.message }));
+                  } else {
+                    const result = (response as SendMessageSuccessResponse).result as Task;
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.end(JSON.stringify(result.kind === "task" ? result.status.message?.parts || [] : []));
+                  }
+                }
+              } catch (e: any) {
+                console.error("Error during streaming:", e);
+                if (!res.headersSent) {
+                  res.statusCode = 500;
                   res.setHeader("Content-Type", "application/json");
-                  res.end(JSON.stringify(result.status.message?.parts));
-                  return;
+                  res.end(JSON.stringify({ error: e.message || String(e) }));
+                } else {
+                  res.write(`data: ${JSON.stringify({ error: e.message || String(e) })}\n\n`);
+                  res.end();
                 }
               }
-
-              res.statusCode = 200;
-              res.setHeader("Content-Type", "application/json");
-              res.end(JSON.stringify([]));
             });
 
             return;

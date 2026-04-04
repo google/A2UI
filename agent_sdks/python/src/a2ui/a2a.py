@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import logging
-from typing import Any, Optional, List
+from typing import Any, Optional, List, AsyncIterable, TYPE_CHECKING
 
+if TYPE_CHECKING:
+  from a2ui.core.parser.streaming import A2uiStreamParser
 from a2a.server.agent_execution import RequestContext
 from a2a.types import (
     AgentExtension,
@@ -247,3 +249,39 @@ def try_activate_a2ui_extension(
     return selected_uri.replace(f"{A2UI_EXTENSION_BASE_URI}/v", "")
 
   return None
+
+
+async def stream_response_to_parts(
+    parser: "A2uiStreamParser",
+    token_stream: AsyncIterable[str],
+) -> AsyncIterable[Part]:
+  """Helper to parse a stream of LLM tokens into A2A Parts incrementally.
+
+  Args:
+      parser: A2uiStreamParser instance to process the stream.
+      token_stream: An async iterable of strings (tokens).
+
+  Yields:
+      A2A Part objects as they are discovered in the stream.
+  """
+  async for token in token_stream:
+    logger.info("-----------------------------")
+    logger.info(f"--- AGENT: Received token:\n{token}")
+    response_parts = parser.process_chunk(token)
+    logger.info(
+        f"--- AGENT: Response parts:\n{[part.a2ui_json for part in response_parts]}\n"
+    )
+    logger.info("-----------------------------")
+
+    for part in response_parts:
+      if part.text:
+        yield Part(root=TextPart(text=part.text))
+
+      if part.a2ui_json:
+        json_data = part.a2ui_json
+
+        if isinstance(json_data, list):
+          for message in json_data:
+            yield create_a2ui_part(message)
+        else:
+          yield create_a2ui_part(json_data)

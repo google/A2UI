@@ -2032,3 +2032,111 @@ def test_sniff_partial_component_enforces_required_fields(mock_catalog):
       },
   }]
   assertResponseContainsMessages(response_parts, expected)
+
+
+def test_multiple_concurrent_surfaces(mock_catalog):
+  """Verifies that the parser can handle multiple surfaces simultaneously."""
+  parser = A2uiStreamParser(catalog=mock_catalog)
+
+  # Send A2UI block opening bracket
+  parser.process_chunk(f"{A2UI_OPEN_TAG}[")
+
+  # 1. Establish root for surface 1
+  response_parts = parser.process_chunk(
+      '{"version": "v0.9", "createSurface": {"surfaceId": "surface1", "catalogId":'
+      ' "test_catalog"}},'
+  )
+  expected_cs1 = [{
+      "version": "v0.9",
+      "createSurface": {"catalogId": "test_catalog", "surfaceId": "surface1"},
+  }]
+  assertResponseContainsMessages(response_parts, expected_cs1)
+
+  # 2. Establish root for surface 2
+  response_parts = parser.process_chunk(
+      '{"version": "v0.9", "createSurface": {"surfaceId": "surface2", "catalogId":'
+      ' "test_catalog"}},'
+  )
+  expected_cs2 = [{
+      "version": "v0.9",
+      "createSurface": {"catalogId": "test_catalog", "surfaceId": "surface2"},
+  }]
+  assertResponseContainsMessages(response_parts, expected_cs2)
+
+  # 3. Stream components for surface 1 in chunks
+  chunk_s1_a = (
+      '{"version": "v0.9", "updateComponents": {"surfaceId": "surface1", "root":'
+      ' "root1", "components": [{"id": "root1", "component": "Card", "child": "c1"}, '
+  )
+  response_parts = parser.process_chunk(chunk_s1_a)
+  expected_s1_a = [{
+      "version": "v0.9",
+      "updateComponents": {
+          "surfaceId": "surface1",
+          "root": "root1",
+          "components": [
+              {
+                  **parser._placeholder_component,
+                  "id": "loading_c1",
+              },
+              {"id": "root1", "component": "Card", "child": "loading_c1"},
+          ],
+      },
+  }]
+  assertResponseContainsMessages(response_parts, expected_s1_a)
+
+  chunk_s1_b = '{"id": "c1", "component": "Text", "text": "hello s1"}]}}, '
+  response_parts = parser.process_chunk(chunk_s1_b)
+
+  expected_s1_b = [{
+      "version": "v0.9",
+      "updateComponents": {
+          "surfaceId": "surface1",
+          "root": "root1",
+          "components": [
+              {
+                  "id": "c1",
+                  "component": "Text",
+                  "text": "hello s1",
+              },
+              {
+                  "id": "root1",
+                  "component": "Card",
+                  "child": "c1",
+              },
+          ],
+      },
+  }]
+  assertResponseContainsMessages(response_parts, expected_s1_b)
+
+  # 4. Stream components for surface 2
+  chunk_s2 = (
+      '{"version": "v0.9", "updateComponents": {"surfaceId": "surface2", "root":'
+      ' "root2", "components": [{"id": "root2", "component": "Card", "child": "c2"},'
+      ' {"id": "c2", "component": "Text", "text": "hello s2"}]}}'
+  )
+  response_parts = parser.process_chunk(chunk_s2)
+
+  expected_s2 = [{
+      "version": "v0.9",
+      "updateComponents": {
+          "surfaceId": "surface2",
+          "root": "root2",
+          "components": [
+              {
+                  "id": "c2",
+                  "component": "Text",
+                  "text": "hello s2",
+              },
+              {
+                  "id": "root2",
+                  "component": "Card",
+                  "child": "c2",
+              },
+          ],
+      },
+  }]
+  assertResponseContainsMessages(response_parts, expected_s2)
+
+  # Send A2UI block closing bracket
+  parser.process_chunk(f"]{A2UI_CLOSE_TAG}")

@@ -133,7 +133,7 @@ def test_load_examples_none_or_invalid_path():
   assert catalog.load_examples("/non/existent/path") == ""
 
 
-def test_with_pruned_components():
+def test_with_pruning_components():
   catalog_schema = {
       "catalogId": "basic",
       "components": {
@@ -151,7 +151,7 @@ def test_with_pruned_components():
   )
 
   # Test basic pruning
-  pruned_catalog = catalog.with_pruned_components(["Text", "Button"])
+  pruned_catalog = catalog.with_pruning(allowed_components=["Text", "Button"])
   pruned = pruned_catalog.catalog_schema
   assert "Text" in pruned["components"]
   assert "Button" in pruned["components"]
@@ -179,13 +179,81 @@ def test_with_pruned_components():
       common_types_schema={},
       catalog_schema=catalog_schema_with_defs,
   )
-  pruned_catalog_defs = catalog_with_defs.with_pruned_components(["Text"])
+  pruned_catalog_defs = catalog_with_defs.with_pruning(allowed_components=["Text"])
   any_comp = pruned_catalog_defs.catalog_schema["$defs"]["anyComponent"]
   assert len(any_comp["oneOf"]) == 1
   assert any_comp["oneOf"][0]["$ref"] == "#/components/Text"
 
   # Test empty allowed components (should return original self)
-  assert catalog.with_pruned_components([]) is catalog
+  assert catalog.with_pruning(allowed_components=[]) is catalog
+
+
+def test_with_pruning_messages():
+  s2c_schema = {
+      "oneOf": [
+          {"$ref": "#/$defs/MessageA"},
+          {"$ref": "#/$defs/MessageB"},
+          {"$ref": "#/$defs/MessageC"},
+      ],
+      "$defs": {
+          "MessageA": {"type": "object", "properties": {"a": {"type": "string"}}},
+          "MessageB": {"type": "object", "properties": {"b": {"type": "string"}}},
+          "MessageC": {"type": "object", "properties": {"c": {"type": "string"}}},
+      },
+  }
+  catalog_schema = {"catalogId": "basic"}
+  catalog = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema=s2c_schema,
+      common_types_schema={},
+      catalog_schema=catalog_schema,
+  )
+
+  # Prune to only MessageA and MessageC
+  pruned_catalog = catalog.with_pruning([], allowed_messages=["MessageA", "MessageC"])
+  pruned_s2c = pruned_catalog.s2c_schema
+
+  assert len(pruned_s2c["oneOf"]) == 2
+  assert {"$ref": "#/$defs/MessageA"} in pruned_s2c["oneOf"]
+  assert {"$ref": "#/$defs/MessageC"} in pruned_s2c["oneOf"]
+  assert {"$ref": "#/$defs/MessageB"} not in pruned_s2c["oneOf"]
+
+  assert "MessageA" in pruned_s2c["$defs"]
+  assert "MessageC" in pruned_s2c["$defs"]
+  assert "MessageB" not in pruned_s2c["$defs"]
+
+
+def test_with_pruning_messages_internal_reachability():
+  s2c_schema = {
+      "oneOf": [
+          {"$ref": "#/$defs/MessageA"},
+      ],
+      "$defs": {
+          "MessageA": {
+              "type": "object",
+              "properties": {"shared": {"$ref": "#/$defs/SharedType"}},
+          },
+          "SharedType": {"type": "string"},
+          "UnusedType": {"type": "number"},
+      },
+  }
+  catalog_schema = {"catalogId": "basic"}
+  catalog = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema=s2c_schema,
+      common_types_schema={},
+      catalog_schema=catalog_schema,
+  )
+
+  # Prune to MessageA. SharedType should be kept, UnusedType should be removed.
+  pruned_catalog = catalog.with_pruning([], allowed_messages=["MessageA"])
+  pruned_defs = pruned_catalog.s2c_schema["$defs"]
+
+  assert "MessageA" in pruned_defs
+  assert "SharedType" in pruned_defs
+  assert "UnusedType" not in pruned_defs
 
 
 def test_render_as_llm_instructions():
@@ -261,7 +329,7 @@ def test_render_as_llm_instructions_drops_empty_common_types():
   assert "### Common Types Schema:" not in schema_str_empty_defs
 
 
-def test_with_pruned_components_prunes_common_types():
+def test_with_pruning_common_types():
   common_types = {
       "$defs": {
           "TypeForCompA": {"type": "string"},
@@ -283,8 +351,74 @@ def test_with_pruned_components_prunes_common_types():
       catalog_schema=catalog_schema,
   )
 
-  pruned_catalog = catalog.with_pruned_components(["CompA"])
+  pruned_catalog = catalog.with_pruning(allowed_components=["CompA"])
   pruned_defs = pruned_catalog.common_types_schema["$defs"]
 
   assert "TypeForCompA" in pruned_defs
   assert "TypeForCompB" not in pruned_defs
+
+
+def test_with_pruning_s2c_also_prunes_common_types():
+  common_types = {
+      "$defs": {
+          "TypeForA": {"type": "string"},
+          "TypeForB": {"type": "number"},
+      }
+  }
+  s2c_schema = {
+      "oneOf": [
+          {"$ref": "#/$defs/MessageA"},
+          {"$ref": "#/$defs/MessageB"},
+      ],
+      "$defs": {
+          "MessageA": {"$ref": "common_types.json#/$defs/TypeForA"},
+          "MessageB": {"$ref": "common_types.json#/$defs/TypeForB"},
+      },
+  }
+  catalog_schema = {"catalogId": "basic"}
+  catalog = A2uiCatalog(
+      version=VERSION_0_9,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema=s2c_schema,
+      common_types_schema=common_types,
+      catalog_schema=catalog_schema,
+  )
+
+  # Prune to only MessageA
+  pruned_catalog = catalog.with_pruning([], allowed_messages=["MessageA"])
+
+  assert "MessageA" in pruned_catalog.s2c_schema["$defs"]
+  assert "MessageB" not in pruned_catalog.s2c_schema["$defs"]
+
+  assert "TypeForA" in pruned_catalog.common_types_schema["$defs"]
+  assert "TypeForB" not in pruned_catalog.common_types_schema["$defs"]
+
+
+def test_with_pruning_messages_v08():
+  s2c_schema = {
+      "properties": {
+          "beginRendering": {"type": "object"},
+          "surfaceUpdate": {"type": "object"},
+          "deleteSurface": {"type": "object"},
+      },
+      "required": ["surfaceId"],
+  }
+  catalog_schema = {"catalogId": "basic"}
+  catalog = A2uiCatalog(
+      version=VERSION_0_8,
+      name=BASIC_CATALOG_NAME,
+      s2c_schema=s2c_schema,
+      common_types_schema={},
+      catalog_schema=catalog_schema,
+  )
+
+  # Prune to only beginRendering and deleteSurface
+  pruned_catalog = catalog.with_pruning(
+      [], allowed_messages=["beginRendering", "deleteSurface"]
+  )
+  pruned_s2c = pruned_catalog.s2c_schema
+
+  assert "beginRendering" in pruned_s2c["properties"]
+  assert "deleteSurface" in pruned_s2c["properties"]
+  assert "surfaceUpdate" not in pruned_s2c["properties"]
+  assert pruned_s2c["required"] == ["surfaceId"]

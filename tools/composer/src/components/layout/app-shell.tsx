@@ -29,7 +29,7 @@ export function AppShell({ children }: AppShellProps) {
     <CopilotKitProvider runtimeUrl="/api/copilotkit" showDevConsole="auto">
       <WidgetsProvider>
         <div className="relative flex h-screen overflow-hidden bg-palette-surface-main p-2">
-          {/* Background blur circles - Glassy effect from dojo */}
+          {/* Background blur circles - Glassy effect from theater */}
           {/* Ellipse 1351 - Orange glow top right */}
           <div
             className="absolute w-[445.84px] h-[445.84px] left-[1040px] top-[11px] rounded-full z-0 pointer-events-none"
