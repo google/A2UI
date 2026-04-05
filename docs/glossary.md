@@ -176,7 +176,7 @@ Do not confuse with LLM tool:
 | Timing       | After the agent to renderer message is sent.                          | Before the agent to renderer message is sent.                                     |
 | Purpose      | UI logic (Validation, visible toggles, Formatting)                    | Reasoning, Data Fetching, Backend Actions                                         |
 | Definition   | Registered in client side function registry and advertised in catalog | Defined in ToolDefinition (passed to LLM)                                         |
-| State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, Databases, Services |
+| State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, databases, and services |
 
 ### Action
 
