@@ -59,7 +59,7 @@ UI component, allowed for use by AI. Examples: date picker, carousel, button, ho
 ### Catalog
 
 1. Itemized renderer capabilities:
-    - List of  components that the agent can use to generate UI
+    - List of components that the agent can use to generate UI
     - List of functions that can be invoked by renderer
     - Styles and themes
 2. Explanation on how the renderer capabilities should be used.
@@ -114,7 +114,7 @@ There are options for A2UI agent:
 
 ### Renderer stack
 
-Functionality of A2UI renderer consists of layers, that can be developed separately and reused:
+Functionality of A2UI renderer consists of layers that can be developed separately and reused:
 
 - **Core Library**:
   
@@ -122,7 +122,7 @@ Functionality of A2UI renderer consists of layers, that can be developed separat
 
 - **Catalog Schema**:
   
-  Definition of catalog in form of JSON.
+  Definition of catalog in the form of JSON.
 
 - **Framework adapter**:
   
@@ -150,7 +150,7 @@ As the protocol allows streaming, any message can be finished (completely delive
 
 ### Data model
 
-Observable, hierarchical, JSON-like object, shared between application and agent and updatable by both application and AI. Each Surface has a separate Data Model.
+Observable, hierarchical, JSON-like object, shared between renderer and agent and updatable by both. Each Surface has a separate Data Model.
 
 Components can be bound to nodes of the data model, in order to auto-update when the values are changed.
 
@@ -172,7 +172,7 @@ Do not confuse with LLM tool:
 | Timing       | After the agent to renderer message is sent.                          | Before the agent to renderer message is sent.                                     |
 | Purpose      | UI logic (Validation, visible toggles, Formatting)                    | Reasoning, Data Fetching, Backend Actions                                         |
 | Definition   | Registered in client side function registry and advertised in catalog | Defined in ToolDefinition (passed to LLM)                                         |
-| State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, Databases, Services |
+| State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, databases, and services |
 
 ### Action
 
