@@ -63,7 +63,7 @@ UI component, allowed for use by AI. Examples: date picker, carousel, button, ho
 ### Catalog
 
 1. Itemized renderer capabilities:
-    - List of  components that the agent can use to generate UI
+    - List of components that the agent can use to generate UI
     - List of functions that can be invoked by renderer
     - Styles and themes
 2. Explanation on how the renderer capabilities should be used.
