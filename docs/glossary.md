@@ -2,10 +2,37 @@
 
 ## Generative UI terms
 
-Terms, not required by A2UI protocol, but are commonly used in the context of Generative UI.
+Terms, not required by A2UI protocol, but commonly used in the context of generative UI.
 
+### Known patterns of GenUI
 
+- **Chat**:
 
+  Pieces of generated UI appear one by one, sorted by time, in a vertically scrollable area, mixed with user input.
+
+- **Canvas**:
+
+  Space for free collaboration.
+
+- **Dashboard**:
+
+  Pieces of generated UI are organized not by time, but by their meaning and stay reliably (a.k.a. pinned) where the user expects to see them.
+
+- **Wizard**:
+
+  Pieces of generated UI are shown one by one, with the goal to collect necessary information for a certain task.
+
+### NoAI information
+
+Information, categorized as **not accessible by AI** (for example, credit card information).
+
+Which information should not be accessible by AI is defined by owners of the application and it is **different in different contexts**. For example, in some contexts medical history should never go to AI, while in others AI is heavily used to help with medical diagnostics and thus needs medical history.
+
+This term is important in GenUI context, because end users want to **clearly see** what their input is allowed to go to AI and which is not allowed.
+
+### Role in AI systems
+
+Role relates to a type of actor that sends a message in an AI system. Normally, there are three: user, model and system. See detailed explanation in doc comments of genai_primitives.
 
 ## A2UI protocol terms
 
@@ -13,22 +40,25 @@ Terms, required by A2UI protocol.
 
 ### A2UI agent and A2UI renderer
 
-The A2UI protocol enables conversation between agent and renderer:
-1. Renderer provides UI capabilities in the form of A2UI catalog and instructions on how to use it.
-2. Agent iterates on the loop:
-    - Provides UI and functions to call, taking into account the received catalog
-    - Receives user input, communicated by renderer
-    - Updates data to show in UI
+The A2UI protocol enables conversation between **agent** and **renderer**:
+1. **Renderer** provides **UI capabilities** in the form of A2UI catalog and **instructions** on how to use it.
+2. **Agent** iterates on the loop:
+    - Provides **UI** and **functions** to call, taking into account the received catalog
+    - Receives **user input**, communicated by renderer
+    - Updates **data** to show in UI
 
 ![agent and renderer](assets/agent-and-renderer.png)
-
-
 
 While the protocol is designed for **AI-empowered agents**, it can work with deterministic agents as well. For example, an agent that tests the renderer, may be noAI-agent.
 
 In case the agent is stateless or does not guarantee to preserve the catalog, the renderer should provide the catalog with every message.
 
 And, sometimes, an agent is using a predefined catalog, thus forcing the renderers to either support this catalog or use an adapter. 
+
+### GenUI Component
+
+UI component, allowed for use by AI. Examples: date picker, carousel, button, hotel selector.
+
 
 ### Catalog
 
@@ -37,12 +67,6 @@ And, sometimes, an agent is using a predefined catalog, thus forcing the rendere
     - List of functions that can be invoked by renderer
     - Styles and themes
 2. Explanation on how the renderer capabilities should be used.
-
-### Basic Catalog
-
-A catalog maintained by the A2UI team to get up and running quickly with A2UI.
-
-### Domain-specific components
 
 It is observed that depending on use case, catalog components may be more or less specific to domain:
 
@@ -54,9 +78,15 @@ It is observed that depending on use case, catalog components may be more or les
 
   Components like HotelCheckout or FlightSelector.
 
-### A2UI framework
 
-A front-end UI library that provides A2UI renderer and API to define catalog 
+### Basic Catalog
+
+A catalog maintained by the A2UI team to get up and running quickly with A2UI.
+
+### Surface
+
+An area of UI, constructed by A2UI agent and managed by the A2UI renderer,
+which consists of a number of components. Surfaces cannot nest.
 
 ### Agent architecture
 
@@ -74,11 +104,11 @@ There are options for A2UI agent:
 
   The central orchestrator manages interactions between a user and several specialized sub-agents. The orchestrator can be in the same process or on the server.
 
-- **Pulling or pushing**:
+- **Pulling / pushing**:
 
   An agent can wait for messages/requests from the renderer, or push messages/requests to it.
 
-- **Stateful or stateless**:
+- **Stateful / stateless**:
 
   Agents can preserve state or be stateless.
 
@@ -96,7 +126,7 @@ Functionality of A2UI renderer consists of layers, that can be developed separat
 
 - **Catalog Schema**:
   
-  Concrete definition of catalog.
+  Definition of catalog in form of JSON.
 
 - **Framework adapter**:
   
@@ -116,3 +146,42 @@ cschema-->core("Core<br>Library");
 cimpl-->fadapter("Framework<br>Adapter");
 fadapter-->core;
 ```
+
+### A2UI message
+
+A message from agent to a UI application, that instructs it to perform a set of surface operations.
+As the protocol allows streaming, any message can be finished (completely delivered) or not finished (partially delivered). A finished message may be completed (successfully delivered) or interrupted (delivery stopped because of some technical issues).
+
+### Data model
+
+Observable, hierarchical, JSON-like object, shared between application and agent and updatable by both application and AI. Each Surface has a separate Data Model.
+
+Components can be bound to nodes of the data model, in order to auto-update when the values are changed.
+
+Data model allows bidirectional synchronization by capturing user interactions into a state object for transmission to the agent, while also allowing agent to push data updates back to the UI.
+
+### Data reference
+
+A reference to a data element, resolvable either by path in the data model or by value.
+
+### Client function
+
+A function provided for AI to invoke when needed.
+
+Do not confuse with LLM tool:
+
+| Feature      | Client Function                                                       | LLM Tool Invocation                                                               |
+| ------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Executor     | A2UI Renderer                                                         | LLM requests invocation without concern about execution details.                  |
+| Timing       | After the agent to renderer message is sent.                          | Before the agent to renderer message is sent.                                     |
+| Purpose      | UI logic (Validation, visible toggles, Formatting)                    | Reasoning, Data Fetching, Backend Actions                                         |
+| Definition   | Registered in client side function registry and advertised in catalog | Defined in ToolDefinition (passed to LLM)                                         |
+| State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, Databases, Services |
+
+### Action
+
+A string that explains to the AI what should be done.
+It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).
+
+
+
