@@ -126,7 +126,7 @@ Functionality of A2UI renderer consists of layers that can be developed separate
 
 - **Catalog Schema**:
   
-  Definition of catalog in form of JSON.
+  Definition of catalog in the form of JSON.
 
 - **Framework adapter**:
   
