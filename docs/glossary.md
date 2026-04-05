@@ -154,7 +154,7 @@ As the protocol allows streaming, any message can be finished (completely delive
 
 ### Data model
 
-Observable, hierarchical, JSON-like object, shared between application and agent and updatable by both application and AI. Each Surface has a separate Data Model.
+Observable, hierarchical, JSON-like object, shared between renderer and agent and updatable by both. Each Surface has a separate Data Model.
 
 Components can be bound to nodes of the data model, in order to auto-update when the values are changed.
 
