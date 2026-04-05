@@ -118,7 +118,7 @@ There are options for A2UI agent:
 
 ### Renderer stack
 
-Functionality of A2UI renderer consists of layers, that can be developed separately and reused:
+Functionality of A2UI renderer consists of layers that can be developed separately and reused:
 
 - **Core Library**:
   
