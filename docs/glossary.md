@@ -30,10 +30,6 @@ Which information should not be accessible by AI is defined by owners of the app
 
 This term is important in GenUI context, because end users want to **clearly see** what their input is allowed to go to AI and which is not allowed.
 
-### Role in AI systems
-
-Role relates to a type of actor that sends a message in an AI system. Normally, there are three: user, model and system. See detailed explanation in doc comments of genai_primitives.
-
 ## A2UI protocol terms
 
 Terms, required by A2UI protocol.
