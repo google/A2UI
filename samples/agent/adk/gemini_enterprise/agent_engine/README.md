@@ -141,15 +141,6 @@ To run the script using `uv`:
     -   `uv run deploy.py`
     -   It may take 5-10 minutes to finish.
 
-## Customization
-
-To build your own agent, you will need to:
-
-*   Implement your agent's logic, by modifying or replacing `agent_executor.py`
-    and the `AdkAgentToA2AExecutor` class.
-*   Adjust the `agent_name`, `display_name`, and `description` when calling
-    `_register_agent_on_gemini_enterprise` in `main.py`.
-
 ## Manually Register An Agent
 
 If you have an Agent that is already deployed to Agent Engine, you can manually
