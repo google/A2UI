@@ -139,6 +139,7 @@ export const A2uiMessageSchema = z.union([
 
 export const A2uiMessageListSchema = z
   .object({
+    version: z.literal('v0.9'),
     messages: z.array(A2uiMessageSchema).describe('A list of messages.'),
   })
   .strict();
@@ -151,6 +152,7 @@ export type A2uiMessage =
   | DeleteSurfaceMessage;
 
 export declare interface A2uiMessageList extends z.infer<typeof A2uiMessageListSchema> {
+  version: 'v0.9';
   messages: A2uiMessage[];
 }
 

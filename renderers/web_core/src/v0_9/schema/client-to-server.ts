@@ -110,6 +110,7 @@ export const A2uiClientMessageSchema = z
 
 export const A2uiClientMessageListSchema = z
   .object({
+    version: z.literal('v0.9'),
     messages: z.array(A2uiClientMessageSchema).describe('A list of client messages.'),
   })
   .strict();
@@ -133,6 +134,7 @@ export type A2uiClientMessage = z.infer<typeof A2uiClientMessageSchema>;
 export type A2uiClientDataModel = z.infer<typeof A2uiClientDataModelSchema>;
 
 export declare interface A2uiClientMessageList extends z.infer<typeof A2uiClientMessageListSchema> {
+  version: 'v0.9';
   messages: A2uiClientMessage[];
 }
 
