@@ -643,7 +643,7 @@ describe('MessageProcessor', () => {
     }, /Surface not found for message: unknown-s/);
   });
 
-  describe('processPayload', () => {
+  describe('processMessageList', () => {
     it('processes a list of messages', () => {
       processor.processMessageList({
         messages: [
