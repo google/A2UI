@@ -147,7 +147,8 @@ fadapter-->core;
 
 ### A2UI message
 
-A message from agent to a UI application, that instructs it to perform a set of surface operations.
+A message between agent and renderer.
+
 As the protocol allows streaming, any message can be finished (completely delivered) or not finished (partially delivered). A finished message may be completed (successfully delivered) or interrupted (delivery stopped because of some technical issues).
 
 ### Data model
