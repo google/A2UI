@@ -108,13 +108,6 @@ export const A2uiClientMessageSchema = z
     ]),
   );
 
-export const A2uiClientMessageListSchema = z
-  .object({
-    version: z.literal('v0.9'),
-    messages: z.array(A2uiClientMessageSchema).describe('A list of client messages.'),
-  })
-  .strict();
-
 /**
  * Schema for the client data model synchronization.
  * Matches specification/v0_9/json/client_data_model.json.
@@ -133,9 +126,14 @@ export type A2uiClientError = z.infer<typeof A2uiClientErrorSchema>;
 export type A2uiClientMessage = z.infer<typeof A2uiClientMessageSchema>;
 export type A2uiClientDataModel = z.infer<typeof A2uiClientDataModelSchema>;
 
+export const A2uiClientMessageListSchema = z
+  .object({
+    version: z.literal('v0.9'),
+    messages: z.array(A2uiClientMessageSchema).describe('A list of client messages.'),
+  })
+  .strict();
+
 export declare interface A2uiClientMessageList extends z.infer<typeof A2uiClientMessageListSchema> {
   version: 'v0.9';
   messages: A2uiClientMessage[];
 }
-
-export type A2uiClientPayload = A2uiClientMessage | A2uiClientMessageList;
