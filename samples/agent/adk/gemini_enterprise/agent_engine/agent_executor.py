@@ -51,12 +51,8 @@ class ContactAgentExecutor(AgentExecutor):
     ui_event_part = None
     action = None
 
-    logger.info(
-        f"--- Client requested extensions: {context.requested_extensions} ---"
-    )
-    active_ui_version = try_activate_a2ui_extension(
-        context, self._agent.agent_card
-    )
+    logger.info(f"--- Client requested extensions: {context.requested_extensions} ---")
+    active_ui_version = try_activate_a2ui_extension(context, self._agent.agent_card)
 
     if active_ui_version:
       logger.info(
@@ -65,8 +61,7 @@ class ContactAgentExecutor(AgentExecutor):
       )
     else:
       logger.info(
-          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text"
-          " runner. ---"
+          "--- AGENT_EXECUTOR: A2UI extension is not active. Using text runner. ---"
       )
 
     if context.message and context.message.parts:
