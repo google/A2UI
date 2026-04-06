@@ -644,19 +644,8 @@ describe('MessageProcessor', () => {
   });
 
   describe('processPayload', () => {
-    it('processes a single message', () => {
-      processor.processPayload({
-        version: 'v0.9',
-        createSurface: {
-          surfaceId: 's1',
-          catalogId: 'test-catalog',
-        },
-      });
-      assert.ok(processor.model.getSurface('s1'));
-    });
-
     it('processes a list of messages', () => {
-      processor.processPayload({
+      processor.processMessageList({
         messages: [
           {
             version: 'v0.9',

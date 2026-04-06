@@ -234,16 +234,12 @@ export class MessageProcessor<T extends ComponentApi> {
   }
 
   /**
-   * Processes an A2UI payload which can be a single message or a list of messages.
+   * Processes an A2UI message list.
    *
-   * @param payload The payload to process.
+   * @param messageList The message list to process.
    */
-  processPayload(payload: A2uiMessage | A2uiMessageList): void {
-    if ('messages' in payload && Array.isArray(payload.messages)) {
-      this.processMessages(payload.messages);
-    } else {
-      this.processMessage(payload as A2uiMessage);
-    }
+  processMessageList(messageList: A2uiMessageList): void {
+    this.processMessages(messageList.messages);
   }
 
   private processMessage(message: A2uiMessage): void {
