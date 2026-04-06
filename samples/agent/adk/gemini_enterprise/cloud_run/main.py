@@ -1,10 +1,10 @@
-# Copyright 2026 Google LLC
+# Copyright 2025 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#      https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,38 +12,50 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Main entry point for the A2A A2UI sample agent."""
-
+import logging
 import os
 
-import dotenv
+from a2a.server.apps import A2AStarletteApplication
+from a2a.server.request_handlers import DefaultRequestHandler
+from a2a.server.tasks import InMemoryTaskStore
+from agent import ContactAgent
+from agent_executor import ContactAgentExecutor
+from dotenv import load_dotenv
 import uvicorn
-from a2a.server import tasks
-from a2a.server.apps.jsonrpc import starlette_app
-from a2a.server.request_handlers import default_request_handler
-from agent_executor import AdkAgentToA2AExecutor
-from gemini_agent import GeminiAgent
 
-dotenv.load_dotenv()
+load_dotenv()
 
-# The URL of your deployed Cloud Function.
-# It's best to set this as an environment variable in your deployment.
-AGENT_URL = os.environ.get("AGENT_URL", "http://127.0.0.1:8000")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# 1. Create the AgentCard, RequestHandler, and App at the global scope.
-agent = GeminiAgent()
-agent_card = agent.create_agent_card(AGENT_URL)
 
-request_handler = default_request_handler.DefaultRequestHandler(
-    agent_executor=AdkAgentToA2AExecutor(),
-    task_store=tasks.InMemoryTaskStore(),
-)
+def serve():
+  """Starts the A2UI server."""
 
-# 2. The Functions Framework will automatically look for this 'app' variable.
-app = starlette_app.A2AStarletteApplication(
-    agent_card=agent_card,
-    http_handler=request_handler,
-).build()
+  try:
+    host = "0.0.0.0"
+    port = int(os.environ.get("PORT", 8080))
+    base_url = f"http://{host}:{port}"
+
+    agent = ContactAgent(base_url=base_url)
+    agent_executor = ContactAgentExecutor(agent=agent)
+    request_handler = DefaultRequestHandler(
+        agent_executor=agent_executor,
+        task_store=InMemoryTaskStore(),
+    )
+    server = A2AStarletteApplication(
+        agent_card=agent.agent_card, http_handler=request_handler
+    )
+
+    app = server.build()
+
+    print(f"Running server on {host}:{port}")
+    uvicorn.run(app, host=host, port=port)
+
+  except Exception as e:
+    logger.error(f"An error occurred during server startup: {e}")
+    exit(1)
+
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+  serve()

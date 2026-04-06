@@ -102,18 +102,19 @@ NOTE: if you already have an agent that is deployed to Agent Engine, skip to
 
 1.  **Copy `.env.example`:** Duplicate the `.env.example` file and rename it to
     `.env`.
-    -   `cd /path/to/a2ui_on_agentengine`
+    -   `cd /path/to/agent_engine`
     -   `cp .env.example .env`
 2.  **Fill `.env`:** Update the `.env` file with your specific Google Cloud
     project details:
     *   `PROJECT_ID`: Your Google Cloud Project ID.
-    *   `LOCATION`: The Google Cloud region you want to deploy the agent in (e.g.,
-        `us-central1`). This location is **not** the same as the *location* used
-        in the command above.
+    *   `LOCATION`: The Google Cloud region you want to deploy the agent in
+        (e.g., `us-central1`). This location is **not** the same as the
+        *location* used in the command above.
     *   `STORAGE_BUCKET`: A Google Cloud Storage bucket name for staging. It
         starts with **"gs://"**.
     *   `GEMINI_ENTERPRISE_APP_ID`: Your Gemini Enterprise Application ID. You
-        can create a new App or use an existing one on Google Cloud Gemini Enterprise.
+        can create a new App or use an existing one on Google Cloud Gemini
+        Enterprise.
     *   `AGENT_AUTHORIZATION`: the value **AGENT_AUTHORIZATION** obtained above.
 
 ## Running the Script
@@ -130,14 +131,14 @@ The `main.py` script performs the following actions:
 To run the script using `uv`:
 
 1.  **Navigate to the script directory:**
-    -   `cd /path/to/a2ui_on_agentengine`
+    -   `cd /path/to/agent_engine`
 2.  **Create and activate a virtual environment:**
-    -   `uv venv source`
-    -   `.venv/bin/activate`
+    -   `uv venv`
+    -   `source .venv/bin/activate`
 3.  **Install dependencies:**
     -   `uv sync`
 4.  **Run the script:**
-    -   `uv run main.py`
+    -   `uv run deploy.py`
     -   It may take 5-10 minutes to finish.
 
 ## Customization
@@ -183,7 +184,7 @@ register it on Gemini Enterprise without running "main.py" script.
       ],
       "version": "1.0.0",
       "capabilities": {
-        "streaming": false,
+        "streaming": true,
         "extensions": [
           {
             "uri": "https://a2ui.org/a2a-extension/a2ui/v0.8",
@@ -212,9 +213,9 @@ register it on Gemini Enterprise without running "main.py" script.
     Replace **LOCATION** and **RESOURCE_NAME**.
 
     -   LOCATION is where you deploy your agent. For example; us-central1.
-    -   RESOURCE_NAME can be found on Google Cloud **Agent Engine**: click the agent;
-        click **Service Configuration**; select **Deployment details**; copy
-        **Resource name**.
+    -   RESOURCE_NAME can be found on Google Cloud **Agent Engine**: click the
+        agent; click **Service Configuration**; select **Deployment details**;
+        copy **Resource name**.
 
     Update *name*, *description*, *skills*, *version* as needed. Leave other
     values unchanged.
@@ -232,7 +233,8 @@ register it on Gemini Enterprise without running "main.py" script.
 
 ## Test Your Agent
 
-1.  Open Google Cloud Console and search for **"Gemini Enterprise"** and click on it.
+1.  Open Google Cloud Console and search for **"Gemini Enterprise"** and click
+    on it.
 2.  Open the project you used in the above setting.
 3.  Click on the **App** you used to register your agent.
     -   If you don't see your app being listed, click **"Edit"** to switch
