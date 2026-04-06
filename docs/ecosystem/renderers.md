@@ -16,7 +16,7 @@ Community and third-party A2UI renderer implementations.
 | **@zhama/a2ui** | React (Web) | ✅ | ❌ | — | [npm](https://www.npmjs.com/package/@zhama/a2ui) |
 | **A2UI-react** | React (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/jem-computer/A2UI-react?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/jem-computer/A2UI-react?style=flat-square&label=updated) | [GitHub](https://github.com/jem-computer/A2UI-react) |
 | **a2ui-swiftui** | SwiftUI (iOS, iPadOS, macOS, tvOS, watchOS, visionOS) | ✅ | ✅ | ![Stars](https://img.shields.io/github/stars/BBC6BAE9/a2ui-swiftui?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/BBC6BAE9/a2ui-swiftui?style=flat-square&label=updated) | [GitHub](https://github.com/BBC6BAE9/a2ui-swiftui) |
-
+| **a2ui-vue** | Vue (Web) | ✅ | ❌ | ![Stars](https://img.shields.io/github/stars/shawnwang15/a2ui-vue?style=flat-square&label=⭐) ![Last commit](https://img.shields.io/github/last-commit/shawnwang15/a2ui-vue?style=flat-square&label=updated) | [GitHub](https://github.com/shawnwang15/a2ui-vue)· [npm](https://www.npmjs.com/package/a2ui-vue) · [Docs](https://shawnwang15.github.io/a2ui-vue/en/) |
 ### Notable Mentions
 
 These projects are early-stage or experimental:
