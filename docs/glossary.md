@@ -134,6 +134,10 @@ As the protocol allows streaming, any message can be finished (completely delive
 
 See [data flow](https://github.com/google/A2UI/blob/main/docs/concepts/data-flow.md).
 
+### Agent turn
+
+Set of messages sent by agent, before it starts waiting for user input.
+
 ### Data model
 
 Observable, hierarchical, JSON-like object, shared between renderer and agent and updatable by both. Each Surface has a separate Data Model.
