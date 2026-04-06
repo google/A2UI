@@ -4,10 +4,10 @@ Customize the look and feel of A2UI components to match your brand.
 
 ## The A2UI Styling Philosophy
 
-A2UI follows a **client-controlled styling** approach:
+A2UI follows a **renderer-controlled styling** approach:
 
 - **Agents describe *what* to show** (components and structure)
-- **Clients decide *how* it looks** (colors, fonts, spacing)
+- **Renderers decide *how* it looks** (colors, fonts, spacing)
 
 This ensures:
 
@@ -32,7 +32,7 @@ flowchart TD
 
 ## Layer 1: Semantic Hints
 
-Agents provide semantic hints (not visual styles) to guide client rendering:
+Agents provide semantic hints (not visual styles) to guide rendering:
 
 ```json
 {
