@@ -1,35 +1,5 @@
 # Glossary
 
-## Generative UI terms
-
-Terms, not required by A2UI protocol, but commonly used in the context of generative UI.
-
-### Known patterns of GenUI
-
-- **Chat**:
-
-  Pieces of generated UI appear one by one, sorted by time, in a vertically scrollable area, mixed with user input.
-
-- **Canvas**:
-
-  Space for free collaboration.
-
-- **Dashboard**:
-
-  Pieces of generated UI are organized not by time, but by their meaning and stay reliably (a.k.a. pinned) where the user expects to see them.
-
-- **Wizard**:
-
-  Pieces of generated UI are shown one by one, with the goal to collect necessary information for a certain task.
-
-### NoAI information
-
-Information, categorized as **not accessible by AI** (for example, credit card information).
-
-Which information should not be accessible by AI is defined by owners of the application and it is **different in different contexts**. For example, in some contexts medical history should never go to AI, while in others AI is heavily used to help with medical diagnostics and thus needs medical history.
-
-This term is important in GenUI context, because end users want to **clearly see** what their input is allowed to go to AI and which is not allowed.
-
 ## A2UI protocol terms
 
 Terms, required by A2UI protocol.
@@ -78,6 +48,8 @@ It is observed that depending on use case, catalog components may be more or les
 ### Basic Catalog
 
 A catalog maintained by the A2UI team to get up and running quickly with A2UI.
+
+See [basic catalog](https://github.com/google/A2UI/blob/main/specification/v0_10/json/basic_catalog.json).
 
 ### Surface
 
@@ -162,6 +134,8 @@ A message between agent and renderer.
 
 As the protocol allows streaming, any message can be finished (completely delivered) or not finished (partially delivered). A finished message may be completed (successfully delivered) or interrupted (delivery stopped because of some technical issues).
 
+See [data flow](https://github.com/google/A2UI/blob/main/docs/concepts/data-flow.md).
+
 ### Data model
 
 Observable, hierarchical, JSON-like object, shared between renderer and agent and updatable by both. Each Surface has a separate Data Model.
@@ -170,9 +144,13 @@ Components can be bound to nodes of the data model, in order to auto-update when
 
 Data model allows bidirectional synchronization by capturing user interactions into a state object for transmission to the agent, while also allowing agent to push data updates back to the UI.
 
+See [data binding](https://github.com/google/A2UI/blob/main/docs/concepts/data-binding.md).
+
 ### Data reference
 
-A reference to a data element, resolvable either by path in the data model or by value.
+In component definition, a reference to a data element, resolvable either by path in the data model or by value.
+
+See [example in basic catalog](https://github.com/google/A2UI/blob/db1fbe726b8d464f8f8493d9991cf0c6e4f8499d/specification/v0_10/json/basic_catalog.json#L18).
 
 ### Client function
 
@@ -188,6 +166,8 @@ Do not confuse with LLM tool:
 | Definition   | Registered in client side function registry and advertised in catalog | Defined in ToolDefinition (passed to LLM)                                         |
 | State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, databases, and services |
 
+See [example](https://github.com/google/A2UI/blob/main/specification/v0_9/json/common_types.json#L200).
+
 ### Action
 
 A string that explains to the AI what should be done.
@@ -195,3 +175,33 @@ A string that explains to the AI what should be done.
 It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).
 
 See [detailed guide on actions](https://github.com/google/A2UI/blob/main/docs/concepts/client_to_server_actions.md).
+
+## Generative UI terms
+
+Terms, not required by A2UI protocol, but commonly used in the context of generative UI.
+
+### Known patterns of GenUI
+
+- **Chat**:
+
+  Pieces of generated UI appear one by one, sorted by time, in a vertically scrollable area, mixed with user input.
+
+- **Canvas**:
+
+  Space for collaboration with an agent.
+
+- **Dashboard**:
+
+  Pieces of generated UI are organized not by time, but by their meaning and stay reliably (a.k.a. pinned) where the user expects to see them.
+
+- **Wizard**:
+
+  Pieces of generated UI are shown one by one, with the goal to collect necessary information for a certain task.
+
+### NoAI information
+
+Information, categorized as **not accessible by AI** (for example, credit card information).
+
+Which information should not be accessible by AI is defined by owners of the application and it is **different in different contexts**. For example, in some contexts medical history should never go to AI, while in others AI is heavily used to help with medical diagnostics and thus needs medical history.
+
+This term is important in GenUI context, because end users want to **clearly see** what their input is allowed to go to AI and which is not allowed.
