@@ -45,7 +45,7 @@ The A2UI protocol enables conversation between **agent** and **renderer**:
 
 ![agent and renderer](assets/agent-and-renderer.png)
 
-While the protocol is designed for **AI-empowered agents**, it can work with deterministic agents as well. For example, an agent that tests the renderer, may be noAI-agent.
+While the protocol is designed for **AI-empowered agents**, it can work with deterministic agents as well. For example, an agent may return a pre-canned A2UI UI.
 
 In case the agent is stateless or does not guarantee to preserve the catalog, the renderer should provide the catalog with every message.
 
@@ -107,6 +107,10 @@ There are options for A2UI agent:
 - **Stateful / stateless**:
 
   Agents can preserve state or be stateless.
+
+- **Mixed with other protocols**:
+
+  A2UI can be used in combination with other protocols. For example, an agent may be an MCP and/or A2A server.
 
 - **Something else**:
 
