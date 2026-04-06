@@ -266,6 +266,22 @@ class A2uiValidator:
 
     return Draft202012Validator(validator_schema, registry=registry)
 
+  def _format_error(self, error: Any, level: int = 0) -> str:
+    """Recursively formats a jsonschema ValidationError."""
+    indent = "  " * level
+    path = " -> ".join(str(p) for p in error.path)
+    path_prefix = f"At '{path}': " if path else ""
+    
+    is_generic = "is not valid under any of the given schemas" in error.message or "is valid under each of" in error.message
+    
+    if is_generic and error.context:
+      msg = f"{indent}{path_prefix}Failed to match any valid schema:"
+      for sub_error in error.context:
+        msg += "\n" + self._format_error(sub_error, level + 1)
+      return msg
+    else:
+      return f"{indent}{path_prefix}{error.message}"
+
   def validate(
       self,
       a2ui_json: Union[Dict[str, Any], List[Any]],
@@ -285,12 +301,9 @@ class A2uiValidator:
     # Basic schema validation
     errors = list(self._validator.iter_errors(messages))
     if errors:
-      error = errors[0]
-      msg = f"Validation failed: {error.message}"
-      if error.context:
-        msg += "\nContext failures:"
-        for sub_error in error.context:
-          msg += f"\n  - {sub_error.message}"
+      msg = "Validation failed:\n" + "\n".join(
+          self._format_error(err) for err in errors
+      )
       raise ValueError(msg)
 
     for message in messages:
