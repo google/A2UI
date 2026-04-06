@@ -1,17 +1,17 @@
-# A2UI Client-to-Server Actions
+# A2UI Renderer-to-Agent Actions
 
-Interactivity in A2UI relies on a bidirectional communication loop. While the Agent drives the UI by streaming component and data updates, the Client communicates user intent back to the Agent through **Actions** and **Data Model Synchronization**.
+Interactivity in A2UI relies on a bidirectional communication loop. While the Agent drives the UI by streaming component and data updates, the Renderer communicates user intent back to the Agent through **Actions** and **Data Model Synchronization**.
 
 ## Action Architecture
 
 Actions allow UI components to trigger behavior. They are defined in the `Action` schema in [`common_types.json`](../specification/v0_9/json/common_types.json) and come in two flavors:
 
-1.  **Server Events**: Dispatched to the Agent for processing (e.g., clicking "Submit").
-2.  **Local Function Calls**: Executed entirely on the client (e.g., opening a URL).
+1.  **Agent Events**: Dispatched to the Agent for processing (e.g., clicking "Submit").
+2.  **Local Function Calls**: Executed entirely on the renderer (e.g., opening a URL).
 
 ### Action Wiring in Schema
 
-Components like `Button` expose an `action` property. Here is how a server event is wired:
+Components like `Button` expose an `action` property. Here is how an agent event is wired:
 
 ```json
 {
@@ -36,9 +36,9 @@ Components like `Button` expose an `action` property. Here is how a server event
 > [!NOTE]
 > **Context vs. Data Model**: While the Data Model represents the entire state tree of a surface, the `context` in an action is effectively a hand-picked **"view"** or subset of that state. This simplifies the Agent's job by providing exactly the values needed for a specific event, without requiring the Agent to navigate a potentially large and complex data model.
 
-### Local Actions vs. Server Events
+### Local Actions vs. Agent Events
 
-While Server Events are the primary way to interact with an agent, **Local Actions** allow for immediate client-side behavior without a network round-trip. This is essential for responsive UI patterns.
+While Agent Events are the primary way to interact with an agent, **Local Actions** allow for immediate renderer-side behavior without a network round-trip. This is essential for responsive UI patterns.
 
 ```json
 {
@@ -56,14 +56,14 @@ While Server Events are the primary way to interact with an agent, **Local Actio
 
 Common uses for Local Actions include:
 
-- **Validation**: Validating inputs for a form before submitting it to the server.
+- **Validation**: Validating inputs for a form before submitting it to the agent.
 - **Formatting**: Using `formatString` to format a local display value.
 
 ### Basic Catalog Action Validation (Checks)
 
-The basic catalog defines a limited set of checks that can be performed on the client. Interactive components can define a list of `checks` (using the `Checkable` schema in [`common_types.json`](../specification/v0_9/json/common_types.json)). For a `Button`, if any check fails, the button is **automatically disabled** on the client.
+The basic catalog defines a limited set of checks that can be performed on the renderer. Interactive components can define a list of `checks` (using the `Checkable` schema in [`common_types.json`](../specification/v0_9/json/common_types.json)). For a `Button`, if any check fails, the button is **automatically disabled** on the renderer.
 
-- **UX Focus**: Action checks are designed to manage **UI State (User Experience)** by preventing invalid interactions before they happen. They are not a replacement for **Data Integrity** checks, which must still be performed on the server.
+- **UX Focus**: Action checks are designed to manage **UI State (User Experience)** by preventing invalid interactions before they happen. They are not a replacement for **Data Integrity** checks, which must still be performed on the agent.
 
 This allows the UI to enforce requirements (like a non-empty field) before the user even tries to submit.
 
@@ -87,12 +87,12 @@ This allows the UI to enforce requirements (like a non-empty field) before the u
 
 ## Local State Updates & The "Write" Contract
 
-Before an action is even dispatched, the client is already managing the state of the UI locally. A2UI defines a **Read/Write Contract** for all input components (like `TextField`, `CheckBox`, or `Slider`).
+Before an action is even dispatched, the renderer is already managing the state of the UI locally. A2UI defines a **Read/Write Contract** for all input components (like `TextField`, `CheckBox`, or `Slider`).
 
 1.  **Read (Model → View)**: When a component renders, it pulls its value from the bound `path` in the Data Model.
-2.  **Write (View → Model)**: As soon as a user interacts (e.g., typing a character or clicking a checkbox), the client **immediately** writes the new value into the local Data Model.
+2.  **Write (View → Model)**: As soon as a user interacts (e.g., typing a character or clicking a checkbox), the renderer **immediately** writes the new value into the local Data Model.
 
-This means the local model is **always** the source of truth for the UI's current state. This "View-to-Model" synchronization happens purely on the client. Only when a User Action (like a Button click) is triggered is this state synchronized back to the server.
+This means the local model is **always** the source of truth for the UI's current state. This "View-to-Model" synchronization happens purely on the renderer. Only when a User Action (like a Button click) is triggered is this state synchronized back to the agent.
 
 > [!IMPORTANT]
 > **Synchronous Updates**: Local model updates are **synchronous**. This guarantees that the Data Model is fully updated before any Action resolves its `context` paths or a `DataModelSync` payload is packaged. There are no race conditions between typing and clicking; the "Write" is always committed first.
@@ -105,7 +105,7 @@ This separation allows for a robust form submission pattern:
 
 - **Binding**: A `TextField` is bound to `/reservationTime`.
 - **Interaction**: The user types "7:00 PM". The local model at `/reservationTime` is updated instantly.
-- **Submission**: The user clicks a "Book" button. The button's action resolves the `path: "/reservationTime"` from the local model and sends the current value to the server.
+- **Submission**: The user clicks a "Book" button. The button's action resolves the `path: "/reservationTime"` from the local model and sends the current value to the agent.
 
 ## User Interaction Flow
 

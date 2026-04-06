@@ -172,7 +172,7 @@ A string that explains to the agent what should be done.
 
 It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).
 
-See [detailed guide on actions](https://github.com/google/A2UI/blob/main/docs/concepts/client_to_server_actions.md).
+See [detailed guide on actions](https://github.com/google/A2UI/blob/main/docs/concepts/actions.md).
 
 ## Generative UI terms
 
