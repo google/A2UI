@@ -27,7 +27,7 @@ logger = logging.getLogger("a2ui-in-mcp-apps-server")
 
 # Global counter state
 COUNTER = 0
-
+A2UI_MIME_TYPE = "application/json+a2ui"
 
 @click.command()
 @click.option("--port", default=8000, help="Port to listen on for SSE")
@@ -128,7 +128,7 @@ def main(port: int, transport: str) -> int:
                         type="resource",
                         resource=types.TextResourceContents(
                             uri="a2ui://ping-result",
-                            mimeType="application/json+a2ui",
+                            mimeType=A2UI_MIME_TYPE,
                             text=json.dumps(simple_counter_a2ui_json)
                         )
                     )
@@ -144,7 +144,7 @@ def main(port: int, transport: str) -> int:
                         type="resource",
                         resource=types.TextResourceContents(
                             uri="a2ui://ping-result",
-                            mimeType="application/json+a2ui",
+                            mimeType=A2UI_MIME_TYPE,
                             text=json.dumps([
                                 {
                                     "dataModelUpdate": {

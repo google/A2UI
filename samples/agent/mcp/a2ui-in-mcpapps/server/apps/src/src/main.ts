@@ -21,6 +21,8 @@ import { provideA2UI, MessageProcessor, Surface, DEFAULT_CATALOG, provideMarkdow
 import { renderMarkdown } from '@a2ui/markdown-it';
 import { theme } from './theme';
 
+const A2UI_MIME_TYPE = 'application/json+a2ui';
+
 @Component({
   selector: 'basic-mcp-app',
   standalone: true,
@@ -154,7 +156,7 @@ export class McpAppRoot implements OnInit, AfterViewInit {
   }
 
   private getA2UIMessages(content: any[]): any[] | null {
-      const a2uiResource = content.find((c: any) => c.type === 'resource' && c.resource?.mimeType === 'application/json+a2ui');
+      const a2uiResource = content.find((c: any) => c.type === 'resource' && c.resource?.mimeType === A2UI_MIME_TYPE);
       if (!a2uiResource || !a2uiResource.resource?.text) {
           return null;
       }
