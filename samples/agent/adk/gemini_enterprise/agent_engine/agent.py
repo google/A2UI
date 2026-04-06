@@ -67,11 +67,12 @@ class ContactAgent:
     self._schema_managers: Dict[str, A2uiSchemaManager] = {}
     self._ui_runners: Dict[str, Runner] = {}
 
-    schema_manager = self._build_schema_manager()
     # Gemini Enerprise only supports VERSION_0_8 for now.
-    self._schema_managers[VERSION_0_8] = schema_manager
-    agent = self._build_llm_agent(schema_manager)
-    self._ui_runners[VERSION_0_8] = self._build_runner(agent)
+    for version in [VERSION_0_8]:
+      schema_manager = self._build_schema_manager(version)
+      self._schema_managers[version] = schema_manager
+      agent = self._build_llm_agent(schema_manager)
+      self._ui_runners[version] = self._build_runner(agent)
 
     self._agent_card = self._build_agent_card()
 
@@ -79,15 +80,15 @@ class ContactAgent:
   def agent_card(self) -> AgentCard:
     return self._agent_card
 
-  def _build_schema_manager(self) -> A2uiSchemaManager:
+  def _build_schema_manager(self, version: str) -> A2uiSchemaManager:
     # Gemini Enerprise only supports VERSION_0_8 for now.
     return A2uiSchemaManager(
-        version=VERSION_0_8,
+        version=version,
         catalogs=[
             BasicCatalog.get_config(
-                version=VERSION_0_8,
+                version=version,
                 examples_path=os.path.join(
-                    os.path.dirname(__file__), f"examples/{VERSION_0_8}"
+                    os.path.dirname(__file__), f"examples/{version}"
                 ),
             )
         ],
@@ -163,7 +164,7 @@ class ContactAgent:
             ui_description=UI_DESCRIPTION,
             include_schema=True,
             include_examples=True,
-            validate_examples=False,  # Use invalid examples to test retry logic
+            validate_examples=True,
         )
         if schema_manager
         else get_text_prompt()
