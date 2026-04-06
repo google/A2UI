@@ -104,7 +104,7 @@ Functionality of A2UI renderer consists of layers that can be developed separate
   
   Code that implements the execution of the agent’s instructions in a concrete framework. For example:
   
-  - JavaScript core and catalogs may be adapted to Angular, Electron and Lit frameworks.
+  - JavaScript core and catalogs may be adapted to Angular, Electron, React and Lit frameworks.
   - Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.
 
   See [Angular adapter](https://github.com/google/A2UI/tree/main/renderers/angular/README.md).
