@@ -23,8 +23,7 @@ And, sometimes, an agent is using a predefined catalog, thus forcing the rendere
 
 ### GenUI Component
 
-UI component, allowed for use by AI. Examples: date picker, carousel, button, hotel selector.
-
+UI component, allowed for use by agent. Examples: date picker, carousel, button, hotel selector.
 
 ### Catalog
 
@@ -43,7 +42,6 @@ It is observed that depending on use case, catalog components may be more or les
 - **More specific**:
 
   Components like HotelCheckout or FlightSelector.
-
 
 ### Basic Catalog
 
@@ -154,7 +152,7 @@ See [example in basic catalog](https://github.com/google/A2UI/blob/db1fbe726b8d4
 
 ### Client function
 
-A function provided for AI to invoke when needed.
+A function provided for agent to invoke when needed.
 
 Do not confuse with LLM tool:
 
@@ -170,7 +168,7 @@ See [example](https://github.com/google/A2UI/blob/main/specification/v0_9/json/c
 
 ### Action
 
-A string that explains to the AI what should be done.
+A string that explains to the agent what should be done.
 
 It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).
 
@@ -204,4 +202,4 @@ Information, categorized as **not accessible by AI** (for example, credit card i
 
 Which information should not be accessible by AI is defined by owners of the application and it is **different in different contexts**. For example, in some contexts medical history should never go to AI, while in others AI is heavily used to help with medical diagnostics and thus needs medical history.
 
-This term is important in GenUI context, because end users want to **clearly see** what their input is allowed to go to AI and which is not allowed.
+This term is important in the GenUI context, because end users want to **clearly see** what their input is allowed to go to the AI and what is not allowed.
