@@ -88,13 +88,11 @@ which consists of a number of components. Surfaces cannot nest.
 
 There are options for A2UI agent:
 
-- **Same-process agent**:
+- **Same-process or server-side**:
 
-  Agent and renderer reside in one process of a client side application. Example: desktop Flutter application.
+  Agent and renderer may reside in one process of a client side application. Example: desktop Flutter application.
 
-- **Server-side agent**:
-
-  Renderer resides on the box that displays UI, and agent resides on another box (server).
+  Or, renderer may reside on the box that displays UI, and agent may reside on another box (server).
 
 - **Orchestrator agent**:
 
