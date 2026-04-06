@@ -5,14 +5,15 @@
   "description": "A list of A2UI Server-to-Client messages.",
   "type": "object",
   "properties": {
-    "items": {
+    "messages": {
       "type": "array",
       "items": {
         "$ref": "server_to_client.json"
       }
     }
   },
+  "additionalProperties": false,
   "required": [
-    "items"
+    "messages"
   ]
 }
