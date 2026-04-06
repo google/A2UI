@@ -643,6 +643,42 @@ describe('MessageProcessor', () => {
     }, /Surface not found for message: unknown-s/);
   });
 
+  describe('processPayload', () => {
+    it('processes a single message', () => {
+      processor.processPayload({
+        version: 'v0.9',
+        createSurface: {
+          surfaceId: 's1',
+          catalogId: 'test-catalog',
+        },
+      });
+      assert.ok(processor.model.getSurface('s1'));
+    });
+
+    it('processes a list of messages', () => {
+      processor.processPayload({
+        messages: [
+          {
+            version: 'v0.9',
+            createSurface: {
+              surfaceId: 's1',
+              catalogId: 'test-catalog',
+            },
+          },
+          {
+            version: 'v0.9',
+            createSurface: {
+              surfaceId: 's2',
+              catalogId: 'test-catalog',
+            },
+          },
+        ],
+      });
+      assert.ok(processor.model.getSurface('s1'));
+      assert.ok(processor.model.getSurface('s2'));
+    });
+  });
+
   it('resolves paths correctly via resolvePath', () => {
     assert.strictEqual(processor.resolvePath('/foo', '/bar'), '/foo');
     assert.strictEqual(processor.resolvePath('foo', '/bar'), '/bar/foo');

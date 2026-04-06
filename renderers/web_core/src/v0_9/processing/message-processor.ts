@@ -27,6 +27,7 @@ import {
   UpdateComponentsMessage,
   UpdateDataModelMessage,
   DeleteSurfaceMessage,
+  A2uiMessageList,
 } from '../schema/server-to-client.js';
 import {
   A2uiClientCapabilities,
@@ -229,6 +230,19 @@ export class MessageProcessor<T extends ComponentApi> {
   processMessages(messages: A2uiMessage[]): void {
     for (const message of messages) {
       this.processMessage(message);
+    }
+  }
+
+  /**
+   * Processes an A2UI payload which can be a single message or a list of messages.
+   *
+   * @param payload The payload to process.
+   */
+  processPayload(payload: A2uiMessage | A2uiMessageList): void {
+    if ('messages' in payload && Array.isArray(payload.messages)) {
+      this.processMessages(payload.messages);
+    } else {
+      this.processMessage(payload as A2uiMessage);
     }
   }
 

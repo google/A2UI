@@ -137,9 +137,22 @@ export const A2uiMessageSchema = z.union([
   DeleteSurfaceMessageSchema,
 ]);
 
+export const A2uiMessageListSchema = z
+  .object({
+    messages: z.array(A2uiMessageSchema).describe('A list of messages.'),
+  })
+  .strict();
+
 /** A message sent from the A2UI server to the client. */
 export type A2uiMessage =
   | CreateSurfaceMessage
   | UpdateComponentsMessage
   | UpdateDataModelMessage
   | DeleteSurfaceMessage;
+
+export declare interface A2uiMessageList extends z.infer<typeof A2uiMessageListSchema> {
+  messages: A2uiMessage[];
+}
+
+export type A2uiPayload = A2uiMessage | A2uiMessageList;
+
