@@ -122,20 +122,31 @@ Functionality of A2UI renderer consists of layers that can be developed separate
   
   Set of primitives, needed to describe catalog and to interact with the agent.
 
+  Fore example, [JavaScript web core library](https://github.com/google/A2UI/tree/main/renderers/web_core/README.md).
+
 - **Catalog Schema**:
   
   Definition of catalog in the form of JSON.
 
+  For example, [basic catalog schema](https://github.com/google/A2UI/tree/main/specification/v0_10/json/basic_catalog.json).
+
 - **Framework adapter**:
   
-  Code that implements the execution of the agent’s instructions in a concrete framework.
-  For example:
-  JavaScript core and catalogs may be adapted to Angular, Electron and Lit frameworks.
-  Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.
+  Code that implements the execution of the agent’s instructions in a concrete framework. For example:
+  
+  - JavaScript core and catalogs may be adapted to Angular, Electron and Lit frameworks.
+  - Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.
+
+  See [Angular adapter](https://github.com/google/A2UI/tree/main/renderers/angular/README.md).
 
 - **Catalog Implementation**:
   
-  Implementation of the catalog schema for the selected framework.
+  Implementation of the catalog schema for a framework.
+
+  For example:
+  
+  - [Angular implementation of basic catalog](https://github.com/google/A2UI/blob/main/renderers/angular/src/v0_9/catalog/basic)
+  
 
 ```mermaid
 flowchart TD;
@@ -180,7 +191,7 @@ Do not confuse with LLM tool:
 ### Action
 
 A string that explains to the AI what should be done.
+
 It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).
 
-
-
+See [detailed guide on actions](https://github.com/google/A2UI/blob/main/docs/concepts/client_to_server_actions.md).
