@@ -233,6 +233,7 @@ export class MessageProcessor<T extends ComponentApi> {
   }
 
   private processMessage(message: A2uiMessage): void {
+    console.log('[MessageProcessor] processMessage:', message);
     const updateTypes = [
       'createSurface',
       'updateComponents',
@@ -278,7 +279,7 @@ export class MessageProcessor<T extends ComponentApi> {
     }
 
     if (this.model.getSurface(surfaceId)) {
-      throw new A2uiStateError(`Surface ${surfaceId} already exists.`);
+      throw new A2uiStateError(`Surface ${surfaceId} already exists`);
     }
 
     const surface = new SurfaceModel<T>(
@@ -353,7 +354,9 @@ export class MessageProcessor<T extends ComponentApi> {
 
     const path = payload.path || '/';
     const value = payload.value;
+    console.log(`[MessageProcessor] Updating data model for surface ${payload.surfaceId} at path ${path} with value:`, value);
     surface.dataModel.set(path, value);
+    console.log(`[MessageProcessor] Data model updated. New value at path ${path}:`, surface.dataModel.get(path));
   }
 
   /**

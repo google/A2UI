@@ -290,11 +290,11 @@ export class GenericBinder<T> {
           const bound = this.context.dataContext.subscribeDynamicValue(
             {path: value.path},
             newVal => {
-              const arr = Array.isArray(newVal) ? newVal : [];
+              const keys = Array.isArray(newVal) ? newVal.map((_, i) => String(i)) : (typeof newVal === 'object' && newVal !== null ? Object.keys(newVal) : []);
               const listContext = this.context.dataContext.nested(value.path);
-              const resolvedChildren = arr.map((_, i) => ({
+              const resolvedChildren = keys.map((key) => ({
                 id: value.componentId,
-                basePath: listContext.nested(String(i)).path,
+                basePath: listContext.nested(key).path,
               }));
               this.updateDeepValue(path, resolvedChildren);
               this.notify();
@@ -307,11 +307,12 @@ export class GenericBinder<T> {
             bound.unsubscribe();
           }
 
-          const currentArr = Array.isArray(bound.value) ? bound.value : [];
+          const currentVal = bound.value;
+          const keys = Array.isArray(currentVal) ? currentVal.map((_, i) => String(i)) : (typeof currentVal === 'object' && currentVal !== null ? Object.keys(currentVal) : []);
           const listContext = this.context.dataContext.nested(value.path);
-          return currentArr.map((_, i) => ({
+          return keys.map((key) => ({
             id: value.componentId,
-            basePath: listContext.nested(String(i)).path,
+            basePath: listContext.nested(key).path,
           }));
         }
         return value;
