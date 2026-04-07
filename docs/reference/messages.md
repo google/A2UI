@@ -248,6 +248,7 @@ Add or update components within a surface.
 
     ### Usage Notes
 
+    Keep these usage notes in mind:
     - One component must be designated as the `root` in the `beginRendering` message to serve as the tree root.
     - Components form an adjacency list (flat structure with ID references).
     - Sending a component with an existing ID updates that component.
@@ -362,6 +363,7 @@ Add or update components within a surface.
 
     ### Usage Notes
 
+    Keep these usage notes in mind:
     - One component must have `"id": "root"` to serve as the tree root (convention, not a separate message field).
     - Component type is a string (`"component": "Text"`) instead of a wrapper object.
     - Properties are flat on the component object (no nesting under type key).
@@ -455,6 +457,7 @@ Update the data model that components bind to.
 
     ### Usage Notes
 
+    Keep these usage notes in mind:
     - Data model is per-surface.
     - Components automatically re-render when their bound data changes.
     - Prefer granular updates to specific paths over replacing the entire model.
@@ -520,6 +523,7 @@ Update the data model that components bind to.
 
     ### Usage Notes
 
+    Keep these usage notes in mind:
     - v0.9 uses standard JSON Pointer paths and plain JSON values — no typed wrappers.
     - `path` defaults to `"/"` (root) if omitted.
     - `value` can be any JSON type (string, number, boolean, object, array, null). Omit to delete.
@@ -586,18 +590,21 @@ Remove a surface and all its components and data.
 
 ### Usage Notes
 
-- Removes all components associated with the surface
-- Clears the data model for the surface
-- Client should remove the surface from the UI
-- Safe to delete non-existent surface (no-op)
-- Use when closing modals, dialogs, or navigating away
-- Identical structure in both versions (v0.9 just adds the `version` field)
+Keep these usage notes in mind:
+- Removes all components associated with the surface.
+- Clears the data model for the surface.
+- Client should remove the surface from the UI.
+- Safe to delete non-existent surface (no-op).
+- Use when closing modals, dialogs, or navigating away.
+- Identical structure in both versions (v0.9 just adds the `version` field).
 
 ---
 
 ## Message Ordering
 
 ### Requirements
+
+Message ordering must satisfy the following requirements:
 
 1. `beginRendering` must come after the initial `surfaceUpdate` messages for that surface.
 2. `surfaceUpdate` can come before or after `dataModelUpdate`.
@@ -649,15 +656,15 @@ Remove a surface and all its components and data.
 
     Validate against:
 
-    - **[server_to_client.json](https://a2ui.org/specification/v0_8/server_to_client.json)**: Message envelope schema
-    - **[standard_catalog_definition.json](https://a2ui.org/specification/v0_8/standard_catalog_definition.json)**: Component schemas
+    - **[server_to_client.json](../../specification/v0_8/json/server_to_client.json)**: Message envelope schema.
+    - **[standard_catalog_definition.json](../../specification/v0_8/json/standard_catalog_definition.json)**: Component schemas.
 
 === "v0.9"
 
     Validate against:
 
-    - **[server_to_client.json](https://a2ui.org/specification/v0_9/server_to_client.json)**: Message envelope schema
-    - **[basic_catalog.json](https://a2ui.org/specification/v0_9/basic_catalog.json)**: Component schemas
+    - **[server_to_client.json](../../specification/v0_9/json/server_to_client.json)**: Message envelope schema.
+    - **[basic_catalog.json](../../specification/v0_9/json/basic_catalog.json)**: Component schemas.
 
 ## Further Reading
 

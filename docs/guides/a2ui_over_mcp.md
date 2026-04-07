@@ -3,15 +3,17 @@
 This guide shows you how to serve **rich, interactive A2UI interfaces** from an **MCP server** using Tools and Embedded Resources. By the end, you'll have a working MCP server that returns A2UI components to any MCP-compatible client.
 
 <video width="100%" height="auto" controls playsinline style="display: block; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; margin-bottom: 24px;">
-  <source src="../assets/guides-a2ui-over-mcp-tour.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/google/A2UI/main/docs/assets/guides-a2ui-over-mcp-tour.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
 ## Prerequisites
 
-- **Python 3.10+**
-- **[uv](https://docs.astral.sh/uv/)** — fast Python package manager
-- **Node.js 18+** (for the MCP Inspector)
+Ensure you have the following installed before you begin:
+
+- **Python** (version 3.10 or later).
+- **[uv](https://docs.astral.sh/uv/)** for fast Python package management.
+- **Node.js** (version 18 or later) for the MCP Inspector.
 
 ## Quick Start: Run the Sample
 
@@ -39,14 +41,14 @@ In the Inspector:
 3. Click **List Tools** → you'll see `get_recipe_a2ui`
 4. Run the tool → the response contains A2UI JSON that renders a recipe card
 
-> ⚠️ **Note**
+> NOTE: Note
 >
 > The sample uses a local path reference to the A2UI Agent SDK. For your own projects, install from PyPI:
 > ```bash
 > pip install a2ui-agent-sdk
 > ```
 
-See all samples at [`samples/agent/mcp/`](../../samples/agent/mcp).
+See all samples at [`samples/agent/mcp/`](https://github.com/google/A2UI/tree/main/samples/agent/mcp).
 
 ## How It Works
 
@@ -187,7 +189,7 @@ def get_hello_world_ui():
     return types.CallToolResult(content=[text_content, a2ui_resource])
 ```
 
-> ⚠️ **Tip**
+> TIP: Tip
 >
 > Always include a `TextContent` alongside your A2UI resource. Clients that don't support A2UI will fall back to showing the text.
 

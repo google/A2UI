@@ -39,6 +39,7 @@ class TestValidator:
             {"$ref": "#/$defs/CreateSurfaceMessage"},
             {"$ref": "#/$defs/UpdateComponentsMessage"},
             {"$ref": "#/$defs/UpdateDataModelMessage"},
+            {"$ref": "#/$defs/DeleteSurfaceMessage"},
         ],
         "$defs": {
             "CreateSurfaceMessage": {
@@ -99,6 +100,7 @@ class TestValidator:
                             "surfaceId": {
                                 "type": "string",
                             },
+                            "path": {"type": "string"},
                             "value": {"additionalProperties": True},
                         },
                         "required": ["surfaceId"],
@@ -106,6 +108,22 @@ class TestValidator:
                     },
                 },
                 "required": ["version", "updateDataModel"],
+                "additionalProperties": False,
+            },
+            "DeleteSurfaceMessage": {
+                "type": "object",
+                "properties": {
+                    "version": {"const": "v0.9"},
+                    "deleteSurface": {
+                        "type": "object",
+                        "properties": {
+                            "surfaceId": {"type": "string"},
+                        },
+                        "required": ["surfaceId"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["deleteSurface", "version"],
                 "additionalProperties": False,
             },
         },
@@ -469,6 +487,76 @@ class TestValidator:
     with pytest.raises(ValueError) as excinfo:
       catalog_0_9.validator.validate(invalid_message)
     assert "'catalogId' is a required property" in str(excinfo.value)
+
+  def test_pretty_error_messages(self, catalog_0_9):
+    payload = [
+        {
+            "version": "v0.9",
+            "createSurface": {
+                "surfaceId": "recipe-card",
+                "catalogId": "https://a2ui.org/specification/v0_9/basic_catalog.json",
+            },
+        },
+        {
+            "version": "v0.9",
+            "updateComponents": {
+                "surfaceId": "recipe-card",
+                "components": [
+                    {
+                        "id": "main-column",
+                        "component": "Column",
+                        "children": ["recipe-image"],
+                        "gap": "small",
+                    },
+                    {
+                        "id": "recipe-image",
+                        "component": "Image",
+                        "url": {"path": "/image"},
+                        "altText": {"path": "/title"},
+                        "fit": "cover",
+                    },
+                    {
+                        "id": "title",
+                        "component": "Text",
+                        "text": {"path": "/title"},
+                        "usageHint": "h3",
+                    },
+                    {
+                        "id": "rating-row",
+                        "component": "Row",
+                        "children": ["star-icon"],
+                    },
+                ],
+            },
+        },
+        {
+            "version": "v0.9",
+            "updateDataModel": {
+                "surfaceId": "recipe-card",
+                "value": {
+                    "image": (
+                        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=180&fit=crop"
+                    )
+                },
+            },
+        },
+        {"version": "v0.9", "deleteSurface": {}},
+        {"unknownMessage": {}},
+    ]
+
+    with pytest.raises(ValueError) as excinfo:
+      catalog_0_9.validator.validate(payload)
+
+    err_text = str(excinfo.value)
+    print(f"\nVALIDATOR_OUTPUT_START\n{err_text}\nVALIDATOR_OUTPUT_END")
+
+    assert "Unknown component: Row" in err_text
+    assert "'usageHint' was unexpected" in err_text
+    assert "'gap' was unexpected" in err_text
+    assert "'altText', 'fit' were unexpected" in err_text
+    assert "'surfaceId' is a required property" in err_text
+    assert "{'path': '/image'} is not of type 'string'" in err_text
+    assert "Unknown message type with keys ['unknownMessage']" in err_text
 
   def test_validator_0_8(self, catalog_0_8):
     # v0.8 uses monolithic bundling for validation

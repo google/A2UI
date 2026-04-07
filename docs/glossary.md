@@ -23,8 +23,7 @@ And, sometimes, an agent is using a predefined catalog, thus forcing the rendere
 
 ### GenUI Component
 
-UI component, allowed for use by AI. Examples: date picker, carousel, button, hotel selector.
-
+UI component, allowed for use by agent. Examples: date picker, carousel, button, hotel selector.
 
 ### Catalog
 
@@ -44,12 +43,11 @@ It is observed that depending on use case, catalog components may be more or les
 
   Components like HotelCheckout or FlightSelector.
 
-
 ### Basic Catalog
 
 A catalog maintained by the A2UI team to get up and running quickly with A2UI.
 
-See [basic catalog](https://github.com/google/A2UI/blob/main/specification/v0_10/json/basic_catalog.json).
+See the [basic catalog](../specification/v0_10/json/basic_catalog.json).
 
 ### Surface
 
@@ -94,22 +92,22 @@ Functionality of A2UI renderer consists of layers that can be developed separate
   
   Set of primitives, needed to describe catalog and to interact with the agent.
 
-  Fore example, [JavaScript web core library](https://github.com/google/A2UI/tree/main/renderers/web_core/README.md).
+  For example, see the [JavaScript web core library](../renderers/web_core/README.md).
 
 - **Catalog Schema**:
   
   Definition of catalog in the form of JSON.
 
-  For example, [basic catalog schema](https://github.com/google/A2UI/tree/main/specification/v0_10/json/basic_catalog.json).
+  For example, see the [basic catalog schema](../specification/v0_10/json/basic_catalog.json).
 
 - **Framework adapter**:
   
   Code that implements the execution of the agent’s instructions in a concrete framework. For example:
   
-  - JavaScript core and catalogs may be adapted to Angular, Electron and Lit frameworks.
+  - JavaScript core and catalogs may be adapted to Angular, Electron, React and Lit frameworks.
   - Dart core and catalogs may be adapted to Flutter and Jaspr frameworks.
 
-  See [Angular adapter](https://github.com/google/A2UI/tree/main/renderers/angular/README.md).
+  See the [Angular adapter](../renderers/angular/README.md).
 
 - **Catalog Implementation**:
   
@@ -117,7 +115,7 @@ Functionality of A2UI renderer consists of layers that can be developed separate
 
   For example:
   
-  - [Angular implementation of basic catalog](https://github.com/google/A2UI/blob/main/renderers/angular/src/v0_9/catalog/basic)
+  - See the [Angular implementation of the basic catalog](../renderers/angular/src/v0_9/catalog/basic)
   
 
 ```mermaid
@@ -134,7 +132,11 @@ A message between agent and renderer.
 
 As the protocol allows streaming, any message can be finished (completely delivered) or not finished (partially delivered). A finished message may be completed (successfully delivered) or interrupted (delivery stopped because of some technical issues).
 
-See [data flow](https://github.com/google/A2UI/blob/main/docs/concepts/data-flow.md).
+See the [data flow guide](concepts/data-flow.md).
+
+### Agent turn
+
+Set of messages sent by agent, before it starts waiting for user input.
 
 ### Data model
 
@@ -144,17 +146,17 @@ Components can be bound to nodes of the data model, in order to auto-update when
 
 Data model allows bidirectional synchronization by capturing user interactions into a state object for transmission to the agent, while also allowing agent to push data updates back to the UI.
 
-See [data binding](https://github.com/google/A2UI/blob/main/docs/concepts/data-binding.md).
+See the [data binding guide](concepts/data-binding.md).
 
 ### Data reference
 
 In component definition, a reference to a data element, resolvable either by path in the data model or by value.
 
-See [example in basic catalog](https://github.com/google/A2UI/blob/db1fbe726b8d464f8f8493d9991cf0c6e4f8499d/specification/v0_10/json/basic_catalog.json#L18).
+See the [example in the basic catalog](../specification/v0_10/json/basic_catalog.json#L18).
 
 ### Client function
 
-A function provided for AI to invoke when needed.
+A function provided for agent to invoke when needed.
 
 Do not confuse with LLM tool:
 
@@ -166,15 +168,15 @@ Do not confuse with LLM tool:
 | Definition   | Registered in client side function registry and advertised in catalog | Defined in ToolDefinition (passed to LLM)                                         |
 | State Access | Access to DataContext and Input values.                               | No access to trigger requests to AI. Access to external APIs, databases, and services |
 
-See [example](https://github.com/google/A2UI/blob/main/specification/v0_9/json/common_types.json#L200).
+See the [example in common types](../specification/v0_9/json/common_types.json#L200).
 
 ### Action
 
-A string that explains to the AI what should be done.
+A container for an interaction triggered by the user in the UI. Actions come in two types:
+- **Event**: Dispatched to the agent for processing (e.g., clicking "Submit").
+- **Function**: Executed locally on the renderer (e.g., opening a URL).
 
-It may be an alias (like “option1”) or detailed explanation (like “order three pounds of ice cream of different flavors for a kids party”).
-
-See [detailed guide on actions](https://github.com/google/A2UI/blob/main/docs/concepts/client_to_server_actions.md).
+See the [detailed guide on actions](concepts/actions.md).
 
 ## Generative UI terms
 
@@ -204,4 +206,4 @@ Information, categorized as **not accessible by AI** (for example, credit card i
 
 Which information should not be accessible by AI is defined by owners of the application and it is **different in different contexts**. For example, in some contexts medical history should never go to AI, while in others AI is heavily used to help with medical diagnostics and thus needs medical history.
 
-This term is important in GenUI context, because end users want to **clearly see** what their input is allowed to go to AI and which is not allowed.
+This term is important in the GenUI context, because end users want to **clearly see** what their input is allowed to go to the AI and what is not allowed.

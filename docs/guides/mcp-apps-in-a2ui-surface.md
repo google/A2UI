@@ -2,7 +2,7 @@
 
 This guide explains how **Model Context Protocol (MCP) Applications** are integrated and displayed within the **A2UI** surface, along with the security model and testing guidelines.
 
-> **Looking for the core A2UI-over-MCP protocol?** See [A2UI over MCP](a2ui_over_mcp.md) for how to return A2UI JSON payloads from MCP tool calls.
+> NOTE: Looking for the core A2UI-over-MCP protocol? See [A2UI over MCP](a2ui_over_mcp.md) for how to return A2UI JSON payloads from MCP tool calls.
 
 ## Overview
 
@@ -70,7 +70,7 @@ export const DEMO_CATALOG = {
 
 ### 2. Usage in A2UI Message
 
-In the Host or Agent context, you send an A2UI message that translates to this custom node.
+In the Host or Agent context, send an A2UI message that translates to this custom node.
 
 ```json
 {
