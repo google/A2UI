@@ -1,8 +1,9 @@
 - name: test_validator_circular_reference
   description: Tests that circular references are detected.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: test_catalog
       components:
         Card:
@@ -29,9 +30,10 @@
     expect_error: Circular reference detected
 - name: test_validator_0_9
   description: Tests validation of v0.9 messages.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components: {}
   validate:
@@ -67,9 +69,10 @@
     expect_error: '''catalogId'' is a required property'
 - name: test_validator_0_8
   description: Tests validation of v0.8 messages.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components: {}
   validate:
@@ -92,9 +95,10 @@
     expect_error: '''not-an-object'' is not of type ''object'''
 - name: test_custom_catalog_0_8
   description: Tests validation with a custom catalog in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: custom
       components:
         Canvas:
@@ -181,9 +185,10 @@
                 path: /data
 - name: test_custom_catalog_0_9
   description: Tests validation with a custom catalog in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: custom
       components:
         Canvas:
@@ -311,9 +316,10 @@
             path: /data
 - name: test_validate_duplicate_ids_v08
   description: Tests that duplicate IDs are detected in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -344,9 +350,10 @@
     expect_error: 'Duplicate component ID: c1'
 - name: test_validate_duplicate_ids_v09
   description: Tests that duplicate IDs are detected in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -387,9 +394,10 @@
     expect_error: 'Duplicate component ID: c1'
 - name: test_validate_missing_root_v08
   description: Tests that missing root component is detected in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -412,9 +420,10 @@
     expect_error: Missing root component
 - name: test_validate_missing_root_v09
   description: Tests that missing root component is detected in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -449,9 +458,10 @@
     expect_error: Missing root component
 - name: test_validate_dangling_references_v08
   description: Tests that dangling references are detected in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Column:
@@ -494,9 +504,10 @@
     expect_error: references non-existent component
 - name: test_validate_dangling_references_v09
   description: Tests that dangling references are detected in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Column:
@@ -558,9 +569,10 @@
     expect_error: references non-existent component
 - name: test_validate_self_reference_v08
   description: Tests that self-references are detected in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Card:
@@ -583,9 +595,10 @@
     expect_error: Self-reference detected
 - name: test_validate_self_reference_v09
   description: Tests that self-references are detected in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Card:
@@ -620,9 +633,10 @@
     expect_error: Self-reference detected
 - name: test_validate_function_call_recursion_v08
   description: Tests that function call recursion limit is exceeded in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Button:
@@ -666,9 +680,10 @@
     expect_error: 'Recursion limit exceeded: functionCall depth > 5'
 - name: test_validate_function_call_recursion_v09
   description: Tests that function call recursion limit is exceeded in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Button:
@@ -725,9 +740,10 @@
     expect_error: 'Recursion limit exceeded: functionCall depth > 5'
 - name: test_validate_orphaned_component_v08
   description: Tests that orphaned components are detected in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -754,9 +770,10 @@
     expect_error: Component 'orphan' is not reachable from 'root'
 - name: test_validate_orphaned_component_v09
   description: Tests that orphaned components are detected in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -794,9 +811,10 @@
     expect_error: Component 'orphan' is not reachable from 'root'
 - name: test_validate_template_reachability_v08
   description: Tests template reachability in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Column:
@@ -847,9 +865,10 @@
     expect_error: references non-existent component 'missing-id'
 - name: test_validate_template_reachability_v09
   description: Tests template reachability in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         List:
@@ -925,9 +944,10 @@
     expect_error: references non-existent component 'missing-id'
 - name: test_validate_v08_custom_root_reachability
   description: Tests custom root reachability in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -974,9 +994,10 @@
               text: I am no longer an orphan
 - name: test_validate_invalid_paths_v08
   description: Tests invalid paths in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -1019,9 +1040,10 @@
       schemas)
 - name: test_validate_invalid_paths_v09
   description: Tests invalid paths in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Text:
@@ -1076,9 +1098,10 @@
       schemas)
 - name: test_validate_recursion_limit_exceeded_v08
   description: Tests that global recursion limit is exceeded in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Card:
@@ -1330,9 +1353,10 @@
     expect_error: 'Global recursion limit exceeded: logical depth'
 - name: test_validate_recursion_limit_exceeded_v09
   description: Tests that global recursion limit is exceeded in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Card:
@@ -1546,9 +1570,10 @@
     expect_error: 'Global recursion limit exceeded: logical depth'
 - name: test_validate_recursion_limit_valid_v08
   description: Tests that global recursion limit is valid in v0.8.
-  constructor:
-    version: '0.8'
-    catalog:
+  catalog:
+    version: "0.8"
+    s2c_schema: "simplified_s2c_v08.json"
+    catalog_schema:
       catalogId: standard
       components:
         Card:
@@ -1739,9 +1764,10 @@
               text: End
 - name: test_validate_recursion_limit_valid_v09
   description: Tests that global recursion limit is valid in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components:
         Card:
@@ -1909,9 +1935,10 @@
           text: End
 - name: test_validate_global_recursion_limit_exceeded_v09
   description: Tests that global recursion limit is exceeded for data model in v0.9.
-  constructor:
-    version: '0.9'
-    catalog:
+  catalog:
+    version: "0.9"
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: standard
       components: {}
   validate:
@@ -2035,9 +2062,10 @@
 
 - name: test_validate_circular_reference_v09
   description: Tests that circular references are detected in v0.9.
-  constructor:
+  catalog:
     version: "0.9"
-    catalog:
+    s2c_schema: "simplified_s2c_v09.json"
+    catalog_schema:
       catalogId: "test_catalog"
       components:
         Card:
