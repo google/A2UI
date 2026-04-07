@@ -24,19 +24,21 @@ from a2ui.core.schema.validator import A2uiValidator
 import json
 
 
-def load_json_file(filename):
-  path = os.path.abspath(
+def _get_conformance_path(filename):
+  return os.path.abspath(
       os.path.join(os.path.dirname(__file__), "../../../conformance", filename)
   )
-  with open(path, "r") as f:
+
+
+def load_json_file(filename):
+  path = _get_conformance_path(filename)
+  with open(path, "r", encoding="utf-8") as f:
     return json.load(f)
 
 
 def load_tests(filename):
-  path = os.path.abspath(
-      os.path.join(os.path.dirname(__file__), "../../../conformance", filename)
-  )
-  with open(path, "r") as f:
+  path = _get_conformance_path(filename)
+  with open(path, "r", encoding="utf-8") as f:
     return yaml.safe_load(f)
 
 
